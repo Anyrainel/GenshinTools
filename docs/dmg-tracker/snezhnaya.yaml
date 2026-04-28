@@ -25,18 +25,36 @@
     Q and C2 Bloodfire. The directive's 114.4% contributes ~2% of total rotation DPS.
     Negligible impact; not worth adding a formula for.
 
+- id: "arlecchino-normal-bol-repeat"
+  entity: "arlecchino"
+  rule: "U9"
+  status: actionable
+  category: "approximation"
+  summary: >
+    The default combo repeats arlecchino-normal three times, but that formula's Masque
+    of the Red Death bonus always starts from the selected initial Bond of Life. Later
+    Normal Attack sequences should continue from the lower Bond of Life left after the
+    previous hits consumed 7.5% current Bond of Life each.
+  detail: >
+    Current formula parts use hitIndex 0-6 and comboDescriptor count: 3, so each repeated
+    sequence reuses the same BoL values. Model the rotation with separate normal formula
+    entries or another per-rotation hit-index mechanism so hits 8-21 use continued
+    0.925^n decay instead of resetting after each 7-hit sequence.
+
 - id: "tartaglia-c4-riptide-count"
   entity: "tartaglia"
   rule: "S9"
-  status: completed
+  status: actionable
   category: "approximation"
   summary: >
-    C4 triggers an additional Riptide Slash (melee) or Riptide Flash (ranged) every 4s
-    that is not subject to the 1.5s internal CD of the base procs. The current
-    comboDescriptor has tartaglia-riptide-slash count: 6 with no C4 bonus, so C4 adds no
-    extra hits in the calc. Should add `bonus: [{ minC: 4, delta: N }]` tuning for the
-    expected extra procs over a ~9s melee rotation.
+    C4 Riptide count is still approximated incorrectly. The current comboDescriptor adds
+    six extra Riptide Slash hits over a ~9s melee rotation even though C4 can only trigger
+    once every 4s, and the ranged Riptide Flash path has no formula/rotation
+    representation.
   detail: >
-    Added bonus:[{ minC: 4, delta: 6 }] to the tartaglia-riptide-slash entry in
-    comboDescriptor (doubles the base 6 procs to 12 at C4+). Code comment notes
-    this is an approximation of C4's CD-bypassed extra trigger over the rotation.
+    Current code uses bonus:[{ minC: 4, delta: 6 }] for tartaglia-riptide-slash. Over the
+    documented ~9s melee window, the every-4s C4 cadence should add about 2 extra melee
+    slashes, or at most 3 if assuming immediate timer alignment, not another full set of
+    six base 1.5s procs. If modeling the ranged C4 branch, add a Riptide Flash formula
+    from A param9 with hits: 3, Hydro/normal/none, then decide its combo count separately
+    from the melee stance rotation.

@@ -74,23 +74,169 @@
 - id: chiori-p1-coord-offfield
   entity: chiori
   rule: S13
-  status: open
+  status: actionable
   category: bug
   summary: >
     chiori-e-combo bundles the on-field upward sweep with 2 P1 coordinated attacks as
     hits:3 on a single on-field part. P1 coordinated attacks occur after Tapestry swap,
     so Chiori is off-field for those 2 hits. The part should be split so the sweep stays
     on-field and the 2 P1 coordinated hits are marked offField: true.
-  detail: ""
+  detail: >
+    Split the on-field upward sweep from the two P1 coordinated attacks. The
+    coordinated attacks occur after the Tapestry swap and should be treated as
+    off-field damage so on-field-only buffs do not apply to them.
 
 - id: yoimiya-c6-separate-formula
   entity: yoimiya
   rule: S9
-  status: open
+  status: actionable
   category: approximation
   summary: >
     C6 extra Blazing Arrow (50% chance, 60% DMG) is modeled as a separate formulaMap
     entry yoimiya-c6-arrow with count:0 default, rather than as a dmg% or baseDmg% buff
     on the existing yoimiya-normal formula. Per S9, constellations enhancing an existing
     attack should be modeled as buffs, not separate formula entries.
-  detail: ""
+  detail: >
+    C6 enhances Yoimiya's existing Niwabi Fire-Dance Normal Attack sequence with
+    extra Blazing Arrow damage. It should be represented on that Normal Attack
+    path rather than as a separate default-disabled formula, so C6 damage is not
+    missed by normal rotations.
+
+- id: kirara-e-q-kit-damage
+  entity: kirara
+  rule: S7
+  status: actionable
+  category: missing-formula
+  summary: >
+    Kirara only models her C4 coordinated attack, but her kit has direct E/Q damage
+    rows and P2 explicitly buffs Meow-teor Kick and Secret Art: Surprise Dispatch
+    damage based on Max HP.
+  detail: >
+    Add formulas for the relevant E and Q damage sources before applying P2: E
+    Tail-Flicking Flying Kick (param1), hold collision damage (param7), Flipclaw
+    Strike (param9), Q initial hit (param1), and Cat Grass Cardamom explosions
+    (param2). P2 should add dmg% scaling from Max HP, with 0.4% per 1000 HP for
+    E damage and 0.3% per 1000 HP for Q damage. C1 can add up to 4 extra Cat
+    Grass Cardamoms, but the exact default count should be chosen with the combo
+    model.
+
+- id: gorou-q-collapse-modeling
+  entity: gorou
+  rule: S7
+  status: actionable
+  category: bug
+  summary: >
+    Gorou's Q formula models only one Crystal Collapse hit and the bespoke P2
+    DEF flat bonus is targeted as selfOnField, so it may not apply to the
+    off-field Crystal Collapse part.
+  detail: >
+    General's Glory generates Crystal Collapse every 1.5s for its duration
+    (base duration param3), so the collapse part should represent the repeated
+    hits rather than a single hit. C2 can extend the duration by up to 3s after
+    crystallize or lunar-crystallize triggers. The P2 15.6% DEF bonus applies
+    to both Q initial damage and Crystal Collapse, including off-field collapse
+    hits, so its receiver/placement must cover the off-field part.
+
+- id: sara-c2-crowfeather-damage
+  entity: kujou_sara
+  rule: S7
+  status: actionable
+  category: bug
+  summary: >
+    Sara C2's weaker Crowfeather damage is not modeled; the E formula only
+    includes the normal Tengu Juurai: Ambush hit.
+  detail: >
+    At C2, using Tengu Stormcall leaves a Crowfeather at Sara's original position
+    that triggers a weaker Tengu Juurai: Ambush dealing 30% of the original E
+    Ambush damage. Add this to the E formula at C2, likely as an additional part
+    using E param1 * 0.3.
+
+- id: shinobu-p2-overbuffs-c4
+  entity: kuki_shinobu
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    Shinobu's P2 EM-to-baseDmg buff is scoped to all skill damage, so it buffs the
+    C4 Thundergrass Mark even though P2 only increases Grass Ring of
+    Sanctification damage.
+  detail: >
+    The current global ScalingBuff uses filter abilities: ["skill"], while the
+    implemented skill formulas are C4 Thundergrass Mark and Hyperbloom. Since the
+    E ring direct damage is intentionally tracked as missing/wont-do, P2 should
+    not apply to C4. If the E ring formula is later added, attach the P2 scaling
+    only to that ring formula or otherwise narrow the scope.
+
+- id: sayu-c6-daruma-scope
+  entity: sayu
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    Sayu C6's EM-to-baseDmg buff is scoped to all Burst damage, so it also buffs
+    the Q initial hit even though C6 only enhances Muji-Muji Daruma damage.
+  detail: >
+    C6 says the Muji-Muji Daruma created by Yoohoo Art: Mujina Flurry gains extra
+    attack damage from Sayu's EM, capped at 400% ATK. The current ScalingBuff
+    uses filter abilities: ["burst"], which also matches sayu-q-initial. Scope
+    the buff to the Daruma formula/part only.
+
+- id: thoma-q-initial-c2-count
+  entity: thoma
+  rule: S7
+  status: actionable
+  category: bug
+  summary: >
+    Thoma's Q modeling omits the initial Crimson Ooyoroi skill hit and keeps
+    Fiery Collapse at 15 hits even when C2 extends the duration by 3s.
+  detail: >
+    Add Q initial Skill DMG (Q param1) to the burst formula or combo, then adjust
+    Fiery Collapse count for C2. Base Scorching Ooyoroi duration is param7 and
+    Fiery Collapse can trigger once every 1s; C2 increases the duration by 3s,
+    so the default collapse count should be 15 at C0-C1 and 18 at C2+ if the
+    combo assumes continuous Normal Attack triggers.
+
+- id: chiori-p2-construct-gate
+  entity: chiori
+  rule: U9
+  status: actionable
+  category: bug
+  summary: >
+    Chiori's P2 Geo DMG Bonus is always active, but The Finishing Touch requires
+    a nearby party member to create a Geo Construct, or C1 to trigger it through
+    a non-Chiori Geo teammate.
+  detail: >
+    The implementation already computes hasGeoConstruct/hasExtraPet for Tamoto
+    count, but the P2 StatBuff is unconditional. Gate the 20% Geo DMG Bonus on
+    Geo Construct creation at C0, and at C1 also allow the constellation path
+    when the team has another Geo character.
+
+- id: raiden-e-burst-buff-offfield
+  entity: raiden_shogun
+  rule: U1
+  status: actionable
+  category: bug
+  summary: >
+    Raiden's E Burst DMG Bonus is emitted as teamOnField per character, so it
+    does not apply to off-field Burst damage even though Eye of Stormy Judgment
+    buffs each affected character's Elemental Burst damage.
+  detail: >
+    Keep the per-character charId scaling by each teammate's burst energy cost,
+    but use a receiver that follows the character's Burst damage while off-field
+    as well as on-field. Off-field Burst formulas such as persistent deployables
+    should still receive the E param4 * energy-cost dmg% bonus.
+
+- id: kazuha-absorption-selection
+  entity: kaedehara_kazuha
+  rule: U11
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Kazuha's P1/Q absorbed-element formulas are selected from team composition,
+    and comboDescriptor defaults to the first present absorbable element, but
+    formula absorption depends on in-game aura priority and enemy state.
+  detail: >
+    Formula absorption is not derivable from team composition alone. It depends
+    on aura priority and enemy state, so choosing the first present team element
+    can be wrong in multi-absorbable teams. Treat the current team-order default
+    as an unsupported approximation and do not rely on it for tracked damage.

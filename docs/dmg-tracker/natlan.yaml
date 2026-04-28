@@ -98,69 +98,132 @@
     Attack hit when tapping during Nightsoul's Blessing).
   detail: nobody use this tap damage, we always hold.
 
-- id: varesa-pa-fp-missing-p1-with-c4
-  entity: varesa
-  rule: U4
-  status: open
-  category: bug
-  summary: >
-    varesa-pa-fp at C4+fullQ uses c4DiligentRefinement as bespokeBuff, which replaces
-    P1's +180% ATK baseDmg entirely. The first FP plunge should receive both P1 and C4
-    DR (like varesa-sq uses p1WithC4 to combine them).
-  detail: ""
-
-- id: varesa-c4-dr-missing-cap
-  entity: varesa
-  rule: S7
-  status: open
-  category: bug
-  summary: >
-    C4 Diligent Refinement ScalingBuff is missing cap parameter. Game text says
-    "至多通过这种方式提升20000" (max 20000). Should be ScalingBuff(..., 5.0, 20000).
-  detail: ""
-
-- id: ororon-c6-basedmg-filter-too-broad
-  entity: ororon
-  rule: U5
-  status: completed
-  category: bug
-  summary: >
-    C6 Q-triggered Hypersense uses a baseDmg% +1.0 StatBuff with filter
-    abilities:["special"], which also applies to the regular P1 Hypersense
-    formula (also ability:"special"). At C6, all 8 regular Hypersense hits
-    get doubled, not only the single Q-triggered hit. Should be a bespokeBuff
-    on the C6 part of ororon-burst only.
-  detail: >
-    Removed the global C6 baseDmg% StatBuff and re-attached it as a bespokeBuff
-    on the C6 Hypersense part of ororon-burst. Only the single Q-triggered
-    Hypersense hit is now doubled; the 8 regular ororon-hypersense procs are
-    unaffected.
-
 - id: kinich-c1-cd-filter-too-broad
   entity: kinich
   rule: U5
-  status: completed
+  status: actionable
   category: bug
   summary: >
-    C1 Scalespiker Cannon CD +100% StatBuff filter abilities:["skill"] also
-    applies to Loop Shot (also ability:"skill"). Game text limits this to
-    Scalespiker Cannon only. Should be a bespokeBuff on the kinich-cannon
-    formula parts instead of a filtered StatBuff.
+    C1 Scalespiker Cannon CD +100% is now scoped away from Loop Shot, but it
+    is still attached to the C6 bounce part. C6 only says P2 and C2 Cannon
+    buffs carry to the bounce, not the C1 Crit DMG buff.
   detail: >
-    Removed the global C1 cd StatBuff and attached it as a bespokeBuff on the
-    cannon main hit and C6 bounce parts of kinich-cannon. Loop Shot no longer
-    incorrectly receives the +100% Crit DMG.
+    Loop Shot is fixed, but `cannonBespoke` is reused for both the main
+    Scalespiker Cannon part and the C6 bounce. Keep C1 on the Cannon hit only;
+    the C6 bounce should inherit P2/C2 effects per C6 text, but not C1.
 
-- id: citlali-c2-em-receiver
-  entity: citlali
-  rule: U1
-  status: completed
+- id: chasca-p1-charge-filter-too-broad
+  entity: chasca
+  rule: U5
+  status: actionable
   category: bug
   summary: >
-    C2 +250 EM buff uses receiver:"other" but game text "处于白曜护盾的庇护下
-    或是伊兹帕帕跟随的其他角色" limits to shielded/followed teammates, which in
-    practice means only the active (on-field) teammate. Should use
-    receiver:"otherOnField".
+    P1 Spirit of the Radiant Shadow is implemented as a global Charged Attack
+    DMG buff, so it also boosts unconverted Shadowhunt Shells. Game text limits
+    the 15%/35%/65% bonus to Shining Shadowhunt Shells.
   detail: >
-    Changed the C2 +250 EM StatBuff receiver from "other" to "otherOnField" so
-    only the active teammate (not off-field teammates) receives the bonus.
+    Spirit of the Radiant Shadow should apply only to Shining Shadowhunt Shell
+    damage. Unconverted Shadowhunt Shells should not receive the P1 Charged
+    Attack DMG bonus.
+
+- id: chasca-c6-cd-filter-too-broad
+  entity: chasca
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    C6 Fatal Rounds is implemented as a global Charged Attack Crit DMG buff, so
+    it also boosts the P2 Burning Shadowhunt Shot. Game text limits the +120%
+    Crit DMG to the next Multitarget Fire instance's Shadowhunt and Shining
+    Shadowhunt Shells.
+  detail: >
+    Fatal Rounds should apply only to the next Multitarget Fire instance's
+    Shadowhunt and Shining Shadowhunt Shells, not to P2 Burning Shadowhunt Shot
+    or unrelated Charged Attack damage.
+
+- id: citlali-p2-skill-filter-too-broad
+  entity: citlali
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    P2 EM-to-baseDmg ScalingBuff is filtered to all Skill damage, so it also
+    boosts Citlali's initial E hit. Game text applies the 90% EM bonus only to
+    Itzpapa's Frostfall Storm damage.
+  detail: >
+    Citlali P2's 90% EM base damage bonus applies to Itzpapa's Frostfall Storm
+    damage only. It should not boost Citlali's initial Elemental Skill hit.
+
+- id: mavuika-flat-atk-bonus-zone
+  entity: mavuika
+  rule: U4
+  status: actionable
+  category: bug
+  summary: >
+    Q Fighting Spirit bonuses and C2 Flamestrider bonuses are merged into
+    talentMultiplier. These are flat ATK-based damage increases and should be
+    baseDmg-style buffs so baseDmg% effects do not multiply them.
+  detail: >
+    Fighting Spirit and C2 Flamestrider bonuses are flat ATK-based damage
+    increases. They should behave as additive base damage bonuses rather than
+    being folded into the talent multiplier zone.
+
+- id: mavuika-c2-def-shred-receiver
+  entity: mavuika
+  rule: U6
+  status: open
+  category: approximation
+  summary: >
+    C2 Ring-form DEF reduction is modeled with receiver:"selfOffField" plus
+    receiver:"other" to avoid buffing on-field Flamestrider damage. U6 expects
+    DEF reduction to be receiver:"team"; the form split needs a cleaner model.
+  detail: >
+    Keep open. C2 Ring-form DEF reduction is an enemy debuff and U6 would
+    normally make it team-wide, but applying it broadly also risks buffing the
+    mutually exclusive on-field Flamestrider mode. The correct current-engine
+    representation needs a form-specific decision before changing the receiver.
+
+- id: kinich-p2-base-dmg-filter-too-broad
+  entity: kinich
+  rule: U5
+  status: actionable
+  category: bug
+  summary: >
+    P2 Hunter's Experience is implemented as an uncapped Skill-wide ScalingBuff,
+    so it boosts Loop Shot and every Scalespiker Cannon. Game text consumes up
+    to two stacks on a Scalespiker Cannon shot only.
+  detail: >
+    Hunter's Experience consumes up to two stacks on a Scalespiker Cannon shot.
+    It should not buff Loop Shot or every Cannon indiscriminately, and the stack
+    cap should be respected on the Cannon damage it actually affects.
+
+- id: kinich-c2-c6-bounce-stack-limit
+  entity: kinich
+  rule: U10
+  status: actionable
+  category: bug
+  summary: >
+    C2 first-Cannon +100% DMG uses one maxStacks:1 bespoke buff shared by the
+    Cannon and C6 bounce parts. At C6, the bounce should also receive the C2
+    buff when the Cannon does, so both parts of the first Cannon sequence need
+    the bonus.
+  detail: >
+    The first Cannon C2 bonus and its C6 bounce inheritance should be evaluated
+    together. The main Cannon and C6 bounce should both receive the first-Cannon
+    bonus when applicable, without a shared maxStacks pool causing one part to
+    consume the other part's intended bonus.
+
+- id: xilonen-converted-samples-distinct-elements
+  entity: xilonen
+  rule: U12
+  status: actionable
+  category: bug
+  summary: >
+    Xilonen counts distinct PHEC elements to decide how many Source Samples are
+    converted. Game text converts one Geo Sample per Pyro/Hydro/Cryo/Electro
+    party member, so duplicate-element teammates can still reach the two-sample
+    threshold and activate the matching RES shred.
+  detail: >
+    Converted Source Samples should count qualifying Pyro/Hydro/Cryo/Electro
+    party members, not only distinct elements. Duplicate-element teammates can
+    still convert enough samples to activate the matching RES shred.

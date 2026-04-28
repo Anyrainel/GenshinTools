@@ -95,18 +95,33 @@
 
 - id: linnea-p2-em-overcount
   entity: linnea
-  rule: S6
-  status: completed
+  rule: U1
+  status: wont-do
   category: approximation
   summary: >
     P2 Universal Naturalist Archive grants 5% DEF as EM to either the active
-    character (if Moonsign) OR Linnea (if non-Moonsign active) — not both.
-    Implementation models both branches simultaneously (selfOffField + teamOnField/Moonsign),
-    so on Nod-Krai teams with a Moonsign teammate active off-field of Linnea, both
-    Linnea and the active Moonsign teammate receive +EM, double-counting the buff for
-    Linnea's own off-field reaction damage (lunarCrystallize EM bonus).
+    Moonsign character or Linnea when the active character is not Moonsign.
+    The implementation approximates this branch from team composition, so some
+    valid active-Moonsign cases can still receive the wrong target.
   detail: >
-    Replaced the simultaneous selfOffField + teamOnField/Moonsign branches with an
-    XOR: if any other Moonsign 5★ Geo teammate is present, only emit the
-    teamOnField/Moonsign buff; otherwise only emit a self buff (covers Linnea on and
-    off-field). Eliminates the double-count on Linnea's off-field LC reaction damage.
+    Exact modeling needs an active-character-aware XOR: the active Moonsign
+    character gets the EM, otherwise Linnea gets it, without both branches being
+    active at once. Current receiver/filter primitives cannot express that
+    runtime branch cleanly. The existing heuristic avoids the worst double-count
+    cases, so the remaining target mismatch is an acceptable approximation.
+
+- id: prune-q-bell-hit-count
+  entity: prune
+  rule: S8
+  status: open
+  category: needs-data
+  summary: >
+    Q Witchlure Bell Hunter-Seeker tick count is estimated at 4 hits over the
+    12s burst duration, while C6 extends the mode to 16s. Game text specifies
+    only "attacking surrounding opponents at intervals" without a concrete tick
+    rate; actual base and C6 tick counts require in-game verification.
+  detail: >
+    Implementation still uses the estimate: comboDescriptor counts 4 base ticks
+    and 5 ticks at C6, with a code comment noting the cadence is pending
+    release/frame verification. Keep this open until the actual Hunter-Seeker
+    attack interval is verified.

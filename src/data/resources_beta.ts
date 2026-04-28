@@ -13,10 +13,10 @@ export const betaCharacters: CharacterResource[] = [
 ];
 export const betaWeapons: WeaponResource[] = [
   {"id":"disaster_and_remorse","rarity":5,"imagePath":"/weapon/disaster_and_remorse.webp"},
-  {"id":"seven_edicts_of_dust_and_light","rarity":5,"imagePath":"/weapon/seven_edicts_of_dust_and_light.webp"},
+  {"id":"angelos_heptades","rarity":5,"imagePath":"/weapon/angelos_heptades.webp"},
 ];
 export const betaArtifacts: ArtifactSetResource[] = [
   {"id":"glacier_and_snowfield","rarity":5,"imagePaths":{"flower":"/artifact/glacier_and_snowfield.webp","plume":"/artifact/glacier_and_snowfield2.webp","sands":"/artifact/glacier_and_snowfield3.webp","goblet":"/artifact/glacier_and_snowfield4.webp","circlet":"/artifact/glacier_and_snowfield5.webp"}},
-  {"id":"heavens_gift","rarity":5,"imagePaths":{"flower":"/artifact/heavens_gift.webp","plume":"/artifact/heavens_gift2.webp","sands":"/artifact/heavens_gift3.webp","goblet":"/artifact/heavens_gift4.webp","circlet":"/artifact/heavens_gift5.webp"}},
+  {"id":"celestial_gift","rarity":5,"imagePaths":{"flower":"/artifact/celestial_gift.webp","plume":"/artifact/celestial_gift2.webp","sands":"/artifact/celestial_gift3.webp","goblet":"/artifact/celestial_gift4.webp","circlet":"/artifact/celestial_gift5.webp"}},
   {"id":"disenchantment_in_deep_shadow","rarity":5,"imagePaths":{"flower":"/artifact/disenchantment_in_deep_shadow.webp","plume":"/artifact/disenchantment_in_deep_shadow2.webp","sands":"/artifact/disenchantment_in_deep_shadow3.webp","goblet":"/artifact/disenchantment_in_deep_shadow4.webp","circlet":"/artifact/disenchantment_in_deep_shadow5.webp"}},
 ];

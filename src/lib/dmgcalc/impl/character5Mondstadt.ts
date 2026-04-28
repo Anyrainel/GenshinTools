@@ -1886,25 +1886,12 @@ class Varka extends CharacterBase {
 }
 
 // Lohen — 5★ Cryo Polearm (Hexerei)
-// Modeling assumptions (Masterstroke mode is the DPS state):
-// - E switches to Masterstroke: NA/CA become Cryo (non-overridable infusion).
-//   The E talent table provides the Masterstroke-mode NA/CA multipliers
-//   (params 1-10 mirror the A table but scale off E skill level).
-// - Joy (up to 100): NA hits grant 15, CA hits grant 18 → 镂骨彻心 is available
-//   once per Masterstroke on rotation (modeled as 1 cast per combo).
-// - Will to Win (max 100, C1 raises cap to 250): grants +0.4% base DMG per point
-//   to 镂骨彻心 (special E, param11) and Q. Selectable via OptionMap — hard to
-//   sustain at cap pre-C4/C6, so the user picks a realistic tier.
-// - Hexerei P4: when Will to Win ≥ 50% of max, NA/CA DMG +40% on cast. Treated as
-//   always-on under sustained rotation.
-// - P3 High Spirits: +1 E skill level for Lohen after E cast (9s/15s). Modeled via
-//   CharacterBase._effectiveLevels through TeamMeta.talentPassiveBonuses("lohen").
-// - C4 maxes Will to Win on Q; C6 removes consumption and adds +150% CRIT DMG to
-//   the special E, Q, and all Masterstroke NA/CA (ZH text supersedes EN 80%).
-
-// Will to Win tiers — user-selectable, since pre-C4 teams cannot reliably
-// sustain max across back-to-back casts. C4+ auto-fills on Q; C6 removes
-// consumption — in both cases max is trivially maintained.
+// Key assumptions:
+// - Rotation is Masterstroke-focused: build Joy with NA/CA, then one special E.
+// - Will to Win is user-selected pre-C4 because sustain is rotation-dependent;
+//   C4+ treats it as max.
+// - P2 cannot know the exact Cryo-reaction trigger owner, so it uses on-field.
+// - C6 follows ZH wording for the special E/Q CRIT DMG bonus.
 const lohenOption = {
   label: { zh: "争胜点数", en: "Will to Win" },
   choices: [
@@ -1917,10 +1904,8 @@ const lohenOption = {
 @RegisterCharacter("lohen", lohenOption)
 class Lohen extends CharacterBase {
   private readonly o = resolveOption(lohenOption, this.option);
-  // Max Will to Win capacity (C1 raises to 300% of base 100 = 300, per ZH)
+  // C1 raises Will to Win capacity to 300 per ZH.
   private readonly maxWill = this.constellation >= 1 ? 300 : 100;
-  // Will to Win point count based on user tier. C4+ auto-fills on Q and C6
-  // removes consumption entirely, so treat max as the sustained value there.
   private readonly willStacks = (() => {
     if (this.constellation >= 4) return this.maxWill;
     switch (this.o) {
@@ -1932,10 +1917,7 @@ class Lohen extends CharacterBase {
         return this.maxWill;
     }
   })();
-  // Triggered Cryo reaction — any reaction whose trigger or aura is Cryo:
-  // Melt, Frozen, Superconduct, Cryo swirl (Anemo+Cryo), Cryo crystallize (Geo+Cryo).
-  // Lunar does not supersede any of these Cryo reactions under current rules,
-  // so the base reaction gates are sufficient.
+  // Includes Cryo aura reactions where TeamMeta only exposes the reaction family.
   private readonly cryoReactionPresent = (() => {
     if (
       this.teamMeta.hasReaction("melt") ||
@@ -1950,11 +1932,9 @@ class Lohen extends CharacterBase {
       )
     );
     const hasCryo = teamEls.has("Cryo");
-    // Cryo swirl: Anemo trigger on Cryo aura (or vice versa — swirl requires Anemo + any)
     if (this.teamMeta.hasReaction("swirl") && hasCryo && teamEls.has("Anemo")) {
       return true;
     }
-    // Cryo crystallize: Geo trigger on Cryo aura
     if (
       this.teamMeta.hasReaction("crystallize") &&
       hasCryo &&
@@ -1964,16 +1944,13 @@ class Lohen extends CharacterBase {
     }
     return false;
   })();
-  // Hexerei Secret Rite active when team has ≥2 Hexerei members
   private readonly isHexereiActive =
     this.teamMeta.countByFaction("Hexerei") >= 2;
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    // Will to Win → +0.4% baseDmg% per point on Etched Into Bone and Soul
-    // ("special E" → "skill" ability tag) and on Q ("burst").
-    // E param12 + Q param2 both describe the same 0.4%/pt rate.
+    // Will to Win scales only the special E and Q damage.
     const willBoost = 0.004 * this.willStacks;
     if (willBoost > 0) {
       buffs.push(
@@ -1988,26 +1965,24 @@ class Lohen extends CharacterBase {
       );
     }
 
-    // P2: After teammate triggers a Cryo reaction, +15% ATK to that teammate and Lohen.
-    // Modeled as always-on (8s window covers rotation) when any Cryo reaction is possible.
+    // Trigger owner is not tracked; approximate the teammate buff as on-field.
     if (this.cryoReactionPresent) {
       buffs.push(
         new StatBuff(cbs(this, "P2", ["E"]), { receiver: "self" }, [
           { key: "atk%", value: 0.15 },
         ]),
-        new StatBuff(cbs(this, "P2", ["E"]), { receiver: "other" }, [
+        new StatBuff(cbs(this, "P2", ["E"]), { receiver: "otherOnField" }, [
           { key: "atk%", value: 0.15 },
         ])
       );
     }
 
-    // Hexerei P4: +40% NA/CA DMG when Will to Win ≥ 50% of max.
-    // Gated on the selected tier so the "Low (25)" choice correctly loses it.
+    // P4 depends on the selected sustained Will tier.
     const willAtHalfCap = this.willStacks >= this.maxWill / 2;
     if (this.isHexereiActive && willAtHalfCap) {
       buffs.push(
         new StatBuff(
-          cbs(this, "P4", ["E"]),
+          cbs(this, "P4", ["E", "Q"]),
           {
             receiver: "selfOnField",
             filter: { abilities: ["normal", "charge"] },
@@ -2017,7 +1992,6 @@ class Lohen extends CharacterBase {
       );
     }
 
-    // C2: Evilsbane Blade → teammates +200 EM (8s) after special E or Q (per ZH).
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(cbs(this, "C2", ["E", "Q"]), { receiver: "other" }, [
@@ -2026,11 +2000,7 @@ class Lohen extends CharacterBase {
       );
     }
 
-    // C6: +175% CRIT DMG to the two damage sources named in the same C6
-    // clause — special E (镂骨彻心) and Q (裁罚遂成). ZH: "上述所有伤害的
-    // 暴击伤害都将提升175%" refers to the special E and Q just named above
-    // in the C6 text; Masterstroke NA/CA/plunge are not part of that
-    // referent. Using `1.75` per ZH.
+    // C6 ZH points at the special E and Q named in the same clause.
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
@@ -2047,9 +2017,7 @@ class Lohen extends CharacterBase {
     return buffs;
   })();
 
-  // E (Masterstroke mode) NA/CA: params 1-7 mirror A-table structure but scale
-  //   off E skill level. Param11 is the special E 镂骨彻心 (90%×4 at Lv10).
-  // Q: 171.12%×6 at Lv10 (param1).
+  // Masterstroke NA/CA/plunge multipliers live in E params; special E is E11.
   protected readonly formulaMap = (() => {
     const cryoNormal = {
       element: "Cryo" as const,
@@ -2077,7 +2045,6 @@ class Lohen extends CharacterBase {
       reaction: "none" as const,
     };
     return {
-      // Masterstroke NA N1-N5 (full string) as the main DPS combo
       "lohen-e-normal": {
         label: { zh: "奇谋 普攻x5", en: "Masterstroke NAx5" },
         parts: [
@@ -2092,7 +2059,6 @@ class Lohen extends CharacterBase {
           { formula: new DirectFormula(this.param("E", 6), cryoNormal) },
         ],
       },
-      // Masterstroke CA (two hits)
       "lohen-e-charge": {
         label: { zh: "奇谋 重击", en: "Masterstroke CA" },
         parts: [
@@ -2102,7 +2068,6 @@ class Lohen extends CharacterBase {
           },
         ],
       },
-      // Special E — 镂骨彻心 (Etched Into Bone and Soul) 90%×4 at Lv10
       "lohen-e-special": {
         label: { zh: "镂骨彻心", en: "Etched Into Bone and Soul" },
         parts: [
@@ -2112,12 +2077,7 @@ class Lohen extends CharacterBase {
           },
         ],
       },
-      // Masterstroke plunge: Masterstroke converts NA/CA/plunge to Cryo DMG
-      // ("洛恩的普通攻击、重击与下落攻击将转为造成…冰元素伤害"). E table
-      // params 8/9/10 are Plunge descent / Low Plunge / High Plunge. We model
-      // descent (param8) + high plunge landing (param10) for peak damage.
-      // Not added to comboDescriptor — plunge is not part of the primary
-      // Masterstroke NA/CA → special E → Q loop. Formula exists for S8b.
+      // Optional plunge formula; not part of the default Masterstroke combo.
       "lohen-e-plunge": {
         label: { zh: "奇谋 下落攻击", en: "Masterstroke Plunge" },
         parts: [
@@ -2125,7 +2085,6 @@ class Lohen extends CharacterBase {
           { formula: new DirectFormula(this.param("E", 10), cryoPlunge) },
         ],
       },
-      // Q — 裁罚遂成 171%×6 at Lv10
       "lohen-burst": {
         label: { zh: "Q伤害×6", en: "Q (×6)" },
         parts: [
@@ -2135,8 +2094,7 @@ class Lohen extends CharacterBase {
           },
         ],
       },
-      // C2: Evilsbane Blade — 500% ATK Cryo AoE after special E/Q, once per 4s (per ZH).
-      // Modeled as a single extra hit per combo (triggered once after special E).
+      // Single C2 proc per combo.
       "lohen-c2-blade": {
         label: { zh: "C2 破邪之刃", en: "C2 Evilsbane Blade" },
         minC: 2,
@@ -2153,8 +2111,7 @@ class Lohen extends CharacterBase {
     };
   })();
 
-  // Rotation: E (enter Masterstroke) → build Joy with NA/CA → special E → Q.
-  // ~2 cycles of (N5 + CA) fills Joy (100 pts). Keep NA heavy.
+  // Default rotation: NA-heavy Joy build, one special E, then Q.
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "lohen-e-normal", count: 2 },

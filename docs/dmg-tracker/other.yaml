@@ -77,54 +77,66 @@
     hardcoded to the maximum 35%. No OptionMap or amortized average is used.
   detail: aloy is not a popular character, not worth implementing the extra OptionMap.
 
-- id: nicole-q-projection-scaling-element
-  entity: nicole
-  rule: S10
-  status: resolved
+- id: skirk-c6-sever-stack-consumption
+  entity: skirk
+  rule: S8
+  status: actionable
+  category: bug
+  summary: >
+    C6 Havoc: Sever coordinated attacks overcount the shared stack pool. The
+    combo includes both the Burst coordinated attack and repeated Normal Attack
+    coordinated attacks, but each absorbed Void Rift grants only one stack and
+    each stack can be consumed by only one Havoc: Sever branch.
+  detail: >
+    At 3 Void Rifts the implementation counts skirk-c6-burst-coord once and
+    skirk-c6-normal-coord four times; the latter is 6 hits per combo, for 24
+    NA coordinated hits, on top of 3 Burst coordinated hits. Game text caps
+    Havoc: Sever at 3 stacks total. Model a single shared consumption path or
+    otherwise gate the default combo so the same stacks are not spent by both
+    branches.
+
+- id: traveler-anemo-absorption-selection
+  entity: traveler_anemo
+  rule: U12
+  status: wont-do
   category: engine-gap
   summary: >
-    Q Arcane Projection (5×200% ATK) and C1 Unity (600% ATK) now use
-    per-slot cross-scaled formulas. Each projection evaluates in the
-    triggering teammate's stat context (ATK, element, DMG%, crit, EM)
-    via FormulaEntry.statsCharId override.
+    Gust Surge absorbed-element damage is represented as team-element formula
+    variants, but the actual absorbed element depends on in-game aura priority
+    and enemy state rather than only team composition.
   detail: >
-    Resolved with the statsCharId engine pattern. Nicole's formulaMap
-    generates one Q projection + one C1 Unity entry per team slot, each
-    with statsCharId set to the slot occupant and DamageTag.element set
-    to the occupant's element. The formula lives in Nicole's charBase
-    (owner = "nicole") but evaluateCombo/compiler resolve stats from the
-    statsCharId character. P4 Hexerei buff routes to occupant via
-    { receiver: "team", charId: occupantId }. Game text citation:
-    "该伤害受益于该角色的攻击力，并视为由该角色造成的伤害".
+    Formula absorption is not derivable from team composition alone. Gust Surge
+    absorption depends on aura priority and enemy state, so team-element variants
+    cannot be selected correctly when multiple absorbable elements are possible.
+    Do not rely on this path for tracked damage without explicit absorption
+    selection.
 
-- id: prune-q-bell-hit-count
-  entity: prune
-  rule: S8
-  status: open
-  category: needs-data
+- id: traveler-anemo-blade-winds-team-elements
+  entity: traveler_anemo
+  rule: U12
+  status: actionable
+  category: bug
   summary: >
-    Q Witchlure Bell Hunter-Seeker tick count is estimated at 4 hits over the
-    12s burst duration (15s+ with C6). Game text specifies only "attacking
-    surrounding opponents at intervals" without a concrete tick rate; actual
-    interval requires in-game verification.
+    P3 Whirlwind always includes all four Blade Wind elements. Game text grants
+    one Blade of the Dawn Breeze stack per Pyro/Hydro/Cryo/Electro teammate
+    attack type, so unavailable elements should not add 50% ATK hits.
   detail: >
-    Per S8, when a periodic proc's exact tick rate is unknown, a best-estimate
-    with a code comment is acceptable. The current 4 ticks / 12s (~3s interval)
-    estimate is consistent with comparable "summon bell/bird/hunter-seeker"
-    mechanics on existing characters (e.g., Yelan Exquisite Throw, Faruzan
-    Dazzling Polyhedron cadence). External sources (KQM, HHW, Wiki) do not
-    yet cover Prune as she is unreleased beta. Revisit only after official release.
+    traveler-anemo-blade-ca unconditionally adds Pyro, Hydro, Cryo, and Electro
+    Blade Wind parts. Build the extra parts from the qualifying team elements
+    instead, and keep the trigger requirement that at least 2 stacks are needed
+    before the special Charged Attack can occur.
 
-- id: skirk-wither-10-trigger-cap
-  entity: skirk
-  rule: U8b
-  status: completed
-  category: approximation
+- id: traveler-electro-amulet-pickup-limitation
+  entity: traveler_electro
+  rule: U1
+  status: wont-do
+  category: engine-gap
   summary: >
-    Q All Shall Wither NA baseDmg% buff is not capped at 10 triggers as game
-    text specifies ("该效果将在触发次数达到10次时解除"). The buff applies to all
-    NA hits in the combo rotation without limit.
+    Abundance Amulet pickup buffs are modeled as teamOnField, but the engine
+    does not enforce the single on-field character who actually absorbs each
+    special pickup object.
   detail: >
-    Added maxStacks:10 to the Wither baseDmg% StatBuff (selfOnField, ability:
-    normal). The combo allocator now distributes the buff across exactly 10 NA
-    hits per rotation, matching the in-game 10-trigger cap on Havoc:Extinction.
+    Lightning Blade creates special pickup objects that only one nearby character
+    absorbs. U1 maps this to receiver: teamOnField as the closest approximation,
+    but the current engine cannot persistently bind the buff to the actual pickup
+    recipient. The approximation is acceptable.

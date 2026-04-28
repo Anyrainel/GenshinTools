@@ -102,30 +102,122 @@
   detail: >
     This approximation is acceptable for now.
 
-- id: chongyun-p1-weapon-filter
-  entity: chongyun
-  rule: U1
-  status: completed
-  category: engine-gap
-  summary: >
-    P1 Normal ATK SPD +8% is limited to Sword/Claymore/Polearm users in the Chonghua
-    Frost Field, but the buff applies to all active teammates because BuffTarget has
-    no weaponTypes filter. Catalyst/bow teammates incorrectly receive the atkSpd buff.
-  detail: >
-    Replaced the single teamOnField StatBuff with per-charId StatBuffs filtered via
-    teamMeta.weaponTypes — only Sword/Claymore/Polearm teammates now receive the
-    atkSpd% buff. Pattern matches Bennett C6 weapon-filter implementation.
-
-- id: zhongli-press-formula
-  entity: zhongli
-  rule: S8b
-  status: completed
+- id: lan_yan-c1-extra-ring
+  entity: lan_yan
+  rule: S7
+  status: wont-do
   category: missing-formula
   summary: >
-    E Press mode (stele creation only) has no formula. Only Hold is modeled via
-    "zhongli-hold" (hold AoE + stele creation). Per S8b, 5★ E should expose both
-    tap and hold modes as separate formulas.
+    C1 adds another Feathermoon Ring after P1 elemental absorption, but E damage remains
+    one ring and does not include the extra C1 ring hit.
   detail: >
-    Added a "zhongli-press" DirectFormula entry using this.param("E", 1) (stele
-    creation Geo DMG) with the existing eHpExtra HP term. Resonance remains its
-    own formula (zhongli-resonance) and zhongli-hold is unchanged.
+    The extra ring is tied to the same absorbed-element path that is intentionally
+    unmodeled for Lan Yan P1. Without a reliable absorption selection, adding this
+    C1 hit would depend on the same unsupported aura-priority decision.
+
+- id: xingqiu-burst-sword-rain-count
+  entity: xingqiu
+  rule: S7
+  status: actionable
+  category: needs-data
+  summary: >
+    Raincutter sword rain is modeled as one Sword Rain DMG hit per proc. The implementation
+    does not model the multi-sword wave pattern or C6's enhanced third wave, so burst damage
+    is undercounted.
+  detail: >
+    Raincutter is a major off-field damage source, and one hit per proc materially
+    undercounts it. Model the standard multi-sword wave pattern, including the
+    C6 enhanced third wave, instead of treating each proc as one Sword Rain hit.
+
+- id: yaoyao-c6-mega-radish-count
+  entity: yaoyao
+  rule: S3
+  status: actionable
+  category: bug
+  summary: >
+    C6 Mega Radishes are additional throws, but the E formula replaces two normal White
+    Jade Radish hits by reducing regular hits from 10 to 8.
+  detail: >
+    Keep 10 normal E White Jade Radish hits and add 2 Mega Radish hits at C6 for one
+    Yuegui: Throwing Mode instance. Game text says every 2 normal throws also releases
+    a Mega Radish, up to 2 per Yuegui.
+
+- id: yaoyao-p1-starscatter-radishes
+  entity: yaoyao
+  rule: S7
+  status: actionable
+  category: missing-formula
+  summary: >
+    P1 Starscatter radishes during Moonjade Descent are not modeled. While Yaoyao is
+    running, sprinting, or jumping in Q, she can throw one extra White Jade Radish every
+    0.6s.
+  detail: >
+    Add to the existing Q formula as extra Adeptal Legacy White Jade Radish hits using
+    this.param("Q", 1). Q lasts 5s, so the text trivially implies up to 8 extra P1 throws
+    if Yaoyao stays moving during the state.
+
+- id: ningguang-charged-star-jades
+  entity: ningguang
+  rule: S7
+  status: actionable
+  category: missing-formula
+  summary: >
+    Ningguang has no Charged Attack or Star Jade formula even though her kit and C6
+    explicitly support Charged Attack damage.
+  detail: >
+    Add Charged Attack damage from A param2 plus Star Jade damage from A param3. C6
+    grants 7 Star Jades after Q; non-C6 Star Jade count depends on the normal/charged
+    sequence and should be selected or documented.
+
+- id: baizhu-c2-splice-hit-count
+  entity: baizhu
+  rule: S3
+  status: actionable
+  category: bug
+  summary: >
+    C2 Gossamer Sprite: Splice is modeled as 3 hits, but the constellation text says
+    it initiates 1 attack before returning.
+  detail: >
+    Change the "baizhu-c2-sprite" formula from hits: 3 to a single 250% ATK Dendro
+    Skill hit. The 3-hit count belongs to Baizhu's regular E sprite, not C2 Splice.
+
+- id: baizhu-c6-extra-spiritveins
+  entity: baizhu
+  rule: S7
+  status: actionable
+  category: missing-formula
+  summary: >
+    C6 shield generation from Gossamer Sprite and Gossamer Sprite: Splice hits is not
+    reflected as extra Spiritvein damage. The implementation only adds the C6 8% Max HP
+    bonus to existing Spiritvein hits.
+  detail: >
+    Each regular sprite or C2 Splice can generate one Seamless Shield, which can
+    then trigger Spiritvein damage through the Q shield rules. C6 should add those
+    extra Spiritvein damage instances consistently with the chosen E and C2 sprite
+    counts.
+
+- id: hu_tao-c4-ally-crit
+  entity: hu_tao
+  rule: U8
+  status: wont-do
+  category: approximation
+  summary: >
+    C4's ally CRIT Rate +12% after defeating a Blood Blossom-affected enemy is not
+    modeled, so teammate damage can miss a constellation team buff.
+  detail: >
+    The trigger depends on defeating an enemy affected by Blood Blossom, which is
+    encounter-dependent and often absent in boss or single-target damage checks.
+    Assuming the ally CRIT buff is always active would overstate teammate damage,
+    so omitting it is the better default.
+
+- id: shenhe-c6-quill-quota
+  entity: shenhe
+  rule: U10
+  status: actionable
+  category: bug
+  summary: >
+    At C6, Icy Quill quota is removed for all Cryo damage abilities, but the constellation
+    only says Normal and Charged Attack triggers stop consuming quota.
+  detail: >
+    Split the C6 Icy Quill modeling so Normal/Charged Cryo hits are unlimited, while
+    Plunging, Skill, and Burst Cryo hits still use the press/hold trigger quotas.

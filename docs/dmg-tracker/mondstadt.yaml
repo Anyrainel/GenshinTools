@@ -19,81 +19,87 @@
     model for trivially-met conditions. Additionally, C6 Mona is an extremely
     niche scenario with negligible user impact.
 
-- id: sucrose-p1-element-restriction
+- id: sucrose-q-absorption-additional-dmg
   entity: sucrose
-  rule: U1
-  status: completed
-  category: bug
-  summary: >
-    P1 Catalyst Conversion buff grants +50 EM to all non-Sucrose teammates via
-    receiver "other" without filtering by element. Game text restricts the buff
-    to teammates whose element matches the swirled element ("队伍中所有对应元素
-    类型的角色"). Non-matching teammates incorrectly receive the buff.
-  detail: >
-    Replaced the single receiver:"other" StatBuff with a per-charId loop over
-    teammates, emitting +50 EM only to teammates whose element is in the
-    presentAbsorbElements set (the swirlable elements actually present on the team).
-
-- id: albedo-c6-fatal-blossom-only
-  entity: albedo
-  rule: U5
-  status: completed
-  category: bug
-  summary: >
-    C6 +250% DEF baseDmg buff (after Silver Isotoma destroyed by Q) uses
-    `filter: { abilities: ["burst"] }`, applying to both burst initial slash AND
-    Fatal Blossoms. Game text restricts the boost to Fatal Blossoms only ("生灭
-    之花造成的伤害").
-  detail: >
-    Removed the global ability-filtered C6 buff from buffs[]; moved it to a
-    bespokeBuffs ScalingBuff on the Fatal Blossom part of albedo-burst, gated on
-    Hexerei. The C2 buff is unchanged.
-
-- id: diluc-missing-normal-formula
-  entity: diluc
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Diluc has no Normal Attack formula despite NAs being part of his canonical
-    rotation (N1E×3) and his C6 specifically buffing the next 2 Normal Attacks
-    (DMG +30%, ATK SPD +30%). Missing NA formula reduces accuracy especially
-    for C6 builds and undercounts vape rotations that include NAs.
-  detail: >
-    Added single-part diluc-normal formula (DirectFormula on A param1, Pyro/normal/none)
-    representing the N1 cancel used in the N1E×3 string. comboDescriptor sets
-    count=3 to reflect three N1 hits per rotation.
-
-- id: venti-windsunder-requires-hexerei
-  entity: venti
-  rule: S6
-  status: completed
-  category: bug
-  summary: >
-    `venti-windsunder` formula models Hexerei: Secret Rite Windsunder Arrow
-    (Anemo NA conversion using A param12). The formula always fires in combo
-    regardless of Hexerei active. Non-Hexerei Venti would fire normal physical
-    bow shots, not Windsunder Arrows — current modeling over-counts Anemo
-    damage for non-Hexerei teams.
-  detail: >
-    Added when: this.teamMeta.countByFaction("Hexerei") >= 2 to the
-    venti-windsunder FormulaEntry so it only fires when Hexerei: Secret Rite is
-    active.
-
-- id: venti-q-absorption-additional-dmg
-  entity: venti
-  rule: S10
-  status: completed
+  rule: S7
+  status: wont-do
   category: engine-gap
   summary: >
-    Q Stormeye Additional Elemental DMG (param2, fires per tick when an element
-    is absorbed) is not modeled. Per S10 element-absorption-formulas, the
-    absorbed element depends on in-game aura priority and cannot be determined
-    from team composition alone. Currently only the Anemo DoT (param1) is modeled,
-    missing the absorbed-element companion damage.
+    Q Additional Elemental DMG from Elemental Absorption is not modeled. The
+    current `sucrose-burst` formula only covers the Anemo DoT, while game text
+    adds a separate Hydro/Pyro/Cryo/Electro damage component after absorption.
   detail: >
-    Added per-element venti-burst-absorb-{pyro|hydro|cryo|electro} formula entries
-    for each absorbable element present in the team (param2, 20 hits, offField=true,
-    burst-ability tag). Default count=0 in comboDescriptor since only one
-    absorption can occur per cast — user opts in to the element they expect to be
-    absorbed.
+    Element absorption formulas cannot be selected from team composition alone.
+    The absorbed element depends on in-game aura priority and enemy state, so a
+    default team-element choice would be wrong when multiple absorbable elements
+    are present. Leave this unmodeled until explicit absorption selection exists.
+
+- id: sucrose-q-dot-hit-count
+  entity: sucrose
+  rule: S7
+  status: open
+  category: needs-data
+  summary: >
+    Q continuous Anemo DoT is modeled as a single hit. Game text describes
+    continuous Anemo damage over the burst duration, so the formula needs a
+    verified hit count, including the C2 duration extension.
+  detail: >
+    Keep open. The tracker claim is credible, but the exact continuous Anemo hit
+    count and the C2 duration-extension count need frame or rotation data before
+    the formula count can be changed safely.
+
+- id: albedo-c4-silver-plunge-buff
+  entity: albedo
+  rule: U8
+  status: wont-do
+  category: engine-gap
+  summary: >
+    C4's Silver Isotoma jump buff is not modeled. The implementation covers the
+    Solar Isotoma field's +30% Plunging Attack DMG, but not the separate Silver
+    Isotoma effect that grants +30% Plunging Attack ground impact DMG for 3s.
+  detail: >
+    Current damage tags can scope to Plunging Attack damage, but cannot
+    distinguish the ground-impact portion from plunge collision damage. Modeling
+    C4 as a generic plunge buff would over-apply the effect, so the current
+    omission is acceptable.
+
+- id: klee-burst-offfield-flag
+  entity: klee
+  rule: S11
+  status: actionable
+  category: bug
+  summary: >
+    Q Sparks 'n' Splash is marked `offField: true`, but Klee's burst damage only
+    persists while Klee remains on-field. The off-field flag incorrectly excludes
+    on-field buffs from her burst damage.
+  detail: >
+    Sparks 'n' Splash only continues while Klee remains on-field, so its burst
+    damage should be treated as on-field damage and should receive on-field buffs.
+
+- id: klee-burst-hit-count
+  entity: klee
+  rule: S7
+  status: open
+  category: needs-data
+  summary: >
+    Q Sparks 'n' Splash is modeled as a single hit. Game text describes
+    continuous attacks throughout the burst duration, so the formula needs a
+    verified hit count.
+  detail: >
+    Keep open. The continuous burst attack is significant enough to model, but
+    the correct default hit count needs gameplay or frame data rather than a
+    guessed duration divisor.
+
+- id: klee-missing-normal-formula
+  entity: klee
+  rule: S7
+  status: actionable
+  category: missing-formula
+  summary: >
+    Klee has no Normal Attack formula even though her Hexerei passive and C6 add
+    Boom-Boom Strike follow-up attacks from Normal Attack hits during her burst.
+    Missing NA coverage prevents those kit-signaled follow-ups from being modeled.
+  detail: >
+    Klee is a catalyst DPS and her Normal Attack sequence is a meaningful damage
+    source. Add normal attack coverage so Normal-triggered follow-up effects such
+    as Hexerei/Boom-Boom Strike and C6 can be evaluated against real attack hits.

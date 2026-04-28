@@ -24,59 +24,99 @@
     KQM TCL as Base DMG Multiplier (baseDmg%), not DMG Bonus (dmg%). Reverted
     the change back to baseDmg%.
 
-- id: sethos-dusk-bolt-missing-atk
-  entity: sethos
-  rule: S2
-  status: completed
-  category: approximation
+- id: candace-q-p2-element-scope
+  entity: candace
+  rule: U5
+  status: actionable
+  category: bug
   summary: >
-    Q Dusk Bolt formula uses scalingKey "em" only, but Dusk Bolts are converted
-    Normal Attacks whose damage should include Normal ATK multiplier × ATK plus
-    Q EM-based increase. The ATK-scaling component is missing.
+    Q Prayer of the Crimson Crown and P2 both buff all Normal Attack damage, but
+    game text restricts them to Normal Attacks that deal Elemental DMG.
+    Physical Normal Attack damage currently receives the bonus incorrectly.
   detail: >
-    Switched scalingKey to "atk" with talent multiplier this.param("A", 1) (N1)
-    and added an extraTerm of EM × this.param("Q", 1) so Dusk Bolt = N1% × ATK +
-    Q-EM scaling, matching the in-game NA-conversion mechanic.
+    Keep receiver:"teamOnField" and abilities:["normal"], but scope the buff to
+    elemental damage only (all elements except Physical).
 
-- id: alhaitham-p2-filter-too-broad
+- id: faruzan-p2-receiver
+  entity: faruzan
+  rule: U1
+  status: actionable
+  category: bug
+  summary: >
+    P2 Hurricane Guard uses receiver:"teamOnField", but game text grants the
+    flat Anemo damage increase to characters affected by Q's Prayerful Wind's
+    Benefit, not only the current active character. Off-field Anemo damage from
+    affected teammates misses the buff.
+  detail: >
+    Use a team-wide receiver with the existing Anemo and ability filters; Q's
+    Prayerful Wind's Benefit is applied to all nearby party members.
+
+- id: faruzan-q-pulse-formula
+  entity: faruzan
+  rule: S7
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Q Whirlwind Pulse damage is not modeled. The implementation has Q buffs but
+    no formula for the initial and subsequent Dazzling Polyhedron pulses.
+  detail: >
+    Faruzan is primarily an Anemo support, and Q pulse damage is minor compared
+    with the carry damage enabled by her buffs. The exact later-pulse count also
+    depends on burst movement and rotation assumptions, so this does not meet the
+    significance threshold for adding a missing formula.
+
+- id: faruzan-c6-collapse-formula
+  entity: faruzan
+  rule: S7
+  status: actionable
+  category: missing-formula
+  summary: >
+    C6 applies Pressurized Collapse when the active character deals damage under
+    Prayerful Wind's Benefit, but the resulting Anemo Skill DMG proc is not
+    modeled.
+  detail: >
+    Add a C6-gated Anemo/Skill formula for the Pressurized Collapse vortex using
+    the E vortex multiplier this.param("E", 2). The trigger is shared party-wide
+    and can occur once every 3s.
+
+- id: alhaitham-lower-mirror-variants
   entity: alhaitham
-  rule: U5
-  status: completed
+  rule: S8
+  status: actionable
+  category: missing-formula
+  summary: >
+    Only the 3-Mirror Projection Attack and 3-Mirror burst case are modeled.
+    Alhaitham is a 5-star character, so the 1-Mirror and 2-Mirror Projection
+    Attack damage rows and lower-mirror burst instance variants should also be
+    represented.
+  detail: >
+    Add Projection variants for E params 4/5 and 6/7 (2-Mirror has hits: 2).
+    Add burst variants for 0/1/2 mirror consumption using Q params 3/4/5 for
+    attack instance counts; keep the existing 3-Mirror variant using param 6.
+
+- id: cyno-q-n4-second-hit
+  entity: cyno
+  rule: S3
+  status: actionable
   category: bug
   summary: >
-    P2 "EM × 0.1% → DMG%" buff filters abilities:["skill","burst"] but game text
-    restricts it to Projection Attacks and Q only, not the E Rush initial hit.
-    The E Rush formula currently receives the bonus incorrectly.
+    Pactsworn Pathclearer N4 is modeled as this.param("Q", 4) with hits: 2, but
+    the talent row is {param4}+{param5}. The second N4 hit currently uses the
+    first hit's multiplier.
   detail: >
-    Removed the shared P2 ScalingBuff from buffs[]; created two ScalingBuff
-    instances (skill-filter and burst-filter) and attached them as bespokeBuffs to
-    alhaitham-projection and alhaitham-burst respectively. alhaitham-rush no
-    longer receives the bonus.
+    Split the N4 part into two DirectFormula parts using this.param("Q", 4) and
+    this.param("Q", 5), or otherwise preserve the two distinct multipliers.
 
-- id: dehya-c2-missing-maxstacks
-  entity: dehya
-  rule: U8b
-  status: completed
+- id: wanderer-c4-hydro-electro-random-buff
+  entity: wanderer
+  rule: U9
+  status: actionable
   category: bug
   summary: >
-    C2 "下次协同攻击造成的伤害提升50%" buff applies to all 4 Molten Inferno field
-    hits in the rotation, but game text limits it to the NEXT coordinated attack
-    only. The buff is missing maxStacks: 1.
+    C4's extra random untriggered P1 buff is omitted when the team only enables
+    Hydro and/or Electro contact. In those cases C4 can still grant an
+    untriggered offensive Pyro or Cryo buff, but the implementation grants
+    neither.
   detail: >
-    Spread maxStacks: 1 onto the BuffSource (cbs result) for the C2 StatBuff so
-    only one E field hit per rotation receives the +50% DMG.
-
-- id: nahida-p2-q-pyro-scope
-  entity: nahida
-  rule: U5
-  status: completed
-  category: approximation
-  summary: >
-    P2 (EM → dmg%/CR on Tri-Karma) and Q Pyro-resonance DMG bonus use filter
-    abilities:["skill"] which also applies to E Press and E Hold initial hits.
-    Game text restricts these bonuses to Tri-Karma Purification only.
-  detail: >
-    Removed the skill-filtered P2 ScalingBuffs and Q Pyro-resonance StatBuff from
-    buffs[]; built a triKarmaBespoke list of those buffs (no ability filter,
-    receiver:"self") and attached it via bespokeBuffs on nahida-karma and
-    nahida-c6-karma. nahida-press / nahida-hold no longer receive the bonuses.
+    Include Hydro/Electro contact when deciding whether C4 should add the best
+    missing offensive P1 buff under the peak-damage assumption.

@@ -256,19 +256,30 @@ describe("Nicole P4 Hexerei bespoke buff", () => {
     }
   });
 
-  it("has bespoke buff when Hexerei count ≥ 2", () => {
-    // nicole (Hexerei) + prune (Hexerei) → P4 active
+  it("has bespoke buff only on Hexerei occupants when Hexerei count ≥ 2", () => {
+    // nicole (Hexerei) + prune (Hexerei) → P4 active, but kaeya is not Hexerei
     const { char } = nicoleWithTeam(["prune", "kaeya"], 6);
     const entries = getEntries(char);
 
-    for (const [, entry] of projEntries(entries)) {
-      expect(entry.parts[0].bespokeBuffs?.length).toBeGreaterThan(0);
-    }
+    expect(
+      entries["nicole-q-coord-slot1"].parts[0].bespokeBuffs?.length
+    ).toBeGreaterThan(0);
+    expect(
+      entries["nicole-q-coord-slot2"].parts[0].bespokeBuffs?.length
+    ).toBeGreaterThan(0);
+    expect(
+      entries["nicole-q-coord-slot3"].parts[0].bespokeBuffs ?? []
+    ).toHaveLength(0);
   });
 
-  it("P4 buff targets each occupant via receiver team + charId", () => {
+  it("P4 buff targets each Hexerei occupant via receiver team + charId", () => {
     const { char } = nicoleWithTeam(["prune", "kaeya"], 6);
     const entries = getEntries(char);
+
+    const proj1 = entries["nicole-q-coord-slot1"]; // nicole's slot
+    const buff1 = proj1.parts[0].bespokeBuffs![0];
+    expect(buff1.target.receiver).toBe("team");
+    expect((buff1.target as { charId: string }).charId).toBe("nicole");
 
     const proj2 = entries["nicole-q-coord-slot2"]; // prune's slot
     const buff = proj2.parts[0].bespokeBuffs![0];
@@ -276,8 +287,7 @@ describe("Nicole P4 Hexerei bespoke buff", () => {
     expect((buff.target as { charId: string }).charId).toBe("prune");
 
     const proj3 = entries["nicole-q-coord-slot3"]; // kaeya's slot
-    const buff3 = proj3.parts[0].bespokeBuffs![0];
-    expect((buff3.target as { charId: string }).charId).toBe("kaeya");
+    expect(proj3.parts[0].bespokeBuffs ?? []).toHaveLength(0);
   });
 
   it("P4 buff on C1 Unity entries when Hexerei active", () => {

@@ -1401,20 +1401,11 @@ class Linnea extends CharacterBase {
 }
 
 // Nicole — 5★ Pyro Catalyst (Hexerei)
-// Modeling assumptions:
-// - E grants Grace of Kenosis → ATK + (ratio × Nicole.ATK), capped at 600.
-//   P1/P2 upgrade it to Guidance of Theosis (+300 ATK) — assume upgraded state
-//   under rotation (P2 triggers on any teammate elemental DMG; P1 triggers for
-//   Hexerei teammates or after 3s on-field).
-// - Q Arcane Projection: 4 triggers × (200% of triggering char's ATK), Pyro DMG
-//   tagged as triggering character (elemental type = theirs). We model these as
-//   separate Pyro coord formulas with hits scaled.
-// - C1: extra 600% ATK coord attack, once per 6s (≈1 trigger per rotation).
-// - C4 Pathfinder's Blessing: 70% of Nicole's ATK bonus baseDmg added to 8
-//   teammate hits (NA/CA/plunge/E/Q) per 17s. Modeled as a teammate-wide
-//   baseDmg buff at ~8 hits spread — implemented as always-on ScalingBuff from
-//   Nicole's ATK since per-hit stack allocation is complex.
-// - C6: Guidance of Theosis DMG ignores 40% DEF → implemented via defReduction%.
+// Key assumptions:
+// - Kenosis is treated as upgraded to Theosis in normal rotations.
+// - Arcane Projections use the triggering slot's stats/element via statsCharId.
+// - C4 gets one independent 8-hit budget per character, including Nicole.
+// - Hexerei P4 is a bespoke projection buff and only applies to Hexerei slots.
 @RegisterCharacter("nicole")
 class Nicole extends CharacterBase {
   private readonly isHexereiActive =
@@ -1423,8 +1414,6 @@ class Nicole extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    // E Grace of Kenosis: ATK = ratio × Nicole.ATK (cap 600).
-    // Param4 is the ratio (15% ATK at Lv10), param5 is cap (600).
     const kenosisRatio = this.param("E", 4);
     const kenosisCap = this.param("E", 5);
     buffs.push(
@@ -1439,10 +1428,7 @@ class Nicole extends CharacterBase {
       )
     );
 
-    // P1/P2: Guidance of Theosis upgrade → +300 ATK flat to teammates.
-    // C2 bumps the bonus to +600 (additional 300 from C2 per ZH, not counted
-    // toward cap). ZH says "额外提升300点攻击力" — favor ZH over EN ("240")
-    // per beta conflict rule.
+    // C2 adds another flat 300 ATK per ZH.
     const theosisBonus = this.constellation >= 2 ? 600 : 300;
     buffs.push(
       new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
@@ -1450,8 +1436,7 @@ class Nicole extends CharacterBase {
       ])
     );
 
-    // C2: Guidance of Theosis reduces corresponding-element Elemental RES by 25%.
-    // We approximate by shredding every element present on the team (one instance per element).
+    // Approximate corresponding-element RES shred with one buff per team element.
     if (this.constellation >= 2) {
       const teamEls = Array.from(
         new Set(
@@ -1471,13 +1456,9 @@ class Nicole extends CharacterBase {
       }
     }
 
-    // C4 Pathfinder's Blessing: 70% Nicole ATK baseDmg on NA/CA/plunge/E/Q,
-    // consumed 8 times per character per 17s. Per U8b "Each character's
-    // Pathfinder's Blessing is counted independently" → emit one maxStacks:8
-    // buff per non-Nicole teammate so each has their own hit budget.
+    // One maxStacks:8 C4 budget per character.
     if (this.constellation >= 4) {
       for (const cid of Object.keys(this.teamMeta.elements)) {
-        if (cid === this.charId) continue;
         buffs.push(
           new ScalingBuff(
             { ...cbs(this, "C4", ["E"]), maxStacks: 8 },
@@ -1497,7 +1478,6 @@ class Nicole extends CharacterBase {
       }
     }
 
-    // C6: Guidance of Theosis → team DMG ignores 40% DEF.
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
@@ -1506,16 +1486,12 @@ class Nicole extends CharacterBase {
       );
     }
 
-    // Hexerei P4 is attached as a bespokeBuff on the Arcane Projection
-    // formula parts below (Q projection + C1 Unity), not a broad burst-
-    // ability buff — the +200% Nicole ATK baseDmg must not apply to
-    // nicole-burst (Q initial slash).
+    // P4 is attached per projection below so it cannot affect Q's initial hit.
 
     return buffs;
   })();
 
-  // E: single Pyro skill hit (param1). Q: single Pyro burst hit (param1) plus
-  // per-slot Arcane Projection coord attacks using each teammate's stats/element.
+  // Q projection formulas are emitted per slot so statsCharId can vary.
   protected readonly formulaMap = (() => {
     const pyroSkill = {
       element: "Pyro" as const,
@@ -1538,10 +1514,6 @@ class Nicole extends CharacterBase {
       },
     };
 
-    // Q Arcane Projection: 4 triggers × 200% of triggering char's ATK (per ZH "至多触发4次").
-    // Game text: "该伤害受益于该角色的攻击力,并视为由该角色造成的伤害"
-    // → Each projection evaluates with the triggering teammate's stats and element.
-    // Generate one formula per team slot with statsCharId override.
     const projRatio = this.param("Q", 2);
     const charNames = {
       ...i18nGameData.characters,
@@ -1566,18 +1538,21 @@ class Nicole extends CharacterBase {
         reaction: "none" as const,
       };
 
-      // Hexerei P4 +200% Nicole ATK baseDmg — per-occupant bespoke buff (per ZH).
-      // Target routes to the occupant's stat sheet via charId.
-      const p4Buff = this.isHexereiActive
-        ? new ScalingBuff(
-            cbs(this, "P4", ["Q"]),
-            { receiver: "team", charId: occupantId },
-            [],
-            "atk",
-            "baseDmg",
-            2.0
-          )
-        : undefined;
+      const occupantIsHexerei =
+        this.teamMeta.factions[occupantId] === "Hexerei";
+
+      // Hexerei slots get Nicole-scaling bonus base DMG on projections.
+      const p4Buff =
+        this.isHexereiActive && occupantIsHexerei
+          ? new ScalingBuff(
+              cbs(this, "P4", ["Q"]),
+              { receiver: "team", charId: occupantId },
+              [],
+              "atk",
+              "baseDmg",
+              3.0
+            )
+          : undefined;
 
       formulas[`nicole-q-coord-slot${slotIdx + 1}`] = {
         label: {
@@ -1616,9 +1591,7 @@ class Nicole extends CharacterBase {
     return formulas;
   })();
 
-  // Rotation: E (apply Kenosis → Theosis) → Q (enter Silent Contemplation) →
-  // coord attacks trigger on teammate hits.
-  // Default combo uses slot 1 (always occupied — UI fills left-to-right).
+  // Default combo uses slot 1 as the guaranteed occupied projection slot.
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "nicole-skill", count: 1 },
