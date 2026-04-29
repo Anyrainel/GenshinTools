@@ -12,7 +12,7 @@ beforeEach(() => {
         customTitle: "List A",
         author: "",
         description: "",
-        linkedAccountId: "800000001",
+        linkedAccountId: 800000001,
       },
       1: {
         id: 1,
@@ -21,7 +21,7 @@ beforeEach(() => {
         customTitle: "List B",
         author: "",
         description: "",
-        linkedAccountId: "800000002",
+        linkedAccountId: 800000002,
       },
       2: {
         id: 2,
@@ -46,12 +46,12 @@ beforeEach(() => {
 
 describe("handleAccountSwitch", () => {
   it("switches to linked tier list when account changes", () => {
-    handleAccountSwitch("800000002");
+    handleAccountSwitch(800000002);
     expect(useTierStore.getState().activeTierListId).toBe(1);
   });
 
   it("does nothing when account has no linked tier list", () => {
-    handleAccountSwitch("999999999");
+    handleAccountSwitch(999999999);
     expect(useTierStore.getState().activeTierListId).toBe(0);
   });
 

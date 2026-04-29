@@ -390,14 +390,10 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
     // Step 1: remap BEFORE save (so remapped IDs match new data)
     remapFreezeStoreForImport(mapping);
     // Step 2: save triggers subscriber which validates
-    useAccountStore
-      .getState()
-      .addOrUpdateAccount("test", { data: newAccountData });
-    useAccountStore.setState({ activeAccountId: "test" });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: newAccountData });
+    useAccountStore.setState({ activeAccountId: 1 });
     // Trigger subscriber by re-saving (subscriber checks active account)
-    useAccountStore
-      .getState()
-      .addOrUpdateAccount("test", { data: newAccountData });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: newAccountData });
 
     // artifact-0 → artifact-10 (preserved, exists in account)
     // artifact-1 → artifact-99 (mapped but doesn't exist → removed by validate)
@@ -422,8 +418,8 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
     };
 
     // Set up account and freeze store
-    useAccountStore.getState().addOrUpdateAccount("test", { data });
-    useAccountStore.setState({ activeAccountId: "test" });
+    useAccountStore.getState().addOrUpdateAccount(1, { data });
+    useAccountStore.setState({ activeAccountId: 1 });
     useFreezeStore.setState({
       frozenArtifactIds: ["artifact-1"],
     });
@@ -433,9 +429,7 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
       ...data,
       extraArtifacts: [], // artifact-1 removed
     };
-    useAccountStore
-      .getState()
-      .addOrUpdateAccount("test", { data: updatedData });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: updatedData });
 
     // Subscriber should have auto-validated and removed the orphaned frozen ID
     expect(useFreezeStore.getState().frozenArtifactIds).toEqual([]);
@@ -459,8 +453,8 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
       extraWeapons: [],
     };
 
-    useAccountStore.getState().addOrUpdateAccount("test", { data });
-    useAccountStore.setState({ activeAccountId: "test" });
+    useAccountStore.getState().addOrUpdateAccount(1, { data });
+    useAccountStore.setState({ activeAccountId: 1 });
     useFreezeStore.setState({
       frozenTeams: {
         team1: {
@@ -489,7 +483,7 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
       extraArtifacts: [],
       extraWeapons: [],
     };
-    useAccountStore.getState().addOrUpdateAccount("test", { data: editedData });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: editedData });
 
     // Subscriber should have removed artifact-1 from frozen team
     const team = useFreezeStore.getState().frozenTeams.team1;
@@ -569,10 +563,10 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
 
     // Remap before save, subscriber validates during save
     remapFreezeStoreForImport(artifactIdMap);
-    useAccountStore.getState().addOrUpdateAccount("test", { data: merged });
-    useAccountStore.setState({ activeAccountId: "test" });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: merged });
+    useAccountStore.setState({ activeAccountId: 1 });
     // Re-save to trigger subscriber with active account
-    useAccountStore.getState().addOrUpdateAccount("test", { data: merged });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: merged });
 
     // Verify frozen artifacts still exist (with potentially new IDs)
     const allIds = collectAllArtifactIds(merged);
@@ -649,9 +643,9 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     );
 
     remapFreezeStoreForImport(artifactIdMap);
-    useAccountStore.getState().addOrUpdateAccount("test", { data: merged });
-    useAccountStore.setState({ activeAccountId: "test" });
-    useAccountStore.getState().addOrUpdateAccount("test", { data: merged });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: merged });
+    useAccountStore.setState({ activeAccountId: 1 });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: merged });
 
     const allIds = collectAllArtifactIds(merged);
     const frozenState = useFreezeStore.getState();
@@ -714,9 +708,9 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     );
 
     remapFreezeStoreForImport(artifactIdMap);
-    useAccountStore.getState().addOrUpdateAccount("test", { data: updated });
-    useAccountStore.setState({ activeAccountId: "test" });
-    useAccountStore.getState().addOrUpdateAccount("test", { data: updated });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: updated });
+    useAccountStore.setState({ activeAccountId: 1 });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: updated });
 
     const frozenState = useFreezeStore.getState();
     // All old frozen IDs should be gone (snapshot creates completely new IDs)
@@ -771,9 +765,9 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     };
 
     remapFreezeStoreForImport(mapping);
-    useAccountStore.getState().addOrUpdateAccount("test", { data: newData });
-    useAccountStore.setState({ activeAccountId: "test" });
-    useAccountStore.getState().addOrUpdateAccount("test", { data: newData });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: newData });
+    useAccountStore.setState({ activeAccountId: 1 });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: newData });
 
     const frozenState = useFreezeStore.getState();
     // team1's artifact-0 was remapped to artifact-10
@@ -823,9 +817,9 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     };
 
     remapFreezeStoreForImport(mapping);
-    useAccountStore.getState().addOrUpdateAccount("test", { data: newData });
-    useAccountStore.setState({ activeAccountId: "test" });
-    useAccountStore.getState().addOrUpdateAccount("test", { data: newData });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: newData });
+    useAccountStore.setState({ activeAccountId: 1 });
+    useAccountStore.getState().addOrUpdateAccount(1, { data: newData });
 
     // Even though new data has artifact-0, the freeze should be cleared
     // because the mapping explicitly orphaned it

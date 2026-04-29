@@ -135,7 +135,7 @@ export const CharacterView = forwardRef<
 
   const handleSaveEdit = useCallback(
     (newData: AccountData) => {
-      if (!activeAccountId) return;
+      if (activeAccountId === null) return;
       addOrUpdateAccount(activeAccountId, { data: newData });
     },
     [activeAccountId, addOrUpdateAccount]

@@ -16,7 +16,7 @@ describe("CharacterView", () => {
 
   it("renders character cards for account characters", () => {
     // Set up account data with one character
-    useAccountStore.getState().addOrUpdateAccount("default", {
+    useAccountStore.getState().addOrUpdateAccount(0, {
       data: {
         characters: [
           {
@@ -49,7 +49,7 @@ describe("CharacterView", () => {
 
   it("respects tier sort when tier assignments exist", () => {
     // Set up account data
-    useAccountStore.getState().addOrUpdateAccount("default", {
+    useAccountStore.getState().addOrUpdateAccount(0, {
       data: {
         characters: [
           {

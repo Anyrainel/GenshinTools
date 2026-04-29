@@ -10,7 +10,7 @@ const MOCK_WEAPON: WeaponResource = {
   imagePath: "/weapon/staff_of_homa.png",
 };
 
-const TEST_PROFILE = "test_profile";
+const TEST_PROFILE = 1;
 
 function setAccountWithWeapon(weaponKey?: string) {
   useAccountStore.setState({

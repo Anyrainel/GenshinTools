@@ -1,5 +1,7 @@
 import type { LuckExpectation } from "@/data/enums";
 import type { TierAssignment, TierCustomization } from "@/data/types";
+import { legacyAccountProfileIdToNumber } from "@/lib/account-data/accountProfile";
+import type { AccountProfileId } from "@/lib/account-data/types";
 
 interface TierListInstanceMigration {
   id: number;
@@ -8,7 +10,7 @@ interface TierListInstanceMigration {
   customTitle: string;
   author: string;
   description: string;
-  linkedAccountId: string | null;
+  linkedAccountId: string | AccountProfileId | null;
 }
 
 /** v0 (single instance) and v1 (multi-instance, with removed investment thresholds). */
@@ -36,6 +38,7 @@ export function migrateTierStore(
   persistedState: unknown,
   version: number
 ): Record<string, unknown> {
+  let migratedState = persistedState;
   if (version <= 0) {
     const old = (persistedState ?? {}) as LegacyPersistedState;
     const instance: TierListInstanceMigration = {
@@ -47,7 +50,7 @@ export function migrateTierStore(
       description: old.description ?? "",
       linkedAccountId: null,
     };
-    return {
+    migratedState = {
       tierLists: { 1: instance },
       activeTierListId: 1,
       nextId: 2,
@@ -60,12 +63,25 @@ export function migrateTierStore(
       author: instance.author,
       description: instance.description,
     };
-  }
-  if (version === 1) {
+  } else if (version === 1) {
     // v1 -> v2: drop removed investment threshold preferences.
     const old = (persistedState ?? {}) as LegacyPersistedState;
     const { investmentThresholds, ...rest } = old;
-    return rest;
+    migratedState = rest;
   }
-  return persistedState as Record<string, unknown>;
+
+  if (version < 3) {
+    // v2 -> v3: account profile ids moved from strings ("default" or UID text)
+    // to numbers (0 or numeric UID).
+    const state = (migratedState ?? {}) as LegacyPersistedState;
+    const tierLists = state.tierLists ?? {};
+    for (const list of Object.values(tierLists)) {
+      list.linkedAccountId = legacyAccountProfileIdToNumber(
+        list.linkedAccountId
+      );
+    }
+    migratedState = { ...state, tierLists };
+  }
+
+  return migratedState as Record<string, unknown>;
 }

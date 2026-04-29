@@ -127,7 +127,7 @@ export const AccountDataSchema = z
 
 const AccountSchema = z
   .object({
-    id: z.string(),
+    id: z.number(),
     name: z.string(),
     data: AccountDataSchema,
     scores: z.record(z.string(), z.unknown()).catch({}),
@@ -137,7 +137,7 @@ const AccountSchema = z
 
 export const PersistedAccountStoreSchema = z.object({
   accounts: z.record(z.string(), AccountSchema).catch({}),
-  activeAccountId: z.string().nullable().catch(null),
+  activeAccountId: z.number().nullable().catch(null),
   staleScoreCharIds: z.union([z.literal(true), z.array(z.string())]).catch([]),
 });
 
@@ -314,7 +314,7 @@ export const PersistedBaseTierStoreSchema = z.object({
 
 const TierListInstanceSchema = PersistedBaseTierStoreSchema.extend({
   id: z.number(),
-  linkedAccountId: z.string().nullable().catch(null),
+  linkedAccountId: z.number().nullable().catch(null),
 });
 
 export const PersistedTierListStoreSchema = z.object({

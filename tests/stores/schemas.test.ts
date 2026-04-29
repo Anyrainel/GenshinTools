@@ -246,8 +246,8 @@ describe("PersistedAccountStoreSchema", () => {
   it("heals account with missing lastUpdate to 0", () => {
     const result = PersistedAccountStoreSchema.parse({
       accounts: {
-        a: {
-          id: "a",
+        1: {
+          id: 1,
           name: "Test",
           data: { characters: [], extraArtifacts: [], extraWeapons: [] },
           scores: {},
@@ -256,14 +256,14 @@ describe("PersistedAccountStoreSchema", () => {
       activeAccountId: null,
       staleScoreCharIds: [],
     });
-    expect(result.accounts.a.lastUpdate).toBe(0);
+    expect(result.accounts[1].lastUpdate).toBe(0);
   });
 
   it("heals non-finite lastUpdate to 0", () => {
     const result = PersistedAccountStoreSchema.parse({
       accounts: {
-        a: {
-          id: "a",
+        1: {
+          id: 1,
           name: "Test",
           data: { characters: [], extraArtifacts: [], extraWeapons: [] },
           scores: {},
@@ -273,7 +273,7 @@ describe("PersistedAccountStoreSchema", () => {
       activeAccountId: null,
       staleScoreCharIds: [],
     });
-    expect(result.accounts.a.lastUpdate).toBe(0);
+    expect(result.accounts[1].lastUpdate).toBe(0);
   });
 
   it("throws on non-object input", () => {

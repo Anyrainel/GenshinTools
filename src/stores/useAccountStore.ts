@@ -3,14 +3,14 @@ import { persist } from "zustand/middleware";
 import type { AccountData } from "@/data/types";
 // AccountState shape lives in @/lib/account-data/types so pure account-data
 // logic across src/lib/ can depend on it without reaching into stores.
-import type { AccountState } from "@/lib/account-data/types";
+import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { migrateAccountStore } from "./migration/account";
 import { PersistedAccountStoreSchema } from "./schemas";
 
 interface AccountStore {
-  accounts: Record<string, AccountState>;
-  activeAccountId: string | null;
+  accounts: Record<AccountProfileId, AccountState>;
+  activeAccountId: AccountProfileId | null;
   /**
    * Per-character score staleness.
    * - `[]` → nothing stale
@@ -19,14 +19,14 @@ interface AccountStore {
    */
   staleScoreCharIds: string[] | true;
 
-  setActiveAccount: (id: string) => void;
+  setActiveAccount: (id: AccountProfileId) => void;
   addOrUpdateAccount: (
-    id: string,
+    id: AccountProfileId,
     payload: Partial<Omit<AccountState, "id">> & { data: AccountData }
   ) => void;
-  /** Atomically rename a profile's storage key and id field. Used to promote "default" → UID. */
-  promoteToUid: (currentId: string, newId: string) => void;
-  deleteAccount: (id: string) => void;
+  /** Atomically rename a profile's storage key and id field. Used to promote profile 0 to a UID. */
+  promoteToUid: (currentId: AccountProfileId, newId: AccountProfileId) => void;
+  deleteAccount: (id: AccountProfileId) => void;
   clearAccounts: () => void;
 
   /** Replace all scores for the active account. Clears all staleness. */
@@ -38,7 +38,7 @@ interface AccountStore {
 }
 
 export const getActiveAccount = (state: AccountStore) =>
-  state.activeAccountId ? state.accounts[state.activeAccountId] : null;
+  state.activeAccountId !== null ? state.accounts[state.activeAccountId] : null;
 
 export const useAccountStore = create<AccountStore>()(
   persist(
@@ -65,7 +65,7 @@ export const useAccountStore = create<AccountStore>()(
 
           return {
             accounts: { ...state.accounts, [id]: updated },
-            activeAccountId: state.activeAccountId || id, // auto-switch if none active
+            activeAccountId: state.activeAccountId ?? id, // auto-switch if none active
             ...(dataChanged && { staleScoreCharIds: true as const }),
           };
         }),
@@ -95,7 +95,7 @@ export const useAccountStore = create<AccountStore>()(
 
           let newActive = state.activeAccountId;
           if (newActive === id) {
-            const remainingKeys = Object.keys(newAccounts);
+            const remainingKeys = Object.keys(newAccounts).map(Number);
             newActive = remainingKeys.length > 0 ? remainingKeys[0] : null;
           }
 
@@ -106,7 +106,7 @@ export const useAccountStore = create<AccountStore>()(
 
       setScores: (scores) =>
         set((state) => {
-          if (!state.activeAccountId) return state;
+          if (state.activeAccountId === null) return state;
           const acc = state.accounts[state.activeAccountId];
           if (!acc) return state;
           return {
@@ -120,7 +120,7 @@ export const useAccountStore = create<AccountStore>()(
 
       mergeScores: (scores) =>
         set((state) => {
-          if (!state.activeAccountId) return state;
+          if (state.activeAccountId === null) return state;
           const acc = state.accounts[state.activeAccountId];
           if (!acc) return state;
 
@@ -169,7 +169,7 @@ export const useAccountStore = create<AccountStore>()(
     }),
     {
       name: "genshin-account-storage",
-      version: 4,
+      version: 5,
       migrate: migrateAccountStore,
       partialize: (state) => ({
         accounts: state.accounts,

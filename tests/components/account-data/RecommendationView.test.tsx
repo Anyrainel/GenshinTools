@@ -77,7 +77,7 @@ describe("RecommendationView", () => {
 
   it("renders tier headings when account data exists", () => {
     // Set up account data
-    useAccountStore.getState().addOrUpdateAccount("default", {
+    useAccountStore.getState().addOrUpdateAccount(0, {
       data: {
         characters: [
           {

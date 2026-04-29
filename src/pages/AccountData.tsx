@@ -30,6 +30,11 @@ import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useArtifactScoreComputation } from "@/hooks/useArtifactScoreComputation";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {
+  DEFAULT_ACCOUNT_PROFILE_ID,
+  isDefaultAccountProfile,
+  uidToAccountProfileId,
+} from "@/lib/account-data/accountProfile";
+import {
   deleteInventoryArtifact,
   deleteInventoryWeapon,
 } from "@/lib/account-data/characterEditor";
@@ -57,6 +62,7 @@ import {
   mergeAccountData,
   mergePartialAccountData,
 } from "@/lib/account-data/import/mergeAccountData";
+import type { AccountProfileId } from "@/lib/account-data/types";
 import {
   CharacterView,
   type CharacterViewHandle,
@@ -166,7 +172,9 @@ export default function AccountDataPage() {
   useArtifactScoreComputation();
   // id IS the uid for non-default profiles
   const lastUid =
-    activeAccount && activeAccount.id !== "default" ? activeAccount.id : "";
+    activeAccount && !isDefaultAccountProfile(activeAccount.id)
+      ? String(activeAccount.id)
+      : "";
 
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(
     null
@@ -179,7 +187,7 @@ export default function AccountDataPage() {
       const isOldFormat =
         !accountData.extraWeapons ||
         accountData.characters.some((c) => !c.talent);
-      if (isOldFormat && activeAccountId) {
+      if (isOldFormat && activeAccountId !== null) {
         clearAccounts();
       }
     }
@@ -229,11 +237,12 @@ export default function AccountDataPage() {
       // For the direct path, determine the target account so we can seed
       // existing characters for partial imports (location resolution).
       const directTargetId =
-        optionalUid ||
-        (Object.keys(currentAccounts).length === 0 ? "default" : null);
-      const existingData = directTargetId
-        ? currentAccounts[directTargetId]?.data
-        : null;
+        uidToAccountProfileId(optionalUid) ??
+        (Object.keys(currentAccounts).length === 0
+          ? DEFAULT_ACCOUNT_PROFILE_ID
+          : null);
+      const existingData =
+        directTargetId !== null ? currentAccounts[directTargetId]?.data : null;
 
       const result = convertGOODToAccountData(data, existingData?.characters);
       const { presentSections } = result;
@@ -390,7 +399,7 @@ export default function AccountDataPage() {
 
   const handleResolveImport = (
     action: "overwrite" | "merge" | "create",
-    targetId: string,
+    targetId: AccountProfileId,
     renamedName?: string
   ) => {
     if (!pendingImport) return;
@@ -454,7 +463,7 @@ export default function AccountDataPage() {
       setAsActive: result.activeId,
       artifactIdMap: resolveArtifactIdMap,
     });
-    if (result.promoteToId) {
+    if (result.promoteToId !== undefined) {
       promoteToUid(result.id, result.promoteToId);
     }
 
@@ -631,12 +640,12 @@ export default function AccountDataPage() {
               lastUpdate={activeAccount?.lastUpdate}
               isEditMode={isEditMode}
               onDeleteWeapon={(weaponId) => {
-                if (!activeAccountId) return;
+                if (activeAccountId === null) return;
                 const newData = deleteInventoryWeapon(accountData, weaponId);
                 addOrUpdateAccount(activeAccountId, { data: newData });
               }}
               onDeleteArtifact={(artifactId) => {
-                if (!activeAccountId) return;
+                if (activeAccountId === null) return;
                 const newData = deleteInventoryArtifact(
                   accountData,
                   artifactId

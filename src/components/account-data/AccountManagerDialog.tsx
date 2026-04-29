@@ -19,7 +19,13 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  DEFAULT_ACCOUNT_PROFILE_ID,
+  isDefaultAccountProfile,
+  uidToAccountProfileId,
+} from "@/lib/account-data/accountProfile";
 import type { PendingImport } from "@/lib/account-data/import/importRouting";
+import type { AccountProfileId } from "@/lib/account-data/types";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 
@@ -29,7 +35,7 @@ interface AccountManagerDialogProps {
   pendingImport: PendingImport | null;
   onResolveImport: (
     action: "overwrite" | "merge" | "create",
-    targetId: string,
+    targetId: AccountProfileId,
     renamedName?: string
   ) => void;
   onOpenImportControl?: () => void;
@@ -49,9 +55,11 @@ export function AccountManagerDialog({
   const deleteAccount = useAccountStore((s) => s.deleteAccount);
   const promoteToUid = useAccountStore((s) => s.promoteToUid);
 
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<AccountProfileId | null>(null);
   const [editUid, setEditUid] = useState("");
-  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<AccountProfileId | null>(
+    null
+  );
 
   const isValidUid = (uid: string) => /^\d{9,10}$/.test(uid.trim());
 
@@ -59,12 +67,14 @@ export function AccountManagerDialog({
   const [newProfileUid, setNewProfileUid] = useState("");
 
   // Track selected target for import action
-  const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [selectedTarget, setSelectedTarget] = useState<
+    AccountProfileId | "create_new" | null
+  >(null);
 
   useEffect(() => {
     if (isOpen) {
       if (pendingImport) {
-        setSelectedTarget(activeAccountId || "default");
+        setSelectedTarget(activeAccountId ?? DEFAULT_ACCOUNT_PROFILE_ID);
         setNewProfileUid("");
       } else {
         setSelectedTarget(null);
@@ -74,31 +84,35 @@ export function AccountManagerDialog({
     }
   }, [isOpen, pendingImport, activeAccountId]);
 
-  const handleUidSave = (id: string) => {
+  const handleUidSave = (id: AccountProfileId) => {
     const trimmed = editUid.trim();
-    if (trimmed && isValidUid(trimmed) && id === "default") {
-      // Rename the storage key from "default" to the UID, keeping id === uid
-      promoteToUid("default", trimmed);
+    const nextId = uidToAccountProfileId(trimmed);
+    if (nextId !== null && isDefaultAccountProfile(id)) {
+      // Rename the storage key from profile 0 to the UID, keeping id === uid.
+      promoteToUid(DEFAULT_ACCOUNT_PROFILE_ID, nextId);
     }
     setEditingId(null);
   };
 
   const handleResolve = () => {
-    if (!pendingImport || !selectedTarget) return;
+    if (!pendingImport || selectedTarget === null) return;
 
     if (selectedTarget === "create_new") {
       if (pendingImport.type === "uid") {
+        const uidProfileId = uidToAccountProfileId(pendingImport.uid);
+        if (uidProfileId === null) return;
         // UID is already known from the import
         onResolveImport(
           "create",
-          pendingImport.uid,
+          uidProfileId,
           pendingImport.nickname || pendingImport.uid
         );
       } else {
         // JSON import — user must have provided a UID
         const finalUid = newProfileUid.trim();
-        if (!finalUid) return; // blocked by disabled button
-        onResolveImport("create", finalUid, finalUid);
+        const finalProfileId = uidToAccountProfileId(finalUid);
+        if (finalProfileId === null) return; // blocked by disabled button
+        onResolveImport("create", finalProfileId, finalUid);
       }
       return;
     }
@@ -126,7 +140,7 @@ export function AccountManagerDialog({
   // Merging one UID's data into a different UID's profile is never meaningful.
   const displayedAccounts =
     isImportMode && isUidImport
-      ? Object.values(accounts).filter((acc) => acc.id === "default")
+      ? Object.values(accounts).filter((acc) => isDefaultAccountProfile(acc.id))
       : Object.values(accounts);
 
   // "create_new" in JSON import mode requires a valid UID
@@ -134,7 +148,7 @@ export function AccountManagerDialog({
     selectedTarget === "create_new" &&
     !isUidImport &&
     !isValidUid(newProfileUid);
-  const canSubmit = !!selectedTarget && !createNewNeedsUid;
+  const canSubmit = selectedTarget !== null && !createNewNeedsUid;
 
   return (
     <ResponsiveDialog open={isOpen} onOpenChange={(v) => !v && onClose()}>
@@ -227,7 +241,7 @@ export function AccountManagerDialog({
                       <div className="min-w-0 flex flex-col">
                         <div className="font-medium text-foreground flex items-center gap-2">
                           <span className="truncate">
-                            {acc.id === "default"
+                            {isDefaultAccountProfile(acc.id)
                               ? `<${t.ui("accountData.defaultAccount")}>`
                               : acc.name}
                           </span>
@@ -239,7 +253,9 @@ export function AccountManagerDialog({
                         </div>
                         <div className="text-xs text-muted-foreground flex gap-1 items-center">
                           <span>
-                            {acc.id === "default" ? "No UID" : acc.id}
+                            {isDefaultAccountProfile(acc.id)
+                              ? "No UID"
+                              : acc.id}
                           </span>
                           <span className="opacity-50">•</span>
                           <span>
@@ -265,7 +281,7 @@ export function AccountManagerDialog({
 
                   {!isImportMode && !isEditing && (
                     <div className="flex items-center gap-1 shrink-0">
-                      {acc.id === "default" && (
+                      {isDefaultAccountProfile(acc.id) && (
                         <Button
                           size="icon"
                           variant="ghost"
@@ -389,7 +405,7 @@ export function AccountManagerDialog({
         )}
       </ResponsiveDialogContent>
       <AlertDialog
-        open={!!deleteTargetId}
+        open={deleteTargetId !== null}
         onOpenChange={(v) => !v && setDeleteTargetId(null)}
       >
         <AlertDialogContent>
@@ -406,7 +422,7 @@ export function AccountManagerDialog({
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
-                if (deleteTargetId) deleteAccount(deleteTargetId);
+                if (deleteTargetId !== null) deleteAccount(deleteTargetId);
                 setDeleteTargetId(null);
               }}
             >

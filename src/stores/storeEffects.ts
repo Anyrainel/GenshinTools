@@ -8,11 +8,12 @@
  * avoids the circular module dependency.
  */
 
+import type { AccountProfileId } from "@/lib/account-data/types";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 /** Exported only for unit tests that exercise the effect in isolation. */
-export function handleAccountSwitch(accountId: string | null): void {
+export function handleAccountSwitch(accountId: AccountProfileId | null): void {
   if (accountId === null) return;
   const tierState = useTierStore.getState();
   const linkedTierListId = tierState.findTierListByAccount(accountId);

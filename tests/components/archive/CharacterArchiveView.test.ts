@@ -13,7 +13,7 @@ import { useAccountStore } from "@/stores/useAccountStore";
  * exists in the active account's character list.
  */
 
-const TEST_PROFILE = "test_profile";
+const TEST_PROFILE = 1;
 
 function setAccountCharacters(characterKeys: string[]) {
   useAccountStore.setState({

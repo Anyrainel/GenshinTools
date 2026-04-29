@@ -59,16 +59,16 @@ describe("useAccountStore", () => {
         characters: [createSampleCharacter()],
       });
 
-      useAccountStore.getState().addOrUpdateAccount("default", { data });
+      useAccountStore.getState().addOrUpdateAccount(0, { data });
 
       const state = useAccountStore.getState();
-      expect(state.accounts.default.data).toEqual(data);
-      expect(state.accounts.default.data.characters.length).toBe(1);
-      expect(state.activeAccountId).toBe("default");
+      expect(state.accounts[0].data).toEqual(data);
+      expect(state.accounts[0].data.characters.length).toBe(1);
+      expect(state.activeAccountId).toBe(0);
     });
 
     it("replaces existing account data", () => {
-      useAccountStore.getState().addOrUpdateAccount("default", {
+      useAccountStore.getState().addOrUpdateAccount(0, {
         data: createSampleAccountData({
           characters: [createSampleCharacter({ key: "venti" })],
         }),
@@ -80,15 +80,11 @@ describe("useAccountStore", () => {
           createSampleCharacter({ key: "xingqiu" }),
         ],
       });
-      useAccountStore
-        .getState()
-        .addOrUpdateAccount("default", { data: newData });
+      useAccountStore.getState().addOrUpdateAccount(0, { data: newData });
 
       const state = useAccountStore.getState();
-      expect(state.accounts.default.data.characters.length).toBe(2);
-      expect(state.accounts.default.data.characters[0].key).toBe(
-        "kaedehara_kazuha"
-      );
+      expect(state.accounts[0].data.characters.length).toBe(2);
+      expect(state.accounts[0].data.characters[0].key).toBe("kaedehara_kazuha");
     });
   });
 
@@ -102,9 +98,9 @@ describe("useAccountStore", () => {
         characters: [createSampleCharacter()],
       });
 
-      applyAccountImport({ accountId: "default", data, name: "Default" });
+      applyAccountImport({ accountId: 0, data, name: "Default" });
 
-      expect(useAccountStore.getState().accounts.default.lastUpdate).toBe(
+      expect(useAccountStore.getState().accounts[0].lastUpdate).toBe(
         now.getTime()
       );
     });
@@ -114,12 +110,12 @@ describe("useAccountStore", () => {
       const data = createSampleAccountData();
 
       applyAccountImport({
-        accountId: "default",
+        accountId: 0,
         data,
         lastUpdate: importedAt,
       });
 
-      expect(useAccountStore.getState().accounts.default.lastUpdate).toBe(
+      expect(useAccountStore.getState().accounts[0].lastUpdate).toBe(
         importedAt
       );
     });
@@ -129,36 +125,36 @@ describe("useAccountStore", () => {
     it("sets the active account ID", () => {
       useAccountStore
         .getState()
-        .addOrUpdateAccount("123456789", { data: createSampleAccountData() });
-      useAccountStore.getState().setActiveAccount("123456789");
+        .addOrUpdateAccount(123456789, { data: createSampleAccountData() });
+      useAccountStore.getState().setActiveAccount(123456789);
 
       const state = useAccountStore.getState();
-      expect(state.activeAccountId).toBe("123456789");
+      expect(state.activeAccountId).toBe(123456789);
     });
   });
 
   describe("promoteToUid", () => {
     it("renames storage key, id field, and updates activeAccountId", () => {
-      useAccountStore.getState().addOrUpdateAccount("default", {
+      useAccountStore.getState().addOrUpdateAccount(0, {
         data: createSampleAccountData({
           characters: [createSampleCharacter()],
         }),
       });
-      useAccountStore.getState().setActiveAccount("default");
+      useAccountStore.getState().setActiveAccount(0);
 
-      useAccountStore.getState().promoteToUid("default", "800000001");
+      useAccountStore.getState().promoteToUid(0, 800000001);
 
       const state = useAccountStore.getState();
-      expect(state.accounts["800000001"]).toBeDefined();
-      expect(state.accounts["800000001"].id).toBe("800000001");
-      expect(state.accounts.default).toBeUndefined();
-      expect(state.activeAccountId).toBe("800000001");
+      expect(state.accounts[800000001]).toBeDefined();
+      expect(state.accounts[800000001].id).toBe(800000001);
+      expect(state.accounts[0]).toBeUndefined();
+      expect(state.activeAccountId).toBe(800000001);
     });
   });
 
   describe("clearAccounts", () => {
     it("clears accounts dictionary", () => {
-      useAccountStore.getState().addOrUpdateAccount("default", {
+      useAccountStore.getState().addOrUpdateAccount(0, {
         data: createSampleAccountData({
           characters: [createSampleCharacter()],
         }),
@@ -185,8 +181,8 @@ describe("per-character score staleness", () => {
   });
 
   beforeEach(() => {
-    useAccountStore.getState().addOrUpdateAccount("test", { data: sampleData });
-    useAccountStore.getState().setActiveAccount("test");
+    useAccountStore.getState().addOrUpdateAccount(1, { data: sampleData });
+    useAccountStore.getState().setActiveAccount(1);
     // addOrUpdateAccount marks staleScoreCharIds = true; clear it for targeted tests
     useAccountStore.getState().setScores({
       hu_tao: null,
@@ -239,7 +235,7 @@ describe("per-character score staleness", () => {
       useAccountStore.getState().mergeScores({
         hu_tao: mockScore,
       });
-      const scores = useAccountStore.getState().accounts.test.scores;
+      const scores = useAccountStore.getState().accounts[1].scores;
       expect(scores.hu_tao).toEqual(mockScore);
       // Other scores preserved
       expect(scores.xiangling).toBeNull();
@@ -285,7 +281,7 @@ describe("per-character score staleness", () => {
       const newData = createSampleAccountData({
         characters: [createSampleCharacter({ key: "venti" })],
       });
-      useAccountStore.getState().addOrUpdateAccount("test", { data: newData });
+      useAccountStore.getState().addOrUpdateAccount(1, { data: newData });
       expect(useAccountStore.getState().staleScoreCharIds).toBe(true);
     });
 
@@ -295,10 +291,8 @@ describe("per-character score staleness", () => {
       expect(useAccountStore.getState().staleScoreCharIds).toEqual([]);
 
       // Same data reference → no stale change
-      const existingData = useAccountStore.getState().accounts.test.data;
-      useAccountStore
-        .getState()
-        .addOrUpdateAccount("test", { data: existingData });
+      const existingData = useAccountStore.getState().accounts[1].data;
+      useAccountStore.getState().addOrUpdateAccount(1, { data: existingData });
       expect(useAccountStore.getState().staleScoreCharIds).toEqual([]);
     });
   });
@@ -336,15 +330,15 @@ describe("migrateAccountStore", () => {
       const result = migrateAccountStore(persisted, 1);
 
       expect(result.accounts["800000000"]).toBeDefined();
-      expect(result.accounts["800000000"].id).toBe("800000000");
-      expect(result.accounts["800000000"].name).toBe("800000000");
-      expect(result.accounts["800000000"].data).toEqual(sampleAccountData);
+      expect(result.accounts[800000000].id).toBe(800000000);
+      expect(result.accounts[800000000].name).toBe("800000000");
+      expect(result.accounts[800000000].data).toEqual(sampleAccountData);
       expect(result.accounts["800000000"].scores).toEqual(persisted.scores);
-      expect(result.activeAccountId).toBe("800000000");
+      expect(result.activeAccountId).toBe(800000000);
       expect(result.staleScoreCharIds).toEqual([]);
       // No uid field on the account
       expect(
-        (result.accounts["800000000"] as Record<string, unknown>).uid
+        (result.accounts[800000000] as Record<string, unknown>).uid
       ).toBeUndefined();
     });
 
@@ -358,11 +352,11 @@ describe("migrateAccountStore", () => {
 
       const result = migrateAccountStore(persisted, 1);
 
-      expect(result.accounts.default).toBeDefined();
-      expect(result.accounts.default.id).toBe("default");
-      expect(result.accounts.default.name).toBe("Default Account");
-      expect(result.accounts.default.data).toEqual(sampleAccountData);
-      expect(result.activeAccountId).toBe("default");
+      expect(result.accounts[0]).toBeDefined();
+      expect(result.accounts[0].id).toBe(0);
+      expect(result.accounts[0].name).toBe("Default Account");
+      expect(result.accounts[0].data).toEqual(sampleAccountData);
+      expect(result.activeAccountId).toBe(0);
       expect(result.staleScoreCharIds).toBe(true);
     });
 
@@ -419,12 +413,12 @@ describe("migrateAccountStore", () => {
       const result = migrateAccountStore(persisted, 2);
 
       expect(result.accounts["800000000"]).toBeDefined();
-      expect(result.accounts["800000000"].id).toBe("800000000");
+      expect(result.accounts[800000000].id).toBe(800000000);
       expect(
-        (result.accounts["800000000"] as Record<string, unknown>).uid
+        (result.accounts[800000000] as Record<string, unknown>).uid
       ).toBeUndefined();
-      expect(result.accounts["800000000"].name).toBe("Main");
-      expect(result.activeAccountId).toBe("800000000");
+      expect(result.accounts[800000000].name).toBe("Main");
+      expect(result.activeAccountId).toBe(800000000);
     });
 
     it("promotes default profile to UID key when uid differs from storage key", () => {
@@ -447,16 +441,16 @@ describe("migrateAccountStore", () => {
       const result = migrateAccountStore(persisted, 2);
 
       // Old "default" key is gone
-      expect(result.accounts.default).toBeUndefined();
+      expect(result.accounts[0]).toBeUndefined();
       // Now stored under the UID
       expect(result.accounts["800000002"]).toBeDefined();
-      expect(result.accounts["800000002"].id).toBe("800000002");
+      expect(result.accounts[800000002].id).toBe(800000002);
       expect(
-        (result.accounts["800000002"] as Record<string, unknown>).uid
+        (result.accounts[800000002] as Record<string, unknown>).uid
       ).toBeUndefined();
       expect(result.accounts["800000002"].name).toBe("MyAccount");
       // activeAccountId updated to follow
-      expect(result.activeAccountId).toBe("800000002");
+      expect(result.activeAccountId).toBe(800000002);
     });
 
     it("preserves default profile when uid is empty", () => {
@@ -477,12 +471,12 @@ describe("migrateAccountStore", () => {
 
       const result = migrateAccountStore(persisted, 2);
 
-      expect(result.accounts.default).toBeDefined();
-      expect(result.accounts.default.id).toBe("default");
+      expect(result.accounts[0]).toBeDefined();
+      expect(result.accounts[0].id).toBe(0);
       expect(
-        (result.accounts.default as Record<string, unknown>).uid
+        (result.accounts[0] as Record<string, unknown>).uid
       ).toBeUndefined();
-      expect(result.activeAccountId).toBe("default");
+      expect(result.activeAccountId).toBe(0);
     });
 
     it("migrates multiple accounts, promoting only the ones with mismatched uid", () => {
@@ -511,12 +505,12 @@ describe("migrateAccountStore", () => {
 
       const result = migrateAccountStore(persisted, 2);
 
-      expect(result.accounts.default).toBeUndefined();
-      expect(result.accounts["900000001"]).toBeDefined();
-      expect(result.accounts["900000001"].id).toBe("900000001");
-      expect(result.accounts["700000002"]).toBeDefined();
-      expect(result.accounts["700000002"].id).toBe("700000002");
-      expect(result.activeAccountId).toBe("900000001");
+      expect(result.accounts[0]).toBeUndefined();
+      expect(result.accounts[900000001]).toBeDefined();
+      expect(result.accounts[900000001].id).toBe(900000001);
+      expect(result.accounts[700000002]).toBeDefined();
+      expect(result.accounts[700000002].id).toBe(700000002);
+      expect(result.activeAccountId).toBe(900000001);
       expect(result.staleScoreCharIds).toBe(true);
     });
 
@@ -577,7 +571,7 @@ describe("migrateAccountStore", () => {
         staleScoreCharIds: [],
       };
 
-      const result = migrateAccountStore(persisted, 4);
+      const result = migrateAccountStore(persisted, 5);
 
       expect(result).toBe(persisted);
     });

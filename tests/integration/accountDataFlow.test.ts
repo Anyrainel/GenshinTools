@@ -142,10 +142,10 @@ describe("Integration: Account Data Page Flow", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
 
       act(() => {
-        useAccountStore.getState().addOrUpdateAccount("default", { data });
+        useAccountStore.getState().addOrUpdateAccount(0, { data });
       });
 
-      const stored = useAccountStore.getState().accounts.default?.data;
+      const stored = useAccountStore.getState().accounts[0]?.data;
       expect(stored).toBeDefined();
       expect(stored?.characters).toHaveLength(4);
     });
@@ -153,11 +153,11 @@ describe("Integration: Account Data Page Flow", () => {
     it("uses account id as the uid for UID-based profiles", () => {
       const data = convertGOODToAccountData(fullGOODData).data;
       act(() => {
-        useAccountStore.getState().addOrUpdateAccount("123456789", { data });
+        useAccountStore.getState().addOrUpdateAccount(123456789, { data });
       });
 
-      const acc = useAccountStore.getState().accounts["123456789"];
-      expect(acc?.id).toBe("123456789");
+      const acc = useAccountStore.getState().accounts[123456789];
+      expect(acc?.id).toBe(123456789);
     });
   });
 
@@ -198,16 +198,16 @@ describe("Integration: Account Data Page Flow", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
 
       act(() => {
-        useAccountStore.getState().addOrUpdateAccount("default", { data });
+        useAccountStore.getState().addOrUpdateAccount(0, { data });
       });
 
-      expect(useAccountStore.getState().accounts.default?.data).toBeDefined();
+      expect(useAccountStore.getState().accounts[0]?.data).toBeDefined();
 
       act(() => {
         useAccountStore.getState().clearAccounts();
       });
 
-      expect(useAccountStore.getState().accounts.default).toBeUndefined();
+      expect(useAccountStore.getState().accounts[0]).toBeUndefined();
     });
   });
 

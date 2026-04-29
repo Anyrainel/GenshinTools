@@ -150,7 +150,7 @@ describe("ItemPicker", () => {
   });
 
   describe("owned only filter", () => {
-    const PROFILE_ID = "test-profile";
+    const PROFILE_ID = 1;
     // Pick 5 characters to be "owned" (in account data)
     const ownedIds = characters.slice(5, 10).map((c) => c.id);
     const unownedIds = characters

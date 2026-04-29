@@ -416,37 +416,37 @@ describe("useTierStore", () => {
   // Account linking
   describe("linkAccount", () => {
     it("links an account to a tier list", () => {
-      useTierStore.getState().linkAccount(1, "account-abc");
+      useTierStore.getState().linkAccount(1, 800000001);
 
       const state = useTierStore.getState();
-      expect(state.tierLists[1].linkedAccountId).toBe("account-abc");
+      expect(state.tierLists[1].linkedAccountId).toBe(800000001);
     });
 
     it("unlinks from other lists when reassigning", () => {
       useTierStore.getState().createTierList("Second");
 
-      useTierStore.getState().linkAccount(1, "account-abc");
+      useTierStore.getState().linkAccount(1, 800000001);
       expect(useTierStore.getState().tierLists[1].linkedAccountId).toBe(
-        "account-abc"
+        800000001
       );
 
       // Link same account to list 2 — should unlink from list 1
-      useTierStore.getState().linkAccount(2, "account-abc");
+      useTierStore.getState().linkAccount(2, 800000001);
 
       const state = useTierStore.getState();
       expect(state.tierLists[1].linkedAccountId).toBeNull();
-      expect(state.tierLists[2].linkedAccountId).toBe("account-abc");
+      expect(state.tierLists[2].linkedAccountId).toBe(800000001);
     });
 
     it("can unlink by passing null", () => {
-      useTierStore.getState().linkAccount(1, "account-abc");
+      useTierStore.getState().linkAccount(1, 800000001);
       useTierStore.getState().linkAccount(1, null);
 
       expect(useTierStore.getState().tierLists[1].linkedAccountId).toBeNull();
     });
 
     it("does nothing for non-existent tier list", () => {
-      useTierStore.getState().linkAccount(999, "account-abc");
+      useTierStore.getState().linkAccount(999, 800000001);
       // no crash
       expect(useTierStore.getState().tierLists[999]).toBeUndefined();
     });
@@ -454,18 +454,14 @@ describe("useTierStore", () => {
 
   describe("findTierListByAccount", () => {
     it("finds a tier list linked to an account", () => {
-      useTierStore.getState().linkAccount(1, "account-abc");
+      useTierStore.getState().linkAccount(1, 800000001);
 
-      const result = useTierStore
-        .getState()
-        .findTierListByAccount("account-abc");
+      const result = useTierStore.getState().findTierListByAccount(800000001);
       expect(result).toBe(1);
     });
 
     it("returns null when no list is linked", () => {
-      const result = useTierStore
-        .getState()
-        .findTierListByAccount("nonexistent");
+      const result = useTierStore.getState().findTierListByAccount(900000001);
       expect(result).toBeNull();
     });
   });

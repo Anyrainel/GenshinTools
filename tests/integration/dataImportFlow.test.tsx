@@ -96,11 +96,11 @@ describe("Integration: Data Import to Character Display Flow", () => {
 
     // Step 2: Populate account store
     act(() => {
-      useAccountStore.getState().addOrUpdateAccount("default", { data });
+      useAccountStore.getState().addOrUpdateAccount(0, { data });
     });
 
     // Verify store state
-    const storeData = useAccountStore.getState().accounts.default?.data;
+    const storeData = useAccountStore.getState().accounts[0]?.data;
     expect(storeData).toBeDefined();
     expect(storeData!.characters).toHaveLength(1);
     expect(storeData!.characters[0].key).toBe("hu_tao");
@@ -110,11 +110,11 @@ describe("Integration: Data Import to Character Display Flow", () => {
     // Setup: Import data to store
     const { data } = convertGOODToAccountData(integrationGOODData);
     act(() => {
-      useAccountStore.getState().addOrUpdateAccount("default", { data });
+      useAccountStore.getState().addOrUpdateAccount(0, { data });
     });
 
     const character =
-      useAccountStore.getState().accounts.default!.data.characters[0];
+      useAccountStore.getState().accounts[0]!.data.characters[0];
     const scoreConfig = useArtifactScoreStore.getState().config;
 
     // Calculate score (no builds available — scores will be 0 without weight data)
@@ -128,11 +128,11 @@ describe("Integration: Data Import to Character Display Flow", () => {
     // Setup: Full import flow
     const { data } = convertGOODToAccountData(integrationGOODData);
     act(() => {
-      useAccountStore.getState().addOrUpdateAccount("default", { data });
+      useAccountStore.getState().addOrUpdateAccount(0, { data });
     });
 
     const character =
-      useAccountStore.getState().accounts.default!.data.characters[0];
+      useAccountStore.getState().accounts[0]!.data.characters[0];
     const scoreConfig = useArtifactScoreStore.getState().config;
     const score = scoreWithBuilds(character, [], scoreConfig.global);
 
@@ -172,11 +172,11 @@ describe("Integration: Data Import to Character Display Flow", () => {
 
     // Initial import
     act(() => {
-      useAccountStore.getState().addOrUpdateAccount("default", { data });
+      useAccountStore.getState().addOrUpdateAccount(0, { data });
     });
 
     const initialCharacter =
-      useAccountStore.getState().accounts.default!.data.characters[0];
+      useAccountStore.getState().accounts[0]!.data.characters[0];
     expect(initialCharacter.artifacts?.flower).toBeDefined();
     expect(initialCharacter.artifacts?.flower?.substats?.cr).toBe(10.5);
 

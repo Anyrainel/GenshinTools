@@ -3,7 +3,7 @@ import type { AccountData } from "@/data/types";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { getIsOwned } from "./ownershipUtils";
 
-const PROFILE = "uid_800000000";
+const PROFILE = 800000000;
 
 function makeAccountData(overrides: Partial<AccountData> = {}): AccountData {
   return {
@@ -178,8 +178,8 @@ describe("getIsOwned", () => {
 
   describe("profile switching", () => {
     it("reflects the active profile's data", () => {
-      const profileA = "uid_100";
-      const profileB = "uid_200";
+      const profileA = 100;
+      const profileB = 200;
 
       useAccountStore.setState({
         activeAccountId: profileA,

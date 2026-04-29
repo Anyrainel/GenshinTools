@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { LuckExpectation } from "@/data/enums";
 import type { TierAssignment, TierCustomization } from "@/data/types";
+import type { AccountProfileId } from "@/lib/account-data/types";
 import { migrateTierStore } from "./migration/tier";
 import { PersistedTierListStoreSchema } from "./schemas";
 
@@ -12,7 +13,7 @@ export interface TierListInstance {
   customTitle: string;
   author: string;
   description: string;
-  linkedAccountId: string | null;
+  linkedAccountId: AccountProfileId | null;
 }
 
 interface TierListState {
@@ -60,8 +61,8 @@ interface TierListState {
   deleteTierList: (id: number) => void;
   setActiveTierList: (id: number) => void;
   renameTierList: (id: number, title: string) => void;
-  linkAccount: (tierListId: number, accountId: string | null) => void;
-  findTierListByAccount: (accountId: string) => number | null;
+  linkAccount: (tierListId: number, accountId: AccountProfileId | null) => void;
+  findTierListByAccount: (accountId: AccountProfileId) => number | null;
 }
 
 // Helpers
@@ -311,7 +312,7 @@ export const useTierStore = create<TierListState>()(
     }),
     {
       name: "tierlist-storage",
-      version: 2,
+      version: 3,
       migrate: migrateTierStore,
       partialize: (state) => ({
         tierLists: state.tierLists,

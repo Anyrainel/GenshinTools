@@ -14,9 +14,10 @@ const ALWAYS_OWNED_CHARACTER_IDS = new Set(
  */
 export function getIsOwned(type: "character" | "weapon", id: string): boolean {
   const state = useAccountStore.getState();
-  const acc = state.activeAccountId
-    ? state.accounts[state.activeAccountId]
-    : null;
+  const acc =
+    state.activeAccountId !== null
+      ? state.accounts[state.activeAccountId]
+      : null;
   if (type === "character" && ALWAYS_OWNED_CHARACTER_IDS.has(id)) return true;
   if (!acc) return false;
   if (type === "character") {

@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { accountProfileIdToString } from "@/lib/account-data/accountProfile";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -64,9 +65,9 @@ export function TierListManagerDialog({
   const sortedTierLists = Object.values(tierLists).sort((a, b) => a.id - b.id);
 
   // Build a set of account IDs already linked to other tier lists
-  const linkedAccountIds = new Map<string, number>();
+  const linkedAccountIds = new Map<number, number>();
   for (const tl of sortedTierLists) {
-    if (tl.linkedAccountId) {
+    if (tl.linkedAccountId !== null) {
       linkedAccountIds.set(tl.linkedAccountId, tl.id);
     }
   }
@@ -210,9 +211,13 @@ export function TierListManagerDialog({
                     {t.ui("tierList.linkedAccount")}
                   </span>
                   <Select
-                    value={tl.linkedAccountId ?? "none"}
+                    value={
+                      tl.linkedAccountId !== null
+                        ? accountProfileIdToString(tl.linkedAccountId)
+                        : "none"
+                    }
                     onValueChange={(val) => {
-                      linkAccount(tl.id, val === "none" ? null : val);
+                      linkAccount(tl.id, val === "none" ? null : Number(val));
                     }}
                   >
                     <SelectTrigger className="h-8 w-40 text-xs">
@@ -229,7 +234,7 @@ export function TierListManagerDialog({
                         return (
                           <SelectItem
                             key={acc.id}
-                            value={acc.id}
+                            value={accountProfileIdToString(acc.id)}
                             disabled={isLinkedElsewhere}
                           >
                             {acc.name}

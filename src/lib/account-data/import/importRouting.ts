@@ -8,7 +8,11 @@
  */
 
 import type { AccountData } from "@/data/types";
-import type { AccountState } from "@/lib/account-data/types";
+import {
+  DEFAULT_ACCOUNT_PROFILE_ID,
+  uidToAccountProfileId,
+} from "@/lib/account-data/accountProfile";
+import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
 import type { GOODData, PresentSections } from "./goodConversion";
 
 // ─── Shared types ─────────────────────────────────────────────────────────────
@@ -27,10 +31,10 @@ export type PendingImport = {
 /** Write data directly to the store, then set it active. */
 export type DirectImport = {
   kind: "direct";
-  id: string;
+  id: AccountProfileId;
   data: AccountData;
   name: string;
-  activeId: string;
+  activeId: AccountProfileId;
 };
 
 /** Open the account-manager dialog so the user can choose a target. */
@@ -43,16 +47,16 @@ export type ResolveResult =
   | {
       kind: "apply";
       /** Write data here first. */
-      id: string;
+      id: AccountProfileId;
       data: AccountData;
       name?: string;
       /**
        * If set, call promoteToUid(id, promoteToId) after writing.
        * The profile key moves from `id` to `promoteToId`.
        */
-      promoteToId?: string;
+      promoteToId?: AccountProfileId;
       /** Set as the active account after all writes (equals promoteToId when set). */
-      activeId: string;
+      activeId: AccountProfileId;
     }
   | {
       /**
@@ -74,28 +78,29 @@ export type ResolveResult =
  * 3. No UID + existing profiles → open dialog
  */
 export function routeLocalImport(
-  accounts: Record<string, AccountState>,
+  accounts: Record<AccountProfileId, AccountState>,
   data: AccountData,
   optionalUid: string,
   defaultAccountName: string
 ): DirectImport | OpenDialog {
-  if (optionalUid) {
+  const uidProfileId = uidToAccountProfileId(optionalUid);
+  if (uidProfileId !== null) {
     return {
       kind: "direct",
-      id: optionalUid,
+      id: uidProfileId,
       data,
-      name: accounts[optionalUid]?.name || optionalUid,
-      activeId: optionalUid,
+      name: accounts[uidProfileId]?.name || optionalUid,
+      activeId: uidProfileId,
     };
   }
 
   if (Object.keys(accounts).length === 0) {
     return {
       kind: "direct",
-      id: "default",
+      id: DEFAULT_ACCOUNT_PROFILE_ID,
       data,
       name: defaultAccountName,
-      activeId: "default",
+      activeId: DEFAULT_ACCOUNT_PROFILE_ID,
     };
   }
 
@@ -114,14 +119,22 @@ export function routeLocalImport(
  * 3. No UID profile, no "default" → create UID profile directly
  */
 export function routeUidImport(
-  accounts: Record<string, AccountState>,
+  accounts: Record<AccountProfileId, AccountState>,
   uid: string,
   data: AccountData,
   nickname: string,
   clearBeforeImport: boolean,
   mergeData: (old: AccountData, incoming: AccountData) => AccountData
 ): DirectImport | OpenDialog {
-  const existingAccount = accounts[uid] ?? null;
+  const uidProfileId = uidToAccountProfileId(uid);
+  if (uidProfileId === null) {
+    return {
+      kind: "dialog",
+      pendingImport: { type: "uid", uid, data, nickname, clearBeforeImport },
+    };
+  }
+
+  const existingAccount = accounts[uidProfileId] ?? null;
 
   if (existingAccount) {
     const profileData = clearBeforeImport
@@ -129,14 +142,14 @@ export function routeUidImport(
       : mergeData({ ...existingAccount.data }, data);
     return {
       kind: "direct",
-      id: uid,
+      id: uidProfileId,
       data: profileData,
       name: nickname || existingAccount.name || uid,
-      activeId: uid,
+      activeId: uidProfileId,
     };
   }
 
-  if (accounts.default) {
+  if (accounts[DEFAULT_ACCOUNT_PROFILE_ID]) {
     return {
       kind: "dialog",
       pendingImport: { type: "uid", uid, data, nickname, clearBeforeImport },
@@ -146,10 +159,10 @@ export function routeUidImport(
   // No matching profile and no default → create the UID profile directly
   return {
     kind: "direct",
-    id: uid,
+    id: uidProfileId,
     data,
     name: nickname || uid,
-    activeId: uid,
+    activeId: uidProfileId,
   };
 }
 
@@ -161,21 +174,28 @@ export function routeUidImport(
  * next import.
  */
 export function routeResolveImport(
-  accounts: Record<string, AccountState>,
+  accounts: Record<AccountProfileId, AccountState>,
   pendingImport: PendingImport,
   action: "overwrite" | "merge" | "create",
-  targetId: string,
+  targetId: AccountProfileId,
   renamedName: string | undefined,
   mergeData: (old: AccountData, incoming: AccountData) => AccountData
 ): ResolveResult {
   const { data: newData, uid, nickname } = pendingImport;
+  const uidProfileId = uidToAccountProfileId(uid);
 
   if (action === "create") {
+    const createName =
+      renamedName ||
+      nickname ||
+      (targetId === DEFAULT_ACCOUNT_PROFILE_ID
+        ? "Default Account"
+        : `${targetId}`);
     return {
       kind: "apply",
       id: targetId,
       data: newData,
-      name: renamedName || nickname || targetId,
+      name: createName,
       activeId: targetId,
     };
   }
@@ -193,14 +213,16 @@ export function routeResolveImport(
   // UID imports targeting a non-UID-keyed profile need key promotion so that
   // subsequent imports for the same UID route directly without a dialog.
   const needsPromotion =
-    pendingImport.type === "uid" && !!uid && targetId !== uid;
+    pendingImport.type === "uid" &&
+    uidProfileId !== null &&
+    targetId !== uidProfileId;
 
   return {
     kind: "apply",
     id: targetId,
     data: finalData,
     ...(renamedName ? { name: renamedName } : {}),
-    ...(needsPromotion ? { promoteToId: uid } : {}),
-    activeId: needsPromotion ? uid : targetId,
+    ...(needsPromotion ? { promoteToId: uidProfileId } : {}),
+    activeId: needsPromotion ? uidProfileId : targetId,
   };
 }

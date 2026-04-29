@@ -1,4 +1,5 @@
 import type { AccountData } from "@/data/types";
+import type { AccountProfileId } from "@/lib/account-data/types";
 import { useAccountStore } from "./useAccountStore";
 import { remapFreezeStoreForImport } from "./useFreezeStore";
 import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
@@ -11,13 +12,13 @@ import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
  * the subscriber in useFreezeStore — callers don't need to trigger it.
  */
 export function applyAccountImport(opts: {
-  accountId: string;
+  accountId: AccountProfileId;
   data: AccountData;
   name?: string;
   /** Timestamp for when this import updated the local account data. */
   lastUpdate?: number;
   /** Account ID to set as active, or omit to skip. */
-  setAsActive?: string;
+  setAsActive?: AccountProfileId;
   /** Old→new artifact ID mapping for freeze-store remapping. */
   artifactIdMap?: Map<string, string>;
 }): void {
@@ -30,7 +31,7 @@ export function applyAccountImport(opts: {
     lastUpdate,
     ...(opts.name ? { name: opts.name } : {}),
   });
-  if (opts.setAsActive) {
+  if (opts.setAsActive !== undefined) {
     store.setActiveAccount(opts.setAsActive);
   }
 }

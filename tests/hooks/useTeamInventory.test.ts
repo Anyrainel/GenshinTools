@@ -38,8 +38,8 @@ beforeEach(() => {
   useAccountStore.setState((prev) => ({
     ...prev,
     accounts: {
-      test: {
-        id: "test",
+      [1]: {
+        id: 1,
         name: "Test",
         scores: {},
         lastUpdate: 0,
@@ -65,7 +65,7 @@ beforeEach(() => {
         },
       },
     },
-    activeAccountId: "test",
+    activeAccountId: 1,
   }));
 
   // Create teams in team store so the hook can look up character lists
