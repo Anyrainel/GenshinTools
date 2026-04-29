@@ -8,6 +8,10 @@
 import { z } from "zod";
 import type { SortDirection } from "@/data/enums";
 import type { GlobalStatWeights } from "@/data/types";
+import {
+  DEFAULT_MIN_SCORE_DIFF,
+  DEFAULT_TIER_THRESHOLDS,
+} from "@/lib/account-data/resourceTips";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
@@ -233,20 +237,33 @@ export const PersistedFreezeStoreSchema = z.object({
 
 const TierThresholdsSchema = z.record(z.string(), z.number()).catch({});
 const ScoreDiffSchema = z.record(z.string(), z.number()).catch({});
+const MinScoreDiffSchema = z
+  .object({
+    craft: ScoreDiffSchema,
+    reroll: ScoreDiffSchema,
+    levelup: ScoreDiffSchema,
+  })
+  .catch({ craft: {}, reroll: {}, levelup: {} });
+
+const ResourceRecSettingsSchema = z.object({
+  thresholds: TierThresholdsSchema.catch(DEFAULT_TIER_THRESHOLDS),
+  minScoreDiff: MinScoreDiffSchema.catch(DEFAULT_MIN_SCORE_DIFF),
+  panelOpen: z.boolean().catch(false),
+  showCraft: z.boolean().catch(true),
+  showReroll: z.boolean().catch(true),
+  showLevelup: z.boolean().catch(true),
+});
 
 export const PersistedResourceRecStoreSchema = z.object({
   thresholds: TierThresholdsSchema,
-  minScoreDiff: z
-    .object({
-      craft: ScoreDiffSchema,
-      reroll: ScoreDiffSchema,
-      levelup: ScoreDiffSchema,
-    })
-    .catch({ craft: {}, reroll: {}, levelup: {} }),
+  minScoreDiff: MinScoreDiffSchema,
   panelOpen: z.boolean().catch(false),
   showCraft: z.boolean().optional().catch(undefined),
   showReroll: z.boolean().optional().catch(undefined),
   showLevelup: z.boolean().optional().catch(undefined),
+  settingsByProfileId: z
+    .record(z.string(), ResourceRecSettingsSchema)
+    .optional(),
 });
 
 // ─── Triage ───
@@ -257,49 +274,50 @@ const CustomFlexInputSchema = z.object({
   requiredSubs: z.array(z.string()).catch([]),
 });
 
+const TriageSettingsSchema = z
+  .object({
+    triageMode: z
+      .enum(["strict", "loose"])
+      .catch(DEFAULT_TRIAGE_SETTINGS.triageMode),
+    mainStatThreshold: z
+      .number()
+      .catch(DEFAULT_TRIAGE_SETTINGS.mainStatThreshold),
+    optionalSubThreshold: z
+      .number()
+      .catch(DEFAULT_TRIAGE_SETTINGS.optionalSubThreshold),
+    fillerKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.fillerKeep),
+    qualityMargin: z.number().catch(DEFAULT_TRIAGE_SETTINGS.qualityMargin),
+    alwaysLockSolidArtifacts: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.alwaysLockSolidArtifacts),
+    setSlotKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.setSlotKeep),
+    ownedOnly: z.boolean().catch(DEFAULT_TRIAGE_SETTINGS.ownedOnly),
+    erHoardingEnabled: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.erHoardingEnabled),
+    erHoardingAllEnabled: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.erHoardingAllEnabled),
+    doubleCritLockEnabled: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.doubleCritLockEnabled),
+    levelProtection: z.number().catch(DEFAULT_TRIAGE_SETTINGS.levelProtection),
+    highLevelProtection: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.highLevelProtection),
+    equippedProtection: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.equippedProtection),
+    disabledFlexPatterns: z.array(z.string()).catch([]),
+    enabledFlexPatterns: z.array(z.string()).catch([]),
+    customFlexInputs: z.array(CustomFlexInputSchema).catch([]),
+  })
+  .loose()
+  .catch(DEFAULT_TRIAGE_SETTINGS);
+
 export const PersistedTriageStoreSchema = z.object({
-  settings: z
-    .object({
-      triageMode: z
-        .enum(["strict", "loose"])
-        .catch(DEFAULT_TRIAGE_SETTINGS.triageMode),
-      mainStatThreshold: z
-        .number()
-        .catch(DEFAULT_TRIAGE_SETTINGS.mainStatThreshold),
-      optionalSubThreshold: z
-        .number()
-        .catch(DEFAULT_TRIAGE_SETTINGS.optionalSubThreshold),
-      fillerKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.fillerKeep),
-      qualityMargin: z.number().catch(DEFAULT_TRIAGE_SETTINGS.qualityMargin),
-      alwaysLockSolidArtifacts: z
-        .boolean()
-        .catch(DEFAULT_TRIAGE_SETTINGS.alwaysLockSolidArtifacts),
-      setSlotKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.setSlotKeep),
-      ownedOnly: z.boolean().catch(DEFAULT_TRIAGE_SETTINGS.ownedOnly),
-      erHoardingEnabled: z
-        .boolean()
-        .catch(DEFAULT_TRIAGE_SETTINGS.erHoardingEnabled),
-      erHoardingAllEnabled: z
-        .boolean()
-        .catch(DEFAULT_TRIAGE_SETTINGS.erHoardingAllEnabled),
-      doubleCritLockEnabled: z
-        .boolean()
-        .catch(DEFAULT_TRIAGE_SETTINGS.doubleCritLockEnabled),
-      levelProtection: z
-        .number()
-        .catch(DEFAULT_TRIAGE_SETTINGS.levelProtection),
-      highLevelProtection: z
-        .boolean()
-        .catch(DEFAULT_TRIAGE_SETTINGS.highLevelProtection),
-      equippedProtection: z
-        .boolean()
-        .catch(DEFAULT_TRIAGE_SETTINGS.equippedProtection),
-      disabledFlexPatterns: z.array(z.string()).catch([]),
-      enabledFlexPatterns: z.array(z.string()).catch([]),
-      customFlexInputs: z.array(CustomFlexInputSchema).catch([]),
-    })
-    .loose()
-    .catch(DEFAULT_TRIAGE_SETTINGS),
+  settings: TriageSettingsSchema,
+  settingsByProfileId: z.record(z.string(), TriageSettingsSchema).optional(),
 });
 
 // ─── Tier list stores ───

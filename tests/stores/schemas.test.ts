@@ -555,6 +555,29 @@ describe("PersistedResourceRecStoreSchema", () => {
     expect(result.showReroll).toBeUndefined();
     expect(result.showLevelup).toBeUndefined();
   });
+
+  it("heals account-scoped settings", () => {
+    const result = PersistedResourceRecStoreSchema.parse({
+      settingsByProfileId: {
+        "0": {
+          thresholds: { S: 0.95 },
+          minScoreDiff: { craft: { A: 7 } },
+          panelOpen: true,
+          showCraft: false,
+          showReroll: "bad",
+          showLevelup: true,
+        },
+      },
+    });
+
+    expect(result.settingsByProfileId?.["0"].thresholds.S).toBe(0.95);
+    expect(result.settingsByProfileId?.["0"].minScoreDiff.craft.A).toBe(7);
+    expect(result.settingsByProfileId?.["0"].minScoreDiff.reroll).toEqual({});
+    expect(result.settingsByProfileId?.["0"].panelOpen).toBe(true);
+    expect(result.settingsByProfileId?.["0"].showCraft).toBe(false);
+    expect(result.settingsByProfileId?.["0"].showReroll).toBe(true);
+    expect(result.settingsByProfileId?.["0"].showLevelup).toBe(true);
+  });
 });
 
 // ─── PersistedTriageStoreSchema ───
@@ -607,6 +630,25 @@ describe("PersistedTriageStoreSchema", () => {
     expect(result.settings.levelProtection).toBe(12);
     expect(result.settings.alwaysLockSolidArtifacts).toBe(false);
     expect(result.settings.customFlexInputs).toEqual([]);
+  });
+
+  it("heals account-scoped settings", () => {
+    const result = PersistedTriageStoreSchema.parse({
+      settingsByProfileId: {
+        "0": { mainStatThreshold: 85 },
+        "123456789": {
+          triageMode: "strict",
+          customFlexInputs: "not-an-array",
+        },
+      },
+    });
+
+    expect(result.settingsByProfileId?.["0"].mainStatThreshold).toBe(85);
+    expect(result.settingsByProfileId?.["0"].ownedOnly).toBe(true);
+    expect(result.settingsByProfileId?.["123456789"].triageMode).toBe("strict");
+    expect(result.settingsByProfileId?.["123456789"].customFlexInputs).toEqual(
+      []
+    );
   });
 });
 

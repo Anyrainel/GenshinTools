@@ -1,10 +1,22 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 
 beforeEach(() => {
-  useTriageStore.setState({ settings: { ...DEFAULT_TRIAGE_SETTINGS } });
+  useAccountStore.setState({
+    accounts: {},
+    activeAccountId: null,
+    staleScoreCharIds: [],
+  });
+  useTriageStore.setState({
+    settings: structuredClone(DEFAULT_TRIAGE_SETTINGS),
+    settingsByProfileId: {
+      [DEFAULT_ACCOUNT_PROFILE_ID]: structuredClone(DEFAULT_TRIAGE_SETTINGS),
+    },
+  });
 });
 
 describe("useTriageStore", () => {
@@ -55,6 +67,33 @@ describe("useTriageStore", () => {
       const state = useTriageStore.getState();
       expect(state.settings.customFlexInputs).toHaveLength(1);
       expect(state.settings.customFlexInputs[0].slot).toBe("sands");
+    });
+
+    it("stores settings per active account profile", () => {
+      act(() => {
+        useAccountStore.setState({ activeAccountId: 0 });
+        useTriageStore.getState().updateSettings({
+          ownedOnly: false,
+          mainStatThreshold: 88,
+        });
+        useAccountStore.setState({ activeAccountId: 123456789 });
+      });
+
+      expect(useTriageStore.getState().settings.ownedOnly).toBe(
+        DEFAULT_TRIAGE_SETTINGS.ownedOnly
+      );
+
+      act(() => {
+        useTriageStore.getState().updateSettings({
+          mainStatThreshold: 75,
+        });
+        useAccountStore.setState({ activeAccountId: 0 });
+      });
+
+      const state = useTriageStore.getState();
+      expect(state.settings.ownedOnly).toBe(false);
+      expect(state.settings.mainStatThreshold).toBe(88);
+      expect(state.settingsByProfileId[123456789].mainStatThreshold).toBe(75);
     });
   });
 });

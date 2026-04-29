@@ -1,3 +1,4 @@
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import type {
   ResourceKind,
   TierCompletenessThresholds,
@@ -6,8 +7,14 @@ import type {
 type KindTierMinScore = Record<ResourceKind, TierCompletenessThresholds>;
 
 interface LegacyResourceRecState {
+  thresholds?: TierCompletenessThresholds;
   minScoreDiff?: TierCompletenessThresholds | KindTierMinScore;
+  panelOpen?: boolean;
+  showCraft?: boolean;
+  showReroll?: boolean;
+  showLevelup?: boolean;
   kindMinScore?: unknown;
+  settingsByProfileId?: Record<string, unknown>;
 }
 
 export function migrateResourceRecStore(
@@ -39,6 +46,18 @@ export function migrateResourceRecStore(
     }
     // Remove obsolete kindMinScore field from v5.
     state.kindMinScore = undefined;
+  }
+  if (version < 7) {
+    state.settingsByProfileId = {
+      [DEFAULT_ACCOUNT_PROFILE_ID]: {
+        thresholds: state.thresholds,
+        minScoreDiff: state.minScoreDiff,
+        panelOpen: state.panelOpen,
+        showCraft: state.showCraft,
+        showReroll: state.showReroll,
+        showLevelup: state.showLevelup,
+      },
+    };
   }
   return state;
 }

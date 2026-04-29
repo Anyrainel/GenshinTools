@@ -1,9 +1,11 @@
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 
 interface LegacyTriageState {
   settings?: Partial<TriageSettings> & {
     strategicHighLevelEvaluation?: unknown;
   };
+  settingsByProfileId?: Record<string, TriageSettings>;
 }
 
 export function migrateTriageStore(
@@ -21,5 +23,10 @@ export function migrateTriageStore(
     settings.strategicHighLevelEvaluation = undefined;
   }
   state.settings = settings as Partial<TriageSettings>;
+  if (version < 5) {
+    state.settingsByProfileId = {
+      [DEFAULT_ACCOUNT_PROFILE_ID]: settings as TriageSettings,
+    };
+  }
   return state;
 }
