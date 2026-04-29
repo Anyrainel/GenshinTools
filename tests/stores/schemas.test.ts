@@ -259,6 +259,23 @@ describe("PersistedAccountStoreSchema", () => {
     expect(result.accounts.a.lastUpdate).toBe(0);
   });
 
+  it("heals non-finite lastUpdate to 0", () => {
+    const result = PersistedAccountStoreSchema.parse({
+      accounts: {
+        a: {
+          id: "a",
+          name: "Test",
+          data: { characters: [], extraArtifacts: [], extraWeapons: [] },
+          scores: {},
+          lastUpdate: Number.POSITIVE_INFINITY,
+        },
+      },
+      activeAccountId: null,
+      staleScoreCharIds: [],
+    });
+    expect(result.accounts.a.lastUpdate).toBe(0);
+  });
+
   it("throws on non-object input", () => {
     expect(() => PersistedAccountStoreSchema.parse(42)).toThrow();
   });

@@ -67,6 +67,7 @@ export function TriageHeader({
   onToggleSort,
   buildManagerInstructions,
   tabContentRef,
+  sourceAgeBadge,
 }: {
   t: Translator;
   settings: TriageSettings;
@@ -84,6 +85,7 @@ export function TriageHeader({
   onToggleSort: (dim: SortDimension) => void;
   buildManagerInstructions: () => ManagePayload;
   tabContentRef?: React.RefObject<TriageTabContentHandle | null>;
+  sourceAgeBadge?: React.ReactNode;
 }) {
   const [flexOpen, setFlexOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -104,8 +106,9 @@ export function TriageHeader({
 
   return (
     <div className="px-4 space-y-3">
-      <div className="flex items-center gap-3 flex-wrap">
-        <h2 className="text-2xl font-semibold">{t.ui("triage.title")}</h2>
+      <div className="flex items-center gap-3 flex-wrap pb-2">
+        <h2 className="text-xl font-semibold">{t.ui("triage.title")}</h2>
+        {sourceAgeBadge}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1.5">

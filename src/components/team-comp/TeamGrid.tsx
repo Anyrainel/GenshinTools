@@ -31,6 +31,7 @@ import { CategoryChip } from "@/components/shared/CategoryChip";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
+import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { TeamCard } from "@/components/team-comp/TeamCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -541,15 +542,19 @@ export function TeamGrid({
             <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
               {/* Left: filter & sort chips */}
               {hasAccountData && (
-                <CategoryChip
-                  active={ownedOnlyFilter}
-                  onClick={() => setOwnedOnlyFilter(!ownedOnlyFilter)}
-                  color="amber"
-                  activeIcon={Bookmark}
-                  inactiveIcon={Bookmark}
-                >
-                  {t.ui("common.ownedOnly")}
-                </CategoryChip>
+                <OwnedOnlyTooltip>
+                  <span className="inline-flex">
+                    <CategoryChip
+                      active={ownedOnlyFilter}
+                      onClick={() => setOwnedOnlyFilter(!ownedOnlyFilter)}
+                      color="amber"
+                      activeIcon={Bookmark}
+                      inactiveIcon={Bookmark}
+                    >
+                      {t.ui("common.ownedOnly")}
+                    </CategoryChip>
+                  </span>
+                </OwnedOnlyTooltip>
               )}
 
               <CategoryChip

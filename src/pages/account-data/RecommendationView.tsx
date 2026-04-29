@@ -2,6 +2,7 @@ import { Info, Loader2, Monitor, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
+import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
@@ -347,12 +348,6 @@ export function RecommendationView({
     ? tierCustomization[displayedProgress.currentTier]?.displayName ||
       t.tier(displayedProgress.currentTier)
     : null;
-  const firstVisibleTier = tiers.find((tier) => {
-    if (tier === "Pool") return false;
-    if (tierCustomization[tier]?.hidden) return false;
-    return (charactersByTier[tier]?.length ?? 0) > 0;
-  });
-
   const renderCalculationStatus = () => (
     <div className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
       <div className="bg-gradient-select border-b border-border/70 px-4 py-2.5 flex items-center gap-2">
@@ -463,7 +458,22 @@ export function RecommendationView({
   );
 
   return (
-    <ScrollLayout bodyClassName="space-y-4">
+    <ScrollLayout
+      header={
+        <div className="flex flex-wrap items-center gap-3 pb-2">
+          <h2 className="text-xl font-bold text-white">
+            {t.ui("accountData.recommendations")}
+          </h2>
+          <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
+          <div className="flex-1" />
+          <div className="flex items-center gap-2">
+            {renderRecalculateButton()}
+            {renderApplyButton()}
+          </div>
+        </div>
+      }
+      bodyClassName="space-y-4"
+    >
       {!hasRankedChars && (
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center">
@@ -499,11 +509,11 @@ export function RecommendationView({
         const displayName = customization?.displayName || t.tier(tier);
         const luckExpectation = customization?.luckExpectation || "balanced";
 
-        const tierSection = (
-          <div className="space-y-3">
+        return (
+          <div key={tier} className="space-y-3">
             {/* Tier Header */}
             <div className="flex flex-wrap items-center gap-4 border-b border-white/10 pb-2">
-              <h2 className="text-2xl font-bold text-white pb-1">
+              <h2 className="text-lg font-bold text-white pb-1">
                 {displayName}
                 <span className="text-base font-normal text-muted-foreground pl-2">
                   ({chars.length})
@@ -529,7 +539,7 @@ export function RecommendationView({
                       "accountData.luckExpectation.tooltip",
                       LUCK_MULTIPLIERS.cautious
                     )}
-                    className="text-xs px-2 py-1 data-[state=on]:bg-primary/20"
+                    className="text-xs px-2 py-0 data-[state=on]:bg-primary/20"
                   >
                     {t.ui("accountData.luckExpectation.cautious")}
                   </ToggleGroupItem>
@@ -539,7 +549,7 @@ export function RecommendationView({
                       "accountData.luckExpectation.tooltip",
                       LUCK_MULTIPLIERS.balanced
                     )}
-                    className="text-xs px-2 py-1 data-[state=on]:bg-primary/20"
+                    className="text-xs px-2 py-0 data-[state=on]:bg-primary/20"
                   >
                     {t.ui("accountData.luckExpectation.balanced")}
                   </ToggleGroupItem>
@@ -549,7 +559,7 @@ export function RecommendationView({
                       "accountData.luckExpectation.tooltip",
                       LUCK_MULTIPLIERS.hopeful
                     )}
-                    className="text-xs px-2 py-1 data-[state=on]:bg-primary/20"
+                    className="text-xs px-2 py-0 data-[state=on]:bg-primary/20"
                   >
                     {t.ui("accountData.luckExpectation.hopeful")}
                   </ToggleGroupItem>
@@ -573,20 +583,6 @@ export function RecommendationView({
                 )
               )}
             </div>
-          </div>
-        );
-
-        if (tier !== firstVisibleTier) {
-          return <div key={tier}>{tierSection}</div>;
-        }
-
-        return (
-          <div key={tier}>
-            <div className="flex justify-end gap-2">
-              {renderRecalculateButton()}
-              {renderApplyButton()}
-            </div>
-            {tierSection}
           </div>
         );
       })}

@@ -131,7 +131,7 @@ const AccountSchema = z
     name: z.string(),
     data: AccountDataSchema,
     scores: z.record(z.string(), z.unknown()).catch({}),
-    lastUpdate: z.number().catch(0),
+    lastUpdate: z.number().finite().catch(0),
   })
   .loose();
 

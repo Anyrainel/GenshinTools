@@ -35,11 +35,11 @@ Parent routes canonicalize to default children:
 | `/` | Launcher/onboarding | None | Entry to tool groups plus keyword feature matrix | Default cards point to the most important child view for each group; the matrix gives one intent-oriented text link per sub-page. |
 | `/account-data/*` | Account shell | Optional account import | Shared account actions, warnings, tab routing | App-bar actions are powerful but can hide mode changes like edit mode. |
 | `/account-data/characters` | Inspect account roster | Account data | Character grid with equipped artifacts and scores | Edit is app-bar-only. Score settings affect many downstream views but look local. |
-| `/account-data/inventory` | Inspect/maintain inventory | Account data | Character, weapon, artifact inventory sections | Scanner/sync is important upstream data refresh. Delete is hidden behind edit mode and item dialogs. |
-| `/account-data/recommendations` | Artifact action planner | Account data plus valid builds | Tiered swap/upgrade recommendations; apply-to-game payload | Depends on Tier List priority, but that is surfaced late. Links to Team Comp Damage exist after results. |
-| `/account-data/evaluation` | Build diagnostic dashboard | Account data plus valid builds | Completion scores by character/build/slot | Good "why is this build weak?" page. Should lead to Recommendations, Resources, and Configure Builds. |
-| `/account-data/resources` | Resource spending planner | Account data plus valid builds | Craft/reroll/level-up suggestions | Advisory/manual; no apply-to-game flow. Dense settings need clearer policy ownership. |
-| `/account-data/triage` | Lock-state workflow | Account data plus valid builds | Lock/unlock/no-change/protected artifact decisions; apply-to-game payload | Strong action lives in header while results are split into secondary categories. |
+| `/account-data/inventory` | Inspect/maintain inventory | Account data | Character, weapon, artifact inventory sections | Shows account data update age at the top; scanner/sync is the main upstream refresh action. Delete is hidden behind edit mode and item dialogs. |
+| `/account-data/recommendations` | Artifact action planner | Account data plus valid builds | Tiered swap/upgrade recommendations; apply-to-game payload | Header shows update age, recalc, and apply-to-game. Depends on Tier List priority. Links to Team Comp Damage exist after results. |
+| `/account-data/evaluation` | Build diagnostic dashboard | Account data plus valid builds | Completion scores by character/build/slot | Header shows update age. Good "why is this build weak?" page. |
+| `/account-data/resources` | Resource spending planner | Account data plus valid builds | Craft/reroll/level-up suggestions | Header shows update age. Advisory/manual resource planning flow. |
+| `/account-data/triage` | Lock-state workflow | Account data plus valid builds | Lock/unlock/no-change/protected artifact decisions; apply-to-game payload | Header shows update age and apply-to-game action while results are split into secondary categories. |
 | `/artifact-filter/*` | Build-config shell | Build data optional | Import/export/clear presets and tab routing | Default preset prompt targets parent route; prefer `/artifact-filter/configure`. |
 | `/artifact-filter/configure` | Build target config | Preset/import or local setup | Per-character builds, weapons, weights, set goals | Existing `?char=id` narrows filters but does not scroll/open a target. This is a key upstream page. |
 | `/artifact-filter/filters` | Generated filter output | Valid builds | Artifact set/slot filters and print image | Character icons can jump back to Configure, but the navigation affordance is subtle. Search-empty and no-config states can blur together. |
@@ -50,7 +50,7 @@ Parent routes canonicalize to default children:
 | `/team-comp/investment` | Investment analysis | Selected/configured team | Constellation/refinement/investment rankings | Detail footer links to same-team Damage and Weapon Choice. |
 | `/team-comp/weapon` | Weapon/artifact choice analysis | Selected/configured team; account data for artifact mode | Weapon rankings and artifact reassignment suggestions | Detail footer links to same-team Damage and Investment. |
 | `/tier-list/*` | Ranking shell | Game data; optional imports/account data | Editable ranking boards and exports | Desktop hides sibling rank boards until entering group. Character tab has list management; others do not. |
-| `/tier-list/characters` | Character priorities | Game data; optional account ownership | Character tier assignments | Feeds Recommendations priority. Owned-only depends on Account Data but does not explain that dependency. |
+| `/tier-list/characters` | Character priorities | Game data; optional account ownership | Character tier assignments | Feeds Recommendations priority. Owned-only tooltips explain the account-data dependency. |
 | `/tier-list/weapons` | Recreational ranking | Game data; optional inventory ownership | Weapon tier assignments | Low utility. Do not treat ranks as an input to other workflows. |
 | `/tier-list/artifacts` | Recreational ranking | Game data | Artifact set tier assignments by bucket | Low utility. Do not treat ranks as an input to Recommendations, Resources, or Triage. |
 | `/archive/*` | Lookup shell | Bundled game data | Search/filter/select reference browser | Pure reference. Embedded builds/account data are convenience affordances while looking up kits, not a major flow. |
@@ -85,12 +85,12 @@ Team analysis loop:
 Reference lookup:
 `Archive entity -> inspect bundled details; optionally edit builds/account data in the embedded convenience controls`
 
-## Affordance Gaps
+## Affordance Notes
 
-- Prerequisites are mostly taught by empty states. This is usually enough; persistent status should be local and actionable, not a global checkmark banner.
-- Cross-view continuation is inconsistent: some empty states link upstream, but normal states often do not expose "continue in..." actions.
-- Account Data powers many features, but ownership/account dependency is not consistently labeled near owned-only filters and optimizer controls.
-- Artifact build configuration is the shared prerequisite for many Account Data views, but it is not visually treated as a setup dependency.
+- Prerequisites are mostly taught by empty states. This remains enough for missing account/build data because the CTA is actionable at the point of need.
+- Account data age is now local to the views where stale source data matters: Inventory, Recommendations, Evaluation, Resources, and Triage.
+- Owned-only filters now explain that ownership comes from imported account data.
+- Cross-view continuation should stay specific: add links only when the current result directly suggests a next action.
 
 ## Current Home Discovery
 
@@ -103,16 +103,8 @@ Home keeps the large image cards as the primary orientation layer, then adds a c
 
 ## Remaining Direction
 
-- Add local prerequisite/status affordances only when they explain a disabled/changed action:
-  - Owned-only filter: show account data is driving ownership.
-  - Optimizer/apply controls: show inventory/account source age or missing data only near the control.
-  - Recommendation/Triage empty states: keep import/build CTAs as the primary prerequisite teaching.
-  - Avoid a persistent global banner that merely says data exists.
 - Consider contextual continuation links where they are specific and actionable:
   - Evaluation result sections -> Recommendations, Resources, Triage, Configure Builds when the action is directly relevant.
-  - Recommendations/Triage -> Inventory source status and Apply to Game
-  - Archive Character -> Configure Build or Account Character only as embedded convenience.
   - Boss Archive -> Team Comp Damage only if the future UI has boss-targeted damage context.
 - Optional future deep links:
   - `/team-comp/weapon?team=id&mode=weapon|artifact` if Weapon Choice mode should be URL-addressable.
-  - `/artifact-filter/configure?char=id&build=id` if current `char=id` targeting should open/scroll a specific card/build rather than only filter.

@@ -332,6 +332,16 @@ export const i18nUiData = {
       en: "This feature analyzes your artifacts against your build configurations. Import your account data and set up builds to get started.",
       zh: "此功能根据配装方案分析你的圣遗物。导入账号数据并配置配装方案即可开始。",
     },
+    updatedJustNow: { en: "Updated just now", zh: "刚刚更新" },
+    updatedMinutes: { en: "Updated {0} min ago", zh: "{0}分钟前更新" },
+    updatedHours: { en: "Updated {0} hr ago", zh: "{0}小时前更新" },
+    updatedDays: { en: "Updated {0} days ago", zh: "{0}天前更新" },
+    updatedMonths: { en: "Updated {0} months ago", zh: "{0}月前更新" },
+    updatedYears: { en: "Updated {0} years ago", zh: "{0}年前更新" },
+    sourceUpdatedBanner: {
+      en: "Account data: {0}",
+      zh: "账号数据：{0}",
+    },
     noFilterMatch: {
       en: "No characters match your filters",
       zh: "没有角色匹配当前过滤条件",
@@ -445,11 +455,11 @@ export const i18nUiData = {
         en: "Characters in the Pool are not computed for recommendations. Their equipped artifacts may even be suggested for other characters to swap.",
         zh: "角色池中的角色不计算推荐操作。他们装备的圣遗物甚至有可能被推荐给其他角色使用。",
       },
-      goToTierList: { en: "Manage Tiers", zh: "管理层级" },
+      goToTierList: { en: "Manage Tiers", zh: "管理优先级" },
     },
     noRankedChars: {
       en: "Rank your characters in the Tier List to get personalized upgrade recommendations.",
-      zh: "在层级列表中为角色排序，即可获得个性化的升级建议。",
+      zh: "在优先级中为角色排序，即可获得个性化的升级建议。",
     },
     recommendationsCalculating: {
       en: "Calculating recommendations",
@@ -457,11 +467,11 @@ export const i18nUiData = {
     },
     recommendationsCurrentTier: {
       en: "Current tier: {0}",
-      zh: "当前层级：{0}",
+      zh: "当前优先级：{0}",
     },
     recommendationsProgress: {
       en: "{0} of {1} tiers complete",
-      zh: "已完成 {0} / {1} 个层级",
+      zh: "已完成 {0} / {1} 个优先级",
     },
     recommendationsFailed: {
       en: "Recommendation calculation failed. Check the console for details.",
@@ -477,7 +487,7 @@ export const i18nUiData = {
     },
     applyRecommendationTiers: {
       en: "Tiers to apply",
-      zh: "应用层级",
+      zh: "应用优先级",
     },
     applyRecommendationTiersDesc: {
       en: "Only best allocation equipment is applied. Upgrade suggestions are not included.",
@@ -1486,6 +1496,10 @@ export const i18nUiData = {
     ownedOnlyDisabled: {
       en: "Import your data first to use this filter",
       zh: "请先导入数据以使用此筛选",
+    },
+    ownedOnlyAccountDataTooltip: {
+      en: "Uses imported account data to decide what you own.",
+      zh: "根据已导入的账号数据判断是否拥有。",
     },
     elements: { en: "Elements", zh: "元素" },
     weaponTypes: { en: "Weapon Types", zh: "武器类型" },

@@ -43,7 +43,7 @@ export function SortToggleGroup({
         value="off"
         aria-label="No sorting"
         disabled={disabled}
-        className="h-7 w-12 rounded-l-sm rounded-r-none border border-r-0 text-xs gap-0.5 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground disabled:opacity-100"
+        className="h-7 w-12 rounded-l-sm rounded-r-none border border-r-0 text-xs gap-0.5 data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100"
       >
         <Minus className="h-3 w-3" />
         {t.ui("filters.sortOff")}
@@ -52,7 +52,7 @@ export function SortToggleGroup({
         value="asc"
         aria-label="Sort ascending"
         disabled={disabled}
-        className="h-7 w-12 rounded-none border border-r-0 text-xs gap-0.5 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground disabled:opacity-100"
+        className="h-7 w-12 rounded-none border border-r-0 text-xs gap-0.5 data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100"
       >
         <ArrowUp className="h-3 w-3" />
         {t.ui("filters.sortAsc")}
@@ -61,7 +61,7 @@ export function SortToggleGroup({
         value="desc"
         aria-label="Sort descending"
         disabled={disabled}
-        className="h-7 w-12 rounded-l-none rounded-r-sm border text-xs gap-0.5 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground disabled:opacity-100"
+        className="h-7 w-12 rounded-l-none rounded-r-sm border text-xs gap-0.5 data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100"
       >
         <ArrowDown className="h-3 w-3" />
         {t.ui("filters.sortDesc")}

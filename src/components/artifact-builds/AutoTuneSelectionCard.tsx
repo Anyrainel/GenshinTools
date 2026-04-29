@@ -105,7 +105,7 @@ export function AutoTuneSelectionCard({
           className={cn(
             "grid place-content-center h-4 w-4 shrink-0 rounded-sm border shadow",
             !noTeams && entry.selected
-              ? "border-primary bg-primary text-primary-foreground"
+              ? "border-primary bg-primary/70 text-primary-foreground"
               : "border-primary",
             noTeams && "opacity-50"
           )}

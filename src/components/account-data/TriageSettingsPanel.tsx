@@ -1,3 +1,4 @@
+import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -50,7 +51,7 @@ function SwitchRow({
   onChange,
 }: {
   id: string;
-  label: string;
+  label: React.ReactNode;
   checked: boolean;
   onChange: (v: boolean) => void;
 }) {
@@ -143,7 +144,11 @@ export function TriageSettingsPanel({
         />
         <SwitchRow
           id="ownedOnly"
-          label={t.ui("triage.ownedOnly")}
+          label={
+            <OwnedOnlyTooltip>
+              <span>{t.ui("triage.ownedOnly")}</span>
+            </OwnedOnlyTooltip>
+          }
           checked={settings.ownedOnly}
           onChange={(v) => update("ownedOnly", v)}
         />

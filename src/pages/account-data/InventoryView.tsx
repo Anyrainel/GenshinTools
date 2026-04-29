@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronRight, Monitor } from "lucide-react";
 import { useCallback, useState } from "react";
+import { AccountDataSourceAgeBanner } from "@/components/account-data/AccountDataSourceAge";
 import type { TaggedArtifact } from "@/components/account-data/InventoryArtifactGrid";
 import {
   getInventoryArtifactTotalCount,
@@ -24,6 +25,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface InventoryViewProps {
   data: AccountData;
+  lastUpdate?: number | null;
   isEditMode?: boolean;
   onDeleteWeapon?: (weaponId: string) => void;
   onDeleteArtifact?: (artifactId: string) => void;
@@ -33,6 +35,7 @@ type ScanTarget = "characters" | "weapons" | "artifacts";
 
 export function InventoryView({
   data,
+  lastUpdate,
   isEditMode = false,
   onDeleteWeapon,
   onDeleteArtifact,
@@ -92,6 +95,8 @@ export function InventoryView({
 
   return (
     <ScrollLayout bodyClassName="space-y-6">
+      <AccountDataSourceAgeBanner lastUpdate={lastUpdate} />
+
       <InventorySection
         title={t.ui("accountData.characters")}
         count={data.characters.length}

@@ -636,7 +636,7 @@ function ScoreUpCardComponent({
                     className={cn(
                       "flex-1 flex items-center justify-center gap-0.5 text-xs font-semibold px-1.5 py-1 rounded-full transition-all",
                       activeView === mode
-                        ? "bg-primary text-primary-foreground shadow-sm"
+                        ? "bg-primary/70 text-primary-foreground shadow-sm"
                         : "bg-white/5 text-foreground/80 hover:bg-white/10"
                     )}
                   >

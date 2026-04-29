@@ -4,89 +4,101 @@
 
 <div align="center">
 
-### _A collection of useful tools for Genshin Impact travelers._
+### Practical planning tools for Genshin Impact accounts, builds, teams, and game data.
 
-[🎮 Launch Tool](https://ggartifact.com)
+[Launch Tool](https://ggartifact.com)
 
 </div>
 
 ---
 
-## 🛠️ Included Tools
+## What It Does
 
-### Artifact Filter Helper
+Genshin Tools helps you turn account data, build targets, and team plans into concrete decisions: what to build, what to lock, what to upgrade, and how a team changes under different optimization choices.
 
-**Customize your own artifact filters!**
+## Tools
 
-Everyone plays Genshin differently. This tool allows you to:
+### Account Data
 
-- **Configure once**: Define builds for each character (sets + stats) based on your specific needs.
-- **Preset Subscription**: Subscribe to curated community presets, then customize on top. Revert individual builds or restore entire characters to preset defaults.
-- **Intelligent merging**: Two merge algorithms (Greedy for speed, Smart for optimality) combine builds into compact filter configs.
-- **Export & Share**: Easily share your configurations or import from the community.
+Import account data and use it across the app.
 
-### Account Analytics
+- **Characters**: browse owned characters, equipped artifacts, artifact scores, and edit account records.
+- **Inventory**: inspect weapons, artifacts, and characters; sync from game; review when account data was last updated.
+- **Recommendations**: find artifact swaps and upgrades by character priority, then send eligible equip plans to the Artifact Manager flow.
+- **Evaluation**: evaluate configured builds against your current artifacts and see build completion by set and character.
+- **Resources**: plan Sanctifying Essence, Sanctifying Elixir, and Dust of Enlightenment spending.
+- **Triage**: decide which artifacts to lock, unlock, or leave protected, with apply-to-game lock instructions.
 
-**Visualize your account progress.**
+Supported import sources include GOOD JSON exports, Enka UID imports, and HoYoLAB imports.
 
-- **Data Import**: Import account data via **GOOD** files (from scanners) or directly via **Enka.Network** (UID).
-- **Artifact Scoring**: Automatically score your characters' artifacts based on custom stat weights.
-- **Personalized Recommendations**: Get actionable insights on which characters and artifacts to invest in — including equip, swap, upgrade, reroll, and farm suggestions.
-- **Build Evaluation**: See per-character build completion and efficiency at a glance with tier ratings (S/A/B/C).
-- **Inventory Overview**: View distribution of artifacts and weapons across your account.
+### Artifact Filter
 
-### Tier List Maker
+Configure character build targets and turn them into filter outputs.
 
-**Create and manage character & weapon tier lists.**
+- **Configure**: define each character's artifact sets, stat weights, weapon assumptions, and build visibility.
+- **Compute Filters**: merge configured builds into artifact set/slot filters for farming and filtering workflows.
+- **AutoTune**: derive build weights from team damage context when you want an advanced starting point.
 
-A modern, interactive tier list maker that:
+### Team Comp
 
-- **Organizes by Element**: Characters are sorted by element within tiers for better clarity.
-- **Character & Weapon Tabs**: Switch between character and weapon tier lists in one unified view.
-- **Save/Load**: Save your tier lists to JSON and load them later, or subscribe to community presets.
-- **Drag & Drop**: Easy-to-use interface.
-- **Export Image**: Share your tier lists with high-quality image exports.
+Build, compare, and optimize teams.
+
+- **Damage**: calculate team damage with buffs, reactions, resonance, enemy assumptions, and transparent formula details.
+- **Frozen**: review frozen artifact/team results and export batch equip instructions.
+- **Investment**: compare constellation, refinement, and other investment changes for a selected team.
+- **Weapon Choice**: compare weapon options and artifact reassignment choices for a selected team.
+
+### Tier List
+
+Create and share personal ranking boards.
+
+- **Characters**: maintain character priorities that also feed account recommendations.
+- **Weapons**: make weapon tier lists for reference or sharing.
+- **Artifacts**: make artifact set tier lists by category.
+- **Export**: save/load JSON and export high-quality images.
 
 ### Archive
 
-**Browse the complete character, weapon, and artifact encyclopedia.**
+Look up bundled game data without leaving the app.
 
-- **Character Details**: View base stats at multiple ascension levels, full skill/talent kits, passives, constellations, and glossary.
-- **Weapon Details**: Compare weapons by type, secondary stat, and rarity.
-- **Artifact Sets**: Browse all artifact sets with piece details and set bonuses.
+- **Characters**: kits, stats, passives, constellations, glossary, and embedded build/account context.
+- **Weapons**: weapon stats, passives, rarity, type, and ownership context.
+- **Artifacts**: artifact set effects, half-set filtering, and set details.
+- **Bosses**: ley line boss data with schedule-aware selection and detail panels.
 
-### Team Builder
+## Localization & Theming
 
-**Theorycraft and optimize your teams with real damage numbers.**
+- English and Simplified Chinese UI
+- Multiple generated theme palettes with element-aware styling
 
-- **Damage Calculator**: Calculate expected damage per character accounting for buffs, reactions, elemental resonance, and enemy stats.
-- **Buff Ledger**: Full transparency — see every buff source, its value, and whether it's active for each formula.
-- **Artifact Optimizer**: Automatically find the best artifact assignment across your team to maximize total damage.
-- **Visual Planning**: Select characters, weapons, and artifacts in a clear, card-based layout with smart filtering.
-- **Manage**: Create, copy, and organize multiple team compositions.
+## Development
 
-## 🖥️ Desktop App
+```bash
+npm install
+npm run dev
+npm run type-check
+npm run lint
+npm run test
+npm run build
+```
 
-**Native performance and offline capability.**
+Useful variants:
 
-The application is wrapped with **Tauri**, allowing you to run it as a standalone desktop application on Windows.
+- `npm run dev:wrangler` starts Vite behind Wrangler Pages dev.
+- `npm run depcheck` checks dependency boundaries.
+- `npm run regtest` runs artifact generator regression tests.
 
-## 🌐 Localization & Theming
+## Tech Stack
 
-- **Languages**: English and Simplified Chinese (EN/ZH)
-- **Themes**: 9 color palettes with per-element theming
+- React 19, TypeScript, Vite 7
+- Tailwind CSS, shadcn/ui, Radix primitives, Vaul, Lucide icons
+- Zustand with Immer and persist middleware
+- Cloudflare Pages/Workers
 
-## 💻 Tech Stack
+## Contributing
 
-- **Framework**: React, TypeScript, Vite
-- **UI**: Tailwind CSS, shadcn/ui
-- **State Management**: Zustand
-- **Desktop**: Tauri
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+Issues and pull requests are welcome. For larger changes, please keep behavior scoped to the relevant page family and include focused validation.
 
 ---
 
-**_Fan-made tool. Not affiliated with HoYoverse._**
+Fan-made tool. Not affiliated with HoYoverse.

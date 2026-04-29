@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
+import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
@@ -20,7 +21,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/enums";
 import { tiers } from "@/data/enums";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
@@ -48,7 +49,8 @@ export function EvaluationView({
   onShowTour,
 }: EvaluationViewProps) {
   const { t } = useLanguage();
-  const accountData = useActiveAccountData();
+  const activeAccount = useActiveAccount();
+  const accountData = activeAccount?.data ?? null;
   const buildGroups = useAllValidResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
@@ -193,11 +195,12 @@ export function EvaluationView({
   return (
     <ScrollLayout
       header={
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pb-2">
           {/* Title + stats */}
           <h2 className="text-xl font-bold text-white">
             {t.ui("evaluation.title")}
           </h2>
+          <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
           <span className="text-sm text-muted-foreground">
             {t.format(
               "evaluation.subtitle",
@@ -256,20 +259,27 @@ export function EvaluationView({
           </div>
 
           {/* Owned-only filter */}
-          <span className="flex items-center gap-1.5 cursor-pointer select-none">
-            <Checkbox
-              id="eval-owned-only"
-              checked={ownedOnly}
-              onCheckedChange={(v) => setOwnedOnly(v === true)}
-              className="h-3.5 w-3.5"
-            />
-            <label
-              htmlFor="eval-owned-only"
-              className="text-sm text-foreground cursor-pointer"
-            >
-              {t.ui("evaluation.ownedOnly")}
-            </label>
-          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex items-center gap-1.5 cursor-pointer select-none">
+                <Checkbox
+                  id="eval-owned-only"
+                  checked={ownedOnly}
+                  onCheckedChange={(v) => setOwnedOnly(v === true)}
+                  className="h-3.5 w-3.5"
+                />
+                <label
+                  htmlFor="eval-owned-only"
+                  className="text-sm text-foreground cursor-pointer"
+                >
+                  {t.ui("evaluation.ownedOnly")}
+                </label>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t.ui("filters.ownedOnlyAccountDataTooltip")}</p>
+            </TooltipContent>
+          </Tooltip>
 
           {/* Tier sort toggle — cycles off → desc → asc */}
           {hasTierData ? (

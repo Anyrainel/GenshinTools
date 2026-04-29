@@ -257,7 +257,7 @@ export function ErResultsPanel({
         <button
           type="button"
           onClick={handleApplyMinER}
-          className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary text-primary-foreground transition-colors"
+          className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary/70 text-primary-foreground transition-colors"
           title={t.ui("erCalc.applyToTeamMinER")}
         >
           {t.ui("erCalc.applyToTeamMinER")}

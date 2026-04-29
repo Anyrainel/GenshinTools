@@ -294,7 +294,7 @@ export function ArtifactSwapDialog({
                     e.stopPropagation();
                     handleConfirm();
                   }}
-                  className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
+                  className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/70 text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span className="text-xs font-bold">

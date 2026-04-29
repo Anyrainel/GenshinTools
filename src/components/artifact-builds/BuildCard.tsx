@@ -384,7 +384,7 @@ function BuildCardComponent({
             <Switch
               checked={build.visible}
               onCheckedChange={handleToggleVisibility}
-              className="data-[state=checked]:bg-primary flex-shrink-0"
+              className="data-[state=checked]:bg-primary/70 flex-shrink-0"
             />
             {labelsRow}
             {!isMobile && (

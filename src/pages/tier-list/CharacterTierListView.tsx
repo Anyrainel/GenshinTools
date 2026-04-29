@@ -20,6 +20,7 @@ import { ExportControl } from "@/components/shared/ExportControl";
 import { FilterChip } from "@/components/shared/FilterChip";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ImportControl } from "@/components/shared/ImportControl";
+import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierListManagerDialog } from "@/components/tier-list/TierListManagerDialog";
@@ -373,12 +374,16 @@ export function CharacterTierListView({
       {
         key: "ownership",
         content: (
-          <FilterChip
-            active={ownedOnly}
-            onClick={() => setOwnedOnly(!ownedOnly)}
-          >
-            {t.ui("common.ownedOnly")}
-          </FilterChip>
+          <OwnedOnlyTooltip>
+            <span className="inline-flex">
+              <FilterChip
+                active={ownedOnly}
+                onClick={() => setOwnedOnly(!ownedOnly)}
+              >
+                {t.ui("common.ownedOnly")}
+              </FilterChip>
+            </span>
+          </OwnedOnlyTooltip>
         ),
       },
     ],

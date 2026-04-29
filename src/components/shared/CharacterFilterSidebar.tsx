@@ -201,22 +201,32 @@ export function CharacterFilterSidebar({
 
           {/* Owned Only */}
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="owned-only"
-                checked={filters.ownedOnly}
-                onCheckedChange={(checked) =>
-                  onFiltersChange({ ...filters, ownedOnly: checked === true })
-                }
-                className="h-4 w-4"
-              />
-              <Label
-                htmlFor="owned-only"
-                className="text-sm xl:text-base text-foreground cursor-pointer font-medium"
-              >
-                {t.ui("common.ownedOnly")}
-              </Label>
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="owned-only"
+                    checked={filters.ownedOnly}
+                    onCheckedChange={(checked) =>
+                      onFiltersChange({
+                        ...filters,
+                        ownedOnly: checked === true,
+                      })
+                    }
+                    className="h-4 w-4"
+                  />
+                  <Label
+                    htmlFor="owned-only"
+                    className="text-sm xl:text-base text-foreground cursor-pointer font-medium"
+                  >
+                    {t.ui("common.ownedOnly")}
+                  </Label>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.ui("filters.ownedOnlyAccountDataTooltip")}</p>
+              </TooltipContent>
+            </Tooltip>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="show-manekin"

@@ -6,6 +6,7 @@
 import { CircleHelp, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
+import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
 import { ResourceTierSection } from "@/components/account-data/ResourceTierSection";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -20,7 +21,7 @@ import {
 import type { Tier } from "@/data/enums";
 import { tiers } from "@/data/enums";
 import { artifactsById } from "@/data/gameResources";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   evaluateAllBuilds,
@@ -121,7 +122,8 @@ interface ResourceViewProps {
 
 export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   const { t } = useLanguage();
-  const accountData = useActiveAccountData();
+  const activeAccount = useActiveAccount();
+  const accountData = activeAccount?.data ?? null;
   const buildGroups = useAllValidResolvedBuilds();
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
@@ -264,10 +266,11 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
     <ScrollLayout
       header={
         <div className="space-y-3">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 pb-2">
             <h2 className="text-xl font-bold text-white">
               {t.ui("evaluation.resourceSuggestions")}
             </h2>
+            <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
             <span className="text-sm text-muted-foreground">
               ({suggestions.length})
             </span>

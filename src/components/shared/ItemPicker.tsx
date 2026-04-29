@@ -943,27 +943,40 @@ function FilterBar({
           </FilterChip>
         ))}
         {(type === "character" || type === "weapon") && (
-          <FilterChip
-            isActive={!!activeFilters.ownedOnly}
-            onClick={() => hasOwnershipData && toggle("ownedOnly", 1)}
-            className={cn(
-              "w-auto px-2 gap-1",
-              !hasOwnershipData && "opacity-40 cursor-not-allowed"
-            )}
-            title={
-              hasOwnershipData
-                ? t.ui("common.ownedOnly")
-                : t.ui("filters.ownedOnlyDisabled")
-            }
-          >
-            <Bookmark
-              className={cn(
-                "h-3 w-3",
-                activeFilters.ownedOnly && "fill-current"
-              )}
-            />
-            <span className="text-xs">{t.ui("common.ownedOnly")}</span>
-          </FilterChip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex">
+                <FilterChip
+                  isActive={!!activeFilters.ownedOnly}
+                  onClick={() => hasOwnershipData && toggle("ownedOnly", 1)}
+                  className={cn(
+                    "w-auto px-2 gap-1",
+                    !hasOwnershipData && "opacity-40 cursor-not-allowed"
+                  )}
+                  title={
+                    hasOwnershipData
+                      ? t.ui("common.ownedOnly")
+                      : t.ui("filters.ownedOnlyDisabled")
+                  }
+                >
+                  <Bookmark
+                    className={cn(
+                      "h-3 w-3",
+                      activeFilters.ownedOnly && "fill-current"
+                    )}
+                  />
+                  <span className="text-xs">{t.ui("common.ownedOnly")}</span>
+                </FilterChip>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {hasOwnershipData
+                  ? t.ui("filters.ownedOnlyAccountDataTooltip")
+                  : t.ui("filters.ownedOnlyDisabled")}
+              </p>
+            </TooltipContent>
+          </Tooltip>
         )}
         {type === "character" && (
           <FilterChip

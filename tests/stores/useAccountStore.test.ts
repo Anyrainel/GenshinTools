@@ -1,11 +1,16 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountData, CharacterData } from "@/data/types";
+import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore, useAccountStore } from "@/stores/useAccountStore";
 import { createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
 beforeEach(() => {
   useAccountStore.getState().clearAccounts();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 // Helper to create sample account data
@@ -82,6 +87,39 @@ describe("useAccountStore", () => {
       expect(state.accounts.default.data.characters.length).toBe(2);
       expect(state.accounts.default.data.characters[0].key).toBe(
         "kaedehara_kazuha"
+      );
+    });
+  });
+
+  describe("applyAccountImport", () => {
+    it("stamps imports with the current time", () => {
+      const now = new Date("2026-04-28T12:00:00Z");
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+
+      const data = createSampleAccountData({
+        characters: [createSampleCharacter()],
+      });
+
+      applyAccountImport({ accountId: "default", data, name: "Default" });
+
+      expect(useAccountStore.getState().accounts.default.lastUpdate).toBe(
+        now.getTime()
+      );
+    });
+
+    it("preserves an explicit import timestamp", () => {
+      const importedAt = 1_777_777_777_000;
+      const data = createSampleAccountData();
+
+      applyAccountImport({
+        accountId: "default",
+        data,
+        lastUpdate: importedAt,
+      });
+
+      expect(useAccountStore.getState().accounts.default.lastUpdate).toBe(
+        importedAt
       );
     });
   });

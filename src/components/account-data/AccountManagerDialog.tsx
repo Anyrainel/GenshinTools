@@ -185,7 +185,7 @@ export function AccountManagerDialog({
                         "p-1.5 rounded-full shrink-0",
                         (isImportMode && isSelectedTarget) ||
                           (!isImportMode && isActive)
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-primary/70 text-primary-foreground"
                           : "bg-muted text-muted-foreground"
                       )}
                     >

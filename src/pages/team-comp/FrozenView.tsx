@@ -374,18 +374,20 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
         <div className="flex flex-col gap-4 py-2">
           {/* Empty state — above controls so it introduces the feature */}
           {isEmpty && (
-            <EmptyState
-              icon={Snowflake}
-              iconColor="text-cyan-500"
-              glowColor="bg-cyan-500/20"
-              title={t.ui("teamComp.frozenEmptyTitle")}
-              description={t.ui("teamComp.frozenEmptyDesc")}
-              action={{
-                label: t.ui("teamComp.optimizeTeamDamage"),
-                icon: Swords,
-                href: "/team-comp/damage",
-              }}
-            />
+            <div className="mb-6 md:mb-9 lg:mb-12">
+              <EmptyState
+                icon={Snowflake}
+                iconColor="text-cyan-500"
+                glowColor="bg-cyan-500/20"
+                title={t.ui("teamComp.frozenEmptyTitle")}
+                description={t.ui("teamComp.frozenEmptyDesc")}
+                action={{
+                  label: t.ui("teamComp.optimizeTeamDamage"),
+                  icon: Swords,
+                  href: "/team-comp/damage",
+                }}
+              />
+            </div>
           )}
 
           {(hasContext || !isEmpty) && (

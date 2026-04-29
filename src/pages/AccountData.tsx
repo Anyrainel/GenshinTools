@@ -628,6 +628,7 @@ export default function AccountDataPage() {
           {accountData ? (
             <InventoryView
               data={accountData}
+              lastUpdate={activeAccount?.lastUpdate}
               isEditMode={isEditMode}
               onDeleteWeapon={(weaponId) => {
                 if (!activeAccountId) return;

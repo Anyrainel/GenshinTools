@@ -177,7 +177,7 @@ function StepAccountData({ t }: StepProps) {
         <div className="grid grid-cols-2 gap-2 rounded-lg border-2 border-amber-500/50 p-2">
           {/* GOOD import card (recommended) */}
           <div className="relative rounded-lg border border-primary/40 bg-primary/[0.04] p-2.5">
-            <span className="absolute -top-2 right-2 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold">
+            <span className="absolute -top-2 right-2 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 bg-primary/70 text-primary-foreground text-[10px] font-semibold">
               <Star className="size-2.5" />
               {t.ui("import.recommended")}
             </span>

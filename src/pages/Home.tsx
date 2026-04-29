@@ -222,7 +222,7 @@ export default function Home() {
                 href="https://github.com/Anyrainel/GenshinTools"
                 target="_blank"
                 rel="noreferrer"
-                className="font-medium text-foreground underline underline-offset-2 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="font-medium text-sky-600 underline underline-offset-2 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {t.ui("app.disclaimerProject")}
               </a>

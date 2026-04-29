@@ -462,8 +462,8 @@ export function AutoTuneView() {
                 className={cn(
                   "px-3.5 py-1.5 font-medium transition-colors",
                   viewFilter === "available"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted/20 text-muted-foreground hover:bg-muted/40"
+                    ? "bg-primary/70 text-primary-foreground"
+                    : "bg-muted/70 text-muted-foreground hover:bg-muted"
                 )}
                 onClick={() => setViewFilter("available")}
               >
@@ -474,8 +474,8 @@ export function AutoTuneView() {
                 className={cn(
                   "px-3.5 py-1.5 font-medium transition-colors border-l border-border",
                   viewFilter === "all"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted/20 text-muted-foreground hover:bg-muted/40"
+                    ? "bg-primary/70 text-primary-foreground"
+                    : "bg-muted/70 text-muted-foreground hover:bg-muted"
                 )}
                 onClick={() => setViewFilter("all")}
               >

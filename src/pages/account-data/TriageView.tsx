@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
+import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import {
   type SortDimension,
   TriageHeader,
@@ -18,7 +19,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
 import {
@@ -48,7 +49,8 @@ const SLOT_ORDER: Record<string, number> = {
 
 export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
-  const accountData = useActiveAccountData();
+  const activeAccount = useActiveAccount();
+  const accountData = activeAccount?.data ?? null;
   const buildGroups = useAllValidResolvedBuilds();
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
@@ -259,6 +261,9 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           onToggleSort={toggleSort}
           buildManagerInstructions={buildManagerInstructions}
           tabContentRef={tabContentRef}
+          sourceAgeBadge={
+            <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
+          }
         />
       }
     >

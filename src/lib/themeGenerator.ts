@@ -220,6 +220,7 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
   const primaryL = isAbyss
     ? clamp(glow1.l + 20, 30, 42) // Darker for Abyss
     : clamp(glow1.l + 25, 45, 65);
+  const isRedBase = base.h <= 30 || base.h >= 330;
 
   // Primary foreground: always light — all themes are dark-mode with
   // medium-brightness primaries (45-65% L), so light text is needed.
@@ -250,8 +251,8 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
     muted: hslVar(base.h, base.s, base.l + 2),
     "muted-foreground": hslVar(
       base.h,
-      clamp(base.s - (base.h <= 30 || base.h >= 330 ? 15 : 10), 0, 20),
-      base.l + 42 + (base.h <= 30 || base.h >= 330 ? 12 : 0)
+      clamp(base.s - (isRedBase ? 15 : 10), 0, 20),
+      base.l + 48 + (isRedBase ? 12 : 0)
     ),
 
     // Accent - interactive highlight

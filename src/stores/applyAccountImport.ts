@@ -14,16 +14,20 @@ export function applyAccountImport(opts: {
   accountId: string;
   data: AccountData;
   name?: string;
+  /** Timestamp for when this import updated the local account data. */
+  lastUpdate?: number;
   /** Account ID to set as active, or omit to skip. */
   setAsActive?: string;
   /** Old→new artifact ID mapping for freeze-store remapping. */
   artifactIdMap?: Map<string, string>;
 }): void {
+  const lastUpdate = opts.lastUpdate ?? Date.now();
   useRecommendationCacheStore.getState().clear();
   remapFreezeStoreForImport(opts.artifactIdMap);
   const store = useAccountStore.getState();
   store.addOrUpdateAccount(opts.accountId, {
     data: opts.data,
+    lastUpdate,
     ...(opts.name ? { name: opts.name } : {}),
   });
   if (opts.setAsActive) {

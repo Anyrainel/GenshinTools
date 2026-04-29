@@ -129,7 +129,7 @@ export function ReactionPartControls({
                   !partCanReact
                     ? "border-border/60 bg-background opacity-30 cursor-not-allowed"
                     : isChecked
-                      ? "bg-primary border-primary text-primary-foreground"
+                      ? "bg-primary/70 border-primary text-primary-foreground"
                       : "border-border/60 bg-background hover:border-border"
                 )}
               >

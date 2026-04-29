@@ -5,6 +5,9 @@ const ALL_THEME_IDS = Object.keys(THEME_SEEDS) as Array<
   keyof typeof THEME_SEEDS
 >;
 
+const parseLightness = (hslVar: string) =>
+  Number.parseInt(hslVar.split(" ")[2], 10);
+
 describe("THEME_SEEDS", () => {
   it("has seeds for all expected regions + abyss", () => {
     const expected = [
@@ -127,12 +130,30 @@ describe("generateThemeVars", () => {
     const abyss = generateThemeVars("abyss");
     const mondstadt = generateThemeVars("mondstadt");
 
-    // Parse lightness from "h s% l%" format
-    const parseLightness = (hslVar: string) =>
-      Number.parseInt(hslVar.split(" ")[2], 10);
-
     expect(parseLightness(abyss.primary)).toBeLessThan(
       parseLightness(mondstadt.primary)
+    );
+  });
+
+  it("raises muted foreground across all themes", () => {
+    for (const id of ALL_THEME_IDS) {
+      const seed = THEME_SEEDS[id];
+      const isRedBase = seed.base.h <= 30 || seed.base.h >= 330;
+      const expectedMinimumLightness = seed.base.l + 48 + (isRedBase ? 12 : 0);
+
+      expect(
+        parseLightness(generateThemeVars(id)["muted-foreground"]),
+        id
+      ).toBe(expectedMinimumLightness);
+    }
+  });
+
+  it("keeps the red hue visibility compensation on top of the global lift", () => {
+    const natlan = generateThemeVars("natlan");
+    const mondstadt = generateThemeVars("mondstadt");
+
+    expect(parseLightness(natlan["muted-foreground"])).toBeGreaterThan(
+      parseLightness(mondstadt["muted-foreground"])
     );
   });
 });

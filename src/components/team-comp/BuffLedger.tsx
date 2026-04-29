@@ -243,7 +243,7 @@ export function BuffLedger({ buffs, team, t, formulas }: Props) {
             <Switch
               checked={showAll}
               onCheckedChange={setShowAll}
-              className="h-4 w-7 data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/50 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
+              className="h-4 w-7 data-[state=checked]:bg-primary/70 data-[state=unchecked]:bg-muted-foreground/50 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
             />
             <span
               className="text-[10px] md:text-xs text-muted-foreground"

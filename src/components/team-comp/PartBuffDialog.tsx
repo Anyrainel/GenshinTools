@@ -340,7 +340,7 @@ export function PartBuffDialog({
       >
         <Settings2 className="w-4 h-4 text-foreground/60 hover:text-foreground transition-colors" />
         {hasOverrides && (
-          <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary rounded-full" />
+          <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary/70 rounded-full" />
         )}
       </button>
 

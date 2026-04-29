@@ -269,7 +269,7 @@ export const AccountImportControl = forwardRef<
               className={cn(
                 "absolute -top-2.5 right-3",
                 "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5",
-                "bg-primary text-primary-foreground text-xs font-semibold"
+                "bg-primary/70 text-primary-foreground text-xs font-semibold"
               )}
             >
               <Star className="w-3 h-3" />
