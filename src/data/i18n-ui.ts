@@ -448,6 +448,22 @@ export const i18nUiData = {
         en: "No artifacts were swapped.",
         zh: "所有圣遗物均未替换。",
       },
+      allocationPending: {
+        en: "Waiting for this tier",
+        zh: "等待计算该优先级",
+      },
+      allocationPendingDesc: {
+        en: "Recommendations are calculated from higher tiers downward.",
+        zh: "提分推荐会从更高优先级依次向下计算。",
+      },
+      noFeasibleAllocation: {
+        en: "No feasible allocation",
+        zh: "暂无可用分配方案",
+      },
+      noFeasibleAllocationDesc: {
+        en: "The optimizer could not form a complete build from the available artifacts and this build target.",
+        zh: "当前可用圣遗物无法按此配装目标组成完整方案。",
+      },
       statValue: { en: "Stat Value", zh: "属性值" },
       fromInventory: { en: "In Inventory", zh: "背包中" },
       fromCharacter: { en: "from {0}", zh: "取自 {0}" },

@@ -4,6 +4,8 @@ import {
   ChevronDown,
   ChevronUp,
   Gem,
+  Info,
+  Loader2,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -46,6 +48,7 @@ interface ScoreUpCardProps {
   tier?: Tier;
   recommendations?: ScoreUpAction[];
   allocatedBuild?: OptimizedBuild | null;
+  allocationStatus?: "pending" | "allocated" | "unallocated";
   score?: ArtifactScoreResult;
   artifactLookup: Map<string, ArtifactData>;
 }
@@ -226,6 +229,40 @@ function HeaderWeaponIcon({
   );
 }
 
+function AllocationStatusMessage({
+  status,
+  t,
+}: {
+  status: "pending" | "unallocated";
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const isPending = status === "pending";
+  const Icon = isPending ? Loader2 : Info;
+
+  return (
+    <div className="flex items-start gap-2 px-3 py-3 text-sm">
+      <Icon
+        className={cn(
+          "mt-0.5 h-4 w-4 shrink-0 text-muted-foreground",
+          isPending && "animate-spin"
+        )}
+      />
+      <div className="min-w-0">
+        <div className="font-semibold text-foreground">
+          {isPending
+            ? t.ui("accountData.insights.allocationPending")
+            : t.ui("accountData.insights.noFeasibleAllocation")}
+        </div>
+        <p className="mt-1 text-xs leading-snug text-muted-foreground">
+          {isPending
+            ? t.ui("accountData.insights.allocationPendingDesc")
+            : t.ui("accountData.insights.noFeasibleAllocationDesc")}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function buildIdleStatSheet(
   artifacts: Partial<Record<Slot, ArtifactData | null>>,
   charId: string,
@@ -370,6 +407,7 @@ function ScoreUpCardComponent({
   tier,
   recommendations,
   allocatedBuild,
+  allocationStatus,
   score,
   artifactLookup,
 }: ScoreUpCardProps) {
@@ -423,6 +461,8 @@ function ScoreUpCardComponent({
     return null;
   })();
   const recs = recommendations ?? [];
+  const resolvedAllocationStatus =
+    allocationStatus ?? (allocatedBuild ? "allocated" : "unallocated");
   const allocationRecs = recs.filter((rec) => rec.actionType !== "upgrade");
   const upgradeRecs = recs.filter((rec) => rec.actionType === "upgrade");
   const currentArtifacts = useMemo(() => {
@@ -572,6 +612,13 @@ function ScoreUpCardComponent({
         {/* Recommendations */}
         {tier !== "Pool" && (
           <CardContent className="p-0 flex-1 flex flex-col">
+            {resolvedAllocationStatus !== "allocated" && (
+              <AllocationStatusMessage
+                status={resolvedAllocationStatus}
+                t={t}
+              />
+            )}
+
             {allocatedBuild && (
               <section className="p-0 md:p-1 lg:p-2 border-t border-border/10">
                 <div className="flex items-center gap-1 pr-1 text-xs md:text-sm font-bold tabular-nums">

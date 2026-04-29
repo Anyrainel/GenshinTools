@@ -218,6 +218,7 @@ export function RecommendationView({
         scoreResult: ArtifactScoreResult;
         recommendations: ScoreUpAction[];
         allocatedBuild: CharacterActions["allocatedBuild"];
+        allocationStatus: "pending" | "allocated" | "unallocated";
       }[]
     > = {};
     for (const tier of tiers) {
@@ -234,6 +235,12 @@ export function RecommendationView({
       const charRecs = displayedRecommendations.perCharacter[char.key];
       const recommendations = charRecs?.actions ?? [];
       const allocatedBuild = charRecs?.allocatedBuild ?? null;
+      const allocationStatus =
+        !charRecs && isCalculating
+          ? "pending"
+          : allocatedBuild
+            ? "allocated"
+            : "unallocated";
 
       if (!byTier[tier]) {
         if (!byTier.Pool) byTier.Pool = [];
@@ -242,6 +249,7 @@ export function RecommendationView({
           scoreResult,
           recommendations,
           allocatedBuild,
+          allocationStatus,
         });
       } else {
         byTier[tier].push({
@@ -249,6 +257,7 @@ export function RecommendationView({
           scoreResult,
           recommendations,
           allocatedBuild,
+          allocationStatus,
         });
       }
     }
@@ -269,7 +278,13 @@ export function RecommendationView({
     }
 
     return byTier;
-  }, [accountData, scores, tierAssignments, displayedRecommendations]);
+  }, [
+    accountData,
+    scores,
+    tierAssignments,
+    displayedRecommendations,
+    isCalculating,
+  ]);
 
   const selectedApplyTierSet = useMemo(
     () => new Set(selectedApplyTiers),
@@ -570,13 +585,20 @@ export function RecommendationView({
             {/* Per-character cards — grid layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
               {chars.map(
-                ({ char, scoreResult, recommendations, allocatedBuild }) => (
+                ({
+                  char,
+                  scoreResult,
+                  recommendations,
+                  allocatedBuild,
+                  allocationStatus,
+                }) => (
                   <ScoreUpCard
                     key={char.key}
                     char={char}
                     tier={tier}
                     recommendations={recommendations}
                     allocatedBuild={allocatedBuild}
+                    allocationStatus={allocationStatus}
                     score={scoreResult}
                     artifactLookup={artifactLookup}
                   />
