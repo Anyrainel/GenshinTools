@@ -3,6 +3,10 @@ import type { MainStat, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData, Build } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
+import {
+  type StatWeightMap,
+  scoreSlot,
+} from "@/lib/artifact/scoring/artifactScore";
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 import { runConcentrationValueRules } from "./concentrationValue";
 import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./constants";
@@ -82,6 +86,7 @@ export function runTriage(
 
   // 3. Count demand per embryoKey (unique characters)
   const demandCounts = new Map<string, Set<string>>();
+  const statWeightsByEmbryoKey = new Map<string, StatWeightMap>();
   for (const rule of rules) {
     const key = makeEmbryoKey(
       rule.demandSource,
@@ -91,6 +96,7 @@ export function runTriage(
     );
     if (!demandCounts.has(key)) demandCounts.set(key, new Set());
     demandCounts.get(key)!.add(rule.characterId);
+    mergeMaxStatWeights(statWeightsByEmbryoKey, key, rule.statWeights);
   }
 
   // Collect all artifacts
@@ -132,6 +138,7 @@ export function runTriage(
     embryoKey: string;
     tier: QualityTier;
     rarity: number;
+    scopedScore: number;
   };
 
   type RankedEdge = CandidateEvaluation & {
@@ -207,7 +214,11 @@ export function runTriage(
       .sort((a, b) => {
         const ka = makeEmbryoKey(a.demandSource, a.slot, a.mainStat, a.desired);
         const kb = makeEmbryoKey(b.demandSource, b.slot, b.mainStat, b.desired);
-        return ka.localeCompare(kb);
+        return (
+          ka.localeCompare(kb) ||
+          a.characterId.localeCompare(b.characterId) ||
+          a.buildId.localeCompare(b.buildId)
+        );
       });
 
     let bestTier: QualityTier = "fodder";
@@ -216,12 +227,21 @@ export function runTriage(
     const evaluations: CandidateEvaluation[] = [];
 
     for (const rule of matchedRules) {
-      const tierResult = evaluateTier(substats, hasFourInitialSubstats, rule);
       const embryoKey = makeEmbryoKey(
         rule.demandSource,
         rule.slot,
         rule.mainStat,
         rule.desired
+      );
+      const tierResult = evaluateTier(
+        substats,
+        hasFourInitialSubstats,
+        rule,
+        settings.triageMode
+      );
+      const scopedScore = scoreSlot(
+        artifact,
+        statWeightsByEmbryoKey.get(embryoKey) ?? {}
       );
 
       const embryoMatch: EmbryoMatch = {
@@ -265,6 +285,7 @@ export function runTriage(
         embryoKey,
         tier: tierResult.tier,
         rarity: tierResult.matchedCondition?.rarity ?? Number.POSITIVE_INFINITY,
+        scopedScore,
       });
 
       if (tierRank(tierResult.tier) < tierRank(bestTier)) {
@@ -352,11 +373,11 @@ export function runTriage(
       allEdges.push({ ...evaluation, prelim });
     }
   }
-  allEdges.sort(compareRankedEdges);
+  const rankedEdges = buildStableOwnedEdges(allEdges, demandCounts);
 
-  const supplyDemandByEdge = buildSupplyDemandByEdge(allEdges, demandCounts);
+  const supplyDemandByEdge = buildSupplyDemandByEdge(rankedEdges, demandCounts);
   const bestEdgeByPrelim = new Map<PrelimResult, RankedEdge>();
-  for (const edge of allEdges) {
+  for (const edge of rankedEdges) {
     if (!bestEdgeByPrelim.has(edge.prelim)) {
       bestEdgeByPrelim.set(edge.prelim, edge);
     }
@@ -382,7 +403,7 @@ export function runTriage(
 
   // Prime, and optionally solid, are hard keeps. They do not consume the
   // demand+margin backup capacity, so loosening thresholds can only add locks.
-  for (const edge of allEdges) {
+  for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
     if (edge.tier === "prime") {
       allocate(edge, "primeTierKeep");
@@ -393,7 +414,7 @@ export function runTriage(
 
   // Capacity-limited keeps for remaining solid/filler edges. Capacity is fixed
   // per embryo key, independent of threshold-dependent tier counts.
-  for (const edge of allEdges) {
+  for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
     if (edge.tier !== "solid" && edge.tier !== "filler") continue;
 
@@ -607,53 +628,161 @@ function rollCount(a: ArtifactData): number {
   return total;
 }
 
-/**
- * Roll-count restricted to the given substats. Used to tie-break artifacts
- * whose matched tier condition has the same rarity: the one with more "roll
- * mass" on the demanded substats (core + optional) is preferred.
- */
-function rollCountOn(a: ArtifactData, stats: SubStat[]): number {
-  const rarity = a.rarity === 4 ? 4 : 5;
-  let total = 0;
-  for (const stat of stats) {
-    const val = a.substats?.[stat];
-    if (typeof val !== "number") continue;
-    const avg = getSubstatAvgRoll(stat, rarity);
-    if (avg > 0) total += val / avg;
-  }
-  return total;
-}
-
 type RankedTriageEdge = {
   prelim: { artifact: ArtifactData };
   result: EmbryoResult;
   embryoKey: string;
   tier: QualityTier;
   rarity: number;
+  scopedScore: number;
 };
 
 /**
- * Stable cross-threshold edge rank. Rarity is raw end-to-end probability, not
- * the current threshold bucket, so changing strict/loose thresholds only
- * admits later edges and does not reorder already-eligible candidates.
+ * Stable rank inside a single demand queue. Rarity is raw end-to-end
+ * probability; scopedScore uses the max stat weights for that queue.
  */
 function compareRankedEdges(a: RankedTriageEdge, b: RankedTriageEdge): number {
   if (a.rarity !== b.rarity) return a.rarity - b.rarity;
-
-  const demA = a.result.embryo?.demand;
-  const demB = b.result.embryo?.demand;
-  const subsA = demA ? [...demA.coreStats, ...demA.valuableStats] : [];
-  const subsB = demB ? [...demB.coreStats, ...demB.valuableStats] : [];
-  const relA = rollCountOn(a.prelim.artifact, subsA);
-  const relB = rollCountOn(b.prelim.artifact, subsB);
-  if (relA !== relB) return relB - relA;
+  if (a.scopedScore !== b.scopedScore) return b.scopedScore - a.scopedScore;
 
   return (
     rollCount(b.prelim.artifact) - rollCount(a.prelim.artifact) ||
     b.prelim.artifact.level - a.prelim.artifact.level ||
     a.prelim.artifact.id.localeCompare(b.prelim.artifact.id) ||
-    a.embryoKey.localeCompare(b.embryoKey)
+    a.embryoKey.localeCompare(b.embryoKey) ||
+    demandIdentity(a).localeCompare(demandIdentity(b))
   );
+}
+
+function mergeMaxStatWeights(
+  weightsByKey: Map<string, StatWeightMap>,
+  embryoKey: string,
+  weights: StatWeightMap
+): void {
+  const merged = weightsByKey.get(embryoKey) ?? {};
+  for (const [stat, weight] of Object.entries(weights) as [
+    SubStat,
+    number | undefined,
+  ][]) {
+    if (weight == null) continue;
+    merged[stat] = Math.max(merged[stat] ?? 0, weight);
+  }
+  weightsByKey.set(embryoKey, merged);
+}
+
+function demandIdentity(edge: RankedTriageEdge): string {
+  const demand = edge.result.embryo?.demand;
+  if (!demand) return "";
+  return `${demand.characterId}:${demand.buildId}`;
+}
+
+type DemandQueueStats = {
+  demand: number;
+  supply: number;
+  pressure: number;
+};
+
+function compareQueueKeys(
+  a: string,
+  b: string,
+  stats: Map<string, DemandQueueStats>
+): number {
+  const sa = stats.get(a);
+  const sb = stats.get(b);
+  return (
+    (sb?.pressure ?? 0) - (sa?.pressure ?? 0) ||
+    (sb?.demand ?? 0) - (sa?.demand ?? 0) ||
+    (sa?.supply ?? 0) - (sb?.supply ?? 0) ||
+    a.localeCompare(b)
+  );
+}
+
+function compareOwnershipConflict<T extends RankedTriageEdge>(
+  a: T,
+  b: T,
+  stats: Map<string, DemandQueueStats>
+): number {
+  if (a.rarity !== b.rarity) return a.rarity - b.rarity;
+  const keyRank = compareQueueKeys(a.embryoKey, b.embryoKey, stats);
+  if (keyRank !== 0) return keyRank;
+  if (a.embryoKey === b.embryoKey && a.scopedScore !== b.scopedScore) {
+    return b.scopedScore - a.scopedScore;
+  }
+  return (
+    a.prelim.artifact.id.localeCompare(b.prelim.artifact.id) ||
+    a.embryoKey.localeCompare(b.embryoKey) ||
+    demandIdentity(a).localeCompare(demandIdentity(b))
+  );
+}
+
+function buildStableOwnedEdges<T extends RankedTriageEdge>(
+  edges: T[],
+  demandCounts: Map<string, Set<string>>
+): T[] {
+  const dedupedByKeyAndArtifact = new Map<string, T>();
+  for (const edge of edges) {
+    const dedupeKey = `${edge.embryoKey}\u0000${edge.prelim.artifact.id}`;
+    const existing = dedupedByKeyAndArtifact.get(dedupeKey);
+    if (!existing || compareRankedEdges(edge, existing) < 0) {
+      dedupedByKeyAndArtifact.set(dedupeKey, edge);
+    }
+  }
+
+  const edgesByKey = new Map<string, T[]>();
+  for (const edge of dedupedByKeyAndArtifact.values()) {
+    if (!edgesByKey.has(edge.embryoKey)) edgesByKey.set(edge.embryoKey, []);
+    edgesByKey.get(edge.embryoKey)!.push(edge);
+  }
+
+  const stats = new Map<string, DemandQueueStats>();
+  for (const [embryoKey, keyEdges] of edgesByKey) {
+    keyEdges.sort(compareRankedEdges);
+    const demand = demandCounts.get(embryoKey)?.size ?? 0;
+    const supply = keyEdges.length;
+    stats.set(embryoKey, {
+      demand,
+      supply,
+      pressure: supply > 0 ? demand / supply : 0,
+    });
+  }
+
+  const keyOrder = [...edgesByKey.keys()].sort((a, b) =>
+    compareQueueKeys(a, b, stats)
+  );
+  const maxQueueLength = Math.max(
+    0,
+    ...[...edgesByKey.values()].map((keyEdges) => keyEdges.length)
+  );
+  const ownedEdges: T[] = [];
+  const claimedArtifactIds = new Set<string>();
+
+  for (let rank = 0; rank < maxQueueLength; rank++) {
+    const candidatesByArtifact = new Map<string, T[]>();
+    for (const embryoKey of keyOrder) {
+      const edge = edgesByKey.get(embryoKey)?.[rank];
+      if (!edge || claimedArtifactIds.has(edge.prelim.artifact.id)) continue;
+      const artifactId = edge.prelim.artifact.id;
+      if (!candidatesByArtifact.has(artifactId)) {
+        candidatesByArtifact.set(artifactId, []);
+      }
+      candidatesByArtifact.get(artifactId)!.push(edge);
+    }
+
+    const roundWinners: T[] = [];
+    for (const candidates of candidatesByArtifact.values()) {
+      candidates.sort((a, b) => compareOwnershipConflict(a, b, stats));
+      roundWinners.push(candidates[0]);
+    }
+
+    roundWinners.sort((a, b) => compareOwnershipConflict(a, b, stats));
+    for (const edge of roundWinners) {
+      if (claimedArtifactIds.has(edge.prelim.artifact.id)) continue;
+      claimedArtifactIds.add(edge.prelim.artifact.id);
+      ownedEdges.push(edge);
+    }
+  }
+
+  return ownedEdges;
 }
 
 function buildSupplyDemandByEdge<T extends RankedTriageEdge>(

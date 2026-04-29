@@ -9,6 +9,7 @@ import type {
 } from "@/data/types";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { evaluateTier } from "@/lib/account-data/triage/tierEvaluator";
+import { getTier } from "@/lib/account-data/triage/tierMath";
 import { lookupTierEntry } from "@/lib/account-data/triage/tierTableBuilder";
 import { runTriage } from "@/lib/account-data/triage/triageEngine";
 import type {
@@ -442,6 +443,200 @@ describe("runTriage", () => {
     }
   });
 
+  it("ranks same-rarity candidates by scoped build score", () => {
+    const highCr = makeArt({
+      substats: rolls({ cr: 3, cd: 1, hp: 1, def: 1 }),
+    });
+    const highCd = makeArt({
+      substats: rolls({ cr: 1, cd: 3, hp: 1, def: 1 }),
+    });
+    const build = makeBuild({
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 20 },
+      ],
+    });
+    const account = makeAccount([{ key: "char_a" }], [highCd, highCr]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [build] }],
+      {
+        ...SETTINGS,
+        optionalSubThreshold: 90,
+        qualityMargin: 0,
+        fillerKeep: 1,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+
+    const byId = (id: string) => decisions.find((d) => d.artifact.id === id)!;
+    expect(byId(highCr.id).label).toBe("lock");
+    expect(byId(highCr.id).decidingResult?.ruleId).toBe("fillerShortfallKeep");
+    expect(byId(highCd.id).label).toBe("unlock");
+  });
+
+  it("maxes weights across same-key builds without changing the core stat key", () => {
+    const highCd = makeArt({
+      substats: rolls({ cr: 2, cd: 4, hp: 1, def: 1 }),
+    });
+    const highHp = makeArt({
+      substats: rolls({ cr: 2, "hp%": 4, hp: 1, def: 1 }),
+    });
+    const lowCdBuild = makeBuild({
+      id: "low_cd",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 10 },
+      ],
+    });
+    const highCdBuild = makeBuild({
+      id: "high_cd",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 80 },
+      ],
+    });
+    const account = makeAccount(
+      [{ key: "char_a" }, { key: "char_b" }],
+      [highHp, highCd]
+    );
+    const { decisions } = runTriage(
+      account,
+      [
+        { characterId: "char_a", builds: [lowCdBuild] },
+        { characterId: "char_b", builds: [highCdBuild] },
+      ],
+      {
+        ...SETTINGS,
+        optionalSubThreshold: 90,
+        qualityMargin: 0,
+        fillerKeep: 1,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+
+    const byId = (id: string) => decisions.find((d) => d.artifact.id === id)!;
+    expect(byId(highCd.id).label).toBe("lock");
+    expect(byId(highCd.id).decidingResult?.embryo?.demand.coreStats).toEqual([
+      "cr",
+    ]);
+    expect(byId(highHp.id).label).toBe("unlock");
+    expect(byId(highHp.id).decidingResult?.embryo?.demand.coreStats).toEqual([
+      "cr",
+    ]);
+  });
+
+  it("assigns a shared same-rank candidate to its rarer match", () => {
+    const shared = makeArt({
+      substats: rolls({ cr: 2, cd: 1, "atk%": 6, hp: 1 }),
+    });
+    const crOnly = makeArt({
+      substats: rolls({ cr: 2, hp: 1, def: 1, atk: 1 }),
+    });
+    const crBuild = makeBuild({
+      id: "cr_build",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "atk%", weight: 89 },
+      ],
+    });
+    const critBuild = makeBuild({
+      id: "crit_build",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 100 },
+      ],
+    });
+    const account = makeAccount(
+      [{ key: "char_a" }, { key: "char_b" }],
+      [shared, crOnly]
+    );
+    const { decisions } = runTriage(
+      account,
+      [
+        { characterId: "char_a", builds: [crBuild] },
+        { characterId: "char_b", builds: [critBuild] },
+      ],
+      {
+        ...SETTINGS,
+        optionalSubThreshold: 90,
+        qualityMargin: 0,
+        fillerKeep: 1,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+
+    const byId = (id: string) => decisions.find((d) => d.artifact.id === id)!;
+    expect(byId(shared.id).label).toBe("lock");
+    expect(byId(shared.id).decidingResult?.embryo?.demand.coreStats).toEqual([
+      "cd",
+      "cr",
+    ]);
+    expect(byId(crOnly.id).decidingResult?.embryo?.demand.coreStats).toEqual([
+      "cr",
+    ]);
+  });
+
+  it("keeps shared-candidate ownership stable across strict and loose modes", () => {
+    const shared = makeArt({
+      substats: rolls({ cr: 2, cd: 1, "atk%": 6, hp: 1 }),
+    });
+    const crBuild = makeBuild({
+      id: "cr_build",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "atk%", weight: 89 },
+      ],
+    });
+    const critBuild = makeBuild({
+      id: "crit_build",
+      substats: [
+        { stat: "cr", weight: 100 },
+        { stat: "cd", weight: 100 },
+      ],
+    });
+    const account = makeAccount(
+      [{ key: "char_a" }, { key: "char_b" }],
+      [shared]
+    );
+    const commonSettings: TriageSettings = {
+      ...SETTINGS,
+      optionalSubThreshold: 90,
+      qualityMargin: 0,
+      fillerKeep: 1,
+      setSlotKeep: 0,
+      doubleCritLockEnabled: false,
+    };
+    const buildGroups = [
+      { characterId: "char_a", builds: [crBuild] },
+      { characterId: "char_b", builds: [critBuild] },
+    ];
+
+    const strict = runTriage(account, buildGroups, {
+      ...commonSettings,
+      triageMode: "strict",
+    }).decisions[0];
+    const loose = runTriage(account, buildGroups, {
+      ...commonSettings,
+      triageMode: "loose",
+    }).decisions[0];
+
+    expect(strict.decidingResult?.embryo?.embryoKey).toBe(
+      loose.decidingResult?.embryo?.embryoKey
+    );
+    expect(strict.decidingResult?.embryo?.demand.coreStats).toEqual([
+      "cd",
+      "cr",
+    ]);
+    expect(loose.decidingResult?.embryo?.demand.coreStats).toEqual([
+      "cd",
+      "cr",
+    ]);
+  });
+
   it("fillerKeep: respects different values (keep 1 vs 3)", () => {
     const build1 = makeBuild({ id: "b1" });
     const build2 = makeBuild({ id: "b2" });
@@ -536,8 +731,12 @@ describe("runTriage", () => {
     );
 
     // Find prime-tier and solid-tier conditions from the computed condition table
-    const primeCondition = entry.conditions.find((c) => c.tier === "prime");
-    const solidCondition = entry.conditions.find((c) => c.tier === "solid");
+    const primeCondition = entry.conditions.find(
+      (c) => getTier(c.rarity, "circlet", SETTINGS.triageMode) === "prime"
+    );
+    const solidCondition = entry.conditions.find(
+      (c) => getTier(c.rarity, "circlet", SETTINGS.triageMode) === "solid"
+    );
 
     // Skip test if tier table doesn't produce both tiers (shouldn't happen)
     if (!primeCondition || !solidCondition) return;
@@ -587,13 +786,22 @@ describe("runTriage", () => {
 
     // Verify tier assignments using the evaluator directly
     const rule = {
+      slot: "circlet" as const,
+      mainStat: "heal%" as MainStat,
       desired,
       optional: [] as SubStat[],
       fillers,
+      statWeights: {},
       tierEntry: entry,
     } as Pick<
       TriageRule,
-      "desired" | "optional" | "fillers" | "tierEntry"
+      | "slot"
+      | "mainStat"
+      | "desired"
+      | "optional"
+      | "fillers"
+      | "statWeights"
+      | "tierEntry"
     > as TriageRule;
     const primeTier = evaluateTier(
       Object.keys(primeSubstats) as SubStat[],

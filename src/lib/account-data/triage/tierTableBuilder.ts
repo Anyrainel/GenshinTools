@@ -6,12 +6,10 @@
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import {
   FOUR_INITIAL_SUBSTAT_EFFECTIVE_PROBABILITY,
-  getTier,
   pJoint,
   SUB_WEIGHTS,
-  type TriageMode,
 } from "./tierMath";
-import type { DemandTierEntry, QualityTier, TierCondition } from "./types";
+import type { DemandTierEntry, TierCondition } from "./types";
 
 // Main stat weight pools (same as triage-tier-table.js MAIN_W)
 
@@ -114,12 +112,10 @@ function computeConditionRows(
   pool: Record<string, number>,
   remaining: string[],
   fillers: string[],
-  mainProb: number,
-  slot: Slot,
-  mode: TriageMode
+  mainProb: number
 ): TierCondition[] {
   const desiredSubstatCount = remaining.length;
-  if (desiredSubstatCount === 0) return [];
+  if (desiredSubstatCount === 0 || mainProb <= 0) return [];
 
   const maxRequiredDesiredHits = Math.min(desiredSubstatCount, 4);
   const hasCritPair =
@@ -133,17 +129,13 @@ function computeConditionRows(
   // hit>=0: rare main stat fallback
   {
     const endToEndProbability = mainProb;
-    const tier = getTier(endToEndProbability, slot, mode);
-    if (tier !== "fodder") {
-      rows.push({
-        requiredDesiredHits: 0,
-        requiresCritPair: false,
-        requiresFourInitialSubstats: false,
-        requiresFillerHit: false,
-        tier,
-        rarity: endToEndProbability,
-      });
-    }
+    rows.push({
+      requiredDesiredHits: 0,
+      requiresCritPair: false,
+      requiresFourInitialSubstats: false,
+      requiresFillerHit: false,
+      rarity: endToEndProbability,
+    });
   }
 
   for (
@@ -171,10 +163,7 @@ function computeConditionRows(
       requiresFourInitialSubstats: boolean;
       requiresFillerHit: boolean;
       endToEndProbability: number;
-      tier: QualityTier;
-      key: string;
     };
-    const comboTier = new Map<string, string>();
     const comboData: Combo[] = [];
 
     for (const requiresCritPair of canRequireCritPair
@@ -214,71 +203,34 @@ function computeConditionRows(
               FOUR_INITIAL_SUBSTAT_EFFECTIVE_PROBABILITY *
               substatProbability
             : mainProb * substatProbability;
-          const tier = getTier(endToEndProbability, slot, mode);
-          const key = `${+requiresCritPair},${+requiresFourInitialSubstats},${+requiresFillerHit}`;
-          comboTier.set(key, tier);
           comboData.push({
             requiresCritPair,
             requiresFourInitialSubstats,
             requiresFillerHit,
             endToEndProbability,
-            tier,
-            key,
           });
         }
       }
     }
 
-    // Lattice filter: show combo only if each active modifier is needed
     for (const combo of comboData) {
       const {
         requiresCritPair,
         requiresFourInitialSubstats,
         requiresFillerHit,
       } = combo;
-      const isBase =
-        !requiresCritPair && !requiresFourInitialSubstats && !requiresFillerHit;
-
-      if (!isBase) {
-        let dominated = false;
-        if (requiresCritPair) {
-          const tierWithoutModifier = comboTier.get(
-            `0,${+requiresFourInitialSubstats},${+requiresFillerHit}`
-          );
-          if (!tierWithoutModifier || tierWithoutModifier === "prime")
-            dominated = true;
-        }
-        if (requiresFourInitialSubstats) {
-          const tierWithoutModifier = comboTier.get(
-            `${+requiresCritPair},0,${+requiresFillerHit}`
-          );
-          if (!tierWithoutModifier || tierWithoutModifier === "prime")
-            dominated = true;
-        }
-        if (requiresFillerHit) {
-          const tierWithoutModifier = comboTier.get(
-            `${+requiresCritPair},${+requiresFourInitialSubstats},0`
-          );
-          if (!tierWithoutModifier || tierWithoutModifier === "prime")
-            dominated = true;
-        }
-        if (dominated) continue;
-      }
-
-      if (combo.tier === "fodder") continue;
 
       rows.push({
         requiredDesiredHits,
         requiresCritPair,
         requiresFourInitialSubstats,
         requiresFillerHit,
-        tier: combo.tier as Exclude<ReturnType<typeof getTier>, "fodder">,
         rarity: combo.endToEndProbability,
       });
     }
   }
 
-  // Sort by rarity ascending (rarest first = best tier first)
+  // Sort by rarity ascending (rarest first).
   rows.sort((a, b) => a.rarity - b.rarity);
   return rows;
 }
@@ -291,10 +243,9 @@ export function lookupTierEntry(
   slot: Slot,
   mainStat: MainStat,
   desired: SubStat[],
-  fillers: SubStat[],
-  mode: TriageMode = "strict"
+  fillers: SubStat[]
 ): DemandTierEntry {
-  const key = `${mode}|${structuralKey(slot, mainStat, desired, fillers)}`;
+  const key = structuralKey(slot, mainStat, desired, fillers);
   const cached = cache.get(key);
   if (cached) return cached;
 
@@ -311,9 +262,7 @@ export function lookupTierEntry(
     pool,
     remaining,
     effectiveFillers,
-    mainProb,
-    slot,
-    mode
+    mainProb
   );
 
   const hasCritPair =

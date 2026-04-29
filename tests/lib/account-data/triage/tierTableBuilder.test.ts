@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { getTier } from "@/lib/account-data/triage/tierMath";
 import {
   clearTierTableCache,
   getMainProb,
@@ -72,19 +73,29 @@ describe("lookupTierEntry", () => {
     expect(entry.conditions.length).toBeGreaterThan(0);
   });
 
-  it("conditions are sorted best-first (prime before solid before filler)", () => {
+  it("conditions are sorted by rarity ascending", () => {
     const entry = lookupTierEntry(
       "flower",
       "hp",
       ["cr", "cd", "atk%", "er"],
       []
     );
-    const tierOrder = { prime: 0, solid: 1, filler: 2 };
     for (let i = 1; i < entry.conditions.length; i++) {
-      const prev = tierOrder[entry.conditions[i - 1].tier];
-      const curr = tierOrder[entry.conditions[i].tier];
-      expect(curr).toBeGreaterThanOrEqual(prev);
+      expect(entry.conditions[i].rarity).toBeGreaterThanOrEqual(
+        entry.conditions[i - 1].rarity
+      );
     }
+  });
+
+  it("uses the same raw condition rows for strict and loose tier labels", () => {
+    const entry = lookupTierEntry("flower", "hp", ["cr", "cd"], []);
+    const condition = entry.conditions.find(
+      (c) => c.requiredDesiredHits === 2 && !c.requiresFourInitialSubstats
+    );
+
+    expect(condition).toBeDefined();
+    expect(getTier(condition!.rarity, "flower", "strict")).toBe("filler");
+    expect(getTier(condition!.rarity, "flower", "loose")).toBe("solid");
   });
 
   it("desired stat matching main stat is excluded from desired substat count", () => {
@@ -114,7 +125,9 @@ describe("lookupTierEntry", () => {
     );
     expect(noDesiredHitCondition).toBeDefined();
     // pyro% goblet ~5% main prob, no-hit rarity = mainProb alone
-    expect(["prime", "solid", "filler"]).toContain(noDesiredHitCondition!.tier);
+    expect(getTier(noDesiredHitCondition!.rarity, "goblet", "strict")).toBe(
+      "filler"
+    );
   });
 
   it("circlet em has conditions", () => {

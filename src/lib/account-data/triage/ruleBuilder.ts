@@ -1,6 +1,7 @@
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type { AccountData, Build } from "@/data/types";
+import { buildToWeightMap } from "@/lib/artifact/scoring/artifactScore";
 import { getAcceptedMainStats } from "./demandExtractor";
 import { lookupTierEntry } from "./tierTableBuilder";
 import type { TriageRule, TriageSettings } from "./types";
@@ -98,6 +99,7 @@ function buildToRules(
   }
   desired.sort();
   optional.sort();
+  const statWeights = buildToWeightMap(build);
 
   // Determine demand source
   const demandSources: Array<{
@@ -132,13 +134,7 @@ function buildToRules(
       );
       for (const mainStat of acceptedMain) {
         const fillers = deriveFillers(desired, slot, mainStat);
-        const tierEntry = lookupTierEntry(
-          slot,
-          mainStat,
-          desired,
-          fillers,
-          settings.triageMode
-        );
+        const tierEntry = lookupTierEntry(slot, mainStat, desired, fillers);
 
         rules.push({
           characterId,
@@ -149,6 +145,7 @@ function buildToRules(
           desired,
           optional,
           fillers,
+          statWeights,
           tierEntry,
         });
       }

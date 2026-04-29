@@ -1,5 +1,6 @@
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
+import type { StatWeightMap } from "@/lib/artifact/scoring/artifactScore";
 
 // Core labels & tiers
 
@@ -137,11 +138,10 @@ export type TierCondition = {
   requiresCritPair: boolean;
   requiresFourInitialSubstats: boolean;
   requiresFillerHit: boolean;
-  tier: Exclude<QualityTier, "fodder">;
   /**
-   * End-to-end probability that a random artifact (same set/slot/main-stat
-   * scenario) would satisfy this condition. Lower = rarer = better. Used as
-   * the primary ranking signal within a tier.
+   * End-to-end probability that a random artifact would satisfy this raw
+   * condition. Lower = rarer = better. The selected triage mode maps this
+   * probability to a tier at evaluation time.
    */
   rarity: number;
 };
@@ -150,7 +150,7 @@ export type DemandTierEntry = {
   desiredSubstatCount: number;
   hasCritPair: boolean;
   hasFillers: boolean;
-  conditions: TierCondition[]; // sorted best-first (prime → solid → filler)
+  conditions: TierCondition[]; // sorted by rarity ascending
 };
 
 export type TriageRule = {
@@ -162,6 +162,7 @@ export type TriageRule = {
   desired: SubStat[];
   optional: SubStat[]; // for ranking only
   fillers: SubStat[];
+  statWeights: StatWeightMap;
   tierEntry: DemandTierEntry;
 };
 

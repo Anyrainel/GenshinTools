@@ -1,4 +1,5 @@
 import type { SubStat } from "@/data/enums";
+import { getTier, type TriageMode } from "./tierMath";
 import type { QualityTier, TierCondition, TriageRule } from "./types";
 
 function countHits(subs: SubStat[], targets: SubStat[]): number {
@@ -20,7 +21,8 @@ export type TierResult = {
 export function evaluateTier(
   artifactSubs: SubStat[],
   startedWithFourSubstats: boolean,
-  rule: TriageRule
+  rule: TriageRule,
+  mode: TriageMode = "strict"
 ): TierResult {
   const hitCount = countHits(artifactSubs, rule.desired);
   const hitOptional = countHits(artifactSubs, rule.optional);
@@ -36,8 +38,9 @@ export function evaluateTier(
     if (cond.requiresCritPair && !hasCritPair) continue;
     if (cond.requiresFourInitialSubstats && !startedWithFourSubstats) continue;
     if (cond.requiresFillerHit && !hasFill) continue;
+    const tier = getTier(cond.rarity, rule.slot, mode);
     return {
-      tier: cond.tier,
+      tier,
       hitCount,
       hitOptional,
       hitTotal,
