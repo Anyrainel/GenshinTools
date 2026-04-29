@@ -41,6 +41,49 @@ describe("useResolvedBuilds", () => {
     expect(result.current[0]!.characterId).toBe("hu_tao");
     expect(result.current[0]!.source).toBe("custom");
   });
+
+  it("appends preset builds added after subscription", () => {
+    const p1 = {
+      id: "p-1",
+      characterId: "hu_tao",
+      name: "Preset 1",
+      visible: true,
+      composition: "4pc" as const,
+      substats: [],
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
+    };
+    const p2 = { ...p1, id: "p-2", name: "Preset 2" };
+    const p3 = { ...p1, id: "p-3", name: "Preset 3" };
+    const originalPreset: BuildPayloadV5 = {
+      version: 5,
+      id: "preset",
+      author: "",
+      description: "",
+      builds: { "p-1": p1, "p-2": p2 },
+      characterBuilds: { hu_tao: ["p-1", "p-2"] },
+      characterWeapons: {},
+    };
+    const updatedPreset: BuildPayloadV5 = {
+      ...originalPreset,
+      builds: { ...originalPreset.builds, "p-3": p3 },
+      characterBuilds: { hu_tao: ["p-1", "p-2", "p-3"] },
+    };
+
+    useBuildsStore.getState().subscribePreset("preset", originalPreset);
+    mockGetCachedPreset.mockReturnValue(updatedPreset);
+    mockLoadPreset.mockResolvedValue(updatedPreset);
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+
+    expect(result.current.map((build) => build.id)).toEqual([
+      "p-1",
+      "p-2",
+      "p-3",
+    ]);
+  });
 });
 
 describe("useResolvedBuilds reference stability", () => {

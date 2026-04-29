@@ -11,6 +11,7 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Build, BuildGroup } from "@/data/types";
+import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import {
   buildRawConfigs,
   DEFAULT_COMPUTE_OPTIONS,
@@ -43,19 +44,10 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
    * Helper to create BuildGroups from store state
    */
   function createBuildGroupsFromStore(): BuildGroup[] {
-    const builds = useBuildsStore.getState().builds;
-    const characterToBuildIds = useBuildsStore.getState().characterToBuildIds;
-    const hiddenCharacters = useBuildsStore.getState().hiddenCharacters;
-
-    return Object.entries(characterToBuildIds).map(
-      ([characterId, buildIds]) => ({
-        characterId,
-        hidden: !!hiddenCharacters[characterId],
-        builds: buildIds
-          .map((id) => builds[id])
-          .filter((b): b is Build => b?.visible),
-      })
-    );
+    return resolveAllBuildsSnapshot().map((group) => ({
+      ...group,
+      builds: group.builds.filter((build): build is Build => build.visible),
+    }));
   }
 
   it("generates filters from a single character build", async () => {

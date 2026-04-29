@@ -1,3 +1,4 @@
+import { waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -77,14 +78,16 @@ describe("BuildCard", () => {
   it("toggles visibility via switch", async () => {
     const user = userEvent.setup();
     renderBuildCard();
+    const stateBefore = useBuildsStore.getState();
+    const buildId = Object.keys(stateBefore.builds)[0];
 
     const toggle = screen.getByRole("switch");
     const wasChecked = toggle.getAttribute("aria-checked") === "true";
     await user.click(toggle);
 
-    const state = useBuildsStore.getState();
-    const buildId = Object.keys(state.builds)[0];
-    const build = state.builds[buildId];
-    expect(build.visible).toBe(!wasChecked);
+    await waitFor(() => {
+      const build = useBuildsStore.getState().builds[buildId];
+      expect(build.visible).toBe(!wasChecked);
+    });
   });
 });

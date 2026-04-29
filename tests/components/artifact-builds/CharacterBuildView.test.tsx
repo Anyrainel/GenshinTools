@@ -58,9 +58,7 @@ vi.mock("@/hooks/useActiveAccount", () => ({
 }));
 
 vi.mock("@/stores/useBuildsStore", () => ({
-  useBuildsStore: vi.fn(
-    () => ({ char1: ["b1"] }) // characterToBuildIds — non-empty so hasAnyBuilds = true
-  ),
+  useBuildsStore: vi.fn((selector) => selector({ hasBuildData: () => true })),
 }));
 
 vi.mock("@/components/artifact-builds/BuildsEmptyState", () => ({
@@ -168,8 +166,9 @@ describe("CharacterBuildView", () => {
   });
 
   it("shows BuildsEmptyState and no sidebar when no builds exist", () => {
-    // Override the store mock to return empty characterToBuildIds
-    vi.mocked(useBuildsStore).mockImplementation(() => ({}) as never);
+    vi.mocked(useBuildsStore).mockImplementation((selector) =>
+      selector({ hasBuildData: () => false } as never)
+    );
 
     render(<CharacterBuildView />);
 

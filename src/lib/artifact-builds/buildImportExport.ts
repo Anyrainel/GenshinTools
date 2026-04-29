@@ -1,5 +1,11 @@
 import type { Draft } from "immer";
 import type { Build, BuildPayload, BuildPayloadV5 } from "@/data/types";
+import {
+  type BuildDelta,
+  setBuildDeltaOrderForCharacter,
+  upsertCustomBuildDelta,
+  upsertPresetBuildDelta,
+} from "@/lib/artifact-builds/buildDeltas";
 import type { BuildsState } from "@/stores/useBuildsStore";
 import { migrateBuild } from "./buildMigration";
 import { areBuildsEqual } from "./buildUtils";
@@ -12,23 +18,29 @@ export function executeSubscribePreset(
   payload: BuildPayloadV5
 ) {
   state.activePresetId = presetId;
-  state.presetDeletedBuildIds = [];
   if (payload.author) state.author = payload.author;
   if (payload.description) state.description = payload.description;
 
-  // Populate characterToBuildIds from preset, preserving custom builds
+  let nextDeltas: BuildDelta[] = state.deltas.filter(
+    (delta) => delta.kind === "custom"
+  ) as BuildDelta[];
+
+  for (const presetBuildIds of Object.values(payload.characterBuilds)) {
+    presetBuildIds.forEach((id, displayIndex) => {
+      nextDeltas = upsertPresetBuildDelta(nextDeltas, id, { displayIndex });
+    });
+  }
+
   for (const [charId, presetBuildIds] of Object.entries(
     payload.characterBuilds
   )) {
     const existingIds = state.characterToBuildIds[charId] || [];
     const presetIdSet = new Set(presetBuildIds);
+    let customIndex = presetBuildIds.length;
 
-    // Deduplication: Remove local custom builds that perfectly mirror a preset build
-    const customIds = existingIds.filter((id) => {
-      if (presetIdSet.has(id)) return false;
-
+    for (const id of existingIds) {
       const localBuild = state.builds[id];
-      if (!localBuild) return true;
+      if (!localBuild) continue;
 
       const isDuplicate = presetBuildIds.some((presetBuildId) => {
         const presetBuild = payload.builds[presetBuildId];
@@ -36,16 +48,41 @@ export function executeSubscribePreset(
       });
 
       if (isDuplicate) {
-        delete state.builds[id];
-        delete state.validationErrors[id];
-        return false;
+        nextDeltas = nextDeltas.filter(
+          (delta) => !(delta.kind === "custom" && delta.id === id)
+        );
+        continue;
       }
 
-      return true;
-    });
-
-    state.characterToBuildIds[charId] = [...presetBuildIds, ...customIds];
+      if (presetIdSet.has(id)) {
+        nextDeltas = upsertCustomBuildDelta(
+          nextDeltas,
+          localBuild,
+          presetBuildIds.indexOf(id)
+        );
+      } else {
+        nextDeltas = upsertCustomBuildDelta(
+          nextDeltas,
+          localBuild,
+          customIndex
+        );
+        customIndex += 1;
+      }
+    }
   }
+
+  for (const delta of state.deltas) {
+    if (delta.kind !== "custom") continue;
+    const charId = delta.value.characterId;
+    if (payload.characterBuilds[charId]) continue;
+    nextDeltas = upsertCustomBuildDelta(
+      nextDeltas,
+      delta.value,
+      delta.displayIndex
+    );
+  }
+
+  state.deltas = nextDeltas;
 
   // Copy weapons only for characters without existing customizations
   for (const [charId, weapons] of Object.entries(payload.characterWeapons)) {
@@ -61,7 +98,7 @@ export function executeImportBuilds(
 ) {
   // Reset to "Custom Mode" (No Preset)
   state.activePresetId = null;
-  state.presetDeletedBuildIds = [];
+  state.deltas = state.deltas.filter((delta) => delta.kind === "custom");
 
   // Set metadata if available
   if (payload.author) state.author = payload.author;
@@ -80,12 +117,19 @@ export function executeImportBuilds(
     for (const [id, build] of Object.entries(v5.builds)) {
       migrateBuild(build);
       state.builds[id] = build;
+      state.deltas = upsertCustomBuildDelta(state.deltas, build);
       state.validationErrors[id] = getBuildValidationErrors(build);
     }
 
     // Merge Character Mappings (using deduplication optionally, but import means replacing references usually)
     for (const [charId, ids] of Object.entries(v5.characterBuilds)) {
       state.characterToBuildIds[charId] = ids;
+      state.deltas = setBuildDeltaOrderForCharacter(
+        state.deltas,
+        charId,
+        ids,
+        null
+      );
     }
 
     // Merge Weapons
@@ -106,6 +150,11 @@ export function executeImportBuilds(
         migrateBuild(buildWithCharacterId);
 
         state.builds[build.id] = buildWithCharacterId;
+        state.deltas = upsertCustomBuildDelta(
+          state.deltas,
+          buildWithCharacterId,
+          buildIds.length
+        );
         state.validationErrors[build.id] =
           getBuildValidationErrors(buildWithCharacterId);
         buildIds.push(build.id);
@@ -113,6 +162,12 @@ export function executeImportBuilds(
 
       if (buildIds.length > 0) {
         state.characterToBuildIds[characterId] = buildIds;
+        state.deltas = setBuildDeltaOrderForCharacter(
+          state.deltas,
+          characterId,
+          buildIds,
+          null
+        );
       }
     }
 

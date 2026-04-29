@@ -49,8 +49,7 @@ export function CharacterBuildView({
 
   const activeAccountData = useActiveAccountData();
   const hasAccountData = activeAccountData != null;
-  const hasAnyBuilds =
-    Object.keys(useBuildsStore((s) => s.characterToBuildIds)).length > 0;
+  const hasAnyBuilds = useBuildsStore((s) => s.hasBuildData());
 
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;

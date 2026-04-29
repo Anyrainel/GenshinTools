@@ -31,7 +31,6 @@ import {
 } from "@/data/gameStatsLoader";
 import type { Build, CharacterResource, WeaponResource } from "@/data/types";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
-import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { BuildCard } from "./BuildCard";
@@ -165,24 +164,9 @@ function CharacterBuildCardComponent({
     state.getCharacterWeapons(character.id)
   );
 
-  // Has customizations = any build for this character has a local override, or a preset build was deleted
-  const hasCustomizations = useBuildsStore((state) => {
-    // Check 1: Any local build overrides (modified or custom)
-    const ids = state.characterToBuildIds[character.id];
-    if (ids?.some((id) => id in state.builds)) return true;
-
-    // Check 2: Any preset builds for this character were deleted
-    if (state.presetDeletedBuildIds.length > 0) {
-      const preset = getCachedPreset(state.activePresetId);
-      const presetBuildIds = preset?.characterBuilds?.[character.id];
-      if (
-        presetBuildIds?.some((id) => state.presetDeletedBuildIds.includes(id))
-      )
-        return true;
-    }
-
-    return false;
-  });
+  const hasCustomizations = useBuildsStore((state) =>
+    state.hasCharacterCustomizations(character.id)
+  );
 
   // Use useMemo with shallow comparison for array to prevent re-renders on reference changes
   const builds = useResolvedBuilds(character.id);

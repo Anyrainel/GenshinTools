@@ -14,6 +14,7 @@ import {
 } from "@/lib/account-data/resourceTips";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
+import { isCustomDelta, isPresetDelta } from "@/lib/presetDelta";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 
 export const DEFAULT_GLOBAL_STAT_WEIGHTS: GlobalStatWeights = {
@@ -167,6 +168,38 @@ export const BuildSchema = z
   })
   .loose();
 
+const RawBuildDeltaSchema = z.discriminatedUnion("kind", [
+  z
+    .object({
+      kind: z.literal("preset"),
+      id: z.string(),
+      displayIndex: z.number().optional(),
+      deleted: z.literal(true).optional(),
+    })
+    .loose(),
+  z
+    .object({
+      kind: z.literal("custom"),
+      id: z.string(),
+      value: BuildSchema,
+      displayIndex: z.number().optional(),
+    })
+    .loose(),
+]);
+
+const BuildDeltasSchema = z
+  .array(z.unknown())
+  .catch([])
+  .transform((items) =>
+    items.flatMap((item) => {
+      const parsed = RawBuildDeltaSchema.safeParse(item);
+      if (!parsed.success) return [];
+      const delta = parsed.data;
+      if (isCustomDelta(delta) || isPresetDelta(delta)) return [delta];
+      return [];
+    })
+  );
+
 const ComputeOptionsSchema = z
   .object({
     expandElementalGoblet: z.boolean().optional(),
@@ -180,10 +213,7 @@ const ComputeOptionsSchema = z
   .catch(DEFAULT_COMPUTE_OPTIONS);
 
 export const PersistedBuildsStoreSchema = z.object({
-  builds: z.record(z.string(), BuildSchema).catch({}),
-  characterToBuildIds: z.record(z.string(), z.array(z.string())).catch({}),
-  presetDeletedBuildIds: z.array(z.string()).catch([]),
-  validationErrors: z.record(z.string(), z.array(z.string())).catch({}),
+  deltas: BuildDeltasSchema,
   activePresetId: z.string().nullable().catch(null),
   hasPromptedForPreset: z.boolean().catch(false),
   hiddenCharacters: z.record(z.string(), z.boolean()).catch({}),

@@ -3,13 +3,15 @@ import { useShallow } from "zustand/react/shallow";
 import type { BuildSource } from "@/data/enums";
 import type { Build, BuildGroup, BuildPayloadV5 } from "@/data/types";
 import {
+  type BuildDelta,
+  resolveBuildIdsForCharacter,
+} from "@/lib/artifact-builds/buildDeltas";
+import {
   getCachedPreset,
   loadPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { filterValidBuildGroups } from "@/lib/artifact-builds/buildValidation";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-
-const EMPTY_ARRAY: string[] = [];
 
 /** Derive build source by checking presence in local store vs preset */
 function deriveBuildSource(
@@ -24,41 +26,27 @@ function deriveBuildSource(
   return "custom";
 }
 
-/**
- * Resolve the ordered list of build IDs for a character.
- * Primary source: characterToBuildIds (canonical ordering).
- * Fallback: preset characterBuilds (for characters not yet in characterToBuildIds).
- */
-function resolveIds(
-  characterToBuildIds: Record<string, string[]>,
-  preset: BuildPayloadV5 | null,
-  charId: string
-): string[] {
-  const local = characterToBuildIds[charId];
-  const presetIds = preset?.characterBuilds[charId] ?? [];
-  if (!local) return presetIds;
-  // Append preset build IDs that aren't already tracked locally. This ensures
-  // that builds added to a subscribed preset after subscription time become
-  // visible without requiring the user to re-import the preset.
-  if (presetIds.length === 0) return local;
-  const localSet = new Set(local);
-  const added = presetIds.filter((id) => !localSet.has(id));
-  return added.length === 0 ? local : [...local, ...added];
-}
-
 export function useResolvedBuilds(characterId: string): Build[] {
   const activePresetId = useBuildsStore((s) => s.activePresetId);
-  const localBuildIds = useBuildsStore(
-    (s) => s.characterToBuildIds[characterId] || EMPTY_ARRAY
+  const relevantDeltas = useBuildsStore(
+    useShallow((s) =>
+      s.deltas.filter(
+        (delta) =>
+          delta.kind === "preset" || delta.value.characterId === characterId
+      )
+    )
   );
-  const presetDeletedIds = useBuildsStore((s) => s.presetDeletedBuildIds);
   // Only subscribe to builds relevant to this character (shallow-compare the subset)
   const relevantBuilds = useBuildsStore(
     useShallow((s) => {
-      const ids = s.characterToBuildIds[characterId] || EMPTY_ARRAY;
       const result: Record<string, Build> = {};
-      for (const id of ids) {
-        if (s.builds[id]) result[id] = s.builds[id];
+      for (const delta of s.deltas) {
+        if (
+          delta.kind === "custom" &&
+          delta.value.characterId === characterId
+        ) {
+          result[delta.id] = delta.value;
+        }
       }
       return result;
     })
@@ -82,14 +70,13 @@ export function useResolvedBuilds(characterId: string): Build[] {
   }, [activePresetId]);
 
   return useMemo(() => {
-    const allIds = resolveIds(
-      { [characterId]: localBuildIds },
+    const allIds = resolveBuildIdsForCharacter(
+      relevantDeltas,
       preset,
       characterId
     );
 
     return allIds
-      .filter((id) => !presetDeletedIds.includes(id))
       .map((id): Build | null => {
         const source = deriveBuildSource(id, relevantBuilds, preset);
 
@@ -111,7 +98,7 @@ export function useResolvedBuilds(characterId: string): Build[] {
         return null;
       })
       .filter((b): b is Build => b !== null);
-  }, [characterId, localBuildIds, presetDeletedIds, relevantBuilds, preset]);
+  }, [characterId, relevantDeltas, relevantBuilds, preset]);
 }
 
 /**
@@ -120,28 +107,32 @@ export function useResolvedBuilds(characterId: string): Build[] {
  */
 function resolveAllBuilds(
   state: {
-    characterToBuildIds: Record<string, string[]>;
+    deltas: BuildDelta[];
     builds: Record<string, Build>;
-    presetDeletedBuildIds: string[];
     hiddenCharacters: Record<string, boolean>;
     characterWeapons: Record<string, string[]>;
   },
   preset: BuildPayloadV5 | null
 ): BuildGroup[] {
-  const allCharIds = new Set([
-    ...Object.keys(state.characterToBuildIds),
-    ...Object.keys(preset?.characterBuilds ?? {}),
-  ]);
+  const allCharIds = new Set(Object.keys(preset?.characterBuilds ?? {}));
+  for (const delta of state.deltas) {
+    if (delta.kind === "custom") {
+      allCharIds.add(delta.value.characterId);
+    }
+  }
 
   const result: BuildGroup[] = [];
 
   for (const charId of allCharIds) {
     if (state.hiddenCharacters[charId]) continue;
 
-    const combinedIds = resolveIds(state.characterToBuildIds, preset, charId);
+    const combinedIds = resolveBuildIdsForCharacter(
+      state.deltas,
+      preset,
+      charId
+    );
 
     const builds = combinedIds
-      .filter((id) => !state.presetDeletedBuildIds.includes(id))
       .map((id) => {
         if (state.builds[id]) return state.builds[id];
         const presetBuild = preset?.builds[id];
@@ -165,9 +156,8 @@ function resolveAllBuilds(
 
 export function useAllResolvedBuilds() {
   const activePresetId = useBuildsStore((s) => s.activePresetId);
-  const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
+  const deltas = useBuildsStore((s) => s.deltas);
   const buildsMap = useBuildsStore((s) => s.builds);
-  const presetDeletedIds = useBuildsStore((s) => s.presetDeletedBuildIds);
   const hiddenCharacters = useBuildsStore((s) => s.hiddenCharacters);
   const characterWeapons = useBuildsStore((s) => s.characterWeapons);
 
@@ -192,22 +182,14 @@ export function useAllResolvedBuilds() {
     () =>
       resolveAllBuilds(
         {
-          characterToBuildIds,
+          deltas,
           builds: buildsMap,
-          presetDeletedBuildIds: presetDeletedIds,
           hiddenCharacters,
           characterWeapons,
         },
         preset
       ),
-    [
-      characterToBuildIds,
-      buildsMap,
-      presetDeletedIds,
-      hiddenCharacters,
-      preset,
-      characterWeapons,
-    ]
+    [deltas, buildsMap, hiddenCharacters, preset, characterWeapons]
   );
 }
 

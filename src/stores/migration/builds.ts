@@ -1,5 +1,9 @@
 import type { SubStat } from "@/data/enums";
 import type { Build, WeightedSubStat } from "@/data/types";
+import {
+  type BuildDelta,
+  createBuildDeltasFromLegacyState,
+} from "@/lib/artifact-builds/buildDeltas";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
 
@@ -21,6 +25,7 @@ const migrateSubstats = (
 
 /** Shape of builds store data during migration. Version-dependent fields may be missing. */
 interface LegacyBuildsState {
+  deltas?: BuildDelta[];
   builds?: Record<string, Build>;
   characterToBuildIds?: Record<string, string[]>;
   presetDeletedBuildIds?: string[];
@@ -39,6 +44,12 @@ export function migrateBuildsStore(
   version: number
 ): Record<string, unknown> {
   const state = persistedState as LegacyBuildsState;
+
+  // Before v6, the store persisted build deltas in three separate fields:
+  // - builds: custom builds and modified preset builds keyed by build ID
+  // - characterToBuildIds: ordered build IDs per character
+  // - presetDeletedBuildIds: preset IDs hidden by the user
+  // v6 stores that information as a single PresetDelta<Build>[] list.
 
   // Guard against missing builds map (corrupted or very old data).
   if (!state.builds || typeof state.builds !== "object") {
@@ -75,6 +86,20 @@ export function migrateBuildsStore(
   for (const build of Object.values(state.builds)) {
     migrateBuild(build);
     state.validationErrors[build.id] = getBuildValidationErrors(build);
+  }
+
+  if (version < 6 || !Array.isArray(state.deltas)) {
+    state.deltas = createBuildDeltasFromLegacyState({
+      builds: state.builds,
+      characterToBuildIds: state.characterToBuildIds,
+      presetDeletedBuildIds: state.presetDeletedBuildIds,
+    });
+  }
+
+  for (const delta of state.deltas) {
+    if (delta.kind === "custom") {
+      migrateBuild(delta.value);
+    }
   }
 
   return state as Record<string, unknown>;

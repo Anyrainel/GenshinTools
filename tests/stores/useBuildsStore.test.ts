@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Build, BuildPayloadV5 } from "@/data/types";
+import { migrateBuildsStore } from "@/stores/migration/builds";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
 vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
@@ -16,6 +17,7 @@ describe("useBuildsStore", () => {
   describe("initial state", () => {
     it("starts with empty maps", () => {
       const state = useBuildsStore.getState();
+      expect(state.deltas).toEqual([]);
       expect(state.characterToBuildIds).toEqual({});
       expect(state.builds).toEqual({});
       expect(state.activePresetId).toBeNull();
@@ -411,7 +413,7 @@ describe("useBuildsStore", () => {
   });
 
   describe("deleteBuild", () => {
-    it("removes build and tracks deletion in presetDeletedBuildIds", () => {
+    it("removes custom build without creating a preset tombstone", () => {
       const charId = "test-char";
       useBuildsStore.getState().newBuild(charId);
       const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
@@ -420,20 +422,43 @@ describe("useBuildsStore", () => {
 
       expect(useBuildsStore.getState().getBuild(buildId)).toBeUndefined();
       expect(useBuildsStore.getState().getBuildIds(charId)).toHaveLength(0);
-      expect(useBuildsStore.getState().presetDeletedBuildIds).toContain(
-        buildId
+      expect(useBuildsStore.getState().presetDeletedBuildIds).toEqual([]);
+      expect(useBuildsStore.getState().deltas).not.toContainEqual(
+        expect.objectContaining({ id: buildId })
       );
     });
   });
 
   describe("revertBuild", () => {
-    it("removes local override while keeping ordering", () => {
+    it("removes preset override while keeping ordering", () => {
       const charId = "test-char";
-      useBuildsStore.getState().newBuild(charId);
-      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+      const buildId = "preset-build";
+      const presetBuild: Build = {
+        id: buildId,
+        characterId: charId,
+        name: "Preset",
+        visible: true,
+        composition: "4pc",
+        substats: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
+        normalizer: 0,
+      };
+      useBuildsStore.getState().subscribePreset("test-preset", {
+        version: 5,
+        id: "test-preset",
+        author: "",
+        description: "",
+        builds: { [buildId]: presetBuild },
+        characterBuilds: { [charId]: [buildId] },
+        characterWeapons: {},
+      });
 
       // Modify the build locally
-      useBuildsStore.getState().setBuild(buildId, { name: "Modified" });
+      useBuildsStore
+        .getState()
+        .setBuild(buildId, { name: "Modified" }, presetBuild);
       expect(useBuildsStore.getState().getBuild(buildId)?.name).toBe(
         "Modified"
       );
@@ -448,8 +473,28 @@ describe("useBuildsStore", () => {
 
     it("un-marks previously deleted build", () => {
       const charId = "test-char";
-      useBuildsStore.getState().newBuild(charId);
-      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+      const buildId = "preset-build";
+      const presetBuild: Build = {
+        id: buildId,
+        characterId: charId,
+        name: "Preset",
+        visible: true,
+        composition: "4pc",
+        substats: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
+        normalizer: 0,
+      };
+      useBuildsStore.getState().subscribePreset("test-preset", {
+        version: 5,
+        id: "test-preset",
+        author: "",
+        description: "",
+        builds: { [buildId]: presetBuild },
+        characterBuilds: { [charId]: [buildId] },
+        characterWeapons: {},
+      });
 
       // Delete then revert
       useBuildsStore.getState().deleteBuild(charId, buildId);
@@ -563,10 +608,8 @@ describe("useBuildsStore", () => {
     });
 
     it("resets presetDeletedBuildIds", () => {
-      // Add a deleted ID
-      useBuildsStore.getState().newBuild("char1");
-      const buildId = useBuildsStore.getState().getBuildIds("char1")[0];
-      useBuildsStore.getState().deleteBuild("char1", buildId);
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+      useBuildsStore.getState().deleteBuild("char1", "p-1");
       expect(useBuildsStore.getState().presetDeletedBuildIds.length).toBe(1);
 
       // Subscribe clears deletions
@@ -699,6 +742,48 @@ describe("useBuildsStore", () => {
       const build = useBuildsStore.getState().getBuild(buildId);
       expect(build?.composition).toBe("2pc+2pc");
       expect(build?.artifactSet).toBeUndefined();
+    });
+  });
+
+  describe("migration", () => {
+    it("converts legacy build maps into preset deltas", () => {
+      const customBuild: Build = {
+        id: "custom-1",
+        characterId: "char1",
+        name: "Custom",
+        visible: true,
+        composition: "4pc",
+        substats: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
+        normalizer: 0,
+      };
+
+      const migrated = migrateBuildsStore(
+        {
+          builds: { "custom-1": customBuild },
+          characterToBuildIds: {
+            char1: ["preset-1", "custom-1"],
+          },
+          presetDeletedBuildIds: ["preset-2"],
+          validationErrors: {},
+        },
+        5
+      );
+
+      expect(migrated.deltas).toEqual(
+        expect.arrayContaining([
+          { kind: "preset", id: "preset-1", displayIndex: 0 },
+          {
+            kind: "custom",
+            id: "custom-1",
+            value: expect.objectContaining({ id: "custom-1" }),
+            displayIndex: 1,
+          },
+          { kind: "preset", id: "preset-2", deleted: true },
+        ])
+      );
     });
   });
 });

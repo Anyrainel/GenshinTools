@@ -331,10 +331,7 @@ describe("PersistedBuildsStoreSchema", () => {
   it("heals all fields from empty object", () => {
     const result = PersistedBuildsStoreSchema.parse({});
     expect(result).toEqual({
-      builds: {},
-      characterToBuildIds: {},
-      presetDeletedBuildIds: [],
-      validationErrors: {},
+      deltas: [],
       activePresetId: null,
       hasPromptedForPreset: false,
       hiddenCharacters: {},
@@ -362,6 +359,41 @@ describe("PersistedBuildsStoreSchema", () => {
     expect(result.computeOptions).toEqual({ normalizeFlatStats: false });
     expect(result.author).toBe("me");
     expect(result.description).toBe("my builds");
+  });
+
+  it("preserves valid preset delta entries", () => {
+    const result = PersistedBuildsStoreSchema.parse({
+      deltas: [
+        { kind: "preset", id: "preset-build", displayIndex: 0 },
+        { kind: "preset", id: "deleted-build", deleted: true },
+        { kind: "custom", id: "custom-build", value: validBuild },
+      ],
+    });
+
+    expect(result.deltas).toHaveLength(3);
+    expect(result.deltas[0]).toEqual({
+      kind: "preset",
+      id: "preset-build",
+      displayIndex: 0,
+    });
+    expect(result.deltas[1]).toEqual({
+      kind: "preset",
+      id: "deleted-build",
+      deleted: true,
+    });
+    expect(result.deltas[2]?.kind).toBe("custom");
+  });
+
+  it("drops corrupted preset delta entries", () => {
+    const result = PersistedBuildsStoreSchema.parse({
+      deltas: [
+        { kind: "preset", id: "valid" },
+        { kind: "custom", id: "missing-value" },
+        { kind: "bad", id: "bad" },
+      ],
+    });
+
+    expect(result.deltas).toEqual([{ kind: "preset", id: "valid" }]);
   });
 
   it("throws on non-object input", () => {
