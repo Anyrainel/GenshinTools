@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Team } from "@/lib/team-comp/types";
-import {
-  mergeTeamStore,
-  migrateTeamStore,
-  useTeamStore,
-} from "@/stores/useTeamStore";
+import { mergeTeamStore, migrateTeamStore } from "@/stores/migration/team";
+import { useTeamStore } from "@/stores/useTeamStore";
 
 // Reset store before each test
 beforeEach(() => {

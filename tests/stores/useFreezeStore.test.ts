@@ -2,7 +2,8 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
-import { migrateFreezeStore, useFreezeStore } from "@/stores/useFreezeStore";
+import { migrateFreezeStore } from "@/stores/migration/freeze";
+import { useFreezeStore } from "@/stores/useFreezeStore";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
 

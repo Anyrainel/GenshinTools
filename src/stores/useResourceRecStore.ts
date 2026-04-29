@@ -14,6 +14,7 @@ import {
   type ResourceKind,
   type TierCompletenessThresholds,
 } from "@/lib/account-data/resourceTips";
+import { migrateResourceRecStore } from "./migration/resource";
 import { PersistedResourceRecStoreSchema } from "./schemas";
 
 interface ResourceRecState {
@@ -69,36 +70,7 @@ export const useResourceRecStore = create<ResourceRecState>()(
     {
       name: "resource-rec-settings",
       version: 6,
-      migrate: (persisted: unknown, version: number) => {
-        const state = (persisted ?? {}) as Record<string, unknown>;
-        // v<6 → v6: minScoreDiff changed from flat TierCompletenessThresholds
-        // to Record<ResourceKind, TierCompletenessThresholds>.
-        // Old shape: { S: 0, A: 5, ... }
-        // New shape: { craft: { S: 0, ... }, reroll: { S: 5, ... }, ... }
-        if (version < 6) {
-          const old = state.minScoreDiff as
-            | TierCompletenessThresholds
-            | undefined;
-          if (old && typeof old === "object" && "S" in old) {
-            // Migrate: use old values for craft/levelup, bump reroll higher
-            state.minScoreDiff = {
-              craft: { ...old },
-              reroll: {
-                S: (old.S ?? 0) + 5,
-                A: (old.A ?? 5) + 5,
-                B: (old.B ?? 10) + 5,
-                C: (old.C ?? 15) + 5,
-                D: (old.D ?? 20) + 5,
-                Pool: (old.Pool ?? 20) + 5,
-              },
-              levelup: { ...old },
-            };
-          }
-          // Remove obsolete kindMinScore field from v5
-          state.kindMinScore = undefined;
-        }
-        return state as Partial<ResourceRecState>;
-      },
+      migrate: migrateResourceRecStore,
       partialize: (state) => ({
         thresholds: state.thresholds,
         minScoreDiff: state.minScoreDiff,

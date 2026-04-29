@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
+import { migrateTriageStore } from "./migration/triage";
 import { PersistedTriageStoreSchema } from "./schemas";
 
 interface TriageState {
@@ -25,19 +26,7 @@ export const useTriageStore = create<TriageState>()(
     {
       name: "triage-settings",
       version: 4,
-      migrate: (persisted: unknown, version: number) => {
-        const state = persisted as Record<string, unknown>;
-        const settings = (state.settings ?? {}) as Record<string, unknown>;
-        // v3 → v4: rename strategicHighLevelEvaluation → highLevelProtection
-        // and flip its meaning (protection = !evaluation).
-        if (version < 4) {
-          const prev = settings.strategicHighLevelEvaluation;
-          settings.highLevelProtection = prev == null ? true : !prev;
-          settings.strategicHighLevelEvaluation = undefined;
-        }
-        state.settings = settings;
-        return state as Partial<TriageState>;
-      },
+      migrate: migrateTriageStore,
       partialize: (state) => ({
         settings: state.settings,
       }),

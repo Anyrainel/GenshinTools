@@ -1,11 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
-import {
-  migrateTierStore,
-  type TierListInstance,
-  useTierStore,
-} from "@/stores/useTierStore";
+import { migrateTierStore } from "@/stores/migration/tier";
+import { type TierListInstance, useTierStore } from "@/stores/useTierStore";
 
 // Reset store before each test — create a fresh default state
 beforeEach(() => {

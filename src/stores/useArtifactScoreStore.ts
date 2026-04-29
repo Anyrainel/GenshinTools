@@ -2,19 +2,11 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { GlobalStatWeights } from "@/data/types";
 import {
-  DEFAULT_GLOBAL_STAT_WEIGHTS,
-  PersistedArtifactScoreStoreSchema,
-} from "./schemas";
+  type ArtifactScoreGlobalConfig,
+  migrateArtifactScorePersisted,
+} from "./migration/artifactScore";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "./schemas";
 import { invalidateScores } from "./useAccountStore";
-
-type ArtifactScoreGlobalConfig = { global: GlobalStatWeights };
-
-function migratePersisted(persisted: unknown): ArtifactScoreGlobalConfig {
-  const parsed = PersistedArtifactScoreStoreSchema.safeParse(persisted);
-  return parsed.success
-    ? parsed.data.config
-    : { global: DEFAULT_GLOBAL_STAT_WEIGHTS };
-}
 
 interface ArtifactScoreState {
   config: ArtifactScoreGlobalConfig;
@@ -57,7 +49,7 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
       name: "artifact-score-storage",
       storage: createJSONStorage(() => localStorage),
       migrate: (persisted) => ({
-        config: migratePersisted(persisted),
+        config: migrateArtifactScorePersisted(persisted),
       }),
       partialize: (state) => ({
         config: state.config,
@@ -65,7 +57,7 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
       merge: (persistedState, currentState) => ({
         ...currentState,
         ...(persistedState as object),
-        config: migratePersisted(persistedState),
+        config: migrateArtifactScorePersisted(persistedState),
       }),
     }
   )

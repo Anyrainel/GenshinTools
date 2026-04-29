@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountData, CharacterData } from "@/data/types";
 import { applyAccountImport } from "@/stores/applyAccountImport";
-import { migrateAccountStore, useAccountStore } from "@/stores/useAccountStore";
+import { migrateAccountStore } from "@/stores/migration/account";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
