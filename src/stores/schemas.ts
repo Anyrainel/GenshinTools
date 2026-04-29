@@ -339,6 +339,10 @@ const TierListInstanceSchema = PersistedBaseTierStoreSchema.extend({
   linkedAccountId: z.number().nullable().catch(null),
 });
 
+const GenericTierListInstanceSchema = PersistedBaseTierStoreSchema.extend({
+  id: z.number(),
+});
+
 export const PersistedTierListStoreSchema = z.object({
   tierLists: z.record(z.string(), TierListInstanceSchema).catch({}),
   activeTierListId: z.number().catch(1),
@@ -346,6 +350,12 @@ export const PersistedTierListStoreSchema = z.object({
   showWeapons: z.boolean().catch(true),
   showTravelers: z.boolean().catch(false),
   showManekin: z.boolean().catch(false),
+});
+
+export const PersistedGenericTierListStoreSchema = z.object({
+  tierLists: z.record(z.string(), GenericTierListInstanceSchema).catch({}),
+  activeTierListId: z.number().catch(1),
+  nextId: z.number().catch(2),
 });
 
 // ─── Preferences ───

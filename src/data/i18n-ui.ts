@@ -2580,6 +2580,7 @@ export const i18nUiData = {
     },
     linkedAccount: { en: "Account:", zh: "账号：" },
     createNew: { en: "Create New Tier List", zh: "创建新排行榜" },
+    untitledList: { en: "Untitled List", zh: "未命名榜单" },
     importChoice: { en: "Import Tier List", zh: "导入排行榜" },
     importChoiceDesc: {
       en: "Override the current tier list or create a new one?",

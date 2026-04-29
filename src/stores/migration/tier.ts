@@ -34,6 +34,28 @@ interface LegacyPersistedState {
   luckExpectation?: LuckExpectation;
 }
 
+interface GenericTierListInstanceMigration {
+  id: number;
+  tierAssignments: TierAssignment;
+  tierCustomization: TierCustomization;
+  customTitle: string;
+  author: string;
+  description: string;
+}
+
+interface LegacyGenericTierState {
+  // v0: weapon/artifact tier stores persisted one flat list.
+  tierAssignments?: TierAssignment;
+  tierCustomization?: TierCustomization;
+  customTitle?: string;
+  author?: string;
+  description?: string;
+  // v1: multi-list shape.
+  tierLists?: Record<number, GenericTierListInstanceMigration>;
+  activeTierListId?: number;
+  nextId?: number;
+}
+
 export function migrateTierStore(
   persistedState: unknown,
   version: number
@@ -84,4 +106,34 @@ export function migrateTierStore(
   }
 
   return migratedState as Record<string, unknown>;
+}
+
+export function migrateGenericTierStore(
+  persistedState: unknown,
+  version: number
+): Record<string, unknown> {
+  if (version >= 1) {
+    return (persistedState ?? {}) as Record<string, unknown>;
+  }
+
+  const old = (persistedState ?? {}) as LegacyGenericTierState;
+  const instance: GenericTierListInstanceMigration = {
+    id: 1,
+    tierAssignments: old.tierAssignments ?? {},
+    tierCustomization: old.tierCustomization ?? {},
+    customTitle: old.customTitle ?? "",
+    author: old.author ?? "",
+    description: old.description ?? "",
+  };
+
+  return {
+    tierLists: { 1: instance },
+    activeTierListId: 1,
+    nextId: 2,
+    tierAssignments: instance.tierAssignments,
+    tierCustomization: instance.tierCustomization,
+    customTitle: instance.customTitle,
+    author: instance.author,
+    description: instance.description,
+  };
 }

@@ -1,4 +1,11 @@
-import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Download,
+  FileDown,
+  Settings,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { ActionConfig } from "@/components/layout/AppBar";
@@ -13,9 +20,20 @@ import { ImportControl } from "@/components/shared/ImportControl";
 import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
+import { SimpleTierListManagerDialog } from "@/components/tier-list/SimpleTierListManagerDialog";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MainStat, Rarity, WeaponType } from "@/data/enums";
@@ -93,6 +111,16 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   );
   const author = useWeaponTierStore((state) => state.author);
   const description = useWeaponTierStore((state) => state.description);
+  const tierLists = useWeaponTierStore((state) => state.tierLists);
+  const activeTierListId = useWeaponTierStore(
+    (state) => state.activeTierListId
+  );
+  const createTierList = useWeaponTierStore((state) => state.createTierList);
+  const deleteTierList = useWeaponTierStore((state) => state.deleteTierList);
+  const renameTierList = useWeaponTierStore((state) => state.renameTierList);
+  const setActiveTierList = useWeaponTierStore(
+    (state) => state.setActiveTierList
+  );
 
   // Control refs for ref-based dialog pattern
   const clearRef = useRef<ControlHandle>(null);
@@ -104,6 +132,9 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
     () => new Set<Rarity>([5, 4, 3])
   );
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
+  const [isManagerDialogOpen, setIsManagerDialogOpen] = useState(false);
+  const [pendingImportData, setPendingImportData] =
+    useState<TierListData | null>(null);
   const weaponStats = weaponStatsResource.use();
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
@@ -129,11 +160,38 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   }, []);
 
   const handleImport = (importedData: TierListData) => {
+    if (Object.keys(tierLists).length > 1) {
+      setPendingImportData(importedData);
+      return;
+    }
     loadTierListData({
       tierAssignments: importedData.tierAssignments,
       tierCustomization: importedData.tierCustomization,
       customTitle: importedData.customTitle || "",
     });
+    toast.success(t.ui("messages.tierListLoaded"));
+  };
+
+  const handleImportOverride = () => {
+    if (!pendingImportData) return;
+    loadTierListData({
+      tierAssignments: pendingImportData.tierAssignments,
+      tierCustomization: pendingImportData.tierCustomization,
+      customTitle: pendingImportData.customTitle || "",
+    });
+    setPendingImportData(null);
+    toast.success(t.ui("messages.tierListLoaded"));
+  };
+
+  const handleImportCreateNew = () => {
+    if (!pendingImportData) return;
+    createTierList(pendingImportData.customTitle || undefined);
+    loadTierListData({
+      tierAssignments: pendingImportData.tierAssignments,
+      tierCustomization: pendingImportData.tierCustomization,
+      customTitle: pendingImportData.customTitle || "",
+    });
+    setPendingImportData(null);
     toast.success(t.ui("messages.tierListLoaded"));
   };
 
@@ -327,17 +385,32 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
       <WideLayout
         title={customTitle || t.ui("app.weaponTierListTitle")}
         actions={
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setIsCustomizeDialogOpen(true)}
-            className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
-          >
-            <Settings className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {t.ui("buttons.customize")}
-            </span>
-          </Button>
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              aria-label={t.ui("buttons.customize")}
+              onClick={() => setIsCustomizeDialogOpen(true)}
+              className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
+            >
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {t.ui("buttons.customize")}
+              </span>
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              aria-label={t.ui("tierList.manageLists")}
+              onClick={() => setIsManagerDialogOpen(true)}
+              className="gap-2 bg-teal-700 hover:bg-teal-800 text-white"
+            >
+              <ArrowLeftRight className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {t.ui("tierList.manageLists")}
+              </span>
+            </Button>
+          </>
         }
         filters={filterGroups}
       >
@@ -379,6 +452,40 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
         initialCustomization={tierCustomization}
         initialCustomTitle={customTitle}
       />
+
+      <SimpleTierListManagerDialog
+        isOpen={isManagerDialogOpen}
+        onClose={() => setIsManagerDialogOpen(false)}
+        tierLists={tierLists}
+        activeTierListId={activeTierListId}
+        createTierList={createTierList}
+        deleteTierList={deleteTierList}
+        renameTierList={renameTierList}
+        setActiveTierList={setActiveTierList}
+      />
+
+      <AlertDialog
+        open={!!pendingImportData}
+        onOpenChange={(open) => !open && setPendingImportData(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.ui("tierList.importChoice")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui("tierList.importChoiceDesc")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleImportOverride}>
+              {t.ui("tierList.importOverride")}
+            </AlertDialogAction>
+            <AlertDialogAction onClick={handleImportCreateNew}>
+              {t.ui("tierList.importCreateNew")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

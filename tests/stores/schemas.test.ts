@@ -14,6 +14,7 @@ import {
   PersistedBaseTierStoreSchema,
   PersistedBuildsStoreSchema,
   PersistedFreezeStoreSchema,
+  PersistedGenericTierListStoreSchema,
   PersistedGreetingStoreSchema,
   PersistedPreferencesStoreSchema,
   PersistedResourceRecStoreSchema,
@@ -754,6 +755,42 @@ describe("PersistedTierListStoreSchema", () => {
     expect(result.activeTierListId).toBe(1);
     expect(result.showWeapons).toBe(true);
     expect(result).not.toHaveProperty("recommendationPrefs");
+  });
+});
+
+// ─── PersistedGenericTierListStoreSchema ───
+
+describe("PersistedGenericTierListStoreSchema", () => {
+  it("heals missing multi-list tier fields", () => {
+    expect(PersistedGenericTierListStoreSchema.parse({})).toEqual({
+      tierLists: {},
+      activeTierListId: 1,
+      nextId: 2,
+    });
+  });
+
+  it("preserves valid generic tier-list instances", () => {
+    const result = PersistedGenericTierListStoreSchema.parse({
+      tierLists: {
+        2: {
+          id: 2,
+          tierAssignments: {
+            staff_of_homa: { tier: "S", position: 0 },
+          },
+          tierCustomization: {},
+          customTitle: "Weapons",
+          author: "me",
+          description: "notes",
+        },
+      },
+      activeTierListId: 2,
+      nextId: 3,
+    });
+
+    expect(result.activeTierListId).toBe(2);
+    expect(result.nextId).toBe(3);
+    expect(result.tierLists[2].customTitle).toBe("Weapons");
+    expect(result.tierLists[2]).not.toHaveProperty("linkedAccountId");
   });
 });
 

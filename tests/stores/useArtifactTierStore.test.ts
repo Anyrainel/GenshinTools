@@ -4,7 +4,25 @@ import type { TierAssignment } from "@/data/types";
 import { useArtifactTierStore } from "@/stores/useArtifactTierStore";
 
 beforeEach(() => {
-  useArtifactTierStore.getState().resetTierList();
+  useArtifactTierStore.setState({
+    tierLists: {
+      1: {
+        id: 1,
+        tierAssignments: {},
+        tierCustomization: {},
+        customTitle: "",
+        author: "",
+        description: "",
+      },
+    },
+    activeTierListId: 1,
+    nextId: 2,
+    tierAssignments: {},
+    tierCustomization: {},
+    customTitle: "",
+    author: "",
+    description: "",
+  });
 });
 
 describe("useArtifactTierStore", () => {
@@ -54,5 +72,28 @@ describe("useArtifactTierStore", () => {
     expect(state.customTitle).toBe("Artifact Sets");
     expect(state.author).toBe("Test Author");
     expect(state.description).toBe("Test Description");
+  });
+
+  it("keeps multiple artifact tier lists isolated", () => {
+    useArtifactTierStore.getState().setTierAssignments({
+      noblesse_oblige: { tier: "S", position: 0 },
+    });
+    useArtifactTierStore.getState().setCustomTitle("Support Sets");
+
+    const secondId = useArtifactTierStore.getState().createTierList("DPS Sets");
+    useArtifactTierStore.getState().setTierAssignments({
+      marechaussee_hunter: { tier: "S", position: 0 },
+    });
+
+    expect(
+      useArtifactTierStore.getState().tierLists[secondId].customTitle
+    ).toBe("DPS Sets");
+
+    useArtifactTierStore.getState().setActiveTierList(1);
+    const state = useArtifactTierStore.getState();
+    expect(state.customTitle).toBe("Support Sets");
+    expect(state.tierAssignments).toEqual({
+      noblesse_oblige: { tier: "S", position: 0 },
+    });
   });
 });
