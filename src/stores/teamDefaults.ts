@@ -15,4 +15,5 @@ export const DEFAULT_TEAM_FIELDS = {
   opts: {} as OptionMap,
   extraBuffs: [] as ExtraBuff[],
   calcContext: {} as CalcContext,
+  optimizationResult: null,
 } satisfies Partial<Team>;

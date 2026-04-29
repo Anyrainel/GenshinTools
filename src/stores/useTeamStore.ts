@@ -5,7 +5,11 @@ import type { ArtifactSetConfig } from "@/data/types";
 // Team state shapes live in @/lib/team-comp/types so pure team logic across
 // src/lib/ can depend on them without reaching into the stores layer.
 import type { ExportedTeam, Team, TeamCompData } from "@/lib/team-comp/types";
-import { mergeTeamStore, migrateTeamStore } from "./migration/team";
+import {
+  mergeTeamStore,
+  migrateTeamStore,
+  stripTeamStoreResultCaches,
+} from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 import { DEFAULT_TEAM_FIELDS } from "./teamDefaults";
 
@@ -93,6 +97,8 @@ export const useTeamStore = create<TeamState>()(
               id: `team-${Date.now()}`,
               name: team.name ? `${team.name}` : "",
               optimizationResult: null, // Don't copy the optimization result as it might be stale
+              choiceResults: {},
+              weaponChoiceResult: null,
             };
             state.teams.splice(index + 1, 0, newTeam);
           }
@@ -259,10 +265,10 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 15,
+      version: 16,
       migrate: migrateTeamStore,
       partialize: (state) => ({
-        teams: state.teams,
+        teams: stripTeamStoreResultCaches({ teams: state.teams }).teams,
         author: state.author,
         description: state.description,
       }),

@@ -9,6 +9,33 @@ import { PersistedTeamStoreSchema } from "@/stores/schemas";
 import { DEFAULT_TEAM_FIELDS } from "@/stores/teamDefaults";
 
 type TeamMigrationState = { teams: Team[] } & Record<string, unknown>;
+type TeamResultCacheField =
+  | "optimizationResult"
+  | "choiceResults"
+  | "weaponChoiceResult";
+
+export function stripTeamResultCaches<T extends object>(
+  team: T
+): Omit<T, TeamResultCacheField> {
+  const {
+    optimizationResult: _optimizationResult,
+    choiceResults: _choiceResults,
+    weaponChoiceResult: _weaponChoiceResult,
+    ...sourceTeam
+  } = team as T & Partial<Record<TeamResultCacheField, unknown>>;
+  return sourceTeam as Omit<T, TeamResultCacheField>;
+}
+
+export function stripTeamStoreResultCaches<TState extends { teams: Team[] }>(
+  state: TState
+): TState {
+  return {
+    ...state,
+    teams: state.teams.map((team) =>
+      stripTeamResultCaches(team)
+    ) as unknown as Team[],
+  };
+}
 
 /**
  * Migrate persisted TeamState from an older version to the current format.
@@ -463,7 +490,12 @@ export function migrateTeamStore(
       };
     });
   }
-  return state;
+  if (version < 16) {
+    // v16: result caches are local/runtime data. Persist only authored team
+    // source/config so cloud backup and localStorage do not carry stale blobs.
+    return stripTeamStoreResultCaches(state);
+  }
+  return stripTeamStoreResultCaches(state);
 }
 
 /**
@@ -484,7 +516,11 @@ export function mergeTeamStore<TState extends { teams: Team[] }>(
     // Zod's .passthrough() adds an index signature that doesn't align with Team,
     // but TeamSchema has already validated and healed all required fields.
     teams: parsed.data.teams.map(
-      (t) => ({ ...DEFAULT_TEAM_FIELDS, ...t }) as Team
+      (t) =>
+        ({
+          ...DEFAULT_TEAM_FIELDS,
+          ...stripTeamResultCaches(t as unknown as Team),
+        }) as Team
     ),
   } as TState;
 }

@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Team } from "@/lib/team-comp/types";
-import { mergeTeamStore, migrateTeamStore } from "@/stores/migration/team";
+import {
+  mergeTeamStore,
+  migrateTeamStore,
+  stripTeamStoreResultCaches,
+} from "@/stores/migration/team";
 import { useTeamStore } from "@/stores/useTeamStore";
 
 // Reset store before each test
@@ -175,6 +179,27 @@ describe("useTeamStore", () => {
       expect(state.teams[0].id).toBe(id1);
       expect(state.teams[1].name).toBe("Team 1"); // Copy
       expect(state.teams[2].id).toBe(id2);
+    });
+
+    it("does not copy cached analysis results", async () => {
+      const originalId = useTeamStore.getState().addTeam({
+        name: "Cached",
+        choiceResults: {
+          weapon: { timestamp: 1, perCharacter: {}, mode: "weapon" },
+        },
+        weaponChoiceResult: { timestamp: 1, perCharacter: {} },
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      useTeamStore.getState().copyTeam(originalId);
+
+      const copy = useTeamStore
+        .getState()
+        .teams.find((team) => team.id !== originalId);
+
+      expect(copy?.optimizationResult).toBeNull();
+      expect(copy?.choiceResults).toEqual({});
+      expect(copy?.weaponChoiceResult).toBeNull();
     });
 
     it("does nothing if team ID not found", () => {
@@ -1109,7 +1134,7 @@ describe("migrateTeamStore", () => {
     });
   });
 
-  it("migrates v14 weaponChoiceResult into mode-keyed choiceResults", () => {
+  it("drops v14 result caches from persisted team source data", () => {
     const weaponChoiceResult = {
       timestamp: 123,
       perCharacter: {
@@ -1132,11 +1157,35 @@ describe("migrateTeamStore", () => {
 
     const result = migrateTeamStore(state, 14);
 
-    expect(result.teams[0].choiceResults?.weapon).toEqual({
-      ...weaponChoiceResult,
-      mode: "weapon",
-    });
-    expect(result.teams[0].weaponChoiceResult).toBe(weaponChoiceResult);
+    expect(
+      (result.teams[0] as unknown as Record<string, unknown>).choiceResults
+    ).toBeUndefined();
+    expect(
+      (result.teams[0] as unknown as Record<string, unknown>).weaponChoiceResult
+    ).toBeUndefined();
+  });
+
+  it("drops v15 result caches from persisted team source data", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          optimizationResult: { artifacts: {}, damage: {}, erTargets: {} },
+          choiceResults: {
+            weapon: { timestamp: 1, perCharacter: {}, mode: "weapon" },
+          },
+          weaponChoiceResult: { timestamp: 1, perCharacter: {} },
+        }),
+      ],
+      author: "",
+      description: "",
+    };
+
+    const result = migrateTeamStore(state, 15);
+    const team = result.teams[0] as unknown as Record<string, unknown>;
+
+    expect(team.optimizationResult).toBeUndefined();
+    expect(team.choiceResults).toBeUndefined();
+    expect(team.weaponChoiceResult).toBeUndefined();
   });
 
   it("full migration from v0 applies all steps", () => {
@@ -1209,6 +1258,7 @@ describe("mergeTeamStore", () => {
     expect(team.combo).toBeNull();
     expect(team.formulaMode).toBe("single");
     expect(team.opts).toEqual({});
+    expect(team.optimizationResult).toBeNull();
   });
 
   it("preserves existing fields when they are already set", () => {
@@ -1249,6 +1299,33 @@ describe("mergeTeamStore", () => {
     expect(team.formulaMode).toBe("combo");
     expect(team.charSettings).toEqual({ ganyu: { minEr: 100, minCr: 60 } });
     expect(result.author).toBe("tester");
+  });
+
+  it("drops persisted result caches while restoring runtime defaults", () => {
+    const persisted = {
+      teams: [
+        {
+          id: "team-cached",
+          name: "Cached",
+          characters: ["ganyu", null, null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+          selectedFormula: null,
+          optimizationResult: { stale: true },
+          choiceResults: { weapon: { stale: true } },
+          weaponChoiceResult: { stale: true },
+        },
+      ],
+      author: "",
+      description: "",
+    };
+
+    const result = mergeTeamStore(persisted, defaultState);
+    const team = result.teams[0] as unknown as Record<string, unknown>;
+
+    expect(team.optimizationResult).toBeNull();
+    expect(team.choiceResults).toBeUndefined();
+    expect(team.weaponChoiceResult).toBeUndefined();
   });
 
   it("handles empty teams array", () => {
@@ -1310,5 +1387,25 @@ describe("mergeTeamStore", () => {
     expect(result.teams[1].reactions).toEqual([]);
     expect(result.teams[1].formulaMode).toBe("single");
     expect(result.teams[1].opts).toEqual({});
+  });
+});
+
+describe("stripTeamStoreResultCaches", () => {
+  it("removes cache fields without touching authored team fields", () => {
+    const team = makeV0Team({
+      choiceResults: {
+        weapon: { timestamp: 1, perCharacter: {}, mode: "weapon" },
+      },
+      weaponChoiceResult: { timestamp: 1, perCharacter: {} },
+      charSettings: { hu_tao: { minEr: 130 } },
+    }) as unknown as Team;
+
+    const result = stripTeamStoreResultCaches({ teams: [team] });
+    const stripped = result.teams[0] as unknown as Record<string, unknown>;
+
+    expect(stripped.optimizationResult).toBeUndefined();
+    expect(stripped.choiceResults).toBeUndefined();
+    expect(stripped.weaponChoiceResult).toBeUndefined();
+    expect(stripped.charSettings).toEqual({ hu_tao: { minEr: 130 } });
   });
 });
