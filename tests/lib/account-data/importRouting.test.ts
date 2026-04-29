@@ -64,7 +64,6 @@ function makeAccount(
     id,
     name: id === 0 ? "Default Account" : `Account ${id}`,
     data: emptyData,
-    scores: {},
     lastUpdate: 1000,
     ...overrides,
   };
@@ -85,7 +84,6 @@ function applyDirect(
       id: result.id,
       name: result.name,
       data: result.data,
-      scores: {},
       lastUpdate: Date.now(),
     },
   };

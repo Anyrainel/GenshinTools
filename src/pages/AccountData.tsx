@@ -26,7 +26,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useActiveAccount } from "@/hooks/useActiveAccount";
+import {
+  useActiveAccount,
+  useActiveAccountScores,
+} from "@/hooks/useActiveAccount";
 import { useArtifactScoreComputation } from "@/hooks/useArtifactScoreComputation";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {
@@ -168,7 +171,7 @@ export default function AccountDataPage() {
   const promoteToUid = useAccountStore((s) => s.promoteToUid);
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data || null;
-  const scores = activeAccount?.scores || {};
+  const scores = useActiveAccountScores();
   useArtifactScoreComputation();
   // id IS the uid for non-default profiles
   const lastUid =

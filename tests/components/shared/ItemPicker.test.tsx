@@ -175,7 +175,6 @@ describe("ItemPicker", () => {
               extraArtifacts: [],
               extraWeapons: [],
             },
-            scores: {},
             lastUpdate: Date.now(),
           },
         },

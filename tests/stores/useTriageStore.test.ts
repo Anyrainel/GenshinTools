@@ -9,7 +9,6 @@ beforeEach(() => {
   useAccountStore.setState({
     accounts: {},
     activeAccountId: null,
-    staleScoreCharIds: [],
   });
   useTriageStore.setState({
     settings: structuredClone(DEFAULT_TRIAGE_SETTINGS),

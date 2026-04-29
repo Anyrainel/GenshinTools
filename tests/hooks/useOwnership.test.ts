@@ -48,7 +48,6 @@ function setAccount(data: AccountData) {
         id: PROFILE,
         name: "Test",
         data,
-        scores: {},
         lastUpdate: Date.now(),
       },
     },
@@ -190,7 +189,6 @@ describe("getIsOwned", () => {
             data: makeAccountData({
               characters: [makeCharacter("hu_tao")],
             }),
-            scores: {},
             lastUpdate: Date.now(),
           },
           [profileB]: {
@@ -199,7 +197,6 @@ describe("getIsOwned", () => {
             data: makeAccountData({
               characters: [makeCharacter("ganyu")],
             }),
-            scores: {},
             lastUpdate: Date.now(),
           },
         },

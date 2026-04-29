@@ -1,5 +1,4 @@
 import type { AccountData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 
 /**
  * Logical account profile id. Profile 0 is the local no-UID/default profile;
@@ -17,6 +16,5 @@ export type AccountState = {
   id: AccountProfileId;
   name: string;
   data: AccountData;
-  scores: Record<string, ArtifactScoreResult | null>;
   lastUpdate: number;
 };

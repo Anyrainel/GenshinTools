@@ -41,7 +41,6 @@ function setAccountWithWeapon(weaponKey?: string) {
           extraArtifacts: [],
           extraWeapons: [],
         },
-        scores: {},
         lastUpdate: Date.now(),
       },
     },

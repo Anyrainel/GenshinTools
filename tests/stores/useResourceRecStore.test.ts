@@ -12,7 +12,6 @@ beforeEach(() => {
   useAccountStore.setState({
     accounts: {},
     activeAccountId: null,
-    staleScoreCharIds: [],
   });
   useResourceRecStore.setState({
     thresholds: { ...DEFAULT_TIER_THRESHOLDS },

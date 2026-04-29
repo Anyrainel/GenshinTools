@@ -366,7 +366,6 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
     useAccountStore.setState({
       accounts: {},
       activeAccountId: 1,
-      staleScoreCharIds: [],
     });
     resetFreezeStore();
   });
@@ -375,7 +374,6 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
     useAccountStore.setState({
       accounts: {},
       activeAccountId: null,
-      staleScoreCharIds: [],
     });
   });
 
@@ -518,7 +516,6 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     useAccountStore.setState({
       accounts: {},
       activeAccountId: 1,
-      staleScoreCharIds: [],
     });
     resetFreezeStore();
   });
@@ -527,7 +524,6 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     useAccountStore.setState({
       accounts: {},
       activeAccountId: null,
-      staleScoreCharIds: [],
     });
   });
 

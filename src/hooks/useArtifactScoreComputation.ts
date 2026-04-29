@@ -11,13 +11,22 @@ import {
   scoreWithBuilds,
 } from "@/lib/artifact/scoring/artifactScore";
 import { areBuildsEqual } from "@/lib/artifact-builds/buildUtils";
+import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
+const EMPTY_STALE_SCORE_CHAR_IDS: string[] = [];
+
 export function useArtifactScoreComputation(): void {
   const accountData = useActiveAccountData();
-  const staleScoreCharIds = useAccountStore((s) => s.staleScoreCharIds);
-  const mergeScores = useAccountStore((s) => s.mergeScores);
+  const activeAccountId = useAccountStore((s) => s.activeAccountId);
+  const staleScoreCharIds = useAccountScoreCacheStore((s) =>
+    activeAccountId === null
+      ? EMPTY_STALE_SCORE_CHAR_IDS
+      : (s.staleScoreCharIdsByProfileId[activeAccountId] ??
+        EMPTY_STALE_SCORE_CHAR_IDS)
+  );
+  const mergeScores = useAccountScoreCacheStore((s) => s.mergeScores);
   const scores = useActiveAccountScores();
   const scoreConfig = useArtifactScoreStore((s) => s.config);
   const buildGroups = useAllValidResolvedBuilds();
@@ -68,6 +77,7 @@ export function useArtifactScoreComputation(): void {
   ]);
 
   useEffect(() => {
+    if (activeAccountId === null) return;
     if (charsToScore.length === 0) return;
     const timer = setTimeout(() => {
       const results: Record<string, ArtifactScoreResult | null> = {};
@@ -86,8 +96,14 @@ export function useArtifactScoreComputation(): void {
           }).totalNonArtifactCr
         );
       }
-      mergeScores(results);
+      mergeScores(activeAccountId, results);
     }, 50);
     return () => clearTimeout(timer);
-  }, [charsToScore, scoreConfig, mergeScores, resolvedBuildsMap]);
+  }, [
+    activeAccountId,
+    charsToScore,
+    scoreConfig,
+    mergeScores,
+    resolvedBuildsMap,
+  ]);
 }

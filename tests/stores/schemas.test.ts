@@ -7,6 +7,7 @@ import {
   ArtifactDataSchema,
   BuildSchema,
   CharacterDataSchema,
+  PersistedAccountScoreCacheStoreSchema,
   PersistedAccountStoreSchema,
   PersistedAnalyzerCacheStoreSchema,
   PersistedArchiveSessionStoreSchema,
@@ -222,26 +223,7 @@ describe("PersistedAccountStoreSchema", () => {
     expect(result).toEqual({
       accounts: {},
       activeAccountId: null,
-      staleScoreCharIds: [],
     });
-  });
-
-  it("accepts staleScoreCharIds as true (literal union)", () => {
-    const result = PersistedAccountStoreSchema.parse({
-      accounts: {},
-      activeAccountId: null,
-      staleScoreCharIds: true,
-    });
-    expect(result.staleScoreCharIds).toBe(true);
-  });
-
-  it("heals corrupted staleScoreCharIds to []", () => {
-    const result = PersistedAccountStoreSchema.parse({
-      accounts: {},
-      activeAccountId: null,
-      staleScoreCharIds: { bad: true },
-    });
-    expect(result.staleScoreCharIds).toEqual([]);
   });
 
   it("heals account with missing lastUpdate to 0", () => {
@@ -255,9 +237,11 @@ describe("PersistedAccountStoreSchema", () => {
         },
       },
       activeAccountId: null,
-      staleScoreCharIds: [],
     });
     expect(result.accounts[1].lastUpdate).toBe(0);
+    expect(
+      (result.accounts[1] as Record<string, unknown>).scores
+    ).toBeUndefined();
   });
 
   it("heals non-finite lastUpdate to 0", () => {
@@ -272,13 +256,48 @@ describe("PersistedAccountStoreSchema", () => {
         },
       },
       activeAccountId: null,
-      staleScoreCharIds: [],
     });
     expect(result.accounts[1].lastUpdate).toBe(0);
   });
 
   it("throws on non-object input", () => {
     expect(() => PersistedAccountStoreSchema.parse(42)).toThrow();
+  });
+});
+
+describe("PersistedAccountScoreCacheStoreSchema", () => {
+  it("heals all fields from empty object", () => {
+    const result = PersistedAccountScoreCacheStoreSchema.parse({});
+    expect(result).toEqual({
+      scoresByProfileId: {},
+      staleScoreCharIdsByProfileId: {},
+    });
+  });
+
+  it("accepts per-profile score and staleness cache data", () => {
+    const result = PersistedAccountScoreCacheStoreSchema.parse({
+      scoresByProfileId: {
+        1: { hu_tao: null },
+      },
+      staleScoreCharIdsByProfileId: {
+        1: true,
+        2: ["xiangling"],
+      },
+    });
+
+    expect(result.scoresByProfileId[1].hu_tao).toBeNull();
+    expect(result.staleScoreCharIdsByProfileId[1]).toBe(true);
+    expect(result.staleScoreCharIdsByProfileId[2]).toEqual(["xiangling"]);
+  });
+
+  it("heals corrupted cache maps to empty objects", () => {
+    const result = PersistedAccountScoreCacheStoreSchema.parse({
+      scoresByProfileId: "bad",
+      staleScoreCharIdsByProfileId: "bad",
+    });
+
+    expect(result.scoresByProfileId).toEqual({});
+    expect(result.staleScoreCharIdsByProfileId).toEqual({});
   });
 });
 

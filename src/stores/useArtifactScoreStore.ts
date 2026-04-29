@@ -6,7 +6,7 @@ import {
   migrateArtifactScorePersisted,
 } from "./migration/artifactScore";
 import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "./schemas";
-import { invalidateScores } from "./useAccountStore";
+import { invalidateScores } from "./useAccountScoreCacheStore";
 
 interface ArtifactScoreState {
   config: ArtifactScoreGlobalConfig;

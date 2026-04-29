@@ -16,6 +16,7 @@ import {
   getCharacterDisplayMeta,
 } from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
+import { useActiveAccountScores } from "@/hooks/useActiveAccount";
 import { useConstellation, useIsOwned } from "@/hooks/useOwnership";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
@@ -110,7 +111,7 @@ function LinkedAccountSection({ character }: { character: CharacterResource }) {
   const accountData = useAccountStore(
     (s) => getActiveAccount(s)?.data ?? undefined
   );
-  const scores = useAccountStore((s) => getActiveAccount(s)?.scores ?? {});
+  const scores = useActiveAccountScores();
 
   const charData = accountData?.characters.find((c) => c.key === character.id);
 

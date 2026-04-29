@@ -1,10 +1,11 @@
 import type { AccountData } from "@/data/types";
 import type { AccountState } from "@/lib/account-data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 
 /**
- * Returns the full active AccountState (id, data, scores, etc.) or null.
+ * Returns the full active AccountState (id, data, etc.) or null.
  * Use this when you need multiple fields from the active account.
  */
 export function useActiveAccount(): AccountState | null {
@@ -27,7 +28,12 @@ export function useActiveAccountScores(): Record<
   string,
   ArtifactScoreResult | null
 > {
-  return useAccountStore((s) => getActiveAccount(s)?.scores ?? EMPTY_SCORES);
+  const activeAccountId = useAccountStore((s) => s.activeAccountId);
+  return useAccountScoreCacheStore((s) =>
+    activeAccountId === null
+      ? EMPTY_SCORES
+      : (s.scoresByProfileId[activeAccountId] ?? EMPTY_SCORES)
+  );
 }
 
 const EMPTY_SCORES: Record<string, ArtifactScoreResult | null> = {};

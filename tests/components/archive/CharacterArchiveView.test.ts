@@ -33,7 +33,6 @@ function setAccountCharacters(characterKeys: string[]) {
           extraArtifacts: [],
           extraWeapons: [],
         },
-        scores: {},
         lastUpdate: Date.now(),
       },
     },

@@ -129,20 +129,25 @@ export const AccountDataSchema = z
 
 // ─── Account ───
 
-const AccountSchema = z
-  .object({
-    id: z.number(),
-    name: z.string(),
-    data: AccountDataSchema,
-    scores: z.record(z.string(), z.unknown()).catch({}),
-    lastUpdate: z.number().finite().catch(0),
-  })
-  .loose();
+const AccountSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  data: AccountDataSchema,
+  lastUpdate: z.number().finite().catch(0),
+});
 
 export const PersistedAccountStoreSchema = z.object({
   accounts: z.record(z.string(), AccountSchema).catch({}),
   activeAccountId: z.number().nullable().catch(null),
-  staleScoreCharIds: z.union([z.literal(true), z.array(z.string())]).catch([]),
+});
+
+export const PersistedAccountScoreCacheStoreSchema = z.object({
+  scoresByProfileId: z
+    .record(z.string(), z.record(z.string(), z.unknown().nullable()))
+    .catch({}),
+  staleScoreCharIdsByProfileId: z
+    .record(z.string(), z.union([z.literal(true), z.array(z.string())]))
+    .catch({}),
 });
 
 // ─── Build (replaces repairBuild) ───

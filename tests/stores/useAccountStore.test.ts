@@ -2,12 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountData, CharacterData } from "@/data/types";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";
+import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
 beforeEach(() => {
   useAccountStore.getState().clearAccounts();
+  useAccountScoreCacheStore.getState().clearAllScores();
 });
 
 afterEach(() => {
@@ -171,7 +173,7 @@ describe("useAccountStore", () => {
 
 // ─── Score staleness tests ────────────────────────────────────────────────────
 
-describe("per-character score staleness", () => {
+describe("account score cache integration", () => {
   const sampleData = createSampleAccountData({
     characters: [
       createSampleCharacter({ key: "hu_tao" }),
@@ -183,8 +185,8 @@ describe("per-character score staleness", () => {
   beforeEach(() => {
     useAccountStore.getState().addOrUpdateAccount(1, { data: sampleData });
     useAccountStore.getState().setActiveAccount(1);
-    // addOrUpdateAccount marks staleScoreCharIds = true; clear it for targeted tests
-    useAccountStore.getState().setScores({
+    // addOrUpdateAccount marks profile 1 stale; clear it for targeted tests.
+    useAccountScoreCacheStore.getState().setScores(1, {
       hu_tao: null,
       xiangling: null,
       xingqiu: null,
@@ -193,49 +195,75 @@ describe("per-character score staleness", () => {
 
   describe("invalidateScores", () => {
     it("marks all stale when called without args", () => {
-      useAccountStore.getState().invalidateScores();
-      expect(useAccountStore.getState().staleScoreCharIds).toBe(true);
+      useAccountScoreCacheStore.getState().invalidateScores(1);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toBe(true);
     });
 
     it("marks specific characters stale", () => {
-      useAccountStore.getState().invalidateScores(["hu_tao"]);
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual(["hu_tao"]);
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["hu_tao"]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual(["hu_tao"]);
     });
 
     it("accumulates multiple per-character invalidations", () => {
-      useAccountStore.getState().invalidateScores(["hu_tao"]);
-      useAccountStore.getState().invalidateScores(["xiangling"]);
-      const stale = useAccountStore.getState().staleScoreCharIds;
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["hu_tao"]);
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["xiangling"]);
+      const stale =
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1];
       expect(stale).toEqual(expect.arrayContaining(["hu_tao", "xiangling"]));
       expect((stale as string[]).length).toBe(2);
     });
 
     it("deduplicates repeated invalidation of same character", () => {
-      useAccountStore.getState().invalidateScores(["hu_tao"]);
-      useAccountStore.getState().invalidateScores(["hu_tao"]);
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual(["hu_tao"]);
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["hu_tao"]);
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["hu_tao"]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual(["hu_tao"]);
     });
 
     it("per-character invalidation is no-op when already fully stale", () => {
-      useAccountStore.getState().invalidateScores(); // all stale
-      useAccountStore.getState().invalidateScores(["hu_tao"]);
-      expect(useAccountStore.getState().staleScoreCharIds).toBe(true);
+      useAccountScoreCacheStore.getState().invalidateScores(1); // all stale
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["hu_tao"]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toBe(true);
     });
 
     it("global invalidation overrides per-character list", () => {
-      useAccountStore.getState().invalidateScores(["hu_tao"]);
-      useAccountStore.getState().invalidateScores(); // all stale
-      expect(useAccountStore.getState().staleScoreCharIds).toBe(true);
+      useAccountScoreCacheStore.getState().invalidateScores(1, ["hu_tao"]);
+      useAccountScoreCacheStore.getState().invalidateScores(1); // all stale
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toBe(true);
+    });
+
+    it("global invalidation marks every cached profile", () => {
+      useAccountScoreCacheStore.getState().setScores(2, { raiden: null });
+
+      useAccountScoreCacheStore
+        .getState()
+        .invalidateScores(undefined, ["hu_tao"]);
+
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual(["hu_tao"]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[2]
+      ).toEqual(["hu_tao"]);
     });
   });
 
   describe("mergeScores", () => {
     it("merges partial scores with existing", () => {
       const mockScore = createArtifactScoreResult();
-      useAccountStore.getState().mergeScores({
+      useAccountScoreCacheStore.getState().mergeScores(1, {
         hu_tao: mockScore,
       });
-      const scores = useAccountStore.getState().accounts[1].scores;
+      const scores = useAccountScoreCacheStore.getState().scoresByProfileId[1];
       expect(scores.hu_tao).toEqual(mockScore);
       // Other scores preserved
       expect(scores.xiangling).toBeNull();
@@ -243,57 +271,110 @@ describe("per-character score staleness", () => {
     });
 
     it("clears per-character staleness only for scored characters", () => {
-      useAccountStore.getState().invalidateScores(["hu_tao", "xiangling"]);
-      useAccountStore.getState().mergeScores({
+      useAccountScoreCacheStore
+        .getState()
+        .invalidateScores(1, ["hu_tao", "xiangling"]);
+      useAccountScoreCacheStore.getState().mergeScores(1, {
         hu_tao: createArtifactScoreResult(),
       });
       // hu_tao cleared, xiangling remains stale
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual([
-        "xiangling",
-      ]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual(["xiangling"]);
     });
 
     it("clears full staleness (true) to empty after scoring", () => {
-      useAccountStore.getState().invalidateScores(); // true
-      useAccountStore.getState().mergeScores({
+      useAccountScoreCacheStore.getState().invalidateScores(1); // true
+      useAccountScoreCacheStore.getState().mergeScores(1, {
         hu_tao: createArtifactScoreResult(),
         xiangling: null,
         xingqiu: null,
       });
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual([]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual([]);
     });
 
     it("is a no-op on empty stale list", () => {
-      // staleScoreCharIds already [] from beforeEach
-      const before = useAccountStore.getState().staleScoreCharIds;
-      useAccountStore.getState().mergeScores({ hu_tao: null });
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual(before);
+      const before =
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1];
+      useAccountScoreCacheStore.getState().mergeScores(1, { hu_tao: null });
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual(before);
     });
   });
 
   describe("addOrUpdateAccount", () => {
     it("marks all stale when data changes", () => {
       // Clear staleness first
-      useAccountStore.getState().setScores({});
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual([]);
+      useAccountScoreCacheStore.getState().setScores(1, {});
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual([]);
 
       // Update with new data object → marks all stale
       const newData = createSampleAccountData({
         characters: [createSampleCharacter({ key: "venti" })],
       });
       useAccountStore.getState().addOrUpdateAccount(1, { data: newData });
-      expect(useAccountStore.getState().staleScoreCharIds).toBe(true);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toBe(true);
     });
 
     it("does not change staleness when data is same reference", () => {
       // Clear staleness
-      useAccountStore.getState().setScores({});
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual([]);
+      useAccountScoreCacheStore.getState().setScores(1, {});
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual([]);
 
       // Same data reference → no stale change
       const existingData = useAccountStore.getState().accounts[1].data;
       useAccountStore.getState().addOrUpdateAccount(1, { data: existingData });
-      expect(useAccountStore.getState().staleScoreCharIds).toEqual([]);
+      expect(
+        useAccountScoreCacheStore.getState().staleScoreCharIdsByProfileId[1]
+      ).toEqual([]);
+    });
+
+    it("renames score cache when profile 0 is promoted to a UID", () => {
+      useAccountScoreCacheStore.getState().setScores(0, {
+        hu_tao: createArtifactScoreResult(),
+      });
+      useAccountStore.getState().addOrUpdateAccount(0, {
+        data: createSampleAccountData(),
+      });
+
+      useAccountStore.getState().promoteToUid(0, 800000001);
+
+      expect(
+        useAccountScoreCacheStore.getState().scoresByProfileId[0]
+      ).toBeUndefined();
+      expect(
+        useAccountScoreCacheStore.getState().scoresByProfileId[800000001].hu_tao
+      ).toBeDefined();
+    });
+
+    it("removes score cache when account profiles are deleted or cleared", () => {
+      useAccountScoreCacheStore.getState().setScores(1, {
+        hu_tao: createArtifactScoreResult(),
+      });
+
+      useAccountStore.getState().deleteAccount(1);
+      expect(
+        useAccountScoreCacheStore.getState().scoresByProfileId[1]
+      ).toBeUndefined();
+
+      useAccountStore.getState().addOrUpdateAccount(2, {
+        data: createSampleAccountData(),
+      });
+      useAccountScoreCacheStore.getState().setScores(2, { raiden: null });
+      useAccountStore.getState().clearAccounts();
+
+      expect(useAccountScoreCacheStore.getState().scoresByProfileId).toEqual(
+        {}
+      );
     });
   });
 });
@@ -301,7 +382,7 @@ describe("per-character score staleness", () => {
 // ─── Migration tests ──────────────────────────────────────────────────────────
 // These verify that persisted data from before the multi-account refactor
 // (commit 9c3f53ead0a5c85f3f0ce661f9195fbf366fd1e0 and earlier) is correctly
-// migrated to the current v4 format.
+// migrated to the current source-data-only account format.
 
 describe("migrateAccountStore", () => {
   const sampleAccountData: AccountData = {
@@ -318,7 +399,7 @@ describe("migrateAccountStore", () => {
     extraWeapons: [],
   };
 
-  describe("v0 / v1 → v4 (old single-account format)", () => {
+  describe("v0 / v1 → current (old single-account format)", () => {
     it("migrates v1 data with a UID to a UID-keyed account", () => {
       const persisted = {
         accountData: sampleAccountData,
@@ -333,12 +414,13 @@ describe("migrateAccountStore", () => {
       expect(result.accounts[800000000].id).toBe(800000000);
       expect(result.accounts[800000000].name).toBe("800000000");
       expect(result.accounts[800000000].data).toEqual(sampleAccountData);
-      expect(result.accounts["800000000"].scores).toEqual(persisted.scores);
       expect(result.activeAccountId).toBe(800000000);
-      expect(result.staleScoreCharIds).toEqual([]);
       // No uid field on the account
       expect(
         (result.accounts[800000000] as Record<string, unknown>).uid
+      ).toBeUndefined();
+      expect(
+        (result.accounts[800000000] as Record<string, unknown>).scores
       ).toBeUndefined();
     });
 
@@ -357,7 +439,9 @@ describe("migrateAccountStore", () => {
       expect(result.accounts[0].name).toBe("Default Account");
       expect(result.accounts[0].data).toEqual(sampleAccountData);
       expect(result.activeAccountId).toBe(0);
-      expect(result.staleScoreCharIds).toBe(true);
+      expect(
+        (result.accounts[0] as Record<string, unknown>).scores
+      ).toBeUndefined();
     });
 
     it("migrates v0 data identically to v1", () => {
@@ -382,7 +466,6 @@ describe("migrateAccountStore", () => {
 
       expect(result.accounts).toEqual({});
       expect(result.activeAccountId).toBeNull();
-      expect(result.staleScoreCharIds).toEqual([]);
     });
 
     it("returns empty accounts when v0 data has no accountData", () => {
@@ -393,7 +476,7 @@ describe("migrateAccountStore", () => {
     });
   });
 
-  describe("v2 → v4 (multi-account with separate uid field)", () => {
+  describe("v2 → current (multi-account with separate uid field)", () => {
     it("strips uid field when uid matches storage key", () => {
       const persisted = {
         accounts: {
@@ -416,6 +499,9 @@ describe("migrateAccountStore", () => {
       expect(result.accounts[800000000].id).toBe(800000000);
       expect(
         (result.accounts[800000000] as Record<string, unknown>).uid
+      ).toBeUndefined();
+      expect(
+        (result.accounts[800000000] as Record<string, unknown>).scores
       ).toBeUndefined();
       expect(result.accounts[800000000].name).toBe("Main");
       expect(result.activeAccountId).toBe(800000000);
@@ -447,6 +533,9 @@ describe("migrateAccountStore", () => {
       expect(result.accounts[800000002].id).toBe(800000002);
       expect(
         (result.accounts[800000002] as Record<string, unknown>).uid
+      ).toBeUndefined();
+      expect(
+        (result.accounts[800000002] as Record<string, unknown>).scores
       ).toBeUndefined();
       expect(result.accounts["800000002"].name).toBe("MyAccount");
       // activeAccountId updated to follow
@@ -511,7 +600,9 @@ describe("migrateAccountStore", () => {
       expect(result.accounts[700000002]).toBeDefined();
       expect(result.accounts[700000002].id).toBe(700000002);
       expect(result.activeAccountId).toBe(900000001);
-      expect(result.staleScoreCharIds).toBe(true);
+      expect(
+        (result.accounts[900000001] as Record<string, unknown>).scores
+      ).toBeUndefined();
     });
 
     it("handles empty accounts gracefully", () => {
@@ -528,8 +619,8 @@ describe("migrateAccountStore", () => {
     });
   });
 
-  describe("v3 → v4 (isScoresStale → staleScoreCharIds)", () => {
-    it("converts false isScoresStale to empty array", () => {
+  describe("v3 → current (drop account score cache fields)", () => {
+    it("drops false isScoresStale", () => {
       const persisted = {
         accounts: {},
         activeAccountId: null,
@@ -538,10 +629,12 @@ describe("migrateAccountStore", () => {
 
       const result = migrateAccountStore(persisted, 3);
 
-      expect(result.staleScoreCharIds).toEqual([]);
+      expect(
+        (result as unknown as Record<string, unknown>).staleScoreCharIds
+      ).toBeUndefined();
     });
 
-    it("converts true isScoresStale to true (all stale)", () => {
+    it("drops true isScoresStale and account scores", () => {
       const persisted = {
         accounts: {
           "800000000": {
@@ -558,22 +651,41 @@ describe("migrateAccountStore", () => {
 
       const result = migrateAccountStore(persisted, 3);
 
-      expect(result.staleScoreCharIds).toBe(true);
       expect(result.accounts["800000000"]).toBeDefined();
+      expect(
+        (result.accounts[800000000] as Record<string, unknown>).scores
+      ).toBeUndefined();
+      expect(
+        (result as unknown as Record<string, unknown>).staleScoreCharIds
+      ).toBeUndefined();
     });
   });
 
-  describe("v4+ → passthrough", () => {
-    it("returns the state unchanged for current version", () => {
+  describe("v6+ → source-data normalization", () => {
+    it("strips cache fields from current persisted state", () => {
       const persisted = {
-        accounts: {},
+        accounts: {
+          800000000: {
+            id: 800000000,
+            name: "Main",
+            data: sampleAccountData,
+            scores: { hu_tao: null },
+            lastUpdate: 1000,
+          },
+        },
         activeAccountId: null,
         staleScoreCharIds: [],
       };
 
-      const result = migrateAccountStore(persisted, 5);
+      const result = migrateAccountStore(persisted, 6);
 
-      expect(result).toBe(persisted);
+      expect(result.accounts[800000000].name).toBe("Main");
+      expect(
+        (result.accounts[800000000] as Record<string, unknown>).scores
+      ).toBeUndefined();
+      expect(
+        (result as unknown as Record<string, unknown>).staleScoreCharIds
+      ).toBeUndefined();
     });
   });
 });

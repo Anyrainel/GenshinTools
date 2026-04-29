@@ -5,12 +5,10 @@ import {
   legacyAccountProfileIdToNumberOrDefault,
 } from "@/lib/account-data/accountProfile";
 import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 
 type PersistedAccountStore = {
   accounts: Record<AccountProfileId, AccountState>;
   activeAccountId: AccountProfileId | null;
-  staleScoreCharIds: string[] | true;
 };
 
 /** Shape of the old v0/v1 single-account store (before multi-account). */
@@ -27,8 +25,16 @@ interface LegacyAccountStoreV0 {
 type LegacyAccountState = Omit<AccountState, "id"> & {
   id?: string | number;
   uid?: string;
+  scores?: unknown;
   [k: string]: unknown;
 };
+
+function stripAccountCacheFields(
+  account: LegacyAccountState
+): Omit<LegacyAccountState, "scores"> {
+  const { scores: _scores, ...sourceAccount } = account;
+  return sourceAccount;
+}
 
 function normalizeAccountStoreIds(
   state: LegacyAccountStoreV0
@@ -39,7 +45,7 @@ function normalizeAccountStoreIds(
     const id = legacyAccountProfileIdToNumberOrDefault(
       legacy.id ?? legacy.uid ?? key
     );
-    const { uid: _dropped, ...rest } = legacy;
+    const { uid: _dropped, ...rest } = stripAccountCacheFields(legacy);
     accounts[id] = {
       ...rest,
       id,
@@ -59,7 +65,6 @@ function normalizeAccountStoreIds(
       activeAccountId !== null && accounts[activeAccountId]
         ? activeAccountId
         : null,
-    staleScoreCharIds: state.staleScoreCharIds ?? [],
   };
 }
 
@@ -76,11 +81,10 @@ export function migrateAccountStore(
   // v0 / v1: old single-account shape { accountData, scores, lastUid }
   if (version === 0 || version === 1) {
     const oldData = state.accountData;
-    const oldScores = state.scores || {};
     const oldUid = state.lastUid || "";
 
     if (!oldData) {
-      return { accounts: {}, activeAccountId: null, staleScoreCharIds: [] };
+      return { accounts: {}, activeAccountId: null };
     }
 
     const id = oldUid ? legacyAccountProfileIdToNumberOrDefault(oldUid) : 0;
@@ -90,12 +94,10 @@ export function migrateAccountStore(
           id,
           name: oldUid || "Default Account",
           data: oldData,
-          scores: oldScores as Record<string, ArtifactScoreResult | null>,
           lastUpdate: Date.now(),
         },
       },
       activeAccountId: id,
-      staleScoreCharIds: state.isScoresStale ? true : [],
     });
   }
 
@@ -123,16 +125,15 @@ export function migrateAccountStore(
     return normalizeAccountStoreIds({
       accounts: newAccounts,
       activeAccountId: activeId,
-      staleScoreCharIds: state.isScoresStale ? true : [],
     });
   }
 
-  // v3: had boolean isScoresStale -> convert to staleScoreCharIds.
+  // v3: had boolean isScoresStale for account-score cache invalidation.
+  // Scores are derivable cache data and now live outside account source data.
   if (version === 3) {
     return normalizeAccountStoreIds({
       accounts: state.accounts ?? {},
       activeAccountId: state.activeAccountId ?? null,
-      staleScoreCharIds: state.isScoresStale ? true : [],
     });
   }
 
@@ -142,5 +143,5 @@ export function migrateAccountStore(
     return normalizeAccountStoreIds(state);
   }
 
-  return persistedState as PersistedAccountStore;
+  return normalizeAccountStoreIds(state);
 }

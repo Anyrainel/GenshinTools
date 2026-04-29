@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
 import { PersistedBuildsStoreSchema } from "@/stores/schemas";
-import { invalidateScores } from "@/stores/useAccountStore";
+import { invalidateScores } from "@/stores/useAccountScoreCacheStore";
 
 let _buildIdSeq = 0;
 function nextBuildId(): string {

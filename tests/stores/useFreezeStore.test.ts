@@ -38,7 +38,6 @@ beforeEach(() => {
   useAccountStore.setState({
     accounts: {},
     activeAccountId: null,
-    staleScoreCharIds: [],
   });
   useFreezeStore.setState({
     frozenTeams: {},
