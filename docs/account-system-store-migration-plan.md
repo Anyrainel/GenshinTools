@@ -15,22 +15,38 @@ The main migration rule is:
 - `src/stores/migration/<domain>.ts` should own legacy persisted shapes and versioned migration code.
 - Cloud backup codecs should be added after local store boundaries are clean.
 
+## Implementation Status
+
+This branch implements the low-risk local migrations needed before cloud backup work. The remaining preset-delta work is intentionally left as a follow-up because it changes authoring semantics, not just persistence boundaries.
+
+| Phase | Status | Commit |
+| --- | --- | --- |
+| Phase 0: migration modules | Done | `a469415a` |
+| Phase 1: numeric account profile ids | Done for profile ids. Account score cache split remains follow-up. | `ee07e6e5` |
+| Phase 2: account-scoped settings | Done for triage and resource settings. Clone-from-last-active import messaging remains follow-up. | `b19c078d` |
+| Phase 3: tier list migrations | Done for character account links and weapon/artifact multi-list stores. | `41c3be21` |
+| Phase 4: freeze account scoping | Done. | `b68b2c47` |
+| Phase 5: team cache persistence split | Done for persisted source data. Runtime Team Comp pages still keep in-memory result fields to avoid UI rewiring in this phase. | `ca14fca1` |
+| Phase 6: build preset delta | Deferred. Needs a dedicated resolver migration and UI regression pass. | pending |
+| Phase 7: team preset delta | Deferred. Needs team preset/source identity before a generic delta can be correct. | pending |
+| Phase 8: cloud codecs | Deferred until the cloud sync implementation starts. | pending |
+
 ## Current Migration Inventory
 
 Current persisted stores with migration or hydration behavior:
 
-| Store | Current key | Current version | Current migration location | Planned migration module |
-| --- | --- | ---: | --- | --- |
-| `useAccountStore` | `genshin-account-storage` | 4 | `src/stores/useAccountStore.ts` | `src/stores/migration/account.ts` |
-| `useBuildsStore` | `artifact-filter-builds` | `BUILD_DATA_VERSION` | `src/stores/useBuildsStore.ts` | `src/stores/migration/builds.ts` |
-| `useTeamStore` | `team-builder-storage` | 15 | `src/stores/useTeamStore.ts` | `src/stores/migration/team.ts` |
-| `useFreezeStore` | `frozen-teams-storage` | 4 | `src/stores/useFreezeStore.ts` | `src/stores/migration/freeze.ts` |
-| `useTierStore` | `tierlist-storage` | 2 | `src/stores/useTierStore.ts` | `src/stores/migration/tier.ts` |
-| `useWeaponTierStore` | `weapon-tierlist-storage` | none | `createTierStore` merge only | `src/stores/migration/tier.ts` |
-| `useArtifactTierStore` | `artifact-tierlist-storage` | none | `createTierStore` merge only | `src/stores/migration/tier.ts` |
-| `useResourceRecStore` | `resource-rec-settings` | 6 | `src/stores/useResourceRecStore.ts` | `src/stores/migration/resource.ts` |
-| `useTriageStore` | `triage-settings` | 4 | `src/stores/useTriageStore.ts` | `src/stores/migration/triage.ts` |
-| `useArtifactScoreStore` | `artifact-score-storage` | none | `src/stores/useArtifactScoreStore.ts` | `src/stores/migration/artifactScore.ts` |
+| Store | Current key | Current version | Current migration module |
+| --- | --- | ---: | --- |
+| `useAccountStore` | `genshin-account-storage` | 5 | `src/stores/migration/account.ts` |
+| `useBuildsStore` | `artifact-filter-builds` | 5 | `src/stores/migration/builds.ts` |
+| `useTeamStore` | `team-builder-storage` | 16 | `src/stores/migration/team.ts` |
+| `useFreezeStore` | `frozen-teams-storage` | 5 | `src/stores/migration/freeze.ts` |
+| `useTierStore` | `tierlist-storage` | 3 | `src/stores/migration/tier.ts` |
+| `useWeaponTierStore` | `weapon-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
+| `useArtifactTierStore` | `artifact-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
+| `useResourceRecStore` | `resource-rec-settings` | 7 | `src/stores/migration/resource.ts` |
+| `useTriageStore` | `triage-settings` | 5 | `src/stores/migration/triage.ts` |
+| `useArtifactScoreStore` | `artifact-score-storage` | none | `src/stores/migration/artifactScore.ts` |
 
 Stores that are persisted but do not need account-system migration work in V1:
 
