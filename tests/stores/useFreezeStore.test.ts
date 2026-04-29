@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
 import { migrateFreezeStore } from "@/stores/migration/freeze";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
@@ -34,7 +35,23 @@ function makeArtifactsByChar(
 }
 
 beforeEach(() => {
-  useFreezeStore.setState({ frozenTeams: {}, reuseMode: "sameChar" });
+  useAccountStore.setState({
+    accounts: {},
+    activeAccountId: null,
+    staleScoreCharIds: [],
+  });
+  useFreezeStore.setState({
+    frozenTeams: {},
+    frozenArtifactIds: [],
+    reuseMode: "sameChar",
+    freezesByProfileId: {
+      0: {
+        frozenTeams: {},
+        frozenArtifactIds: [],
+        reuseMode: "sameChar",
+      },
+    },
+  });
 });
 
 describe("useFreezeStore", () => {
@@ -378,6 +395,68 @@ describe("useFreezeStore", () => {
     });
   });
 
+  describe("account profiles", () => {
+    it("keeps frozen state isolated by active account profile", () => {
+      act(() => {
+        useAccountStore.setState({ activeAccountId: 1 });
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
+        useFreezeStore.getState().setReuseMode("none");
+        useAccountStore.setState({ activeAccountId: 2 });
+      });
+
+      expect(useFreezeStore.getState().frozenTeams).toEqual({});
+      expect(useFreezeStore.getState().reuseMode).toBe("sameChar");
+
+      act(() => {
+        useFreezeStore.getState().freezeArtifact("b1");
+        useAccountStore.setState({ activeAccountId: 1 });
+      });
+
+      const state = useFreezeStore.getState();
+      expect(state.frozenTeams.team1.frozenCharIds).toEqual(["hu_tao"]);
+      expect(state.reuseMode).toBe("none");
+      expect(state.freezesByProfileId[2].frozenArtifactIds).toEqual(["b1"]);
+    });
+
+    it("can remap and validate an inactive profile without changing the active mirror", () => {
+      act(() => {
+        useAccountStore.setState({ activeAccountId: 1 });
+        useFreezeStore.getState().freezeArtifact("active-art");
+        useFreezeStore.setState((state) => ({
+          freezesByProfileId: {
+            ...state.freezesByProfileId,
+            2: {
+              frozenTeams: {},
+              reuseMode: "forceReuse",
+              frozenArtifactIds: ["old-art", "orphan"],
+            },
+          },
+        }));
+      });
+
+      act(() => {
+        useFreezeStore
+          .getState()
+          .remapArtifactIds(new Map([["old-art", "new-art"]]), 2);
+        useFreezeStore
+          .getState()
+          .validateFrozenArtifacts(new Set(["new-art"]), 2);
+      });
+
+      const state = useFreezeStore.getState();
+      expect(state.frozenArtifactIds).toEqual(["active-art"]);
+      expect(state.freezesByProfileId[2].frozenArtifactIds).toEqual([
+        "new-art",
+      ]);
+    });
+  });
+
   describe("migration v2 → v3", () => {
     it("migrates allowSameCharReuse: true to reuseMode: sameChar", () => {
       // Simulate v2 persisted state by directly setting store state
@@ -416,6 +495,25 @@ describe("migrateFreezeStore", () => {
     };
     const result = migrateFreezeStore(oldState, 3);
     expect(result.frozenArtifactIds).toEqual(["art-1", "art-2"]);
+  });
+
+  it("migrates v4 → v5: moves legacy freeze state into default profile", () => {
+    const oldState = {
+      frozenTeams: {
+        "team-1": {
+          frozenCharIds: ["hu_tao"],
+          artifactsByChar: makeArtifactsByChar("hu_tao", ["a1"]),
+        },
+      },
+      reuseMode: "forceReuse" as const,
+      frozenArtifactIds: ["standalone-1"],
+    };
+    const result = migrateFreezeStore(oldState, 4);
+    expect(result.freezesByProfileId?.[0]).toEqual({
+      frozenTeams: oldState.frozenTeams,
+      reuseMode: "forceReuse",
+      frozenArtifactIds: ["standalone-1"],
+    });
   });
 
   it("migrates v2 → v4: allowSameCharReuse", () => {

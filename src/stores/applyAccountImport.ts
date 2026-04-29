@@ -1,7 +1,11 @@
 import type { AccountData } from "@/data/types";
 import type { AccountProfileId } from "@/lib/account-data/types";
 import { useAccountStore } from "./useAccountStore";
-import { remapFreezeStoreForImport } from "./useFreezeStore";
+import {
+  collectAllArtifactIds,
+  remapFreezeStoreForImport,
+  useFreezeStore,
+} from "./useFreezeStore";
 import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
 
 /**
@@ -24,7 +28,7 @@ export function applyAccountImport(opts: {
 }): void {
   const lastUpdate = opts.lastUpdate ?? Date.now();
   useRecommendationCacheStore.getState().clear();
-  remapFreezeStoreForImport(opts.artifactIdMap);
+  remapFreezeStoreForImport(opts.artifactIdMap, opts.accountId);
   const store = useAccountStore.getState();
   store.addOrUpdateAccount(opts.accountId, {
     data: opts.data,
@@ -34,4 +38,7 @@ export function applyAccountImport(opts: {
   if (opts.setAsActive !== undefined) {
     store.setActiveAccount(opts.setAsActive);
   }
+  useFreezeStore
+    .getState()
+    .validateFrozenArtifacts(collectAllArtifactIds(opts.data), opts.accountId);
 }

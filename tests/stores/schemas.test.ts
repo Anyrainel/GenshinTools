@@ -501,6 +501,44 @@ describe("PersistedFreezeStoreSchema", () => {
     ).toBeNull();
   });
 
+  it("heals account-scoped freeze buckets", () => {
+    const result = PersistedFreezeStoreSchema.parse({
+      freezesByProfileId: {
+        "0": {
+          frozenTeams: {
+            "team-1": {
+              frozenCharIds: ["Ayaka"],
+              artifactsByChar: {
+                Ayaka: { flower: "not-an-artifact" },
+              },
+            },
+          },
+          reuseMode: "forceReuse",
+          frozenArtifactIds: ["artifact-1"],
+        },
+        "123456789": {
+          frozenTeams: 42,
+          reuseMode: "bad",
+          frozenArtifactIds: "bad",
+        },
+      },
+    });
+
+    expect(result.freezesByProfileId?.["0"].reuseMode).toBe("forceReuse");
+    expect(result.freezesByProfileId?.["0"].frozenArtifactIds).toEqual([
+      "artifact-1",
+    ]);
+    expect(
+      result.freezesByProfileId?.["0"].frozenTeams["team-1"].artifactsByChar
+        .Ayaka.flower
+    ).toBeNull();
+    expect(result.freezesByProfileId?.["123456789"].frozenTeams).toEqual({});
+    expect(result.freezesByProfileId?.["123456789"].reuseMode).toBe("sameChar");
+    expect(result.freezesByProfileId?.["123456789"].frozenArtifactIds).toEqual(
+      []
+    );
+  });
+
   it("throws on non-object input", () => {
     expect(() => PersistedFreezeStoreSchema.parse(false)).toThrow();
   });

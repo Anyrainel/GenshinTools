@@ -227,10 +227,14 @@ const FrozenTeamSchema = z
   })
   .loose();
 
-export const PersistedFreezeStoreSchema = z.object({
+const FreezeProfileSchema = z.object({
   frozenTeams: z.record(z.string(), FrozenTeamSchema).catch({}),
   reuseMode: z.enum(["none", "sameChar", "forceReuse"]).catch("sameChar"),
   frozenArtifactIds: z.array(z.string()).catch([]),
+});
+
+export const PersistedFreezeStoreSchema = FreezeProfileSchema.extend({
+  freezesByProfileId: z.record(z.string(), FreezeProfileSchema).optional(),
 });
 
 // ─── ResourceRec ───

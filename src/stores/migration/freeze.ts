@@ -1,5 +1,6 @@
 import type { Slot } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 
 type ArtifactReuseMode = "none" | "sameChar" | "forceReuse";
 
@@ -9,6 +10,13 @@ interface FrozenTeamMigration {
 }
 
 interface FreezeMigrationState {
+  frozenTeams: Record<string, FrozenTeamMigration>;
+  reuseMode: ArtifactReuseMode;
+  frozenArtifactIds: string[];
+  freezesByProfileId?: Record<string, FreezeProfileMigration>;
+}
+
+interface FreezeProfileMigration {
   frozenTeams: Record<string, FrozenTeamMigration>;
   reuseMode: ArtifactReuseMode;
   frozenArtifactIds: string[];
@@ -46,6 +54,20 @@ export function migrateFreezeStore(
     legacy.reuseMode =
       legacy.allowSameCharReuse === false ? "none" : "sameChar";
     legacy.allowSameCharReuse = undefined;
+  }
+  // v4 -> v5: freeze state became account-profile scoped. Old single-account
+  // shape is preserved as profile 0 (the no-UID/default profile).
+  if (version < 5) {
+    state.freezesByProfileId = {
+      [DEFAULT_ACCOUNT_PROFILE_ID]: {
+        frozenTeams: (state.frozenTeams ?? {}) as Record<
+          string,
+          FrozenTeamMigration
+        >,
+        reuseMode: (state.reuseMode as ArtifactReuseMode) ?? "sameChar",
+        frozenArtifactIds: (state.frozenArtifactIds ?? []) as string[],
+      },
+    };
   }
   return state as Partial<FreezeMigrationState> as FreezeMigrationState;
 }

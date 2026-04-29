@@ -51,6 +51,13 @@ function resetFreezeStore() {
     frozenTeams: {},
     frozenArtifactIds: [],
     reuseMode: "sameChar",
+    freezesByProfileId: {
+      0: {
+        frozenTeams: {},
+        frozenArtifactIds: [],
+        reuseMode: "sameChar",
+      },
+    },
   });
 }
 
@@ -355,10 +362,21 @@ describe("collectAllArtifactIds", () => {
 });
 
 describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
-  beforeEach(resetFreezeStore);
+  beforeEach(() => {
+    useAccountStore.setState({
+      accounts: {},
+      activeAccountId: 1,
+      staleScoreCharIds: [],
+    });
+    resetFreezeStore();
+  });
   afterEach(() => {
     resetFreezeStore();
-    useAccountStore.setState({ accounts: {}, activeAccountId: null });
+    useAccountStore.setState({
+      accounts: {},
+      activeAccountId: null,
+      staleScoreCharIds: [],
+    });
   });
 
   it("remap before save + subscriber validate = correct end state", () => {
@@ -496,10 +514,21 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
 // ─── End-to-end: Import → ID reassignment → Freeze store update ─────────────
 
 describe("end-to-end: import pipeline preserves freeze state", () => {
-  beforeEach(resetFreezeStore);
+  beforeEach(() => {
+    useAccountStore.setState({
+      accounts: {},
+      activeAccountId: 1,
+      staleScoreCharIds: [],
+    });
+    resetFreezeStore();
+  });
   afterEach(() => {
     resetFreezeStore();
-    useAccountStore.setState({ accounts: {}, activeAccountId: null });
+    useAccountStore.setState({
+      accounts: {},
+      activeAccountId: null,
+      staleScoreCharIds: [],
+    });
   });
 
   it("mergeAccountData + remap preserves frozen artifacts", () => {
