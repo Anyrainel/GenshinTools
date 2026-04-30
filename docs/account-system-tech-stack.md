@@ -1,6 +1,6 @@
 # Account System Design 1: Tech Stack, Product System, and Monetization
 
-Last verified: 2026-04-29.
+Last updated: 2026-04-30. Cloudflare product limits last verified: 2026-04-29.
 
 ## Scope
 
@@ -328,30 +328,29 @@ For GenshinTools, direct sponsorship or affiliate-style static placements are pr
 
 ## Recommended Rollout
 
+Completed local prerequisite
+
+- Local account profile ids use numeric default profile `0` and UID profile ids.
+- Triage/resource settings and freeze intent are account-scoped locally.
+- Profile `0` promotion remaps account-scoped local stores before activating the UID.
+- Build and team presets use hydrated active presets plus persisted `PresetDelta` overlays.
+- Team source data is split into `team.comp`, `team.config`, and local-only result caches.
+- Character, weapon, and artifact tier-list stores are multi-instance.
+- Migration code lives under `src/stores/migration/<domain>.ts`; current store files define latest runtime schemas only.
+
 Phase 1: Foundation
 
 - Session auth with one global provider and one China-friendly provider if feasible.
 - `/api/me`, logout, provider-linking skeleton.
 - Entitlement table and manual admin grants.
 
-Phase 2: Local data-boundary migration
-
-- Account profile partition helpers, including numeric default profile `0`.
-- Per-account triage/resource settings.
-- Account-scoped freeze intent.
-- Team library/config/cache split.
-- Team result caches split out of team source/config data.
-- Account profile `0` promotion to UID, including moving account-scoped data and soft-deleting `0`.
-- Stable multi-instance tier-list ids for character, weapon, and artifact lists.
-- Migration tests for old persisted store shapes.
-
-Phase 3: Cloud codecs and UI
+Phase 2: Cloud codecs and UI
 
 - Introduce cloud codecs for account, builds, teams, account freeze, account settings, and tier lists.
 - Normalize account data at the cloud boundary.
 - Add account-menu sync/conflict status and resolver.
 
-Phase 4: Cloud backup API
+Phase 3: Cloud backup API
 
 - D1 migrations and R2 bucket.
 - Cloud sync index endpoint.
@@ -359,13 +358,13 @@ Phase 4: Cloud backup API
 - Gate upload/restore by `cloud_sync`.
 - Allow delete/download even after entitlement expiry.
 
-Phase 5: Payments and feedback
+Phase 4: Payments and feedback
 
 - Stripe checkout/webhook.
 - Afdian/manual donation grant path.
 - Text-only feedback form with rate limiting and China-safe anti-spam fallback.
 
-Phase 6: Analytics and monetization
+Phase 5: Analytics and monetization
 
 - Cloudflare Web Analytics.
 - First-party batched event rollups.

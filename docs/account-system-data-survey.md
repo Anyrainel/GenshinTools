@@ -14,16 +14,17 @@ Current durable localStorage keys observed in `src/stores`:
 
 | Store | Key | Current contents | Cloud decision |
 | --- | --- | --- | --- |
-| `useAccountStore` | `genshin-account-storage` | account profiles, active account, stale score markers, account scores | Split and normalize. Upload account data. Exclude scores and stale markers. |
-| `useBuildsStore` | `artifact-filter-builds` | artifact build deltas, custom builds, preset id, compute options, validation cache | Upload user-authored build config. Exclude validation cache if recomputable. |
-| `useTeamStore` | `team-builder-storage` | team comp deltas, team config, active preset metadata | Upload team library/config. Exclude result caches. |
+| `useAccountStore` | `genshin-account-storage` | numeric account profiles and active account id | Upload account profile data and normalized account source data. Scores are already split out. |
+| `useAccountScoreCacheStore` | `account-score-cache-storage` | account-scoped artifact score results and stale markers | Do not upload in V1. Recompute or use local cache only. |
+| `useBuildsStore` | `artifact-filter-builds` | artifact build preset deltas, active preset id, compute options, character metadata, derived runtime views | Upload user-authored build config. Exclude hydrated preset payload, validation state, and derived runtime views. |
+| `useTeamStore` | `team-builder-storage` | `compDeltas`, `configsByTeamId`, active preset id, metadata, derived runtime views | Upload `team.comp` and `team.config`. Exclude result caches and derived views. |
 | `useFreezeStore` | `frozen-teams-storage` | account-scoped frozen team artifact-id loadouts, standalone frozen artifact ids, reuse mode | Upload account-scoped stable freeze intent. Do not duplicate full artifact blobs. |
 | `useTierStore` | `tierlist-storage` | character tier-list instances, account links, and view settings | Upload user-authored tier lists. Preserve at most one account-linked list per account profile plus unattached lists. |
-| `useWeaponTierStore` | `weapon-tierlist-storage` | weapon tier list | Migrate to stable multi-instance ids and include in backup. No account profile linkage. |
-| `useArtifactTierStore` | `artifact-tierlist-storage` | artifact tier list | Migrate to stable multi-instance ids and include in backup. No account profile linkage. |
+| `useWeaponTierStore` | `weapon-tierlist-storage` | multi-instance weapon tier lists | Include in backup. No account profile linkage. |
+| `useArtifactTierStore` | `artifact-tierlist-storage` | multi-instance artifact tier lists | Include in backup. No account profile linkage. |
 | `useArtifactScoreStore` | `artifact-score-storage` | global artifact scoring weights | Upload small settings. |
-| `useTriageStore` | `triage-settings` | triage settings | Upload as account-scoped settings in the cloud codec. |
-| `useResourceRecStore` | `resource-rec-settings` | resource recommendation thresholds and filters | Upload as account-scoped settings in the cloud codec. |
+| `useTriageStore` | `triage-settings` | account-scoped triage settings | Upload as account-scoped settings. |
+| `useResourceRecStore` | `resource-rec-settings` | account-scoped resource recommendation thresholds and filters | Upload as account-scoped settings. |
 | `usePreferencesStore` | `preferences-storage` | UI preferences | Keep device-local in V1. Revisit after core backup is stable. |
 | `useGreetingStore` | `greeting-storage` | onboarding/greeting state | Do not upload by default. |
 | `useSessionNavStore` | `session-nav-storage` | session navigation state | Do not upload. |
@@ -44,11 +45,11 @@ Concrete backup domains:
 | --- | --- | --- | --- |
 | Account profiles and inventory | `account.profile`, `account.characters`, `account.weapons`, `account.artifacts`, `account.equipment` | account profile id (`0` for default/no UID, otherwise numeric UID) | Latest complete import for that profile can intentionally overwrite cloud. Manual edits use revision checks. |
 | Build library | `builds` | `default` | Revision checked; user resolves local/cloud if edited on multiple devices. |
-| Team library/config | `teams.library`, `teams.config` | `default` | Revision checked; user resolves local/cloud if edited on multiple devices. |
+| Team comp/config | `team.comp`, `team.config` | `default` | Revision checked; user resolves local/cloud if edited on multiple devices. |
 | Account freeze intent | `account.freeze` | account profile id | Revision checked; artifact ids are account-scoped. |
 | Character tier lists | `tier.character.account`, `tier.character.custom` | account profile id for linked lists; stable list id for unattached lists | At most one linked list per account profile, plus unattached custom lists. |
 | Global tier lists | `tier.weapon`, `tier.artifact` | stable list id | Include in local multi-instance migration; no account-profile linkage. |
-| Account settings | `account.triage`, `account.resources` | account profile id | Currently singleton locally; must migrate to account-scoped before backup V1. |
+| Account settings | `account.triage`, `account.resources` | account profile id | Already account-scoped locally; cloud codecs should preserve that partitioning. |
 | Global settings | `settings.artifactScore` | `default` | Low risk; latest writer wins is acceptable. Keep UI preferences device-local in V1. |
 | Local result caches | none | none | Excluded from cloud. |
 | Session/UI state | none | none | Excluded from cloud. |
@@ -83,10 +84,9 @@ Cloud target:
 
 Account profile ids:
 
-- Current local profiles are keyed by `"default"` for the no-UID profile and by UID for UID-bound profiles.
-- Migrate the local account profile id type to the same convention used by cloud: profile id `0` for the default/no-UID profile and the actual UID for UID-bound profiles.
+- Current local profiles use numeric ids: profile id `0` for the default/no-UID profile and the actual UID for UID-bound profiles.
 - UID `0` does not exist in game and should never be displayed as a player UID. It is only a profile key.
-- When a default/no-UID profile is promoted to a real UID, move all account-scoped partitions from profile `0` to the UID and soft-delete profile `0`.
+- When a default/no-UID profile is promoted to a real UID, local account-scoped stores are renamed from profile `0` to the UID before activation. Cloud sync should move all account-scoped partitions from profile `0` to the UID and soft-delete profile `0`.
 - A signed-in app account can have zero or one default profile plus at most one profile for each UID.
 - Backup should include all local account profiles by default, not only the active account.
 
@@ -226,13 +226,13 @@ Further compacting:
 
 ## Account Scores and Recommendation Outputs
 
-`useAccountStore` currently persists `scores` inside each account. These are derived from account data, artifact score settings, builds, and scoring logic.
+`useAccountScoreCacheStore` now owns account-scoped score results and stale markers. Scores are derived from account data, artifact score settings, builds, and scoring logic, so they are not account source data.
 
 Cloud decision:
 
 - Do not upload account `scores` in the first version.
-- Keep `staleScoreCharIds` local-only.
-- Move scores out of `useAccountStore` into a dedicated local cache store before cloud sync becomes the default path.
+- Keep `staleScoreCharIdsByProfileId` local-only.
+- Keep scores in `useAccountScoreCacheStore`, not `useAccountStore`.
 - Recompute scores after restore or lazily when the relevant page opens.
 - If recompute cost becomes a real problem, add a separate `cache.accountScores` cloud namespace later with a strict dependency hash:
   - account artifacts hash
@@ -291,7 +291,7 @@ Resolver rules:
 1. Rehydrate one flat `PresetDelta<Build>[]`.
 2. Resolve the visible universe of preset and custom builds.
 3. Group resolved builds by `build.characterId`.
-4. Drop preset ids with `removed: true`.
+4. Drop preset ids with `deleted: true`.
 5. Add custom items from custom deltas.
 6. Sort within each character group by `displayIndex` when present.
 7. Append visible items without `displayIndex`, preserving preset order for preset items and creation/id order for custom items.
@@ -299,9 +299,9 @@ Resolver rules:
 CRUD mapping:
 
 - Create custom build: add a custom item delta with `id`, `value.characterId`, and optional `displayIndex`.
-- Edit preset build: fork it by setting `removed: true` on the preset item and adding a custom item with the edited full value.
+- Edit preset build: fork it by setting `deleted: true` on the preset item and adding a custom item with the edited full value.
 - Edit custom build: replace the custom item's full `value` in place while preserving its id.
-- Remove preset build: set `removed: true` on the preset item delta.
+- Remove preset build: set `deleted: true` on the preset item delta.
 - Remove custom build: remove the custom item delta.
 - Reorder: update only `displayIndex` on affected item deltas.
 - Restore character: remove deltas whose resolved group is that character and remove character-level metadata.
@@ -340,24 +340,20 @@ Persisted delta:
 ```ts
 type PresetDelta<TItem> =
   | {
-      source: "preset";
+      kind: "preset";
       id: string;
       /** Display ordering within this list. */
       displayIndex?: number;
       /** Preset tombstone. Missing/false means visible. */
-      removed?: true;
-      /** Preset items already get content from the preset, so they do not carry value. */
-      value?: never;
+      deleted?: true;
     }
   | {
-      source: "custom";
+      kind: "custom";
       id: string;
       /** Display ordering within this list. */
       displayIndex?: number;
       /** Custom item content. Custom edits replace this full value in place. */
       value: TItem;
-      /** Custom items are removed by removing their delta. */
-      removed?: never;
     };
 ```
 
@@ -366,7 +362,7 @@ Generic resolver:
 1. Receive already-loaded `presetItems: readonly TObject[]` from the preset catalog or store orchestration layer.
 2. Convert base items to preset records with `getId(item)`.
 3. Apply matching preset item deltas.
-4. Remove preset records whose delta has `removed: true`.
+4. Remove preset records whose delta has `deleted: true`.
 5. Add custom item deltas with `value`.
 6. Build derived groups with `getGroupKey(resolvedItem)`.
 7. Within each group, sort indexed items by `displayIndex`; append unindexed visible items afterward.
@@ -374,25 +370,25 @@ Generic resolver:
 
 Invariants:
 
-- `removed` is the only removal source for preset objects.
+- `deleted` is the only removal source for preset objects.
 - Preset object content is immutable and always comes from preset data.
 - `value` on a custom item is the only source for custom object content.
 - Custom object content is mutable by whole-value replacement under the same custom id.
 - `displayIndex` is only ordering metadata. Missing `displayIndex` never means removal.
 - Grouping belongs to the resolver, not persisted state. Persisted data remains one flat delta list.
-- Preset deltas cannot carry `value`; custom deltas cannot carry `removed`.
+- Preset deltas cannot carry `value`; custom deltas cannot carry `deleted`.
 - Editing a preset item is modeled as remove preset plus create custom.
 - Custom in-place edits must preserve the id returned by `getId`. If identity changes, model it as remove old custom plus create new custom and remap any external references in the same transaction.
 - The resolver spec lives in code, not user data. Persisted data stores the result of user actions, not arbitrary field-path functions.
 - Loading a preset by `presetId` lives outside the generic overlay helper. The helper resolves only `presetItems + delta + spec`.
-- The persisted array should be normalized to at most one entry per `(source, id)` before saving; runtime code may build a temporary index for efficient resolution.
+- The persisted array should be normalized to at most one entry per `(kind, id)` before saving; runtime code may build a temporary index for efficient resolution.
 - Duplicate `displayIndex` values are allowed. The resolver sorts within the current list and uses deterministic tie breakers such as preset base index, custom creation id, and object id.
 - Duplicate `displayIndex` values across different groups are expected, for example multiple characters can each have a build at index `0`.
 
 This generic type can back:
 
 - character build overlays via one `PresetDelta<Build>[]` grouped by `build.characterId`
-- team library overlays via one `PresetDelta<TeamComp>[]`
+- team comp overlays via one `PresetDelta<TeamComp>[]`
 - future preset-backed lists; callers can select a static or dynamic base list before invoking the generic resolver
 
 ## Team Store Refactor
@@ -412,7 +408,7 @@ Cache fields are local-only:
 
 Target split:
 
-### 1. Team Library
+### 1. Team Comp
 
 Preset-eligible fields:
 
@@ -427,9 +423,9 @@ Cloud model:
 
 ```ts
 type TeamCompCloudPayload = {
-  presetId: string | null;
+  activePresetId: string | null;
   presetRevision?: string;
-  deltas: PresetDelta<TeamComp>[];
+  compDeltas: PresetDelta<TeamComp>[];
 };
 ```
 
@@ -437,13 +433,13 @@ Team identity:
 
 - Preset teams use stable ids from the preset payload.
 - Custom teams should use opaque local ids so their full `value` can be replaced in place.
-- Editing a preset team forks it: mark the preset id `removed` and add a custom team with a full value.
+- Editing a preset team forks it: mark the preset id `deleted` and add a custom team with a full value.
 - Editing a custom team replaces the custom entry's full `value` while preserving its id.
 - If we intentionally use content-derived ids for an immutable preset source, changing identity fields is a remove plus create operation.
 
 This mirrors the build store: store only the user's difference from the canonical preset.
 
-### 2. Team Config
+### 2. Team Setup Config
 
 User-specific fields that should not live in team presets:
 
@@ -548,7 +544,7 @@ type FrozenLoadoutCloudEntry = {
 };
 
 type FreezeCloudPayload = {
-  accountProfileId: string;
+  accountProfileId: AccountProfileId;
   reuseMode: "none" | "sameChar" | "forceReuse";
   standaloneArtifactIds: string[];
   loadouts: FrozenLoadoutCloudEntry[];
@@ -572,7 +568,7 @@ Tier stores are good cloud candidates:
 - weapon tier lists, no account-profile linkage
 - artifact tier lists, no account-profile linkage
 
-They are user-authored and small. Since the local migration pass will already touch tier-list UI/store code, migrate weapon and artifact tier lists to stable multi-instance ids at the same time and include them in the backup set.
+They are user-authored and small. Character, weapon, and artifact tier-list stores are already multi-instance locally, so cloud codecs can encode each list as its own partition without changing the UI store shape.
 
 Character tier list cloud partitions:
 
@@ -594,7 +590,7 @@ Account-scoped settings recommendation:
 
 - Move triage settings to `account.triage/{accountProfileId}` in the cloud codec.
 - Move resource recommendation thresholds/filters to `account.resources/{accountProfileId}` in the cloud codec.
-- Migrate the local stores to per-profile state before cloud backup V1 so the codec does not need to guess which profile owns singleton settings.
+- The local stores already persist settings by account profile id, so the codec does not need to guess which profile owns singleton settings.
 - Keep `settings.artifactScore/default` global unless we decide users need different scoring weights per account profile.
 
 Optional:
@@ -670,7 +666,7 @@ Avoid uploading on every store mutation. Instead:
 
 - Account data: upload after import, scanner sync, manual account edit save, artifact manager apply.
 - Builds: debounce after build edit or preset subscribe changes.
-- Teams: debounce after team library/config changes.
+- Teams: debounce after team comp/config changes.
 - Settings: debounce, low priority.
 - Tier lists: debounce after edit.
 
@@ -750,21 +746,19 @@ Phase 1: Define boundaries
 - Add tests that excluded stores are not in the default backup set.
 - Add a dev tool to print estimated uncompressed/compressed sizes per namespace.
 
-Phase 2: Local store migrations
+Completed local store migration phase
 
-- Migrate triage settings from singleton to per-account-profile state.
-- Migrate resource recommendation settings from singleton to per-account-profile state.
-- When creating a new account profile, clone triage/resource settings from the last active account profile. If the cloned settings differ from defaults, tell the user in the import flow.
-- Make freeze state account-scoped and id-only at the durable boundary, while keeping UI selectors that can derive the existing nested team view.
-- Migrate local account profile ids from `"default"` to `0`, and keep UID profiles keyed by UID.
-- When promoting profile `0` to a UID, move account-scoped local data to the UID and remove/soft-delete `0`.
-- On account switch, switch the visible freeze state to that account profile; backup still includes all account profiles.
-- Introduce `TeamComp`, `TeamSetupConfig`, and local-only team cache concepts.
-- Move `optimizationResult`, `choiceResults`, and `weaponChoiceResult` ownership out of `useTeamStore` source data.
-- Move team result caches out of `Team` into a local-only team result cache store.
-- Keep `useAnalyzerCacheStore` as an in-memory full-options analyzer cache only.
-- Migrate weapon/artifact tier-list stores toward stable multi-instance list ids and include them in backup.
-- Keep migrations from current persisted versions and add old-store hydration tests for each changed store.
+- Triage and resource recommendation settings are per-account-profile.
+- New account profiles clone triage/resource settings from the last active account profile when those settings differ from defaults, and the import flow tells the user.
+- Freeze state is account-scoped and ID-only at the durable boundary.
+- Local account profile ids use `0` for the default/no-UID profile and UID numbers for UID profiles.
+- Profile `0` promotion remaps triage/resource settings, freeze state, character tier-list links, and score cache before activating the UID.
+- Account switching updates visible freeze state; backup still includes all account profiles.
+- `TeamComp`, `TeamSetupConfig`, and local-only team result cache concepts are separated.
+- Optimizer, investment, weapon choice, and artifact choice results are outside `useTeamStore` source data.
+- `useAnalyzerCacheStore` is an in-memory full-options analyzer cache only.
+- Character, weapon, and artifact tier-list stores are multi-instance.
+- Old-store hydration and migration tests cover the changed store shapes.
 
 Phase 3: Cloud codecs
 

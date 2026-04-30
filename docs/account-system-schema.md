@@ -1,6 +1,6 @@
 # Account System Design 3: D1, R2, and Payload Schema Draft
 
-Last updated: 2026-04-29.
+Last updated: 2026-04-30.
 
 ## Scope
 
@@ -299,8 +299,8 @@ Suggested namespaces:
 | Account | `account.artifacts` | `{accountProfileId}:{setGroup}` | normalized artifacts in one stable set group | Latest complete import or artifact edit can overwrite |
 | Account | `account.equipment` | account profile id | equipped item ids by character | Latest complete import or equip action can overwrite |
 | Builds | `builds` | `default` | artifact build deltas | Explicit local/cloud choice |
-| Teams | `teams.library` | `default` | preset id, added teams, removed preset team ids | Explicit local/cloud choice |
-| Teams | `teams.config` | `default` | user-specific calc/config by team id | Explicit local/cloud choice |
+| Teams | `team.comp` | `default` | preset id and `PresetDelta<TeamComp>` composition overlay | Explicit local/cloud choice |
+| Teams | `team.config` | `default` | user-specific calc/config by team id | Explicit local/cloud choice |
 | Account | `account.freeze` | account profile id | freeze intent by account-scoped artifact ids | Explicit local/cloud choice |
 | Tiers | `tier.character.account` | account profile id | character tier list linked to an account profile | One linked list per account profile |
 | Tiers | `tier.character.custom` | stable list id | unattached character tier list | Multi-instance |
@@ -379,7 +379,7 @@ type AccountProfilePayload = {
 };
 ```
 
-Profile `0` is a real profile key, not a game UID. When profile `0` is promoted to a UID, move all account-scoped partitions from `0` to that UID and mark the old `0` heads as soft-deleted. Importing the same UID again should reactivate/overwrite soft-deleted data for that UID.
+Profile `0` is a real profile key, not a game UID. Local imports already rename account-scoped stores before activating a promoted UID. Cloud sync should mirror that behavior by moving account-scoped partitions from `0` to the UID and marking the old `0` heads as soft-deleted. Importing the same UID again should reactivate/overwrite soft-deleted data for that UID.
 
 ### `account.characters`
 
@@ -537,35 +537,33 @@ Identity rules:
 ```ts
 type PresetDelta<TItem> =
   | {
-      source: "preset";
+      kind: "preset";
       id: string;
       displayIndex?: number;
-      removed?: true;
-      value?: never;
+      deleted?: true;
     }
   | {
-      source: "custom";
+      kind: "custom";
       id: string;
       displayIndex?: number;
       value: TItem;
-      removed?: never;
     };
 ```
 
 Resolver rules:
 
-- Removal only comes from `removed`.
+- Preset removal only comes from `deleted`.
 - Preset object content comes from the preset and is immutable.
 - Custom object content comes from `value`.
 - Custom edits replace the full `value` in place while preserving the custom id.
 - Ordering only comes from `displayIndex`.
 - Missing `displayIndex` means resolver default order; it never means removal.
 - Grouping is derived by resolver code, not stored by the generic item delta.
-- Preset deltas cannot carry `value`; custom deltas cannot carry `removed`.
+- Preset deltas cannot carry `value`; custom deltas cannot carry `deleted`.
 - Duplicate `displayIndex` values are allowed. The resolver determines the group being sorted.
 - If a preset item is edited, resolve it as remove preset plus create custom.
 - If a custom item's id would change, resolve it as remove old custom plus create new custom and remap any external references in the same transaction.
-- The persisted array should be normalized to at most one entry per `(source, id)` before saving.
+- The persisted array should be normalized to at most one entry per `(kind, id)` before saving.
 
 ## Build Payload
 
@@ -578,7 +576,7 @@ type CharacterBuildMetadata = {
 type BuildsCloudPayload = {
   activePresetId: string | null;
   activePresetRevision?: string;
-  builds: PresetDelta<unknown>[];
+  deltas: PresetDelta<unknown>[];
   characterMetadata?: Record<string, CharacterBuildMetadata>;
   computeOptions?: unknown;
   author?: string;
@@ -588,53 +586,61 @@ type BuildsCloudPayload = {
 
 Do not include `validationErrors`.
 
-Do not infer preset removal from missing `displayIndex` or missing delta entries. The resolver must treat `removed` as the only source of truth for preset removal so that new builds added by a subscribed preset update can appear automatically.
+Do not infer preset removal from missing `displayIndex` or missing delta entries. The resolver must treat `deleted` as the only source of truth for preset removal so that new builds added by a subscribed preset update can appear automatically.
 
 ## Team Payloads
 
-### `teams.library`
+### `team.comp`
 
 ```ts
-type TeamTemplatePayload = {
-  id: string;
-  name: string;
-  characters: (string | null)[];
-  weapons: (string | null)[];
-  artifacts: ({ setId: string } | { halfSetIds: [string, string] } | null)[];
-  reactions?: string[];
+type TeamCompSlotCloudPayload = {
+  charId: string | null;
+  weaponId: string | null;
+  artifactSet: ({ setId: string } | { halfSetIds: [string, string] }) | null;
 };
 
-type TeamLibraryCloudPayload = {
-  presetId: string | null;
+type TeamCompCloudItem = {
+  id: string;
+  name: string;
+  slots: TeamCompSlotCloudPayload[];
+  reactions: string[];
+};
+
+type TeamCompCloudPayload = {
+  activePresetId: string | null;
   presetRevision?: string;
   /** Team order is global because this is a single list. */
-  teams: PresetDelta<TeamTemplatePayload>[];
-  renamedTeams?: Record<string, string>;
+  compDeltas: PresetDelta<TeamCompCloudItem>[];
   author?: string;
   description?: string;
 };
 ```
 
-### `teams.config`
+### `team.config`
 
 ```ts
-type TeamUserConfigPayload = {
-  opts?: Record<string, unknown>;
-  calcContext?: Record<string, unknown>;
-  enemyAura?: string;
-  extraBuffs?: unknown[];
-  selectedFormula?: { charId: string; formulaId: string } | null;
-  singleReaction?: unknown;
-  singleForceOnField?: boolean;
-  formulaMode?: "single" | "combo";
-  combo?: unknown;
-  charSettings?: Record<string, unknown>;
-  erTimelines?: unknown[];
-  analyzer?: unknown;
+type TeamCharConfigPayload = {
+  level?: number;
+  constellation?: number;
+  refinement?: number;
+  talentLevels?: Partial<Record<"auto" | "skill" | "burst", number>>;
+  minEr?: number;
+  minCr?: number;
+  crMode?: "min" | "target";
+  tierAwarePool?: boolean;
+  fullSetOptional?: boolean;
+};
+
+type TeamSetupConfigPayload = {
+  combatOptions: Record<string, string>;
+  charConfigs?: Record<string, TeamCharConfigPayload>;
+  damage?: unknown;
+  energy?: unknown;
+  investment?: unknown;
 };
 
 type TeamConfigCloudPayload = {
-  byTeamId: Record<string, TeamUserConfigPayload>;
+  configsByTeamId: Record<string, TeamSetupConfigPayload>;
 };
 ```
 
@@ -643,31 +649,20 @@ Do not include optimizer, choice, or investment result caches.
 Local-only result cache target:
 
 ```ts
-type TeamResultCacheMode =
-  | "optimizer"
-  | "investment"
-  | "weapon-choice"
-  | "artifact-choice";
-
-type TeamResultCacheEntry<TResult = unknown> = {
-  accountRevision: string;
-  buildRevision: string;
-  teamRevision: string;
-  calcRevision: string;
-  updatedAt: number;
-  result: TResult;
+type TeamResultCacheEntry = {
+  optimizationResult?: OptimizationResult | null;
+  investmentResult?: SerializedAnalyzerResult | null;
+  weaponChoiceResult?: WeaponChoiceResult | null;
+  artifactChoiceResult?: WeaponChoiceResult | null;
 };
 
 type TeamResultCacheState = {
-  /** One latest UI-restorable result per team and mode. */
-  lastByTeam: Record<
-    string,
-    Partial<Record<TeamResultCacheMode, TeamResultCacheEntry>>
-  >;
+  /** One latest UI-restorable result per team. */
+  resultsByTeamId: Record<string, TeamResultCacheEntry>;
 };
 ```
 
-This should live outside `TeamConfigCloudPayload`. It can replace or absorb the current analyzer cache pattern, which already persists one latest analyzer result per team. A broader in-memory cache keyed by full options can remain an implementation detail, but it is not required by the account-system design.
+This should live outside `TeamConfigCloudPayload`. `useTeamResultCacheStore` is a local-only persisted cache, while `useAnalyzerCacheStore` remains an in-memory cache keyed by full analyzer options.
 
 ## Freeze Payload
 
@@ -704,6 +699,7 @@ Character tier lists can be linked to account profiles or unattached:
 
 ```ts
 type CharacterTierListPayload = {
+  /** Path-safe cloud list id; may be encoded from a local numeric id. */
   id: string;
   linkedAccountProfileId?: AccountProfileId | null;
   title?: string;
@@ -719,7 +715,7 @@ Partition rules:
 - `tier.character.account/{profileId}` stores the list linked to one account profile. `linkedAccountProfileId` is a number in the payload/local store, not a formatted string.
 - `tier.character.custom/{listId}` stores an unattached custom list.
 - On restore, if multiple lists claim the same `linkedAccountProfileId`, keep the newest account-linked partition and import the rest as unattached lists.
-- `listId` should be stable. For new unattached lists, use a timestamp-sortable id such as ULID. Local numeric ids can be migrated to stable ids during the local store migration.
+- `listId` should be stable at the cloud boundary. Current local tier-list ids are numeric, so the codec can encode them as path-safe strings without changing the local store shape.
 - `tier.weapon/{listId}` and `tier.artifact/{listId}` use the same stable list-id pattern and do not need account-profile linking.
 
 Account-data workflow settings should move to account-scoped cloud namespaces:
@@ -742,7 +738,7 @@ type AccountResourcesPayload = {
 };
 ```
 
-These require local store migration before cloud backup V1. The local stores should persist settings by account profile id so the cloud codec does not need to guess which profile owns singleton settings.
+The local stores already persist settings by account profile id, so the cloud codec does not need to guess which profile owns singleton settings.
 
 ## Feedback Tables
 
@@ -1097,7 +1093,7 @@ Conflict policy for the first release:
 There are three independent version layers:
 
 1. D1 schema migrations: backend table shape.
-2. Cloud payload namespace schema versions: `account.artifacts` schema 1, `teams.config` schema 1, etc.
+2. Cloud payload namespace schema versions: `account.artifacts` schema 1, `team.config` schema 1, etc.
 3. Local Zustand store versions: existing local hydration and old user migration.
 
 Rules:

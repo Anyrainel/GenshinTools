@@ -17,16 +17,16 @@ The main migration rule is:
 
 ## Implementation Status
 
-This branch implements the local store migrations needed before cloud backup work. The remaining work before Cloudflare implementation is the cloud backup codec/namespace layer.
+The local store migrations needed before cloud backup work are complete on `master` through `b668a54f`. The remaining work before Cloudflare implementation is the cloud backup codec/namespace layer.
 
 | Phase | Status | Commit |
 | --- | --- | --- |
 | Phase 0: migration modules | Done | `a469415a` |
 | Phase 1: numeric account profile ids | Done for profile ids and account score cache split. | `ee07e6e5` |
-| Phase 2: account-scoped settings | Done for triage/resource settings, clone-from-last-active import behavior, and import messaging. | `b19c078d` + current |
+| Phase 2: account-scoped settings | Done for triage/resource settings, clone-from-last-active import behavior, promotion remapping, and import messaging. | `b19c078d`, `b668a54f` |
 | Phase 3: tier list migrations | Done for character account links and weapon/artifact multi-list stores. | `41c3be21` |
-| Phase 4: freeze account scoping | Done. Freeze state is account-scoped and durable state is ID-only loadouts. | `b68b2c47` + current |
-| Phase 5: team cache persistence split | Done. Team source/config stays in `useTeamStore`; optimizer, investment, weapon choice, and artifact choice latest results route through local-only `useTeamResultCacheStore`. Analyzer cache is in-memory keyed cache only. | `ca14fca1` + current |
+| Phase 4: freeze account scoping | Done. Freeze state is account-scoped, durable state is ID-only loadouts, and profile promotion remaps freeze data before activation. | `b68b2c47`, `b668a54f` |
+| Phase 5: team cache persistence split | Done. Team source/config stays in `useTeamStore`; optimizer, investment, weapon choice, and artifact choice latest results route through local-only `useTeamResultCacheStore`. Analyzer cache is in-memory keyed cache only. | `ca14fca1`, `c6cc7dc2` |
 | Phase 6: build preset delta | Done. Build store persists `PresetDelta<Build>[]` and derives runtime views from the active hydrated preset. | `5a0a1967`, `d6ffb28c` |
 | Phase 7: team preset delta | Done. Team store persists `PresetDelta<TeamComp>[]` plus `configsByTeamId`, with active preset hydration and dedupe. | `98e3eb62`, `5a0a1967` |
 | Phase 8: cloud codecs | Deferred until the cloud sync implementation starts. | pending |
@@ -40,12 +40,13 @@ Current persisted stores with migration or hydration behavior:
 | `useAccountStore` | `genshin-account-storage` | 6 | `src/stores/migration/account.ts` |
 | `useBuildsStore` | `artifact-filter-builds` | 6 | `src/stores/migration/builds.ts` |
 | `useTeamStore` | `team-builder-storage` | 17 | `src/stores/migration/team.ts` |
-| `useFreezeStore` | `frozen-teams-storage` | 6 | `src/stores/migration/freeze.ts` |
+| `useFreezeStore` | `frozen-teams-storage` | 7 | `src/stores/migration/freeze.ts` |
 | `useTierStore` | `tierlist-storage` | 3 | `src/stores/migration/tier.ts` |
 | `useWeaponTierStore` | `weapon-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
 | `useArtifactTierStore` | `artifact-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
-| `useResourceRecStore` | `resource-rec-settings` | 7 | `src/stores/migration/resource.ts` |
-| `useTriageStore` | `triage-settings` | 5 | `src/stores/migration/triage.ts` |
+| `useResourceRecStore` | `resource-rec-settings` | 8 | `src/stores/migration/resource.ts` |
+| `useTriageStore` | `triage-settings` | 6 | `src/stores/migration/triage.ts` |
+| `useAccountScoreCacheStore` | `account-score-cache-storage` | 1 | none; current-shape schema healing only |
 | `useArtifactScoreStore` | `artifact-score-storage` | none | `src/stores/migration/artifactScore.ts` |
 
 Stores that are persisted but do not need account-system migration work in V1:
@@ -172,7 +173,7 @@ Target pattern:
 
 ```ts
 type AccountScopedSettings<TSettings> = {
-  byProfileId: Record<AccountProfileId, TSettings>;
+  settingsByProfileId: Record<AccountProfileId, TSettings>;
 };
 ```
 
@@ -184,6 +185,7 @@ Migration:
 - Existing singleton resource recommendation settings become settings for profile `0`, or the active account profile if available.
 - New account profile import should clone settings from the last active profile if those settings differ from defaults.
 - The import flow should tell the user when cloned settings were applied.
+- If profile `0` is promoted to a UID during import, remap triage/resource settings, freeze state, and character tier-list account links before setting the UID as active.
 
 Cloud result:
 
@@ -206,7 +208,7 @@ Target:
 
 ```ts
 type CharacterTierListInstance = {
-  id: string;
+  id: number;
   linkedAccountId: AccountProfileId | null;
   // current list data
 };
@@ -214,16 +216,11 @@ type CharacterTierListInstance = {
 
 Migration:
 
-- Numeric list ids migrate to stable string ids.
 - `linkedAccountId: "default"` migrates to `0`.
 - UID string account links migrate to numeric UID.
 - Unattached lists keep `linkedAccountId: null`.
-
-Use deterministic migrated ids, not random ids, so migration tests are stable. For example:
-
-```ts
-`character-tier-${oldNumericId}`
-```
+- Legacy singleton data migrates into `tierLists: Record<number, TierListInstance>` with `activeTierListId` and `nextId`.
+- Local list ids are numeric. Cloud codecs can encode them as path-safe partition strings later, but the current local source of truth stays numeric.
 
 ### Weapon and Artifact Tier Lists
 
@@ -233,15 +230,16 @@ Target:
 
 ```ts
 type TierListStore<TList> = {
-  lists: Record<string, TList>;
-  activeListId: string;
+  tierLists: Record<number, TList>;
+  activeTierListId: number;
+  nextId: number;
 };
 ```
 
 Default migrated ids:
 
-- `weapon-default`
-- `artifact-default`
+- `1` for the initial weapon list
+- `1` for the initial artifact list
 
 No account link is required for weapon or artifact tier lists.
 
@@ -310,7 +308,7 @@ Team source data should not persist optimizer, investment, or weapon-choice resu
 
 Target:
 
-- `useTeamStore` persists teams, author, description, and user-authored team config only.
+- `useTeamStore` persists `compDeltas`, `configsByTeamId`, author, and description only.
 - Derived result caches move to a local-only team result cache store.
 - One latest result per team and mode is enough for V1.
 
@@ -358,7 +356,7 @@ Store shape:
 
 ```ts
 type BuildStoreState = {
-  presetId: string;
+  activePresetId: string | null;
   deltas: PresetDelta<Build>[];
   // current compute/config fields
 };
@@ -366,7 +364,7 @@ type BuildStoreState = {
 
 Resolution rules:
 
-- Preset data is loaded by `presetId`.
+- Preset data is loaded by `activePresetId`.
 - The store contains only local deltas.
 - Per-character build mapping is reconstructed after hydration.
 - `displayIndex` is sorted within each character, so duplicate display indexes across characters are valid.
@@ -401,8 +399,9 @@ Target:
 
 ```ts
 type TeamStoreState = {
-  presetId: string;
-  deltas: PresetDelta<Team>[];
+  activePresetId: string | null;
+  compDeltas: PresetDelta<TeamComp>[];
+  configsByTeamId: Record<string, TeamSetupConfig>;
   author?: string;
   description?: string;
 };
@@ -411,7 +410,7 @@ type TeamStoreState = {
 Migration:
 
 - Existing custom teams become `kind: "custom"` entries.
-- Existing removed preset teams become deleted preset entries if the current store can infer that state.
+- Existing deleted preset teams become deleted preset entries if the current store can infer that state.
 - Existing order becomes global `displayIndex`.
 
 Tests:
@@ -442,7 +441,8 @@ Planned namespaces:
 | `tier.weapon` | list id |
 | `tier.artifact` | list id |
 | `builds` | default |
-| `teams` | default |
+| `team.comp` | default |
+| `team.config` | default |
 | `account.triage` | profile id |
 | `account.resources` | profile id |
 | `settings.artifactScore` | default |
