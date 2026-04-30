@@ -14,7 +14,10 @@ import {
   cacheBuildPreset,
   getCachedBuildPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
-import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
+import {
+  filterValidBuildGroups,
+  getBuildValidationErrors,
+} from "@/lib/artifact-builds/buildValidation";
 import { PersistedBuildsStoreSchema } from "@/stores/schemas";
 import { invalidateScores } from "@/stores/useAccountScoreCacheStore";
 
@@ -25,8 +28,10 @@ function nextBuildId(): string {
 
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import type { BuildSource } from "../data/enums";
 import type {
   Build,
+  BuildGroup,
   BuildPayload,
   BuildPayloadV5,
   ComputeOptions,
@@ -52,6 +57,9 @@ export interface BuildsState {
   // Reference to the active preset ID (if any)
   activePresetId: string | null;
 
+  // Hydrated runtime preset payload for the active preset. Not persisted.
+  activePresetPayload: BuildPayloadV5 | null;
+
   // Canonical persisted build customizations and preset tombstones/order.
   deltas: BuildDelta[];
 
@@ -64,8 +72,10 @@ export interface BuildsState {
   // Derived runtime view: IDs of hidden preset builds.
   presetDeletedBuildIds: string[];
 
-  // Runtime signal for hooks that read the external preset cache.
-  presetRevision: number;
+  // Derived runtime view: full preset/custom builds for UI consumers.
+  resolvedBuildsByCharacterId: Record<string, Build[]>;
+  resolvedBuildGroups: BuildGroup[];
+  validResolvedBuildGroups: BuildGroup[];
 
   // Global UI State
   hasPromptedForPreset: boolean;
@@ -127,10 +137,126 @@ export interface BuildsState {
 
 // Empty array constant to avoid creating new arrays
 const EMPTY_ARRAY: string[] = [];
+const EMPTY_BUILDS: Build[] = [];
+
+export function selectBuildsForCharacter(
+  state: BuildsState,
+  characterId: string
+): Build[] {
+  return state.resolvedBuildsByCharacterId[characterId] ?? EMPTY_BUILDS;
+}
+
+export function selectResolvedBuildGroups(state: BuildsState): BuildGroup[] {
+  return state.resolvedBuildGroups;
+}
+
+export function selectValidResolvedBuildGroups(
+  state: BuildsState
+): BuildGroup[] {
+  return state.validResolvedBuildGroups;
+}
+
+function getActivePresetPayload(state: BuildsState): BuildPayloadV5 | null {
+  return (
+    state.activePresetPayload ?? getCachedBuildPreset(state.activePresetId)
+  );
+}
+
+function deriveBuildSource(
+  id: string,
+  buildsMap: Record<string, Build>,
+  preset: BuildPayloadV5 | null
+): BuildSource {
+  const inLocal = id in buildsMap;
+  const inPreset = !!preset?.builds[id];
+  if (inLocal && inPreset) return "modified";
+  if (inPreset) return "preset";
+  return "custom";
+}
+
+function withBuildSource(
+  build: Build,
+  source: BuildSource,
+  previous: Build | undefined
+): Build {
+  if (build.source === source) return build;
+  if (
+    previous?.source === source &&
+    previous.id === build.id &&
+    areBuildsEqual(previous, build)
+  ) {
+    return previous;
+  }
+  return { ...build, source };
+}
+
+function reuseBuildArrayIfUnchanged(
+  builds: Build[],
+  previous: Build[] | undefined
+): Build[] {
+  if (!previous || previous.length !== builds.length) return builds;
+  return builds.every((build, index) => build === previous[index])
+    ? previous
+    : builds;
+}
+
+function deriveResolvedBuildViews(
+  state: BuildsState,
+  preset: BuildPayloadV5 | null
+): {
+  resolvedBuildsByCharacterId: Record<string, Build[]>;
+  resolvedBuildGroups: BuildGroup[];
+  validResolvedBuildGroups: BuildGroup[];
+} {
+  const resolvedBuildsByCharacterId: Record<string, Build[]> = {};
+  const resolvedBuildGroups: BuildGroup[] = [];
+  const previousResolvedBuilds = state.resolvedBuildsByCharacterId;
+
+  for (const [characterId, ids] of Object.entries(state.characterToBuildIds)) {
+    const previousById = new Map(
+      (previousResolvedBuilds[characterId] ?? []).map((build) => [
+        build.id,
+        build,
+      ])
+    );
+    const previousBuilds = previousResolvedBuilds[characterId];
+    const builds = ids
+      .map((id): Build | null => {
+        const localBuild = state.builds[id];
+        const presetBuild = preset?.builds[id];
+        const build = localBuild ?? presetBuild;
+        if (!build) return null;
+        return withBuildSource(
+          build,
+          deriveBuildSource(id, state.builds, preset),
+          previousById.get(id)
+        );
+      })
+      .filter((build): build is Build => build !== null);
+
+    if (builds.length === 0) continue;
+    const stableBuilds = reuseBuildArrayIfUnchanged(builds, previousBuilds);
+    resolvedBuildsByCharacterId[characterId] = stableBuilds;
+
+    if (state.hiddenCharacters[characterId]) continue;
+    resolvedBuildGroups.push({
+      characterId,
+      builds: stableBuilds,
+      hidden: false,
+      weapons: state.characterWeapons[characterId] ?? [],
+    });
+  }
+
+  return {
+    resolvedBuildsByCharacterId,
+    resolvedBuildGroups,
+    validResolvedBuildGroups: filterValidBuildGroups(resolvedBuildGroups),
+  };
+}
 
 function refreshDerivedBuildState(
   state: BuildsState,
-  preset = getCachedBuildPreset(state.activePresetId)
+  preset = getActivePresetPayload(state)
 ): void {
   const previousCharacterToBuildIds = state.characterToBuildIds;
   const runtime = deriveBuildRuntimeFromDeltas(state.deltas, preset);
@@ -170,6 +296,10 @@ function refreshDerivedBuildState(
   for (const build of Object.values(state.builds)) {
     state.validationErrors[build.id] = getBuildValidationErrors(build);
   }
+  const resolved = deriveResolvedBuildViews(state, preset);
+  state.resolvedBuildsByCharacterId = resolved.resolvedBuildsByCharacterId;
+  state.resolvedBuildGroups = resolved.resolvedBuildGroups;
+  state.validResolvedBuildGroups = resolved.validResolvedBuildGroups;
 }
 
 function getNextDisplayIndex(state: BuildsState, characterId: string): number {
@@ -180,7 +310,7 @@ function ensurePresetOrderDeltasForCharacter(
   state: BuildsState,
   characterId: string
 ): void {
-  const preset = getCachedBuildPreset(state.activePresetId);
+  const preset = getActivePresetPayload(state);
   const presetBuildIds = preset?.characterBuilds?.[characterId];
   if (!presetBuildIds?.length) return;
 
@@ -202,11 +332,14 @@ export const useBuildsStore = create<BuildsState>()(
     immer((set, get) => ({
       // Initial state
       activePresetId: null,
+      activePresetPayload: null,
       deltas: [],
       characterToBuildIds: {},
       builds: {},
       presetDeletedBuildIds: [],
-      presetRevision: 0,
+      resolvedBuildsByCharacterId: {},
+      resolvedBuildGroups: [],
+      validResolvedBuildGroups: [],
       hasPromptedForPreset: false,
       hiddenCharacters: {},
       validationErrors: {},
@@ -247,7 +380,7 @@ export const useBuildsStore = create<BuildsState>()(
           return true;
         }
 
-        const preset = getCachedBuildPreset(state.activePresetId);
+        const preset = getActivePresetPayload(state);
         const presetBuildIds = preset?.characterBuilds?.[characterId];
         return state.deltas.some(
           (delta) =>
@@ -320,7 +453,7 @@ export const useBuildsStore = create<BuildsState>()(
 
       restoreCharacter: (characterId: string) => {
         set((state) => {
-          const preset = getCachedBuildPreset(state.activePresetId);
+          const preset = getActivePresetPayload(state);
           const presetBuildIds = preset?.characterBuilds?.[characterId];
 
           state.deltas = state.deltas.filter((delta) => {
@@ -393,7 +526,7 @@ export const useBuildsStore = create<BuildsState>()(
           // Check if the result still matches the preset version (no-op guard).
           // This prevents marking a build as "modified" when no actual data changed
           // (e.g. clicking the name input without typing, or editing back to original).
-          const preset = getCachedBuildPreset(state.activePresetId);
+          const preset = getActivePresetPayload(state);
           const presetBuild = preset?.builds[buildId];
           const displayIndex = getBuildDeltaDisplayIndex(state.deltas, buildId);
           if (presetBuild && areBuildsEqual(targetBuild, presetBuild)) {
@@ -427,7 +560,7 @@ export const useBuildsStore = create<BuildsState>()(
       // Remove a build from a character
       removeBuild: (characterId: string, buildId: string) => {
         set((state) => {
-          const preset = getCachedBuildPreset(state.activePresetId);
+          const preset = getActivePresetPayload(state);
           const displayIndex = getBuildDeltaDisplayIndex(state.deltas, buildId);
           const isPresetBuild =
             !!preset?.builds[buildId] ||
@@ -459,7 +592,7 @@ export const useBuildsStore = create<BuildsState>()(
 
       deleteBuild: (characterId: string, buildId: string) => {
         set((state) => {
-          const preset = getCachedBuildPreset(state.activePresetId);
+          const preset = getActivePresetPayload(state);
           const displayIndex = getBuildDeltaDisplayIndex(state.deltas, buildId);
           const isPresetBuild =
             !!preset?.builds[buildId] ||
@@ -491,7 +624,7 @@ export const useBuildsStore = create<BuildsState>()(
 
       revertBuild: (characterId: string, buildId: string) => {
         set((state) => {
-          const preset = getCachedBuildPreset(state.activePresetId);
+          const preset = getActivePresetPayload(state);
           const displayIndex = getBuildDeltaDisplayIndex(state.deltas, buildId);
           const isPresetBuild =
             !!preset?.builds[buildId] ||
@@ -520,6 +653,7 @@ export const useBuildsStore = create<BuildsState>()(
           } else {
             delete state.hiddenCharacters[characterId];
           }
+          refreshDerivedBuildState(state);
         });
       },
 
@@ -531,15 +665,16 @@ export const useBuildsStore = create<BuildsState>()(
           } else {
             state.hiddenCharacters[characterId] = true;
           }
+          refreshDerivedBuildState(state);
         });
       },
 
       subscribePreset: (presetId: string, payload: BuildPayloadV5) => {
         cacheBuildPreset(presetId, payload);
         set((state) => {
+          state.activePresetPayload = payload;
           executeSubscribePreset(state, presetId, payload);
           refreshDerivedBuildState(state, payload);
-          state.presetRevision += 1;
         });
         invalidateScores();
       },
@@ -548,9 +683,9 @@ export const useBuildsStore = create<BuildsState>()(
         cacheBuildPreset(presetId, payload);
         set((state) => {
           if (state.activePresetId !== presetId) return;
+          state.activePresetPayload = payload;
           state.deltas = dedupeBuildDeltasAgainstPreset(state.deltas, payload);
           refreshDerivedBuildState(state, payload);
-          state.presetRevision += 1;
         });
         invalidateScores();
       },
@@ -570,7 +705,7 @@ export const useBuildsStore = create<BuildsState>()(
           if (swapIdx < 0 || swapIdx >= ids.length) return;
 
           [ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
-          const preset = getCachedBuildPreset(state.activePresetId);
+          const preset = getActivePresetPayload(state);
           state.deltas = setBuildDeltaOrderForCharacter(
             state.deltas,
             characterId,
@@ -589,6 +724,7 @@ export const useBuildsStore = create<BuildsState>()(
           } else {
             state.characterWeapons[characterId] = weaponIds.slice(0, 5);
           }
+          refreshDerivedBuildState(state);
         });
       },
 
@@ -597,6 +733,7 @@ export const useBuildsStore = create<BuildsState>()(
       importBuilds: (payload: BuildPayload | BuildPayloadV5) => {
         set((state) => {
           executeImportBuilds(state, payload);
+          state.activePresetPayload = null;
           refreshDerivedBuildState(state, null);
         });
         invalidateScores();
@@ -606,11 +743,14 @@ export const useBuildsStore = create<BuildsState>()(
       clearAll: () => {
         set((state) => {
           state.activePresetId = null;
+          state.activePresetPayload = null;
           state.deltas = [];
           state.characterToBuildIds = {};
           state.builds = {};
           state.presetDeletedBuildIds = [];
-          state.presetRevision = 0;
+          state.resolvedBuildsByCharacterId = {};
+          state.resolvedBuildGroups = [];
+          state.validResolvedBuildGroups = [];
           state.hiddenCharacters = {};
           state.validationErrors = {};
           state.characterWeapons = {};
@@ -640,15 +780,15 @@ export const useBuildsStore = create<BuildsState>()(
       setActivePreset: (presetId: string | null) => {
         set((state) => {
           state.activePresetId = presetId;
+          state.activePresetPayload = getCachedBuildPreset(presetId);
           state.deltas = state.deltas.map((delta) => {
             if (delta.kind !== "preset" || !delta.deleted) return delta;
             const { deleted: _deleted, ...rest } = delta;
             return rest;
           });
-          const preset = getCachedBuildPreset(presetId);
+          const preset = getActivePresetPayload(state);
           state.deltas = dedupeBuildDeltasAgainstPreset(state.deltas, preset);
           refreshDerivedBuildState(state, preset);
-          state.presetRevision += 1;
         });
         invalidateScores();
       },
@@ -686,19 +826,20 @@ export const useBuildsStore = create<BuildsState>()(
             migrateBuild(delta.value);
           }
         }
-        const runtime = deriveBuildRuntimeFromDeltas(
-          merged.deltas,
-          getCachedBuildPreset(merged.activePresetId)
+        merged.activePresetPayload = getCachedBuildPreset(
+          merged.activePresetId
         );
-        merged.builds = runtime.builds;
-        merged.characterToBuildIds = runtime.characterToBuildIds;
-        merged.presetDeletedBuildIds = runtime.presetDeletedBuildIds;
-        merged.validationErrors = {};
-        for (const build of Object.values(merged.builds)) {
-          merged.validationErrors[build.id] = getBuildValidationErrors(build);
-        }
+        refreshDerivedBuildState(merged, merged.activePresetPayload);
         return merged;
       },
     }
   )
 );
+
+export function getResolvedBuildGroupsSnapshot(): BuildGroup[] {
+  return useBuildsStore.getState().resolvedBuildGroups;
+}
+
+export function getValidResolvedBuildGroupsSnapshot(): BuildGroup[] {
+  return useBuildsStore.getState().validResolvedBuildGroups;
+}

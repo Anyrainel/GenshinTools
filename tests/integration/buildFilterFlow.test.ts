@@ -11,13 +11,15 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Build, BuildGroup } from "@/data/types";
-import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import {
   buildRawConfigs,
   DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
 } from "@/lib/artifact-builds/computeFilters";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  getResolvedBuildGroupsSnapshot,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 
 /** Run the full two-phase pipeline with a non-aborting signal. */
 async function computeFilters(
@@ -44,7 +46,7 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
    * Helper to create BuildGroups from store state
    */
   function createBuildGroupsFromStore(): BuildGroup[] {
-    return resolveAllBuildsSnapshot().map((group) => ({
+    return getResolvedBuildGroupsSnapshot().map((group) => ({
       ...group,
       builds: group.builds.filter((build): build is Build => build.visible),
     }));

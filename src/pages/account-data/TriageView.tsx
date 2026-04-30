@@ -20,7 +20,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
 import {
   QUALITY_TIER_RANK,
@@ -32,6 +31,10 @@ import type {
   QualityTier,
   TriageDecision,
 } from "@/lib/account-data/triage/types";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 
 interface TriageViewProps {
@@ -51,7 +54,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useAllValidResolvedBuilds();
+  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 

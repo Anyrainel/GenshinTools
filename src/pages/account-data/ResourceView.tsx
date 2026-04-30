@@ -22,7 +22,6 @@ import type { Tier } from "@/data/enums";
 import { tiers } from "@/data/enums";
 import { artifactsById } from "@/data/gameResources";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   evaluateAllBuilds,
   filterOwnedBuildGroups,
@@ -38,6 +37,10 @@ import {
 } from "@/lib/account-data/resourceTips";
 import { getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { usePUpgradeCacheStore } from "@/stores/usePUpgradeCacheStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -124,7 +127,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useAllValidResolvedBuilds();
+  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
   const tierAssignments = useTierStore((s) => s.tierAssignments);

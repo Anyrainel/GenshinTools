@@ -19,7 +19,6 @@ import { charactersById } from "@/data/gameResources";
 import type { CharacterData } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAsyncRecommendations } from "@/hooks/useAsyncRecommendations";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { buildRecommendationEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   buildArtifactLookup,
@@ -28,6 +27,10 @@ import {
   type ScoreUpAction,
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { useRecommendationCacheStore } from "@/stores/useRecommendationCacheStore";
 import { useTierStore } from "@/stores/useTierStore";
 
@@ -47,7 +50,7 @@ export function RecommendationView({
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useAllValidResolvedBuilds();
+  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   const tierCustomization = useTierStore((s) => s.tierCustomization);

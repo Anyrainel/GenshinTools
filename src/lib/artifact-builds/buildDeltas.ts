@@ -50,6 +50,7 @@ export function upsertCustomBuildDelta(
   build: Build,
   displayIndex = getBuildDeltaDisplayIndex(deltas, build.id)
 ): BuildDelta[] {
+  const { source: _source, ...storedBuild } = build;
   const withoutPresetTombstone = deltas.filter(
     (delta) =>
       !(isPresetDelta(delta) && delta.id === build.id && delta.deleted === true)
@@ -57,7 +58,7 @@ export function upsertCustomBuildDelta(
   return setDelta(withoutPresetTombstone, {
     kind: "custom",
     id: build.id,
-    value: build,
+    value: storedBuild,
     ...(displayIndex != null ? { displayIndex } : {}),
   });
 }

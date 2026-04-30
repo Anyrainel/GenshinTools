@@ -4,16 +4,18 @@
  * Tests the full user flows for preset build management:
  *   subscribe → edit → revert → delete → restore
  *
- * Uses the store + useResolvedBuilds hook together to verify
- * that the UI-facing resolved builds stay correct through mutations.
+ * Uses the store's resolved runtime view to verify that UI-facing builds stay
+ * correct through mutations.
  */
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Build, BuildPayloadV5 } from "@/data/types";
-import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCachedBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  selectBuildsForCharacter,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 
 const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
 
@@ -100,7 +102,9 @@ function subscribeAndRender(characterId: string) {
   act(() => {
     useBuildsStore.getState().subscribePreset("test-preset", preset);
   });
-  return renderHook(() => useResolvedBuilds(characterId));
+  return renderHook(() =>
+    useBuildsStore((state) => selectBuildsForCharacter(state, characterId))
+  );
 }
 
 describe("Integration: Build Preset Lifecycle", () => {
@@ -328,8 +332,12 @@ describe("Integration: Build Preset Lifecycle", () => {
         useBuildsStore.getState().subscribePreset("test-preset", preset);
       });
 
-      const htHook = renderHook(() => useResolvedBuilds("hu_tao"));
-      const xqHook = renderHook(() => useResolvedBuilds("xingqiu"));
+      const htHook = renderHook(() =>
+        useBuildsStore((state) => selectBuildsForCharacter(state, "hu_tao"))
+      );
+      const xqHook = renderHook(() =>
+        useBuildsStore((state) => selectBuildsForCharacter(state, "xingqiu"))
+      );
 
       await waitFor(() => {
         expect(htHook.result.current.length).toBe(2);

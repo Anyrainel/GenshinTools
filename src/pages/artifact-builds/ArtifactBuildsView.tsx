@@ -18,9 +18,11 @@ import { allArtifacts } from "@/data/gameResources";
 import type { ComputeOptions } from "@/data/types";
 import { useAsyncCompute } from "@/hooks/useAsyncCompute";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { downloadElementAsImage } from "@/lib/downloadImage";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 
 interface ArtifactBuildsViewProps {
   onJumpToCharacter: (characterId: string) => void;
@@ -47,9 +49,7 @@ export const ArtifactBuildsView = forwardRef<
   const exportRef = useRef<HTMLDivElement>(null);
   const [showExport, setShowExport] = useState(false);
 
-  // Get data from resolved builds hook
-  // This automatically handles union of Local and Preset builds
-  const characterBuilds = useAllValidResolvedBuilds();
+  const characterBuilds = useBuildsStore(selectValidResolvedBuildGroups);
   const hasAnyBuilds = useBuildsStore((s) => s.hasBuildData());
 
   // Async compute with caching and cancellation

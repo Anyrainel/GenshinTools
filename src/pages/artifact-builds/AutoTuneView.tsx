@@ -18,7 +18,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { characterStatsResource } from "@/data/gameStatsLoader";
 import type { AccountData, Build, BuildGroup } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/artifact-builds/auto-tune/autoTune";
 import type { AutoTuneWorkerResponse } from "@/lib/artifact-builds/auto-tune/autoTune.worker";
 import type {
@@ -32,7 +31,10 @@ import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
 import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 
 type EntryStatus = "idle" | "computing" | "done" | "applied";
@@ -243,7 +245,7 @@ function collectEntries(
 export function AutoTuneView() {
   const { t } = useLanguage();
   const characterStats = characterStatsResource.use();
-  const groups = useAllValidResolvedBuilds();
+  const groups = useBuildsStore(selectValidResolvedBuildGroups);
   const setBuild = useBuildsStore((s) => s.setBuild);
   const allUserTeams = useTeamStore((s) => s.teams);
   const accountData = useActiveAccountData();

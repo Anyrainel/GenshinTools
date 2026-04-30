@@ -30,9 +30,11 @@ import {
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { Build, CharacterResource, WeaponResource } from "@/data/types";
-import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  selectBuildsForCharacter,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { BuildCard } from "./BuildCard";
 
 interface WeaponSlotProps {
@@ -168,8 +170,9 @@ function CharacterBuildCardComponent({
     state.hasCharacterCustomizations(character.id)
   );
 
-  // Use useMemo with shallow comparison for array to prevent re-renders on reference changes
-  const builds = useResolvedBuilds(character.id);
+  const builds = useBuildsStore((state) =>
+    selectBuildsForCharacter(state, character.id)
+  );
 
   const newBuild = useBuildsStore((state) => state.newBuild);
   const copyBuild = useBuildsStore((state) => state.copyBuild);

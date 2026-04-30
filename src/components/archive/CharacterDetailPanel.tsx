@@ -18,10 +18,12 @@ import {
 import type { CharacterResource } from "@/data/types";
 import { useActiveAccountScores } from "@/hooks/useActiveAccount";
 import { useConstellation, useIsOwned } from "@/hooks/useOwnership";
-import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  selectBuildsForCharacter,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { BaseStatsTable } from "./BaseStatsTable";
 import { EffectCard } from "./EffectCard";
 import { SkillCard } from "./SkillCard";
@@ -62,7 +64,9 @@ function LinkedBuildSection({
   characterStats: CharacterStatsMap | null;
 }) {
   const { t } = useLanguage();
-  const builds = useResolvedBuilds(character.id);
+  const builds = useBuildsStore((state) =>
+    selectBuildsForCharacter(state, character.id)
+  );
   const newBuild = useBuildsStore((state) => state.newBuild);
   const copyBuild = useBuildsStore((state) => state.copyBuild);
 

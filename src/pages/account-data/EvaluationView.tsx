@@ -22,7 +22,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/enums";
 import { tiers } from "@/data/enums";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
 import {
   COMPLETION_TIERS,
@@ -33,6 +32,10 @@ import {
 } from "@/lib/account-data/buildEvaluation";
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 type SortDir = "asc" | "desc";
@@ -51,7 +54,7 @@ export function EvaluationView({
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useAllValidResolvedBuilds();
+  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
 

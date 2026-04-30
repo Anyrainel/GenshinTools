@@ -39,7 +39,6 @@ import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { useTeamInventory } from "@/hooks/useTeamInventory";
 import {
   type BuildMatchResult,
@@ -79,6 +78,10 @@ import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { ViewId } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -194,7 +197,7 @@ export function DamageDetail({
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
   const gameStatsReady = characterStats !== null && weaponStats !== null;
-  const buildGroups = useAllValidResolvedBuilds();
+  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
 
   const fullSetOptionalByChar = useMemo(() => {
     if (!team.charSettings) return undefined;

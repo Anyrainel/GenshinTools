@@ -4,7 +4,6 @@ import {
   useActiveAccountData,
   useActiveAccountScores,
 } from "@/hooks/useActiveAccount";
-import { useAllValidResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCrBudget } from "@/lib/account-data/maxCrBuff";
 import {
   type ArtifactScoreResult,
@@ -14,6 +13,10 @@ import { areBuildsEqual } from "@/lib/artifact-builds/buildUtils";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import {
+  selectValidResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 
 const EMPTY_STALE_SCORE_CHAR_IDS: string[] = [];
 
@@ -29,7 +32,7 @@ export function useArtifactScoreComputation(): void {
   const mergeScores = useAccountScoreCacheStore((s) => s.mergeScores);
   const scores = useActiveAccountScores();
   const scoreConfig = useArtifactScoreStore((s) => s.config);
-  const buildGroups = useAllValidResolvedBuilds();
+  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
 
   const resolvedBuildsMap = useMemo(() => {
     const map: Record<string, Build[]> = {};

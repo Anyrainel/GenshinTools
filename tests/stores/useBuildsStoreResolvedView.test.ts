@@ -2,15 +2,12 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BuildPayloadV5 } from "@/data/types";
 import { useHydrateBuildPreset } from "@/hooks/useHydrateBuildPreset";
+import { loadBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
-  useAllResolvedBuilds,
-  useResolvedBuilds,
-} from "@/hooks/useResolvedBuilds";
-import {
-  getCachedBuildPreset,
-  loadBuildPreset,
-} from "@/lib/artifact-builds/buildPresetRegistry";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+  selectBuildsForCharacter,
+  selectResolvedBuildGroups,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 
 const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
 
@@ -27,8 +24,17 @@ vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
   ),
 }));
 
-const mockGetCachedBuildPreset = vi.mocked(getCachedBuildPreset);
 const mockLoadBuildPreset = vi.mocked(loadBuildPreset);
+
+function useBuildsForCharacter(characterId: string) {
+  return useBuildsStore((state) =>
+    selectBuildsForCharacter(state, characterId)
+  );
+}
+
+function useResolvedBuildGroups() {
+  return useBuildsStore(selectResolvedBuildGroups);
+}
 
 beforeEach(() => {
   useBuildsStore.getState().clearAll();
@@ -36,9 +42,9 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("useResolvedBuilds", () => {
+describe("build store resolved view", () => {
   it("returns empty array when no preset and no local builds", () => {
-    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const { result } = renderHook(() => useBuildsForCharacter("hu_tao"));
     expect(result.current).toEqual([]);
   });
 
@@ -81,7 +87,7 @@ describe("useResolvedBuilds", () => {
     const state = useBuildsStore.getState();
     state.newBuild("hu_tao");
 
-    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const { result } = renderHook(() => useBuildsForCharacter("hu_tao"));
     expect(result.current.length).toBe(1);
     expect(result.current[0]!.characterId).toBe("hu_tao");
     expect(result.current[0]!.source).toBe("custom");
@@ -118,32 +124,29 @@ describe("useResolvedBuilds", () => {
     };
 
     useBuildsStore.getState().subscribePreset("preset", originalPreset);
-    presetCache.set("preset", updatedPreset);
     useBuildsStore.getState().hydratePreset("preset", updatedPreset);
 
-    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const { result } = renderHook(() => useBuildsForCharacter("hu_tao"));
 
     expect(result.current.map((build) => build.id)).toEqual([
       "p-1",
       "p-2",
       "p-3",
     ]);
-    expect(mockGetCachedBuildPreset).toHaveBeenCalled();
     expect(mockLoadBuildPreset).not.toHaveBeenCalled();
   });
 });
 
-describe("useResolvedBuilds reference stability", () => {
+describe("build store resolved view reference stability", () => {
   it("preserves build reference when an unrelated character is edited", () => {
     const state = useBuildsStore.getState();
     state.newBuild("hu_tao");
     state.newBuild("xiangling");
 
-    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const { result } = renderHook(() => useBuildsForCharacter("hu_tao"));
     const before = result.current[0];
     expect(before).toBeDefined();
 
-    // Edit xiangling's build — should NOT affect hu_tao's references
     act(() => {
       const s = useBuildsStore.getState();
       const xlBuildId = s.characterToBuildIds.xiangling[0];
@@ -152,7 +155,6 @@ describe("useResolvedBuilds reference stability", () => {
 
     const after = result.current[0];
     expect(after).toBeDefined();
-    // hu_tao's build object should be the exact same reference
     expect(after).toBe(before);
   });
 
@@ -160,7 +162,7 @@ describe("useResolvedBuilds reference stability", () => {
     const state = useBuildsStore.getState();
     state.newBuild("hu_tao");
 
-    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const { result } = renderHook(() => useBuildsForCharacter("hu_tao"));
     const before = result.current[0];
 
     act(() => {
@@ -172,14 +174,13 @@ describe("useResolvedBuilds reference stability", () => {
     const after = result.current[0];
     expect(after).toBeDefined();
     expect(after!.name).toBe("Updated");
-    // Reference should have changed
     expect(after).not.toBe(before);
   });
 });
 
-describe("useAllResolvedBuilds", () => {
+describe("build store resolved groups", () => {
   it("returns empty array when no characters", () => {
-    const { result } = renderHook(() => useAllResolvedBuilds());
+    const { result } = renderHook(() => useResolvedBuildGroups());
     expect(result.current).toEqual([]);
   });
 
@@ -187,7 +188,7 @@ describe("useAllResolvedBuilds", () => {
     const state = useBuildsStore.getState();
     state.newBuild("hu_tao");
 
-    const { result } = renderHook(() => useAllResolvedBuilds());
+    const { result } = renderHook(() => useResolvedBuildGroups());
     expect(result.current.length).toBe(1);
     expect(result.current[0]!.characterId).toBe("hu_tao");
     expect(result.current[0]!.builds.length).toBe(1);
@@ -198,7 +199,7 @@ describe("useAllResolvedBuilds", () => {
     state.newBuild("hu_tao");
     state.setCharacterHidden("hu_tao", true);
 
-    const { result } = renderHook(() => useAllResolvedBuilds());
+    const { result } = renderHook(() => useResolvedBuildGroups());
     expect(result.current).toEqual([]);
   });
 
@@ -206,7 +207,7 @@ describe("useAllResolvedBuilds", () => {
     const state = useBuildsStore.getState();
     state.newBuild("hu_tao");
 
-    const { result, rerender } = renderHook(() => useAllResolvedBuilds());
+    const { result, rerender } = renderHook(() => useResolvedBuildGroups());
     expect(result.current.length).toBe(1);
 
     act(() => {

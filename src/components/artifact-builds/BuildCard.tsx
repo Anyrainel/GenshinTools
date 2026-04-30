@@ -132,7 +132,7 @@ function BuildCardComponent({
   const setBuild = useBuildsStore((state) => state.setBuild);
   const deleteBuild = useBuildsStore((state) => state.deleteBuild);
   const revertBuild = useBuildsStore((state) => state.revertBuild);
-  // source is derived in useResolvedBuilds
+  // source is derived in the build store's resolved runtime view
   const [confirmAction, setConfirmAction] = useState<
     "delete" | "revert" | null
   >(null);
@@ -694,6 +694,6 @@ function ValidationPopover({
   );
 }
 
-// Relies on reference-stable Build objects from useResolvedBuilds and stable
+// Relies on reference-stable Build objects from the build store and stable
 // callbacks from the parent — default shallow compare is sufficient.
 export const BuildCard = memo(BuildCardComponent);

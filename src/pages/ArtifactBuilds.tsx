@@ -15,7 +15,6 @@ import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BuildPayload, BuildPayloadV5, PresetOption } from "@/data/types";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
-import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { createBuildExportPayloadV5 } from "@/lib/artifact-builds/buildUtils";
 import { getResolvedBuildValidationIssues } from "@/lib/artifact-builds/buildValidation";
@@ -29,7 +28,10 @@ import {
 } from "@/pages/artifact-builds/ArtifactBuildsView";
 import { AutoTuneView } from "@/pages/artifact-builds/AutoTuneView";
 import { CharacterBuildView } from "@/pages/artifact-builds/CharacterBuildView";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  getResolvedBuildGroupsSnapshot,
+  useBuildsStore,
+} from "@/stores/useBuildsStore";
 
 const isValidArtifactBuildsTab = (
   tab: string | null
@@ -87,7 +89,7 @@ export default function ArtifactBuildsPage() {
   const handleExport = useCallback(
     async (exportAuthor: string, exportDescription: string) => {
       const payload = createBuildExportPayloadV5(
-        resolveAllBuildsSnapshot(),
+        getResolvedBuildGroupsSnapshot(),
         computeOptions,
         exportAuthor,
         exportDescription
@@ -114,7 +116,9 @@ export default function ArtifactBuildsPage() {
   }, []);
 
   const handleExportTrigger = useCallback(() => {
-    const issues = getResolvedBuildValidationIssues(resolveAllBuildsSnapshot());
+    const issues = getResolvedBuildValidationIssues(
+      getResolvedBuildGroupsSnapshot()
+    );
     const warnings: string[] = [];
 
     for (const issue of issues.slice(0, 3)) {
