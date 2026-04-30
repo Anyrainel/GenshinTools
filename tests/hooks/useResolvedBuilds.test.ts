@@ -1,35 +1,80 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BuildPayloadV5 } from "@/data/types";
+import { useHydrateBuildPreset } from "@/hooks/useHydrateBuildPreset";
 import {
   useAllResolvedBuilds,
   useResolvedBuilds,
 } from "@/hooks/useResolvedBuilds";
 import {
-  getCachedPreset,
-  loadPreset,
+  getCachedBuildPreset,
+  loadBuildPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
+const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
+
 vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
-  getCachedPreset: vi.fn(() => null),
-  loadPreset: vi.fn(() => Promise.resolve(null)),
+  cacheBuildPreset: vi.fn((id: string, payload: BuildPayloadV5) => {
+    presetCache.set(id, payload);
+    if (payload.id) presetCache.set(payload.id, payload);
+  }),
+  getCachedBuildPreset: vi.fn((id: string | null) =>
+    id ? (presetCache.get(id) ?? null) : null
+  ),
+  loadBuildPreset: vi.fn((id: string) =>
+    Promise.resolve(presetCache.get(id) ?? null)
+  ),
 }));
 
-const mockGetCachedPreset = vi.mocked(getCachedPreset);
-const mockLoadPreset = vi.mocked(loadPreset);
+const mockGetCachedBuildPreset = vi.mocked(getCachedBuildPreset);
+const mockLoadBuildPreset = vi.mocked(loadBuildPreset);
 
 beforeEach(() => {
   useBuildsStore.getState().clearAll();
+  presetCache.clear();
   vi.clearAllMocks();
-  mockGetCachedPreset.mockReturnValue(null);
-  mockLoadPreset.mockResolvedValue(null as unknown as BuildPayloadV5);
 });
 
 describe("useResolvedBuilds", () => {
   it("returns empty array when no preset and no local builds", () => {
     const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
     expect(result.current).toEqual([]);
+  });
+
+  it("hydrates the active preset through the app-level hook", async () => {
+    const p1 = {
+      id: "p-1",
+      characterId: "hu_tao",
+      name: "Preset 1",
+      visible: true,
+      composition: "4pc" as const,
+      substats: [],
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
+    };
+    const preset: BuildPayloadV5 = {
+      version: 5,
+      id: "preset",
+      author: "",
+      description: "",
+      builds: { "p-1": p1 },
+      characterBuilds: { hu_tao: ["p-1"] },
+      characterWeapons: {},
+    };
+    mockLoadBuildPreset.mockResolvedValueOnce(preset);
+
+    act(() => {
+      useBuildsStore.getState().setActivePreset("preset");
+    });
+    renderHook(() => useHydrateBuildPreset());
+
+    await waitFor(() => {
+      expect(useBuildsStore.getState().getBuildIds("hu_tao")).toEqual(["p-1"]);
+    });
+    expect(mockLoadBuildPreset).toHaveBeenCalledWith("preset");
   });
 
   it("returns local builds for character when no preset", () => {
@@ -73,8 +118,8 @@ describe("useResolvedBuilds", () => {
     };
 
     useBuildsStore.getState().subscribePreset("preset", originalPreset);
-    mockGetCachedPreset.mockReturnValue(updatedPreset);
-    mockLoadPreset.mockResolvedValue(updatedPreset);
+    presetCache.set("preset", updatedPreset);
+    useBuildsStore.getState().hydratePreset("preset", updatedPreset);
 
     const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
 
@@ -83,6 +128,8 @@ describe("useResolvedBuilds", () => {
       "p-2",
       "p-3",
     ]);
+    expect(mockGetCachedBuildPreset).toHaveBeenCalled();
+    expect(mockLoadBuildPreset).not.toHaveBeenCalled();
   });
 });
 

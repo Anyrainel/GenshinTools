@@ -16,7 +16,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { BuildPayload, BuildPayloadV5, PresetOption } from "@/data/types";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
-import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
+import { loadBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { createBuildExportPayloadV5 } from "@/lib/artifact-builds/buildUtils";
 import { getResolvedBuildValidationIssues } from "@/lib/artifact-builds/buildValidation";
 import {
@@ -81,7 +81,7 @@ export default function ArtifactBuildsPage() {
   }, []);
 
   const loadPreset = useCallback(async (path: string) => {
-    return loadPresetFromRegistry(path);
+    return loadBuildPreset(path);
   }, []);
 
   const handleExport = useCallback(

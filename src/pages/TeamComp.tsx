@@ -16,8 +16,8 @@ import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
-  loadPresetPayload,
 } from "@/lib/presetLoader";
+import { loadTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
 import type { TeamCompData } from "@/lib/team-comp/types";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
@@ -92,7 +92,7 @@ export default function TeamCompPage() {
   }, []);
 
   const loadPreset = useCallback(async (path: string) => {
-    return loadPresetPayload(presetModules, path);
+    return loadTeamPreset(path);
   }, []);
 
   const handleImport = (data: TeamCompData, preset?: PresetOption) => {

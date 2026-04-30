@@ -3,14 +3,25 @@ import type { Build, BuildPayloadV5 } from "@/data/types";
 import { migrateBuildsStore } from "@/stores/migration/builds";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
+const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
+
 vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
-  getCachedPreset: vi.fn(() => null),
-  loadPreset: vi.fn(() => Promise.resolve(null)),
+  cacheBuildPreset: vi.fn((id: string, payload: BuildPayloadV5) => {
+    presetCache.set(id, payload);
+    if (payload.id) presetCache.set(payload.id, payload);
+  }),
+  getCachedBuildPreset: vi.fn((id: string | null) =>
+    id ? (presetCache.get(id) ?? null) : null
+  ),
+  loadBuildPreset: vi.fn((id: string) =>
+    Promise.resolve(presetCache.get(id) ?? null)
+  ),
 }));
 
 // Reset store before each test
 beforeEach(() => {
   useBuildsStore.getState().clearAll();
+  presetCache.clear();
 });
 
 describe("useBuildsStore", () => {
@@ -605,6 +616,74 @@ describe("useBuildsStore", () => {
 
       // And the build payload deleted from memory
       expect(useBuildsStore.getState().getBuild(localId)).toBeUndefined();
+    });
+
+    it("deduplicates on hydration and preserves the custom order index", () => {
+      const state = useBuildsStore.getState();
+      state.newBuild("char1");
+      const customId = state.getBuildIds("char1")[0];
+      state.setBuild(customId, { name: "Custom Build" });
+
+      state.newBuild("char1");
+      const duplicateId = state.getBuildIds("char1")[1];
+      state.setBuild(duplicateId, {
+        id: duplicateId,
+        characterId: "char1",
+        name: "Preset Build",
+        visible: true,
+        composition: "4pc",
+        artifactSet: undefined,
+        minCons: undefined,
+        roles: undefined,
+        styles: undefined,
+        halfSet1: undefined,
+        halfSet2: undefined,
+        substats: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
+        normalizer: 0,
+      });
+
+      state.setActivePreset("test-preset");
+      state.hydratePreset("test-preset", presetPayload);
+
+      expect(useBuildsStore.getState().getBuildIds("char1")).toEqual([
+        customId,
+        "p-1",
+      ]);
+      expect(useBuildsStore.getState().deltas).toContainEqual({
+        kind: "preset",
+        id: "p-1",
+        displayIndex: 1,
+      });
+      expect(useBuildsStore.getState().getBuild(duplicateId)).toBeUndefined();
+    });
+
+    it("keeps modified custom builds during hydration dedupe", () => {
+      const state = useBuildsStore.getState();
+      state.newBuild("char1");
+      const customId = state.getBuildIds("char1")[0];
+      state.setBuild(customId, {
+        name: "Modified",
+        visible: true,
+        composition: "4pc",
+        substats: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
+        normalizer: 0,
+      });
+
+      state.setActivePreset("test-preset");
+      state.hydratePreset("test-preset", presetPayload);
+
+      expect(useBuildsStore.getState().getBuildIds("char1")).toContain(
+        customId
+      );
+      expect(useBuildsStore.getState().getBuild(customId)?.name).toBe(
+        "Modified"
+      );
     });
 
     it("resets presetDeletedBuildIds", () => {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { Team } from "@/lib/team-comp/types";
+import type { Team, TeamCompData } from "@/lib/team-comp/types";
 import {
   mergeTeamStore,
   migrateTeamStore,
@@ -178,21 +178,23 @@ describe("useTeamStore", () => {
   });
 
   describe("subscribePreset", () => {
+    const presetPayload: TeamCompData = {
+      teams: [
+        {
+          id: "preset-team",
+          name: "Preset Team",
+          characters: ["hu_tao", null, null, null],
+          weapons: ["staff_of_homa", null, null, null],
+          artifacts: [null, null, null, null],
+          minEr: { hu_tao: 1.3 },
+        },
+      ],
+      author: "preset",
+      description: "test",
+    };
+
     it("resolves preset teams without duplicating comp values in deltas", () => {
-      useTeamStore.getState().subscribePreset("preset-a", {
-        teams: [
-          {
-            id: "preset-team",
-            name: "Preset Team",
-            characters: ["hu_tao", null, null, null],
-            weapons: ["staff_of_homa", null, null, null],
-            artifacts: [null, null, null, null],
-            minEr: { hu_tao: 1.3 },
-          },
-        ],
-        author: "preset",
-        description: "test",
-      });
+      useTeamStore.getState().subscribePreset("preset-a", presetPayload);
 
       const state = useTeamStore.getState();
       expect(state.activePresetId).toBe("preset-a");
@@ -211,6 +213,58 @@ describe("useTeamStore", () => {
       if (delta.kind === "custom") {
         expect(delta.value.name).toBe("Local Name");
       }
+    });
+
+    it("deduplicates matching custom comps on hydration and preserves config", () => {
+      const firstId = useTeamStore.getState().addTeam({
+        id: "custom-first",
+        name: "Custom Team",
+        characters: ["xingqiu", null, null, null],
+      });
+      const duplicateId = useTeamStore.getState().addTeam({
+        id: "custom-duplicate",
+        name: "Preset Team",
+        characters: ["hu_tao", null, null, null],
+        weapons: ["staff_of_homa", null, null, null],
+      });
+      useTeamStore.getState().updateTeam(duplicateId, {
+        charSettings: { hu_tao: { minEr: 1.5 } },
+      });
+
+      useTeamStore.setState({ activePresetId: "preset-a" });
+      useTeamStore.getState().hydratePreset("preset-a", presetPayload);
+
+      const state = useTeamStore.getState();
+      expect(state.teams.map((team) => team.id)).toEqual([
+        firstId,
+        "preset-team",
+      ]);
+      expect(state.compDeltas).toContainEqual({
+        kind: "preset",
+        id: "preset-team",
+        displayIndex: 1,
+      });
+      expect(state.configsByTeamId["preset-team"].charConfigs).toEqual({
+        hu_tao: { minEr: 1.5 },
+      });
+      expect(state.configsByTeamId[duplicateId]).toBeUndefined();
+    });
+
+    it("ignores preset hydration when there is no active preset", () => {
+      const id = useTeamStore.getState().addTeam({
+        id: "custom-team",
+        name: "Custom Team",
+      });
+
+      useTeamStore.getState().hydratePreset("preset-a", presetPayload);
+
+      const state = useTeamStore.getState();
+      expect(state.activePresetId).toBeNull();
+      expect(state.teams.map((team) => team.id)).toEqual([id]);
+      expect(state.compDeltas[0]).toMatchObject({
+        kind: "custom",
+        id,
+      });
     });
   });
 

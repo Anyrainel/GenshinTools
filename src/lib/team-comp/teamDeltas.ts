@@ -596,6 +596,96 @@ export function deleteTeamCompDelta(
   });
 }
 
+function artifactSetConfigsEqual(
+  first: ArtifactSetConfig | null,
+  second: ArtifactSetConfig | null
+): boolean {
+  if (first === second) return true;
+  if (!first || !second || first.type !== second.type) return false;
+  if (first.type === "4pc" && second.type === "4pc") {
+    return first.setId === second.setId;
+  }
+  if (first.type === "2pc+2pc" && second.type === "2pc+2pc") {
+    return (
+      first.halfSetIds[0] === second.halfSetIds[0] &&
+      first.halfSetIds[1] === second.halfSetIds[1]
+    );
+  }
+  return false;
+}
+
+export function areTeamCompsEqual(first: TeamComp, second: TeamComp): boolean {
+  if (first.name !== second.name) return false;
+  if (first.reactions.length !== second.reactions.length) return false;
+  for (let i = 0; i < first.reactions.length; i++) {
+    if (first.reactions[i] !== second.reactions[i]) return false;
+  }
+  if (first.slots.length !== second.slots.length) return false;
+  for (let i = 0; i < first.slots.length; i++) {
+    const firstSlot = first.slots[i];
+    const secondSlot = second.slots[i];
+    if (
+      firstSlot.charId !== secondSlot.charId ||
+      firstSlot.weaponId !== secondSlot.weaponId ||
+      !artifactSetConfigsEqual(firstSlot.artifactSet, secondSlot.artifactSet)
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export interface TeamCompDedupeResult {
+  deltas: TeamCompDelta[];
+  idMap: Record<string, string>;
+}
+
+export function dedupeTeamCompDeltasAgainstPreset(
+  deltas: TeamCompDelta[],
+  preset: TeamCompData | null
+): TeamCompDedupeResult {
+  if (!preset) return { deltas, idMap: {} };
+
+  const presetComps = normalizePresetPayload(preset);
+  const deletedPresetIds = new Set(
+    deltas
+      .filter((delta) => isPresetDelta(delta) && delta.deleted)
+      .map((delta) => delta.id)
+  );
+  const matchedPresetIds = new Set<string>();
+  const idMap: Record<string, string> = {};
+  let next: TeamCompDelta[] = deltas.filter(isPresetDelta);
+
+  for (const delta of deltas) {
+    if (!isCustomDelta(delta)) continue;
+
+    const matchingPreset = presetComps.find((presetComp) => {
+      if (
+        deletedPresetIds.has(presetComp.id) ||
+        matchedPresetIds.has(presetComp.id)
+      ) {
+        return false;
+      }
+      return areTeamCompsEqual(delta.value, presetComp);
+    });
+
+    if (matchingPreset) {
+      matchedPresetIds.add(matchingPreset.id);
+      idMap[delta.id] = matchingPreset.id;
+      next = upsertPresetTeamCompDelta(next, matchingPreset.id, {
+        ...(delta.displayIndex != null
+          ? { displayIndex: delta.displayIndex }
+          : {}),
+      });
+      continue;
+    }
+
+    next = upsertCustomTeamCompDelta(next, delta.value, delta.displayIndex);
+  }
+
+  return { deltas: next, idMap };
+}
+
 function normalizePresetPayload(payload: TeamCompData | null): TeamComp[] {
   if (!payload) return [];
   return payload.teams.flatMap((team) => {

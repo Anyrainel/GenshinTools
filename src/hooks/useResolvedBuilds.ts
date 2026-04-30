@@ -1,15 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import type { BuildSource } from "@/data/enums";
 import type { Build, BuildGroup, BuildPayloadV5 } from "@/data/types";
-import {
-  type BuildDelta,
-  resolveBuildIdsForCharacter,
-} from "@/lib/artifact-builds/buildDeltas";
-import {
-  getCachedPreset,
-  loadPreset,
-} from "@/lib/artifact-builds/buildPresetRegistry";
+import { getCachedBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { filterValidBuildGroups } from "@/lib/artifact-builds/buildValidation";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
@@ -26,15 +19,19 @@ function deriveBuildSource(
   return "custom";
 }
 
+function getCachedBuildPresetForRevision(
+  activePresetId: string | null,
+  presetRevision: number
+): BuildPayloadV5 | null {
+  void presetRevision;
+  return getCachedBuildPreset(activePresetId);
+}
+
 export function useResolvedBuilds(characterId: string): Build[] {
   const activePresetId = useBuildsStore((s) => s.activePresetId);
-  const relevantDeltas = useBuildsStore(
-    useShallow((s) =>
-      s.deltas.filter(
-        (delta) =>
-          delta.kind === "preset" || delta.value.characterId === characterId
-      )
-    )
+  const presetRevision = useBuildsStore((s) => s.presetRevision);
+  const buildIds = useBuildsStore(
+    useShallow((s) => s.characterToBuildIds[characterId] ?? [])
   );
   // Only subscribe to builds relevant to this character (shallow-compare the subset)
   const relevantBuilds = useBuildsStore(
@@ -51,32 +48,13 @@ export function useResolvedBuilds(characterId: string): Build[] {
       return result;
     })
   );
-
-  const [preset, setPreset] = useState<BuildPayloadV5 | null>(() =>
-    getCachedPreset(activePresetId)
+  const preset = getCachedBuildPresetForRevision(
+    activePresetId,
+    presetRevision
   );
 
-  useEffect(() => {
-    if (activePresetId) {
-      loadPreset(activePresetId)
-        .then(setPreset)
-        .catch((e) => {
-          console.error("Failed to load preset", activePresetId, e);
-          setPreset(null);
-        });
-    } else {
-      setPreset(null);
-    }
-  }, [activePresetId]);
-
   return useMemo(() => {
-    const allIds = resolveBuildIdsForCharacter(
-      relevantDeltas,
-      preset,
-      characterId
-    );
-
-    return allIds
+    return buildIds
       .map((id): Build | null => {
         const source = deriveBuildSource(id, relevantBuilds, preset);
 
@@ -98,7 +76,7 @@ export function useResolvedBuilds(characterId: string): Build[] {
         return null;
       })
       .filter((b): b is Build => b !== null);
-  }, [characterId, relevantDeltas, relevantBuilds, preset]);
+  }, [buildIds, relevantBuilds, preset]);
 }
 
 /**
@@ -107,30 +85,19 @@ export function useResolvedBuilds(characterId: string): Build[] {
  */
 function resolveAllBuilds(
   state: {
-    deltas: BuildDelta[];
     builds: Record<string, Build>;
+    characterToBuildIds: Record<string, string[]>;
     hiddenCharacters: Record<string, boolean>;
     characterWeapons: Record<string, string[]>;
   },
   preset: BuildPayloadV5 | null
 ): BuildGroup[] {
-  const allCharIds = new Set(Object.keys(preset?.characterBuilds ?? {}));
-  for (const delta of state.deltas) {
-    if (delta.kind === "custom") {
-      allCharIds.add(delta.value.characterId);
-    }
-  }
-
   const result: BuildGroup[] = [];
 
-  for (const charId of allCharIds) {
+  for (const [charId, combinedIds] of Object.entries(
+    state.characterToBuildIds
+  )) {
     if (state.hiddenCharacters[charId]) continue;
-
-    const combinedIds = resolveBuildIdsForCharacter(
-      state.deltas,
-      preset,
-      charId
-    );
 
     const builds = combinedIds
       .map((id) => {
@@ -156,40 +123,28 @@ function resolveAllBuilds(
 
 export function useAllResolvedBuilds() {
   const activePresetId = useBuildsStore((s) => s.activePresetId);
-  const deltas = useBuildsStore((s) => s.deltas);
+  const presetRevision = useBuildsStore((s) => s.presetRevision);
+  const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
   const buildsMap = useBuildsStore((s) => s.builds);
   const hiddenCharacters = useBuildsStore((s) => s.hiddenCharacters);
   const characterWeapons = useBuildsStore((s) => s.characterWeapons);
-
-  const [preset, setPreset] = useState<BuildPayloadV5 | null>(() =>
-    getCachedPreset(activePresetId)
+  const preset = getCachedBuildPresetForRevision(
+    activePresetId,
+    presetRevision
   );
-
-  useEffect(() => {
-    if (activePresetId) {
-      loadPreset(activePresetId)
-        .then(setPreset)
-        .catch((e) => {
-          console.error("Failed to load preset", activePresetId, e);
-          setPreset(null);
-        });
-    } else {
-      setPreset(null);
-    }
-  }, [activePresetId]);
 
   return useMemo(
     () =>
       resolveAllBuilds(
         {
-          deltas,
           builds: buildsMap,
+          characterToBuildIds,
           hiddenCharacters,
           characterWeapons,
         },
         preset
       ),
-    [deltas, buildsMap, hiddenCharacters, preset, characterWeapons]
+    [buildsMap, characterToBuildIds, hiddenCharacters, preset, characterWeapons]
   );
 }
 
@@ -204,7 +159,7 @@ export function useAllValidResolvedBuilds() {
  */
 export function resolveAllBuildsSnapshot(): BuildGroup[] {
   const state = useBuildsStore.getState();
-  const preset = getCachedPreset(state.activePresetId);
+  const preset = getCachedBuildPreset(state.activePresetId);
   return resolveAllBuilds(state, preset);
 }
 

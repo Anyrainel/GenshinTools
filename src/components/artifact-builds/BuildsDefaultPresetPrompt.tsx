@@ -14,7 +14,7 @@ import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   getAvailablePresets,
-  loadPreset,
+  loadBuildPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
@@ -57,7 +57,7 @@ export function BuildsDefaultPresetPrompt() {
         const presets = getAvailablePresets();
         if (presets.length > 0) {
           const id = presets[0]!;
-          const payload = await loadPreset(id);
+          const payload = await loadBuildPreset(id);
           subscribePreset(id, payload);
           toast.success(t.ui("app.presetLoaded"));
           setConfirmOpen(true);

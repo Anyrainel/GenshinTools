@@ -12,20 +12,24 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Build, BuildPayloadV5 } from "@/data/types";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
-import {
-  getCachedPreset,
-  loadPreset,
-} from "@/lib/artifact-builds/buildPresetRegistry";
+import { getCachedBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+
+const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
 
 // ── Mock the preset registry ────────────────────────────────────
 vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
-  getCachedPreset: vi.fn(() => null),
-  loadPreset: vi.fn(() => Promise.resolve(null)),
+  cacheBuildPreset: vi.fn((id: string, payload: BuildPayloadV5) => {
+    presetCache.set(id, payload);
+    if (payload.id) presetCache.set(payload.id, payload);
+  }),
+  getCachedBuildPreset: vi.fn((id: string | null) =>
+    id ? (presetCache.get(id) ?? null) : null
+  ),
+  loadBuildPreset: vi.fn((id: string) =>
+    Promise.resolve(presetCache.get(id) ?? null)
+  ),
 }));
-
-const mockGetCachedPreset = vi.mocked(getCachedPreset);
-const mockLoadPreset = vi.mocked(loadPreset);
 
 function makeBuild(
   id: string,
@@ -83,9 +87,10 @@ const preset: BuildPayloadV5 = {
 // ── Setup ───────────────────────────────────────────────────────
 beforeEach(() => {
   useBuildsStore.getState().clearAll();
+  presetCache.clear();
+  presetCache.set("test-preset", preset);
+  if (preset.id) presetCache.set(preset.id, preset);
   vi.clearAllMocks();
-  mockGetCachedPreset.mockReturnValue(preset);
-  mockLoadPreset.mockResolvedValue(preset);
 });
 
 /**
@@ -361,7 +366,7 @@ describe("Integration: Build Preset Lifecycle", () => {
 
       // Check 2: Any preset builds for this character were deleted
       if (state.presetDeletedBuildIds.length > 0) {
-        const cachedPreset = getCachedPreset(state.activePresetId);
+        const cachedPreset = getCachedBuildPreset(state.activePresetId);
         const presetBuildIds = cachedPreset?.characterBuilds?.[characterId];
         if (
           presetBuildIds?.some((id) => state.presetDeletedBuildIds.includes(id))

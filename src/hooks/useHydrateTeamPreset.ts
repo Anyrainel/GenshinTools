@@ -1,13 +1,9 @@
 import { useEffect } from "react";
-import { loadPresetPayload } from "@/lib/presetLoader";
-import { getCachedTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
-import type { TeamCompData } from "@/lib/team-comp/types";
+import {
+  getCachedTeamPreset,
+  loadTeamPreset,
+} from "@/lib/team-comp/teamPresetRegistry";
 import { useTeamStore } from "@/stores/useTeamStore";
-
-const teamPresetModules = import.meta.glob<{ default: TeamCompData }>(
-  "@/presets/team-comp/*.json",
-  { eager: false }
-);
 
 export function useHydrateTeamPreset(): void {
   const activePresetId = useTeamStore((state) => state.activePresetId);
@@ -20,7 +16,7 @@ export function useHydrateTeamPreset(): void {
       hydratePreset(activePresetId, cached);
       return;
     }
-    loadPresetPayload(teamPresetModules, activePresetId)
+    loadTeamPreset(activePresetId)
       .then((data) => hydratePreset(activePresetId, data))
       .catch((error) => {
         console.error("Failed to hydrate team preset", error);

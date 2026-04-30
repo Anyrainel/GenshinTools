@@ -4,6 +4,7 @@ import {
   isPresetDelta,
   type PresetDelta,
 } from "@/lib/presetDelta";
+import { areBuildsEqual } from "./buildUtils";
 
 export type BuildDelta = PresetDelta<Build>;
 
@@ -95,6 +96,52 @@ export function deleteBuildDelta(
     ...(displayIndex != null ? { displayIndex } : {}),
     deleted: true,
   });
+}
+
+export function dedupeBuildDeltasAgainstPreset(
+  deltas: BuildDelta[],
+  preset: BuildPayloadV5 | null
+): BuildDelta[] {
+  if (!preset) return deltas;
+
+  const deletedPresetIds = new Set(
+    deltas
+      .filter((delta) => isPresetDelta(delta) && delta.deleted)
+      .map((delta) => delta.id)
+  );
+  const matchedPresetIds = new Set<string>();
+  let next: BuildDelta[] = deltas.filter(isPresetDelta);
+
+  for (const delta of deltas) {
+    if (!isCustomDelta(delta)) continue;
+
+    const presetBuildIds =
+      preset.characterBuilds[delta.value.characterId] ?? [];
+    const matchingPresetId = presetBuildIds.find((presetBuildId) => {
+      if (
+        deletedPresetIds.has(presetBuildId) ||
+        matchedPresetIds.has(presetBuildId)
+      ) {
+        return false;
+      }
+      const presetBuild = preset.builds[presetBuildId];
+      return presetBuild && areBuildsEqual(delta.value, presetBuild);
+    });
+
+    if (matchingPresetId) {
+      matchedPresetIds.add(matchingPresetId);
+      next = upsertPresetBuildDelta(next, matchingPresetId, {
+        ...(delta.displayIndex != null
+          ? { displayIndex: delta.displayIndex }
+          : {}),
+      });
+      continue;
+    }
+
+    next = upsertCustomBuildDelta(next, delta.value, delta.displayIndex);
+  }
+
+  return next;
 }
 
 export function getCustomBuildMapFromDeltas(

@@ -5,6 +5,7 @@ import {
   createEmptyTeamComp,
   createTeamConfigsFromPresetPayload,
   createTeamPersistenceFromImportedData,
+  dedupeTeamCompDeltasAgainstPreset,
   deleteTeamCompDelta,
   deriveTeamRuntimeFromDeltas,
   getTeamDeltaDisplayIndex,
@@ -81,6 +82,24 @@ function refreshDerivedTeamState(
     preset,
     cacheByTeamId
   );
+}
+
+function dedupeTeamCompStateAgainstPreset(
+  state: TeamState,
+  preset: TeamCompData
+): void {
+  const { deltas, idMap } = dedupeTeamCompDeltasAgainstPreset(
+    state.compDeltas,
+    preset
+  );
+  state.compDeltas = deltas;
+  for (const [fromId, toId] of Object.entries(idMap)) {
+    if (fromId === toId) continue;
+    const config = state.configsByTeamId[fromId];
+    if (!config) continue;
+    state.configsByTeamId[toId] = config;
+    delete state.configsByTeamId[fromId];
+  }
 }
 
 function reindexTeamOrder(
@@ -321,6 +340,7 @@ export const useTeamStore = create<TeamState>()(
           state.configsByTeamId = createTeamConfigsFromPresetPayload(data);
           state.author = data.author ?? "";
           state.description = data.description ?? "";
+          dedupeTeamCompStateAgainstPreset(state, data);
           refreshDerivedTeamState(state, data);
         });
       },
@@ -329,6 +349,7 @@ export const useTeamStore = create<TeamState>()(
         cacheTeamPreset(presetId, data);
         set((state) => {
           if (state.activePresetId !== presetId) return;
+          dedupeTeamCompStateAgainstPreset(state, data);
           refreshDerivedTeamState(state, data);
         });
       },

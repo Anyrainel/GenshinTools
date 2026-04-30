@@ -2,13 +2,13 @@ import type { Draft } from "immer";
 import type { Build, BuildPayload, BuildPayloadV5 } from "@/data/types";
 import {
   type BuildDelta,
+  dedupeBuildDeltasAgainstPreset,
   setBuildDeltaOrderForCharacter,
   upsertCustomBuildDelta,
   upsertPresetBuildDelta,
 } from "@/lib/artifact-builds/buildDeltas";
 import type { BuildsState } from "@/stores/useBuildsStore";
 import { migrateBuild } from "./buildMigration";
-import { areBuildsEqual } from "./buildUtils";
 import { getBuildValidationErrors } from "./buildValidation";
 import { DEFAULT_COMPUTE_OPTIONS } from "./computeFilters";
 
@@ -21,9 +21,7 @@ export function executeSubscribePreset(
   if (payload.author) state.author = payload.author;
   if (payload.description) state.description = payload.description;
 
-  let nextDeltas: BuildDelta[] = state.deltas.filter(
-    (delta) => delta.kind === "custom"
-  ) as BuildDelta[];
+  let nextDeltas: BuildDelta[] = [];
 
   for (const presetBuildIds of Object.values(payload.characterBuilds)) {
     presetBuildIds.forEach((id, displayIndex) => {
@@ -42,18 +40,6 @@ export function executeSubscribePreset(
       const localBuild = state.builds[id];
       if (!localBuild) continue;
 
-      const isDuplicate = presetBuildIds.some((presetBuildId) => {
-        const presetBuild = payload.builds[presetBuildId];
-        return presetBuild && areBuildsEqual(localBuild, presetBuild);
-      });
-
-      if (isDuplicate) {
-        nextDeltas = nextDeltas.filter(
-          (delta) => !(delta.kind === "custom" && delta.id === id)
-        );
-        continue;
-      }
-
       if (presetIdSet.has(id)) {
         nextDeltas = upsertCustomBuildDelta(
           nextDeltas,
@@ -71,10 +57,10 @@ export function executeSubscribePreset(
     }
   }
 
+  const nextDeltaIds = new Set(nextDeltas.map((delta) => delta.id));
   for (const delta of state.deltas) {
     if (delta.kind !== "custom") continue;
-    const charId = delta.value.characterId;
-    if (payload.characterBuilds[charId]) continue;
+    if (nextDeltaIds.has(delta.id)) continue;
     nextDeltas = upsertCustomBuildDelta(
       nextDeltas,
       delta.value,
@@ -82,7 +68,7 @@ export function executeSubscribePreset(
     );
   }
 
-  state.deltas = nextDeltas;
+  state.deltas = dedupeBuildDeltasAgainstPreset(nextDeltas, payload);
 
   // Copy weapons only for characters without existing customizations
   for (const [charId, weapons] of Object.entries(payload.characterWeapons)) {

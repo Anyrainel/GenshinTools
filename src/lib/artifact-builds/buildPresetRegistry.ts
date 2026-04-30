@@ -22,7 +22,7 @@ const loadedPresets: Record<string, BuildPayloadV5> = {};
  * To facilitate ID lookup, we might need to load metadata first.
  */
 
-export async function loadPreset(path: string): Promise<BuildPayloadV5> {
+export async function loadBuildPreset(path: string): Promise<BuildPayloadV5> {
   if (loadedPresets[path]) return loadedPresets[path];
 
   const loader = presetModules[path];
@@ -39,17 +39,19 @@ export async function loadPreset(path: string): Promise<BuildPayloadV5> {
     migrateBuild(build);
   }
 
-  loadedPresets[path] = v5;
-
-  // Also cache by internal ID if present
-  if (v5.id) {
-    loadedPresets[v5.id] = v5;
-  }
+  cacheBuildPreset(path, v5);
 
   return v5;
 }
 
-export function getCachedPreset(
+export function cacheBuildPreset(idOrPath: string, payload: BuildPayloadV5) {
+  loadedPresets[idOrPath] = payload;
+  if (payload.id) {
+    loadedPresets[payload.id] = payload;
+  }
+}
+
+export function getCachedBuildPreset(
   idOrPath: string | null
 ): BuildPayloadV5 | null {
   if (!idOrPath) return null;
