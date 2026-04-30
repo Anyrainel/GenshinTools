@@ -116,6 +116,10 @@ interface FreezeState {
   ) => void;
   /** All per-account frozen state. Top-level fields mirror the active profile. */
   freezesByProfileId: Record<AccountProfileId, FrozenProfileState>;
+  renameProfile: (
+    sourceProfileId: AccountProfileId,
+    targetProfileId: AccountProfileId
+  ) => void;
   setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
@@ -157,6 +161,13 @@ function normalizeProfileState(
     reuseMode: profile.reuseMode,
     frozenArtifactIds: profile.frozenArtifactIds,
   };
+}
+
+function profileStateEqual(
+  first: FrozenProfileState,
+  second: FrozenProfileState
+): boolean {
+  return JSON.stringify(first) === JSON.stringify(second);
 }
 
 const accountArtifactIndexCache = new WeakMap<
@@ -529,6 +540,33 @@ export const useFreezeStore = create<FreezeState>()(
           const profile = getProfileState(state, targetProfileId);
           const validated = validateProfileArtifacts(profile, allArtifactIds);
           return updateProfileState(state, targetProfileId, validated);
+        }),
+
+      renameProfile: (sourceProfileId, targetProfileId) =>
+        set((state) => {
+          if (sourceProfileId === targetProfileId) return state;
+          const sourceProfile =
+            getActiveProfileId() === sourceProfileId
+              ? currentProfileState(state)
+              : state.freezesByProfileId[sourceProfileId];
+          if (!sourceProfile) return state;
+
+          const normalized = normalizeProfileState(sourceProfile);
+          const defaultProfile = cloneDefaultProfileState();
+          const freezesByProfileId = { ...state.freezesByProfileId };
+          delete freezesByProfileId[sourceProfileId];
+          if (!profileStateEqual(normalized, defaultProfile)) {
+            freezesByProfileId[targetProfileId] = normalized;
+          }
+
+          const activeProfileId = getActiveProfileId();
+          return {
+            ...(activeProfileId === sourceProfileId ||
+            activeProfileId === targetProfileId
+              ? applyProfileState(normalized, activeProfileId)
+              : {}),
+            freezesByProfileId,
+          };
         }),
 
       setActiveProfile: (profileId) =>

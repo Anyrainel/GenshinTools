@@ -62,6 +62,10 @@ interface TierListState {
   setActiveTierList: (id: number) => void;
   renameTierList: (id: number, title: string) => void;
   linkAccount: (tierListId: number, accountId: AccountProfileId | null) => void;
+  renameLinkedAccount: (
+    sourceAccountId: AccountProfileId,
+    targetAccountId: AccountProfileId
+  ) => void;
   findTierListByAccount: (accountId: AccountProfileId) => number | null;
 }
 
@@ -295,6 +299,45 @@ export const useTierStore = create<TierListState>()(
 
           newTierLists[tierListId] = { ...inst, linkedAccountId: accountId };
 
+          const base = {
+            tierLists: newTierLists,
+            activeTierListId: state.activeTierListId,
+          };
+          return { ...base, ...deriveActiveFields(base) };
+        }),
+
+      renameLinkedAccount: (sourceAccountId, targetAccountId) =>
+        set((state) => {
+          if (sourceAccountId === targetAccountId) return state;
+          let changed = false;
+          let sourceListId: number | null = null;
+          const newTierLists = { ...state.tierLists };
+
+          for (const [key, list] of Object.entries(state.tierLists)) {
+            const id = Number(key);
+            if (list.linkedAccountId === sourceAccountId) {
+              sourceListId = id;
+            }
+          }
+          if (sourceListId === null) return state;
+
+          for (const [key, list] of Object.entries(state.tierLists)) {
+            const id = Number(key);
+            if (id === sourceListId) {
+              if (list.linkedAccountId !== targetAccountId) {
+                newTierLists[id] = {
+                  ...list,
+                  linkedAccountId: targetAccountId,
+                };
+                changed = true;
+              }
+            } else if (list.linkedAccountId === targetAccountId) {
+              newTierLists[id] = { ...list, linkedAccountId: null };
+              changed = true;
+            }
+          }
+
+          if (!changed) return state;
           const base = {
             tierLists: newTierLists,
             activeTierListId: state.activeTierListId,

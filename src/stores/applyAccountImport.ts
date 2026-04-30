@@ -8,12 +8,27 @@ import {
 } from "./useFreezeStore";
 import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
 import { useResourceRecStore } from "./useResourceRecStore";
+import { useTierStore } from "./useTierStore";
 import { useTriageStore } from "./useTriageStore";
 
 export type ClonedProfileSettingsDomain = "triage" | "resources";
 
 export interface ApplyAccountImportResult {
   clonedProfileSettings: ClonedProfileSettingsDomain[];
+}
+
+function promoteProfileScopedStores(
+  sourceProfileId: AccountProfileId,
+  targetProfileId: AccountProfileId
+): void {
+  useTriageStore
+    .getState()
+    .renameProfileSettings(sourceProfileId, targetProfileId);
+  useResourceRecStore
+    .getState()
+    .renameProfileSettings(sourceProfileId, targetProfileId);
+  useFreezeStore.getState().renameProfile(sourceProfileId, targetProfileId);
+  useTierStore.getState().renameLinkedAccount(sourceProfileId, targetProfileId);
 }
 
 /**
@@ -31,6 +46,8 @@ export function applyAccountImport(opts: {
   lastUpdate?: number;
   /** Account ID to set as active, or omit to skip. */
   setAsActive?: AccountProfileId;
+  /** Promote the imported profile key after saving, e.g. profile 0 -> UID. */
+  promoteToId?: AccountProfileId;
   /** Old→new artifact ID mapping for freeze-store remapping. */
   artifactIdMap?: Map<string, string>;
 }): ApplyAccountImportResult {
@@ -68,11 +85,18 @@ export function applyAccountImport(opts: {
     lastUpdate,
     ...(opts.name ? { name: opts.name } : {}),
   });
+  if (opts.promoteToId !== undefined) {
+    promoteProfileScopedStores(opts.accountId, opts.promoteToId);
+    store.promoteToUid(opts.accountId, opts.promoteToId);
+  }
   if (opts.setAsActive !== undefined) {
     store.setActiveAccount(opts.setAsActive);
   }
   useFreezeStore
     .getState()
-    .validateFrozenArtifacts(collectAllArtifactIds(opts.data), opts.accountId);
+    .validateFrozenArtifacts(
+      collectAllArtifactIds(opts.data),
+      opts.promoteToId ?? opts.accountId
+    );
   return { clonedProfileSettings };
 }

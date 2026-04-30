@@ -9,9 +9,11 @@ import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { useTriageStore } from "@/stores/useTriageStore";
-import { createArtifactScoreResult } from "../fixtures";
+import { createArtifactData, createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
 beforeEach(() => {
@@ -37,6 +39,42 @@ beforeEach(() => {
     settingsByProfileId: {
       0: structuredClone(resourceSettings),
     },
+  });
+  useFreezeStore.setState({
+    frozenTeamLoadouts: {},
+    frozenTeams: {},
+    reuseMode: "sameChar",
+    frozenArtifactIds: [],
+    freezesByProfileId: {
+      0: {
+        frozenTeamLoadouts: {},
+        reuseMode: "sameChar",
+        frozenArtifactIds: [],
+      },
+    },
+  });
+  useTierStore.setState({
+    tierLists: {
+      1: {
+        id: 1,
+        tierAssignments: {},
+        tierCustomization: {},
+        customTitle: "",
+        author: "",
+        description: "",
+        linkedAccountId: null,
+      },
+    },
+    activeTierListId: 1,
+    nextId: 2,
+    showWeapons: true,
+    showTravelers: false,
+    showManekin: false,
+    tierAssignments: {},
+    tierCustomization: {},
+    customTitle: "",
+    author: "",
+    description: "",
   });
 });
 
@@ -251,6 +289,88 @@ describe("useAccountStore", () => {
       expect(
         useResourceRecStore.getState().settingsByProfileId[800000003].panelOpen
       ).toBe(false);
+    });
+
+    it("promotes profile-scoped state before activating a UID import", () => {
+      const sourceArtifact = createArtifactData({
+        id: "old-artifact",
+        slotKey: "flower",
+      });
+      const promotedArtifact = createArtifactData({
+        id: "new-artifact",
+        slotKey: "flower",
+      });
+      useAccountStore.getState().addOrUpdateAccount(0, {
+        data: createSampleAccountData({ extraArtifacts: [sourceArtifact] }),
+      });
+      useAccountStore.getState().setActiveAccount(0);
+      useTriageStore.getState().updateSettings({ mainStatThreshold: 91 });
+      useResourceRecStore.getState().setPanelOpen(true);
+      useFreezeStore.setState({
+        frozenTeamLoadouts: {
+          "team-1": {
+            frozenCharIds: ["hu_tao"],
+            artifactIdsByChar: { hu_tao: { flower: "old-artifact" } },
+          },
+        },
+        frozenTeams: {},
+        reuseMode: "forceReuse",
+        frozenArtifactIds: ["old-artifact"],
+        freezesByProfileId: {
+          0: {
+            frozenTeamLoadouts: {
+              "team-1": {
+                frozenCharIds: ["hu_tao"],
+                artifactIdsByChar: { hu_tao: { flower: "old-artifact" } },
+              },
+            },
+            reuseMode: "forceReuse",
+            frozenArtifactIds: ["old-artifact"],
+          },
+        },
+      });
+      useTierStore.getState().linkAccount(1, 0);
+
+      const result = applyAccountImport({
+        accountId: 0,
+        data: createSampleAccountData({ extraArtifacts: [promotedArtifact] }),
+        setAsActive: 800000001,
+        promoteToId: 800000001,
+        artifactIdMap: new Map([["old-artifact", "new-artifact"]]),
+      });
+
+      expect(result.clonedProfileSettings).toEqual([]);
+      expect(useAccountStore.getState().accounts[0]).toBeUndefined();
+      expect(useAccountStore.getState().accounts[800000001]).toBeDefined();
+      expect(useAccountStore.getState().activeAccountId).toBe(800000001);
+      expect(useTriageStore.getState().settingsByProfileId[0]).toBeUndefined();
+      expect(
+        useTriageStore.getState().settingsByProfileId[800000001]
+          .mainStatThreshold
+      ).toBe(91);
+      expect(useTriageStore.getState().settings.mainStatThreshold).toBe(91);
+      expect(
+        useResourceRecStore.getState().settingsByProfileId[0]
+      ).toBeUndefined();
+      expect(
+        useResourceRecStore.getState().settingsByProfileId[800000001].panelOpen
+      ).toBe(true);
+      expect(useResourceRecStore.getState().panelOpen).toBe(true);
+      expect(useFreezeStore.getState().freezesByProfileId[0]).toBeUndefined();
+      expect(
+        useFreezeStore.getState().freezesByProfileId[800000001]
+          .frozenArtifactIds
+      ).toEqual(["new-artifact"]);
+      expect(
+        useFreezeStore.getState().freezesByProfileId[800000001]
+          .frozenTeamLoadouts["team-1"].artifactIdsByChar.hu_tao.flower
+      ).toBe("new-artifact");
+      expect(
+        useFreezeStore.getState().getFrozenTeam("team-1")?.artifactsByChar
+          .hu_tao.flower?.id
+      ).toBe("new-artifact");
+      expect(useTierStore.getState().findTierListByAccount(0)).toBeNull();
+      expect(useTierStore.getState().findTierListByAccount(800000001)).toBe(1);
     });
   });
 

@@ -171,7 +171,6 @@ export default function AccountDataPage() {
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const clearAccounts = useAccountStore((s) => s.clearAccounts);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
-  const promoteToUid = useAccountStore((s) => s.promoteToUid);
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data || null;
   const scores = useActiveAccountScores();
@@ -474,11 +473,9 @@ export default function AccountDataPage() {
       data: result.data,
       name: result.name || undefined,
       setAsActive: result.activeId,
+      promoteToId: result.promoteToId,
       artifactIdMap: resolveArtifactIdMap,
     });
-    if (result.promoteToId !== undefined) {
-      promoteToUid(result.id, result.promoteToId);
-    }
 
     showImportSuccess(importResult);
     setPendingImport(null);

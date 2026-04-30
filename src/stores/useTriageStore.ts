@@ -17,6 +17,10 @@ interface TriageState {
     sourceProfileId: AccountProfileId,
     targetProfileId: AccountProfileId
   ) => boolean;
+  renameProfileSettings: (
+    sourceProfileId: AccountProfileId,
+    targetProfileId: AccountProfileId
+  ) => void;
   setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
@@ -97,6 +101,38 @@ export const useTriageStore = create<TriageState>()(
         });
         return didClone;
       },
+
+      renameProfileSettings: (sourceProfileId, targetProfileId) =>
+        set((state) => {
+          if (sourceProfileId === targetProfileId) return state;
+          const sourceSettings =
+            getActiveProfileId() === sourceProfileId
+              ? state.settings
+              : state.settingsByProfileId[sourceProfileId];
+          if (!sourceSettings) return state;
+
+          const settingsByProfileId = { ...state.settingsByProfileId };
+          delete settingsByProfileId[sourceProfileId];
+
+          const nextSettings = settingsEqual(
+            sourceSettings,
+            cloneDefaultSettings()
+          )
+            ? cloneDefaultSettings()
+            : cloneSettings(sourceSettings);
+          if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
+            settingsByProfileId[targetProfileId] = nextSettings;
+          }
+          const activeProfileId = getActiveProfileId();
+
+          return {
+            ...(activeProfileId === sourceProfileId ||
+            activeProfileId === targetProfileId
+              ? { settings: nextSettings }
+              : {}),
+            settingsByProfileId,
+          };
+        }),
 
       setActiveProfile: (profileId) =>
         set((state) => ({
