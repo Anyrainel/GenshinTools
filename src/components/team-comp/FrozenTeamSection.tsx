@@ -7,11 +7,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 interface FrozenTeamSectionProps {
-  team: Team;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
   /** 1-based display index for the "Team N" label. */
   teamIndex: number;
   /** Character IDs currently frozen in the store. */
@@ -28,7 +30,8 @@ interface FrozenTeamSectionProps {
 }
 
 export function FrozenTeamSection({
-  team,
+  teamComp,
+  setupConfig,
   teamIndex,
   frozenCharIds,
   pendingRefreezeChars,
@@ -42,6 +45,10 @@ export function FrozenTeamSection({
   const { t } = useLanguage();
 
   const [swapGuideOpen, setSwapGuideOpen] = useState(false);
+  const { characters, artifacts } = useMemo(
+    () => teamCompToArrays(teamComp),
+    [teamComp]
+  );
 
   const frozenCharIdSet = useMemo(
     () => new Set(frozenCharIds),
@@ -52,36 +59,41 @@ export function FrozenTeamSection({
   const displayCharIds = useMemo(() => {
     const set = new Set(frozenCharIds);
     for (const cid of Object.keys(pendingRefreezeChars)) set.add(cid);
-    return team.characters.filter((c): c is string => !!c && set.has(c));
-  }, [frozenCharIds, pendingRefreezeChars, team.characters]);
+    return characters.filter((c): c is string => !!c && set.has(c));
+  }, [frozenCharIds, pendingRefreezeChars, characters]);
 
   // Full team roster for the header row
   const fullRosterCharIds = useMemo(
-    () => team.characters.filter((c): c is string => !!c),
-    [team.characters]
+    () => characters.filter((c): c is string => !!c),
+    [characters]
   );
 
   const hasPendingRefreeze = Object.keys(pendingRefreezeChars).length > 0;
   const isFrozen = frozenCharIds.length > 0;
 
-  // Build a virtual team with only the displayed characters for StatSheetPanel
-  const virtualTeam = useMemo(
-    (): Team => ({
-      ...team,
-      characters: [
-        displayCharIds[0] ?? null,
-        displayCharIds[1] ?? null,
-        displayCharIds[2] ?? null,
-        displayCharIds[3] ?? null,
-      ],
-    }),
-    [team, displayCharIds]
+  const displayCharacters = useMemo(
+    () => [
+      displayCharIds[0] ?? null,
+      displayCharIds[1] ?? null,
+      displayCharIds[2] ?? null,
+      displayCharIds[3] ?? null,
+    ],
+    [displayCharIds]
+  );
+  const displayArtifacts = useMemo(
+    () =>
+      displayCharacters.map((charId) => {
+        if (!charId) return null;
+        const originalIndex = characters.indexOf(charId);
+        return originalIndex >= 0 ? (artifacts[originalIndex] ?? null) : null;
+      }),
+    [displayCharacters, characters, artifacts]
   );
 
   // Equipped artifacts for swap guide
   const equippedArtifactsByChar = useMemo(() => {
     const equipped: Record<string, Record<string, ArtifactData>> = {};
-    for (const cid of team.characters) {
+    for (const cid of characters) {
       if (!cid) continue;
       const acctChar = accountData?.characters.find(
         (c: CharacterData) => c.key === cid
@@ -92,7 +104,7 @@ export function FrozenTeamSection({
       >;
     }
     return equipped;
-  }, [team.characters, accountData]);
+  }, [characters, accountData]);
 
   // Optimized artifacts for swap guide — use merged artifactsByChar (all displayed chars)
   const optimizedArtifactsByChar = artifactsByChar;
@@ -175,7 +187,8 @@ export function FrozenTeamSection({
       {/* StatSheetPanel in preview mode — shows character + artifacts + freeze/unfreeze */}
       <div className="p-1 md:p-2">
         <StatSheetPanel
-          team={virtualTeam}
+          characters={displayCharacters}
+          artifacts={displayArtifacts}
           artifactsByChar={artifactsByChar}
           targetCharId=""
           highlightedStat={null}
@@ -191,7 +204,9 @@ export function FrozenTeamSection({
       {/* Swap Guide — toggled via header button, no inner collapsible */}
       {swapGuideOpen && (
         <SwapGuide
-          team={team}
+          comp={teamComp}
+          setupConfig={setupConfig}
+          characters={characters}
           equippedArtifactsByChar={equippedArtifactsByChar}
           optimizedArtifactsByChar={optimizedArtifactsByChar}
           accountData={accountData}

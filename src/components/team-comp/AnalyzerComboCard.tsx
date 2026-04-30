@@ -11,6 +11,7 @@ import type { Element } from "@/data/enums";
 import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   ComboFormula,
+  ExtraBuff,
   ReactionOverride,
   TeamSlotConfig,
 } from "@/lib/dmgcalc/types";
@@ -19,7 +20,6 @@ import type {
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
-import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { AnalyzerComboTab } from "./AnalyzerComboTab";
 import {
@@ -41,9 +41,9 @@ interface AnalyzerComboCardProps {
   onComboOverridesChange: (overrides: ComboCountOverrides) => void;
   onMinErOverridesChange: (overrides: MinErOverrides) => void;
   onReactionChange: (stableKey: string, override: ReactionOverride) => void;
-  // Environment settings (local, not persisted)
-  envTeam: Team;
-  updateEnvTeam: (id: string, patch: Partial<Team>) => void;
+  envCharacters: string[];
+  extraBuffs: ExtraBuff[];
+  onExtraBuffsChange: (buffs: ExtraBuff[]) => void;
   localEnemyAura: Element | undefined;
   onEnemyAuraChange: (el: Element | undefined) => void;
   t: ReturnType<typeof useLanguage>["t"];
@@ -62,8 +62,9 @@ export function AnalyzerComboCard({
   onComboOverridesChange,
   onMinErOverridesChange,
   onReactionChange,
-  envTeam,
-  updateEnvTeam,
+  envCharacters,
+  extraBuffs,
+  onExtraBuffsChange,
   localEnemyAura,
   onEnemyAuraChange,
   t,
@@ -95,8 +96,9 @@ export function AnalyzerComboCard({
               {/* Environment settings */}
               <div className="flex items-center">
                 <ExtraBuffsPanel
-                  team={envTeam}
-                  updateTeam={updateEnvTeam}
+                  characters={envCharacters}
+                  extraBuffs={extraBuffs}
+                  onExtraBuffsChange={onExtraBuffsChange}
                   enemyAura={localEnemyAura}
                   onEnemyAuraChange={onEnemyAuraChange}
                   t={t}

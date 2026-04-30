@@ -4,28 +4,21 @@ import { StatSheetPanel } from "@/components/team-comp/StatSheetPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { StatKey } from "@/data/enums";
 import type { DisplayResult } from "@/lib/dmgcalc/types";
-import type { Team } from "@/lib/team-comp/types";
+import {
+  teamCompInputToComp,
+  teamCompToArrays,
+} from "@/lib/team-comp/teamDeltas";
+import type { TeamComp } from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
-const mockTeam: Team = {
+const mockTeamComp: TeamComp = teamCompInputToComp({
   id: "test-team",
   name: "Test Team",
   characters: ["hu_tao", "xingqiu", null, null],
   weapons: ["staff_of_homa", "sacrificial_sword", null, null],
   artifacts: [null, null, null, null],
   reactions: [],
-  combo: null,
-  formulaMode: "single",
-  calcContext: {
-    enemyLevel: 110,
-    enemyRes: 0.1,
-    rollMultiplier: 0.85,
-    substatBudget: "8_6",
-  },
-  selectedFormula: null,
-  optimizationResult: null,
-  opts: {},
-};
+});
 
 /** Minimal DisplayResult with stat records for two characters. */
 function makeResult(overrides?: Partial<DisplayResult>): DisplayResult {
@@ -97,9 +90,11 @@ function TestPanel(props: PanelProps) {
 }
 
 function defaultProps(overrides: Partial<PanelProps> = {}): PanelProps {
+  const { characters, artifacts } = teamCompToArrays(mockTeamComp);
   return {
     result: makeResult(),
-    team: mockTeam,
+    characters,
+    artifacts,
     artifactsByChar: { hu_tao: {}, xingqiu: {} },
     targetCharId: "hu_tao",
     highlightedStat: null as {

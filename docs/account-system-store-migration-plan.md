@@ -1,6 +1,6 @@
 # Account System Design 4: Store Migration Implementation Plan
 
-Last updated: 2026-04-29.
+Last updated: 2026-04-30.
 
 ## Scope
 
@@ -25,8 +25,8 @@ This branch implements the local store migrations needed before cloud backup wor
 | Phase 1: numeric account profile ids | Done for profile ids and account score cache split. | `ee07e6e5` |
 | Phase 2: account-scoped settings | Done for triage/resource settings, clone-from-last-active import behavior, and import messaging. | `b19c078d` + current |
 | Phase 3: tier list migrations | Done for character account links and weapon/artifact multi-list stores. | `41c3be21` |
-| Phase 4: freeze account scoping | Done. | `b68b2c47` |
-| Phase 5: team cache persistence split | Done. Team source/config stays in `useTeamStore`; weapon/artifact choice results route through local-only `useTeamResultCacheStore`. Analyzer cache remains local-only. | `ca14fca1` + current |
+| Phase 4: freeze account scoping | Done. Freeze state is account-scoped and durable state is ID-only loadouts. | `b68b2c47` + current |
+| Phase 5: team cache persistence split | Done. Team source/config stays in `useTeamStore`; optimizer, investment, weapon choice, and artifact choice latest results route through local-only `useTeamResultCacheStore`. Analyzer cache is in-memory keyed cache only. | `ca14fca1` + current |
 | Phase 6: build preset delta | Done. Build store persists `PresetDelta<Build>[]` and derives runtime views from the active hydrated preset. | `5a0a1967`, `d6ffb28c` |
 | Phase 7: team preset delta | Done. Team store persists `PresetDelta<TeamComp>[]` plus `configsByTeamId`, with active preset hydration and dedupe. | `98e3eb62`, `5a0a1967` |
 | Phase 8: cloud codecs | Deferred until the cloud sync implementation starts. | pending |
@@ -40,7 +40,7 @@ Current persisted stores with migration or hydration behavior:
 | `useAccountStore` | `genshin-account-storage` | 6 | `src/stores/migration/account.ts` |
 | `useBuildsStore` | `artifact-filter-builds` | 6 | `src/stores/migration/builds.ts` |
 | `useTeamStore` | `team-builder-storage` | 17 | `src/stores/migration/team.ts` |
-| `useFreezeStore` | `frozen-teams-storage` | 5 | `src/stores/migration/freeze.ts` |
+| `useFreezeStore` | `frozen-teams-storage` | 6 | `src/stores/migration/freeze.ts` |
 | `useTierStore` | `tierlist-storage` | 3 | `src/stores/migration/tier.ts` |
 | `useWeaponTierStore` | `weapon-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
 | `useArtifactTierStore` | `artifact-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
@@ -61,8 +61,8 @@ Runtime cache stores should stay outside cloud sync:
 
 | Store | Decision |
 | --- | --- |
-| `useAnalyzerCacheStore` | Keep local only for investment analyzer results. |
-| `useTeamResultCacheStore` | Keep local only for Team Comp optimizer and weapon/artifact choice results. |
+| `useAnalyzerCacheStore` | Keep in-memory only for full-option-keyed investment analyzer reuse. |
+| `useTeamResultCacheStore` | Keep local only for the latest Team Comp optimizer, investment, weapon choice, and artifact choice result per team. |
 | `useRecommendationCacheStore` | Keep in memory only. |
 | `usePUpgradeCacheStore` | Keep in memory only. |
 | `useBuffOverrideStore` | Runtime only. |
@@ -322,9 +322,8 @@ Migration:
 
 Implementation notes:
 
-- Keep `useAnalyzerCacheStore` local-only.
-- `useTeamResultCacheStore` owns optimizer and weapon/artifact choice result caches.
-- `useAnalyzerCacheStore` remains a separate local-only investment analyzer cache for now.
+- Keep `useAnalyzerCacheStore` in-memory only for full-option-keyed analyzer reuse.
+- `useTeamResultCacheStore` owns the latest optimizer, investment, weapon choice, and artifact choice result per team.
 - Cache data should not appear in any cloud codec.
 
 Tests:

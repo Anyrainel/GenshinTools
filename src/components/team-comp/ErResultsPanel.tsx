@@ -15,7 +15,7 @@ import type {
   QWindow,
   TeamSlot,
 } from "@/lib/ercalc/types";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamComp } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import {
   erPercentToInternal,
@@ -28,10 +28,10 @@ interface ErResultsPanelProps {
   team: TeamSlot[];
   embedded?: boolean;
   /**
-   * When provided, Apply writes directly to this team's charSettings.
+   * When provided, Apply writes directly to this team's character config.
    * When absent, falls back to matching by character IDs.
    */
-  targetTeam?: Team;
+  targetTeam?: TeamComp;
 }
 
 function getErTextColor(er: number, isInfinity: boolean) {
@@ -175,41 +175,51 @@ export function ErResultsPanel({
   targetTeam,
 }: ErResultsPanelProps) {
   const { t, language } = useLanguage();
-  const teams = useTeamStore((s) => s.teams);
-  const updateTeam = useTeamStore((s) => s.updateTeam);
+  const teamComps = useTeamStore((s) => s.teamComps);
+  const getTeamSetupConfigById = useTeamStore((s) => s.getTeamSetupConfigById);
+  const updateTeamSetupConfig = useTeamStore((s) => s.updateTeamSetupConfig);
   const [allExpanded, setAllExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: t is stable per language, which is already a dependency
   const handleApplyMinER = useCallback(() => {
     let target = targetTeam;
     if (!target) {
       const charIds = team.map((s) => s.charId);
-      const matching = findMatchingTeams(teams, charIds);
+      const matching = findMatchingTeams(teamComps, charIds);
       if (matching.length === 0) {
         toast.info(t.ui("erCalc.noMatchingTeamFound"));
         return;
       }
       target = matching[0];
     }
-    const charSettings: Record<string, { minEr?: number }> = {
-      ...target.charSettings,
+    const setupConfig = getTeamSetupConfigById(target.id);
+    const charConfigs = {
+      ...(setupConfig.charConfigs ?? {}),
     };
     for (const r of results) {
       if (r.erNeeded !== Number.POSITIVE_INFINITY && r.erNeeded > 100) {
-        charSettings[r.characterId] = {
-          ...charSettings[r.characterId],
+        charConfigs[r.characterId] = {
+          ...charConfigs[r.characterId],
           minEr: erPercentToInternal(r.erNeeded),
         };
       }
     }
-    updateTeam(target.id, { charSettings });
+    updateTeamSetupConfig(target.id, { charConfigs });
     toast.success(
       language === "zh"
         ? `已应用到「${target.name || "队伍"}」的最低ER`
         : `Applied to "${target.name || "team"}" min ER`
     );
-  }, [team, teams, results, updateTeam, language, targetTeam]);
+  }, [
+    team,
+    teamComps,
+    results,
+    getTeamSetupConfigById,
+    updateTeamSetupConfig,
+    language,
+    targetTeam,
+    t,
+  ]);
 
   const handleCopy = useCallback(() => {
     const teamNames = team.map((s) => t.character(s.charId)).join(" / ");

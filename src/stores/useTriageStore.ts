@@ -105,22 +105,26 @@ export const useTriageStore = create<TriageState>()(
     }),
     {
       name: "triage-settings",
-      version: 5,
+      version: 6,
       migrate: migrateTriageStore,
       partialize: (state) => ({
-        settings: state.settings,
-        settingsByProfileId: state.settingsByProfileId,
+        settingsByProfileId: {
+          ...state.settingsByProfileId,
+          [getActiveProfileId()]: cloneSettings(state.settings),
+        },
       }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedTriageStoreSchema.safeParse(persistedState);
         if (!parsed.success) return currentState;
         const activeProfileId = getActiveProfileId();
-        const settingsByProfileId = (parsed.data.settingsByProfileId ?? {
-          [DEFAULT_ACCOUNT_PROFILE_ID]: {
-            ...currentState.settings,
-            ...(parsed.data.settings as Partial<TriageSettings>),
-          },
-        }) as Record<AccountProfileId, TriageSettings>;
+        const settingsByProfileId = parsed.data.settingsByProfileId as Record<
+          AccountProfileId,
+          TriageSettings
+        >;
+        if (Object.keys(settingsByProfileId).length === 0) {
+          settingsByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] =
+            cloneDefaultSettings();
+        }
         return {
           ...currentState,
           settingsByProfileId,

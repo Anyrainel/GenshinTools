@@ -1,6 +1,12 @@
 import type { ComponentProps } from "react";
 import { TeamRosterCard } from "@/components/team-comp/TeamRosterCard";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { teamCompInputToComp } from "@/lib/team-comp/teamDeltas";
+import type {
+  TeamComp,
+  TeamCompInput,
+  TeamSetupConfig,
+} from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
 vi.mock("@/hooks/useMediaQuery", () => ({
@@ -17,40 +23,39 @@ function TestRoster(props: RosterProps) {
   return <TeamRosterCard {...props} t={t} />;
 }
 
-function makeTeam(
-  overrides: Partial<RosterProps["team"]> = {}
-): RosterProps["team"] {
-  return {
+function makeTeamComp(overrides: Partial<TeamCompInput> = {}): TeamComp {
+  return teamCompInputToComp({
     id: "test-team",
     name: "Test Team",
     characters: ["hu_tao", "xingqiu", null, null],
     weapons: ["staff_of_homa", null, null, null],
     artifacts: [null, null, null, null],
     reactions: [],
-    combo: null,
-    formulaMode: "single",
-    calcContext: {
-      enemyLevel: 110,
-      enemyRes: 0.1,
-      rollMultiplier: 0.85,
-      substatBudget: "8_6",
-    },
-    selectedFormula: null,
-    optimizationResult: null,
-    opts: {},
     ...overrides,
-  };
+  });
 }
 
-function defaultProps(overrides: Partial<RosterProps> = {}): RosterProps {
+function defaultProps(
+  overrides: Partial<RosterProps> & {
+    teamComp?: TeamComp;
+    setupConfig?: TeamSetupConfig;
+  } = {}
+): RosterProps {
+  const {
+    teamComp = makeTeamComp(),
+    setupConfig = { combatOptions: {} },
+    ...rest
+  } = overrides;
   return {
-    team: makeTeam(),
-    updateTeam: vi.fn(),
+    teamComp,
+    setupConfig,
+    updateTeamComp: vi.fn(),
+    updateTeamSetupConfig: vi.fn(),
     accountData: null,
     characterStats: {},
     weaponStats: {},
     isMobile: false,
-    ...overrides,
+    ...rest,
   };
 }
 
@@ -98,7 +103,7 @@ describe("TeamRosterCard", () => {
     render(
       <TestRoster
         {...defaultProps({
-          team: makeTeam({ weapons: [null, null, null, null] }),
+          teamComp: makeTeamComp({ weapons: [null, null, null, null] }),
         })}
       />
     );
@@ -154,13 +159,14 @@ describe("TeamRosterCard", () => {
     expect(screen.getByText("R3")).toBeInTheDocument();
   });
 
-  it("overrides constellation via opts", () => {
+  it("overrides constellation via setup config", () => {
     render(
       <TestRoster
         {...defaultProps({
-          team: makeTeam({
-            opts: { "hu_tao.overrideConstellation": "6" },
-          }),
+          setupConfig: {
+            combatOptions: {},
+            charConfigs: { hu_tao: { constellation: 6 } },
+          },
         })}
       />
     );
@@ -171,7 +177,7 @@ describe("TeamRosterCard", () => {
     const { container } = render(
       <TestRoster
         {...defaultProps({
-          team: makeTeam({ characters: ["hu_tao", null, null, null] }),
+          teamComp: makeTeamComp({ characters: ["hu_tao", null, null, null] }),
         })}
       />
     );

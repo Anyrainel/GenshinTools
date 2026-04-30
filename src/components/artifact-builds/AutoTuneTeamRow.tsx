@@ -4,10 +4,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/gameResources";
 import type { AccountData } from "@/data/types";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 
 interface AutoTuneTeamRowProps {
-  team: Team;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
   characterId: string;
   enabled: boolean;
   onToggle: (enabled: boolean) => void;
@@ -16,7 +18,8 @@ interface AutoTuneTeamRowProps {
 }
 
 export function AutoTuneTeamRow({
-  team,
+  teamComp,
+  setupConfig,
   characterId,
   enabled,
   onToggle,
@@ -24,6 +27,7 @@ export function AutoTuneTeamRow({
   hideCheckbox,
 }: AutoTuneTeamRowProps) {
   const { t } = useLanguage();
+  const { characters, weapons, artifacts } = teamCompToArrays(teamComp);
 
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is a controlled component inside the label
@@ -37,16 +41,16 @@ export function AutoTuneTeamRow({
       )}
       <div className="flex-1 min-w-0">
         <div className="text-xs font-medium mb-1 truncate text-muted-foreground">
-          {team.name || buildTeamLabel(team, t)}
+          {teamComp.name || buildTeamLabel({ characters }, t)}
         </div>
         {/* 4×3 grid: row 1 = characters, row 2 = weapons, row 3 = artifacts */}
         <div className="grid grid-cols-4 gap-x-1.5 gap-y-1 justify-items-center">
           {[0, 1, 2, 3].map((idx) => {
-            const charId = team.characters[idx];
+            const charId = characters[idx];
             const charRes = charId ? charactersById[charId] : null;
             const isTarget = charId === characterId;
             const constellation = charId
-              ? resolveConstellation(charId, team, accountData)
+              ? resolveConstellation(charId, setupConfig, accountData)
               : undefined;
             return (
               <div
@@ -66,12 +70,12 @@ export function AutoTuneTeamRow({
             );
           })}
           {[0, 1, 2, 3].map((idx) => {
-            const charId = team.characters[idx];
-            const weaponId = team.weapons[idx];
+            const charId = characters[idx];
+            const weaponId = weapons[idx];
             const wpnRes = weaponId ? weaponsById[weaponId] : null;
             const refinement =
               weaponId && charId
-                ? resolveRefinement(charId, weaponId, team, accountData)
+                ? resolveRefinement(charId, weaponId, setupConfig, accountData)
                 : undefined;
             return (
               <div key={`w${idx}`} className="flex justify-center">
@@ -84,7 +88,7 @@ export function AutoTuneTeamRow({
             );
           })}
           {[0, 1, 2, 3].map((idx) => {
-            const artConfig = team.artifacts[idx];
+            const artConfig = artifacts[idx];
             return (
               <div key={`a${idx}`} className="flex justify-center">
                 {artConfig?.type === "4pc" ? (
@@ -103,29 +107,33 @@ export function AutoTuneTeamRow({
   );
 }
 
-/** Resolve constellation using the same logic as buildTeamConfigs */
+/** Resolve constellation using the same logic as buildTeamSlotConfigs. */
 function resolveConstellation(
   charId: string,
-  team: Team,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): number {
-  if (team.opts?.[`${charId}.overrideConstellation`] !== undefined) {
-    return Number(team.opts[`${charId}.overrideConstellation`]);
-  }
+  const authored = setupConfig.charConfigs?.[charId]?.constellation;
+  if (authored !== undefined) return authored;
+  const combatOverride =
+    setupConfig.combatOptions?.[`${charId}.overrideConstellation`];
+  if (combatOverride !== undefined) return Number(combatOverride);
   const acctChar = accountData?.characters.find((c) => c.key === charId);
   return acctChar ? acctChar.constellation : 0;
 }
 
-/** Resolve refinement using the same logic as buildTeamConfigs */
+/** Resolve refinement using the same logic as buildTeamSlotConfigs. */
 function resolveRefinement(
   charId: string,
   weaponId: string,
-  team: Team,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): number {
-  if (team.opts?.[`${charId}.overrideRefinement`] !== undefined) {
-    return Number(team.opts[`${charId}.overrideRefinement`]);
-  }
+  const authored = setupConfig.charConfigs?.[charId]?.refinement;
+  if (authored !== undefined) return authored;
+  const combatOverride =
+    setupConfig.combatOptions?.[`${charId}.overrideRefinement`];
+  if (combatOverride !== undefined) return Number(combatOverride);
   if (accountData) {
     const refinements: number[] = [];
     for (const c of accountData.characters) {

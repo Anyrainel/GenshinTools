@@ -4,7 +4,6 @@ import type {
   IGOODArtifact,
   IGOODSubstat,
 } from "@/lib/account-data/import/goodConversion";
-import type { Team } from "@/lib/team-comp/types";
 import {
   artifactIdToGOODKey,
   charIdToGOODKey,
@@ -105,7 +104,7 @@ export function buildTriageInstructions(
  * for ones that are already equipped on the target character.
  */
 export function buildEquipInstructions(
-  team: Team,
+  characters: (string | null)[],
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>,
   accountData: AccountData | null
 ): EquipPayload {
@@ -126,7 +125,7 @@ export function buildEquipInstructions(
     { fromChar: string | null; toChar: string }
   >();
 
-  for (const charId of team.characters) {
+  for (const charId of characters) {
     if (!charId) continue;
     const optimized = optimizedArtifactsByChar[charId];
     if (!optimized) continue;
@@ -155,7 +154,7 @@ export function buildEquipInstructions(
  */
 export function buildBatchEquipInstructions(
   teams: {
-    team: Team;
+    characters: (string | null)[];
     optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   }[],
   accountData: AccountData | null
@@ -173,8 +172,8 @@ export function buildBatchEquipInstructions(
   // Deduplicate: artId → { art, targetCharId }
   const seen = new Map<string, { art: ArtifactData; targetCharId: string }>();
 
-  for (const { team, optimizedArtifactsByChar } of teams) {
-    for (const charId of team.characters) {
+  for (const { characters, optimizedArtifactsByChar } of teams) {
+    for (const charId of characters) {
       if (!charId) continue;
       const optimized = optimizedArtifactsByChar[charId];
       if (!optimized) continue;

@@ -4,13 +4,15 @@ import { ExportColumn } from "@/components/team-comp/SwapGuide";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
 import { buildArtifactOwnerMap } from "@/lib/artifact/inventory";
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import type { FrozenTeam } from "@/stores/useFreezeStore";
 
 interface FrozenExportPanelProps {
   entries: {
     teamId: string;
-    team: Team;
+    teamComp: TeamComp;
+    setupConfig: TeamSetupConfig;
   }[];
   frozenTeams: Record<string, FrozenTeam>;
   accountData: AccountData | null;
@@ -31,17 +33,16 @@ export const FrozenExportPanel = forwardRef<
         <ExportBranding />
         {entries.map((entry, i) => {
           const ownerMap = buildArtifactOwnerMap(accountData);
-          const charIds = entry.team.characters.filter(
-            (id): id is string => id != null
-          );
+          const { characters } = teamCompToArrays(entry.teamComp);
+          const charIds = characters.filter((id): id is string => id != null);
           const optimizedArts =
             frozenTeams[entry.teamId]?.artifactsByChar ?? {};
           return (
-            <div key={entry.team.id}>
+            <div key={entry.teamComp.id}>
               {i > 0 && <div className="h-px bg-border/20" />}
-              {entry.team.name && (
+              {entry.teamComp.name && (
                 <div className="text-center py-1.5 text-sm font-bold text-foreground/90 bg-black/20">
-                  {entry.team.name}
+                  {entry.teamComp.name}
                 </div>
               )}
               <div className="grid grid-cols-4 gap-px bg-border/10">
@@ -62,7 +63,8 @@ export const FrozenExportPanel = forwardRef<
                     <ExportColumn
                       key={charId}
                       charId={charId}
-                      team={entry.team}
+                      comp={entry.teamComp}
+                      setupConfig={entry.setupConfig}
                       equipped={equipped}
                       optimized={optimized}
                       ownerMap={ownerMap}

@@ -1,36 +1,24 @@
 import { describe, expect, it } from "vitest";
 
-import type { Team } from "@/lib/team-comp/types";
+import { teamArraysToComp } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp } from "@/lib/team-comp/types";
 import {
   erPercentToInternal,
   findMatchingTeams,
 } from "@/stores/teamStoreIntegration";
 
-// Minimal Team mock for testing
-function mockTeam(id: string, chars: (string | null)[]): Team {
-  return {
+// Minimal TeamComp mock for testing
+function mockTeam(id: string, chars: (string | null)[]): TeamComp {
+  return teamArraysToComp({
     id,
     name: "",
     characters: chars,
-    weapons: [null, null, null, null],
-    artifacts: [null, null, null, null],
     reactions: [],
-    opts: {},
-    calcContext: {
-      enemyLevel: 110,
-      enemyRes: 0.1,
-      rollMultiplier: 0.85,
-      substatBudget: "8_6",
-    },
-    selectedFormula: null,
-    optimizationResult: null,
-    formulaMode: "single",
-    combo: null,
-  };
+  });
 }
 
 describe("findMatchingTeams", () => {
-  const teams: Team[] = [
+  const teams: TeamComp[] = [
     mockTeam("t1", ["bennett", "xiangling", "xingqiu", "sucrose"]),
     mockTeam("t2", ["raiden_shogun", "bennett", "xiangling", "xingqiu"]),
     mockTeam("t3", ["hu_tao", "xingqiu", "yelan", "zhongli"]),

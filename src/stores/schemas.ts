@@ -223,25 +223,7 @@ export const PersistedBuildsStoreSchema = z.object({
   description: z.string().catch(""),
 });
 
-// ─── Team (replaces repairTeam) ───
-
-export const TeamSchema = z
-  .object({
-    id: z.string(),
-    name: z.string().catch(""),
-    characters: z.array(z.string().nullable()).catch([null, null, null, null]),
-    weapons: z.array(z.string().nullable()).catch([null, null, null, null]),
-    artifacts: z
-      .array(ArtifactSetConfigSchema.nullable().catch(null))
-      .catch([null, null, null, null]),
-    reactions: z.array(z.string()).catch([]),
-    opts: z.record(z.string(), z.unknown()).catch({}),
-    calcContext: z.record(z.string(), z.unknown()).catch({}),
-    formulaMode: z.enum(["single", "combo"]).catch("single"),
-    extraBuffs: z.array(z.unknown()).catch([]),
-    charSettings: z.record(z.string(), z.unknown()).catch({}),
-  })
-  .loose();
+// ─── Team Store ───
 
 const TeamCompSlotSchema = z.object({
   charId: z.string().nullable().catch(null),
@@ -297,7 +279,7 @@ const TeamDamageConfigSchema = z
   })
   .loose();
 
-const TeamConfigSchema = z
+const TeamSetupConfigSchema = z
   .object({
     combatOptions: z.record(z.string(), z.string()).catch({}),
     charConfigs: z.record(z.string(), TeamCharConfigSchema).optional(),
@@ -348,33 +330,34 @@ const TeamCompDeltasSchema = z
 export const PersistedTeamStoreSchema = z.object({
   activePresetId: z.string().nullable().catch(null),
   compDeltas: TeamCompDeltasSchema,
-  configsByTeamId: z.record(z.string(), TeamConfigSchema).catch({}),
-  teams: z.array(TeamSchema).optional().catch(undefined),
+  configsByTeamId: z.record(z.string(), TeamSetupConfigSchema).catch({}),
   author: z.string().catch(""),
   description: z.string().catch(""),
 });
 
 // ─── Freeze ───
 
-const FrozenSlotMapSchema = z
-  .record(z.string(), ArtifactDataSchema.nullable().catch(null))
+const FrozenArtifactIdSlotMapSchema = z
+  .record(z.string(), z.string())
   .catch({});
 
-const FrozenTeamSchema = z
+const FrozenTeamLoadoutSchema = z
   .object({
     frozenCharIds: z.array(z.string()).catch([]),
-    artifactsByChar: z.record(z.string(), FrozenSlotMapSchema).catch({}),
+    artifactIdsByChar: z
+      .record(z.string(), FrozenArtifactIdSlotMapSchema)
+      .catch({}),
   })
   .loose();
 
 const FreezeProfileSchema = z.object({
-  frozenTeams: z.record(z.string(), FrozenTeamSchema).catch({}),
+  frozenTeamLoadouts: z.record(z.string(), FrozenTeamLoadoutSchema).catch({}),
   reuseMode: z.enum(["none", "sameChar", "forceReuse"]).catch("sameChar"),
   frozenArtifactIds: z.array(z.string()).catch([]),
 });
 
-export const PersistedFreezeStoreSchema = FreezeProfileSchema.extend({
-  freezesByProfileId: z.record(z.string(), FreezeProfileSchema).optional(),
+export const PersistedFreezeStoreSchema = z.object({
+  freezesByProfileId: z.record(z.string(), FreezeProfileSchema).catch({}),
 });
 
 // ─── ResourceRec ───
@@ -399,15 +382,9 @@ const ResourceRecSettingsSchema = z.object({
 });
 
 export const PersistedResourceRecStoreSchema = z.object({
-  thresholds: TierThresholdsSchema,
-  minScoreDiff: MinScoreDiffSchema,
-  panelOpen: z.boolean().catch(false),
-  showCraft: z.boolean().optional().catch(undefined),
-  showReroll: z.boolean().optional().catch(undefined),
-  showLevelup: z.boolean().optional().catch(undefined),
   settingsByProfileId: z
     .record(z.string(), ResourceRecSettingsSchema)
-    .optional(),
+    .catch({}),
 });
 
 // ─── Triage ───
@@ -460,8 +437,7 @@ const TriageSettingsSchema = z
   .catch(DEFAULT_TRIAGE_SETTINGS);
 
 export const PersistedTriageStoreSchema = z.object({
-  settings: TriageSettingsSchema,
-  settingsByProfileId: z.record(z.string(), TriageSettingsSchema).optional(),
+  settingsByProfileId: z.record(z.string(), TriageSettingsSchema).catch({}),
 });
 
 // ─── Tier list stores ───
@@ -580,12 +556,13 @@ export const PersistedSessionNavStoreSchema = z.object({
     }),
 });
 
-// ─── Analyzer cache ───
-
-export const PersistedAnalyzerCacheStoreSchema = z.object({
-  lastByTeam: z.record(z.string(), z.unknown()).catch({}),
+const TeamResultCacheEntrySchema = z.object({
+  optimizationResult: z.unknown().nullable().optional(),
+  investmentResult: z.unknown().nullable().optional(),
+  weaponChoiceResult: z.unknown().nullable().optional(),
+  artifactChoiceResult: z.unknown().nullable().optional(),
 });
 
 export const PersistedTeamResultCacheStoreSchema = z.object({
-  resultsByTeamId: z.record(z.string(), z.unknown()).catch({}),
+  resultsByTeamId: z.record(z.string(), TeamResultCacheEntrySchema).catch({}),
 });

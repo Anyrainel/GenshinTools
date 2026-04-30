@@ -39,7 +39,15 @@ import {
 } from "@/lib/dmgcalc/core/registry";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import {
+  teamCompInputToComp,
+  teamCompToArrays,
+} from "@/lib/team-comp/teamDeltas";
+import type {
+  TeamCharConfig,
+  TeamComp,
+  TeamSetupConfig,
+} from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
   CARD_BODY_CLS,
@@ -49,8 +57,15 @@ import {
 } from "./cardStyles";
 
 interface TeamRosterCardProps {
-  team: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
+  updateTeamComp: (id: string, comp: TeamComp) => void;
+  updateTeamSetupConfig: (
+    id: string,
+    updater:
+      | Partial<TeamSetupConfig>
+      | ((config: TeamSetupConfig) => TeamSetupConfig)
+  ) => void;
   accountData: AccountData | null;
   characterStats: Record<string, CharacterStats>;
   weaponStats: Record<string, WeaponStats>;
@@ -60,8 +75,10 @@ interface TeamRosterCardProps {
 }
 
 export function TeamRosterCard({
-  team,
-  updateTeam,
+  teamComp,
+  setupConfig,
+  updateTeamComp,
+  updateTeamSetupConfig,
   accountData,
   characterStats,
   weaponStats,
@@ -73,9 +90,68 @@ export function TeamRosterCard({
   const isNarrow = useMediaQuery("(max-width: 559px)");
   const charIconSize = isNarrow ? "sm" : isMobile ? "md" : "xl";
   const subIconSize = isNarrow ? "xs" : isMobile ? "sm" : "lg";
+  const { characters, weapons, artifacts } = useMemo(
+    () => teamCompToArrays(teamComp),
+    [teamComp]
+  );
+  const combatOptions = setupConfig.combatOptions;
+  const charConfigs = setupConfig.charConfigs ?? {};
 
   const handleOptionChange = (entityId: string, val: string) => {
-    updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
+    const match = entityId.match(
+      /^(.+)\.override(Level|Constellation|Refinement|TalentAuto|TalentSkill|TalentBurst)$/
+    );
+    if (match) {
+      const [, charId, field] = match;
+      const numeric = Number(val);
+      if (!Number.isFinite(numeric)) return;
+      updateTeamSetupConfig(teamComp.id, (config) => {
+        const current = config.charConfigs?.[charId] ?? {};
+        const nextCharConfig: TeamCharConfig = { ...current };
+        if (field === "Level") nextCharConfig.level = numeric;
+        else if (field === "Constellation")
+          nextCharConfig.constellation = numeric;
+        else if (field === "Refinement") nextCharConfig.refinement = numeric;
+        else {
+          const talentLevels = { ...(current.talentLevels ?? {}) };
+          if (field === "TalentAuto") talentLevels.auto = numeric;
+          if (field === "TalentSkill") talentLevels.skill = numeric;
+          if (field === "TalentBurst") talentLevels.burst = numeric;
+          nextCharConfig.talentLevels = talentLevels;
+        }
+        return {
+          ...config,
+          charConfigs: {
+            ...(config.charConfigs ?? {}),
+            [charId]: nextCharConfig,
+          },
+        };
+      });
+      return;
+    }
+
+    updateTeamSetupConfig(teamComp.id, (config) => ({
+      ...config,
+      combatOptions: { ...(config.combatOptions ?? {}), [entityId]: val },
+    }));
+  };
+
+  const updateCompArrays = (
+    patch: Partial<{
+      characters: (string | null)[];
+      weapons: (string | null)[];
+      artifacts: typeof artifacts;
+    }>
+  ) => {
+    updateTeamComp(
+      teamComp.id,
+      teamCompInputToComp({
+        ...teamComp,
+        characters: patch.characters ?? characters,
+        weapons: patch.weapons ?? weapons,
+        artifacts: patch.artifacts ?? artifacts,
+      })
+    );
   };
 
   /** Render a single combat option dropdown. */
@@ -91,7 +167,7 @@ export function TeamRosterCard({
     );
     // If selected value is disabled, fall back to first enabled choice
     const raw =
-      team.opts?.[entityId] || getDefaultOptionValue(schema, teamMeta);
+      combatOptions?.[entityId] || getDefaultOptionValue(schema, teamMeta);
     const allDisabled = enabledChoices.length === 0;
     const value = allDisabled
       ? ""
@@ -155,44 +231,50 @@ export function TeamRosterCard({
   };
 
   // Build TeamMeta once for option context (cheap — just lookups)
-  const charIds = team.characters.filter((id): id is string => id != null);
+  const charIds = characters.filter((id): id is string => id != null);
   const constellations: Record<string, number> = {};
   for (const cid of charIds) {
     const acct = accountData?.characters.find(
       (c: CharacterData) => c.key === cid
     );
     constellations[cid] =
-      team.opts?.[`${cid}.overrideConstellation`] !== undefined
-        ? Number(team.opts[`${cid}.overrideConstellation`])
+      charConfigs[cid]?.constellation !== undefined
+        ? Number(charConfigs[cid]?.constellation)
         : (acct?.constellation ?? 0);
   }
   const artSets: Record<string, string> = {};
-  for (let i = 0; i < team.characters.length; i++) {
-    const cid = team.characters[i];
-    const art = team.artifacts[i];
+  for (let i = 0; i < characters.length; i++) {
+    const cid = characters[i];
+    const art = artifacts[i];
     if (cid && art?.type === "4pc") artSets[cid] = art.setId;
   }
   // biome-ignore lint/correctness/useExhaustiveDependencies: stable serialized deps
   const teamMeta = useMemo(
-    () => new TeamMeta(charIds, constellations, artSets, team.enemyAura),
+    () =>
+      new TeamMeta(
+        charIds,
+        constellations,
+        artSets,
+        setupConfig.damage?.enemyAura
+      ),
     [
       charIds.join(),
       JSON.stringify(constellations),
       JSON.stringify(artSets),
-      team.enemyAura,
+      setupConfig.damage?.enemyAura,
     ]
   );
 
-  // Sync effective option values back to team.opts so the calculation library
+  // Sync effective option values back to combatOptions so the calculation library
   // always receives the same value that the UI dropdown displays.
   // Note: This component only renders when gameStats are ready (gated by parent),
   // so TeamMeta always has valid element/region/faction data here.
   useEffect(() => {
     const entityIds: string[] = [...charIds];
-    for (let i = 0; i < team.characters.length; i++) {
-      const wid = team.weapons[i];
+    for (let i = 0; i < characters.length; i++) {
+      const wid = weapons[i];
       if (wid && getOptionDef(wid)) entityIds.push(wid);
-      const art = team.artifacts[i];
+      const art = artifacts[i];
       const artSetId = art?.type === "4pc" ? art.setId : null;
       if (artSetId && getOptionDef(artSetId)) entityIds.push(artSetId);
     }
@@ -205,25 +287,29 @@ export function TeamRosterCard({
         isChoiceEnabled(c, teamMeta)
       );
       if (enabledChoices.length === 0) continue;
-      const raw = team.opts?.[eid] || getDefaultOptionValue(schema, teamMeta);
+      const raw =
+        combatOptions?.[eid] || getDefaultOptionValue(schema, teamMeta);
       const effective = enabledChoices.some((c) => c.value === raw)
         ? raw
         : enabledChoices[0].value;
-      if (effective !== (team.opts?.[eid] ?? "")) {
+      if (effective !== (combatOptions?.[eid] ?? "")) {
         updates[eid] = effective;
       }
     }
     if (Object.keys(updates).length > 0) {
-      updateTeam(team.id, { opts: { ...(team.opts || {}), ...updates } });
+      updateTeamSetupConfig(teamComp.id, (config) => ({
+        ...config,
+        combatOptions: { ...(config.combatOptions ?? {}), ...updates },
+      }));
     }
   }, [
-    team.id,
-    team.characters,
-    team.weapons,
-    team.artifacts,
-    team.opts,
+    teamComp.id,
+    characters,
+    weapons,
+    artifacts,
+    combatOptions,
     teamMeta,
-    updateTeam,
+    updateTeamSetupConfig,
     charIds,
   ]);
 
@@ -244,10 +330,10 @@ export function TeamRosterCard({
         <div
           className={cn("grid", "grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2")}
         >
-          {team.characters.map((charId, i) => {
+          {characters.map((charId, i) => {
             if (!charId) {
               // Only the first empty slot (right after the last filled slot) is interactive
-              const isNextEmpty = !team.characters.some(
+              const isNextEmpty = !characters.some(
                 (c, j) => j < i && c == null
               );
               if (!isNextEmpty) {
@@ -272,15 +358,15 @@ export function TeamRosterCard({
                     triggerSize={charIconSize}
                     filter={(item) => {
                       const c = item as { id: string };
-                      return !team.characters.some(
+                      return !characters.some(
                         (otherId, j) => j !== i && otherId === c.id
                       );
                     }}
                     onChange={(newCharId) => {
-                      const newChars = [...team.characters];
+                      const newChars = [...characters];
                       newChars[i] = newCharId;
-                      const newWeapons = [...team.weapons];
-                      const newArts = [...team.artifacts];
+                      const newWeapons = [...weapons];
+                      const newArts = [...artifacts];
 
                       // Prefill weapon and artifact from account data
                       const acctChar = accountData?.characters.find(
@@ -303,7 +389,7 @@ export function TeamRosterCard({
                           }
                         }
                       }
-                      updateTeam(team.id, {
+                      updateCompArrays({
                         characters: newChars,
                         weapons: newWeapons,
                         artifacts: newArts,
@@ -315,11 +401,11 @@ export function TeamRosterCard({
             }
 
             const char = charactersById[charId];
-            const weaponId = team.weapons[i];
+            const weaponId = weapons[i];
             const charHasOption = getOptionDef(charId) != null;
             const weaponHasOption =
               weaponId != null && getOptionDef(weaponId) != null;
-            const artConfig = team.artifacts[i];
+            const artConfig = artifacts[i];
             const artSetId = artConfig?.type === "4pc" ? artConfig.setId : null;
             const artifactHasOption =
               artSetId != null && getOptionDef(artSetId) != null;
@@ -328,14 +414,14 @@ export function TeamRosterCard({
               (c: CharacterData) => c.key === charId
             );
             const charLevel =
-              team.opts?.[`${charId}.overrideLevel`] !== undefined
-                ? Number(team.opts[`${charId}.overrideLevel`])
+              charConfigs[charId]?.level !== undefined
+                ? Number(charConfigs[charId]?.level)
                 : acctChar
                   ? Number(getCharacterLevelTier(acctChar.level))
                   : 90;
             const charConst =
-              team.opts?.[`${charId}.overrideConstellation`] !== undefined
-                ? Number(team.opts[`${charId}.overrideConstellation`])
+              charConfigs[charId]?.constellation !== undefined
+                ? Number(charConfigs[charId]?.constellation)
                 : (acctChar?.constellation ?? 0);
 
             let defaultRefine = 1;
@@ -352,26 +438,23 @@ export function TeamRosterCard({
                 defaultRefine = Math.max(...refinements);
             }
             const weaponRefine =
-              team.opts?.[`${charId}.overrideRefinement`] !== undefined
-                ? Number(team.opts[`${charId}.overrideRefinement`])
+              charConfigs[charId]?.refinement !== undefined
+                ? Number(charConfigs[charId]?.refinement)
                 : defaultRefine;
 
             // Talent levels: from override → account data → default 10
             const info = charInfo[charId];
             const talentAuto =
-              team.opts?.[`${charId}.overrideTalentAuto`] !== undefined &&
-              team.opts[`${charId}.overrideTalentAuto`] !== ""
-                ? Number(team.opts[`${charId}.overrideTalentAuto`])
+              charConfigs[charId]?.talentLevels?.auto !== undefined
+                ? Number(charConfigs[charId]?.talentLevels?.auto)
                 : (acctChar?.talent?.auto ?? 10);
             const talentSkill =
-              team.opts?.[`${charId}.overrideTalentSkill`] !== undefined &&
-              team.opts[`${charId}.overrideTalentSkill`] !== ""
-                ? Number(team.opts[`${charId}.overrideTalentSkill`])
+              charConfigs[charId]?.talentLevels?.skill !== undefined
+                ? Number(charConfigs[charId]?.talentLevels?.skill)
                 : (acctChar?.talent?.skill ?? 10);
             const talentBurst =
-              team.opts?.[`${charId}.overrideTalentBurst`] !== undefined &&
-              team.opts[`${charId}.overrideTalentBurst`] !== ""
-                ? Number(team.opts[`${charId}.overrideTalentBurst`])
+              charConfigs[charId]?.talentLevels?.burst !== undefined
+                ? Number(charConfigs[charId]?.talentLevels?.burst)
                 : (acctChar?.talent?.burst ?? 10);
 
             // Determine which talents get +3 from constellations
@@ -400,15 +483,15 @@ export function TeamRosterCard({
                     triggerSize={charIconSize}
                     filter={(item) => {
                       const c = item as { id: string };
-                      return !team.characters.some(
+                      return !characters.some(
                         (otherId, j) => j !== i && otherId === c.id
                       );
                     }}
                     onChange={(newCharId) => {
-                      const newChars = [...team.characters];
+                      const newChars = [...characters];
                       newChars[i] = newCharId;
-                      const newWeapons = [...team.weapons];
-                      const newArts = [...team.artifacts];
+                      const newWeapons = [...weapons];
+                      const newArts = [...artifacts];
                       const newChar = charactersById[newCharId];
 
                       // Prefill weapon and artifact from account data
@@ -456,7 +539,7 @@ export function TeamRosterCard({
                           }
                         }
                       }
-                      updateTeam(team.id, {
+                      updateCompArrays({
                         characters: newChars,
                         weapons: newWeapons,
                         artifacts: newArts,
@@ -464,15 +547,15 @@ export function TeamRosterCard({
                     }}
                     onClear={
                       // Only allow removing the last filled character (prefix ordering)
-                      !team.characters.some((c, j) => j > i && c != null)
+                      !characters.some((c, j) => j > i && c != null)
                         ? () => {
-                            const newChars = [...team.characters];
+                            const newChars = [...characters];
                             newChars[i] = null;
-                            const newWeapons = [...team.weapons];
+                            const newWeapons = [...weapons];
                             newWeapons[i] = null;
-                            const newArts = [...team.artifacts];
+                            const newArts = [...artifacts];
                             newArts[i] = null;
-                            updateTeam(team.id, {
+                            updateCompArrays({
                               characters: newChars,
                               weapons: newWeapons,
                               artifacts: newArts,
@@ -483,7 +566,7 @@ export function TeamRosterCard({
                   />
                   <ItemPicker
                     type="weapon"
-                    value={team.weapons[i]}
+                    value={weapons[i]}
                     triggerSize={subIconSize}
                     disabled={!charId}
                     filter={(() => {
@@ -503,20 +586,20 @@ export function TeamRosterCard({
                       };
                     })()}
                     onChange={(newWeaponId) => {
-                      const newWeapons = [...team.weapons];
+                      const newWeapons = [...weapons];
                       newWeapons[i] = newWeaponId;
-                      updateTeam(team.id, { weapons: newWeapons });
+                      updateCompArrays({ weapons: newWeapons });
                     }}
                   />
                   <ItemPicker
                     type="artifact"
-                    value={team.artifacts[i]}
+                    value={artifacts[i]}
                     triggerSize={subIconSize}
                     disabled={!charId}
                     onChange={(newArtifact) => {
-                      const newArts = [...team.artifacts];
+                      const newArts = [...artifacts];
                       newArts[i] = newArtifact;
-                      updateTeam(team.id, { artifacts: newArts });
+                      updateCompArrays({ artifacts: newArts });
                     }}
                   />
                 </div>

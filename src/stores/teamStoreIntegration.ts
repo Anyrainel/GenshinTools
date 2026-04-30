@@ -1,13 +1,19 @@
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp } from "@/lib/team-comp/types";
 
 /**
  * Find teams in the store that match the given character IDs.
  * Returns teams where ALL given character IDs are present (order-independent).
  */
-export function findMatchingTeams(teams: Team[], charIds: string[]): Team[] {
+export function findMatchingTeams(
+  teamComps: TeamComp[],
+  charIds: string[]
+): TeamComp[] {
   const idSet = new Set(charIds);
-  return teams.filter((team) => {
-    const teamCharIds = team.characters.filter(Boolean) as string[];
+  return teamComps.filter((team) => {
+    const teamCharIds = teamCompToArrays(team).characters.filter(
+      Boolean
+    ) as string[];
     if (teamCharIds.length !== charIds.length) return false;
     return teamCharIds.every((id) => idSet.has(id));
   });

@@ -10,6 +10,7 @@ import type {
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";
 import { useAnalyzerCacheStore } from "@/stores/useAnalyzerCacheStore";
+import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 
 /** Build a cache key from the analyzer options that affect the result. */
 function buildCacheKey(opts: AnalyzerOptions): string {
@@ -60,12 +61,16 @@ export interface UseAnalyzerState {
 export function useAnalyzer(teamId: string): UseAnalyzerState {
   const cacheGet = useAnalyzerCacheStore((s) => s.get);
   const cacheSet = useAnalyzerCacheStore((s) => s.set);
-  const getForTeam = useAnalyzerCacheStore((s) => s.getForTeam);
-  const setForTeam = useAnalyzerCacheStore((s) => s.setForTeam);
+  const getInvestmentResult = useTeamResultCacheStore(
+    (s) => s.getInvestmentResult
+  );
+  const setInvestmentResult = useTeamResultCacheStore(
+    (s) => s.setInvestmentResult
+  );
 
   const [progress, setProgress] = useState<AnalyzerProgress | null>(null);
   const [result, setResult] = useState<AnalyzerResult | null>(
-    () => getForTeam(teamId) ?? null
+    () => getInvestmentResult(teamId) ?? null
   );
   const [isComputing, setIsComputing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -119,7 +124,7 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
           if (isAnalyzerResult(yielded)) {
             setResult(yielded);
             cacheSet(key, yielded);
-            setForTeam(teamId, yielded);
+            setInvestmentResult(teamId, yielded);
           } else {
             setProgress(yielded);
           }
@@ -134,7 +139,7 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
         }
       }
     },
-    [stop, cacheGet, cacheSet, setForTeam, teamId]
+    [stop, cacheGet, cacheSet, setInvestmentResult, teamId]
   );
 
   return { progress, result, isComputing, error, start, stop };

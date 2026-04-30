@@ -28,17 +28,25 @@ import type {
 import { resolveCalcContext } from "@/lib/dmgcalc/utils";
 import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
 import {
-  buildTeamConfigs,
+  buildTeamSlotConfigs,
   buildWeaponChoiceCharConfigs,
   getEffectiveCombo,
 } from "@/lib/team-comp/teamConfigUtils";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type {
   ChoiceResultCache,
-  Team,
+  TeamComp,
+  TeamDamageConfig,
+  TeamSetupConfig,
   WeaponChoiceResult,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type { ViewId } from "@/stores/useSessionNavStore";
+import {
+  choiceResultsFromTeamResultCache,
+  type TeamResultCacheEntry,
+  useTeamResultCacheStore,
+} from "@/stores/useTeamResultCacheStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamDetailAspectLinks } from "./TeamDetailAspectLinks";
@@ -46,25 +54,63 @@ import { TeamRosterCard } from "./TeamRosterCard";
 import { WeaponChoiceResultCard } from "./WeaponChoiceResultCard";
 
 interface WeaponChoiceDetailProps {
-  team: Team;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
   onBack: () => void;
   viewId?: ViewId;
+  resultCache?: TeamResultCacheEntry;
 }
 
 export function WeaponChoiceDetail({
-  team,
+  teamComp,
+  setupConfig,
   onBack,
   viewId = "weaponChoice",
+  resultCache,
 }: WeaponChoiceDetailProps) {
   const { t } = useLanguage();
-  const storeUpdateTeam = useTeamStore((s) => s.updateTeam);
+  const storeUpdateTeamComp = useTeamStore((s) => s.updateTeamComp);
+  const updateTeamSetupConfig = useTeamStore((s) => s.updateTeamSetupConfig);
+  const setChoiceResult = useTeamResultCacheStore((s) => s.setChoiceResult);
+  const clearChoiceResults = useTeamResultCacheStore(
+    (s) => s.clearChoiceResults
+  );
   const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
-  const updateTeam = useCallback(
-    (id: string, patch: Partial<Team>) => {
-      storeUpdateTeam(id, patch);
-      if (patch.characters) checkAutoDisableOwned(patch.characters);
+  const updateTeamComp = useCallback(
+    (id: string, nextComp: TeamComp) => {
+      storeUpdateTeamComp(id, nextComp);
+      checkAutoDisableOwned(teamCompToArrays(nextComp).characters);
     },
-    [storeUpdateTeam, checkAutoDisableOwned]
+    [storeUpdateTeamComp, checkAutoDisableOwned]
+  );
+  const updateSetupConfig = useCallback(
+    (
+      updater:
+        | Partial<TeamSetupConfig>
+        | ((config: TeamSetupConfig) => TeamSetupConfig)
+    ) => {
+      updateTeamSetupConfig(teamComp.id, updater);
+    },
+    [teamComp.id, updateTeamSetupConfig]
+  );
+  const updateDamageConfig = useCallback(
+    (
+      updater:
+        | Partial<TeamDamageConfig>
+        | ((config: TeamDamageConfig) => TeamDamageConfig)
+    ) => {
+      updateSetupConfig((config) => {
+        const current = config.damage ?? {};
+        return {
+          ...config,
+          damage:
+            typeof updater === "function"
+              ? updater(current)
+              : { ...current, ...updater },
+        };
+      });
+    },
+    [updateSetupConfig]
   );
   const accountData = useActiveAccountData();
   const characterStats = characterStatsResource.use();
@@ -72,13 +118,19 @@ export function WeaponChoiceDetail({
   const gameStatsReady = characterStats !== null && weaponStats !== null;
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const [choiceMode, setChoiceMode] = useState<"weapon" | "artifact">("weapon");
+  const { characters, weapons, artifacts } = useMemo(
+    () => teamCompToArrays(teamComp),
+    [teamComp]
+  );
+  const damageConfig = setupConfig.damage ?? {};
+  const combatOptions = setupConfig.combatOptions ?? {};
 
-  const localEnemyAura = team.enemyAura;
-  const localExtraBuffs = team.extraBuffs ?? [];
+  const localEnemyAura = damageConfig.enemyAura;
+  const localExtraBuffs = damageConfig.extraBuffs ?? [];
 
   const configs = useMemo(
-    () => buildTeamConfigs(team, accountData),
-    [team, accountData]
+    () => buildTeamSlotConfigs(teamComp, setupConfig, accountData),
+    [teamComp, setupConfig, accountData]
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: characterStats/weaponStats are intentional invalidation triggers
@@ -87,7 +139,7 @@ export function WeaponChoiceDetail({
     try {
       const tb = new TeamBuild(
         configs,
-        team.opts || {},
+        combatOptions,
         localEnemyAura,
         localExtraBuffs
       );
@@ -100,7 +152,7 @@ export function WeaponChoiceDetail({
     }
   }, [
     configs,
-    team.opts,
+    combatOptions,
     localEnemyAura,
     localExtraBuffs,
     gameStatsReady,
@@ -109,7 +161,7 @@ export function WeaponChoiceDetail({
   ]);
 
   // ── Formula management (unified with Damage tab) ──
-  const formulaMode = team.formulaMode ?? "single";
+  const formulaMode = damageConfig.formulaMode ?? "single";
   const [expandedLine, setExpandedLine] = useState<{
     charId: string;
     formulaId: string;
@@ -117,7 +169,7 @@ export function WeaponChoiceDetail({
   } | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: reset expanded line when team changes
-  useEffect(() => setExpandedLine(null), [team.id]);
+  useEffect(() => setExpandedLine(null), [teamComp.id]);
 
   // Derive formula lists from teamBuild
   const availableFormulas = useMemo(() => {
@@ -138,9 +190,9 @@ export function WeaponChoiceDetail({
   // ── Combo management (unified with Damage tab) ──
   const combo = useMemo<ComboFormula>(
     () =>
-      team.combo ??
-      resolveActiveCombo([], undefined, teamBuild, team.characters),
-    [team.combo, teamBuild, team.characters]
+      damageConfig.combo ??
+      resolveActiveCombo([], undefined, teamBuild, characters),
+    [damageConfig.combo, teamBuild, characters]
   );
 
   const comboLineMap = useMemo(
@@ -151,9 +203,9 @@ export function WeaponChoiceDetail({
   const updateCombo = useCallback(
     (updater: (c: ComboFormula) => ComboFormula) => {
       const updated = updater({ ...combo });
-      updateTeam(team.id, { combo: updated });
+      updateDamageConfig({ combo: updated });
     },
-    [combo, team.id, updateTeam]
+    [combo, updateDamageConfig]
   );
 
   const setComboLineCount = useCallback(
@@ -173,7 +225,7 @@ export function WeaponChoiceDetail({
       override: ReactionOverride
     ) => {
       if (formulaMode === "single") {
-        updateTeam(team.id, { singleReaction: override });
+        updateDamageConfig({ singleReaction: override });
         return;
       }
       updateCombo((c) =>
@@ -187,37 +239,41 @@ export function WeaponChoiceDetail({
         )
       );
     },
-    [formulaMode, comboLineMap, updateCombo, updateTeam, team.id]
+    [formulaMode, comboLineMap, updateCombo, updateDamageConfig]
   );
 
   const handleModeChange = useCallback(
     (mode: "single" | "combo") => {
       if (mode !== formulaMode) {
-        updateTeam(team.id, { formulaMode: mode });
+        updateDamageConfig({ formulaMode: mode });
       }
     },
-    [formulaMode, updateTeam, team.id]
+    [formulaMode, updateDamageConfig]
   );
 
   const onSelectSingleFormula = useCallback(
     (charId: string, formulaId: string, reaction: string) => {
-      updateTeam(team.id, {
+      updateDamageConfig({
         ...buildSingleFormulaSelection(
           charId,
           formulaId,
           reaction,
-          team.selectedFormula ?? undefined,
-          team.singleReaction
+          damageConfig.selectedFormula ?? undefined,
+          damageConfig.singleReaction
         ),
       });
     },
-    [updateTeam, team.id, team.selectedFormula, team.singleReaction]
+    [
+      updateDamageConfig,
+      damageConfig.selectedFormula,
+      damageConfig.singleReaction,
+    ]
   );
 
   const onResetCombo = useCallback(() => {
     if (!teamBuild) return;
     const lines: ComboLine[] = [];
-    for (const charId of team.characters) {
+    for (const charId of characters) {
       if (!charId) continue;
       const comboData = teamBuild.catalog.getCombo(charId);
       for (const [formulaId, count] of Object.entries(comboData)) {
@@ -226,15 +282,28 @@ export function WeaponChoiceDetail({
         }
       }
     }
-    updateTeam(team.id, {
+    updateDamageConfig({
       combo: { id: combo.id, label: combo.label, lines },
     });
-  }, [teamBuild, team.characters, team.id, combo.id, combo.label, updateTeam]);
+  }, [teamBuild, characters, combo.id, combo.label, updateDamageConfig]);
 
   // ── Effective combo (unified projection, shared with Damage tab) ──
   const displayComboBase = useMemo<ComboFormula>(
-    () => getEffectiveCombo(team),
-    [team]
+    () =>
+      getEffectiveCombo({
+        formulaMode,
+        selectedFormula: damageConfig.selectedFormula,
+        singleReaction: damageConfig.singleReaction,
+        singleForceOnField: damageConfig.singleForceOnField,
+        combo: damageConfig.combo,
+      }),
+    [
+      formulaMode,
+      damageConfig.selectedFormula,
+      damageConfig.singleReaction,
+      damageConfig.singleForceOnField,
+      damageConfig.combo,
+    ]
   );
 
   // Ephemeral "ignore character damage" toggles (combo mode only).
@@ -275,36 +344,36 @@ export function WeaponChoiceDetail({
   } = useAsyncWeaponChoice();
 
   // Display result: either from computation or restored from store
-  const [displayResults, setDisplayResults] = useState<ChoiceResultCache>(
-    () => ({
-      ...(team.weaponChoiceResult ? { weapon: team.weaponChoiceResult } : {}),
-      ...(team.choiceResults ?? {}),
-    })
+  const [displayResults, setDisplayResults] = useState<ChoiceResultCache>(() =>
+    choiceResultsFromTeamResultCache(resultCache)
   );
   const displayResultsRef = useRef(displayResults);
   const handledComputeResultKeyRef = useRef<string | null>(null);
   const activeDisplayResult = displayResults[choiceMode] ?? null;
+  const persistChoiceResult = useCallback(
+    (mode: "weapon" | "artifact", result: WeaponChoiceResult | null) => {
+      setChoiceResult(teamComp.id, mode, result);
+    },
+    [setChoiceResult, teamComp.id]
+  );
 
   // Clear stale results when team composition changes
-  const compositionKey = `${team.characters.join(",")}|${team.weapons.join(",")}`;
+  const compositionKey = `${characters.join(",")}|${weapons.join(",")}`;
   const prevCompositionKey = useRef(compositionKey);
   useEffect(() => {
     if (prevCompositionKey.current !== compositionKey) {
       prevCompositionKey.current = compositionKey;
-      updateTeam(team.id, { choiceResults: {}, weaponChoiceResult: null });
+      clearChoiceResults(teamComp.id);
       displayResultsRef.current = {};
       setDisplayResults({});
     }
-  }, [compositionKey, team.id, updateTeam]);
+  }, [clearChoiceResults, compositionKey, teamComp.id]);
 
   useEffect(() => {
-    const cached = {
-      ...(team.weaponChoiceResult ? { weapon: team.weaponChoiceResult } : {}),
-      ...(team.choiceResults ?? {}),
-    };
+    const cached = choiceResultsFromTeamResultCache(resultCache);
     displayResultsRef.current = cached;
     setDisplayResults(cached);
-  }, [team.choiceResults, team.weaponChoiceResult]);
+  }, [resultCache]);
 
   // Update displayResult when computation yields
   useEffect(() => {
@@ -334,16 +403,9 @@ export function WeaponChoiceDetail({
     });
     // Persist when done
     if (computeResult.done) {
-      const nextChoiceResults: ChoiceResultCache = {
-        ...displayResultsRef.current,
-        [mode]: storeResult,
-      };
-      updateTeam(team.id, {
-        choiceResults: nextChoiceResults,
-        ...(mode === "weapon" ? { weaponChoiceResult: storeResult } : {}),
-      });
+      setChoiceResult(teamComp.id, mode, storeResult);
     }
-  }, [computeResult, team.id, updateTeam]);
+  }, [computeResult, setChoiceResult, teamComp.id]);
 
   // Stop computation on unmount
   useEffect(() => {
@@ -354,15 +416,19 @@ export function WeaponChoiceDetail({
 
   const handleRun = useCallback(() => {
     if (!teamBuild || !weaponStats) return;
-    const charConfigs = buildWeaponChoiceCharConfigs(team, accountData);
+    const charConfigs = buildWeaponChoiceCharConfigs(
+      teamComp,
+      setupConfig,
+      accountData
+    );
     const opts: WeaponChoiceOptions = {
       mode: choiceMode,
       baseConfigs: configs,
       charConfigs,
       combo: displayCombo,
-      calcContext: resolveCalcContext(team.calcContext),
+      calcContext: resolveCalcContext(damageConfig.calcContext),
       weaponStats,
-      opts: team.opts || {},
+      opts: combatOptions,
       enemyAura: localEnemyAura,
       extraBuffs: localExtraBuffs.length > 0 ? localExtraBuffs : undefined,
     };
@@ -371,18 +437,21 @@ export function WeaponChoiceDetail({
     teamBuild,
     weaponStats,
     configs,
-    team,
+    teamComp,
+    setupConfig,
     accountData,
     displayCombo,
     choiceMode,
+    damageConfig.calcContext,
+    combatOptions,
     localEnemyAura,
     localExtraBuffs,
     start,
   ]);
 
   const charIds = useMemo(
-    () => team.characters.filter((id): id is string => id != null),
-    [team.characters]
+    () => characters.filter((id): id is string => id != null),
+    [characters]
   );
 
   // ── Header with back button + team name ──
@@ -397,7 +466,7 @@ export function WeaponChoiceDetail({
         <ArrowLeft className="w-5 h-5 text-foreground/70" />
       </Button>
       <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-sky-500/90 to-sky-600/60 tracking-tight truncate flex-1">
-        {team.name || t.ui("teamComp.tabWeaponChoice")}
+        {teamComp.name || t.ui("teamComp.tabWeaponChoice")}
       </h2>
     </div>
   );
@@ -470,8 +539,10 @@ export function WeaponChoiceDetail({
 
         {/* 1. Team Roster (refinement hidden — weapons are the test variable) */}
         <TeamRosterCard
-          team={team}
-          updateTeam={updateTeam}
+          teamComp={teamComp}
+          setupConfig={setupConfig}
+          updateTeamComp={updateTeamComp}
+          updateTeamSetupConfig={updateTeamSetupConfig}
           accountData={accountData}
           characterStats={characterStats ?? {}}
           weaponStats={weaponStats ?? {}}
@@ -481,9 +552,9 @@ export function WeaponChoiceDetail({
 
         {/* 2. Formula Selection Card */}
         <FormulaSelectorCard
-          team={team}
-          effectiveTeam={team}
-          updateTeam={updateTeam}
+          characters={characters}
+          damageConfig={damageConfig}
+          onDamageConfigChange={updateDamageConfig}
           allFormulas={allFormulas}
           availableFormulas={availableFormulas}
           displayFormulas={displayFormulas}
@@ -513,8 +584,14 @@ export function WeaponChoiceDetail({
 
         {/* 3. Results Card */}
         <WeaponChoiceResultCard
-          team={team}
-          updateTeam={updateTeam}
+          teamComp={teamComp}
+          setupConfig={setupConfig}
+          characters={characters}
+          weapons={weapons}
+          artifacts={artifacts}
+          onTeamCompChange={(comp) => updateTeamComp(comp.id, comp)}
+          onSetupConfigChange={updateSetupConfig}
+          setChoiceResult={persistChoiceResult}
           charIds={charIds}
           isComputing={isComputing}
           choiceMode={choiceMode}
@@ -527,7 +604,7 @@ export function WeaponChoiceDetail({
           t={t}
         />
 
-        <TeamDetailAspectLinks teamId={team.id} currentAspect="weapon" />
+        <TeamDetailAspectLinks teamId={teamComp.id} currentAspect="weapon" />
       </div>
     </ScrollLayout>
   );

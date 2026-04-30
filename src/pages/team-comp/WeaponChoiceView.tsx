@@ -18,12 +18,12 @@ export function WeaponChoiceView({ importRef }: WeaponChoiceViewProps) {
     (s) => s.viewSettings.weaponChoice.activeTeamId
   );
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
-  const teams = useTeamStore((s) => s.teams);
+  const teamComps = useTeamStore((s) => s.teamComps);
   const [searchParams, setSearchParams] = useSearchParams();
   const teamParam = searchParams.get("team");
   const hasTeamParam = searchParams.has("team");
   const teamParamIsValid =
-    teamParam != null && teams.some((team) => team.id === teamParam);
+    teamParam != null && teamComps.some((team) => team.id === teamParam);
   const routedTeamId = hasTeamParam && teamParamIsValid ? teamParam : null;
 
   const setTeamSearchParam = useCallback(
@@ -78,8 +78,13 @@ export function WeaponChoiceView({ importRef }: WeaponChoiceViewProps) {
       viewId="weaponChoice"
       activeTeamId={routedTeamId}
       setActiveTeamId={handleActiveTeamChange}
-      renderDetail={(team, onBack) => (
-        <WeaponChoiceDetail team={team} onBack={onBack} />
+      renderDetail={(teamComp, setupConfig, onBack, resultCache) => (
+        <WeaponChoiceDetail
+          teamComp={teamComp}
+          setupConfig={setupConfig}
+          onBack={onBack}
+          resultCache={resultCache}
+        />
       )}
       selectLabel={t.ui("teamComp.tabWeaponChoice")}
       selectIcon={Sword}

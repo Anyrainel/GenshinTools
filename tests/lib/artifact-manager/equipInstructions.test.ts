@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
 import { buildEquipInstructions } from "@/lib/account-data/manager/instructions";
-import type { Team } from "@/lib/team-comp/types";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {
@@ -18,31 +17,13 @@ function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   };
 }
 
-function makeTeam(charIds: (string | null)[]): Team {
-  return {
-    id: "team-1",
-    name: "Test Team",
-    characters: [
-      charIds[0] ?? null,
-      charIds[1] ?? null,
-      charIds[2] ?? null,
-      charIds[3] ?? null,
-    ],
-    weapons: [null, null, null, null],
-    artifacts: [null, null, null, null],
-    reactions: [],
-    opts: {},
-    calcContext: {
-      enemyLevel: 110,
-      enemyRes: 0.1,
-      rollMultiplier: 0.85,
-      substatBudget: "8_6",
-    },
-    selectedFormula: null,
-    optimizationResult: null,
-    formulaMode: "single",
-    combo: null,
-  };
+function makeCharacters(charIds: (string | null)[]): (string | null)[] {
+  return [
+    charIds[0] ?? null,
+    charIds[1] ?? null,
+    charIds[2] ?? null,
+    charIds[3] ?? null,
+  ];
 }
 
 function makeAccount(
@@ -63,7 +44,7 @@ function makeAccount(
 
 describe("buildEquipInstructions", () => {
   it("creates equip instructions for all optimized artifacts", () => {
-    const team = makeTeam(["furina", "raiden_shogun"]);
+    const characters = makeCharacters(["furina", "raiden_shogun"]);
     const optimized: Record<string, Record<string, ArtifactData>> = {
       furina: {
         flower: makeArtifact({ id: "a1", slotKey: "flower" }),
@@ -78,14 +59,14 @@ describe("buildEquipInstructions", () => {
       { key: "raiden_shogun", artifacts: {} },
     ]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.request.equip).toHaveLength(3);
     expect(payload.artifactIds).toEqual(["a1", "a2", "a3"]);
   });
 
   it("sets GOOD character key as location on each instruction", () => {
-    const team = makeTeam(["furina"]);
+    const characters = makeCharacters(["furina"]);
     const optimized: Record<string, Record<string, ArtifactData>> = {
       furina: {
         flower: makeArtifact({ id: "a1", slotKey: "flower" }),
@@ -93,13 +74,13 @@ describe("buildEquipInstructions", () => {
     };
     const account = makeAccount([{ key: "furina", artifacts: {} }]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.request.equip[0].location).toBe("Furina");
   });
 
   it("converts artifact to GOOD v3 format with current owner as artifact.location", () => {
-    const team = makeTeam(["furina"]);
+    const characters = makeCharacters(["furina"]);
     const art = makeArtifact({
       id: "a1",
       slotKey: "flower",
@@ -114,14 +95,14 @@ describe("buildEquipInstructions", () => {
       { key: "raiden_shogun", artifacts: { flower: art } },
     ]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.request.equip[0].artifact.location).toBe("RaidenShogun");
     expect(payload.request.equip[0].location).toBe("Furina");
   });
 
   it("builds swapMap with fromChar and toChar for each artifact", () => {
-    const team = makeTeam(["furina"]);
+    const characters = makeCharacters(["furina"]);
     const art = makeArtifact({ id: "a1", slotKey: "flower" });
     const optimized: Record<string, Record<string, ArtifactData>> = {
       furina: { flower: art },
@@ -131,7 +112,7 @@ describe("buildEquipInstructions", () => {
       { key: "raiden_shogun", artifacts: { flower: art } },
     ]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.swapMap.get("a1")).toEqual({
       fromChar: "raiden_shogun",
@@ -140,14 +121,14 @@ describe("buildEquipInstructions", () => {
   });
 
   it("sets fromChar to null when artifact is in inventory", () => {
-    const team = makeTeam(["furina"]);
+    const characters = makeCharacters(["furina"]);
     const art = makeArtifact({ id: "a1", slotKey: "flower" });
     const optimized: Record<string, Record<string, ArtifactData>> = {
       furina: { flower: art },
     };
     const account = makeAccount([{ key: "furina", artifacts: {} }]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.swapMap.get("a1")).toEqual({
       fromChar: null,
@@ -155,20 +136,20 @@ describe("buildEquipInstructions", () => {
     });
   });
 
-  it("skips null character slots in team", () => {
-    const team = makeTeam(["furina", null, null, null]);
+  it("skips null character slots", () => {
+    const characters = makeCharacters(["furina", null, null, null]);
     const optimized: Record<string, Record<string, ArtifactData>> = {
       furina: { flower: makeArtifact({ id: "a1" }) },
     };
     const account = makeAccount([{ key: "furina", artifacts: {} }]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.request.equip).toHaveLength(1);
   });
 
   it("skips characters with no optimized artifacts", () => {
-    const team = makeTeam(["furina", "raiden_shogun"]);
+    const characters = makeCharacters(["furina", "raiden_shogun"]);
     const optimized: Record<string, Record<string, ArtifactData>> = {
       furina: { flower: makeArtifact({ id: "a1" }) },
     };
@@ -177,7 +158,7 @@ describe("buildEquipInstructions", () => {
       { key: "raiden_shogun", artifacts: {} },
     ]);
 
-    const payload = buildEquipInstructions(team, optimized, account);
+    const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.request.equip).toHaveLength(1);
   });

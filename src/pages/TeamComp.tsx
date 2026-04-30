@@ -17,6 +17,7 @@ import {
   getCachedPresetMetadata,
   loadPresetMetadata,
 } from "@/lib/presetLoader";
+import { createDefaultTeamSetupConfig } from "@/lib/team-comp/teamDeltas";
 import { loadTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
 import type { TeamCompData } from "@/lib/team-comp/types";
 import { useFreezeStore } from "@/stores/useFreezeStore";
@@ -53,17 +54,20 @@ export default function TeamCompPage() {
   });
   const tabs = useMemo(() => getTabsForRoute(t, "/team-comp"), [t]);
   const tour = useTour();
-  const teams = useTeamStore((state) => state.teams);
+  const teamComps = useTeamStore((state) => state.teamComps);
   const [searchParams] = useSearchParams();
   const teamParam = searchParams.get("team");
   const routedDamageTeamId =
     activeTab === "damage" &&
     teamParam != null &&
-    teams.some((team) => team.id === teamParam)
+    teamComps.some((team) => team.id === teamParam)
       ? teamParam
       : null;
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
-  const updateTeam = useTeamStore((state) => state.updateTeam);
+  const updateTeamComp = useTeamStore((state) => state.updateTeamComp);
+  const updateTeamSetupConfig = useTeamStore(
+    (state) => state.updateTeamSetupConfig
+  );
   const importTeams = useTeamStore((state) => state.importTeams);
   const subscribePreset = useTeamStore((state) => state.subscribePreset);
   const exportTeams = useTeamStore((state) => state.exportTeams);
@@ -233,19 +237,19 @@ export default function TeamCompPage() {
 
   // Damage tab — detail view (team selected)
   if (routedDamageTeamId) {
-    const activeTeam = teams.find((t) => t.id === routedDamageTeamId);
+    const activeTeam = teamComps.find((t) => t.id === routedDamageTeamId);
     if (!activeTeam) {
       setTimeout(() => setActiveTeamId("damage", null), 0);
       return null;
     }
     const clearActiveTeam = () => {
-      updateTeam(activeTeam.id, {
-        characters: [null, null, null, null],
-        weapons: [null, null, null, null],
-        artifacts: [null, null, null, null],
-        opts: {},
-        selectedFormula: null,
-        charSettings: {},
+      updateTeamComp(activeTeam.id, {
+        ...activeTeam,
+        slots: [],
+      });
+      updateTeamSetupConfig(activeTeam.id, {
+        ...createDefaultTeamSetupConfig(),
+        damage: { selectedFormula: null },
       });
     };
 

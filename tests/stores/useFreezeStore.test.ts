@@ -40,12 +40,13 @@ beforeEach(() => {
     activeAccountId: null,
   });
   useFreezeStore.setState({
+    frozenTeamLoadouts: {},
     frozenTeams: {},
     frozenArtifactIds: [],
     reuseMode: "sameChar",
     freezesByProfileId: {
       0: {
-        frozenTeams: {},
+        frozenTeamLoadouts: {},
         frozenArtifactIds: [],
         reuseMode: "sameChar",
       },
@@ -70,7 +71,12 @@ describe("useFreezeStore", () => {
       const state = useFreezeStore.getState();
       expect(state.frozenTeams.team1).toBeDefined();
       expect(state.frozenTeams.team1.frozenCharIds).toEqual(["hu_tao"]);
-      expect(state.frozenTeams.team1.artifactsByChar).toEqual(byChar);
+      expect(state.frozenTeamLoadouts.team1).toEqual({
+        frozenCharIds: ["hu_tao"],
+        artifactIdsByChar: {
+          hu_tao: { flower: "a1", plume: "a2", sands: "a3" },
+        },
+      });
     });
 
     it("merges with existing frozen chars", () => {
@@ -298,7 +304,9 @@ describe("useFreezeStore", () => {
       const frozen = useFreezeStore.getState().getFrozenTeam("team1");
       expect(frozen).toBeDefined();
       expect(frozen!.frozenCharIds).toEqual(["hu_tao"]);
-      expect(frozen!.artifactsByChar).toEqual(byChar);
+      expect(frozen!.artifactIdsByChar).toEqual({
+        hu_tao: { flower: "a1", plume: "a2" },
+      });
     });
 
     it("returns undefined for a non-frozen team", () => {
@@ -431,7 +439,7 @@ describe("useFreezeStore", () => {
           freezesByProfileId: {
             ...state.freezesByProfileId,
             2: {
-              frozenTeams: {},
+              frozenTeamLoadouts: {},
               reuseMode: "forceReuse",
               frozenArtifactIds: ["old-art", "orphan"],
             },
@@ -483,7 +491,7 @@ describe("migrateFreezeStore", () => {
       reuseMode: "none",
     };
     const result = migrateFreezeStore(oldState, 3);
-    expect(result.frozenArtifactIds).toBeUndefined();
+    expect(result.freezesByProfileId?.[0].frozenArtifactIds).toEqual([]);
   });
 
   it("migrates v3 → v4: preserves existing frozenArtifactIds", () => {
@@ -493,7 +501,10 @@ describe("migrateFreezeStore", () => {
       frozenArtifactIds: ["art-1", "art-2"],
     };
     const result = migrateFreezeStore(oldState, 3);
-    expect(result.frozenArtifactIds).toEqual(["art-1", "art-2"]);
+    expect(result.freezesByProfileId?.[0].frozenArtifactIds).toEqual([
+      "art-1",
+      "art-2",
+    ]);
   });
 
   it("migrates v4 → v5: moves legacy freeze state into default profile", () => {
@@ -509,7 +520,12 @@ describe("migrateFreezeStore", () => {
     };
     const result = migrateFreezeStore(oldState, 4);
     expect(result.freezesByProfileId?.[0]).toEqual({
-      frozenTeams: oldState.frozenTeams,
+      frozenTeamLoadouts: {
+        "team-1": {
+          frozenCharIds: ["hu_tao"],
+          artifactIdsByChar: { hu_tao: { flower: "a1" } },
+        },
+      },
       reuseMode: "forceReuse",
       frozenArtifactIds: ["standalone-1"],
     });
@@ -521,8 +537,8 @@ describe("migrateFreezeStore", () => {
       allowSameCharReuse: false,
     };
     const result = migrateFreezeStore(oldState, 2);
-    expect(result.reuseMode).toBe("none");
-    expect(result.frozenArtifactIds).toBeUndefined();
+    expect(result.freezesByProfileId?.[0].reuseMode).toBe("none");
+    expect(result.freezesByProfileId?.[0].frozenArtifactIds).toEqual([]);
   });
 
   it("full migration from v0 applies all steps", () => {
@@ -551,11 +567,15 @@ describe("migrateFreezeStore", () => {
       },
     };
     const result = migrateFreezeStore(oldState, 0);
-    // v0→v1: frozenCharIds derived from artifactsByChar keys
-    expect(result.frozenTeams["team-1"].frozenCharIds).toEqual(["hu_tao"]);
+    // v0→v6: frozenCharIds and artifact IDs are derived from artifactsByChar.
+    expect(
+      result.freezesByProfileId?.[0]?.frozenTeamLoadouts?.["team-1"]
+    ).toEqual({
+      frozenCharIds: ["hu_tao"],
+      artifactIdsByChar: { hu_tao: { flower: "a1" } },
+    });
     // v1→v2→v3: reuseMode defaults to sameChar
-    expect(result.reuseMode).toBe("sameChar");
-    // Missing frozenArtifactIds is healed by the persisted schema/merge layer.
-    expect(result.frozenArtifactIds).toBeUndefined();
+    expect(result.freezesByProfileId?.[0].reuseMode).toBe("sameChar");
+    expect(result.freezesByProfileId?.[0].frozenArtifactIds).toEqual([]);
   });
 });

@@ -9,7 +9,6 @@ import {
 } from "@/lib/artifact-builds/buildDeltas";
 import type { BuildsState } from "@/stores/useBuildsStore";
 import { migrateBuild } from "./buildMigration";
-import { getBuildValidationErrors } from "./buildValidation";
 import { DEFAULT_COMPUTE_OPTIONS } from "./computeFilters";
 
 export function executeSubscribePreset(
@@ -100,16 +99,13 @@ export function executeImportBuilds(
     };
 
     // Merge Builds
-    for (const [id, build] of Object.entries(v5.builds)) {
+    for (const build of Object.values(v5.builds)) {
       migrateBuild(build);
-      state.builds[id] = build;
       state.deltas = upsertCustomBuildDelta(state.deltas, build);
-      state.validationErrors[id] = getBuildValidationErrors(build);
     }
 
     // Merge Character Mappings (using deduplication optionally, but import means replacing references usually)
     for (const [charId, ids] of Object.entries(v5.characterBuilds)) {
-      state.characterToBuildIds[charId] = ids;
       state.deltas = setBuildDeltaOrderForCharacter(
         state.deltas,
         charId,
@@ -135,19 +131,15 @@ export function executeImportBuilds(
         };
         migrateBuild(buildWithCharacterId);
 
-        state.builds[build.id] = buildWithCharacterId;
         state.deltas = upsertCustomBuildDelta(
           state.deltas,
           buildWithCharacterId,
           buildIds.length
         );
-        state.validationErrors[build.id] =
-          getBuildValidationErrors(buildWithCharacterId);
         buildIds.push(build.id);
       }
 
       if (buildIds.length > 0) {
-        state.characterToBuildIds[characterId] = buildIds;
         state.deltas = setBuildDeltaOrderForCharacter(
           state.deltas,
           characterId,

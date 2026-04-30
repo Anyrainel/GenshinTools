@@ -5,24 +5,28 @@ import type {
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
 import {
-  createTeamPersistenceFromLegacyTeams,
-  deriveTeamRuntimeFromDeltas,
+  deriveTeamCompsFromDeltas,
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import { getCachedTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
 import type {
   AnalyzerConfig,
-  CharSettings,
-  Team,
-  TeamConfig,
+  TeamComp,
+  TeamSetupConfig,
 } from "@/lib/team-comp/types";
+import {
+  createTeamPersistenceFromLegacyTeams,
+  type LegacyCharSettings,
+  type LegacyPersistedTeam,
+} from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
 
 type TeamMigrationState = {
-  teams: Team[];
+  teams?: LegacyPersistedTeam[];
+  teamComps?: TeamComp[];
   activePresetId?: string | null;
   compDeltas?: TeamCompDelta[];
-  configsByTeamId?: Record<string, TeamConfig>;
+  configsByTeamId?: Record<string, TeamSetupConfig>;
 } & Record<string, unknown>;
 type TeamResultCacheField =
   | "optimizationResult"
@@ -41,14 +45,14 @@ export function stripTeamResultCaches<T extends object>(
   return sourceTeam as Omit<T, TeamResultCacheField>;
 }
 
-export function stripTeamStoreResultCaches<TState extends { teams: Team[] }>(
-  state: TState
-): TState {
+export function stripTeamStoreResultCaches<
+  TState extends { teams?: LegacyPersistedTeam[] },
+>(state: TState): TState {
   return {
     ...state,
-    teams: state.teams.map((team) =>
+    teams: (state.teams ?? []).map((team) =>
       stripTeamResultCaches(team)
-    ) as unknown as Team[],
+    ) as unknown as LegacyPersistedTeam[],
   };
 }
 
@@ -65,7 +69,7 @@ export function migrateTeamStore(
   if (version < 1) {
     state.teams = (state.teams ?? []).map((t) => ({
       ...t,
-      reactions: (t as Team).reactions || [],
+      reactions: (t as LegacyPersistedTeam).reactions || [],
     }));
   }
   if (version < 2) {
@@ -80,7 +84,7 @@ export function migrateTeamStore(
   if (version < 3) {
     state.teams = state.teams.map((t) => ({
       ...t,
-      formulaMode: (t as Team).formulaMode ?? "single",
+      formulaMode: (t as LegacyPersistedTeam).formulaMode ?? "single",
     }));
   }
   if (version < 4) {
@@ -99,7 +103,7 @@ export function migrateTeamStore(
     // Add extraBuffs field
     state.teams = state.teams.map((t) => ({
       ...t,
-      extraBuffs: (t as Team).extraBuffs ?? [],
+      extraBuffs: (t as LegacyPersistedTeam).extraBuffs ?? [],
     }));
   }
   if (version < 6) {
@@ -274,11 +278,11 @@ export function migrateTeamStore(
         ...Object.keys(tierAwarePool),
         ...Object.keys(ignoreArtifactSets),
       ]);
-      let charSettings: Record<string, CharSettings> | undefined;
+      let charSettings: Record<string, LegacyCharSettings> | undefined;
       if (allCharIds.size > 0) {
         charSettings = {};
         for (const charId of allCharIds) {
-          const s: CharSettings = {};
+          const s: LegacyCharSettings = {};
           if (charId in minEr) s.minEr = minEr[charId];
           if (charId in minCr) s.minCr = minCr[charId];
           if (charId in crMode) s.crMode = crMode[charId] as "min" | "target";
@@ -490,22 +494,6 @@ export function migrateTeamStore(
       return { ...t, artifacts, erTimelines };
     });
   }
-  if (version < 15) {
-    // v15: split the single Weapon Choice cache into mode-keyed choice results.
-    // Old shape: team.weaponChoiceResult held the weapon-mode result only.
-    // New shape: team.choiceResults.weapon/artifact can cache each mode
-    // independently while keeping weaponChoiceResult as a legacy mirror.
-    state.teams = state.teams.map((t) => {
-      if (!t.weaponChoiceResult || t.choiceResults?.weapon) return t;
-      return {
-        ...t,
-        choiceResults: {
-          ...(t.choiceResults ?? {}),
-          weapon: { ...t.weaponChoiceResult, mode: "weapon" as const },
-        },
-      };
-    });
-  }
   if (version < 16) {
     // v16: result caches are local/runtime data. Persist only authored team
     // source/config so cloud backup and localStorage do not carry stale blobs.
@@ -527,13 +515,10 @@ export function migrateTeamStore(
     state.activePresetId = null;
     state.compDeltas = converted.compDeltas;
     state.configsByTeamId = converted.configsByTeamId;
-    state.teams = deriveTeamRuntimeFromDeltas(
-      state.compDeltas,
-      state.configsByTeamId,
-      null
-    );
+    state.teamComps = deriveTeamCompsFromDeltas(state.compDeltas, null);
   }
 
+  delete state.teams;
   return state;
 }
 
@@ -545,34 +530,35 @@ export function migrateTeamStore(
  */
 export function mergeTeamStore<
   TState extends {
-    teams: Team[];
+    teamComps: TeamComp[];
+    teamCompById: Record<string, TeamComp>;
+    author: string;
+    description: string;
     activePresetId: string | null;
     compDeltas: TeamCompDelta[];
-    configsByTeamId: Record<string, TeamConfig>;
+    configsByTeamId: Record<string, TeamSetupConfig>;
   },
 >(persistedState: unknown, currentState: TState): TState {
   const parsed = PersistedTeamStoreSchema.safeParse(persistedState);
   if (!parsed.success) return currentState;
-  const legacyTeams = parsed.data.teams ?? [];
-  const converted =
-    parsed.data.compDeltas.length === 0 && legacyTeams.length > 0
-      ? createTeamPersistenceFromLegacyTeams(legacyTeams as unknown as Team[])
-      : null;
-  const compDeltas = (converted?.compDeltas ??
-    parsed.data.compDeltas) as TeamCompDelta[];
-  const configsByTeamId = (converted?.configsByTeamId ??
-    parsed.data.configsByTeamId) as Record<string, TeamConfig>;
+  const compDeltas = parsed.data.compDeltas as TeamCompDelta[];
+  const configsByTeamId = parsed.data.configsByTeamId as Record<
+    string,
+    TeamSetupConfig
+  >;
   const activePresetId = parsed.data.activePresetId;
+  const teamComps = deriveTeamCompsFromDeltas(
+    compDeltas,
+    getCachedTeamPreset(activePresetId)
+  );
   return {
     ...currentState,
-    ...parsed.data,
     activePresetId,
+    author: parsed.data.author ?? currentState.author,
+    description: parsed.data.description ?? currentState.description,
     compDeltas,
     configsByTeamId,
-    teams: deriveTeamRuntimeFromDeltas(
-      compDeltas,
-      configsByTeamId,
-      getCachedTeamPreset(activePresetId)
-    ),
+    teamComps,
+    teamCompById: Object.fromEntries(teamComps.map((team) => [team.id, team])),
   } as TState;
 }

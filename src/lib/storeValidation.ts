@@ -83,31 +83,3 @@ export function repairBuild(build: Build): void {
   if (!Array.isArray(build.circletWeights)) build.circletWeights = [];
   if (typeof build.normalizer !== "number") build.normalizer = 0;
 }
-
-// ─── Team ───
-
-/**
- * Ensure a Team object has all required array/object fields. Mutates in-place.
- * Scalar fields (id, name, selectedFormula) are less dangerous when missing
- * since they don't cause "not iterable" or "cannot read property of undefined"
- * crashes — focus on structural fields that are iterated or spread.
- */
-export function repairTeam(team: Record<string, unknown>): void {
-  if (!Array.isArray(team.characters))
-    team.characters = [null, null, null, null];
-  if (!Array.isArray(team.weapons)) team.weapons = [null, null, null, null];
-  if (!Array.isArray(team.artifacts)) team.artifacts = [null, null, null, null];
-  if (!Array.isArray(team.reactions)) team.reactions = [];
-  if (typeof team.opts !== "object" || team.opts == null) team.opts = {};
-  if (typeof team.calcContext !== "object" || team.calcContext == null)
-    team.calcContext = {};
-  if (team.formulaMode !== "single" && team.formulaMode !== "combo")
-    team.formulaMode = "single";
-  if (team.extraBuffs != null && !Array.isArray(team.extraBuffs))
-    team.extraBuffs = [];
-  if (
-    team.charSettings != null &&
-    (typeof team.charSettings !== "object" || Array.isArray(team.charSettings))
-  )
-    team.charSettings = {};
-}

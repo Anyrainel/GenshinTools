@@ -30,8 +30,9 @@ import type {
   ComboCountOverrides,
   MinErOverrides,
 } from "@/lib/team-comp/analyzer/types";
-import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import { buildTeamSlotConfigs } from "@/lib/team-comp/teamConfigUtils";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { AnalyzerComboCard } from "./AnalyzerComboCard";
@@ -40,13 +41,18 @@ import { AnalyzerResultCard } from "./AnalyzerResultCard";
 import { TeamDetailAspectLinks } from "./TeamDetailAspectLinks";
 
 interface InvestmentDetailProps {
-  team: Team;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
   onBack: () => void;
 }
 
-export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
+export function InvestmentDetail({
+  teamComp,
+  setupConfig,
+  onBack,
+}: InvestmentDetailProps) {
   const { t } = useLanguage();
-  const updateTeam = useTeamStore((s) => s.updateTeam);
+  const updateTeamSetupConfig = useTeamStore((s) => s.updateTeamSetupConfig);
   const accountData = useActiveAccountData();
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
@@ -70,47 +76,51 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       : isLg
         ? "sm"
         : "lg";
+  const teamId = teamComp.id;
+  const { characters } = useMemo(() => teamCompToArrays(teamComp), [teamComp]);
+  const characterIds = useMemo(
+    () => characters.filter((charId): charId is string => charId != null),
+    [characters]
+  );
+  const damageConfig = setupConfig.damage ?? {};
+  const investmentConfig = setupConfig.investment;
+  const combatOptions = setupConfig.combatOptions;
 
   // ── Analyzer-specific environment settings (independent from DamageView) ──
-  const localEnemyAura = team.analyzer?.enemyAura;
-  const localExtraBuffs = team.analyzer?.extraBuffs ?? [];
+  const localEnemyAura = investmentConfig?.enemyAura;
+  const localExtraBuffs = investmentConfig?.extraBuffs ?? [];
 
   // Ref to avoid stale closures on team.analyzer in callbacks/effects that also write to it
-  const analyzerRef = useRef(team.analyzer);
-  analyzerRef.current = team.analyzer;
+  const analyzerRef = useRef(investmentConfig);
+  analyzerRef.current = investmentConfig;
 
   const setLocalEnemyAura = useCallback(
     (el: Element | undefined) => {
-      updateTeam(team.id, {
-        analyzer: { ...analyzerRef.current, enemyAura: el },
-      });
+      updateTeamSetupConfig(teamId, (config) => ({
+        ...config,
+        investment: { ...analyzerRef.current, enemyAura: el },
+      }));
     },
-    [team.id, updateTeam]
+    [teamId, updateTeamSetupConfig]
   );
 
-  // Fake team-like object for ExtraBuffsPanel (it reads team.extraBuffs)
-  const envTeam = useMemo(
-    () => ({ ...team, extraBuffs: localExtraBuffs }),
-    [team, localExtraBuffs]
-  );
-  const updateEnvTeam = useCallback(
-    (_id: string, patch: Partial<Team>) => {
-      if (patch.extraBuffs !== undefined) {
-        updateTeam(team.id, {
-          analyzer: {
-            ...analyzerRef.current,
-            extraBuffs: patch.extraBuffs ?? [],
-          },
-        });
-      }
+  const setLocalExtraBuffs = useCallback(
+    (extraBuffs: typeof localExtraBuffs) => {
+      updateTeamSetupConfig(teamId, (config) => ({
+        ...config,
+        investment: {
+          ...analyzerRef.current,
+          extraBuffs,
+        },
+      }));
     },
-    [team.id, updateTeam]
+    [teamId, updateTeamSetupConfig]
   );
 
   // ── Compute baseConfigs ──
   const configs = useMemo(
-    () => buildTeamConfigs(team, accountData),
-    [team, accountData]
+    () => buildTeamSlotConfigs(teamComp, setupConfig, accountData),
+    [teamComp, setupConfig, accountData]
   );
 
   // ── Compute teamBuild ──
@@ -120,7 +130,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     try {
       const tb = new TeamBuild(
         configs,
-        team.opts || {},
+        combatOptions,
         localEnemyAura,
         localExtraBuffs
       );
@@ -133,7 +143,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     }
   }, [
     configs,
-    team.opts,
+    combatOptions,
     localEnemyAura,
     localExtraBuffs,
     gameStatsReady,
@@ -145,7 +155,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   // Use the DamageView combo structure for counts, but strip reactions —
   // the analyzer manages its own reactions via analyzerReactionOverrides.
   const templateCombo = useMemo<ComboFormula>(() => {
-    const sourceCombo = team.combo;
+    const sourceCombo = damageConfig.combo;
     let baseLines: ComboLine[];
     if (sourceCombo) {
       // Strip reactions from DamageView combo lines — only keep charId/formulaId/count
@@ -156,7 +166,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       }));
     } else if (teamBuild) {
       baseLines = [];
-      for (const charId of team.characters) {
+      for (const charId of characters) {
         if (!charId) continue;
         const combo = teamBuild.catalog.getCombo(charId);
         for (const [formulaId, count] of Object.entries(combo)) {
@@ -182,10 +192,10 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       label: sourceCombo?.label ?? { en: "Rotation", zh: "循环" },
       lines: Array.from(merged.values()),
     };
-  }, [team.combo, teamBuild, team.characters]);
+  }, [damageConfig.combo, teamBuild, characters]);
 
   // ── Analyzer-specific reaction overrides (persisted, independent from DamageView) ──
-  const reactionOverrides = team.analyzer?.reactionOverrides ?? {};
+  const reactionOverrides = investmentConfig?.reactionOverrides ?? {};
 
   // Effective combo: templateCombo with analyzer reaction overrides applied.
   // Override key is `charId.formulaId` — all lines for the same formula share one override.
@@ -202,21 +212,22 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
   const handleReactionChange = useCallback(
     (stableKey: string, override: ReactionOverride) => {
-      updateTeam(team.id, {
-        analyzer: {
+      updateTeamSetupConfig(teamId, (config) => ({
+        ...config,
+        investment: {
           ...analyzerRef.current,
           reactionOverrides: {
             ...reactionOverrides,
             [stableKey]: override,
           },
         },
-      });
+      }));
     },
-    [team.id, updateTeam, reactionOverrides]
+    [teamId, updateTeamSetupConfig, reactionOverrides]
   );
 
   // ── State management ──
-  const storedConfigs = team.analyzer?.configs;
+  const storedConfigs = investmentConfig?.configs;
   const [charConfigs, setCharConfigs] = useState<AnalyzerCharConfig[]>(() =>
     configs.length > 0
       ? reconcileConfigs(
@@ -227,13 +238,13 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
   );
 
   const [comboOverrides, setComboOverrides] = useState<ComboCountOverrides>(
-    () => team.analyzer?.comboOverrides ?? {}
+    () => investmentConfig?.comboOverrides ?? {}
   );
   const [minErOverrides, setMinErOverrides] = useState<MinErOverrides>(
-    () => team.analyzer?.minErOverrides ?? {}
+    () => investmentConfig?.minErOverrides ?? {}
   );
 
-  const analysis = useAnalyzer(team.id);
+  const analysis = useAnalyzer(teamId);
   const { progress, result, isComputing, error, start, stop } = analysis;
 
   // Re-reconcile when baseConfigs change
@@ -259,31 +270,34 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
       const bc = bcs.find((b) => b.charId === cfg.charId);
       return bc ? fullToStored(cfg, bc) : fullToStored(cfg, bcs[0]);
     });
-    updateTeam(team.id, {
-      analyzer: { ...analyzerRef.current, configs: stored },
-    });
-  }, [charConfigs, team.id, updateTeam]);
+    updateTeamSetupConfig(teamId, (config) => ({
+      ...config,
+      investment: { ...analyzerRef.current, configs: stored },
+    }));
+  }, [charConfigs, teamId, updateTeamSetupConfig]);
 
   // Persist combo/minEr overrides
   useEffect(() => {
-    updateTeam(team.id, {
-      analyzer: {
+    updateTeamSetupConfig(teamId, (config) => ({
+      ...config,
+      investment: {
         ...analyzerRef.current,
         comboOverrides:
           Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
       },
-    });
-  }, [comboOverrides, team.id, updateTeam]);
+    }));
+  }, [comboOverrides, teamId, updateTeamSetupConfig]);
 
   useEffect(() => {
-    updateTeam(team.id, {
-      analyzer: {
+    updateTeamSetupConfig(teamId, (config) => ({
+      ...config,
+      investment: {
         ...analyzerRef.current,
         minErOverrides:
           Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
       },
-    });
-  }, [minErOverrides, team.id, updateTeam]);
+    }));
+  }, [minErOverrides, teamId, updateTeamSetupConfig]);
 
   // ── Callbacks ──
   const updateWeapon = useCallback(
@@ -368,7 +382,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
         Object.keys(comboOverrides).length > 0 ? comboOverrides : undefined,
       minErOverrides:
         Object.keys(minErOverrides).length > 0 ? minErOverrides : undefined,
-      calcContext: resolveCalcContext(team.calcContext),
+      calcContext: resolveCalcContext(damageConfig.calcContext),
     };
     start(opts, !!result);
   }, [
@@ -379,7 +393,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
     effectiveCombo,
     comboOverrides,
     minErOverrides,
-    team.calcContext,
+    damageConfig.calcContext,
     start,
   ]);
 
@@ -395,7 +409,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
         <ArrowLeft className="w-5 h-5 text-foreground/70" />
       </Button>
       <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
-        {team.name || t.ui("teamComp.tabInvestment")}
+        {teamComp.name || t.ui("teamComp.tabInvestment")}
       </h2>
     </div>
   );
@@ -489,8 +503,9 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
           onComboOverridesChange={setComboOverrides}
           onMinErOverridesChange={setMinErOverrides}
           onReactionChange={handleReactionChange}
-          envTeam={envTeam}
-          updateEnvTeam={updateEnvTeam}
+          envCharacters={characterIds}
+          extraBuffs={localExtraBuffs}
+          onExtraBuffsChange={setLocalExtraBuffs}
           localEnemyAura={localEnemyAura}
           onEnemyAuraChange={setLocalEnemyAura}
           t={t}
@@ -498,8 +513,13 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
 
         {/* 3. Results: settings + run button + chart + table/sequence */}
         <AnalyzerResultCard
-          team={team}
-          updateTeam={updateTeam}
+          calcContext={damageConfig.calcContext ?? {}}
+          onCalcContextChange={(calcContext) => {
+            updateTeamSetupConfig(teamId, (config) => ({
+              ...config,
+              damage: { ...(config.damage ?? {}), calcContext },
+            }));
+          }}
           charConfigs={charConfigs}
           isComputing={isComputing}
           result={result}
@@ -509,7 +529,7 @@ export function InvestmentDetail({ team, onBack }: InvestmentDetailProps) {
           onStop={stop}
         />
 
-        <TeamDetailAspectLinks teamId={team.id} currentAspect="investment" />
+        <TeamDetailAspectLinks teamId={teamId} currentAspect="investment" />
       </div>
     </ScrollLayout>
   );

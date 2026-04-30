@@ -25,8 +25,8 @@ export function collectAllArtifactIds(data: AccountData): Set<string> {
 
 /**
  * Remap freeze store artifact IDs before saving new account data.
- * Must be called BEFORE addOrUpdateAccount — the auto-validation subscriber
- * (see bottom of file) handles validation during the save.
+ * Must be called BEFORE addOrUpdateAccount. The auto-validation subscriber
+ * at the bottom of this file handles validation during the save.
  */
 export function remapFreezeStoreForImport(
   artifactIdMap?: Map<string, string>,
@@ -39,62 +39,77 @@ export function remapFreezeStoreForImport(
 
 export type ArtifactReuseMode = "none" | "sameChar" | "forceReuse";
 
-export interface FrozenTeam {
-  /** Which character IDs have their artifacts frozen */
+export type FrozenArtifactIdsByChar = Record<
+  string,
+  Partial<Record<Slot, string>>
+>;
+
+export interface FrozenTeamLoadout {
+  /** Which character IDs have their artifacts frozen. */
   frozenCharIds: string[];
-  /** Full optimized artifact data per character, for restoring on re-entry */
+  /** Stable artifact IDs per character/slot. Source of truth. */
+  artifactIdsByChar: FrozenArtifactIdsByChar;
+}
+
+export interface FrozenTeam {
+  /** Which character IDs have their artifacts frozen. */
+  frozenCharIds: string[];
+  /** Stable artifact IDs per character/slot. */
+  artifactIdsByChar?: FrozenArtifactIdsByChar;
+  /** Resolved artifact data for UI and optimizer inputs. Derived from account data. */
   artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
 }
 
 interface FrozenProfileState {
-  /** Map of teamId → frozen data */
-  frozenTeams: Record<string, FrozenTeam>;
-  /** Controls how frozen artifacts can be reused across teams */
+  /** Map of teamId to stable frozen artifact IDs. */
+  frozenTeamLoadouts: Record<string, FrozenTeamLoadout>;
+  /** Controls how frozen artifacts can be reused across teams. */
   reuseMode: ArtifactReuseMode;
-  /** Individually frozen artifact IDs (not tied to any team) */
+  /** Individually frozen artifact IDs, not tied to any team. */
   frozenArtifactIds: string[];
 }
 
 interface FreezeState {
-  /** Map of teamId → frozen data */
+  /** Map of teamId to stable frozen artifact IDs. Source of truth. */
+  frozenTeamLoadouts: Record<string, FrozenTeamLoadout>;
+  /** Map of teamId to resolved frozen data. Derived runtime view. */
   frozenTeams: Record<string, FrozenTeam>;
-  /** Controls how frozen artifacts can be reused across teams */
+  /** Controls how frozen artifacts can be reused across teams. */
   reuseMode: ArtifactReuseMode;
-  /** Individually frozen artifact IDs (not tied to any team) */
+  /** Individually frozen artifact IDs, not tied to any team. */
   frozenArtifactIds: string[];
 
-  /** Freeze specific characters within a team */
+  /** Freeze specific characters within a team. */
   freezeCharacters: (
     teamId: string,
     charIds: string[],
     artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
   ) => void;
-  /** Unfreeze specific characters within a team (removes team entry if none left) */
+  /** Unfreeze specific characters within a team; removes team entry if none left. */
   unfreezeCharacters: (teamId: string, charIds: string[]) => void;
-  /** Remove the entire team's freeze entry */
+  /** Remove the entire team's freeze entry. */
   unfreezeTeam: (teamId: string) => void;
   clearAll: () => void;
   setReuseMode: (mode: ArtifactReuseMode) => void;
-  /** Freeze a standalone artifact by ID */
+  /** Freeze a standalone artifact by ID. */
   freezeArtifact: (id: string) => void;
-  /** Unfreeze a standalone artifact by ID */
+  /** Unfreeze a standalone artifact by ID. */
   unfreezeArtifact: (id: string) => void;
-  /** True if any character in the team is frozen */
+  /** True if any character in the team is frozen. */
   isFrozen: (teamId: string) => boolean;
-  /** True if a specific character is frozen within a team */
+  /** True if a specific character is frozen within a team. */
   isCharFrozen: (teamId: string, charId: string) => boolean;
-  /** Get all frozen character IDs for a team */
+  /** Get all frozen character IDs for a team. */
   getFrozenCharIds: (teamId: string) => string[];
   getFrozenTeam: (teamId: string) => FrozenTeam | undefined;
-  /** All artifact IDs locked by frozen characters across teams + standalone frozen artifacts (optionally excluding one team) */
+  /** All artifact IDs locked by frozen characters across teams plus standalone frozen artifacts. */
   getFrozenArtifactIds: (excludeTeamId?: string) => Set<string>;
-  /** Remap frozen artifact IDs using an old→new mapping from ID reassignment.
-   *  IDs mapped to "" are treated as orphaned and removed. */
+  /** Remap frozen artifact IDs using an old-to-new mapping from ID reassignment. */
   remapArtifactIds: (
     mapping: Map<string, string>,
     profileId?: AccountProfileId
   ) => void;
-  /** Remove any frozen artifact IDs that don't exist in the given set. */
+  /** Remove any frozen artifact IDs that do not exist in the given set. */
   validateFrozenArtifacts: (
     allArtifactIds: Set<string>,
     profileId?: AccountProfileId | null
@@ -104,25 +119,8 @@ interface FreezeState {
   setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
-/** Collect artifact IDs from a specific set of characters. */
-function collectCharArtifactIds(
-  artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>,
-  charIds: string[]
-): string[] {
-  const ids: string[] = [];
-  for (const cid of charIds) {
-    const arts = artifactsByChar[cid];
-    if (!arts) continue;
-    for (const slot of allSlots) {
-      const a = arts[slot];
-      if (a) ids.push(a.id);
-    }
-  }
-  return ids;
-}
-
 const cloneDefaultProfileState = (): FrozenProfileState => ({
-  frozenTeams: {},
+  frozenTeamLoadouts: {},
   reuseMode: "sameChar",
   frozenArtifactIds: [],
 });
@@ -130,14 +128,108 @@ const cloneDefaultProfileState = (): FrozenProfileState => ({
 const getActiveProfileId = () =>
   useAccountStore.getState().activeAccountId ?? DEFAULT_ACCOUNT_PROFILE_ID;
 
+function toArtifactIdSlots(
+  artifacts: Partial<Record<Slot, ArtifactData | null>>
+): Partial<Record<Slot, string>> {
+  const ids: Partial<Record<Slot, string>> = {};
+  for (const slot of allSlots) {
+    const artifact = artifacts[slot];
+    if (artifact?.id) ids[slot] = artifact.id;
+  }
+  return ids;
+}
+
+function hasAnySlotId(ids: Partial<Record<Slot, string>>): boolean {
+  return allSlots.some((slot) => ids[slot] != null);
+}
+
+function getProfileLoadouts(
+  profile: FrozenProfileState
+): Record<string, FrozenTeamLoadout> {
+  return profile.frozenTeamLoadouts;
+}
+
+function normalizeProfileState(
+  profile: FrozenProfileState
+): FrozenProfileState {
+  return {
+    frozenTeamLoadouts: getProfileLoadouts(profile),
+    reuseMode: profile.reuseMode,
+    frozenArtifactIds: profile.frozenArtifactIds,
+  };
+}
+
+const accountArtifactIndexCache = new WeakMap<
+  AccountData,
+  Map<string, ArtifactData>
+>();
+
+function getArtifactIndexForAccount(
+  data: AccountData | undefined
+): Map<string, ArtifactData> {
+  if (!data) return new Map<string, ArtifactData>();
+  const cached = accountArtifactIndexCache.get(data);
+  if (cached) return cached;
+  const artifacts = new Map<string, ArtifactData>();
+  for (const char of data.characters) {
+    for (const artifact of Object.values(char.artifacts)) {
+      if (artifact) artifacts.set(artifact.id, artifact);
+    }
+  }
+  for (const artifact of data.extraArtifacts) {
+    artifacts.set(artifact.id, artifact);
+  }
+  accountArtifactIndexCache.set(data, artifacts);
+  return artifacts;
+}
+
+function resolveFrozenTeams(
+  frozenTeamLoadouts: Record<string, FrozenTeamLoadout>,
+  profileId: AccountProfileId | null | undefined
+): Record<string, FrozenTeam> {
+  const account =
+    useAccountStore.getState().accounts[
+      profileId ?? DEFAULT_ACCOUNT_PROFILE_ID
+    ];
+  const artifactById = getArtifactIndexForAccount(account?.data);
+  const frozenTeams: Record<string, FrozenTeam> = {};
+
+  for (const [teamId, loadout] of Object.entries(frozenTeamLoadouts)) {
+    const artifactsByChar: Record<
+      string,
+      Record<Slot, ArtifactData | null>
+    > = {};
+    for (const charId of loadout.frozenCharIds) {
+      const ids = loadout.artifactIdsByChar[charId] ?? {};
+      const artifacts = {} as Record<Slot, ArtifactData | null>;
+      for (const slot of allSlots) {
+        const id = ids[slot];
+        artifacts[slot] = id ? (artifactById.get(id) ?? null) : null;
+      }
+      artifactsByChar[charId] = artifacts;
+    }
+    frozenTeams[teamId] = {
+      frozenCharIds: [...loadout.frozenCharIds],
+      artifactIdsByChar: structuredClone(loadout.artifactIdsByChar),
+      artifactsByChar,
+    };
+  }
+
+  return frozenTeams;
+}
+
 const currentProfileState = (state: FreezeState): FrozenProfileState => ({
-  frozenTeams: state.frozenTeams,
+  frozenTeamLoadouts: state.frozenTeamLoadouts,
   reuseMode: state.reuseMode,
   frozenArtifactIds: state.frozenArtifactIds,
 });
 
-const applyProfileState = (profile: FrozenProfileState) => ({
-  frozenTeams: profile.frozenTeams,
+const applyProfileState = (
+  profile: FrozenProfileState,
+  profileId: AccountProfileId | null | undefined
+) => ({
+  frozenTeamLoadouts: getProfileLoadouts(profile),
+  frozenTeams: resolveFrozenTeams(getProfileLoadouts(profile), profileId),
   reuseMode: profile.reuseMode,
   frozenArtifactIds: profile.frozenArtifactIds,
 });
@@ -145,7 +237,10 @@ const applyProfileState = (profile: FrozenProfileState) => ({
 const getStoredProfileState = (
   state: Pick<
     FreezeState,
-    "freezesByProfileId" | "frozenTeams" | "reuseMode" | "frozenArtifactIds"
+    | "freezesByProfileId"
+    | "frozenTeamLoadouts"
+    | "reuseMode"
+    | "frozenArtifactIds"
   >,
   profileId: AccountProfileId | null | undefined
 ): FrozenProfileState =>
@@ -165,10 +260,12 @@ const updateProfileState = (
   profileId: AccountProfileId,
   profile: FrozenProfileState
 ) => ({
-  ...(profileId === getActiveProfileId() ? applyProfileState(profile) : {}),
+  ...(profileId === getActiveProfileId()
+    ? applyProfileState(profile, profileId)
+    : {}),
   freezesByProfileId: {
     ...state.freezesByProfileId,
-    [profileId]: profile,
+    [profileId]: normalizeProfileState(profile),
   },
 });
 
@@ -180,43 +277,30 @@ const remapProfileArtifacts = (
     .map((id) => mapping.get(id) ?? id)
     .filter((id) => id !== "");
 
-  const frozenTeams: Record<string, FrozenTeam> = {};
-  for (const [teamId, team] of Object.entries(profile.frozenTeams)) {
-    const artifactsByChar: Record<
-      string,
-      Record<Slot, ArtifactData | null>
-    > = {};
-    let hasAnyArtifact = false;
-    for (const [charId, arts] of Object.entries(team.artifactsByChar)) {
-      const nextArts = {} as Record<Slot, ArtifactData | null>;
+  const frozenTeamLoadouts: Record<string, FrozenTeamLoadout> = {};
+  for (const [teamId, team] of Object.entries(getProfileLoadouts(profile))) {
+    const artifactIdsByChar: FrozenArtifactIdsByChar = {};
+    for (const [charId, ids] of Object.entries(team.artifactIdsByChar)) {
+      const nextIds: Partial<Record<Slot, string>> = {};
       for (const slot of allSlots) {
-        const art = arts[slot];
-        if (art) {
-          const newId = mapping.get(art.id);
-          if (newId === "") {
-            nextArts[slot] = null;
-          } else {
-            nextArts[slot] = newId !== undefined ? { ...art, id: newId } : art;
-            hasAnyArtifact = true;
-          }
-        } else {
-          nextArts[slot] = null;
-        }
+        const id = ids[slot];
+        if (!id) continue;
+        const mapped = mapping.get(id);
+        if (mapped === "") continue;
+        nextIds[slot] = mapped ?? id;
       }
-      artifactsByChar[charId] = nextArts;
+      if (hasAnySlotId(nextIds)) artifactIdsByChar[charId] = nextIds;
     }
-    if (!hasAnyArtifact) continue;
 
-    const frozenCharIds = team.frozenCharIds.filter((cid) => {
-      const arts = artifactsByChar[cid];
-      return arts && allSlots.some((slot) => arts[slot] != null);
-    });
+    const frozenCharIds = team.frozenCharIds.filter((cid) =>
+      hasAnySlotId(artifactIdsByChar[cid] ?? {})
+    );
     if (frozenCharIds.length > 0) {
-      frozenTeams[teamId] = { frozenCharIds, artifactsByChar };
+      frozenTeamLoadouts[teamId] = { frozenCharIds, artifactIdsByChar };
     }
   }
 
-  return { ...profile, frozenArtifactIds, frozenTeams };
+  return { ...profile, frozenArtifactIds, frozenTeamLoadouts };
 };
 
 const validateProfileArtifacts = (
@@ -227,45 +311,41 @@ const validateProfileArtifacts = (
     allArtifactIds.has(id)
   );
 
-  const frozenTeams: Record<string, FrozenTeam> = {};
+  const frozenTeamLoadouts: Record<string, FrozenTeamLoadout> = {};
   let changed = frozenArtifactIds.length !== profile.frozenArtifactIds.length;
 
-  for (const [teamId, team] of Object.entries(profile.frozenTeams)) {
-    const artifactsByChar: Record<
-      string,
-      Record<Slot, ArtifactData | null>
-    > = {};
-    for (const [charId, arts] of Object.entries(team.artifactsByChar)) {
-      const nextArts = {} as Record<Slot, ArtifactData | null>;
+  for (const [teamId, team] of Object.entries(getProfileLoadouts(profile))) {
+    const artifactIdsByChar: FrozenArtifactIdsByChar = {};
+    for (const [charId, ids] of Object.entries(team.artifactIdsByChar)) {
+      const nextIds: Partial<Record<Slot, string>> = {};
       for (const slot of allSlots) {
-        const art = arts[slot];
-        if (art && allArtifactIds.has(art.id)) {
-          nextArts[slot] = art;
-        } else {
-          if (art) changed = true;
-          nextArts[slot] = null;
-        }
+        const id = ids[slot];
+        if (!id) continue;
+        if (allArtifactIds.has(id)) nextIds[slot] = id;
+        else changed = true;
       }
-      artifactsByChar[charId] = nextArts;
+      if (hasAnySlotId(nextIds)) artifactIdsByChar[charId] = nextIds;
     }
 
-    const frozenCharIds = team.frozenCharIds.filter((cid) => {
-      const arts = artifactsByChar[cid];
-      return arts && allSlots.some((slot) => arts[slot] != null);
-    });
+    const frozenCharIds = team.frozenCharIds.filter((cid) =>
+      hasAnySlotId(artifactIdsByChar[cid] ?? {})
+    );
     if (frozenCharIds.length > 0) {
-      frozenTeams[teamId] = { frozenCharIds, artifactsByChar };
+      frozenTeamLoadouts[teamId] = { frozenCharIds, artifactIdsByChar };
     } else if (team.frozenCharIds.length > 0) {
       changed = true;
     }
   }
 
-  return changed ? { ...profile, frozenArtifactIds, frozenTeams } : profile;
+  return changed
+    ? { ...profile, frozenArtifactIds, frozenTeamLoadouts }
+    : profile;
 };
 
 export const useFreezeStore = create<FreezeState>()(
   persist(
     (set, get) => ({
+      frozenTeamLoadouts: {},
       frozenTeams: {},
       reuseMode: "sameChar" as ArtifactReuseMode,
       frozenArtifactIds: [],
@@ -277,24 +357,32 @@ export const useFreezeStore = create<FreezeState>()(
         set((state) => {
           const profileId = getActiveProfileId();
           const profile = getProfileState(state, profileId);
-          const existing = profile.frozenTeams[teamId];
-          // Merge with existing: keep already-frozen chars, add new ones
-          const prevFrozen = existing?.frozenCharIds ?? [];
-          const mergedCharIds = Array.from(
-            new Set([...prevFrozen, ...charIds])
-          );
-          const mergedArtifacts = {
-            ...(existing?.artifactsByChar ?? {}),
-            ...artifactsByChar,
+          const profileLoadouts = getProfileLoadouts(profile);
+          const existing = profileLoadouts[teamId];
+          const artifactIdsByChar: FrozenArtifactIdsByChar = {
+            ...(existing?.artifactIdsByChar ?? {}),
           };
+          const frozenSet = new Set(existing?.frozenCharIds ?? []);
+
+          for (const charId of charIds) {
+            const ids = toArtifactIdSlots(artifactsByChar[charId] ?? {});
+            if (!hasAnySlotId(ids)) {
+              delete artifactIdsByChar[charId];
+              frozenSet.delete(charId);
+              continue;
+            }
+            artifactIdsByChar[charId] = ids;
+            frozenSet.add(charId);
+          }
+
+          const frozenCharIds = [...frozenSet].filter((charId) =>
+            hasAnySlotId(artifactIdsByChar[charId] ?? {})
+          );
           return updateProfileState(state, profileId, {
             ...profile,
-            frozenTeams: {
-              ...profile.frozenTeams,
-              [teamId]: {
-                frozenCharIds: mergedCharIds,
-                artifactsByChar: mergedArtifacts,
-              },
+            frozenTeamLoadouts: {
+              ...profileLoadouts,
+              [teamId]: { frozenCharIds, artifactIdsByChar },
             },
           });
         }),
@@ -303,26 +391,31 @@ export const useFreezeStore = create<FreezeState>()(
         set((state) => {
           const profileId = getActiveProfileId();
           const profile = getProfileState(state, profileId);
-          const existing = profile.frozenTeams[teamId];
+          const profileLoadouts = getProfileLoadouts(profile);
+          const existing = profileLoadouts[teamId];
           if (!existing) return state;
           const charSet = new Set(charIds);
           const remaining = existing.frozenCharIds.filter(
             (id) => !charSet.has(id)
           );
           if (remaining.length === 0) {
-            const { [teamId]: _, ...rest } = profile.frozenTeams;
+            const { [teamId]: _, ...rest } = profileLoadouts;
             return updateProfileState(state, profileId, {
               ...profile,
-              frozenTeams: rest,
+              frozenTeamLoadouts: rest,
             });
           }
+
+          const artifactIdsByChar = { ...existing.artifactIdsByChar };
+          for (const charId of charIds) delete artifactIdsByChar[charId];
           return updateProfileState(state, profileId, {
             ...profile,
-            frozenTeams: {
-              ...profile.frozenTeams,
+            frozenTeamLoadouts: {
+              ...profileLoadouts,
               [teamId]: {
                 ...existing,
                 frozenCharIds: remaining,
+                artifactIdsByChar,
               },
             },
           });
@@ -332,10 +425,10 @@ export const useFreezeStore = create<FreezeState>()(
         set((state) => {
           const profileId = getActiveProfileId();
           const profile = getProfileState(state, profileId);
-          const { [teamId]: _, ...rest } = profile.frozenTeams;
+          const { [teamId]: _, ...rest } = getProfileLoadouts(profile);
           return updateProfileState(state, profileId, {
             ...profile,
-            frozenTeams: rest,
+            frozenTeamLoadouts: rest,
           });
         }),
 
@@ -345,10 +438,11 @@ export const useFreezeStore = create<FreezeState>()(
           const profile = getProfileState(state, profileId);
           return updateProfileState(state, profileId, {
             ...profile,
-            frozenTeams: {},
+            frozenTeamLoadouts: {},
             frozenArtifactIds: [],
           });
         }),
+
       setReuseMode: (mode) =>
         set((state) => {
           const profileId = getActiveProfileId();
@@ -401,20 +495,17 @@ export const useFreezeStore = create<FreezeState>()(
 
       getFrozenArtifactIds: (excludeTeamId) => {
         const state = get();
-        const ids = new Set<string>();
-        // Include standalone frozen artifacts
-        for (const id of state.frozenArtifactIds) {
-          ids.add(id);
-        }
-        for (const [tid, entry] of Object.entries(state.frozenTeams)) {
+        const ids = new Set<string>(state.frozenArtifactIds);
+        const frozenTeamLoadouts = state.frozenTeamLoadouts;
+
+        for (const [tid, entry] of Object.entries(frozenTeamLoadouts)) {
           if (tid === excludeTeamId) continue;
-          const charIds = entry.frozenCharIds ?? [];
-          // Only include artifacts belonging to frozen characters
-          for (const id of collectCharArtifactIds(
-            entry.artifactsByChar,
-            charIds
-          )) {
-            ids.add(id);
+          for (const charId of entry.frozenCharIds ?? []) {
+            const slotIds = entry.artifactIdsByChar[charId] ?? {};
+            for (const slot of allSlots) {
+              const id = slotIds[slot];
+              if (id) ids.add(id);
+            }
           }
         }
         return ids;
@@ -437,45 +528,51 @@ export const useFreezeStore = create<FreezeState>()(
           const targetProfileId = profileId ?? getActiveProfileId();
           const profile = getProfileState(state, targetProfileId);
           const validated = validateProfileArtifacts(profile, allArtifactIds);
-          if (validated === profile) return state;
           return updateProfileState(state, targetProfileId, validated);
         }),
 
       setActiveProfile: (profileId) =>
         set((state) =>
-          applyProfileState(getStoredProfileState(state, profileId))
+          applyProfileState(getStoredProfileState(state, profileId), profileId)
         ),
     }),
     {
       name: "frozen-teams-storage",
-      version: 5,
+      version: 7,
       migrate: migrateFreezeStore,
       partialize: (state) => ({
-        frozenTeams: state.frozenTeams,
-        reuseMode: state.reuseMode,
-        frozenArtifactIds: state.frozenArtifactIds,
-        freezesByProfileId: state.freezesByProfileId,
+        freezesByProfileId: {
+          ...state.freezesByProfileId,
+          [getActiveProfileId()]: normalizeProfileState(
+            currentProfileState(state)
+          ),
+        },
       }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedFreezeStoreSchema.safeParse(persistedState);
-        const persisted = parsed.success ? parsed.data : null;
-        const fallbackProfile: FrozenProfileState = {
-          frozenTeams: (persisted?.frozenTeams ??
-            currentState.frozenTeams) as Record<string, FrozenTeam>,
-          reuseMode: persisted?.reuseMode ?? currentState.reuseMode,
-          frozenArtifactIds:
-            persisted?.frozenArtifactIds ?? currentState.frozenArtifactIds,
-        };
-        const freezesByProfileId = (persisted?.freezesByProfileId ?? {
-          [DEFAULT_ACCOUNT_PROFILE_ID]: fallbackProfile,
-        }) as Record<AccountProfileId, FrozenProfileState>;
+        const persistedProfiles = parsed.success
+          ? (parsed.data.freezesByProfileId as Record<
+              AccountProfileId,
+              FrozenProfileState
+            >)
+          : {};
+        const freezesByProfileId = Object.fromEntries(
+          Object.entries(persistedProfiles).map(([profileId, profile]) => [
+            profileId,
+            normalizeProfileState(profile),
+          ])
+        ) as Record<AccountProfileId, FrozenProfileState>;
+        if (Object.keys(freezesByProfileId).length === 0) {
+          freezesByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] =
+            cloneDefaultProfileState();
+        }
         const activeProfile =
           freezesByProfileId[getActiveProfileId()] ??
           freezesByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] ??
-          fallbackProfile;
+          cloneDefaultProfileState();
         return {
           ...currentState,
-          ...applyProfileState(activeProfile),
+          ...applyProfileState(activeProfile, getActiveProfileId()),
           freezesByProfileId,
         };
       },
@@ -483,7 +580,6 @@ export const useFreezeStore = create<FreezeState>()(
   )
 );
 
-// ─── Auto-validation subscriber ──────────────────────────────────────────────
 // Validates frozen artifact IDs against the active account whenever that
 // account changes or its data changes. Imports into inactive accounts call
 // validateFrozenArtifacts(accountId) directly through applyAccountImport.

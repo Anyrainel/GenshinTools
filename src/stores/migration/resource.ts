@@ -47,7 +47,7 @@ export function migrateResourceRecStore(
     // Remove obsolete kindMinScore field from v5.
     state.kindMinScore = undefined;
   }
-  if (version < 7) {
+  if (version < 7 || !state.settingsByProfileId) {
     state.settingsByProfileId = {
       [DEFAULT_ACCOUNT_PROFILE_ID]: {
         thresholds: state.thresholds,
@@ -58,6 +58,14 @@ export function migrateResourceRecStore(
         showLevelup: state.showLevelup,
       },
     };
+  }
+  if (version < 8) {
+    delete state.thresholds;
+    delete state.minScoreDiff;
+    delete state.panelOpen;
+    delete state.showCraft;
+    delete state.showReroll;
+    delete state.showLevelup;
   }
   return state;
 }

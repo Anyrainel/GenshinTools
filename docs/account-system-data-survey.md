@@ -1,6 +1,6 @@
 # Account System Design 2: Cloud Data Survey and Refactor Plan
 
-Last updated: 2026-04-29.
+Last updated: 2026-04-30.
 
 ## Scope
 
@@ -16,8 +16,8 @@ Current durable localStorage keys observed in `src/stores`:
 | --- | --- | --- | --- |
 | `useAccountStore` | `genshin-account-storage` | account profiles, active account, stale score markers, account scores | Split and normalize. Upload account data. Exclude scores and stale markers. |
 | `useBuildsStore` | `artifact-filter-builds` | artifact build deltas, custom builds, preset id, compute options, validation cache | Upload user-authored build config. Exclude validation cache if recomputable. |
-| `useTeamStore` | `team-builder-storage` | teams, team config, optimizer result cache, weapon/artifact choice cache | Refactor before cloud. Upload team library/config. Exclude result caches. |
-| `useFreezeStore` | `frozen-teams-storage` | frozen team artifacts, frozen artifact ids, reuse mode | Upload account-scoped stable freeze intent. Avoid duplicating full artifact blobs if account data can resolve ids. |
+| `useTeamStore` | `team-builder-storage` | team comp deltas, team config, active preset metadata | Upload team library/config. Exclude result caches. |
+| `useFreezeStore` | `frozen-teams-storage` | account-scoped frozen team artifact-id loadouts, standalone frozen artifact ids, reuse mode | Upload account-scoped stable freeze intent. Do not duplicate full artifact blobs. |
 | `useTierStore` | `tierlist-storage` | character tier-list instances, account links, and view settings | Upload user-authored tier lists. Preserve at most one account-linked list per account profile plus unattached lists. |
 | `useWeaponTierStore` | `weapon-tierlist-storage` | weapon tier list | Migrate to stable multi-instance ids and include in backup. No account profile linkage. |
 | `useArtifactTierStore` | `artifact-tierlist-storage` | artifact tier list | Migrate to stable multi-instance ids and include in backup. No account profile linkage. |
@@ -28,7 +28,8 @@ Current durable localStorage keys observed in `src/stores`:
 | `useGreetingStore` | `greeting-storage` | onboarding/greeting state | Do not upload by default. |
 | `useSessionNavStore` | `session-nav-storage` | session navigation state | Do not upload. |
 | `useArchiveSessionStore` | `archive-session-storage` | archive session state | Do not upload. |
-| `useAnalyzerCacheStore` | `analyzer-cache` | in-memory analyzer cache plus one persisted last analyzer result per team | Do not upload. Use as the starting pattern for a broader local team-result cache. |
+| `useTeamResultCacheStore` | `team-result-cache` | latest optimizer, investment, weapon choice, and artifact choice result per team | Do not upload. Long-lived local cache only. |
+| `useAnalyzerCacheStore` | none | in-memory analyzer cache keyed by full analyzer options | Do not upload. Implementation cache only. |
 | `useRecommendationCacheStore` | none | in-memory Map cache | Do not upload. |
 | `usePUpgradeCacheStore` | none | in-memory Map cache | Do not upload. |
 | `useBuffOverrideStore` | none | non-persisted buff override runtime | Do not upload. |
@@ -399,14 +400,14 @@ This generic type can back:
 Current `Team` runtime values are derived from two persisted source structures:
 
 1. `compDeltas: PresetDelta<TeamComp>[]` for preset-eligible composition and global display order.
-2. `configsByTeamId: Record<string, TeamConfig>` for user-authored calculation/config state.
+2. `configsByTeamId: Record<string, TeamSetupConfig>` for user-authored calculation/config state.
 
 `Team` remains the runtime projection consumed by existing Team Comp UI, but it is no longer the durable source shape for cloud backup.
 
 Cache fields are local-only:
 
-- `useTeamResultCacheStore` owns optimizer and weapon/artifact choice result caches keyed by team id.
-- `useAnalyzerCacheStore` remains local-only for investment analyzer results keyed by team id.
+- `useTeamResultCacheStore` owns optimizer, investment, weapon choice, and artifact choice latest-result caches keyed by team id.
+- `useAnalyzerCacheStore` remains in-memory only for full-option-keyed investment analyzer reuse.
 - Both stores are excluded from cloud backup.
 
 Target split:
@@ -463,7 +464,7 @@ User-specific fields that should not live in team presets:
 Cloud model:
 
 ```ts
-type TeamConfig = {
+type TeamSetupConfig = {
   combatOptions: Record<string, string>;
   charConfigs?: Record<string, TeamCharConfig>;
   damage?: TeamDamageConfig;
@@ -472,7 +473,7 @@ type TeamConfig = {
 };
 
 type TeamConfigCloudPayload = {
-  byTeamId: Record<string, TeamConfig>;
+  byTeamId: Record<string, TeamSetupConfig>;
 };
 ```
 
@@ -492,8 +493,9 @@ Current local model:
 ```ts
 type TeamResultCacheEntry = {
   optimizationResult?: OptimizationResult | null;
-  choiceResults?: ChoiceResultCache;
+  investmentResult?: SerializedAnalyzerResult | null;
   weaponChoiceResult?: WeaponChoiceResult | null;
+  artifactChoiceResult?: WeaponChoiceResult | null;
 };
 
 type TeamResultCacheState = {
@@ -510,22 +512,26 @@ type TeamResultCacheState = {
 
 ## Freeze Store
 
-Current freeze entries persist full artifact blobs:
+Current freeze entries persist ID-only loadouts and derive the blob view from account data:
 
 ```ts
-type FrozenTeam = {
+type FrozenTeamLoadout = {
   frozenCharIds: string[];
+  artifactIdsByChar: Record<string, Partial<Record<Slot, string>>>;
+};
+
+type FrozenTeam = FrozenTeamLoadout & {
   artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
 };
 ```
 
 Cloud decision:
 
-- Prefer storing freeze intent as artifact ids and character ids.
+- Store freeze intent as artifact ids and character ids.
 - Do not upload full artifact blobs if account data is included in the same backup.
 - On restore, resolve freeze ids against restored account artifacts.
 - Freeze payloads are account-scoped because artifact ids are account-scoped. Use `account.freeze` partitioned by account profile id, not a single global `freeze/default` partition.
-- The current nested `teamId -> artifactsByChar` shape is a UI-friendly view, not the ideal cloud shape.
+- The current nested `teamId -> FrozenTeamLoadout` shape is the local durable source. The `artifactsByChar` blob shape is a UI-friendly derived view.
 - The cloud shape should be a flat list of frozen character loadouts so reuse-mode logic can be resolved from one uniform collection.
 - UI code can derive the current nested view after rehydration if that remains convenient.
 
@@ -753,10 +759,10 @@ Phase 2: Local store migrations
 - Migrate local account profile ids from `"default"` to `0`, and keep UID profiles keyed by UID.
 - When promoting profile `0` to a UID, move account-scoped local data to the UID and remove/soft-delete `0`.
 - On account switch, switch the visible freeze state to that account profile; backup still includes all account profiles.
-- Introduce `TeamComp`, `TeamConfig`, and local-only team cache concepts.
+- Introduce `TeamComp`, `TeamSetupConfig`, and local-only team cache concepts.
 - Move `optimizationResult`, `choiceResults`, and `weaponChoiceResult` ownership out of `useTeamStore` source data.
 - Move team result caches out of `Team` into a local-only team result cache store.
-- Keep `useAnalyzerCacheStore` as a separate local-only analyzer cache for now.
+- Keep `useAnalyzerCacheStore` as an in-memory full-options analyzer cache only.
 - Migrate weapon/artifact tier-list stores toward stable multi-instance list ids and include them in backup.
 - Keep migrations from current persisted versions and add old-store hydration tests for each changed store.
 

@@ -1,6 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { TeamCard } from "@/components/team-comp/TeamCard";
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompInputToComp } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamCompInput } from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
 const mockCharStats = {
@@ -81,25 +82,18 @@ vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
   };
 });
 
-const mockTeam: Team = {
+function makeTeamComp(input: TeamCompInput & { id: string }): TeamComp {
+  return teamCompInputToComp(input);
+}
+
+const mockTeamComp = makeTeamComp({
   id: "team-1",
   name: "Hu Tao Vape",
   characters: ["hu_tao", "xingqiu", "zhongli", null],
   weapons: [null, null, null, null],
   artifacts: [null, null, null, null],
   reactions: [],
-  opts: {},
-  calcContext: {
-    enemyLevel: 110,
-    enemyRes: 0.1,
-    rollMultiplier: 0.85,
-    substatBudget: "8_6",
-  },
-  selectedFormula: null,
-  optimizationResult: null,
-  formulaMode: "single",
-  combo: null,
-};
+});
 
 describe("TeamCard", () => {
   const mockOnUpdate = vi.fn();
@@ -115,9 +109,9 @@ describe("TeamCard", () => {
   it("displays team name in input field", () => {
     render(
       <TeamCard
-        team={mockTeam}
+        teamComp={mockTeamComp}
         index={0}
-        onUpdate={mockOnUpdate}
+        onUpdateComp={mockOnUpdate}
         onDelete={mockOnDelete}
         onCopy={mockOnCopy}
       />
@@ -131,9 +125,9 @@ describe("TeamCard", () => {
     const user = userEvent.setup();
     render(
       <TeamCard
-        team={mockTeam}
+        teamComp={mockTeamComp}
         index={0}
-        onUpdate={mockOnUpdate}
+        onUpdateComp={mockOnUpdate}
         onDelete={mockOnDelete}
         onCopy={mockOnCopy}
       />
@@ -153,9 +147,9 @@ describe("TeamCard", () => {
   it("renders element badges on character icons", () => {
     const { container } = render(
       <TeamCard
-        team={mockTeam}
+        teamComp={mockTeamComp}
         index={0}
-        onUpdate={mockOnUpdate}
+        onUpdateComp={mockOnUpdate}
         onDelete={mockOnDelete}
         onCopy={mockOnCopy}
       />
@@ -169,31 +163,20 @@ describe("TeamCard", () => {
   });
 
   it("renders empty placeholder for null character slots", () => {
-    const emptyTeam: Team = {
+    const emptyTeamComp = makeTeamComp({
       id: "team-2",
       name: "Empty",
       characters: [null, null, null, null],
       weapons: [null, null, null, null],
       artifacts: [null, null, null, null],
       reactions: [],
-      opts: {},
-      calcContext: {
-        enemyLevel: 110,
-        enemyRes: 0.1,
-        rollMultiplier: 0.85,
-        substatBudget: "8_6",
-      },
-      selectedFormula: null,
-      optimizationResult: null,
-      formulaMode: "single",
-      combo: null,
-    };
+    });
 
     render(
       <TeamCard
-        team={emptyTeam}
+        teamComp={emptyTeamComp}
         index={0}
-        onUpdate={mockOnUpdate}
+        onUpdateComp={mockOnUpdate}
         onDelete={mockOnDelete}
         onCopy={mockOnCopy}
       />
@@ -207,7 +190,7 @@ describe("TeamCard", () => {
   });
 
   it("enables optimize button when all slots are filled", () => {
-    const fullTeam: Team = {
+    const fullTeamComp = makeTeamComp({
       id: "team-3",
       name: "Full Team",
       characters: ["hu_tao", "xingqiu", "zhongli", "bennett"],
@@ -224,24 +207,13 @@ describe("TeamCard", () => {
         { type: "4pc", setId: "noblesse_oblige" },
       ],
       reactions: ["vaporize"],
-      opts: {},
-      calcContext: {
-        enemyLevel: 110,
-        enemyRes: 0.1,
-        rollMultiplier: 0.85,
-        substatBudget: "8_6",
-      },
-      selectedFormula: null,
-      optimizationResult: null,
-      formulaMode: "single",
-      combo: null,
-    };
+    });
 
     render(
       <TeamCard
-        team={fullTeam}
+        teamComp={fullTeamComp}
         index={0}
-        onUpdate={mockOnUpdate}
+        onUpdateComp={mockOnUpdate}
         onDelete={mockOnDelete}
         onCopy={mockOnCopy}
       />

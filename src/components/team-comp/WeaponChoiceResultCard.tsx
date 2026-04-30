@@ -37,7 +37,8 @@ import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type {
   ArtifactAssignmentSuggestion,
   ChoiceRanking,
-  Team,
+  TeamComp,
+  TeamSetupConfig,
   WeaponChoiceResult,
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
@@ -158,8 +159,21 @@ function ArtifactChoiceRowIcon({
 }
 
 interface WeaponChoiceResultCardProps {
-  team: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
+  characters: (string | null)[];
+  weapons: (string | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
+  onTeamCompChange: (comp: TeamComp) => void;
+  onSetupConfigChange: (
+    updater:
+      | Partial<TeamSetupConfig>
+      | ((config: TeamSetupConfig) => TeamSetupConfig)
+  ) => void;
+  setChoiceResult: (
+    mode: "weapon" | "artifact",
+    result: WeaponChoiceResult | null
+  ) => void;
   charIds: string[];
   isComputing: boolean;
   choiceMode: "weapon" | "artifact";
@@ -208,18 +222,19 @@ function CharPanelHeader({
 
 function WeaponDetailContent({
   entry,
-  team,
+  characters,
+  weapons,
   charId,
   t,
 }: {
   entry: ChoiceRanking;
-  team?: Team;
+  characters?: (string | null)[];
+  weapons?: (string | null)[];
   charId: string;
   t: WeaponChoiceResultCardProps["t"];
 }) {
-  const charIndex = team?.characters.indexOf(charId) ?? -1;
-  const currentWeaponId =
-    team && charIndex >= 0 ? team.weapons[charIndex] : null;
+  const charIndex = characters?.indexOf(charId) ?? -1;
+  const currentWeaponId = weapons && charIndex >= 0 ? weapons[charIndex] : null;
 
   return (
     <div className="space-y-2 text-xs">
@@ -344,7 +359,8 @@ function getHighlightCount(rankings: ChoiceRanking[]): number {
 
 function WeaponEntryRow({
   entry,
-  team,
+  characters,
+  weapons,
   charId,
   idx,
   isTop,
@@ -352,7 +368,8 @@ function WeaponEntryRow({
   t,
 }: {
   entry: ChoiceRanking;
-  team?: Team;
+  characters?: (string | null)[];
+  weapons?: (string | null)[];
   charId: string;
   idx: number;
   isTop: boolean;
@@ -435,7 +452,8 @@ function WeaponEntryRow({
           <div className="p-4 pt-2 safe-area-bottom max-w-sm mx-auto">
             <WeaponDetailContent
               entry={entry}
-              team={team}
+              characters={characters}
+              weapons={weapons}
               charId={charId}
               t={t}
             />
@@ -453,7 +471,13 @@ function WeaponEntryRow({
         side="right"
         className="w-64 p-3 border-border bg-popover"
       >
-        <WeaponDetailContent entry={entry} team={team} charId={charId} t={t} />
+        <WeaponDetailContent
+          entry={entry}
+          characters={characters}
+          weapons={weapons}
+          charId={charId}
+          t={t}
+        />
       </HoverCardContent>
     </HoverCard>
   );
@@ -462,14 +486,16 @@ function WeaponEntryRow({
 /** Exported for reuse in preview components */
 export function CharacterWeaponPanel({
   charId,
-  team,
+  characters,
+  weapons,
   rankings,
   scopeHint,
   isMobile,
   t,
 }: {
   charId: string;
-  team?: Team;
+  characters?: (string | null)[];
+  weapons?: (string | null)[];
   rankings: ChoiceRanking[];
   scopeHint?: string;
   isMobile: boolean;
@@ -488,7 +514,8 @@ export function CharacterWeaponPanel({
                 : `${entry.weaponId}-${entry.refinement}`
             }
             entry={entry}
-            team={team}
+            characters={characters}
+            weapons={weapons}
             charId={charId}
             idx={idx}
             isTop={idx < highlightCount}
@@ -503,15 +530,24 @@ export function CharacterWeaponPanel({
 
 function ArtifactAssignmentCard({
   suggestion,
-  team,
+  teamComp,
+  characters,
+  artifacts,
   result,
-  updateTeam,
+  onTeamCompChange,
+  setChoiceResult,
   t,
 }: {
   suggestion: ArtifactAssignmentSuggestion;
-  team: Team;
+  teamComp: TeamComp;
+  characters: (string | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
   result: WeaponChoiceResult;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  onTeamCompChange: (comp: TeamComp) => void;
+  setChoiceResult: (
+    mode: "weapon" | "artifact",
+    result: WeaponChoiceResult | null
+  ) => void;
   t: WeaponChoiceResultCardProps["t"];
 }) {
   const improvement = Math.max(0, suggestion.percentImprovement);
@@ -524,8 +560,8 @@ function ArtifactAssignmentCard({
         artifactSet,
       ])
     );
-    const nextArtifacts = [...team.artifacts];
-    team.characters.forEach((charId, index) => {
+    const nextArtifacts = [...artifacts];
+    characters.forEach((charId, index) => {
       if (!charId || !assignmentByChar.has(charId)) return;
       nextArtifacts[index] = assignmentByChar.get(charId) ?? null;
     });
@@ -539,14 +575,23 @@ function ArtifactAssignmentCard({
       },
     };
 
-    updateTeam(team.id, {
-      artifacts: nextArtifacts,
-      choiceResults: {
-        ...(team.choiceResults ?? {}),
-        artifact: nextResult,
-      },
+    onTeamCompChange({
+      ...teamComp,
+      slots: teamComp.slots.map((slot, index) => ({
+        ...slot,
+        artifactSet: nextArtifacts[index] ?? null,
+      })),
     });
-  }, [result, suggestion, team, updateTeam]);
+    setChoiceResult("artifact", nextResult);
+  }, [
+    artifacts,
+    characters,
+    onTeamCompChange,
+    result,
+    setChoiceResult,
+    suggestion,
+    teamComp,
+  ]);
 
   return (
     <div className="rounded-md border border-border bg-background/30 overflow-hidden">
@@ -584,9 +629,9 @@ function ArtifactAssignmentCard({
           const label = artifactSet
             ? getArtifactSetLabel(artifactSet, t)
             : t.ui("common.none");
-          const charIndex = team.characters.indexOf(charId);
+          const charIndex = characters.indexOf(charId);
           const currentArtifactSet =
-            charIndex >= 0 ? (team.artifacts[charIndex] ?? null) : null;
+            charIndex >= 0 ? (artifacts[charIndex] ?? null) : null;
           const assignmentChanged =
             getArtifactAssignmentKey(currentArtifactSet) !==
             getArtifactAssignmentKey(artifactSet);
@@ -640,8 +685,14 @@ function ArtifactAssignmentCard({
 // ─── Main Card ───
 
 export function WeaponChoiceResultCard({
-  team,
-  updateTeam,
+  teamComp,
+  setupConfig,
+  characters,
+  weapons,
+  artifacts,
+  onTeamCompChange,
+  onSetupConfigChange,
+  setChoiceResult,
   charIds,
   isComputing,
   choiceMode,
@@ -654,13 +705,19 @@ export function WeaponChoiceResultCard({
   t,
 }: WeaponChoiceResultCardProps) {
   const isMobile = useMediaQuery("(max-width: 1023px)");
-  const ctx = team.calcContext;
+  const ctx = setupConfig.damage?.calcContext ?? {};
 
   const patchCtx = useCallback(
     (patch: Partial<CalcContext>) => {
-      updateTeam(team.id, { calcContext: { ...ctx, ...patch } });
+      onSetupConfigChange((config) => ({
+        ...config,
+        damage: {
+          ...(config.damage ?? {}),
+          calcContext: { ...(config.damage?.calcContext ?? {}), ...patch },
+        },
+      }));
     },
-    [team.id, ctx, updateTeam]
+    [onSetupConfigChange]
   );
 
   const hasResult = result && Object.keys(result.perCharacter).length > 0;
@@ -711,7 +768,14 @@ export function WeaponChoiceResultCard({
       </OptionButtonRow>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
         {/* Per-character CR/ER settings */}
-        <CharCrErSettings team={team} updateTeam={updateTeam} t={t} />
+        <CharCrErSettings
+          characters={characters}
+          charConfigs={setupConfig.charConfigs}
+          onCharConfigsChange={(charConfigs) =>
+            onSetupConfigChange({ charConfigs })
+          }
+          t={t}
+        />
 
         {/* Settings row */}
         <div className={CONTROLS_CLS}>
@@ -834,9 +898,12 @@ export function WeaponChoiceResultCard({
         {choiceMode === "artifact" && result?.artifactAssignmentSuggestion && (
           <ArtifactAssignmentCard
             suggestion={result.artifactAssignmentSuggestion}
-            team={team}
+            teamComp={teamComp}
+            characters={characters}
+            artifacts={artifacts}
             result={result}
-            updateTeam={updateTeam}
+            onTeamCompChange={onTeamCompChange}
+            setChoiceResult={setChoiceResult}
             t={t}
           />
         )}
@@ -854,7 +921,8 @@ export function WeaponChoiceResultCard({
                   <CharacterWeaponPanel
                     key={charId}
                     charId={charId}
-                    team={team}
+                    characters={characters}
+                    weapons={weapons}
                     rankings={rankings}
                     scopeHint={scopeHint}
                     isMobile={isMobile}

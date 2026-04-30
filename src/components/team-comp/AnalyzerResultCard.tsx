@@ -15,7 +15,6 @@ import type {
   AnalyzerCharConfig,
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";
-import type { Team } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { AnalyzerChart } from "./AnalyzerChart";
 import { AnalyzerSequence } from "./AnalyzerSequence";
@@ -30,8 +29,8 @@ import {
 import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
 
 interface AnalyzerResultCardProps {
-  team: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  calcContext: Partial<CalcContext>;
+  onCalcContextChange: (patch: Partial<CalcContext>) => void;
   charConfigs: AnalyzerCharConfig[];
   isComputing: boolean;
   result: AnalyzerResult | null;
@@ -42,8 +41,8 @@ interface AnalyzerResultCardProps {
 }
 
 export function AnalyzerResultCard({
-  team,
-  updateTeam,
+  calcContext,
+  onCalcContextChange,
   charConfigs,
   isComputing,
   result,
@@ -53,7 +52,7 @@ export function AnalyzerResultCard({
   onStop,
 }: AnalyzerResultCardProps) {
   const { t } = useLanguage();
-  const ctx = team.calcContext;
+  const ctx = calcContext;
 
   type ResultTab = "table" | "sequence";
   const [resultTab, setResultTab] = useState<ResultTab>("table");
@@ -62,9 +61,9 @@ export function AnalyzerResultCard({
 
   const patchCtx = useCallback(
     (patch: Partial<CalcContext>) => {
-      updateTeam(team.id, { calcContext: { ...ctx, ...patch } });
+      onCalcContextChange({ ...ctx, ...patch });
     },
-    [team.id, ctx, updateTeam]
+    [ctx, onCalcContextChange]
   );
 
   const charIds = charConfigs.map((c) => c.charId);

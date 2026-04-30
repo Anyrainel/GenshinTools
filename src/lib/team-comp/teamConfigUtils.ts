@@ -14,8 +14,10 @@ import type {
 } from "@/data/types";
 import type {
   CharBaseConfig,
-  Team,
   TeamCharConfig,
+  TeamComp,
+  TeamDamageConfig,
+  TeamSetupConfig,
   WeaponChoiceCharConfig,
 } from "@/lib/team-comp/types";
 import { EMPTY_LABEL } from "../dmgcalc/core/combo";
@@ -27,6 +29,7 @@ import type {
   TeamSlotConfig,
 } from "../dmgcalc/types";
 import { getHalfSetIds, getSetId } from "../dmgcalc/utils";
+import { teamCompToArrays } from "./teamDeltas";
 
 /** Detect what artifact set bonuses the equipped pieces actually form. */
 export function detectEquippedSets(
@@ -100,15 +103,15 @@ export function setsMatch(
 
 /**
  * Resolve a character's level, constellation, and raw talent data from
- * account data + team overrides.  Shared by buildTeamConfigs and
+ * account data + team overrides.  Shared by buildTeamSlotConfigs and
  * buildWeaponChoiceCharConfigs.
  */
 function resolveCharBaseConfig(
   charId: string,
-  team: Team,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): CharBaseConfig {
-  const charConfig = team.config?.charConfigs?.[charId];
+  const charConfig = setupConfig.charConfigs?.[charId];
   const acctChar = accountData?.characters.find((c) => c.key === charId);
   const defaultLevel = acctChar
     ? Number(getCharacterLevelTier(acctChar.level))
@@ -118,14 +121,15 @@ function resolveCharBaseConfig(
   const charLevel =
     charConfig?.level !== undefined
       ? charConfig.level
-      : team.opts?.[`${charId}.overrideLevel`] !== undefined
-        ? Number(team.opts[`${charId}.overrideLevel`])
+      : setupConfig.combatOptions?.[`${charId}.overrideLevel`] !== undefined
+        ? Number(setupConfig.combatOptions[`${charId}.overrideLevel`])
         : defaultLevel;
   const constellation =
     charConfig?.constellation !== undefined
       ? charConfig.constellation
-      : team.opts?.[`${charId}.overrideConstellation`] !== undefined
-        ? Number(team.opts[`${charId}.overrideConstellation`])
+      : setupConfig.combatOptions?.[`${charId}.overrideConstellation`] !==
+          undefined
+        ? Number(setupConfig.combatOptions[`${charId}.overrideConstellation`])
         : defaultConst;
 
   return { charLevel, constellation, acctTalent: acctChar?.talent };
@@ -137,14 +141,17 @@ function resolveCharBaseConfig(
  */
 function resolveTalentOverrides(
   charId: string,
-  team: Team,
+  setupConfig: TeamSetupConfig,
   acctTalent: TalentLevels | undefined,
   fallback: TalentLevels | undefined
 ): TalentLevels | undefined {
-  const charTalent = team.config?.charConfigs?.[charId]?.talentLevels;
-  const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
-  const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
-  const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+  const charTalent = setupConfig.charConfigs?.[charId]?.talentLevels;
+  const overrideAuto =
+    setupConfig.combatOptions?.[`${charId}.overrideTalentAuto`];
+  const overrideSkill =
+    setupConfig.combatOptions?.[`${charId}.overrideTalentSkill`];
+  const overrideBurst =
+    setupConfig.combatOptions?.[`${charId}.overrideTalentBurst`];
   if (
     charTalent?.auto === undefined &&
     charTalent?.skill === undefined &&
@@ -182,10 +189,10 @@ function resolveTalentOverrides(
 function resolveRefinement(
   charId: string,
   weaponId: string,
-  team: Team,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): number {
-  const authoredRefinement = team.config?.charConfigs?.[charId]?.refinement;
+  const authoredRefinement = setupConfig.charConfigs?.[charId]?.refinement;
   if (authoredRefinement !== undefined) return authoredRefinement;
   let defaultRefine = 1;
   if (accountData) {
@@ -198,44 +205,52 @@ function resolveRefinement(
     }
     if (refinements.length > 0) defaultRefine = Math.max(...refinements);
   }
-  return team.opts?.[`${charId}.overrideRefinement`] !== undefined
-    ? Number(team.opts[`${charId}.overrideRefinement`])
+  return setupConfig.combatOptions?.[`${charId}.overrideRefinement`] !==
+    undefined
+    ? Number(setupConfig.combatOptions[`${charId}.overrideRefinement`])
     : defaultRefine;
 }
 
 function getTeamCharConfig(
-  team: Team,
+  setupConfig: TeamSetupConfig,
   charId: string
 ): TeamCharConfig | undefined {
-  return team.config?.charConfigs?.[charId] ?? team.charSettings?.[charId];
+  return setupConfig.charConfigs?.[charId];
 }
 
 /**
  * Build TeamBuild configs using ACTUAL equipped artifact sets (for accurate
  * damage calc). Falls back to goal sets if no artifacts are equipped.
  */
-export function buildTeamConfigs(
-  team: Team,
+export function buildTeamSlotConfigs(
+  comp: TeamComp,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): TeamSlotConfig[] {
   const configs: TeamSlotConfig[] = [];
+  const { characters, weapons, artifacts } = teamCompToArrays(comp);
   for (let i = 0; i < 4; i++) {
-    const charId = team.characters[i];
+    const charId = characters[i];
     if (!charId) continue;
-    if (!team.weapons[i]) continue; // wait for weapon to be selected
+    if (!weapons[i]) continue; // wait for weapon to be selected
 
     const { charLevel, constellation, acctTalent } = resolveCharBaseConfig(
       charId,
-      team,
+      setupConfig,
       accountData
     );
 
-    const weaponId = team.weapons[i]!;
-    const refinement = resolveRefinement(charId, weaponId, team, accountData);
+    const weaponId = weapons[i]!;
+    const refinement = resolveRefinement(
+      charId,
+      weaponId,
+      setupConfig,
+      accountData
+    );
 
     let artifactSet: ArtifactSetConfig | null = null;
 
-    const artConfig = team.artifacts[i];
+    const artConfig = artifacts[i];
     if (artConfig) {
       if (artConfig.type === "4pc") {
         artifactSet = { type: "4pc", setId: artConfig.setId };
@@ -249,7 +264,7 @@ export function buildTeamConfigs(
 
     const talentLevels = resolveTalentOverrides(
       charId,
-      team,
+      setupConfig,
       acctTalent,
       acctTalent
     );
@@ -273,25 +288,30 @@ export function buildTeamConfigs(
  * computation uses exactly what the user sees.
  */
 export function buildWeaponChoiceCharConfigs(
-  team: Team,
+  comp: TeamComp,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): WeaponChoiceCharConfig[] {
   const configs: WeaponChoiceCharConfig[] = [];
+  const { characters, artifacts } = teamCompToArrays(comp);
   for (let i = 0; i < 4; i++) {
-    const charId = team.characters[i];
+    const charId = characters[i];
     if (!charId) continue;
 
     const { charLevel, constellation, acctTalent } = resolveCharBaseConfig(
       charId,
-      team,
+      setupConfig,
       accountData
     );
 
     const baseTalent = acctTalent ?? { auto: 10, skill: 10, burst: 10 };
-    const authoredTalent = team.config?.charConfigs?.[charId]?.talentLevels;
-    const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
-    const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
-    const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+    const authoredTalent = setupConfig.charConfigs?.[charId]?.talentLevels;
+    const overrideAuto =
+      setupConfig.combatOptions?.[`${charId}.overrideTalentAuto`];
+    const overrideSkill =
+      setupConfig.combatOptions?.[`${charId}.overrideTalentSkill`];
+    const overrideBurst =
+      setupConfig.combatOptions?.[`${charId}.overrideTalentBurst`];
     const talentLevels: [number, number, number] = [
       authoredTalent?.auto !== undefined
         ? authoredTalent.auto
@@ -309,14 +329,14 @@ export function buildWeaponChoiceCharConfigs(
           ? Number(overrideBurst)
           : baseTalent.burst,
     ];
-    const charConfig = getTeamCharConfig(team, charId);
+    const charConfig = getTeamCharConfig(setupConfig, charId);
 
     configs.push({
       charId,
       level: charLevel,
       constellation,
       talentLevels,
-      artifactConfig: team.artifacts[i] ?? null,
+      artifactConfig: artifacts[i] ?? null,
       minEr: charConfig?.minEr ?? 1,
       minCr: charConfig?.minCr ?? 0,
     });
@@ -374,20 +394,22 @@ export function getHigherTierEquippedArtifactIds(
 
 export function resolveBuildInfo(
   charId: string,
-  team: Team,
+  comp: TeamComp,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ) {
   const { charLevel, constellation: charConst } = resolveCharBaseConfig(
     charId,
-    team,
+    setupConfig,
     accountData
   );
-  const idx = team.characters.indexOf(charId);
-  const weaponId = idx >= 0 ? team.weapons[idx] : null;
+  const { characters, weapons, artifacts } = teamCompToArrays(comp);
+  const idx = characters.indexOf(charId);
+  const weaponId = idx >= 0 ? weapons[idx] : null;
   const weaponRefine = weaponId
-    ? resolveRefinement(charId, weaponId, team, accountData)
+    ? resolveRefinement(charId, weaponId, setupConfig, accountData)
     : 1;
-  const artConfig = idx >= 0 ? team.artifacts[idx] : null;
+  const artConfig = idx >= 0 ? artifacts[idx] : null;
   return { charLevel, charConst, weaponId, weaponRefine, artConfig };
 }
 
@@ -447,19 +469,12 @@ export function deriveSetKeysFromConfigs(
  */
 
 export function getEffectiveCombo(
-  team: Pick<
-    Team,
-    | "formulaMode"
-    | "selectedFormula"
-    | "singleReaction"
-    | "singleForceOnField"
-    | "combo"
-  >
+  damageConfig: TeamDamageConfig | undefined
 ): ComboFormula {
-  const mode = team.formulaMode ?? "single";
+  const mode = damageConfig?.formulaMode ?? "single";
 
   if (mode === "single") {
-    const sel = team.selectedFormula;
+    const sel = damageConfig?.selectedFormula;
     if (!sel) {
       return { id: "__single_empty__", label: EMPTY_LABEL, lines: [] };
     }
@@ -467,18 +482,18 @@ export function getEffectiveCombo(
       charId: sel.charId,
       formulaId: sel.formulaId,
       count: 1,
-      reaction: team.singleReaction,
-      forceOnField: team.singleForceOnField,
+      reaction: damageConfig?.singleReaction,
+      forceOnField: damageConfig?.singleForceOnField,
     };
     return { id: "__single__", label: EMPTY_LABEL, lines: [line] };
   }
 
   // combo mode
-  if (!team.combo) {
+  if (!damageConfig?.combo) {
     return { id: "__combo_empty__", label: EMPTY_LABEL, lines: [] };
   }
   return {
-    ...team.combo,
-    lines: team.combo.lines.filter((l) => l.count > 0),
+    ...damageConfig.combo,
+    lines: damageConfig.combo.lines.filter((l) => l.count > 0),
   };
 }

@@ -15,7 +15,7 @@ import {
   useDeferredTextInput,
 } from "@/hooks/useDeferredTextInput";
 import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamCharConfig } from "@/lib/team-comp/types";
 import { getAssetUrl } from "@/lib/utils";
 
 const LABEL_CLS =
@@ -156,7 +156,7 @@ export function RollQualityInputs({
 const CHAR_INPUT_CLS =
   "text-center font-bold bg-white/5 rounded-md border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm";
 
-// Defers commit until blur/Enter so per-keystroke updateTeam calls don't
+// Defers commit until blur/Enter so per-keystroke config updates don't
 // re-render the whole optimizer/generator results pipeline.
 function PctInput({
   value,
@@ -187,25 +187,38 @@ const CB_LABEL_CLS =
   "font-medium text-foreground/60 text-[10px] md:text-xs leading-tight";
 
 export type CharCrErProps = {
-  team: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  characters: (string | null)[];
+  charConfigs?: Record<string, TeamCharConfig>;
+  onCharConfigsChange: (charConfigs: Record<string, TeamCharConfig>) => void;
   tierAssignments?: TierAssignment;
   t: ReturnType<typeof useLanguage>["t"];
 };
 
 export function CharCrErSettings({
-  team,
-  updateTeam,
+  characters,
+  charConfigs,
+  onCharConfigsChange,
   tierAssignments,
   t,
 }: CharCrErProps) {
-  const charIds = team.characters.filter((id): id is string => id != null);
+  const configs = charConfigs ?? {};
+  const charIds = characters.filter((id): id is string => id != null);
   if (charIds.length === 0) return null;
+
+  const updateCharConfig = (
+    charId: string,
+    updater: (current: TeamCharConfig) => TeamCharConfig
+  ) => {
+    onCharConfigsChange({
+      ...configs,
+      [charId]: updater(configs[charId] ?? {}),
+    });
+  };
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 pb-1 md:pb-2">
       {charIds.map((charId) => {
-        const cs = team.charSettings?.[charId];
+        const cs = configs[charId];
         const crMode = cs?.crMode ?? "min";
         const tierEnabled = cs?.tierAwarePool ?? false;
         const fullSetOptional = cs?.fullSetOptional ?? false;
@@ -232,13 +245,10 @@ export function CharCrErSettings({
                 <Select
                   value={crMode}
                   onValueChange={(v) => {
-                    const prev = team.charSettings?.[charId];
+                    const prev = configs[charId];
                     const { minCr: _, ...rest } = prev ?? {};
-                    updateTeam(team.id, {
-                      charSettings: {
-                        ...team.charSettings,
-                        [charId]: { ...rest, crMode: v as "min" | "target" },
-                      },
+                    updateCharConfig(charId, () => {
+                      return { ...rest, crMode: v as "min" | "target" };
                     });
                   }}
                 >
@@ -260,24 +270,19 @@ export function CharCrErSettings({
                   }
                   onCommit={(rawIn) => {
                     const raw = rawIn.trim();
-                    const prev = team.charSettings?.[charId];
+                    const prev = configs[charId];
                     if (raw === "") {
                       const { minCr: _, ...rest } = prev ?? {};
-                      updateTeam(team.id, {
-                        charSettings: { ...team.charSettings, [charId]: rest },
-                      });
+                      updateCharConfig(charId, () => rest);
                       return;
                     }
                     const val = Number(raw) / 100;
                     if (!Number.isNaN(val)) {
-                      updateTeam(team.id, {
-                        charSettings: {
-                          ...team.charSettings,
-                          [charId]: {
-                            ...prev,
-                            minCr: Math.max(0, Math.min(1, val)),
-                          },
-                        },
+                      updateCharConfig(charId, () => {
+                        return {
+                          ...prev,
+                          minCr: Math.max(0, Math.min(1, val)),
+                        };
                       });
                     }
                   }}
@@ -298,21 +303,16 @@ export function CharCrErSettings({
                   }
                   onCommit={(rawIn) => {
                     const raw = rawIn.trim();
-                    const prev = team.charSettings?.[charId];
+                    const prev = configs[charId];
                     if (raw === "") {
                       const { minEr: _, ...rest } = prev ?? {};
-                      updateTeam(team.id, {
-                        charSettings: { ...team.charSettings, [charId]: rest },
-                      });
+                      updateCharConfig(charId, () => rest);
                       return;
                     }
                     const val = Number(raw) / 100;
                     if (!Number.isNaN(val)) {
-                      updateTeam(team.id, {
-                        charSettings: {
-                          ...team.charSettings,
-                          [charId]: { ...prev, minEr: val },
-                        },
+                      updateCharConfig(charId, () => {
+                        return { ...prev, minEr: val };
                       });
                     }
                   }}
@@ -329,14 +329,11 @@ export function CharCrErSettings({
               <div
                 className={CB_CLS}
                 onClick={() =>
-                  updateTeam(team.id, {
-                    charSettings: {
-                      ...team.charSettings,
-                      [charId]: {
-                        ...team.charSettings?.[charId],
-                        fullSetOptional: !fullSetOptional,
-                      },
-                    },
+                  updateCharConfig(charId, (current) => {
+                    return {
+                      ...current,
+                      fullSetOptional: !fullSetOptional,
+                    };
                   })
                 }
               >
@@ -354,14 +351,11 @@ export function CharCrErSettings({
                 <div
                   className={CB_CLS}
                   onClick={() =>
-                    updateTeam(team.id, {
-                      charSettings: {
-                        ...team.charSettings,
-                        [charId]: {
-                          ...team.charSettings?.[charId],
-                          tierAwarePool: !tierEnabled,
-                        },
-                      },
+                    updateCharConfig(charId, (current) => {
+                      return {
+                        ...current,
+                        tierAwarePool: !tierEnabled,
+                      };
                     })
                   }
                 >

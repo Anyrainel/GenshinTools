@@ -40,14 +40,18 @@ import {
 } from "@/data/gameStatsLoader";
 import type { AccountData, WeaponResource } from "@/data/types";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import {
+  teamCompInputToComp,
+  teamCompToArrays,
+} from "@/lib/team-comp/teamDeltas";
+import type { TeamComp } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { REACTION_COLORS } from "../shared/colors";
 
 interface TeamCardProps {
-  team: Team;
+  teamComp: TeamComp;
   index: number;
-  onUpdate: (patch: Partial<Team>) => void;
+  onUpdateComp: (comp: TeamComp) => void;
   onDelete?: () => void;
   onCopy?: () => void;
   onSelect?: () => void;
@@ -78,9 +82,9 @@ function setsEqual(a?: Set<string>, b?: Set<string>): boolean {
 
 export const TeamCard = memo(
   function TeamCard({
-    team,
+    teamComp,
     index,
-    onUpdate,
+    onUpdateComp,
     onDelete,
     onCopy,
     onSelect,
@@ -101,9 +105,31 @@ export const TeamCard = memo(
     const characterStats = characterStatsResource.use();
     const weaponStats = weaponStatsResource.use();
 
+    const { characters, weapons, artifacts } = useMemo(
+      () => teamCompToArrays(teamComp),
+      [teamComp]
+    );
+
+    const updateCompArrays = (
+      patch: Partial<{
+        characters: (string | null)[];
+        weapons: (string | null)[];
+        artifacts: TeamComp["slots"][number]["artifactSet"][];
+      }>
+    ) => {
+      onUpdateComp(
+        teamCompInputToComp({
+          ...teamComp,
+          characters: patch.characters ?? characters,
+          weapons: patch.weapons ?? weapons,
+          artifacts: patch.artifacts ?? artifacts,
+        })
+      );
+    };
+
     // At least one character with a weapon is enough to optimize
-    const hasConfiguredMember = team.characters.some(
-      (charId, i) => charId != null && team.weapons[i] != null
+    const hasConfiguredMember = characters.some(
+      (charId, i) => charId != null && weapons[i] != null
     );
 
     const reactionOptions = useMemo(
@@ -153,17 +179,22 @@ export const TeamCard = memo(
           )}
           <LightweightMultiSelect
             options={reactionOptions}
-            value={team.reactions}
+            value={teamComp.reactions}
             onValueChange={(value: string[]) =>
-              onUpdate({ reactions: value as ReactionType[] })
+              onUpdateComp({
+                ...teamComp,
+                reactions: value as ReactionType[],
+              })
             }
             placeholder={t.ui("teamComp.reactions")}
             triggerClassName={multiSelectTriggerClass}
             itemClassName="text-xs"
           />
           <Input
-            value={team.name}
-            onChange={(e) => onUpdate({ name: e.target.value })}
+            value={teamComp.name}
+            onChange={(e) =>
+              onUpdateComp({ ...teamComp, name: e.target.value })
+            }
             placeholder={t.ui("teamComp.teamName")}
             className="font-semibold !text-xs xl:!text-sm bg-transparent border-none px-1.5 xl:px-2 h-6 xl:h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
           />
@@ -213,7 +244,7 @@ export const TeamCard = memo(
             {/* Row 0: Element icons — dim by default, bright on resonance (2+ same element) */}
             <div />
             {/* spacer for icon column */}
-            {team.characters.map((charId, idx) => {
+            {characters.map((charId, idx) => {
               const char = charId ? charactersById[charId] : null;
               const charMeta = char
                 ? getCharacterDisplayMeta(char, characterStats?.[char.id])
@@ -224,7 +255,7 @@ export const TeamCard = memo(
                   : null;
               const hasResonance =
                 charMeta?.element != null &&
-                team.characters.filter(Boolean).filter((id) => {
+                characters.filter(Boolean).filter((id) => {
                   const c = charactersById[id!];
                   const meta = c
                     ? getCharacterDisplayMeta(c, characterStats?.[c.id])
@@ -255,11 +286,11 @@ export const TeamCard = memo(
 
             {/* Row 1: Character icon + Character pickers */}
             <User2 className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-muted-foreground" />
-            {team.characters.map((charId, idx) => {
+            {characters.map((charId, idx) => {
               // Only allow clearing the last filled slot (enforce prefix ordering)
               const isLastFilled =
                 charId != null &&
-                !team.characters.some((c, j) => j > idx && c != null);
+                !characters.some((c, j) => j > idx && c != null);
               return (
                 <ItemPicker
                   key={`char-${idx}`}
@@ -269,15 +300,15 @@ export const TeamCard = memo(
                   frozen={!!(charId && frozenCharIds?.has(charId))}
                   filter={(item) => {
                     const c = item as { id: string };
-                    return !team.characters.some(
+                    return !characters.some(
                       (otherId, j) => j !== idx && otherId === c.id
                     );
                   }}
                   onChange={(val) => {
-                    const newChars = [...team.characters];
+                    const newChars = [...characters];
                     newChars[idx] = val;
-                    const newWeapons = [...team.weapons];
-                    const newArts = [...team.artifacts];
+                    const newWeapons = [...weapons];
+                    const newArts = [...artifacts];
                     const char = charactersById[val];
 
                     // Prefill weapon and artifact from account data
@@ -325,7 +356,7 @@ export const TeamCard = memo(
                         }
                       }
                     }
-                    onUpdate({
+                    updateCompArrays({
                       characters: newChars,
                       weapons: newWeapons,
                       artifacts: newArts,
@@ -334,13 +365,13 @@ export const TeamCard = memo(
                   onClear={
                     isLastFilled
                       ? () => {
-                          const newChars = [...team.characters];
+                          const newChars = [...characters];
                           newChars[idx] = null;
-                          const newWeapons = [...team.weapons];
+                          const newWeapons = [...weapons];
                           newWeapons[idx] = null;
-                          const newArts = [...team.artifacts];
+                          const newArts = [...artifacts];
                           newArts[idx] = null;
-                          onUpdate({
+                          updateCompArrays({
                             characters: newChars,
                             weapons: newWeapons,
                             artifacts: newArts,
@@ -354,8 +385,8 @@ export const TeamCard = memo(
 
             {/* Row 2: Weapon icon + Weapon pickers */}
             <Swords className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-muted-foreground" />
-            {team.weapons.map((weaponId, idx) => {
-              const charId = team.characters[idx];
+            {weapons.map((weaponId, idx) => {
+              const charId = characters[idx];
               return (
                 <ItemPicker
                   key={`wpn-${idx}`}
@@ -364,19 +395,19 @@ export const TeamCard = memo(
                   triggerSize="md"
                   frozen={!!(charId && frozenCharIds?.has(charId))}
                   onChange={(val) => {
-                    const newWeapons = [...team.weapons];
+                    const newWeapons = [...weapons];
                     newWeapons[idx] = val;
-                    onUpdate({ weapons: newWeapons });
+                    updateCompArrays({ weapons: newWeapons });
                   }}
                   onClear={() => {
-                    const newWeapons = [...team.weapons];
+                    const newWeapons = [...weapons];
                     newWeapons[idx] = null;
-                    onUpdate({ weapons: newWeapons });
+                    updateCompArrays({ weapons: newWeapons });
                   }}
-                  disabled={!team.characters[idx]}
+                  disabled={!characters[idx]}
                   filter={(item) => {
-                    const char = team.characters[idx]
-                      ? charactersById[team.characters[idx]!]
+                    const char = characters[idx]
+                      ? charactersById[characters[idx]!]
                       : null;
                     if (!char) return true;
                     const charMeta = getCharacterDisplayMeta(
@@ -398,8 +429,8 @@ export const TeamCard = memo(
 
             {/* Row 3: Artifact icon + Artifact pickers */}
             <Diamond className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-muted-foreground" />
-            {team.artifacts.map((artConfig, idx) => {
-              const charId = team.characters[idx];
+            {artifacts.map((artConfig, idx) => {
+              const charId = characters[idx];
               const charFrozen = !!(charId && frozenCharIds?.has(charId));
               return (
                 <ItemPicker
@@ -408,14 +439,14 @@ export const TeamCard = memo(
                   value={artConfig}
                   triggerSize="md"
                   onChange={(val) => {
-                    const newArts = [...team.artifacts];
+                    const newArts = [...artifacts];
                     newArts[idx] = val;
-                    onUpdate({ artifacts: newArts });
+                    updateCompArrays({ artifacts: newArts });
                   }}
                   onClear={() => {
-                    const newArts = [...team.artifacts];
+                    const newArts = [...artifacts];
                     newArts[idx] = null;
-                    onUpdate({ artifacts: newArts });
+                    updateCompArrays({ artifacts: newArts });
                   }}
                   disabled={!charId}
                   frozen={charFrozen}
@@ -465,7 +496,7 @@ export const TeamCard = memo(
     );
   },
   (prev, next) =>
-    prev.team === next.team &&
+    prev.teamComp === next.teamComp &&
     prev.index === next.index &&
     prev.isFrozen === next.isFrozen &&
     prev.isFullyFrozen === next.isFullyFrozen &&

@@ -28,8 +28,9 @@ import type {
 import { aggregateTeamResults } from "@/lib/artifact-builds/auto-tune/pipeline";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import { buildTeamSlotConfigs } from "@/lib/team-comp/teamConfigUtils";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import {
   selectValidResolvedBuildGroups,
@@ -48,7 +49,7 @@ type BuildEntry = {
   selected: boolean;
   status: EntryStatus;
   result: AutoTuneOutput | null;
-  teams: Team[];
+  teamComps: TeamComp[];
 };
 
 type Phase = "selection" | "computing" | "review";
@@ -124,7 +125,8 @@ function runAutoTuneWorkers(
 // ── Build team inputs from user teams ──
 
 function buildTeamInputsFromUserTeams(
-  teams: Team[],
+  teamComps: TeamComp[],
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig,
   characterId: string,
   element: string,
   accountData: AccountData | null,
@@ -132,15 +134,16 @@ function buildTeamInputsFromUserTeams(
 ): AutoTuneTeamInput[] {
   const inputs: AutoTuneTeamInput[] = [];
 
-  for (const team of teams) {
+  for (const teamComp of teamComps) {
     try {
-      const configs = buildTeamConfigs(team, accountData);
+      const setupConfig = getTeamSetupConfigById(teamComp.id);
+      const configs = buildTeamSlotConfigs(teamComp, setupConfig, accountData);
       if (
         configs.length === 0 ||
         !configs.some((c) => c.charId === characterId)
       )
         continue;
-      const opts = (team.opts ?? {}) as Record<string, string>;
+      const opts = setupConfig.combatOptions as Record<string, string>;
       let formulas: WeightedFormula[] | undefined;
       try {
         const tb = new TeamBuild(configs, opts);
@@ -162,7 +165,12 @@ function buildTeamInputsFromUserTeams(
         configs,
         opts,
         formulas,
-        label: team.name || buildTeamLabel(team, t),
+        label:
+          teamComp.name ||
+          buildTeamLabel(
+            { characters: teamCompToArrays(teamComp).characters },
+            t
+          ),
         teamIndex: inputs.length,
         element,
       });
@@ -177,15 +185,16 @@ function buildTeamInputsFromUserTeams(
 // ── Collect DPS builds ──
 
 function getMatchingTeams(
-  allTeams: Team[],
+  allTeamComps: TeamComp[],
   characterId: string,
   build: Build
-): Team[] {
-  return allTeams.filter((team) => {
-    const charIdx = team.characters.indexOf(characterId);
+): TeamComp[] {
+  return allTeamComps.filter((teamComp) => {
+    const { characters, artifacts } = teamCompToArrays(teamComp);
+    const charIdx = characters.indexOf(characterId);
     if (charIdx === -1) return false;
 
-    const teamArt = team.artifacts[charIdx];
+    const teamArt = artifacts[charIdx];
     if (!teamArt) return true;
     if (build.composition === "4pc" && build.artifactSet) {
       if (teamArt.type === "4pc") return teamArt.setId === build.artifactSet;
@@ -205,7 +214,7 @@ function getMatchingTeams(
 
 function collectEntries(
   groups: BuildGroup[],
-  allTeams: Team[],
+  allTeamComps: TeamComp[],
   filter: ViewFilter,
   characterStats?: Record<string, { releaseDate?: string }> | null
 ): BuildEntry[] {
@@ -213,16 +222,20 @@ function collectEntries(
   for (const group of groups) {
     for (const build of group.builds) {
       if (!build.roles?.includes("dps")) continue;
-      const teams = getMatchingTeams(allTeams, group.characterId, build);
-      if (filter === "available" && teams.length === 0) continue;
+      const teamComps = getMatchingTeams(
+        allTeamComps,
+        group.characterId,
+        build
+      );
+      if (filter === "available" && teamComps.length === 0) continue;
       entries.push({
         buildId: build.id,
         characterId: group.characterId,
         build,
-        selected: teams.length > 0,
+        selected: teamComps.length > 0,
         status: "idle",
         result: null,
-        teams,
+        teamComps,
       });
     }
   }
@@ -247,7 +260,8 @@ export function AutoTuneView() {
   const characterStats = characterStatsResource.use();
   const groups = useBuildsStore(selectValidResolvedBuildGroups);
   const setBuild = useBuildsStore((s) => s.setBuild);
-  const allUserTeams = useTeamStore((s) => s.teams);
+  const allTeamComps = useTeamStore((s) => s.teamComps);
+  const getTeamSetupConfigById = useTeamStore((s) => s.getTeamSetupConfigById);
   const accountData = useActiveAccountData();
 
   const [entries, setEntries] = useState<BuildEntry[]>([]);
@@ -260,10 +274,10 @@ export function AutoTuneView() {
   useEffect(() => {
     if (phase === "selection") {
       setEntries(
-        collectEntries(groups, allUserTeams, viewFilter, characterStats)
+        collectEntries(groups, allTeamComps, viewFilter, characterStats)
       );
     }
-  }, [groups, allUserTeams, phase, viewFilter, characterStats]);
+  }, [groups, allTeamComps, phase, viewFilter, characterStats]);
 
   // ── Selection controls ──
 
@@ -317,7 +331,8 @@ export function AutoTuneView() {
       });
 
       const teamInputs = buildTeamInputsFromUserTeams(
-        entry.teams,
+        entry.teamComps,
+        getTeamSetupConfigById,
         entry.characterId,
         element,
         accountData,
@@ -364,7 +379,7 @@ export function AutoTuneView() {
     }
 
     setPhase("review");
-  }, [entries, characterStats, accountData, t]);
+  }, [entries, characterStats, getTeamSetupConfigById, accountData, t]);
 
   // ── Apply ──
 
@@ -419,9 +434,9 @@ export function AutoTuneView() {
     abortRef.current = true;
     setPhase("selection");
     setEntries(
-      collectEntries(groups, allUserTeams, viewFilter, characterStats)
+      collectEntries(groups, allTeamComps, viewFilter, characterStats)
     );
-  }, [groups, allUserTeams, viewFilter, characterStats]);
+  }, [groups, allTeamComps, viewFilter, characterStats]);
 
   // ── Derived counts ──
   const successCount = entries.filter(
@@ -435,8 +450,8 @@ export function AutoTuneView() {
       <ScrollLayout>
         <AutoTuneEmptyState
           hasBuilds={groups.length > 0}
-          hasTeams={allUserTeams.some((t) =>
-            t.characters.some((c) => c != null)
+          hasTeams={allTeamComps.some((teamComp) =>
+            teamComp.slots.some((slot) => slot.charId != null)
           )}
           onShowAll={() => setViewFilter("all")}
         />
@@ -560,6 +575,7 @@ export function AutoTuneView() {
               entry={entry}
               onToggle={() => toggleEntry(idx)}
               element={characterStats?.[entry.characterId]?.element ?? ""}
+              getTeamSetupConfigById={getTeamSetupConfigById}
               accountData={accountData}
             />
           ))}
@@ -586,6 +602,7 @@ export function AutoTuneView() {
                   onApply={() => applyEntry(idx)}
                   onDismiss={() => toggleEntry(idx)}
                   element={characterStats?.[entry.characterId]?.element ?? ""}
+                  getTeamSetupConfigById={getTeamSetupConfigById}
                   accountData={accountData}
                 />
               );

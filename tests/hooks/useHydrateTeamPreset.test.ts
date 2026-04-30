@@ -46,7 +46,7 @@ describe("useHydrateTeamPreset", () => {
     renderHook(() => useHydrateTeamPreset());
 
     await waitFor(() => {
-      expect(useTeamStore.getState().teams.map((team) => team.id)).toEqual([
+      expect(useTeamStore.getState().teamComps.map((team) => team.id)).toEqual([
         "preset-team",
       ]);
     });

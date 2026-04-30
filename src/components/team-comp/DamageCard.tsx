@@ -39,7 +39,12 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MainStat, MainStatSlot, Slot } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
-import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
+import type {
+  AccountData,
+  ArtifactData,
+  ArtifactSetConfig,
+  TierAssignment,
+} from "@/data/types";
 import { aggregateComboFormulaDefaults } from "@/lib/dmgcalc/core/comboBuffOverrides";
 import {
   adjustPartDamage,
@@ -59,9 +64,10 @@ import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
 import type {
   OptFailReason,
-  Team,
+  TeamComp,
   TeamOptimizationProgress,
   TeamOptimizationResult,
+  TeamSetupConfig,
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { BuffLedgerFormula } from "./BuffDialog";
@@ -121,7 +127,7 @@ function hasPartialReaction(line: ComboLine): boolean {
 
 /** Combo mode breakdown: 4-column grid grouped by character, with drill-down. */
 function ComboBreakdown({
-  team,
+  characters,
   lineDamages,
   comboLines,
   comboId,
@@ -140,7 +146,7 @@ function ComboBreakdown({
   dpsSeconds,
   setDpsSeconds,
 }: {
-  team: Team;
+  characters: (string | null)[];
   lineDamages: { perHit: number; total: number }[];
   comboLines: ComboLine[];
   comboId?: string;
@@ -252,7 +258,7 @@ function ComboBreakdown({
   );
 
   // Maintain team character order
-  const teamCharIds = team.characters.filter((id): id is string => id != null);
+  const teamCharIds = characters.filter((id): id is string => id != null);
 
   const [expanded, setExpanded] = useSessionState("comboExpanded", true);
 
@@ -749,7 +755,8 @@ function SingleResultView({
   displayResult,
   resolvedFormula,
   teamBuild,
-  team,
+  characters,
+  artifacts,
   artifactsByChar,
   critMode,
   setCritMode,
@@ -774,7 +781,8 @@ function SingleResultView({
   displayResult: DisplayResult;
   resolvedFormula: { charId: string; formulaId: string };
   teamBuild: TeamBuild;
-  team: Team;
+  characters: (string | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
@@ -829,7 +837,8 @@ function SingleResultView({
       {displayResult && (
         <StatSheetPanel
           result={displayResult}
-          team={team}
+          characters={characters}
+          artifacts={artifacts}
           artifactsByChar={artifactsByChar}
           targetCharId={resolvedFormula.charId}
           highlightedStat={null}
@@ -947,7 +956,7 @@ function SingleResultView({
       {displayResult && (
         <BuffLedger
           buffs={displayResult.buffs}
-          team={team}
+          characters={characters}
           t={t}
           formulas={
             parts
@@ -978,7 +987,8 @@ function ComboResultView({
   comboLines,
   comboId,
   teamBuild,
-  team,
+  characters,
+  artifacts,
   artifactsByChar,
   calcContext,
   critMode,
@@ -1004,7 +1014,8 @@ function ComboResultView({
   comboLines: ComboLine[];
   comboId?: string;
   teamBuild: TeamBuild;
-  team: Team;
+  characters: (string | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   calcContext: CalcContext;
   critMode: CritMode;
@@ -1043,8 +1054,8 @@ function ComboResultView({
     [comboLines, allFormulaIds]
   );
   const teamCharIds = useMemo(
-    () => team.characters.filter((id): id is string => id != null),
-    [team.characters]
+    () => characters.filter((id): id is string => id != null),
+    [characters]
   );
 
   // Build per-formula contexts for BuffLedger's override dialog
@@ -1114,7 +1125,8 @@ function ComboResultView({
       {displayResult && (
         <StatSheetPanel
           result={displayResult}
-          team={team}
+          characters={characters}
+          artifacts={artifacts}
           artifactsByChar={artifactsByChar}
           targetCharId={""}
           comboActiveCharIds={
@@ -1136,7 +1148,7 @@ function ComboResultView({
         />
       )}
       <ComboBreakdown
-        team={team}
+        characters={characters}
         lineDamages={displayResult.lineDamages ?? []}
         comboLines={comboLines}
         comboId={comboId}
@@ -1161,7 +1173,7 @@ function ComboResultView({
       {displayResult && (
         <BuffLedger
           buffs={displayResult.buffs}
-          team={team}
+          characters={characters}
           t={t}
           formulas={comboFormulas}
         />
@@ -1171,9 +1183,15 @@ function ComboResultView({
 }
 
 interface DamageCardProps {
-  team: Team;
-  effectiveTeam: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
+  characters: (string | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
+  onSetupConfigChange: (
+    updater:
+      | Partial<TeamSetupConfig>
+      | ((config: TeamSetupConfig) => TeamSetupConfig)
+  ) => void;
   resolvedFormula: { charId: string; formulaId: string } | null;
   isMobile: boolean;
   // Current equipped
@@ -1245,40 +1263,35 @@ interface DamageCardProps {
 // ─── Shared inline control helpers ───
 
 type CtxProps = {
-  team: Team;
+  calcContext: Partial<CalcContext> | undefined;
   activeContext: CalcContext;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  onCalcContextChange: (patch: Partial<CalcContext>) => void;
   t: ReturnType<typeof useLanguage>["t"];
 };
 
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
 
-function EnemyFields({ team, updateTeam, t }: Omit<CtxProps, "activeContext">) {
+function EnemyFields({
+  calcContext,
+  onCalcContextChange,
+  t,
+}: Omit<CtxProps, "activeContext">) {
   return (
     <EnemyInputs
-      enemyLevel={team.calcContext.enemyLevel ?? ""}
+      enemyLevel={calcContext?.enemyLevel ?? ""}
       onEnemyLevelChange={(raw) => {
         const num = Number(raw);
-        if (!Number.isNaN(num))
-          updateTeam(team.id, {
-            calcContext: { ...team.calcContext, enemyLevel: num },
-          });
+        if (!Number.isNaN(num)) onCalcContextChange({ enemyLevel: num });
       }}
       enemyRes={
-        team.calcContext.enemyRes != null
-          ? Math.round(team.calcContext.enemyRes * 100)
+        calcContext?.enemyRes != null
+          ? Math.round(calcContext.enemyRes * 100)
           : ""
       }
       onEnemyResChange={(raw) => {
         const num = Number(raw);
-        if (!Number.isNaN(num))
-          updateTeam(team.id, {
-            calcContext: {
-              ...team.calcContext,
-              enemyRes: num / 100,
-            },
-          });
+        if (!Number.isNaN(num)) onCalcContextChange({ enemyRes: num / 100 });
       }}
       t={t}
     />
@@ -1469,21 +1482,17 @@ function ComparisonLabel({
   );
 }
 
-function RollQualityFields({ team, activeContext, updateTeam, t }: CtxProps) {
+function RollQualityFields({
+  activeContext,
+  onCalcContextChange,
+  t,
+}: CtxProps) {
   return (
     <RollQualityInputs
       rollMultiplier={activeContext.rollMultiplier}
-      onRollMultiplierChange={(v) =>
-        updateTeam(team.id, {
-          calcContext: { ...team.calcContext, rollMultiplier: v },
-        })
-      }
+      onRollMultiplierChange={(v) => onCalcContextChange({ rollMultiplier: v })}
       substatBudget={activeContext.substatBudget}
-      onSubstatBudgetChange={(v) =>
-        updateTeam(team.id, {
-          calcContext: { ...team.calcContext, substatBudget: v },
-        })
-      }
+      onSubstatBudgetChange={(v) => onCalcContextChange({ substatBudget: v })}
       t={t}
     />
   );
@@ -1520,9 +1529,11 @@ function ActionButton({
 }
 
 export function DamageCard({
-  team,
-  effectiveTeam,
-  updateTeam,
+  teamComp,
+  setupConfig,
+  characters,
+  artifacts,
+  onSetupConfigChange,
   resolvedFormula,
   isMobile,
   equippedArtifactsByChar,
@@ -1573,6 +1584,37 @@ export function DamageCard({
   preferredMainStatsDisabled,
 }: DamageCardProps) {
   const { t } = useLanguage();
+  const damageConfig = setupConfig.damage ?? {};
+  const charConfigs = setupConfig.charConfigs ?? {};
+  const updateDamageConfig = useCallback(
+    (patch: Partial<NonNullable<TeamSetupConfig["damage"]>>) => {
+      onSetupConfigChange((config) => ({
+        ...config,
+        damage: {
+          ...(config.damage ?? {}),
+          ...patch,
+        },
+      }));
+    },
+    [onSetupConfigChange]
+  );
+  const updateCharConfigs = useCallback(
+    (nextCharConfigs: NonNullable<TeamSetupConfig["charConfigs"]>) => {
+      onSetupConfigChange({ charConfigs: nextCharConfigs });
+    },
+    [onSetupConfigChange]
+  );
+  const updateCalcContext = useCallback(
+    (patch: Partial<CalcContext>) => {
+      updateDamageConfig({
+        calcContext: {
+          ...(damageConfig.calcContext ?? {}),
+          ...patch,
+        },
+      });
+    },
+    [damageConfig.calcContext, updateDamageConfig]
+  );
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
   >("resultsTab", "current");
@@ -1619,7 +1661,12 @@ export function DamageCard({
     };
   }, [isComputing]);
 
-  const ctxProps: CtxProps = { team, activeContext, updateTeam, t };
+  const ctxProps: CtxProps = {
+    calcContext: damageConfig.calcContext,
+    activeContext,
+    onCalcContextChange: updateCalcContext,
+    t,
+  };
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
 
@@ -1638,11 +1685,11 @@ export function DamageCard({
     let setMismatch = false;
     let erUnmet = false;
     let crUnmet = false;
-    for (let i = 0; i < effectiveTeam.characters.length; i++) {
-      const charId = effectiveTeam.characters[i];
+    for (let i = 0; i < characters.length; i++) {
+      const charId = characters[i];
       if (!charId) continue;
       // Set check
-      const reqSet = effectiveTeam.artifacts[i];
+      const reqSet = artifacts[i];
       if (reqSet && !setMismatch) {
         const equipped = equippedArtifactsByChar[charId];
         if (equipped) {
@@ -1669,14 +1716,14 @@ export function DamageCard({
         }
       }
       // ER check
-      const minEr = effectiveTeam.charSettings?.[charId]?.minEr;
+      const minEr = charConfigs[charId]?.minEr;
       if (minEr && minEr > 1) {
         const sheets = currentDisplayResult.statSheets[charId];
         const currentEr = sheets?.onField.get("er", null) ?? 1;
         if (currentEr < minEr) erUnmet = true;
       }
       // CR check
-      const minCr = effectiveTeam.charSettings?.[charId]?.minCr;
+      const minCr = charConfigs[charId]?.minCr;
       if (minCr && minCr > 0) {
         const sheets = currentDisplayResult.statSheets[charId];
         const currentCr = sheets?.onField.get("cr", null) ?? 0;
@@ -1687,7 +1734,14 @@ export function DamageCard({
     if (crUnmet) caveats.push(t.ui("teamComp.caveatCrUnmet"));
     if (erUnmet) caveats.push(t.ui("teamComp.caveatErUnmet"));
     return caveats;
-  }, [currentDisplayResult, effectiveTeam, equippedArtifactsByChar, t]);
+  }, [
+    currentDisplayResult,
+    characters,
+    artifacts,
+    charConfigs,
+    equippedArtifactsByChar,
+    t,
+  ]);
 
   return (
     <Card className={CARD_CLS}>
@@ -1747,7 +1801,8 @@ export function DamageCard({
                 displayResult={currentDisplayResult}
                 resolvedFormula={resolvedFormula}
                 teamBuild={teamBuild}
-                team={effectiveTeam}
+                characters={characters}
+                artifacts={artifacts}
                 artifactsByChar={equippedArtifactsByChar}
                 critMode={critMode}
                 setCritMode={setCritMode}
@@ -1766,7 +1821,8 @@ export function DamageCard({
                 comboLines={comboLines}
                 comboId={comboId}
                 teamBuild={teamBuild}
-                team={effectiveTeam}
+                characters={characters}
+                artifacts={artifacts}
                 artifactsByChar={equippedArtifactsByChar}
                 calcContext={activeContext}
                 critMode={critMode}
@@ -1817,8 +1873,9 @@ export function DamageCard({
           <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
             {/* Per-character optimizer settings (CR/ER/Tier) */}
             <CharCrErSettings
-              team={team}
-              updateTeam={updateTeam}
+              characters={characters}
+              charConfigs={charConfigs}
+              onCharConfigsChange={updateCharConfigs}
               tierAssignments={tierAssignments}
               t={t}
             />
@@ -1920,7 +1977,8 @@ export function DamageCard({
                 {/* Partial StatSheetPanel — preview mode, artifacts only */}
                 {hasOptResult && (
                   <StatSheetPanel
-                    team={effectiveTeam}
+                    characters={characters}
+                    artifacts={artifacts}
                     artifactsByChar={optimizedArtifactsByChar}
                     targetCharId=""
                     highlightedStat={null}
@@ -2030,7 +2088,7 @@ export function DamageCard({
                       )}
                       {/* Per-character status badges — always visible during optimization */}
                       <div className="flex flex-wrap gap-1.5">
-                        {effectiveTeam.characters
+                        {characters
                           .filter((id): id is string => id != null)
                           .map((charId) => {
                             const pr = teamProgress?.passResults.find(
@@ -2099,7 +2157,8 @@ export function DamageCard({
                   displayResult={optimizedDisplayResult}
                   resolvedFormula={resolvedFormula}
                   teamBuild={teamBuild}
-                  team={effectiveTeam}
+                  characters={characters}
+                  artifacts={artifacts}
                   artifactsByChar={optimizedArtifactsByChar}
                   critMode={critMode}
                   setCritMode={setCritMode}
@@ -2129,7 +2188,8 @@ export function DamageCard({
                   comboLines={comboLines}
                   comboId={comboId}
                   teamBuild={teamBuild}
-                  team={effectiveTeam}
+                  characters={characters}
+                  artifacts={artifacts}
                   artifactsByChar={optimizedArtifactsByChar}
                   calcContext={activeContext}
                   critMode={critMode}
@@ -2180,7 +2240,9 @@ export function DamageCard({
               (teamResult?.done || hasOptResult) &&
               teamResult?.bestDamage !== 0 && (
                 <SwapGuide
-                  team={effectiveTeam}
+                  comp={teamComp}
+                  setupConfig={setupConfig}
+                  characters={characters}
                   equippedArtifactsByChar={equippedArtifactsByChar}
                   optimizedArtifactsByChar={optimizedArtifactsByChar}
                   accountData={accountData}
@@ -2194,7 +2256,12 @@ export function DamageCard({
       {/* ── Content: Generate (dev only) ── */}
       {resultsTab === "generate" && (
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-          <CharCrErSettings team={team} updateTeam={updateTeam} t={t} />
+          <CharCrErSettings
+            characters={characters}
+            charConfigs={charConfigs}
+            onCharConfigsChange={updateCharConfigs}
+            t={t}
+          />
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
             <RollQualityFields {...ctxProps} />
@@ -2246,7 +2313,8 @@ export function DamageCard({
                 displayResult={genDisplayResult}
                 resolvedFormula={resolvedFormula}
                 teamBuild={teamBuild}
-                team={effectiveTeam}
+                characters={characters}
+                artifacts={artifacts}
                 artifactsByChar={genArtifactsByChar}
                 critMode={critMode}
                 setCritMode={setCritMode}
@@ -2264,7 +2332,8 @@ export function DamageCard({
                 comboLines={comboLines}
                 comboId={comboId}
                 teamBuild={teamBuild}
-                team={effectiveTeam}
+                characters={characters}
+                artifacts={artifacts}
                 artifactsByChar={genArtifactsByChar}
                 calcContext={activeContext}
                 critMode={critMode}

@@ -2,6 +2,7 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
+import { migrateTriageStore } from "@/stores/migration/triage";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 
@@ -19,6 +20,26 @@ beforeEach(() => {
 });
 
 describe("useTriageStore", () => {
+  it("migrates v5 persisted active settings into profile settings only", () => {
+    const result = migrateTriageStore(
+      {
+        settings: {
+          ...DEFAULT_TRIAGE_SETTINGS,
+          mainStatThreshold: 82,
+        },
+      },
+      5
+    );
+
+    expect(result.settingsByProfileId).toEqual({
+      [DEFAULT_ACCOUNT_PROFILE_ID]: {
+        ...DEFAULT_TRIAGE_SETTINGS,
+        mainStatThreshold: 82,
+      },
+    });
+    expect(result).not.toHaveProperty("settings");
+  });
+
   describe("migration v0 → v1", () => {
     it("adds customFlexInputs: [] when missing", () => {
       // Simulate v0 persisted state (no customFlexInputs)

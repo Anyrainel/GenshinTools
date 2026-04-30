@@ -14,14 +14,13 @@ import {
 import type { ResolvedBuff, ResolvedStatEntry } from "@/lib/dmgcalc/types";
 import { getSourceIcon } from "@/lib/team-comp/buffDisplayUtils";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
-import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getValueColor, VALUE_COLORS } from "../shared/colors";
 import { BuffDialog, type BuffLedgerFormula } from "./BuffDialog";
 
 type Props = {
   buffs: ResolvedBuff[];
-  team: Team;
+  characters: (string | null)[];
   t: ReturnType<typeof useLanguage>["t"];
   formulas?: BuffLedgerFormula[];
 };
@@ -198,7 +197,7 @@ function BuffChip({
   );
 }
 
-export function BuffLedger({ buffs, team, t, formulas }: Props) {
+export function BuffLedger({ buffs, characters, t, formulas }: Props) {
   const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
@@ -285,7 +284,7 @@ export function BuffLedger({ buffs, team, t, formulas }: Props) {
           )}
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
-            {team.characters.map((charId, i) => {
+            {characters.map((charId, i) => {
               if (!charId)
                 return (
                   <div

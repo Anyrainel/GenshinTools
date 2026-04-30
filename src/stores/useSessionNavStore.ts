@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { migrateSessionNavStorageValue } from "./migration/sessionNav";
 import {
   DEFAULT_VIEW_SETTINGS,
   PersistedSessionNavStoreSchema,
@@ -69,39 +70,10 @@ export const useSessionNavStore = create<SessionNavState>()(
         getItem: (name) => {
           const str = sessionStorage.getItem(name);
           if (!str) return null;
-          const parsed = JSON.parse(str);
-          // Migrate from old flat fields to unified viewSettings
-          if (parsed?.state) {
-            const s = parsed.state;
-            if (!s.viewSettings) {
-              s.viewSettings = {
-                damage: {
-                  ...DEFAULT_VIEW_SETTINGS,
-                  activeTeamId: s.activeTeamId ?? null,
-                },
-                investment: {
-                  ...DEFAULT_VIEW_SETTINGS,
-                  activeTeamId: s.activeInvestmentTeamId ?? null,
-                },
-                weaponChoice: {
-                  ...DEFAULT_VIEW_SETTINGS,
-                  activeTeamId: s.activeWeaponChoiceTeamId ?? null,
-                },
-              };
-              // Clean up old fields
-              s.activeTeamId = undefined;
-              s.activeInvestmentTeamId = undefined;
-              s.activeWeaponChoiceTeamId = undefined;
-            }
-            // Ensure all views have all fields (in case new fields were added)
-            for (const viewId of ["damage", "investment", "weaponChoice"]) {
-              s.viewSettings[viewId] = {
-                ...DEFAULT_VIEW_SETTINGS,
-                ...s.viewSettings[viewId],
-              };
-            }
-          }
-          return parsed;
+          return migrateSessionNavStorageValue(JSON.parse(str)) as {
+            state: Record<string, unknown>;
+            version?: number;
+          };
         },
         setItem: (name, value) => {
           sessionStorage.setItem(name, JSON.stringify(value));

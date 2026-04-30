@@ -9,7 +9,11 @@ import { CharCrErSettings } from "@/components/team-comp/GeneratorControls";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TierAssignment } from "@/data/types";
 import type { CalcContext } from "@/lib/dmgcalc/types";
-import type { Team } from "@/lib/team-comp/types";
+import {
+  teamCompInputToComp,
+  teamCompToArrays,
+} from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
 vi.mock("@/hooks/useMediaQuery", () => ({
@@ -53,24 +57,28 @@ vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
   };
 });
 
-const mockTeam: Team = {
+const mockTeamComp: TeamComp = teamCompInputToComp({
   id: "test-team",
   name: "Test Team",
   characters: ["hu_tao", "xingqiu", null, null],
   weapons: ["staff_of_homa", null, null, null],
   artifacts: [null, null, null, null],
   reactions: [],
-  combo: null,
-  formulaMode: "combo",
-  calcContext: {
-    enemyLevel: 110,
-    enemyRes: 0.1,
-    rollMultiplier: 0.85,
-    substatBudget: "8_6",
+});
+
+const mockSetupConfig: TeamSetupConfig = {
+  combatOptions: {},
+  damage: {
+    calcContext: {
+      enemyLevel: 110,
+      enemyRes: 0.1,
+      rollMultiplier: 0.85,
+      substatBudget: "8_6",
+    },
+    selectedFormula: null,
+    formulaMode: "combo",
+    combo: null,
   },
-  selectedFormula: null,
-  optimizationResult: null,
-  opts: {},
 };
 
 type CardProps = ComponentProps<typeof DamageCard>;
@@ -80,10 +88,15 @@ function TestCard(props: CardProps) {
 }
 
 function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
+  const teamComp = mockTeamComp;
+  const setupConfig = mockSetupConfig;
+  const { characters, artifacts } = teamCompToArrays(teamComp);
   return {
-    team: mockTeam,
-    effectiveTeam: mockTeam,
-    updateTeam: vi.fn(),
+    teamComp,
+    setupConfig,
+    characters,
+    artifacts,
+    onSetupConfigChange: vi.fn(),
     resolvedFormula: null,
     isMobile: false,
     equippedArtifactsByChar: {},
@@ -375,14 +388,19 @@ describe("DpsDisplay", () => {
 
 function TestCharCrErSettings(
   props: Partial<ComponentProps<typeof CharCrErSettings>> & {
-    team?: Team;
+    teamComp?: TeamComp;
+    setupConfig?: TeamSetupConfig;
   }
 ) {
   const { t } = useLanguage();
+  const teamComp = props.teamComp ?? mockTeamComp;
+  const setupConfig = props.setupConfig ?? mockSetupConfig;
+  const { characters } = teamCompToArrays(teamComp);
   return (
     <CharCrErSettings
-      team={props.team ?? mockTeam}
-      updateTeam={props.updateTeam ?? vi.fn()}
+      characters={props.characters ?? characters}
+      charConfigs={props.charConfigs ?? setupConfig.charConfigs}
+      onCharConfigsChange={props.onCharConfigsChange ?? vi.fn()}
       tierAssignments={props.tierAssignments}
       t={t}
     />
@@ -392,7 +410,7 @@ function TestCharCrErSettings(
 describe("CharCrErSettings", () => {
   it("renders a row for each character in the team", () => {
     render(<TestCharCrErSettings />);
-    // mockTeam has hu_tao and xingqiu (2 non-null characters) — shown as icons only
+    // The fixture has hu_tao and xingqiu (2 non-null characters) — shown as icons only
     expect(screen.getByAltText("Hu Tao")).toBeInTheDocument();
     expect(screen.getByAltText("Xingqiu")).toBeInTheDocument();
   });

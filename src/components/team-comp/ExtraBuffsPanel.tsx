@@ -35,7 +35,6 @@ import { isPctStat } from "@/data/utils";
 import type { ExtraBuff } from "@/lib/dmgcalc/types";
 import { CUSTOM_STAT_OPTIONS } from "@/lib/team-comp/constants";
 import { formatBuffStats } from "@/lib/team-comp/displayFormatter";
-import type { Team } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getElementColor } from "../shared/colors";
 
@@ -43,26 +42,27 @@ import { getElementColor } from "../shared/colors";
 const FOOD_PREFIX = "food:";
 
 interface ExtraBuffsPanelProps {
-  team: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  characters: string[];
+  extraBuffs: ExtraBuff[];
+  onExtraBuffsChange: (buffs: ExtraBuff[]) => void;
   enemyAura: Element | undefined;
   onEnemyAuraChange: (el: Element | undefined) => void;
   t: ReturnType<typeof useLanguage>["t"];
 }
 
 export function ExtraBuffsPanel({
-  team,
-  updateTeam,
+  characters,
+  extraBuffs,
+  onExtraBuffsChange,
   enemyAura,
   onEnemyAuraChange,
   t,
 }: ExtraBuffsPanelProps) {
-  const extraBuffs: ExtraBuff[] = team.extraBuffs ?? [];
   const [customDialogOpen, setCustomDialogOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const setExtraBuffs = (buffs: ExtraBuff[]) => {
-    updateTeam(team.id, { extraBuffs: buffs } as Partial<Team>);
+    onExtraBuffsChange(buffs);
   };
 
   // ── Food toggles ──
@@ -147,8 +147,6 @@ export function ExtraBuffsPanel({
   };
 
   const activeCount = extraBuffs.length;
-  const characters = team.characters.filter((c): c is string => c != null);
-
   return (
     <>
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>

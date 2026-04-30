@@ -45,7 +45,8 @@ import type {
   TimelineAction,
 } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -57,29 +58,41 @@ const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
 
 function resolveCharCtx(
   charId: string,
-  team: Team,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null
 ): { constellation: number; talentLevels: [number, number, number] } {
   const acctChar = accountData?.characters.find((c) => c.key === charId);
   const defaultConst = acctChar ? acctChar.constellation : 0;
   const constellation =
-    team.opts?.[`${charId}.overrideConstellation`] !== undefined
-      ? Number(team.opts[`${charId}.overrideConstellation`])
-      : defaultConst;
+    setupConfig.charConfigs?.[charId]?.constellation ??
+    (setupConfig.combatOptions?.[`${charId}.overrideConstellation`] !==
+    undefined
+      ? Number(setupConfig.combatOptions[`${charId}.overrideConstellation`])
+      : defaultConst);
   const acct = acctChar?.talent ?? { auto: 10, skill: 10, burst: 10 };
-  const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
-  const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
-  const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
+  const authoredTalent = setupConfig.charConfigs?.[charId]?.talentLevels;
+  const overrideAuto =
+    setupConfig.combatOptions?.[`${charId}.overrideTalentAuto`];
+  const overrideSkill =
+    setupConfig.combatOptions?.[`${charId}.overrideTalentSkill`];
+  const overrideBurst =
+    setupConfig.combatOptions?.[`${charId}.overrideTalentBurst`];
   const base: [number, number, number] = [
-    overrideAuto !== undefined && overrideAuto !== ""
-      ? Number(overrideAuto)
-      : acct.auto,
-    overrideSkill !== undefined && overrideSkill !== ""
-      ? Number(overrideSkill)
-      : acct.skill,
-    overrideBurst !== undefined && overrideBurst !== ""
-      ? Number(overrideBurst)
-      : acct.burst,
+    authoredTalent?.auto !== undefined
+      ? authoredTalent.auto
+      : overrideAuto !== undefined && overrideAuto !== ""
+        ? Number(overrideAuto)
+        : acct.auto,
+    authoredTalent?.skill !== undefined
+      ? authoredTalent.skill
+      : overrideSkill !== undefined && overrideSkill !== ""
+        ? Number(overrideSkill)
+        : acct.skill,
+    authoredTalent?.burst !== undefined
+      ? authoredTalent.burst
+      : overrideBurst !== undefined && overrideBurst !== ""
+        ? Number(overrideBurst)
+        : acct.burst,
   ];
 
   // Apply constellation +3 talent bonuses (C3 / C5) — matches CharacterBase
@@ -166,11 +179,13 @@ function getBoundaryParticleBridge(
 }
 
 function teamToSlots(
-  team: Team,
+  comp: TeamComp,
+  setupConfig: TeamSetupConfig,
   accountData: AccountData | null,
   characterStats: ReturnType<typeof characterStatsResource.use>
 ): TeamSlot[] {
-  const charIds = team.characters.filter((id): id is string => id != null);
+  const { characters, weapons, artifacts } = teamCompToArrays(comp);
+  const charIds = characters.filter((id): id is string => id != null);
 
   return charIds
     .map((charId, i) => {
@@ -178,10 +193,10 @@ function teamToSlots(
       const pData = particles[charId];
       const element = (pData?.element ?? "Anemo") as Element;
       const burstCost = info?.energy ?? 60;
-      const weaponId = team.weapons[i] ?? undefined;
+      const weaponId = weapons[i] ?? undefined;
       const { constellation, talentLevels } = resolveCharCtx(
         charId,
-        team,
+        setupConfig,
         accountData
       );
       // healAction: only set if this character actually heals at the current
@@ -198,10 +213,9 @@ function teamToSlots(
         constellation,
         weaponId,
         artifactSet:
-          team.artifacts[i]?.type === "4pc" &&
-          team.artifacts[i]?.setId === "scholar"
+          artifacts[i]?.type === "4pc" && artifacts[i]?.setId === "scholar"
             ? null
-            : team.artifacts[i],
+            : artifacts[i],
         weaponType: characterStats?.[charId]?.weaponType,
         talentLevels,
         healAction,
@@ -211,14 +225,19 @@ function teamToSlots(
 }
 
 interface ErCalcCardProps {
-  team: Team;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
 }
 
-export function ErCalcCard({ team }: ErCalcCardProps) {
+export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
   const { t } = useLanguage();
-  const updateTeam = useTeamStore((s) => s.updateTeam);
+  const updateTeamSetupConfig = useTeamStore((s) => s.updateTeamSetupConfig);
   const accountData = useActiveAccountData();
   const characterStats = characterStatsResource.use();
+  const { characters, artifacts } = useMemo(
+    () => teamCompToArrays(teamComp),
+    [teamComp]
+  );
   // Persist open/closed across refresh via session store (sessionStorage-backed).
   const expanded = useSessionNavStore(
     (s) => s.viewSettings.damage.erCalcExpanded
@@ -233,35 +252,37 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
     [collapsed, setErCalcExpanded]
   );
 
-  const charIds = team.characters.filter((id): id is string => id != null);
+  const charIds = characters.filter((id): id is string => id != null);
   const erTeam = useMemo(
-    () => teamToSlots(team, accountData, characterStats),
-    [team, accountData, characterStats]
+    () => teamToSlots(teamComp, setupConfig, accountData, characterStats),
+    [teamComp, setupConfig, accountData, characterStats]
   );
 
   // Scholar 4pc bonus is not modeled by the engine (particle-gain trigger
   // isn't wired through distributeParticles yet). Show a banner when any
   // teammate has it equipped so users know the calc ignores it.
   const hasScholarEquipped = useMemo(
-    () =>
-      team.artifacts.some((a) => a?.type === "4pc" && a.setId === "scholar"),
-    [team.artifacts]
+    () => artifacts.some((a) => a?.type === "4pc" && a.setId === "scholar"),
+    [artifacts]
   );
 
   // Read timelines from team store, fallback to empty
   const timelines = useMemo<ERTimeline[]>(
     () =>
-      team.erTimelines && team.erTimelines.length > 0
-        ? team.erTimelines
+      setupConfig.energy?.timelines && setupConfig.energy.timelines.length > 0
+        ? setupConfig.energy.timelines
         : [EMPTY_ERT],
-    [team.erTimelines]
+    [setupConfig.energy?.timelines]
   );
 
   const setTimelines = useCallback(
     (newTimelines: ERTimeline[]) => {
-      updateTeam(team.id, { erTimelines: newTimelines });
+      updateTeamSetupConfig(teamComp.id, (config) => ({
+        ...config,
+        energy: { ...(config.energy ?? {}), timelines: newTimelines },
+      }));
     },
-    [team.id, updateTeam]
+    [teamComp.id, updateTeamSetupConfig]
   );
 
   const [startEmpty, setStartEmpty] = useState(false);
@@ -863,7 +884,7 @@ export function ErCalcCard({ team }: ErCalcCardProps) {
               <ErResultsPanel
                 results={results}
                 team={erTeam}
-                targetTeam={team}
+                targetTeam={teamComp}
                 embedded
               />
             )}

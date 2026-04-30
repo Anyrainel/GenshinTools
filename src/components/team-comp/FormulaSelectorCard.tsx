@@ -24,7 +24,7 @@ import type {
   I18nLabel,
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamDamageConfig } from "@/lib/team-comp/types";
 import { isElement, isReactionType } from "@/lib/typeValidation";
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
@@ -80,9 +80,13 @@ function ReactionElementIcons({
 type FormulaInfo = { label: I18nLabel; minC: number };
 
 interface FormulaSelectorCardProps {
-  team: Team;
-  effectiveTeam: Team;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  characters: (string | null)[];
+  damageConfig: TeamDamageConfig;
+  onDamageConfigChange: (
+    updater:
+      | Partial<TeamDamageConfig>
+      | ((config: TeamDamageConfig) => TeamDamageConfig)
+  ) => void;
   allFormulas: { charId: string; formulaId: string; label: I18nLabel }[];
   availableFormulas: Record<string, Record<string, I18nLabel>>;
   /** All formulas including constellation-locked ones, with minC info. */
@@ -127,9 +131,9 @@ interface FormulaSelectorCardProps {
 }
 
 export function FormulaSelectorCard({
-  team,
-  effectiveTeam,
-  updateTeam,
+  characters,
+  damageConfig,
+  onDamageConfigChange,
   allFormulas,
   availableFormulas,
   displayFormulas,
@@ -149,6 +153,10 @@ export function FormulaSelectorCard({
   t,
 }: FormulaSelectorCardProps) {
   const isSingle = formulaMode === "single";
+  const selectedFormula = damageConfig.selectedFormula;
+  const singleReaction = damageConfig.singleReaction;
+  const singleForceOnField = damageConfig.singleForceOnField;
+  const combo = damageConfig.combo;
   return (
     <Card className={CARD_CLS}>
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
@@ -165,10 +173,13 @@ export function FormulaSelectorCard({
       <OptionButtonRow>
         <OptionButtonCell>
           <ExtraBuffsPanel
-            team={team}
-            updateTeam={updateTeam}
-            enemyAura={team.enemyAura}
-            onEnemyAuraChange={(el) => updateTeam(team.id, { enemyAura: el })}
+            characters={characters.filter((id): id is string => id != null)}
+            extraBuffs={damageConfig.extraBuffs ?? []}
+            onExtraBuffsChange={(extraBuffs) =>
+              onDamageConfigChange({ extraBuffs })
+            }
+            enemyAura={damageConfig.enemyAura}
+            onEnemyAuraChange={(el) => onDamageConfigChange({ enemyAura: el })}
             t={t}
           />
         </OptionButtonCell>
@@ -211,7 +222,7 @@ export function FormulaSelectorCard({
           <div className="flex flex-col gap-2">
             {/* ── Unified grid: one column per character ── */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
-              {effectiveTeam.characters.map((cid, idx) => {
+              {characters.map((cid, idx) => {
                 if (!cid) return <div key={idx} />;
                 const charFormulas = displayFormulas[cid];
                 const unlockedFormulas = availableFormulas[cid];
@@ -253,8 +264,8 @@ export function FormulaSelectorCard({
                           const isLocked = !unlockedFormulas?.[formulaId];
                           const isSingleSelected =
                             isSingle &&
-                            team.selectedFormula?.charId === cid &&
-                            team.selectedFormula?.formulaId === formulaId;
+                            selectedFormula?.charId === cid &&
+                            selectedFormula?.formulaId === formulaId;
 
                           // Derive reactions for this formula
                           const formulaEntry =
@@ -279,7 +290,7 @@ export function FormulaSelectorCard({
                           // ── Single mode: chip buttons ──
                           if (isSingle) {
                             const activeRx = isSingleSelected
-                              ? (team.singleReaction?.reaction ?? "none")
+                              ? (singleReaction?.reaction ?? "none")
                               : "none";
                             const offField = teamBuild
                               ? teamBuild.catalog.offFieldStatus(formulaId)
@@ -301,8 +312,7 @@ export function FormulaSelectorCard({
                                   onClick={() => {
                                     if (isLocked) return;
                                     const currentRx = isSingleSelected
-                                      ? (team.singleReaction?.reaction ??
-                                        "none")
+                                      ? (singleReaction?.reaction ?? "none")
                                       : "none";
                                     onSelectSingleFormula?.(
                                       cid,
@@ -334,9 +344,9 @@ export function FormulaSelectorCard({
                                     <label className="flex items-center gap-1 mt-1 cursor-pointer">
                                       <input
                                         type="checkbox"
-                                        checked={!!team.singleForceOnField}
+                                        checked={!!singleForceOnField}
                                         onChange={(e) =>
-                                          updateTeam(team.id, {
+                                          onDamageConfigChange({
                                             singleForceOnField:
                                               e.target.checked || undefined,
                                           })
@@ -386,9 +396,7 @@ export function FormulaSelectorCard({
                                         formulaEntry={formulaEntry}
                                         charId={cid}
                                         reactionType={activeRx as ReactionType}
-                                        reactionOverride={
-                                          team.singleReaction ?? {}
-                                        }
+                                        reactionOverride={singleReaction ?? {}}
                                         onReactionChange={(override) =>
                                           onReactionChange(
                                             cid,
@@ -462,9 +470,9 @@ export function FormulaSelectorCard({
                                         onChange={(e) => {
                                           const newForceOnField =
                                             e.target.checked || undefined;
-                                          if (team.combo) {
+                                          if (combo) {
                                             const updatedLines =
-                                              team.combo.lines.map((l) => {
+                                              combo.lines.map((l) => {
                                                 if (
                                                   l.charId === cid &&
                                                   l.formulaId === formulaId
@@ -477,9 +485,9 @@ export function FormulaSelectorCard({
                                                 }
                                                 return l;
                                               });
-                                            updateTeam(team.id, {
+                                            onDamageConfigChange({
                                               combo: {
-                                                ...team.combo,
+                                                ...combo,
                                                 lines: updatedLines,
                                               },
                                             });
@@ -798,9 +806,8 @@ export function FormulaSelectorCard({
                                   {eligibleArr.map((cid) => {
                                     const cidFormula = triggerFormulaId(cid);
                                     const isActive =
-                                      team.selectedFormula?.charId === cid &&
-                                      team.selectedFormula?.formulaId ===
-                                        cidFormula;
+                                      selectedFormula?.charId === cid &&
+                                      selectedFormula?.formulaId === cidFormula;
                                     return (
                                       <button
                                         key={cid}

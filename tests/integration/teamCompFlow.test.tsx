@@ -1,16 +1,15 @@
 /**
  * Integration Tests: Team Builder Flow
  *
- * Tests the complete pipeline:
- * 1. Team store operations (add, update, delete, copy)
- * 2. Team persistence and state management
- * 3. TeamCard rendering with team data
+ * Tests the current split model:
+ * 1. Team comp operations in the Zustand store
+ * 2. Separate setup config state
+ * 3. TeamCard rendering from TeamComp data
  */
 
 import { act } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TeamCard } from "@/components/team-comp/TeamCard";
-import type { Team } from "@/lib/team-comp/types";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { render, screen } from "../utils/render";
 
@@ -19,131 +18,93 @@ describe("Integration: Team Builder Flow", () => {
     useTeamStore.getState().clearTeams();
   });
 
-  it("creates a new team with default values", () => {
+  it("creates a new team comp with default values", () => {
     act(() => {
       useTeamStore.getState().addTeam();
     });
 
-    const teams = useTeamStore.getState().teams;
-    expect(teams).toHaveLength(1);
-    expect(teams[0].name).toBe("");
-    expect(teams[0].characters).toHaveLength(4);
-    expect(teams[0].characters.every((c) => c === null)).toBe(true);
+    const teamComps = useTeamStore.getState().teamComps;
+    expect(teamComps).toHaveLength(1);
+    expect(teamComps[0].name).toBe("");
+    expect(teamComps[0].slots).toEqual([]);
   });
 
-  it("updates team name correctly", () => {
+  it("updates comp and setup config independently", () => {
+    let teamId = "";
     act(() => {
-      useTeamStore.getState().addTeam();
+      teamId = useTeamStore.getState().addTeam();
     });
 
-    const teamId = useTeamStore.getState().teams[0].id;
-
     act(() => {
-      useTeamStore.getState().updateTeam(teamId, { name: "National Team" });
-    });
-
-    const updatedTeam = useTeamStore.getState().teams[0];
-    expect(updatedTeam.name).toBe("National Team");
-  });
-
-  it("assigns characters to team slots", () => {
-    act(() => {
-      useTeamStore.getState().addTeam();
-    });
-
-    const teamId = useTeamStore.getState().teams[0].id;
-
-    act(() => {
-      useTeamStore.getState().updateTeam(teamId, {
-        characters: ["hu_tao", "xingqiu", "zhongli", "bennett"],
+      useTeamStore.getState().updateTeamComp(teamId, {
+        name: "National Team",
+        slots: [
+          { charId: "hu_tao", weaponId: null, artifactSet: null },
+          { charId: "xingqiu", weaponId: null, artifactSet: null },
+          { charId: "zhongli", weaponId: null, artifactSet: null },
+          { charId: "bennett", weaponId: null, artifactSet: null },
+        ],
+      });
+      useTeamStore.getState().updateTeamSetupConfig(teamId, {
+        combatOptions: {},
+        charConfigs: { hu_tao: { minEr: 1.3 } },
       });
     });
 
-    const team = useTeamStore.getState().teams[0];
-    expect(team.characters).toEqual([
+    const state = useTeamStore.getState();
+    expect(state.teamComps[0].name).toBe("National Team");
+    expect(state.teamComps[0].slots.map((slot) => slot.charId)).toEqual([
       "hu_tao",
       "xingqiu",
       "zhongli",
       "bennett",
     ]);
+    expect(state.configsByTeamId[teamId].charConfigs?.hu_tao).toEqual({
+      minEr: 1.3,
+    });
   });
 
-  it("copies team with all data", async () => {
+  it("copies and deletes team comps", async () => {
+    let teamId = "";
     act(() => {
-      useTeamStore.getState().addTeam();
-    });
-
-    const teamId = useTeamStore.getState().teams[0].id;
-
-    act(() => {
-      useTeamStore.getState().updateTeam(teamId, {
+      teamId = useTeamStore.getState().addTeam({
         name: "Hu Tao Vape",
-        characters: ["hu_tao", "xingqiu", "zhongli", "bennett"],
+        characters: ["hu_tao", "xingqiu", null, null],
       });
     });
 
-    // Add delay to ensure different timestamp for copied team
-    await new Promise((r) => setTimeout(r, 5));
-
+    await new Promise((resolve) => setTimeout(resolve, 5));
     act(() => {
       useTeamStore.getState().copyTeam(teamId);
     });
 
-    const teams = useTeamStore.getState().teams;
-    expect(teams).toHaveLength(2);
-    expect(teams[1].name).toBe("Hu Tao Vape");
-    expect(teams[1].characters).toEqual([
+    let teamComps = useTeamStore.getState().teamComps;
+    expect(teamComps).toHaveLength(2);
+    expect(teamComps[1].name).toBe("Hu Tao Vape");
+    expect(teamComps[1].slots.map((slot) => slot.charId)).toEqual([
       "hu_tao",
       "xingqiu",
-      "zhongli",
-      "bennett",
     ]);
-    // Should have different IDs
-    expect(teams[1].id).not.toBe(teams[0].id);
+    expect(teamComps[1].id).not.toBe(teamComps[0].id);
+
+    act(() => {
+      useTeamStore.getState().deleteTeam(teamId);
+    });
+
+    teamComps = useTeamStore.getState().teamComps;
+    expect(teamComps).toHaveLength(1);
+    expect(teamComps[0].id).not.toBe(teamId);
   });
 
-  it("deletes team correctly", async () => {
-    act(() => {
-      useTeamStore.getState().addTeam();
-    });
-
-    // Add delay to ensure different timestamp for second team
-    await new Promise((r) => setTimeout(r, 5));
-
-    act(() => {
-      useTeamStore.getState().addTeam();
-    });
-
-    expect(useTeamStore.getState().teams).toHaveLength(2);
-
-    const teamToDelete = useTeamStore.getState().teams[0].id;
-
-    act(() => {
-      useTeamStore.getState().deleteTeam(teamToDelete);
-    });
-
-    expect(useTeamStore.getState().teams).toHaveLength(1);
-  });
-
-  it("renders TeamCard with team data", () => {
-    const mockTeam: Team = {
+  it("renders TeamCard with team comp data", () => {
+    const teamComp = {
       id: "test-team-1",
       name: "Test Team",
-      characters: ["hu_tao", "xingqiu", null, null],
-      weapons: [null, null, null, null],
-      artifacts: [null, null, null, null],
+      slots: [
+        { charId: "hu_tao", weaponId: null, artifactSet: null },
+        { charId: "xingqiu", weaponId: null, artifactSet: null },
+      ],
       reactions: [],
-      opts: {},
-      calcContext: {
-        enemyLevel: 110,
-        enemyRes: 0.1,
-        rollMultiplier: 0.85,
-        substatBudget: "8_6",
-      },
-      selectedFormula: null,
-      optimizationResult: null,
-      formulaMode: "single",
-      combo: null,
     };
 
     const mockUpdate = vi.fn();
@@ -152,32 +113,31 @@ describe("Integration: Team Builder Flow", () => {
 
     render(
       <TeamCard
-        team={mockTeam}
+        teamComp={teamComp}
         index={0}
-        onUpdate={mockUpdate}
+        onUpdateComp={mockUpdate}
         onDelete={mockDelete}
         onCopy={mockCopy}
       />
     );
 
-    // Team name should be in input
-    const nameInput = screen.getByDisplayValue("Test Team");
-    expect(nameInput).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Test Team")).toBeInTheDocument();
   });
 
-  it("clears all teams", () => {
+  it("clears all team state", () => {
     act(() => {
       useTeamStore.getState().addTeam();
       useTeamStore.getState().addTeam();
       useTeamStore.getState().addTeam();
     });
 
-    expect(useTeamStore.getState().teams).toHaveLength(3);
+    expect(useTeamStore.getState().teamComps).toHaveLength(3);
 
     act(() => {
       useTeamStore.getState().clearTeams();
     });
 
-    expect(useTeamStore.getState().teams).toHaveLength(0);
+    expect(useTeamStore.getState().teamComps).toHaveLength(0);
+    expect(useTeamStore.getState().configsByTeamId).toEqual({});
   });
 });

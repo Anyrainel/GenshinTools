@@ -18,12 +18,12 @@ export function InvestmentView({ importRef }: InvestmentViewProps) {
     (s) => s.viewSettings.investment.activeTeamId
   );
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
-  const teams = useTeamStore((s) => s.teams);
+  const teamComps = useTeamStore((s) => s.teamComps);
   const [searchParams, setSearchParams] = useSearchParams();
   const teamParam = searchParams.get("team");
   const hasTeamParam = searchParams.has("team");
   const teamParamIsValid =
-    teamParam != null && teams.some((team) => team.id === teamParam);
+    teamParam != null && teamComps.some((team) => team.id === teamParam);
   const routedTeamId = hasTeamParam && teamParamIsValid ? teamParam : null;
 
   const setTeamSearchParam = useCallback(
@@ -78,8 +78,12 @@ export function InvestmentView({ importRef }: InvestmentViewProps) {
       viewId="investment"
       activeTeamId={routedTeamId}
       setActiveTeamId={handleActiveTeamChange}
-      renderDetail={(team, onBack) => (
-        <InvestmentDetail team={team} onBack={onBack} />
+      renderDetail={(teamComp, setupConfig, onBack) => (
+        <InvestmentDetail
+          teamComp={teamComp}
+          setupConfig={setupConfig}
+          onBack={onBack}
+        />
       )}
       selectLabel={t.ui("teamComp.tabInvestment")}
       selectIcon={TrendingUp}

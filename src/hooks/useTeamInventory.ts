@@ -7,6 +7,7 @@ import type {
 } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { frozenArtifactsMatchConfig } from "@/lib/team-comp/teamConfigUtils";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -143,9 +144,13 @@ export function useTeamInventory(teamId: string): TeamInventory {
   const frozenTeams = useFreezeStore((s) => s.frozenTeams);
   const reuseMode = useFreezeStore((s) => s.reuseMode);
   const standaloneFrozenIds = useFreezeStore((s) => s.frozenArtifactIds);
-  const team = useTeamStore((s) => s.getTeamById(teamId));
-  const teamCharacters = team?.characters;
-  const teamArtifacts = team?.artifacts;
+  const teamComp = useTeamStore((s) => s.getTeamCompById(teamId));
+  const teamArrays = useMemo(
+    () => (teamComp ? teamCompToArrays(teamComp) : null),
+    [teamComp]
+  );
+  const teamCharacters = teamArrays?.characters;
+  const teamArtifacts = teamArrays?.artifacts;
 
   return useMemo(() => {
     if (!accountData) {

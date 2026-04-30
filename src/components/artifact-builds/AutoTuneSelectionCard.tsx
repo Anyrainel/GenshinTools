@@ -4,7 +4,7 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
 import type { AccountData, Build } from "@/data/types";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
 import { ELEMENT_HEX, getElementColor } from "../shared/colors";
@@ -14,7 +14,7 @@ type SelectionEntry = {
   characterId: string;
   build: Build;
   selected: boolean;
-  teams: Team[];
+  teamComps: TeamComp[];
 };
 
 function ArtifactSetIcons({ build }: { build: Build }) {
@@ -32,21 +32,24 @@ function ArtifactSetIcons({ build }: { build: Build }) {
 }
 
 function TeamsTooltip({
-  teams,
+  teamComps,
   characterId,
+  getTeamSetupConfigById,
   accountData,
 }: {
-  teams: Team[];
+  teamComps: TeamComp[];
   characterId: string;
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
   accountData: AccountData | null;
 }) {
-  if (teams.length === 0) return null;
+  if (teamComps.length === 0) return null;
   return (
     <div className="space-y-1.5 p-2">
-      {teams.map((team) => (
+      {teamComps.map((teamComp) => (
         <AutoTuneTeamRow
-          key={team.id}
-          team={team}
+          key={teamComp.id}
+          teamComp={teamComp}
+          setupConfig={getTeamSetupConfigById(teamComp.id)}
           characterId={characterId}
           enabled={true}
           onToggle={() => {}}
@@ -62,18 +65,20 @@ export function AutoTuneSelectionCard({
   entry,
   onToggle,
   element,
+  getTeamSetupConfigById,
   accountData,
 }: {
   entry: SelectionEntry;
   onToggle: () => void;
   element: string;
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
   accountData: AccountData | null;
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
   const elHex = ELEMENT_HEX[element] || "#888";
   const elColor = getElementColor(parseElement(element), "text");
-  const noTeams = entry.teams.length === 0;
+  const noTeams = entry.teamComps.length === 0;
 
   return (
     <div className="relative group">
@@ -134,7 +139,7 @@ export function AutoTuneSelectionCard({
       </button>
 
       {/* Hover tooltip — teams */}
-      {entry.teams.length > 0 && (
+      {entry.teamComps.length > 0 && (
         <div
           className={cn(
             "absolute z-50 left-0 top-full mt-1 min-w-max",
@@ -145,8 +150,9 @@ export function AutoTuneSelectionCard({
           )}
         >
           <TeamsTooltip
-            teams={entry.teams}
+            teamComps={entry.teamComps}
             characterId={entry.characterId}
+            getTeamSetupConfigById={getTeamSetupConfigById}
             accountData={accountData}
           />
         </div>

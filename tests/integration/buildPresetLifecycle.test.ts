@@ -205,7 +205,7 @@ describe("Integration: Build Preset Lifecycle", () => {
       await waitFor(() => expect(result.current.length).toBe(2));
 
       act(() => {
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
       });
 
       await waitFor(() => {
@@ -220,7 +220,7 @@ describe("Integration: Build Preset Lifecycle", () => {
       });
 
       act(() => {
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
       });
 
       expect(useBuildsStore.getState().presetDeletedBuildIds).toContain("p-1");
@@ -234,8 +234,8 @@ describe("Integration: Build Preset Lifecycle", () => {
 
       // Delete both builds
       act(() => {
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-2");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-2");
       });
       await waitFor(() => {
         expect(result.current.length).toBe(0);
@@ -263,7 +263,7 @@ describe("Integration: Build Preset Lifecycle", () => {
       // Edit p-1, delete p-2
       act(() => {
         useBuildsStore.getState().setBuild("p-1", { name: "Modified HT" }, p1);
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-2");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-2");
       });
 
       await waitFor(() => {
@@ -346,7 +346,7 @@ describe("Integration: Build Preset Lifecycle", () => {
 
       // Delete hu_tao's build, edit xingqiu's build
       act(() => {
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
         useBuildsStore.getState().setBuild("p-3", { name: "XQ Modified" }, p3);
       });
 
@@ -405,7 +405,7 @@ describe("Integration: Build Preset Lifecycle", () => {
     it("returns true when a preset build is deleted (Bug 2 fix)", () => {
       act(() => {
         useBuildsStore.getState().subscribePreset("test-preset", preset);
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
       });
 
       // This was Bug 2: previously returned false after deletion
@@ -425,7 +425,7 @@ describe("Integration: Build Preset Lifecycle", () => {
       act(() => {
         useBuildsStore.getState().subscribePreset("test-preset", preset);
         useBuildsStore.getState().setBuild("p-1", { name: "Changed" }, p1);
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-2");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-2");
       });
 
       expect(checkHasCustomizations("hu_tao")).toBe(true);
@@ -478,7 +478,7 @@ describe("Integration: Build Preset Lifecycle", () => {
 
       // Delete
       act(() => {
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
       });
       await waitFor(() => expect(result.current.length).toBe(1));
 
@@ -488,7 +488,7 @@ describe("Integration: Build Preset Lifecycle", () => {
       });
 
       // Note: revertBuild doesn't re-add to characterToBuildIds if it was removed.
-      // The build was removed from ordering by deleteBuild, so revert alone
+      // The build was removed from ordering by removeBuild, so revert alone
       // won't bring it back. Need restoreCharacter for full recovery.
       // This tests the expected behavior.
       const state = useBuildsStore.getState();
@@ -512,7 +512,7 @@ describe("Integration: Build Preset Lifecycle", () => {
 
       // Delete original p-1
       act(() => {
-        useBuildsStore.getState().deleteBuild("hu_tao", "p-1");
+        useBuildsStore.getState().removeBuild("hu_tao", "p-1");
       });
 
       await waitFor(() => {

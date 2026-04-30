@@ -5,6 +5,7 @@ import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
 } from "@/lib/account-data/resourceTips";
+import { migrateResourceRecStore } from "@/stores/migration/resource";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
 
@@ -34,6 +35,41 @@ beforeEach(() => {
 });
 
 describe("useResourceRecStore", () => {
+  it("migrates v7 persisted active fields into profile settings only", () => {
+    const result = migrateResourceRecStore(
+      {
+        thresholds: { S: 0.9 },
+        minScoreDiff: {
+          craft: { S: 1 },
+          reroll: { A: 2 },
+          levelup: { B: 3 },
+        },
+        panelOpen: true,
+        showCraft: false,
+        showReroll: true,
+        showLevelup: false,
+      },
+      7
+    );
+
+    expect(result.settingsByProfileId).toEqual({
+      [DEFAULT_ACCOUNT_PROFILE_ID]: {
+        thresholds: { S: 0.9 },
+        minScoreDiff: {
+          craft: { S: 1 },
+          reroll: { A: 2 },
+          levelup: { B: 3 },
+        },
+        panelOpen: true,
+        showCraft: false,
+        showReroll: true,
+        showLevelup: false,
+      },
+    });
+    expect(result).not.toHaveProperty("thresholds");
+    expect(result).not.toHaveProperty("minScoreDiff");
+  });
+
   it("stores recommendation controls per active account profile", () => {
     act(() => {
       useAccountStore.setState({ activeAccountId: 0 });

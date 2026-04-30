@@ -3,16 +3,12 @@ import type { ComponentProps } from "react";
 import { FormulaSelectorCard } from "@/components/team-comp/FormulaSelectorCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ComboLine } from "@/lib/dmgcalc/types";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamDamageConfig } from "@/lib/team-comp/types";
 import { render, screen } from "../../utils/render";
 
-const mockTeam: Team = {
-  id: "test-team",
-  name: "Test Team",
-  characters: ["hu_tao", "xingqiu", "zhongli", "bennett"],
-  weapons: [null, null, null, null],
-  artifacts: [null, null, null, null],
-  reactions: [],
+const mockCharacters = ["hu_tao", "xingqiu", "zhongli", "bennett"];
+
+const mockDamageConfig: TeamDamageConfig = {
   combo: null,
   formulaMode: "combo",
   calcContext: {
@@ -22,8 +18,6 @@ const mockTeam: Team = {
     substatBudget: "8_6",
   },
   selectedFormula: null,
-  optimizationResult: null,
-  opts: {},
 };
 
 const mockFormulas = [
@@ -63,9 +57,9 @@ function TestCard(props: CardProps) {
 
 function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
   return {
-    team: mockTeam,
-    effectiveTeam: mockTeam,
-    updateTeam: vi.fn(),
+    characters: mockCharacters,
+    damageConfig: mockDamageConfig,
+    onDamageConfigChange: vi.fn(),
     allFormulas: mockFormulas,
     availableFormulas: mockAvailableFormulas,
     displayFormulas: Object.fromEntries(

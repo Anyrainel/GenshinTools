@@ -30,14 +30,16 @@ import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { resolveBuildInfo } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getRarityColor } from "../shared/colors";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
 
 type Props = {
-  team: Team;
+  comp: TeamComp;
+  setupConfig: TeamSetupConfig;
+  characters: (string | null)[];
   equippedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   accountData: AccountData | null;
@@ -47,7 +49,9 @@ type Props = {
 };
 
 export function SwapGuide({
-  team,
+  comp,
+  setupConfig,
+  characters,
   equippedArtifactsByChar,
   optimizedArtifactsByChar,
   accountData,
@@ -59,12 +63,12 @@ export function SwapGuide({
 
   const handleDownload = useCallback(() => {
     if (!exportRef.current) return;
-    const charNames = team.characters
+    const charNames = characters
       .filter((id): id is string => id != null)
       .map((id) => t.character(id))
       .join("_");
     downloadElementAsImage(exportRef.current, charNames, t);
-  }, [t, team.characters]);
+  }, [t, characters]);
 
   const ownerMap = useMemo(
     () => buildArtifactOwnerMap(accountData),
@@ -73,7 +77,7 @@ export function SwapGuide({
 
   const changeCount = useMemo(() => {
     let count = 0;
-    for (const charId of team.characters) {
+    for (const charId of characters) {
       if (!charId) continue;
       const equipped = equippedArtifactsByChar[charId] ?? {};
       const optimized = optimizedArtifactsByChar[charId] ?? {};
@@ -84,13 +88,14 @@ export function SwapGuide({
       }
     }
     return count;
-  }, [team.characters, equippedArtifactsByChar, optimizedArtifactsByChar]);
+  }, [characters, equippedArtifactsByChar, optimizedArtifactsByChar]);
 
   const [equipDialogOpen, setEquipDialogOpen] = useState(false);
 
   const buildEquipPayload = useCallback(
-    () => buildEquipInstructions(team, optimizedArtifactsByChar, accountData),
-    [team, optimizedArtifactsByChar, accountData]
+    () =>
+      buildEquipInstructions(characters, optimizedArtifactsByChar, accountData),
+    [characters, optimizedArtifactsByChar, accountData]
   );
 
   if (changeCount === 0 && !alwaysOpen) return null;
@@ -132,13 +137,14 @@ export function SwapGuide({
       >
         <div ref={exportRef} style={{ width: 1400 }}>
           <div className="grid grid-cols-4 gap-px">
-            {team.characters.map((charId, i) => {
+            {characters.map((charId, i) => {
               if (!charId) return <div key={i} />;
               return (
                 <ExportColumn
                   key={charId}
                   charId={charId}
-                  team={team}
+                  comp={comp}
+                  setupConfig={setupConfig}
                   equipped={equippedArtifactsByChar[charId] ?? {}}
                   optimized={optimizedArtifactsByChar[charId] ?? {}}
                   ownerMap={ownerMap}
@@ -153,7 +159,7 @@ export function SwapGuide({
 
       {/* 2x2 on small screens, 4x1 on large — same as StatSheetPanel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2 p-1 md:p-2">
-        {team.characters.map((charId, i) => {
+        {characters.map((charId, i) => {
           if (!charId) return <div key={i} />;
           const equipped = equippedArtifactsByChar[charId] ?? {};
           const optimized = optimizedArtifactsByChar[charId] ?? {};
@@ -452,7 +458,8 @@ function StatusBadge({
 // ─── Export-only column: icon header + on-page slot rows ───
 export function ExportColumn({
   charId,
-  team,
+  comp,
+  setupConfig,
   equipped,
   optimized,
   ownerMap,
@@ -460,7 +467,8 @@ export function ExportColumn({
   t,
 }: {
   charId: string;
-  team: Team;
+  comp: TeamComp;
+  setupConfig: TeamSetupConfig;
   equipped: Record<string, ArtifactData>;
   optimized: Record<string, ArtifactData>;
   ownerMap: Map<string, string>;
@@ -469,7 +477,7 @@ export function ExportColumn({
 }) {
   const char = charactersById[charId];
   const { charLevel, charConst, weaponId, weaponRefine, artConfig } =
-    resolveBuildInfo(charId, team, accountData);
+    resolveBuildInfo(charId, comp, setupConfig, accountData);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (

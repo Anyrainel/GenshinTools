@@ -279,59 +279,31 @@ export const useResourceRecStore = create<ResourceRecState>()(
     }),
     {
       name: "resource-rec-settings",
-      version: 7,
+      version: 8,
       migrate: migrateResourceRecStore,
       partialize: (state) => ({
-        thresholds: state.thresholds,
-        minScoreDiff: state.minScoreDiff,
-        panelOpen: state.panelOpen,
-        showCraft: state.showCraft,
-        showReroll: state.showReroll,
-        showLevelup: state.showLevelup,
-        settingsByProfileId: state.settingsByProfileId,
+        settingsByProfileId: {
+          ...state.settingsByProfileId,
+          [getActiveProfileId()]: normalizeSettings(currentSettings(state)),
+        },
       }),
       merge: (persistedState, currentState) => {
         const parsed =
           PersistedResourceRecStoreSchema.safeParse(persistedState);
         if (!parsed.success) return currentState;
-        const persisted = parsed.data;
-        const fallbackSettings: ResourceRecSettings = {
-          thresholds: {
-            ...currentState.thresholds,
-            ...persisted.thresholds,
-          },
-          minScoreDiff: {
-            craft: {
-              ...currentState.minScoreDiff.craft,
-              ...persisted.minScoreDiff.craft,
-            },
-            reroll: {
-              ...currentState.minScoreDiff.reroll,
-              ...persisted.minScoreDiff.reroll,
-            },
-            levelup: {
-              ...currentState.minScoreDiff.levelup,
-              ...persisted.minScoreDiff.levelup,
-            },
-          },
-          panelOpen: persisted.panelOpen,
-          showCraft: persisted.showCraft ?? currentState.showCraft,
-          showReroll: persisted.showReroll ?? currentState.showReroll,
-          showLevelup: persisted.showLevelup ?? currentState.showLevelup,
-        };
-        const settingsByProfileId = persisted.settingsByProfileId ?? {
-          [DEFAULT_ACCOUNT_PROFILE_ID]: fallbackSettings,
-        };
         const normalizedSettingsByProfileId = Object.fromEntries(
-          Object.entries(settingsByProfileId).map(([profileId, settings]) => [
-            profileId,
-            normalizeSettings(settings),
-          ])
+          Object.entries(parsed.data.settingsByProfileId).map(
+            ([profileId, settings]) => [profileId, normalizeSettings(settings)]
+          )
         ) as Record<AccountProfileId, ResourceRecSettings>;
+        if (Object.keys(normalizedSettingsByProfileId).length === 0) {
+          normalizedSettingsByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] =
+            cloneDefaultSettings();
+        }
         const activeSettings =
           normalizedSettingsByProfileId[getActiveProfileId()] ??
           normalizedSettingsByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] ??
-          fallbackSettings;
+          cloneDefaultSettings();
         return {
           ...currentState,
           ...applySettings(normalizeSettings(activeSettings)),

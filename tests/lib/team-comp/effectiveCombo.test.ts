@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { ComboFormula } from "@/lib/dmgcalc/types";
 import { getEffectiveCombo } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamDamageConfig } from "@/lib/team-comp/types";
 
 type TeamSlice = Pick<
-  Team,
+  TeamDamageConfig,
   | "formulaMode"
   | "selectedFormula"
   | "singleReaction"

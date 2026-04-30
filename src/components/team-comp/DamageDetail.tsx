@@ -67,12 +67,18 @@ import type {
 } from "@/lib/dmgcalc/types";
 import { resolveCalcContext } from "@/lib/dmgcalc/utils";
 import {
-  buildTeamConfigs,
+  buildTeamSlotConfigs,
   getEffectiveCombo,
   getHigherTierEquippedArtifactIds,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
-import type { CharOptConfig, Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type {
+  CharOptConfig,
+  TeamComp,
+  TeamDamageConfig,
+  TeamSetupConfig,
+} from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
@@ -102,17 +108,27 @@ import { TeamRosterCard } from "./TeamRosterCard";
 const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 
 export interface DamageDetailProps {
-  team: Team;
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
   onBack: () => void;
   viewId?: ViewId;
 }
 
 export function DamageDetail({
-  team,
+  teamComp,
+  setupConfig,
   onBack,
   viewId = "damage",
 }: DamageDetailProps) {
   const { t, language } = useLanguage();
+  const teamId = teamComp.id;
+  const { characters, artifacts } = useMemo(
+    () => teamCompToArrays(teamComp),
+    [teamComp]
+  );
+  const damageConfig = setupConfig.damage ?? {};
+  const charConfigs = setupConfig.charConfigs ?? {};
+  const combatOptions = setupConfig.combatOptions ?? {};
   const limitText = limitMap[language];
   const [limitOpen, setLimitOpen] = useState(false);
   const [expandedLine, setExpandedLine] = useState<{
@@ -121,27 +137,59 @@ export function DamageDetail({
     reaction: string;
   } | null>(null);
   // biome-ignore lint/correctness/useExhaustiveDependencies: reset expanded line when team changes
-  useEffect(() => setExpandedLine(null), [team.id]);
+  useEffect(() => setExpandedLine(null), [teamId]);
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const accountData = useActiveAccountData();
-  const storeUpdateTeam = useTeamStore((state) => state.updateTeam);
+  const storeUpdateTeamComp = useTeamStore((state) => state.updateTeamComp);
+  const updateTeamSetupConfig = useTeamStore(
+    (state) => state.updateTeamSetupConfig
+  );
   const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
-  const updateTeam = useCallback(
-    (id: string, patch: Partial<Team>) => {
-      storeUpdateTeam(id, patch);
-      if (patch.characters) checkAutoDisableOwned(patch.characters);
+  const updateTeamComp = useCallback(
+    (id: string, nextComp: TeamComp) => {
+      storeUpdateTeamComp(id, nextComp);
+      checkAutoDisableOwned(teamCompToArrays(nextComp).characters);
     },
-    [storeUpdateTeam, checkAutoDisableOwned]
+    [storeUpdateTeamComp, checkAutoDisableOwned]
+  );
+  const updateSetupConfig = useCallback(
+    (
+      updater:
+        | Partial<TeamSetupConfig>
+        | ((config: TeamSetupConfig) => TeamSetupConfig)
+    ) => {
+      updateTeamSetupConfig(teamId, updater);
+    },
+    [teamId, updateTeamSetupConfig]
+  );
+  const updateDamageConfig = useCallback(
+    (
+      updater:
+        | Partial<TeamDamageConfig>
+        | ((config: TeamDamageConfig) => TeamDamageConfig)
+    ) => {
+      updateSetupConfig((config) => {
+        const current = config.damage ?? {};
+        return {
+          ...config,
+          damage:
+            typeof updater === "function"
+              ? updater(current)
+              : { ...current, ...updater },
+        };
+      });
+    },
+    [updateSetupConfig]
   );
   const scoreConfig = useArtifactScoreStore((state) => state.config);
   const tierAssignments = useTierStore((s) => s.tierAssignments);
   // Use targeted selectors — subscribing to the full store caused re-renders
   // on ANY freeze mutation (other teams, reuseMode changes, etc.).
-  const frozenEntry = useFreezeStore((s) => s.frozenTeams[team.id]);
+  const frozenEntry = useFreezeStore((s) => s.frozenTeams[teamId]);
   const freezeCharacters = useFreezeStore((s) => s.freezeCharacters);
   const unfreezeCharacters = useFreezeStore((s) => s.unfreezeCharacters);
   const unfreezeTeamAction = useFreezeStore((s) => s.unfreezeTeam);
-  const teamInventory = useTeamInventory(team.id);
+  const teamInventory = useTeamInventory(teamId);
   const isFrozen =
     frozenEntry != null && (frozenEntry.frozenCharIds?.length ?? 0) > 0;
   const frozenCharIds = frozenEntry?.frozenCharIds ?? [];
@@ -150,8 +198,8 @@ export function DamageDetail({
     [frozenCharIds]
   );
   const teamCharIds = useMemo(
-    () => team.characters.filter((id): id is string => id != null),
-    [team.characters]
+    () => characters.filter((id): id is string => id != null),
+    [characters]
   );
   const isFullyFrozen =
     isFrozen &&
@@ -200,13 +248,12 @@ export function DamageDetail({
   const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
 
   const fullSetOptionalByChar = useMemo(() => {
-    if (!team.charSettings) return undefined;
     const map: Record<string, boolean> = {};
-    for (const [cid, s] of Object.entries(team.charSettings)) {
+    for (const [cid, s] of Object.entries(charConfigs)) {
       if (s.fullSetOptional != null) map[cid] = s.fullSetOptional;
     }
     return Object.keys(map).length > 0 ? map : undefined;
-  }, [team.charSettings]);
+  }, [charConfigs]);
 
   const optimizerBuildMatchByChar = useMemo(() => {
     if (!accountData) return {};
@@ -226,8 +273,6 @@ export function DamageDetail({
     return map;
   }, [accountData, buildGroups, scoreConfig.global]);
 
-  const effectiveTeam = team;
-
   const {
     progress: teamProgress,
     result: teamResult,
@@ -244,9 +289,9 @@ export function DamageDetail({
   }, [stopTeamOpt]);
 
   const configs = useMemo(() => {
-    const c = buildTeamConfigs(effectiveTeam, accountData);
+    const c = buildTeamSlotConfigs(teamComp, setupConfig, accountData);
     return c;
-  }, [effectiveTeam, accountData]);
+  }, [teamComp, setupConfig, accountData]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: characterStats/weaponStats are intentional invalidation triggers — TeamBuild reads them indirectly via global registries
   const { teamBuild, buildError } = useMemo(() => {
@@ -256,11 +301,11 @@ export function DamageDetail({
     try {
       const tb = new TeamBuild(
         configs,
-        team.opts || {},
-        team.enemyAura,
-        team.extraBuffs,
+        combatOptions,
+        damageConfig.enemyAura,
+        damageConfig.extraBuffs,
         undefined,
-        team.calcContext
+        damageConfig.calcContext
       );
       return { teamBuild: tb, buildError: null };
     } catch (e: unknown) {
@@ -272,9 +317,10 @@ export function DamageDetail({
     }
   }, [
     configs,
-    team.opts,
-    team.enemyAura,
-    team.extraBuffs,
+    combatOptions,
+    damageConfig.enemyAura,
+    damageConfig.extraBuffs,
+    damageConfig.calcContext,
     gameStatsReady,
     characterStats,
     weaponStats,
@@ -297,7 +343,7 @@ export function DamageDetail({
 
   const equippedArtifactsByChar = useMemo(() => {
     const map: Record<string, Record<string, ArtifactData>> = {};
-    for (const cid of effectiveTeam.characters) {
+    for (const cid of characters) {
       if (!cid) continue;
       const acctChar = accountData?.characters.find(
         (c: CharacterData) => c.key === cid
@@ -305,11 +351,11 @@ export function DamageDetail({
       map[cid] = (acctChar?.artifacts || {}) as Record<string, ArtifactData>;
     }
     return map;
-  }, [effectiveTeam.characters, accountData]);
+  }, [characters, accountData]);
 
   const artifactSheets = useMemo(
-    () => toStatSheets(effectiveTeam.characters, equippedArtifactsByChar),
-    [effectiveTeam.characters, equippedArtifactsByChar]
+    () => toStatSheets(characters, equippedArtifactsByChar),
+    [characters, equippedArtifactsByChar]
   );
 
   // Value-equivalence frozen check for the current tab: a character is "frozen"
@@ -335,31 +381,29 @@ export function DamageDetail({
   }, [frozenEntry, equippedArtifactsByChar]);
 
   const resolvedFormula = useMemo(() => {
-    if (!team.selectedFormula) return allFormulas[0] || null;
+    if (!damageConfig.selectedFormula) return allFormulas[0] || null;
     const isValid = allFormulas.some(
       (f) =>
-        f.charId === team.selectedFormula!.charId &&
-        f.formulaId === team.selectedFormula!.formulaId
+        f.charId === damageConfig.selectedFormula!.charId &&
+        f.formulaId === damageConfig.selectedFormula!.formulaId
     );
-    return isValid ? team.selectedFormula : allFormulas[0] || null;
-  }, [team.selectedFormula, allFormulas]);
+    return isValid ? damageConfig.selectedFormula : allFormulas[0] || null;
+  }, [damageConfig.selectedFormula, allFormulas]);
 
   const activeContext = useMemo<CalcContext>(() => {
     // Build per-character CR targets from characters using "target" crMode
     let perCharCrTarget: Record<string, number> | undefined;
-    if (team.charSettings) {
-      for (const [cid, s] of Object.entries(team.charSettings)) {
-        if (s.crMode === "target" && s.minCr != null) {
-          if (!perCharCrTarget) perCharCrTarget = {};
-          perCharCrTarget[cid] = Math.round(s.minCr * 100);
-        }
+    for (const [cid, s] of Object.entries(charConfigs)) {
+      if (s.crMode === "target" && s.minCr != null) {
+        if (!perCharCrTarget) perCharCrTarget = {};
+        perCharCrTarget[cid] = Math.round(s.minCr * 100);
       }
     }
     return {
-      ...resolveCalcContext(team.calcContext),
+      ...resolveCalcContext(damageConfig.calcContext),
       perCharCrTarget,
     };
-  }, [team.calcContext, team.charSettings]);
+  }, [damageConfig.calcContext, charConfigs]);
 
   const displayContext = useMemo<CalcContext>(
     () => ({
@@ -379,17 +423,17 @@ export function DamageDetail({
   // ─── Combo Management ───
 
   const combo = useMemo<ComboFormula>(() => {
-    if (team.combo) return team.combo;
+    if (damageConfig.combo) return damageConfig.combo;
     // No combo stored yet — synthesize a default from teamBuild
-    return resolveActiveCombo([], undefined, teamBuild, team.characters, true);
-  }, [team.combo, teamBuild, team.characters]);
+    return resolveActiveCombo([], undefined, teamBuild, characters, true);
+  }, [damageConfig.combo, teamBuild, characters]);
 
   // Persist the default combo to the store so getEffectiveCombo can find it
   useEffect(() => {
-    if (!team.combo && combo.lines.length > 0) {
-      updateTeam(team.id, { combo });
+    if (!damageConfig.combo && combo.lines.length > 0) {
+      updateDamageConfig({ combo });
     }
-  }, [team.combo, combo, updateTeam, team.id]);
+  }, [damageConfig.combo, combo, updateDamageConfig]);
 
   const comboLineMap = useMemo(
     () => buildComboLineMap(combo.lines),
@@ -399,9 +443,9 @@ export function DamageDetail({
   const updateCombo = useCallback(
     (updater: (c: ComboFormula) => ComboFormula) => {
       const updated = updater({ ...combo });
-      updateTeam(team.id, { combo: updated });
+      updateDamageConfig({ combo: updated });
     },
-    [combo, team.id, updateTeam]
+    [combo, updateDamageConfig]
   );
 
   const setComboLineCount = useCallback(
@@ -413,7 +457,7 @@ export function DamageDetail({
     [comboLineMap, updateCombo]
   );
 
-  const formulaMode = team.formulaMode ?? "single";
+  const formulaMode = damageConfig.formulaMode ?? "single";
 
   const handleReactionChange = useCallback(
     (
@@ -423,7 +467,7 @@ export function DamageDetail({
       override: ReactionOverride
     ) => {
       if (formulaMode === "single") {
-        updateTeam(team.id, { singleReaction: override });
+        updateDamageConfig({ singleReaction: override });
         return;
       }
       updateCombo((c) =>
@@ -437,31 +481,35 @@ export function DamageDetail({
         )
       );
     },
-    [formulaMode, comboLineMap, updateCombo, updateTeam, team.id]
+    [formulaMode, comboLineMap, updateCombo, updateDamageConfig]
   );
 
   const handleModeChange = useCallback(
     (mode: "single" | "combo") => {
       if (mode !== formulaMode) {
-        updateTeam(team.id, { formulaMode: mode });
+        updateDamageConfig({ formulaMode: mode });
       }
     },
-    [formulaMode, updateTeam, team.id]
+    [formulaMode, updateDamageConfig]
   );
 
   const onSelectSingleFormula = useCallback(
     (charId: string, formulaId: string, reaction: string) => {
-      updateTeam(team.id, {
+      updateDamageConfig({
         ...buildSingleFormulaSelection(
           charId,
           formulaId,
           reaction,
-          team.selectedFormula ?? undefined,
-          team.singleReaction
+          damageConfig.selectedFormula ?? undefined,
+          damageConfig.singleReaction
         ),
       });
     },
-    [updateTeam, team.id, team.selectedFormula, team.singleReaction]
+    [
+      updateDamageConfig,
+      damageConfig.selectedFormula,
+      damageConfig.singleReaction,
+    ]
   );
 
   // ─── Display Combo ───
@@ -472,17 +520,17 @@ export function DamageDetail({
     () =>
       getEffectiveCombo({
         formulaMode,
-        selectedFormula: team.selectedFormula,
-        singleReaction: team.singleReaction,
-        singleForceOnField: team.singleForceOnField,
-        combo: team.combo,
+        selectedFormula: damageConfig.selectedFormula,
+        singleReaction: damageConfig.singleReaction,
+        singleForceOnField: damageConfig.singleForceOnField,
+        combo: damageConfig.combo,
       }),
     [
       formulaMode,
-      team.selectedFormula,
-      team.singleReaction,
-      team.singleForceOnField,
-      team.combo,
+      damageConfig.selectedFormula,
+      damageConfig.singleReaction,
+      damageConfig.singleForceOnField,
+      damageConfig.combo,
     ]
   );
 
@@ -553,12 +601,11 @@ export function DamageDetail({
   }, [teamBuild, displayCombo, artifactSheets, displayContext, buffOverrides]);
 
   const minErRaw =
-    (resolvedFormula && team.charSettings?.[resolvedFormula.charId]?.minEr) ??
-    1.0;
+    (resolvedFormula && charConfigs[resolvedFormula.charId]?.minEr) ?? 1.0;
 
   const getGoalArtifactSet = (charId: string): ArtifactSetConfig | null => {
-    const charIdx = effectiveTeam.characters.indexOf(charId);
-    const goalArt = charIdx >= 0 ? effectiveTeam.artifacts[charIdx] : undefined;
+    const charIdx = characters.indexOf(charId);
+    const goalArt = charIdx >= 0 ? artifacts[charIdx] : undefined;
     return goalArt ?? null;
   };
 
@@ -603,18 +650,18 @@ export function DamageDetail({
     const carryCharId =
       resolvedFormula?.charId ??
       displayCombo.lines.find((l) => l.count > 0)?.charId ??
-      effectiveTeam.characters.find((c): c is string => c != null)!;
+      characters.find((c): c is string => c != null)!;
 
     const perChar: Record<string, CharOptConfig> = {};
 
-    for (let ci = 0; ci < effectiveTeam.characters.length; ci++) {
-      const cid = effectiveTeam.characters[ci];
+    for (let ci = 0; ci < characters.length; ci++) {
+      const cid = characters[ci];
       if (!cid) continue;
       // Skip frozen and force-reused characters — their artifacts are locked
       if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const goalArtSet = getGoalArtifactSet(cid);
-      const cs = team.charSettings?.[cid];
+      const cs = charConfigs[cid];
       perChar[cid] = {
         minEr: cs?.minEr ?? 1.0,
         minCr: cs?.crMode === "target" ? 0 : (cs?.minCr ?? 0),
@@ -635,9 +682,9 @@ export function DamageDetail({
     try {
       optTeamBuild = new TeamBuild(
         optimizerConfigs,
-        team.opts || {},
-        team.enemyAura,
-        team.extraBuffs
+        combatOptions,
+        damageConfig.enemyAura,
+        damageConfig.extraBuffs
       );
     } catch (e) {
       console.warn(
@@ -673,9 +720,9 @@ export function DamageDetail({
 
     // Build per-char excluded artifact IDs for tier-aware pool
     let perCharExcludedArtifactIds: Record<string, string[]> | undefined;
-    if (team.charSettings && accountData) {
+    if (accountData) {
       for (const cid of Object.keys(perChar)) {
-        if (!team.charSettings[cid]?.tierAwarePool) continue;
+        if (!charConfigs[cid]?.tierAwarePool) continue;
         const excluded = getHigherTierEquippedArtifactIds(
           cid,
           tierAssignments,
@@ -822,8 +869,8 @@ export function DamageDetail({
   ]);
 
   const optArtifactSheets = useMemo(
-    () => toStatSheets(effectiveTeam.characters, optimizedArtifactsByChar),
-    [optimizedArtifactsByChar, effectiveTeam.characters]
+    () => toStatSheets(characters, optimizedArtifactsByChar),
+    [optimizedArtifactsByChar, characters]
   );
 
   const hasFrozenResult = isFrozen && frozenEntry?.artifactsByChar != null;
@@ -838,9 +885,7 @@ export function DamageDetail({
   // True when every roster character has artifacts from any source
   // (frozen, force-reused, optimizer results, restored, or equipped)
   const allCharsResolved = useMemo(() => {
-    const charIds = effectiveTeam.characters.filter(
-      (id): id is string => id != null
-    );
+    const charIds = characters.filter((id): id is string => id != null);
     if (charIds.length === 0) return false;
     return charIds.every((cid) => {
       if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) return true;
@@ -850,7 +895,7 @@ export function DamageDetail({
       return arts != null && Object.values(arts).some(Boolean);
     });
   }, [
-    effectiveTeam.characters,
+    characters,
     frozenCharIdSet,
     forceReusedCharIds,
     teamResult,
@@ -903,10 +948,10 @@ export function DamageDetail({
     const genContext: CalcContext = { ...activeContext };
 
     const setKeysByChar: Record<string, Record<Slot, string>> = {};
-    for (let i = 0; i < effectiveTeam.characters.length; i++) {
-      const cid = effectiveTeam.characters[i];
+    for (let i = 0; i < characters.length; i++) {
+      const cid = characters[i];
       if (!cid) continue;
-      const artConfig = effectiveTeam.artifacts[i];
+      const artConfig = artifacts[i];
       if (!artConfig) continue;
 
       if (artConfig.type === "4pc") {
@@ -948,13 +993,13 @@ export function DamageDetail({
     const carryCharId =
       resolvedFormula?.charId ??
       displayCombo.lines.find((l) => l.count > 0)?.charId ??
-      effectiveTeam.characters.find((c): c is string => c != null)!;
+      characters.find((c): c is string => c != null)!;
 
     // Build per-char ER/CR constraints for generator
     const genPerChar: Record<string, { minEr: number; minCr: number }> = {};
-    for (const cid of effectiveTeam.characters) {
+    for (const cid of characters) {
       if (!cid) continue;
-      const cs = team.charSettings?.[cid];
+      const cs = charConfigs[cid];
       genPerChar[cid] = {
         minEr: cs?.minEr ?? 1.0,
         minCr: cs?.crMode === "target" ? 0 : (cs?.minCr ?? 0),
@@ -991,7 +1036,7 @@ export function DamageDetail({
       }
 
       const doFreeze = () => {
-        freezeCharacters(team.id, [charId], {
+        freezeCharacters(teamId, [charId], {
           [charId]: charArts as Record<Slot, ArtifactData | null>,
         });
       };
@@ -999,7 +1044,7 @@ export function DamageDetail({
       // Check if already frozen with different artifacts → override warning
       if (frozenCharIdSet.has(charId) && !currentTabFrozenCharIds.has(charId)) {
         // Read fresh state inside event handler to avoid stale closures
-        const currentFrozen = useFreezeStore.getState().frozenTeams[team.id];
+        const currentFrozen = useFreezeStore.getState().frozenTeams[teamId];
         setPendingFreezeAction({
           action: doFreeze,
           reason: "override",
@@ -1015,7 +1060,7 @@ export function DamageDetail({
         { [charId]: charArts },
         teamInventory.frozenArtifactIds,
         useFreezeStore.getState().frozenTeams,
-        team.id
+        teamId
       );
       if (conflicts.length > 0) {
         setPendingFreezeAction({
@@ -1030,10 +1075,10 @@ export function DamageDetail({
     [
       equippedArtifactsByChar,
       freezeCharacters,
-      team.id,
       teamInventory.frozenArtifactIds,
       frozenCharIdSet,
       currentTabFrozenCharIds,
+      teamId,
     ]
   );
 
@@ -1041,9 +1086,9 @@ export function DamageDetail({
   const handleUnfreezeCharFromCurrent = useCallback(
     (charId: string) => {
       setRestoredArtifacts(null);
-      unfreezeCharacters(team.id, [charId]);
+      unfreezeCharacters(teamId, [charId]);
     },
-    [unfreezeCharacters, team.id]
+    [unfreezeCharacters, teamId]
   );
 
   const genArtifactsByChar = useMemo(() => {
@@ -1057,8 +1102,8 @@ export function DamageDetail({
   }, [genResult, equippedArtifactsByChar]);
 
   const genArtifactSheets = useMemo(
-    () => toStatSheets(effectiveTeam.characters, genArtifactsByChar),
-    [genArtifactsByChar, effectiveTeam.characters]
+    () => toStatSheets(characters, genArtifactsByChar),
+    [genArtifactsByChar, characters]
   );
 
   const genDisplayResult = useMemo(
@@ -1108,12 +1153,12 @@ export function DamageDetail({
 
   const swapMatchingSetIds = useMemo(() => {
     if (!swapTarget) return new Set<string>();
-    const charIdx = effectiveTeam.characters.indexOf(swapTarget.charId);
+    const charIdx = characters.indexOf(swapTarget.charId);
     const adapted = {
-      artifacts: effectiveTeam.artifacts.map((a) => a ?? undefined),
+      artifacts: artifacts.map((a) => a ?? undefined),
     };
     return getMatchingSetIds(adapted, charIdx);
-  }, [swapTarget, effectiveTeam]);
+  }, [swapTarget, characters, artifacts]);
 
   const handleArtifactSwap = useCallback(
     (charId: string, slot: Slot, artifact: ArtifactData) => {
@@ -1165,7 +1210,7 @@ export function DamageDetail({
             <ArrowLeft className="w-5 h-5 text-foreground/70" />
           </Button>
           <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
-            {team.name || t.ui("teamComp.teamOptimization")}
+            {teamComp.name || t.ui("teamComp.teamOptimization")}
             <span
               className="inline-block ml-1.5 align-baseline cursor-pointer"
               onClick={() => setLimitOpen(true)}
@@ -1180,8 +1225,10 @@ export function DamageDetail({
            so TeamMeta always has valid element/region/faction data) */}
         {gameStatsReady && (
           <TeamRosterCard
-            team={team}
-            updateTeam={updateTeam}
+            teamComp={teamComp}
+            setupConfig={setupConfig}
+            updateTeamComp={updateTeamComp}
+            updateTeamSetupConfig={updateTeamSetupConfig}
             accountData={accountData}
             characterStats={characterStats!}
             weaponStats={weaponStats!}
@@ -1193,9 +1240,9 @@ export function DamageDetail({
 
         {/* Card 2 — Formula Selection */}
         <FormulaSelectorCard
-          team={team}
-          effectiveTeam={effectiveTeam}
-          updateTeam={updateTeam}
+          characters={characters}
+          damageConfig={damageConfig}
+          onDamageConfigChange={updateDamageConfig}
           allFormulas={allFormulas}
           availableFormulas={availableFormulas}
           displayFormulas={displayFormulas}
@@ -1222,7 +1269,7 @@ export function DamageDetail({
           onResetCombo={() => {
             if (!teamBuild) return;
             const lines: ComboLine[] = [];
-            for (const charId of team.characters) {
+            for (const charId of characters) {
               if (!charId) continue;
               const combo = teamBuild.catalog.getCombo(charId);
               for (const [formulaId, count] of Object.entries(combo)) {
@@ -1231,7 +1278,7 @@ export function DamageDetail({
                 }
               }
             }
-            updateTeam(team.id, {
+            updateDamageConfig({
               combo: { id: combo.id, label: combo.label, lines },
             });
           }}
@@ -1239,13 +1286,15 @@ export function DamageDetail({
         />
 
         {/* ER Requirements — collapsible; applies to team charSettings.minEr */}
-        {<ErCalcCard team={team} />}
+        {<ErCalcCard teamComp={teamComp} setupConfig={setupConfig} />}
 
         {/* Card 3 — Equipment & Damage */}
         <DamageCard
-          team={team}
-          effectiveTeam={effectiveTeam}
-          updateTeam={updateTeam}
+          teamComp={teamComp}
+          setupConfig={setupConfig}
+          characters={characters}
+          artifacts={artifacts}
+          onSetupConfigChange={updateSetupConfig}
           resolvedFormula={resolvedFormula}
           hasOptResult={hasOptResult}
           allCharsResolved={allCharsResolved}
@@ -1283,7 +1332,7 @@ export function DamageDetail({
             }
             if (freezableCharIds.length === 0) return;
 
-            freezeCharacters(team.id, freezableCharIds, byChar);
+            freezeCharacters(teamId, freezableCharIds, byChar);
             setSwapOverrides({});
           }}
           onUnfreezeAll={
@@ -1304,7 +1353,7 @@ export function DamageDetail({
                   setRestoredArtifacts(
                     Object.keys(snapshot).length > 0 ? snapshot : null
                   );
-                  unfreezeTeamAction(team.id);
+                  unfreezeTeamAction(teamId);
                 }
               : undefined
           }
@@ -1317,7 +1366,7 @@ export function DamageDetail({
               if (art) charArts[slot] = art as ArtifactData;
             }
 
-            freezeCharacters(team.id, [charId], {
+            freezeCharacters(teamId, [charId], {
               [charId]: charArts as Record<Slot, ArtifactData | null>,
             });
           }}
@@ -1334,7 +1383,7 @@ export function DamageDetail({
             setRestoredArtifacts(
               Object.keys(snapshot).length > 0 ? snapshot : null
             );
-            unfreezeCharacters(team.id, [charId]);
+            unfreezeCharacters(teamId, [charId]);
           }}
           isMobile={isMobile}
           equippedArtifactsByChar={equippedArtifactsByChar}
@@ -1378,7 +1427,7 @@ export function DamageDetail({
         />
 
         <TeamDetailAspectLinks
-          teamId={team.id}
+          teamId={teamId}
           currentAspect="damage"
           showFrozenLink={isFrozen}
         />

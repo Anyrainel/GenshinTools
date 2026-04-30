@@ -5,79 +5,33 @@ import {
   type PresetDelta,
 } from "@/lib/presetDelta";
 import type {
-  AnalyzerConfig,
-  CharSettings,
   ExportedArtifact,
   ExportedTeam,
-  Team,
   TeamCharConfig,
   TeamComp,
   TeamCompData,
-  TeamConfig,
+  TeamCompInput,
+  TeamSetupConfig,
 } from "@/lib/team-comp/types";
 
 export type TeamCompDelta = PresetDelta<TeamComp>;
 
 const MAX_TEAM_SLOTS = 4;
 const CUSTOM_SORT_OFFSET = 1_000_000;
+type CustomTeamCompDelta = Extract<TeamCompDelta, { kind: "custom" }>;
+type PresetTeamCompDelta = Extract<TeamCompDelta, { kind: "preset" }>;
 
-type LegacyTeamPatchKeys =
-  | "name"
-  | "characters"
-  | "weapons"
-  | "artifacts"
-  | "reactions"
-  | "opts"
-  | "calcContext"
-  | "enemyAura"
-  | "extraBuffs"
-  | "selectedFormula"
-  | "singleReaction"
-  | "singleForceOnField"
-  | "formulaMode"
-  | "combo"
-  | "charSettings"
-  | "erTimelines"
-  | "analyzer"
-  | "comp"
-  | "config";
+type TeamCompDeltaIndex = {
+  customById: Map<string, CustomTeamCompDelta>;
+  presetById: Map<string, PresetTeamCompDelta>;
+  deletedPresetIds: Set<string>;
+};
 
-const COMP_PATCH_KEYS = new Set<LegacyTeamPatchKeys>([
-  "name",
-  "characters",
-  "weapons",
-  "artifacts",
-  "reactions",
-  "comp",
-]);
-
-const CONFIG_PATCH_KEYS = new Set<LegacyTeamPatchKeys>([
-  "opts",
-  "calcContext",
-  "enemyAura",
-  "extraBuffs",
-  "selectedFormula",
-  "singleReaction",
-  "singleForceOnField",
-  "formulaMode",
-  "combo",
-  "charSettings",
-  "erTimelines",
-  "analyzer",
-  "config",
-]);
-
-export function hasTeamCompPatch(patch: Partial<Team>): boolean {
-  return Object.keys(patch).some((key) =>
-    COMP_PATCH_KEYS.has(key as LegacyTeamPatchKeys)
-  );
-}
-
-export function hasTeamConfigPatch(patch: Partial<Team>): boolean {
-  return Object.keys(patch).some((key) =>
-    CONFIG_PATCH_KEYS.has(key as LegacyTeamPatchKeys)
-  );
-}
+type PresetCompIndex = {
+  ids: string[];
+  byId: Map<string, TeamComp>;
+  indexById: Map<string, number>;
+};
 
 function cleanRecord<T>(
   record: Record<string, T>
@@ -85,18 +39,10 @@ function cleanRecord<T>(
   return Object.keys(record).length > 0 ? record : undefined;
 }
 
-function cleanObject<T extends object>(value: T): T | undefined {
-  return Object.keys(value).length > 0 ? value : undefined;
-}
-
 function toNumber(value: unknown): number | undefined {
   if (value === "" || value == null) return undefined;
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : undefined;
-}
-
-function toOptionString(value: unknown): string {
-  return typeof value === "string" ? value : String(value);
 }
 
 function normalizeArtifactConfig(artifact: unknown): ArtifactSetConfig | null {
@@ -168,7 +114,7 @@ export function teamCompToArrays(comp: TeamComp): {
   return { characters, weapons, artifacts };
 }
 
-export function legacyArraysToTeamComp({
+export function teamArraysToComp({
   id,
   name = "",
   characters = [],
@@ -212,7 +158,7 @@ export function createEmptyTeamComp(id: string): TeamComp {
   };
 }
 
-export function createDefaultTeamConfig(): TeamConfig {
+export function createDefaultTeamSetupConfig(): TeamSetupConfig {
   return { combatOptions: {} };
 }
 
@@ -235,141 +181,9 @@ function mergeCharConfig(
   };
 }
 
-function splitLegacyCombatOptions(opts: unknown): {
-  combatOptions: TeamConfig["combatOptions"];
-  charConfigs?: Record<string, TeamCharConfig>;
-} {
-  const combatOptions: TeamConfig["combatOptions"] = {};
-  const charConfigs: Record<string, TeamCharConfig> = {};
-  if (!opts || typeof opts !== "object") {
-    return { combatOptions };
-  }
-
-  for (const [key, value] of Object.entries(opts as Record<string, unknown>)) {
-    const match = key.match(
-      /^(.+)\.override(Level|Constellation|Refinement|TalentAuto|TalentSkill|TalentBurst)$/
-    );
-    if (!match) {
-      combatOptions[key] = toOptionString(value);
-      continue;
-    }
-
-    const [, charId, field] = match;
-    const numeric = toNumber(value);
-    if (numeric == null) continue;
-
-    if (field === "Level") {
-      mergeCharConfig(charConfigs, charId, { level: numeric });
-    } else if (field === "Constellation") {
-      mergeCharConfig(charConfigs, charId, { constellation: numeric });
-    } else if (field === "Refinement") {
-      mergeCharConfig(charConfigs, charId, { refinement: numeric });
-    } else if (field === "TalentAuto") {
-      mergeCharConfig(charConfigs, charId, { talentLevels: { auto: numeric } });
-    } else if (field === "TalentSkill") {
-      mergeCharConfig(charConfigs, charId, {
-        talentLevels: { skill: numeric },
-      });
-    } else if (field === "TalentBurst") {
-      mergeCharConfig(charConfigs, charId, {
-        talentLevels: { burst: numeric },
-      });
-    }
-  }
-
-  return { combatOptions, charConfigs: cleanRecord(charConfigs) };
-}
-
-function legacyCharSettingsToCharConfigs(
-  settings: Team["charSettings"]
-): Record<string, TeamCharConfig> | undefined {
-  if (!settings) return undefined;
-  const result: Record<string, TeamCharConfig> = {};
-  for (const [charId, value] of Object.entries(settings)) {
-    const next: TeamCharConfig = {};
-    if (value.minEr != null) next.minEr = value.minEr;
-    if (value.minCr != null) next.minCr = value.minCr;
-    if (value.crMode != null) next.crMode = value.crMode;
-    if (value.tierAwarePool != null) next.tierAwarePool = value.tierAwarePool;
-    const fullSetOptional =
-      value.fullSetOptional ?? value.ignoreArtifactSets ?? undefined;
-    if (fullSetOptional != null) next.fullSetOptional = fullSetOptional;
-    if (Object.keys(next).length > 0) result[charId] = next;
-  }
-  return cleanRecord(result);
-}
-
-function mergeCharConfigRecords(
-  first?: Record<string, TeamCharConfig>,
-  second?: Record<string, TeamCharConfig>
-): Record<string, TeamCharConfig> | undefined {
-  const result: Record<string, TeamCharConfig> = {};
-  for (const source of [first, second]) {
-    if (!source) continue;
-    for (const [charId, config] of Object.entries(source)) {
-      mergeCharConfig(result, charId, config);
-    }
-  }
-  return cleanRecord(result);
-}
-
-export function teamCharConfigsToLegacyOptions(
-  config: TeamConfig
-): TeamConfig["combatOptions"] {
-  const opts: TeamConfig["combatOptions"] = { ...(config.combatOptions ?? {}) };
-  for (const [charId, charConfig] of Object.entries(config.charConfigs ?? {})) {
-    if (charConfig.level != null) {
-      opts[`${charId}.overrideLevel`] = String(charConfig.level);
-    }
-    if (charConfig.constellation != null) {
-      opts[`${charId}.overrideConstellation`] = String(
-        charConfig.constellation
-      );
-    }
-    if (charConfig.refinement != null) {
-      opts[`${charId}.overrideRefinement`] = String(charConfig.refinement);
-    }
-    if (charConfig.talentLevels?.auto != null) {
-      opts[`${charId}.overrideTalentAuto`] = String(
-        charConfig.talentLevels.auto
-      );
-    }
-    if (charConfig.talentLevels?.skill != null) {
-      opts[`${charId}.overrideTalentSkill`] = String(
-        charConfig.talentLevels.skill
-      );
-    }
-    if (charConfig.talentLevels?.burst != null) {
-      opts[`${charId}.overrideTalentBurst`] = String(
-        charConfig.talentLevels.burst
-      );
-    }
-  }
-  return opts;
-}
-
-export function teamCharConfigsToLegacyCharSettings(
-  charConfigs?: Record<string, TeamCharConfig>
-): Record<string, CharSettings> | undefined {
-  if (!charConfigs) return undefined;
-  const result: Record<string, CharSettings> = {};
-  for (const [charId, config] of Object.entries(charConfigs)) {
-    const settings: CharSettings = {};
-    if (config.minEr != null) settings.minEr = config.minEr;
-    if (config.minCr != null) settings.minCr = config.minCr;
-    if (config.crMode != null) settings.crMode = config.crMode;
-    if (config.tierAwarePool != null)
-      settings.tierAwarePool = config.tierAwarePool;
-    if (config.fullSetOptional != null)
-      settings.fullSetOptional = config.fullSetOptional;
-    if (Object.keys(settings).length > 0) result[charId] = settings;
-  }
-  return cleanRecord(result);
-}
-
-export function normalizeTeamConfig(
-  config: Partial<TeamConfig> = {}
-): TeamConfig {
+export function normalizeTeamSetupConfig(
+  config: Partial<TeamSetupConfig> = {}
+): TeamSetupConfig {
   return {
     combatOptions: { ...(config.combatOptions ?? {}) },
     ...(config.charConfigs ? { charConfigs: config.charConfigs } : {}),
@@ -379,116 +193,25 @@ export function normalizeTeamConfig(
   };
 }
 
-export function legacyTeamToComp(
-  team: Partial<Team> & { id: string }
+export function teamCompInputToComp(
+  input: TeamCompInput & { id: string }
 ): TeamComp {
-  if (!team.characters && !team.weapons && !team.artifacts && team.comp) {
+  if (!input.characters && !input.weapons && !input.artifacts && input.slots) {
     return {
-      ...team.comp,
-      id: team.id,
-      name: team.name ?? team.comp.name ?? "",
-      reactions: [...(team.reactions ?? team.comp.reactions ?? [])],
-      slots: trimTrailingEmptySlots(team.comp.slots ?? []),
+      id: input.id,
+      name: input.name ?? "",
+      reactions: [...(input.reactions ?? [])],
+      slots: trimTrailingEmptySlots(input.slots),
     };
   }
-  return legacyArraysToTeamComp({
-    id: team.id,
-    name: team.name ?? "",
-    characters: team.characters ?? [],
-    weapons: team.weapons ?? [],
-    artifacts: team.artifacts ?? [],
-    reactions: team.reactions ?? [],
+  return teamArraysToComp({
+    id: input.id,
+    name: input.name ?? "",
+    characters: input.characters ?? [],
+    weapons: input.weapons ?? [],
+    artifacts: input.artifacts ?? [],
+    reactions: input.reactions ?? [],
   });
-}
-
-export function legacyTeamToConfig(team: Partial<Team>): TeamConfig {
-  const base = normalizeTeamConfig(team.config ?? {});
-  const split = splitLegacyCombatOptions(team.opts ?? base.combatOptions);
-  const charConfigs = mergeCharConfigRecords(
-    base.charConfigs,
-    mergeCharConfigRecords(
-      split.charConfigs,
-      legacyCharSettingsToCharConfigs(team.charSettings)
-    )
-  );
-
-  const damage = {
-    ...(base.damage ?? {}),
-    ...(team.calcContext ? { calcContext: team.calcContext } : {}),
-    ...(team.enemyAura != null ? { enemyAura: team.enemyAura } : {}),
-    ...(team.extraBuffs && team.extraBuffs.length > 0
-      ? { extraBuffs: team.extraBuffs }
-      : {}),
-    ...(team.selectedFormula !== undefined
-      ? { selectedFormula: team.selectedFormula }
-      : {}),
-    ...(team.singleReaction !== undefined
-      ? { singleReaction: team.singleReaction }
-      : {}),
-    ...(team.singleForceOnField !== undefined
-      ? { singleForceOnField: team.singleForceOnField }
-      : {}),
-    ...(team.formulaMode !== undefined
-      ? { formulaMode: team.formulaMode }
-      : {}),
-    ...(team.combo !== undefined ? { combo: team.combo } : {}),
-  };
-
-  const energy = {
-    ...(base.energy ?? {}),
-    ...(team.erTimelines && team.erTimelines.length > 0
-      ? { timelines: team.erTimelines }
-      : {}),
-  };
-
-  const investment = (team.analyzer ?? base.investment) as
-    | AnalyzerConfig
-    | undefined;
-
-  return normalizeTeamConfig({
-    combatOptions: split.combatOptions,
-    ...(charConfigs ? { charConfigs } : {}),
-    ...(cleanObject(damage) ? { damage } : {}),
-    ...(cleanObject(energy) ? { energy } : {}),
-    ...(investment ? { investment } : {}),
-  });
-}
-
-export function projectRuntimeTeam(
-  comp: TeamComp,
-  config: TeamConfig = createDefaultTeamConfig()
-): Team {
-  const normalizedConfig = normalizeTeamConfig(config);
-  const { characters, weapons, artifacts } = teamCompToArrays(comp);
-  const damage = normalizedConfig.damage ?? {};
-  const charSettings = teamCharConfigsToLegacyCharSettings(
-    normalizedConfig.charConfigs
-  );
-
-  return {
-    id: comp.id,
-    name: comp.name,
-    comp,
-    config: normalizedConfig,
-    characters,
-    weapons,
-    artifacts,
-    reactions: comp.reactions ?? [],
-    opts: teamCharConfigsToLegacyOptions(normalizedConfig),
-    calcContext: damage.calcContext ?? {},
-    enemyAura: damage.enemyAura,
-    extraBuffs: damage.extraBuffs ?? [],
-    selectedFormula: damage.selectedFormula ?? null,
-    singleReaction: damage.singleReaction,
-    singleForceOnField: damage.singleForceOnField,
-    formulaMode: damage.formulaMode ?? "single",
-    combo: damage.combo ?? null,
-    ...(charSettings ? { charSettings } : {}),
-    erTimelines: normalizedConfig.energy?.timelines,
-    optimizationResult: null,
-    weaponChoiceResult: null,
-    analyzer: normalizedConfig.investment,
-  };
 }
 
 function setDelta<T extends TeamCompDelta>(
@@ -500,6 +223,22 @@ function setDelta<T extends TeamCompDelta>(
   );
   next.push(nextDelta);
   return next;
+}
+
+function indexTeamCompDeltas(deltas: TeamCompDelta[]): TeamCompDeltaIndex {
+  const customById = new Map<string, CustomTeamCompDelta>();
+  const presetById = new Map<string, PresetTeamCompDelta>();
+  const deletedPresetIds = new Set<string>();
+  for (const delta of deltas) {
+    if (isCustomDelta(delta)) {
+      customById.set(delta.id, delta);
+      continue;
+    }
+    presetById.set(delta.id, delta);
+    if (delta.deleted) deletedPresetIds.add(delta.id);
+    else deletedPresetIds.delete(delta.id);
+  }
+  return { customById, presetById, deletedPresetIds };
 }
 
 export function getTeamDeltaDisplayIndex(
@@ -665,18 +404,16 @@ function normalizePresetPayload(payload: TeamCompData | null): TeamComp[] {
   });
 }
 
-function getPresetCompMap(
-  payload: TeamCompData | null
-): Record<string, TeamComp> {
-  const comps: Record<string, TeamComp> = {};
+function getPresetCompIndex(payload: TeamCompData | null): PresetCompIndex {
+  const ids: string[] = [];
+  const byId = new Map<string, TeamComp>();
+  const indexById = new Map<string, number>();
   for (const comp of normalizePresetPayload(payload)) {
-    comps[comp.id] = comp;
+    ids.push(comp.id);
+    byId.set(comp.id, comp);
+    indexById.set(comp.id, ids.length - 1);
   }
-  return comps;
-}
-
-function getPresetTeamIds(payload: TeamCompData | null): string[] {
-  return normalizePresetPayload(payload).map((comp) => comp.id);
+  return { ids, byId, indexById };
 }
 
 export function isPresetTeamComp(
@@ -684,34 +421,26 @@ export function isPresetTeamComp(
   preset: TeamCompData | null,
   teamId: string
 ): boolean {
-  const presetMap = getPresetCompMap(preset);
+  const presetIndex = getPresetCompIndex(preset);
   return (
-    presetMap[teamId] != null ||
+    presetIndex.byId.has(teamId) ||
     deltas.some((delta) => isPresetDelta(delta) && delta.id === teamId)
   );
 }
 
-export function deriveTeamRuntimeFromDeltas(
+export function deriveTeamCompsFromDeltas(
   deltas: TeamCompDelta[],
-  configsByTeamId: Record<string, TeamConfig>,
   preset: TeamCompData | null
-): Team[] {
-  const presetMap = getPresetCompMap(preset);
-  const presetIds = getPresetTeamIds(preset);
-  const deletedPresetIds = new Set(
-    deltas
-      .filter((delta) => isPresetDelta(delta) && delta.deleted)
-      .map((delta) => delta.id)
-  );
-  const customDeltas = deltas.filter(isCustomDelta);
-  const presetDeltaIds = deltas
-    .filter((delta) => isPresetDelta(delta) && !delta.deleted)
-    .map((delta) => delta.id);
+): TeamComp[] {
+  const presetIndex = getPresetCompIndex(preset);
+  const deltaIndex = indexTeamCompDeltas(deltas);
 
   const candidateIds = new Set<string>([
-    ...presetIds,
-    ...presetDeltaIds,
-    ...customDeltas.map((delta) => delta.id),
+    ...presetIndex.ids,
+    ...[...deltaIndex.presetById.values()]
+      .filter((delta) => !delta.deleted)
+      .map((delta) => delta.id),
+    ...deltaIndex.customById.keys(),
   ]);
 
   const entries: {
@@ -721,30 +450,30 @@ export function deriveTeamRuntimeFromDeltas(
   }[] = [];
   let customIndex = 0;
   for (const teamId of candidateIds) {
-    const customDelta = customDeltas.find((delta) => delta.id === teamId);
-    const presetDelta = deltas.find(
-      (delta) => isPresetDelta(delta) && delta.id === teamId
-    );
+    const customDelta = deltaIndex.customById.get(teamId);
+    const presetDelta = deltaIndex.presetById.get(teamId);
     if (customDelta) {
+      const presetIndexForTeam = presetIndex.indexById.get(teamId);
       entries.push({
         comp: customDelta.value,
         displayIndex:
           customDelta.displayIndex ?? CUSTOM_SORT_OFFSET + customIndex,
-        fallbackIndex: presetIds.includes(teamId)
-          ? presetIds.indexOf(teamId)
-          : CUSTOM_SORT_OFFSET + customIndex,
+        fallbackIndex:
+          presetIndexForTeam != null
+            ? presetIndexForTeam
+            : CUSTOM_SORT_OFFSET + customIndex,
       });
       customIndex++;
       continue;
     }
-    if (deletedPresetIds.has(teamId)) continue;
-    const presetComp = presetMap[teamId];
+    if (deltaIndex.deletedPresetIds.has(teamId)) continue;
+    const presetComp = presetIndex.byId.get(teamId);
     if (!presetComp) continue;
-    const presetIndex = presetIds.indexOf(teamId);
+    const presetOrderIndex = presetIndex.indexById.get(teamId) ?? 0;
     entries.push({
       comp: presetComp,
-      displayIndex: presetDelta?.displayIndex ?? presetIndex,
-      fallbackIndex: presetIndex,
+      displayIndex: presetDelta?.displayIndex ?? presetOrderIndex,
+      fallbackIndex: presetOrderIndex,
     });
   }
 
@@ -755,9 +484,7 @@ export function deriveTeamRuntimeFromDeltas(
     return a.fallbackIndex - b.fallbackIndex;
   });
 
-  return entries.map(({ comp }) =>
-    projectRuntimeTeam(comp, configsByTeamId[comp.id])
-  );
+  return entries.map(({ comp }) => comp);
 }
 
 export function setTeamDeltaGlobalOrder(
@@ -765,21 +492,30 @@ export function setTeamDeltaGlobalOrder(
   orderedIds: string[],
   preset: TeamCompData | null
 ): TeamCompDelta[] {
-  const presetMap = getPresetCompMap(preset);
-  let next = deltas;
+  const presetIndex = getPresetCompIndex(preset);
+  const deltaIndex = indexTeamCompDeltas(deltas);
+  const nextByKey = new Map<string, TeamCompDelta>();
+  for (const delta of deltas) {
+    nextByKey.set(`${delta.kind}:${delta.id}`, delta);
+  }
   orderedIds.forEach((id, displayIndex) => {
-    const customDelta = next.find(
-      (delta) => isCustomDelta(delta) && delta.id === id
-    );
-    if (customDelta && isCustomDelta(customDelta)) {
-      next = upsertCustomTeamCompDelta(next, customDelta.value, displayIndex);
+    const customDelta = deltaIndex.customById.get(id);
+    if (customDelta) {
+      nextByKey.set(`custom:${id}`, {
+        ...customDelta,
+        displayIndex,
+      });
       return;
     }
-    if (presetMap[id]) {
-      next = upsertPresetTeamCompDelta(next, id, { displayIndex });
+    if (presetIndex.byId.has(id)) {
+      nextByKey.set(`preset:${id}`, {
+        kind: "preset",
+        id,
+        displayIndex,
+      });
     }
   });
-  return next;
+  return [...nextByKey.values()];
 }
 
 export function exportedTeamToComp(team: unknown): TeamComp | null {
@@ -799,7 +535,7 @@ export function exportedTeamToComp(team: unknown): TeamComp | null {
   const reactions = Array.isArray(value.reactions)
     ? value.reactions.map((reaction) => String(reaction))
     : [];
-  return legacyArraysToTeamComp({
+  return teamArraysToComp({
     id: value.id,
     name: typeof value.name === "string" ? value.name : "",
     characters,
@@ -809,8 +545,8 @@ export function exportedTeamToComp(team: unknown): TeamComp | null {
   });
 }
 
-function exportedTeamToConfig(team: unknown): TeamConfig {
-  if (!team || typeof team !== "object") return createDefaultTeamConfig();
+function exportedTeamToSetupConfig(team: unknown): TeamSetupConfig {
+  if (!team || typeof team !== "object") return createDefaultTeamSetupConfig();
   const value = team as Record<string, unknown>;
   const charConfigs: Record<string, TeamCharConfig> = {};
   const minEr = value.minEr;
@@ -829,7 +565,7 @@ function exportedTeamToConfig(team: unknown): TeamConfig {
         mergeCharConfig(charConfigs, charId, { minCr: numeric });
     }
   }
-  return normalizeTeamConfig({
+  return normalizeTeamSetupConfig({
     combatOptions: {},
     ...(cleanRecord(charConfigs) ? { charConfigs } : {}),
   });
@@ -837,7 +573,7 @@ function exportedTeamToConfig(team: unknown): TeamConfig {
 
 export function createTeamPersistenceFromImportedData(data: unknown): {
   compDeltas: TeamCompDelta[];
-  configsByTeamId: Record<string, TeamConfig>;
+  configsByTeamId: Record<string, TeamSetupConfig>;
   author: string;
   description: string;
 } {
@@ -863,12 +599,12 @@ export function createTeamPersistenceFromImportedData(data: unknown): {
       : { teams: Array.isArray(data) ? data : [] };
   const teams = payload.teams;
   let compDeltas: TeamCompDelta[] = [];
-  const configsByTeamId: Record<string, TeamConfig> = {};
+  const configsByTeamId: Record<string, TeamSetupConfig> = {};
   teams.forEach((team, displayIndex) => {
     const comp = exportedTeamToComp(team);
     if (!comp) return;
     compDeltas = upsertCustomTeamCompDelta(compDeltas, comp, displayIndex);
-    configsByTeamId[comp.id] = exportedTeamToConfig(team);
+    configsByTeamId[comp.id] = exportedTeamToSetupConfig(team);
   });
   return {
     compDeltas,
@@ -878,28 +614,14 @@ export function createTeamPersistenceFromImportedData(data: unknown): {
   };
 }
 
-export function createTeamPersistenceFromLegacyTeams(teams: Team[]): {
-  compDeltas: TeamCompDelta[];
-  configsByTeamId: Record<string, TeamConfig>;
-} {
-  let compDeltas: TeamCompDelta[] = [];
-  const configsByTeamId: Record<string, TeamConfig> = {};
-  teams.forEach((team, displayIndex) => {
-    const comp = legacyTeamToComp(team);
-    compDeltas = upsertCustomTeamCompDelta(compDeltas, comp, displayIndex);
-    configsByTeamId[team.id] = legacyTeamToConfig(team);
-  });
-  return { compDeltas, configsByTeamId };
-}
-
-export function createTeamConfigsFromPresetPayload(
+export function createTeamSetupConfigsFromPresetPayload(
   payload: TeamCompData
-): Record<string, TeamConfig> {
-  const configsByTeamId: Record<string, TeamConfig> = {};
+): Record<string, TeamSetupConfig> {
+  const configsByTeamId: Record<string, TeamSetupConfig> = {};
   for (const team of payload.teams) {
     const comp = exportedTeamToComp(team);
     if (!comp) continue;
-    configsByTeamId[comp.id] = exportedTeamToConfig(team);
+    configsByTeamId[comp.id] = exportedTeamToSetupConfig(team);
   }
   return configsByTeamId;
 }

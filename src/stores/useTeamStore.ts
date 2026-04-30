@@ -3,19 +3,17 @@ import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import {
   createEmptyTeamComp,
-  createTeamConfigsFromPresetPayload,
   createTeamPersistenceFromImportedData,
+  createTeamSetupConfigsFromPresetPayload,
   dedupeTeamCompDeltasAgainstPreset,
   deleteTeamCompDelta,
-  deriveTeamRuntimeFromDeltas,
+  deriveTeamCompsFromDeltas,
   getTeamDeltaDisplayIndex,
-  hasTeamCompPatch,
-  hasTeamConfigPatch,
   isPresetTeamComp,
-  legacyTeamToComp,
-  legacyTeamToConfig,
+  normalizeTeamSetupConfig,
   setTeamDeltaGlobalOrder,
   type TeamCompDelta,
+  teamCompInputToComp,
   teamCompToArrays,
   teamCompToExportedTeam,
   upsertCustomTeamCompDelta,
@@ -26,16 +24,14 @@ import {
 } from "@/lib/team-comp/teamPresetRegistry";
 import type {
   ExportedTeam,
-  Team,
+  TeamAddInput,
+  TeamComp,
   TeamCompData,
-  TeamConfig,
+  TeamSetupConfig,
 } from "@/lib/team-comp/types";
 import { mergeTeamStore, migrateTeamStore } from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
-import {
-  pickTeamResultCachePatch,
-  useTeamResultCacheStore,
-} from "./useTeamResultCacheStore";
+import { useTeamResultCacheStore } from "./useTeamResultCacheStore";
 
 let _teamIdSeq = 0;
 function nextTeamId(): string {
@@ -43,19 +39,30 @@ function nextTeamId(): string {
 }
 
 interface TeamState {
-  teams: Team[];
+  teamComps: TeamComp[];
+  teamCompById: Record<string, TeamComp>;
   author: string;
   description: string;
   activePresetId: string | null;
   compDeltas: TeamCompDelta[];
-  configsByTeamId: Record<string, TeamConfig>;
+  configsByTeamId: Record<string, TeamSetupConfig>;
 
   // Selectors
-  getTeamById: (id: string) => Team | undefined;
+  getTeamCompById: (id: string) => TeamComp | undefined;
+  getTeamSetupConfigById: (id: string) => TeamSetupConfig;
 
   // Actions
-  addTeam: (initialData?: Partial<Team>, position?: "start" | "end") => string;
-  updateTeam: (id: string, patch: Partial<Team>) => void;
+  addTeam: (initialData?: TeamAddInput, position?: "start" | "end") => string;
+  updateTeamComp: (
+    id: string,
+    updater: Partial<TeamComp> | ((comp: TeamComp) => TeamComp)
+  ) => void;
+  updateTeamSetupConfig: (
+    id: string,
+    updater:
+      | Partial<TeamSetupConfig>
+      | ((config: TeamSetupConfig) => TeamSetupConfig)
+  ) => void;
   deleteTeam: (id: string) => void;
   copyTeam: (id: string) => void;
   moveTeam: (id: string, direction: "up" | "down") => void;
@@ -77,10 +84,9 @@ function refreshDerivedTeamState(
   state: TeamState,
   preset = getCachedTeamPreset(state.activePresetId)
 ): void {
-  state.teams = deriveTeamRuntimeFromDeltas(
-    state.compDeltas,
-    state.configsByTeamId,
-    preset
+  state.teamComps = deriveTeamCompsFromDeltas(state.compDeltas, preset);
+  state.teamCompById = Object.fromEntries(
+    state.teamComps.map((team) => [team.id, team])
   );
 }
 
@@ -123,8 +129,14 @@ function insertIdInOrder(
   return position === "start" ? [id, ...withoutId] : [...withoutId, id];
 }
 
-function exportTeamWithStableId(team: Team): ExportedTeam {
-  const comp = legacyTeamToComp(team);
+function getSetupConfig(
+  configsByTeamId: Record<string, TeamSetupConfig>,
+  teamId: string
+): TeamSetupConfig {
+  return normalizeTeamSetupConfig(configsByTeamId[teamId] ?? {});
+}
+
+function exportTeamWithStableId(comp: TeamComp): ExportedTeam {
   const { characters, weapons, artifacts } = teamCompToArrays(comp);
   return {
     ...teamCompToExportedTeam(comp),
@@ -135,85 +147,72 @@ function exportTeamWithStableId(team: Team): ExportedTeam {
 export const useTeamStore = create<TeamState>()(
   persist(
     immer((set, get) => ({
-      teams: [],
+      teamComps: [],
+      teamCompById: {},
       author: "",
       description: "",
       activePresetId: null,
       compDeltas: [],
       configsByTeamId: {},
 
-      getTeamById: (id) => get().teams.find((t) => t.id === id),
+      getTeamCompById: (id) => get().teamCompById[id],
+      getTeamSetupConfigById: (id) => getSetupConfig(get().configsByTeamId, id),
 
       addTeam: (initialData, position = "end") => {
         const id = initialData?.id ?? nextTeamId();
-        const cachePatch = pickTeamResultCachePatch(initialData ?? {});
         set((state) => {
-          const baseComp = createEmptyTeamComp(id);
-          const draftTeam = {
-            ...deriveTeamRuntimeFromDeltas(
-              [{ kind: "custom", id, value: baseComp }],
-              {},
-              null
-            )[0],
-            ...initialData,
-            id,
-          };
-          const comp = legacyTeamToComp(draftTeam);
+          const comp =
+            initialData != null
+              ? teamCompInputToComp({ ...initialData, id })
+              : createEmptyTeamComp(id);
           state.compDeltas = upsertCustomTeamCompDelta(state.compDeltas, comp);
-          state.configsByTeamId[id] = legacyTeamToConfig(initialData ?? {});
+          state.configsByTeamId[id] = normalizeTeamSetupConfig(
+            initialData?.setupConfig ?? {}
+          );
           reindexTeamOrder(
             state,
             insertIdInOrder(
-              state.teams.map((team) => team.id),
+              state.teamComps.map((team) => team.id),
               id,
               position
             )
           );
           refreshDerivedTeamState(state);
         });
-        if (cachePatch) {
-          useTeamResultCacheStore.getState().patchForTeam(id, cachePatch);
-        }
         return id;
       },
 
-      updateTeam: (id, patch) => {
+      updateTeamComp: (id, updater) => {
         set((state) => {
-          const team = state.teams.find((t) => t.id === id);
-          if (!team) return;
-
-          const compChanged = hasTeamCompPatch(patch);
-          const configChanged = hasTeamConfigPatch(patch);
-          const cachePatch = pickTeamResultCachePatch(patch);
-
-          if (!compChanged && !configChanged) {
-            if (cachePatch) {
-              useTeamResultCacheStore.getState().patchForTeam(id, cachePatch);
-            }
-            return;
-          }
-
-          const mergedTeam = { ...team, ...patch, id };
+          const comp = state.teamCompById[id];
+          if (!comp) return;
           const displayIndex =
             getTeamDeltaDisplayIndex(state.compDeltas, id) ??
-            state.teams.findIndex((t) => t.id === id);
-
-          if (compChanged) {
-            state.compDeltas = upsertCustomTeamCompDelta(
-              state.compDeltas,
-              legacyTeamToComp(mergedTeam),
-              displayIndex
-            );
-          }
-
-          if (configChanged) {
-            state.configsByTeamId[id] = legacyTeamToConfig(mergedTeam);
-          }
-
+            state.teamComps.findIndex((team) => team.id === id);
+          const nextComp =
+            typeof updater === "function"
+              ? updater(comp)
+              : { ...comp, ...updater, id };
+          state.compDeltas = upsertCustomTeamCompDelta(
+            state.compDeltas,
+            nextComp,
+            displayIndex
+          );
           refreshDerivedTeamState(state);
-          if (cachePatch) {
-            useTeamResultCacheStore.getState().patchForTeam(id, cachePatch);
-          }
+        });
+      },
+
+      updateTeamSetupConfig: (id, updater) => {
+        set((state) => {
+          const comp = state.teamCompById[id];
+          if (!comp) return;
+          const current = getSetupConfig(state.configsByTeamId, id);
+          state.configsByTeamId[id] = normalizeTeamSetupConfig(
+            typeof updater === "function"
+              ? updater(current)
+              : { ...current, ...updater }
+          );
+          refreshDerivedTeamState(state);
         });
       },
 
@@ -222,7 +221,7 @@ export const useTeamStore = create<TeamState>()(
           const preset = getCachedTeamPreset(state.activePresetId);
           const displayIndex =
             getTeamDeltaDisplayIndex(state.compDeltas, id) ??
-            state.teams.findIndex((t) => t.id === id);
+            state.teamComps.findIndex((t) => t.id === id);
           if (isPresetTeamComp(state.compDeltas, preset, id)) {
             state.compDeltas = deleteTeamCompDelta(
               state.compDeltas,
@@ -242,24 +241,21 @@ export const useTeamStore = create<TeamState>()(
 
       copyTeam: (id) => {
         set((state) => {
-          const index = state.teams.findIndex((t) => t.id === id);
+          const index = state.teamComps.findIndex((t) => t.id === id);
           if (index === -1) return;
-          const source = state.teams[index];
+          const source = state.teamComps[index];
           const newId = nextTeamId();
-          const copiedTeam: Team = {
-            ...source,
-            id: newId,
-            comp: { ...legacyTeamToComp(source), id: newId },
-            optimizationResult: null,
-            weaponChoiceResult: null,
-          };
+          const copiedComp = { ...source, id: newId };
           state.compDeltas = upsertCustomTeamCompDelta(
             state.compDeltas,
-            legacyTeamToComp(copiedTeam),
+            copiedComp,
             index + 1
           );
-          state.configsByTeamId[newId] = legacyTeamToConfig(copiedTeam);
-          const nextOrder = state.teams.map((team) => team.id);
+          state.configsByTeamId[newId] = getSetupConfig(
+            state.configsByTeamId,
+            id
+          );
+          const nextOrder = state.teamComps.map((team) => team.id);
           nextOrder.splice(index + 1, 0, newId);
           reindexTeamOrder(state, nextOrder);
           refreshDerivedTeamState(state);
@@ -268,7 +264,7 @@ export const useTeamStore = create<TeamState>()(
 
       moveTeam: (id, direction) => {
         set((state) => {
-          const ids = state.teams.map((team) => team.id);
+          const ids = state.teamComps.map((team) => team.id);
           const index = ids.indexOf(id);
           if (index === -1) return;
           const targetIndex = direction === "up" ? index - 1 : index + 1;
@@ -282,7 +278,7 @@ export const useTeamStore = create<TeamState>()(
       moveTeamRelative: (id, anchorId, position) => {
         set((state) => {
           if (id === anchorId) return;
-          const ids = state.teams.map((team) => team.id);
+          const ids = state.teamComps.map((team) => team.id);
           const idx = ids.indexOf(id);
           if (idx === -1) return;
           ids.splice(idx, 1);
@@ -297,7 +293,8 @@ export const useTeamStore = create<TeamState>()(
 
       clearTeams: () => {
         set((state) => {
-          state.teams = [];
+          state.teamComps = [];
+          state.teamCompById = {};
           state.author = "";
           state.description = "";
           state.activePresetId = null;
@@ -327,7 +324,7 @@ export const useTeamStore = create<TeamState>()(
         set((state) => {
           state.activePresetId = presetId;
           state.compDeltas = [];
-          state.configsByTeamId = createTeamConfigsFromPresetPayload(data);
+          state.configsByTeamId = createTeamSetupConfigsFromPresetPayload(data);
           state.author = data.author ?? "";
           state.description = data.description ?? "";
           dedupeTeamCompStateAgainstPreset(state, data);
@@ -346,35 +343,33 @@ export const useTeamStore = create<TeamState>()(
       },
 
       exportTeams: (author, description) => {
-        const { teams } = get();
-        const normalized = teams.map((team) => {
+        const { teamComps } = get();
+        const normalized = teamComps.map((team) => {
+          const { characters, weapons, artifacts } = teamCompToArrays(team);
           const indices = [1, 2, 3].sort(
-            (a, b) =>
-              charSortKey(team.characters[a]) - charSortKey(team.characters[b])
+            (a, b) => charSortKey(characters[a]) - charSortKey(characters[b])
           );
-          return {
+          return teamCompInputToComp({
             ...team,
-            characters: [
-              team.characters[0],
-              ...indices.map((i) => team.characters[i]),
-            ],
-            weapons: [team.weapons[0], ...indices.map((i) => team.weapons[i])],
-            artifacts: [
-              team.artifacts[0],
-              ...indices.map((i) => team.artifacts[i]),
-            ],
-          };
+            characters: [characters[0], ...indices.map((i) => characters[i])],
+            weapons: [weapons[0], ...indices.map((i) => weapons[i])],
+            artifacts: [artifacts[0], ...indices.map((i) => artifacts[i])],
+          });
         });
         const sorted = normalized.sort((a, b) => {
+          const aArrays = teamCompToArrays(a);
+          const bArrays = teamCompToArrays(b);
           const carryDiff =
-            charSortKey(a.characters[0]) - charSortKey(b.characters[0]);
+            charSortKey(aArrays.characters[0]) -
+            charSortKey(bArrays.characters[0]);
           if (carryDiff !== 0) return carryDiff;
-          const idA = a.characters[0] ?? "";
-          const idB = b.characters[0] ?? "";
+          const idA = aArrays.characters[0] ?? "";
+          const idB = bArrays.characters[0] ?? "";
           if (idA !== idB) return idA < idB ? -1 : 1;
           for (let i = 1; i < 4; i++) {
             const diff =
-              charSortKey(a.characters[i]) - charSortKey(b.characters[i]);
+              charSortKey(aArrays.characters[i]) -
+              charSortKey(bArrays.characters[i]);
             if (diff !== 0) return diff;
           }
           return 0;

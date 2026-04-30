@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Build, BuildPayloadV5 } from "@/data/types";
 import { migrateBuildsStore } from "@/stores/migration/builds";
+import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
 const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
@@ -21,6 +22,7 @@ vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
 // Reset store before each test
 beforeEach(() => {
   useBuildsStore.getState().clearAll();
+  useAccountScoreCacheStore.getState().clearAllScores();
   presetCache.clear();
 });
 
@@ -423,13 +425,13 @@ describe("useBuildsStore", () => {
     });
   });
 
-  describe("deleteBuild", () => {
+  describe("removeBuild", () => {
     it("removes custom build without creating a preset tombstone", () => {
       const charId = "test-char";
       useBuildsStore.getState().newBuild(charId);
       const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
 
-      useBuildsStore.getState().deleteBuild(charId, buildId);
+      useBuildsStore.getState().removeBuild(charId, buildId);
 
       expect(useBuildsStore.getState().getBuild(buildId)).toBeUndefined();
       expect(useBuildsStore.getState().getBuildIds(charId)).toHaveLength(0);
@@ -508,7 +510,7 @@ describe("useBuildsStore", () => {
       });
 
       // Delete then revert
-      useBuildsStore.getState().deleteBuild(charId, buildId);
+      useBuildsStore.getState().removeBuild(charId, buildId);
       expect(useBuildsStore.getState().presetDeletedBuildIds).toContain(
         buildId
       );
@@ -686,9 +688,46 @@ describe("useBuildsStore", () => {
       );
     });
 
+    it("does not invalidate scores when preset hydration is unchanged", () => {
+      const state = useBuildsStore.getState();
+      state.setActivePreset("test-preset");
+      state.hydratePreset("test-preset", presetPayload);
+      useAccountScoreCacheStore.getState().setScores(0, { char1: null });
+
+      state.hydratePreset("test-preset", presetPayload);
+
+      expect(
+        useAccountScoreCacheStore.getState().getStaleScoreCharIds(0)
+      ).toEqual([]);
+    });
+
+    it("invalidates scores when preset hydration changes resolved builds", () => {
+      const state = useBuildsStore.getState();
+      state.setActivePreset("test-preset");
+      state.hydratePreset("test-preset", presetPayload);
+      useAccountScoreCacheStore.getState().setScores(0, { char1: null });
+
+      state.hydratePreset("test-preset", {
+        ...presetPayload,
+        builds: {
+          ...presetPayload.builds,
+          "p-2": {
+            ...presetPayload.builds["p-1"],
+            id: "p-2",
+            name: "Second Preset Build",
+          },
+        },
+        characterBuilds: { char1: ["p-1", "p-2"] },
+      });
+
+      expect(useAccountScoreCacheStore.getState().getStaleScoreCharIds(0)).toBe(
+        true
+      );
+    });
+
     it("resets presetDeletedBuildIds", () => {
       useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
-      useBuildsStore.getState().deleteBuild("char1", "p-1");
+      useBuildsStore.getState().removeBuild("char1", "p-1");
       expect(useBuildsStore.getState().presetDeletedBuildIds.length).toBe(1);
 
       // Subscribe clears deletions
@@ -753,7 +792,7 @@ describe("useBuildsStore", () => {
       // Simulate some deleted IDs
       useBuildsStore.getState().newBuild("char1");
       const buildId = useBuildsStore.getState().getBuildIds("char1")[0];
-      useBuildsStore.getState().deleteBuild("char1", buildId);
+      useBuildsStore.getState().removeBuild("char1", buildId);
 
       useBuildsStore.getState().setActivePreset("new-preset");
 

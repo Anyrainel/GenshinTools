@@ -111,7 +111,7 @@ export interface TeamOptimizerOptions {
   useLagrangianAlloc?: boolean;
 }
 
-// ─── Team state shape ──────────────────────────────────────────────
+// ─── Team comp state shape ──────────────────────────────────────────────
 
 // These describe the persisted / in-memory team state. The Zustand
 // store in src/stores/useTeamStore.ts holds instances of these, and
@@ -178,17 +178,6 @@ export interface WeaponChoiceCharConfig {
   minCr: number;
 }
 
-/** Per-character optimizer/generator settings, keyed by charId. */
-export interface CharSettings {
-  minEr?: number;
-  minCr?: number;
-  crMode?: "min" | "target";
-  tierAwarePool?: boolean;
-  fullSetOptional?: boolean;
-  /** @deprecated legacy runtime compatibility; use fullSetOptional. */
-  ignoreArtifactSets?: boolean;
-}
-
 /** Analyzer-specific configuration, grouped under team.analyzer. */
 export interface AnalyzerConfig {
   configs?: StoredAnalyzerCharConfig[];
@@ -241,7 +230,7 @@ export interface TeamEnergyConfig {
 
 export type TeamInvestmentConfig = AnalyzerConfig;
 
-export interface TeamConfig {
+export interface TeamSetupConfig {
   combatOptions: OptionMap;
   charConfigs?: Record<string, TeamCharConfig>;
   damage?: TeamDamageConfig;
@@ -249,40 +238,18 @@ export interface TeamConfig {
   investment?: TeamInvestmentConfig;
 }
 
-export interface Team {
-  id: string;
-  name: string;
-  // Canonical persisted/cloud-sync source split. Runtime teams projected by
-  // useTeamStore carry these fields; optional for legacy import/test shapes.
-  comp?: TeamComp;
-  config?: TeamConfig;
-  // ─── Composition ───
-  characters: (string | null)[];
-  weapons: (string | null)[];
-  artifacts: (ArtifactSetConfig | null)[];
-  reactions: ReactionType[];
-  opts: OptionMap;
-  // ─── Shared config ───
-  calcContext: Partial<CalcContext>;
-  enemyAura?: Element;
-  extraBuffs?: ExtraBuff[];
-  // ─── Formula / combo ───
-  selectedFormula: { charId: string; formulaId: string } | null;
-  singleReaction?: ReactionOverride;
-  singleForceOnField?: boolean;
-  formulaMode: "single" | "combo";
-  combo: ComboFormula | null;
-  // ─── Per-character settings ───
-  charSettings?: Record<string, CharSettings>;
-  // ─── ER calculator ───
-  erTimelines?: ERTimeline[];
-  // ─── Result caches ───
-  optimizationResult: OptimizationResult | null;
-  choiceResults?: ChoiceResultCache;
-  /** @deprecated use choiceResults.weapon */
-  weaponChoiceResult?: WeaponChoiceResult | null;
-  // ─── Analyzer ───
-  analyzer?: AnalyzerConfig;
+export interface TeamCompInput {
+  id?: string;
+  name?: string;
+  slots?: TeamCompSlot[];
+  characters?: (string | null)[];
+  weapons?: (string | null)[];
+  artifacts?: (ArtifactSetConfig | null)[];
+  reactions?: ReactionType[];
+}
+
+export interface TeamAddInput extends TeamCompInput {
+  setupConfig?: Partial<TeamSetupConfig>;
 }
 
 /** Exported artifact — discriminator omitted since field names differ. */

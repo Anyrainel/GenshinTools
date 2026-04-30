@@ -130,7 +130,7 @@ function BuildCardComponent({
   const { t } = useLanguage();
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const setBuild = useBuildsStore((state) => state.setBuild);
-  const deleteBuild = useBuildsStore((state) => state.deleteBuild);
+  const removeBuild = useBuildsStore((state) => state.removeBuild);
   const revertBuild = useBuildsStore((state) => state.revertBuild);
   // source is derived in the build store's resolved runtime view
   const [confirmAction, setConfirmAction] = useState<
@@ -193,7 +193,7 @@ function BuildCardComponent({
 
   const handleConfirmAction = () => {
     if (confirmAction === "delete") {
-      deleteBuild(build.characterId, buildId);
+      removeBuild(build.characterId, buildId);
     } else if (confirmAction === "revert") {
       revertBuild(build.characterId, buildId);
     }

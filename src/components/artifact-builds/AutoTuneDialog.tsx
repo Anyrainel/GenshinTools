@@ -19,11 +19,13 @@ import type {
   AutoTuneTeamResult,
 } from "@/lib/artifact-builds/auto-tune/pipeline";
 import { aggregateTeamResults } from "@/lib/artifact-builds/auto-tune/pipeline";
+import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/dmgcalc/constants";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { ComboLine, I18nLabel } from "@/lib/dmgcalc/types";
-import { buildTeamConfigs } from "@/lib/team-comp/teamConfigUtils";
-import type { Team } from "@/lib/team-comp/types";
+import { buildTeamSlotConfigs } from "@/lib/team-comp/teamConfigUtils";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { AutoTuneResults } from "./AutoTuneResults";
 import { AutoTuneTeamRow } from "./AutoTuneTeamRow";
@@ -32,22 +34,6 @@ import { TeamEditDialog } from "./TeamEditDialog";
 /** Unique key for a combo line: formulaId + reaction */
 function comboLineKey(line: ComboLine): string {
   return `${line.formulaId}.${line.reaction?.reaction ?? "none"}`;
-}
-
-/** Build a team label from character names: "Hu Tao" → "Tao", join with "/" */
-function shortenName(name: string): string {
-  const parts = name.split(" ");
-  return parts.length > 1 ? parts[parts.length - 1] : name;
-}
-
-export function buildTeamLabel(
-  team: { characters: (string | null)[] },
-  t: { character: (id: string) => string }
-): string {
-  return team.characters
-    .filter(Boolean)
-    .map((cid) => shortenName(t.character(cid!)))
-    .join("/");
 }
 
 // ─── State Management ───
@@ -123,18 +109,20 @@ export function AutoTuneDialog({
   onApply,
 }: AutoTuneDialogProps) {
   const { t } = useLanguage();
-  const teams = useTeamStore((s) => s.teams);
+  const teamComps = useTeamStore((s) => s.teamComps);
+  const getTeamSetupConfigById = useTeamStore((s) => s.getTeamSetupConfigById);
   const addTeam = useTeamStore((s) => s.addTeam);
   const accountData = useActiveAccountData();
 
   // Filter teams: must contain this character AND match build's artifact set
   const relevantTeams = useMemo(() => {
-    return teams.filter((team) => {
-      const charIdx = team.characters.indexOf(characterId);
+    return teamComps.filter((teamComp) => {
+      const { characters, artifacts } = teamCompToArrays(teamComp);
+      const charIdx = characters.indexOf(characterId);
       if (charIdx === -1) return false;
 
       // Match artifact set from the build
-      const teamArt = team.artifacts[charIdx];
+      const teamArt = artifacts[charIdx];
       if (!teamArt) return true; // no artifact configured = show it
       if (build.composition === "4pc" && build.artifactSet) {
         if (teamArt.type === "4pc") return teamArt.setId === build.artifactSet;
@@ -150,7 +138,7 @@ export function AutoTuneDialog({
       }
       return true;
     });
-  }, [teams, characterId, build]);
+  }, [teamComps, characterId, build]);
 
   const initialEnabledIds = useMemo(
     () => new Set(relevantTeams.map((t) => t.id)),
@@ -196,8 +184,13 @@ export function AutoTuneDialog({
       }[] = [];
       let reactions: ReactionType[] = ["none"];
       let combo: Record<string, number> = {};
-      for (const team of enabledTeams) {
-        const configs = buildTeamConfigs(team, accountData);
+      for (const teamComp of enabledTeams) {
+        const setupConfig = getTeamSetupConfigById(teamComp.id);
+        const configs = buildTeamSlotConfigs(
+          teamComp,
+          setupConfig,
+          accountData
+        );
         if (
           configs.length === 0 ||
           !configs.some((c) => c.charId === characterId)
@@ -206,7 +199,7 @@ export function AutoTuneDialog({
         try {
           const tb = new TeamBuild(
             configs,
-            (team.opts ?? {}) as Record<string, string>
+            setupConfig.combatOptions as Record<string, string>
           );
           const allFormulas = tb.catalog.getFormulaIds();
           const charFormulas = allFormulas[characterId];
@@ -240,7 +233,13 @@ export function AutoTuneDialog({
         eligibleReactions: reactions,
         defaultCombo: combo,
       };
-    }, [enabledTeams, accountData, characterId, element]);
+    }, [
+      enabledTeams,
+      getTeamSetupConfigById,
+      accountData,
+      characterId,
+      element,
+    ]);
 
   const hasReactions = eligibleReactions.length > 1;
 
@@ -331,15 +330,19 @@ export function AutoTuneDialog({
     const formulas = activeFormulas.length > 0 ? activeFormulas : undefined;
 
     // Spawn one worker per team for parallel computation
-    const teamInputs = enabledTeams.map((team, i) => ({
-      characterId,
-      configs: buildTeamConfigs(team, accountData),
-      opts: (team.opts ?? {}) as Record<string, string>,
-      formulas,
-      label: team.name || buildTeamLabel(team, t),
-      teamIndex: i,
-      element,
-    }));
+    const teamInputs = enabledTeams.map((teamComp, i) => {
+      const setupConfig = getTeamSetupConfigById(teamComp.id);
+      const { characters } = teamCompToArrays(teamComp);
+      return {
+        characterId,
+        configs: buildTeamSlotConfigs(teamComp, setupConfig, accountData),
+        opts: setupConfig.combatOptions as Record<string, string>,
+        formulas,
+        label: teamComp.name || buildTeamLabel({ characters }, t),
+        teamIndex: i,
+        element,
+      };
+    });
 
     const results: (AutoTuneTeamResult | null)[] = new Array(
       teamInputs.length
@@ -397,7 +400,15 @@ export function AutoTuneDialog({
       };
       worker.postMessage({ id: i, input: teamInputs[i] });
     }
-  }, [enabledTeams, accountData, characterId, element, activeFormulas, t]);
+  }, [
+    enabledTeams,
+    getTeamSetupConfigById,
+    accountData,
+    characterId,
+    element,
+    activeFormulas,
+    t,
+  ]);
 
   const handleApply = useCallback(() => {
     if (state.result) {
@@ -425,6 +436,7 @@ export function AutoTuneDialog({
             <ConfigPhase
               characterId={characterId}
               relevantTeams={relevantTeams}
+              getTeamSetupConfigById={getTeamSetupConfigById}
               enabledTeamIds={state.enabledTeamIds}
               discoveredFormulas={discoveredFormulas}
               comboLines={state.comboLines}
@@ -498,6 +510,7 @@ export function AutoTuneDialog({
 function ConfigPhase({
   characterId,
   relevantTeams,
+  getTeamSetupConfigById,
   enabledTeamIds,
   discoveredFormulas,
   comboLines,
@@ -510,7 +523,8 @@ function ConfigPhase({
   t,
 }: {
   characterId: string;
-  relevantTeams: Team[];
+  relevantTeams: TeamComp[];
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
   enabledTeamIds: Set<string>;
   discoveredFormulas: {
     formulaId: string;
@@ -542,7 +556,8 @@ function ConfigPhase({
             {relevantTeams.map((team) => (
               <AutoTuneTeamRow
                 key={team.id}
-                team={team}
+                teamComp={team}
+                setupConfig={getTeamSetupConfigById(team.id)}
                 characterId={characterId}
                 enabled={enabledTeamIds.has(team.id)}
                 onToggle={(enabled) =>

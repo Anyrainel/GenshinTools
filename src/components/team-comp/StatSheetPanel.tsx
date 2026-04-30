@@ -32,7 +32,7 @@ import type { MainStat, MainStatSlot, Slot, StatKey } from "@/data/enums";
 import { mainStatSlots } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import { characterStatsResource } from "@/data/gameStatsLoader";
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
@@ -40,7 +40,7 @@ import type { DisplayResult } from "@/lib/dmgcalc/types";
 import { filterMatchesTag } from "@/lib/dmgcalc/utils";
 import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatter";
 import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamConfigUtils";
-import type { OptFailReason, Team } from "@/lib/team-comp/types";
+import type { OptFailReason } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 
@@ -56,7 +56,8 @@ type ViewMode = "idle" | "combat" | "marginal";
 
 type Props = {
   result?: DisplayResult | null;
-  team: Team;
+  characters: (string | null)[];
+  artifacts: (ArtifactSetConfig | null)[];
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   targetCharId: string;
   /** Character IDs with active combo lines (combo mode only). */
@@ -298,7 +299,8 @@ function useConditionalViewData(
 
 export function StatSheetPanel({
   result,
-  team,
+  characters,
+  artifacts,
   artifactsByChar,
   targetCharId,
   comboActiveCharIds,
@@ -342,7 +344,7 @@ export function StatSheetPanel({
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2">
-      {team.characters.map((charId, i) => {
+      {characters.map((charId, i) => {
         if (!charId) return <div key={i} />;
 
         const isTarget = charId === targetCharId;
@@ -367,7 +369,7 @@ export function StatSheetPanel({
 
         const artifactsObj = artifactsByChar[charId] || {};
         const hasArtifacts = Object.values(artifactsObj).some(Boolean);
-        const goalConfig = team.artifacts[i];
+        const goalConfig = artifacts[i];
         const equippedSets = detectEquippedSets(Object.values(artifactsObj));
         const hasMismatch =
           hasArtifacts && goalConfig && !setsMatch(goalConfig, equippedSets);

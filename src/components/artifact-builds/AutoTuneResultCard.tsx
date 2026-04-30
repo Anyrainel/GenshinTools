@@ -15,7 +15,7 @@ import type {
   AutoTuneOutput,
   TeamBreakdown,
 } from "@/lib/artifact-builds/auto-tune/pipeline";
-import type { Team } from "@/lib/team-comp/types";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
 import { ELEMENT_HEX, getElementColor } from "../shared/colors";
@@ -28,18 +28,20 @@ type ResultEntry = {
   build: Build;
   status: EntryStatus;
   result: AutoTuneOutput | null;
-  teams: Team[];
+  teamComps: TeamComp[];
 };
 
 function TeamResultRow({
-  team,
+  teamComp,
   characterId,
   breakdown,
+  getTeamSetupConfigById,
   accountData,
 }: {
-  team: Team | null;
+  teamComp: TeamComp | null;
   characterId: string;
   breakdown: TeamBreakdown;
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
   accountData: AccountData | null;
 }) {
   const { t } = useLanguage();
@@ -53,10 +55,11 @@ function TeamResultRow({
         className="flex items-center gap-3 w-full px-2.5 py-2 text-left hover:bg-muted/20 transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
-        {team ? (
+        {teamComp ? (
           <div className="flex-1 min-w-0 pointer-events-none">
             <AutoTuneTeamRow
-              team={team}
+              teamComp={teamComp}
+              setupConfig={getTeamSetupConfigById(teamComp.id)}
               characterId={characterId}
               enabled={true}
               onToggle={() => {}}
@@ -112,12 +115,14 @@ export function AutoTuneResultCard({
   onApply,
   onDismiss,
   element,
+  getTeamSetupConfigById,
   accountData,
 }: {
   entry: ResultEntry;
   onApply: () => void;
   onDismiss: () => void;
   element: string;
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
   accountData: AccountData | null;
 }) {
   const { t } = useLanguage();
@@ -234,9 +239,10 @@ export function AutoTuneResultCard({
             {result.teamBreakdowns.map((tb) => (
               <TeamResultRow
                 key={tb.teamIndex}
-                team={entry.teams[tb.teamIndex] ?? null}
+                teamComp={entry.teamComps[tb.teamIndex] ?? null}
                 characterId={entry.characterId}
                 breakdown={tb}
+                getTeamSetupConfigById={getTeamSetupConfigById}
                 accountData={accountData}
               />
             ))}

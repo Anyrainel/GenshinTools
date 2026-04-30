@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
 import {
@@ -9,7 +8,6 @@ import {
   CharacterDataSchema,
   PersistedAccountScoreCacheStoreSchema,
   PersistedAccountStoreSchema,
-  PersistedAnalyzerCacheStoreSchema,
   PersistedArchiveSessionStoreSchema,
   PersistedArtifactScoreStoreSchema,
   PersistedBaseTierStoreSchema,
@@ -24,7 +22,6 @@ import {
   PersistedTeamStoreSchema,
   PersistedTierListStoreSchema,
   PersistedTriageStoreSchema,
-  TeamSchema,
   WeaponDataSchema,
 } from "@/stores/schemas";
 
@@ -74,25 +71,6 @@ function validCharacter(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
 }
-
-const validTeam = {
-  id: "team-1",
-  name: "Freeze Team",
-  characters: ["Ayaka", "Kokomi", null, null],
-  weapons: ["MistsplitterReforged", null, null, null],
-  artifacts: [
-    { type: "4pc" as const, setId: "BlizzardStrayer" },
-    null,
-    null,
-    null,
-  ],
-  reactions: [],
-  opts: {},
-  calcContext: {},
-  formulaMode: "single" as const,
-  extraBuffs: [],
-  charSettings: {},
-};
 
 const validBuild = {
   id: "build-1",
@@ -402,70 +380,6 @@ describe("PersistedBuildsStoreSchema", () => {
   });
 });
 
-// ─── TeamSchema ───
-
-describe("TeamSchema", () => {
-  it("heals missing array fields to null-filled defaults", () => {
-    const input = omit({ ...validTeam }, "characters", "weapons", "artifacts");
-    const result = TeamSchema.parse(input);
-    expect(result.characters).toEqual([null, null, null, null]);
-    expect(result.weapons).toEqual([null, null, null, null]);
-    expect(result.artifacts).toEqual([null, null, null, null]);
-  });
-
-  it("heals invalid artifact configs within array to null", () => {
-    const result = TeamSchema.parse({
-      ...validTeam,
-      artifacts: [{ type: "invalid", setId: "x" }, null, null, null],
-    });
-    expect(result.artifacts[0]).toBeNull();
-  });
-
-  it("heals missing scalar fields to defaults", () => {
-    const input = omit(
-      { ...validTeam },
-      "name",
-      "reactions",
-      "opts",
-      "extraBuffs",
-      "charSettings"
-    );
-    const result = TeamSchema.parse(input);
-    expect(result.name).toBe("");
-    expect(result.reactions).toEqual([]);
-    expect(result.opts).toEqual({});
-    expect(result.extraBuffs).toEqual([]);
-    expect(result.charSettings).toEqual({});
-  });
-
-  it("heals invalid formulaMode and accepts valid combo", () => {
-    const invalid = TeamSchema.parse({ ...validTeam, formulaMode: "triple" });
-    expect(invalid.formulaMode).toBe("single");
-
-    const combo = TeamSchema.parse({ ...validTeam, formulaMode: "combo" });
-    expect(combo.formulaMode).toBe("combo");
-  });
-
-  it("accepts 2pc+2pc artifact config", () => {
-    const result = TeamSchema.parse({
-      ...validTeam,
-      artifacts: [
-        {
-          type: "2pc+2pc",
-          halfSetIds: ["GladiatorsFinale", "ShimenawasReminiscence"],
-        },
-        null,
-        null,
-        null,
-      ],
-    });
-    expect(result.artifacts[0]).toEqual({
-      type: "2pc+2pc",
-      halfSetIds: ["GladiatorsFinale", "ShimenawasReminiscence"],
-    });
-  });
-});
-
 // ─── PersistedTeamStoreSchema ───
 
 describe("PersistedTeamStoreSchema", () => {
@@ -499,80 +413,77 @@ describe("PersistedTeamStoreSchema", () => {
 describe("PersistedFreezeStoreSchema", () => {
   it("heals all fields from empty object", () => {
     expect(PersistedFreezeStoreSchema.parse({})).toEqual({
-      frozenTeams: {},
-      reuseMode: "sameChar",
-      frozenArtifactIds: [],
+      freezesByProfileId: {},
     });
   });
 
   it("validates reuseMode enum", () => {
     // Invalid heals to default
     const invalid = PersistedFreezeStoreSchema.parse({
-      reuseMode: "badValue",
+      freezesByProfileId: {
+        "0": {
+          frozenTeamLoadouts: {},
+          reuseMode: "badValue",
+          frozenArtifactIds: [],
+        },
+      },
     });
-    expect(invalid.reuseMode).toBe("sameChar");
+    expect(invalid.freezesByProfileId["0"].reuseMode).toBe("sameChar");
 
     // All valid values accepted
     for (const mode of ["none", "sameChar", "forceReuse"] as const) {
       const result = PersistedFreezeStoreSchema.parse({
-        frozenTeams: {},
-        reuseMode: mode,
-        frozenArtifactIds: [],
+        freezesByProfileId: {
+          "0": {
+            frozenTeamLoadouts: {},
+            reuseMode: mode,
+            frozenArtifactIds: [],
+          },
+        },
       });
-      expect(result.reuseMode).toBe(mode);
+      expect(result.freezesByProfileId["0"].reuseMode).toBe(mode);
     }
   });
 
-  it("heals corrupted nested data", () => {
-    const result = PersistedFreezeStoreSchema.parse({
-      frozenTeams: {
-        "team-1": {
-          frozenCharIds: "not-an-array",
-          artifactsByChar: 42,
-        },
-      },
-      reuseMode: "sameChar",
-      frozenArtifactIds: [],
-    });
-    expect(result.frozenTeams["team-1"].frozenCharIds).toEqual([]);
-    expect(result.frozenTeams["team-1"].artifactsByChar).toEqual({});
-  });
-
-  it("heals corrupted artifact inside frozenTeam to null", () => {
-    const result = PersistedFreezeStoreSchema.parse({
-      frozenTeams: {
-        "team-1": {
-          frozenCharIds: [],
-          artifactsByChar: {
-            Ayaka: { flower: "not-an-artifact" },
-          },
-        },
-      },
-      reuseMode: "sameChar",
-      frozenArtifactIds: [],
-    });
-    expect(
-      result.frozenTeams["team-1"].artifactsByChar.Ayaka.flower
-    ).toBeNull();
-  });
-
-  it("heals account-scoped freeze buckets", () => {
+  it("heals corrupted latest loadout data", () => {
     const result = PersistedFreezeStoreSchema.parse({
       freezesByProfileId: {
         "0": {
-          frozenTeams: {
+          frozenTeamLoadouts: {
+            "team-1": {
+              frozenCharIds: "not-an-array",
+              artifactIdsByChar: 42,
+            },
+          },
+          reuseMode: "sameChar",
+          frozenArtifactIds: [],
+        },
+      },
+    });
+    expect(
+      result.freezesByProfileId["0"].frozenTeamLoadouts["team-1"].frozenCharIds
+    ).toEqual([]);
+    expect(
+      result.freezesByProfileId["0"].frozenTeamLoadouts["team-1"]
+        .artifactIdsByChar
+    ).toEqual({});
+  });
+
+  it("heals account-scoped freeze loadout buckets", () => {
+    const result = PersistedFreezeStoreSchema.parse({
+      freezesByProfileId: {
+        "0": {
+          frozenTeamLoadouts: {
             "team-1": {
               frozenCharIds: ["Ayaka"],
-              artifactsByChar: {
-                Ayaka: { flower: "not-an-artifact" },
-              },
+              artifactIdsByChar: { Ayaka: { flower: "artifact-1" } },
             },
           },
           reuseMode: "forceReuse",
           frozenArtifactIds: ["artifact-1"],
         },
         "123456789": {
-          frozenTeams: 42,
+          frozenTeamLoadouts: 42,
           reuseMode: "bad",
           frozenArtifactIds: "bad",
         },
@@ -584,10 +495,12 @@ describe("PersistedFreezeStoreSchema", () => {
       "artifact-1",
     ]);
     expect(
-      result.freezesByProfileId?.["0"].frozenTeams["team-1"].artifactsByChar
-        .Ayaka.flower
-    ).toBeNull();
-    expect(result.freezesByProfileId?.["123456789"].frozenTeams).toEqual({});
+      result.freezesByProfileId?.["0"].frozenTeamLoadouts?.["team-1"]
+        .artifactIdsByChar.Ayaka.flower
+    ).toBe("artifact-1");
+    expect(result.freezesByProfileId?.["123456789"].frozenTeamLoadouts).toEqual(
+      {}
+    );
     expect(result.freezesByProfileId?.["123456789"].reuseMode).toBe("sameChar");
     expect(result.freezesByProfileId?.["123456789"].frozenArtifactIds).toEqual(
       []
@@ -604,49 +517,7 @@ describe("PersistedFreezeStoreSchema", () => {
 describe("PersistedResourceRecStoreSchema", () => {
   it("heals structural fields from empty object", () => {
     const result = PersistedResourceRecStoreSchema.parse({});
-    expect(result.thresholds).toEqual({});
-    expect(result.minScoreDiff).toEqual({
-      craft: {},
-      reroll: {},
-      levelup: {},
-    });
-    expect(result.panelOpen).toBe(false);
-    expect(result.showCraft).toBeUndefined();
-    expect(result.showReroll).toBeUndefined();
-    expect(result.showLevelup).toBeUndefined();
-  });
-
-  it("heals corrupted minScoreDiff while preserving valid inner data", () => {
-    // Completely corrupted
-    const corrupted = PersistedResourceRecStoreSchema.parse({
-      minScoreDiff: "broken",
-    });
-    expect(corrupted.minScoreDiff).toEqual({
-      craft: {},
-      reroll: {},
-      levelup: {},
-    });
-
-    // Partial — preserves craft, heals missing reroll/levelup
-    const partial = PersistedResourceRecStoreSchema.parse({
-      minScoreDiff: { craft: { GladiatorsFinale: 5 } },
-    });
-    expect(partial.minScoreDiff.craft).toEqual({ GladiatorsFinale: 5 });
-    expect(partial.minScoreDiff.reroll).toEqual({});
-    expect(partial.minScoreDiff.levelup).toEqual({});
-  });
-
-  it("drops wrong types for optional visibility fields", () => {
-    const result = PersistedResourceRecStoreSchema.parse({
-      panelOpen: "yes",
-      showCraft: 0,
-      showReroll: null,
-      showLevelup: [],
-    });
-    expect(result.panelOpen).toBe(false);
-    expect(result.showCraft).toBeUndefined();
-    expect(result.showReroll).toBeUndefined();
-    expect(result.showLevelup).toBeUndefined();
+    expect(result).toEqual({ settingsByProfileId: {} });
   });
 
   it("heals account-scoped settings", () => {
@@ -676,53 +547,15 @@ describe("PersistedResourceRecStoreSchema", () => {
 // ─── PersistedTriageStoreSchema ───
 
 describe("PersistedTriageStoreSchema", () => {
-  const fullDefaults = { settings: DEFAULT_TRIAGE_SETTINGS };
-
   it("heals missing or corrupted settings to full defaults", () => {
-    expect(PersistedTriageStoreSchema.parse({})).toEqual(fullDefaults);
-    expect(PersistedTriageStoreSchema.parse({ settings: 42 })).toEqual(
-      fullDefaults
-    );
-  });
-
-  it("preserves valid fields while healing missing ones", () => {
-    const result = PersistedTriageStoreSchema.parse({
-      settings: { triageMode: "strict", mainStatThreshold: 80 },
+    expect(PersistedTriageStoreSchema.parse({})).toEqual({
+      settingsByProfileId: {},
     });
-    expect(result.settings.triageMode).toBe("strict");
-    expect(result.settings.mainStatThreshold).toBe(80);
-    // Healed fields
-    expect(result.settings.optionalSubThreshold).toBe(50);
-    expect(result.settings.fillerKeep).toBe(DEFAULT_TRIAGE_SETTINGS.fillerKeep);
-    expect(result.settings.alwaysLockSolidArtifacts).toBe(false);
-    expect(result.settings.ownedOnly).toBe(true);
-    expect(result.settings.levelProtection).toBe(12);
-    expect(result.settings.customFlexInputs).toEqual([]);
-  });
-
-  it("heals wrong types for enum, boolean, and number settings", () => {
-    const result = PersistedTriageStoreSchema.parse({
-      settings: {
-        triageMode: "medium",
-        ownedOnly: "no",
-        erHoardingEnabled: 0,
-        doubleCritLockEnabled: null,
-        mainStatThreshold: "high",
-        levelProtection: false,
-        alwaysLockSolidArtifacts: "yes",
-        customFlexInputs: "not-an-array",
-      },
+    expect(
+      PersistedTriageStoreSchema.parse({ settingsByProfileId: 42 })
+    ).toEqual({
+      settingsByProfileId: {},
     });
-    expect(result.settings.triageMode).toBe("loose");
-    expect(result.settings.ownedOnly).toBe(true);
-    expect(result.settings.erHoardingEnabled).toBe(true);
-    expect(result.settings.doubleCritLockEnabled).toBe(true);
-    expect(result.settings.mainStatThreshold).toBe(
-      DEFAULT_TRIAGE_SETTINGS.mainStatThreshold
-    );
-    expect(result.settings.levelProtection).toBe(12);
-    expect(result.settings.alwaysLockSolidArtifacts).toBe(false);
-    expect(result.settings.customFlexInputs).toEqual([]);
   });
 
   it("heals account-scoped settings", () => {
@@ -956,21 +789,6 @@ describe("PersistedSessionNavStoreSchema", () => {
   });
 });
 
-// ─── PersistedAnalyzerCacheStoreSchema ───
-
-describe("PersistedAnalyzerCacheStoreSchema", () => {
-  it("heals analyzer cache envelope", () => {
-    expect(PersistedAnalyzerCacheStoreSchema.parse({})).toEqual({
-      lastByTeam: {},
-    });
-    expect(
-      PersistedAnalyzerCacheStoreSchema.parse({
-        lastByTeam: { "team-1": { expensive: "opaque-cache-payload" } },
-      }).lastByTeam["team-1"]
-    ).toEqual({ expensive: "opaque-cache-payload" });
-  });
-});
-
 // ─── PersistedTeamResultCacheStoreSchema ───
 
 describe("PersistedTeamResultCacheStoreSchema", () => {
@@ -984,7 +802,7 @@ describe("PersistedTeamResultCacheStoreSchema", () => {
           "team-1": { choiceResults: { weapon: { timestamp: 1 } } },
         },
       }).resultsByTeamId["team-1"]
-    ).toEqual({ choiceResults: { weapon: { timestamp: 1 } } });
+    ).toEqual({});
   });
 });
 

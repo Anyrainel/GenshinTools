@@ -71,7 +71,10 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
     const reuseMode = useFreezeStore((s) => s.reuseMode);
     const setReuseMode = useFreezeStore((s) => s.setReuseMode);
     const clearAllFrozen = useFreezeStore((s) => s.clearAll);
-    const teams = useTeamStore((s) => s.teams);
+    const teamComps = useTeamStore((s) => s.teamComps);
+    const getTeamSetupConfigById = useTeamStore(
+      (s) => s.getTeamSetupConfigById
+    );
     const accountData = useActiveAccountData();
     const [freezeDialogOpen, setFreezeDialogOpen] = useState(false);
     const frozenExportRef = useRef<HTMLDivElement>(null);
@@ -233,17 +236,18 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
     const frozenTeamEntries = useMemo(() => {
       const entries: {
         teamId: string;
-        team: (typeof teams)[number];
+        teamComp: (typeof teamComps)[number];
+        setupConfig: ReturnType<typeof getTeamSetupConfigById>;
         teamIndex: number;
         frozenCharIds: string[];
         pendingRefreezeChars: Record<string, Record<Slot, ArtifactData | null>>;
         artifactsByChar: Record<string, Record<string, ArtifactData>>;
       }[] = [];
 
-      for (let i = 0; i < teams.length; i++) {
-        const team = teams[i];
-        const snapshot = teamDataSnapshot.current[team.id];
-        const storeData = frozenTeams[team.id];
+      for (let i = 0; i < teamComps.length; i++) {
+        const teamComp = teamComps[i];
+        const snapshot = teamDataSnapshot.current[teamComp.id];
+        const storeData = frozenTeams[teamComp.id];
         if (!snapshot) continue;
 
         const storeFrozenCharIds = storeData?.frozenCharIds ?? [];
@@ -274,8 +278,9 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
         }
 
         entries.push({
-          teamId: team.id,
-          team,
+          teamId: teamComp.id,
+          teamComp,
+          setupConfig: getTeamSetupConfigById(teamComp.id),
           teamIndex: i + 1,
           frozenCharIds: storeFrozenCharIds,
           pendingRefreezeChars: pendingChars,
@@ -283,7 +288,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
         });
       }
       return entries;
-    }, [teams, frozenTeams]);
+    }, [teamComps, frozenTeams, getTeamSetupConfigById]);
 
     // ── Standalone frozen artifacts ──
 
@@ -358,7 +363,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
 
     const buildBatchEquipPayload = useCallback(() => {
       const teamInputs = frozenTeamEntries.map((entry) => ({
-        team: entry.team,
+        characters: entry.teamComp.slots.map((slot) => slot.charId),
         optimizedArtifactsByChar: entry.artifactsByChar,
       }));
       return buildBatchEquipInstructions(teamInputs, accountData);
@@ -367,7 +372,7 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
     // Show controls when there's meaningful context (account + teams),
     // even if nothing is frozen yet, so users can configure reuse mode
     // and freeze standalone artifacts from the start.
-    const hasContext = !!accountData && teams.length > 0;
+    const hasContext = !!accountData && teamComps.length > 0;
 
     return (
       <ScrollLayout>
@@ -417,7 +422,8 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
             frozenTeamEntries.map((entry) => (
               <FrozenTeamSection
                 key={entry.teamId}
-                team={entry.team}
+                teamComp={entry.teamComp}
+                setupConfig={entry.setupConfig}
                 teamIndex={entry.teamIndex}
                 frozenCharIds={entry.frozenCharIds}
                 pendingRefreezeChars={entry.pendingRefreezeChars}

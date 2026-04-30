@@ -49,12 +49,16 @@ import { useAutoDisableOwnedFilter } from "@/hooks/useAutoDisableOwnedFilter";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
 import { fuzzyMatch } from "@/lib/search";
-import type { Team } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { TeamSort, ViewId } from "@/stores/useSessionNavStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
-import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
+import {
+  type TeamResultCacheEntry,
+  useTeamResultCacheStore,
+} from "@/stores/useTeamResultCacheStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
 
@@ -115,7 +119,12 @@ export interface TeamGridProps {
   activeTeamId: string | null;
   setActiveTeamId: (id: string | null) => void;
   /** Renders the detail view for a selected team */
-  renderDetail: (team: Team, onBack: () => void) => React.ReactNode;
+  renderDetail: (
+    teamComp: TeamComp,
+    setupConfig: TeamSetupConfig,
+    onBack: () => void,
+    resultCache: TeamResultCacheEntry | undefined
+  ) => React.ReactNode;
   /** TeamCard select-button overrides */
   selectLabel?: string;
   selectIcon?: LucideIcon;
@@ -149,9 +158,10 @@ export function TeamGrid({
   const cardMinWidth = isXl ? CARD_MAX_WIDTH : CARD_MAX_WIDTH_COMPACT;
   const characterStats = characterStatsResource.use();
   const accountData = useActiveAccountData();
-  const teams = useTeamStore((s) => s.teams);
+  const teamComps = useTeamStore((s) => s.teamComps);
+  const getTeamSetupConfigById = useTeamStore((s) => s.getTeamSetupConfigById);
   const addTeam = useTeamStore((s) => s.addTeam);
-  const updateTeam = useTeamStore((s) => s.updateTeam);
+  const updateTeamComp = useTeamStore((s) => s.updateTeamComp);
   const deleteTeam = useTeamStore((s) => s.deleteTeam);
   const copyTeam = useTeamStore((s) => s.copyTeam);
   const moveTeam = useTeamStore((s) => s.moveTeam);
@@ -171,8 +181,8 @@ export function TeamGrid({
 
   // Ghost team: auto-create a blank card when empty so the tour has targets
   useEffect(() => {
-    if (emptyState && teams.length === 0) addTeam();
-  }, [emptyState, teams.length, addTeam]);
+    if (emptyState && teamComps.length === 0) addTeam();
+  }, [emptyState, teamComps.length, addTeam]);
 
   // Ownership
   const isOwned = useIsOwned();
@@ -211,20 +221,21 @@ export function TeamGrid({
     if (!hasAccountData)
       return new Map<string, { ownedCount: number; filledCount: number }>();
     const map = new Map<string, { ownedCount: number; filledCount: number }>();
-    for (const team of teams) {
-      const filledChars = team.characters.filter(Boolean) as string[];
+    for (const team of teamComps) {
+      const { characters } = teamCompToArrays(team);
+      const filledChars = characters.filter(Boolean) as string[];
       const ownedCount = filledChars.filter((id) =>
         isOwned("character", id)
       ).length;
       map.set(team.id, { ownedCount, filledCount: filledChars.length });
     }
     return map;
-  }, [teams, isOwned, hasAccountData]);
+  }, [teamComps, isOwned, hasAccountData]);
 
   // Filter teams based on search, element/region of their characters
   // biome-ignore lint/correctness/useExhaustiveDependencies: frozenTeams is the data dep; isFrozen is a stable selector
   const filteredTeams = useMemo(() => {
-    let result = teams;
+    let result = teamComps;
 
     // Search filter: fuzzy match against team name, character/weapon/artifact names, reaction names
     const query = searchQuery.trim();
@@ -233,15 +244,16 @@ export function TeamGrid({
         // Team custom name
         if (team.name && fuzzyMatch(query, team.name)) return true;
         // Character names
-        for (const id of team.characters) {
+        const { characters, weapons, artifacts } = teamCompToArrays(team);
+        for (const id of characters) {
           if (id && fuzzyMatch(query, t.character(id))) return true;
         }
         // Weapon names
-        for (const id of team.weapons) {
+        for (const id of weapons) {
           if (id && fuzzyMatch(query, t.weapon(id))) return true;
         }
         // Artifact set names
-        for (const art of team.artifacts) {
+        for (const art of artifacts) {
           if (!art) continue;
           if (art.type === "4pc") {
             if (fuzzyMatch(query, t.artifact(art.setId))) return true;
@@ -262,7 +274,8 @@ export function TeamGrid({
 
     if (elementFilter.size > 0 || regionFilter.size > 0) {
       result = result.filter((team) => {
-        const chars = team.characters
+        const { characters } = teamCompToArrays(team);
+        const chars = characters
           .filter(Boolean)
           .map((id) => charactersById[id!])
           .filter(Boolean);
@@ -305,7 +318,8 @@ export function TeamGrid({
 
       indexed.sort((a, b) => {
         const getScore = (tm: typeof a.team) => {
-          const charIds = tm.characters.filter(Boolean) as string[];
+          const { characters } = teamCompToArrays(tm);
+          const charIds = characters.filter(Boolean) as string[];
           if (charIds.length === 0)
             return teamSort === "tier" ? WORST_TIER : "";
 
@@ -355,7 +369,7 @@ export function TeamGrid({
 
     return result;
   }, [
-    teams,
+    teamComps,
     searchQuery,
     t,
     elementFilter,
@@ -387,9 +401,10 @@ export function TeamGrid({
         frozenCharIds: Set<string>;
       }
     >();
-    for (const team of teams) {
+    for (const team of teamComps) {
       const frozenIds = getFrozenCharIds(team.id);
-      const charIds = team.characters.filter(Boolean);
+      const { characters } = teamCompToArrays(team);
+      const charIds = characters.filter(Boolean);
       map.set(team.id, {
         isFrozen: frozenIds.length > 0,
         isFullyFrozen:
@@ -401,7 +416,7 @@ export function TeamGrid({
       });
     }
     return map;
-  }, [enableFreeze, teams, frozenTeams]);
+  }, [enableFreeze, teamComps, frozenTeams]);
 
   // Precompute filtered order: maps team id → display position.
   // Teams not in filteredTeams get hidden via CSS instead of unmounting,
@@ -459,17 +474,18 @@ export function TeamGrid({
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
 
-  const isTeamEmpty = (t: { characters: (string | null)[] }) =>
-    t.characters.every((c) => c == null);
+  const isTeamEmpty = (t: TeamComp) =>
+    teamCompToArrays(t).characters.every((c) => c == null);
 
   const showEmptyState =
-    !!emptyState && teams.length <= 1 && teams.every(isTeamEmpty);
+    !!emptyState && teamComps.length <= 1 && teamComps.every(isTeamEmpty);
 
   const handleAddTeam = (position: "start" | "end") => {
     // Don't create a new empty team if one already exists at that edge
-    if (emptyState && teams.length > 0) {
-      if (position === "start" && isTeamEmpty(teams[0])) return;
-      if (position === "end" && isTeamEmpty(teams[teams.length - 1])) return;
+    if (emptyState && teamComps.length > 0) {
+      if (position === "start" && isTeamEmpty(teamComps[0])) return;
+      if (position === "end" && isTeamEmpty(teamComps[teamComps.length - 1]))
+        return;
     }
     addTeam(undefined, position);
     requestAnimationFrame(() => {
@@ -483,16 +499,21 @@ export function TeamGrid({
 
   // ── Detail view (when a team is selected) ──
   if (activeTeamId) {
-    const activeTeam = teams.find((t) => t.id === activeTeamId);
-    if (!activeTeam) {
+    const activeTeamComp = teamComps.find((t) => t.id === activeTeamId);
+    if (!activeTeamComp) {
       setTimeout(() => setActiveTeamId(null), 0);
       return null;
     }
-    const activeTeamWithCache: Team = activeTeamResultCache
-      ? { ...activeTeam, ...activeTeamResultCache }
-      : activeTeam;
+    const setupConfig = getTeamSetupConfigById(activeTeamId);
     return (
-      <>{renderDetail(activeTeamWithCache, () => setActiveTeamId(null))}</>
+      <>
+        {renderDetail(
+          activeTeamComp,
+          setupConfig,
+          () => setActiveTeamId(null),
+          activeTeamResultCache
+        )}
+      </>
     );
   }
 
@@ -663,7 +684,7 @@ export function TeamGrid({
             >
               {/* Render ALL teams — hidden ones use display:none + CSS order for sort.
                   This avoids destroying/recreating 30+ cards when toggling filters. */}
-              {teams.map((team, realIndex) => {
+              {teamComps.map((team, realIndex) => {
                 const order = filteredTeamOrder.get(team.id);
                 const isVisible = order !== undefined;
                 const freeze = teamFreezeMap?.get(team.id);
@@ -683,12 +704,13 @@ export function TeamGrid({
                   >
                     {(dragHandleProps) => (
                       <TeamCard
-                        team={team}
+                        teamComp={team}
                         index={realIndex}
-                        onUpdate={(patch) => {
-                          updateTeam(team.id, patch);
-                          if (patch.characters)
-                            checkAutoDisableOwned(patch.characters);
+                        onUpdateComp={(nextComp) => {
+                          updateTeamComp(team.id, nextComp);
+                          checkAutoDisableOwned(
+                            teamCompToArrays(nextComp).characters
+                          );
                         }}
                         onDelete={() => {
                           if (enableFreeze) unfreezeTeam(team.id);
@@ -702,7 +724,7 @@ export function TeamGrid({
                             : undefined
                         }
                         onMoveDown={
-                          realIndex < teams.length - 1
+                          realIndex < teamComps.length - 1
                             ? () => moveTeam(team.id, "down")
                             : undefined
                         }

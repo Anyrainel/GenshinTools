@@ -46,14 +46,54 @@ function makeSlotMap(
   return result;
 }
 
+type FrozenTeamFixture = {
+  frozenCharIds: string[];
+  artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
+};
+
+function toArtifactIdsByChar(
+  artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
+): Record<string, Partial<Record<Slot, string>>> {
+  const idsByChar: Record<string, Partial<Record<Slot, string>>> = {};
+  for (const [charId, artifacts] of Object.entries(artifactsByChar)) {
+    const slotIds: Partial<Record<Slot, string>> = {};
+    for (const slot of allSlots) {
+      const artifact = artifacts[slot];
+      if (artifact?.id) slotIds[slot] = artifact.id;
+    }
+    idsByChar[charId] = slotIds;
+  }
+  return idsByChar;
+}
+
+function setFrozenTeamsForTest(
+  frozenTeams: Record<string, FrozenTeamFixture>,
+  extraState: Partial<ReturnType<typeof useFreezeStore.getState>> = {}
+) {
+  useFreezeStore.setState({
+    ...extraState,
+    frozenTeamLoadouts: Object.fromEntries(
+      Object.entries(frozenTeams).map(([teamId, team]) => [
+        teamId,
+        {
+          frozenCharIds: team.frozenCharIds,
+          artifactIdsByChar: toArtifactIdsByChar(team.artifactsByChar),
+        },
+      ])
+    ),
+    frozenTeams,
+  });
+}
+
 function resetFreezeStore() {
   useFreezeStore.setState({
+    frozenTeamLoadouts: {},
     frozenTeams: {},
     frozenArtifactIds: [],
     reuseMode: "sameChar",
     freezesByProfileId: {
       0: {
-        frozenTeams: {},
+        frozenTeamLoadouts: {},
         frozenArtifactIds: [],
         reuseMode: "sameChar",
       },
@@ -97,17 +137,15 @@ describe("remapArtifactIds", () => {
     expect(useFreezeStore.getState().frozenArtifactIds).toEqual(["artifact-5"]);
   });
 
-  it("remaps team frozen artifact IDs inside artifactsByChar", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-              plume: makeArt("artifact-1", "plume"),
-            }),
-          },
+  it("remaps team frozen artifact IDs inside loadouts", () => {
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+            plume: makeArt("artifact-1", "plume"),
+          }),
         },
       },
     });
@@ -118,25 +156,23 @@ describe("remapArtifactIds", () => {
     ]);
     useFreezeStore.getState().remapArtifactIds(mapping);
 
-    const team = useFreezeStore.getState().frozenTeams.team1;
-    expect(team.artifactsByChar.charA.flower?.id).toBe("artifact-100");
-    expect(team.artifactsByChar.charA.plume?.id).toBe("artifact-101");
+    const team = useFreezeStore.getState().frozenTeamLoadouts.team1;
+    expect(team.artifactIdsByChar.charA.flower).toBe("artifact-100");
+    expect(team.artifactIdsByChar.charA.plume).toBe("artifact-101");
   });
 
   it("removes team artifacts mapped to empty string and cleans up empty chars", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA", "charB"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-            }),
-            charB: makeSlotMap({
-              flower: makeArt("artifact-1", "flower"),
-              plume: makeArt("artifact-2", "plume"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA", "charB"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+          }),
+          charB: makeSlotMap({
+            flower: makeArt("artifact-1", "flower"),
+            plume: makeArt("artifact-2", "plume"),
+          }),
         },
       },
     });
@@ -148,24 +184,22 @@ describe("remapArtifactIds", () => {
     ]);
     useFreezeStore.getState().remapArtifactIds(mapping);
 
-    const team = useFreezeStore.getState().frozenTeams.team1;
+    const team = useFreezeStore.getState().frozenTeamLoadouts.team1;
     // charA removed from frozenCharIds (all artifacts orphaned)
     expect(team.frozenCharIds).toEqual(["charB"]);
     // charB preserved
-    expect(team.artifactsByChar.charB.flower?.id).toBe("artifact-50");
-    expect(team.artifactsByChar.charB.plume?.id).toBe("artifact-2");
+    expect(team.artifactIdsByChar.charB.flower).toBe("artifact-50");
+    expect(team.artifactIdsByChar.charB.plume).toBe("artifact-2");
   });
 
   it("removes entire team entry when all characters lose all artifacts", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+          }),
         },
       },
     });
@@ -173,18 +207,16 @@ describe("remapArtifactIds", () => {
     const mapping = new Map([["artifact-0", ""]]);
     useFreezeStore.getState().remapArtifactIds(mapping);
 
-    expect(useFreezeStore.getState().frozenTeams).toEqual({});
+    expect(useFreezeStore.getState().frozenTeamLoadouts).toEqual({});
   });
 
   it("no-ops when mapping is empty", () => {
     const initial = {
       frozenArtifactIds: ["artifact-0"],
-      frozenTeams: {
+      frozenTeamLoadouts: {
         team1: {
           frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({ flower: makeArt("artifact-0", "flower") }),
-          },
+          artifactIdsByChar: { charA: { flower: "artifact-0" } },
         },
       },
     };
@@ -199,16 +231,14 @@ describe("remapArtifactIds", () => {
   });
 
   it("preserves artifacts not in the mapping", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-              plume: makeArt("artifact-5", "plume"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+            plume: makeArt("artifact-5", "plume"),
+          }),
         },
       },
     });
@@ -217,10 +247,11 @@ describe("remapArtifactIds", () => {
     const mapping = new Map([["artifact-0", "artifact-99"]]);
     useFreezeStore.getState().remapArtifactIds(mapping);
 
-    const arts =
-      useFreezeStore.getState().frozenTeams.team1.artifactsByChar.charA;
-    expect(arts.flower?.id).toBe("artifact-99");
-    expect(arts.plume?.id).toBe("artifact-5");
+    const ids =
+      useFreezeStore.getState().frozenTeamLoadouts.team1.artifactIdsByChar
+        .charA;
+    expect(ids.flower).toBe("artifact-99");
+    expect(ids.plume).toBe("artifact-5");
   });
 });
 
@@ -243,17 +274,15 @@ describe("validateFrozenArtifacts", () => {
   });
 
   it("removes team artifacts with IDs not in the valid set", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-              plume: makeArt("artifact-1", "plume"),
-              sands: makeArt("artifact-2", "sands"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+            plume: makeArt("artifact-1", "plume"),
+            sands: makeArt("artifact-2", "sands"),
+          }),
         },
       },
     });
@@ -262,26 +291,25 @@ describe("validateFrozenArtifacts", () => {
     const validIds = new Set(["artifact-0", "artifact-2"]);
     useFreezeStore.getState().validateFrozenArtifacts(validIds);
 
-    const arts =
-      useFreezeStore.getState().frozenTeams.team1.artifactsByChar.charA;
-    expect(arts.flower?.id).toBe("artifact-0");
-    expect(arts.plume).toBeNull();
-    expect(arts.sands?.id).toBe("artifact-2");
+    const ids =
+      useFreezeStore.getState().frozenTeamLoadouts.team1.artifactIdsByChar
+        .charA;
+    expect(ids.flower).toBe("artifact-0");
+    expect(ids.plume).toBeUndefined();
+    expect(ids.sands).toBe("artifact-2");
   });
 
   it("removes characters with no remaining artifacts from frozenCharIds", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA", "charB"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-            }),
-            charB: makeSlotMap({
-              flower: makeArt("artifact-1", "flower"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA", "charB"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+          }),
+          charB: makeSlotMap({
+            flower: makeArt("artifact-1", "flower"),
+          }),
         },
       },
     });
@@ -290,20 +318,18 @@ describe("validateFrozenArtifacts", () => {
     const validIds = new Set(["artifact-0"]);
     useFreezeStore.getState().validateFrozenArtifacts(validIds);
 
-    const team = useFreezeStore.getState().frozenTeams.team1;
+    const team = useFreezeStore.getState().frozenTeamLoadouts.team1;
     expect(team.frozenCharIds).toEqual(["charA"]);
   });
 
   it("removes entire team when all characters lose all artifacts", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+          }),
         },
       },
     });
@@ -311,13 +337,12 @@ describe("validateFrozenArtifacts", () => {
     // No valid IDs
     useFreezeStore.getState().validateFrozenArtifacts(new Set());
 
-    expect(useFreezeStore.getState().frozenTeams).toEqual({});
+    expect(useFreezeStore.getState().frozenTeamLoadouts).toEqual({});
   });
 
   it("no-ops when all IDs are valid", () => {
-    useFreezeStore.setState({
-      frozenArtifactIds: ["artifact-0"],
-      frozenTeams: {
+    setFrozenTeamsForTest(
+      {
         team1: {
           frozenCharIds: ["charA"],
           artifactsByChar: {
@@ -327,13 +352,18 @@ describe("validateFrozenArtifacts", () => {
           },
         },
       },
-    });
+      { frozenArtifactIds: ["artifact-0"] }
+    );
 
-    const before = useFreezeStore.getState();
     useFreezeStore.getState().validateFrozenArtifacts(new Set(["artifact-0"]));
-    const after = useFreezeStore.getState();
+    const after = useFreezeStore.getState().frozenTeamLoadouts;
 
-    expect(before).toBe(after);
+    expect(after).toEqual({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactIdsByChar: { charA: { flower: "artifact-0" } },
+      },
+    });
   });
 });
 
@@ -471,16 +501,14 @@ describe("remapFreezeStoreForImport + auto-validation subscriber", () => {
 
     useAccountStore.getState().addOrUpdateAccount(1, { data });
     useAccountStore.setState({ activeAccountId: 1 });
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["Amber"],
-          artifactsByChar: {
-            Amber: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-              plume: makeArt("artifact-1", "plume"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["Amber"],
+        artifactsByChar: {
+          Amber: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+            plume: makeArt("artifact-1", "plume"),
+          }),
         },
       },
     });
@@ -547,9 +575,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     };
 
     // Freeze artifact-0 (standalone) and artifact-1 (team)
-    useFreezeStore.setState({
-      frozenArtifactIds: ["artifact-2"],
-      frozenTeams: {
+    setFrozenTeamsForTest(
+      {
         team1: {
           frozenCharIds: ["Amber"],
           artifactsByChar: {
@@ -560,7 +587,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
           },
         },
       },
-    });
+      { frozenArtifactIds: ["artifact-2"] }
+    );
 
     // New import data (Enka-style: only characters on showcase)
     const incoming: AccountData = {
@@ -632,9 +660,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
       extraWeapons: [],
     };
 
-    useFreezeStore.setState({
-      frozenArtifactIds: ["artifact-1"],
-      frozenTeams: {
+    setFrozenTeamsForTest(
+      {
         team1: {
           frozenCharIds: ["Amber"],
           artifactsByChar: {
@@ -644,7 +671,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
           },
         },
       },
-    });
+      { frozenArtifactIds: ["artifact-1"] }
+    );
 
     // Characters-only partial import
     const incoming: AccountData = {
@@ -701,9 +729,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
     };
 
     // Freeze some artifacts
-    useFreezeStore.setState({
-      frozenArtifactIds: ["artifact-1"],
-      frozenTeams: {
+    setFrozenTeamsForTest(
+      {
         team1: {
           frozenCharIds: ["Amber"],
           artifactsByChar: {
@@ -713,7 +740,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
           },
         },
       },
-    });
+      { frozenArtifactIds: ["artifact-1"] }
+    );
 
     // Scanner snapshot replaces everything
     const { data: updated, artifactIdMap } = rebuildAccountFromSnapshot(
@@ -744,23 +772,21 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
   });
 
   it("multiple teams: only affected team's artifacts get orphaned", () => {
-    useFreezeStore.setState({
-      frozenTeams: {
-        team1: {
-          frozenCharIds: ["charA"],
-          artifactsByChar: {
-            charA: makeSlotMap({
-              flower: makeArt("artifact-0", "flower"),
-            }),
-          },
+    setFrozenTeamsForTest({
+      team1: {
+        frozenCharIds: ["charA"],
+        artifactsByChar: {
+          charA: makeSlotMap({
+            flower: makeArt("artifact-0", "flower"),
+          }),
         },
-        team2: {
-          frozenCharIds: ["charB"],
-          artifactsByChar: {
-            charB: makeSlotMap({
-              flower: makeArt("artifact-1", "flower"),
-            }),
-          },
+      },
+      team2: {
+        frozenCharIds: ["charB"],
+        artifactsByChar: {
+          charB: makeSlotMap({
+            flower: makeArt("artifact-1", "flower"),
+          }),
         },
       },
     });
@@ -807,9 +833,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
 
   it("handles edge case: frozen ID coincidentally matches new ID from different artifact", () => {
     // Old freeze has artifact-0
-    useFreezeStore.setState({
-      frozenArtifactIds: ["artifact-0"],
-      frozenTeams: {
+    setFrozenTeamsForTest(
+      {
         team1: {
           frozenCharIds: ["charA"],
           artifactsByChar: {
@@ -819,7 +844,8 @@ describe("end-to-end: import pipeline preserves freeze state", () => {
           },
         },
       },
-    });
+      { frozenArtifactIds: ["artifact-0"] }
+    );
 
     // Full snapshot replacement: old artifact-0 mapped to "" (orphaned)
     // New data happens to also have artifact-0 but it's a DIFFERENT artifact

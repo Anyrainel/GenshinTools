@@ -66,7 +66,7 @@ export interface BuildsState {
   // Derived runtime view: only modified presets + custom builds.
   builds: Record<string, Build>;
 
-  // Derived runtime view: ordered build IDs for current UI compatibility.
+  // Derived runtime view: ordered build IDs by character.
   characterToBuildIds: Record<string, string[]>;
 
   // Derived runtime view: IDs of hidden preset builds.
@@ -103,8 +103,7 @@ export interface BuildsState {
   newBuild: (characterId: string) => Build;
   copyBuild: (characterId: string, buildId: string, baseBuild?: Build) => Build;
   setBuild: (buildId: string, patch: Partial<Build>, baseBuild?: Build) => void;
-  removeBuild: (characterId: string, buildId: string) => void; // Legacy/Smart delete
-  deleteBuild: (characterId: string, buildId: string) => void; // Complete delete (hides preset)
+  removeBuild: (characterId: string, buildId: string) => void;
   revertBuild: (characterId: string, buildId: string) => void; // Reverts local override
   restoreCharacter: (characterId: string) => void; // Restores preset state for a character
   subscribePreset: (presetId: string, payload: BuildPayloadV5) => void;
@@ -154,6 +153,19 @@ export function selectValidResolvedBuildGroups(
   state: BuildsState
 ): BuildGroup[] {
   return state.validResolvedBuildGroups;
+}
+
+function getBuildScoreDependencySignature(state: BuildsState): string {
+  return JSON.stringify(
+    state.resolvedBuildGroups.map((group) => ({
+      characterId: group.characterId,
+      weapons: group.weapons,
+      builds: group.builds.map((build) => {
+        const { source: _source, ...scoredBuild } = build;
+        return scoredBuild;
+      }),
+    }))
+  );
 }
 
 function getActivePresetPayload(state: BuildsState): BuildPayloadV5 | null {
@@ -590,38 +602,6 @@ export const useBuildsStore = create<BuildsState>()(
         invalidateScores([characterId]);
       },
 
-      deleteBuild: (characterId: string, buildId: string) => {
-        set((state) => {
-          const preset = getActivePresetPayload(state);
-          const displayIndex = getBuildDeltaDisplayIndex(state.deltas, buildId);
-          const isPresetBuild =
-            !!preset?.builds[buildId] ||
-            state.deltas.some(
-              (delta) => delta.kind === "preset" && delta.id === buildId
-            );
-          if (isPresetBuild) {
-            state.deltas = deleteBuildDelta(
-              state.deltas,
-              buildId,
-              displayIndex
-            );
-          } else {
-            state.deltas = removeCustomBuildDelta(state.deltas, buildId);
-          }
-
-          const existingBuildIds = state.characterToBuildIds[characterId] || [];
-          const newBuildIds = existingBuildIds.filter((id) => id !== buildId);
-          state.deltas = setBuildDeltaOrderForCharacter(
-            state.deltas,
-            characterId,
-            newBuildIds,
-            preset
-          );
-          refreshDerivedBuildState(state);
-        });
-        invalidateScores([characterId]);
-      },
-
       revertBuild: (characterId: string, buildId: string) => {
         set((state) => {
           const preset = getActivePresetPayload(state);
@@ -681,13 +661,17 @@ export const useBuildsStore = create<BuildsState>()(
 
       hydratePreset: (presetId: string, payload: BuildPayloadV5) => {
         cacheBuildPreset(presetId, payload);
+        let scoreDependenciesChanged = false;
         set((state) => {
           if (state.activePresetId !== presetId) return;
+          const previousSignature = getBuildScoreDependencySignature(state);
           state.activePresetPayload = payload;
           state.deltas = dedupeBuildDeltasAgainstPreset(state.deltas, payload);
           refreshDerivedBuildState(state, payload);
+          scoreDependenciesChanged =
+            previousSignature !== getBuildScoreDependencySignature(state);
         });
-        invalidateScores();
+        if (scoreDependenciesChanged) invalidateScores();
       },
 
       moveBuild: (

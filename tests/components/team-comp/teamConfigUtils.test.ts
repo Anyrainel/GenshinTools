@@ -1,19 +1,23 @@
 import { describe, expect, it } from "vitest";
-import type { ReactionType } from "@/data/enums";
 import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import {
   calcComboResults,
   extractComboOverrides,
 } from "@/lib/dmgcalc/core/comboBuffOverrides";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { OptionMap } from "@/lib/dmgcalc/types";
 import {
-  buildTeamConfigs,
+  buildTeamSlotConfigs,
   detectEquippedSets,
   frozenArtifactsMatchConfig,
   setsMatch,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
+import { teamCompInputToComp } from "@/lib/team-comp/teamDeltas";
+import type {
+  TeamComp,
+  TeamCompInput,
+  TeamSetupConfig,
+} from "@/lib/team-comp/types";
 import {
   createAccountData,
   createArtifactData,
@@ -32,6 +36,44 @@ function makeArtifact(setKey: string, slot = "flower"): ArtifactData {
     setKey,
     slotKey: slot as ArtifactData["slotKey"],
   });
+}
+
+type TeamFixture = {
+  comp: TeamComp;
+  setupConfig: TeamSetupConfig;
+};
+
+function makeTeamFixture(
+  compOverrides: Partial<TeamCompInput> = {},
+  setupConfig: TeamSetupConfig = { combatOptions: {} }
+): TeamFixture {
+  return {
+    comp: teamCompInputToComp({
+      id: "t1",
+      name: "Test Team",
+      characters: ["hu_tao", "xingqiu", null, null],
+      weapons: ["staff_of_homa", "sacrificial_sword", null, null],
+      artifacts: [
+        { type: "4pc", setId: CW },
+        {
+          type: "2pc+2pc",
+          halfSetIds: ["er-20", "atk%-18"],
+        },
+        null,
+        null,
+      ],
+      reactions: [],
+      ...compOverrides,
+    }),
+    setupConfig,
+  };
+}
+
+function buildConfigs(
+  team: TeamFixture,
+  accountData: Parameters<typeof buildTeamSlotConfigs>[2]
+) {
+  return buildTeamSlotConfigs(team.comp, team.setupConfig, accountData);
 }
 
 // ── detectEquippedSets ──────────────────────────────────────────────────────
@@ -277,49 +319,20 @@ describe("frozenArtifactsMatchConfig", () => {
   });
 });
 
-// ── buildTeamConfigs ─────────────────────────────────────────────────────
+// ── buildTeamSlotConfigs ─────────────────────────────────────────────────
 
-describe("buildTeamConfigs", () => {
-  const baseTeam = {
-    id: "t1",
-    name: "Test Team",
-    characters: ["hu_tao", "xingqiu", null, null] as (string | null)[],
-    weapons: ["staff_of_homa", "sacrificial_sword", null, null] as (
-      | string
-      | null
-    )[],
-    artifacts: [
-      { type: "4pc" as const, setId: CW },
-      {
-        type: "2pc+2pc" as const,
-        halfSetIds: ["er-20", "atk%-18"] as [string, string],
-      },
-      null,
-      null,
-    ],
-    reactions: [] as ReactionType[],
-    opts: {} as OptionMap,
-    calcContext: {
-      enemyLevel: 110,
-      enemyRes: 0.1,
-      rollMultiplier: 0.85,
-      substatBudget: "8_6" as const,
-    },
-    selectedFormula: null,
-    optimizationResult: null,
-    formulaMode: "single" as const,
-    combo: null,
-  };
+describe("buildTeamSlotConfigs", () => {
+  const baseTeam = makeTeamFixture();
 
   it("builds configs for non-null characters", () => {
-    const configs = buildTeamConfigs(baseTeam, null);
+    const configs = buildConfigs(baseTeam, null);
     expect(configs).toHaveLength(2);
     expect(configs[0].charId).toBe("hu_tao");
     expect(configs[1].charId).toBe("xingqiu");
   });
 
   it("defaults to level 90, constellation 0, refinement 1 without account data", () => {
-    const configs = buildTeamConfigs(baseTeam, null);
+    const configs = buildConfigs(baseTeam, null);
     expect(configs[0].charLevel).toBe(90);
     expect(configs[0].constellation).toBe(0);
     expect(configs[0].refinement).toBe(1);
@@ -336,28 +349,33 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     expect(configs[0].charLevel).toBe(90);
     expect(configs[0].constellation).toBe(1);
   });
 
-  it("uses overrides from team opts", () => {
-    const team = {
-      ...baseTeam,
-      opts: {
-        "hu_tao.overrideLevel": "80",
-        "hu_tao.overrideConstellation": "2",
-        "hu_tao.overrideRefinement": "3",
-      } as OptionMap,
-    };
-    const configs = buildTeamConfigs(team, null);
+  it("uses user-authored character config values", () => {
+    const team = makeTeamFixture(
+      {},
+      {
+        combatOptions: {},
+        charConfigs: {
+          hu_tao: {
+            level: 80,
+            constellation: 2,
+            refinement: 3,
+          },
+        },
+      }
+    );
+    const configs = buildConfigs(team, null);
     expect(configs[0].charLevel).toBe(80);
     expect(configs[0].constellation).toBe(2);
     expect(configs[0].refinement).toBe(3);
   });
 
   it("falls back to goal artifact sets when no account artifacts equipped", () => {
-    const configs = buildTeamConfigs(baseTeam, null);
+    const configs = buildConfigs(baseTeam, null);
     // hu_tao has 4pc CW goal
     expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
     // xingqiu has 2pc+2pc goal
@@ -382,7 +400,7 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     // Team roster says 4pc CW — that's the source of truth
     expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
@@ -394,7 +412,7 @@ describe("buildTeamConfigs", () => {
         createWeaponData({ key: "staff_of_homa", refinement: 3 }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     expect(configs[0].refinement).toBe(3);
   });
 
@@ -413,7 +431,7 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     expect(configs[0].refinement).toBe(5);
   });
 
@@ -433,7 +451,7 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     expect(configs[0].refinement).toBe(4);
   });
 
@@ -453,17 +471,16 @@ describe("buildTeamConfigs", () => {
       ],
       extraWeapons: [createWeaponData({ key: "staff_of_homa", refinement: 2 })],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     expect(configs[0].refinement).toBe(3);
   });
 
   it("skips character when weapon slot is empty", () => {
-    const team = {
-      ...baseTeam,
-      characters: ["hu_tao", null, null, null] as (string | null)[],
-      weapons: [null, null, null, null] as (string | null)[],
-    };
-    const configs = buildTeamConfigs(team, null);
+    const team = makeTeamFixture({
+      characters: ["hu_tao", null, null, null],
+      weapons: [null, null, null, null],
+    });
+    const configs = buildConfigs(team, null);
     expect(configs).toHaveLength(0);
   });
 
@@ -480,7 +497,7 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     // Goal for hu_tao is 4pc CW — should fall back since single 2pc is incomplete
     expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
@@ -494,7 +511,7 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
 
@@ -513,7 +530,7 @@ describe("buildTeamConfigs", () => {
         }),
       ],
     });
-    const configs = buildTeamConfigs(baseTeam, acct);
+    const configs = buildConfigs(baseTeam, acct);
     // Team roster says 4pc CW — equipped artifacts are irrelevant
     expect(configs[0].artifactSet).toEqual({ type: "4pc", setId: CW });
   });
