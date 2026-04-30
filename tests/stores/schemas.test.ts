@@ -20,6 +20,7 @@ import {
   PersistedPreferencesStoreSchema,
   PersistedResourceRecStoreSchema,
   PersistedSessionNavStoreSchema,
+  PersistedTeamResultCacheStoreSchema,
   PersistedTeamStoreSchema,
   PersistedTierListStoreSchema,
   PersistedTriageStoreSchema,
@@ -967,6 +968,23 @@ describe("PersistedAnalyzerCacheStoreSchema", () => {
         lastByTeam: { "team-1": { expensive: "opaque-cache-payload" } },
       }).lastByTeam["team-1"]
     ).toEqual({ expensive: "opaque-cache-payload" });
+  });
+});
+
+// ─── PersistedTeamResultCacheStoreSchema ───
+
+describe("PersistedTeamResultCacheStoreSchema", () => {
+  it("heals team result cache envelope", () => {
+    expect(PersistedTeamResultCacheStoreSchema.parse({})).toEqual({
+      resultsByTeamId: {},
+    });
+    expect(
+      PersistedTeamResultCacheStoreSchema.parse({
+        resultsByTeamId: {
+          "team-1": { choiceResults: { weapon: { timestamp: 1 } } },
+        },
+      }).resultsByTeamId["team-1"]
+    ).toEqual({ choiceResults: { weapon: { timestamp: 1 } } });
   });
 });
 

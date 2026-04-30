@@ -17,18 +17,18 @@ The main migration rule is:
 
 ## Implementation Status
 
-This branch implements the low-risk local migrations needed before cloud backup work. The remaining preset-delta work is intentionally left as a follow-up because it changes authoring semantics, not just persistence boundaries.
+This branch implements the local store migrations needed before cloud backup work. The remaining work before Cloudflare implementation is the cloud backup codec/namespace layer.
 
 | Phase | Status | Commit |
 | --- | --- | --- |
 | Phase 0: migration modules | Done | `a469415a` |
-| Phase 1: numeric account profile ids | Done for profile ids. Account score cache split remains follow-up. | `ee07e6e5` |
-| Phase 2: account-scoped settings | Done for triage and resource settings. Clone-from-last-active import messaging remains follow-up. | `b19c078d` |
+| Phase 1: numeric account profile ids | Done for profile ids and account score cache split. | `ee07e6e5` |
+| Phase 2: account-scoped settings | Done for triage/resource settings, clone-from-last-active import behavior, and import messaging. | `b19c078d` + current |
 | Phase 3: tier list migrations | Done for character account links and weapon/artifact multi-list stores. | `41c3be21` |
 | Phase 4: freeze account scoping | Done. | `b68b2c47` |
-| Phase 5: team cache persistence split | Done for persisted source data. Runtime Team Comp pages still keep in-memory result fields to avoid UI rewiring in this phase. | `ca14fca1` |
-| Phase 6: build preset delta | Deferred. Needs a dedicated resolver migration and UI regression pass. | pending |
-| Phase 7: team preset delta | Deferred. Needs team preset/source identity before a generic delta can be correct. | pending |
+| Phase 5: team cache persistence split | Done. Team source/config stays in `useTeamStore`; weapon/artifact choice results route through local-only `useTeamResultCacheStore`. Analyzer cache remains local-only. | `ca14fca1` + current |
+| Phase 6: build preset delta | Done. Build store persists `PresetDelta<Build>[]` and derives runtime views from the active hydrated preset. | `5a0a1967`, `d6ffb28c` |
+| Phase 7: team preset delta | Done. Team store persists `PresetDelta<TeamComp>[]` plus `configsByTeamId`, with active preset hydration and dedupe. | `98e3eb62`, `5a0a1967` |
 | Phase 8: cloud codecs | Deferred until the cloud sync implementation starts. | pending |
 
 ## Current Migration Inventory
@@ -37,9 +37,9 @@ Current persisted stores with migration or hydration behavior:
 
 | Store | Current key | Current version | Current migration module |
 | --- | --- | ---: | --- |
-| `useAccountStore` | `genshin-account-storage` | 5 | `src/stores/migration/account.ts` |
-| `useBuildsStore` | `artifact-filter-builds` | 5 | `src/stores/migration/builds.ts` |
-| `useTeamStore` | `team-builder-storage` | 16 | `src/stores/migration/team.ts` |
+| `useAccountStore` | `genshin-account-storage` | 6 | `src/stores/migration/account.ts` |
+| `useBuildsStore` | `artifact-filter-builds` | 6 | `src/stores/migration/builds.ts` |
+| `useTeamStore` | `team-builder-storage` | 17 | `src/stores/migration/team.ts` |
 | `useFreezeStore` | `frozen-teams-storage` | 5 | `src/stores/migration/freeze.ts` |
 | `useTierStore` | `tierlist-storage` | 3 | `src/stores/migration/tier.ts` |
 | `useWeaponTierStore` | `weapon-tierlist-storage` | 1 | `src/stores/migration/tier.ts` |
@@ -61,7 +61,8 @@ Runtime cache stores should stay outside cloud sync:
 
 | Store | Decision |
 | --- | --- |
-| `useAnalyzerCacheStore` | Keep local only. Can be generalized into a broader per-team result cache. |
+| `useAnalyzerCacheStore` | Keep local only for investment analyzer results. |
+| `useTeamResultCacheStore` | Keep local only for Team Comp optimizer and weapon/artifact choice results. |
 | `useRecommendationCacheStore` | Keep in memory only. |
 | `usePUpgradeCacheStore` | Keep in memory only. |
 | `useBuffOverrideStore` | Runtime only. |
@@ -322,7 +323,8 @@ Migration:
 Implementation notes:
 
 - Keep `useAnalyzerCacheStore` local-only.
-- Either extend it or create a new `useTeamResultCacheStore` for optimizer, investment, and weapon-choice results.
+- `useTeamResultCacheStore` owns optimizer and weapon/artifact choice result caches.
+- `useAnalyzerCacheStore` remains a separate local-only investment analyzer cache for now.
 - Cache data should not appear in any cloud codec.
 
 Tests:

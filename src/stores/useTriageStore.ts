@@ -13,6 +13,10 @@ interface TriageState {
   settingsByProfileId: Record<AccountProfileId, TriageSettings>;
   setSettings: (settings: TriageSettings) => void;
   updateSettings: (patch: Partial<TriageSettings>) => void;
+  cloneSettingsForProfile: (
+    sourceProfileId: AccountProfileId,
+    targetProfileId: AccountProfileId
+  ) => boolean;
   setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
@@ -35,6 +39,14 @@ const getSettingsForProfile = (
 ) =>
   state.settingsByProfileId[profileId ?? DEFAULT_ACCOUNT_PROFILE_ID] ??
   cloneDefaultSettings();
+
+const cloneSettings = (settings: TriageSettings): TriageSettings =>
+  structuredClone(settings);
+
+const settingsEqual = (
+  first: TriageSettings,
+  second: TriageSettings
+): boolean => JSON.stringify(first) === JSON.stringify(second);
 
 export const useTriageStore = create<TriageState>()(
   persist(
@@ -64,6 +76,27 @@ export const useTriageStore = create<TriageState>()(
             [getActiveProfileId()]: { ...state.settings, ...patch },
           },
         })),
+
+      cloneSettingsForProfile: (sourceProfileId, targetProfileId) => {
+        let didClone = false;
+        set((state) => {
+          const sourceSettings = getSettingsForProfile(state, sourceProfileId);
+          if (settingsEqual(sourceSettings, cloneDefaultSettings())) return {};
+
+          didClone = true;
+          const cloned = cloneSettings(sourceSettings);
+          return {
+            ...(getActiveProfileId() === targetProfileId
+              ? { settings: cloned }
+              : {}),
+            settingsByProfileId: {
+              ...state.settingsByProfileId,
+              [targetProfileId]: cloned,
+            },
+          };
+        });
+        return didClone;
+      },
 
       setActiveProfile: (profileId) =>
         set((state) => ({

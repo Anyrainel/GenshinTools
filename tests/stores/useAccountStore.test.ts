@@ -1,15 +1,43 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountData, CharacterData } from "@/data/types";
+import {
+  DEFAULT_MIN_SCORE_DIFF,
+  DEFAULT_TIER_THRESHOLDS,
+} from "@/lib/account-data/resourceTips";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useResourceRecStore } from "@/stores/useResourceRecStore";
+import { useTriageStore } from "@/stores/useTriageStore";
 import { createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
 beforeEach(() => {
   useAccountStore.getState().clearAccounts();
   useAccountScoreCacheStore.getState().clearAllScores();
+  const triageSettings = structuredClone(DEFAULT_TRIAGE_SETTINGS);
+  useTriageStore.setState({
+    settings: triageSettings,
+    settingsByProfileId: {
+      0: structuredClone(DEFAULT_TRIAGE_SETTINGS),
+    },
+  });
+  const resourceSettings = {
+    thresholds: { ...DEFAULT_TIER_THRESHOLDS },
+    minScoreDiff: structuredClone(DEFAULT_MIN_SCORE_DIFF),
+    panelOpen: false,
+    showCraft: true,
+    showReroll: true,
+    showLevelup: true,
+  };
+  useResourceRecStore.setState({
+    ...resourceSettings,
+    settingsByProfileId: {
+      0: structuredClone(resourceSettings),
+    },
+  });
 });
 
 afterEach(() => {
@@ -120,6 +148,109 @@ describe("useAccountStore", () => {
       expect(useAccountStore.getState().accounts[0].lastUpdate).toBe(
         importedAt
       );
+    });
+
+    it("clones customized triage and resource settings for a new profile", () => {
+      useAccountStore.getState().addOrUpdateAccount(0, {
+        data: createSampleAccountData(),
+      });
+      useAccountStore.getState().setActiveAccount(0);
+      useTriageStore.getState().updateSettings({ mainStatThreshold: 88 });
+      useResourceRecStore.getState().setPanelOpen(true);
+
+      const result = applyAccountImport({
+        accountId: 800000001,
+        data: createSampleAccountData(),
+        name: "Main",
+        setAsActive: 800000001,
+      });
+
+      expect(result.clonedProfileSettings).toEqual(["triage", "resources"]);
+      expect(
+        useTriageStore.getState().settingsByProfileId[800000001]
+          .mainStatThreshold
+      ).toBe(88);
+      expect(useTriageStore.getState().settings.mainStatThreshold).toBe(88);
+      expect(
+        useResourceRecStore.getState().settingsByProfileId[800000001].panelOpen
+      ).toBe(true);
+      expect(useResourceRecStore.getState().panelOpen).toBe(true);
+    });
+
+    it("does not materialize default settings for a new profile", () => {
+      useAccountStore.getState().addOrUpdateAccount(0, {
+        data: createSampleAccountData(),
+      });
+      useAccountStore.getState().setActiveAccount(0);
+
+      const result = applyAccountImport({
+        accountId: 800000002,
+        data: createSampleAccountData(),
+        setAsActive: 800000002,
+      });
+
+      expect(result.clonedProfileSettings).toEqual([]);
+      expect(
+        useTriageStore.getState().settingsByProfileId[800000002]
+      ).toBeUndefined();
+      expect(
+        useResourceRecStore.getState().settingsByProfileId[800000002]
+      ).toBeUndefined();
+      expect(useTriageStore.getState().settings).toEqual(
+        DEFAULT_TRIAGE_SETTINGS
+      );
+      expect(useResourceRecStore.getState().thresholds).toEqual(
+        DEFAULT_TIER_THRESHOLDS
+      );
+    });
+
+    it("does not overwrite settings when importing into an existing profile", () => {
+      useAccountStore.getState().addOrUpdateAccount(0, {
+        data: createSampleAccountData(),
+      });
+      useAccountStore.getState().addOrUpdateAccount(800000003, {
+        data: createSampleAccountData(),
+      });
+      useAccountStore.getState().setActiveAccount(0);
+      useTriageStore.getState().updateSettings({ mainStatThreshold: 90 });
+      useResourceRecStore.getState().setPanelOpen(true);
+      useTriageStore.setState((state) => ({
+        settingsByProfileId: {
+          ...state.settingsByProfileId,
+          800000003: {
+            ...structuredClone(DEFAULT_TRIAGE_SETTINGS),
+            mainStatThreshold: 70,
+          },
+        },
+      }));
+      useResourceRecStore.setState((state) => ({
+        settingsByProfileId: {
+          ...state.settingsByProfileId,
+          800000003: {
+            thresholds: { ...DEFAULT_TIER_THRESHOLDS },
+            minScoreDiff: structuredClone(DEFAULT_MIN_SCORE_DIFF),
+            panelOpen: false,
+            showCraft: true,
+            showReroll: true,
+            showLevelup: true,
+          },
+        },
+      }));
+
+      const result = applyAccountImport({
+        accountId: 800000003,
+        data: createSampleAccountData(),
+        setAsActive: 800000003,
+      });
+
+      expect(result.clonedProfileSettings).toEqual([]);
+      expect(
+        useTriageStore.getState().settingsByProfileId[800000003]
+          .mainStatThreshold
+      ).toBe(70);
+      expect(
+        useResourceRecStore.getState().settingsByProfileId[800000003].panelOpen
+      ).toBe(false);
     });
   });
 

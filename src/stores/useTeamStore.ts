@@ -9,10 +9,8 @@ import {
   deleteTeamCompDelta,
   deriveTeamRuntimeFromDeltas,
   getTeamDeltaDisplayIndex,
-  getTeamRuntimeCacheById,
   hasTeamCompPatch,
   hasTeamConfigPatch,
-  hasTeamRuntimeCachePatch,
   isPresetTeamComp,
   legacyTeamToComp,
   legacyTeamToConfig,
@@ -34,6 +32,10 @@ import type {
 } from "@/lib/team-comp/types";
 import { mergeTeamStore, migrateTeamStore } from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
+import {
+  pickTeamResultCachePatch,
+  useTeamResultCacheStore,
+} from "./useTeamResultCacheStore";
 
 let _teamIdSeq = 0;
 function nextTeamId(): string {
@@ -75,12 +77,10 @@ function refreshDerivedTeamState(
   state: TeamState,
   preset = getCachedTeamPreset(state.activePresetId)
 ): void {
-  const cacheByTeamId = getTeamRuntimeCacheById(state.teams);
   state.teams = deriveTeamRuntimeFromDeltas(
     state.compDeltas,
     state.configsByTeamId,
-    preset,
-    cacheByTeamId
+    preset
   );
 }
 
@@ -123,18 +123,6 @@ function insertIdInOrder(
   return position === "start" ? [id, ...withoutId] : [...withoutId, id];
 }
 
-function applyRuntimeCachePatch(team: Team, patch: Partial<Team>): void {
-  if ("optimizationResult" in patch) {
-    team.optimizationResult = patch.optimizationResult ?? null;
-  }
-  if ("choiceResults" in patch) {
-    team.choiceResults = patch.choiceResults;
-  }
-  if ("weaponChoiceResult" in patch) {
-    team.weaponChoiceResult = patch.weaponChoiceResult ?? null;
-  }
-}
-
 function exportTeamWithStableId(team: Team): ExportedTeam {
   const comp = legacyTeamToComp(team);
   const { characters, weapons, artifacts } = teamCompToArrays(comp);
@@ -158,6 +146,7 @@ export const useTeamStore = create<TeamState>()(
 
       addTeam: (initialData, position = "end") => {
         const id = initialData?.id ?? nextTeamId();
+        const cachePatch = pickTeamResultCachePatch(initialData ?? {});
         set((state) => {
           const baseComp = createEmptyTeamComp(id);
           const draftTeam = {
@@ -182,6 +171,9 @@ export const useTeamStore = create<TeamState>()(
           );
           refreshDerivedTeamState(state);
         });
+        if (cachePatch) {
+          useTeamResultCacheStore.getState().patchForTeam(id, cachePatch);
+        }
         return id;
       },
 
@@ -192,10 +184,12 @@ export const useTeamStore = create<TeamState>()(
 
           const compChanged = hasTeamCompPatch(patch);
           const configChanged = hasTeamConfigPatch(patch);
-          const cacheChanged = hasTeamRuntimeCachePatch(patch);
+          const cachePatch = pickTeamResultCachePatch(patch);
 
           if (!compChanged && !configChanged) {
-            if (cacheChanged) applyRuntimeCachePatch(team, patch);
+            if (cachePatch) {
+              useTeamResultCacheStore.getState().patchForTeam(id, cachePatch);
+            }
             return;
           }
 
@@ -217,9 +211,9 @@ export const useTeamStore = create<TeamState>()(
           }
 
           refreshDerivedTeamState(state);
-          const refreshed = state.teams.find((t) => t.id === id);
-          if (refreshed && cacheChanged)
-            applyRuntimeCachePatch(refreshed, patch);
+          if (cachePatch) {
+            useTeamResultCacheStore.getState().patchForTeam(id, cachePatch);
+          }
         });
       },
 
@@ -242,6 +236,7 @@ export const useTeamStore = create<TeamState>()(
           }
           delete state.configsByTeamId[id];
           refreshDerivedTeamState(state, preset);
+          useTeamResultCacheStore.getState().clearForTeam(id);
         });
       },
 
@@ -256,7 +251,6 @@ export const useTeamStore = create<TeamState>()(
             id: newId,
             comp: { ...legacyTeamToComp(source), id: newId },
             optimizationResult: null,
-            choiceResults: {},
             weaponChoiceResult: null,
           };
           state.compDeltas = upsertCustomTeamCompDelta(
@@ -269,12 +263,6 @@ export const useTeamStore = create<TeamState>()(
           nextOrder.splice(index + 1, 0, newId);
           reindexTeamOrder(state, nextOrder);
           refreshDerivedTeamState(state);
-          const copy = state.teams.find((team) => team.id === newId);
-          if (copy) {
-            copy.optimizationResult = null;
-            copy.choiceResults = {};
-            copy.weaponChoiceResult = null;
-          }
         });
       },
 
@@ -315,6 +303,7 @@ export const useTeamStore = create<TeamState>()(
           state.activePresetId = null;
           state.compDeltas = [];
           state.configsByTeamId = {};
+          useTeamResultCacheStore.getState().clearAll();
         });
       },
 
@@ -329,6 +318,7 @@ export const useTeamStore = create<TeamState>()(
           state.author = imported.author;
           state.description = imported.description;
           refreshDerivedTeamState(state, null);
+          useTeamResultCacheStore.getState().clearAll();
         });
       },
 
@@ -342,6 +332,7 @@ export const useTeamStore = create<TeamState>()(
           state.description = data.description ?? "";
           dedupeTeamCompStateAgainstPreset(state, data);
           refreshDerivedTeamState(state, data);
+          useTeamResultCacheStore.getState().clearAll();
         });
       },
 

@@ -358,6 +358,10 @@ export const i18nUiData = {
       en: "Import successful!",
       zh: "导入成功！",
     },
+    profileSettingsCopied: {
+      en: "Copied triage and resource settings from your previous account.",
+      zh: "已沿用上一个账号的锁定助手和资源规划设置。",
+    },
     conversionWarning: {
       en: "Some items could not be imported",
       zh: "部分条目无法导入",

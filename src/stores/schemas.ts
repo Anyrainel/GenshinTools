@@ -585,3 +585,7 @@ export const PersistedSessionNavStoreSchema = z.object({
 export const PersistedAnalyzerCacheStoreSchema = z.object({
   lastByTeam: z.record(z.string(), z.unknown()).catch({}),
 });
+
+export const PersistedTeamResultCacheStoreSchema = z.object({
+  resultsByTeamId: z.record(z.string(), z.unknown()).catch({}),
+});

@@ -7,7 +7,6 @@ import type {
 import {
   createTeamPersistenceFromLegacyTeams,
   deriveTeamRuntimeFromDeltas,
-  getTeamRuntimeCacheById,
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import { getCachedTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
@@ -564,7 +563,6 @@ export function mergeTeamStore<
   const configsByTeamId = (converted?.configsByTeamId ??
     parsed.data.configsByTeamId) as Record<string, TeamConfig>;
   const activePresetId = parsed.data.activePresetId;
-  const cacheByTeamId = getTeamRuntimeCacheById(currentState.teams);
   return {
     ...currentState,
     ...parsed.data,
@@ -574,8 +572,7 @@ export function mergeTeamStore<
     teams: deriveTeamRuntimeFromDeltas(
       compDeltas,
       configsByTeamId,
-      getCachedTeamPreset(activePresetId),
-      cacheByTeamId
+      getCachedTeamPreset(activePresetId)
     ),
   } as TState;
 }

@@ -5,11 +5,13 @@ import {
   migrateTeamStore,
   stripTeamStoreResultCaches,
 } from "@/stores/migration/team";
+import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 
 // Reset store before each test
 beforeEach(() => {
   useTeamStore.getState().clearTeams();
+  useTeamResultCacheStore.getState().clearAll();
 });
 
 describe("useTeamStore", () => {
@@ -174,6 +176,28 @@ describe("useTeamStore", () => {
       if (delta.kind === "custom") {
         expect(delta.value).not.toHaveProperty("charConfigs");
       }
+    });
+
+    it("routes result cache patches to the local result cache store", () => {
+      const id = useTeamStore.getState().addTeam({ name: "Cached" });
+      const weaponResult = {
+        timestamp: 1,
+        mode: "weapon" as const,
+        perCharacter: {},
+      };
+
+      useTeamStore.getState().updateTeam(id, {
+        choiceResults: { weapon: weaponResult },
+        weaponChoiceResult: weaponResult,
+      });
+
+      const team = useTeamStore.getState().teams.find((t) => t.id === id);
+      expect(team?.choiceResults).toBeUndefined();
+      expect(team?.weaponChoiceResult).toBeNull();
+      expect(useTeamResultCacheStore.getState().resultsByTeamId[id]).toEqual({
+        choiceResults: { weapon: weaponResult },
+        weaponChoiceResult: weaponResult,
+      });
     });
   });
 
@@ -352,8 +376,18 @@ describe("useTeamStore", () => {
         .teams.find((team) => team.id !== originalId);
 
       expect(copy?.optimizationResult).toBeNull();
-      expect(copy?.choiceResults).toEqual({});
+      expect(copy?.choiceResults).toBeUndefined();
       expect(copy?.weaponChoiceResult).toBeNull();
+      expect(
+        useTeamResultCacheStore.getState().resultsByTeamId[originalId]
+      ).toMatchObject({
+        choiceResults: {
+          weapon: { timestamp: 1, perCharacter: {}, mode: "weapon" },
+        },
+      });
+      expect(
+        useTeamResultCacheStore.getState().resultsByTeamId[copy!.id]
+      ).toBeUndefined();
     });
 
     it("does nothing if team ID not found", () => {

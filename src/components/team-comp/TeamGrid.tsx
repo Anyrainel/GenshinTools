@@ -54,6 +54,7 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { TeamSort, ViewId } from "@/stores/useSessionNavStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
+import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
 
@@ -155,6 +156,9 @@ export function TeamGrid({
   const copyTeam = useTeamStore((s) => s.copyTeam);
   const moveTeam = useTeamStore((s) => s.moveTeam);
   const moveTeamRelative = useTeamStore((s) => s.moveTeamRelative);
+  const activeTeamResultCache = useTeamResultCacheStore((s) =>
+    activeTeamId ? s.resultsByTeamId[activeTeamId] : undefined
+  );
 
   // Use targeted selectors — subscribing to the full store caused every
   // freeze mutation to re-render the entire page + recalculate filteredTeams.
@@ -484,7 +488,12 @@ export function TeamGrid({
       setTimeout(() => setActiveTeamId(null), 0);
       return null;
     }
-    return <>{renderDetail(activeTeam, () => setActiveTeamId(null))}</>;
+    const activeTeamWithCache: Team = activeTeamResultCache
+      ? { ...activeTeam, ...activeTeamResultCache }
+      : activeTeam;
+    return (
+      <>{renderDetail(activeTeamWithCache, () => setActiveTeamId(null))}</>
+    );
   }
 
   // ── Grid view ──

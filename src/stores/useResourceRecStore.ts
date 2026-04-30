@@ -54,6 +54,10 @@ interface ResourceRecState {
   setShowCraft: (v: boolean) => void;
   setShowReroll: (v: boolean) => void;
   setShowLevelup: (v: boolean) => void;
+  cloneSettingsForProfile: (
+    sourceProfileId: AccountProfileId,
+    targetProfileId: AccountProfileId
+  ) => boolean;
   setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
@@ -120,6 +124,14 @@ const currentSettings = (state: ResourceRecState): ResourceRecSettings => ({
   showReroll: state.showReroll,
   showLevelup: state.showLevelup,
 });
+
+const cloneSettings = (settings: ResourceRecSettings): ResourceRecSettings =>
+  structuredClone(settings);
+
+const settingsEqual = (
+  first: ResourceRecSettings,
+  second: ResourceRecSettings
+): boolean => JSON.stringify(first) === JSON.stringify(second);
 
 export const useResourceRecStore = create<ResourceRecState>()(
   persist(
@@ -240,6 +252,27 @@ export const useResourceRecStore = create<ResourceRecState>()(
             },
           };
         }),
+
+      cloneSettingsForProfile: (sourceProfileId, targetProfileId) => {
+        let didClone = false;
+        set((state) => {
+          const sourceSettings = getSettingsForProfile(state, sourceProfileId);
+          if (settingsEqual(sourceSettings, cloneDefaultSettings())) return {};
+
+          didClone = true;
+          const cloned = cloneSettings(sourceSettings);
+          return {
+            ...(getActiveProfileId() === targetProfileId
+              ? applySettings(cloned)
+              : {}),
+            settingsByProfileId: {
+              ...state.settingsByProfileId,
+              [targetProfileId]: cloned,
+            },
+          };
+        });
+        return didClone;
+      },
 
       setActiveProfile: (profileId) =>
         set((state) => applySettings(getSettingsForProfile(state, profileId))),

@@ -18,11 +18,6 @@ import type {
 
 export type TeamCompDelta = PresetDelta<TeamComp>;
 
-export type TeamRuntimeCache = Pick<
-  Team,
-  "optimizationResult" | "choiceResults" | "weaponChoiceResult"
->;
-
 const MAX_TEAM_SLOTS = 4;
 const CUSTOM_SORT_OFFSET = 1_000_000;
 
@@ -81,14 +76,6 @@ export function hasTeamCompPatch(patch: Partial<Team>): boolean {
 export function hasTeamConfigPatch(patch: Partial<Team>): boolean {
   return Object.keys(patch).some((key) =>
     CONFIG_PATCH_KEYS.has(key as LegacyTeamPatchKeys)
-  );
-}
-
-export function hasTeamRuntimeCachePatch(patch: Partial<Team>): boolean {
-  return (
-    "optimizationResult" in patch ||
-    "choiceResults" in patch ||
-    "weaponChoiceResult" in patch
   );
 }
 
@@ -469,8 +456,7 @@ export function legacyTeamToConfig(team: Partial<Team>): TeamConfig {
 
 export function projectRuntimeTeam(
   comp: TeamComp,
-  config: TeamConfig = createDefaultTeamConfig(),
-  cache?: Partial<TeamRuntimeCache>
+  config: TeamConfig = createDefaultTeamConfig()
 ): Team {
   const normalizedConfig = normalizeTeamConfig(config);
   const { characters, weapons, artifacts } = teamCompToArrays(comp);
@@ -499,25 +485,10 @@ export function projectRuntimeTeam(
     combo: damage.combo ?? null,
     ...(charSettings ? { charSettings } : {}),
     erTimelines: normalizedConfig.energy?.timelines,
-    optimizationResult: cache?.optimizationResult ?? null,
-    choiceResults: cache?.choiceResults,
-    weaponChoiceResult: cache?.weaponChoiceResult ?? null,
+    optimizationResult: null,
+    weaponChoiceResult: null,
     analyzer: normalizedConfig.investment,
   };
-}
-
-export function getTeamRuntimeCacheById(
-  teams: Team[]
-): Record<string, TeamRuntimeCache> {
-  const cacheById: Record<string, TeamRuntimeCache> = {};
-  for (const team of teams) {
-    cacheById[team.id] = {
-      optimizationResult: team.optimizationResult ?? null,
-      choiceResults: team.choiceResults,
-      weaponChoiceResult: team.weaponChoiceResult ?? null,
-    };
-  }
-  return cacheById;
 }
 
 function setDelta<T extends TeamCompDelta>(
@@ -723,8 +694,7 @@ export function isPresetTeamComp(
 export function deriveTeamRuntimeFromDeltas(
   deltas: TeamCompDelta[],
   configsByTeamId: Record<string, TeamConfig>,
-  preset: TeamCompData | null,
-  cacheByTeamId: Record<string, TeamRuntimeCache> = {}
+  preset: TeamCompData | null
 ): Team[] {
   const presetMap = getPresetCompMap(preset);
   const presetIds = getPresetTeamIds(preset);
@@ -786,7 +756,7 @@ export function deriveTeamRuntimeFromDeltas(
   });
 
   return entries.map(({ comp }) =>
-    projectRuntimeTeam(comp, configsByTeamId[comp.id], cacheByTeamId[comp.id])
+    projectRuntimeTeam(comp, configsByTeamId[comp.id])
   );
 }
 

@@ -241,32 +241,30 @@ Cloud decision:
 
 ## Build Store
 
-Current `useBuildsStore` already uses a subscribe/preset delta model:
+Current `useBuildsStore` now uses the shared preset-delta model:
 
 - `activePresetId`
-- local `builds`
-- `characterToBuildIds`
-- `presetDeletedBuildIds`
+- `activePresetPayload` as hydrated runtime preset data, not persisted
+- `deltas: PresetDelta<Build>[]` as the persisted source of custom builds, preset tombstones, and order
+- derived runtime views for UI compatibility:
+  - `builds`
+  - `characterToBuildIds`
+  - `presetDeletedBuildIds`
+  - `resolvedBuildsByCharacterId`
+  - `resolvedBuildGroups`
+  - `validResolvedBuildGroups`
 - `characterWeapons`
 - `computeOptions`
 - metadata
 - local `validationErrors`
 
-Current resolver behavior matters:
-
-- `characterToBuildIds` stores local ordering and known build ids.
-- `presetDeletedBuildIds` stores explicit deletion tombstones for preset builds.
-- The resolver appends preset build ids that were added after the user subscribed to a preset.
-
-Therefore, `characterToBuildIds` cannot also imply removal by absence. If absence meant removal, new builds added by a subscribed preset update would never appear. If absence meant "not seen yet", removed preset builds would reappear. We need explicit removal state.
-
 Cloud decision:
 
-- Upload build config and preset overlays.
+- Upload `activePresetId`, `deltas`, character metadata, compute options, and metadata.
 - Exclude `validationErrors`; recompute with `getBuildValidationErrors()` during hydration or import.
-- Refactor toward a structure where each piece of information has one source of truth.
+- Exclude `activePresetPayload` and every derived runtime view.
 
-Recommended build overlay model, using the generic preset overlay type below:
+Cloud payload shape:
 
 ```ts
 type CharacterBuildMetadata = {
@@ -279,7 +277,7 @@ type CharacterBuildMetadata = {
 type BuildsCloudPayload = {
   activePresetId: string | null;
   activePresetRevision?: string;
-  builds: PresetDelta<Build>[];
+  deltas: PresetDelta<Build>[];
   characterMetadata?: Record<string, CharacterBuildMetadata>;
   computeOptions?: ComputeOptions;
   author?: string;
@@ -307,7 +305,7 @@ CRUD mapping:
 - Reorder: update only `displayIndex` on affected item deltas.
 - Restore character: remove deltas whose resolved group is that character and remove character-level metadata.
 
-This is more explicit than the current mixed `builds` + `characterToBuildIds` + `presetDeletedBuildIds` shape. The current shape works locally, but the cloud shape should not depend on interpreting one list as both order and removal.
+The old mixed `builds` + `characterToBuildIds` + `presetDeletedBuildIds` persisted shape has been migrated into this single-source delta shape. Those old fields are now derived runtime compatibility views only.
 
 ## Generic Preset Overlay Lists
 
@@ -393,24 +391,23 @@ Invariants:
 This generic type can back:
 
 - character build overlays via one `PresetDelta<Build>[]` grouped by `build.characterId`
-- team library overlays via one `PresetDelta<TeamTemplate>[]`
+- team library overlays via one `PresetDelta<TeamComp>[]`
 - future preset-backed lists; callers can select a static or dynamic base list before invoking the generic resolver
 
 ## Team Store Refactor
 
-Current `Team` combines three concerns:
+Current `Team` runtime values are derived from two persisted source structures:
 
-1. Team library and preset-eligible composition.
-2. User-specific calculation/config state.
-3. Expensive result caches.
+1. `compDeltas: PresetDelta<TeamComp>[]` for preset-eligible composition and global display order.
+2. `configsByTeamId: Record<string, TeamConfig>` for user-authored calculation/config state.
 
-Current cache fields inside `Team`:
+`Team` remains the runtime projection consumed by existing Team Comp UI, but it is no longer the durable source shape for cloud backup.
 
-- `optimizationResult`
-- `choiceResults`
-- deprecated `weaponChoiceResult`
+Cache fields are local-only:
 
-The analyzer already has a better pattern: `useAnalyzerCacheStore` keeps analyzer results outside team composition/config. It is not limited to one team: the persisted snapshot is keyed by team id, and it stores one latest analyzer result per team. Generalize that separation to optimizer, investment, weapon choice, and artifact choice, but keep the persisted target to one latest result per team per mode because the UI has no "go back to previous result" workflow.
+- `useTeamResultCacheStore` owns optimizer and weapon/artifact choice result caches keyed by team id.
+- `useAnalyzerCacheStore` remains local-only for investment analyzer results keyed by team id.
+- Both stores are excluded from cloud backup.
 
 Target split:
 
@@ -431,8 +428,7 @@ Cloud model:
 type TeamCompCloudPayload = {
   presetId: string | null;
   presetRevision?: string;
-  teams: PresetDelta<TeamTemplate>[];
-  renamedTeams?: Record<string, string>;
+  deltas: PresetDelta<TeamComp>[];
 };
 ```
 
@@ -444,7 +440,7 @@ Team identity:
 - Editing a custom team replaces the custom entry's full `value` while preserving its id.
 - If we intentionally use content-derived ids for an immutable preset source, changing identity fields is a remove plus create operation.
 
-This mirrors the build store idea: store only the user's difference from the canonical preset.
+This mirrors the build store: store only the user's difference from the canonical preset.
 
 ### 2. Team Config
 
@@ -467,23 +463,16 @@ User-specific fields that should not live in team presets:
 Cloud model:
 
 ```ts
-type TeamUserConfigPayload = {
-  opts?: Record<string, unknown>;
-  calcContext?: Record<string, unknown>;
-  enemyAura?: string;
-  extraBuffs?: unknown[];
-  selectedFormula?: { charId: string; formulaId: string } | null;
-  singleReaction?: unknown;
-  singleForceOnField?: boolean;
-  formulaMode?: "single" | "combo";
-  combo?: unknown;
-  charSettings?: Record<string, unknown>;
-  erTimelines?: unknown[];
-  analyzer?: unknown;
+type TeamConfig = {
+  combatOptions: Record<string, string>;
+  charConfigs?: Record<string, TeamCharConfig>;
+  damage?: TeamDamageConfig;
+  energy?: TeamEnergyConfig;
+  investment?: TeamInvestmentConfig;
 };
 
 type TeamConfigCloudPayload = {
-  byTeamId: Record<string, TeamUserConfigPayload>;
+  byTeamId: Record<string, TeamConfig>;
 };
 ```
 
@@ -493,46 +482,30 @@ Config is keyed by team id. If a composition edit creates a new id, the UI can o
 
 Excluded from cloud backup:
 
-- optimizer result
+- optimizer result / historical `optimizationResult`
 - weapon choice result
 - artifact choice result
 - investment analysis / analyzer results
 
-Recommended local model:
+Current local model:
 
 ```ts
-type TeamResultCacheMode =
-  | "optimizer"
-  | "investment"
-  | "weapon-choice"
-  | "artifact-choice";
-
-type TeamResultCacheEntry<TResult = unknown> = {
-  accountRevision: string;
-  buildRevision: string;
-  teamRevision: string;
-  calcRevision: string;
-  updatedAt: number;
-  result: TResult;
+type TeamResultCacheEntry = {
+  optimizationResult?: OptimizationResult | null;
+  choiceResults?: ChoiceResultCache;
+  weaponChoiceResult?: WeaponChoiceResult | null;
 };
 
 type TeamResultCacheState = {
-  /** One latest UI-restorable result per team and mode. */
-  lastByTeam: Record<
-    string,
-    Partial<Record<TeamResultCacheMode, TeamResultCacheEntry>>
-  >;
+  resultsByTeamId: Record<string, TeamResultCacheEntry>;
 };
 ```
 
-Store this in a dedicated local cache store:
-
-- `useTeamResultCacheStore`, replacing or absorbing `useAnalyzerCacheStore`
-- localStorage or IndexedDB, not sessionStorage by default
+- Stored in `useTeamResultCacheStore`.
+- localStorage for now, not sessionStorage
 - TTL optional
 - excluded from cloud
-- entries include account/build/team/calc dependency hashes
-- clear or ignore stale entries when dependency hashes change
+- dependency hashes can be added later if stale restored results become confusing
 - a broader in-memory cache keyed by full options can remain as an implementation detail if it is convenient, but it is not required for the cloud-sync refactor
 
 ## Freeze Store
@@ -780,10 +753,10 @@ Phase 2: Local store migrations
 - Migrate local account profile ids from `"default"` to `0`, and keep UID profiles keyed by UID.
 - When promoting profile `0` to a UID, move account-scoped local data to the UID and remove/soft-delete `0`.
 - On account switch, switch the visible freeze state to that account profile; backup still includes all account profiles.
-- Introduce `TeamTemplate`, `TeamUserConfig`, and `TeamCache` concepts.
-- Move `optimizationResult`, `choiceResults`, and `weaponChoiceResult` out of `Team`.
+- Introduce `TeamComp`, `TeamConfig`, and local-only team cache concepts.
+- Move `optimizationResult`, `choiceResults`, and `weaponChoiceResult` ownership out of `useTeamStore` source data.
 - Move team result caches out of `Team` into a local-only team result cache store.
-- Broaden `useAnalyzerCacheStore` into that local-only team result cache store, or introduce the new store beside it and migrate analyzer cache into it.
+- Keep `useAnalyzerCacheStore` as a separate local-only analyzer cache for now.
 - Migrate weapon/artifact tier-list stores toward stable multi-instance list ids and include them in backup.
 - Keep migrations from current persisted versions and add old-store hydration tests for each changed store.
 
