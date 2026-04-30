@@ -470,7 +470,9 @@ describe("TeamSchema", () => {
 describe("PersistedTeamStoreSchema", () => {
   it("heals all fields from empty object", () => {
     expect(PersistedTeamStoreSchema.parse({})).toEqual({
-      teams: [],
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {},
       author: "",
       description: "",
     });

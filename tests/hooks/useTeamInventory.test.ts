@@ -38,7 +38,7 @@ beforeEach(() => {
   useAccountStore.setState((prev) => ({
     ...prev,
     accounts: {
-      [1]: {
+      1: {
         id: 1,
         name: "Test",
         lastUpdate: 0,

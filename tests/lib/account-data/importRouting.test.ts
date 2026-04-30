@@ -117,7 +117,7 @@ function applyResolve(
 describe("routeLocalImport", () => {
   it("routes directly to UID profile when optional UID is provided", () => {
     const accounts = {
-      [800000000]: makeAccount(800000000, { name: "Main" }),
+      800000000: makeAccount(800000000, { name: "Main" }),
     };
     const result = routeLocalImport(accounts, dataA, "800000000", "Default");
 
@@ -158,7 +158,7 @@ describe("routeLocalImport", () => {
   });
 
   it("opens dialog when no UID but existing profiles are present", () => {
-    const accounts = { [0]: makeAccount(0) };
+    const accounts = { 0: makeAccount(0) };
     const result = routeLocalImport(
       accounts,
       dataA,
@@ -174,8 +174,8 @@ describe("routeLocalImport", () => {
 
   it("opens dialog even when multiple UID profiles exist", () => {
     const accounts = {
-      [700000001]: makeAccount(700000001),
-      [800000002]: makeAccount(800000002),
+      700000001: makeAccount(700000001),
+      800000002: makeAccount(800000002),
     };
     const result = routeLocalImport(accounts, dataA, "", "Default");
 
@@ -187,7 +187,7 @@ describe("routeLocalImport", () => {
 
 describe("routeUidImport", () => {
   it("merges into existing UID profile directly", () => {
-    const accounts = { [800000000]: makeAccount(800000000, { data: dataA }) };
+    const accounts = { 800000000: makeAccount(800000000, { data: dataA }) };
     let mergeCalled = false;
     const result = routeUidImport(
       accounts,
@@ -207,7 +207,7 @@ describe("routeUidImport", () => {
   });
 
   it("overwrites existing UID profile without merging when clearBeforeImport", () => {
-    const accounts = { [800000000]: makeAccount(800000000, { data: dataA }) };
+    const accounts = { 800000000: makeAccount(800000000, { data: dataA }) };
     let mergeCalled = false;
     const result = routeUidImport(
       accounts,
@@ -228,7 +228,7 @@ describe("routeUidImport", () => {
 
   it("uses nickname as name when provided", () => {
     const accounts = {
-      [800000000]: makeAccount(800000000, { name: "Old Name" }),
+      800000000: makeAccount(800000000, { name: "Old Name" }),
     };
     const result = routeUidImport(
       accounts,
@@ -244,7 +244,7 @@ describe("routeUidImport", () => {
 
   it("preserves existing name when nickname is empty", () => {
     const accounts = {
-      [800000000]: makeAccount(800000000, { name: "My Account" }),
+      800000000: makeAccount(800000000, { name: "My Account" }),
     };
     const result = routeUidImport(
       accounts,
@@ -259,7 +259,7 @@ describe("routeUidImport", () => {
   });
 
   it("opens dialog when UID profile absent but 'default' exists", () => {
-    const accounts = { [0]: makeAccount(0) };
+    const accounts = { 0: makeAccount(0) };
     const result = routeUidImport(
       accounts,
       "800000000",
@@ -293,7 +293,7 @@ describe("routeUidImport", () => {
   });
 
   it("creates UID profile directly even when other UID profiles exist (no 'default')", () => {
-    const accounts = { [700000001]: makeAccount(700000001) };
+    const accounts = { 700000001: makeAccount(700000001) };
     const result = routeUidImport(
       accounts,
       "800000002",
@@ -326,7 +326,7 @@ describe("routeResolveImport", () => {
   };
 
   it("creates a new account for JSON import create action", () => {
-    const accounts = { [0]: makeAccount(0) };
+    const accounts = { 0: makeAccount(0) };
     const result = routeResolveImport(
       accounts,
       jsonPending,
@@ -345,7 +345,7 @@ describe("routeResolveImport", () => {
   });
 
   it("creates a new UID account for UID import create action", () => {
-    const accounts = { [0]: makeAccount(0) };
+    const accounts = { 0: makeAccount(0) };
     const result = routeResolveImport(
       accounts,
       uidPending,
@@ -364,7 +364,7 @@ describe("routeResolveImport", () => {
   });
 
   it("overwrites existing profile for JSON overwrite action", () => {
-    const accounts = { [0]: makeAccount(0, { data: dataB }) };
+    const accounts = { 0: makeAccount(0, { data: dataB }) };
     const result = routeResolveImport(
       accounts,
       jsonPending,
@@ -383,7 +383,7 @@ describe("routeResolveImport", () => {
   });
 
   it("merges into 'default' for UID merge action and encodes key promotion", () => {
-    const accounts = { [0]: makeAccount(0) };
+    const accounts = { 0: makeAccount(0) };
     let mergeCalled = false;
     const result = routeResolveImport(
       accounts,
@@ -407,7 +407,7 @@ describe("routeResolveImport", () => {
   });
 
   it("overwrites 'default' for UID overwrite action and encodes key promotion", () => {
-    const accounts = { [0]: makeAccount(0) };
+    const accounts = { 0: makeAccount(0) };
     const result = routeResolveImport(
       accounts,
       uidPending,
@@ -438,7 +438,7 @@ describe("routeResolveImport", () => {
   });
 
   it("does not promote when UID import targets an account already keyed by that UID", () => {
-    const accounts = { [800000000]: makeAccount(800000000) };
+    const accounts = { 800000000: makeAccount(800000000) };
     const result = routeResolveImport(
       accounts,
       uidPending,
@@ -576,7 +576,7 @@ describe("user journeys", () => {
 
     // Step 2: User edits UID in dialog (simulate promoteToUid("default", "800000003"))
     accounts[800000003] = { ...accounts[0], id: 800000003 };
-    const { [0]: _removed, ...rest } = accounts;
+    const { 0: _removed, ...rest } = accounts;
     accounts = rest;
     expect(accounts[800000003]).toBeDefined();
     expect(accounts[0]).toBeUndefined();
@@ -596,7 +596,7 @@ describe("user journeys", () => {
 
   it("J5: Enka UID → dialog → create new → Enka same UID again → direct", () => {
     let accounts: Record<number, AccountState> = {
-      [0]: makeAccount(0),
+      0: makeAccount(0),
     };
 
     // Step 1: Enka "800000004" — no profile, default exists → dialog
@@ -642,7 +642,7 @@ describe("user journeys", () => {
 
   it("J6: JSON (no UID) → default → overwrite via dialog → stays as default, no promotion", () => {
     let accounts: Record<number, AccountState> = {
-      [0]: makeAccount(0, { data: dataA }),
+      0: makeAccount(0, { data: dataA }),
     };
     const pending: PendingImport = {
       type: "json",

@@ -65,6 +65,7 @@ export default function TeamCompPage() {
   const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const importTeams = useTeamStore((state) => state.importTeams);
+  const subscribePreset = useTeamStore((state) => state.subscribePreset);
   const exportTeams = useTeamStore((state) => state.exportTeams);
   const clearTeamsRaw = useTeamStore((state) => state.clearTeams);
   const author = useTeamStore((state) => state.author);
@@ -94,9 +95,13 @@ export default function TeamCompPage() {
     return loadPresetPayload(presetModules, path);
   }, []);
 
-  const handleImport = (data: TeamCompData) => {
+  const handleImport = (data: TeamCompData, preset?: PresetOption) => {
     clearAllFrozen();
-    importTeams(data);
+    if (preset) {
+      subscribePreset(preset.path, data);
+    } else {
+      importTeams(data);
+    }
     toast.success(t.ui("import.action"));
   };
 

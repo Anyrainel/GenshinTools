@@ -15,6 +15,7 @@ import type {
 import type {
   CharBaseConfig,
   Team,
+  TeamCharConfig,
   WeaponChoiceCharConfig,
 } from "@/lib/team-comp/types";
 import { EMPTY_LABEL } from "../dmgcalc/core/combo";
@@ -107,6 +108,7 @@ function resolveCharBaseConfig(
   team: Team,
   accountData: AccountData | null
 ): CharBaseConfig {
+  const charConfig = team.config?.charConfigs?.[charId];
   const acctChar = accountData?.characters.find((c) => c.key === charId);
   const defaultLevel = acctChar
     ? Number(getCharacterLevelTier(acctChar.level))
@@ -114,13 +116,17 @@ function resolveCharBaseConfig(
   const defaultConst = acctChar ? acctChar.constellation : 0;
 
   const charLevel =
-    team.opts?.[`${charId}.overrideLevel`] !== undefined
-      ? Number(team.opts[`${charId}.overrideLevel`])
-      : defaultLevel;
+    charConfig?.level !== undefined
+      ? charConfig.level
+      : team.opts?.[`${charId}.overrideLevel`] !== undefined
+        ? Number(team.opts[`${charId}.overrideLevel`])
+        : defaultLevel;
   const constellation =
-    team.opts?.[`${charId}.overrideConstellation`] !== undefined
-      ? Number(team.opts[`${charId}.overrideConstellation`])
-      : defaultConst;
+    charConfig?.constellation !== undefined
+      ? charConfig.constellation
+      : team.opts?.[`${charId}.overrideConstellation`] !== undefined
+        ? Number(team.opts[`${charId}.overrideConstellation`])
+        : defaultConst;
 
   return { charLevel, constellation, acctTalent: acctChar?.talent };
 }
@@ -135,10 +141,14 @@ function resolveTalentOverrides(
   acctTalent: TalentLevels | undefined,
   fallback: TalentLevels | undefined
 ): TalentLevels | undefined {
+  const charTalent = team.config?.charConfigs?.[charId]?.talentLevels;
   const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
   const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
   const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
   if (
+    charTalent?.auto === undefined &&
+    charTalent?.skill === undefined &&
+    charTalent?.burst === undefined &&
     overrideAuto === undefined &&
     overrideSkill === undefined &&
     overrideBurst === undefined
@@ -147,9 +157,24 @@ function resolveTalentOverrides(
   }
   const base = acctTalent ?? { auto: 10, skill: 10, burst: 10 };
   return {
-    auto: overrideAuto !== undefined ? Number(overrideAuto) : base.auto,
-    skill: overrideSkill !== undefined ? Number(overrideSkill) : base.skill,
-    burst: overrideBurst !== undefined ? Number(overrideBurst) : base.burst,
+    auto:
+      charTalent?.auto !== undefined
+        ? charTalent.auto
+        : overrideAuto !== undefined
+          ? Number(overrideAuto)
+          : base.auto,
+    skill:
+      charTalent?.skill !== undefined
+        ? charTalent.skill
+        : overrideSkill !== undefined
+          ? Number(overrideSkill)
+          : base.skill,
+    burst:
+      charTalent?.burst !== undefined
+        ? charTalent.burst
+        : overrideBurst !== undefined
+          ? Number(overrideBurst)
+          : base.burst,
   };
 }
 
@@ -160,6 +185,8 @@ function resolveRefinement(
   team: Team,
   accountData: AccountData | null
 ): number {
+  const authoredRefinement = team.config?.charConfigs?.[charId]?.refinement;
+  if (authoredRefinement !== undefined) return authoredRefinement;
   let defaultRefine = 1;
   if (accountData) {
     const refinements: number[] = [];
@@ -174,6 +201,13 @@ function resolveRefinement(
   return team.opts?.[`${charId}.overrideRefinement`] !== undefined
     ? Number(team.opts[`${charId}.overrideRefinement`])
     : defaultRefine;
+}
+
+function getTeamCharConfig(
+  team: Team,
+  charId: string
+): TeamCharConfig | undefined {
+  return team.config?.charConfigs?.[charId] ?? team.charSettings?.[charId];
 }
 
 /**
@@ -254,20 +288,28 @@ export function buildWeaponChoiceCharConfigs(
     );
 
     const baseTalent = acctTalent ?? { auto: 10, skill: 10, burst: 10 };
+    const authoredTalent = team.config?.charConfigs?.[charId]?.talentLevels;
     const overrideAuto = team.opts?.[`${charId}.overrideTalentAuto`];
     const overrideSkill = team.opts?.[`${charId}.overrideTalentSkill`];
     const overrideBurst = team.opts?.[`${charId}.overrideTalentBurst`];
     const talentLevels: [number, number, number] = [
-      overrideAuto !== undefined && overrideAuto !== ""
-        ? Number(overrideAuto)
-        : baseTalent.auto,
-      overrideSkill !== undefined && overrideSkill !== ""
-        ? Number(overrideSkill)
-        : baseTalent.skill,
-      overrideBurst !== undefined && overrideBurst !== ""
-        ? Number(overrideBurst)
-        : baseTalent.burst,
+      authoredTalent?.auto !== undefined
+        ? authoredTalent.auto
+        : overrideAuto !== undefined && overrideAuto !== ""
+          ? Number(overrideAuto)
+          : baseTalent.auto,
+      authoredTalent?.skill !== undefined
+        ? authoredTalent.skill
+        : overrideSkill !== undefined && overrideSkill !== ""
+          ? Number(overrideSkill)
+          : baseTalent.skill,
+      authoredTalent?.burst !== undefined
+        ? authoredTalent.burst
+        : overrideBurst !== undefined && overrideBurst !== ""
+          ? Number(overrideBurst)
+          : baseTalent.burst,
     ];
+    const charConfig = getTeamCharConfig(team, charId);
 
     configs.push({
       charId,
@@ -275,8 +317,8 @@ export function buildWeaponChoiceCharConfigs(
       constellation,
       talentLevels,
       artifactConfig: team.artifacts[i] ?? null,
-      minEr: team.charSettings?.[charId]?.minEr ?? 1,
-      minCr: team.charSettings?.[charId]?.minCr ?? 0,
+      minEr: charConfig?.minEr ?? 1,
+      minCr: charConfig?.minCr ?? 0,
     });
   }
   return configs;

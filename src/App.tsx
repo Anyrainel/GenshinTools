@@ -14,6 +14,7 @@ import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
+import { useHydrateTeamPreset } from "@/hooks/useHydrateTeamPreset";
 import { cn } from "@/lib/utils";
 import Home from "./pages/Home";
 
@@ -37,6 +38,7 @@ function App() {
   const location = useLocation();
   const { language } = useLanguage();
   const isHomePage = location.pathname === "/";
+  useHydrateTeamPreset();
 
   useEffect(() => {
     const base = `/${location.pathname.split("/")[1]}`;

@@ -208,7 +208,7 @@ export function CharCrErSettings({
         const cs = team.charSettings?.[charId];
         const crMode = cs?.crMode ?? "min";
         const tierEnabled = cs?.tierAwarePool ?? false;
-        const ignoreSetEnabled = cs?.ignoreArtifactSets ?? false;
+        const fullSetOptional = cs?.fullSetOptional ?? false;
 
         return (
           <div
@@ -334,14 +334,14 @@ export function CharCrErSettings({
                       ...team.charSettings,
                       [charId]: {
                         ...team.charSettings?.[charId],
-                        ignoreArtifactSets: !ignoreSetEnabled,
+                        fullSetOptional: !fullSetOptional,
                       },
                     },
                   })
                 }
               >
                 <Checkbox
-                  checked={ignoreSetEnabled}
+                  checked={fullSetOptional}
                   className="h-3.5 w-3.5 pointer-events-none"
                 />
                 <span className={CB_LABEL_CLS}>

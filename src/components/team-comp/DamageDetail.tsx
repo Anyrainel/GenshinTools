@@ -196,11 +196,11 @@ export function DamageDetail({
   const gameStatsReady = characterStats !== null && weaponStats !== null;
   const buildGroups = useAllValidResolvedBuilds();
 
-  const ignoreArtifactSets = useMemo(() => {
+  const fullSetOptionalByChar = useMemo(() => {
     if (!team.charSettings) return undefined;
     const map: Record<string, boolean> = {};
     for (const [cid, s] of Object.entries(team.charSettings)) {
-      if (s.ignoreArtifactSets != null) map[cid] = s.ignoreArtifactSets;
+      if (s.fullSetOptional != null) map[cid] = s.fullSetOptional;
     }
     return Object.keys(map).length > 0 ? map : undefined;
   }, [team.charSettings]);
@@ -722,7 +722,7 @@ export function DamageDetail({
       baseSheets: optBaseSheets,
       perChar,
       teamDeadlineMs: performance.now() + timeBudgetSec * 1000,
-      ignoreArtifactSets,
+      ignoreArtifactSets: fullSetOptionalByChar,
       perCharExtraArtifacts: teamInventory.perCharExtraArtifacts,
       perCharExcludedArtifactIds,
     });
@@ -973,7 +973,7 @@ export function DamageDetail({
       setKeysByChar,
       rollMultiplier: activeContext.rollMultiplier,
       perChar: genPerChar,
-      ignoreArtifactSets: ignoreArtifactSets ?? undefined,
+      ignoreArtifactSets: fullSetOptionalByChar ?? undefined,
     });
   };
 

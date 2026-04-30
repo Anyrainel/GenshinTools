@@ -184,6 +184,8 @@ export interface CharSettings {
   minCr?: number;
   crMode?: "min" | "target";
   tierAwarePool?: boolean;
+  fullSetOptional?: boolean;
+  /** @deprecated legacy runtime compatibility; use fullSetOptional. */
   ignoreArtifactSets?: boolean;
 }
 
@@ -197,9 +199,63 @@ export interface AnalyzerConfig {
   extraBuffs?: ExtraBuff[];
 }
 
+export interface TeamCompSlot {
+  charId: string | null;
+  weaponId: string | null;
+  artifactSet: ArtifactSetConfig | null;
+}
+
+export interface TeamComp {
+  id: string;
+  name: string;
+  slots: TeamCompSlot[];
+  reactions: ReactionType[];
+}
+
+export interface TeamCharConfig {
+  level?: number;
+  constellation?: number;
+  refinement?: number;
+  talentLevels?: Partial<TalentLevels>;
+  minEr?: number;
+  minCr?: number;
+  crMode?: "min" | "target";
+  tierAwarePool?: boolean;
+  fullSetOptional?: boolean;
+}
+
+export interface TeamDamageConfig {
+  calcContext?: Partial<CalcContext>;
+  enemyAura?: Element;
+  extraBuffs?: ExtraBuff[];
+  selectedFormula?: { charId: string; formulaId: string } | null;
+  singleReaction?: ReactionOverride;
+  singleForceOnField?: boolean;
+  formulaMode?: "single" | "combo";
+  combo?: ComboFormula | null;
+}
+
+export interface TeamEnergyConfig {
+  timelines?: ERTimeline[];
+}
+
+export type TeamInvestmentConfig = AnalyzerConfig;
+
+export interface TeamConfig {
+  combatOptions: OptionMap;
+  charConfigs?: Record<string, TeamCharConfig>;
+  damage?: TeamDamageConfig;
+  energy?: TeamEnergyConfig;
+  investment?: TeamInvestmentConfig;
+}
+
 export interface Team {
   id: string;
   name: string;
+  // Canonical persisted/cloud-sync source split. Runtime teams projected by
+  // useTeamStore carry these fields; optional for legacy import/test shapes.
+  comp?: TeamComp;
+  config?: TeamConfig;
   // ─── Composition ───
   characters: (string | null)[];
   weapons: (string | null)[];

@@ -243,8 +243,113 @@ export const TeamSchema = z
   })
   .loose();
 
+const TeamCompSlotSchema = z.object({
+  charId: z.string().nullable().catch(null),
+  weaponId: z.string().nullable().catch(null),
+  artifactSet: ArtifactSetConfigSchema.nullable().catch(null),
+});
+
+export const TeamCompSchema = z
+  .object({
+    id: z.string(),
+    name: z.string().catch(""),
+    slots: z.array(TeamCompSlotSchema).catch([]),
+    reactions: z.array(z.string()).catch([]),
+  })
+  .loose();
+
+const TeamCharConfigSchema = z
+  .object({
+    level: z.number().optional(),
+    constellation: z.number().optional(),
+    refinement: z.number().optional(),
+    talentLevels: z
+      .object({
+        auto: z.number().optional(),
+        skill: z.number().optional(),
+        burst: z.number().optional(),
+      })
+      .optional(),
+    minEr: z.number().optional(),
+    minCr: z.number().optional(),
+    crMode: z.enum(["min", "target"]).optional(),
+    tierAwarePool: z.boolean().optional(),
+    fullSetOptional: z.boolean().optional(),
+  })
+  .loose();
+
+const TeamDamageConfigSchema = z
+  .object({
+    calcContext: z.record(z.string(), z.unknown()).optional(),
+    enemyAura: z.string().optional(),
+    extraBuffs: z.array(z.unknown()).optional(),
+    selectedFormula: z
+      .object({
+        charId: z.string(),
+        formulaId: z.string(),
+      })
+      .nullable()
+      .optional(),
+    singleReaction: z.unknown().optional(),
+    singleForceOnField: z.boolean().optional(),
+    formulaMode: z.enum(["single", "combo"]).optional(),
+    combo: z.unknown().nullable().optional(),
+  })
+  .loose();
+
+const TeamConfigSchema = z
+  .object({
+    combatOptions: z.record(z.string(), z.string()).catch({}),
+    charConfigs: z.record(z.string(), TeamCharConfigSchema).optional(),
+    damage: TeamDamageConfigSchema.optional(),
+    energy: z
+      .object({
+        timelines: z.array(z.unknown()).optional(),
+      })
+      .loose()
+      .optional(),
+    investment: z.unknown().optional(),
+  })
+  .loose()
+  .catch({ combatOptions: {} });
+
+const RawTeamCompDeltaSchema = z.discriminatedUnion("kind", [
+  z
+    .object({
+      kind: z.literal("preset"),
+      id: z.string(),
+      displayIndex: z.number().optional(),
+      deleted: z.literal(true).optional(),
+    })
+    .loose(),
+  z
+    .object({
+      kind: z.literal("custom"),
+      id: z.string(),
+      value: TeamCompSchema,
+      displayIndex: z.number().optional(),
+    })
+    .loose(),
+]);
+
+const TeamCompDeltasSchema = z
+  .array(z.unknown())
+  .catch([])
+  .transform((items) =>
+    items.flatMap((item) => {
+      const parsed = RawTeamCompDeltaSchema.safeParse(item);
+      if (!parsed.success) return [];
+      const delta = parsed.data;
+      if (isCustomDelta(delta) || isPresetDelta(delta)) return [delta];
+      return [];
+    })
+  );
+
 export const PersistedTeamStoreSchema = z.object({
-  teams: z.array(TeamSchema).catch([]),
+  activePresetId: z.string().nullable().catch(null),
+  compDeltas: TeamCompDeltasSchema,
+  configsByTeamId: z.record(z.string(), TeamConfigSchema).catch({}),
+  teams: z.array(TeamSchema).optional().catch(undefined),
   author: z.string().catch(""),
   description: z.string().catch(""),
 });

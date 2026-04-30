@@ -4,11 +4,27 @@ import type {
   ComboLine,
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
-import type { AnalyzerConfig, CharSettings, Team } from "@/lib/team-comp/types";
+import {
+  createTeamPersistenceFromLegacyTeams,
+  deriveTeamRuntimeFromDeltas,
+  getTeamRuntimeCacheById,
+  type TeamCompDelta,
+} from "@/lib/team-comp/teamDeltas";
+import { getCachedTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
+import type {
+  AnalyzerConfig,
+  CharSettings,
+  Team,
+  TeamConfig,
+} from "@/lib/team-comp/types";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
-import { DEFAULT_TEAM_FIELDS } from "@/stores/teamDefaults";
 
-type TeamMigrationState = { teams: Team[] } & Record<string, unknown>;
+type TeamMigrationState = {
+  teams: Team[];
+  activePresetId?: string | null;
+  compDeltas?: TeamCompDelta[];
+  configsByTeamId?: Record<string, TeamConfig>;
+} & Record<string, unknown>;
 type TeamResultCacheField =
   | "optimizationResult"
   | "choiceResults"
@@ -46,15 +62,16 @@ export function migrateTeamStore(
   version: number
 ): TeamMigrationState {
   const state = persistedState as TeamMigrationState;
+  if (!Array.isArray(state.teams)) state.teams = [];
   if (version < 1) {
-    state.teams = state.teams.map((t) => ({
+    state.teams = (state.teams ?? []).map((t) => ({
       ...t,
       reactions: (t as Team).reactions || [],
     }));
   }
   if (version < 2) {
     // biome-ignore lint/suspicious/noExplicitAny: migration from legacy format (reactionOverrides removed in v9)
-    state.teams = state.teams.map((t: any) => ({
+    state.teams = (state.teams ?? []).map((t: any) => ({
       ...t,
       reactionOverrides: t.reactionOverrides ?? {},
       combos: t.combos ?? [],
@@ -493,9 +510,32 @@ export function migrateTeamStore(
   if (version < 16) {
     // v16: result caches are local/runtime data. Persist only authored team
     // source/config so cloud backup and localStorage do not carry stale blobs.
-    return stripTeamStoreResultCaches(state);
+    Object.assign(state, stripTeamStoreResultCaches(state));
   }
-  return stripTeamStoreResultCaches(state);
+  Object.assign(state, stripTeamStoreResultCaches(state));
+
+  if (version < 17 || !Array.isArray(state.compDeltas)) {
+    // Before v17, the team store persisted each team as one flat object:
+    // composition (name/characters/weapons/artifacts/reactions), combat opts,
+    // damage formula state, ER timelines, optimizer settings, and analyzer
+    // settings all lived together under `teams`.
+    //
+    // v17 splits that into:
+    // - compDeltas: PresetDelta<TeamComp>[] for preset-eligible composition
+    //   and global order only.
+    // - configsByTeamId: user-authored per-team config keyed by team ID.
+    const converted = createTeamPersistenceFromLegacyTeams(state.teams ?? []);
+    state.activePresetId = null;
+    state.compDeltas = converted.compDeltas;
+    state.configsByTeamId = converted.configsByTeamId;
+    state.teams = deriveTeamRuntimeFromDeltas(
+      state.compDeltas,
+      state.configsByTeamId,
+      null
+    );
+  }
+
+  return state;
 }
 
 /**
@@ -504,23 +544,38 @@ export function migrateTeamStore(
  * persisted data stored before the field was added.
  * Exported for testability — called by zustand persist's `merge` option.
  */
-export function mergeTeamStore<TState extends { teams: Team[] }>(
-  persistedState: unknown,
-  currentState: TState
-): TState {
+export function mergeTeamStore<
+  TState extends {
+    teams: Team[];
+    activePresetId: string | null;
+    compDeltas: TeamCompDelta[];
+    configsByTeamId: Record<string, TeamConfig>;
+  },
+>(persistedState: unknown, currentState: TState): TState {
   const parsed = PersistedTeamStoreSchema.safeParse(persistedState);
   if (!parsed.success) return currentState;
+  const legacyTeams = parsed.data.teams ?? [];
+  const converted =
+    parsed.data.compDeltas.length === 0 && legacyTeams.length > 0
+      ? createTeamPersistenceFromLegacyTeams(legacyTeams as unknown as Team[])
+      : null;
+  const compDeltas = (converted?.compDeltas ??
+    parsed.data.compDeltas) as TeamCompDelta[];
+  const configsByTeamId = (converted?.configsByTeamId ??
+    parsed.data.configsByTeamId) as Record<string, TeamConfig>;
+  const activePresetId = parsed.data.activePresetId;
+  const cacheByTeamId = getTeamRuntimeCacheById(currentState.teams);
   return {
     ...currentState,
     ...parsed.data,
-    // Zod's .passthrough() adds an index signature that doesn't align with Team,
-    // but TeamSchema has already validated and healed all required fields.
-    teams: parsed.data.teams.map(
-      (t) =>
-        ({
-          ...DEFAULT_TEAM_FIELDS,
-          ...stripTeamResultCaches(t as unknown as Team),
-        }) as Team
+    activePresetId,
+    compDeltas,
+    configsByTeamId,
+    teams: deriveTeamRuntimeFromDeltas(
+      compDeltas,
+      configsByTeamId,
+      getCachedTeamPreset(activePresetId),
+      cacheByTeamId
     ),
   } as TState;
 }

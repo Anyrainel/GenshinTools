@@ -987,8 +987,8 @@ export const i18nUiData = {
     critModeCrit: { en: "CRIT", zh: "暴击" },
     critModeNoCrit: { en: "Non-CRIT", zh: "非暴击" },
     emptyDamageMsg: {
-      en: "Configure characters and weapons, then select a formula to see damage.",
-      zh: "配置角色和武器，然后选择公式以查看伤害。",
+      en: "Select a formula above to see damage.",
+      zh: "选择公式以查看伤害。",
     },
     emptyComboMsg: {
       en: "Add formula counts in the combo tab to see total rotation damage.",

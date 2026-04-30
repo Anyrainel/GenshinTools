@@ -17,6 +17,9 @@ describe("useTeamStore", () => {
     it("starts with empty teams array", () => {
       const state = useTeamStore.getState();
       expect(state.teams).toEqual([]);
+      expect(state.compDeltas).toEqual([]);
+      expect(state.configsByTeamId).toEqual({});
+      expect(state.activePresetId).toBeNull();
     });
   });
 
@@ -31,6 +34,15 @@ describe("useTeamStore", () => {
       expect(state.teams[0].characters).toEqual([null, null, null, null]);
       expect(state.teams[0].weapons).toEqual([null, null, null, null]);
       expect(state.teams[0].artifacts).toEqual([null, null, null, null]);
+      expect(state.compDeltas).toEqual([
+        {
+          kind: "custom",
+          id,
+          value: { id, name: "", slots: [], reactions: [] },
+          displayIndex: 0,
+        },
+      ]);
+      expect(state.configsByTeamId[id]).toEqual({ combatOptions: {} });
     });
 
     it("returns the generated team ID", () => {
@@ -50,6 +62,15 @@ describe("useTeamStore", () => {
       expect(team?.characters).toEqual(["hu_tao", null, null, null]);
       // Default slots should remain
       expect(team?.weapons).toEqual([null, null, null, null]);
+      const delta = useTeamStore.getState().compDeltas[0];
+      expect(delta.kind).toBe("custom");
+      if (delta.kind === "custom") {
+        expect(delta.value.slots[0]).toMatchObject({
+          charId: "hu_tao",
+          weaponId: null,
+          artifactSet: null,
+        });
+      }
     });
 
     it("generates unique IDs for rapid creates", async () => {
@@ -111,6 +132,85 @@ describe("useTeamStore", () => {
       const state = useTeamStore.getState();
       expect(state.teams.length).toBe(1);
       expect(state.teams[0].name).toBe("Existing");
+    });
+
+    it("stores authored overrides in team config instead of comp", () => {
+      const id = useTeamStore.getState().addTeam({
+        characters: ["hu_tao", null, null, null],
+      });
+
+      useTeamStore.getState().updateTeam(id, {
+        opts: {
+          "hu_tao.overrideLevel": "80",
+          "hu_tao.overrideConstellation": "2",
+          "hu_tao.overrideTalentBurst": "9",
+          hu_tao: "charged",
+        },
+        charSettings: {
+          hu_tao: {
+            minEr: 1.4,
+            minCr: 0.7,
+            fullSetOptional: true,
+          },
+        },
+      });
+
+      const state = useTeamStore.getState();
+      expect(state.configsByTeamId[id]).toMatchObject({
+        combatOptions: { hu_tao: "charged" },
+        charConfigs: {
+          hu_tao: {
+            level: 80,
+            constellation: 2,
+            talentLevels: { burst: 9 },
+            minEr: 1.4,
+            minCr: 0.7,
+            fullSetOptional: true,
+          },
+        },
+      });
+      const delta = state.compDeltas[0];
+      expect(delta.kind).toBe("custom");
+      if (delta.kind === "custom") {
+        expect(delta.value).not.toHaveProperty("charConfigs");
+      }
+    });
+  });
+
+  describe("subscribePreset", () => {
+    it("resolves preset teams without duplicating comp values in deltas", () => {
+      useTeamStore.getState().subscribePreset("preset-a", {
+        teams: [
+          {
+            id: "preset-team",
+            name: "Preset Team",
+            characters: ["hu_tao", null, null, null],
+            weapons: ["staff_of_homa", null, null, null],
+            artifacts: [null, null, null, null],
+            minEr: { hu_tao: 1.3 },
+          },
+        ],
+        author: "preset",
+        description: "test",
+      });
+
+      const state = useTeamStore.getState();
+      expect(state.activePresetId).toBe("preset-a");
+      expect(state.compDeltas).toEqual([]);
+      expect(state.teams[0].characters[0]).toBe("hu_tao");
+      expect(state.configsByTeamId["preset-team"].charConfigs).toEqual({
+        hu_tao: { minEr: 1.3 },
+      });
+
+      useTeamStore.getState().updateTeam("preset-team", { name: "Local Name" });
+      const delta = useTeamStore.getState().compDeltas[0];
+      expect(delta).toMatchObject({
+        kind: "custom",
+        id: "preset-team",
+      });
+      if (delta.kind === "custom") {
+        expect(delta.value.name).toBe("Local Name");
+      }
     });
   });
 
@@ -818,12 +918,12 @@ describe("migrateTeamStore", () => {
           minEr: 1.2,
           minCr: 0.7,
           crMode: "target",
-          ignoreArtifactSets: true,
+          fullSetOptional: true,
         },
         xingqiu: {
           minEr: 2.0,
           tierAwarePool: true,
-          ignoreArtifactSets: false,
+          fullSetOptional: false,
         },
       });
       // Old fields removed
@@ -1162,7 +1262,7 @@ describe("migrateTeamStore", () => {
     ).toBeUndefined();
     expect(
       (result.teams[0] as unknown as Record<string, unknown>).weaponChoiceResult
-    ).toBeUndefined();
+    ).toBeNull();
   });
 
   it("drops v15 result caches from persisted team source data", () => {
@@ -1183,9 +1283,9 @@ describe("migrateTeamStore", () => {
     const result = migrateTeamStore(state, 15);
     const team = result.teams[0] as unknown as Record<string, unknown>;
 
-    expect(team.optimizationResult).toBeUndefined();
+    expect(team.optimizationResult).toBeNull();
     expect(team.choiceResults).toBeUndefined();
-    expect(team.weaponChoiceResult).toBeUndefined();
+    expect(team.weaponChoiceResult).toBeNull();
   });
 
   it("full migration from v0 applies all steps", () => {
@@ -1325,7 +1425,7 @@ describe("mergeTeamStore", () => {
 
     expect(team.optimizationResult).toBeNull();
     expect(team.choiceResults).toBeUndefined();
-    expect(team.weaponChoiceResult).toBeUndefined();
+    expect(team.weaponChoiceResult).toBeNull();
   });
 
   it("handles empty teams array", () => {

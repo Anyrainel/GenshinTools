@@ -1,22 +1,51 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { ArtifactSetConfig } from "@/data/types";
-// Team state shapes live in @/lib/team-comp/types so pure team logic across
-// src/lib/ can depend on them without reaching into the stores layer.
-import type { ExportedTeam, Team, TeamCompData } from "@/lib/team-comp/types";
 import {
-  mergeTeamStore,
-  migrateTeamStore,
-  stripTeamStoreResultCaches,
-} from "./migration/team";
+  createEmptyTeamComp,
+  createTeamConfigsFromPresetPayload,
+  createTeamPersistenceFromImportedData,
+  deleteTeamCompDelta,
+  deriveTeamRuntimeFromDeltas,
+  getTeamDeltaDisplayIndex,
+  getTeamRuntimeCacheById,
+  hasTeamCompPatch,
+  hasTeamConfigPatch,
+  hasTeamRuntimeCachePatch,
+  isPresetTeamComp,
+  legacyTeamToComp,
+  legacyTeamToConfig,
+  setTeamDeltaGlobalOrder,
+  type TeamCompDelta,
+  teamCompToArrays,
+  teamCompToExportedTeam,
+  upsertCustomTeamCompDelta,
+} from "@/lib/team-comp/teamDeltas";
+import {
+  cacheTeamPreset,
+  getCachedTeamPreset,
+} from "@/lib/team-comp/teamPresetRegistry";
+import type {
+  ExportedTeam,
+  Team,
+  TeamCompData,
+  TeamConfig,
+} from "@/lib/team-comp/types";
+import { mergeTeamStore, migrateTeamStore } from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
-import { DEFAULT_TEAM_FIELDS } from "./teamDefaults";
+
+let _teamIdSeq = 0;
+function nextTeamId(): string {
+  return `team-${Date.now()}${_teamIdSeq++}`;
+}
 
 interface TeamState {
   teams: Team[];
   author: string;
   description: string;
+  activePresetId: string | null;
+  compDeltas: TeamCompDelta[];
+  configsByTeamId: Record<string, TeamConfig>;
 
   // Selectors
   getTeamById: (id: string) => Team | undefined;
@@ -36,7 +65,64 @@ interface TeamState {
   clearTeams: () => void;
   setMetadata: (author: string, description: string) => void;
   importTeams: (data: TeamCompData) => void;
+  subscribePreset: (presetId: string, data: TeamCompData) => void;
+  hydratePreset: (presetId: string, data: TeamCompData) => void;
   exportTeams: (author: string, description: string) => TeamCompData;
+}
+
+function refreshDerivedTeamState(
+  state: TeamState,
+  preset = getCachedTeamPreset(state.activePresetId)
+): void {
+  const cacheByTeamId = getTeamRuntimeCacheById(state.teams);
+  state.teams = deriveTeamRuntimeFromDeltas(
+    state.compDeltas,
+    state.configsByTeamId,
+    preset,
+    cacheByTeamId
+  );
+}
+
+function reindexTeamOrder(
+  state: TeamState,
+  orderedIds: string[],
+  preset = getCachedTeamPreset(state.activePresetId)
+): void {
+  state.compDeltas = setTeamDeltaGlobalOrder(
+    state.compDeltas,
+    orderedIds,
+    preset
+  );
+}
+
+function insertIdInOrder(
+  currentIds: string[],
+  id: string,
+  position: "start" | "end"
+): string[] {
+  const withoutId = currentIds.filter((existing) => existing !== id);
+  return position === "start" ? [id, ...withoutId] : [...withoutId, id];
+}
+
+function applyRuntimeCachePatch(team: Team, patch: Partial<Team>): void {
+  if ("optimizationResult" in patch) {
+    team.optimizationResult = patch.optimizationResult ?? null;
+  }
+  if ("choiceResults" in patch) {
+    team.choiceResults = patch.choiceResults;
+  }
+  if ("weaponChoiceResult" in patch) {
+    team.weaponChoiceResult = patch.weaponChoiceResult ?? null;
+  }
+}
+
+function exportTeamWithStableId(team: Team): ExportedTeam {
+  const comp = legacyTeamToComp(team);
+  const { characters, weapons, artifacts } = teamCompToArrays(comp);
+  return {
+    ...teamCompToExportedTeam(comp),
+    id: encodeTeamId(characters, weapons, artifacts),
+  };
 }
 
 export const useTeamStore = create<TeamState>()(
@@ -45,29 +131,37 @@ export const useTeamStore = create<TeamState>()(
       teams: [],
       author: "",
       description: "",
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {},
 
       getTeamById: (id) => get().teams.find((t) => t.id === id),
 
       addTeam: (initialData, position = "end") => {
-        const id = `team-${Date.now()}`;
-        const newTeam: Team = {
-          id,
-          name: "",
-          characters: [null, null, null, null],
-          weapons: [null, null, null, null],
-          artifacts: [null, null, null, null],
-          ...DEFAULT_TEAM_FIELDS,
-          selectedFormula: null,
-          optimizationResult: null,
-          combo: null,
-          ...initialData,
-        };
+        const id = initialData?.id ?? nextTeamId();
         set((state) => {
-          if (position === "start") {
-            state.teams.unshift(newTeam);
-          } else {
-            state.teams.push(newTeam);
-          }
+          const baseComp = createEmptyTeamComp(id);
+          const draftTeam = {
+            ...deriveTeamRuntimeFromDeltas(
+              [{ kind: "custom", id, value: baseComp }],
+              {},
+              null
+            )[0],
+            ...initialData,
+            id,
+          };
+          const comp = legacyTeamToComp(draftTeam);
+          state.compDeltas = upsertCustomTeamCompDelta(state.compDeltas, comp);
+          state.configsByTeamId[id] = legacyTeamToConfig(initialData ?? {});
+          reindexTeamOrder(
+            state,
+            insertIdInOrder(
+              state.teams.map((team) => team.id),
+              id,
+              position
+            )
+          );
+          refreshDerivedTeamState(state);
         });
         return id;
       },
@@ -75,60 +169,122 @@ export const useTeamStore = create<TeamState>()(
       updateTeam: (id, patch) => {
         set((state) => {
           const team = state.teams.find((t) => t.id === id);
-          if (team) {
-            Object.assign(team, patch);
+          if (!team) return;
+
+          const compChanged = hasTeamCompPatch(patch);
+          const configChanged = hasTeamConfigPatch(patch);
+          const cacheChanged = hasTeamRuntimeCachePatch(patch);
+
+          if (!compChanged && !configChanged) {
+            if (cacheChanged) applyRuntimeCachePatch(team, patch);
+            return;
           }
+
+          const mergedTeam = { ...team, ...patch, id };
+          const displayIndex =
+            getTeamDeltaDisplayIndex(state.compDeltas, id) ??
+            state.teams.findIndex((t) => t.id === id);
+
+          if (compChanged) {
+            state.compDeltas = upsertCustomTeamCompDelta(
+              state.compDeltas,
+              legacyTeamToComp(mergedTeam),
+              displayIndex
+            );
+          }
+
+          if (configChanged) {
+            state.configsByTeamId[id] = legacyTeamToConfig(mergedTeam);
+          }
+
+          refreshDerivedTeamState(state);
+          const refreshed = state.teams.find((t) => t.id === id);
+          if (refreshed && cacheChanged)
+            applyRuntimeCachePatch(refreshed, patch);
         });
       },
 
       deleteTeam: (id) => {
         set((state) => {
-          state.teams = state.teams.filter((t) => t.id !== id);
+          const preset = getCachedTeamPreset(state.activePresetId);
+          const displayIndex =
+            getTeamDeltaDisplayIndex(state.compDeltas, id) ??
+            state.teams.findIndex((t) => t.id === id);
+          if (isPresetTeamComp(state.compDeltas, preset, id)) {
+            state.compDeltas = deleteTeamCompDelta(
+              state.compDeltas,
+              id,
+              displayIndex
+            );
+          } else {
+            state.compDeltas = state.compDeltas.filter(
+              (delta) => !(delta.kind === "custom" && delta.id === id)
+            );
+          }
+          delete state.configsByTeamId[id];
+          refreshDerivedTeamState(state, preset);
         });
       },
 
       copyTeam: (id) => {
         set((state) => {
           const index = state.teams.findIndex((t) => t.id === id);
-          if (index !== -1) {
-            const team = state.teams[index];
-            const newTeam = {
-              ...team,
-              id: `team-${Date.now()}`,
-              name: team.name ? `${team.name}` : "",
-              optimizationResult: null, // Don't copy the optimization result as it might be stale
-              choiceResults: {},
-              weaponChoiceResult: null,
-            };
-            state.teams.splice(index + 1, 0, newTeam);
+          if (index === -1) return;
+          const source = state.teams[index];
+          const newId = nextTeamId();
+          const copiedTeam: Team = {
+            ...source,
+            id: newId,
+            comp: { ...legacyTeamToComp(source), id: newId },
+            optimizationResult: null,
+            choiceResults: {},
+            weaponChoiceResult: null,
+          };
+          state.compDeltas = upsertCustomTeamCompDelta(
+            state.compDeltas,
+            legacyTeamToComp(copiedTeam),
+            index + 1
+          );
+          state.configsByTeamId[newId] = legacyTeamToConfig(copiedTeam);
+          const nextOrder = state.teams.map((team) => team.id);
+          nextOrder.splice(index + 1, 0, newId);
+          reindexTeamOrder(state, nextOrder);
+          refreshDerivedTeamState(state);
+          const copy = state.teams.find((team) => team.id === newId);
+          if (copy) {
+            copy.optimizationResult = null;
+            copy.choiceResults = {};
+            copy.weaponChoiceResult = null;
           }
         });
       },
 
       moveTeam: (id, direction) => {
         set((state) => {
-          const index = state.teams.findIndex((t) => t.id === id);
+          const ids = state.teams.map((team) => team.id);
+          const index = ids.indexOf(id);
           if (index === -1) return;
           const targetIndex = direction === "up" ? index - 1 : index + 1;
-          if (targetIndex < 0 || targetIndex >= state.teams.length) return;
-          const temp = state.teams[index];
-          state.teams[index] = state.teams[targetIndex];
-          state.teams[targetIndex] = temp;
+          if (targetIndex < 0 || targetIndex >= ids.length) return;
+          [ids[index], ids[targetIndex]] = [ids[targetIndex], ids[index]];
+          reindexTeamOrder(state, ids);
+          refreshDerivedTeamState(state);
         });
       },
 
       moveTeamRelative: (id, anchorId, position) => {
         set((state) => {
           if (id === anchorId) return;
-          const idx = state.teams.findIndex((t) => t.id === id);
+          const ids = state.teams.map((team) => team.id);
+          const idx = ids.indexOf(id);
           if (idx === -1) return;
-          // Remove the team first
-          const [team] = state.teams.splice(idx, 1);
-          // Find anchor after removal (index may have shifted)
-          const anchorIdx = state.teams.findIndex((t) => t.id === anchorId);
+          ids.splice(idx, 1);
+          const anchorIdx = ids.indexOf(anchorId);
           if (anchorIdx === -1) return;
           const insertIdx = position === "after" ? anchorIdx + 1 : anchorIdx;
-          state.teams.splice(insertIdx, 0, team);
+          ids.splice(insertIdx, 0, id);
+          reindexTeamOrder(state, ids);
+          refreshDerivedTeamState(state);
         });
       },
 
@@ -137,96 +293,73 @@ export const useTeamStore = create<TeamState>()(
           state.teams = [];
           state.author = "";
           state.description = "";
+          state.activePresetId = null;
+          state.compDeltas = [];
+          state.configsByTeamId = {};
         });
       },
 
       setMetadata: (author, description) => set({ author, description }),
 
       importTeams: (data) => {
-        // Accept both envelope { teams, author?, description? } and legacy raw Team[]
-        const teamsArr = Array.isArray(data) ? data : data.teams;
-        const validTeams: Team[] = teamsArr
-          .filter(
-            // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
-            (t: any) => t.id && Array.isArray(t.characters)
-          )
-          // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
-          .map((t: any) => {
-            return {
-              id: t.id,
-              name: t.name ?? "",
-              characters: t.characters,
-              weapons: t.weapons ?? [null, null, null, null],
-              artifacts: (t.artifacts ?? [null, null, null, null]).map(
-                // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
-                (a: any): ArtifactSetConfig | null => {
-                  if (!a) return null;
-                  if (a.type === "4pc" && "setId" in a)
-                    return { type: "4pc", setId: a.setId };
-                  if (a.type === "2pc+2pc" && a.halfSetIds)
-                    return { type: "2pc+2pc", halfSetIds: a.halfSetIds };
-                  // Legacy format without type discriminator
-                  if ("setId" in a) return { type: "4pc", setId: a.setId };
-                  // Legacy: { id1, id2 } → { halfSetIds }
-                  if ("id1" in a)
-                    return {
-                      type: "2pc+2pc",
-                      halfSetIds: [String(a.id1), String(a.id2)],
-                    };
-                  // Legacy: { halfSetIds } without type
-                  if ("halfSetIds" in a)
-                    return { type: "2pc+2pc", halfSetIds: a.halfSetIds };
-                  return null;
-                }
-              ),
-              reactions: t.reactions ?? [],
-              opts: t.opts ?? {},
-              selectedFormula: t.selectedFormula ?? null,
-              optimizationResult: null,
-              calcContext: t.calcContext,
-              formulaMode: t.formulaMode ?? "combo",
-              combo: t.combo ?? null,
-            };
-          });
-
+        const imported = createTeamPersistenceFromImportedData(data);
         set((state) => {
-          state.teams = validTeams;
-          if (!Array.isArray(data)) {
-            state.author = data.author ?? "";
-            state.description = data.description ?? "";
-          }
+          state.activePresetId = null;
+          state.compDeltas = imported.compDeltas;
+          state.configsByTeamId = imported.configsByTeamId;
+          state.author = imported.author;
+          state.description = imported.description;
+          refreshDerivedTeamState(state, null);
+        });
+      },
+
+      subscribePreset: (presetId, data) => {
+        cacheTeamPreset(presetId, data);
+        set((state) => {
+          state.activePresetId = presetId;
+          state.compDeltas = [];
+          state.configsByTeamId = createTeamConfigsFromPresetPayload(data);
+          state.author = data.author ?? "";
+          state.description = data.description ?? "";
+          refreshDerivedTeamState(state, data);
+        });
+      },
+
+      hydratePreset: (presetId, data) => {
+        cacheTeamPreset(presetId, data);
+        set((state) => {
+          if (state.activePresetId !== presetId) return;
+          refreshDerivedTeamState(state, data);
         });
       },
 
       exportTeams: (author, description) => {
         const { teams } = get();
-        // First, normalize teammate order (slots 1-3) by release date desc
-        const normalized = teams.map((t) => {
+        const normalized = teams.map((team) => {
           const indices = [1, 2, 3].sort(
             (a, b) =>
-              charSortKey(t.characters[a]) - charSortKey(t.characters[b])
+              charSortKey(team.characters[a]) - charSortKey(team.characters[b])
           );
           return {
-            ...t,
+            ...team,
             characters: [
-              t.characters[0],
-              ...indices.map((i) => t.characters[i]),
+              team.characters[0],
+              ...indices.map((i) => team.characters[i]),
             ],
-            weapons: [t.weapons[0], ...indices.map((i) => t.weapons[i])],
-            artifacts: [t.artifacts[0], ...indices.map((i) => t.artifacts[i])],
+            weapons: [team.weapons[0], ...indices.map((i) => team.weapons[i])],
+            artifacts: [
+              team.artifacts[0],
+              ...indices.map((i) => team.artifacts[i]),
+            ],
           };
         });
-        // Sort teams by carry release date, then group by carry ID, then teammates
         const sorted = normalized.sort((a, b) => {
-          // Primary: carry release date (newest first)
           const carryDiff =
             charSortKey(a.characters[0]) - charSortKey(b.characters[0]);
           if (carryDiff !== 0) return carryDiff;
-          // Secondary: group same-date carries by ID so they stay together
           const idA = a.characters[0] ?? "";
           const idB = b.characters[0] ?? "";
           if (idA !== idB) return idA < idB ? -1 : 1;
-          // Tertiary: teammates 1-3
           for (let i = 1; i < 4; i++) {
             const diff =
               charSortKey(a.characters[i]) - charSortKey(b.characters[i]);
@@ -234,44 +367,25 @@ export const useTeamStore = create<TeamState>()(
           }
           return 0;
         });
-        // Export composition metadata with stable content-based IDs
-        const exportable: ExportedTeam[] = sorted.map((t) => {
-          const entry: ExportedTeam = {
-            id: encodeTeamId(t.characters, t.weapons, t.artifacts),
-            name: t.name,
-            characters: t.characters,
-            weapons: t.weapons,
-            artifacts: t.artifacts.map((a) => {
-              if (!a) return null;
-              if (a.type === "4pc") return { setId: a.setId };
-              return { halfSetIds: a.halfSetIds };
-            }),
-          };
-          if (t.reactions.length > 0) entry.reactions = t.reactions;
-          if (t.charSettings) {
-            const minEr: Record<string, number> = {};
-            const minCr: Record<string, number> = {};
-            for (const [cid, s] of Object.entries(t.charSettings)) {
-              if (s.minEr != null) minEr[cid] = s.minEr;
-              if (s.minCr != null) minCr[cid] = s.minCr;
-            }
-            if (Object.keys(minEr).length > 0) entry.minEr = minEr;
-            if (Object.keys(minCr).length > 0) entry.minCr = minCr;
-          }
-          return entry;
-        });
-        return { teams: exportable, author, description };
+        return {
+          teams: sorted.map(exportTeamWithStableId),
+          author,
+          description,
+        };
       },
     })),
     {
       name: "team-builder-storage",
-      version: 16,
+      version: 17,
       migrate: migrateTeamStore,
-      partialize: (state) => ({
-        teams: stripTeamStoreResultCaches({ teams: state.teams }).teams,
-        author: state.author,
-        description: state.description,
-      }),
+      partialize: (state) =>
+        ({
+          activePresetId: state.activePresetId,
+          compDeltas: state.compDeltas,
+          configsByTeamId: state.configsByTeamId,
+          author: state.author,
+          description: state.description,
+        }) as unknown as ReturnType<typeof migrateTeamStore>,
       merge: mergeTeamStore,
     }
   )
