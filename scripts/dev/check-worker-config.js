@@ -1,0 +1,106 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
+const CONFIG_PATH = "wrangler.jsonc";
+
+function stripJsonc(input) {
+  let output = "";
+  let inString = false;
+  let quote = "";
+  let escaped = false;
+
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i];
+    const next = input[i + 1];
+
+    if (inString) {
+      output += char;
+      if (escaped) {
+        escaped = false;
+      } else if (char === "\\") {
+        escaped = true;
+      } else if (char === quote) {
+        inString = false;
+        quote = "";
+      }
+      continue;
+    }
+
+    if (char === '"' || char === "'") {
+      inString = true;
+      quote = char;
+      output += char;
+      continue;
+    }
+
+    if (char === "/" && next === "/") {
+      while (i < input.length && input[i] !== "\n") i++;
+      output += "\n";
+      continue;
+    }
+
+    if (char === "/" && next === "*") {
+      i += 2;
+      while (i < input.length && !(input[i] === "*" && input[i + 1] === "/")) {
+        i++;
+      }
+      i++;
+      continue;
+    }
+
+    output += char;
+  }
+
+  return output.replace(/,\s*([}\]])/g, "$1");
+}
+
+function readConfig() {
+  try {
+    return JSON.parse(stripJsonc(readFileSync(CONFIG_PATH, "utf8")));
+  } catch (error) {
+    fail(`Unable to parse ${CONFIG_PATH}: ${error.message}`);
+  }
+}
+
+function fail(message) {
+  console.error(`Worker config check failed: ${message}`);
+  process.exit(1);
+}
+
+function assert(condition, message) {
+  if (!condition) fail(message);
+}
+
+const config = readConfig();
+const assets = config.assets ?? {};
+const compatibilityFlags = config.compatibility_flags ?? [];
+
+assert(typeof config.name === "string" && config.name.length > 0, "missing name");
+assert(
+  typeof config.compatibility_date === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(config.compatibility_date),
+  "compatibility_date must be set as YYYY-MM-DD"
+);
+assert(config.main === "worker/index.ts", "main must stay worker/index.ts");
+assert(existsSync(path.resolve(config.main)), "worker main file does not exist");
+assert(assets.directory === "./dist", "assets.directory must be ./dist");
+assert(assets.binding === "ASSETS", "assets.binding must be ASSETS");
+assert(
+  assets.not_found_handling === "single-page-application",
+  "SPA fallback must use assets.not_found_handling"
+);
+assert(
+  Array.isArray(assets.run_worker_first) &&
+    assets.run_worker_first.includes("/api/*"),
+  "assets.run_worker_first must include /api/*"
+);
+assert(
+  config.observability?.enabled === true,
+  "observability.enabled must be true"
+);
+assert(
+  !compatibilityFlags.includes("nodejs_compat"),
+  "nodejs_compat is not allowed unless the Worker safety policy is revisited"
+);
+
+console.log("Worker config check passed.");

@@ -15,6 +15,12 @@ if [ ! -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
     npm run depcheck || exit 1
   fi
 
+  WORKER_CHECK_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^(worker/|wrangler\.jsonc|vite\.config\.ts|vitest\.worker\.config\.ts|tsconfig\.worker(-tests)?\.json|worker-configuration\.d\.ts|scripts/dev/(check-worker-|run-worker-dry-run)|package(-lock)?\.json$)' || true)
+  if [ -n "$WORKER_CHECK_FILES" ]; then
+    echo "Running cheap Worker checks..."
+    npm run check:worker:cheap || exit 1
+  fi
+
   echo "Running file convention and i18n tests..."
   npx vitest run tests/fileConventions.test.ts tests/i18n.test.ts || exit 1
 fi

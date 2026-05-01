@@ -5,6 +5,7 @@
 # Determine the range of commits being pushed.
 has_ts=false
 has_py=false
+has_worker=false
 while read -r local_ref local_sha remote_ref remote_sha; do
   # Skip delete pushes
   if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
@@ -28,6 +29,9 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   if echo "$changed_files" | grep -qE 'scripts/.*\.py$'; then
     has_py=true
   fi
+  if echo "$changed_files" | grep -qE '^(worker/|wrangler\.jsonc|vite\.config\.ts|vitest\.worker\.config\.ts|tsconfig\.worker(-tests)?\.json|worker-configuration\.d\.ts|scripts/dev/(check-worker-|run-worker-dry-run)|package(-lock)?\.json$)'; then
+    has_worker=true
+  fi
 done
 
 # TypeScript type check + tests (always run full type-check when any TS file changed)
@@ -40,6 +44,11 @@ if [ "$has_ts" = true ]; then
 
   echo "Running regression tests..."
   npm run regtest -- run --quiet || exit 1
+fi
+
+if [ "$has_worker" = true ]; then
+  echo "Running Worker deployment checks..."
+  npm run check:worker || exit 1
 fi
 
 # HoYoLAB / 米游社 API version check (non-blocking on network errors)

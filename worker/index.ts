@@ -1,7 +1,3 @@
-interface Env {
-  ASSETS: Fetcher;
-}
-
 const ENKA_BASE_URL = "https://enka.network/api";
 
 const HOYOLAB_BASES = {
@@ -330,9 +326,25 @@ function randLetters(n: number): string {
   const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let out = "";
   for (let i = 0; i < n; i++) {
-    out += alphabet[Math.floor(Math.random() * alphabet.length)];
+    out += alphabet[randomInt(alphabet.length)];
   }
   return out;
+}
+
+function randomInt(maxExclusive: number): number {
+  if (!Number.isInteger(maxExclusive) || maxExclusive <= 0) {
+    throw new Error("maxExclusive must be a positive integer");
+  }
+
+  const range = 0x100000000;
+  const limit = range - (range % maxExclusive);
+  const value = new Uint32Array(1);
+
+  do {
+    crypto.getRandomValues(value);
+  } while (value[0] >= limit);
+
+  return value[0] % maxExclusive;
 }
 
 function dsOs(): string {
@@ -344,7 +356,7 @@ function dsOs(): string {
 
 function dsCn(bodyText: string, query: URLSearchParams): string {
   const t = Math.floor(Date.now() / 1000);
-  const r = 100001 + Math.floor(Math.random() * 100000);
+  const r = 100001 + randomInt(100000);
   const q = [...query.entries()]
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([k, v]) => `${k}=${v}`)

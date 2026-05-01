@@ -10,6 +10,7 @@ export default defineConfig({
     testTimeout: 15000,
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.{ts,tsx}"],
+    exclude: ["tests/worker/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "text-summary", "html"],
