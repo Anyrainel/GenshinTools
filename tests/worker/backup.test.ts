@@ -76,12 +76,12 @@ type BackupCommitJson = {
 };
 
 describe("Worker backup API", () => {
-  it("stays unavailable until D1/R2 backup bindings are configured", async () => {
+  it("stays unavailable until dev auth is configured", async () => {
     const response = await SELF.fetch("https://example.com/api/backup/v1/head");
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
-      error: "backup_not_configured",
+      error: "backup_auth_not_configured",
     });
   });
 
@@ -110,6 +110,7 @@ describe("Worker backup API", () => {
             schemaVersion: 1,
             contentHash,
             compressedHash,
+            logicalBytes: 1,
             compressedBytes: body.byteLength,
             writeMode: { kind: "ifAbsent" },
           },
@@ -157,6 +158,7 @@ describe("Worker backup API", () => {
             schemaVersion: 1,
             contentHash,
             compressedHash,
+            logicalBytes: 1,
             compressedBytes: body.byteLength,
             writeMode: { kind: "ifAbsent" },
           },

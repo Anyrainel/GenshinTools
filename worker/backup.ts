@@ -657,8 +657,7 @@ function validatePut(
   }
   if (
     put.logicalBytes !== undefined &&
-    (!Number.isInteger(put.logicalBytes) ||
-      put.logicalBytes < put.compressedBytes)
+    (!Number.isInteger(put.logicalBytes) || put.logicalBytes < 1)
   ) {
     return backupJson({ error: "invalid_payload", field: "logicalBytes" }, 422);
   }
