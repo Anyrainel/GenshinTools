@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 import { migrateGenericTierStore } from "@/stores/migration/tier";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
@@ -19,11 +26,6 @@ beforeEach(() => {
     },
     activeTierListId: 1,
     nextId: 2,
-    tierAssignments: {},
-    tierCustomization: {},
-    customTitle: "",
-    author: "",
-    description: "",
   });
 });
 
@@ -31,19 +33,19 @@ describe("useWeaponTierStore", () => {
   describe("initial state", () => {
     it("starts with empty tier assignments", () => {
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments).toEqual({});
+      expect(selectActiveTierAssignments(state)).toEqual({});
     });
 
     it("starts with empty tier customization", () => {
       const state = useWeaponTierStore.getState();
-      expect(state.tierCustomization).toEqual({});
+      expect(selectActiveTierCustomization(state)).toEqual({});
     });
 
     it("has empty metadata", () => {
       const state = useWeaponTierStore.getState();
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
-      expect(state.customTitle).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
+      expect(selectActiveTierTitle(state)).toBe("");
     });
   });
 
@@ -57,7 +59,7 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().setTierAssignments(assignments);
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments).toEqual(assignments);
+      expect(selectActiveTierAssignments(state)).toEqual(assignments);
     });
 
     it("supports function updater pattern", () => {
@@ -75,11 +77,11 @@ describe("useWeaponTierStore", () => {
         }));
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments.staff_of_homa).toEqual({
+      expect(selectActiveTierAssignments(state).staff_of_homa).toEqual({
         tier: "S",
         position: 0,
       });
-      expect(state.tierAssignments.mistsplitter_reforged).toEqual({
+      expect(selectActiveTierAssignments(state).mistsplitter_reforged).toEqual({
         tier: "S",
         position: 1,
       });
@@ -95,8 +97,10 @@ describe("useWeaponTierStore", () => {
       });
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments.staff_of_homa).toBeUndefined();
-      expect(state.tierAssignments.mistsplitter_reforged).toBeDefined();
+      expect(selectActiveTierAssignments(state).staff_of_homa).toBeUndefined();
+      expect(
+        selectActiveTierAssignments(state).mistsplitter_reforged
+      ).toBeDefined();
     });
   });
 
@@ -110,7 +114,7 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().setTierCustomization(customization);
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierCustomization).toEqual(customization);
+      expect(selectActiveTierCustomization(state)).toEqual(customization);
     });
   });
 
@@ -119,7 +123,7 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().setCustomTitle("Weapon Tier List 5.0");
 
       const state = useWeaponTierStore.getState();
-      expect(state.customTitle).toBe("Weapon Tier List 5.0");
+      expect(selectActiveTierTitle(state)).toBe("Weapon Tier List 5.0");
     });
   });
 
@@ -139,11 +143,11 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().resetTierList();
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments).toEqual({});
-      expect(state.tierCustomization).toEqual({});
-      expect(state.customTitle).toBe("");
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
+      expect(selectActiveTierAssignments(state)).toEqual({});
+      expect(selectActiveTierCustomization(state)).toEqual({});
+      expect(selectActiveTierTitle(state)).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
     });
   });
 
@@ -160,11 +164,13 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().loadTierListData(data);
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments).toEqual(data.tierAssignments);
-      expect(state.tierCustomization).toEqual(data.tierCustomization);
-      expect(state.customTitle).toBe("Imported Weapon List");
-      expect(state.author).toBe("Test Author");
-      expect(state.description).toBe("Test Description");
+      expect(selectActiveTierAssignments(state)).toEqual(data.tierAssignments);
+      expect(selectActiveTierCustomization(state)).toEqual(
+        data.tierCustomization
+      );
+      expect(selectActiveTierTitle(state)).toBe("Imported Weapon List");
+      expect(selectActiveTierAuthor(state)).toBe("Test Author");
+      expect(selectActiveTierDescription(state)).toBe("Test Description");
     });
 
     it("handles missing optional fields", () => {
@@ -177,10 +183,10 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().loadTierListData(data);
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments).toEqual(data.tierAssignments);
-      expect(state.customTitle).toBe("");
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
+      expect(selectActiveTierAssignments(state)).toEqual(data.tierAssignments);
+      expect(selectActiveTierTitle(state)).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
     });
   });
 
@@ -189,8 +195,8 @@ describe("useWeaponTierStore", () => {
       useWeaponTierStore.getState().setMetadata("Weapon Expert", "5.0 Review");
 
       const state = useWeaponTierStore.getState();
-      expect(state.author).toBe("Weapon Expert");
-      expect(state.description).toBe("5.0 Review");
+      expect(selectActiveTierAuthor(state)).toBe("Weapon Expert");
+      expect(selectActiveTierDescription(state)).toBe("5.0 Review");
     });
   });
 
@@ -209,14 +215,14 @@ describe("useWeaponTierStore", () => {
       let state = useWeaponTierStore.getState();
       expect(secondId).toBe(2);
       expect(state.activeTierListId).toBe(2);
-      expect(state.tierAssignments).toEqual({
+      expect(selectActiveTierAssignments(state)).toEqual({
         mistsplitter_reforged: { tier: "S", position: 0 },
       });
 
       useWeaponTierStore.getState().setActiveTierList(1);
       state = useWeaponTierStore.getState();
-      expect(state.customTitle).toBe("Polearms");
-      expect(state.tierAssignments).toEqual({
+      expect(selectActiveTierTitle(state)).toBe("Polearms");
+      expect(selectActiveTierAssignments(state)).toEqual({
         staff_of_homa: { tier: "S", position: 0 },
       });
       expect(state.tierLists[2].customTitle).toBe("Swords");
@@ -225,7 +231,9 @@ describe("useWeaponTierStore", () => {
     it("renames and deletes lists without deleting the last list", () => {
       const secondId = useWeaponTierStore.getState().createTierList("Second");
       useWeaponTierStore.getState().renameTierList(secondId, "Renamed");
-      expect(useWeaponTierStore.getState().customTitle).toBe("Renamed");
+      expect(selectActiveTierTitle(useWeaponTierStore.getState())).toBe(
+        "Renamed"
+      );
 
       useWeaponTierStore.getState().deleteTierList(secondId);
       let state = useWeaponTierStore.getState();

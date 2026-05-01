@@ -35,7 +35,10 @@ import {
   selectValidResolvedBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
-import { useTriageStore } from "@/stores/useTriageStore";
+import {
+  selectActiveTriageSettings,
+  useTriageStore,
+} from "@/stores/useTriageStore";
 
 interface TriageViewProps {
   onOpenImport?: () => void;
@@ -58,7 +61,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 
-  const settings = useTriageStore((s) => s.settings);
+  const settings = useTriageStore(selectActiveTriageSettings);
   const setSettings = useTriageStore((s) => s.setSettings);
 
   const [tierFilter, setTierFilter] = useState<Set<QualityTier>>(

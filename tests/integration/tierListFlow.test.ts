@@ -1,3 +1,10 @@
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 /**
  * Integration Tests: Tier List Page Flow
  *
@@ -36,7 +43,7 @@ describe("Integration: Tier List Page Flow", () => {
         useTierStore.getState().setTierAssignments(assignments);
       });
 
-      const stored = useTierStore.getState().tierAssignments;
+      const stored = selectActiveTierAssignments(useTierStore.getState());
       expect(stored.hu_tao).toEqual({ tier: "S", position: 0 });
       expect(stored.xingqiu).toEqual({ tier: "S", position: 1 });
       expect(stored.zhongli).toEqual({ tier: "A", position: 0 });
@@ -57,7 +64,7 @@ describe("Integration: Tier List Page Flow", () => {
         });
       });
 
-      const stored = useTierStore.getState().tierAssignments;
+      const stored = selectActiveTierAssignments(useTierStore.getState());
       expect(stored.hu_tao).toBeUndefined();
       expect(stored.xingqiu).toBeDefined();
     });
@@ -76,7 +83,9 @@ describe("Integration: Tier List Page Flow", () => {
         });
       });
 
-      expect(useTierStore.getState().tierAssignments.hu_tao.tier).toBe("A");
+      expect(
+        selectActiveTierAssignments(useTierStore.getState()).hu_tao.tier
+      ).toBe("A");
     });
   });
 
@@ -92,7 +101,7 @@ describe("Integration: Tier List Page Flow", () => {
         useTierStore.getState().setTierCustomization(customization);
       });
 
-      const stored = useTierStore.getState().tierCustomization;
+      const stored = selectActiveTierCustomization(useTierStore.getState());
       expect(stored.S?.displayName).toBe("Meta Defining");
       expect(stored.A?.displayName).toBe("Great");
     });
@@ -107,7 +116,7 @@ describe("Integration: Tier List Page Flow", () => {
         useTierStore.getState().setTierCustomization(customization);
       });
 
-      const stored = useTierStore.getState().tierCustomization;
+      const stored = selectActiveTierCustomization(useTierStore.getState());
       expect(stored.C?.hidden).toBe(true);
       expect(stored.D?.hidden).toBe(true);
     });
@@ -117,7 +126,7 @@ describe("Integration: Tier List Page Flow", () => {
         useTierStore.getState().setCustomTitle("Spiral Abyss 4.5 Tier List");
       });
 
-      expect(useTierStore.getState().customTitle).toBe(
+      expect(selectActiveTierTitle(useTierStore.getState())).toBe(
         "Spiral Abyss 4.5 Tier List"
       );
     });
@@ -143,11 +152,14 @@ describe("Integration: Tier List Page Flow", () => {
       });
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments.hu_tao).toEqual({ tier: "S", position: 0 });
-      expect(state.tierCustomization.S?.displayName).toBe("Best");
-      expect(state.customTitle).toBe("Imported Tier List");
-      expect(state.author).toBe("Test Author");
-      expect(state.description).toBe("Test Description");
+      expect(selectActiveTierAssignments(state).hu_tao).toEqual({
+        tier: "S",
+        position: 0,
+      });
+      expect(selectActiveTierCustomization(state).S?.displayName).toBe("Best");
+      expect(selectActiveTierTitle(state)).toBe("Imported Tier List");
+      expect(selectActiveTierAuthor(state)).toBe("Test Author");
+      expect(selectActiveTierDescription(state)).toBe("Test Description");
     });
 
     it("exports complete tier list state", () => {
@@ -166,11 +178,11 @@ describe("Integration: Tier List Page Flow", () => {
 
       // Validate export structure
       const exportData: TierListData = {
-        tierAssignments: state.tierAssignments,
-        tierCustomization: state.tierCustomization,
-        customTitle: state.customTitle,
-        author: state.author,
-        description: state.description,
+        tierAssignments: selectActiveTierAssignments(state),
+        tierCustomization: selectActiveTierCustomization(state),
+        customTitle: selectActiveTierTitle(state),
+        author: selectActiveTierAuthor(state),
+        description: selectActiveTierDescription(state),
       };
 
       expect(exportData.tierAssignments.hu_tao).toBeDefined();

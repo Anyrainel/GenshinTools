@@ -10,9 +10,15 @@ import { migrateAccountStore } from "@/stores/migration/account";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
-import { useResourceRecStore } from "@/stores/useResourceRecStore";
+import {
+  getActiveResourceRecSettings,
+  useResourceRecStore,
+} from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { useTriageStore } from "@/stores/useTriageStore";
+import {
+  getActiveTriageSettings,
+  useTriageStore,
+} from "@/stores/useTriageStore";
 import { createArtifactData, createArtifactScoreResult } from "../fixtures";
 
 // Reset store before each test
@@ -21,9 +27,8 @@ beforeEach(() => {
   useAccountScoreCacheStore.getState().clearAllScores();
   const triageSettings = structuredClone(DEFAULT_TRIAGE_SETTINGS);
   useTriageStore.setState({
-    settings: triageSettings,
     settingsByProfileId: {
-      0: structuredClone(DEFAULT_TRIAGE_SETTINGS),
+      0: triageSettings,
     },
   });
   const resourceSettings = {
@@ -35,7 +40,6 @@ beforeEach(() => {
     showLevelup: true,
   };
   useResourceRecStore.setState({
-    ...resourceSettings,
     settingsByProfileId: {
       0: structuredClone(resourceSettings),
     },
@@ -70,11 +74,6 @@ beforeEach(() => {
     showWeapons: true,
     showTravelers: false,
     showManekin: false,
-    tierAssignments: {},
-    tierCustomization: {},
-    customTitle: "",
-    author: "",
-    description: "",
   });
 });
 
@@ -208,11 +207,11 @@ describe("useAccountStore", () => {
         useTriageStore.getState().settingsByProfileId[800000001]
           .mainStatThreshold
       ).toBe(88);
-      expect(useTriageStore.getState().settings.mainStatThreshold).toBe(88);
+      expect(getActiveTriageSettings().mainStatThreshold).toBe(88);
       expect(
         useResourceRecStore.getState().settingsByProfileId[800000001].panelOpen
       ).toBe(true);
-      expect(useResourceRecStore.getState().panelOpen).toBe(true);
+      expect(getActiveResourceRecSettings().panelOpen).toBe(true);
     });
 
     it("does not materialize default settings for a new profile", () => {
@@ -234,10 +233,8 @@ describe("useAccountStore", () => {
       expect(
         useResourceRecStore.getState().settingsByProfileId[800000002]
       ).toBeUndefined();
-      expect(useTriageStore.getState().settings).toEqual(
-        DEFAULT_TRIAGE_SETTINGS
-      );
-      expect(useResourceRecStore.getState().thresholds).toEqual(
+      expect(getActiveTriageSettings()).toEqual(DEFAULT_TRIAGE_SETTINGS);
+      expect(getActiveResourceRecSettings().thresholds).toEqual(
         DEFAULT_TIER_THRESHOLDS
       );
     });
@@ -348,14 +345,14 @@ describe("useAccountStore", () => {
         useTriageStore.getState().settingsByProfileId[800000001]
           .mainStatThreshold
       ).toBe(91);
-      expect(useTriageStore.getState().settings.mainStatThreshold).toBe(91);
+      expect(getActiveTriageSettings().mainStatThreshold).toBe(91);
       expect(
         useResourceRecStore.getState().settingsByProfileId[0]
       ).toBeUndefined();
       expect(
         useResourceRecStore.getState().settingsByProfileId[800000001].panelOpen
       ).toBe(true);
-      expect(useResourceRecStore.getState().panelOpen).toBe(true);
+      expect(getActiveResourceRecSettings().panelOpen).toBe(true);
       expect(useFreezeStore.getState().freezesByProfileId[0]).toBeUndefined();
       expect(
         useFreezeStore.getState().freezesByProfileId[800000001]

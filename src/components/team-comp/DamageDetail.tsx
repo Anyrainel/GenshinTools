@@ -82,6 +82,7 @@ import type {
 import { cn } from "@/lib/utils";
 import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
 import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import {
@@ -182,7 +183,7 @@ export function DamageDetail({
     [updateSetupConfig]
   );
   const scoreConfig = useArtifactScoreStore((state) => state.config);
-  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
   // Use targeted selectors — subscribing to the full store caused re-renders
   // on ANY freeze mutation (other teams, reuseMode changes, etc.).
   const frozenEntry = useFreezeStore((s) => s.frozenTeams[teamId]);

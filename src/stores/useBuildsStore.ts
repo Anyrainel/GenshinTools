@@ -438,7 +438,7 @@ export const useBuildsStore = create<BuildsState>()(
 
         if (!originalBuild) {
           console.error(`Build ${buildId} not found and no baseBuild provided`);
-          // Fallback or throw? Let's create a blank one to avoid crash, or throw.
+          // Missing source builds can occur while editing custom-only state.
           throw new Error(`Build ${buildId} not found`);
         }
 
@@ -712,7 +712,6 @@ export const useBuildsStore = create<BuildsState>()(
         });
       },
 
-      // Import builds from exported data
       // Import builds from exported data
       importBuilds: (payload: BuildPayload | BuildPayloadV5) => {
         set((state) => {

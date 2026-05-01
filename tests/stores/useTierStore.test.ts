@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 import { migrateTierStore } from "@/stores/migration/tier";
 import { type TierListInstance, useTierStore } from "@/stores/useTierStore";
 
@@ -22,11 +29,6 @@ beforeEach(() => {
     showWeapons: true,
     showTravelers: false,
     showManekin: false,
-    tierAssignments: {},
-    tierCustomization: {},
-    customTitle: "",
-    author: "",
-    description: "",
   });
 });
 
@@ -43,12 +45,12 @@ describe("useTierStore", () => {
 
     it("starts with empty tier assignments", () => {
       const state = useTierStore.getState();
-      expect(state.tierAssignments).toEqual({});
+      expect(selectActiveTierAssignments(state)).toEqual({});
     });
 
     it("starts with empty tier customization", () => {
       const state = useTierStore.getState();
-      expect(state.tierCustomization).toEqual({});
+      expect(selectActiveTierCustomization(state)).toEqual({});
     });
 
     it("has default visibility settings", () => {
@@ -60,31 +62,30 @@ describe("useTierStore", () => {
 
     it("has empty metadata", () => {
       const state = useTierStore.getState();
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
-      expect(state.customTitle).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
+      expect(selectActiveTierTitle(state)).toBe("");
     });
   });
 
-  // Backward-compatible selectors
-  describe("backward-compatible selectors", () => {
-    it("top-level tierAssignments reflects active list", () => {
+  describe("active-list selectors", () => {
+    it("active tierAssignments reflects active list", () => {
       const assignments: TierAssignment = {
         venti: { tier: "S", position: 0 },
       };
       useTierStore.getState().setTierAssignments(assignments);
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments).toEqual(assignments);
+      expect(selectActiveTierAssignments(state)).toEqual(assignments);
       expect(state.tierLists[state.activeTierListId].tierAssignments).toEqual(
         assignments
       );
     });
 
-    it("top-level customTitle reflects active list", () => {
+    it("active customTitle reflects active list", () => {
       useTierStore.getState().setCustomTitle("My List");
       const state = useTierStore.getState();
-      expect(state.customTitle).toBe("My List");
+      expect(selectActiveTierTitle(state)).toBe("My List");
       expect(state.tierLists[state.activeTierListId].customTitle).toBe(
         "My List"
       );
@@ -100,16 +101,16 @@ describe("useTierStore", () => {
       // Create list 2
       const _id2 = useTierStore.getState().createTierList("List Two");
 
-      // Top-level should now reflect list 2
+      // Active selectors should now reflect list 2
       let state = useTierStore.getState();
-      expect(state.customTitle).toBe("List Two");
-      expect(state.tierAssignments).toEqual({});
+      expect(selectActiveTierTitle(state)).toBe("List Two");
+      expect(selectActiveTierAssignments(state)).toEqual({});
 
       // Switch back to list 1
       useTierStore.getState().setActiveTierList(1);
       state = useTierStore.getState();
-      expect(state.customTitle).toBe("List One");
-      expect(state.tierAssignments).toEqual({
+      expect(selectActiveTierTitle(state)).toBe("List One");
+      expect(selectActiveTierAssignments(state)).toEqual({
         venti: { tier: "S", position: 0 },
       });
     });
@@ -126,7 +127,7 @@ describe("useTierStore", () => {
       useTierStore.getState().setTierAssignments(assignments);
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments).toEqual(assignments);
+      expect(selectActiveTierAssignments(state)).toEqual(assignments);
     });
 
     it("supports function updater", () => {
@@ -140,8 +141,11 @@ describe("useTierStore", () => {
       }));
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments.venti).toEqual({ tier: "S", position: 0 });
-      expect(state.tierAssignments.kaedehara_kazuha).toEqual({
+      expect(selectActiveTierAssignments(state).venti).toEqual({
+        tier: "S",
+        position: 0,
+      });
+      expect(selectActiveTierAssignments(state).kaedehara_kazuha).toEqual({
         tier: "S",
         position: 1,
       });
@@ -158,7 +162,7 @@ describe("useTierStore", () => {
       useTierStore.getState().setTierCustomization(customization);
 
       const state = useTierStore.getState();
-      expect(state.tierCustomization).toEqual(customization);
+      expect(selectActiveTierCustomization(state)).toEqual(customization);
     });
   });
 
@@ -167,7 +171,7 @@ describe("useTierStore", () => {
       useTierStore.getState().setCustomTitle("My Tier List");
 
       const state = useTierStore.getState();
-      expect(state.customTitle).toBe("My Tier List");
+      expect(selectActiveTierTitle(state)).toBe("My Tier List");
     });
   });
 
@@ -208,11 +212,11 @@ describe("useTierStore", () => {
       useTierStore.getState().resetTierList();
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments).toEqual({});
-      expect(state.tierCustomization).toEqual({});
-      expect(state.customTitle).toBe("");
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
+      expect(selectActiveTierAssignments(state)).toEqual({});
+      expect(selectActiveTierCustomization(state)).toEqual({});
+      expect(selectActiveTierTitle(state)).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
     });
 
     it("only resets the active list", () => {
@@ -222,11 +226,13 @@ describe("useTierStore", () => {
 
       // Reset list 2
       useTierStore.getState().resetTierList();
-      expect(useTierStore.getState().customTitle).toBe("");
+      expect(selectActiveTierTitle(useTierStore.getState())).toBe("");
 
       // List 1 is untouched
       useTierStore.getState().setActiveTierList(1);
-      expect(useTierStore.getState().customTitle).toBe("List One Data");
+      expect(selectActiveTierTitle(useTierStore.getState())).toBe(
+        "List One Data"
+      );
     });
   });
 
@@ -243,11 +249,13 @@ describe("useTierStore", () => {
       useTierStore.getState().loadTierListData(data);
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments).toEqual(data.tierAssignments);
-      expect(state.tierCustomization).toEqual(data.tierCustomization);
-      expect(state.customTitle).toBe("Imported List");
-      expect(state.author).toBe("Test Author");
-      expect(state.description).toBe("Test Description");
+      expect(selectActiveTierAssignments(state)).toEqual(data.tierAssignments);
+      expect(selectActiveTierCustomization(state)).toEqual(
+        data.tierCustomization
+      );
+      expect(selectActiveTierTitle(state)).toBe("Imported List");
+      expect(selectActiveTierAuthor(state)).toBe("Test Author");
+      expect(selectActiveTierDescription(state)).toBe("Test Description");
     });
 
     it("handles missing optional fields", () => {
@@ -259,10 +267,10 @@ describe("useTierStore", () => {
       useTierStore.getState().loadTierListData(data);
 
       const state = useTierStore.getState();
-      expect(state.tierAssignments).toEqual(data.tierAssignments);
-      expect(state.customTitle).toBe("");
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
+      expect(selectActiveTierAssignments(state)).toEqual(data.tierAssignments);
+      expect(selectActiveTierTitle(state)).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
     });
   });
 
@@ -271,8 +279,8 @@ describe("useTierStore", () => {
       useTierStore.getState().setMetadata("Test Author", "Test Description");
 
       const state = useTierStore.getState();
-      expect(state.author).toBe("Test Author");
-      expect(state.description).toBe("Test Description");
+      expect(selectActiveTierAuthor(state)).toBe("Test Author");
+      expect(selectActiveTierDescription(state)).toBe("Test Description");
     });
   });
 
@@ -281,7 +289,7 @@ describe("useTierStore", () => {
       useTierStore.getState().setTierLuckExpectation("S", "hopeful");
 
       const state = useTierStore.getState();
-      expect(state.tierCustomization.S).toEqual({
+      expect(selectActiveTierCustomization(state).S).toEqual({
         displayName: "S",
         hidden: false,
         luckExpectation: "hopeful",
@@ -295,7 +303,7 @@ describe("useTierStore", () => {
       useTierStore.getState().setTierLuckExpectation("S", "cautious");
 
       const state = useTierStore.getState();
-      expect(state.tierCustomization.S).toEqual({
+      expect(selectActiveTierCustomization(state).S).toEqual({
         displayName: "God Tier",
         hidden: false,
         luckExpectation: "cautious",
@@ -343,7 +351,7 @@ describe("useTierStore", () => {
       const state = useTierStore.getState();
       expect(state.tierLists[2]).toBeUndefined();
       expect(state.activeTierListId).toBe(1);
-      expect(state.customTitle).toBe(""); // back to list 1
+      expect(selectActiveTierTitle(state)).toBe(""); // back to list 1
     });
 
     it("refuses to delete the last list", () => {
@@ -373,10 +381,10 @@ describe("useTierStore", () => {
       useTierStore.getState().createTierList("List Two");
 
       useTierStore.getState().setActiveTierList(1);
-      expect(useTierStore.getState().customTitle).toBe("List One");
+      expect(selectActiveTierTitle(useTierStore.getState())).toBe("List One");
 
       useTierStore.getState().setActiveTierList(2);
-      expect(useTierStore.getState().customTitle).toBe("List Two");
+      expect(selectActiveTierTitle(useTierStore.getState())).toBe("List Two");
     });
 
     it("does nothing for non-existent id", () => {
@@ -392,7 +400,7 @@ describe("useTierStore", () => {
       const state = useTierStore.getState();
       expect(state.tierLists[1].customTitle).toBe("Renamed");
       // Since list 1 is active, top-level should also update
-      expect(state.customTitle).toBe("Renamed");
+      expect(selectActiveTierTitle(state)).toBe("Renamed");
     });
 
     it("renames a non-active list without affecting top-level", () => {
@@ -403,7 +411,7 @@ describe("useTierStore", () => {
 
       const state = useTierStore.getState();
       expect(state.tierLists[1].customTitle).toBe("Renamed One");
-      expect(state.customTitle).toBe("Second"); // still the active list's title
+      expect(selectActiveTierTitle(state)).toBe("Second"); // still the active list's title
     });
 
     it("does nothing for non-existent id", () => {
@@ -500,9 +508,8 @@ describe("useTierStore", () => {
       expect(tierLists[1].description).toBe("Desc");
       expect(tierLists[1].linkedAccountId).toBeNull();
 
-      // Derived fields should also be present
-      expect(result.tierAssignments).toEqual(v0State.tierAssignments);
-      expect(result.customTitle).toBe("Old List");
+      expect(result.tierAssignments).toBeUndefined();
+      expect(result.customTitle).toBeUndefined();
     });
 
     it("handles v0 with missing fields", () => {
@@ -535,6 +542,41 @@ describe("useTierStore", () => {
       const result = migrateTierStore(v1State, 1);
       expect(result.recommendationPrefs).toBeUndefined();
       expect(result.investmentThresholds).toBeUndefined();
+    });
+
+    it("migrates v2 linked account ids to numeric profile ids", () => {
+      const v2State = {
+        tierLists: {
+          1: {
+            id: 1,
+            tierAssignments: {},
+            tierCustomization: {},
+            customTitle: "Default",
+            author: "",
+            description: "",
+            linkedAccountId: "default",
+          },
+          2: {
+            id: 2,
+            tierAssignments: {},
+            tierCustomization: {},
+            customTitle: "UID",
+            author: "",
+            description: "",
+            linkedAccountId: "800000001",
+          },
+        },
+        activeTierListId: 1,
+        nextId: 3,
+      };
+
+      const result = migrateTierStore(v2State, 2);
+      const tierLists = result.tierLists as Record<number, TierListInstance>;
+
+      expect(tierLists[1].linkedAccountId).toBe(0);
+      expect(tierLists[2].linkedAccountId).toBe(800000001);
+      expect(result).not.toHaveProperty("tierAssignments");
+      expect(result).not.toHaveProperty("customTitle");
     });
   });
 });

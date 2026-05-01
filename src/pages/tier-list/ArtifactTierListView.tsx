@@ -46,6 +46,13 @@ import type {
   TierCustomization,
   TierListData,
 } from "@/data/types";
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 import { useArtifactTierStore } from "@/stores/useArtifactTierStore";
 
 type ArtifactTierGroup = "dps" | "support" | "other";
@@ -87,13 +94,9 @@ interface ArtifactTierListViewProps {
 export function ArtifactTierListView({ onActions }: ArtifactTierListViewProps) {
   const { t } = useLanguage();
 
-  const tierAssignments = useArtifactTierStore(
-    (state) => state.tierAssignments
-  );
-  const tierCustomization = useArtifactTierStore(
-    (state) => state.tierCustomization
-  );
-  const customTitle = useArtifactTierStore((state) => state.customTitle);
+  const tierAssignments = useArtifactTierStore(selectActiveTierAssignments);
+  const tierCustomization = useArtifactTierStore(selectActiveTierCustomization);
+  const customTitle = useArtifactTierStore(selectActiveTierTitle);
   const setTierAssignments = useArtifactTierStore(
     (state) => state.setTierAssignments
   );
@@ -107,8 +110,8 @@ export function ArtifactTierListView({ onActions }: ArtifactTierListViewProps) {
   const loadTierListData = useArtifactTierStore(
     (state) => state.loadTierListData
   );
-  const author = useArtifactTierStore((state) => state.author);
-  const description = useArtifactTierStore((state) => state.description);
+  const author = useArtifactTierStore(selectActiveTierAuthor);
+  const description = useArtifactTierStore(selectActiveTierDescription);
   const tierLists = useArtifactTierStore((state) => state.tierLists);
   const activeTierListId = useArtifactTierStore(
     (state) => state.activeTierListId

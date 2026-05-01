@@ -9,7 +9,6 @@ import { PersistedTriageStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
 
 interface TriageState {
-  settings: TriageSettings;
   settingsByProfileId: Record<AccountProfileId, TriageSettings>;
   setSettings: (settings: TriageSettings) => void;
   updateSettings: (patch: Partial<TriageSettings>) => void;
@@ -21,7 +20,6 @@ interface TriageState {
     sourceProfileId: AccountProfileId,
     targetProfileId: AccountProfileId
   ) => void;
-  setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
 const cloneDefaultSettings = (): TriageSettings => ({
@@ -44,6 +42,13 @@ const getSettingsForProfile = (
   state.settingsByProfileId[profileId ?? DEFAULT_ACCOUNT_PROFILE_ID] ??
   cloneDefaultSettings();
 
+export const selectActiveTriageSettings = (
+  state: Pick<TriageState, "settingsByProfileId">
+): TriageSettings => getSettingsForProfile(state, getActiveProfileId());
+
+export const getActiveTriageSettings = (): TriageSettings =>
+  selectActiveTriageSettings(useTriageStore.getState());
+
 const cloneSettings = (settings: TriageSettings): TriageSettings =>
   structuredClone(settings);
 
@@ -55,31 +60,31 @@ const settingsEqual = (
 export const useTriageStore = create<TriageState>()(
   persist(
     (set) => ({
-      settings: cloneDefaultSettings(),
       settingsByProfileId: {
         [DEFAULT_ACCOUNT_PROFILE_ID]: cloneDefaultSettings(),
       },
 
       setSettings: (settings) =>
+        set((state) => ({
+          settingsByProfileId: {
+            ...state.settingsByProfileId,
+            [getActiveProfileId()]: settings,
+          },
+        })),
+
+      updateSettings: (patch) =>
         set((state) => {
           const profileId = getActiveProfileId();
           return {
-            settings,
             settingsByProfileId: {
               ...state.settingsByProfileId,
-              [profileId]: settings,
+              [profileId]: {
+                ...getSettingsForProfile(state, profileId),
+                ...patch,
+              },
             },
           };
         }),
-
-      updateSettings: (patch) =>
-        set((state) => ({
-          settings: { ...state.settings, ...patch },
-          settingsByProfileId: {
-            ...state.settingsByProfileId,
-            [getActiveProfileId()]: { ...state.settings, ...patch },
-          },
-        })),
 
       cloneSettingsForProfile: (sourceProfileId, targetProfileId) => {
         let didClone = false;
@@ -90,9 +95,6 @@ export const useTriageStore = create<TriageState>()(
           didClone = true;
           const cloned = cloneSettings(sourceSettings);
           return {
-            ...(getActiveProfileId() === targetProfileId
-              ? { settings: cloned }
-              : {}),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [targetProfileId]: cloned,
@@ -105,10 +107,7 @@ export const useTriageStore = create<TriageState>()(
       renameProfileSettings: (sourceProfileId, targetProfileId) =>
         set((state) => {
           if (sourceProfileId === targetProfileId) return state;
-          const sourceSettings =
-            getActiveProfileId() === sourceProfileId
-              ? state.settings
-              : state.settingsByProfileId[sourceProfileId];
+          const sourceSettings = state.settingsByProfileId[sourceProfileId];
           if (!sourceSettings) return state;
 
           const settingsByProfileId = { ...state.settingsByProfileId };
@@ -123,36 +122,22 @@ export const useTriageStore = create<TriageState>()(
           if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
             settingsByProfileId[targetProfileId] = nextSettings;
           }
-          const activeProfileId = getActiveProfileId();
 
           return {
-            ...(activeProfileId === sourceProfileId ||
-            activeProfileId === targetProfileId
-              ? { settings: nextSettings }
-              : {}),
             settingsByProfileId,
           };
         }),
-
-      setActiveProfile: (profileId) =>
-        set((state) => ({
-          settings: getSettingsForProfile(state, profileId),
-        })),
     }),
     {
       name: "triage-settings",
       version: 6,
       migrate: migrateTriageStore,
       partialize: (state) => ({
-        settingsByProfileId: {
-          ...state.settingsByProfileId,
-          [getActiveProfileId()]: cloneSettings(state.settings),
-        },
+        settingsByProfileId: state.settingsByProfileId,
       }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedTriageStoreSchema.safeParse(persistedState);
         if (!parsed.success) return currentState;
-        const activeProfileId = getActiveProfileId();
         const settingsByProfileId = parsed.data.settingsByProfileId as Record<
           AccountProfileId,
           TriageSettings
@@ -164,10 +149,6 @@ export const useTriageStore = create<TriageState>()(
         return {
           ...currentState,
           settingsByProfileId,
-          settings:
-            settingsByProfileId[activeProfileId] ??
-            settingsByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] ??
-            currentState.settings,
         };
       },
     }
@@ -176,6 +157,9 @@ export const useTriageStore = create<TriageState>()(
 
 useAccountStore.subscribe((state, prevState) => {
   if (state.activeAccountId !== prevState.activeAccountId) {
-    useTriageStore.getState().setActiveProfile(state.activeAccountId);
+    // Re-run active-settings selectors after account changes without storing a mirror.
+    useTriageStore.setState((triageState) => ({
+      settingsByProfileId: triageState.settingsByProfileId,
+    }));
   }
 });

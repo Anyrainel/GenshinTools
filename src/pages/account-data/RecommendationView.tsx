@@ -28,6 +28,10 @@ import {
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import {
+  selectActiveTierAssignments,
+  selectActiveTierCustomization,
+} from "@/stores/createTierStore";
+import {
   selectValidResolvedBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
@@ -52,8 +56,8 @@ export function RecommendationView({
   const accountData = activeAccount?.data ?? null;
   const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
-  const tierAssignments = useTierStore((s) => s.tierAssignments);
-  const tierCustomization = useTierStore((s) => s.tierCustomization);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
+  const tierCustomization = useTierStore(selectActiveTierCustomization);
   const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
   const {
     recommendations: allRecs,

@@ -22,14 +22,11 @@ export function migrateTriageStore(
     settings.highLevelProtection = prev == null ? true : !prev;
     settings.strategicHighLevelEvaluation = undefined;
   }
-  state.settings = settings as Partial<TriageSettings>;
   if (version < 5 || !state.settingsByProfileId) {
     state.settingsByProfileId = {
       [DEFAULT_ACCOUNT_PROFILE_ID]: settings as TriageSettings,
     };
   }
-  if (version < 6) {
-    delete state.settings;
-  }
+  delete state.settings;
   return state;
 }

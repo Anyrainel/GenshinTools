@@ -52,6 +52,7 @@ import { fuzzyMatch } from "@/lib/search";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { TeamSort, ViewId } from "@/stores/useSessionNavStore";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
@@ -190,7 +191,7 @@ export function TeamGrid({
   const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
 
   // Tier data
-  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
   const tierRank = useMemo(() => {
     const map: Record<string, number> = {};
     for (let i = 0; i < tiers.length; i++) map[tiers[i]] = i;

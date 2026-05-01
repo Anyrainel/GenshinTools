@@ -34,9 +34,9 @@ import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { downloadElementAsImage } from "@/lib/downloadImage";
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
-
 export interface CharacterViewHandle {
   downloadImage: () => void;
 }
@@ -57,7 +57,7 @@ export const CharacterView = forwardRef<
 
   const scores = useActiveAccountScores();
 
-  const tierAssignments = useTierStore((state) => state.tierAssignments);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
 
   const isOwned = useIsOwned();

@@ -35,12 +35,6 @@ beforeEach(() => {
     },
     activeTierListId: 0,
     nextId: 3,
-    // Derived fields from active list (id 0)
-    tierAssignments: {},
-    tierCustomization: {},
-    customTitle: "List A",
-    author: "",
-    description: "",
   });
 });
 

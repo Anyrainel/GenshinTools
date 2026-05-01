@@ -31,6 +31,7 @@ import {
   selectActiveBuildsForAccount,
 } from "@/lib/account-data/buildEvaluation";
 import { cn } from "@/lib/utils";
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   selectValidResolvedBuildGroups,
@@ -64,7 +65,7 @@ export function EvaluationView({
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [ownedOnly, setOwnedOnly] = useState(true);
 
-  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
   const ownedKeys = useMemo(
     () => new Set(accountData?.characters.map((c) => c.key) ?? []),

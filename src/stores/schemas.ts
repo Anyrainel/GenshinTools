@@ -1,7 +1,7 @@
 /**
  * Zod schemas for validating and healing persisted store data.
  *
- * These replace the imperative `repair*` functions in storeValidation.ts.
+ * These heal persisted store payloads at the storage boundary.
  * All schemas use `.catch()` so invalid data is healed to safe defaults
  * instead of throwing — the app never crashes on corrupted localStorage.
  */
@@ -70,7 +70,7 @@ const TierCustomizationSchema = z
   .record(z.string(), TierCustomizationItemSchema)
   .catch({});
 
-// ─── ArtifactData (replaces repairArtifact) ───
+// ─── ArtifactData ───
 
 export const ArtifactDataSchema = z
   .object({
@@ -97,7 +97,7 @@ export const WeaponDataSchema = z
   })
   .loose();
 
-// ─── CharacterData (replaces repairCharacter) ───
+// ─── CharacterData ───
 
 export const CharacterDataSchema = z
   .object({
@@ -118,7 +118,7 @@ export const CharacterDataSchema = z
   })
   .loose();
 
-// ─── AccountData (replaces repairAccountData) ───
+// ─── AccountData ───
 
 export const AccountDataSchema = z
   .object({
@@ -151,7 +151,7 @@ export const PersistedAccountScoreCacheStoreSchema = z.object({
     .catch({}),
 });
 
-// ─── Build (replaces repairBuild) ───
+// ─── Build ───
 
 export const BuildSchema = z
   .object({

@@ -61,6 +61,13 @@ import {
   loadPresetPayload,
 } from "@/lib/presetLoader";
 import { getSortedWeaponSecondaryStats } from "@/lib/utils";
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
 // Placeholder for weapon tier list presets
@@ -91,11 +98,9 @@ interface WeaponTierListViewProps {
 export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const { t } = useLanguage();
 
-  const tierAssignments = useWeaponTierStore((state) => state.tierAssignments);
-  const tierCustomization = useWeaponTierStore(
-    (state) => state.tierCustomization
-  );
-  const customTitle = useWeaponTierStore((state) => state.customTitle);
+  const tierAssignments = useWeaponTierStore(selectActiveTierAssignments);
+  const tierCustomization = useWeaponTierStore(selectActiveTierCustomization);
+  const customTitle = useWeaponTierStore(selectActiveTierTitle);
   const setTierAssignments = useWeaponTierStore(
     (state) => state.setTierAssignments
   );
@@ -109,8 +114,8 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const loadTierListData = useWeaponTierStore(
     (state) => state.loadTierListData
   );
-  const author = useWeaponTierStore((state) => state.author);
-  const description = useWeaponTierStore((state) => state.description);
+  const author = useWeaponTierStore(selectActiveTierAuthor);
+  const description = useWeaponTierStore(selectActiveTierDescription);
   const tierLists = useWeaponTierStore((state) => state.tierLists);
   const activeTierListId = useWeaponTierStore(
     (state) => state.activeTierListId

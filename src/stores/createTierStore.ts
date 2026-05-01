@@ -1,3 +1,4 @@
+import type { z } from "zod";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { TierAssignment, TierCustomization } from "@/data/types";
@@ -13,18 +14,13 @@ export interface TierListInstanceBase {
   description: string;
 }
 
-/** Base state shared by weapon and artifact tier-list stores. */
-export interface TierStoreBase {
-  tierLists: Record<number, TierListInstanceBase>;
+/** Base state shared by character, weapon, and artifact tier-list stores. */
+export interface TierStoreBase<
+  TInstance extends TierListInstanceBase = TierListInstanceBase,
+> {
+  tierLists: Record<number, TInstance>;
   activeTierListId: number;
   nextId: number;
-
-  // Derived fields from active list for existing page selectors.
-  tierAssignments: TierAssignment;
-  tierCustomization: TierCustomization;
-  customTitle: string;
-  author: string;
-  description: string;
 
   setTierAssignments: (
     assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)
@@ -47,20 +43,46 @@ export interface TierStoreBase {
   renameTierList: (id: number, title: string) => void;
 }
 
-interface CreateTierStoreOptions<T extends TierStoreBase> {
+type StoreSet<T> = (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
+type StoreGet<T> = () => T;
+
+interface CreateTierStoreOptions<
+  TState extends TierStoreBase<TInstance>,
+  TInstance extends TierListInstanceBase,
+  TPersisted,
+> {
   /** localStorage key for persistence */
   storageKey: string;
+  version?: number;
+  migrate?: (persistedState: unknown, version: number) => unknown;
+  persistedSchema?: z.ZodType<TPersisted>;
+  /** Extra fields for newly created tier-list instances. */
+  createInstanceExtra?: (
+    id: number,
+    title: string
+  ) => Omit<Partial<TInstance>, keyof TierListInstanceBase>;
   /** Extra initial state fields beyond the base */
-  extraState?: Partial<T>;
+  extraState?: Partial<TState>;
   /** Extra actions beyond the base */
-  extraActions?: (
-    set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void
-  ) => Partial<T>;
+  extraActions?: (ctx: {
+    set: StoreSet<TState>;
+    get: StoreGet<TState>;
+    updateTierList: (
+      state: Pick<TState, "tierLists" | "activeTierListId">,
+      id: number,
+      patch: Partial<TInstance>
+    ) => Partial<TState>;
+    updateActiveTierList: (
+      state: Pick<TState, "tierLists" | "activeTierListId">,
+      patch: Partial<TInstance>
+    ) => Partial<TState>;
+    createEmptyInstance: (id: number, title?: string) => TInstance;
+  }) => Partial<TState>;
   /** Extra fields to include in partialize (all base fields are always included) */
-  extraPartialize?: (state: T) => Partial<T>;
+  extraPartialize?: (state: TState) => Partial<TState>;
 }
 
-function createEmptyInstance(id: number, title = ""): TierListInstanceBase {
+function createBaseInstance(id: number, title = ""): TierListInstanceBase {
   return {
     id,
     tierAssignments: {},
@@ -71,115 +93,182 @@ function createEmptyInstance(id: number, title = ""): TierListInstanceBase {
   };
 }
 
-function deriveActiveFields(state: {
-  tierLists: Record<number, TierListInstanceBase>;
-  activeTierListId: number;
-}) {
-  const inst =
-    state.tierLists[state.activeTierListId] ?? createEmptyInstance(0);
-  return {
-    tierAssignments: inst.tierAssignments,
-    tierCustomization: inst.tierCustomization,
-    customTitle: inst.customTitle,
-    author: inst.author,
-    description: inst.description,
-  };
+export function selectActiveTierList<
+  TInstance extends TierListInstanceBase,
+  TState extends Pick<
+    TierStoreBase<TInstance>,
+    "tierLists" | "activeTierListId"
+  >,
+>(state: TState): TInstance {
+  return (
+    state.tierLists[state.activeTierListId] ??
+    (createBaseInstance(0) as TInstance)
+  );
 }
 
-function updateActiveInstance<T extends TierStoreBase>(
-  state: Pick<T, "tierLists" | "activeTierListId">,
-  patch: Partial<TierListInstanceBase>
-): Partial<T> {
-  const id = state.activeTierListId;
-  const current = state.tierLists[id] ?? createEmptyInstance(id);
-  const tierLists = {
-    ...state.tierLists,
-    [id]: { ...current, ...patch },
-  };
-  const base = { tierLists, activeTierListId: id };
-  return { ...base, ...deriveActiveFields(base) } as Partial<T>;
+export function selectActiveTierAssignments<
+  TInstance extends TierListInstanceBase,
+  TState extends Pick<
+    TierStoreBase<TInstance>,
+    "tierLists" | "activeTierListId"
+  >,
+>(state: TState): TierAssignment {
+  return selectActiveTierList(state).tierAssignments;
 }
 
-const defaultInstance = createEmptyInstance(1);
-const defaultTierLists: Record<number, TierListInstanceBase> = {
-  1: defaultInstance,
-};
+export function selectActiveTierCustomization<
+  TInstance extends TierListInstanceBase,
+  TState extends Pick<
+    TierStoreBase<TInstance>,
+    "tierLists" | "activeTierListId"
+  >,
+>(state: TState): TierCustomization {
+  return selectActiveTierList(state).tierCustomization;
+}
 
-export function createTierStore<T extends TierStoreBase>(
-  options: CreateTierStoreOptions<T>
-) {
-  return create<T>()(
+export function selectActiveTierTitle<
+  TInstance extends TierListInstanceBase,
+  TState extends Pick<
+    TierStoreBase<TInstance>,
+    "tierLists" | "activeTierListId"
+  >,
+>(state: TState): string {
+  return selectActiveTierList(state).customTitle;
+}
+
+export function selectActiveTierAuthor<
+  TInstance extends TierListInstanceBase,
+  TState extends Pick<
+    TierStoreBase<TInstance>,
+    "tierLists" | "activeTierListId"
+  >,
+>(state: TState): string {
+  return selectActiveTierList(state).author;
+}
+
+export function selectActiveTierDescription<
+  TInstance extends TierListInstanceBase,
+  TState extends Pick<
+    TierStoreBase<TInstance>,
+    "tierLists" | "activeTierListId"
+  >,
+>(state: TState): string {
+  return selectActiveTierList(state).description;
+}
+
+export function createTierStore<
+  TState extends TierStoreBase<TInstance>,
+  TInstance extends TierListInstanceBase = TierListInstanceBase,
+  TPersisted = z.infer<typeof PersistedGenericTierListStoreSchema>,
+>(options: CreateTierStoreOptions<TState, TInstance, TPersisted>) {
+  const createEmptyInstance = (id: number, title = ""): TInstance =>
+    ({
+      ...createBaseInstance(id, title),
+      ...(options.createInstanceExtra?.(id, title) ?? {}),
+    }) as TInstance;
+
+  const updateTierList = (
+    state: Pick<TState, "tierLists" | "activeTierListId">,
+    id: number,
+    patch: Partial<TInstance>
+  ): Partial<TState> => {
+    const current = state.tierLists[id] ?? createEmptyInstance(id);
+    return {
+      tierLists: {
+        ...state.tierLists,
+        [id]: { ...current, ...patch },
+      },
+    } as Partial<TState>;
+  };
+
+  const updateActiveTierList = (
+    state: Pick<TState, "tierLists" | "activeTierListId">,
+    patch: Partial<TInstance>
+  ): Partial<TState> => updateTierList(state, state.activeTierListId, patch);
+
+  const defaultInstance = createEmptyInstance(1);
+  const defaultTierLists: Record<number, TInstance> = {
+    1: defaultInstance,
+  };
+
+  const persistedSchema =
+    options.persistedSchema ?? PersistedGenericTierListStoreSchema;
+
+  return create<TState>()(
     persist(
       (set, get) => {
-        const baseState: TierStoreBase = {
+        const baseState: TierStoreBase<TInstance> = {
           tierLists: defaultTierLists,
           activeTierListId: 1,
           nextId: 2,
 
-          tierAssignments: defaultInstance.tierAssignments,
-          tierCustomization: defaultInstance.tierCustomization,
-          customTitle: defaultInstance.customTitle,
-          author: defaultInstance.author,
-          description: defaultInstance.description,
-
           setTierAssignments: (assignments) =>
             set((state) => {
-              const id = state.activeTierListId;
-              const current = state.tierLists[id] ?? createEmptyInstance(id);
+              const current = selectActiveTierList(state);
               const tierAssignments =
                 typeof assignments === "function"
                   ? assignments(current.tierAssignments)
                   : assignments;
-              return updateActiveInstance(state, { tierAssignments });
+              return updateActiveTierList(state, {
+                tierAssignments,
+              } as Partial<TInstance>);
             }),
 
           setTierCustomization: (tierCustomization) =>
-            set((state) => updateActiveInstance(state, { tierCustomization })),
+            set((state) =>
+              updateActiveTierList(state, {
+                tierCustomization,
+              } as Partial<TInstance>)
+            ),
 
           setCustomTitle: (customTitle) =>
-            set((state) => updateActiveInstance(state, { customTitle })),
+            set((state) =>
+              updateActiveTierList(state, { customTitle } as Partial<TInstance>)
+            ),
 
           resetTierList: () =>
             set((state) =>
-              updateActiveInstance(state, {
+              updateActiveTierList(state, {
                 tierAssignments: {},
                 tierCustomization: {},
                 customTitle: "",
                 author: "",
                 description: "",
-              })
+              } as Partial<TInstance>)
             ),
 
           loadTierListData: (data) =>
             set((state) =>
-              updateActiveInstance(state, {
+              updateActiveTierList(state, {
                 tierAssignments: data.tierAssignments,
                 tierCustomization: data.tierCustomization,
                 customTitle: data.customTitle || "",
                 author: data.author || "",
                 description: data.description || "",
-              })
+              } as Partial<TInstance>)
             ),
 
           setMetadata: (author, description) =>
             set((state) =>
-              updateActiveInstance(state, { author, description })
+              updateActiveTierList(state, {
+                author,
+                description,
+              } as Partial<TInstance>)
             ),
 
           createTierList: (title?: string) => {
             const id = get().nextId;
-            set((state) => {
-              const tierLists = {
-                ...state.tierLists,
-                [id]: createEmptyInstance(id, title ?? ""),
-              };
-              const base = {
-                tierLists,
-                activeTierListId: id,
-                nextId: id + 1,
-              };
-              return { ...base, ...deriveActiveFields(base) } as Partial<T>;
-            });
+            set(
+              (state) =>
+                ({
+                  tierLists: {
+                    ...state.tierLists,
+                    [id]: createEmptyInstance(id, title ?? ""),
+                  },
+                  activeTierListId: id,
+                  nextId: id + 1,
+                }) as Partial<TState>
+            );
             return id;
           },
 
@@ -190,52 +279,50 @@ export function createTierStore<T extends TierStoreBase>(
 
               const { [id]: _, ...tierLists } = state.tierLists;
               const remainingIds = Object.keys(tierLists).map(Number);
-              const activeTierListId =
-                state.activeTierListId === id
-                  ? Math.min(...remainingIds)
-                  : state.activeTierListId;
-              const base = { tierLists, activeTierListId };
-              return { ...base, ...deriveActiveFields(base) } as Partial<T>;
+              return {
+                tierLists,
+                activeTierListId:
+                  state.activeTierListId === id
+                    ? Math.min(...remainingIds)
+                    : state.activeTierListId,
+              } as Partial<TState>;
             }),
 
           setActiveTierList: (id) =>
-            set((state) => {
-              if (!(id in state.tierLists)) return state;
-              const base = {
-                tierLists: state.tierLists,
-                activeTierListId: id,
-              };
-              return { ...base, ...deriveActiveFields(base) } as Partial<T>;
-            }),
+            set((state) =>
+              id in state.tierLists
+                ? ({ activeTierListId: id } as Partial<TState>)
+                : state
+            ),
 
-          renameTierList: (id, title) =>
+          renameTierList: (id, customTitle) =>
             set((state) => {
-              const inst = state.tierLists[id];
-              if (!inst) return state;
-              const tierLists = {
-                ...state.tierLists,
-                [id]: { ...inst, customTitle: title },
-              };
-              const base = {
-                tierLists,
-                activeTierListId: state.activeTierListId,
-              };
-              return { ...base, ...deriveActiveFields(base) } as Partial<T>;
+              if (!state.tierLists[id]) return state;
+              return updateTierList(state, id, {
+                customTitle,
+              } as Partial<TInstance>);
             }),
         };
 
-        const extra = options.extraActions?.(set) ?? {};
+        const extra =
+          options.extraActions?.({
+            set,
+            get,
+            updateTierList,
+            updateActiveTierList,
+            createEmptyInstance,
+          }) ?? {};
 
         return {
           ...baseState,
           ...(options.extraState ?? {}),
           ...extra,
-        } as T;
+        } as TState;
       },
       {
         name: options.storageKey,
-        version: 1,
-        migrate: migrateGenericTierStore,
+        version: options.version ?? 1,
+        migrate: options.migrate ?? migrateGenericTierStore,
         partialize: (state) => ({
           tierLists: state.tierLists,
           activeTierListId: state.activeTierListId,
@@ -243,13 +330,12 @@ export function createTierStore<T extends TierStoreBase>(
           ...(options.extraPartialize?.(state) ?? {}),
         }),
         merge: (persistedState, currentState) => {
-          const parsed =
-            PersistedGenericTierListStoreSchema.safeParse(persistedState);
+          const parsed = persistedSchema.safeParse(persistedState);
           const persisted = parsed.success ? parsed.data : {};
           const merged = {
             ...currentState,
             ...persisted,
-          } as T;
+          } as TState;
 
           if (
             typeof merged.tierLists !== "object" ||
@@ -266,10 +352,7 @@ export function createTierStore<T extends TierStoreBase>(
             }
           }
 
-          return {
-            ...merged,
-            ...deriveActiveFields(merged),
-          };
+          return merged;
         },
       }
     )

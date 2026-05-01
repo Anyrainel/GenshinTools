@@ -1,3 +1,4 @@
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 /**
  * Integration Tests: Tier Assignment to Character Sorting Flow
  *
@@ -85,7 +86,9 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       useTierStore.getState().setTierAssignments(tierAssignments);
     });
 
-    const storedAssignments = useTierStore.getState().tierAssignments;
+    const storedAssignments = selectActiveTierAssignments(
+      useTierStore.getState()
+    );
 
     const filters: CharacterFilters = {
       ...defaultCharacterFilters,
@@ -175,7 +178,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
 
     const sorted = filterAndSortCharacters(testCharacters, filters, {
       ...options,
-      tierAssignments: useTierStore.getState().tierAssignments,
+      tierAssignments: selectActiveTierAssignments(useTierStore.getState()),
     });
 
     // Only Pyro, sorted by tier (hu_tao S, bennett A)
@@ -206,14 +209,18 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       useTierStore.getState().setTierAssignments(tierAssignments);
     });
 
-    expect(useTierStore.getState().tierAssignments.hu_tao).toBeDefined();
-    expect(useTierStore.getState().tierAssignments.hu_tao.tier).toBe("S");
+    expect(
+      selectActiveTierAssignments(useTierStore.getState()).hu_tao
+    ).toBeDefined();
+    expect(
+      selectActiveTierAssignments(useTierStore.getState()).hu_tao.tier
+    ).toBe("S");
 
     // Reset clears assignments
     act(() => {
       useTierStore.getState().resetTierList();
     });
 
-    expect(useTierStore.getState().tierAssignments).toEqual({});
+    expect(selectActiveTierAssignments(useTierStore.getState())).toEqual({});
   });
 });

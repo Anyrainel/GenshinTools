@@ -13,6 +13,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Tier } from "@/data/enums";
 import type { TierAssignment, TierCustomization } from "@/data/types";
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
 describe("Integration: Weapon Tier List Page Flow", () => {
@@ -32,7 +39,7 @@ describe("Integration: Weapon Tier List Page Flow", () => {
         useWeaponTierStore.getState().setTierAssignments(assignments);
       });
 
-      const stored = useWeaponTierStore.getState().tierAssignments;
+      const stored = selectActiveTierAssignments(useWeaponTierStore.getState());
       expect(stored.staff_of_homa).toEqual({ tier: "S", position: 0 });
       expect(stored.amos_bow).toEqual({ tier: "S", position: 1 });
       expect(stored.sacrificial_sword).toEqual({ tier: "A", position: 0 });
@@ -53,7 +60,7 @@ describe("Integration: Weapon Tier List Page Flow", () => {
         }));
       });
 
-      const stored = useWeaponTierStore.getState().tierAssignments;
+      const stored = selectActiveTierAssignments(useWeaponTierStore.getState());
       expect(stored.staff_of_homa).toBeDefined();
       expect(stored.amos_bow).toBeDefined();
     });
@@ -70,7 +77,9 @@ describe("Integration: Weapon Tier List Page Flow", () => {
         useWeaponTierStore.getState().setTierCustomization(customization);
       });
 
-      const stored = useWeaponTierStore.getState().tierCustomization;
+      const stored = selectActiveTierCustomization(
+        useWeaponTierStore.getState()
+      );
       expect(stored.S?.displayName).toBe("Best in Slot");
       expect(stored.A?.displayName).toBe("Excellent");
     });
@@ -80,7 +89,9 @@ describe("Integration: Weapon Tier List Page Flow", () => {
         useWeaponTierStore.getState().setCustomTitle("Sword Tier List");
       });
 
-      expect(useWeaponTierStore.getState().customTitle).toBe("Sword Tier List");
+      expect(selectActiveTierTitle(useWeaponTierStore.getState())).toBe(
+        "Sword Tier List"
+      );
     });
   });
 
@@ -103,12 +114,12 @@ describe("Integration: Weapon Tier List Page Flow", () => {
       });
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments.staff_of_homa).toEqual({
+      expect(selectActiveTierAssignments(state).staff_of_homa).toEqual({
         tier: "S",
         position: 0,
       });
-      expect(state.tierCustomization.S?.displayName).toBe("BiS");
-      expect(state.customTitle).toBe("Imported Weapons");
+      expect(selectActiveTierCustomization(state).S?.displayName).toBe("BiS");
+      expect(selectActiveTierTitle(state)).toBe("Imported Weapons");
     });
 
     it("exports complete weapon tier list state", () => {
@@ -120,9 +131,9 @@ describe("Integration: Weapon Tier List Page Flow", () => {
       });
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments.staff_of_homa).toBeDefined();
-      expect(state.author).toBe("Author");
-      expect(state.description).toBe("Description");
+      expect(selectActiveTierAssignments(state).staff_of_homa).toBeDefined();
+      expect(selectActiveTierAuthor(state)).toBe("Author");
+      expect(selectActiveTierDescription(state)).toBe("Description");
     });
   });
 
@@ -141,10 +152,10 @@ describe("Integration: Weapon Tier List Page Flow", () => {
       });
 
       const state = useWeaponTierStore.getState();
-      expect(state.tierAssignments).toEqual({});
-      expect(state.customTitle).toBe("");
-      expect(state.author).toBe("");
-      expect(state.description).toBe("");
+      expect(selectActiveTierAssignments(state)).toEqual({});
+      expect(selectActiveTierTitle(state)).toBe("");
+      expect(selectActiveTierAuthor(state)).toBe("");
+      expect(selectActiveTierDescription(state)).toBe("");
     });
   });
 });

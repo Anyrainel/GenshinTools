@@ -64,6 +64,13 @@ import {
   loadPresetMetadata,
   loadPresetPayload,
 } from "@/lib/presetLoader";
+import {
+  selectActiveTierAssignments,
+  selectActiveTierAuthor,
+  selectActiveTierCustomization,
+  selectActiveTierDescription,
+  selectActiveTierTitle,
+} from "@/stores/createTierStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 const presetModules = import.meta.glob<{ default: TierListData }>(
@@ -109,9 +116,9 @@ export function CharacterTierListView({
   );
   const tour = useTour();
 
-  const tierAssignments = useTierStore((state) => state.tierAssignments);
-  const tierCustomization = useTierStore((state) => state.tierCustomization);
-  const customTitle = useTierStore((state) => state.customTitle);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
+  const tierCustomization = useTierStore(selectActiveTierCustomization);
+  const customTitle = useTierStore(selectActiveTierTitle);
   const setTierAssignments = useTierStore((state) => state.setTierAssignments);
   const setTierCustomization = useTierStore(
     (state) => state.setTierCustomization
@@ -125,8 +132,8 @@ export function CharacterTierListView({
   const setShowTravelers = useTierStore((state) => state.setShowTravelers);
   const showManekin = useTierStore((state) => state.showManekin);
   const setShowManekin = useTierStore((state) => state.setShowManekin);
-  const author = useTierStore((state) => state.author);
-  const description = useTierStore((state) => state.description);
+  const author = useTierStore(selectActiveTierAuthor);
+  const description = useTierStore(selectActiveTierDescription);
 
   // Control refs for ref-based dialog pattern
   const clearRef = useRef<ControlHandle>(null);

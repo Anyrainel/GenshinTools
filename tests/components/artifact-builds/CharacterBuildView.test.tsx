@@ -17,7 +17,20 @@ vi.mock("@/contexts/LanguageContext", () => ({
 }));
 
 vi.mock("@/stores/useTierStore", () => ({
-  useTierStore: vi.fn(() => ({ tierAssignments: {} })),
+  useTierStore: vi.fn((selector) =>
+    selector({
+      activeTierListId: 1,
+      tierLists: {
+        1: {
+          tierAssignments: {},
+          tierCustomization: {},
+          customTitle: "",
+          author: "",
+          description: "",
+        },
+      },
+    })
+  ),
 }));
 
 // Mock complex sub-components

@@ -20,7 +20,7 @@ import { migrateResourceRecStore } from "./migration/resource";
 import { PersistedResourceRecStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
 
-interface ResourceRecSettings {
+export interface ResourceRecSettings {
   thresholds: TierCompletenessThresholds;
   minScoreDiff: KindTierMinScore;
   panelOpen: boolean;
@@ -38,13 +38,7 @@ interface ResourceRecSettingsInput {
   showLevelup: boolean;
 }
 
-interface ResourceRecState {
-  thresholds: TierCompletenessThresholds;
-  minScoreDiff: KindTierMinScore;
-  panelOpen: boolean;
-  showCraft: boolean;
-  showReroll: boolean;
-  showLevelup: boolean;
+export interface ResourceRecState {
   settingsByProfileId: Record<AccountProfileId, ResourceRecSettings>;
   setThreshold: (tier: Tier, value: number) => void;
   setMinScoreDiff: (kind: ResourceKind, tier: Tier, value: number) => void;
@@ -62,7 +56,6 @@ interface ResourceRecState {
     sourceProfileId: AccountProfileId,
     targetProfileId: AccountProfileId
   ) => void;
-  setActiveProfile: (profileId: AccountProfileId | null) => void;
 }
 
 const cloneDefaultSettings = (): ResourceRecSettings => ({
@@ -72,15 +65,6 @@ const cloneDefaultSettings = (): ResourceRecSettings => ({
   showCraft: true,
   showReroll: true,
   showLevelup: true,
-});
-
-const applySettings = (settings: ResourceRecSettings) => ({
-  thresholds: settings.thresholds,
-  minScoreDiff: settings.minScoreDiff,
-  panelOpen: settings.panelOpen,
-  showCraft: settings.showCraft,
-  showReroll: settings.showReroll,
-  showLevelup: settings.showLevelup,
 });
 
 const normalizeSettings = (
@@ -113,21 +97,45 @@ const normalizeSettings = (
 const getActiveProfileId = () =>
   useAccountStore.getState().activeAccountId ?? DEFAULT_ACCOUNT_PROFILE_ID;
 
-const getSettingsForProfile = (
+export const getResourceRecSettingsForProfile = (
   state: Pick<ResourceRecState, "settingsByProfileId">,
   profileId: AccountProfileId | null
 ) =>
   state.settingsByProfileId[profileId ?? DEFAULT_ACCOUNT_PROFILE_ID] ??
   cloneDefaultSettings();
 
-const currentSettings = (state: ResourceRecState): ResourceRecSettings => ({
-  thresholds: state.thresholds,
-  minScoreDiff: state.minScoreDiff,
-  panelOpen: state.panelOpen,
-  showCraft: state.showCraft,
-  showReroll: state.showReroll,
-  showLevelup: state.showLevelup,
-});
+export const selectActiveResourceRecSettings = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): ResourceRecSettings =>
+  getResourceRecSettingsForProfile(state, getActiveProfileId());
+
+export const getActiveResourceRecSettings = (): ResourceRecSettings =>
+  selectActiveResourceRecSettings(useResourceRecStore.getState());
+
+export const selectActiveResourceRecThresholds = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): TierCompletenessThresholds =>
+  selectActiveResourceRecSettings(state).thresholds;
+
+export const selectActiveResourceRecMinScoreDiff = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): KindTierMinScore => selectActiveResourceRecSettings(state).minScoreDiff;
+
+export const selectActiveResourceRecPanelOpen = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): boolean => selectActiveResourceRecSettings(state).panelOpen;
+
+export const selectActiveResourceRecShowCraft = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): boolean => selectActiveResourceRecSettings(state).showCraft;
+
+export const selectActiveResourceRecShowReroll = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): boolean => selectActiveResourceRecSettings(state).showReroll;
+
+export const selectActiveResourceRecShowLevelup = (
+  state: Pick<ResourceRecState, "settingsByProfileId">
+): boolean => selectActiveResourceRecSettings(state).showLevelup;
 
 const cloneSettings = (settings: ResourceRecSettings): ResourceRecSettings =>
   structuredClone(settings);
@@ -140,24 +148,18 @@ const settingsEqual = (
 export const useResourceRecStore = create<ResourceRecState>()(
   persist(
     (set) => ({
-      thresholds: { ...DEFAULT_TIER_THRESHOLDS },
-      minScoreDiff: structuredClone(DEFAULT_MIN_SCORE_DIFF),
-      panelOpen: false,
-      showCraft: true,
-      showReroll: true,
-      showLevelup: true,
       settingsByProfileId: {
         [DEFAULT_ACCOUNT_PROFILE_ID]: cloneDefaultSettings(),
       },
 
       setThreshold: (tier, value) =>
         set((state) => {
+          const current = selectActiveResourceRecSettings(state);
           const next = {
-            ...currentSettings(state),
-            thresholds: { ...state.thresholds, [tier]: value },
+            ...current,
+            thresholds: { ...current.thresholds, [tier]: value },
           };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -167,15 +169,15 @@ export const useResourceRecStore = create<ResourceRecState>()(
 
       setMinScoreDiff: (kind, tier, value) =>
         set((state) => {
+          const current = selectActiveResourceRecSettings(state);
           const next = {
-            ...currentSettings(state),
+            ...current,
             minScoreDiff: {
-              ...state.minScoreDiff,
-              [kind]: { ...state.minScoreDiff[kind], [tier]: value },
+              ...current.minScoreDiff,
+              [kind]: { ...current.minScoreDiff[kind], [tier]: value },
             },
           };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -186,11 +188,10 @@ export const useResourceRecStore = create<ResourceRecState>()(
       resetThresholds: () =>
         set((state) => {
           const next = {
-            ...currentSettings(state),
+            ...selectActiveResourceRecSettings(state),
             thresholds: { ...DEFAULT_TIER_THRESHOLDS },
           };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -200,11 +201,10 @@ export const useResourceRecStore = create<ResourceRecState>()(
       resetMinScoreDiff: () =>
         set((state) => {
           const next = {
-            ...currentSettings(state),
+            ...selectActiveResourceRecSettings(state),
             minScoreDiff: structuredClone(DEFAULT_MIN_SCORE_DIFF),
           };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -214,9 +214,11 @@ export const useResourceRecStore = create<ResourceRecState>()(
 
       setPanelOpen: (open) =>
         set((state) => {
-          const next = { ...currentSettings(state), panelOpen: open };
+          const next = {
+            ...selectActiveResourceRecSettings(state),
+            panelOpen: open,
+          };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -225,9 +227,11 @@ export const useResourceRecStore = create<ResourceRecState>()(
         }),
       setShowCraft: (v) =>
         set((state) => {
-          const next = { ...currentSettings(state), showCraft: v };
+          const next = {
+            ...selectActiveResourceRecSettings(state),
+            showCraft: v,
+          };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -236,9 +240,11 @@ export const useResourceRecStore = create<ResourceRecState>()(
         }),
       setShowReroll: (v) =>
         set((state) => {
-          const next = { ...currentSettings(state), showReroll: v };
+          const next = {
+            ...selectActiveResourceRecSettings(state),
+            showReroll: v,
+          };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -247,9 +253,11 @@ export const useResourceRecStore = create<ResourceRecState>()(
         }),
       setShowLevelup: (v) =>
         set((state) => {
-          const next = { ...currentSettings(state), showLevelup: v };
+          const next = {
+            ...selectActiveResourceRecSettings(state),
+            showLevelup: v,
+          };
           return {
-            ...applySettings(next),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [getActiveProfileId()]: next,
@@ -260,15 +268,15 @@ export const useResourceRecStore = create<ResourceRecState>()(
       cloneSettingsForProfile: (sourceProfileId, targetProfileId) => {
         let didClone = false;
         set((state) => {
-          const sourceSettings = getSettingsForProfile(state, sourceProfileId);
+          const sourceSettings = getResourceRecSettingsForProfile(
+            state,
+            sourceProfileId
+          );
           if (settingsEqual(sourceSettings, cloneDefaultSettings())) return {};
 
           didClone = true;
           const cloned = cloneSettings(sourceSettings);
           return {
-            ...(getActiveProfileId() === targetProfileId
-              ? applySettings(cloned)
-              : {}),
             settingsByProfileId: {
               ...state.settingsByProfileId,
               [targetProfileId]: cloned,
@@ -281,10 +289,7 @@ export const useResourceRecStore = create<ResourceRecState>()(
       renameProfileSettings: (sourceProfileId, targetProfileId) =>
         set((state) => {
           if (sourceProfileId === targetProfileId) return state;
-          const sourceSettings =
-            getActiveProfileId() === sourceProfileId
-              ? currentSettings(state)
-              : state.settingsByProfileId[sourceProfileId];
+          const sourceSettings = state.settingsByProfileId[sourceProfileId];
           if (!sourceSettings) return state;
 
           const settingsByProfileId = { ...state.settingsByProfileId };
@@ -299,29 +304,18 @@ export const useResourceRecStore = create<ResourceRecState>()(
           if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
             settingsByProfileId[targetProfileId] = nextSettings;
           }
-          const activeProfileId = getActiveProfileId();
 
           return {
-            ...(activeProfileId === sourceProfileId ||
-            activeProfileId === targetProfileId
-              ? applySettings(nextSettings)
-              : {}),
             settingsByProfileId,
           };
         }),
-
-      setActiveProfile: (profileId) =>
-        set((state) => applySettings(getSettingsForProfile(state, profileId))),
     }),
     {
       name: "resource-rec-settings",
       version: 8,
       migrate: migrateResourceRecStore,
       partialize: (state) => ({
-        settingsByProfileId: {
-          ...state.settingsByProfileId,
-          [getActiveProfileId()]: normalizeSettings(currentSettings(state)),
-        },
+        settingsByProfileId: state.settingsByProfileId,
       }),
       merge: (persistedState, currentState) => {
         const parsed =
@@ -336,13 +330,8 @@ export const useResourceRecStore = create<ResourceRecState>()(
           normalizedSettingsByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] =
             cloneDefaultSettings();
         }
-        const activeSettings =
-          normalizedSettingsByProfileId[getActiveProfileId()] ??
-          normalizedSettingsByProfileId[DEFAULT_ACCOUNT_PROFILE_ID] ??
-          cloneDefaultSettings();
         return {
           ...currentState,
-          ...applySettings(normalizeSettings(activeSettings)),
           settingsByProfileId: normalizedSettingsByProfileId,
         };
       },
@@ -352,6 +341,9 @@ export const useResourceRecStore = create<ResourceRecState>()(
 
 useAccountStore.subscribe((state, prevState) => {
   if (state.activeAccountId !== prevState.activeAccountId) {
-    useResourceRecStore.getState().setActiveProfile(state.activeAccountId);
+    // Re-run active-settings selectors after account changes without storing a mirror.
+    useResourceRecStore.setState((resourceState) => ({
+      settingsByProfileId: resourceState.settingsByProfileId,
+    }));
   }
 });

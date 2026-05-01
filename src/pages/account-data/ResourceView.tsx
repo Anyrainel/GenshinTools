@@ -1,3 +1,7 @@
+import {
+  selectActiveTierAssignments,
+  selectActiveTierCustomization,
+} from "@/stores/createTierStore";
 /**
  * Dedicated page for resource spending suggestions (craft / reroll / level-up).
  * Computes suggestions from evaluation data and displays them grouped by tier.
@@ -42,7 +46,10 @@ import {
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { usePUpgradeCacheStore } from "@/stores/usePUpgradeCacheStore";
-import { useResourceRecStore } from "@/stores/useResourceRecStore";
+import {
+  getResourceRecSettingsForProfile,
+  useResourceRecStore,
+} from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 type ResourceSetCategory = "dps" | "support" | "other";
@@ -130,13 +137,18 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const scoreConfig = useArtifactScoreStore((s) => s.config);
-  const tierAssignments = useTierStore((s) => s.tierAssignments);
-  const tierCustomization = useTierStore((s) => s.tierCustomization);
-  const recThresholds = useResourceRecStore((s) => s.thresholds);
-  const recMinScoreDiff = useResourceRecStore((s) => s.minScoreDiff);
-  const showCraft = useResourceRecStore((s) => s.showCraft);
-  const showReroll = useResourceRecStore((s) => s.showReroll);
-  const showLevelup = useResourceRecStore((s) => s.showLevelup);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
+  const tierCustomization = useTierStore(selectActiveTierCustomization);
+  const recSettings = useResourceRecStore((s) =>
+    getResourceRecSettingsForProfile(s, activeAccount?.id ?? null)
+  );
+  const {
+    thresholds: recThresholds,
+    minScoreDiff: recMinScoreDiff,
+    showCraft,
+    showReroll,
+    showLevelup,
+  } = recSettings;
   const setShowCraft = useResourceRecStore((s) => s.setShowCraft);
   const setShowReroll = useResourceRecStore((s) => s.setShowReroll);
   const setShowLevelup = useResourceRecStore((s) => s.setShowLevelup);

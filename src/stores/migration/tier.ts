@@ -79,11 +79,6 @@ export function migrateTierStore(
       showWeapons: old.showWeapons ?? true,
       showTravelers: old.showTravelers ?? false,
       showManekin: old.showManekin ?? false,
-      tierAssignments: instance.tierAssignments,
-      tierCustomization: instance.tierCustomization,
-      customTitle: instance.customTitle,
-      author: instance.author,
-      description: instance.description,
     };
   } else if (version === 1) {
     // v1 -> v2: drop removed investment threshold preferences.
@@ -130,10 +125,5 @@ export function migrateGenericTierStore(
     tierLists: { 1: instance },
     activeTierListId: 1,
     nextId: 2,
-    tierAssignments: instance.tierAssignments,
-    tierCustomization: instance.tierCustomization,
-    customTitle: instance.customTitle,
-    author: instance.author,
-    description: instance.description,
   };
 }

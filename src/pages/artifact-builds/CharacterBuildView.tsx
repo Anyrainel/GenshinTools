@@ -16,7 +16,6 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { allCharacters, charactersById } from "@/data/gameResources";
-
 import {
   characterStatsResource,
   getCharacterDisplayMeta,
@@ -29,6 +28,7 @@ import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useTierStore } from "@/stores/useTierStore";
 
@@ -51,7 +51,7 @@ export function CharacterBuildView({
   const hasAccountData = activeAccountData != null;
   const hasAnyBuilds = useBuildsStore((s) => s.hasBuildData());
 
-  const tierAssignments = useTierStore((state) => state.tierAssignments);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
 
   const isOwned = useIsOwned();

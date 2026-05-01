@@ -64,6 +64,7 @@ import type {
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
 import { cn, getAssetUrl, getSortedWeaponSecondaryStats } from "@/lib/utils";
+import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 type ItemPickerType = "character" | "weapon" | "artifact";
@@ -122,7 +123,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
 }: ItemPickerProps<T>) {
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
-  const tierAssignments = useTierStore((s) => s.tierAssignments);
+  const tierAssignments = useTierStore(selectActiveTierAssignments);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isOpen, setIsOpen] = useState(defaultOpen);
 

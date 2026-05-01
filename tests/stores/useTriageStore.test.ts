@@ -4,7 +4,10 @@ import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { migrateTriageStore } from "@/stores/migration/triage";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useTriageStore } from "@/stores/useTriageStore";
+import {
+  getActiveTriageSettings,
+  useTriageStore,
+} from "@/stores/useTriageStore";
 
 beforeEach(() => {
   useAccountStore.setState({
@@ -12,7 +15,6 @@ beforeEach(() => {
     activeAccountId: null,
   });
   useTriageStore.setState({
-    settings: structuredClone(DEFAULT_TRIAGE_SETTINGS),
     settingsByProfileId: {
       [DEFAULT_ACCOUNT_PROFILE_ID]: structuredClone(DEFAULT_TRIAGE_SETTINGS),
     },
@@ -20,6 +22,27 @@ beforeEach(() => {
 });
 
 describe("useTriageStore", () => {
+  it("migrates v3 strategic evaluation into high level protection", () => {
+    const result = migrateTriageStore(
+      {
+        settings: {
+          ...DEFAULT_TRIAGE_SETTINGS,
+          strategicHighLevelEvaluation: true,
+        },
+      },
+      3
+    );
+
+    expect(result.settingsByProfileId).toEqual({
+      [DEFAULT_ACCOUNT_PROFILE_ID]: {
+        ...DEFAULT_TRIAGE_SETTINGS,
+        highLevelProtection: false,
+        strategicHighLevelEvaluation: undefined,
+      },
+    });
+    expect(result).not.toHaveProperty("settings");
+  });
+
   it("migrates v5 persisted active settings into profile settings only", () => {
     const result = migrateTriageStore(
       {
@@ -37,6 +60,22 @@ describe("useTriageStore", () => {
         mainStatThreshold: 82,
       },
     });
+    expect(result).not.toHaveProperty("settings");
+  });
+
+  it("preserves current profile settings without active settings mirror", () => {
+    const currentState = {
+      settingsByProfileId: {
+        123456789: {
+          ...DEFAULT_TRIAGE_SETTINGS,
+          mainStatThreshold: 77,
+        },
+      },
+    };
+
+    const result = migrateTriageStore(currentState, 6);
+
+    expect(result).toBe(currentState);
     expect(result).not.toHaveProperty("settings");
   });
 
@@ -60,18 +99,19 @@ describe("useTriageStore", () => {
         // no customFlexInputs
       };
 
-      // The merge function spreads defaults, so missing fields get defaults
+      // Active settings fall back through the profile map and default healing.
       act(() => {
         useTriageStore.setState({
-          settings: {
-            ...DEFAULT_TRIAGE_SETTINGS,
-            ...v0Settings,
+          settingsByProfileId: {
+            [DEFAULT_ACCOUNT_PROFILE_ID]: {
+              ...DEFAULT_TRIAGE_SETTINGS,
+              ...v0Settings,
+            },
           },
         });
       });
 
-      const state = useTriageStore.getState();
-      expect(state.settings.customFlexInputs).toEqual([]);
+      expect(getActiveTriageSettings().customFlexInputs).toEqual([]);
     });
   });
 
@@ -84,9 +124,9 @@ describe("useTriageStore", () => {
           ],
         });
       });
-      const state = useTriageStore.getState();
-      expect(state.settings.customFlexInputs).toHaveLength(1);
-      expect(state.settings.customFlexInputs[0].slot).toBe("sands");
+      const settings = getActiveTriageSettings();
+      expect(settings.customFlexInputs).toHaveLength(1);
+      expect(settings.customFlexInputs[0].slot).toBe("sands");
     });
 
     it("stores settings per active account profile", () => {
@@ -99,7 +139,7 @@ describe("useTriageStore", () => {
         useAccountStore.setState({ activeAccountId: 123456789 });
       });
 
-      expect(useTriageStore.getState().settings.ownedOnly).toBe(
+      expect(getActiveTriageSettings().ownedOnly).toBe(
         DEFAULT_TRIAGE_SETTINGS.ownedOnly
       );
 
@@ -111,8 +151,9 @@ describe("useTriageStore", () => {
       });
 
       const state = useTriageStore.getState();
-      expect(state.settings.ownedOnly).toBe(false);
-      expect(state.settings.mainStatThreshold).toBe(88);
+      const settings = getActiveTriageSettings();
+      expect(settings.ownedOnly).toBe(false);
+      expect(settings.mainStatThreshold).toBe(88);
       expect(state.settingsByProfileId[123456789].mainStatThreshold).toBe(75);
     });
   });
