@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "genshintools",
+  "name": "ggartifact",
   "compatibility_date": "2026-04-30",
   "main": "worker/index.ts",
   "assets": {
