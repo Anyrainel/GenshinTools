@@ -10,44 +10,33 @@ export type TeamCloudSnapshot = {
   description: string;
 };
 
-export type TeamCompCloudPayload = {
+export type TeamCloudPayload = {
   activePresetId: string | null;
   presetRevision?: string;
   compDeltas: TeamCompDelta[];
+  configsByTeamId: Record<string, TeamSetupConfig>;
   author?: string;
   description?: string;
-};
-
-export type TeamConfigCloudPayload = {
-  configsByTeamId: Record<string, TeamSetupConfig>;
 };
 
 export type TeamRestorePatch = TeamCloudSnapshot;
 
 export function teamToCloud(
   snapshot: TeamCloudSnapshot
-): CloudExportPartition[] {
+): CloudExportPartition<TeamCloudPayload>[] {
   return [
     {
-      namespace: "team.comp",
-      partitionKey: "default",
+      namespace: "teams",
+      partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
       payload: {
         activePresetId: snapshot.activePresetId,
         compDeltas: snapshot.compDeltas,
+        configsByTeamId: snapshot.configsByTeamId,
         author: snapshot.author,
         description: snapshot.description,
-      } satisfies TeamCompCloudPayload,
-    },
-    {
-      namespace: "team.config",
-      partitionKey: "default",
-      schemaVersion: 1,
-      conflictPolicy: "explicit-choice",
-      payload: {
-        configsByTeamId: snapshot.configsByTeamId,
-      } satisfies TeamConfigCloudPayload,
+      } satisfies TeamCloudPayload,
     },
   ];
 }
@@ -55,17 +44,14 @@ export function teamToCloud(
 export function teamFromCloud(
   partitions: CloudExportPartition[]
 ): TeamRestorePatch {
-  const comp = partitions.find(
-    (partition) => partition.namespace === "team.comp"
-  )?.payload as TeamCompCloudPayload | undefined;
-  const config = partitions.find(
-    (partition) => partition.namespace === "team.config"
-  )?.payload as TeamConfigCloudPayload | undefined;
+  const current = partitions.find(
+    (partition) => partition.namespace === "teams"
+  )?.payload as TeamCloudPayload | undefined;
   return {
-    activePresetId: comp?.activePresetId ?? null,
-    compDeltas: comp?.compDeltas ?? [],
-    configsByTeamId: config?.configsByTeamId ?? {},
-    author: comp?.author ?? "",
-    description: comp?.description ?? "",
+    activePresetId: current?.activePresetId ?? null,
+    compDeltas: current?.compDeltas ?? [],
+    configsByTeamId: current?.configsByTeamId ?? {},
+    author: current?.author ?? "",
+    description: current?.description ?? "",
   };
 }

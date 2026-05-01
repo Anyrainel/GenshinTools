@@ -2,12 +2,17 @@ import type { CloudExportPartition } from "@/cloud/types";
 import type { ComputeOptions } from "@/data/types";
 import type { BuildDelta } from "@/lib/artifact-builds/buildDeltas";
 
+export type ArtifactScoreCloudConfig = Record<string, unknown> & {
+  global: Record<string, number>;
+};
+
 export type BuildsCloudSnapshot = {
   activePresetId: string | null;
   deltas: BuildDelta[];
   hiddenCharacters: Record<string, boolean>;
   characterWeapons: Record<string, string[]>;
   computeOptions: ComputeOptions;
+  artifactScore: ArtifactScoreCloudConfig;
   author: string;
   description: string;
 };
@@ -23,6 +28,7 @@ export type BuildsCloudPayload = {
   deltas: BuildDelta[];
   characterMetadata?: Record<string, CharacterBuildMetadata>;
   computeOptions?: ComputeOptions;
+  artifactScore?: ArtifactScoreCloudConfig;
   author?: string;
   description?: string;
 };
@@ -36,7 +42,7 @@ export function buildsToCloud(
   return [
     {
       namespace: "builds",
-      partitionKey: "default",
+      partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
       payload: {
@@ -44,6 +50,7 @@ export function buildsToCloud(
         deltas: snapshot.deltas,
         ...(Object.keys(characterMetadata).length ? { characterMetadata } : {}),
         computeOptions: snapshot.computeOptions,
+        artifactScore: snapshot.artifactScore,
         author: snapshot.author,
         description: snapshot.description,
       },
@@ -72,6 +79,7 @@ export function buildsFromCloud(
       )
     ),
     computeOptions: payload?.computeOptions ?? {},
+    artifactScore: payload?.artifactScore ?? { global: {} },
     author: payload?.author ?? "",
     description: payload?.description ?? "",
   };

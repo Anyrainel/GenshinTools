@@ -112,18 +112,11 @@ export function getCloudConflictGroupKey(
   namespace: CloudNamespace,
   partitionKey: string
 ): string {
-  if (isAccountSourceNamespace(namespace)) {
-    return `account:${getAccountProfileIdFromPartition(namespace, partitionKey)}`;
+  if (isProfileSourceNamespace(namespace)) {
+    return `profile:${getProfileIdFromPartition(namespace, partitionKey)}`;
   }
-  if (namespace === "team.comp" || namespace === "team.config") {
-    return "team:default";
-  }
-  if (
-    namespace === "account.freeze" ||
-    namespace === "account.triage" ||
-    namespace === "account.resources"
-  ) {
-    return `${namespace}:${partitionKey}`;
+  if (namespace === "teams") {
+    return "teams:all";
   }
   return `${namespace}:${partitionKey}`;
 }
@@ -352,21 +345,19 @@ function hasSyncHistory(meta: LocalCloudPartitionMeta | undefined) {
   );
 }
 
-function isAccountSourceNamespace(namespace: CloudNamespace) {
+function isProfileSourceNamespace(namespace: CloudNamespace) {
   return (
-    namespace === "account.profile" ||
-    namespace === "account.characters" ||
-    namespace === "account.weapons" ||
-    namespace === "account.artifacts" ||
-    namespace === "account.equipment"
+    namespace === "profile.app" ||
+    namespace === "profile.game" ||
+    namespace === "profile.artifacts"
   );
 }
 
-function getAccountProfileIdFromPartition(
+function getProfileIdFromPartition(
   namespace: CloudNamespace,
   partitionKey: string
 ) {
-  if (namespace === "account.artifacts") {
+  if (namespace === "profile.artifacts") {
     return partitionKey.split(":")[0] ?? partitionKey;
   }
   return partitionKey;

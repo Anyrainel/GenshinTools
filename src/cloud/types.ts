@@ -1,37 +1,25 @@
 import type { AccountProfileId } from "@/lib/account-data/types";
 
 export type CloudNamespace =
-  | "account.profile"
-  | "account.characters"
-  | "account.weapons"
-  | "account.artifacts"
-  | "account.equipment"
+  | "profile.app"
+  | "profile.game"
+  | "profile.artifacts"
   | "builds"
-  | "team.comp"
-  | "team.config"
-  | "account.freeze"
-  | "tier.character.account"
-  | "tier.character.custom"
-  | "tier.weapon"
-  | "tier.artifact"
-  | "settings.artifactScore"
-  | "account.triage"
-  | "account.resources";
+  | "teams"
+  | "tiers";
 
 export type StoreDataClass =
   | "account"
   | "builds"
   | "teams"
-  | "freeze"
   | "tiers"
-  | "settings"
   | "local-cache"
   | "session"
   | "preferences"
   | "sync-metadata";
 
 export type CloudConflictPolicy =
-  | "account-import-wins"
+  | "profile-import-wins"
   | "explicit-choice"
   | "latest-writer-wins"
   | "excluded";
@@ -95,6 +83,7 @@ export type CloudExportPartition<TPayload = unknown> = {
 export type CloudBackupDescriptor = {
   id: string;
   localStorageKey?: string;
+  localStorageKeys?: string[];
   class: StoreDataClass;
   includeInBackup: boolean;
   namespaces: CloudNamespace[];

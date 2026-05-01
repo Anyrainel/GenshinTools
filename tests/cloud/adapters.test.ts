@@ -10,33 +10,21 @@ import {
   buildsToCloud,
 } from "@/cloud/adapters/buildsAdapter";
 import {
-  type FreezeCloudSnapshot,
-  freezeFromCloud,
-  freezeToCloud,
-} from "@/cloud/adapters/freezeAdapter";
-import {
-  type SettingsCloudSnapshot,
-  settingsFromCloud,
-  settingsToCloud,
-} from "@/cloud/adapters/settingsAdapter";
-import {
   type TeamCloudSnapshot,
   teamFromCloud,
   teamToCloud,
 } from "@/cloud/adapters/teamAdapter";
 import {
   type CharacterTierListSnapshot,
-  characterTiersFromCloud,
-  characterTiersToCloud,
   type GenericTierListSnapshot,
-  genericTiersFromCloud,
-  genericTiersToCloud,
+  tiersFromCloud,
+  tiersToCloud,
 } from "@/cloud/adapters/tierAdapter";
 import { createEnvelope, verifyEnvelopePayload } from "@/cloud/payload";
 import type { ArtifactData, Build, WeaponData } from "@/data/types";
 
 describe("account cloud adapter", () => {
-  it("partitions profiles, source data, equipment, set groups, and disposable weapons", () => {
+  it("partitions profiles, game data, artifacts, and disposable weapons", () => {
     const equippedWeapon: WeaponData = {
       id: "weapon-1",
       key: "black_tassel",
@@ -55,6 +43,15 @@ describe("account cloud adapter", () => {
     const duplicateArtifact = artifact("artifact-2");
     const snapshot: AccountCloudSnapshot = {
       activeAccountId: 0,
+      freezesByProfileId: {
+        0: {
+          reuseMode: "forceReuse",
+          frozenArtifactIds: ["artifact-1"],
+          frozenTeamLoadouts: {},
+        },
+      },
+      triageByProfileId: { 0: { triageMode: "strict" } },
+      resourcesByProfileId: { 0: { panelOpen: true } },
       accounts: {
         0: {
           id: 0,
@@ -87,14 +84,24 @@ describe("account cloud adapter", () => {
     const partitions = accountToCloud(snapshot);
 
     expect(
-      partitions.filter(
-        (partition) => partition.namespace === "account.profile"
-      )
+      partitions.map((partition) => [
+        partition.namespace,
+        partition.partitionKey,
+      ])
+    ).toEqual([
+      ["profile.app", "0"],
+      ["profile.game", "0"],
+      ["profile.artifacts", "0"],
+      ["profile.app", "600000001"],
+      ["profile.game", "600000001"],
+      ["profile.artifacts", "600000001"],
+    ]);
+    expect(
+      partitions.filter((partition) => partition.namespace === "profile.app")
     ).toHaveLength(2);
     const weaponPayload = partitions.find(
       (partition) =>
-        partition.namespace === "account.weapons" &&
-        partition.partitionKey === "0"
+        partition.namespace === "profile.game" && partition.partitionKey === "0"
     )?.payload as { weapons: { key: string }[] };
     expect(weaponPayload.weapons).toEqual([
       {
@@ -104,17 +111,23 @@ describe("account cloud adapter", () => {
         level: 1,
         refinement: 1,
         lock: false,
+        equippedCharacterId: "amber",
       },
     ]);
 
     const artifactPayload = partitions.find(
       (partition) =>
-        partition.namespace === "account.artifacts" &&
-        partition.partitionKey === "0:gladiators_finale"
+        partition.namespace === "profile.artifacts" &&
+        partition.partitionKey === "0"
     )?.payload as {
-      artifacts: { id: string; identity: { occurrence: number } }[];
+      artifacts: {
+        id: string;
+        identity: { occurrence: number };
+        equippedCharacterId?: string;
+      }[];
     };
     expect(artifactPayload.artifacts).toHaveLength(2);
+    expect(artifactPayload.artifacts[0].equippedCharacterId).toBe("amber");
     expect(new Set(artifactPayload.artifacts.map((item) => item.id)).size).toBe(
       2
     );
@@ -130,6 +143,11 @@ describe("account cloud adapter", () => {
     expect(restored.accounts[0].data.extraWeapons).toEqual([]);
     expect(restored.accounts[0].data.extraArtifacts).toHaveLength(1);
     expect(restored.accounts[600000001].name).toBe("UID");
+    expect(restored.freezesByProfileId[0].frozenArtifactIds).toEqual([
+      artifactPayload.artifacts[0].id,
+    ]);
+    expect(restored.triageByProfileId[0]).toEqual({ triageMode: "strict" });
+    expect(restored.resourcesByProfileId[0]).toEqual({ panelOpen: true });
   });
 });
 
@@ -154,6 +172,7 @@ describe("cloud source adapters", () => {
       hiddenCharacters: { amber: true },
       characterWeapons: { amber: ["black_tassel"] },
       computeOptions: { normalizeFlatStats: true },
+      artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
       author: "author",
       description: "description",
       validationErrors: { "custom-build": ["local only"] },
@@ -161,6 +180,12 @@ describe("cloud source adapters", () => {
     } satisfies BuildsCloudSnapshot & Record<string, unknown>;
 
     const [partition] = buildsToCloud(snapshot);
+    expect(partition).toMatchObject({
+      namespace: "builds",
+      partitionKey: "all",
+      schemaVersion: 1,
+      conflictPolicy: "explicit-choice",
+    });
     expect(partition.payload).not.toHaveProperty("validationErrors");
     expect(partition.payload).not.toHaveProperty("activePresetPayload");
     expect(buildsFromCloud([partition])).toEqual({
@@ -169,6 +194,7 @@ describe("cloud source adapters", () => {
       hiddenCharacters: { amber: true },
       characterWeapons: { amber: ["black_tassel"] },
       computeOptions: { normalizeFlatStats: true },
+      artifactScore: snapshot.artifactScore,
       author: "author",
       description: "description",
     });
@@ -207,10 +233,12 @@ describe("cloud source adapters", () => {
     } satisfies TeamCloudSnapshot & Record<string, unknown>;
 
     const partitions = teamToCloud(snapshot);
-    expect(
-      partitions.find((partition) => partition.namespace === "team.comp")
-        ?.payload
-    ).not.toHaveProperty("resultsByTeamId");
+    expect(partitions).toHaveLength(1);
+    expect(partitions[0]).toMatchObject({
+      namespace: "teams",
+      partitionKey: "all",
+    });
+    expect(partitions[0].payload).not.toHaveProperty("resultsByTeamId");
     expect(teamFromCloud(partitions)).toEqual({
       activePresetId: null,
       compDeltas: snapshot.compDeltas,
@@ -220,35 +248,7 @@ describe("cloud source adapters", () => {
     });
   });
 
-  it("round-trips freeze intent as account-scoped flat loadouts", () => {
-    const snapshot: FreezeCloudSnapshot = {
-      freezesByProfileId: {
-        0: {
-          reuseMode: "forceReuse",
-          frozenArtifactIds: ["artifact-standalone"],
-          frozenTeamLoadouts: {
-            "team-1": {
-              frozenCharIds: ["amber"],
-              artifactIdsByChar: {
-                amber: { flower: "artifact-1" },
-              },
-            },
-          },
-        },
-      },
-    };
-    const partitions = freezeToCloud(snapshot);
-    expect(partitions[0].payload.loadouts).toEqual([
-      {
-        teamId: "team-1",
-        charId: "amber",
-        artifactIds: { flower: "artifact-1" },
-      },
-    ]);
-    expect(freezeFromCloud(partitions)).toEqual(snapshot);
-  });
-
-  it("round-trips character, weapon, and artifact tier list partitions", () => {
+  it("round-trips combined character, weapon, and artifact tier lists", () => {
     const characterSnapshot: CharacterTierListSnapshot = {
       activeTierListId: 1,
       nextId: 3,
@@ -263,45 +263,37 @@ describe("cloud source adapters", () => {
       tierLists: { 1: tierList(1) },
     };
 
-    const characterPartitions = characterTiersToCloud(characterSnapshot);
-    expect(characterPartitions.map((partition) => partition.namespace)).toEqual(
-      ["tier.character.account", "tier.character.custom"]
-    );
-    expect(characterTiersFromCloud(characterPartitions).tierLists[1]).toEqual(
+    const partitions = tiersToCloud({
+      character: characterSnapshot,
+      weapon: genericSnapshot,
+      artifact: genericSnapshot,
+    });
+    expect(partitions).toHaveLength(1);
+    expect(partitions[0]).toMatchObject({
+      namespace: "tiers",
+      partitionKey: "all",
+    });
+    expect(tiersFromCloud(partitions).character.tierLists[1]).toEqual(
       characterSnapshot.tierLists[1]
     );
-
-    const weaponPartitions = genericTiersToCloud(
-      genericSnapshot,
-      "tier.weapon"
+    expect(tiersFromCloud(partitions).weapon.tierLists[1]).toEqual(
+      genericSnapshot.tierLists[1]
     );
-    const artifactPartitions = genericTiersToCloud(
-      genericSnapshot,
-      "tier.artifact"
+    expect(tiersFromCloud(partitions).artifact.tierLists[1]).toEqual(
+      genericSnapshot.tierLists[1]
     );
-    expect(
-      genericTiersFromCloud(weaponPartitions, "tier.weapon").tierLists[1]
-    ).toEqual(genericSnapshot.tierLists[1]);
-    expect(
-      genericTiersFromCloud(artifactPartitions, "tier.artifact").tierLists[1]
-    ).toEqual(genericSnapshot.tierLists[1]);
-  });
-
-  it("round-trips settings by global and account-scoped namespaces", () => {
-    const snapshot: SettingsCloudSnapshot = {
-      artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
-      triageByProfileId: { 0: { triageMode: "strict" } },
-      resourcesByProfileId: { 0: { panelOpen: true } },
-    };
-    const partitions = settingsToCloud(snapshot);
-    expect(settingsFromCloud(partitions)).toEqual(snapshot);
   });
 
   it("creates verifiable cloud payload envelopes", async () => {
-    const [partition] = settingsToCloud({
+    const [partition] = buildsToCloud({
+      activePresetId: null,
+      deltas: [],
+      hiddenCharacters: {},
+      characterWeapons: {},
+      computeOptions: {},
       artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
-      triageByProfileId: {},
-      resourcesByProfileId: {},
+      author: "",
+      description: "",
     });
     const envelope = await createEnvelope(partition, {
       rev: "rev-test",

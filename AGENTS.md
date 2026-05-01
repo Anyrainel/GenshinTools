@@ -102,13 +102,14 @@ Do not introduce a repo-wide generic `Result<T>` abstraction. Prefer domain-spec
 ## Store And Data Migrations
 
 When changing persisted store shape:
+0. If smooth migration is not possible, discuss options before implementing.
 1. Document the old shape at the migration site as comments.
 2. Always version the store data, but avoid multiple local version bumps for the same push.
-3. Migrate from the current origin version; merge with any existing local migration bump.
+3. Migrate from the current origin version; merge with any existing local migration bump. If default values changed, don't add migration to force the old default value.
 4. Always add migration test for the old format, ensure all shapes of valid data can be migrated.
 
-If smooth migration is not possible, discuss options before implementing. If default values changed, don't add migration to force the old default value.
 For non-store refactors, migrate callers to one clean import/implementation path; do not add re-export compatibility shims for internal code.
+Must clean up old types and code paths, with one exception: the store migration (logic + old schema) should live under src/stores/migration/.
 
 ## Testing
 

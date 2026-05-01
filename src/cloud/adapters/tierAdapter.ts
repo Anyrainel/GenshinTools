@@ -1,4 +1,3 @@
-import { encodePathSegment } from "@/cloud/payload";
 import type { CloudExportPartition } from "@/cloud/types";
 import type { TierAssignment, TierCustomization } from "@/data/types";
 import type { AccountProfileId } from "@/lib/account-data/types";
@@ -38,61 +37,101 @@ export type TierListPayload = {
   tierCustomization: TierCustomization;
 };
 
-export function characterTiersToCloud(
-  snapshot: CharacterTierListSnapshot
-): CloudExportPartition<TierListPayload>[] {
-  return Object.values(snapshot.tierLists).map((list) => {
-    const linked = list.linkedAccountId != null;
-    return {
-      namespace: linked ? "tier.character.account" : "tier.character.custom",
-      partitionKey: encodePathSegment(
-        linked ? (list.linkedAccountId ?? "") : listId(list.id)
-      ),
+export type TiersCloudSnapshot = {
+  character: CharacterTierListSnapshot;
+  weapon: GenericTierListSnapshot;
+  artifact: GenericTierListSnapshot;
+};
+
+export type TiersCloudPayload = {
+  character: {
+    activeTierListId: number;
+    nextId: number;
+    lists: TierListPayload[];
+  };
+  weapon: {
+    activeTierListId: number;
+    nextId: number;
+    lists: TierListPayload[];
+  };
+  artifact: {
+    activeTierListId: number;
+    nextId: number;
+    lists: TierListPayload[];
+  };
+};
+
+export function tiersToCloud(
+  snapshot: TiersCloudSnapshot
+): CloudExportPartition<TiersCloudPayload>[] {
+  return [
+    {
+      namespace: "tiers",
+      partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
-      payload: tierListPayload(list, {
-        linkedAccountProfileId: list.linkedAccountId,
-      }),
-    };
-  });
+      payload: {
+        character: characterTierPayload(snapshot.character),
+        weapon: genericTierPayload(snapshot.weapon),
+        artifact: genericTierPayload(snapshot.artifact),
+      },
+    },
+  ];
 }
 
-export function genericTiersToCloud(
-  snapshot: GenericTierListSnapshot,
-  namespace: "tier.weapon" | "tier.artifact"
-): CloudExportPartition<TierListPayload>[] {
-  return Object.values(snapshot.tierLists).map((list) => ({
-    namespace,
-    partitionKey: listId(list.id),
-    schemaVersion: 1,
-    conflictPolicy: "explicit-choice",
-    payload: tierListPayload(list),
-  }));
+export function tiersFromCloud(partitions: CloudExportPartition[]) {
+  const current = partitions.find(
+    (partition) => partition.namespace === "tiers"
+  )?.payload as TiersCloudPayload | undefined;
+  return {
+    character: current
+      ? characterSnapshotFromPayload(current.character)
+      : tierSnapshot<CharacterTierListInstanceSnapshot>([]),
+    weapon: current
+      ? genericSnapshotFromPayload(current.weapon)
+      : tierSnapshot<TierListInstanceSnapshot>([]),
+    artifact: current
+      ? genericSnapshotFromPayload(current.artifact)
+      : tierSnapshot<TierListInstanceSnapshot>([]),
+  };
 }
 
-export function characterTiersFromCloud(
-  partitions: CloudExportPartition[]
+function characterTierPayload(snapshot: CharacterTierListSnapshot) {
+  return {
+    activeTierListId: snapshot.activeTierListId,
+    nextId: snapshot.nextId,
+    lists: Object.values(snapshot.tierLists).map((list) =>
+      tierListPayload(list, { linkedAccountProfileId: list.linkedAccountId })
+    ),
+  };
+}
+
+function genericTierPayload(snapshot: GenericTierListSnapshot) {
+  return {
+    activeTierListId: snapshot.activeTierListId,
+    nextId: snapshot.nextId,
+    lists: Object.values(snapshot.tierLists).map((list) =>
+      tierListPayload(list)
+    ),
+  };
+}
+
+function characterSnapshotFromPayload(
+  payload: TiersCloudPayload["character"]
 ): CharacterTierListSnapshot {
-  const lists = partitions
-    .filter(
-      (partition) =>
-        partition.namespace === "tier.character.account" ||
-        partition.namespace === "tier.character.custom"
-    )
-    .map((partition) => partition.payload as TierListPayload)
-    .map((payload, index) => characterTierListFromPayload(payload, index + 1));
-  return tierSnapshot(lists);
+  const lists = payload.lists.map((list, index) =>
+    characterTierListFromPayload(list, index + 1)
+  );
+  return tierSnapshot(lists, payload.activeTierListId, payload.nextId);
 }
 
-export function genericTiersFromCloud(
-  partitions: CloudExportPartition[],
-  namespace: "tier.weapon" | "tier.artifact"
+function genericSnapshotFromPayload(
+  payload: TiersCloudPayload["weapon"] | TiersCloudPayload["artifact"]
 ): GenericTierListSnapshot {
-  const lists = partitions
-    .filter((partition) => partition.namespace === namespace)
-    .map((partition) => partition.payload as TierListPayload)
-    .map((payload, index) => tierListFromPayload(payload, index + 1));
-  return tierSnapshot(lists);
+  const lists = payload.lists.map((list, index) =>
+    tierListFromPayload(list, index + 1)
+  );
+  return tierSnapshot(lists, payload.activeTierListId, payload.nextId);
 }
 
 function tierListPayload(
@@ -136,17 +175,22 @@ function characterTierListFromPayload(
   };
 }
 
-function tierSnapshot<TList extends TierListInstanceSnapshot>(lists: TList[]) {
+function tierSnapshot<TList extends TierListInstanceSnapshot>(
+  lists: TList[],
+  activeId?: number,
+  nextId?: number
+) {
   const fallback = lists.length ? lists : [emptyList(1) as TList];
   const tierLists = Object.fromEntries(
     fallback.map((list) => [list.id, list])
   ) as Record<number, TList>;
   const ids = Object.keys(tierLists).map(Number);
-  const activeTierListId = Math.min(...ids);
+  const activeTierListId =
+    activeId != null && tierLists[activeId] ? activeId : Math.min(...ids);
   return {
     tierLists,
     activeTierListId,
-    nextId: Math.max(...ids) + 1,
+    nextId: Math.max(nextId ?? 0, Math.max(...ids) + 1),
   };
 }
 

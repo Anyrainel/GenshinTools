@@ -9,26 +9,11 @@ import {
   buildsToCloud,
 } from "@/cloud/adapters/buildsAdapter";
 import {
-  type FreezeCloudSnapshot,
-  freezeFromCloud,
-  freezeToCloud,
-} from "@/cloud/adapters/freezeAdapter";
-import {
-  type SettingsCloudSnapshot,
-  settingsFromCloud,
-  settingsToCloud,
-} from "@/cloud/adapters/settingsAdapter";
-import {
   type TeamCloudSnapshot,
   teamFromCloud,
   teamToCloud,
 } from "@/cloud/adapters/teamAdapter";
-import {
-  characterTiersFromCloud,
-  characterTiersToCloud,
-  genericTiersFromCloud,
-  genericTiersToCloud,
-} from "@/cloud/adapters/tierAdapter";
+import { tiersFromCloud, tiersToCloud } from "@/cloud/adapters/tierAdapter";
 import type { CloudExportPartition, CloudRestorePlan } from "@/cloud/types";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
@@ -45,11 +30,9 @@ export type LocalCloudSnapshots = {
   account: AccountCloudSnapshot;
   builds: BuildsCloudSnapshot;
   teams: TeamCloudSnapshot;
-  freeze: FreezeCloudSnapshot;
   characterTiers: ReturnType<typeof getCharacterTierSnapshot>;
   weaponTiers: ReturnType<typeof getWeaponTierSnapshot>;
   artifactTiers: ReturnType<typeof getArtifactTierSnapshot>;
-  settings: SettingsCloudSnapshot;
 };
 
 export function getLocalCloudSnapshots(): LocalCloudSnapshots {
@@ -57,11 +40,9 @@ export function getLocalCloudSnapshots(): LocalCloudSnapshots {
     account: getAccountSnapshot(),
     builds: getBuildsSnapshot(),
     teams: getTeamSnapshot(),
-    freeze: getFreezeSnapshot(),
     characterTiers: getCharacterTierSnapshot(),
     weaponTiers: getWeaponTierSnapshot(),
     artifactTiers: getArtifactTierSnapshot(),
-    settings: getSettingsSnapshot(),
   };
 }
 
@@ -71,26 +52,31 @@ export function buildLocalBackupPartitions(): CloudExportPartition[] {
     ...accountToCloud(snapshots.account),
     ...buildsToCloud(snapshots.builds),
     ...teamToCloud(snapshots.teams),
-    ...freezeToCloud(snapshots.freeze),
-    ...characterTiersToCloud(snapshots.characterTiers),
-    ...genericTiersToCloud(snapshots.weaponTiers, "tier.weapon"),
-    ...genericTiersToCloud(snapshots.artifactTiers, "tier.artifact"),
-    ...settingsToCloud(snapshots.settings),
+    ...tiersToCloud({
+      character: snapshots.characterTiers,
+      weapon: snapshots.weaponTiers,
+      artifact: snapshots.artifactTiers,
+    }),
   ];
 }
 
 export function buildCloudRestorePlan(
   partitions: CloudExportPartition[]
 ): CloudRestorePlan {
+  const accountPatch = accountFromCloud(partitions);
+  const buildsPatch = buildsFromCloud(partitions);
+  const tierPatch = tiersFromCloud(partitions);
   return {
-    accounts: accountFromCloud(partitions),
-    builds: buildsFromCloud(partitions),
+    accounts: accountPatch.accounts,
+    builds: buildsPatch,
     teams: teamFromCloud(partitions),
-    freezesByProfileId: freezeFromCloud(partitions),
-    characterTierLists: characterTiersFromCloud(partitions),
-    weaponTierLists: genericTiersFromCloud(partitions, "tier.weapon"),
-    artifactTierLists: genericTiersFromCloud(partitions, "tier.artifact"),
-    ...settingsFromCloud(partitions),
+    freezesByProfileId: accountPatch.freezesByProfileId,
+    characterTierLists: tierPatch.character,
+    weaponTierLists: tierPatch.weapon,
+    artifactTierLists: tierPatch.artifact,
+    artifactScore: buildsPatch.artifactScore,
+    triageByProfileId: accountPatch.triageByProfileId,
+    resourcesByProfileId: accountPatch.resourcesByProfileId,
   };
 }
 
@@ -99,6 +85,9 @@ function getAccountSnapshot(): AccountCloudSnapshot {
   return {
     accounts: state.accounts,
     activeAccountId: state.activeAccountId,
+    freezesByProfileId: useFreezeStore.getState().freezesByProfileId,
+    triageByProfileId: useTriageStore.getState().settingsByProfileId,
+    resourcesByProfileId: useResourceRecStore.getState().settingsByProfileId,
   };
 }
 
@@ -110,6 +99,7 @@ function getBuildsSnapshot(): BuildsCloudSnapshot {
     hiddenCharacters: state.hiddenCharacters,
     characterWeapons: state.characterWeapons,
     computeOptions: state.computeOptions,
+    artifactScore: useArtifactScoreStore.getState().config,
     author: state.author,
     description: state.description,
   };
@@ -123,12 +113,6 @@ function getTeamSnapshot(): TeamCloudSnapshot {
     configsByTeamId: state.configsByTeamId,
     author: state.author,
     description: state.description,
-  };
-}
-
-function getFreezeSnapshot(): FreezeCloudSnapshot {
-  return {
-    freezesByProfileId: useFreezeStore.getState().freezesByProfileId,
   };
 }
 
@@ -156,13 +140,5 @@ function getArtifactTierSnapshot() {
     tierLists: state.tierLists,
     activeTierListId: state.activeTierListId,
     nextId: state.nextId,
-  };
-}
-
-function getSettingsSnapshot(): SettingsCloudSnapshot {
-  return {
-    artifactScore: useArtifactScoreStore.getState().config,
-    triageByProfileId: useTriageStore.getState().settingsByProfileId,
-    resourcesByProfileId: useResourceRecStore.getState().settingsByProfileId,
   };
 }

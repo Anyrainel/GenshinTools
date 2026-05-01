@@ -24,16 +24,16 @@ describe("useCloudSyncMetadataStore", () => {
     act(() => {
       useCloudSyncMetadataStore.getState().markPartitionDirty({
         namespace: "builds",
-        partitionKey: "default",
+        partitionKey: "all",
         updatedAt: 100,
       });
     });
 
-    const id = getCloudSyncPartitionId("builds", "default");
+    const id = getCloudSyncPartitionId("builds", "all");
     expect(useCloudSyncMetadataStore.getState().partitionsById[id]).toEqual({
       id,
       namespace: "builds",
-      partitionKey: "default",
+      partitionKey: "all",
       dirty: true,
       updatedAt: 100,
     });
@@ -41,7 +41,7 @@ describe("useCloudSyncMetadataStore", () => {
     act(() => {
       useCloudSyncMetadataStore.getState().markPartitionSyncedFromUpload({
         namespace: "builds",
-        partitionKey: "default",
+        partitionKey: "all",
         rev: "rev-1",
         contentHash: "sha256:local",
         syncedAt: 200,
@@ -51,7 +51,7 @@ describe("useCloudSyncMetadataStore", () => {
     expect(useCloudSyncMetadataStore.getState().partitionsById[id]).toEqual({
       id,
       namespace: "builds",
-      partitionKey: "default",
+      partitionKey: "all",
       lastSeenRev: "rev-1",
       lastAppliedHash: "sha256:local",
       lastUploadedHash: "sha256:local",
@@ -64,22 +64,22 @@ describe("useCloudSyncMetadataStore", () => {
   it("preserves upload hash when a later download becomes the applied head", () => {
     act(() => {
       useCloudSyncMetadataStore.getState().markPartitionSyncedFromUpload({
-        namespace: "team.comp",
-        partitionKey: "default",
+        namespace: "teams",
+        partitionKey: "all",
         rev: "rev-1",
         contentHash: "sha256:local",
         syncedAt: 100,
       });
       useCloudSyncMetadataStore.getState().markPartitionSyncedFromDownload({
-        namespace: "team.comp",
-        partitionKey: "default",
+        namespace: "teams",
+        partitionKey: "all",
         rev: "rev-2",
         contentHash: "sha256:cloud",
         syncedAt: 200,
       });
     });
 
-    const id = getCloudSyncPartitionId("team.comp", "default");
+    const id = getCloudSyncPartitionId("teams", "all");
     expect(
       useCloudSyncMetadataStore.getState().partitionsById[id]
     ).toMatchObject({
@@ -91,14 +91,14 @@ describe("useCloudSyncMetadataStore", () => {
   });
 
   it("records and clears conflicts separately from partition metadata", () => {
-    const id = getCloudSyncPartitionId("account.artifacts", "0:gladiators");
+    const id = getCloudSyncPartitionId("profile.artifacts", "0:gladiators");
 
     act(() => {
       useCloudSyncMetadataStore.getState().markConflict({
         id,
-        namespace: "account.artifacts",
+        namespace: "profile.artifacts",
         partitionKey: "0:gladiators",
-        groupKey: "account:0",
+        groupKey: "profile:0",
         conflictPolicy: "explicit-choice",
         reason: "both-changed",
         detectedAt: 300,
@@ -111,7 +111,7 @@ describe("useCloudSyncMetadataStore", () => {
     expect(
       useCloudSyncMetadataStore.getState().conflictsById[id]
     ).toMatchObject({
-      groupKey: "account:0",
+      groupKey: "profile:0",
       reason: "both-changed",
       remoteRev: "rev-2",
     });
@@ -119,7 +119,7 @@ describe("useCloudSyncMetadataStore", () => {
     act(() => {
       useCloudSyncMetadataStore
         .getState()
-        .clearConflict("account.artifacts", "0:gladiators");
+        .clearConflict("profile.artifacts", "0:gladiators");
     });
 
     expect(
@@ -131,7 +131,7 @@ describe("useCloudSyncMetadataStore", () => {
     act(() => {
       useCloudSyncMetadataStore.getState().markPartitionDirty({
         namespace: "builds",
-        partitionKey: "default",
+        partitionKey: "all",
       });
       useCloudSyncMetadataStore.getState().clearSyncMetadata();
     });

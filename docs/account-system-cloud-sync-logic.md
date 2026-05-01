@@ -37,14 +37,14 @@ namespace + "/" + partitionKey
 
 Examples:
 
-- `account.profile/0`
-- `account.characters/600000001`
-- `account.artifacts/600000001:gladiators_finale`
-- `builds/default`
-- `team.comp/default`
-- `team.config/default`
+- `profile.app/0`
+- `profile.game/600000001`
+- `profile.artifacts/600000001`
+- `builds/all`
+- `teams/all`
+- `tiers/all`
 
-The sync client must compare revisions per partition, not per store. A device can be current for `team.config/default` and conflicted for `builds/default` at the same time.
+The sync client must compare revisions per partition, not per store. A device can be current for `teams/all` and conflicted for `builds/all` at the same time.
 
 ## Local Sync Metadata Needed
 
@@ -118,12 +118,11 @@ The registry sets the default policy by data class:
 
 | Policy | Current namespaces | Default behavior |
 | --- | --- | --- |
-| `account-import-wins` | `account.profile`, `account.characters`, `account.weapons`, `account.artifacts`, `account.equipment` | Only an explicit account import/replace action may overwrite cloud for that profile. Passive background sync should still stop on conflict. |
-| `explicit-choice` | builds, teams, freeze, tiers, account triage/resources | Ask the user to choose local or cloud for each conflicted partition or domain group. |
-| `latest-writer-wins` | global artifact score settings | Choose the newest accepted write when both sides changed. This is acceptable only for low-risk settings. |
+| `profile-import-wins` | `profile.app`, `profile.game`, `profile.artifacts` | Only an explicit game profile import/replace action may overwrite cloud for that profile. Passive background sync should still stop on conflict. |
+| `explicit-choice` | builds, team, tiers | Ask the user to choose local or cloud for each conflicted partition or domain group. |
 | `excluded` | caches, session state, preferences, greeting state, in-memory stores | Never upload or restore. |
 
-Important: `account-import-wins` is not a blanket background overwrite rule. It means "the user intentionally imported or replaced this account profile, so that import can become the new cloud head after a revision check." If another device changed the same profile meanwhile, the UI should show what will be overwritten before proceeding.
+Important: `profile-import-wins` is not a blanket background overwrite rule. It means "the user intentionally imported or replaced this game profile, so that import can become the new cloud head after a revision check." If another device changed the same profile meanwhile, the UI should show what will be overwritten before proceeding.
 
 ## When To Download From Cloud
 
@@ -157,7 +156,7 @@ Upload should be skipped when:
 
 Upload should require user intent when:
 
-- The partition is account source data and the change comes from an explicit import replacing a profile.
+- The partition is profile source data and the change comes from an explicit import replacing a profile.
 - The server rejects the upload because cloud head moved.
 - The partition has an `explicit-choice` conflict.
 
@@ -167,14 +166,13 @@ Conflicts should be grouped for review but applied per partition.
 
 Recommended grouping:
 
-- Account profile data: group `account.profile`, `account.characters`, `account.weapons`, `account.artifacts`, and `account.equipment` by profile id.
-- Artifact shards: show one account-profile group even though `account.artifacts/{profileId}:{setGroup}` may contain multiple shards.
-- Builds: `builds/default`.
-- Team data: group `team.comp/default` and `team.config/default`, but keep their revisions separate.
-- Freeze: `account.freeze/{profileId}`.
-- Character tiers: one list partition at a time.
-- Weapon/artifact tiers: one list partition at a time.
-- Account settings: by profile id.
+- Profile app data: `profile.app/{profileId}` contains game profile metadata, profile-scoped app settings, freeze state, and other small profile-scoped app data.
+- Profile game data: `profile.game/{profileId}` contains character data plus weapon inventory.
+- Profile artifact data: `profile.artifacts/{profileId}` contains artifact inventory; equipped character id is local to each artifact item.
+- Group `profile.app`, `profile.game`, and `profile.artifacts` by profile id in conflict UI because they are related.
+- Builds: `builds/all`, including artifact score global settings.
+- Team data: `teams/all`.
+- Tier data: `tiers/all`.
 
 This keeps the UI understandable while preserving per-partition revision checks.
 

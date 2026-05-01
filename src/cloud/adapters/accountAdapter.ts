@@ -1,6 +1,6 @@
 import { encodePathSegment } from "@/cloud/payload";
 import type { CloudExportPartition } from "@/cloud/types";
-import type { Slot } from "@/data/enums";
+import { allSlots, type Slot } from "@/data/enums";
 import { weaponsById } from "@/data/gameResources";
 import type {
   AccountData,
@@ -14,21 +14,44 @@ import {
   assignWeaponIdentities,
   type CloudItemIdentity,
 } from "./itemIdentity";
-import { getArtifactSetGroup } from "./setGroup";
+
+export type ArtifactReuseMode = "none" | "sameChar" | "forceReuse";
+
+export type FrozenArtifactIdsByChar = Record<
+  string,
+  Partial<Record<Slot, string>>
+>;
+
+export type FrozenTeamLoadout = {
+  frozenCharIds: string[];
+  artifactIdsByChar: FrozenArtifactIdsByChar;
+};
+
+export type FrozenProfileStateSnapshot = {
+  frozenTeamLoadouts: Record<string, FrozenTeamLoadout>;
+  reuseMode: ArtifactReuseMode;
+  frozenArtifactIds: string[];
+};
 
 export type AccountCloudSnapshot = {
   accounts: Record<AccountProfileId, AccountState>;
   activeAccountId: AccountProfileId | null;
+  freezesByProfileId?: Record<AccountProfileId, FrozenProfileStateSnapshot>;
+  triageByProfileId?: Record<AccountProfileId, unknown>;
+  resourcesByProfileId?: Record<AccountProfileId, unknown>;
 };
 
-export type AccountProfilePayload = {
+export type AccountAppPayload = {
   accountProfileId: AccountProfileId;
   name: string;
   uid?: number;
   lastImportedAt?: number;
+  freeze?: FrozenProfileStateSnapshot;
+  triageSettings?: unknown;
+  resourceSettings?: unknown;
 };
 
-export type AccountCharactersPayload = {
+export type AccountRosterPayload = {
   accountProfileId: AccountProfileId;
   characters: {
     key: string;
@@ -36,10 +59,6 @@ export type AccountCharactersPayload = {
     constellation: number;
     talent: [number, number, number];
   }[];
-};
-
-export type AccountWeaponsPayload = {
-  accountProfileId: AccountProfileId;
   weapons: {
     id: string;
     identity: CloudItemIdentity;
@@ -47,12 +66,12 @@ export type AccountWeaponsPayload = {
     level: number;
     refinement: number;
     lock: boolean;
+    equippedCharacterId?: string;
   }[];
 };
 
 export type AccountArtifactsPayload = {
   accountProfileId: AccountProfileId;
-  setGroup: string;
   artifacts: {
     id: string;
     identity: CloudItemIdentity;
@@ -68,120 +87,118 @@ export type AccountArtifactsPayload = {
     elixirCrafted?: boolean;
     unactivatedSubstats?: ArtifactData["unactivatedSubstats"];
     initialValues?: ArtifactData["initialValues"];
-  }[];
-};
-
-export type AccountEquipmentPayload = {
-  accountProfileId: AccountProfileId;
-  equipment: {
-    charId: string;
-    weaponId?: string;
-    artifactIds?: Partial<Record<Slot, string>>;
+    equippedCharacterId?: string;
   }[];
 };
 
 export type AccountRestorePatch = {
   accounts: Record<AccountProfileId, AccountState>;
+  freezesByProfileId: Record<AccountProfileId, FrozenProfileStateSnapshot>;
+  triageByProfileId: Record<AccountProfileId, unknown>;
+  resourcesByProfileId: Record<AccountProfileId, unknown>;
 };
 
 export function accountToCloud(
   snapshot: AccountCloudSnapshot
 ): CloudExportPartition[] {
-  return Object.values(snapshot.accounts).flatMap(accountToCloudPartitions);
+  return Object.values(snapshot.accounts).flatMap((account) =>
+    accountToCloudPartitions(account, snapshot)
+  );
 }
 
 export function accountFromCloud(
   partitions: CloudExportPartition[]
 ): AccountRestorePatch {
-  const profiles = byProfile<AccountProfilePayload>(
-    partitions,
-    "account.profile"
-  );
-  const characters = byProfile<AccountCharactersPayload>(
-    partitions,
-    "account.characters"
-  );
-  const weapons = byProfile<AccountWeaponsPayload>(
-    partitions,
-    "account.weapons"
-  );
-  const equipment = byProfile<AccountEquipmentPayload>(
-    partitions,
-    "account.equipment"
-  );
+  const apps = byProfile<AccountAppPayload>(partitions, "profile.app");
+  const rosters = byProfile<AccountRosterPayload>(partitions, "profile.game");
   const artifactsByProfile = new Map<
     AccountProfileId,
-    AccountArtifactsPayload[]
+    AccountArtifactsPayload
   >();
   for (const partition of partitions) {
-    if (partition.namespace !== "account.artifacts") continue;
+    if (partition.namespace !== "profile.artifacts") continue;
     const payload = partition.payload as AccountArtifactsPayload;
-    const group = artifactsByProfile.get(payload.accountProfileId);
-    if (group) group.push(payload);
-    else artifactsByProfile.set(payload.accountProfileId, [payload]);
+    artifactsByProfile.set(payload.accountProfileId, payload);
   }
 
   const profileIds = new Set<AccountProfileId>([
-    ...profiles.keys(),
-    ...characters.keys(),
-    ...weapons.keys(),
-    ...equipment.keys(),
+    ...apps.keys(),
+    ...rosters.keys(),
     ...artifactsByProfile.keys(),
   ]);
 
   const accounts: Record<AccountProfileId, AccountState> = {};
+  const freezesByProfileId: Record<
+    AccountProfileId,
+    FrozenProfileStateSnapshot
+  > = {};
+  const triageByProfileId: Record<AccountProfileId, unknown> = {};
+  const resourcesByProfileId: Record<AccountProfileId, unknown> = {};
   for (const profileId of profileIds) {
-    const profile = profiles.get(profileId);
+    const app = apps.get(profileId);
+    if (app?.freeze) freezesByProfileId[profileId] = app.freeze;
+    if (app && "triageSettings" in app) {
+      triageByProfileId[profileId] = app.triageSettings;
+    }
+    if (app && "resourceSettings" in app) {
+      resourcesByProfileId[profileId] = app.resourceSettings;
+    }
     accounts[profileId] = {
       id: profileId,
-      name: profile?.name ?? `Account ${profileId}`,
-      lastUpdate: profile?.lastImportedAt ?? Date.now(),
+      name: app?.name ?? `Account ${profileId}`,
+      lastUpdate: app?.lastImportedAt ?? Date.now(),
       data: restoreAccountData(
-        characters.get(profileId),
-        weapons.get(profileId),
-        artifactsByProfile.get(profileId) ?? [],
-        equipment.get(profileId)
+        rosters.get(profileId),
+        artifactsByProfile.get(profileId)
       ),
     };
   }
 
-  return { accounts };
+  return {
+    accounts,
+    freezesByProfileId,
+    triageByProfileId,
+    resourcesByProfileId,
+  };
 }
 
 function accountToCloudPartitions(
-  account: AccountState
+  account: AccountState,
+  snapshot: AccountCloudSnapshot
 ): CloudExportPartition[] {
-  const { weaponByLocalId, weapons } = collectWeapons(account.data);
-  const { artifacts } = collectArtifacts(account.data);
+  const { weaponByLocalId, weapons, weaponEquippedCharacterByLocalId } =
+    collectWeapons(account.data);
+  const { artifacts, artifactEquippedCharacterByLocalId } = collectArtifacts(
+    account.data
+  );
   const identifiedWeapons = assignWeaponIdentities(weapons);
   const identifiedArtifacts = assignArtifactIdentities(artifacts);
-  const weaponIdByLocalId = new Map(
-    identifiedWeapons.map((entry) => [entry.localId, entry.cloudId])
-  );
   const artifactIdByLocalId = new Map(
     identifiedArtifacts.map((entry) => [entry.localId, entry.cloudId])
   );
-  const artifactsByGroup = new Map<
-    string,
-    ReturnType<typeof toCloudArtifact>[]
-  >();
-
-  for (const entry of identifiedArtifacts) {
-    const cloudArtifact = toCloudArtifact(entry);
-    const group = getArtifactSetGroup(entry.item.setKey);
-    const existing = artifactsByGroup.get(group);
-    if (existing) existing.push(cloudArtifact);
-    else artifactsByGroup.set(group, [cloudArtifact]);
-  }
 
   return [
-    cloudPartition("account.profile", String(account.id), {
+    cloudPartition("profile.app", String(account.id), {
       accountProfileId: account.id,
       name: account.name,
       ...(account.id !== 0 ? { uid: account.id } : {}),
       lastImportedAt: account.lastUpdate,
-    } satisfies AccountProfilePayload),
-    cloudPartition("account.characters", String(account.id), {
+      ...(snapshot.freezesByProfileId?.[account.id]
+        ? {
+            freeze: toCloudFreezeProfile(
+              snapshot.freezesByProfileId[account.id],
+              artifactIdByLocalId
+            ),
+          }
+        : {}),
+      ...(account.id in (snapshot.triageByProfileId ?? {})
+        ? { triageSettings: snapshot.triageByProfileId?.[account.id] }
+        : {}),
+      ...(account.id in (snapshot.resourcesByProfileId ?? {})
+        ? { resourceSettings: snapshot.resourcesByProfileId?.[account.id] }
+        : {}),
+    } satisfies AccountAppPayload),
+    cloudPartition("profile.game", String(account.id), {
       accountProfileId: account.id,
       characters: account.data.characters.map((character) => ({
         key: character.key,
@@ -193,9 +210,6 @@ function accountToCloudPartitions(
           character.talent.burst,
         ],
       })),
-    } satisfies AccountCharactersPayload),
-    cloudPartition("account.weapons", String(account.id), {
-      accountProfileId: account.id,
       weapons: identifiedWeapons
         .filter(
           (entry) =>
@@ -211,31 +225,21 @@ function accountToCloudPartitions(
           level: entry.item.level,
           refinement: entry.item.refinement,
           lock: entry.item.lock,
+          ...(weaponEquippedCharacterByLocalId.get(entry.localId)
+            ? {
+                equippedCharacterId: weaponEquippedCharacterByLocalId.get(
+                  entry.localId
+                ),
+              }
+            : {}),
         })),
-    } satisfies AccountWeaponsPayload),
-    cloudPartition("account.equipment", String(account.id), {
+    } satisfies AccountRosterPayload),
+    cloudPartition("profile.artifacts", String(account.id), {
       accountProfileId: account.id,
-      equipment: account.data.characters.map((character) => ({
-        charId: character.key,
-        ...(character.weapon
-          ? { weaponId: weaponIdByLocalId.get(character.weapon.id) }
-          : {}),
-        artifactIds: Object.fromEntries(
-          Object.entries(character.artifacts).flatMap(([slot, artifact]) => {
-            if (!artifact) return [];
-            const cloudId = artifactIdByLocalId.get(artifact.id);
-            return cloudId ? [[slot, cloudId]] : [];
-          })
-        ) as Partial<Record<Slot, string>>,
-      })),
-    } satisfies AccountEquipmentPayload),
-    ...[...artifactsByGroup.entries()].map(([setGroup, artifacts]) =>
-      cloudPartition("account.artifacts", `${account.id}:${setGroup}`, {
-        accountProfileId: account.id,
-        setGroup,
-        artifacts,
-      } satisfies AccountArtifactsPayload)
-    ),
+      artifacts: identifiedArtifacts.map((entry) =>
+        toCloudArtifact(entry, artifactEquippedCharacterByLocalId)
+      ),
+    } satisfies AccountArtifactsPayload),
   ];
 }
 
@@ -248,30 +252,38 @@ function cloudPartition<TPayload>(
     namespace,
     partitionKey: encodePathSegment(partitionKey),
     schemaVersion: 1,
-    conflictPolicy: "account-import-wins",
+    conflictPolicy: "profile-import-wins",
     payload,
   };
 }
 
 function collectWeapons(data: AccountData) {
   const weaponByLocalId = new Map<string, WeaponData>();
+  const weaponEquippedCharacterByLocalId = new Map<string, string>();
   for (const character of data.characters) {
-    if (character.weapon)
+    if (character.weapon) {
       weaponByLocalId.set(character.weapon.id, character.weapon);
+      weaponEquippedCharacterByLocalId.set(character.weapon.id, character.key);
+    }
   }
   for (const weapon of data.extraWeapons)
     weaponByLocalId.set(weapon.id, weapon);
   return {
     weaponByLocalId,
+    weaponEquippedCharacterByLocalId,
     weapons: [...weaponByLocalId.values()],
   };
 }
 
 function collectArtifacts(data: AccountData) {
   const artifactByLocalId = new Map<string, ArtifactData>();
+  const artifactEquippedCharacterByLocalId = new Map<string, string>();
   for (const character of data.characters) {
     for (const artifact of Object.values(character.artifacts)) {
-      if (artifact) artifactByLocalId.set(artifact.id, artifact);
+      if (artifact) {
+        artifactByLocalId.set(artifact.id, artifact);
+        artifactEquippedCharacterByLocalId.set(artifact.id, character.key);
+      }
     }
   }
   for (const artifact of data.extraArtifacts) {
@@ -279,6 +291,7 @@ function collectArtifacts(data: AccountData) {
   }
   return {
     artifactByLocalId,
+    artifactEquippedCharacterByLocalId,
     artifacts: [...artifactByLocalId.values()],
   };
 }
@@ -306,7 +319,8 @@ function shouldSkipWeaponForCloud(weapon: WeaponData, equipped: boolean) {
 }
 
 function toCloudArtifact(
-  entry: ReturnType<typeof assignArtifactIdentities>[number]
+  entry: ReturnType<typeof assignArtifactIdentities>[number],
+  artifactEquippedCharacterByLocalId: Map<string, string>
 ): AccountArtifactsPayload["artifacts"][number] {
   return {
     id: entry.cloudId,
@@ -333,6 +347,43 @@ function toCloudArtifact(
     ...(entry.item.initialValues
       ? { initialValues: entry.item.initialValues }
       : {}),
+    ...(artifactEquippedCharacterByLocalId.get(entry.localId)
+      ? {
+          equippedCharacterId: artifactEquippedCharacterByLocalId.get(
+            entry.localId
+          ),
+        }
+      : {}),
+  };
+}
+
+function toCloudFreezeProfile(
+  profile: FrozenProfileStateSnapshot,
+  artifactIdByLocalId: Map<string, string>
+): FrozenProfileStateSnapshot {
+  const mapArtifactId = (id: string) => artifactIdByLocalId.get(id) ?? id;
+  const frozenTeamLoadouts: FrozenProfileStateSnapshot["frozenTeamLoadouts"] =
+    {};
+  for (const [teamId, loadout] of Object.entries(profile.frozenTeamLoadouts)) {
+    frozenTeamLoadouts[teamId] = {
+      frozenCharIds: [...loadout.frozenCharIds],
+      artifactIdsByChar: Object.fromEntries(
+        Object.entries(loadout.artifactIdsByChar).map(([charId, ids]) => [
+          charId,
+          Object.fromEntries(
+            allSlots.flatMap((slot) => {
+              const id = ids[slot];
+              return id ? [[slot, mapArtifactId(id)]] : [];
+            })
+          ) as Partial<Record<Slot, string>>,
+        ])
+      ),
+    };
+  }
+  return {
+    reuseMode: profile.reuseMode,
+    frozenArtifactIds: profile.frozenArtifactIds.map(mapArtifactId),
+    frozenTeamLoadouts,
   };
 }
 
@@ -350,98 +401,113 @@ function byProfile<TPayload extends { accountProfileId: AccountProfileId }>(
 }
 
 function restoreAccountData(
-  charactersPayload: AccountCharactersPayload | undefined,
-  weaponsPayload: AccountWeaponsPayload | undefined,
-  artifactPayloads: AccountArtifactsPayload[],
-  equipmentPayload: AccountEquipmentPayload | undefined
+  rosterPayload: AccountRosterPayload | undefined,
+  artifactPayload: AccountArtifactsPayload | undefined
 ): AccountData {
-  const weaponById = new Map(
-    (weaponsPayload?.weapons ?? []).map((weapon) => [
-      weapon.id,
-      {
-        id: weapon.id,
-        key: weapon.key,
-        level: weapon.level,
-        refinement: weapon.refinement,
-        lock: weapon.lock,
-      } satisfies WeaponData,
+  const weaponByCharId = new Map(
+    (rosterPayload?.weapons ?? []).flatMap((weapon) => {
+      if (!weapon.equippedCharacterId) return [];
+      return [
+        [
+          weapon.equippedCharacterId,
+          {
+            id: weapon.id,
+            key: weapon.key,
+            level: weapon.level,
+            refinement: weapon.refinement,
+            lock: weapon.lock,
+          } satisfies WeaponData,
+        ],
+      ];
+    })
+  );
+  const equippedWeaponIds = new Set(
+    (rosterPayload?.weapons ?? [])
+      .filter((weapon) => weapon.equippedCharacterId)
+      .map((weapon) => weapon.id)
+  );
+  const artifactsByCharId = new Map<
+    string,
+    Partial<Record<Slot, ArtifactData>>
+  >();
+  const equippedArtifactIds = new Set<string>();
+  const artifactById = new Map(
+    (artifactPayload?.artifacts ?? []).map((artifact) => [
+      artifact.id,
+      artifactFromPayload(artifact),
     ])
   );
-  const artifactById = new Map(
-    artifactPayloads
-      .flatMap((payload) => payload.artifacts)
-      .map((artifact) => [
-        artifact.id,
-        {
-          id: artifact.id,
-          setKey: artifact.setKey,
-          slotKey: artifact.slotKey,
-          level: artifact.level,
-          rarity: artifact.rarity,
-          mainStatKey: artifact.mainStatKey,
-          lock: artifact.lock,
-          substats: artifact.substats,
-          ...(artifact.totalRolls != null
-            ? { totalRolls: artifact.totalRolls }
-            : {}),
-          ...(artifact.astralMark != null
-            ? { astralMark: artifact.astralMark }
-            : {}),
-          ...(artifact.elixirCrafted != null
-            ? { elixirCrafted: artifact.elixirCrafted }
-            : {}),
-          ...(artifact.unactivatedSubstats
-            ? { unactivatedSubstats: artifact.unactivatedSubstats }
-            : {}),
-          ...(artifact.initialValues
-            ? { initialValues: artifact.initialValues }
-            : {}),
-        } satisfies ArtifactData,
-      ])
-  );
-  const equipmentByChar = new Map(
-    (equipmentPayload?.equipment ?? []).map((entry) => [entry.charId, entry])
-  );
-  const equippedWeaponIds = new Set<string>();
-  const equippedArtifactIds = new Set<string>();
 
-  const characters: CharacterData[] = (charactersPayload?.characters ?? []).map(
-    (character) => {
-      const equipment = equipmentByChar.get(character.key);
-      const weapon = equipment?.weaponId
-        ? weaponById.get(equipment.weaponId)
-        : undefined;
-      if (weapon) equippedWeaponIds.add(weapon.id);
-      const artifacts = Object.fromEntries(
-        Object.entries(equipment?.artifactIds ?? {}).flatMap(([slot, id]) => {
-          const artifact = artifactById.get(id);
-          if (!artifact) return [];
-          equippedArtifactIds.add(artifact.id);
-          return [[slot, artifact]];
-        })
-      ) as Partial<Record<Slot, ArtifactData>>;
-      return {
-        key: character.key,
-        level: character.level,
-        constellation: character.constellation,
-        talent: {
-          auto: character.talent[0],
-          skill: character.talent[1],
-          burst: character.talent[2],
-        },
-        ...(weapon ? { weapon } : {}),
-        artifacts,
-      };
+  for (const artifact of artifactPayload?.artifacts ?? []) {
+    if (!artifact.equippedCharacterId) continue;
+    const bySlot = artifactsByCharId.get(artifact.equippedCharacterId) ?? {};
+    const restored = artifactById.get(artifact.id);
+    if (restored) {
+      bySlot[artifact.slotKey] = restored;
+      equippedArtifactIds.add(artifact.id);
     }
+    artifactsByCharId.set(artifact.equippedCharacterId, bySlot);
+  }
+
+  const characters: CharacterData[] = (rosterPayload?.characters ?? []).map(
+    (character) => ({
+      key: character.key,
+      level: character.level,
+      constellation: character.constellation,
+      talent: {
+        auto: character.talent[0],
+        skill: character.talent[1],
+        burst: character.talent[2],
+      },
+      ...(weaponByCharId.get(character.key)
+        ? { weapon: weaponByCharId.get(character.key) }
+        : {}),
+      artifacts: artifactsByCharId.get(character.key) ?? {},
+    })
   );
 
   return {
     characters,
-    extraWeapons: [...weaponById.values()].filter(
-      (weapon) => !equippedWeaponIds.has(weapon.id)
-    ),
+    extraWeapons: (rosterPayload?.weapons ?? [])
+      .filter((weapon) => !equippedWeaponIds.has(weapon.id))
+      .map(
+        (weapon) =>
+          ({
+            id: weapon.id,
+            key: weapon.key,
+            level: weapon.level,
+            refinement: weapon.refinement,
+            lock: weapon.lock,
+          }) satisfies WeaponData
+      ),
     extraArtifacts: [...artifactById.values()].filter(
       (artifact) => !equippedArtifactIds.has(artifact.id)
     ),
+  };
+}
+
+function artifactFromPayload(
+  artifact: AccountArtifactsPayload["artifacts"][number]
+): ArtifactData {
+  return {
+    id: artifact.id,
+    setKey: artifact.setKey,
+    slotKey: artifact.slotKey,
+    level: artifact.level,
+    rarity: artifact.rarity,
+    mainStatKey: artifact.mainStatKey,
+    lock: artifact.lock,
+    substats: artifact.substats,
+    ...(artifact.totalRolls != null ? { totalRolls: artifact.totalRolls } : {}),
+    ...(artifact.astralMark != null ? { astralMark: artifact.astralMark } : {}),
+    ...(artifact.elixirCrafted != null
+      ? { elixirCrafted: artifact.elixirCrafted }
+      : {}),
+    ...(artifact.unactivatedSubstats
+      ? { unactivatedSubstats: artifact.unactivatedSubstats }
+      : {}),
+    ...(artifact.initialValues
+      ? { initialValues: artifact.initialValues }
+      : {}),
   };
 }

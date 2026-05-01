@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getCloudConflictGroupKey,
-  planCloudSync,
-  planPartitionSync,
-} from "@/cloud/syncPlanner";
+import { getCloudConflictGroupKey, planCloudSync } from "@/cloud/syncPlanner";
 import type {
   CloudLocalPartitionState,
   CloudNamespace,
@@ -16,7 +12,7 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [],
       localMeta: [],
-      remoteHeads: [remote("builds", "default", "rev-1", "hash-cloud")],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud")],
     });
 
     expect(plan.downloads).toHaveLength(1);
@@ -29,7 +25,7 @@ describe("cloud sync planner", () => {
 
   it("uploads a local-only partition as a first cloud write", () => {
     const plan = planCloudSync({
-      localPartitions: [local("builds", "default", "hash-local")],
+      localPartitions: [local("builds", "all", "hash-local")],
       localMeta: [],
       remoteHeads: [],
     });
@@ -44,9 +40,9 @@ describe("cloud sync planner", () => {
 
   it("marks matching local and remote content as synced", () => {
     const plan = planCloudSync({
-      localPartitions: [local("builds", "default", "hash-same")],
-      localMeta: [meta("builds", "default", "rev-0", "hash-same")],
-      remoteHeads: [remote("builds", "default", "rev-1", "hash-same")],
+      localPartitions: [local("builds", "all", "hash-same")],
+      localMeta: [meta("builds", "all", "rev-0", "hash-same")],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-same")],
     });
 
     expect(plan.noops).toHaveLength(1);
@@ -59,9 +55,9 @@ describe("cloud sync planner", () => {
 
   it("downloads when local is unchanged and cloud moved ahead", () => {
     const plan = planCloudSync({
-      localPartitions: [local("builds", "default", "hash-old")],
-      localMeta: [meta("builds", "default", "rev-1", "hash-old")],
-      remoteHeads: [remote("builds", "default", "rev-2", "hash-cloud")],
+      localPartitions: [local("builds", "all", "hash-old")],
+      localMeta: [meta("builds", "all", "rev-1", "hash-old")],
+      remoteHeads: [remote("builds", "all", "rev-2", "hash-cloud")],
     });
 
     expect(plan.downloads).toHaveLength(1);
@@ -74,9 +70,9 @@ describe("cloud sync planner", () => {
 
   it("uploads when local changed and cloud is still at the last seen revision", () => {
     const plan = planCloudSync({
-      localPartitions: [local("builds", "default", "hash-local")],
-      localMeta: [meta("builds", "default", "rev-1", "hash-old")],
-      remoteHeads: [remote("builds", "default", "rev-1", "hash-old")],
+      localPartitions: [local("builds", "all", "hash-local")],
+      localMeta: [meta("builds", "all", "rev-1", "hash-old")],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-old")],
     });
 
     expect(plan.uploads).toHaveLength(1);
@@ -89,9 +85,9 @@ describe("cloud sync planner", () => {
 
   it("requires user choice when a first sync sees different local and cloud data", () => {
     const plan = planCloudSync({
-      localPartitions: [local("builds", "default", "hash-local")],
+      localPartitions: [local("builds", "all", "hash-local")],
       localMeta: [],
-      remoteHeads: [remote("builds", "default", "rev-1", "hash-cloud")],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud")],
     });
 
     expect(plan.conflicts).toHaveLength(1);
@@ -103,56 +99,16 @@ describe("cloud sync planner", () => {
 
   it("requires user choice when explicit-choice data changed on both sides", () => {
     const plan = planCloudSync({
-      localPartitions: [local("team.comp", "default", "hash-local")],
-      localMeta: [meta("team.comp", "default", "rev-1", "hash-old")],
-      remoteHeads: [remote("team.comp", "default", "rev-2", "hash-cloud")],
+      localPartitions: [local("teams", "all", "hash-local")],
+      localMeta: [meta("teams", "all", "rev-1", "hash-old")],
+      remoteHeads: [remote("teams", "all", "rev-2", "hash-cloud")],
     });
 
     expect(plan.conflicts).toHaveLength(1);
     expect(plan.conflicts[0]).toMatchObject({
       action: "conflict",
       reason: "both-changed",
-      groupKey: "team:default",
-    });
-  });
-
-  it("resolves latest-writer-wins settings by timestamp", () => {
-    const newerLocal = planPartitionSync({
-      id: "settings.artifactScore/default",
-      namespace: "settings.artifactScore",
-      partitionKey: "default",
-      local: local("settings.artifactScore", "default", "hash-local", 20),
-      meta: meta("settings.artifactScore", "default", "rev-1", "hash-old", 10),
-      remote: remote(
-        "settings.artifactScore",
-        "default",
-        "rev-2",
-        "hash-cloud",
-        15
-      ),
-    });
-    const newerRemote = planPartitionSync({
-      id: "settings.artifactScore/default",
-      namespace: "settings.artifactScore",
-      partitionKey: "default",
-      local: local("settings.artifactScore", "default", "hash-local", 20),
-      meta: meta("settings.artifactScore", "default", "rev-1", "hash-old", 10),
-      remote: remote(
-        "settings.artifactScore",
-        "default",
-        "rev-2",
-        "hash-cloud",
-        25
-      ),
-    });
-
-    expect(newerLocal).toMatchObject({
-      action: "upload",
-      reason: "both-changed",
-    });
-    expect(newerRemote).toMatchObject({
-      action: "download",
-      reason: "both-changed",
+      groupKey: "teams:all",
     });
   });
 
@@ -160,7 +116,7 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [],
       localMeta: [],
-      remoteHeads: [remote("builds", "default", "rev-1", "hash-cloud", 1, 2)],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 2)],
     });
 
     expect(plan.unsupported).toHaveLength(1);
@@ -176,7 +132,7 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [
         {
-          ...local("builds", "default", "hash-local"),
+          ...local("builds", "all", "hash-local"),
           conflictPolicy: "excluded",
         },
       ],
@@ -191,12 +147,18 @@ describe("cloud sync planner", () => {
     });
   });
 
-  it("groups sharded account partitions by profile id", () => {
+  it("groups profile partitions by profile id", () => {
+    expect(getCloudConflictGroupKey("profile.app", "600000001")).toBe(
+      "profile:600000001"
+    );
+    expect(getCloudConflictGroupKey("profile.game", "600000001")).toBe(
+      "profile:600000001"
+    );
     expect(
-      getCloudConflictGroupKey("account.artifacts", "600000001:gladiators")
-    ).toBe("account:600000001");
-    expect(getCloudConflictGroupKey("account.weapons", "600000001")).toBe(
-      "account:600000001"
+      getCloudConflictGroupKey("profile.artifacts", "600000001:gladiators")
+    ).toBe("profile:600000001");
+    expect(getCloudConflictGroupKey("profile.artifacts", "600000001")).toBe(
+      "profile:600000001"
     );
   });
 });

@@ -9,39 +9,22 @@ describe("cloud backup registry", () => {
     const included = getIncludedCloudBackupDescriptors();
     const includedIds = new Set(included.map((descriptor) => descriptor.id));
     expect(includedIds).toEqual(
-      new Set([
-        "account",
-        "builds",
-        "teams",
-        "freeze",
-        "character-tiers",
-        "weapon-tiers",
-        "artifact-tiers",
-        "artifact-score-settings",
-        "triage-settings",
-        "resource-settings",
-      ])
+      new Set(["account", "builds", "teams", "tiers"])
     );
-    expect(included.flatMap((descriptor) => descriptor.namespaces)).toEqual(
-      expect.arrayContaining([
-        "account.profile",
-        "account.characters",
-        "account.weapons",
-        "account.artifacts",
-        "account.equipment",
-        "builds",
-        "team.comp",
-        "team.config",
-        "account.freeze",
-        "tier.character.account",
-        "tier.character.custom",
-        "tier.weapon",
-        "tier.artifact",
-        "settings.artifactScore",
-        "account.triage",
-        "account.resources",
-      ])
-    );
+    expect(included.flatMap((descriptor) => descriptor.namespaces)).toEqual([
+      "profile.app",
+      "profile.game",
+      "profile.artifacts",
+      "builds",
+      "teams",
+      "tiers",
+    ]);
+    expect(included.map((descriptor) => descriptor.conflictPolicy)).toEqual([
+      "profile-import-wins",
+      "explicit-choice",
+      "explicit-choice",
+      "explicit-choice",
+    ]);
   });
 
   it("explicitly classifies cache, session, and device-local stores as excluded", () => {
