@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:wrangler": "wrangler pages dev --proxy 5173 -- vite",
     "dev:worker": "vite build && wrangler dev",
+    "deploy:worker": "npm run build && wrangler deploy",
     "build": "tsc -b && vite build",
     "build:tauri": "tsc -b && vite build --mode tauri",
     "preview": "vite preview",

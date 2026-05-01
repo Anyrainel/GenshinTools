@@ -60,10 +60,36 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return json({ error: "not_found" }, 404);
     }
+    if (url.pathname.startsWith("/assets/")) {
+      return handleAssetRequest(request, env);
+    }
 
     return env.ASSETS.fetch(request);
   },
 };
+
+async function handleAssetRequest(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  const response = await env.ASSETS.fetch(request);
+  const contentType = response.headers.get("Content-Type") ?? "";
+
+  if (response.ok && contentType.includes("text/html")) {
+    return new Response("Not found", {
+      status: 404,
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        "CDN-Cache-Control": "no-store",
+        "Cloudflare-CDN-Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
+  }
+
+  return response;
+}
 
 async function handleEnkaProxy(request: Request, url: URL): Promise<Response> {
   if (request.method === "OPTIONS") {
