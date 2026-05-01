@@ -201,6 +201,15 @@ export default function AccountDataPage() {
   const [conversionWarnings, setConversionWarnings] = useState<
     ConversionWarning[]
   >([]);
+  const characterWarningKeys = conversionWarnings
+    .filter((w) => w.type === "character")
+    .map((w) => w.key);
+  const weaponWarningKeys = conversionWarnings
+    .filter((w) => w.type === "weapon")
+    .map((w) => w.key);
+  const artifactWarningKeys = conversionWarnings
+    .filter((w) => w.type === "artifact")
+    .map((w) => w.key);
 
   const showConversionWarnings = (result: ConversionResult) => {
     if (result.warnings.length === 0) {
@@ -578,40 +587,30 @@ export default function AccountDataPage() {
                 <AlertTitle>{t.ui("accountData.conversionWarning")}</AlertTitle>
                 <AlertDescription>
                   <div className="mt-1">
-                    {conversionWarnings.filter((w) => w.type === "character")
-                      .length > 0 && (
+                    {characterWarningKeys.length > 0 && (
                       <div>
                         <span className="font-medium">
                           {t.ui("accountData.characters")}:
                         </span>{" "}
-                        {conversionWarnings
-                          .filter((w) => w.type === "character")
-                          .map((w) => w.key)
-                          .join(", ")}
+                        {characterWarningKeys.join(", ")}
                       </div>
                     )}
-                    {conversionWarnings.filter((w) => w.type === "weapon")
-                      .length > 0 && (
+                    {weaponWarningKeys.length > 0 && (
                       <div>
                         <span className="font-medium">
                           {t.ui("teamComp.weapon")}:
                         </span>{" "}
-                        {conversionWarnings
-                          .filter((w) => w.type === "weapon")
-                          .map((w) => w.key)
-                          .join(", ")}
+                        {weaponWarningKeys.join(", ")}{" "}
+                        {t.ui("accountData.weaponImportUnsupportedNote")}
                       </div>
                     )}
-                    {conversionWarnings.filter((w) => w.type === "artifact")
-                      .length > 0 && (
+                    {artifactWarningKeys.length > 0 && (
                       <div>
                         <span className="font-medium">
                           {t.ui("teamComp.artifact")}:
                         </span>{" "}
-                        {conversionWarnings
-                          .filter((w) => w.type === "artifact")
-                          .map((w) => w.key)
-                          .join(", ")}
+                        {artifactWarningKeys.join(", ")}{" "}
+                        {t.ui("accountData.artifactImportUnsupportedNote")}
                       </div>
                     )}
                   </div>

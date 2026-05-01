@@ -370,6 +370,14 @@ export const i18nUiData = {
       en: "skipped",
       zh: "已跳过",
     },
+    weaponImportUnsupportedNote: {
+      en: "(note: 1-2* weapons are not supported)",
+      zh: "（注：暂不支持 1-2 星武器）",
+    },
+    artifactImportUnsupportedNote: {
+      en: "(note: 1-3* and unpopular 4* artifacts are not supported)",
+      zh: "（注：暂不支持 1-3 星和冷门 4 星圣遗物）",
+    },
     noSetBonus: { en: "No Set Bonus", zh: "无套装效果" },
     artifactScore: {
       en: "Artifact Score",
