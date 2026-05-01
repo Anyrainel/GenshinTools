@@ -25,6 +25,7 @@
     "type-check": "npm run cf:types && tsc -b --noEmit",
     "test": "vitest run",
     "test:worker": "vitest run -c vitest.worker.config.ts",
+    "smoke:backup-worker": "npm run build && node scripts/dev/smoke-backup-worker.js",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
