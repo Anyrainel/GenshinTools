@@ -12,6 +12,7 @@ import {
   PersistedArtifactScoreStoreSchema,
   PersistedBaseTierStoreSchema,
   PersistedBuildsStoreSchema,
+  PersistedCloudSyncMetadataStoreSchema,
   PersistedFreezeStoreSchema,
   PersistedGenericTierListStoreSchema,
   PersistedGreetingStoreSchema,
@@ -704,6 +705,58 @@ describe("PersistedPreferencesStoreSchema", () => {
       tierSort: "desc",
       releaseSort: "asc",
       scoreSort: "desc",
+    });
+  });
+});
+
+// ─── PersistedCloudSyncMetadataStoreSchema ───
+
+describe("PersistedCloudSyncMetadataStoreSchema", () => {
+  it("heals local cloud sync metadata maps", () => {
+    expect(PersistedCloudSyncMetadataStoreSchema.parse({})).toEqual({
+      deviceId: "",
+      partitionsById: {},
+      conflictsById: {},
+    });
+
+    const result = PersistedCloudSyncMetadataStoreSchema.parse({
+      deviceId: 123,
+      partitionsById: {
+        "builds/default": {
+          namespace: "builds",
+          partitionKey: "default",
+          lastSeenRev: "rev-1",
+          lastAppliedHash: "sha256:old",
+          dirty: "yes",
+          updatedAt: "bad",
+        },
+      },
+      conflictsById: {
+        "builds/default": {
+          id: "builds/default",
+          namespace: "builds",
+          partitionKey: "default",
+          groupKey: "builds:default",
+          conflictPolicy: "explicit-choice",
+          reason: "both-changed",
+          detectedAt: "bad",
+        },
+      },
+    });
+
+    expect(result.deviceId).toBe("");
+    expect(result.partitionsById["builds/default"]).toMatchObject({
+      namespace: "builds",
+      partitionKey: "default",
+      lastSeenRev: "rev-1",
+      lastAppliedHash: "sha256:old",
+      updatedAt: 0,
+    });
+    expect(result.partitionsById["builds/default"].dirty).toBeUndefined();
+    expect(result.conflictsById["builds/default"]).toMatchObject({
+      id: "builds/default",
+      reason: "both-changed",
+      detectedAt: 0,
     });
   });
 });

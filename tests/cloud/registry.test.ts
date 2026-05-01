@@ -54,6 +54,7 @@ describe("cloud backup registry", () => {
         "account-score-cache",
         "team-result-cache",
         "preferences",
+        "cloud-sync-metadata",
         "greeting",
         "session-nav",
         "archive-session",

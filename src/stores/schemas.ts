@@ -492,6 +492,44 @@ export const PersistedPreferencesStoreSchema = z.object({
     .catch(DEFAULT_CHARACTER_SORT),
 });
 
+// ─── Cloud sync metadata ───
+
+const CloudSyncPartitionMetaSchema = z
+  .object({
+    namespace: z.string(),
+    partitionKey: z.string(),
+    lastSeenRev: z.string().optional(),
+    lastAppliedHash: z.string().optional(),
+    lastUploadedHash: z.string().optional(),
+    lastSyncedAt: z.number().optional(),
+    dirty: z.boolean().optional().catch(undefined),
+    updatedAt: z.number().catch(0),
+  })
+  .loose();
+
+const CloudSyncConflictMetaSchema = z
+  .object({
+    id: z.string(),
+    namespace: z.string(),
+    partitionKey: z.string(),
+    groupKey: z.string(),
+    conflictPolicy: z.string(),
+    reason: z.string(),
+    detectedAt: z.number().catch(0),
+    localHash: z.string().optional(),
+    remoteHash: z.string().optional(),
+    localUpdatedAt: z.number().optional(),
+    remoteUpdatedAt: z.number().optional(),
+    remoteRev: z.string().optional(),
+  })
+  .loose();
+
+export const PersistedCloudSyncMetadataStoreSchema = z.object({
+  deviceId: z.string().catch(""),
+  partitionsById: z.record(z.string(), CloudSyncPartitionMetaSchema).catch({}),
+  conflictsById: z.record(z.string(), CloudSyncConflictMetaSchema).catch({}),
+});
+
 // ─── Greeting ───
 
 export const PersistedGreetingStoreSchema = z.object({

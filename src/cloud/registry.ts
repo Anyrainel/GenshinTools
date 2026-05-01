@@ -125,6 +125,15 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     conflictPolicy: "excluded",
   },
   {
+    id: "cloud-sync-metadata",
+    localStorageKey: "cloud-sync-metadata-storage",
+    class: "sync-metadata",
+    includeInBackup: false,
+    namespaces: [],
+    currentVersion: 1,
+    conflictPolicy: "excluded",
+  },
+  {
     id: "greeting",
     localStorageKey: "greeting-storage",
     class: "session",

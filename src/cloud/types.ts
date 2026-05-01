@@ -27,7 +27,8 @@ export type StoreDataClass =
   | "settings"
   | "local-cache"
   | "session"
-  | "preferences";
+  | "preferences"
+  | "sync-metadata";
 
 export type CloudConflictPolicy =
   | "account-import-wins"

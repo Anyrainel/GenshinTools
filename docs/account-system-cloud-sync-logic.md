@@ -10,9 +10,10 @@ This document describes the current cloud backup transform logic and the intende
 - `src/cloud/adapters/*Adapter.ts` convert local snapshots into cloud payload partitions and back into local-compatible restore patches.
 - `src/cloud/payload.ts` canonicalizes payload JSON, computes `contentHash`, creates `CloudPayloadEnvelope`, verifies payload hashes, and gzip-compresses/decompresses JSON.
 - `src/cloud/syncPlanner.ts` compares local partition hashes, local sync metadata, and remote heads to produce upload, download, no-op, conflict, skip, and unsupported-schema decisions.
+- `src/stores/useCloudSyncMetadataStore.ts` persists device-local sync metadata and conflict records. It is excluded from cloud backup.
 - `src/cloud/storeAdapters.ts` is the only file in `src/cloud/` that imports Zustand stores.
 
-The sync client, server API, local sync metadata store, dirty queue, and conflict resolver UI are not implemented yet. The decision logic below is implemented as a pure planner, but nothing calls it from a live API or UI flow yet.
+The sync client, server API, dirty queue, and conflict resolver UI are not implemented yet. The decision logic below is implemented as a pure planner, and the local metadata store exists, but nothing calls them from a live API or UI flow yet.
 
 ## Three Version Axes
 
@@ -65,7 +66,7 @@ This metadata is keyed by `namespace/partitionKey`.
 
 Domain Zustand stores should not own cloud revisions. They only own local app state. The sync layer owns `lastSeenRev`, dirty state, retry state, and conflict state.
 
-The metadata type exists in `src/cloud/types.ts`; the persisted metadata store itself is still pending.
+The metadata type exists in `src/cloud/types.ts`; the persisted device-local store is `src/stores/useCloudSyncMetadataStore.ts`.
 
 ## Envelope Rules
 
@@ -181,7 +182,6 @@ This keeps the UI understandable while preserving per-partition revision checks.
 
 These are not implemented in `src/cloud/` yet:
 
-- Local sync metadata store.
 - Server-side partition index/head API.
 - Optimistic concurrency checks.
 - Dirty queue and retry state.
