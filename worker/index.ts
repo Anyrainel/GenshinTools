@@ -1,3 +1,5 @@
+import { type BackupEnv, handleBackupRequest } from "./backup";
+
 const ENKA_BASE_URL = "https://enka.network/api";
 
 const HOYOLAB_BASES = {
@@ -35,6 +37,9 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    if (url.pathname.startsWith("/api/backup/v1")) {
+      return handleBackupRequest(request, url, env as BackupEnv);
+    }
     if (url.pathname.startsWith("/api/enka/")) {
       return handleEnkaProxy(request, url);
     }

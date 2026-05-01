@@ -334,7 +334,7 @@ Completed local prerequisite
 - Triage/resource settings and freeze intent are account-scoped locally.
 - Profile `0` promotion remaps account-scoped local stores before activating the UID.
 - Build and team presets use hydrated active presets plus persisted `PresetDelta` overlays.
-- Team source data is split into `team.comp`, `team.config`, and local-only result caches.
+- Team source data is split from local-only result caches. Cloud backup stores team source/config together as `teams/all`.
 - Character, weapon, and artifact tier-list stores are multi-instance.
 - Migration code lives under `src/stores/migration/<domain>.ts`; current store files define latest runtime schemas only.
 
@@ -344,9 +344,9 @@ Phase 1: Foundation
 - `/api/me`, logout, provider-linking skeleton.
 - Entitlement table and manual admin grants.
 
-Phase 2: Cloud codecs and UI
+Phase 2: Cloud adapters and UI
 
-- Introduce cloud codecs for account, builds, teams, account freeze, account settings, and tier lists.
+- Introduce cloud adapters for profile, builds, teams, and tier lists.
 - Normalize account data at the cloud boundary.
 - Add account-menu sync/conflict status and resolver.
 

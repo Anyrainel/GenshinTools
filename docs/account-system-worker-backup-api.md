@@ -48,6 +48,12 @@ Required server-side auth boundary:
 
 Auth is not a blocker for the API design. It becomes a blocker before public deployment of read/write endpoints, because the Worker must reliably map a request to one app user and enforce that user's object ownership.
 
+Current implementation status:
+
+- Public auth is not wired yet.
+- The Worker route is intentionally dev-gated with `Authorization: Bearer <BACKUP_DEV_AUTH_SECRET>` and `x-backup-dev-user-id`.
+- Without `BACKUP_DB`, `BACKUP_BUCKET`, and `BACKUP_DEV_AUTH_SECRET`, `/api/backup/v1/*` returns an unavailable JSON error and does not read or write anything.
+
 Recommended auth interface:
 
 ```ts
@@ -265,6 +271,8 @@ type BackupHead = {
   objectId: string;
   schemaVersion: number;
   contentHash: string;
+  compressedHash: string;
+  compressedBytes: number;
   updatedAt: number;
   sourceDeviceId?: string;
   sourceDeviceLabel?: string;
@@ -297,6 +305,7 @@ Request:
 type BackupCommitRequest = {
   idempotencyKey: string;
   deviceId: string;
+  deviceLabel?: string;
   puts: {
     commitObjectKey: string;
     partitionKey: string;

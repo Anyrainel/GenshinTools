@@ -6,7 +6,7 @@ Last updated: 2026-04-30.
 
 This document surveys what GenshinTools currently stores locally, what should go to cloud backup, what should be excluded, and what refactors make cloud sync manageable.
 
-The key rule is: cloud sync should not blindly upload every Zustand persistence key forever. We should introduce an explicit cloud boundary with versioned codecs, then let local stores keep serving UI needs.
+The key rule is: cloud sync should not blindly upload every Zustand persistence key forever. We should introduce an explicit cloud boundary with versioned adapters, then let local stores keep serving UI needs.
 
 ## Current Persistence Boundary
 
@@ -17,7 +17,7 @@ Current durable localStorage keys observed in `src/stores`:
 | `useAccountStore` | `genshin-account-storage` | numeric account profiles and active account id | Upload account profile data and normalized account source data. Scores are already split out. |
 | `useAccountScoreCacheStore` | `account-score-cache-storage` | account-scoped artifact score results and stale markers | Do not upload in V1. Recompute or use local cache only. |
 | `useBuildsStore` | `artifact-filter-builds` | artifact build preset deltas, active preset id, compute options, character metadata, derived runtime views | Upload user-authored build config. Exclude hydrated preset payload, validation state, and derived runtime views. |
-| `useTeamStore` | `team-builder-storage` | `compDeltas`, `configsByTeamId`, active preset id, metadata, derived runtime views | Upload `team.comp` and `team.config`. Exclude result caches and derived views. |
+| `useTeamStore` | `team-builder-storage` | `compDeltas`, `configsByTeamId`, active preset id, metadata, derived runtime views | Upload `teams/all`. Exclude result caches and derived views. |
 | `useFreezeStore` | `frozen-teams-storage` | account-scoped frozen team artifact-id loadouts, standalone frozen artifact ids, reuse mode | Upload account-scoped stable freeze intent. Do not duplicate full artifact blobs. |
 | `useTierStore` | `tierlist-storage` | character tier-list instances, account links, and view settings | Upload user-authored tier lists. Preserve at most one account-linked list per account profile plus unattached lists. |
 | `useWeaponTierStore` | `weapon-tierlist-storage` | multi-instance weapon tier lists | Include in backup. No account profile linkage. |
@@ -43,14 +43,12 @@ Concrete backup domains:
 
 | Domain | Namespaces | Partition | Conflict behavior |
 | --- | --- | --- | --- |
-| Account profiles and inventory | `account.profile`, `account.characters`, `account.weapons`, `account.artifacts`, `account.equipment` | account profile id (`0` for default/no UID, otherwise numeric UID) | Latest complete import for that profile can intentionally overwrite cloud. Manual edits use revision checks. |
-| Build library | `builds` | `default` | Revision checked; user resolves local/cloud if edited on multiple devices. |
-| Team comp/config | `team.comp`, `team.config` | `default` | Revision checked; user resolves local/cloud if edited on multiple devices. |
-| Account freeze intent | `account.freeze` | account profile id | Revision checked; artifact ids are account-scoped. |
-| Character tier lists | `tier.character.account`, `tier.character.custom` | account profile id for linked lists; stable list id for unattached lists | At most one linked list per account profile, plus unattached custom lists. |
-| Global tier lists | `tier.weapon`, `tier.artifact` | stable list id | Include in local multi-instance migration; no account-profile linkage. |
-| Account settings | `account.triage`, `account.resources` | account profile id | Already account-scoped locally; cloud codecs should preserve that partitioning. |
-| Global settings | `settings.artifactScore` | `default` | Low risk; latest writer wins is acceptable. Keep UI preferences device-local in V1. |
+| Game profile app data | `profile.app` | profile id (`0` for default/no UID, otherwise numeric UID) | Explicit profile import/replace may overwrite; passive sync still revision-checks. |
+| Game profile characters and weapons | `profile.game` | profile id | Explicit profile import/replace may overwrite; passive sync still revision-checks. |
+| Game profile artifacts | `profile.artifacts` | profile id | Explicit profile import/replace may overwrite; passive sync still revision-checks. |
+| Build library and artifact score settings | `builds` | `all` | Revision checked; user resolves local/cloud if edited on multiple devices. |
+| Team comp/config | `teams` | `all` | Revision checked; user resolves local/cloud if edited on multiple devices. |
+| Tier lists | `tiers` | `all` | Revision checked; user resolves local/cloud if edited on multiple devices. |
 | Local result caches | none | none | Excluded from cloud. |
 | Session/UI state | none | none | Excluded from cloud. |
 
@@ -73,12 +71,10 @@ type AccountData = {
 Cloud target:
 
 - Keep local `AccountData` for UI and existing import flows.
-- Add a cloud codec that normalizes account data into partitions:
-  - account summary
-  - characters
-  - weapons
-  - artifacts
-  - equipment links
+- Add a cloud adapter that normalizes game profile data into coarse partitions:
+  - `profile.app/{profileId}` for game profile metadata, freeze state, triage settings, and resource settings.
+  - `profile.game/{profileId}` for characters and non-disposable weapons.
+  - `profile.artifacts/{profileId}` for artifacts, including each artifact's equipped character id.
 - Compress each partition before upload.
 - Track a hash and revision per partition so imports only upload changed partitions.
 
@@ -161,48 +157,41 @@ Weapon identity caveat:
 
 Cloud partition references should use these stable ids:
 
-- `account.characters` stores character-owned state only, not equipped item ids.
-- `account.weapons` stores each backed-up weapon by `id`, not its equipped character. The cloud codec excludes disposable weapons.
-- `account.artifacts` stores each artifact by `id`, not its equipped character, split by stable `setGroup` shards.
-- `account.equipment` stores the current equipped weapon/artifact ids per character.
+- `profile.game` stores character-owned state and each backed-up weapon by stable `id`. The cloud adapter excludes disposable weapons.
+- `profile.artifacts` stores each artifact by stable `id`, including `equippedCharacterId` directly on the artifact row.
+- `profile.app` stores game profile metadata plus small profile-scoped app data such as freeze, triage, and resource settings.
 
-This means partition upload order no longer matters. The equipment partition can reference ids that are resolved when the matching weapon/artifact partition is present in the same cloud index.
+This means character/weapon data and artifact inventory can still be compared independently, but V1 avoids a separate equipment partition because artifact equipment is stored on the artifact item itself.
 
-Why equipment is its own partition:
+Why equipment is not its own partition in V1:
 
-- Character edits should not upload artifact inventory.
-- Artifact lock/level/stat edits should not upload character roster.
-- Equip changes are common and small. They should upload only `account.equipment`, not both `account.characters` and the full `account.artifacts` partition.
-- The UI can derive reverse indexes such as "artifact equipped by character" after hydration.
+- The implemented local store already represents artifact equipment on the artifact item.
+- Keeping equipment on `profile.artifacts` avoids an extra correlated object that must be committed atomically with artifacts.
+- Weapon equipment stays local to weapon entries in `profile.game`.
+- If equip-only payloads become a measured bottleneck, a later schema can split them out intentionally.
 
 Recommended account partitions, repeated per account profile id:
 
 | Partition | Contents | Upload trigger |
 | --- | --- | --- |
-| `account.profile` | profile id, display name, UID if present, source metadata | account create/rename/link |
-| `account.characters` | character key, level, constellation, talents | character import/edit |
-| `account.weapons` | all non-disposable weapons with id, key, rarity, level, refinement, lock | weapon import/edit |
-| `account.artifacts` | one `setGroup` shard of artifacts with id, set, slot, rarity, level, main stat, lock, roll data | artifact import/edit/scanner sync |
-| `account.equipment` | per-character equipped weapon id and artifact ids by slot | equip change/import |
+| `profile.app/{profileId}` | profile id, name, UID if present, source metadata, freeze, triage, and resource settings | account create/rename/link, freeze/settings edit |
+| `profile.game/{profileId}` | characters and all non-disposable weapons with id, key, rarity, level, refinement, lock, and weapon equipment | character/weapon import/edit |
+| `profile.artifacts/{profileId}` | artifacts with id, set, slot, rarity, level, main stat, lock, roll data, and equipped character id | artifact import/edit/scanner sync/equip change |
 
-Artifact shard rule:
+Artifact sharding note:
 
-- Use namespace `account.artifacts` with partition key `{accountProfileId}:{setGroup}`.
-- `setGroup` is a stable implementation-defined group derived from the artifact set. The likely source is artifact domain/source grouping, but the payload should not expose "release" or "domain" as semantic API.
-- Keep the `setGroup` mapping stable. Add new groups as new artifact domains/sets release. If an existing set changes group, treat it as a cloud payload migration and delete/supersede old shard heads.
-- A shard stores a full snapshot of artifacts in that group. Do not store item-level patches in V1.
-- A lock/stat/level edit uploads only that artifact's current `setGroup` shard.
-- A full import recomputes hashes for all set groups and uploads only changed shards.
-- If import matching changes an artifact id but the set stays in the same group, only that group is dirty. If a future migration changes the group mapping, old and new groups are dirty.
+- Earlier planning considered `account.artifacts/{profileId}:{setGroup}`. The implemented V1 keeps one artifact partition per game profile: `profile.artifacts/{profileId}`.
+- `src/cloud/adapters/setGroup.ts` remains as an editable mapping for future shard experiments and local measurement, but it is not part of the current Worker API partition key.
+- If real production payloads show poor upload success for the artifact partition, split `profile.artifacts/{profileId}` into grouped partitions in a new cloud payload schema version.
 
 Disposable weapon filter:
 
-- The cloud codec should exclude weapons that are all of:
+- The cloud adapter should exclude weapons that are all of:
   - unlocked
   - rarity 3
   - level 1
   - refinement 1
-  - not equipped by any character in `account.equipment`
+  - not equipped by any character in `profile.game`
 - This filter applies only to cloud backup payloads. Local stores may keep those weapons if imports/scanners provide them.
 - On restore, missing disposable weapons are intentionally not recreated. This is acceptable data loss because they are common fodder and not relied on by user-authored features.
 
@@ -212,17 +201,17 @@ Compression:
 - Server should accept already-compressed bodies and store them directly in R2.
 - Store `logical_bytes`, `compressed_bytes`, and `sha256` in D1.
 - Use gzip first because it is broadly supported and usually strong for repeated JSON keys and enum strings. Brotli can be considered later.
-- Measure real account dumps before adding a custom artifact codec. Track both full logical JSON size and compressed size for `account.artifacts`.
+- Measure real account dumps before adding a custom artifact representation. Track both full logical JSON size and compressed size for `profile.artifacts`.
 
 Further compacting:
 
-- If gzip is not enough for China upload reliability, add a compact artifact codec:
+- If gzip is not enough for China upload reliability, add a compact artifact representation:
   - dictionary encode repeated enum keys such as stats, slots, set ids, artifact keys
   - store artifacts as arrays instead of objects
   - omit default false fields
   - keep equipment links out of the artifact payload
-- Do this at the cloud codec boundary, not in local UI types.
-- Do not build a bespoke binary format in V1. A dictionary/array JSON codec is easier to migrate, inspect, and test.
+- Do this at the cloud adapter boundary, not in local UI types.
+- Do not build a bespoke binary format in V1. A dictionary/array JSON representation is easier to migrate, inspect, and test.
 
 ## Account Scores and Recommendation Outputs
 
@@ -526,7 +515,7 @@ Cloud decision:
 - Store freeze intent as artifact ids and character ids.
 - Do not upload full artifact blobs if account data is included in the same backup.
 - On restore, resolve freeze ids against restored account artifacts.
-- Freeze payloads are account-scoped because artifact ids are account-scoped. Use `account.freeze` partitioned by account profile id, not a single global `freeze/default` partition.
+- Freeze payloads are account-scoped because artifact ids are account-scoped. Include them in `profile.app/{profileId}`, not a separate global freeze partition.
 - The current nested `teamId -> FrozenTeamLoadout` shape is the local durable source. The `artifactsByChar` blob shape is a UI-friendly derived view.
 - The cloud shape should be a flat list of frozen character loadouts so reuse-mode logic can be resolved from one uniform collection.
 - UI code can derive the current nested view after rehydration if that remains convenient.
@@ -568,30 +557,30 @@ Tier stores are good cloud candidates:
 - weapon tier lists, no account-profile linkage
 - artifact tier lists, no account-profile linkage
 
-They are user-authored and small. Character, weapon, and artifact tier-list stores are already multi-instance locally, so cloud codecs can encode each list as its own partition without changing the UI store shape.
+They are user-authored and small. Character, weapon, and artifact tier-list stores are already multi-instance locally. V1 stores them together as `tiers/all` to keep API calls and D1 rows low; a later schema can split high-churn tier data if measured conflicts justify it.
 
-Character tier list cloud partitions:
+Tier cloud partition:
 
-- Use namespace `tier.character.account` with partition key equal to the numeric account profile id for the tier list linked to an account profile.
-- Use namespace `tier.character.custom` with partition key equal to a stable list id for unattached custom tier lists.
+- Use namespace `tiers` with partition key `all`.
+- Keep account-linked and unattached character tier lists in the payload.
+- Keep weapon and artifact tier lists in the same payload.
 - Enforce at most one linked character tier list per account profile during restore. If cloud has duplicates, keep the newest and convert the rest to unattached lists.
 - Store `linkedAccountProfileId?: number` in the payload so the UI can preserve the current account-switch behavior.
-- Use namespace `tier.weapon` and `tier.artifact` with stable list-id partitions. These payloads do not store `linkedAccountProfileId`.
 
 ## Settings Stores
 
 Upload:
 
-- artifact score settings
-- triage settings
-- resource recommendation settings
+- artifact score settings, inside `builds/all`
+- triage settings, inside `profile.app/{profileId}`
+- resource recommendation settings, inside `profile.app/{profileId}`
 
 Account-scoped settings recommendation:
 
-- Move triage settings to `account.triage/{accountProfileId}` in the cloud codec.
-- Move resource recommendation thresholds/filters to `account.resources/{accountProfileId}` in the cloud codec.
-- The local stores already persist settings by account profile id, so the codec does not need to guess which profile owns singleton settings.
-- Keep `settings.artifactScore/default` global unless we decide users need different scoring weights per account profile.
+- Move triage settings to `profile.app/{profileId}` in the cloud adapter.
+- Move resource recommendation thresholds/filters to `profile.app/{profileId}` in the cloud adapter.
+- The local stores already persist settings by account profile id, so the adapter does not need to guess which profile owns singleton settings.
+- Keep artifact score global and include it in `builds/all` because it is used by build/recommendation logic.
 
 Optional:
 
@@ -614,9 +603,7 @@ type StoreDataClass =
   | "account"
   | "builds"
   | "teams"
-  | "freeze"
   | "tiers"
-  | "settings"
   | "local-cache"
   | "session";
 
@@ -644,11 +631,12 @@ type CloudBackupDescriptor<TLocal, TCloud> = {
 
 Suggested location:
 
-- `src/stores/cloud/registry.ts`
-- `src/stores/cloud/codecs/accountCodec.ts`
-- `src/stores/cloud/codecs/buildsCodec.ts`
-- `src/stores/cloud/codecs/teamCodec.ts`
-- `src/stores/cloud/codecs/settingsCodec.ts`
+- `src/cloud/registry.ts`
+- `src/cloud/adapters/accountAdapter.ts`
+- `src/cloud/adapters/buildsAdapter.ts`
+- `src/cloud/adapters/teamAdapter.ts`
+- `src/cloud/adapters/tierAdapter.ts`
+- `src/cloud/storeAdapters.ts` as the only cloud file that imports Zustand stores
 
 The registry should be the only frontend code that decides whether a store participates in cloud backup. Local-cache and session descriptors are still useful because tests can assert they are excluded from the default backup set.
 
@@ -657,8 +645,8 @@ Use dependency hashes only for derived results:
 - Source/settings payloads use `contentHash` plus `baseRev` for sync.
 - Local caches may store a `dependencyHash` such as account hash + build hash + scoring-engine version to know when to ignore stale cache.
 - `dependencyHash` is not a substitute for optimistic concurrency, and should not decide whether a source payload can overwrite cloud.
-- `baseRev` lives in local sync metadata keyed by namespace/partition, not inside each Zustand store. Store code stays focused on local state; cloud codecs and the sync client own revisions.
-- The domain class controls default conflict behavior. Account imports can use an explicit latest-import-wins upload path for that account profile; builds/teams/account-freeze use conservative revision checks; global settings can use latest-writer-wins.
+- `baseRev` lives in local sync metadata keyed by namespace/partition, not inside each Zustand store. Store code stays focused on local state; cloud adapters and the sync client own revisions.
+- The domain class controls default conflict behavior. Game profile imports can use an explicit profile-import-wins upload path for that profile; builds, teams, and tiers use conservative revision checks.
 
 ## Upload Triggers
 
@@ -667,7 +655,7 @@ Avoid uploading on every store mutation. Instead:
 - Account data: upload after import, scanner sync, manual account edit save, artifact manager apply.
 - Builds: debounce after build edit or preset subscribe changes.
 - Teams: debounce after team comp/config changes.
-- Settings: debounce, low priority.
+- Profile app settings: debounce with the `profile.app/{profileId}` payload.
 - Tier lists: debounce after edit.
 
 Use a dirty queue:
@@ -689,11 +677,11 @@ Flush rules:
 - Manual "Sync now" flushes immediately.
 - Background flush waits for idle or 10-30 seconds after the last edit.
 - Large account imports should upload once after the import completes.
-- Upload dirty partitions separately in V1. An account import can enqueue `account.profile`, `account.characters`, `account.weapons`, `account.artifacts`, and `account.equipment`, then flush them one by one in the background. Add batching later only if request count becomes a measured bottleneck.
+- Upload dirty partitions separately in V1, but start from coarse partitions to keep API calls and D1 rows low. A game profile import can enqueue `profile.app/{profileId}`, `profile.game/{profileId}`, and `profile.artifacts/{profileId}`.
 - Offline or failed uploads stay queued with exponential backoff.
 - Do not rely on `sendBeacon` or `fetch(..., { keepalive: true })` for cloud backup payloads. Those are appropriate for telemetry, not multi-MB compressed backup bodies.
 - Same-browser concurrent editing is not a primary concern. A lightweight localStorage/BroadcastChannel signal is enough to avoid duplicate background flushes; do not build a heavy local leader-election system for v1.
-- Before a flush, read the cloud index/head metadata and compare it with local sync metadata. If both local and cloud changed, apply the domain policy: account import can overwrite that account profile, global settings can latest-write, and builds/teams/account-freeze should mark the partition conflicted.
+- Before a flush, read the cloud index/head metadata and compare it with local sync metadata. If both local and cloud changed, apply the domain policy: an explicit game profile import can overwrite that profile, while builds/teams/tiers should mark the partition conflicted.
 - Avoid repeated conflict prompts. Passive detection should update sync status; user-facing choices should appear only from explicit sync/restore actions or before a destructive overwrite.
 - Surface conflicts under the account icon dropdown as a persistent sync status. Clicking it opens a resolver where the user picks local or cloud per affected domain/partition.
 - The top-right account icon replaces the current overflow icon and becomes the stable home for login state, sync state, pending errors, conflict resolution, restore/download, and cloud-data deletion.
@@ -733,10 +721,10 @@ For a better default user experience, use a backup-style conflict model rather t
 - Same device, offline edits: keep the local dirty payload and retry later.
 - Different devices edited independently: detect by `lastSeenRev` versus cloud head and pause sync for affected partitions.
 - Partitions are replaced as whole units in v1; do not try field-level merges except for future narrow append-only domains.
-- Account data imported from GOOD/Scanner/manual import is usually a full current snapshot, so the upload path can intentionally override older cloud data after showing a lightweight "new import will replace cloud backup" status.
+- Game profile data imported from GOOD/Scanner/manual import is usually a full current snapshot, so the upload path can intentionally override older cloud data after showing a lightweight "new import will replace cloud backup" status.
 - UID imports can remain local merge flows, but cloud backup V1 can upload the resulting full account profile snapshot as an override. We do not need server-side account partition merging in V1.
-- Builds, teams, and account freeze intent are hand-authored state, so conflicts should be explicit keep-local/use-cloud decisions.
-- Settings are low risk and can use latest-writer-wins.
+- Builds, teams, and tiers are hand-authored state, so conflicts should be explicit keep-local/use-cloud decisions.
+- Profile app settings live in `profile.app`; artifact score settings live in `builds/all`.
 
 ## Refactor Plan
 
@@ -760,14 +748,15 @@ Completed local store migration phase
 - Character, weapon, and artifact tier-list stores are multi-instance.
 - Old-store hydration and migration tests cover the changed store shapes.
 
-Phase 3: Cloud codecs
+Phase 3: Cloud adapters
 
 - Convert local `AccountData` to normalized cloud partitions.
 - Preserve current import/store code.
 - Add round-trip tests: local -> cloud -> local.
 - Measure gzip ratio with real account dumps.
-- Add codecs for account-scoped freeze, triage, resources, and character tier lists.
-- Add codecs for `tier.weapon` and `tier.artifact` list-id partitions.
+- Include freeze, triage, and resource settings in `profile.app`.
+- Include artifact score settings in `builds/all`.
+- Include character, weapon, and artifact tier lists in `tiers/all`.
 
 Phase 4: Backup Set and UI
 

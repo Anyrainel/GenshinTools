@@ -223,92 +223,79 @@ Valid `entitlements.source`:
 - `manual`
 - `trial`
 
-## Sync Device Table
+## Backup Device Table
 
 ```sql
-CREATE TABLE sync_devices (
+CREATE TABLE backup_devices (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  device_public_id TEXT NOT NULL,
+  device_id TEXT NOT NULL,
   label TEXT,
   created_at INTEGER NOT NULL,
   last_seen_at INTEGER NOT NULL,
-  last_sync_at INTEGER,
-  UNIQUE(user_id, device_public_id)
+  last_backup_at INTEGER,
+  UNIQUE(user_id, device_id)
 );
-
-CREATE INDEX idx_sync_devices_user
-  ON sync_devices(user_id, last_seen_at);
 ```
 
-The client generates `device_public_id` and stores it locally. It is not trusted for auth, only conflict display and sync diagnostics.
+The client generates `device_id` and stores it locally. It is not trusted for auth, only conflict display and sync diagnostics. Device labels are optional and should be computed from coarse browser hints when available.
 
-## Cloud Sync Tables
+## Cloud Backup Tables
 
-Cloud sync stores versioned objects by namespace and partition.
+Cloud backup stores current heads in D1 and compressed object bodies in R2. V1 keeps D1 writes low: one aggregate row per user, one current-head row per partition key, and one short-lived commit idempotency row per write request.
 
 ```sql
-CREATE TABLE sync_objects (
-  id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  namespace TEXT NOT NULL,
-  partition_key TEXT NOT NULL,
-  rev TEXT NOT NULL,
-  base_rev TEXT,
-  schema_version INTEGER NOT NULL,
-  r2_key TEXT NOT NULL,
-  content_hash TEXT NOT NULL,
-  compressed_hash TEXT,
-  compression TEXT NOT NULL,
-  media_type TEXT NOT NULL,
-  logical_bytes INTEGER NOT NULL,
-  compressed_bytes INTEGER NOT NULL,
-  source_device_id TEXT REFERENCES sync_devices(id) ON DELETE SET NULL,
-  created_at INTEGER NOT NULL,
-  superseded_at INTEGER,
-  deleted_at INTEGER,
-  UNIQUE(user_id, namespace, partition_key, rev)
+CREATE TABLE backup_user_state (
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  head_set_rev TEXT NOT NULL,
+  updated_at INTEGER NOT NULL,
+  key_count INTEGER NOT NULL DEFAULT 0,
+  total_compressed_bytes INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE INDEX idx_sync_objects_user_ns
-  ON sync_objects(user_id, namespace, partition_key, created_at);
-
-CREATE TABLE sync_heads (
+CREATE TABLE backup_heads (
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  namespace TEXT NOT NULL,
   partition_key TEXT NOT NULL,
-  object_id TEXT NOT NULL REFERENCES sync_objects(id) ON DELETE CASCADE,
+  object_id TEXT NOT NULL,
   rev TEXT NOT NULL,
+  schema_version INTEGER NOT NULL,
+  content_hash TEXT NOT NULL,
+  compressed_hash TEXT NOT NULL,
+  compressed_bytes INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
+  source_device_row_id TEXT REFERENCES backup_devices(id) ON DELETE SET NULL,
   soft_deleted_at INTEGER,
-  PRIMARY KEY(user_id, namespace, partition_key)
+  PRIMARY KEY(user_id, partition_key)
+);
+
+CREATE TABLE backup_commits (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  idempotency_key TEXT NOT NULL,
+  device_row_id TEXT REFERENCES backup_devices(id) ON DELETE SET NULL,
+  result_json TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  UNIQUE(user_id, idempotency_key)
 );
 ```
 
-`sync_heads` plus `sync_objects` are the source of truth for the current cloud index. Do not add a stored manifest table in V1.
+`backup_commits` is not staging. It is only a retry ledger so the same idempotency key can return the original result after a lost response.
 
-In this design, "cloud index" means the response from `GET /api/sync/index`: a compact list of current cloud heads by namespace/partition. It is an index the client reads before upload or restore, not a separate persisted document. The server composes it from `sync_heads` joined to `sync_objects`.
+The source of truth for the current cloud index is `backup_user_state` plus `backup_heads`. Do not add a stored manifest table in V1.
+
+In this design, "cloud head" means the response from `GET /api/backup/v1/head`: a compact list of current partition heads. It is the index the client reads before upload or restore, not a separate persisted document.
 
 Suggested namespaces:
 
 | Domain | Namespace | Partition examples | Payload | Default conflict policy |
 | --- | --- | --- | --- | --- |
-| Account | `account.profile` | account profile id (`0` for default/no UID, otherwise numeric UID) | account display/source metadata | Latest complete import for that profile can overwrite |
-| Account | `account.characters` | account profile id | character state only | Latest complete import for that profile can overwrite |
-| Account | `account.weapons` | account profile id | normalized non-disposable weapons | Latest complete import for that profile can overwrite |
-| Account | `account.artifacts` | `{accountProfileId}:{setGroup}` | normalized artifacts in one stable set group | Latest complete import or artifact edit can overwrite |
-| Account | `account.equipment` | account profile id | equipped item ids by character | Latest complete import or equip action can overwrite |
-| Builds | `builds` | `default` | artifact build deltas | Explicit local/cloud choice |
-| Teams | `team.comp` | `default` | preset id and `PresetDelta<TeamComp>` composition overlay | Explicit local/cloud choice |
-| Teams | `team.config` | `default` | user-specific calc/config by team id | Explicit local/cloud choice |
-| Account | `account.freeze` | account profile id | freeze intent by account-scoped artifact ids | Explicit local/cloud choice |
-| Tiers | `tier.character.account` | account profile id | character tier list linked to an account profile | One linked list per account profile |
-| Tiers | `tier.character.custom` | stable list id | unattached character tier list | Multi-instance |
-| Tiers | `tier.weapon` | stable list id | weapon tier list | Multi-instance, no profile link |
-| Tiers | `tier.artifact` | stable list id | artifact tier list | Multi-instance, no profile link |
-| Settings | `settings.artifactScore` | `default` | artifact score settings | Latest writer wins |
-| Account | `account.triage` | account profile id | triage settings | Latest writer or explicit choice |
-| Account | `account.resources` | account profile id | resource recommendation settings | Latest writer or explicit choice |
+| Game profile app data | `profile.app` | profile id (`0` for default/no UID, otherwise numeric UID) | game profile metadata, freeze state, triage settings, resource settings | Explicit profile import/replace can overwrite; passive sync revision-checks |
+| Game profile data | `profile.game` | profile id | character state and normalized non-disposable weapons | Explicit profile import/replace can overwrite; passive sync revision-checks |
+| Game profile artifacts | `profile.artifacts` | profile id | artifact inventory with equipped character id on each artifact | Explicit profile import/replace can overwrite; passive sync revision-checks |
+| Builds | `builds` | `all` | artifact build deltas plus global artifact score settings | Explicit local/cloud choice |
+| Teams | `teams` | `all` | preset id, `PresetDelta<TeamComp>` overlays, and user-specific calc/config by team id | Explicit local/cloud choice |
+| Tiers | `tiers` | `all` | character, weapon, and artifact tier lists | Explicit local/cloud choice |
 
 ## R2 Object Keys
 
@@ -323,7 +310,7 @@ users/{user_id}/sync/{namespace}/{partition_key}/{rev}.json.gz
 Example:
 
 ```text
-users/usr_01HX/sync/account.artifacts/uid-600000000/rev_01JZ.json.gz
+users/usr_01HX/sync/profile.artifacts/uid-600000000/rev_01JZ.json.gz
 ```
 
 R2 object metadata:
@@ -331,7 +318,7 @@ R2 object metadata:
 ```text
 content-type: application/json
 content-encoding: gzip
-x-genshin-tools-namespace: account.artifacts
+x-genshin-tools-namespace: profile.artifacts
 x-genshin-tools-schema-version: 1
 x-genshin-tools-content-hash: sha256:...
 x-genshin-tools-compressed-hash: sha256:...
@@ -362,12 +349,12 @@ Type names in the main code should represent the latest shape and should not car
 
 ## Account Payloads
 
-### `account.profile`
+### `profile.app`
 
 ```ts
 type AccountProfileId = number; // 0 for default/no UID, otherwise numeric UID
 
-type AccountProfilePayload = {
+type ProfileAppPayload = {
   accountProfileId: AccountProfileId;
   name: string;
   /** Missing for the default/no-UID profile. Never display accountProfileId 0 as a UID. */
@@ -376,15 +363,18 @@ type AccountProfilePayload = {
   lastImportedAt?: number;
   source?: "good" | "enka" | "hoyolab" | "manual" | "scanner" | string;
   softDeletedAt?: number;
+  freeze: unknown;
+  triage: unknown;
+  resources: unknown;
 };
 ```
 
 Profile `0` is a real profile key, not a game UID. Local imports already rename account-scoped stores before activating a promoted UID. Cloud sync should mirror that behavior by moving account-scoped partitions from `0` to the UID and marking the old `0` heads as soft-deleted. Importing the same UID again should reactivate/overwrite soft-deleted data for that UID.
 
-### `account.characters`
+### `profile.game`
 
 ```ts
-type AccountCharactersPayload = {
+type ProfileGamePayload = {
   accountProfileId: AccountProfileId;
   characters: {
     key: string;
@@ -392,16 +382,6 @@ type AccountCharactersPayload = {
     constellation: number;
     talent: [number, number, number];
   }[];
-};
-```
-
-Equipment is intentionally not stored here. Use `account.equipment` as the single source of truth for equipped item links so equip changes do not rewrite both character state and item inventory partitions.
-
-### `account.weapons`
-
-```ts
-type AccountWeaponsPayload = {
-  accountProfileId: AccountProfileId;
   weapons: {
     id: string;
     identity?: {
@@ -414,6 +394,7 @@ type AccountWeaponsPayload = {
     level: number;
     refinement: number;
     lock: boolean;
+    equippedCharacterId?: string;
   }[];
 };
 ```
@@ -438,14 +419,13 @@ function shouldSkipWeaponForCloud(weapon: {
 }
 ```
 
-The filter runs at the cloud codec boundary. Local stores may keep skipped weapons. Restore does not recreate skipped disposable weapons.
+The filter runs at the cloud adapter boundary. Local stores may keep skipped weapons. Restore does not recreate skipped disposable weapons.
 
-### `account.artifacts`
+### `profile.artifacts`
 
 ```ts
-type AccountArtifactsPayload = {
+type ProfileArtifactsPayload = {
   accountProfileId: AccountProfileId;
-  setGroup: string;
   artifacts: {
     id: string;
     identity?: {
@@ -465,62 +445,35 @@ type AccountArtifactsPayload = {
     elixirCrafted?: boolean;
     unactivatedSubstats?: Record<string, number>;
     initialValues?: Record<string, number>;
+    equippedCharacterId?: string;
   }[];
 };
-```
-
-`setGroup` is a stable implementation-defined artifact-set shard. It can be derived from artifact domain/source grouping, release era, or another frozen mapping, but the cloud contract only requires that the same `setKey` maps to the same `setGroup` for a given schema version.
-
-Partition key:
-
-```ts
-`${accountProfileId}:${setGroup}`
 ```
 
 Rules:
 
-- Store a full snapshot for one set group per object.
+- Store a full snapshot for one game profile's artifact inventory.
 - Do not store item-level artifact patches in V1.
-- Full imports recompute every setGroup hash and upload only changed groups.
-- Single artifact edits upload only that artifact's setGroup.
-- If the mapping changes for existing sets, bump the artifact payload schema or run a migration that writes new shard heads and soft-deletes/supersedes old ones.
-
-### `account.equipment`
-
-```ts
-type ArtifactSlot = "flower" | "plume" | "sands" | "goblet" | "circlet";
-
-type AccountEquipmentPayload = {
-  accountProfileId: AccountProfileId;
-  equipment: {
-    charId: string;
-    weaponId?: string;
-    artifactIds?: Partial<Record<ArtifactSlot, string>>;
-  }[];
-};
-```
-
-`weaponId` and `artifactIds` are account-scoped stable ids. They must not be derived from array order in the weapons/artifacts partitions.
-
-The app can derive item-to-character indexes after hydration. Do not duplicate `equippedCharId` on every artifact/weapon row in the cloud payload, because equip changes are common and `account.artifacts` is the largest partition.
+- Equipment is local to the artifact row through `equippedCharacterId`.
+- `src/cloud/adapters/setGroup.ts` remains available for future sharding experiments, but V1 does not put `setGroup` in the partition key.
 
 ### Artifact Payload Compression
 
-Start with normal JSON plus gzip for `account.artifacts`. Repeated object keys, stat keys, slot keys, and set keys should compress well, and this keeps V1 easy to inspect and migrate.
+Start with normal JSON plus gzip for `profile.artifacts`. Repeated object keys, stat keys, slot keys, and set keys should compress well, and this keeps V1 easy to inspect and migrate.
 
-Before adding a custom compact codec, measure real dumps:
+Before adding a custom compact representation, measure real dumps:
 
-- logical JSON bytes for `account.artifacts`
-- gzip bytes for `account.artifacts`
+- logical JSON bytes for `profile.artifacts`
+- gzip bytes for `profile.artifacts`
 - upload time on slow network simulation
 - Worker memory and CPU during upload/restore
 
-Add a compact artifact codec only if gzip payloads are still too large. The preferred compact codec is dictionary/array JSON, not a bespoke binary format:
+Add a compact artifact representation only if gzip payloads are still too large. The preferred shape is dictionary/array JSON, not a bespoke binary format:
 
 - top-level dictionaries for stat keys, set keys, slot keys, and optional source strings
 - artifact rows as arrays with fixed field order
 - omit default `false` and empty optional fields
-- keep equipment links in `account.equipment`, not artifact rows
+- keep equipment links on artifact/weapon rows unless a later measured bottleneck justifies splitting equipment
 
 Later compact schema versions can replace repeated string fields with dictionaries and arrays without changing local `AccountData`.
 
@@ -590,7 +543,7 @@ Do not infer preset removal from missing `displayIndex` or missing delta entries
 
 ## Team Payloads
 
-### `team.comp`
+### `teams/all`
 
 ```ts
 type TeamCompSlotCloudPayload = {
@@ -606,19 +559,16 @@ type TeamCompCloudItem = {
   reactions: string[];
 };
 
-type TeamCompCloudPayload = {
+type TeamsCloudPayload = {
   activePresetId: string | null;
   presetRevision?: string;
   /** Team order is global because this is a single list. */
   compDeltas: PresetDelta<TeamCompCloudItem>[];
   author?: string;
   description?: string;
+  configsByTeamId: Record<string, TeamSetupConfigPayload>;
 };
-```
 
-### `team.config`
-
-```ts
 type TeamCharConfigPayload = {
   level?: number;
   constellation?: number;
@@ -637,10 +587,6 @@ type TeamSetupConfigPayload = {
   damage?: unknown;
   energy?: unknown;
   investment?: unknown;
-};
-
-type TeamConfigCloudPayload = {
-  configsByTeamId: Record<string, TeamSetupConfigPayload>;
 };
 ```
 
@@ -662,7 +608,7 @@ type TeamResultCacheState = {
 };
 ```
 
-This should live outside `TeamConfigCloudPayload`. `useTeamResultCacheStore` is a local-only persisted cache, while `useAnalyzerCacheStore` remains an in-memory cache keyed by full analyzer options.
+This should live outside `TeamsCloudPayload`. `useTeamResultCacheStore` is a local-only persisted cache, while `useAnalyzerCacheStore` remains an in-memory cache keyed by full analyzer options.
 
 ## Freeze Payload
 
@@ -692,6 +638,7 @@ Normalize freeze payloads before save and after restore:
 - Collapse duplicate `(teamId, charId)` entries deterministically.
 - Keep multiple loadouts for the same `charId` across different teams.
 - Resolve `forceReuse` per target team by selecting at most one matching loadout per `charId`; do not make the cloud payload itself depend on a specific target team.
+- V1 embeds this payload inside `profile.app/{profileId}` instead of publishing a separate freeze partition.
 
 ## Tier and Account Settings Payloads
 
@@ -712,13 +659,12 @@ type CharacterTierListPayload = {
 
 Partition rules:
 
-- `tier.character.account/{profileId}` stores the list linked to one account profile. `linkedAccountProfileId` is a number in the payload/local store, not a formatted string.
-- `tier.character.custom/{listId}` stores an unattached custom list.
+- `tiers/all` stores all character, weapon, and artifact tier lists.
+- Character tier lists may still be linked to account profiles in the payload. `linkedAccountProfileId` is a number in the payload/local store, not a formatted string.
 - On restore, if multiple lists claim the same `linkedAccountProfileId`, keep the newest account-linked partition and import the rest as unattached lists.
-- `listId` should be stable at the cloud boundary. Current local tier-list ids are numeric, so the codec can encode them as path-safe strings without changing the local store shape.
-- `tier.weapon/{listId}` and `tier.artifact/{listId}` use the same stable list-id pattern and do not need account-profile linking.
+- Current local tier-list ids are numeric and stay local. The adapter serializes them inside the `tiers/all` payload.
 
-Account-data workflow settings should move to account-scoped cloud namespaces:
+Account-data workflow settings live in `profile.app/{profileId}`:
 
 ```ts
 type AccountTriagePayload = {
@@ -738,7 +684,7 @@ type AccountResourcesPayload = {
 };
 ```
 
-The local stores already persist settings by account profile id, so the cloud codec does not need to guess which profile owns singleton settings.
+The local stores already persist settings by account profile id, so the cloud adapter does not need to guess which profile owns singleton settings.
 
 ## Feedback Tables
 
@@ -920,13 +866,15 @@ Entitlements:
 - `POST /api/billing/stripe/webhook`
 - `POST /api/billing/afdian/webhook` if supported
 
-Sync:
+Backup:
 
-- `GET /api/sync/index`
-- `POST /api/sync/objects`
-- `GET /api/sync/objects/:objectId`
-- `DELETE /api/sync/objects/:objectId`
-- `POST /api/sync/restore-plan`
+- `GET /api/backup/v1/head`
+- `POST /api/backup/v1/commits`
+- `POST /api/backup/v1/objects`
+- `GET /api/backup/v1/devices`
+- `PATCH /api/backup/v1/devices/:deviceId`
+
+The Worker API design lives in `docs/account-system-worker-backup-api.md`. Keep this schema doc focused on data shapes and storage semantics.
 
 Feedback:
 
@@ -943,61 +891,25 @@ Ads (V2 only, generic/contextual, not tied to backup data):
 - `GET /api/ads/slots` only if we build first-party sponsorship inventory or server-side ad policy
 - `POST /api/ads/events` only for first-party sponsorship impression/click rollups
 
-## Sync Upload Contract
+## Backup Upload Contract
 
-Request:
+The V1 Worker API is batch-by-default:
 
-```ts
-type SyncObjectUploadRequest = {
-  namespace: string;
-  partitionKey: string;
-  baseRev?: string;
-  schemaVersion: number;
-  compression: "gzip";
-  mediaType: "application/json";
-  logicalBytes: number;
-  compressedBytes: number;
-  /** Hash of canonical JSON payload before compression. */
-  contentHash: string;
-  /** Optional hash of the exact compressed bytes. */
-  compressedHash?: string;
-};
-```
+- `GET /api/backup/v1/head` returns the current head set and supports a cheap no-change response through `headSetRev`.
+- `POST /api/backup/v1/commits` publishes one logical backup attempt containing one or more changed partition objects.
+- `POST /api/backup/v1/objects` downloads selected current objects in one response when possible.
 
-Do not base64-encode backup bodies in the normal path. Base64 would inflate the largest account uploads and force extra JS/Worker memory copies.
+Each commit request carries changed compressed objects directly. There is no staging table and no separate temporary object lifecycle. `backup_commits` is only an idempotency ledger so a retry with the same idempotency key can return the same result.
 
-Wire format:
+Do not base64-encode backup bodies in the normal path. Use `multipart/form-data` when object bytes are involved; base64 remains debug-only for small test tools.
 
-- V1 uploads one partition object per request.
-- The request body is the compressed bytes; metadata is JSON in a `metadata` form field or compact headers if it fits safely.
-- The JSON metadata contains the `SyncObjectUploadRequest` fields above except the body bytes.
-- Keep a debug-only base64 JSON path possible for tests or admin tools, not for production backup.
+The client owns conflict decisions. Server revision checks are still useful as a default guard, but import/replace flows must have an explicit overwrite path after the UI decides that overwriting cloud is intended.
 
-Response:
-
-```ts
-type SyncObjectUploadResult = {
-  namespace: string;
-  partitionKey: string;
-  objectId: string;
-  rev: string;
-  accepted: true;
-  conflict?: {
-    currentRev: string;
-    currentObjectId: string;
-  };
-};
-```
-
-The V1 endpoint should accept one object. Batching can be added later if request count becomes a real bottleneck.
-
-If `baseRev` does not match the current `sync_heads` revision, return HTTP 409 with current head metadata. The client should mark that partition as paused/conflicted.
-
-## Sync Consistency Pattern
+## Backup Consistency Pattern
 
 Use D1 metadata as the source of truth and R2 as immutable blob storage.
 
-Normal sync should not download full R2 objects just to compare local and cloud. It also should not normally issue R2 `HEAD` requests, because D1 already stores the metadata needed for comparison. R2 `HeadObject` and `GetObject` are both Class B operations; `HEAD` avoids body transfer and Worker memory pressure, but it does not avoid the read operation class. The cloud index endpoint should return, for each namespace/partition:
+Normal sync should not download full R2 objects just to compare local and cloud. It also should not normally issue R2 `HEAD` requests, because D1 already stores the metadata needed for comparison. R2 `HeadObject` and `GetObject` are both Class B operations; `HEAD` avoids body transfer and Worker memory pressure, but it does not avoid the read operation class. The cloud head endpoint should return, for each partition key:
 
 - current `rev`
 - `objectId`
@@ -1011,25 +923,25 @@ Normal sync should not download full R2 objects just to compare local and cloud.
 Client upload flow:
 
 1. Read the latest cloud index/head metadata near the start of a sync attempt, not from R2.
-2. Convert local state through the cloud codec.
+2. Convert local state through the cloud adapter.
 3. Canonicalize JSON and compute `contentHash`.
 4. If the cloud index already has the same `contentHash` for that namespace/partition, mark the partition clean and update local sync metadata.
-5. If the cloud head differs from local `lastSeenRev` and local content also differs from cloud, apply the namespace conflict policy. Global settings can latest-write, a complete account import can intentionally replace that account profile's cloud partitions, and hand-authored builds/teams/account-freeze should pause this partition as a conflict instead of uploading in the background.
+5. If the cloud head differs from local `lastSeenRev` and local content also differs from cloud, apply the namespace conflict policy. A complete game profile import can intentionally replace that profile's cloud partitions, and hand-authored builds/teams/tiers should pause the affected partition as a conflict instead of uploading in the background.
 6. Compress the payload.
-7. Upload each dirty partition separately with local `lastSeenRev` as `baseRev`.
+7. Upload dirty partitions in one commit when possible, with per-partition `baseRev` metadata from local sync metadata. If a batch fails due to network size or reliability, the client may retry smaller batches.
 
 Server upload flow:
 
 1. Authenticate and check `cloud_sync` entitlement for writes.
-2. Validate namespace, partition, schema version, byte sizes, and hashes.
-3. Read the current D1 head for `(user_id, namespace, partition_key)`.
-4. If `baseRev` differs from the current head, return HTTP 409 with current head metadata.
-5. Write the compressed body to R2 under an immutable key that contains the new `rev`.
-6. Insert a `sync_objects` row.
-7. Update `sync_heads` with a conditional SQL statement, for example `WHERE rev = ?`, or insert when no head exists.
-8. If the conditional head update loses a race, return HTTP 409 and schedule orphan R2 cleanup.
+2. Validate partition key allowlist, schema version, byte sizes, and hashes.
+3. Read current D1 heads for all changed `partitionKey` values.
+4. If a guarded write has a stale `baseRev`, return HTTP 409 with current head metadata.
+5. Write compressed bodies to R2 under immutable server-generated object ids.
+6. Update `backup_heads` and `backup_user_state` in a D1 transaction.
+7. Store the result in `backup_commits` for idempotent retry.
+8. If the D1 transaction loses a race, return HTTP 409 and schedule orphan R2 cleanup.
 
-Do not use R2 object overwrite semantics for sync heads. R2 conditional writes and ETags are useful for object integrity and idempotency, but D1 `sync_heads` should remain the concurrency boundary.
+Do not use R2 object overwrite semantics for backup heads. R2 conditional writes and ETags are useful for object integrity and idempotency, but D1 `backup_heads` should remain the concurrency boundary.
 
 `contentHash` is the required logical integrity and dedupe field. `compressedHash` is optional: keep it only if we want the server to validate exact compressed bytes without decompressing, or if we want an extra transport/storage diagnostic. It is not needed for conflict control.
 
@@ -1051,7 +963,7 @@ type LocalSyncMeta = {
 };
 ```
 
-The upload client reads local app stores, converts them through codecs, and attaches the current `lastSeenRev` as `baseRev`. Successful upload or restore updates `LocalSyncMeta`. Store actions do not need to understand cloud revisions.
+The upload client reads local app stores, converts them through adapters, and attaches the current `lastSeenRev` as `baseRev`. Successful upload or restore updates `LocalSyncMeta`. Store actions do not need to understand cloud revisions.
 
 Read cloud head metadata at these moments:
 
@@ -1083,9 +995,9 @@ Conflict policy for the first release:
 - Do not show a modal for passive conflict detection. Show a non-blocking sync status under the account icon dropdown, such as "Cloud has newer data; local changes not uploaded."
 - Ask the user only when they click sync/restore, switch device data intentionally, or attempt an action that would overwrite one side.
 - If cloud head changed since local `baseRev` for hand-authored domains, offer "keep local and overwrite cloud" versus "use cloud and replace local". Keep the old local payload until the user chooses.
-- For complete account imports, allow an explicit latest-import-wins path that overwrites older cloud account partitions.
+- For complete game profile imports, allow an explicit profile-import-wins path that overwrites older cloud profile partitions.
 - UID imports can keep the current local merge behavior. The cloud upload stores the resulting full account profile snapshot; do not implement server-side account merging in V1.
-- For settings, latest-writer-wins is acceptable.
+- Profile app settings are part of `profile.app`; artifact score settings are part of `builds/all`.
 - Keep only the latest visible head per namespace/partition in V1. Mark older objects `superseded_at` and garbage collect their R2 blobs after the upload is committed. The schema keeps timestamps so a later `+N days` retention feature can be added without reshaping tables.
 
 ## Migration Strategy
@@ -1093,14 +1005,14 @@ Conflict policy for the first release:
 There are three independent version layers:
 
 1. D1 schema migrations: backend table shape.
-2. Cloud payload namespace schema versions: `account.artifacts` schema 1, `team.config` schema 1, etc.
+2. Cloud payload namespace schema versions: `profile.artifacts` schema 1, `teams` schema 1, etc.
 3. Local Zustand store versions: existing local hydration and old user migration.
 
 Rules:
 
 - Do not bump local store versions for cloud-only payload changes.
 - Do not make cloud payloads depend on local `partialize` output directly.
-- Every cloud codec needs round-trip tests.
+- Every cloud adapter needs round-trip tests.
 - Restores should enter through store import/hydration paths that already repair and migrate local shapes.
 
 ## Data Deletion

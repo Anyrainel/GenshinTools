@@ -13,11 +13,11 @@ The main migration rule is:
 - Store files should define the current runtime store.
 - `src/stores/schemas.ts` should define current valid persisted shapes and hydration healing.
 - `src/stores/migration/<domain>.ts` should own legacy persisted shapes and versioned migration code.
-- Cloud backup codecs should be added after local store boundaries are clean.
+- Cloud backup adapters should be added after local store boundaries are clean.
 
 ## Implementation Status
 
-The local store migrations needed before cloud backup work are complete on `master` through `b668a54f`. The remaining work before Cloudflare implementation is the cloud backup codec/namespace layer.
+The local store migrations needed before cloud backup work are complete on `master` through `b668a54f`. The remaining work before Cloudflare implementation is the cloud backup adapter/partition layer.
 
 | Phase | Status | Commit |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ The local store migrations needed before cloud backup work are complete on `mast
 | Phase 5: team cache persistence split | Done. Team source/config stays in `useTeamStore`; optimizer, investment, weapon choice, and artifact choice latest results route through local-only `useTeamResultCacheStore`. Analyzer cache is in-memory keyed cache only. | `ca14fca1`, `c6cc7dc2` |
 | Phase 6: build preset delta | Done. Build store persists `PresetDelta<Build>[]` and derives runtime views from the active hydrated preset. | `5a0a1967`, `d6ffb28c` |
 | Phase 7: team preset delta | Done. Team store persists `PresetDelta<TeamComp>[]` plus `configsByTeamId`, with active preset hydration and dedupe. | `98e3eb62`, `5a0a1967` |
-| Phase 8: cloud codecs | Deferred until the cloud sync implementation starts. | pending |
+| Phase 8: cloud adapters | Implemented as the local-only `src/cloud` transform boundary. | `0fe3c48e` |
 
 ## Current Migration Inventory
 
@@ -189,8 +189,7 @@ Migration:
 
 Cloud result:
 
-- `account.triage:{profileId}`
-- `account.resources:{profileId}`
+- `profile.app/{profileId}` contains triage and resource recommendation settings.
 
 Tests:
 
@@ -220,7 +219,7 @@ Migration:
 - UID string account links migrate to numeric UID.
 - Unattached lists keep `linkedAccountId: null`.
 - Legacy singleton data migrates into `tierLists: Record<number, TierListInstance>` with `activeTierListId` and `nextId`.
-- Local list ids are numeric. Cloud codecs can encode them as path-safe partition strings later, but the current local source of truth stays numeric.
+- Local list ids are numeric. Cloud adapters can encode them into payload fields later, but the current local source of truth stays numeric.
 
 ### Weapon and Artifact Tier Lists
 
@@ -247,11 +246,7 @@ Implementation notes:
 
 - Prefer a shared multi-tier-list store helper instead of bespoke character, weapon, and artifact implementations.
 - Keep account linking optional and character-only.
-- Cloud namespaces should be:
-  - `tier.character:{listId}` for unattached character lists
-  - `tier.character.account:{profileId}` or equivalent for account-linked character lists
-  - `tier.weapon:{listId}`
-  - `tier.artifact:{listId}`
+- Cloud backup V1 stores all tier-list data in `tiers/all` to reduce request and D1 row volume. The payload still preserves character account links and stable local list ids.
 
 Tests:
 
@@ -293,7 +288,7 @@ Migration:
 
 Cloud result:
 
-- `account.freeze:{profileId}`
+- `profile.app/{profileId}` contains freeze state with account-scoped artifact ids.
 
 Tests:
 
@@ -322,7 +317,7 @@ Implementation notes:
 
 - Keep `useAnalyzerCacheStore` in-memory only for full-option-keyed analyzer reuse.
 - `useTeamResultCacheStore` owns the latest optimizer, investment, weapon choice, and artifact choice result per team.
-- Cache data should not appear in any cloud codec.
+- Cache data should not appear in any cloud adapter payload.
 
 Tests:
 
@@ -420,9 +415,9 @@ Tests:
 - Custom teams survive migration.
 - Cache fields are not present in the source store.
 
-## Phase 8: Cloud Codec Preparation
+## Phase 8: Cloud Adapter Preparation
 
-After the local store migrations are complete, add cloud backup codec scaffolding.
+After the local store migrations are complete, add cloud backup adapter scaffolding.
 
 This should still be local-only work. It prepares the app boundary before server work starts.
 
@@ -430,38 +425,29 @@ Planned namespaces:
 
 | Namespace | Partition |
 | --- | --- |
-| `account.profile` | profile id |
-| `account.characters` | profile id |
-| `account.weapons` | profile id |
-| `account.artifacts` | profile id plus stable `setGroup` |
-| `account.equipment` | profile id |
-| `account.freeze` | profile id |
-| `tier.character` | list id |
-| `tier.character.account` | profile id |
-| `tier.weapon` | list id |
-| `tier.artifact` | list id |
-| `builds` | default |
-| `team.comp` | default |
-| `team.config` | default |
-| `account.triage` | profile id |
-| `account.resources` | profile id |
-| `settings.artifactScore` | default |
+| `profile.app` | profile id |
+| `profile.game` | profile id |
+| `profile.artifacts` | profile id |
+| `builds` | `all` |
+| `teams` | `all` |
+| `tiers` | `all` |
 
-Codec rules:
+Adapter rules:
 
-- Artifacts are sharded by stable `setGroup`.
-- The `setGroup` mapping is an implementation detail, but should be stable across app versions when possible.
+- Artifacts are coarse by profile in V1. `setGroup` remains an implementation hook for future measured sharding, not a current partition key.
 - Weapons exclude disposable weapons from cloud backup: unlocked, rarity 3, level 1, refinement 1, and not equipped.
-- Equipment owns equipped weapon and artifact references.
+- Weapon equipment stays with weapons in `profile.game`; artifact equipment stays with artifacts in `profile.artifacts`.
+- Freeze, triage, and resource settings live in `profile.app`.
+- Artifact score settings live in `builds/all`.
 - Cache stores are never encoded for cloud backup.
-- Payload codecs have independent versions from local Zustand store versions.
+- Payload adapters have independent versions from local Zustand store versions.
 
 Tests:
 
 - Round-trip every namespace.
 - Verify disposable weapon filtering.
-- Verify artifact shard selection.
-- Verify equipment references survive character, weapon, and artifact partitioning.
+- Verify profile partitions use `profile.app`, `profile.game`, and `profile.artifacts`.
+- Verify equipment references survive `profile.game` and `profile.artifacts` partitioning.
 - Verify cache data is absent from every cloud payload.
 
 ## Versioning Strategy
@@ -477,7 +463,7 @@ Recommended order:
 5. Team cache split.
 6. Build preset-delta migration.
 7. Team preset-delta migration.
-8. Cloud codec scaffolding.
+8. Cloud adapter scaffolding.
 
 Rules:
 
