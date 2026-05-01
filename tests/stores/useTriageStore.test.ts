@@ -1,4 +1,4 @@
-import { act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
@@ -6,6 +6,7 @@ import { migrateTriageStore } from "@/stores/migration/triage";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {
   getActiveTriageSettings,
+  selectActiveTriageSettings,
   useTriageStore,
 } from "@/stores/useTriageStore";
 
@@ -116,6 +117,35 @@ describe("useTriageStore", () => {
   });
 
   describe("updateSettings", () => {
+    it("returns a stable default snapshot for profiles without stored settings", () => {
+      act(() => {
+        useAccountStore.setState({ activeAccountId: 123456789 });
+      });
+
+      const state = useTriageStore.getState();
+      expect(state.settingsByProfileId[123456789]).toBeUndefined();
+      expect(selectActiveTriageSettings(state)).toBe(
+        selectActiveTriageSettings(state)
+      );
+      expect(getActiveTriageSettings()).toEqual(DEFAULT_TRIAGE_SETTINGS);
+    });
+
+    it("can subscribe to active defaults without a render loop", () => {
+      act(() => {
+        useAccountStore.setState({ activeAccountId: 123456789 });
+      });
+
+      const { result, rerender } = renderHook(() =>
+        useTriageStore(selectActiveTriageSettings)
+      );
+      const firstSettings = result.current;
+
+      rerender();
+
+      expect(result.current).toBe(firstSettings);
+      expect(result.current).toEqual(DEFAULT_TRIAGE_SETTINGS);
+    });
+
     it("patches settings with customFlexInputs", () => {
       act(() => {
         useTriageStore.getState().updateSettings({

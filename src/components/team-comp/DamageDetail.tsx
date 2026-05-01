@@ -70,6 +70,7 @@ import {
   buildTeamSlotConfigs,
   getEffectiveCombo,
   getHigherTierEquippedArtifactIds,
+  resolveSelectedFormula,
   toStatSheets,
 } from "@/lib/team-comp/teamConfigUtils";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
@@ -381,15 +382,10 @@ export function DamageDetail({
     return result;
   }, [frozenEntry, equippedArtifactsByChar]);
 
-  const resolvedFormula = useMemo(() => {
-    if (!damageConfig.selectedFormula) return allFormulas[0] || null;
-    const isValid = allFormulas.some(
-      (f) =>
-        f.charId === damageConfig.selectedFormula!.charId &&
-        f.formulaId === damageConfig.selectedFormula!.formulaId
-    );
-    return isValid ? damageConfig.selectedFormula : allFormulas[0] || null;
-  }, [damageConfig.selectedFormula, allFormulas]);
+  const resolvedFormula = useMemo(
+    () => resolveSelectedFormula(damageConfig.selectedFormula, allFormulas),
+    [damageConfig.selectedFormula, allFormulas]
+  );
 
   const activeContext = useMemo<CalcContext>(() => {
     // Build per-character CR targets from characters using "target" crMode
@@ -439,6 +435,15 @@ export function DamageDetail({
   const comboLineMap = useMemo(
     () => buildComboLineMap(combo.lines),
     [combo.lines]
+  );
+
+  const formulaSelectorDamageConfig = useMemo<TeamDamageConfig>(
+    () => ({
+      ...damageConfig,
+      selectedFormula: resolvedFormula,
+      combo,
+    }),
+    [damageConfig, resolvedFormula, combo]
   );
 
   const updateCombo = useCallback(
@@ -501,16 +506,12 @@ export function DamageDetail({
           charId,
           formulaId,
           reaction,
-          damageConfig.selectedFormula ?? undefined,
+          resolvedFormula ?? undefined,
           damageConfig.singleReaction
         ),
       });
     },
-    [
-      updateDamageConfig,
-      damageConfig.selectedFormula,
-      damageConfig.singleReaction,
-    ]
+    [updateDamageConfig, resolvedFormula, damageConfig.singleReaction]
   );
 
   // ─── Display Combo ───
@@ -521,17 +522,17 @@ export function DamageDetail({
     () =>
       getEffectiveCombo({
         formulaMode,
-        selectedFormula: damageConfig.selectedFormula,
+        selectedFormula: resolvedFormula,
         singleReaction: damageConfig.singleReaction,
         singleForceOnField: damageConfig.singleForceOnField,
-        combo: damageConfig.combo,
+        combo,
       }),
     [
       formulaMode,
-      damageConfig.selectedFormula,
+      resolvedFormula,
       damageConfig.singleReaction,
       damageConfig.singleForceOnField,
-      damageConfig.combo,
+      combo,
     ]
   );
 
@@ -1242,7 +1243,7 @@ export function DamageDetail({
         {/* Card 2 — Formula Selection */}
         <FormulaSelectorCard
           characters={characters}
-          damageConfig={damageConfig}
+          damageConfig={formulaSelectorDamageConfig}
           onDamageConfigChange={updateDamageConfig}
           allFormulas={allFormulas}
           availableFormulas={availableFormulas}

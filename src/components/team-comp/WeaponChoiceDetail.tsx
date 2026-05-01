@@ -31,6 +31,7 @@ import {
   buildTeamSlotConfigs,
   buildWeaponChoiceCharConfigs,
   getEffectiveCombo,
+  resolveSelectedFormula,
 } from "@/lib/team-comp/teamConfigUtils";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type {
@@ -59,6 +60,14 @@ interface WeaponChoiceDetailProps {
   onBack: () => void;
   viewId?: ViewId;
   resultCache?: TeamResultCacheEntry;
+}
+
+function getArtifactChoiceKey(
+  artifactSet: TeamComp["slots"][number]["artifactSet"]
+): string {
+  if (!artifactSet) return "none";
+  if (artifactSet.type === "4pc") return `4pc:${artifactSet.setId}`;
+  return `2pc:${artifactSet.halfSetIds.join("+")}`;
 }
 
 export function WeaponChoiceDetail({
@@ -187,6 +196,11 @@ export function WeaponChoiceDetail({
     [validCharIds, availableFormulas]
   );
 
+  const resolvedFormula = useMemo(
+    () => resolveSelectedFormula(damageConfig.selectedFormula, allFormulas),
+    [damageConfig.selectedFormula, allFormulas]
+  );
+
   // ── Combo management (unified with Damage tab) ──
   const combo = useMemo<ComboFormula>(
     () =>
@@ -195,9 +209,24 @@ export function WeaponChoiceDetail({
     [damageConfig.combo, teamBuild, characters]
   );
 
+  useEffect(() => {
+    if (!damageConfig.combo && combo.lines.length > 0) {
+      updateDamageConfig({ combo });
+    }
+  }, [damageConfig.combo, combo, updateDamageConfig]);
+
   const comboLineMap = useMemo(
     () => buildComboLineMap(combo.lines),
     [combo.lines]
+  );
+
+  const formulaSelectorDamageConfig = useMemo<TeamDamageConfig>(
+    () => ({
+      ...damageConfig,
+      selectedFormula: resolvedFormula,
+      combo,
+    }),
+    [damageConfig, resolvedFormula, combo]
   );
 
   const updateCombo = useCallback(
@@ -258,16 +287,12 @@ export function WeaponChoiceDetail({
           charId,
           formulaId,
           reaction,
-          damageConfig.selectedFormula ?? undefined,
+          resolvedFormula ?? undefined,
           damageConfig.singleReaction
         ),
       });
     },
-    [
-      updateDamageConfig,
-      damageConfig.selectedFormula,
-      damageConfig.singleReaction,
-    ]
+    [updateDamageConfig, resolvedFormula, damageConfig.singleReaction]
   );
 
   const onResetCombo = useCallback(() => {
@@ -292,17 +317,17 @@ export function WeaponChoiceDetail({
     () =>
       getEffectiveCombo({
         formulaMode,
-        selectedFormula: damageConfig.selectedFormula,
+        selectedFormula: resolvedFormula,
         singleReaction: damageConfig.singleReaction,
         singleForceOnField: damageConfig.singleForceOnField,
-        combo: damageConfig.combo,
+        combo,
       }),
     [
       formulaMode,
-      damageConfig.selectedFormula,
+      resolvedFormula,
       damageConfig.singleReaction,
       damageConfig.singleForceOnField,
-      damageConfig.combo,
+      combo,
     ]
   );
 
@@ -352,13 +377,18 @@ export function WeaponChoiceDetail({
   const activeDisplayResult = displayResults[choiceMode] ?? null;
   const persistChoiceResult = useCallback(
     (mode: "weapon" | "artifact", result: WeaponChoiceResult | null) => {
+      setDisplayResults((prev) => {
+        const next = { ...prev, [mode]: result };
+        displayResultsRef.current = next;
+        return next;
+      });
       setChoiceResult(teamComp.id, mode, result);
     },
     [setChoiceResult, teamComp.id]
   );
 
   // Clear stale results when team composition changes
-  const compositionKey = `${characters.join(",")}|${weapons.join(",")}`;
+  const compositionKey = `${characters.join(",")}|${weapons.join(",")}|${artifacts.map(getArtifactChoiceKey).join(",")}`;
   const prevCompositionKey = useRef(compositionKey);
   useEffect(() => {
     if (prevCompositionKey.current !== compositionKey) {
@@ -553,7 +583,7 @@ export function WeaponChoiceDetail({
         {/* 2. Formula Selection Card */}
         <FormulaSelectorCard
           characters={characters}
-          damageConfig={damageConfig}
+          damageConfig={formulaSelectorDamageConfig}
           onDamageConfigChange={updateDamageConfig}
           allFormulas={allFormulas}
           availableFormulas={availableFormulas}

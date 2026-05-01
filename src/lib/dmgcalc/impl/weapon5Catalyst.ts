@@ -476,8 +476,8 @@ class CashflowSupervision extends WeaponBase {
   ];
 }
 
-@RegisterWeapon("seven_edicts_of_dust_and_light")
-class SevenEdictsOfDustAndLight extends WeaponBase {
+@RegisterWeapon("angelos_heptades")
+class AngelosHeptades extends WeaponBase {
   // Base ATK% (always).
   // After creating a shield, "Pathfinder's Light" (20s): per 1000 ATK → active party
   // member DMG +X%, capped. The wielder is off-field-eligible (shielder role).

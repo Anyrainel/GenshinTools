@@ -289,7 +289,8 @@ async function runGeneratorToCompletion(
   combo: ComboFormula,
   calcContext: CalcContext,
   perChar?: Record<string, { minEr: number; minCr: number }>,
-  setKeysByChar?: Record<string, Record<Slot, string>>
+  setKeysByChar?: Record<string, Record<Slot, string>>,
+  onProgress?: (progress: number, phase: string) => void
 ): Promise<GeneratorResult | null> {
   let lastResult: GeneratorResult | null = null;
   const gen = runGenerator({
@@ -305,6 +306,7 @@ async function runGeneratorToCompletion(
 
   for await (const result of gen) {
     lastResult = result;
+    onProgress?.(result.progress, result.phase);
   }
   return lastResult;
 }
@@ -365,17 +367,22 @@ async function computeForChar(
   ) => void
 ): Promise<ChoiceRanking[]> {
   const supportCharIds = charIds.filter((id) => id !== targetCharId);
+  const candidateQueue = [...candidates];
+  const initialCandidateCount = candidateQueue.length;
+  let totalProgressSteps = initialCandidateCount + 1;
 
   // Step 1: Generate supporter artifacts once using the roster weapon
   const rosterTeamBuild = new TeamBuild(configs, opts, enemyAura, extraBuffs);
 
+  onProgress(0, undefined, totalProgressSteps);
   const rosterResult = await runGeneratorToCompletion(
     rosterTeamBuild,
     targetCharId,
     combo,
     calcContext,
     perChar,
-    setKeysByChar
+    setKeysByChar,
+    (progress) => onProgress(progress, undefined, totalProgressSteps)
   );
 
   if (!rosterResult) return [];
@@ -389,10 +396,7 @@ async function computeForChar(
   }
 
   // Step 2: For each candidate, generate artifacts and evaluate
-  const candidateQueue = [...candidates];
-  const initialCandidateCount = candidateQueue.length;
   const rankings: ChoiceRanking[] = [];
-  let choicesDone = 0;
 
   for (
     let candidateIndex = 0;
@@ -400,11 +404,9 @@ async function computeForChar(
     candidateIndex++
   ) {
     const candidate = candidateQueue[candidateIndex];
-    onProgress(
-      choicesDone,
-      getCandidateProgressLabel(candidate),
-      candidateQueue.length
-    );
+    const progressBase = candidateIndex + 1;
+    const progressLabel = getCandidateProgressLabel(candidate);
+    onProgress(progressBase, progressLabel, totalProgressSteps);
 
     const candidateConfigs = configs.map((c) =>
       c.charId !== targetCharId
@@ -441,17 +443,19 @@ async function computeForChar(
       combo,
       calcContext,
       perChar,
-      candidateSetKeysByChar
+      candidateSetKeysByChar,
+      (progress) =>
+        onProgress(progressBase + progress, progressLabel, totalProgressSteps)
     );
 
     if (!weaponResult) {
-      choicesDone++;
       if (candidateIndex === initialCandidateCount - 1) {
         const twoPieceCandidates = buildTwoPieceArtifactChoiceCandidates(
           collectGeneratedSubstatKeys(rankings)
         );
         candidateQueue.push(...twoPieceCandidates);
-        onProgress(choicesDone, undefined, candidateQueue.length);
+        totalProgressSteps = candidateQueue.length + 1;
+        onProgress(progressBase + 1, undefined, totalProgressSteps);
       }
       continue;
     }
@@ -536,17 +540,17 @@ async function computeForChar(
       });
     }
 
-    choicesDone++;
     if (candidateIndex === initialCandidateCount - 1) {
       const twoPieceCandidates = buildTwoPieceArtifactChoiceCandidates(
         collectGeneratedSubstatKeys(rankings)
       );
       candidateQueue.push(...twoPieceCandidates);
-      onProgress(choicesDone, undefined, candidateQueue.length);
+      totalProgressSteps = candidateQueue.length + 1;
+      onProgress(progressBase + 1, undefined, totalProgressSteps);
     }
   }
 
-  onProgress(choicesDone, undefined, candidateQueue.length);
+  onProgress(totalProgressSteps, undefined, totalProgressSteps);
   return rankings;
 }
 

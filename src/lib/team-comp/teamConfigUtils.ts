@@ -31,6 +31,21 @@ import type {
 import { getHalfSetIds, getSetId } from "../dmgcalc/utils";
 import { teamCompToArrays } from "./teamDeltas";
 
+type FormulaSelection = { charId: string; formulaId: string };
+
+export function resolveSelectedFormula(
+  selectedFormula: FormulaSelection | null | undefined,
+  allFormulas: readonly FormulaSelection[]
+): FormulaSelection | null {
+  if (!selectedFormula) return allFormulas[0] ?? null;
+  const isValid = allFormulas.some(
+    (formula) =>
+      formula.charId === selectedFormula.charId &&
+      formula.formulaId === selectedFormula.formulaId
+  );
+  return isValid ? selectedFormula : (allFormulas[0] ?? null);
+}
+
 /** Detect what artifact set bonuses the equipped pieces actually form. */
 export function detectEquippedSets(
   artifacts: (ArtifactData | null | undefined)[]

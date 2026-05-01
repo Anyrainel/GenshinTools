@@ -393,23 +393,30 @@ class ViridescentVenerer4pc extends ArtifactSetBase {
       teamElements.has(el)
     );
 
-    this.buffs = [
+    const buffs: StatBuff[] = [
       new StatBuff(
         { type: "artifactSet", id: this.artifactSetId, triggers: ["swirl"] },
         { receiver: "self", filter: { reactions: ["swirl"] } },
         [{ key: "reactionDmg%", value: 0.6 }]
       ),
-      new StatBuff(
-        {
-          type: "artifactSet",
-          id: this.artifactSetId,
-          triggers: ["swirl"],
-          noStackId: this.artifactSetId,
-        },
-        { receiver: "team", filter: { elements: elements } },
-        [{ key: "resReduction%", value: 0.4 }]
-      ),
     ];
+
+    if (teamMeta.elements[charId] === "Anemo" && elements.length > 0) {
+      buffs.push(
+        new StatBuff(
+          {
+            type: "artifactSet",
+            id: this.artifactSetId,
+            triggers: ["swirl"],
+            noStackId: this.artifactSetId,
+          },
+          { receiver: "team", filter: { elements: elements } },
+          [{ key: "resReduction%", value: 0.4 }]
+        )
+      );
+    }
+
+    this.buffs = buffs;
   }
 }
 
@@ -1371,7 +1378,7 @@ class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
   ];
 }
 
-const heavensGiftOption = {
+const celestialGiftOption = {
   label: { zh: "凡世颂歌模拟范围", en: "Mortal Hymn scope" },
   choices: [
     {
@@ -1385,8 +1392,8 @@ const heavensGiftOption = {
   ] as const,
 } satisfies OptionDef;
 
-@RegisterArtifactSet("heavens_gift", heavensGiftOption)
-class HeavensGift4pc extends ArtifactSetBase {
+@RegisterArtifactSet("celestial_gift", celestialGiftOption)
+class CelestialGift4pc extends ArtifactSetBase {
   // 2pc: ER +20%.
   // 4pc: Hexerei wearer gets a post-E buff giving
   //       +20% dmg to their element off-field.
@@ -1397,7 +1404,7 @@ class HeavensGift4pc extends ArtifactSetBase {
   // Modeling: effect is always-on. "self" limits bonus to
   // the active on-field element, "team" makes it team-wide.
   // noStackId is element-specific to prevent same-element stacking.
-  private readonly o = resolveOption(heavensGiftOption, this.option);
+  private readonly o = resolveOption(celestialGiftOption, this.option);
   readonly halfSetId = "er-20";
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[];

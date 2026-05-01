@@ -32,6 +32,8 @@ const cloneDefaultSettings = (): TriageSettings => ({
   })),
 });
 
+const FALLBACK_TRIAGE_SETTINGS = cloneDefaultSettings();
+
 const getActiveProfileId = () =>
   useAccountStore.getState().activeAccountId ?? DEFAULT_ACCOUNT_PROFILE_ID;
 
@@ -40,7 +42,7 @@ const getSettingsForProfile = (
   profileId: AccountProfileId | null
 ) =>
   state.settingsByProfileId[profileId ?? DEFAULT_ACCOUNT_PROFILE_ID] ??
-  cloneDefaultSettings();
+  FALLBACK_TRIAGE_SETTINGS;
 
 export const selectActiveTriageSettings = (
   state: Pick<TriageState, "settingsByProfileId">

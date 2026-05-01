@@ -96,6 +96,17 @@ function getArtifactAssignmentKey(
   return [...artifactSet.halfSetIds].sort().join("+");
 }
 
+const MIN_ASSIGNMENT_IMPROVEMENT_PERCENT = 0.05;
+
+function hasArtifactAssignmentImprovement(
+  suggestion: ArtifactAssignmentSuggestion
+): boolean {
+  return (
+    Math.max(0, suggestion.percentImprovement) >
+    MIN_ASSIGNMENT_IMPROVEMENT_PERCENT
+  );
+}
+
 function formatArtifactProgressTarget(
   target: string,
   t: WeaponChoiceResultCardProps["t"]
@@ -551,7 +562,7 @@ function ArtifactAssignmentCard({
   t: WeaponChoiceResultCardProps["t"];
 }) {
   const improvement = Math.max(0, suggestion.percentImprovement);
-  const hasImprovement = improvement > 0.05;
+  const hasImprovement = hasArtifactAssignmentImprovement(suggestion);
 
   const handleApply = useCallback(() => {
     const assignmentByChar = new Map(
@@ -636,7 +647,13 @@ function ArtifactAssignmentCard({
             getArtifactAssignmentKey(currentArtifactSet) !==
             getArtifactAssignmentKey(artifactSet);
           return (
-            <div key={charId} className="flex items-center gap-2 min-w-0">
+            <div
+              key={charId}
+              className={cn(
+                "flex items-center gap-2 min-w-0 rounded-md border px-2 py-1",
+                assignmentChanged ? "border-primary" : "border-transparent"
+              )}
+            >
               <div className="flex items-center gap-1.5 min-w-0">
                 {artifactSet ? (
                   <ArtifactChoiceRowIcon
@@ -895,18 +912,22 @@ export function WeaponChoiceResultCard({
 
         {error && <p className="text-sm text-destructive">{error.message}</p>}
 
-        {choiceMode === "artifact" && result?.artifactAssignmentSuggestion && (
-          <ArtifactAssignmentCard
-            suggestion={result.artifactAssignmentSuggestion}
-            teamComp={teamComp}
-            characters={characters}
-            artifacts={artifacts}
-            result={result}
-            onTeamCompChange={onTeamCompChange}
-            setChoiceResult={setChoiceResult}
-            t={t}
-          />
-        )}
+        {choiceMode === "artifact" &&
+          result?.artifactAssignmentSuggestion &&
+          hasArtifactAssignmentImprovement(
+            result.artifactAssignmentSuggestion
+          ) && (
+            <ArtifactAssignmentCard
+              suggestion={result.artifactAssignmentSuggestion}
+              teamComp={teamComp}
+              characters={characters}
+              artifacts={artifacts}
+              result={result}
+              onTeamCompChange={onTeamCompChange}
+              setChoiceResult={setChoiceResult}
+              t={t}
+            />
+          )}
 
         {/* Results grid — always show character panels when charIds exist */}
         {charIds.length > 0 ? (
