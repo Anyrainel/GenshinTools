@@ -234,34 +234,33 @@ export interface WeaponStat {
   statValue: number;
 }
 
-// Enka API endpoints with fallback strategy
-// Primary: Self-hosted Cloudflare Pages Function (works on ggartifact.com)
-// Fallback: corsproxy.io (for GitHub Pages or other deployments)
+// Enka API endpoint. Browser imports must go through our Cloudflare proxy
+// because the upstream Enka API does not provide browser-safe CORS.
 const ENKA_DIRECT_API = "/api/enka/uid/";
-const CORS_PROXY_FALLBACK = "https://corsproxy.io/?";
-const ENKA_EXTERNAL_API = "https://enka.network/api/uid/";
 
 /**
- * Determines if we're running on a deployment that has our Cloudflare Function.
- * Returns true for Cloudflare Pages (ggartifact.com, *.pages.dev) and localhost
- * when running via Wrangler (port 8788).
+ * Determines if we're running on a deployment that has our Cloudflare proxy.
+ * Returns true for Cloudflare Pages, Workers, custom domains, and localhost
+ * when running via Wrangler.
  */
-function hasCloudflareProxy(): boolean {
-  const { hostname, port } = window.location;
-
-  // Production: Cloudflare Pages deployments
+export function hasCloudflareProxyForLocation({
+  hostname,
+  port,
+}: Pick<Location, "hostname" | "port">): boolean {
+  // Production: Cloudflare Pages, Workers, and custom-domain deployments
   if (
     hostname.endsWith(".pages.dev") ||
+    hostname.endsWith(".workers.dev") ||
     hostname === "ggartifact.com" ||
     hostname.endsWith(".ggartifact.com")
   ) {
     return true;
   }
 
-  // Development: Only when running through Wrangler (port 8788)
+  // Development: Only when running through Wrangler.
   // If accessing via Vite directly (port 5173), Functions aren't available
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return port === "8788";
+    return port === "8787" || port === "8788";
   }
 
   return false;
@@ -272,37 +271,20 @@ export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
     throw new Error("Invalid UID format");
   }
 
-  // Try primary endpoint first (Cloudflare Pages Function)
-  const useCfProxy = hasCloudflareProxy();
-  const primaryUrl = useCfProxy
-    ? `${ENKA_DIRECT_API}${uid}`
-    : `${CORS_PROXY_FALLBACK}${ENKA_EXTERNAL_API}${uid}`;
+  const useCfProxy = hasCloudflareProxyForLocation(window.location);
+  if (!useCfProxy) {
+    throw new Error(
+      "Enka import requires the Cloudflare proxy. Use the deployed site or run local dev through Wrangler."
+    );
+  }
 
   let response: Response;
-  let usedFallback = false;
 
   try {
-    response = await fetch(primaryUrl);
-
-    // If primary fails with network error or 5xx, try fallback (only if we used CF proxy)
-    if (useCfProxy && !response.ok && response.status >= 500) {
-      console.warn("Cloudflare proxy failed, trying fallback...");
-      response = await fetch(
-        `${CORS_PROXY_FALLBACK}${ENKA_EXTERNAL_API}${uid}`
-      );
-      usedFallback = true;
-    }
+    response = await fetch(`${ENKA_DIRECT_API}${uid}`);
   } catch (error) {
-    // Network error on primary, try fallback if we used CF proxy
-    if (useCfProxy) {
-      console.warn("Cloudflare proxy network error, trying fallback...", error);
-      response = await fetch(
-        `${CORS_PROXY_FALLBACK}${ENKA_EXTERNAL_API}${uid}`
-      );
-      usedFallback = true;
-    } else {
-      throw error;
-    }
+    console.error("Cloudflare Enka proxy network error:", error);
+    throw error;
   }
 
   if (!response.ok) {
@@ -329,10 +311,6 @@ export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
   const data = (await response.json()) as EnkaResponse;
   if (!data.playerInfo) {
     throw new Error("Invalid Enka response");
-  }
-
-  if (usedFallback) {
-    console.info("Successfully fetched via fallback proxy");
   }
 
   return data;

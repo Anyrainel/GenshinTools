@@ -1,12 +1,85 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   convertEnkaToGOOD,
   type EnkaResponse,
   fetchEnkaData,
+  hasCloudflareProxyForLocation,
 } from "@/lib/account-data/import/enkaFetcher";
 
 describe("enka", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function setWindowLocation(hostname: string, port = "") {
+    vi.spyOn(window, "location", "get").mockReturnValue({
+      hostname,
+      port,
+    } as Location);
+  }
+
+  describe("hasCloudflareProxyForLocation", () => {
+    it("uses the local proxy on Cloudflare deployment hosts", () => {
+      expect(
+        hasCloudflareProxyForLocation({
+          hostname: "genshintools.pages.dev",
+          port: "",
+        })
+      ).toBe(true);
+      expect(
+        hasCloudflareProxyForLocation({
+          hostname: "ggartifact.anyrainel.workers.dev",
+          port: "",
+        })
+      ).toBe(true);
+      expect(
+        hasCloudflareProxyForLocation({
+          hostname: "cn.ggartifact.com",
+          port: "",
+        })
+      ).toBe(true);
+    });
+
+    it("uses the local proxy for Wrangler dev but not Vite-only dev", () => {
+      expect(
+        hasCloudflareProxyForLocation({ hostname: "localhost", port: "8787" })
+      ).toBe(true);
+      expect(
+        hasCloudflareProxyForLocation({ hostname: "127.0.0.1", port: "8788" })
+      ).toBe(true);
+      expect(
+        hasCloudflareProxyForLocation({ hostname: "localhost", port: "5173" })
+      ).toBe(false);
+    });
+  });
+
   describe("fetchEnkaData", () => {
+    it("fetches Enka through the local Cloudflare proxy on Workers hosts", async () => {
+      setWindowLocation("ggartifact.anyrainel.workers.dev");
+      const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+        new Response(JSON.stringify({ playerInfo: { nickname: "A" } }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      );
+
+      await expect(fetchEnkaData("123456789")).resolves.toMatchObject({
+        playerInfo: { nickname: "A" },
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith("/api/enka/uid/123456789");
+    });
+
+    it("does not call a public CORS proxy on unsupported hosts", async () => {
+      setWindowLocation("example.com");
+      const fetchMock = vi.spyOn(globalThis, "fetch");
+
+      await expect(fetchEnkaData("123456789")).rejects.toThrow(
+        "Enka import requires the Cloudflare proxy"
+      );
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
     describe("UID validation", () => {
       it("throws error for empty UID", async () => {
         await expect(fetchEnkaData("")).rejects.toThrow("Invalid UID format");

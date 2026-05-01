@@ -3,6 +3,8 @@
   "name": "ggartifact",
   "compatibility_date": "2026-04-30",
   "main": "worker/index.ts",
+  "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
