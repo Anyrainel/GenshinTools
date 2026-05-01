@@ -160,6 +160,32 @@ const SLOT_BY_POS: Record<number, string> = {
   5: "circlet",
 };
 
+const MULTI_ELEMENT_CHARACTER_NAMES = new Set([
+  "Traveler",
+  "Manekin",
+  "Manekina",
+]);
+
+function normalizeElementName(element: string): string {
+  return element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
+}
+
+function resolveHoyolabCharacterKey(
+  name: string,
+  element: string | undefined
+): string | undefined {
+  const directKey = charNameMap.get(normalize(name));
+  if (directKey) return directKey;
+
+  if (!element || !MULTI_ELEMENT_CHARACTER_NAMES.has(name)) {
+    return undefined;
+  }
+
+  return charNameMap.get(
+    normalize(`${name} (${normalizeElementName(element)})`)
+  );
+}
+
 // Low-level fetch through the signed proxy
 
 const PROXY_BASE = "/api/hoyolab";
@@ -233,6 +259,7 @@ export async function fetchHoyolabData(
   );
 
   const ids = list.list.map((c) => c.id);
+  const listEntryById = new Map(list.list.map((entry) => [entry.id, entry]));
   const details: CharacterDetailEntry[] = [];
   for (let i = 0; i < ids.length; i += DETAIL_BATCH_SIZE) {
     const batch = ids.slice(i, i + DETAIL_BATCH_SIZE);
@@ -242,7 +269,15 @@ export async function fetchHoyolabData(
       { character_ids: batch, role_id: uid, server },
       cookie
     );
-    details.push(...detail.list);
+    for (const entry of detail.list) {
+      const listEntry = listEntryById.get(entry.base.id);
+      const element = entry.base.element || listEntry?.element || "";
+      details.push(
+        element === entry.base.element
+          ? entry
+          : { ...entry, base: { ...entry.base, element } }
+      );
+    }
   }
 
   return { uid, region, server, characters: details };
@@ -296,11 +331,17 @@ export function convertHoyolabToGOOD(
 
   for (const entry of fetched.characters) {
     const charName = entry.base.name;
-    const charKey = charNameMap.get(normalize(charName));
+    const charKey = resolveHoyolabCharacterKey(
+      charName,
+      entry.base.element || undefined
+    );
     if (!charKey) {
       warn("character", charName);
       continue;
     }
+    const isMultiElementCharacter =
+      MULTI_ELEMENT_CHARACTER_NAMES.has(charName) &&
+      Boolean(entry.base.element);
 
     const level = entry.base.level;
     const actives = entry.skills.filter((s) => s.skill_type === 1);
@@ -318,6 +359,9 @@ export function convertHoyolabToGOOD(
       level,
       constellation: entry.base.actived_constellation_num,
       ascension: levelToAscension(level),
+      ...(isMultiElementCharacter && {
+        element: normalizeElementName(entry.base.element),
+      }),
       ...(talent && { talent }),
     });
 
