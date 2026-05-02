@@ -180,8 +180,7 @@ Recommended account partitions, repeated per account profile id:
 
 Artifact sharding note:
 
-- Earlier planning considered `account.artifacts/{profileId}:{setGroup}`. The implemented V1 keeps one artifact partition per game profile: `profile.artifacts/{profileId}`.
-- `src/cloud/adapters/setGroup.ts` remains as an editable mapping for future shard experiments and local measurement, but it is not part of the current Worker API partition key.
+- V1 keeps one artifact partition per game profile: `profile.artifacts/{profileId}`.
 - If real production payloads show poor upload success for the artifact partition, split `profile.artifacts/{profileId}` into grouped partitions in a new cloud payload schema version.
 
 Disposable weapon filter:
@@ -748,26 +747,44 @@ Completed local store migration phase
 - Character, weapon, and artifact tier-list stores are multi-instance.
 - Old-store hydration and migration tests cover the changed store shapes.
 
-Phase 3: Cloud adapters
+Completed cloud adapter and backup API phase
 
-- Convert local `AccountData` to normalized cloud partitions.
-- Preserve current import/store code.
-- Add round-trip tests: local -> cloud -> local.
-- Measure gzip ratio with real account dumps.
-- Include freeze, triage, and resource settings in `profile.app`.
-- Include artifact score settings in `builds/all`.
-- Include character, weapon, and artifact tier lists in `tiers/all`.
+- `src/cloud/registry.ts` classifies source data, selected settings, caches, preferences, and session state.
+- `src/cloud/adapters/*Adapter.ts` converts account, build, team, and tier data to cloud partitions and back to restore patches.
+- `src/cloud/storeAdapters.ts` builds the local backup partition set from Zustand stores.
+- `src/cloud/payload.ts` canonicalizes, hashes, verifies, gzips, and gunzips payload envelopes.
+- `src/cloud/syncPlanner.ts` plans upload, download, conflict, no-op, skipped, and unsupported-schema decisions.
+- `src/cloud/apiClient.ts` is a typed client for the Worker backup API.
+- `src/cloud/syncClient.ts` is a headless coordinator for reading heads, planning sync, committing safe uploads, committing explicitly confirmed local overwrites, marking no-op/upload metadata, recording unresolved conflicts, downloading selected objects, verifying envelopes, building restore plans, applying restore plans, and marking download metadata only after local apply succeeds.
+- `src/cloud/storeAdapters.ts` applies restore-plan sections through store-owned APIs so derived build/team runtime state and score caches refresh correctly.
+- `worker/backup.ts` implements the head, commit, and object endpoints with D1/R2 persistence and optimistic concurrency.
+- `worker/auth.ts` is the production-shaped auth and entitlement boundary. It currently has a dev-only `requireUser()` implementation backed by `BACKUP_DEV_AUTH_SECRET` and `x-backup-dev-user-id`.
+- `migrations/0001_backup.sql` has been applied locally and remotely for the backup metadata tables.
+- `npm run smoke:backup-worker` exercises the local Worker backup path with local D1/R2 bindings.
+- `tests/cloud/syncClientFlows.test.ts` simulates multiple devices against a stateful fake backup API, including manual-edit conflict, explicit imported-profile overwrite, grouped profile downloads, verified download restore planning, post-apply metadata marking, and corrupt object rejection.
 
-Phase 4: Backup Set and UI
+Completed manual cloud UI slice
 
-- Build local backup-set generation, dirty queue, conflict status, and account-menu resolver.
+- In local dev builds, `src/components/layout/AppBar.tsx` uses an avatar-shaped account menu for account access, cloud backup, theme, language, and existing page menu actions.
+- Production builds keep the generic overflow menu and do not expose account or cloud backup entry points.
+- `/account` stores dev-gated backup credentials locally until production auth replaces the dev header path.
+- `/account/cloud-backup` provides manual "Sync now", "Apply cloud changes", and "Keep local" actions. It calls `runCloudSyncOnce()`, `downloadCloudSyncRestorePlan()`, and `applyCloudRestoreAndMarkSynced()`.
+- No passive background sync is wired.
+- `explicitLocalOverwrite` is only reachable from a user-clicked keep-local action. Passive sync still leaves conflicts unresolved.
+- Fresh browsers with only default local partition state can download existing cloud data on first sync. Real local data that differs from cloud data still pauses as a conflict.
+
+Still pending: Backup Set and UI
+
+- Dirty queue and retry state.
+- Account-menu sync/conflict badge.
+- Full conflict resolver with cloud/local choice per conflict group.
 - Gate upload/restore UI with `cloud_sync`.
 
-Phase 5: Server API
+Still pending: Production auth and entitlement gate
 
-- Add Cloudflare D1 migrations and R2 bucket bindings.
-- Build cloud index and upload/restore endpoints.
-- Gate upload/restore with `cloud_sync`.
+- Replace the dev implementation inside `worker/auth.ts` with SSO-backed session lookup.
+- Add `/api/me`, logout, and provider-linking skeleton.
+- Persist and check the `cloud_sync` entitlement from D1 instead of the temporary dev grant.
 - Keep delete/download available even after entitlement expiry.
 
 ## Open Questions

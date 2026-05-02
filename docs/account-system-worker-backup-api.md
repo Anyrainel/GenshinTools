@@ -50,9 +50,14 @@ Auth is not a blocker for the API design. It becomes a blocker before public dep
 
 Current implementation status:
 
-- Public auth is not wired yet.
-- The Worker route is intentionally dev-gated with `Authorization: Bearer <BACKUP_DEV_AUTH_SECRET>` and `x-backup-dev-user-id`.
+- Public SSO/session auth is not wired yet.
+- `worker/auth.ts` owns the production-shaped `requireUser()` and entitlement boundary.
+- The current `requireUser()` implementation is intentionally dev-gated with `Authorization: Bearer <BACKUP_DEV_AUTH_SECRET>` and `x-backup-dev-user-id`.
 - Without `BACKUP_DB`, `BACKUP_BUCKET`, and `BACKUP_DEV_AUTH_SECRET`, `/api/backup/v1/*` returns an unavailable JSON error and does not read or write anything.
+- `GET /api/backup/v1/head`, `POST /api/backup/v1/commits`, and `POST /api/backup/v1/objects` are implemented in `worker/backup.ts`.
+- `src/cloud/apiClient.ts` is the typed frontend contract layer for these endpoints.
+- `src/cloud/syncClient.ts` calls the client head/commit/download path for safe upload, explicit local overwrite, no-op, verified restore-plan download, restore-plan apply, and post-apply metadata decisions.
+- In local dev builds, `/account/cloud-backup` is the manual UI flow for that coordinator. Production builds do not expose the account or cloud backup pages. The manual page does not start background sync.
 
 Recommended auth interface:
 
@@ -537,15 +542,17 @@ Use HTTP status:
 
 ## Implementation Order
 
-Recommended build order:
+Build order and current status:
 
-1. Measure current adapter payload sizes after canonical JSON and gzip compression to choose the initial coarse partition split.
-2. Add D1 migration for `backup_user_state`, `backup_devices`, `backup_heads`, and `backup_commits`; add `backup_objects` only if V1 keeps explicit object history.
-3. Add Worker route skeleton under `/api/backup/v1/*`.
-4. Add auth middleware stub with a clear production blocker: no public backup without real `requireUser`.
-5. Implement `GET /api/backup/v1/head` with the cheap `headSetRev` no-change path.
-6. Implement multipart `POST /api/backup/v1/commits`.
-7. Implement `POST /api/backup/v1/objects`.
-8. Add frontend backup coordinator that consumes heads and calls `planCloudSync`.
+1. Done: add D1 migration for `backup_user_state`, `backup_devices`, `backup_heads`, and `backup_commits`.
+2. Done: add Worker route skeleton under `/api/backup/v1/*`.
+3. Done: add `worker/auth.ts` with a production-shaped `requireUser()` and entitlement boundary. Current implementation remains dev-only.
+4. Done: implement `GET /api/backup/v1/head` with the cheap `headSetRev` no-change path.
+5. Done: implement multipart `POST /api/backup/v1/commits`.
+6. Done: implement `POST /api/backup/v1/objects`.
+7. Done: add the typed frontend `BackupApiClient`.
+8. Done: add a headless frontend backup coordinator that consumes heads, builds local partitions, calls `planCloudSync()`, commits safe uploads or explicitly confirmed local overwrites, and updates local sync metadata after successful no-op or upload handling.
+9. Done: add a manual dev sync surface that calls the coordinator without enabling passive background sync.
+10. Later: measure real account dump sizes after canonical JSON and gzip compression before changing the coarse partition split.
 
 Do not wire automatic triggers until the manual backup/restore path is correct.

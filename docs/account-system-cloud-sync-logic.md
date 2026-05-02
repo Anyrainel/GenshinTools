@@ -4,7 +4,7 @@ This document describes the current cloud backup transform logic and the intende
 
 ## Current Implementation State
 
-`src/cloud/` currently implements the transform boundary only:
+`src/cloud/` currently implements the local transform and planning boundary:
 
 - `src/cloud/registry.ts` lists which local data classes participate in backup.
 - `src/cloud/adapters/*Adapter.ts` convert local snapshots into cloud payload partitions and back into local-compatible restore patches.
@@ -12,8 +12,14 @@ This document describes the current cloud backup transform logic and the intende
 - `src/cloud/syncPlanner.ts` compares local partition hashes, local sync metadata, and remote heads to produce upload, download, no-op, conflict, skip, and unsupported-schema decisions.
 - `src/stores/useCloudSyncMetadataStore.ts` persists device-local sync metadata and conflict records. It is excluded from cloud backup.
 - `src/cloud/storeAdapters.ts` is the only file in `src/cloud/` that imports Zustand stores.
+- `src/cloud/apiClient.ts` is a typed frontend client for `/api/backup/v1`.
+- `src/cloud/syncClient.ts` is a headless, dev-gated coordinator that reads Worker heads, builds local partitions, runs `planCloudSync()`, commits safe uploads, marks no-op/upload metadata, records conflicts, downloads selected backup objects, verifies downloaded envelopes, builds restore plans, applies downloaded restore plans, and marks download metadata only after local apply succeeds. It also supports `explicitLocalOverwrite` for already-confirmed local-wins actions such as replacing cloud profile partitions after an import.
+- `src/cloud/storeAdapters.ts` applies restore-plan sections through store-owned APIs so build/team derived runtime views and score caches refresh correctly.
+- `tests/cloud/syncClientFlows.test.ts` covers stateful multi-device flows: unchanged second-device sync, independent manual-edit conflict, explicit imported-profile overwrite, grouped profile downloads, verified download restore planning, post-apply metadata marking, and corrupt downloaded object rejection.
 
-The sync client, server API, dirty queue, and conflict resolver UI are not implemented yet. The decision logic below is implemented as a pure planner, and the local metadata store exists, but nothing calls them from a live API or UI flow yet.
+The dev-gated Worker backup API is implemented under `/api/backup/v1` and covered by worker tests plus the local `npm run smoke:backup-worker` path. `worker/auth.ts` owns the `requireUser()` and entitlement boundary, but its current implementation is still dev-only and resolves users from `BACKUP_DEV_AUTH_SECRET` plus `x-backup-dev-user-id`.
+
+In local dev builds, the avatar account menu is wired in `src/components/layout/AppBar.tsx`. It links to `/account` for backup test credentials and `/account/cloud-backup` for the manual cloud backup surface. Production builds keep the generic overflow menu and do not expose account or cloud backup entry points until production auth is ready. No passive background sync is wired.
 
 ## Three Version Axes
 
@@ -23,9 +29,13 @@ Do not collapse these into one field.
 | --- | --- | --- | --- | --- |
 | Local store version | Zustand persist `version` and `src/stores/migration/**` | Local store | Browser-local persisted shape | Hydrating old local data before cloud transforms run |
 | Cloud payload schema | `schemaVersion` on each cloud envelope/partition | `src/cloud/adapters/**` | Version of the cloud payload shape for one namespace | Migrating cloud payloads before restore |
-| Cloud revision | `rev` and `baseRev` on each cloud envelope | Sync server/client | Server head for one namespace/partition | Multi-device concurrency and conflict detection |
+| Cloud revision | Server head `rev`, commit `writeMode`, and local `lastSeenRev` | Sync server/client | Server head for one namespace/partition | Multi-device concurrency and conflict detection |
 
 `contentHash` is separate from all three. It verifies payload integrity and skips unchanged uploads, but it is not a conflict-control mechanism.
+
+The R2 payload envelope may include upload-time self-description such as `rev` and `baseRev`, but D1/Worker head metadata is authoritative for concurrency. The server generates the published head `rev` during commit; restore verification must compare namespace, partition key, schema version, `contentHash`, and compressed object hash, not require the envelope's upload-time `rev` to equal the server head `rev`.
+
+Fresh devices still initialize app stores with default local data. Export partitions can mark that default state as `isEmpty`; if a first sync sees remote cloud data and only default local state, the planner downloads cloud data instead of reporting a first-sync conflict. Real divergent local data without sync history still reports `first-sync-local-and-cloud`.
 
 ## Partition Identity
 
@@ -178,13 +188,12 @@ This keeps the UI understandable while preserving per-partition revision checks.
 
 ## Open Implementation Gaps
 
-These are not implemented in `src/cloud/` yet:
+These are not implemented yet:
 
-- Server-side partition index/head API.
-- Optimistic concurrency checks.
 - Dirty queue and retry state.
-- Conflict resolver UI.
+- Full conflict resolver UI for choosing cloud per conflict.
 - Cloud payload migrations beyond V1.
-- Apply step that commits `CloudRestorePlan` through store actions.
+- Production SSO/session auth behind `worker/auth.ts`.
+- Durable entitlement storage and public backup access.
 
-Until those exist, `src/cloud/` can plan conflict-safe sync actions, but it does not yet execute them against the cloud or apply restore patches into live stores.
+The server-side head/commit/object API and optimistic concurrency checks exist in the Worker. The manual cloud backup page calls the frontend coordinator for safe upload, explicit local overwrite, no-op, and download/apply decisions. Use `applyCloudRestoreAndMarkSynced()` for any restore UI code so sync metadata advances only after the local store apply step succeeds.

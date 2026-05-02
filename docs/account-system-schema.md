@@ -334,6 +334,7 @@ type CloudPayloadEnvelope<T> = {
   schemaVersion: number;
   namespace: string;
   partitionKey: string;
+  /** Upload-time client id. Server head metadata owns the published concurrency rev. */
   rev: string;
   baseRev?: string;
   createdAt: number;
@@ -344,6 +345,8 @@ type CloudPayloadEnvelope<T> = {
 ```
 
 `contentHash` is the hash of canonical JSON for `payload`, not the compressed bytes.
+
+D1/Worker head metadata is the source of truth for the current published `rev`, `objectId`, hashes, and timestamps. The envelope `rev` is upload-time self-description and may differ from the server-generated head `rev`; restore verification should use the head metadata plus envelope namespace, partition key, schema version, and payload hash.
 
 Type names in the main code should represent the latest shape and should not carry suffixes like `V1`. The payload envelope's `schemaVersion` is the wire-version source of truth. Historical shapes should live in migration modules and may use versioned names there, for example `AccountArtifactsPayloadV1Schema`.
 
@@ -455,7 +458,7 @@ Rules:
 - Store a full snapshot for one game profile's artifact inventory.
 - Do not store item-level artifact patches in V1.
 - Equipment is local to the artifact row through `equippedCharacterId`.
-- `src/cloud/adapters/setGroup.ts` remains available for future sharding experiments, but V1 does not put `setGroup` in the partition key.
+- V1 uses `profile.artifacts/{profileId}` as the partition key. If production payloads require sharding, add grouped artifact partitions in a new cloud payload schema version.
 
 ### Artifact Payload Compression
 
@@ -987,7 +990,9 @@ Restore flow:
 2. Let the client compare local `contentHash`/`baseRev` with cloud head metadata.
 3. Download only selected R2 objects.
 4. If present, verify `compressedHash`; decompress, then verify `contentHash`.
-5. Run payload-schema migration and local store hydration/import code.
+5. Build a `CloudRestorePlan`.
+6. Run payload-schema migration and local store hydration/import code when migrations exist for older cloud schemas.
+7. Mark sync metadata from download only after the local apply step succeeds.
 
 Conflict policy for the first release:
 

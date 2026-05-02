@@ -434,7 +434,7 @@ Planned namespaces:
 
 Adapter rules:
 
-- Artifacts are coarse by profile in V1. `setGroup` remains an implementation hook for future measured sharding, not a current partition key.
+- Artifacts are coarse by profile in V1: `profile.artifacts/{profileId}`.
 - Weapons exclude disposable weapons from cloud backup: unlocked, rarity 3, level 1, refinement 1, and not equipped.
 - Weapon equipment stays with weapons in `profile.game`; artifact equipment stays with artifacts in `profile.artifacts`.
 - Freeze, triage, and resource settings live in `profile.app`.

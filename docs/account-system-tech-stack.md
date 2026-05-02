@@ -58,7 +58,7 @@ Design the backup path around small metadata reads and immutable object writes:
 - Uploads include `baseRev`. The server updates D1 heads only when `baseRev` still matches the current head; otherwise return 409 and let the user choose local or cloud.
 - Same-browser concurrent editing is not a primary concern. Use only a lightweight localStorage or `BroadcastChannel` signal to avoid duplicate background flushes.
 - Background sync should pause on real hand-authored data conflicts instead of prompting immediately. Surface the status under the account icon menu and show choices only for explicit sync/restore or before overwriting either local or cloud data.
-- Complete account imports can intentionally replace older cloud account partitions. Settings can use latest-writer-wins.
+- Complete account imports can intentionally replace older cloud account partitions after explicit user intent. Settings that share a conflicted partition follow that partition's conflict policy; do not auto-merge by timestamp in V1.
 - Keep payloads partitioned by namespace so one import uploads only changed account/build/team partitions.
 - Upload one partition object per request in V1. This keeps conflict handling and Worker memory simple. Add batch upload only if request overhead becomes a measured bottleneck.
 - Stream or avoid buffering large bodies in Workers. Workers have 128 MB isolate memory and request body limits come from the Cloudflare account plan.
@@ -328,7 +328,7 @@ For GenshinTools, direct sponsorship or affiliate-style static placements are pr
 
 ## Recommended Rollout
 
-Completed local prerequisite
+Completed local/backend prerequisite
 
 - Local account profile ids use numeric default profile `0` and UID profile ids.
 - Triage/resource settings and freeze intent are account-scoped locally.
@@ -337,26 +337,30 @@ Completed local prerequisite
 - Team source data is split from local-only result caches. Cloud backup stores team source/config together as `teams/all`.
 - Character, weapon, and artifact tier-list stores are multi-instance.
 - Migration code lives under `src/stores/migration/<domain>.ts`; current store files define latest runtime schemas only.
+- Cloud adapters, payload envelopes, sync planning, and local sync metadata exist under `src/cloud/` and `src/stores/useCloudSyncMetadataStore.ts`.
+- `src/cloud/apiClient.ts` models the backup API contract.
+- `src/cloud/syncClient.ts` provides a coordinator for safe upload, explicit local overwrite, no-op, conflict, verified download restore planning, restore-plan apply, and post-apply download metadata marking.
+- `worker/auth.ts` provides the `requireUser()` and entitlement-check boundary that SSO should replace internally.
+- Local dev builds expose account and cloud backup through an avatar-shaped menu in `src/components/layout/AppBar.tsx`.
+- Production builds keep the generic overflow menu and hide account/cloud backup entry points until production auth is wired.
+- `/account` and `/account/cloud-backup` are the first manual UI surfaces for dev-gated backup access and manual backup/restore.
+- Stateful multi-device flow tests cover unchanged second-device sync, independent manual-edit conflict, explicit imported-profile overwrite, grouped profile downloads, verified download restore planning, post-apply metadata marking, and corrupt object rejection.
+- The dev-gated Worker backup API exists at `/api/backup/v1/*` with D1/R2 bindings, a local smoke command, and remote `0001_backup.sql` migration applied.
 
-Phase 1: Foundation
+Remaining foundation
 
 - Session auth with one global provider and one China-friendly provider if feasible.
 - `/api/me`, logout, provider-linking skeleton.
 - Entitlement table and manual admin grants.
+- Replace the dev-only implementation inside `worker/auth.ts` before public backup reads or writes.
 
-Phase 2: Cloud adapters and UI
+Remaining cloud UI
 
-- Introduce cloud adapters for profile, builds, teams, and tier lists.
-- Normalize account data at the cloud boundary.
-- Add account-menu sync/conflict status and resolver.
-
-Phase 3: Cloud backup API
-
-- D1 migrations and R2 bucket.
-- Cloud sync index endpoint.
-- Upload/download compressed backup payloads to R2.
+- Dirty queue and retry state.
+- Account-menu sync/conflict badge and full resolver.
 - Gate upload/restore by `cloud_sync`.
 - Allow delete/download even after entitlement expiry.
+- Keep passive background sync disabled until the manual path is reliable.
 
 Phase 4: Payments and feedback
 
