@@ -70,6 +70,74 @@ export const i18nUiData = {
       zh: "确定要删除此账号配置吗？",
     },
   },
+  accountSystem: {
+    accountMenu: { en: "Account menu", zh: "账号菜单" },
+    accountDesc: {
+      en: "Cloud sign-in is being wired. Use backup test credentials here to enable manual cloud sync.",
+      zh: "云端登录仍在接入中。当前可在这里填写备份测试凭证，启用手动云同步。",
+    },
+    devUserId: { en: "Backup test user", zh: "备份测试用户" },
+    devAuthSecret: { en: "Backup test secret", zh: "备份测试密钥" },
+    devSessionMissing: {
+      en: "Enter a backup test user and secret first.",
+      zh: "请先填写备份测试用户和密钥。",
+    },
+    devSessionSaved: {
+      en: "Backup access saved.",
+      zh: "已保存备份访问凭证。",
+    },
+    signedOut: { en: "Backup access cleared.", zh: "已清除备份访问凭证。" },
+    signOut: { en: "Sign out", zh: "退出" },
+    cloudBackup: { en: "Cloud Backup", zh: "云端备份" },
+    cloudBackupDesc: {
+      en: "Manual backup and restore only. No background sync runs from this page.",
+      zh: "仅手动备份与恢复。此页面不会启动后台同步。",
+    },
+    devSessionRequired: {
+      en: "Backup access required",
+      zh: "需要备份访问凭证",
+    },
+    devSessionRequiredDesc: {
+      en: "Save backup test credentials before using cloud backup.",
+      zh: "使用云端备份前，请先保存备份测试凭证。",
+    },
+    openAccount: { en: "Open account", zh: "打开账号页" },
+    syncFailed: { en: "Cloud action failed", zh: "云端操作失败" },
+    trackedPartitions: { en: "Tracked partitions", zh: "已跟踪分区" },
+    conflicts: { en: "Conflicts", zh: "冲突" },
+    lastSync: { en: "Last sync", zh: "上次同步" },
+    syncNow: { en: "Sync now", zh: "立即同步" },
+    applyCloudChanges: { en: "Apply cloud changes", zh: "应用云端变更" },
+    keepLocal: { en: "Keep local", zh: "保留本地" },
+    restoreApplied: {
+      en: "Applied cloud restore sections: {0}.",
+      zh: "已应用云端恢复内容：{0} 项。",
+    },
+    status: {
+      idle: { en: "Idle", zh: "空闲" },
+      synced: { en: "Synced", zh: "已同步" },
+      uploaded: { en: "Uploaded", zh: "已上传" },
+      needsDownload: { en: "Cloud changed", zh: "云端有变更" },
+      conflict: { en: "Conflict", zh: "有冲突" },
+      unsupported: { en: "Upgrade needed", zh: "需要升级" },
+    },
+    statusToast: {
+      synced: { en: "Cloud backup is up to date.", zh: "云端备份已是最新。" },
+      uploaded: { en: "Local data uploaded.", zh: "本地数据已上传。" },
+      needsDownload: {
+        en: "Cloud has newer data. Review before applying.",
+        zh: "云端有较新的数据，请确认后再应用。",
+      },
+      conflict: {
+        en: "Sync paused because local and cloud both changed.",
+        zh: "本地和云端都发生了变化，同步已暂停。",
+      },
+      unsupported: {
+        en: "Cloud data was written by a newer app version.",
+        zh: "云端数据来自较新的应用版本。",
+      },
+    },
+  },
   import: {
     action: { en: "Import", zh: "导入" },
     dialogDesc: {

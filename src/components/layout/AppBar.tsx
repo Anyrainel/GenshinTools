@@ -1,6 +1,9 @@
 import {
   Check,
+  CircleUserRound,
+  Cloud,
   Languages,
+  LogIn,
   type LucideIcon,
   Menu,
   MoreVertical,
@@ -138,7 +141,7 @@ export function AppBar({
   const collapsibleActions = visibleActions.filter((a) => !a.alwaysShow);
   const hasCollapsibleActions = collapsibleActions.length > 0;
   const hasTabs = tabs && tabs.length > 0;
-  const isHomePage = location.pathname === "/";
+  const showCloudBackupDevUi = import.meta.env.DEV;
 
   // Explicit theme labels for static analysis
   const getThemeLabel = (themeId: ThemeId) => {
@@ -346,19 +349,64 @@ export function AppBar({
             {/* Legacy actions support */}
             {legacyActions}
 
-            {/* "More" Menu - hidden on home page; on mobile for other pages; always on non-home desktop (theme/language folded) */}
-            {!isHomePage && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={cn(
+                    showCloudBackupDevUi && "rounded-full",
+                    "2xl:mr-4"
+                  )}
+                >
+                  {showCloudBackupDevUi ? (
+                    <CircleUserRound className="w-5 h-5" />
+                  ) : (
                     <MoreVertical className="w-5 h-5" />
-                    <span className="sr-only">More</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {/* Collapsible actions in dropdown on mobile */}
-                  <div className="md:hidden">
-                    {collapsibleActions.map((action) => (
+                  )}
+                  <span className="sr-only">
+                    {showCloudBackupDevUi
+                      ? t.ui("accountSystem.accountMenu")
+                      : "More"}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {showCloudBackupDevUi && (
+                  <>
+                    <DropdownMenuItem asChild className="gap-2">
+                      <Link to="/account">
+                        <LogIn className="w-4 h-4" />
+                        {t.ui("accountData.account")}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="gap-2">
+                      <Link to="/account/cloud-backup">
+                        <Cloud className="w-4 h-4" />
+                        {t.ui("accountSystem.cloudBackup")}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+
+                <div className="md:hidden">
+                  {collapsibleActions.map((action) => (
+                    <DropdownMenuItem
+                      key={action.key}
+                      onClick={action.onTrigger}
+                      className="gap-2"
+                    >
+                      <action.icon className="w-4 h-4" />
+                      {action.label}
+                    </DropdownMenuItem>
+                  ))}
+                  {hasCollapsibleActions && <DropdownMenuSeparator />}
+                </div>
+
+                {menuOnlyActions.length > 0 && (
+                  <>
+                    {menuOnlyActions.map((action) => (
                       <DropdownMenuItem
                         key={action.key}
                         onClick={action.onTrigger}
@@ -368,124 +416,68 @@ export function AppBar({
                         {action.label}
                       </DropdownMenuItem>
                     ))}
-                    {hasCollapsibleActions && <DropdownMenuSeparator />}
-                  </div>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
 
-                  {menuOnlyActions.length > 0 && (
-                    <>
-                      {menuOnlyActions.map((action) => (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="gap-2">
+                    <Palette className="w-4 h-4" />
+                    <span>{t.ui("theme.switcherButton")}</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      {SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
                         <DropdownMenuItem
-                          key={action.key}
-                          onClick={action.onTrigger}
+                          key={themeId}
+                          onClick={() => setTheme(themeId)}
                           className="gap-2"
                         >
-                          <action.icon className="w-4 h-4" />
-                          {action.label}
+                          {theme === themeId && <Check className="w-4 h-4" />}
+                          {theme !== themeId && <span className="w-4" />}
+                          {getThemeLabel(themeId)}
                         </DropdownMenuItem>
                       ))}
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
 
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="gap-2">
-                      <Palette className="w-4 h-4" />
-                      <span>{t.ui("theme.switcherButton")}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        {SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
-                          <DropdownMenuItem
-                            key={themeId}
-                            onClick={() => setTheme(themeId)}
-                            className="gap-2"
-                          >
-                            {theme === themeId && <Check className="w-4 h-4" />}
-                            {theme !== themeId && <span className="w-4" />}
-                            {getThemeLabel(themeId)}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="gap-2">
-                      <Languages className="w-4 h-4" />
-                      <span>{t.ui("app.language")}</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem
-                          onClick={toggleLanguage}
-                          className="gap-2"
-                        >
-                          <Check
-                            className={cn(
-                              "w-4 h-4",
-                              language === "en" ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          English
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={toggleLanguage}
-                          className="gap-2"
-                        >
-                          <Check
-                            className={cn(
-                              "w-4 h-4",
-                              language === "zh" ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          中文
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-
-            {/* Theme/Language Switchers - always visible on home page */}
-            {isHomePage && (
-              <div className="flex items-center gap-2 2xl:pr-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="h-9 gap-2 pt-1.5 pb-2.5"
-                    >
-                      <Palette className="w-4 h-4" />
-                      <span>{t.ui("theme.switcherButton")}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-0">
-                    {SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="gap-2">
+                    <Languages className="w-4 h-4" />
+                    <span>{t.ui("app.language")}</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
                       <DropdownMenuItem
-                        key={themeId}
-                        onClick={() => setTheme(themeId)}
+                        onClick={toggleLanguage}
                         className="gap-2"
                       >
-                        {theme === themeId && <Check className="w-4 h-4" />}
-                        {theme !== themeId && <span className="w-4" />}
-                        {getThemeLabel(themeId)}
+                        <Check
+                          className={cn(
+                            "w-4 h-4",
+                            language === "en" ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        English
                       </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Button
-                  variant="outline"
-                  className="h-9 gap-2 pt-1.5 pb-2.5"
-                  type="button"
-                  onClick={toggleLanguage}
-                >
-                  <Languages className="w-4 h-4" />
-                  {language === "en" ? "中文" : "EN"}
-                </Button>
-              </div>
-            )}
+                      <DropdownMenuItem
+                        onClick={toggleLanguage}
+                        className="gap-2"
+                      >
+                        <Check
+                          className={cn(
+                            "w-4 h-4",
+                            language === "zh" ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        中文
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
