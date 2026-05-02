@@ -6,9 +6,9 @@ import {
   remapFreezeStoreForImport,
   useFreezeStore,
 } from "./useFreezeStore";
-import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
-import { useRecommendationSettingsStore } from "./useRecommendationSettingsStore";
 import { useResourceRecStore } from "./useResourceRecStore";
+import { useScoreUpCacheStore } from "./useScoreUpCacheStore";
+import { useScoreUpSettingsStore } from "./useScoreUpSettingsStore";
 import { useTierStore } from "./useTierStore";
 import { useTriageStore } from "./useTriageStore";
 
@@ -24,7 +24,7 @@ function promoteProfileScopedStores(
   useResourceRecStore
     .getState()
     .renameProfileSettings(sourceProfileId, targetProfileId);
-  useRecommendationSettingsStore
+  useScoreUpSettingsStore
     .getState()
     .renameProfileSettings(sourceProfileId, targetProfileId);
   useFreezeStore.getState().renameProfile(sourceProfileId, targetProfileId);
@@ -52,7 +52,7 @@ export function applyAccountImport(opts: {
   artifactIdMap?: Map<string, string>;
 }): ApplyAccountImportResult {
   const lastUpdate = opts.lastUpdate ?? Date.now();
-  useRecommendationCacheStore.getState().clear();
+  useScoreUpCacheStore.getState().clear();
   remapFreezeStoreForImport(opts.artifactIdMap, opts.accountId);
   const store = useAccountStore.getState();
 

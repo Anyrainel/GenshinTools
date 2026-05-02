@@ -75,7 +75,7 @@ function PoolSourceFlow({
   );
 }
 
-export function RecommendationHelpDialog({
+export function ScoreUpHelpDialog({
   open,
   onOpenChange,
 }: {

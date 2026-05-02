@@ -1,32 +1,30 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "ggartifact",
-	"compatibility_date": "2026-04-30",
-	"main": "worker/index.ts",
-	"workers_dev": true,
-	"preview_urls": true,
-	"observability": {
-		"enabled": true
-	},
-	"assets": {
-		"directory": "./dist",
-		"binding": "ASSETS",
-		"not_found_handling": "single-page-application",
-		"run_worker_first": [
-			"/api/*"
-		]
-	},
-	"d1_databases": [
-		{
-			"binding": "BACKUP_DB",
-			"database_name": "ggartifact-backup",
-			"database_id": "bf430d1d-3063-4ce6-bf57-4558110bf55f"
-		}
-	],
-	"r2_buckets": [
-		{
-			"bucket_name": "ggartifact-backup",
-			"binding": "BACKUP_BUCKET"
-		}
-	]
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ggartifact",
+  "compatibility_date": "2026-04-30",
+  "main": "worker/index.ts",
+  "workers_dev": true,
+  "preview_urls": true,
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "BACKUP_DB",
+      "database_name": "ggartifact-backup",
+      "database_id": "bf430d1d-3063-4ce6-bf57-4558110bf55f"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "ggartifact-backup",
+      "binding": "BACKUP_BUCKET"
+    }
+  ]
 }

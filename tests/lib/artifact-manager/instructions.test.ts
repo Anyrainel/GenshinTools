@@ -3,7 +3,7 @@ import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
 import {
-  buildRecommendationEquipInstructions,
+  buildScoreUpEquipInstructions,
   buildTriageInstructions,
 } from "@/lib/account-data/manager/instructions";
 
@@ -170,7 +170,7 @@ describe("buildRecommendationEquipInstructions", () => {
       Object.values(allocatedArtifacts).map((art) => [art.id, art])
     );
 
-    const result = buildRecommendationEquipInstructions(
+    const result = buildScoreUpEquipInstructions(
       [
         {
           characterId: "hu_tao",

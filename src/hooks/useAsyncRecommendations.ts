@@ -7,14 +7,14 @@ import type {
 } from "@/data/types";
 import {
   type AllActions,
-  generateRecommendationsByTier,
-  type RecommendationTierUpdate,
+  generateScoreActionsByTier,
+  type ScoreUpTierUpdate,
 } from "@/lib/account-data/scoreUpEngine";
 import type { AllocationOptions } from "@/lib/account-data/tierWaterfall";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { useAsyncComputation } from "./useAsyncComputation";
 
-export interface RecommendationOptions {
+export interface ScoreUpOptions {
   accountData: AccountData;
   scores: Record<string, ArtifactScoreResult | null>;
   tierAssignments: TierAssignment;
@@ -22,33 +22,30 @@ export interface RecommendationOptions {
   options?: AllocationOptions;
 }
 
-export interface RecommendationProgress {
+export interface ScoreUpProgress {
   completedTierCount: number;
   totalTierCount: number;
   currentTier: Tier | null;
 }
 
-export interface AsyncRecommendationsState {
+export interface AsyncScoreUpState {
   recommendations: AllActions | null;
-  progress: RecommendationProgress;
+  progress: ScoreUpProgress;
   isComputing: boolean;
   error: Error | null;
-  start: (opts: RecommendationOptions) => void;
+  start: (opts: ScoreUpOptions) => void;
   stop: () => void;
 }
 
-export function useAsyncRecommendations(): AsyncRecommendationsState {
-  const [progress, setProgress] = useState<RecommendationProgress>({
+export function useAsyncScoreUp(): AsyncScoreUpState {
+  const [progress, setProgress] = useState<ScoreUpProgress>({
     completedTierCount: 0,
     totalTierCount: 0,
     currentTier: null,
   });
 
   const onYield = useCallback(
-    (
-      yielded: RecommendationTierUpdate,
-      setResult: (result: AllActions) => void
-    ) => {
+    (yielded: ScoreUpTierUpdate, setResult: (result: AllActions) => void) => {
       setProgress({
         completedTierCount: yielded.completedTierCount,
         totalTierCount: yielded.totalTierCount,
@@ -68,8 +65,8 @@ export function useAsyncRecommendations(): AsyncRecommendationsState {
   }, []);
 
   const runRecommendations = useCallback(
-    (opts: RecommendationOptions) =>
-      generateRecommendationsByTier(
+    (opts: ScoreUpOptions) =>
+      generateScoreActionsByTier(
         opts.accountData,
         opts.scores,
         opts.tierAssignments,
@@ -80,9 +77,9 @@ export function useAsyncRecommendations(): AsyncRecommendationsState {
   );
 
   const { result, isComputing, error, start, stop } = useAsyncComputation<
-    RecommendationTierUpdate,
+    ScoreUpTierUpdate,
     AllActions,
-    RecommendationOptions
+    ScoreUpOptions
   >(runRecommendations, onYield, onStart);
 
   return {

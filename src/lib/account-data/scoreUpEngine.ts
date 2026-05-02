@@ -81,7 +81,7 @@ export interface AllActions {
   perCharacter: Record<string, CharacterActions>;
 }
 
-export interface RecommendationTierUpdate {
+export interface ScoreUpTierUpdate {
   tier: Tier;
   recommendations: AllActions;
   completedTierCount: number;
@@ -94,7 +94,7 @@ const DEFAULT_TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
 
 // ─── Main entry ───
 
-export function generateAllRecommendations(
+export function generateAllScoreActions(
   accountData: AccountData,
   scores: Record<string, ArtifactScoreResult | null>,
   tierAssignments: TierAssignment,
@@ -109,7 +109,7 @@ export function generateAllRecommendations(
     options
   );
 
-  return buildRecommendationsFromAllocation(
+  return buildScoreActionsFromAllocation(
     accountData,
     tierAssignments,
     options,
@@ -117,7 +117,7 @@ export function generateAllRecommendations(
   );
 }
 
-export function recomputeTierUpgradeRecommendations(
+export function recomputeTierUpgrades(
   recommendations: AllActions,
   accountData: AccountData,
   tierAssignments: TierAssignment,
@@ -202,15 +202,15 @@ export function recomputeTierUpgradeRecommendations(
   };
 }
 
-export async function* generateRecommendationsByTier(
+export async function* generateScoreActionsByTier(
   accountData: AccountData,
   scores: Record<string, ArtifactScoreResult | null>,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},
   options: AllocationOptions = {}
-): AsyncGenerator<RecommendationTierUpdate, void> {
+): AsyncGenerator<ScoreUpTierUpdate, void> {
   const processedCharacterIds = new Set<string>();
-  let latestRecommendations = emptyActions();
+  let latestActions = emptyActions();
 
   for (const step of runTierWaterfallSteps(
     accountData,
@@ -224,7 +224,7 @@ export async function* generateRecommendationsByTier(
       if (tier === step.tier) processedCharacterIds.add(char.key);
     }
 
-    latestRecommendations = buildRecommendationsFromAllocation(
+    latestActions = buildScoreActionsFromAllocation(
       accountData,
       tierAssignments,
       options,
@@ -234,7 +234,7 @@ export async function* generateRecommendationsByTier(
 
     yield {
       tier: step.tier,
-      recommendations: latestRecommendations,
+      recommendations: latestActions,
       completedTierCount: step.completedTierCount,
       totalTierCount: step.totalTierCount,
     };
@@ -243,7 +243,7 @@ export async function* generateRecommendationsByTier(
   }
 }
 
-function buildRecommendationsFromAllocation(
+function buildScoreActionsFromAllocation(
   accountData: AccountData,
   tierAssignments: TierAssignment,
   options: AllocationOptions,

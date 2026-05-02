@@ -20,8 +20,8 @@ import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useArtifactTierStore } from "@/stores/useArtifactTierStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
-import { useRecommendationSettingsStore } from "@/stores/useRecommendationSettingsStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
+import { useScoreUpSettingsStore } from "@/stores/useScoreUpSettingsStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useTriageStore } from "@/stores/useTriageStore";
@@ -91,7 +91,7 @@ function getAccountSnapshot(): AccountCloudSnapshot {
     triageByProfileId: useTriageStore.getState().settingsByProfileId,
     resourcesByProfileId: useResourceRecStore.getState().settingsByProfileId,
     recommendationsByProfileId:
-      useRecommendationSettingsStore.getState().settingsByProfileId,
+      useScoreUpSettingsStore.getState().settingsByProfileId,
   };
 }
 

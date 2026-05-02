@@ -609,7 +609,7 @@ function ScoreUpCardComponent({
           </div>
         </div>
 
-        {/* Recommendations */}
+        {/* ScoreUp */}
         {tier !== "Pool" && (
           <CardContent className="p-0 flex-1 flex flex-col">
             {resolvedAllocationStatus !== "allocated" && (

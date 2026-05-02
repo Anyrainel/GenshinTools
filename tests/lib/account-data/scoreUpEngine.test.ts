@@ -9,7 +9,7 @@ import type {
   AllActions,
   ScoreUpAction,
 } from "@/lib/account-data/scoreUpEngine";
-import { recomputeTierUpgradeRecommendations } from "@/lib/account-data/scoreUpEngine";
+import { recomputeTierUpgrades } from "@/lib/account-data/scoreUpEngine";
 import type { AllocatedBuild } from "@/lib/account-data/tierWaterfall";
 
 const weights = { cr: 100, cd: 100, "atk%": 80 } as const;
@@ -208,14 +208,14 @@ describe("recomputeTierUpgradeRecommendations", () => {
       },
     };
 
-    const cautious = recomputeTierUpgradeRecommendations(
+    const cautious = recomputeTierUpgrades(
       base,
       accountData,
       tierAssignments,
       "S",
       "cautious"
     );
-    const hopeful = recomputeTierUpgradeRecommendations(
+    const hopeful = recomputeTierUpgrades(
       cautious,
       accountData,
       tierAssignments,

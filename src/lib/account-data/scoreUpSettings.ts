@@ -1,11 +1,11 @@
 import type { LuckExpectation, Tier } from "@/data/enums";
 
-export interface RecommendationSettings {
+export interface ScoreUpSettings {
   allowPoolArtifactSteals: boolean;
   luckExpectationByTier: Record<Tier, LuckExpectation>;
 }
 
-export const DEFAULT_RECOMMENDATION_SETTINGS: RecommendationSettings = {
+export const DEFAULT_SCORE_UP_SETTINGS: ScoreUpSettings = {
   allowPoolArtifactSteals: true,
   luckExpectationByTier: {
     S: "balanced",
@@ -17,19 +17,19 @@ export const DEFAULT_RECOMMENDATION_SETTINGS: RecommendationSettings = {
   },
 };
 
-export function cloneDefaultRecommendationSettings(): RecommendationSettings {
-  return structuredClone(DEFAULT_RECOMMENDATION_SETTINGS);
+export function cloneDefaultScoreUpSettings(): ScoreUpSettings {
+  return structuredClone(DEFAULT_SCORE_UP_SETTINGS);
 }
 
-export function normalizeRecommendationSettings(
-  settings: Partial<RecommendationSettings>
-): RecommendationSettings {
+export function normalizeScoreUpSettings(
+  settings: Partial<ScoreUpSettings>
+): ScoreUpSettings {
   return {
     allowPoolArtifactSteals:
       settings.allowPoolArtifactSteals ??
-      DEFAULT_RECOMMENDATION_SETTINGS.allowPoolArtifactSteals,
+      DEFAULT_SCORE_UP_SETTINGS.allowPoolArtifactSteals,
     luckExpectationByTier: {
-      ...DEFAULT_RECOMMENDATION_SETTINGS.luckExpectationByTier,
+      ...DEFAULT_SCORE_UP_SETTINGS.luckExpectationByTier,
       ...settings.luckExpectationByTier,
     },
   };

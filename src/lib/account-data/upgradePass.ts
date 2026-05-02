@@ -29,7 +29,7 @@ import type { AllocatedBuild } from "./tierWaterfall";
 
 export type UpgradeStrategy = 1 | 2 | 3;
 
-export interface UpgradeRecommendation {
+export interface UpgradeAction {
   strategy: UpgradeStrategy;
   characterId: string;
   /** Slot whose artifact is being upgraded (the one that requires +XP/runes). */
@@ -49,7 +49,7 @@ export interface UpgradeRecommendation {
 
 export interface CharacterUpgrades {
   characterId: string;
-  recommendations: UpgradeRecommendation[];
+  recommendations: UpgradeAction[];
 }
 
 export interface UpgradePassOptions {
@@ -73,7 +73,7 @@ export function runUpgradePassForCharacter(
   options: UpgradePassOptions = {}
 ): CharacterUpgrades {
   const minDiff = options.minScoreDiff ?? 1.0;
-  const recs: UpgradeRecommendation[] = [];
+  const recs: UpgradeAction[] = [];
 
   if (!alloc.build || !alloc.context) {
     return { characterId: alloc.characterId, recommendations: recs };

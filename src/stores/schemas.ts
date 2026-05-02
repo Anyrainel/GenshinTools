@@ -8,11 +8,11 @@
 import { z } from "zod";
 import type { SortDirection } from "@/data/enums";
 import type { GlobalStatWeights } from "@/data/types";
-import { DEFAULT_RECOMMENDATION_SETTINGS } from "@/lib/account-data/recommendationSettings";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
 } from "@/lib/account-data/resourceTips";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/lib/account-data/scoreUpSettings";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { inferTriageBackupAmountMode } from "@/lib/account-data/triage/settings";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
@@ -389,27 +389,25 @@ export const PersistedResourceRecStoreSchema = z.object({
     .catch({}),
 });
 
-// ─── Recommendation settings ───
+// ─── ScoreUp settings ───
 
 const LuckExpectationSchema = z
   .enum(["cautious", "balanced", "hopeful"])
   .catch("balanced");
 
-const RecommendationLuckByTierSchema = z
+const ScoreUpLuckByTierSchema = z
   .record(z.string(), LuckExpectationSchema)
-  .catch(DEFAULT_RECOMMENDATION_SETTINGS.luckExpectationByTier);
+  .catch(DEFAULT_SCORE_UP_SETTINGS.luckExpectationByTier);
 
-const RecommendationSettingsSchema = z.object({
+const ScoreUpSettingsSchema = z.object({
   allowPoolArtifactSteals: z
     .boolean()
-    .catch(DEFAULT_RECOMMENDATION_SETTINGS.allowPoolArtifactSteals),
-  luckExpectationByTier: RecommendationLuckByTierSchema,
+    .catch(DEFAULT_SCORE_UP_SETTINGS.allowPoolArtifactSteals),
+  luckExpectationByTier: ScoreUpLuckByTierSchema,
 });
 
-export const PersistedRecommendationSettingsStoreSchema = z.object({
-  settingsByProfileId: z
-    .record(z.string(), RecommendationSettingsSchema)
-    .catch({}),
+export const PersistedScoreUpSettingsStoreSchema = z.object({
+  settingsByProfileId: z.record(z.string(), ScoreUpSettingsSchema).catch({}),
 });
 
 // ─── Triage ───

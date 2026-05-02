@@ -34,7 +34,7 @@ function fakeArtifact(
   } as ArtifactData;
 }
 
-// ── Step 1 Tab 3: Recommendations ──
+// ── Step 1 Tab 3: ScoreUp ──
 
 export const PREVIEW_RECOMMENDATIONS: ScoreUpAction[] = [
   {

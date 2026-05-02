@@ -41,7 +41,7 @@ export default function AccountDataPreview({ t }: PreviewProps) {
           descKey: "greeting.previewInventory",
         },
         {
-          content: <RecommendationsContent t={t} />,
+          content: <ScoreUpContent t={t} />,
           descKey: "greeting.previewRecommendations",
         },
         {
@@ -155,8 +155,8 @@ function InventoryContent({ t }: PreviewProps) {
   );
 }
 
-/** Recommendations — real ActionRecommendationCard */
-function RecommendationsContent({ t }: PreviewProps) {
+/** ScoreUp card */
+function ScoreUpContent({ t }: PreviewProps) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center gap-2 mb-2">

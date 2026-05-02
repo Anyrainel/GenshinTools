@@ -72,8 +72,8 @@ import {
 } from "@/pages/account-data/CharacterView";
 import { EvaluationView } from "@/pages/account-data/EvaluationView";
 import { InventoryView } from "@/pages/account-data/InventoryView";
-import { RecommendationView } from "@/pages/account-data/RecommendationView";
 import { ResourceView } from "@/pages/account-data/ResourceView";
+import { ScoreUpView } from "@/pages/account-data/ScoreUpView";
 import { TriageView } from "@/pages/account-data/TriageView";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
@@ -666,7 +666,7 @@ export default function AccountDataPage() {
         </TabsContent>
 
         <TabsContent value="recommendations" className="mt-0 h-full">
-          <RecommendationView
+          <ScoreUpView
             scores={scores}
             onOpenImport={() => importRef.current?.open()}
             onShowTour={() => tour.start("account-data")}

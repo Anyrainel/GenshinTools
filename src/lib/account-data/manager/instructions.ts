@@ -210,7 +210,7 @@ export function buildBatchEquipInstructions(
  * Upgrade-pass suggestions are intentionally excluded; callers pass only the
  * allocated build selected by the tier waterfall.
  */
-export function buildRecommendationEquipInstructions(
+export function buildScoreUpEquipInstructions(
   allocations: {
     characterId: string;
     allocatedBuild: OptimizedBuild | null;

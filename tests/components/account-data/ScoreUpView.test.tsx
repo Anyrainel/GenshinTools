@@ -6,7 +6,7 @@ import type {
   NormalizedScoreInfo,
   StatScoreBreakdown,
 } from "@/lib/artifact/scoring/artifactScore";
-import { RecommendationView } from "@/pages/account-data/RecommendationView";
+import { ScoreUpView } from "@/pages/account-data/ScoreUpView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";
@@ -61,14 +61,14 @@ const mockScoreResult: ArtifactScoreResult = {
   } as NormalizedScoreInfo,
 };
 
-describe("RecommendationView", () => {
+describe("ScoreUpView", () => {
   beforeEach(() => {
     useAccountStore.getState().clearAccounts();
     useTierStore.getState().resetTierList();
   });
 
   it("shows empty state when no account data", () => {
-    render(<RecommendationView scores={{}} />);
+    render(<ScoreUpView scores={{}} />);
 
     expect(
       screen.getByText("Account Data & Builds Required")
@@ -150,9 +150,9 @@ describe("RecommendationView", () => {
       .getState()
       .setTierAssignments({ hu_tao: { tier: "S", position: 0 } });
 
-    render(<RecommendationView scores={{ hu_tao: mockScoreResult }} />);
+    render(<ScoreUpView scores={{ hu_tao: mockScoreResult }} />);
 
-    // Component renders without crashing — the recommendation engine may
+    // Component renders without crashing — the score-up engine may
     // error on the minimal mock build, but the view renders gracefully
     expect(document.body.textContent).toBeTruthy();
   });

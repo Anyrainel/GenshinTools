@@ -17,8 +17,8 @@ import {
   PersistedGenericTierListStoreSchema,
   PersistedGreetingStoreSchema,
   PersistedPreferencesStoreSchema,
-  PersistedRecommendationSettingsStoreSchema,
   PersistedResourceRecStoreSchema,
+  PersistedScoreUpSettingsStoreSchema,
   PersistedSessionNavStoreSchema,
   PersistedTeamResultCacheStoreSchema,
   PersistedTeamStoreSchema,
@@ -546,16 +546,16 @@ describe("PersistedResourceRecStoreSchema", () => {
   });
 });
 
-// ─── PersistedRecommendationSettingsStoreSchema ───
+// ─── PersistedScoreUpSettingsStoreSchema ───
 
-describe("PersistedRecommendationSettingsStoreSchema", () => {
+describe("PersistedScoreUpSettingsStoreSchema", () => {
   it("heals structural fields from empty object", () => {
-    const result = PersistedRecommendationSettingsStoreSchema.parse({});
+    const result = PersistedScoreUpSettingsStoreSchema.parse({});
     expect(result).toEqual({ settingsByProfileId: {} });
   });
 
   it("heals account-scoped settings", () => {
-    const result = PersistedRecommendationSettingsStoreSchema.parse({
+    const result = PersistedScoreUpSettingsStoreSchema.parse({
       settingsByProfileId: {
         "0": {
           allowPoolArtifactSteals: false,

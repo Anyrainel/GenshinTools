@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountData, CharacterData } from "@/data/types";
-import { DEFAULT_RECOMMENDATION_SETTINGS } from "@/lib/account-data/recommendationSettings";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
 } from "@/lib/account-data/resourceTips";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/lib/account-data/scoreUpSettings";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";
@@ -12,13 +12,13 @@ import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import {
-  getActiveRecommendationSettings,
-  useRecommendationSettingsStore,
-} from "@/stores/useRecommendationSettingsStore";
-import {
   getActiveResourceRecSettings,
   useResourceRecStore,
 } from "@/stores/useResourceRecStore";
+import {
+  getActiveScoreUpSettings,
+  useScoreUpSettingsStore,
+} from "@/stores/useScoreUpSettingsStore";
 import { useTierStore } from "@/stores/useTierStore";
 import {
   getActiveTriageSettings,
@@ -49,9 +49,9 @@ beforeEach(() => {
       0: structuredClone(resourceSettings),
     },
   });
-  useRecommendationSettingsStore.setState({
+  useScoreUpSettingsStore.setState({
     settingsByProfileId: {
-      0: structuredClone(DEFAULT_RECOMMENDATION_SETTINGS),
+      0: structuredClone(DEFAULT_SCORE_UP_SETTINGS),
     },
   });
   useFreezeStore.setState({
@@ -204,9 +204,7 @@ describe("useAccountStore", () => {
       useAccountStore.getState().setActiveAccount(0);
       useTriageStore.getState().updateSettings({ mainStatThreshold: 88 });
       useResourceRecStore.getState().setPanelOpen(true);
-      useRecommendationSettingsStore
-        .getState()
-        .setAllowPoolArtifactSteals(false);
+      useScoreUpSettingsStore.getState().setAllowPoolArtifactSteals(false);
 
       const result = applyAccountImport({
         accountId: 800000001,
@@ -223,13 +221,11 @@ describe("useAccountStore", () => {
         useResourceRecStore.getState().settingsByProfileId[800000001]
       ).toBeUndefined();
       expect(
-        useRecommendationSettingsStore.getState().settingsByProfileId[800000001]
+        useScoreUpSettingsStore.getState().settingsByProfileId[800000001]
       ).toBeUndefined();
       expect(getActiveTriageSettings()).toEqual(DEFAULT_TRIAGE_SETTINGS);
       expect(getActiveResourceRecSettings().panelOpen).toBe(false);
-      expect(getActiveRecommendationSettings()).toEqual(
-        DEFAULT_RECOMMENDATION_SETTINGS
-      );
+      expect(getActiveScoreUpSettings()).toEqual(DEFAULT_SCORE_UP_SETTINGS);
     });
 
     it("does not materialize default settings for a new profile", () => {
@@ -252,15 +248,13 @@ describe("useAccountStore", () => {
         useResourceRecStore.getState().settingsByProfileId[800000002]
       ).toBeUndefined();
       expect(
-        useRecommendationSettingsStore.getState().settingsByProfileId[800000002]
+        useScoreUpSettingsStore.getState().settingsByProfileId[800000002]
       ).toBeUndefined();
       expect(getActiveTriageSettings()).toEqual(DEFAULT_TRIAGE_SETTINGS);
       expect(getActiveResourceRecSettings().thresholds).toEqual(
         DEFAULT_TIER_THRESHOLDS
       );
-      expect(getActiveRecommendationSettings()).toEqual(
-        DEFAULT_RECOMMENDATION_SETTINGS
-      );
+      expect(getActiveScoreUpSettings()).toEqual(DEFAULT_SCORE_UP_SETTINGS);
     });
 
     it("does not overwrite settings when importing into an existing profile", () => {
@@ -273,9 +267,7 @@ describe("useAccountStore", () => {
       useAccountStore.getState().setActiveAccount(0);
       useTriageStore.getState().updateSettings({ mainStatThreshold: 90 });
       useResourceRecStore.getState().setPanelOpen(true);
-      useRecommendationSettingsStore
-        .getState()
-        .setAllowPoolArtifactSteals(false);
+      useScoreUpSettingsStore.getState().setAllowPoolArtifactSteals(false);
       useTriageStore.setState((state) => ({
         settingsByProfileId: {
           ...state.settingsByProfileId,
@@ -298,14 +290,14 @@ describe("useAccountStore", () => {
           },
         },
       }));
-      useRecommendationSettingsStore.setState((state) => ({
+      useScoreUpSettingsStore.setState((state) => ({
         settingsByProfileId: {
           ...state.settingsByProfileId,
           800000003: {
-            ...structuredClone(DEFAULT_RECOMMENDATION_SETTINGS),
+            ...structuredClone(DEFAULT_SCORE_UP_SETTINGS),
             allowPoolArtifactSteals: true,
             luckExpectationByTier: {
-              ...DEFAULT_RECOMMENDATION_SETTINGS.luckExpectationByTier,
+              ...DEFAULT_SCORE_UP_SETTINGS.luckExpectationByTier,
               S: "cautious",
             },
           },
@@ -327,11 +319,11 @@ describe("useAccountStore", () => {
         useResourceRecStore.getState().settingsByProfileId[800000003].panelOpen
       ).toBe(false);
       expect(
-        useRecommendationSettingsStore.getState().settingsByProfileId[800000003]
+        useScoreUpSettingsStore.getState().settingsByProfileId[800000003]
           .allowPoolArtifactSteals
       ).toBe(true);
       expect(
-        useRecommendationSettingsStore.getState().settingsByProfileId[800000003]
+        useScoreUpSettingsStore.getState().settingsByProfileId[800000003]
           .luckExpectationByTier.S
       ).toBe("cautious");
     });
@@ -351,9 +343,7 @@ describe("useAccountStore", () => {
       useAccountStore.getState().setActiveAccount(0);
       useTriageStore.getState().updateSettings({ mainStatThreshold: 91 });
       useResourceRecStore.getState().setPanelOpen(true);
-      useRecommendationSettingsStore
-        .getState()
-        .setAllowPoolArtifactSteals(false);
+      useScoreUpSettingsStore.getState().setAllowPoolArtifactSteals(false);
       useFreezeStore.setState({
         frozenTeamLoadouts: {
           "team-1": {
@@ -405,15 +395,13 @@ describe("useAccountStore", () => {
       ).toBe(true);
       expect(getActiveResourceRecSettings().panelOpen).toBe(true);
       expect(
-        useRecommendationSettingsStore.getState().settingsByProfileId[0]
+        useScoreUpSettingsStore.getState().settingsByProfileId[0]
       ).toBeUndefined();
       expect(
-        useRecommendationSettingsStore.getState().settingsByProfileId[800000001]
+        useScoreUpSettingsStore.getState().settingsByProfileId[800000001]
           .allowPoolArtifactSteals
       ).toBe(false);
-      expect(getActiveRecommendationSettings().allowPoolArtifactSteals).toBe(
-        false
-      );
+      expect(getActiveScoreUpSettings().allowPoolArtifactSteals).toBe(false);
       expect(useFreezeStore.getState().freezesByProfileId[0]).toBeUndefined();
       expect(
         useFreezeStore.getState().freezesByProfileId[800000001]

@@ -15,7 +15,7 @@ interface AccountDataNeedsBothStateProps {
 
 /**
  * Shared empty state for views that require both account data AND builds
- * (Recommendation, Evaluation, Triage).
+ * (ScoreUp, Evaluation, Triage).
  * Shows up to two action buttons depending on what's missing.
  */
 export function AccountDataNeedsBothState({

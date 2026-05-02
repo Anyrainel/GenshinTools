@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelpButton";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
-import { RecommendationHelpDialog } from "@/components/account-data/RecommendationHelpDialog";
+import { ScoreUpHelpDialog } from "@/components/account-data/RecommendationHelpDialog";
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
@@ -20,12 +20,12 @@ import { LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { CharacterData, TierCustomization } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
-import { useAsyncRecommendations } from "@/hooks/useAsyncRecommendations";
-import { buildRecommendationEquipInstructions } from "@/lib/account-data/manager/instructions";
+import { useAsyncScoreUp } from "@/hooks/useAsyncRecommendations";
+import { buildScoreUpEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   buildArtifactLookup,
   type CharacterActions,
-  recomputeTierUpgradeRecommendations,
+  recomputeTierUpgrades,
   type ScoreUpAction,
 } from "@/lib/account-data/scoreUpEngine";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
@@ -37,14 +37,14 @@ import {
   selectValidResolvedBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
-import { useRecommendationCacheStore } from "@/stores/useRecommendationCacheStore";
+import { useScoreUpCacheStore } from "@/stores/useScoreUpCacheStore";
 import {
-  getRecommendationSettingsForProfile,
-  useRecommendationSettingsStore,
-} from "@/stores/useRecommendationSettingsStore";
+  getScoreUpSettingsForProfile,
+  useScoreUpSettingsStore,
+} from "@/stores/useScoreUpSettingsStore";
 import { useTierStore } from "@/stores/useTierStore";
 
-interface RecommendationViewProps {
+interface ScoreUpViewProps {
   scores: Record<string, ArtifactScoreResult | null>;
   onOpenImport?: () => void;
   onShowTour?: () => void;
@@ -52,11 +52,11 @@ interface RecommendationViewProps {
 
 const APPLY_RECOMMENDATION_TIERS: Tier[] = ["S", "A", "B", "C", "D"];
 
-export function RecommendationView({
+export function ScoreUpView({
   scores,
   onOpenImport,
   onShowTour,
-}: RecommendationViewProps) {
+}: ScoreUpViewProps) {
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
@@ -64,18 +64,17 @@ export function RecommendationView({
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const tierAssignments = useTierStore(selectActiveTierAssignments);
   const tierCustomization = useTierStore(selectActiveTierCustomization);
-  const recommendationSettings = useRecommendationSettingsStore((s) =>
-    getRecommendationSettingsForProfile(s, activeAccount?.id ?? null)
+  const scoreUpSettings = useScoreUpSettingsStore((s) =>
+    getScoreUpSettingsForProfile(s, activeAccount?.id ?? null)
   );
-  const setAllowPoolArtifactSteals = useRecommendationSettingsStore(
+  const setAllowPoolArtifactSteals = useScoreUpSettingsStore(
     (s) => s.setAllowPoolArtifactSteals
   );
-  const setTierLuckExpectation = useRecommendationSettingsStore(
+  const setTierLuckExpectation = useScoreUpSettingsStore(
     (s) => s.setTierLuckExpectation
   );
-  const { allowPoolArtifactSteals, luckExpectationByTier } =
-    recommendationSettings;
-  const recommendationTierCustomization = useMemo<TierCustomization>(
+  const { allowPoolArtifactSteals, luckExpectationByTier } = scoreUpSettings;
+  const tierLuckCustomization = useMemo<TierCustomization>(
     () =>
       Object.fromEntries(
         tiers.map((tier) => [
@@ -99,11 +98,11 @@ export function RecommendationView({
     error: recommendationError,
     start: startRecommendations,
     stop: stopRecommendations,
-  } = useAsyncRecommendations();
-  const cacheVersion = useRecommendationCacheStore((s) => s.version);
-  const cacheGet = useRecommendationCacheStore((s) => s.get);
-  const cacheSet = useRecommendationCacheStore((s) => s.set);
-  const cacheClearKey = useRecommendationCacheStore((s) => s.clearKey);
+  } = useAsyncScoreUp();
+  const cacheVersion = useScoreUpCacheStore((s) => s.version);
+  const cacheGet = useScoreUpCacheStore((s) => s.get);
+  const cacheSet = useScoreUpCacheStore((s) => s.set);
+  const cacheClearKey = useScoreUpCacheStore((s) => s.clearKey);
   const [activeRunKey, setActiveRunKey] = useState<string | null>(null);
   const [recalculateNonce, setRecalculateNonce] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -145,7 +144,7 @@ export function RecommendationView({
       return;
     }
 
-    if (useRecommendationCacheStore.getState().get(recommendationCacheKey)) {
+    if (useScoreUpCacheStore.getState().get(recommendationCacheKey)) {
       stopRecommendations();
       setActiveRunKey(null);
       return;
@@ -156,7 +155,7 @@ export function RecommendationView({
       accountData,
       scores,
       tierAssignments,
-      tierCustomization: recommendationTierCustomization,
+      tierCustomization: tierLuckCustomization,
       options: allocationOptions,
     });
 
@@ -168,7 +167,7 @@ export function RecommendationView({
     recalculateNonce,
     scores,
     tierAssignments,
-    recommendationTierCustomization,
+    tierLuckCustomization,
     allocationOptions,
     startRecommendations,
     stopRecommendations,
@@ -221,7 +220,7 @@ export function RecommendationView({
         displayedRecommendations &&
         !isCalculating
       ) {
-        const recommendations = recomputeTierUpgradeRecommendations(
+        const recommendations = recomputeTierUpgrades(
           displayedRecommendations,
           accountData,
           tierAssignments,
@@ -374,7 +373,7 @@ export function RecommendationView({
 
   const buildRecommendationEquipPayload = useCallback(
     () =>
-      buildRecommendationEquipInstructions(
+      buildScoreUpEquipInstructions(
         recommendationAllocationsForApply,
         accountData,
         artifactLookup
@@ -759,7 +758,7 @@ export function RecommendationView({
         actionDisabled={recommendationAllocationsForApply.length === 0}
         idleContent={renderApplyTierSelection()}
       />
-      <RecommendationHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
+      <ScoreUpHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
     </ScrollLayout>
   );
 }
