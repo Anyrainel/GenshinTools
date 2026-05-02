@@ -101,7 +101,7 @@ export class BackupApiClient {
 
   constructor(options: BackupApiClientOptions = {}) {
     this.baseUrl = (options.baseUrl ?? "/api/backup/v1").replace(/\/$/, "");
-    this.fetchImpl = options.fetchImpl ?? fetch;
+    this.fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
     this.getHeaders = options.getHeaders;
   }
 

@@ -8,7 +8,7 @@ import { migrateTriageStore } from "./migration/triage";
 import { PersistedTriageStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
 
-interface TriageState {
+export interface TriageState {
   settingsByProfileId: Record<AccountProfileId, TriageSettings>;
   setSettings: (settings: TriageSettings) => void;
   updateSettings: (patch: Partial<TriageSettings>) => void;

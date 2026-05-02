@@ -48,6 +48,7 @@ export type CloudConflictDecision = CloudSyncDecisionBase & {
   action: "conflict";
   localHash?: string;
   remoteHash?: string;
+  remoteRev?: string;
   localUpdatedAt?: number;
   remoteUpdatedAt?: number;
 };
@@ -197,6 +198,17 @@ export function planPartitionSync(
     };
   }
 
+  if (!hasSyncHistory(state.meta) && state.local.isEmpty) {
+    return {
+      ...base,
+      action: "download",
+      reason: "remote-only",
+      remoteRev: state.remote.rev,
+      contentHash: state.remote.contentHash,
+      schemaVersion: state.remote.schemaVersion,
+    };
+  }
+
   if (!hasSyncHistory(state.meta)) {
     return conflictDecision(base, state, "first-sync-local-and-cloud");
   }
@@ -229,7 +241,7 @@ export function planPartitionSync(
   }
 
   if (localChanged && cloudChanged) {
-    return resolveBothChanged(base, state, conflictPolicy);
+    return resolveBothChanged(base, state);
   }
 
   return conflictDecision(base, state, "metadata-mismatch");
@@ -295,31 +307,8 @@ function decisionBase(
 
 function resolveBothChanged(
   base: CloudSyncDecisionBase,
-  state: PartitionPlanningState,
-  conflictPolicy: CloudConflictPolicy
+  state: PartitionPlanningState
 ): CloudSyncDecision {
-  if (conflictPolicy === "latest-writer-wins" && state.local && state.remote) {
-    const localUpdatedAt = state.local.updatedAt ?? state.meta?.updatedAt ?? 0;
-    if (localUpdatedAt >= state.remote.updatedAt) {
-      return {
-        ...base,
-        action: "upload",
-        reason: "both-changed",
-        baseRev: state.meta?.lastSeenRev,
-        contentHash: state.local.contentHash,
-        schemaVersion: state.local.schemaVersion,
-      };
-    }
-    return {
-      ...base,
-      action: "download",
-      reason: "both-changed",
-      remoteRev: state.remote.rev,
-      contentHash: state.remote.contentHash,
-      schemaVersion: state.remote.schemaVersion,
-    };
-  }
-
   return conflictDecision(base, state, "both-changed");
 }
 
@@ -334,6 +323,7 @@ function conflictDecision(
     reason,
     localHash: state.local?.contentHash,
     remoteHash: state.remote?.contentHash,
+    remoteRev: state.remote?.rev,
     localUpdatedAt: state.local?.updatedAt ?? state.meta?.updatedAt,
     remoteUpdatedAt: state.remote?.updatedAt,
   };

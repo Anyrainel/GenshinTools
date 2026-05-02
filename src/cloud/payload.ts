@@ -66,18 +66,28 @@ export function encodePathSegment(value: string | number): string {
 }
 
 export async function gzipJson(value: unknown): Promise<Uint8Array> {
-  const stream = new Blob([canonicalJson(value)])
-    .stream()
-    .pipeThrough(new CompressionStream("gzip"));
+  const stream = textStream(canonicalJson(value)).pipeThrough(
+    new CompressionStream("gzip")
+  );
   return streamToBytes(stream);
 }
 
 export async function gunzipJson<T>(bytes: Uint8Array): Promise<T> {
-  const stream = new Blob([bytes])
-    .stream()
-    .pipeThrough(new DecompressionStream("gzip"));
+  const stream = byteStream(bytes).pipeThrough(new DecompressionStream("gzip"));
   const text = new TextDecoder().decode(await streamToBytes(stream));
   return JSON.parse(text) as T;
+}
+
+function textStream(text: string): ReadableStream<Uint8Array> {
+  const body = new Response(text).body;
+  if (!body) throw new Error("Unable to create payload text stream");
+  return body;
+}
+
+function byteStream(bytes: Uint8Array): ReadableStream<Uint8Array> {
+  const body = new Response(bytes).body;
+  if (!body) throw new Error("Unable to create payload byte stream");
+  return body;
 }
 
 async function streamToBytes(stream: ReadableStream<Uint8Array>) {

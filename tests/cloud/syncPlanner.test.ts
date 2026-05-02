@@ -97,6 +97,21 @@ describe("cloud sync planner", () => {
     });
   });
 
+  it("downloads cloud data on first sync when the local partition is only default app state", () => {
+    const plan = planCloudSync({
+      localPartitions: [local("builds", "all", "hash-default", 1, 1, true)],
+      localMeta: [],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud")],
+    });
+
+    expect(plan.downloads).toHaveLength(1);
+    expect(plan.downloads[0]).toMatchObject({
+      action: "download",
+      reason: "remote-only",
+      remoteRev: "rev-1",
+    });
+  });
+
   it("requires user choice when explicit-choice data changed on both sides", () => {
     const plan = planCloudSync({
       localPartitions: [local("teams", "all", "hash-local")],
@@ -168,13 +183,15 @@ function local(
   partitionKey: string,
   contentHash: string,
   updatedAt = 1,
-  schemaVersion = 1
+  schemaVersion = 1,
+  isEmpty = false
 ): CloudLocalPartitionState {
   return {
     namespace,
     partitionKey,
     schemaVersion,
     contentHash,
+    ...(isEmpty ? { isEmpty } : {}),
     updatedAt,
   };
 }

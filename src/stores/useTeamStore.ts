@@ -38,6 +38,14 @@ function nextTeamId(): string {
   return `team-${Date.now()}${_teamIdSeq++}`;
 }
 
+export type TeamSourceState = {
+  activePresetId: string | null;
+  compDeltas: TeamCompDelta[];
+  configsByTeamId: Record<string, TeamSetupConfig>;
+  author: string;
+  description: string;
+};
+
 interface TeamState {
   teamComps: TeamComp[];
   teamCompById: Record<string, TeamComp>;
@@ -75,6 +83,7 @@ interface TeamState {
   clearTeams: () => void;
   setMetadata: (author: string, description: string) => void;
   importTeams: (data: TeamCompData) => void;
+  replaceSourceState: (source: TeamSourceState) => void;
   subscribePreset: (presetId: string, data: TeamCompData) => void;
   hydratePreset: (presetId: string, data: TeamCompData) => void;
   exportTeams: (author: string, description: string) => TeamCompData;
@@ -315,6 +324,18 @@ export const useTeamStore = create<TeamState>()(
           state.author = imported.author;
           state.description = imported.description;
           refreshDerivedTeamState(state, null);
+          useTeamResultCacheStore.getState().clearAll();
+        });
+      },
+
+      replaceSourceState: (source) => {
+        set((state) => {
+          state.activePresetId = source.activePresetId;
+          state.compDeltas = source.compDeltas;
+          state.configsByTeamId = source.configsByTeamId;
+          state.author = source.author;
+          state.description = source.description;
+          refreshDerivedTeamState(state);
           useTeamResultCacheStore.getState().clearAll();
         });
       },

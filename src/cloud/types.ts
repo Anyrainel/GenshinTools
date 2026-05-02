@@ -21,7 +21,6 @@ export type StoreDataClass =
 export type CloudConflictPolicy =
   | "profile-import-wins"
   | "explicit-choice"
-  | "latest-writer-wins"
   | "excluded";
 
 export type CloudPartitionKey = string;
@@ -58,6 +57,7 @@ export type CloudLocalPartitionState = {
   schemaVersion: number;
   contentHash: string;
   conflictPolicy?: CloudConflictPolicy;
+  isEmpty?: boolean;
   updatedAt?: number;
 };
 
@@ -77,6 +77,7 @@ export type CloudExportPartition<TPayload = unknown> = {
   partitionKey: CloudPartitionKey;
   schemaVersion: number;
   conflictPolicy: CloudConflictPolicy;
+  isEmpty?: boolean;
   payload: TPayload;
 };
 

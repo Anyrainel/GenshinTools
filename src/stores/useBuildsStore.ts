@@ -48,6 +48,16 @@ import {
 import { DEFAULT_COMPUTE_OPTIONS } from "../lib/artifact-builds/computeFilters";
 import { migrateBuildsStore } from "./migration/builds";
 
+export type BuildsSourceState = {
+  activePresetId: string | null;
+  deltas: BuildDelta[];
+  hiddenCharacters: Record<string, boolean>;
+  characterWeapons: Record<string, string[]>;
+  computeOptions: ComputeOptions;
+  author: string;
+  description: string;
+};
+
 export interface BuildsState {
   // State
   // Metadata about the current "Net Sum" state
@@ -125,6 +135,7 @@ export interface BuildsState {
   // Utility for import
   // Handles both V4 (Legacy) and V5 (Flat) payloads
   importBuilds: (payload: BuildPayload | BuildPayloadV5) => void;
+  replaceSourceState: (source: BuildsSourceState) => void;
   clearAll: () => void;
 
   // Compute options
@@ -718,6 +729,23 @@ export const useBuildsStore = create<BuildsState>()(
           executeImportBuilds(state, payload);
           state.activePresetPayload = null;
           refreshDerivedBuildState(state, null);
+        });
+        invalidateScores();
+      },
+
+      replaceSourceState: (source) => {
+        set((state) => {
+          state.activePresetId = source.activePresetId;
+          state.activePresetPayload = getCachedBuildPreset(
+            source.activePresetId
+          );
+          state.deltas = source.deltas;
+          state.hiddenCharacters = source.hiddenCharacters;
+          state.characterWeapons = source.characterWeapons;
+          state.computeOptions = source.computeOptions;
+          state.author = source.author;
+          state.description = source.description;
+          refreshDerivedBuildState(state);
         });
         invalidateScores();
       },

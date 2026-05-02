@@ -11,6 +11,7 @@ import { invalidateScores } from "./useAccountScoreCacheStore";
 interface ArtifactScoreState {
   config: ArtifactScoreGlobalConfig;
   setGlobalWeight: (key: keyof GlobalStatWeights, value: number) => void;
+  replaceConfig: (config: ArtifactScoreGlobalConfig) => void;
   resetConfig: () => void;
   resetGlobalConfig: () => void;
 }
@@ -29,6 +30,10 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
             },
           },
         }));
+        invalidateScores();
+      },
+      replaceConfig: (config) => {
+        set(() => ({ config }));
         invalidateScores();
       },
       resetConfig: () => {

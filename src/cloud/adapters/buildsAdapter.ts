@@ -1,6 +1,8 @@
 import type { CloudExportPartition } from "@/cloud/types";
 import type { ComputeOptions } from "@/data/types";
 import type { BuildDelta } from "@/lib/artifact-builds/buildDeltas";
+import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
 export type ArtifactScoreCloudConfig = Record<string, unknown> & {
   global: Record<string, number>;
@@ -45,6 +47,7 @@ export function buildsToCloud(
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
+      isEmpty: isEmptyBuildsSnapshot(snapshot),
       payload: {
         activePresetId: snapshot.activePresetId,
         deltas: snapshot.deltas,
@@ -56,6 +59,23 @@ export function buildsToCloud(
       },
     },
   ];
+}
+
+function isEmptyBuildsSnapshot(snapshot: BuildsCloudSnapshot) {
+  return (
+    snapshot.activePresetId === null &&
+    snapshot.deltas.length === 0 &&
+    Object.keys(snapshot.hiddenCharacters).length === 0 &&
+    Object.keys(snapshot.characterWeapons).length === 0 &&
+    snapshot.author === "" &&
+    snapshot.description === "" &&
+    isSameJson(snapshot.computeOptions, DEFAULT_COMPUTE_OPTIONS) &&
+    isSameJson(snapshot.artifactScore, { global: DEFAULT_GLOBAL_STAT_WEIGHTS })
+  );
+}
+
+function isSameJson(first: unknown, second: unknown) {
+  return JSON.stringify(first) === JSON.stringify(second);
 }
 
 export function buildsFromCloud(

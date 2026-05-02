@@ -11,7 +11,7 @@ import type { AccountProfileId } from "@/lib/account-data/types";
 import { PersistedScoreUpSettingsStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
 
-interface ScoreUpSettingsState {
+export interface ScoreUpSettingsState {
   settingsByProfileId: Record<AccountProfileId, ScoreUpSettings>;
   setAllowPoolArtifactSteals: (allow: boolean) => void;
   setTierLuckExpectation: (tier: Tier, luck: LuckExpectation) => void;
