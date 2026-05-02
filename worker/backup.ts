@@ -1,3 +1,11 @@
+import {
+  type AppEnv,
+  type AuthenticatedUser,
+  isAuthFailure,
+  requireEntitlement,
+  requireUser,
+} from "./auth";
+
 const BACKUP_API_PREFIX = "/api/backup/v1";
 
 const BACKUP_CORS_HEADERS = {
@@ -24,11 +32,7 @@ const BACKUP_CAPABILITIES = {
   maxCompressedBytesPerObject: BACKUP_LIMITS.maxCompressedBytesPerObject,
 };
 
-export type BackupEnv = Env & {
-  BACKUP_DB?: D1Database;
-  BACKUP_BUCKET?: R2Bucket;
-  BACKUP_DEV_AUTH_SECRET?: string;
-};
+export type BackupEnv = AppEnv;
 
 type BackupHeadRow = {
   partition_key: string;
@@ -105,7 +109,7 @@ type BackupObjectDownloadRequest = {
 };
 
 type AuthenticatedBackupContext = {
-  userId: string;
+  user: AuthenticatedUser;
   db: D1Database;
   bucket: R2Bucket;
 };
@@ -119,7 +123,7 @@ export async function handleBackupRequest(
     return new Response(null, { status: 204, headers: BACKUP_CORS_HEADERS });
   }
 
-  const context = authenticateBackupRequest(request, env);
+  const context = await authenticateBackupRequest(request, env);
   if (context instanceof Response) {
     return context;
   }
@@ -149,29 +153,25 @@ export async function handleBackupRequest(
   return backupJson({ error: "not_found" }, 404);
 }
 
-function authenticateBackupRequest(
+async function authenticateBackupRequest(
   request: Request,
   env: BackupEnv
-): AuthenticatedBackupContext | Response {
+): Promise<AuthenticatedBackupContext | Response> {
   if (!env.BACKUP_DB || !env.BACKUP_BUCKET) {
     return backupJson({ error: "backup_not_configured" }, 503);
   }
 
-  const secret = env.BACKUP_DEV_AUTH_SECRET;
-  if (!secret) {
-    return backupJson({ error: "backup_auth_not_configured" }, 503);
+  const user = await requireUser(request, env);
+  if (isAuthFailure(user)) {
+    return backupJson(user.payload, user.status);
   }
 
-  if (request.headers.get("Authorization") !== `Bearer ${secret}`) {
-    return backupJson({ error: "unauthenticated" }, 401);
+  const missingEntitlement = requireEntitlement(user, "cloud_sync");
+  if (missingEntitlement) {
+    return backupJson(missingEntitlement.payload, missingEntitlement.status);
   }
 
-  const userId = request.headers.get("x-backup-dev-user-id");
-  if (!userId || !isSafeUserId(userId)) {
-    return backupJson({ error: "invalid_user" }, 422);
-  }
-
-  return { userId, db: env.BACKUP_DB, bucket: env.BACKUP_BUCKET };
+  return { user, db: env.BACKUP_DB, bucket: env.BACKUP_BUCKET };
 }
 
 async function handleBackupHead(
@@ -184,7 +184,7 @@ async function handleBackupHead(
     .prepare(
       "SELECT head_set_rev FROM backup_user_state WHERE user_id = ? LIMIT 1"
     )
-    .bind(context.userId)
+    .bind(context.user.userId)
     .first<{ head_set_rev: string }>();
 
   const headSetRev = state?.head_set_rev ?? "empty";
@@ -198,7 +198,7 @@ async function handleBackupHead(
     });
   }
 
-  const rows = await selectActiveHeads(context.db, context.userId);
+  const rows = await selectActiveHeads(context.db, context.user.userId);
   return backupJson({
     serverTime: now,
     changed: true,
@@ -231,7 +231,7 @@ async function handleBackupCommit(
     .prepare(
       "SELECT result_json FROM backup_commits WHERE user_id = ? AND idempotency_key = ? LIMIT 1"
     )
-    .bind(context.userId, manifest.idempotencyKey)
+    .bind(context.user.userId, manifest.idempotencyKey)
     .first<{ result_json: string }>();
 
   if (existingCommit) {
@@ -242,7 +242,7 @@ async function handleBackupCommit(
   const deletes = manifest.deletes ?? [];
   const currentRows = await selectHeadsByPartitionKeys(
     context.db,
-    context.userId,
+    context.user.userId,
     [
       ...puts.map((put) => put.partitionKey),
       ...deletes.map((del) => del.partitionKey),
@@ -257,7 +257,7 @@ async function handleBackupCommit(
     return backupJson({ error: "revision_conflict", conflicts }, 409);
   }
 
-  const deviceRowId = await resolveDeviceRow(context.db, context.userId, {
+  const deviceRowId = await resolveDeviceRow(context.db, context.user.userId, {
     deviceId: manifest.deviceId,
     deviceLabel: manifest.deviceLabel,
   });
@@ -291,7 +291,7 @@ async function handleBackupCommit(
 
     const objectId = makeRev("obj");
     const rev = makeRev("rev");
-    const r2Key = makeObjectKey(context.userId, objectId);
+    const r2Key = makeObjectKey(context.user.userId, objectId);
     await context.bucket.put(r2Key, part, {
       httpMetadata: {
         contentType: "application/json",
@@ -340,7 +340,7 @@ async function handleBackupCommit(
             soft_deleted_at = NULL`
         )
         .bind(
-          context.userId,
+          context.user.userId,
           put.partitionKey,
           objectId,
           rev,
@@ -369,7 +369,7 @@ async function handleBackupCommit(
           committedAt,
           committedAt,
           deviceRowId,
-          context.userId,
+          context.user.userId,
           del.partitionKey
         )
     );
@@ -397,7 +397,7 @@ async function handleBackupCommit(
           key_count = excluded.key_count,
           total_compressed_bytes = excluded.total_compressed_bytes`
       )
-      .bind(context.userId, headSetRev, committedAt, context.userId)
+      .bind(context.user.userId, headSetRev, committedAt, context.user.userId)
   );
   statements.push(
     context.db
@@ -410,7 +410,7 @@ async function handleBackupCommit(
       )
       .bind(
         makeRev("commit"),
-        context.userId,
+        context.user.userId,
         manifest.idempotencyKey,
         deviceRowId,
         JSON.stringify(result),
@@ -446,7 +446,7 @@ async function handleBackupObjectDownload(
 
   const rows = await selectHeadsByObjectIds(
     context.db,
-    context.userId,
+    context.user.userId,
     body.objectIds
   );
   const rowsByObjectId = new Map(rows.map((row) => [row.object_id, row]));
@@ -472,7 +472,7 @@ async function handleBackupObjectDownload(
     }
 
     const object = await context.bucket.get(
-      makeObjectKey(context.userId, objectId)
+      makeObjectKey(context.user.userId, objectId)
     );
     if (!object) {
       return backupJson({ error: "object_not_found", objectId }, 404);
@@ -925,10 +925,6 @@ function isKnownPartitionKey(value: string): boolean {
 
 function isSha256(value: string): boolean {
   return /^sha256:[a-f0-9]{64}$/.test(value);
-}
-
-function isSafeUserId(value: string): boolean {
-  return /^[A-Za-z0-9_:-]{1,96}$/.test(value);
 }
 
 function isSafeDeviceId(value: string): boolean {
