@@ -5,9 +5,11 @@ import {
   Minus,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelpButton";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
+import { EvaluationHelpDialog } from "@/components/account-data/EvaluationHelpDialog";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -64,6 +66,7 @@ export function EvaluationView({
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [tierFilter, setTierFilter] = useState<TierFilter>("all");
   const [ownedOnly, setOwnedOnly] = useState(true);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const tierAssignments = useTierStore(selectActiveTierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
@@ -204,6 +207,10 @@ export function EvaluationView({
           <h2 className="text-xl font-bold text-white">
             {t.ui("evaluation.title")}
           </h2>
+          <AccountDataHelpButton
+            label={t.ui("buttons.help")}
+            onClick={() => setHelpOpen(true)}
+          />
           <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
           <span className="text-sm text-muted-foreground">
             {t.format(
@@ -352,6 +359,7 @@ export function EvaluationView({
       {filteredGroups.map((group) => (
         <SetGroupSection key={group.artifactSet} group={group} />
       ))}
+      <EvaluationHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
     </ScrollLayout>
   );
 }

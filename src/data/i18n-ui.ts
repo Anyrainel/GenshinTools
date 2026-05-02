@@ -358,10 +358,6 @@ export const i18nUiData = {
       en: "Import successful!",
       zh: "导入成功！",
     },
-    profileSettingsCopied: {
-      en: "Copied triage and resource settings from your previous account.",
-      zh: "已沿用上一个账号的锁定助手和资源规划设置。",
-    },
     conversionWarning: {
       en: "Some items could not be imported",
       zh: "部分条目无法导入",
@@ -489,6 +485,54 @@ export const i18nUiData = {
       en: "Rank your characters in the Tier List to get personalized upgrade recommendations.",
       zh: "在优先级中为角色排序，即可获得个性化的升级建议。",
     },
+    recommendationsHelpTitle: {
+      en: "How Recommendations Are Chosen",
+      zh: "提分推荐是如何选择的",
+    },
+    recommendationsHelpDesc: {
+      en: "This page builds an upgrade plan for ranked characters from your imported artifacts and visible build targets.",
+      zh: "这个页面会根据已导入的圣遗物和已启用的配装目标，为已评级角色生成提升方案。",
+    },
+    recommendationsHelpPriorityTitle: {
+      en: "Only ranked tiers receive recommendations",
+      zh: "只有已评级角色会生成推荐",
+    },
+    recommendationsHelpPriorityDesc: {
+      en: "The search runs S, A, B, C, then D. Pool characters are skipped: they do not get recommendations and they are not part of the tier score being maximized.",
+      zh: "系统会依次处理 S、A、B、C、D。角色池会被跳过：角色池中的角色不会生成推荐，也不会计入需要最大化的优先级总分。",
+    },
+    recommendationsHelpPoolLabel: {
+      en: "Pool",
+      zh: "角色池",
+    },
+    recommendationsHelpRankedTierRange: {
+      en: "S-D",
+      zh: "S-D",
+    },
+    recommendationsHelpPoolTitle: {
+      en: "Pool artifacts can still be allowed into the search",
+      zh: "角色池圣遗物仍可选择是否参与搜索",
+    },
+    recommendationsHelpPoolDesc: {
+      en: "The checkbox only controls whether artifacts equipped by Pool characters can be used by ranked tiers. It does not make Pool characters receive recommendations.",
+      zh: "勾选项只控制角色池角色身上的圣遗物是否能被已评级角色使用；它不会让角色池角色生成推荐。",
+    },
+    recommendationsHelpAllocationTitle: {
+      en: "Artifacts are allocated to maximize tier score",
+      zh: "圣遗物会按优先级内总分分配",
+    },
+    recommendationsHelpAllocationDesc: {
+      en: "Within a tier, artifacts are assigned to maximize the tier's total score, not by checking characters one at a time. The score assumes maximum Crit Rate buffs from character, weapon, and artifact effects; Crit Rate above 100% adds 0 score.",
+      zh: "在同一个优先级内，系统会分配圣遗物来最大化该优先级的总分，而不是逐个角色单独判断。评分会假设角色、武器和圣遗物效果提供的最大暴击率增益；超过 100% 的暴击率不再计分。",
+    },
+    recommendationsHelpUpgradeTitle: {
+      en: "Upgrade actions estimate future level-up value",
+      zh: "强化操作会估算后续升级收益",
+    },
+    recommendationsHelpUpgradeDesc: {
+      en: "For an artifact that can still level up, the page estimates the average score gain from its remaining upgrade rolls. The luck selector changes the assumed roll value used for that estimate.",
+      zh: "如果圣遗物还能继续升级，页面会估算剩余强化次数带来的平均分数收益。词条期望会改变这个估算中使用的词条数值假设。",
+    },
     recommendationsCalculating: {
       en: "Calculating recommendations",
       zh: "正在计算提分推荐",
@@ -508,6 +552,14 @@ export const i18nUiData = {
     recalculateRecommendations: {
       en: "Recalculate",
       zh: "重新计算",
+    },
+    allowPoolArtifactSteals: {
+      en: "Use artifacts from Pool tier",
+      zh: "允许使用角色池中角色的圣遗物",
+    },
+    allowPoolArtifactStealsDesc: {
+      en: "When unchecked, artifacts equipped by Pool characters are excluded from recommendation search.",
+      zh: "取消勾选后，已装备在角色池角色身上的圣遗物不会进入提分推荐搜索。",
     },
     applyRecommendationsToGame: {
       en: "Apply recommendations to game",
@@ -1963,6 +2015,50 @@ export const i18nUiData = {
     noSuggestions: {
       en: "No suggestions — all builds meet their tier threshold.",
       zh: "暂无建议 — 所有配装已达到各自评级的阈值。",
+    },
+    evalHelpTitle: {
+      en: "How Set Evaluation Is Scored",
+      zh: "套装评估是如何评分的",
+    },
+    evalHelpDesc: {
+      en: "This page estimates how complete each build is with your current account data. It is a farming and coverage view, not an equip plan.",
+      zh: "这个页面会估算当前账号数据对各个配装的完成度。它用于判断刷取和覆盖情况，不是换装方案。",
+    },
+    evalHelpBuildsTitle: {
+      en: "Only active builds are evaluated",
+      zh: "只评估当前生效的配装",
+    },
+    evalHelpBuildsDesc: {
+      en: "The page uses visible builds for the active account. If a character has constellation-specific versions of the same build, it uses the highest version that the account currently qualifies for.",
+      zh: "页面只使用当前账号下已启用的配装。若同一角色有同一套装的不同命座版本，会选择当前账号命座能够满足的最高版本。",
+    },
+    evalHelpSwitchOn: {
+      en: "Included in evaluation",
+      zh: "参与套装评估",
+    },
+    evalHelpSwitchOff: {
+      en: "Skipped by this page",
+      zh: "不参与套装评估",
+    },
+    evalHelpMergeTitle: {
+      en: "Similar builds are merged",
+      zh: "相近配装会合并显示",
+    },
+    evalHelpMergeDesc: {
+      en: "Before builds are merged, stat weights are grouped into buckets. Builds with the same set, role, and 100/75-weight stat profile share one normalized build entry; 50-weight stats and allowed main stats are combined into that entry.",
+      zh: "合并配装前，词条权重会先归入固定档位。相同套装、相同定位，并且 100/75 档词条相同的配装会合并成一个归一化配装条目；50 档词条和可用主词条会合并到这个条目中。",
+    },
+    evalHelpWeightLabel: {
+      en: "Weights:",
+      zh: "权重：",
+    },
+    evalHelpCompetitionTitle: {
+      en: "The same artifact can appear in multiple builds",
+      zh: "同一件圣遗物可以参与多个配装",
+    },
+    evalHelpCompetitionDesc: {
+      en: "Evaluation picks the best available pieces for each build independently. It does not decide ownership, so one strong artifact may be shown as useful for several builds. Use Recommendations when you want to decide who should actually get it first.",
+      zh: "每个配装会独立挑选最佳部件，不决定圣遗物归属。因此，同一件强力圣遗物可能出现在多个配装里。若要决定它实际先给谁，请使用提分推荐。",
     },
     helpTitle: {
       en: "How Scores Are Calculated",

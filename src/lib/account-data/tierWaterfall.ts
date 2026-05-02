@@ -83,6 +83,8 @@ export interface AllocationOptions {
   slotCaps?: BuildOptimizerConfig["slotCaps"];
   /** Order of tiers processed; default is S → A → B → C → D (Pool excluded). */
   tierOrder?: Tier[];
+  /** Whether artifacts equipped by Pool characters can enter recommendation search. */
+  allowPoolArtifactSteals?: boolean;
 }
 
 const DEFAULT_TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
@@ -127,12 +129,11 @@ export function* runTierWaterfallSteps(
   const topK = options.topK ?? DEFAULT_TOP_K;
   const tierOrder = options.tierOrder ?? DEFAULT_TIER_ORDER;
 
-  const allArtifacts: ArtifactData[] = [
-    ...accountData.extraArtifacts,
-    ...accountData.characters.flatMap((c) =>
-      Object.values(c.artifacts).filter((a): a is ArtifactData => !!a)
-    ),
-  ];
+  const allArtifacts = collectEligibleArtifacts(
+    accountData,
+    tierAssignments,
+    options.allowPoolArtifactSteals ?? true
+  );
 
   const charsByTier = new Map<Tier, AccountData["characters"]>();
   for (const char of accountData.characters) {
@@ -402,6 +403,23 @@ function snapshotAllocation(
     unclaimedAfterWaterfall: Array.from(unclaimedById.values()),
     totalNodesExplored,
   };
+}
+
+function collectEligibleArtifacts(
+  accountData: AccountData,
+  tierAssignments: TierAssignment,
+  allowPoolArtifactSteals: boolean
+): ArtifactData[] {
+  return [
+    ...accountData.extraArtifacts,
+    ...accountData.characters.flatMap((character) => {
+      const ownerTier: Tier = tierAssignments[character.key]?.tier || "Pool";
+      if (!allowPoolArtifactSteals && ownerTier === "Pool") return [];
+      return Object.values(character.artifacts).filter(
+        (artifact): artifact is ArtifactData => !!artifact
+      );
+    }),
+  ];
 }
 
 function safeGetCrBudget(

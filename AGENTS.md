@@ -80,6 +80,12 @@ Use this as the first routing hint when the user refers to a page or tab in natu
 - The app has 9 runtime theme palettes via `ThemeContext` and `themeGenerator.ts`; avoid hardcoded visual colors in UI.
 - For mobile/desktop dialog variants, prefer the existing Drawer/Popover/Dialog pattern used by `ItemPicker.tsx`.
 
+## File conventions
+
+- No re-export from other modules. Caller must import from source of truth.
+- `constants.ts` must only `export const`. `types.ts` must only `export type` or `export interface`. `utils.ts` must only `export function`.
+- Make extra effort to keep the codebase clean and avoid dependency mess (models in wrong places), overly-encompassing objects (models too big) or spaghetti code (models too small).
+
 ## i18n
 
 - `src/data/i18n-ui.ts`: static UI strings. `t.ui()` calls must use string literals, never constructed keys.

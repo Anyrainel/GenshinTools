@@ -120,11 +120,16 @@ export function generateAllRecommendations(
 export function recomputeTierUpgradeRecommendations(
   recommendations: AllActions,
   accountData: AccountData,
+  tierAssignments: TierAssignment,
   tier: Tier,
   luckExpectation: LuckExpectation,
   options: AllocationOptions = {}
 ): AllActions {
-  const allArtifacts = collectAllArtifacts(accountData);
+  const allArtifacts = collectEligibleArtifacts(
+    accountData,
+    tierAssignments,
+    options.allowPoolArtifactSteals ?? true
+  );
   const artifactById = new Map(allArtifacts.map((a) => [a.id, a]));
   const allocationByCharacter: Record<string, AllocatedBuild> = {};
   for (const [characterId, entry] of Object.entries(
@@ -252,12 +257,11 @@ function buildRecommendationsFromAllocation(
     }
   }
 
-  const allArtifacts: ArtifactData[] = [
-    ...accountData.extraArtifacts,
-    ...accountData.characters.flatMap((c) =>
-      Object.values(c.artifacts).filter((a): a is ArtifactData => !!a)
-    ),
-  ];
+  const allArtifacts = collectEligibleArtifacts(
+    accountData,
+    tierAssignments,
+    options.allowPoolArtifactSteals ?? true
+  );
   const artifactById = new Map(allArtifacts.map((a) => [a.id, a]));
   const tierOrder = options.tierOrder ?? DEFAULT_TIER_ORDER;
   const tierRank = new Map<Tier, number>(
@@ -378,12 +382,20 @@ function emptyActions(): AllActions {
   };
 }
 
-function collectAllArtifacts(accountData: AccountData): ArtifactData[] {
+function collectEligibleArtifacts(
+  accountData: AccountData,
+  tierAssignments: TierAssignment,
+  allowPoolArtifactSteals: boolean
+): ArtifactData[] {
   return [
     ...accountData.extraArtifacts,
-    ...accountData.characters.flatMap((c) =>
-      Object.values(c.artifacts).filter((a): a is ArtifactData => !!a)
-    ),
+    ...accountData.characters.flatMap((character) => {
+      const ownerTier: Tier = tierAssignments[character.key]?.tier || "Pool";
+      if (!allowPoolArtifactSteals && ownerTier === "Pool") return [];
+      return Object.values(character.artifacts).filter(
+        (artifact): artifact is ArtifactData => !!artifact
+      );
+    }),
   ];
 }
 

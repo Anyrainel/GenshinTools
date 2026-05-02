@@ -1,8 +1,10 @@
 import { Info, Loader2, Monitor, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelpButton";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
+import { RecommendationHelpDialog } from "@/components/account-data/RecommendationHelpDialog";
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
@@ -16,7 +18,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { LuckExpectation, Tier } from "@/data/enums";
 import { LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
-import type { CharacterData } from "@/data/types";
+import type { CharacterData, TierCustomization } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAsyncRecommendations } from "@/hooks/useAsyncRecommendations";
 import { buildRecommendationEquipInstructions } from "@/lib/account-data/manager/instructions";
@@ -36,6 +38,10 @@ import {
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { useRecommendationCacheStore } from "@/stores/useRecommendationCacheStore";
+import {
+  getRecommendationSettingsForProfile,
+  useRecommendationSettingsStore,
+} from "@/stores/useRecommendationSettingsStore";
 import { useTierStore } from "@/stores/useTierStore";
 
 interface RecommendationViewProps {
@@ -58,7 +64,34 @@ export function RecommendationView({
   const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
   const tierAssignments = useTierStore(selectActiveTierAssignments);
   const tierCustomization = useTierStore(selectActiveTierCustomization);
-  const setTierLuckExpectation = useTierStore((s) => s.setTierLuckExpectation);
+  const recommendationSettings = useRecommendationSettingsStore((s) =>
+    getRecommendationSettingsForProfile(s, activeAccount?.id ?? null)
+  );
+  const setAllowPoolArtifactSteals = useRecommendationSettingsStore(
+    (s) => s.setAllowPoolArtifactSteals
+  );
+  const setTierLuckExpectation = useRecommendationSettingsStore(
+    (s) => s.setTierLuckExpectation
+  );
+  const { allowPoolArtifactSteals, luckExpectationByTier } =
+    recommendationSettings;
+  const recommendationTierCustomization = useMemo<TierCustomization>(
+    () =>
+      Object.fromEntries(
+        tiers.map((tier) => [
+          tier,
+          {
+            ...tierCustomization[tier],
+            luckExpectation: luckExpectationByTier[tier],
+          },
+        ])
+      ) as TierCustomization,
+    [tierCustomization, luckExpectationByTier]
+  );
+  const allocationOptions = useMemo(
+    () => ({ allowPoolArtifactSteals }),
+    [allowPoolArtifactSteals]
+  );
   const {
     recommendations: allRecs,
     progress,
@@ -73,6 +106,7 @@ export function RecommendationView({
   const cacheClearKey = useRecommendationCacheStore((s) => s.clearKey);
   const [activeRunKey, setActiveRunKey] = useState<string | null>(null);
   const [recalculateNonce, setRecalculateNonce] = useState(0);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [equipDialogOpen, setEquipDialogOpen] = useState(false);
   const [selectedApplyTiers, setSelectedApplyTiers] = useState<Tier[]>(
     APPLY_RECOMMENDATION_TIERS
@@ -86,9 +120,17 @@ export function RecommendationView({
         accountData,
         scores,
         tierAssignments,
+        allowPoolArtifactSteals,
       })
     )}`;
-  }, [activeAccount, accountData, hasAnyBuilds, scores, tierAssignments]);
+  }, [
+    activeAccount,
+    accountData,
+    allowPoolArtifactSteals,
+    hasAnyBuilds,
+    scores,
+    tierAssignments,
+  ]);
 
   const cachedRecommendations = recommendationCacheKey
     ? cacheGet(recommendationCacheKey)
@@ -114,7 +156,8 @@ export function RecommendationView({
       accountData,
       scores,
       tierAssignments,
-      tierCustomization,
+      tierCustomization: recommendationTierCustomization,
+      options: allocationOptions,
     });
 
     return stopRecommendations;
@@ -125,7 +168,8 @@ export function RecommendationView({
     recalculateNonce,
     scores,
     tierAssignments,
-    tierCustomization,
+    recommendationTierCustomization,
+    allocationOptions,
     startRecommendations,
     stopRecommendations,
   ]);
@@ -180,8 +224,10 @@ export function RecommendationView({
         const recommendations = recomputeTierUpgradeRecommendations(
           displayedRecommendations,
           accountData,
+          tierAssignments,
           tier,
-          luckExpectation
+          luckExpectation,
+          allocationOptions
         );
         cacheSet(recommendationCacheKey, {
           recommendations,
@@ -194,7 +240,9 @@ export function RecommendationView({
       accountData,
       recommendationCacheKey,
       displayedRecommendations,
+      tierAssignments,
       isCalculating,
+      allocationOptions,
       cacheSet,
       displayedProgress,
       setTierLuckExpectation,
@@ -437,6 +485,25 @@ export function RecommendationView({
     </Button>
   );
 
+  const renderPoolStealSetting = () => (
+    <div className="flex items-center gap-2">
+      <Checkbox
+        id="recommendation-allow-pool-steals"
+        checked={allowPoolArtifactSteals}
+        onCheckedChange={(checked) =>
+          setAllowPoolArtifactSteals(checked === true)
+        }
+      />
+      <Label
+        htmlFor="recommendation-allow-pool-steals"
+        className="cursor-pointer whitespace-nowrap text-sm text-white"
+        title={t.ui("accountData.allowPoolArtifactStealsDesc")}
+      >
+        {t.ui("accountData.allowPoolArtifactSteals")}
+      </Label>
+    </div>
+  );
+
   const renderApplyTierSelection = () => (
     <div className="space-y-2 rounded-lg border border-border p-3">
       <div className="space-y-0.5">
@@ -486,7 +553,12 @@ export function RecommendationView({
           <h2 className="text-xl font-bold text-white">
             {t.ui("accountData.recommendations")}
           </h2>
+          <AccountDataHelpButton
+            label={t.ui("buttons.help")}
+            onClick={() => setHelpOpen(true)}
+          />
           <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
+          {renderPoolStealSetting()}
           <div className="flex-1" />
           <div className="flex items-center gap-2">
             {renderRecalculateButton()}
@@ -529,7 +601,7 @@ export function RecommendationView({
         if (chars.length === 0) return null;
 
         const displayName = customization?.displayName || t.tier(tier);
-        const luckExpectation = customization?.luckExpectation || "balanced";
+        const luckExpectation = luckExpectationByTier[tier];
 
         return (
           <div key={tier} className="space-y-3">
@@ -687,6 +759,7 @@ export function RecommendationView({
         actionDisabled={recommendationAllocationsForApply.length === 0}
         idleContent={renderApplyTierSelection()}
       />
+      <RecommendationHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
     </ScrollLayout>
   );
 }

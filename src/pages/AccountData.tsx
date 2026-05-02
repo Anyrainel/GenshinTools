@@ -75,10 +75,7 @@ import { InventoryView } from "@/pages/account-data/InventoryView";
 import { RecommendationView } from "@/pages/account-data/RecommendationView";
 import { ResourceView } from "@/pages/account-data/ResourceView";
 import { TriageView } from "@/pages/account-data/TriageView";
-import {
-  type ApplyAccountImportResult,
-  applyAccountImport,
-} from "@/stores/applyAccountImport";
+import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
 
 const isValidAccountDataTab = (
@@ -243,11 +240,8 @@ export default function AccountDataPage() {
     setConversionWarnings([]);
   };
 
-  const showImportSuccess = (result: ApplyAccountImportResult) => {
+  const showImportSuccess = () => {
     toast.success(t.ui("accountData.importSuccess"));
-    if (result.clonedProfileSettings.length > 0) {
-      toast.info(t.ui("accountData.profileSettingsCopied"));
-    }
   };
 
   const handleLocalImport = (data: GOODData, optionalUid: string) => {
@@ -293,14 +287,14 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
-        const importResult = applyAccountImport({
+        applyAccountImport({
           accountId: routing.id,
           data: routing.data,
           name: routing.name,
           setAsActive: routing.activeId,
           artifactIdMap: partialMergeMap,
         });
-        showImportSuccess(importResult);
+        showImportSuccess();
       } else {
         // Dialog path — store raw GOOD for re-conversion at resolution time
         const pending = routing.pendingImport;
@@ -347,14 +341,14 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
-        const importResult = applyAccountImport({
+        applyAccountImport({
           accountId: routing.id,
           data: routing.data,
           name: routing.name,
           setAsActive: routing.activeId,
           artifactIdMap: uidMergeMap,
         });
-        showImportSuccess(importResult);
+        showImportSuccess();
       } else {
         setPendingImport(routing.pendingImport);
         setIsAccountManagerOpen(true);
@@ -397,14 +391,14 @@ export default function AccountDataPage() {
       );
 
       if (routing.kind === "direct") {
-        const importResult = applyAccountImport({
+        applyAccountImport({
           accountId: routing.id,
           data: routing.data,
           name: routing.name,
           setAsActive: routing.activeId,
           artifactIdMap: hoyoMergeMap,
         });
-        showImportSuccess(importResult);
+        showImportSuccess();
       } else {
         setPendingImport(routing.pendingImport);
         setIsAccountManagerOpen(true);
@@ -477,7 +471,7 @@ export default function AccountDataPage() {
       return;
     }
 
-    const importResult = applyAccountImport({
+    applyAccountImport({
       accountId: result.id,
       data: result.data,
       name: result.name || undefined,
@@ -486,7 +480,7 @@ export default function AccountDataPage() {
       artifactIdMap: resolveArtifactIdMap,
     });
 
-    showImportSuccess(importResult);
+    showImportSuccess();
     setPendingImport(null);
     setIsAccountManagerOpen(false);
   };

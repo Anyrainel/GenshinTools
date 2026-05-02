@@ -52,6 +52,7 @@ describe("account cloud adapter", () => {
       },
       triageByProfileId: { 0: { triageMode: "strict" } },
       resourcesByProfileId: { 0: { panelOpen: true } },
+      recommendationsByProfileId: { 0: { allowPoolArtifactSteals: false } },
       accounts: {
         0: {
           id: 0,
@@ -148,6 +149,9 @@ describe("account cloud adapter", () => {
     ]);
     expect(restored.triageByProfileId[0]).toEqual({ triageMode: "strict" });
     expect(restored.resourcesByProfileId[0]).toEqual({ panelOpen: true });
+    expect(restored.recommendationsByProfileId[0]).toEqual({
+      allowPoolArtifactSteals: false,
+    });
   });
 });
 

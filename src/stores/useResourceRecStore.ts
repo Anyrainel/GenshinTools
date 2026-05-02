@@ -48,10 +48,6 @@ export interface ResourceRecState {
   setShowCraft: (v: boolean) => void;
   setShowReroll: (v: boolean) => void;
   setShowLevelup: (v: boolean) => void;
-  cloneSettingsForProfile: (
-    sourceProfileId: AccountProfileId,
-    targetProfileId: AccountProfileId
-  ) => boolean;
   renameProfileSettings: (
     sourceProfileId: AccountProfileId,
     targetProfileId: AccountProfileId
@@ -138,9 +134,6 @@ export const selectActiveResourceRecShowReroll = (
 export const selectActiveResourceRecShowLevelup = (
   state: Pick<ResourceRecState, "settingsByProfileId">
 ): boolean => selectActiveResourceRecSettings(state).showLevelup;
-
-const cloneSettings = (settings: ResourceRecSettings): ResourceRecSettings =>
-  structuredClone(settings);
 
 const settingsEqual = (
   first: ResourceRecSettings,
@@ -267,27 +260,6 @@ export const useResourceRecStore = create<ResourceRecState>()(
           };
         }),
 
-      cloneSettingsForProfile: (sourceProfileId, targetProfileId) => {
-        let didClone = false;
-        set((state) => {
-          const sourceSettings = getResourceRecSettingsForProfile(
-            state,
-            sourceProfileId
-          );
-          if (settingsEqual(sourceSettings, cloneDefaultSettings())) return {};
-
-          didClone = true;
-          const cloned = cloneSettings(sourceSettings);
-          return {
-            settingsByProfileId: {
-              ...state.settingsByProfileId,
-              [targetProfileId]: cloned,
-            },
-          };
-        });
-        return didClone;
-      },
-
       renameProfileSettings: (sourceProfileId, targetProfileId) =>
         set((state) => {
           if (sourceProfileId === targetProfileId) return state;
@@ -302,7 +274,7 @@ export const useResourceRecStore = create<ResourceRecState>()(
             cloneDefaultSettings()
           )
             ? cloneDefaultSettings()
-            : cloneSettings(sourceSettings);
+            : structuredClone(sourceSettings);
           if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
             settingsByProfileId[targetProfileId] = nextSettings;
           }

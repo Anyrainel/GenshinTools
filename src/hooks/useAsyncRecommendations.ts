@@ -10,6 +10,7 @@ import {
   generateRecommendationsByTier,
   type RecommendationTierUpdate,
 } from "@/lib/account-data/scoreUpEngine";
+import type { AllocationOptions } from "@/lib/account-data/tierWaterfall";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
 import { useAsyncComputation } from "./useAsyncComputation";
 
@@ -18,6 +19,7 @@ export interface RecommendationOptions {
   scores: Record<string, ArtifactScoreResult | null>;
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
+  options?: AllocationOptions;
 }
 
 export interface RecommendationProgress {
@@ -71,7 +73,8 @@ export function useAsyncRecommendations(): AsyncRecommendationsState {
         opts.accountData,
         opts.scores,
         opts.tierAssignments,
-        opts.tierCustomization
+        opts.tierCustomization,
+        opts.options
       ),
     []
   );

@@ -7,15 +7,12 @@ import {
   useFreezeStore,
 } from "./useFreezeStore";
 import { useRecommendationCacheStore } from "./useRecommendationCacheStore";
+import { useRecommendationSettingsStore } from "./useRecommendationSettingsStore";
 import { useResourceRecStore } from "./useResourceRecStore";
 import { useTierStore } from "./useTierStore";
 import { useTriageStore } from "./useTriageStore";
 
-export type ClonedProfileSettingsDomain = "triage" | "resources";
-
-export interface ApplyAccountImportResult {
-  clonedProfileSettings: ClonedProfileSettingsDomain[];
-}
+export type ApplyAccountImportResult = Record<string, never>;
 
 function promoteProfileScopedStores(
   sourceProfileId: AccountProfileId,
@@ -25,6 +22,9 @@ function promoteProfileScopedStores(
     .getState()
     .renameProfileSettings(sourceProfileId, targetProfileId);
   useResourceRecStore
+    .getState()
+    .renameProfileSettings(sourceProfileId, targetProfileId);
+  useRecommendationSettingsStore
     .getState()
     .renameProfileSettings(sourceProfileId, targetProfileId);
   useFreezeStore.getState().renameProfile(sourceProfileId, targetProfileId);
@@ -55,30 +55,6 @@ export function applyAccountImport(opts: {
   useRecommendationCacheStore.getState().clear();
   remapFreezeStoreForImport(opts.artifactIdMap, opts.accountId);
   const store = useAccountStore.getState();
-  const previousActiveAccountId = store.activeAccountId;
-  const isNewProfile = store.accounts[opts.accountId] == null;
-  const clonedProfileSettings: ClonedProfileSettingsDomain[] = [];
-
-  if (
-    isNewProfile &&
-    previousActiveAccountId !== null &&
-    previousActiveAccountId !== opts.accountId
-  ) {
-    if (
-      useTriageStore
-        .getState()
-        .cloneSettingsForProfile(previousActiveAccountId, opts.accountId)
-    ) {
-      clonedProfileSettings.push("triage");
-    }
-    if (
-      useResourceRecStore
-        .getState()
-        .cloneSettingsForProfile(previousActiveAccountId, opts.accountId)
-    ) {
-      clonedProfileSettings.push("resources");
-    }
-  }
 
   store.addOrUpdateAccount(opts.accountId, {
     data: opts.data,
@@ -98,5 +74,5 @@ export function applyAccountImport(opts: {
       collectAllArtifactIds(opts.data),
       opts.promoteToId ?? opts.accountId
     );
-  return { clonedProfileSettings };
+  return {};
 }

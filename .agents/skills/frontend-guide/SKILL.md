@@ -22,9 +22,12 @@ only when the task needs that detail.
 2. Inspect 2-3 nearby examples in the same family before choosing structure or
    styling. Prefer current code over this guide when they conflict.
 3. Apply the hard repo invariants from `references/repo-invariants.md`.
-4. Pick an existing layout/component pattern before adding new structure.
-5. Use player-facing labels and i18n-backed strings for visible text.
-6. Verify the changed surface at mobile and desktop widths. For larger visual
+4. For explanatory surfaces, load
+   `references/explanatory-copy-and-visuals.md` before drafting copy or visual
+   aids.
+5. Pick an existing layout/component pattern before adding new structure.
+6. Use player-facing labels and i18n-backed strings for visible text.
+7. Verify the changed surface at mobile and desktop widths. For larger visual
    changes, also check at least one non-default theme.
 
 ## When To Load References
@@ -35,6 +38,9 @@ only when the task needs that detail.
 - `references/layout-and-surfaces.md`: Read when creating or reorganizing a
   page, choosing card/surface styles, displaying characters/items, or adding
   filters/toolbars.
+- `references/explanatory-copy-and-visuals.md`: Read when writing help dialogs,
+  onboarding, empty states, tooltips, algorithm explanations, score
+  explanations, or any visual aid whose job is to teach behavior.
 - `references/ux-checklist.md`: Read when adding interactions, forms, async
   states, dense data views, responsive behavior, or before finishing a visible
   UI change.
@@ -44,10 +50,11 @@ only when the task needs that detail.
 Use this order when rules compete:
 
 1. Repo invariants and accessibility.
-2. Existing page-family patterns.
-3. Player workflow clarity and scanability.
-4. Visual polish consistent with the theme system.
-5. Local convenience or implementation speed.
+2. Accuracy against actual behavior and domain rules.
+3. Existing page-family patterns.
+4. Player workflow clarity, explanatory clarity, and scanability.
+5. Visual polish consistent with the theme system.
+6. Local convenience or implementation speed.
 
 ## Fast Defaults
 
@@ -55,8 +62,9 @@ Use this order when rules compete:
 - Use existing layout components from `src/components/layout/` before custom
   scroll shells.
 - Use `bg-gradient-card` / `bg-gradient-select` for primary content panels and
-  their headers; use lower-emphasis `bg-card/*` surfaces only when nearby code
-  clearly uses them as nested chrome or subtle secondary containers.
+  their headers when the surrounding page family uses that surface language.
+  Do not add decorative cards or boxes only to make explanatory content look
+  designed.
 - Use `ItemIcon` or `CharAvatar` when identity scanning matters; text-only
   references are acceptable only for low-emphasis prose or compact metadata.
 - Use shared filter chips from `src/components/shared/FilterChip.tsx` and
@@ -64,7 +72,7 @@ Use this order when rules compete:
 - Keep body text at `text-sm` and compact metadata at `text-xs`; do not add
   opacity modifiers to `text-muted-foreground`.
 - Group inputs separately from computed outputs, especially in calculators and
-  recommendation/evaluation views.
+  scored decision workflows.
 
 ## Finish Checklist
 
@@ -76,3 +84,5 @@ Use this order when rules compete:
   the workflow can reach them.
 - Keyboard/focus behavior is preserved for dialogs, popovers, menus, and form
   controls.
+- Explanatory visuals encode real rules, ordering, inclusion, transformation,
+  or state changes; remove visuals that only decorate the prose.

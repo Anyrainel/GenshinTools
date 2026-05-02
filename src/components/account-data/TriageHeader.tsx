@@ -3,12 +3,12 @@ import {
   ArrowUp,
   ChevronsDownUp,
   ChevronsUpDown,
-  CircleHelp,
   Monitor,
   Puzzle,
   Settings,
 } from "lucide-react";
 import { useState } from "react";
+import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelpButton";
 import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { TriageSettingsPanel } from "@/components/account-data/TriageSettingsPanel";
@@ -117,6 +117,10 @@ export function TriageHeader({
     <div className="px-4 space-y-3">
       <div className="flex items-center gap-3 flex-wrap pb-2">
         <h2 className="text-xl font-semibold">{t.ui("triage.title")}</h2>
+        <AccountDataHelpButton
+          label={t.ui("buttons.help")}
+          onClick={() => setHelpOpen(true)}
+        />
         {sourceAgeBadge}
         <Popover>
           <PopoverTrigger asChild>
@@ -162,13 +166,6 @@ export function TriageHeader({
       <div className="flex items-center gap-2 flex-wrap">
         <p className="text-sm">
           {t.ui("triage.subtitle").replace("{0}", totalArtifacts.toString())}
-          <button
-            type="button"
-            onClick={() => setHelpOpen(true)}
-            className="ml-1.5 inline-flex align-text-bottom text-amber-400 hover:text-amber-300 transition-colors"
-          >
-            <CircleHelp className="size-4" />
-          </button>
         </p>
         <div className="flex items-center gap-1.5 ml-2">
           {QUALITY_TIERS.map((tier) => (

@@ -102,6 +102,7 @@ export type CloudRestorePlan = {
   artifactScore?: unknown;
   triageByProfileId?: unknown;
   resourcesByProfileId?: unknown;
+  recommendationsByProfileId?: unknown;
 };
 
 export type AccountScopedPayload = {

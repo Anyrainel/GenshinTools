@@ -20,6 +20,7 @@ import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useArtifactTierStore } from "@/stores/useArtifactTierStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
+import { useRecommendationSettingsStore } from "@/stores/useRecommendationSettingsStore";
 import { useResourceRecStore } from "@/stores/useResourceRecStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -77,6 +78,7 @@ export function buildCloudRestorePlan(
     artifactScore: buildsPatch.artifactScore,
     triageByProfileId: accountPatch.triageByProfileId,
     resourcesByProfileId: accountPatch.resourcesByProfileId,
+    recommendationsByProfileId: accountPatch.recommendationsByProfileId,
   };
 }
 
@@ -88,6 +90,8 @@ function getAccountSnapshot(): AccountCloudSnapshot {
     freezesByProfileId: useFreezeStore.getState().freezesByProfileId,
     triageByProfileId: useTriageStore.getState().settingsByProfileId,
     resourcesByProfileId: useResourceRecStore.getState().settingsByProfileId,
+    recommendationsByProfileId:
+      useRecommendationSettingsStore.getState().settingsByProfileId,
   };
 }
 

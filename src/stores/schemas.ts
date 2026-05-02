@@ -8,6 +8,7 @@
 import { z } from "zod";
 import type { SortDirection } from "@/data/enums";
 import type { GlobalStatWeights } from "@/data/types";
+import { DEFAULT_RECOMMENDATION_SETTINGS } from "@/lib/account-data/recommendationSettings";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
@@ -385,6 +386,29 @@ const ResourceRecSettingsSchema = z.object({
 export const PersistedResourceRecStoreSchema = z.object({
   settingsByProfileId: z
     .record(z.string(), ResourceRecSettingsSchema)
+    .catch({}),
+});
+
+// ─── Recommendation settings ───
+
+const LuckExpectationSchema = z
+  .enum(["cautious", "balanced", "hopeful"])
+  .catch("balanced");
+
+const RecommendationLuckByTierSchema = z
+  .record(z.string(), LuckExpectationSchema)
+  .catch(DEFAULT_RECOMMENDATION_SETTINGS.luckExpectationByTier);
+
+const RecommendationSettingsSchema = z.object({
+  allowPoolArtifactSteals: z
+    .boolean()
+    .catch(DEFAULT_RECOMMENDATION_SETTINGS.allowPoolArtifactSteals),
+  luckExpectationByTier: RecommendationLuckByTierSchema,
+});
+
+export const PersistedRecommendationSettingsStoreSchema = z.object({
+  settingsByProfileId: z
+    .record(z.string(), RecommendationSettingsSchema)
     .catch({}),
 });
 

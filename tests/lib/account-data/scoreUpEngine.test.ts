@@ -146,6 +146,10 @@ function makeAllocation(): {
 describe("recomputeTierUpgradeRecommendations", () => {
   it("replaces only upgrade recommendations for the selected tier", () => {
     const { accountData, allocation } = makeAllocation();
+    const tierAssignments = {
+      hu_tao: { tier: "S", position: 0 },
+      xiangling: { tier: "A", position: 0 },
+    } as const;
     const preservedSwap: ScoreUpAction = {
       actionType: "swap",
       characterId: "hu_tao",
@@ -207,12 +211,14 @@ describe("recomputeTierUpgradeRecommendations", () => {
     const cautious = recomputeTierUpgradeRecommendations(
       base,
       accountData,
+      tierAssignments,
       "S",
       "cautious"
     );
     const hopeful = recomputeTierUpgradeRecommendations(
       cautious,
       accountData,
+      tierAssignments,
       "S",
       "hopeful"
     );

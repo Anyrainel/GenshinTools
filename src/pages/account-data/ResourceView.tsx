@@ -7,8 +7,9 @@ import {
  * Computes suggestions from evaluation data and displays them grouped by tier.
  */
 
-import { CircleHelp, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelpButton";
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
@@ -285,17 +286,14 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
             <h2 className="text-xl font-bold text-white">
               {t.ui("evaluation.resourceSuggestions")}
             </h2>
+            <AccountDataHelpButton
+              label={t.ui("buttons.help")}
+              onClick={() => setHelpOpen(true)}
+            />
             <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
             <span className="text-sm text-muted-foreground">
               ({suggestions.length})
             </span>
-            <button
-              type="button"
-              onClick={() => setHelpOpen(true)}
-              className="text-amber-400 hover:text-amber-300 transition-colors"
-            >
-              <CircleHelp className="size-4" />
-            </button>
             <div className="flex-1" />
             <Button
               type="button"

@@ -17,6 +17,7 @@ import {
   PersistedGenericTierListStoreSchema,
   PersistedGreetingStoreSchema,
   PersistedPreferencesStoreSchema,
+  PersistedRecommendationSettingsStoreSchema,
   PersistedResourceRecStoreSchema,
   PersistedSessionNavStoreSchema,
   PersistedTeamResultCacheStoreSchema,
@@ -542,6 +543,39 @@ describe("PersistedResourceRecStoreSchema", () => {
     expect(result.settingsByProfileId?.["0"].showCraft).toBe(false);
     expect(result.settingsByProfileId?.["0"].showReroll).toBe(true);
     expect(result.settingsByProfileId?.["0"].showLevelup).toBe(true);
+  });
+});
+
+// ─── PersistedRecommendationSettingsStoreSchema ───
+
+describe("PersistedRecommendationSettingsStoreSchema", () => {
+  it("heals structural fields from empty object", () => {
+    const result = PersistedRecommendationSettingsStoreSchema.parse({});
+    expect(result).toEqual({ settingsByProfileId: {} });
+  });
+
+  it("heals account-scoped settings", () => {
+    const result = PersistedRecommendationSettingsStoreSchema.parse({
+      settingsByProfileId: {
+        "0": {
+          allowPoolArtifactSteals: false,
+          luckExpectationByTier: {
+            S: "hopeful",
+            A: "bad",
+          },
+        },
+      },
+    });
+
+    expect(result.settingsByProfileId?.["0"].allowPoolArtifactSteals).toBe(
+      false
+    );
+    expect(result.settingsByProfileId?.["0"].luckExpectationByTier.S).toBe(
+      "hopeful"
+    );
+    expect(result.settingsByProfileId?.["0"].luckExpectationByTier.A).toBe(
+      "balanced"
+    );
   });
 });
 

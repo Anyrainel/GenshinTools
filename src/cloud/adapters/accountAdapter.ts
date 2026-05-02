@@ -39,6 +39,7 @@ export type AccountCloudSnapshot = {
   freezesByProfileId?: Record<AccountProfileId, FrozenProfileStateSnapshot>;
   triageByProfileId?: Record<AccountProfileId, unknown>;
   resourcesByProfileId?: Record<AccountProfileId, unknown>;
+  recommendationsByProfileId?: Record<AccountProfileId, unknown>;
 };
 
 export type AccountAppPayload = {
@@ -49,6 +50,7 @@ export type AccountAppPayload = {
   freeze?: FrozenProfileStateSnapshot;
   triageSettings?: unknown;
   resourceSettings?: unknown;
+  recommendationSettings?: unknown;
 };
 
 export type AccountRosterPayload = {
@@ -96,6 +98,7 @@ export type AccountRestorePatch = {
   freezesByProfileId: Record<AccountProfileId, FrozenProfileStateSnapshot>;
   triageByProfileId: Record<AccountProfileId, unknown>;
   resourcesByProfileId: Record<AccountProfileId, unknown>;
+  recommendationsByProfileId: Record<AccountProfileId, unknown>;
 };
 
 export function accountToCloud(
@@ -134,6 +137,7 @@ export function accountFromCloud(
   > = {};
   const triageByProfileId: Record<AccountProfileId, unknown> = {};
   const resourcesByProfileId: Record<AccountProfileId, unknown> = {};
+  const recommendationsByProfileId: Record<AccountProfileId, unknown> = {};
   for (const profileId of profileIds) {
     const app = apps.get(profileId);
     if (app?.freeze) freezesByProfileId[profileId] = app.freeze;
@@ -142,6 +146,9 @@ export function accountFromCloud(
     }
     if (app && "resourceSettings" in app) {
       resourcesByProfileId[profileId] = app.resourceSettings;
+    }
+    if (app && "recommendationSettings" in app) {
+      recommendationsByProfileId[profileId] = app.recommendationSettings;
     }
     accounts[profileId] = {
       id: profileId,
@@ -159,6 +166,7 @@ export function accountFromCloud(
     freezesByProfileId,
     triageByProfileId,
     resourcesByProfileId,
+    recommendationsByProfileId,
   };
 }
 
@@ -196,6 +204,12 @@ function accountToCloudPartitions(
         : {}),
       ...(account.id in (snapshot.resourcesByProfileId ?? {})
         ? { resourceSettings: snapshot.resourcesByProfileId?.[account.id] }
+        : {}),
+      ...(account.id in (snapshot.recommendationsByProfileId ?? {})
+        ? {
+            recommendationSettings:
+              snapshot.recommendationsByProfileId?.[account.id],
+          }
         : {}),
     } satisfies AccountAppPayload),
     cloudPartition("profile.game", String(account.id), {

@@ -12,10 +12,6 @@ interface TriageState {
   settingsByProfileId: Record<AccountProfileId, TriageSettings>;
   setSettings: (settings: TriageSettings) => void;
   updateSettings: (patch: Partial<TriageSettings>) => void;
-  cloneSettingsForProfile: (
-    sourceProfileId: AccountProfileId,
-    targetProfileId: AccountProfileId
-  ) => boolean;
   renameProfileSettings: (
     sourceProfileId: AccountProfileId,
     targetProfileId: AccountProfileId
@@ -51,9 +47,6 @@ export const selectActiveTriageSettings = (
 export const getActiveTriageSettings = (): TriageSettings =>
   selectActiveTriageSettings(useTriageStore.getState());
 
-const cloneSettings = (settings: TriageSettings): TriageSettings =>
-  structuredClone(settings);
-
 const settingsEqual = (
   first: TriageSettings,
   second: TriageSettings
@@ -88,24 +81,6 @@ export const useTriageStore = create<TriageState>()(
           };
         }),
 
-      cloneSettingsForProfile: (sourceProfileId, targetProfileId) => {
-        let didClone = false;
-        set((state) => {
-          const sourceSettings = getSettingsForProfile(state, sourceProfileId);
-          if (settingsEqual(sourceSettings, cloneDefaultSettings())) return {};
-
-          didClone = true;
-          const cloned = cloneSettings(sourceSettings);
-          return {
-            settingsByProfileId: {
-              ...state.settingsByProfileId,
-              [targetProfileId]: cloned,
-            },
-          };
-        });
-        return didClone;
-      },
-
       renameProfileSettings: (sourceProfileId, targetProfileId) =>
         set((state) => {
           if (sourceProfileId === targetProfileId) return state;
@@ -120,7 +95,7 @@ export const useTriageStore = create<TriageState>()(
             cloneDefaultSettings()
           )
             ? cloneDefaultSettings()
-            : cloneSettings(sourceSettings);
+            : structuredClone(sourceSettings);
           if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
             settingsByProfileId[targetProfileId] = nextSettings;
           }
