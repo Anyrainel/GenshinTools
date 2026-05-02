@@ -30,6 +30,16 @@ export function sortSubs(subs: SubStat[]): SubStat[] {
   return [...subs].sort((a, b) => (SUB_ORDER[a] ?? 99) - (SUB_ORDER[b] ?? 99));
 }
 
+export function makeFlexPatternKey(
+  slot: Slot,
+  mainStat: MainStat,
+  sortedSubs: SubStat[],
+  requiresFourInitialSubstats = false
+): string {
+  const base = `flex:${slot}:${mainStat}:${sortedSubs.join(",")}`;
+  return requiresFourInitialSubstats ? `${base}:4line` : base;
+}
+
 // Curated templates (compact authoring format)
 
 type FlexSub = SubStat | "flat";
@@ -174,7 +184,7 @@ export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
       const rarity = computeRarity(slot, mainStat, sorted);
       if (rarity < 0) continue;
 
-      const key = `flex:${slot}:${mainStat}:${sorted.join(",")}`;
+      const key = makeFlexPatternKey(slot, mainStat, sorted);
       const pattern: FlexPattern = {
         key,
         slot,
@@ -201,12 +211,18 @@ export function buildCustomFlexPattern(
   const rarity = computeRarity(input.slot, input.mainStat, sorted);
   if (rarity < 0) return null;
 
-  const key = `flex:${input.slot}:${input.mainStat}:${sorted.join(",")}`;
+  const key = makeFlexPatternKey(
+    input.slot,
+    input.mainStat,
+    sorted,
+    input.requiresFourInitialSubstats
+  );
   return {
     key,
     slot: input.slot,
     mainStat: input.mainStat,
     requiredSubs: sorted,
+    requiresFourInitialSubstats: input.requiresFourInitialSubstats || undefined,
     rarity,
     custom: true,
   };

@@ -1,4 +1,4 @@
-import { act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import {
@@ -9,6 +9,7 @@ import { migrateResourceRecStore } from "@/stores/migration/resource";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {
   getActiveResourceRecSettings,
+  selectActiveResourceRecSettings,
   useResourceRecStore,
 } from "@/stores/useResourceRecStore";
 
@@ -158,5 +159,48 @@ describe("useResourceRecStore", () => {
     expect(state).not.toHaveProperty("showLevelup");
     expect(state.settingsByProfileId[123456789].thresholds.S).toBe(0.8);
     expect(state.settingsByProfileId[123456789].showLevelup).toBe(false);
+  });
+
+  it("returns a stable default snapshot for profiles without stored settings", () => {
+    act(() => {
+      useAccountStore.setState({ activeAccountId: 123456789 });
+    });
+
+    const state = useResourceRecStore.getState();
+    expect(state.settingsByProfileId[123456789]).toBeUndefined();
+    expect(selectActiveResourceRecSettings(state)).toBe(
+      selectActiveResourceRecSettings(state)
+    );
+    expect(getActiveResourceRecSettings()).toEqual({
+      thresholds: DEFAULT_TIER_THRESHOLDS,
+      minScoreDiff: DEFAULT_MIN_SCORE_DIFF,
+      panelOpen: false,
+      showCraft: true,
+      showReroll: true,
+      showLevelup: true,
+    });
+  });
+
+  it("can subscribe to active defaults without a render loop", () => {
+    act(() => {
+      useAccountStore.setState({ activeAccountId: 123456789 });
+    });
+
+    const { result, rerender } = renderHook(() =>
+      useResourceRecStore(selectActiveResourceRecSettings)
+    );
+    const firstSettings = result.current;
+
+    rerender();
+
+    expect(result.current).toBe(firstSettings);
+    expect(result.current).toEqual({
+      thresholds: DEFAULT_TIER_THRESHOLDS,
+      minScoreDiff: DEFAULT_MIN_SCORE_DIFF,
+      panelOpen: false,
+      showCraft: true,
+      showReroll: true,
+      showLevelup: true,
+    });
   });
 });

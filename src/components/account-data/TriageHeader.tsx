@@ -50,6 +50,15 @@ const TIER_COLOR = TRIAGE_TIER_COLORS.text;
 
 export type SortDimension = "tier" | "name" | "level";
 
+function backupAmountModeLabel(
+  mode: TriageSettings["backupAmountMode"],
+  t: Translator
+) {
+  if (mode === "normal") return t.ui("triage.backupAmountNormal");
+  if (mode === "extra") return t.ui("triage.backupAmountExtra");
+  return t.ui("triage.backupAmountCustom");
+}
+
 export function TriageHeader({
   t,
   settings,
@@ -113,7 +122,8 @@ export function TriageHeader({
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1.5">
               <Settings className="w-4 h-4" />
-              {t.ui("triage.settings")}
+              {t.ui("triage.settings")} (
+              {backupAmountModeLabel(settings.backupAmountMode, t)})
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-auto">
@@ -121,6 +131,7 @@ export function TriageHeader({
               settings={settings}
               onChange={onSettingsChange}
               t={t}
+              onOpenHelp={() => setHelpOpen(true)}
             />
           </PopoverContent>
         </Popover>

@@ -13,6 +13,7 @@ import {
   DEFAULT_TIER_THRESHOLDS,
 } from "@/lib/account-data/resourceTips";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
+import { inferTriageBackupAmountMode } from "@/lib/account-data/triage/settings";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
 import { isCustomDelta, isPresetDelta } from "@/lib/presetDelta";
 import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
@@ -408,6 +409,10 @@ const TriageSettingsSchema = z
       .catch(DEFAULT_TRIAGE_SETTINGS.optionalSubThreshold),
     fillerKeep: z.number().catch(DEFAULT_TRIAGE_SETTINGS.fillerKeep),
     qualityMargin: z.number().catch(DEFAULT_TRIAGE_SETTINGS.qualityMargin),
+    backupAmountMode: z
+      .enum(["normal", "extra", "custom"])
+      .optional()
+      .catch(DEFAULT_TRIAGE_SETTINGS.backupAmountMode),
     alwaysLockSolidArtifacts: z
       .boolean()
       .catch(DEFAULT_TRIAGE_SETTINGS.alwaysLockSolidArtifacts),
@@ -434,6 +439,11 @@ const TriageSettingsSchema = z
     customFlexInputs: z.array(CustomFlexInputSchema).catch([]),
   })
   .loose()
+  .transform((settings) => ({
+    ...settings,
+    backupAmountMode:
+      settings.backupAmountMode ?? inferTriageBackupAmountMode(settings),
+  }))
   .catch(DEFAULT_TRIAGE_SETTINGS);
 
 export const PersistedTriageStoreSchema = z.object({

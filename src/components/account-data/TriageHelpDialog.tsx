@@ -1,4 +1,4 @@
-import { Lock, ShieldAlert, Zap } from "lucide-react";
+import { Lock, ShieldAlert, Unlock, Zap } from "lucide-react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -148,43 +148,86 @@ export function TriageHelpDialog({
                   </div>
                 </div>
               </div>
-              {/* Row 2: under-supply — all locked, small backup, demand line past it */}
+              {/* Row 2: over-supply — demand mid-bar, small margin after */}
               <div className="flex items-center gap-1.5">
-                <span className="shrink-0 w-14 text-right text-green-400">
-                  {t.ui("triage.help.supplyUnder")}
+                <span className="shrink-0 w-14 text-right text-foreground">
+                  {t.ui("triage.help.supplyOver")}
                 </span>
-                <div className="flex-1 flex h-5 rounded overflow-hidden">
-                  <div className="flex-[7] bg-green-500/20 text-green-300 flex items-center justify-center">
+                <div className="relative flex-1 h-6 rounded overflow-hidden bg-zinc-500/10">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-green-500/20 text-green-300 flex items-center justify-center"
+                    style={{ width: "39.286%" }}
+                  >
                     <Lock className="w-2.5 h-2.5" />
                   </div>
-                  <div className="flex-[1] bg-emerald-500/10 text-emerald-400/70 border-l border-dashed border-emerald-400/30 border-r border-r-foreground flex items-center justify-center">
-                    {t.ui("triage.help.supplyBackup")}
+                  <div
+                    className="absolute inset-y-0 border-l border-foreground"
+                    style={{ left: "39.286%" }}
+                  />
+                  <div
+                    className="absolute inset-y-0 bg-emerald-500/10 text-emerald-400 flex items-center justify-center px-1 whitespace-nowrap"
+                    style={{ left: "39.286%", width: "21.428%" }}
+                  >
+                    {t.ui("triage.help.supplyMargin")}
                   </div>
-                  <div className="flex-[2.5] bg-zinc-500/10" />
-                  <div className="flex-[3.5] bg-zinc-500/10 text-zinc-500 flex items-center justify-center border-l-2 border-foreground">
-                    {t.ui("triage.help.supplyRecycle")}
+                  <div
+                    className="absolute inset-y-0 border-l border-dashed border-foreground"
+                    style={{ left: "60.714%" }}
+                  />
+                  <div
+                    className="absolute inset-y-0 right-0 bg-red-500/20 text-red-400 flex items-center justify-center"
+                    style={{ left: "60.714%" }}
+                  >
+                    <Unlock className="w-2.5 h-2.5" aria-hidden="true" />
+                    <span className="sr-only">
+                      {t.ui("triage.help.supplyRecycle")}
+                    </span>
                   </div>
                 </div>
               </div>
-              {/* Row 3: over-supply — demand mid-bar, small margin after */}
+              {/* Row 3: under-supply — all locked, filler cap, demand line past it */}
               <div className="flex items-center gap-1.5">
-                <span className="shrink-0 w-14 text-right text-red-400">
-                  {t.ui("triage.help.supplyOver")}
+                <span className="shrink-0 w-14 text-right text-foreground">
+                  {t.ui("triage.help.supplyUnder")}
                 </span>
-                <div className="flex-1 flex h-5 rounded overflow-hidden">
-                  <div className="flex-[5] bg-green-500/20 text-green-300 flex items-center justify-center border-r-2 border-foreground">
+                <div className="relative flex-1 h-6 rounded overflow-hidden bg-zinc-500/10">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-green-500/20 text-green-300 flex items-center justify-center"
+                    style={{ width: "50%" }}
+                  >
                     <Lock className="w-2.5 h-2.5" />
                   </div>
-                  <div className="flex-[1] bg-emerald-500/10 text-emerald-400/70 border-l border-dashed border-emerald-400/30 border-r border-r-foreground flex items-center justify-center">
-                    {t.ui("triage.help.supplyMargin")}
+                  <div
+                    className="absolute inset-y-0 bg-emerald-500/10 text-emerald-400 flex items-center justify-center px-1 whitespace-nowrap"
+                    style={{ left: "50%", width: "14.286%" }}
+                  >
+                    {t.ui("triage.help.supplyBackup")}
                   </div>
-                  <div className="flex-[8] bg-zinc-500/10 text-zinc-500 flex items-center justify-center">
-                    {t.ui("triage.help.supplyRecycle")}
+                  <div
+                    className="absolute inset-y-0 border-l border-dashed border-foreground"
+                    style={{ left: "64.286%" }}
+                  />
+                  <div
+                    className="absolute inset-y-0 bg-red-500/20"
+                    style={{ left: "64.286%", width: "14.285%" }}
+                  />
+                  <div
+                    className="absolute inset-y-0 border-l border-foreground"
+                    style={{ left: "78.571%" }}
+                  />
+                  <div
+                    className="absolute inset-y-0 right-0 bg-red-500/20 text-red-400 flex items-center justify-center"
+                    style={{ left: "78.571%" }}
+                  >
+                    <Unlock className="w-2.5 h-2.5" aria-hidden="true" />
+                    <span className="sr-only">
+                      {t.ui("triage.help.supplyRecycle")}
+                    </span>
                   </div>
                 </div>
               </div>
               {/* Legend */}
-              <div className="flex items-center gap-3 text-[10px] text-muted-foreground ml-[3.875rem]">
+              <div className="flex items-center justify-center gap-3 text-[10px] text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <span className="inline-block w-0.5 h-3 bg-foreground rounded-full" />
                   = {t.ui("triage.help.supplyDemand")}
@@ -194,8 +237,11 @@ export function TriageHelpDialog({
                   = {t.ui("triage.help.supplyKeep")}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {t.ui("triage.help.supplyCustomizable")}
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                {t.ui("triage.help.setSlotFloorDetail")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t.ui("triage.help.backupAmountDetail")}
               </p>
             </div>
           </section>
@@ -226,9 +272,6 @@ export function TriageHelpDialog({
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                  · {t.ui("triage.help.setSlotFloorDetail")}
-                </p>
               </div>
               <div className="rounded-lg border border-border p-2.5">
                 <div className="flex items-center gap-1.5 mb-1.5">

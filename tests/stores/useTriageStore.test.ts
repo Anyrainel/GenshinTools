@@ -80,6 +80,35 @@ describe("useTriageStore", () => {
     expect(result).not.toHaveProperty("settings");
   });
 
+  it("migrates v6 backup amount mode from existing keep-rule values", () => {
+    const result = migrateTriageStore(
+      {
+        settingsByProfileId: {
+          123456789: {
+            ...DEFAULT_TRIAGE_SETTINGS,
+            qualityMargin: 7,
+            fillerKeep: 3,
+            setSlotKeep: 3,
+            backupAmountMode: undefined,
+          },
+          234567890: {
+            ...DEFAULT_TRIAGE_SETTINGS,
+            qualityMargin: 10,
+            fillerKeep: 5,
+            setSlotKeep: 3,
+            backupAmountMode: undefined,
+          },
+        },
+      },
+      6
+    );
+
+    expect(result.settingsByProfileId).toMatchObject({
+      123456789: { backupAmountMode: "custom" },
+      234567890: { backupAmountMode: "extra" },
+    });
+  });
+
   describe("migration v0 → v1", () => {
     it("adds customFlexInputs: [] when missing", () => {
       // Simulate v0 persisted state (no customFlexInputs)

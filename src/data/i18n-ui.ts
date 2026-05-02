@@ -2251,6 +2251,7 @@ export const i18nUiData = {
     // Settings
     flexPatterns: { en: "Flex Patterns", zh: "散件保留" },
     settings: { en: "Settings", zh: "设置" },
+    restoreDefaults: { en: "Restore defaults", zh: "恢复默认" },
     settingsProtection: {
       en: "Protection rules (excluded from analysis)",
       zh: "保护规则（不参与分析）",
@@ -2266,8 +2267,23 @@ export const i18nUiData = {
       zh: "副词条阈值",
     },
     ownedOnly: {
-      en: "Owned characters only",
-      zh: "只考虑已拥有角色",
+      en: "Owned characters' builds only",
+      zh: "只考虑已拥有角色的配装",
+    },
+    backupAmount: {
+      en: "Reserve buffer",
+      zh: "保留余量",
+    },
+    backupAmountNormal: { en: "normal", zh: "标准" },
+    backupAmountExtra: { en: "extra", zh: "额外" },
+    backupAmountCustom: { en: "custom", zh: "自定义" },
+    backupAmountNormalDesc: {
+      en: "Demand margin 5 · filler cap 3 · set-slot keep 3",
+      zh: "需求余量 5 · 过渡上限 3 · 套装部位保留 3",
+    },
+    backupAmountExtraDesc: {
+      en: "Demand margin 10 · filler cap 5 · set-slot keep 3",
+      zh: "需求余量 10 · 过渡上限 5 · 套装部位保留 3",
     },
     qualityMargin: {
       en: "Demand margin (extra keep above demand)",
@@ -2305,9 +2321,9 @@ export const i18nUiData = {
       en: "Relaxed mode",
       zh: "宽松模式",
     },
-    triageModeHint: {
-      en: "Keeps more artifacts (looser tier thresholds)",
-      zh: "保留更多圣遗物（品质阈值放宽）",
+    triageModeThresholdHint: {
+      en: "Prime: {0}/{1}, Solid: {2}/{3}, Filler: {4}/{5}",
+      zh: "极品：{0}/{1}，精良：{2}/{3}，过渡：{4}/{5}",
     },
     levelProtection: {
       en: "High-level threshold",
@@ -2366,49 +2382,60 @@ export const i18nUiData = {
         zh: "其余全部 — 无条件分解。",
       },
       supplyTitle: { en: "Supply & demand", zh: "供需机制" },
-      supplyOver: { en: "Plenty of pieces", zh: "供给充足" },
-      supplyUnder: { en: "Short on pieces", zh: "供不应求" },
+      supplyOver: { en: "Plenty of pieces:", zh: "供给充足：" },
+      supplyUnder: { en: "Short on pieces:", zh: "供不应求：" },
       supplyDemand: { en: "demand", zh: "需求" },
-      supplyMargin: { en: "margin", zh: "余量" },
-      supplyBackup: { en: "backup", zh: "保底" },
+      supplyMargin: { en: "demand margin", zh: "需求余量" },
+      supplyBackup: { en: "filler cap", zh: "过渡上限" },
       supplyRecycle: { en: "recycle", zh: "回收" },
       supplyKeep: { en: "keep limit", zh: "保留" },
-      supplyCustomizable: {
-        en: "Backup and margin counts are customizable in settings.",
-        zh: "保底和余量的数量可以在设置中自定义。",
+      setSlotFloorDetail: {
+        en: "There is also set-slot keep: ensures a minimum piece count per set+slot.",
+        zh: "此外还有套装部位最低保留，确保每个套装都能凑齐。",
+      },
+      backupAmountDetail: {
+        en: "Reserve buffer controls demand margin, filler cap, and set-slot keep: normal is 5 / 3 / 3, extra is 10 / 5 / 3. You can also customize this.",
+        zh: "保留余量设置选项（需求余量/过渡上限/套装部位保留）：标准为 5 / 3 / 3，额外为 10 / 5 / 3。也可以自定义数值。",
       },
       spTitle: { en: "Exceptions", zh: "例外规则" },
       spOverride: {
         en: "Extra lock rules (optional)",
         zh: "额外锁定规则（可选）",
       },
-      setSlotFloorDetail: {
-        en: "Set+slot keep: ensures a minimum piece count per set+slot.",
-        zh: "套装部位最低保留：确保每个套装的每个部位达到最低件数。",
-      },
       spProtect: {
-        en: "Protection rules (no suggestions)",
-        zh: "保护规则（不提供建议）",
+        en: "Protection rules (no changes to current status)",
+        zh: "保护规则（不改变现状）",
       },
       spHighLevelOff: {
         en: "When high-level protection is off",
         zh: "关闭高等级保护后",
       },
       spHighLevelOffDetail: {
-        en: "Leveled artifacts run through normal triage. Any that would be unlocked are re-checked by a strategic-value pass and kept if ≥60% of their upgrade rolls (rolls beyond the initial one-per-substat, min. 3 upgrades) fall into one category: CR+CD, ER, EM, ATK%, HP%, or DEF%.",
-        zh: "已升级的圣遗物将走一遍正常评级。本应被淘汰的，会由策略价值规则再判定一次：若其升级词条（即每个副词条初始 1 次以外的后续强化，至少 3 次）中 ≥60% 集中在单一类别（双暴合并、充能、精通、攻击%、生命%、防御%），则予以保留。",
+        en: "Leveled artifacts run through normal triage. Any that would be unlocked are re-checked and kept if ≥60% of their upgrade rolls fall into one category: CR+CD, ER, EM, ATK%, HP%, or DEF%.",
+        zh: "已升级的圣遗物将走一遍正常评级。本应被淘汰的，会再判定一次：若其升级词条中 ≥60% 集中在单一类别（双暴、充能、精通、攻击%、生命%、防御%），则予以保留。",
       },
     },
     flexDialogDesc: {
-      en: "Auto-detected premium off-piece patterns. Toggle on to lock regardless of set. (Format: Slot·MainStat·SubStat)",
-      zh: "自动检测的散件类型。开启后无视套装锁定。（选项为“部位·主词条·副词条”）",
+      en: "Customize off-piece patterns. Toggle on to always lock.",
+      zh: "自定义散件类型。开启后直接锁定。",
     },
     globalRules: { en: "Global Rules", zh: "全局规则" },
-    builtInPatterns: { en: "Built-in Patterns", zh: "内置散件" },
+    builtInPatterns: {
+      en: "Built-in Patterns (Format: Slot·MainStat·SubStat)",
+      zh: "内置散件（格式：部位·主词条·副词条）",
+    },
     mainLabel: { en: "Main", zh: "主" },
     subLabel: { en: "Sub", zh: "副" },
     customPatterns: { en: "Custom Patterns", zh: "自定义散件" },
     addCustomFlex: { en: "Add", zh: "添加" },
+    requiresFourInitialSubstats: {
+      en: "4 initial lines",
+      zh: "初始 4 词条",
+    },
+    initial4LineBadge: {
+      en: "4-line",
+      zh: "4初始",
+    },
     customFlexDuplicate: {
       en: "Pattern already exists",
       zh: "该规则已存在",

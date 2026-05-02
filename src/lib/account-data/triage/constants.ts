@@ -1,13 +1,34 @@
-import type { QualityTier, TriageSettings } from "./types";
+import type {
+  QualityTier,
+  TriageBackupAmountMode,
+  TriageSettings,
+} from "./types";
+
+export const TRIAGE_BACKUP_AMOUNT_PRESETS = {
+  normal: {
+    qualityMargin: 5,
+    fillerKeep: 3,
+    setSlotKeep: 3,
+  },
+  extra: {
+    qualityMargin: 10,
+    fillerKeep: 5,
+    setSlotKeep: 3,
+  },
+} as const satisfies Record<
+  Exclude<TriageBackupAmountMode, "custom">,
+  Pick<TriageSettings, "qualityMargin" | "fillerKeep" | "setSlotKeep">
+>;
 
 export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   triageMode: "loose",
   mainStatThreshold: 80,
   optionalSubThreshold: 50,
-  fillerKeep: 3,
-  qualityMargin: 7,
+  fillerKeep: TRIAGE_BACKUP_AMOUNT_PRESETS.normal.fillerKeep,
+  qualityMargin: TRIAGE_BACKUP_AMOUNT_PRESETS.normal.qualityMargin,
+  backupAmountMode: "normal",
   alwaysLockSolidArtifacts: false,
-  setSlotKeep: 3,
+  setSlotKeep: TRIAGE_BACKUP_AMOUNT_PRESETS.normal.setSlotKeep,
   ownedOnly: true,
   erHoardingEnabled: true,
   erHoardingAllEnabled: false,

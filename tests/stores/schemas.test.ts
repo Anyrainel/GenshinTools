@@ -572,10 +572,31 @@ describe("PersistedTriageStoreSchema", () => {
 
     expect(result.settingsByProfileId?.["0"].mainStatThreshold).toBe(85);
     expect(result.settingsByProfileId?.["0"].ownedOnly).toBe(true);
+    expect(result.settingsByProfileId?.["0"].backupAmountMode).toBe("normal");
     expect(result.settingsByProfileId?.["123456789"].triageMode).toBe("strict");
     expect(result.settingsByProfileId?.["123456789"].customFlexInputs).toEqual(
       []
     );
+  });
+
+  it("heals missing backup amount mode from keep-rule values", () => {
+    const result = PersistedTriageStoreSchema.parse({
+      settingsByProfileId: {
+        "0": {
+          qualityMargin: 10,
+          fillerKeep: 5,
+          setSlotKeep: 3,
+        },
+        "1": {
+          qualityMargin: 8,
+          fillerKeep: 3,
+          setSlotKeep: 3,
+        },
+      },
+    });
+
+    expect(result.settingsByProfileId?.["0"].backupAmountMode).toBe("extra");
+    expect(result.settingsByProfileId?.["1"].backupAmountMode).toBe("custom");
   });
 });
 

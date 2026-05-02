@@ -63,4 +63,17 @@ describe("buildCustomFlexPattern", () => {
     expect(result).not.toBeNull();
     expect(result!.key).toBe("flex:goblet:pyro%:cr,cd");
   });
+
+  it("marks custom patterns that require four initial substats", () => {
+    const result = buildCustomFlexPattern({
+      slot: "goblet",
+      mainStat: "pyro%",
+      requiredSubs: ["cr", "cd"],
+      requiresFourInitialSubstats: true,
+    });
+
+    expect(result).not.toBeNull();
+    expect(result!.key).toBe("flex:goblet:pyro%:cr,cd:4line");
+    expect(result!.requiresFourInitialSubstats).toBe(true);
+  });
 });

@@ -102,6 +102,7 @@ export type TriageDecision = {
 // Settings
 
 export type TriageMode = "strict" | "loose";
+export type TriageBackupAmountMode = "normal" | "extra" | "custom";
 
 export type TriageSettings = {
   /** Triage strictness mode. Loose mode uses looser per-tier probability thresholds. */
@@ -110,6 +111,7 @@ export type TriageSettings = {
   optionalSubThreshold: number;
   fillerKeep: number;
   qualityMargin: number;
+  backupAmountMode: TriageBackupAmountMode;
   /** When true, solid-tier artifacts are locked even when supply exceeds demand. */
   alwaysLockSolidArtifacts: boolean;
   setSlotKeep: number; // min artifacts to keep per set+slot
@@ -171,6 +173,7 @@ export type FlexPattern = {
   slot: Slot;
   mainStat: MainStat;
   requiredSubs: SubStat[];
+  requiresFourInitialSubstats?: boolean;
   /** E2E rarity probability */
   rarity: number;
   /** If true, this pattern is off by default and must be explicitly enabled */
@@ -183,4 +186,5 @@ export type CustomFlexInput = {
   slot: Slot;
   mainStat: MainStat;
   requiredSubs: SubStat[];
+  requiresFourInitialSubstats?: boolean;
 };

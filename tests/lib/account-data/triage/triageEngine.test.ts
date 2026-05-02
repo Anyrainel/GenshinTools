@@ -402,6 +402,37 @@ describe("runTriage", () => {
     expect(decisions[0].label).toBe("lock");
   });
 
+  it("custom flex patterns can require four initial substats", () => {
+    const art = makeArt({
+      setKey: "unrelated_set",
+      slotKey: "sands",
+      mainStatKey: "em",
+      level: 20,
+      totalRolls: 8,
+      substats: { er: 1, "hp%": 1 },
+    });
+    const account = makeAccount([], [art]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        setSlotKeep: 0,
+        customFlexInputs: [
+          {
+            slot: "sands",
+            mainStat: "em",
+            requiredSubs: ["er", "hp%"],
+            requiresFourInitialSubstats: true,
+          },
+        ],
+      }
+    );
+
+    expect(decisions[0].specialRules).not.toContain("offPiecePattern");
+  });
+
   // fillerKeep: under-supply keeps best filler artifacts
 
   it("fillerKeep: locks top filler artifacts when supply < demand", () => {
@@ -914,13 +945,32 @@ describe("runTriage", () => {
     const alwaysLock = runTriage(
       account,
       [{ characterId: "char_a", builds: [makeBuild()] }],
-      { ...baseSettings, alwaysLockSolidArtifacts: true }
+      {
+        ...baseSettings,
+        backupAmountMode: "custom",
+        alwaysLockSolidArtifacts: true,
+      }
     );
     expect(
       alwaysLock.decisions.filter(
         (d) => d.decidingResult?.ruleId === "solidTierKeep"
       )
     ).toHaveLength(5);
+
+    const normalMode = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...baseSettings,
+        backupAmountMode: "normal",
+        alwaysLockSolidArtifacts: true,
+      }
+    );
+    expect(
+      normalMode.decisions.filter(
+        (d) => d.decidingResult?.ruleId === "solidTierKeep"
+      )
+    ).toHaveLength(2);
   });
 
   it("alwaysLockSolidArtifacts: still caps filler locks by demand margin", () => {
@@ -941,6 +991,7 @@ describe("runTriage", () => {
       [{ characterId: "char_a", builds: [makeBuild()] }],
       {
         ...SETTINGS,
+        backupAmountMode: "custom",
         alwaysLockSolidArtifacts: true,
         qualityMargin: 3,
         setSlotKeep: 0,

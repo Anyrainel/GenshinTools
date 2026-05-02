@@ -298,6 +298,8 @@ export function runTriage(
     for (const flexPattern of enabledFlex) {
       if (flexPattern.slot !== artifact.slotKey) continue;
       if (flexPattern.mainStat !== artifact.mainStatKey) continue;
+      if (flexPattern.requiresFourInitialSubstats && !hasFourInitialSubstats)
+        continue;
       if (!flexPattern.requiredSubs.every((stat) => substats.includes(stat)))
         continue;
 
@@ -403,11 +405,13 @@ export function runTriage(
 
   // Prime, and optionally solid, are hard keeps. They do not consume the
   // demand+margin backup capacity, so loosening thresholds can only add locks.
+  const alwaysLockSolidArtifacts =
+    settings.backupAmountMode === "custom" && settings.alwaysLockSolidArtifacts;
   for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
     if (edge.tier === "prime") {
       allocate(edge, "primeTierKeep");
-    } else if (settings.alwaysLockSolidArtifacts && edge.tier === "solid") {
+    } else if (alwaysLockSolidArtifacts && edge.tier === "solid") {
       allocate(edge, "solidTierKeep");
     }
   }

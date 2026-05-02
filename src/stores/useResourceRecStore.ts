@@ -67,6 +67,8 @@ const cloneDefaultSettings = (): ResourceRecSettings => ({
   showLevelup: true,
 });
 
+const FALLBACK_RESOURCE_REC_SETTINGS = cloneDefaultSettings();
+
 const normalizeSettings = (
   settings: ResourceRecSettingsInput
 ): ResourceRecSettings => ({
@@ -102,7 +104,7 @@ export const getResourceRecSettingsForProfile = (
   profileId: AccountProfileId | null
 ) =>
   state.settingsByProfileId[profileId ?? DEFAULT_ACCOUNT_PROFILE_ID] ??
-  cloneDefaultSettings();
+  FALLBACK_RESOURCE_REC_SETTINGS;
 
 export const selectActiveResourceRecSettings = (
   state: Pick<ResourceRecState, "settingsByProfileId">

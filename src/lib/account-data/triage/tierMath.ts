@@ -31,7 +31,7 @@ export type TriageMode = "strict" | "loose";
  * many artifacts. Values are hardcoded and can be tuned independently per
  * tier and per slot class.
  */
-const TIER_THRESHOLDS = {
+export const TRIAGE_TIER_THRESHOLDS = {
   strict: {
     flowerFeather: { premium: 0.015, quality: 0.06, neutral: 0.15 },
     sandsGobletCirclet: { premium: 0.005, quality: 0.02, neutral: 0.1 },
@@ -131,7 +131,7 @@ export function pJoint(
 // Tier assignment
 
 function getThresholds(slot: Slot, mode: TriageMode) {
-  const set = TIER_THRESHOLDS[mode];
+  const set = TRIAGE_TIER_THRESHOLDS[mode];
   return slot === "flower" || slot === "plume"
     ? set.flowerFeather
     : set.sandsGobletCirclet;

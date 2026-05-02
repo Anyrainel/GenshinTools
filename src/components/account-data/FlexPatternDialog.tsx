@@ -1,7 +1,9 @@
 import { Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { StatSelect } from "@/components/artifact-builds/StatSelect";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -23,6 +25,7 @@ import type { MainStat, Slot, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import {
   buildCustomFlexPattern,
+  makeFlexPatternKey,
   sortSubs,
 } from "@/lib/account-data/triage/flexRegistry";
 import type {
@@ -84,12 +87,22 @@ export function FlexPatternDialog({
 
   const removeCustom = (input: CustomFlexInput) => {
     const sorted = sortSubs(input.requiredSubs);
-    const key = `flex:${input.slot}:${input.mainStat}:${sorted.join(",")}`;
+    const key = makeFlexPatternKey(
+      input.slot,
+      input.mainStat,
+      sorted,
+      input.requiresFourInitialSubstats
+    );
     onSettingsChange({
       ...settings,
       customFlexInputs: settings.customFlexInputs.filter((ci) => {
         const ciSorted = sortSubs(ci.requiredSubs);
-        const ciKey = `flex:${ci.slot}:${ci.mainStat}:${ciSorted.join(",")}`;
+        const ciKey = makeFlexPatternKey(
+          ci.slot,
+          ci.mainStat,
+          ciSorted,
+          ci.requiresFourInitialSubstats
+        );
         return ciKey !== key;
       }),
     });
@@ -173,6 +186,11 @@ export function FlexPatternDialog({
                     <span>
                       {fp.requiredSubs.map((s) => t.statShort(s)).join("+")}
                     </span>
+                    {fp.requiresFourInitialSubstats && (
+                      <Badge variant="secondary" className="h-5 text-[10px]">
+                        {t.ui("triage.initial4LineBadge")}
+                      </Badge>
+                    )}
                     <span className="text-xs text-muted-foreground font-mono">
                       {(fp.rarity * 100).toFixed(2)}%
                     </span>
@@ -240,6 +258,11 @@ export function FlexPatternDialog({
                     <span>
                       {fp.requiredSubs.map((s) => t.statShort(s)).join("+")}
                     </span>
+                    {fp.requiresFourInitialSubstats && (
+                      <Badge variant="secondary" className="h-5 text-[10px]">
+                        {t.ui("triage.initial4LineBadge")}
+                      </Badge>
+                    )}
                     <span className="text-xs text-muted-foreground font-mono">
                       {(fp.rarity * 100).toFixed(2)}%
                     </span>
@@ -269,6 +292,8 @@ function CustomFlexAddForm({
   const [slot, setSlot] = useState<Slot>("flower");
   const [mainStat, setMainStat] = useState<MainStat>("hp");
   const [subs, setSubs] = useState<string[]>([""]);
+  const [requiresFourInitialSubstats, setRequiresFourInitialSubstats] =
+    useState(false);
 
   // Enforce at least one sub slot is always visible
   const handleSubsChange = useCallback((values: string[]) => {
@@ -301,7 +326,12 @@ function CustomFlexAddForm({
     if (filledSubs.length < 1) return { valid: false, error: null };
 
     const sorted = sortSubs(filledSubs as SubStat[]);
-    const key = `flex:${slot}:${mainStat}:${sorted.join(",")}`;
+    const key = makeFlexPatternKey(
+      slot,
+      mainStat,
+      sorted,
+      requiresFourInitialSubstats
+    );
 
     // Check official duplicates
     if (officialKeys.has(key)) {
@@ -318,13 +348,21 @@ function CustomFlexAddForm({
       slot,
       mainStat,
       requiredSubs: filledSubs as SubStat[],
+      requiresFourInitialSubstats,
     });
     if (!fp) {
       return { valid: false, error: "invalid" as const };
     }
 
     return { valid: true, error: null };
-  }, [slot, mainStat, filledSubs, officialKeys, customPatterns]);
+  }, [
+    slot,
+    mainStat,
+    filledSubs,
+    officialKeys,
+    customPatterns,
+    requiresFourInitialSubstats,
+  ]);
 
   const handleAdd = () => {
     if (!validation.valid) return;
@@ -332,6 +370,7 @@ function CustomFlexAddForm({
       slot,
       mainStat,
       requiredSubs: filledSubs as SubStat[],
+      requiresFourInitialSubstats,
     };
     onSettingsChange({
       ...settings,
@@ -397,6 +436,18 @@ function CustomFlexAddForm({
         />
 
         {/* Add button */}
+        <label
+          className="flex items-center gap-2 text-xs text-foreground"
+          htmlFor="customFlexRequiresFourInitialSubstats"
+        >
+          <Checkbox
+            id="customFlexRequiresFourInitialSubstats"
+            checked={requiresFourInitialSubstats}
+            onBooleanChange={setRequiresFourInitialSubstats}
+          />
+          <span>{t.ui("triage.requiresFourInitialSubstats")}</span>
+        </label>
+
         <Button
           variant="outline"
           size="sm"
