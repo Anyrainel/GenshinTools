@@ -1,8 +1,18 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Home } from "lucide-react";
 import { BrowserRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppBar } from "@/components/layout/AppBar";
+
+const signIn = vi.fn();
+const signOut = vi.fn();
+const getIdTokenClaims = vi.fn();
+let logtoState = {
+  isAuthenticated: false,
+  isLoading: false,
+  error: undefined as Error | undefined,
+};
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({
@@ -31,7 +41,29 @@ vi.mock("@/components/layout/appNavigation", () => ({
   ],
 }));
 
+vi.mock("@logto/react", () => ({
+  UserScope: { Email: "email" },
+  useLogto: () => ({
+    ...logtoState,
+    signIn,
+    signOut,
+    getIdTokenClaims,
+  }),
+}));
+
 describe("AppBar", () => {
+  beforeEach(() => {
+    window.history.pushState(null, "", "/");
+    signIn.mockReset();
+    signOut.mockReset();
+    getIdTokenClaims.mockReset();
+    logtoState = {
+      isAuthenticated: false,
+      isLoading: false,
+      error: undefined,
+    };
+  });
+
   it("renders navigation links", () => {
     render(
       <BrowserRouter>
@@ -93,5 +125,84 @@ describe("AppBar", () => {
 
     fireEvent.click(screen.getByText("Tab 2"));
     expect(mockTabChange).toHaveBeenCalledWith("tab2");
+  });
+
+  it("shows sign-in when the browser is signed out", async () => {
+    render(
+      <BrowserRouter>
+        <AppBar />
+      </BrowserRouter>
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "accountSystem.accountMenu" })
+    );
+
+    expect(screen.getByText("accountSystem.signIn")).toBeInTheDocument();
+    expect(
+      screen.queryByText("accountSystem.manageAccount")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("accountSystem.syncData")
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("accountSystem.signOut")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByText("accountSystem.signIn"));
+
+    expect(signIn).toHaveBeenCalledWith({
+      redirectUri: "http://localhost:3000/callback",
+      postRedirectUri: "http://localhost:3000/account",
+    });
+  });
+
+  it("shows account management, sync, and sign-out when signed in", async () => {
+    logtoState = {
+      isAuthenticated: true,
+      isLoading: false,
+      error: undefined,
+    };
+    getIdTokenClaims.mockResolvedValue({
+      sub: "user_1",
+      name: "Traveler",
+      email: "traveler@example.com",
+    });
+
+    render(
+      <BrowserRouter>
+        <AppBar />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => {
+      expect(getIdTokenClaims).toHaveBeenCalled();
+    });
+    await userEvent.click(
+      screen.getByRole("button", { name: "accountSystem.accountMenu" })
+    );
+
+    expect(screen.getByText("traveler@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("accountSystem.signIn")).not.toBeInTheDocument();
+    expect(screen.getByText("accountSystem.manageAccount")).toBeInTheDocument();
+    expect(screen.getByText("accountSystem.syncData")).toBeInTheDocument();
+    expect(screen.getByText("accountSystem.signOut")).toBeInTheDocument();
+
+    const manageLink = screen
+      .getByText("accountSystem.manageAccount")
+      .closest("a");
+    expect(manageLink?.getAttribute("href")).toBe(
+      "https://synz8r.logto.app/account/security?redirect=http%3A%2F%2Flocalhost%3A3000%2F"
+    );
+
+    const menuItems = screen
+      .getAllByRole("menuitem")
+      .map((item) => item.textContent);
+    expect(menuItems.indexOf("accountSystem.manageAccount")).toBeLessThan(
+      menuItems.indexOf("accountSystem.syncData")
+    );
+    expect(menuItems.at(-1)).toBe("accountSystem.signOut");
+
+    await userEvent.click(screen.getByText("accountSystem.signOut"));
+
+    expect(signOut).toHaveBeenCalledWith("http://localhost:3000/");
   });
 });

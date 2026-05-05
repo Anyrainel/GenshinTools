@@ -1,6 +1,7 @@
 import { SELF } from "cloudflare:test";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type BackupEnv, handleBackupRequest } from "../../worker/backup";
+import { createTestJwt } from "./jwtTestUtils";
 
 type UserStateRecord = {
   user_id: string;
@@ -78,8 +79,31 @@ type BackupCommitJson = {
   }[];
 };
 
+const LOGTO_AUDIENCE = "https://ggartifact.test/api";
+let logtoIssuer = "";
+let accessToken = "";
+
 describe("Worker backup API", () => {
-  it("rejects backup requests without an auth session", async () => {
+  beforeEach(async () => {
+    logtoIssuer = `https://backup-auth-${crypto.randomUUID()}.test/oidc`;
+    const { token, jwks } = await createTestJwt({
+      issuer: logtoIssuer,
+      audience: LOGTO_AUDIENCE,
+      subject: "backup-user-1",
+      claims: { name: "Backup User" },
+    });
+    accessToken = token;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(jwks))
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("rejects backup requests without a bearer token", async () => {
     const response = await SELF.fetch("https://example.com/api/backup/v1/head");
 
     expect(response.status).toBe(401);
@@ -299,6 +323,9 @@ function createBackupTestEnv(): {
       ASSETS: { fetch: async () => new Response("asset") },
       BACKUP_DB: db as unknown as D1Database,
       BACKUP_BUCKET: bucket as unknown as R2Bucket,
+      LOGTO_ISSUER: logtoIssuer,
+      LOGTO_JWKS_URI: `${logtoIssuer}/jwks`,
+      LOGTO_API_RESOURCE: LOGTO_AUDIENCE,
     } as unknown as BackupEnv,
   };
 }
@@ -309,7 +336,7 @@ function backupFetch(
   init: RequestInit = {}
 ): Promise<Response> {
   const headers = new Headers(init.headers);
-  headers.set("Authorization", "Bearer session-token");
+  headers.set("Authorization", `Bearer ${accessToken}`);
   return handleBackupRequest(
     new Request(`https://example.com/api/backup/v1${path}`, {
       ...init,
@@ -357,6 +384,8 @@ async function sha256(value: Uint8Array): Promise<string> {
 }
 
 class FakeD1Database {
+  readonly appUsers = new Map<string, { displayName: string | null }>();
+  readonly identities = new Map<string, { userId: string }>();
   readonly userStates = new Map<string, UserStateRecord>();
   readonly devices = new Map<string, DeviceRecord>();
   readonly heads = new Map<string, HeadRecord>();
@@ -389,13 +418,6 @@ class FakeD1PreparedStatement {
   }
 
   async first<T>(): Promise<T | null> {
-    if (this.sql.includes("FROM auth_sessions")) {
-      return {
-        user_id: "user_test",
-        display_name: "Test User",
-      } as T;
-    }
-
     if (this.sql.includes("FROM backup_user_state")) {
       const userId = String(this.args[0]);
       return (this.db.userStates.get(userId) ?? null) as T | null;
@@ -420,14 +442,6 @@ class FakeD1PreparedStatement {
   }
 
   async all<T>(): Promise<D1Result<T>> {
-    if (this.sql.includes("FROM user_entitlements")) {
-      return {
-        results: [{ code: "cloud_sync" }] as T[],
-        success: true,
-        meta: d1Meta(),
-      };
-    }
-
     if (this.sql.includes("h.partition_key IN")) {
       const userId = String(this.args[0]);
       const partitionKeys = new Set(this.args.slice(1).map(String));
@@ -480,7 +494,20 @@ class FakeD1PreparedStatement {
   }
 
   async run(): Promise<D1Result> {
-    if (this.sql.includes("UPDATE auth_sessions")) {
+    if (this.sql.includes("INSERT INTO app_users")) {
+      const [userId, displayName] = this.args;
+      this.db.appUsers.set(String(userId), {
+        displayName: displayName === null ? null : String(displayName),
+      });
+      return d1Ok();
+    }
+
+    if (this.sql.includes("INSERT INTO auth_identities")) {
+      const [provider, providerSubject, userId] = this.args;
+      this.db.identities.set(
+        `${String(provider)}\0${String(providerSubject)}`,
+        { userId: String(userId) }
+      );
       return d1Ok();
     }
 
