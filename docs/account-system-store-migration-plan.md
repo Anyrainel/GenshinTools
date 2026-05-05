@@ -1,12 +1,12 @@
-# Account System Design 4: Store Migration Implementation Plan
+# Account System Store Migration Plan
 
-Last updated: 2026-04-30.
+Last updated: 2026-05-05.
 
 ## Scope
 
-This document plans the local Zustand store migrations needed before implementing the Cloudflare account, backup, entitlement, feedback, and telemetry backend.
+This document is the historical implementation plan for the local Zustand store migrations that were needed before cloud backup adapters and Worker persistence. The current account/API source of truth is `docs/account-system.md`; the current backup data model is `docs/backup-data-model.md`.
 
-The goal of this phase is to make local persisted data easier to reason about and easier to encode for cloud backup. It does not implement Workers, D1, R2, auth, payments, or the sync endpoints.
+The goal of this phase was to make local persisted data easier to reason about and easier to encode for cloud backup. The migration work is complete; keep this file only as reference for why the store boundaries look the way they do.
 
 The main migration rule is:
 
