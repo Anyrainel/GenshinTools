@@ -72,38 +72,46 @@ export const i18nUiData = {
   },
   accountSystem: {
     accountMenu: { en: "Account menu", zh: "账号菜单" },
-    devAccountTitle: { en: "Dev login", zh: "开发登录" },
+    accountTitle: { en: "Account Login", zh: "账号登录" },
     accountDesc: {
-      en: "Local development only. This fake provider login creates a normal app session. Each test account ID has separate cloud backup data in the local Wrangler database.",
-      zh: "仅限本地开发使用。这里用假的第三方登录创建正常的应用会话。每个测试账号 ID 在本地 Wrangler 数据库中都有独立的云端备份数据。",
+      en: "Sign in to use cloud backup across browsers and devices.",
+      zh: "登录后即可在不同浏览器和设备之间使用云端备份。",
     },
-    devUserId: { en: "Test account ID", zh: "测试账号 ID" },
-    devSessionMissing: {
-      en: "Enter a test account ID first.",
-      zh: "请先填写测试账号 ID。",
+    signIn: { en: "Sign in", zh: "登录" },
+    signOut: { en: "Sign out", zh: "退出登录" },
+    manageAccount: { en: "Manage account", zh: "管理账号" },
+    syncData: { en: "Sync data", zh: "同步数据" },
+    signedIn: { en: "Connected account", zh: "已连接账号" },
+    signedOut: { en: "Not signed in", zh: "未登录" },
+    accountEmailFallback: { en: "Signed-in account", zh: "已登录账号" },
+    accountLoadFailed: {
+      en: "Account details unavailable",
+      zh: "无法读取账号信息",
     },
-    devSessionSaved: {
-      en: "Dev login session is active.",
-      zh: "已启用开发登录会话。",
+    logtoAccount: { en: "Logto account", zh: "Logto 账号" },
+    apiResource: {
+      en: "Cloud backup API: {0}",
+      zh: "云端备份 API：{0}",
+    },
+    loginCallback: {
+      en: "Finishing sign-in...",
+      zh: "正在完成登录...",
     },
     loginFailed: { en: "Login failed", zh: "登录失败" },
-    signedOut: { en: "Dev login session cleared.", zh: "已清除开发登录会话。" },
-    useDevAccount: { en: "Log in as test account", zh: "以测试账号登录" },
-    clearDevAccount: { en: "Clear dev login", zh: "清除开发登录" },
     cloudBackup: { en: "Cloud Backup", zh: "云端备份" },
     cloudBackupDesc: {
       en: "Manual backup and restore only. No background sync runs from this page.",
       zh: "仅手动备份与恢复。此页面不会启动后台同步。",
     },
-    devSessionRequired: {
-      en: "Test account required",
-      zh: "需要测试账号",
+    signInRequired: {
+      en: "Sign in required",
+      zh: "需要登录",
     },
-    devSessionRequiredDesc: {
-      en: "Set up a local test account before using manual cloud backup.",
-      zh: "使用手动云端备份前，请先设置本地测试账号。",
+    signInRequiredDesc: {
+      en: "Sign in before using manual cloud backup.",
+      zh: "使用手动云端备份前，请先登录。",
     },
-    openAccount: { en: "Set up test account", zh: "设置测试账号" },
+    openAccount: { en: "Open account", zh: "打开账号" },
     syncFailed: { en: "Cloud action failed", zh: "云端操作失败" },
     metadataFailed: {
       en: "Could not load backup metadata",
@@ -144,8 +152,8 @@ export const i18nUiData = {
     },
     restoreNotice: {
       noCloudChanges: {
-        en: "No cloud changes are available to restore for this test account.",
-        zh: "此测试账号当前没有可恢复的云端变更。",
+        en: "No cloud changes are available to restore for this account.",
+        zh: "此账号当前没有可恢复的云端变更。",
       },
       conflict: {
         en: "Cloud restore is paused because local and cloud data both changed. Review the conflicts before overwriting either side.",
@@ -158,8 +166,8 @@ export const i18nUiData = {
     },
     uploadNotice: {
       noLocalChanges: {
-        en: "No local changes are available to upload for this test account.",
-        zh: "此测试账号当前没有可上传的本地变更。",
+        en: "No local changes are available to upload for this account.",
+        zh: "此账号当前没有可上传的本地变更。",
       },
     },
     manualChoice: {
@@ -270,6 +278,8 @@ export const i18nUiData = {
       checking: { en: "Checking", zh: "检查中" },
       uploading: { en: "Uploading", zh: "正在上传" },
       downloading: { en: "Downloading", zh: "正在下载" },
+      signedIn: { en: "Authenticated", zh: "已认证" },
+      signedOut: { en: "Signed out", zh: "未登录" },
     },
     statusToast: {
       uploaded: { en: "Local data uploaded.", zh: "本地数据已上传。" },

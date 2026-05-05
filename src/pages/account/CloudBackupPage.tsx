@@ -1,3 +1,4 @@
+import { useLogto } from "@logto/react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -19,10 +20,7 @@ import {
   refreshManualBackupMetadata,
   uploadManualBackupSelection,
 } from "@/cloud/manualBackupController";
-import {
-  createCloudBackupApiClient,
-  getCloudBackupDevSession,
-} from "@/cloud/session";
+import { createCloudBackupApiClient } from "@/cloud/session";
 import type { CloudSyncRunResult } from "@/cloud/syncClient";
 import type { CloudPartitionId } from "@/cloud/types";
 import { CloudBackupMetadataTable } from "@/components/account/CloudBackupMetadataTable";
@@ -45,6 +43,12 @@ type Notice = {
 
 export default function CloudBackupPage() {
   const { t } = useLanguage();
+  const {
+    isAuthenticated,
+    isLoading: isAuthLoading,
+    getAccessToken,
+    getIdTokenClaims,
+  } = useLogto();
   const [lastError, setLastError] = useState<string | null>(null);
   const [lastNotice, setLastNotice] = useState<Notice | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
@@ -57,11 +61,13 @@ export default function CloudBackupPage() {
   const [metadataError, setMetadataError] = useState<string | null>(null);
   const [cloudMetadata, setCloudMetadata] =
     useState<CloudBackupMetadataSnapshot | null>(null);
+  const [logtoSubject, setLogtoSubject] = useState<string | null>(null);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
   );
-  const session = getCloudBackupDevSession();
-  const sessionUserId = session?.userId ?? null;
+  const auth = useMemo(() => ({ getAccessToken }), [getAccessToken]);
+  const apiClient = useMemo(() => createCloudBackupApiClient(auth), [auth]);
+  const sessionUserId = logtoSubject ? `logto:${logtoSubject}` : null;
 
   const partitionMeta = useMemo(
     () => Object.values(partitionsById),
@@ -79,7 +85,7 @@ export default function CloudBackupPage() {
       setMetadataError(null);
       try {
         const snapshot = await refreshManualBackupMetadata(
-          createCloudBackupApiClient(),
+          apiClient,
           sessionUserId
         );
         setCloudMetadata(snapshot);
@@ -90,11 +96,31 @@ export default function CloudBackupPage() {
         setMetadataStatus("idle");
       }
     },
-    [sessionUserId, t]
+    [apiClient, sessionUserId, t]
   );
 
   useEffect(() => {
-    if (!sessionUserId) {
+    if (!isAuthenticated) {
+      setLogtoSubject(null);
+      return;
+    }
+
+    let cancelled = false;
+    void getIdTokenClaims()
+      .then((claims) => {
+        if (!cancelled) setLogtoSubject(claims?.sub ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setLogtoSubject(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getIdTokenClaims, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !sessionUserId) {
       setCloudMetadata(null);
       setMetadataError(null);
       return;
@@ -108,7 +134,7 @@ export default function CloudBackupPage() {
       return;
     }
     void refreshCloudMetadata("loading");
-  }, [refreshCloudMetadata, sessionUserId]);
+  }, [isAuthenticated, refreshCloudMetadata, sessionUserId]);
 
   useEffect(() => {
     if (operation === null) return;
@@ -125,10 +151,7 @@ export default function CloudBackupPage() {
     setLastError(null);
     setLastNotice(null);
     try {
-      const pending = await previewManualBackupAction(
-        "upload",
-        createCloudBackupApiClient()
-      );
+      const pending = await previewManualBackupAction("upload", apiClient);
       const manualPlan = pending.plan;
       if (manualPlan.choices.length > 0) {
         setPendingAction(pending);
@@ -143,11 +166,7 @@ export default function CloudBackupPage() {
         return;
       }
       setOperation("upload");
-      const result = await uploadManualBackupSelection(
-        createCloudBackupApiClient(),
-        pending,
-        []
-      );
+      const result = await uploadManualBackupSelection(apiClient, pending, []);
       setOperation(null);
       if (result.status === "skipped") {
         setLastNotice({
@@ -172,10 +191,7 @@ export default function CloudBackupPage() {
     setLastError(null);
     setLastNotice(null);
     try {
-      const pending = await previewManualBackupAction(
-        "download",
-        createCloudBackupApiClient()
-      );
+      const pending = await previewManualBackupAction("download", apiClient);
       const syncResult = pending.syncResult;
       if (syncResult.status === "unsupported") {
         setLastNotice({
@@ -250,7 +266,7 @@ export default function CloudBackupPage() {
     setLastNotice(null);
     try {
       const result = await uploadManualBackupSelection(
-        createCloudBackupApiClient(),
+        apiClient,
         pending,
         selectedIds
       );
@@ -289,7 +305,7 @@ export default function CloudBackupPage() {
       }
       setOperation("download");
       const applied = await downloadManualBackupSelection(
-        createCloudBackupApiClient(),
+        apiClient,
         syncResult,
         partitionIds
       );
@@ -327,17 +343,15 @@ export default function CloudBackupPage() {
             </div>
 
             <div className="p-4 space-y-4">
-              {!session && (
+              {!isAuthenticated && (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>
-                    {t.ui("accountSystem.devSessionRequired")}
+                    {t.ui("accountSystem.signInRequired")}
                   </AlertTitle>
                   <AlertDescription>
                     <div className="flex flex-wrap items-center gap-3">
-                      <span>
-                        {t.ui("accountSystem.devSessionRequiredDesc")}
-                      </span>
+                      <span>{t.ui("accountSystem.signInRequiredDesc")}</span>
                       <Button asChild size="sm" variant="outline">
                         <Link to="/account">
                           {t.ui("accountSystem.openAccount")}
@@ -370,7 +384,9 @@ export default function CloudBackupPage() {
                   type="button"
                   variant="secondary"
                   onClick={() => void beginUploadToCloud()}
-                  disabled={!session || operation !== null}
+                  disabled={
+                    !isAuthenticated || isAuthLoading || operation !== null
+                  }
                 >
                   <CloudUpload
                     className={cn(
@@ -383,7 +399,9 @@ export default function CloudBackupPage() {
                 <Button
                   type="button"
                   onClick={() => void beginDownloadFromCloud()}
-                  disabled={!session || operation !== null}
+                  disabled={
+                    !isAuthenticated || isAuthLoading || operation !== null
+                  }
                 >
                   <CloudDownload
                     className={cn(

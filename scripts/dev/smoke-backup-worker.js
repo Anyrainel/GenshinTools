@@ -11,9 +11,7 @@ import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 
 const port = Number(process.env.BACKUP_SMOKE_PORT ?? 8795);
-const userId = "backup_smoke_user";
-const backupUserId = `usr_dev_${userId}`;
-let sessionToken = "";
+const accessToken = process.env.BACKUP_SMOKE_ACCESS_TOKEN?.trim() ?? "";
 const root = process.cwd();
 const testResultsDir = path.join(root, "test-results");
 const persistDir = path.join(testResultsDir, "backup-smoke-state");
@@ -32,6 +30,12 @@ let stdoutFd;
 let stderrFd;
 
 async function main() {
+  if (!accessToken) {
+    throw new Error(
+      "BACKUP_SMOKE_ACCESS_TOKEN is required. Sign in locally with Logto and provide a Worker API access token for the configured API resource."
+    );
+  }
+
   applyLocalMigration();
 
   const server = startWranglerDev();
@@ -46,7 +50,6 @@ async function main() {
     throw error;
   } finally {
     stopProcessTree(server.pid);
-    cleanupSmokeUser();
     rmSync(persistDir, { recursive: true, force: true });
     closeLogFiles();
     if (!failed) {
@@ -120,7 +123,6 @@ async function waitForHead() {
   let lastError = "";
   while (Date.now() - startedAt < 30_000) {
     try {
-      await login();
       const response = await fetch(`${baseUrl()}/head`, { headers: authHeaders() });
       if (response.ok) return;
       lastError = `${response.status} ${await response.text()}`;
@@ -231,58 +233,6 @@ async function runBackupSmoke() {
   );
 }
 
-function cleanupSmokeUser() {
-  const sql = [
-    `DELETE FROM backup_commits WHERE user_id = '${backupUserId}'`,
-    `DELETE FROM backup_heads WHERE user_id = '${backupUserId}'`,
-    `DELETE FROM backup_devices WHERE user_id = '${backupUserId}'`,
-    `DELETE FROM backup_user_state WHERE user_id = '${backupUserId}'`,
-    `DELETE FROM auth_sessions WHERE user_id = '${backupUserId}'`,
-    `DELETE FROM user_entitlements WHERE user_id = '${backupUserId}'`,
-    `DELETE FROM auth_identities WHERE provider = 'dev' AND provider_subject = '${userId}'`,
-    `DELETE FROM app_users WHERE id = '${backupUserId}'`,
-  ].join("; ");
-  spawnSync(
-    wranglerBin,
-    [
-      "--config",
-      "wrangler.jsonc",
-      "d1",
-      "execute",
-      "ggartifact-backup",
-      "--local",
-      "--persist-to",
-      persistDir,
-      "--env",
-      "dev",
-      "--command",
-      sql,
-    ],
-    {
-      cwd: root,
-      shell: process.platform === "win32",
-      stdio: "ignore",
-    }
-  );
-}
-
-async function login() {
-  if (sessionToken) return;
-  const response = await must(
-    fetch(`http://127.0.0.1:${port}/api/auth/dev-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accountId: userId }),
-    }),
-    "dev login"
-  );
-  const body = await readJson(response);
-  if (typeof body.sessionToken !== "string") {
-    throw new Error(`unexpected login response: ${JSON.stringify(body)}`);
-  }
-  sessionToken = body.sessionToken;
-}
-
 async function must(responsePromise, label) {
   const response = await responsePromise;
   if (!response.ok) {
@@ -297,7 +247,7 @@ async function readJson(response) {
 
 function authHeaders() {
   return {
-    Authorization: `Bearer ${sessionToken}`,
+    Authorization: `Bearer ${accessToken}`,
   };
 }
 

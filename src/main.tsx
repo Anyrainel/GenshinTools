@@ -1,7 +1,9 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { LogtoProvider } from "@logto/react";
 import { BrowserRouter, HashRouter } from "react-router-dom";
 import App from "./App.tsx";
+import { logtoConfig } from "./cloud/authConfig";
 import { ErrorBoundary } from "./components/shared/ErrorBoundary";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -25,15 +27,17 @@ const Router = useHash ? HashRouter : BrowserRouter;
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ErrorBoundary>
-    <ThemeProvider>
-      <LanguageProvider>
-        <TooltipProvider delayDuration={200}>
-          <Router basename={import.meta.env.BASE_URL}>
-            <App />
-          </Router>
-        </TooltipProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <LogtoProvider config={logtoConfig}>
+      <ThemeProvider>
+        <LanguageProvider>
+          <TooltipProvider delayDuration={200}>
+            <Router basename={import.meta.env.BASE_URL}>
+              <App />
+            </Router>
+          </TooltipProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </LogtoProvider>
   </ErrorBoundary>
   // </StrictMode>
 );

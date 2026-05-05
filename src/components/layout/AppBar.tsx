@@ -4,13 +4,17 @@ import {
   Cloud,
   Languages,
   LogIn,
+  LogOut,
   type LucideIcon,
+  Mail,
   Menu,
-  MoreVertical,
   Palette,
+  Settings,
 } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { getLogtoAccountCenterSecurityUrl } from "@/cloud/authConfig";
 import {
   getNavigationConfig,
   type TabConfig,
@@ -20,6 +24,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -37,6 +42,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
+import { useLogtoAccountSummary } from "@/hooks/useLogtoAccountSummary";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 /**
@@ -88,6 +94,14 @@ export function AppBar({
 }: AppBarProps) {
   const { language, toggleLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const {
+    isAuthenticated,
+    isLoading: isAccountLoading,
+    account,
+    accountError,
+    signIn,
+    signOut,
+  } = useLogtoAccountSummary();
   const location = useLocation();
   const navigate = useNavigate();
   const [_isPending, startTransition] = useTransition();
@@ -141,7 +155,36 @@ export function AppBar({
   const collapsibleActions = visibleActions.filter((a) => !a.alwaysShow);
   const hasCollapsibleActions = collapsibleActions.length > 0;
   const hasTabs = tabs && tabs.length > 0;
-  const showCloudBackupDevUi = import.meta.env.DEV;
+  const accountLabel = accountError
+    ? t.ui("accountSystem.accountLoadFailed")
+    : isAccountLoading && isAuthenticated
+      ? t.ui("common.loading")
+      : (account?.email ??
+        account?.displayName ??
+        account?.subject ??
+        t.ui("accountSystem.accountEmailFallback"));
+
+  const handleSignIn = async () => {
+    try {
+      await signIn();
+    } catch (signInError) {
+      toast.error(
+        signInError instanceof Error ? signInError.message : String(signInError)
+      );
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (signOutError) {
+      toast.error(
+        signOutError instanceof Error
+          ? signOutError.message
+          : String(signOutError)
+      );
+    }
+  };
 
   // Explicit theme labels for static analysis
   const getThemeLabel = (themeId: ThemeId) => {
@@ -354,41 +397,46 @@ export function AppBar({
                 <Button
                   variant="outline"
                   size="icon"
-                  className={cn(
-                    showCloudBackupDevUi && "rounded-full",
-                    "2xl:mr-4"
-                  )}
+                  className="rounded-full 2xl:mr-4"
                 >
-                  {showCloudBackupDevUi ? (
-                    <CircleUserRound className="w-5 h-5" />
-                  ) : (
-                    <MoreVertical className="w-5 h-5" />
-                  )}
+                  <CircleUserRound className="w-5 h-5" />
                   <span className="sr-only">
-                    {showCloudBackupDevUi
-                      ? t.ui("accountSystem.accountMenu")
-                      : "More"}
+                    {t.ui("accountSystem.accountMenu")}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {showCloudBackupDevUi && (
+              <DropdownMenuContent align="end" className="min-w-56">
+                {isAuthenticated ? (
                   <>
+                    <DropdownMenuLabel className="flex items-center gap-2 font-normal">
+                      <Mail className="w-4 h-4 text-primary" />
+                      <span className="truncate">{accountLabel}</span>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem asChild className="gap-2">
-                      <Link to="/account">
-                        <LogIn className="w-4 h-4" />
-                        {t.ui("accountSystem.devAccountTitle")}
-                      </Link>
+                      <a href={getLogtoAccountCenterSecurityUrl()}>
+                        <Settings className="w-4 h-4" />
+                        {t.ui("accountSystem.manageAccount")}
+                      </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="gap-2">
                       <Link to="/account/cloud-backup">
                         <Cloud className="w-4 h-4" />
-                        {t.ui("accountSystem.cloudBackup")}
+                        {t.ui("accountSystem.syncData")}
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                   </>
+                ) : (
+                  <DropdownMenuItem
+                    onClick={() => void handleSignIn()}
+                    disabled={isAccountLoading}
+                    className="gap-2"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    {t.ui("accountSystem.signIn")}
+                  </DropdownMenuItem>
                 )}
+                <DropdownMenuSeparator />
 
                 <div className="md:hidden">
                   {collapsibleActions.map((action) => (
@@ -476,6 +524,19 @@ export function AppBar({
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
                 </DropdownMenuSub>
+                {isAuthenticated && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => void handleSignOut()}
+                      disabled={isAccountLoading}
+                      className="gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {t.ui("accountSystem.signOut")}
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

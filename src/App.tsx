@@ -24,12 +24,9 @@ const ArtifactBuildsPage = lazy(() => import("./pages/ArtifactBuilds"));
 const TeamCompPage = lazy(() => import("./pages/TeamComp"));
 const TierListPage = lazy(() => import("./pages/TierList"));
 const ArchivePage = lazy(() => import("./pages/Archive"));
-const AccountPage = import.meta.env.DEV
-  ? lazy(() => import("./pages/account/AccountPage"))
-  : null;
-const CloudBackupPage = import.meta.env.DEV
-  ? lazy(() => import("./pages/account/CloudBackupPage"))
-  : null;
+const AccountPage = lazy(() => import("./pages/account/AccountPage"));
+const CloudBackupPage = lazy(() => import("./pages/account/CloudBackupPage"));
+const AuthCallbackPage = lazy(() => import("./pages/account/AuthCallbackPage"));
 
 const SITE_NAME = "GGArtifact";
 
@@ -39,9 +36,7 @@ const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
   "/tier-list": { en: "Tier List", zh: "榜单" },
   "/archive": { en: "Archive", zh: "图鉴" },
   "/team-comp": { en: "Team DMG", zh: "队伍伤害" },
-  ...(import.meta.env.DEV
-    ? { "/account": { en: "Dev Login", zh: "开发登录" } }
-    : {}),
+  "/account": { en: "Account", zh: "账号" },
 };
 
 function App() {
@@ -102,15 +97,12 @@ function App() {
                 <Route path="/archive/:tab" element={<ArchivePage />} />
                 <Route path="/team-comp" element={<TeamCompPage />} />
                 <Route path="/team-comp/:tab" element={<TeamCompPage />} />
-                {AccountPage && CloudBackupPage && (
-                  <>
-                    <Route path="/account" element={<AccountPage />} />
-                    <Route
-                      path="/account/cloud-backup"
-                      element={<CloudBackupPage />}
-                    />
-                  </>
-                )}
+                <Route path="/callback" element={<AuthCallbackPage />} />
+                <Route path="/account" element={<AccountPage />} />
+                <Route
+                  path="/account/cloud-backup"
+                  element={<CloudBackupPage />}
+                />
               </Routes>
             </Suspense>
           </main>

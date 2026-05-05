@@ -8,6 +8,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
       "frozen-teams-storage",
       "triage-settings",
       "resource-rec-settings",
+      "recommendation-settings",
     ],
     class: "account",
     includeInBackup: true,

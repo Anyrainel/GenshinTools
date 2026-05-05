@@ -8,14 +8,35 @@
   "observability": {
     "enabled": true
   },
+  "vars": {
+    "LOGTO_ENDPOINT": "https://synz8r.logto.app",
+    "LOGTO_API_RESOURCE": "https://ggartifact.com/api"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*"]
   },
+  "d1_databases": [
+    {
+      "binding": "BACKUP_DB",
+      "database_name": "ggartifact-backup",
+      "database_id": "bf430d1d-3063-4ce6-bf57-4558110bf55f"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "ggartifact-backup",
+      "binding": "BACKUP_BUCKET"
+    }
+  ],
   "env": {
     "dev": {
+      "vars": {
+        "LOGTO_ENDPOINT": "https://synz8r.logto.app",
+        "LOGTO_API_RESOURCE": "https://ggartifact.com/api"
+      },
       "d1_databases": [
         {
           "binding": "BACKUP_DB",

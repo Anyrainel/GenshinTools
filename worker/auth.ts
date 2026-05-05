@@ -1,40 +1,33 @@
+import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
+
 export type AppEnv = Env & {
   BACKUP_DB?: D1Database;
   BACKUP_BUCKET?: R2Bucket;
+  LOGTO_ENDPOINT?: string;
+  LOGTO_ISSUER?: string;
+  LOGTO_JWKS_URI?: string;
+  LOGTO_API_RESOURCE?: string;
 };
 
 export type AuthenticatedUser = {
   userId: string;
   displayName?: string;
   entitlements: Set<string>;
-  authMode: "session";
+  authMode: "logto";
 };
 
 export type AuthFailure = {
-  status: 401 | 403 | 422 | 503;
+  status: 401 | 403 | 503;
   payload:
     | { error: "backup_storage_not_configured" }
     | { error: "unauthenticated" }
-    | { error: "invalid_user" }
     | { error: "entitlement_required"; code: string };
 };
 
-type DevLoginRequest = {
-  accountId?: unknown;
-};
-
-type SessionRow = {
-  user_id: string;
-  display_name: string | null;
-};
-
-type EntitlementRow = {
-  code: string;
-};
-
 const AUTH_API_PREFIX = "/api/auth";
-const DEV_PROVIDER = "dev";
-const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const LOGTO_PROVIDER = "logto";
+const DEFAULT_LOGTO_ENDPOINT = "https://synz8r.logto.app";
+const DEFAULT_LOGTO_API_RESOURCE = "https://ggartifact.com/api";
 const AUTH_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -58,7 +51,16 @@ export async function requireUser(
     };
   }
 
-  return lookupSessionUser(env.BACKUP_DB, bearerToken);
+  if (!looksLikeJwt(bearerToken)) {
+    return { status: 401, payload: { error: "unauthenticated" } };
+  }
+
+  const logtoConfig = getLogtoConfig(env);
+  if (logtoConfig) {
+    return lookupLogtoUser(env.BACKUP_DB, bearerToken, logtoConfig);
+  }
+
+  return { status: 401, payload: { error: "unauthenticated" } };
 }
 
 export async function handleAuthRequest(
@@ -71,13 +73,6 @@ export async function handleAuthRequest(
   }
 
   const path = stripAuthPrefix(url.pathname);
-  if (path === "/dev-login") {
-    if (request.method !== "POST") {
-      return authJson({ error: "method_not_allowed" }, 405);
-    }
-    return handleDevLogin(request, env);
-  }
-
   if (path === "/me") {
     if (request.method !== "GET") {
       return authJson({ error: "method_not_allowed" }, 405);
@@ -91,149 +86,122 @@ export async function handleAuthRequest(
     if (request.method !== "POST") {
       return authJson({ error: "method_not_allowed" }, 405);
     }
-    return handleLogout(request, env);
+    return handleLogout();
   }
 
   return authJson({ error: "not_found" }, 404);
 }
 
-async function lookupSessionUser(
-  db: D1Database,
-  sessionToken: string
-): Promise<AuthenticatedUser | AuthFailure> {
-  const now = Date.now();
-  const tokenHash = await sha256Hex(sessionToken);
-  const session = await db
-    .prepare(
-      `SELECT u.id AS user_id, u.display_name AS display_name
-       FROM auth_sessions s
-       JOIN app_users u ON u.id = s.user_id
-       WHERE s.token_hash = ?
-         AND s.revoked_at IS NULL
-         AND s.expires_at > ?
-         AND u.disabled_at IS NULL
-       LIMIT 1`
-    )
-    .bind(tokenHash, now)
-    .first<SessionRow>();
+type LogtoConfig = {
+  issuer: string;
+  jwksUri: string;
+  audience: string;
+};
 
-  if (!session) {
+type LogtoIdentity = {
+  subject: string;
+  userId: string;
+  displayName?: string;
+  email?: string;
+};
+
+const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
+
+async function lookupLogtoUser(
+  db: D1Database,
+  accessToken: string,
+  config: LogtoConfig
+): Promise<AuthenticatedUser | AuthFailure> {
+  const claims = await verifyLogtoAccessToken(accessToken, config);
+  if (!claims) {
     return { status: 401, payload: { error: "unauthenticated" } };
   }
 
-  await db
-    .prepare("UPDATE auth_sessions SET last_seen_at = ? WHERE token_hash = ?")
-    .bind(now, tokenHash)
-    .run();
+  const identity = await toLogtoIdentity(claims);
+  if (!identity) {
+    return { status: 401, payload: { error: "unauthenticated" } };
+  }
 
-  const entitlements = await selectEntitlements(db, session.user_id, now);
+  await upsertLogtoUser(db, identity);
+
   return {
-    userId: session.user_id,
-    displayName: session.display_name ?? undefined,
-    entitlements,
-    authMode: "session",
+    userId: identity.userId,
+    displayName: identity.displayName,
+    entitlements: new Set(["cloud_sync", ...getClaimScopes(claims)]),
+    authMode: "logto",
   };
 }
 
-async function handleDevLogin(
-  request: Request,
-  env: AppEnv
-): Promise<Response> {
-  if (!env.BACKUP_DB) {
-    return authJson({ error: "backup_storage_not_configured" }, 503);
+async function verifyLogtoAccessToken(
+  accessToken: string,
+  config: LogtoConfig
+): Promise<JWTPayload | null> {
+  try {
+    const jwks = getJwks(config.jwksUri);
+    const { payload } = await jwtVerify(accessToken, jwks, {
+      issuer: config.issuer,
+      audience: config.audience,
+    });
+    return payload;
+  } catch {
+    return null;
   }
+}
 
-  const body = await readJsonObject<DevLoginRequest>(request);
-  const providerSubject =
-    typeof body.accountId === "string" ? body.accountId.trim() : "";
-  if (!providerSubject || !isSafeUserId(providerSubject)) {
-    return authJson({ error: "invalid_user" }, 422);
-  }
+async function toLogtoIdentity(
+  claims: JWTPayload
+): Promise<LogtoIdentity | null> {
+  if (!claims.sub) return null;
+  const subject = claims.sub;
+  return {
+    subject,
+    userId: `usr_logto_${(await sha256Hex(subject)).slice(0, 32)}`,
+    displayName: getOptionalStringClaim(claims, "name") ?? undefined,
+    email: getOptionalStringClaim(claims, "email") ?? undefined,
+  };
+}
 
+async function upsertLogtoUser(
+  db: D1Database,
+  identity: LogtoIdentity
+): Promise<void> {
   const now = Date.now();
-  const userId = makeDevUserId(providerSubject);
-  const displayName = providerSubject;
-  const sessionToken = makeSessionToken();
-  const sessionId = makeId("ses");
-  const expiresAt = now + SESSION_TTL_MS;
-  const tokenHash = await sha256Hex(sessionToken);
-
-  await env.BACKUP_DB.batch([
-    env.BACKUP_DB.prepare(
-      `INSERT INTO app_users (id, display_name, created_at, updated_at)
+  await db.batch([
+    db
+      .prepare(
+        `INSERT INTO app_users (id, display_name, created_at, updated_at)
        VALUES (?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
-         display_name = excluded.display_name,
+         display_name = COALESCE(excluded.display_name, app_users.display_name),
          updated_at = excluded.updated_at`
-    ).bind(userId, displayName, now, now),
-    env.BACKUP_DB.prepare(
-      `INSERT INTO auth_identities (
-         provider, provider_subject, user_id, display_name, created_at, updated_at
+      )
+      .bind(identity.userId, identity.displayName ?? null, now, now),
+    db
+      .prepare(
+        `INSERT INTO auth_identities (
+         provider, provider_subject, user_id, email, display_name, created_at, updated_at
        )
-       VALUES (?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(provider, provider_subject) DO UPDATE SET
          user_id = excluded.user_id,
+         email = excluded.email,
          display_name = excluded.display_name,
          updated_at = excluded.updated_at`
-    ).bind(DEV_PROVIDER, providerSubject, userId, displayName, now, now),
-    env.BACKUP_DB.prepare(
-      `INSERT INTO user_entitlements (user_id, code, source, granted_at)
-       VALUES (?, ?, ?, ?)
-       ON CONFLICT(user_id, code) DO UPDATE SET
-         source = excluded.source`
-    ).bind(userId, "cloud_sync", "dev", now),
-    env.BACKUP_DB.prepare(
-      `INSERT INTO auth_sessions (
-         id, user_id, token_hash, created_at, expires_at, last_seen_at
-       )
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).bind(sessionId, userId, tokenHash, now, expiresAt, now),
+      )
+      .bind(
+        LOGTO_PROVIDER,
+        identity.subject,
+        identity.userId,
+        identity.email ?? null,
+        identity.displayName ?? null,
+        now,
+        now
+      ),
   ]);
-
-  return authJson({
-    sessionToken,
-    expiresAt,
-    user: {
-      id: userId,
-      displayName,
-      provider: DEV_PROVIDER,
-      providerSubject,
-      entitlements: ["cloud_sync"],
-    },
-  });
 }
 
-async function handleLogout(request: Request, env: AppEnv): Promise<Response> {
-  if (!env.BACKUP_DB) {
-    return authJson({ error: "backup_storage_not_configured" }, 503);
-  }
-
-  const bearerToken = getBearerToken(request);
-  if (bearerToken) {
-    const tokenHash = await sha256Hex(bearerToken);
-    await env.BACKUP_DB.prepare(
-      "UPDATE auth_sessions SET revoked_at = ? WHERE token_hash = ?"
-    )
-      .bind(Date.now(), tokenHash)
-      .run();
-  }
-
+async function handleLogout(): Promise<Response> {
   return authJson({ ok: true });
-}
-
-async function selectEntitlements(
-  db: D1Database,
-  userId: string,
-  now: number
-): Promise<Set<string>> {
-  const result = await db
-    .prepare(
-      `SELECT code FROM user_entitlements
-       WHERE user_id = ? AND (expires_at IS NULL OR expires_at > ?)`
-    )
-    .bind(userId, now)
-    .all<EntitlementRow>();
-  return new Set((result.results ?? []).map((row) => row.code));
 }
 
 export function requireEntitlement(
@@ -268,22 +236,56 @@ function getBearerToken(request: Request): string | null {
   return match?.[1]?.trim() || null;
 }
 
-function isSafeUserId(value: string): boolean {
-  return /^[A-Za-z0-9_:-]{1,96}$/.test(value);
+function looksLikeJwt(value: string): boolean {
+  return value.split(".").length === 3;
 }
 
-function makeDevUserId(providerSubject: string): string {
-  return `usr_dev_${providerSubject}`;
+function getLogtoConfig(env: AppEnv): LogtoConfig | null {
+  const endpoint = normalizeUrl(env.LOGTO_ENDPOINT ?? DEFAULT_LOGTO_ENDPOINT);
+  const issuer = normalizeUrl(
+    env.LOGTO_ISSUER ?? (endpoint ? `${endpoint}/oidc` : undefined)
+  );
+  const jwksUri = normalizeUrl(
+    env.LOGTO_JWKS_URI ?? (issuer ? `${issuer}/jwks` : undefined)
+  );
+  const audience = (
+    env.LOGTO_API_RESOURCE ?? DEFAULT_LOGTO_API_RESOURCE
+  ).trim();
+  if (!issuer || !jwksUri || !audience) return null;
+  return { issuer, jwksUri, audience };
 }
 
-function makeId(prefix: string): string {
-  return `${prefix}_${crypto.randomUUID()}`;
+function getJwks(jwksUri: string): ReturnType<typeof createRemoteJWKSet> {
+  const cached = jwksCache.get(jwksUri);
+  if (cached) return cached;
+  const jwks = createRemoteJWKSet(new URL(jwksUri));
+  jwksCache.set(jwksUri, jwks);
+  return jwks;
 }
 
-function makeSessionToken(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  return `sess_${crypto.randomUUID()}_${bytesToHex(bytes)}`;
+function normalizeUrl(value: string | undefined): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return trimmed.replace(/\/+$/, "");
+}
+
+function getOptionalStringClaim(
+  claims: JWTPayload,
+  key: string
+): string | null {
+  const value = claims[key];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function getClaimScopes(claims: JWTPayload): string[] {
+  const scope = claims.scope;
+  if (typeof scope === "string") {
+    return scope
+      .split(/\s+/)
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+  return [];
 }
 
 async function sha256Hex(value: string): Promise<string> {
@@ -294,17 +296,6 @@ async function sha256Hex(value: string): Promise<string> {
 
 function bytesToHex(bytes: Uint8Array): string {
   return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-async function readJsonObject<T extends object>(request: Request): Promise<T> {
-  try {
-    const parsed = await request.json();
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? (parsed as T)
-      : ({} as T);
-  } catch {
-    return {} as T;
-  }
 }
 
 function stripAuthPrefix(pathname: string): string {
