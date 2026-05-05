@@ -293,6 +293,7 @@ function getBuildsSnapshot(): BuildsCloudSnapshot {
     artifactScore: useArtifactScoreStore.getState().config,
     author: state.author,
     description: state.description,
+    updatedAt: state.updatedAt,
   };
 }
 
@@ -304,6 +305,7 @@ function getTeamSnapshot(): TeamCloudSnapshot {
     configsByTeamId: state.configsByTeamId,
     author: state.author,
     description: state.description,
+    updatedAt: state.updatedAt,
   };
 }
 
@@ -313,6 +315,7 @@ function getCharacterTierSnapshot() {
     tierLists: state.tierLists,
     activeTierListId: state.activeTierListId,
     nextId: state.nextId,
+    updatedAt: state.updatedAt,
   };
 }
 
@@ -322,6 +325,7 @@ function getWeaponTierSnapshot() {
     tierLists: state.tierLists,
     activeTierListId: state.activeTierListId,
     nextId: state.nextId,
+    updatedAt: state.updatedAt,
   };
 }
 
@@ -331,6 +335,7 @@ function getArtifactTierSnapshot() {
     tierLists: state.tierLists,
     activeTierListId: state.activeTierListId,
     nextId: state.nextId,
+    updatedAt: state.updatedAt,
   };
 }
 
@@ -465,6 +470,7 @@ function applyCharacterTierSnapshot(snapshot: CharacterTierListSnapshot): void {
     tierLists: snapshot.tierLists,
     activeTierListId: snapshot.activeTierListId,
     nextId: snapshot.nextId,
+    updatedAt: snapshot.updatedAt,
   });
 }
 
@@ -473,6 +479,7 @@ function applyWeaponTierSnapshot(snapshot: GenericTierListSnapshot): void {
     tierLists: snapshot.tierLists,
     activeTierListId: snapshot.activeTierListId,
     nextId: snapshot.nextId,
+    updatedAt: snapshot.updatedAt,
   });
 }
 
@@ -481,5 +488,6 @@ function applyArtifactTierSnapshot(snapshot: GenericTierListSnapshot): void {
     tierLists: snapshot.tierLists,
     activeTierListId: snapshot.activeTierListId,
     nextId: snapshot.nextId,
+    updatedAt: snapshot.updatedAt,
   });
 }

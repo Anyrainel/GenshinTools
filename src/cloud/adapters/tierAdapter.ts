@@ -6,12 +6,14 @@ export type CharacterTierListSnapshot = {
   tierLists: Record<number, CharacterTierListInstanceSnapshot>;
   activeTierListId: number;
   nextId: number;
+  updatedAt: number;
 };
 
 export type GenericTierListSnapshot = {
   tierLists: Record<number, TierListInstanceSnapshot>;
   activeTierListId: number;
   nextId: number;
+  updatedAt: number;
 };
 
 export type TierListInstanceSnapshot = {
@@ -44,6 +46,7 @@ export type TiersCloudSnapshot = {
 };
 
 export type TiersCloudPayload = {
+  updatedAt?: number;
   character: {
     activeTierListId: number;
     nextId: number;
@@ -72,6 +75,7 @@ export function tiersToCloud(
       conflictPolicy: "explicit-choice",
       isEmpty: isEmptyTiersSnapshot(snapshot),
       payload: {
+        updatedAt: getTiersUpdatedAt(snapshot),
         character: characterTierPayload(snapshot.character),
         weapon: genericTierPayload(snapshot.weapon),
         artifact: genericTierPayload(snapshot.artifact),
@@ -89,20 +93,53 @@ export function isEmptyTiersSnapshot(snapshot: TiersCloudSnapshot): boolean {
 }
 
 export function tiersFromCloud(partitions: CloudExportPartition[]) {
-  const current = partitions.find(
+  const partition = partitions.find(
     (partition) => partition.namespace === "tiers"
-  )?.payload as TiersCloudPayload | undefined;
+  );
+  const current = partition?.payload as TiersCloudPayload | undefined;
+  const updatedAt =
+    getMetadataUpdatedAt(partition) ?? current?.updatedAt ?? Date.now();
   return {
     character: current
-      ? characterSnapshotFromPayload(current.character)
-      : tierSnapshot<CharacterTierListInstanceSnapshot>([]),
+      ? characterSnapshotFromPayload(current.character, updatedAt)
+      : tierSnapshot<CharacterTierListInstanceSnapshot>(
+          [],
+          undefined,
+          undefined,
+          updatedAt
+        ),
     weapon: current
-      ? genericSnapshotFromPayload(current.weapon)
-      : tierSnapshot<TierListInstanceSnapshot>([]),
+      ? genericSnapshotFromPayload(current.weapon, updatedAt)
+      : tierSnapshot<TierListInstanceSnapshot>(
+          [],
+          undefined,
+          undefined,
+          updatedAt
+        ),
     artifact: current
-      ? genericSnapshotFromPayload(current.artifact)
-      : tierSnapshot<TierListInstanceSnapshot>([]),
+      ? genericSnapshotFromPayload(current.artifact, updatedAt)
+      : tierSnapshot<TierListInstanceSnapshot>(
+          [],
+          undefined,
+          undefined,
+          updatedAt
+        ),
   };
+}
+
+function getTiersUpdatedAt(snapshot: TiersCloudSnapshot): number {
+  return Math.max(
+    snapshot.character.updatedAt,
+    snapshot.weapon.updatedAt,
+    snapshot.artifact.updatedAt
+  );
+}
+
+function getMetadataUpdatedAt(
+  partition: CloudExportPartition | undefined
+): number | undefined {
+  return partition?.metadata?.records.find((record) => record.kind === "tiers")
+    ?.updatedAt;
 }
 
 function characterTierPayload(snapshot: CharacterTierListSnapshot) {
@@ -126,21 +163,33 @@ function genericTierPayload(snapshot: GenericTierListSnapshot) {
 }
 
 function characterSnapshotFromPayload(
-  payload: TiersCloudPayload["character"]
+  payload: TiersCloudPayload["character"],
+  updatedAt: number
 ): CharacterTierListSnapshot {
   const lists = payload.lists.map((list, index) =>
     characterTierListFromPayload(list, index + 1)
   );
-  return tierSnapshot(lists, payload.activeTierListId, payload.nextId);
+  return tierSnapshot(
+    lists,
+    payload.activeTierListId,
+    payload.nextId,
+    updatedAt
+  );
 }
 
 function genericSnapshotFromPayload(
-  payload: TiersCloudPayload["weapon"] | TiersCloudPayload["artifact"]
+  payload: TiersCloudPayload["weapon"] | TiersCloudPayload["artifact"],
+  updatedAt: number
 ): GenericTierListSnapshot {
   const lists = payload.lists.map((list, index) =>
     tierListFromPayload(list, index + 1)
   );
-  return tierSnapshot(lists, payload.activeTierListId, payload.nextId);
+  return tierSnapshot(
+    lists,
+    payload.activeTierListId,
+    payload.nextId,
+    updatedAt
+  );
 }
 
 function tierListPayload(
@@ -187,7 +236,8 @@ function characterTierListFromPayload(
 function tierSnapshot<TList extends TierListInstanceSnapshot>(
   lists: TList[],
   activeId?: number,
-  nextId?: number
+  nextId?: number,
+  updatedAt = Date.now()
 ) {
   const fallback = lists.length ? lists : [emptyList(1) as TList];
   const tierLists = Object.fromEntries(
@@ -200,6 +250,7 @@ function tierSnapshot<TList extends TierListInstanceSnapshot>(
     tierLists,
     activeTierListId,
     nextId: Math.max(nextId ?? 0, Math.max(...ids) + 1),
+    updatedAt,
   };
 }
 

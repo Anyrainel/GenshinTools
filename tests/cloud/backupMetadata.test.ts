@@ -18,8 +18,8 @@ describe("backup metadata", () => {
       { kind: "weapons", count: 1, profileId: "100", updatedAt: 1234 },
     ]);
     expect(metadataByPartition.get("teams/all")?.records).toEqual([
-      { kind: "teams", count: 1 },
-      { kind: "teamConfigs", count: 2 },
+      { kind: "teams", count: 1, updatedAt: 4321 },
+      { kind: "teamConfigs", count: 2, updatedAt: 4321 },
     ]);
 
     const rows = buildLocalBackupMetadataRows(partitions, []);
@@ -97,6 +97,7 @@ describe("backup metadata", () => {
           schemaVersion: 1,
           conflictPolicy: "explicit-choice",
           payload: {
+            updatedAt: 2468,
             deltas: [
               { kind: "preset", id: "preset-a", displayIndex: 0 },
               { kind: "preset", id: "preset-b", displayIndex: 1 },
@@ -116,6 +117,7 @@ describe("backup metadata", () => {
     expect(rows.find((row) => row.id === "builds")?.local).toEqual({
       hasRecord: true,
       count: 4,
+      updatedAt: 2468,
       partitionCount: 1,
     });
   });
@@ -190,6 +192,7 @@ describe("backup metadata", () => {
       character: {
         activeTierListId: 1,
         nextId: 3,
+        updatedAt: 5000,
         tierLists: {
           1: {
             id: 1,
@@ -214,6 +217,7 @@ describe("backup metadata", () => {
       weapon: {
         activeTierListId: 1,
         nextId: 2,
+        updatedAt: 5100,
         tierLists: {
           1: {
             id: 1,
@@ -228,6 +232,7 @@ describe("backup metadata", () => {
       artifact: {
         activeTierListId: 1,
         nextId: 2,
+        updatedAt: 5200,
         tierLists: {
           1: {
             id: 1,
@@ -293,6 +298,45 @@ describe("backup metadata", () => {
       partitionCount: 1,
     });
   });
+
+  it("does not display backup upload time as data update time", async () => {
+    const snapshot = await fetchCloudBackupMetadata({
+      getHead: async () => ({
+        serverTime: 3100,
+        changed: true,
+        headSetRev: "hset_1",
+        capabilities: {
+          apiVersion: 1,
+          commitContentTypes: ["multipart/form-data"],
+          maxObjectsPerCommit: 10,
+          maxCompressedBytesPerCommit: 10,
+          maxCompressedBytesPerObject: 10,
+        },
+        heads: [
+          {
+            partitionKey: "teams/all",
+            objectId: "obj_1",
+            rev: "rev_1",
+            schemaVersion: 1,
+            contentHash: "sha256:a",
+            compressedHash: "sha256:b",
+            compressedBytes: 10,
+            updatedAt: 3000,
+            metadata: {
+              schemaVersion: 1,
+              records: [{ kind: "teams", count: 1 }],
+            },
+          },
+        ],
+      }),
+    });
+
+    expect(snapshot.rows.find((row) => row.id === "teams")?.cloud).toEqual({
+      hasRecord: true,
+      count: 1,
+      partitionCount: 1,
+    });
+  });
 });
 
 function createPartitions(): CloudExportPartition[] {
@@ -342,6 +386,7 @@ function createPartitions(): CloudExportPartition[] {
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
       payload: {
+        updatedAt: 4321,
         compDeltas: [
           {
             kind: "custom",

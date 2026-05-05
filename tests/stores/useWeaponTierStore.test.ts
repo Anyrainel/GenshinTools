@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
 import {
@@ -261,9 +261,17 @@ describe("useWeaponTierStore", () => {
         description: "Description",
       };
 
-      const result = migrateGenericTierStore(oldState, 0);
+      vi.useFakeTimers();
+      vi.setSystemTime(678_901);
+      let result: Record<string, unknown>;
+      try {
+        result = migrateGenericTierStore(oldState, 0);
+      } finally {
+        vi.useRealTimers();
+      }
       expect(result.activeTierListId).toBe(1);
       expect(result.nextId).toBe(2);
+      expect(result.updatedAt).toBe(678_901);
       expect(result.tierLists).toEqual({
         1: {
           id: 1,

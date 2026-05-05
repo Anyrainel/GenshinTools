@@ -36,6 +36,7 @@ export type ManualBackupUploadSelectionResult =
 
 const CLOUD_METADATA_CACHE_PREFIX = "cloud_backup_metadata:";
 const CLOUD_METADATA_CACHE_SCHEMA_VERSION = 4;
+export const CLOUD_METADATA_CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function buildManualBackupMetadataRows(
   localMeta: CloudSyncPartitionMeta[],
@@ -126,6 +127,7 @@ export function readCloudMetadataCache(
     if (
       !parsed ||
       parsed.schemaVersion !== CLOUD_METADATA_CACHE_SCHEMA_VERSION ||
+      !Number.isFinite(parsed.checkedAt) ||
       !Array.isArray(parsed.rows) ||
       !parsed.rows.every(isCachedMetadataRow)
     ) {
@@ -136,6 +138,16 @@ export function readCloudMetadataCache(
   } catch {
     return null;
   }
+}
+
+export function isCloudMetadataCacheStale(
+  snapshot: CloudBackupMetadataSnapshot,
+  now = Date.now()
+): boolean {
+  return (
+    !Number.isFinite(snapshot.checkedAt) ||
+    now - snapshot.checkedAt > CLOUD_METADATA_CACHE_MAX_AGE_MS
+  );
 }
 
 function writeCloudMetadataCache(

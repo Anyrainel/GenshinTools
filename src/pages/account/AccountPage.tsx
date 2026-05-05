@@ -57,7 +57,7 @@ export default function AccountPage() {
 
   return (
     <PageLayout>
-      <ScrollLayout bodyClassName="max-w-3xl">
+      <ScrollLayout>
         <div className="space-y-4">
           <section className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
             <div className="bg-gradient-select border-b border-border/70 px-4 py-3 flex items-center justify-between gap-3">

@@ -19,6 +19,7 @@ vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
   getCachedBuildPreset: vi.fn((id: string | null) =>
     id ? (presetCache.get(id) ?? null) : null
   ),
+  getDefaultBuildPresetId: vi.fn(() => "preset-default"),
   loadBuildPreset: vi.fn((id: string) =>
     Promise.resolve(presetCache.get(id) ?? null)
   ),

@@ -101,6 +101,7 @@ export type CloudExportPartition<TPayload = unknown> = {
   schemaVersion: number;
   conflictPolicy: CloudConflictPolicy;
   isEmpty?: boolean;
+  metadata?: CloudBackupHeadMetadata;
   payload: TPayload;
 };
 

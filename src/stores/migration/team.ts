@@ -28,6 +28,7 @@ type TeamMigrationState = {
   activePresetId?: string | null;
   compDeltas?: TeamCompDelta[];
   configsByTeamId?: Record<string, TeamSetupConfig>;
+  updatedAt?: number;
 } & Record<string, unknown>;
 type TeamResultCacheField =
   | "optimizationResult"
@@ -519,6 +520,10 @@ export function migrateTeamStore(
     state.teamComps = deriveTeamCompsFromDeltas(state.compDeltas, null);
   }
 
+  if (version < 18 || !Number.isFinite(state.updatedAt)) {
+    state.updatedAt = Date.now();
+  }
+
   delete state.teams;
   return state;
 }
@@ -535,6 +540,7 @@ export function mergeTeamStore<
     teamCompById: Record<string, TeamComp>;
     author: string;
     description: string;
+    updatedAt: number;
     activePresetId: string | null;
     compDeltas: TeamCompDelta[];
     configsByTeamId: Record<string, TeamSetupConfig>;
@@ -564,6 +570,7 @@ export function mergeTeamStore<
     activePresetId,
     author: parsed.data.author ?? currentState.author,
     description: parsed.data.description ?? currentState.description,
+    updatedAt: parsed.data.updatedAt ?? currentState.updatedAt,
     compDeltas: deduped.deltas,
     configsByTeamId: nextConfigsByTeamId,
     teamComps,

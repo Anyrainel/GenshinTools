@@ -7,7 +7,9 @@ import {
   formatBackupCount,
   formatBackupDateTime,
   formatOptionalBackupDate,
-  metadataRowLabel,
+  getMetadataDisplayRows,
+  type MetadataLabelParts,
+  metadataRowLabelParts,
 } from "./cloudBackupLabels";
 
 export function CloudBackupMetadataTable({
@@ -22,22 +24,23 @@ export function CloudBackupMetadataTable({
   onRefresh: () => void;
 }) {
   const { t } = useLanguage();
+  const displayRows = getMetadataDisplayRows(rows);
   return (
-    <div className="rounded-lg border border-border bg-background/50 overflow-hidden">
-      <div className="px-3 py-2.5 border-b border-border flex flex-wrap items-center justify-between gap-2">
+    <div className="w-full max-w-3xl mx-auto rounded-lg border border-border overflow-hidden">
+      <div className="px-3 py-2.5 border-b border-border bg-background/50 flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold">
+          <h2 className="font-semibold">
             {t.ui("accountSystem.backupContents")}
           </h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted-foreground">
-            {checkedAt
-              ? t
-                  .ui("accountSystem.metadataCheckedAt")
-                  .replace("{0}", formatBackupDateTime(checkedAt))
-              : t.ui("accountSystem.metadataNotChecked")}
-          </span>
+          {checkedAt && (
+            <span className="text-sm text-muted-foreground">
+              {t
+                .ui("accountSystem.metadataCheckedAt")
+                .replace("{0}", formatBackupDateTime(checkedAt))}
+            </span>
+          )}
           <Button
             type="button"
             variant="outline"
@@ -50,40 +53,77 @@ export function CloudBackupMetadataTable({
           </Button>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-gradient-select">
         <table className="w-full min-w-[640px] text-sm">
-          <thead className="bg-muted/40 text-xs text-muted-foreground">
+          <thead className="text-sky-300">
             <tr>
-              <th className="text-left font-medium px-3 py-2">
-                {t.ui("accountSystem.dataType")}
+              <th
+                className="text-left font-semibold px-3 py-2 text-muted-foreground"
+                rowSpan={2}
+              >
+                {t.ui("accountSystem.metadataDataColumn")}
+              </th>
+              <th
+                className="text-center font-bold px-3 py-2 bg-amber-600/20 text-amber-300 rounded-t-md"
+                colSpan={2}
+              >
+                {t.ui("accountSystem.manualChoice.thisBrowser")}
+              </th>
+              <th className="text-center font-bold px-3 py-2" colSpan={2}>
+                {t.ui("accountSystem.cloudBackup")}
+              </th>
+            </tr>
+            <tr>
+              <th className="text-right font-medium px-3 py-2 bg-amber-600/20 text-amber-300">
+                {t.ui("accountSystem.metadataRecordsColumn")}
+              </th>
+              <th className="text-left font-medium px-3 py-2 bg-amber-600/20 text-amber-300">
+                {t.ui("accountSystem.metadataUpdatedColumn")}
               </th>
               <th className="text-right font-medium px-3 py-2">
-                {t.ui("accountSystem.localRecords")}
+                {t.ui("accountSystem.metadataRecordsColumn")}
               </th>
               <th className="text-left font-medium px-3 py-2">
-                {t.ui("accountSystem.localUpdated")}
-              </th>
-              <th className="text-right font-medium px-3 py-2">
-                {t.ui("accountSystem.cloudRecords")}
-              </th>
-              <th className="text-left font-medium px-3 py-2">
-                {t.ui("accountSystem.cloudUpdated")}
+                {t.ui("accountSystem.metadataUpdatedColumn")}
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {rows.map((row) => (
-              <tr key={row.id}>
+            {displayRows.map((row, index) => (
+              <tr
+                key={row.id}
+                className={cn(
+                  row.startsGroup && index > 0 && "border-t-2 border-border"
+                )}
+              >
                 <td className="px-3 py-2 font-medium">
-                  {metadataRowLabel(row.kind, t, row.profileId)}
+                  <MetadataLabel
+                    parts={metadataRowLabelParts(row.kind, t, row.profileId)}
+                  />
                 </td>
-                <td className="px-3 py-2 text-right tabular-nums">
+                <td
+                  className={cn(
+                    "px-3 py-2 text-right tabular-nums bg-amber-600/20",
+                    row.local.count !== row.cloud.count && "font-semibold",
+                    index === displayRows.length - 1 && "rounded-bl-md"
+                  )}
+                >
                   {formatBackupCount(row.local)}
                 </td>
-                <td className="px-3 py-2">
+                <td
+                  className={cn(
+                    "px-3 py-2 bg-amber-600/20",
+                    index === displayRows.length - 1 && "rounded-br-md"
+                  )}
+                >
                   {formatOptionalBackupDate(row.local, t)}
                 </td>
-                <td className="px-3 py-2 text-right tabular-nums">
+                <td
+                  className={cn(
+                    "px-3 py-2 text-right tabular-nums",
+                    row.local.count !== row.cloud.count && "font-semibold"
+                  )}
+                >
                   {formatBackupCount(row.cloud)}
                 </td>
                 <td className="px-3 py-2">
@@ -95,5 +135,16 @@ export function CloudBackupMetadataTable({
         </table>
       </div>
     </div>
+  );
+}
+
+function MetadataLabel({ parts }: { parts: MetadataLabelParts }) {
+  return (
+    <>
+      {parts.label}
+      {parts.profile && (
+        <span className="text-foreground/80"> [{parts.profile}]</span>
+      )}
+    </>
   );
 }

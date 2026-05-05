@@ -21,6 +21,7 @@ export interface TierStoreBase<
   tierLists: Record<number, TInstance>;
   activeTierListId: number;
   nextId: number;
+  updatedAt: number;
 
   setTierAssignments: (
     assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)
@@ -91,6 +92,10 @@ function createBaseInstance(id: number, title = ""): TierListInstanceBase {
     author: "",
     description: "",
   };
+}
+
+function touchTierStore(): number {
+  return Date.now();
 }
 
 export function selectActiveTierList<
@@ -178,6 +183,7 @@ export function createTierStore<
         ...state.tierLists,
         [id]: { ...current, ...patch },
       },
+      updatedAt: touchTierStore(),
     } as Partial<TState>;
   };
 
@@ -201,6 +207,7 @@ export function createTierStore<
           tierLists: defaultTierLists,
           activeTierListId: 1,
           nextId: 2,
+          updatedAt: Date.now(),
 
           setTierAssignments: (assignments) =>
             set((state) => {
@@ -267,6 +274,7 @@ export function createTierStore<
                   },
                   activeTierListId: id,
                   nextId: id + 1,
+                  updatedAt: touchTierStore(),
                 }) as Partial<TState>
             );
             return id;
@@ -285,13 +293,17 @@ export function createTierStore<
                   state.activeTierListId === id
                     ? Math.min(...remainingIds)
                     : state.activeTierListId,
+                updatedAt: touchTierStore(),
               } as Partial<TState>;
             }),
 
           setActiveTierList: (id) =>
             set((state) =>
               id in state.tierLists
-                ? ({ activeTierListId: id } as Partial<TState>)
+                ? ({
+                    activeTierListId: id,
+                    updatedAt: touchTierStore(),
+                  } as Partial<TState>)
                 : state
             ),
 
@@ -321,20 +333,26 @@ export function createTierStore<
       },
       {
         name: options.storageKey,
-        version: options.version ?? 1,
+        version: options.version ?? 2,
         migrate: options.migrate ?? migrateGenericTierStore,
         partialize: (state) => ({
           tierLists: state.tierLists,
           activeTierListId: state.activeTierListId,
           nextId: state.nextId,
+          updatedAt: state.updatedAt,
           ...(options.extraPartialize?.(state) ?? {}),
         }),
         merge: (persistedState, currentState) => {
           const parsed = persistedSchema.safeParse(persistedState);
           const persisted = parsed.success ? parsed.data : {};
+          const updatedAt =
+            typeof (persisted as { updatedAt?: unknown }).updatedAt === "number"
+              ? (persisted as { updatedAt: number }).updatedAt
+              : currentState.updatedAt;
           const merged = {
             ...currentState,
             ...persisted,
+            updatedAt,
           } as TState;
 
           if (

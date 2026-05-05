@@ -93,22 +93,15 @@ export function buildBackupHeadMetadataByPartition(
 
 export function buildLocalBackupMetadataRows(
   partitions: CloudExportPartition[],
-  localMeta: LocalCloudPartitionMeta[]
+  _localMeta: LocalCloudPartitionMeta[]
 ): BackupMetadataRow[] {
   const metadataById = buildBackupHeadMetadataByPartition(partitions);
-  const localUpdatedAtById = new Map(
-    localMeta.map((meta) => [
-      partitionId(meta.namespace, meta.partitionKey),
-      meta.updatedAt,
-    ])
-  );
   return mergeBackupMetadataRows(
     buildMetadataRows(
       partitions.map((partition) => {
         const id = partitionId(partition.namespace, partition.partitionKey);
         return {
           id,
-          updatedAt: localUpdatedAtById.get(id),
           metadata: metadataById.get(id)!,
         };
       }),
@@ -161,7 +154,6 @@ function buildCloudBackupMetadataRows(
       .filter((head) => head.deletedAt == null)
       .map((head) => ({
         id: head.partitionKey,
-        updatedAt: head.updatedAt,
         metadata: head.metadata,
       })),
     "cloud"
@@ -171,7 +163,6 @@ function buildCloudBackupMetadataRows(
 function buildMetadataRows(
   entries: {
     id: CloudPartitionId;
-    updatedAt?: number;
     metadata: CloudBackupHeadMetadata;
   }[],
   sideName: "local" | "cloud"
@@ -187,7 +178,7 @@ function buildMetadataRows(
         sides.get(rowId) ?? createMutableSide(sides, rowId),
         record.count,
         entry.id,
-        record.updatedAt ?? entry.updatedAt
+        record.updatedAt
       );
     }
   }
@@ -300,13 +291,18 @@ function buildPartitionMetadata(
   }
 
   if (partition.namespace === "builds") {
-    const payload = partition.payload as { deltas?: BackupMetadataDelta[] };
+    const payload = partition.payload as {
+      deltas?: BackupMetadataDelta[];
+      updatedAt?: number;
+    };
+    const updatedAt = finiteTimestamp(payload.updatedAt);
     return {
       schemaVersion: 1,
       records: [
         {
           kind: "builds",
           count: payload.deltas?.filter(isUserVisibleBuildDelta).length ?? 0,
+          ...(updatedAt != null ? { updatedAt } : {}),
         },
       ],
     };
@@ -316,7 +312,9 @@ function buildPartitionMetadata(
     const payload = partition.payload as {
       compDeltas?: BackupMetadataDelta[];
       configsByTeamId?: Record<string, unknown>;
+      updatedAt?: number;
     };
+    const updatedAt = finiteTimestamp(payload.updatedAt);
     return {
       schemaVersion: 1,
       records: [
@@ -324,10 +322,12 @@ function buildPartitionMetadata(
           kind: "teams",
           count:
             payload.compDeltas?.filter(isUserVisiblePresetDelta).length ?? 0,
+          ...(updatedAt != null ? { updatedAt } : {}),
         },
         {
           kind: "teamConfigs",
           count: Object.keys(payload.configsByTeamId ?? {}).length,
+          ...(updatedAt != null ? { updatedAt } : {}),
         },
       ],
     };
@@ -335,18 +335,26 @@ function buildPartitionMetadata(
 
   if (partition.namespace === "tiers") {
     const payload = partition.payload as TiersCloudPayload;
+    const updatedAt = finiteTimestamp(payload.updatedAt);
     return {
       schemaVersion: 1,
       records: [
         {
           kind: "tiers",
           count: countUserVisibleTierLists(payload),
+          ...(updatedAt != null ? { updatedAt } : {}),
         },
       ],
     };
   }
 
   return { schemaVersion: 1, records: [] };
+}
+
+function finiteTimestamp(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : undefined;
 }
 
 function countPresentSettings(payload: {

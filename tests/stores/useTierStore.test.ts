@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
 import {
@@ -577,6 +577,25 @@ describe("useTierStore", () => {
       expect(tierLists[2].linkedAccountId).toBe(800000001);
       expect(result).not.toHaveProperty("tierAssignments");
       expect(result).not.toHaveProperty("customTitle");
+    });
+
+    it("fills missing data update time during migration", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(345_678);
+      try {
+        const result = migrateTierStore(
+          {
+            tierLists: {},
+            activeTierListId: 1,
+            nextId: 2,
+          },
+          3
+        );
+
+        expect(result.updatedAt).toBe(345_678);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

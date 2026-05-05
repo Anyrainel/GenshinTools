@@ -430,6 +430,7 @@ export async function readDownloadedPartitions(
       partitionKey: envelope.partitionKey,
       schemaVersion: envelope.schemaVersion,
       conflictPolicy: descriptor.conflictPolicy,
+      metadata: expectedHead.metadata,
       payload: envelope.payload,
     });
   }

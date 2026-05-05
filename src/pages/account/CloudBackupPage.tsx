@@ -12,6 +12,7 @@ import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
 import {
   buildManualBackupMetadataRows,
   downloadManualBackupSelection,
+  isCloudMetadataCacheStale,
   type PendingManualBackupAction,
   previewManualBackupAction,
   readCloudMetadataCache,
@@ -35,13 +36,17 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { useCloudSyncMetadataStore } from "@/stores/useCloudSyncMetadataStore";
 
-type Operation = "upload" | "download" | null;
+type Operation = "checking" | "upload" | "download" | null;
 type MetadataStatus = "idle" | "loading" | "refreshing";
+type Notice = {
+  title: string;
+  message: string;
+};
 
 export default function CloudBackupPage() {
   const { t } = useLanguage();
   const [lastError, setLastError] = useState<string | null>(null);
-  const [lastNotice, setLastNotice] = useState<string | null>(null);
+  const [lastNotice, setLastNotice] = useState<Notice | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
   const [pendingAction, setPendingAction] =
     useState<PendingManualBackupAction | null>(null);
@@ -97,6 +102,9 @@ export default function CloudBackupPage() {
     const cached = readCloudMetadataCache(sessionUserId);
     if (cached) {
       setCloudMetadata(cached);
+      if (isCloudMetadataCacheStale(cached)) {
+        void refreshCloudMetadata("refreshing");
+      }
       return;
     }
     void refreshCloudMetadata("loading");
@@ -113,7 +121,7 @@ export default function CloudBackupPage() {
   }, [operation]);
 
   const beginUploadToCloud = async () => {
-    setOperation("upload");
+    setOperation("checking");
     setLastError(null);
     setLastNotice(null);
     try {
@@ -127,16 +135,28 @@ export default function CloudBackupPage() {
         setSelectedChoiceIds(new Set());
         return;
       }
+      if (manualPlan.automaticPartitionIds.length === 0) {
+        setLastNotice({
+          title: t.ui("accountSystem.backupContents"),
+          message: t.ui("accountSystem.uploadNotice.noLocalChanges"),
+        });
+        return;
+      }
+      setOperation("upload");
       const result = await uploadManualBackupSelection(
         createCloudBackupApiClient(),
         pending,
         []
       );
-      await refreshCloudMetadata();
+      setOperation(null);
       if (result.status === "skipped") {
-        setLastNotice(t.ui("accountSystem.uploadNotice.noLocalChanges"));
+        setLastNotice({
+          title: t.ui("accountSystem.backupContents"),
+          message: t.ui("accountSystem.uploadNotice.noLocalChanges"),
+        });
         return;
       }
+      await refreshCloudMetadata();
       toast.success(t.ui("accountSystem.statusToast.uploaded"));
     } catch (error) {
       const message = formatBackupError(error, t);
@@ -148,7 +168,7 @@ export default function CloudBackupPage() {
   };
 
   const beginDownloadFromCloud = async () => {
-    setOperation("download");
+    setOperation("checking");
     setLastError(null);
     setLastNotice(null);
     try {
@@ -158,7 +178,10 @@ export default function CloudBackupPage() {
       );
       const syncResult = pending.syncResult;
       if (syncResult.status === "unsupported") {
-        setLastNotice(restoreNotice(syncResult.status, t));
+        setLastNotice({
+          title: t.ui("accountSystem.restoreStatus"),
+          message: restoreNotice(syncResult.status, t),
+        });
         return;
       }
       const manualPlan = pending.plan;
@@ -168,7 +191,10 @@ export default function CloudBackupPage() {
         return;
       }
       if (manualPlan.automaticPartitionIds.length === 0) {
-        setLastNotice(restoreNotice(syncResult.status, t));
+        setLastNotice({
+          title: t.ui("accountSystem.restoreStatus"),
+          message: restoreNotice(syncResult.status, t),
+        });
         return;
       }
       await applyCloudDownload(syncResult, manualPlan.automaticPartitionIds);
@@ -215,7 +241,11 @@ export default function CloudBackupPage() {
     pending: PendingManualBackupAction,
     selectedIds: CloudPartitionId[]
   ) => {
-    setOperation("upload");
+    const hasUploadWork =
+      pending.plan.automaticPartitionIds.length > 0 || selectedIds.length > 0;
+    if (hasUploadWork) {
+      setOperation("upload");
+    }
     setLastError(null);
     setLastNotice(null);
     try {
@@ -224,8 +254,12 @@ export default function CloudBackupPage() {
         pending,
         selectedIds
       );
+      setOperation(null);
       if (result.status === "skipped") {
-        setLastNotice(t.ui("accountSystem.manualChoice.allSkipped"));
+        setLastNotice({
+          title: t.ui("accountSystem.backupContents"),
+          message: t.ui("accountSystem.manualChoice.allSkipped"),
+        });
         return;
       }
       await refreshCloudMetadata();
@@ -243,19 +277,23 @@ export default function CloudBackupPage() {
     syncResult: CloudSyncRunResult,
     partitionIds: CloudPartitionId[]
   ) => {
-    setOperation("download");
     setLastError(null);
     setLastNotice(null);
     try {
       if (partitionIds.length === 0) {
-        setLastNotice(t.ui("accountSystem.manualChoice.allSkipped"));
+        setLastNotice({
+          title: t.ui("accountSystem.restoreStatus"),
+          message: t.ui("accountSystem.manualChoice.allSkipped"),
+        });
         return;
       }
+      setOperation("download");
       const applied = await downloadManualBackupSelection(
         createCloudBackupApiClient(),
         syncResult,
         partitionIds
       );
+      setOperation(null);
       toast.success(
         t
           .ui("accountSystem.restoreApplied")
@@ -273,10 +311,10 @@ export default function CloudBackupPage() {
 
   return (
     <PageLayout>
-      <ScrollLayout bodyClassName="max-w-5xl">
+      <ScrollLayout>
         <div className="space-y-4">
-          <section className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
-            <div className="bg-gradient-select border-b border-border/70 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <section className="rounded-xl bg-card/30 border border-border overflow-hidden shadow-lg">
+            <div className="border-b border-border/70 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0">
                 <h1 className="text-xl md:text-2xl font-bold">
                   {t.ui("accountSystem.cloudBackup")}
@@ -310,22 +348,6 @@ export default function CloudBackupPage() {
                 </Alert>
               )}
 
-              {lastError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>{t.ui("accountSystem.syncFailed")}</AlertTitle>
-                  <AlertDescription>{lastError}</AlertDescription>
-                </Alert>
-              )}
-
-              {lastNotice && (
-                <Alert>
-                  <CheckCircle2 className="h-4 w-4" />
-                  <AlertTitle>{t.ui("accountSystem.restoreStatus")}</AlertTitle>
-                  <AlertDescription>{lastNotice}</AlertDescription>
-                </Alert>
-              )}
-
               {metadataError && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -343,9 +365,10 @@ export default function CloudBackupPage() {
                 onRefresh={() => void refreshCloudMetadata()}
               />
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => void beginUploadToCloud()}
                   disabled={!session || operation !== null}
                 >
@@ -359,7 +382,6 @@ export default function CloudBackupPage() {
                 </Button>
                 <Button
                   type="button"
-                  variant="secondary"
                   onClick={() => void beginDownloadFromCloud()}
                   disabled={!session || operation !== null}
                 >
@@ -372,6 +394,22 @@ export default function CloudBackupPage() {
                   {t.ui("accountSystem.downloadFromCloud")}
                 </Button>
               </div>
+
+              {lastError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>{t.ui("accountSystem.syncFailed")}</AlertTitle>
+                  <AlertDescription>{lastError}</AlertDescription>
+                </Alert>
+              )}
+
+              {lastNotice && (
+                <Alert>
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertTitle>{lastNotice.title}</AlertTitle>
+                  <AlertDescription>{lastNotice.message}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </section>
         </div>
@@ -397,13 +435,13 @@ function OperationBadge({
   operation: Exclude<Operation, null>;
 }) {
   const { t } = useLanguage();
-  return (
-    <Badge variant="secondary">
-      {operation === "upload"
+  const label =
+    operation === "checking"
+      ? t.ui("accountSystem.status.checking")
+      : operation === "upload"
         ? t.ui("accountSystem.status.uploading")
-        : t.ui("accountSystem.status.downloading")}
-    </Badge>
-  );
+        : t.ui("accountSystem.status.downloading");
+  return <Badge variant="secondary">{label}</Badge>;
 }
 
 function restoreNotice(

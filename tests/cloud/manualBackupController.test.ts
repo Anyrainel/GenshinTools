@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
 import {
+  CLOUD_METADATA_CACHE_MAX_AGE_MS,
   downloadManualBackupSelection,
+  isCloudMetadataCacheStale,
   type PendingManualBackupAction,
   uploadManualBackupSelection,
 } from "@/cloud/manualBackupController";
@@ -104,6 +107,29 @@ describe("manual backup controller", () => {
       downloaded,
     });
     expect(result).toBe(applied);
+  });
+
+  it("treats cached metadata as stale after one week", () => {
+    const checkedAt = 1000;
+    const snapshot = {
+      schemaVersion: 4,
+      checkedAt,
+      headSetRev: "hset-1",
+      rows: [],
+    } satisfies CloudBackupMetadataSnapshot;
+
+    expect(
+      isCloudMetadataCacheStale(
+        snapshot,
+        checkedAt + CLOUD_METADATA_CACHE_MAX_AGE_MS
+      )
+    ).toBe(false);
+    expect(
+      isCloudMetadataCacheStale(
+        snapshot,
+        checkedAt + CLOUD_METADATA_CACHE_MAX_AGE_MS + 1
+      )
+    ).toBe(true);
   });
 });
 

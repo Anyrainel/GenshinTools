@@ -45,6 +45,7 @@ export type TeamSourceState = {
   configsByTeamId: Record<string, TeamSetupConfig>;
   author: string;
   description: string;
+  updatedAt: number;
 };
 
 interface TeamState {
@@ -52,6 +53,7 @@ interface TeamState {
   teamCompById: Record<string, TeamComp>;
   author: string;
   description: string;
+  updatedAt: number;
   activePresetId: string | null;
   compDeltas: TeamCompDelta[];
   configsByTeamId: Record<string, TeamSetupConfig>;
@@ -98,6 +100,10 @@ function refreshDerivedTeamState(
   state.teamCompById = Object.fromEntries(
     state.teamComps.map((team) => [team.id, team])
   );
+}
+
+function touchTeamState(state: Pick<TeamState, "updatedAt">): void {
+  state.updatedAt = Date.now();
 }
 
 function dedupeTeamCompStateAgainstPreset(
@@ -161,6 +167,7 @@ export const useTeamStore = create<TeamState>()(
       teamCompById: {},
       author: "",
       description: "",
+      updatedAt: Date.now(),
       activePresetId: null,
       compDeltas: [],
       configsByTeamId: {},
@@ -188,6 +195,7 @@ export const useTeamStore = create<TeamState>()(
             )
           );
           refreshDerivedTeamState(state);
+          touchTeamState(state);
         });
         return id;
       },
@@ -210,6 +218,7 @@ export const useTeamStore = create<TeamState>()(
             displayIndex
           );
           refreshDerivedTeamState(state);
+          touchTeamState(state);
         });
       },
 
@@ -224,6 +233,7 @@ export const useTeamStore = create<TeamState>()(
               : { ...current, ...updater }
           );
           refreshDerivedTeamState(state);
+          touchTeamState(state);
         });
       },
 
@@ -246,6 +256,7 @@ export const useTeamStore = create<TeamState>()(
           }
           delete state.configsByTeamId[id];
           refreshDerivedTeamState(state, preset);
+          touchTeamState(state);
           useTeamResultCacheStore.getState().clearForTeam(id);
         });
       },
@@ -270,6 +281,7 @@ export const useTeamStore = create<TeamState>()(
           nextOrder.splice(index + 1, 0, newId);
           reindexTeamOrder(state, nextOrder);
           refreshDerivedTeamState(state);
+          touchTeamState(state);
         });
       },
 
@@ -283,6 +295,7 @@ export const useTeamStore = create<TeamState>()(
           [ids[index], ids[targetIndex]] = [ids[targetIndex], ids[index]];
           reindexTeamOrder(state, ids);
           refreshDerivedTeamState(state);
+          touchTeamState(state);
         });
       },
 
@@ -299,6 +312,7 @@ export const useTeamStore = create<TeamState>()(
           ids.splice(insertIdx, 0, id);
           reindexTeamOrder(state, ids);
           refreshDerivedTeamState(state);
+          touchTeamState(state);
         });
       },
 
@@ -311,11 +325,13 @@ export const useTeamStore = create<TeamState>()(
           state.activePresetId = null;
           state.compDeltas = [];
           state.configsByTeamId = {};
+          touchTeamState(state);
           useTeamResultCacheStore.getState().clearAll();
         });
       },
 
-      setMetadata: (author, description) => set({ author, description }),
+      setMetadata: (author, description) =>
+        set({ author, description, updatedAt: Date.now() }),
 
       importTeams: (data) => {
         const imported = createTeamPersistenceFromImportedData(data);
@@ -326,6 +342,7 @@ export const useTeamStore = create<TeamState>()(
           state.author = imported.author;
           state.description = imported.description;
           refreshDerivedTeamState(state, null);
+          touchTeamState(state);
           useTeamResultCacheStore.getState().clearAll();
         });
       },
@@ -337,6 +354,7 @@ export const useTeamStore = create<TeamState>()(
           state.configsByTeamId = source.configsByTeamId;
           state.author = source.author;
           state.description = source.description;
+          state.updatedAt = source.updatedAt;
           refreshDerivedTeamState(state);
           useTeamResultCacheStore.getState().clearAll();
         });
@@ -352,6 +370,7 @@ export const useTeamStore = create<TeamState>()(
           state.description = data.description ?? "";
           dedupeTeamCompStateAgainstPreset(state, data);
           refreshDerivedTeamState(state, data);
+          touchTeamState(state);
           useTeamResultCacheStore.getState().clearAll();
         });
       },
@@ -406,7 +425,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 17,
+      version: 18,
       migrate: migrateTeamStore,
       partialize: (state) =>
         ({
@@ -415,6 +434,7 @@ export const useTeamStore = create<TeamState>()(
           configsByTeamId: state.configsByTeamId,
           author: state.author,
           description: state.description,
+          updatedAt: state.updatedAt,
         }) as unknown as ReturnType<typeof migrateTeamStore>,
       merge: mergeTeamStore,
     }

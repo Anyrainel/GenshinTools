@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TeamCompData } from "@/lib/team-comp/types";
 import {
   mergeTeamStore,
@@ -292,6 +292,25 @@ describe("team store migration", () => {
         },
       },
     });
+  });
+
+  it("fills missing data update time during migration", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(234_567);
+    try {
+      const result = migrateTeamStore(
+        {
+          activePresetId: null,
+          compDeltas: [],
+          configsByTeamId: {},
+        },
+        17
+      );
+
+      expect(result.updatedAt).toBe(234_567);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("merge hydrates latest persisted data into the current runtime state", () => {

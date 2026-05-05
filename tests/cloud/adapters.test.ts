@@ -217,6 +217,7 @@ describe("cloud source adapters", () => {
       artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
       author: "author",
       description: "description",
+      updatedAt: 100,
       validationErrors: { "custom-build": ["local only"] },
       activePresetPayload: { local: true },
     } satisfies BuildsCloudSnapshot & Record<string, unknown>;
@@ -238,6 +239,7 @@ describe("cloud source adapters", () => {
       artifactScore: snapshot.artifactScore,
       author: "author",
       description: "description",
+      updatedAt: 100,
     });
   });
 
@@ -251,6 +253,7 @@ describe("cloud source adapters", () => {
       artifactScore: { global: DEFAULT_GLOBAL_STAT_WEIGHTS },
       author: "",
       description: "",
+      updatedAt: 100,
     });
 
     expect(partition.isEmpty).toBe(true);
@@ -267,6 +270,7 @@ describe("cloud source adapters", () => {
       artifactScore: { global: DEFAULT_GLOBAL_STAT_WEIGHTS },
       author: "",
       description: "",
+      updatedAt: 100,
     });
 
     expect(partition.isEmpty).toBe(false);
@@ -334,6 +338,7 @@ describe("cloud source adapters", () => {
       },
       author: "author",
       description: "description",
+      updatedAt: 200,
       resultsByTeamId: { "team-1": { optimizationResult: {} } },
     } satisfies TeamCloudSnapshot & Record<string, unknown>;
 
@@ -350,6 +355,7 @@ describe("cloud source adapters", () => {
       configsByTeamId: snapshot.configsByTeamId,
       author: "author",
       description: "description",
+      updatedAt: 200,
     });
   });
 
@@ -360,6 +366,7 @@ describe("cloud source adapters", () => {
       configsByTeamId: {},
       author: "",
       description: "",
+      updatedAt: 200,
     });
 
     expect(partition.isEmpty).toBe(true);
@@ -369,6 +376,7 @@ describe("cloud source adapters", () => {
     const characterSnapshot: CharacterTierListSnapshot = {
       activeTierListId: 1,
       nextId: 3,
+      updatedAt: 300,
       tierLists: {
         1: tierList(1, { linkedAccountId: 0 }),
         2: tierList(2, { linkedAccountId: null }),
@@ -377,6 +385,7 @@ describe("cloud source adapters", () => {
     const genericSnapshot: GenericTierListSnapshot = {
       activeTierListId: 1,
       nextId: 2,
+      updatedAt: 400,
       tierLists: { 1: tierList(1) },
     };
 
@@ -405,6 +414,7 @@ describe("cloud source adapters", () => {
     const defaultCharacter: CharacterTierListSnapshot = {
       activeTierListId: 1,
       nextId: 2,
+      updatedAt: 300,
       tierLists: {
         1: {
           id: 1,
@@ -420,6 +430,7 @@ describe("cloud source adapters", () => {
     const defaultGeneric: GenericTierListSnapshot = {
       activeTierListId: 1,
       nextId: 2,
+      updatedAt: 400,
       tierLists: {
         1: {
           id: 1,
@@ -450,6 +461,7 @@ describe("cloud source adapters", () => {
       artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
       author: "",
       description: "",
+      updatedAt: 100,
     });
     const envelope = await createEnvelope(partition, {
       rev: "rev-test",

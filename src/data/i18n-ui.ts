@@ -107,40 +107,32 @@ export const i18nUiData = {
     syncFailed: { en: "Cloud action failed", zh: "云端操作失败" },
     metadataFailed: {
       en: "Could not load backup metadata",
-      zh: "无法加载备份概览",
+      zh: "无法加载备份状态",
     },
-    backupContents: { en: "Backup contents", zh: "备份内容" },
+    backupContents: { en: "Backup status", zh: "备份状态" },
     metadataCheckedAt: {
-      en: "Checked {0}",
+      en: "Last Fetched {0}",
       zh: "上次检查 {0}",
     },
-    metadataNotChecked: {
-      en: "Not checked this session",
-      zh: "本会话尚未检查",
-    },
-    refreshMetadata: { en: "Refresh metadata", zh: "刷新概览" },
-    dataType: { en: "Data", zh: "数据" },
-    localRecords: { en: "Local records", zh: "本地记录" },
-    localUpdated: { en: "Local updated", zh: "本地更新时间" },
-    cloudRecords: { en: "Cloud records", zh: "云端记录" },
-    cloudUpdated: { en: "Cloud updated", zh: "云端更新时间" },
+    refreshMetadata: { en: "Refresh status", zh: "刷新状态" },
+    metadataDataColumn: { en: "Data category", zh: "数据分类" },
+    metadataRecordsColumn: { en: "Records", zh: "记录数" },
+    metadataUpdatedColumn: { en: "Data updated", zh: "更新时间" },
     noRecord: { en: "No record", zh: "无记录" },
     missingUpdateTime: {
-      en: "Missing update time from metadata",
-      zh: "概览中缺少更新时间",
+      en: "Missing metadata",
+      zh: "缺少数据",
     },
-    profileDataLabel: { en: "{0} ({1})", zh: "{0}（{1}）" },
-    defaultProfile: { en: "default account", zh: "默认账号" },
     metadata: {
       frozen: { en: "Frozen loadouts", zh: "冻结配装" },
       settings: { en: "Profile settings", zh: "账号设置" },
-      builds: { en: "Build changes", zh: "配装改动" },
-      teams: { en: "Team changes", zh: "队伍改动" },
-      teamConfigs: { en: "Team configs", zh: "队伍配置" },
-      tiers: { en: "Tier lists", zh: "排行表" },
+      builds: { en: "Custom Builds", zh: "自定义配装" },
+      teams: { en: "Custom Teams", zh: "自定义队伍" },
+      teamConfigs: { en: "Team configs", zh: "队伍参数" },
+      tiers: { en: "Tier lists", zh: "榜单" },
     },
-    uploadToCloud: { en: "Upload to cloud", zh: "上传到云端" },
-    downloadFromCloud: { en: "Download from cloud", zh: "从云端下载" },
+    uploadToCloud: { en: "Back Up", zh: "备份数据" },
+    downloadFromCloud: { en: "Restore", zh: "恢复数据" },
     restoreStatus: { en: "Restore status", zh: "恢复状态" },
     devStorageNotConfigured: {
       en: "The local Worker is missing local backup storage. Restart with npm run dev:worker so the local D1 and R2 bindings are available.",
@@ -171,59 +163,111 @@ export const i18nUiData = {
       },
     },
     manualChoice: {
-      uploadTitle: {
-        en: "Choose what to upload",
-        zh: "选择要上传的数据",
-      },
-      downloadTitle: {
-        en: "Choose what to download",
-        zh: "选择要下载的数据",
-      },
       uploadDescription: {
-        en: "Checked rows will use local data and update the cloud. Unchecked rows will be skipped.",
-        zh: "勾选的行会使用本地数据更新云端；未勾选的行会跳过。",
+        en: "Review the data groups that will change in the cloud backup.",
+        zh: "请确认会更改云端备份的数据组。",
       },
       downloadDescription: {
-        en: "Checked rows will use cloud data and update this browser. Unchecked rows will be skipped.",
-        zh: "勾选的行会使用云端数据更新当前浏览器；未勾选的行会跳过。",
+        en: "Review the data groups that will change in this browser.",
+        zh: "请确认会更改当前浏览器的数据组。",
+      },
+      thisBrowser: {
+        en: "This browser",
+        zh: "当前浏览器",
+      },
+      uploadScope: {
+        en: "Included groups update the cloud backup. Groups left out keep both sides as they are.",
+        zh: "已包含的数据组会更新云端备份；未包含的数据组两边都保持不变。",
+      },
+      downloadScope: {
+        en: "Included groups update this browser from the cloud backup. Groups left out keep both sides as they are.",
+        zh: "已包含的数据组会用云端备份更新当前浏览器；未包含的数据组两边都保持不变。",
+      },
+      automaticSectionTitle: {
+        en: "Included automatically",
+        zh: "自动包含",
+      },
+      automaticUploadSectionDescription: {
+        en: "These local changes do not overwrite existing cloud data.",
+        zh: "这些本地改动不会覆盖已有的云端数据。",
+      },
+      automaticDownloadSectionDescription: {
+        en: "These cloud changes do not overwrite existing local data.",
+        zh: "这些云端改动不会覆盖已有的本地数据。",
+      },
+      choiceSectionTitle: {
+        en: "Needs your choice",
+        zh: "需要选择",
+      },
+      uploadChoiceSectionDescription: {
+        en: "Select only the rows where this browser should overwrite or remove cloud data.",
+        zh: "只勾选需要用当前浏览器覆盖或删除云端数据的行。",
+      },
+      downloadChoiceSectionDescription: {
+        en: "Select only the rows where the cloud backup should overwrite this browser.",
+        zh: "只勾选需要用云端备份覆盖当前浏览器数据的行。",
+      },
+      rowCount: {
+        en: "{0} groups",
+        zh: "{0} 组",
+      },
+      dataGroupColumn: {
+        en: "Data group",
+        zh: "数据组",
+      },
+      resultColumn: {
+        en: "What will happen",
+        zh: "将执行的操作",
       },
       automaticUpload: {
-        en: "No conflict. {0} will be uploaded.",
-        zh: "没有冲突，将上传「{0}」。",
+        en: "Save this browser's copy to the cloud backup.",
+        zh: "将当前浏览器的数据保存到云端备份。",
       },
       automaticDownload: {
-        en: "No conflict. {0} will be downloaded.",
-        zh: "没有冲突，将下载「{0}」。",
+        en: "Restore the cloud copy to this browser.",
+        zh: "将云端备份恢复到当前浏览器。",
       },
-      useLocalData: { en: "Use local data", zh: "使用本地数据" },
-      useCloudData: { en: "Use cloud data", zh: "使用云端数据" },
       included: { en: "Included", zh: "已包含" },
-      skip: { en: "Skip row", zh: "跳过此项" },
-      confirmUpload: { en: "Upload selected", zh: "上传已选数据" },
-      confirmDownload: { en: "Download selected", zh: "下载已选数据" },
       allSkipped: {
-        en: "No rows were selected, so no data was changed.",
-        zh: "未选择任何行，因此没有更改数据。",
+        en: "No data groups were included, so both sides were left unchanged.",
+        zh: "未包含任何数据组，两边都保持不变。",
+      },
+      keepBothUnchanged: {
+        en: "Keep this browser and the cloud backup as they are.",
+        zh: "当前浏览器和云端备份都保持不变。",
+      },
+      keepBothStatus: {
+        en: "Leave both unchanged",
+        zh: "两边都不更改",
       },
       uploadOverwriteCloud: {
-        en: "Checked: replace the cloud copy of {0} with local data.",
-        zh: "勾选后：用本地的「{0}」覆盖云端。",
+        en: "Replace the cloud backup with this browser's copy.",
+        zh: "用当前浏览器的数据覆盖云端备份。",
       },
       uploadDeleteCloud: {
-        en: "Checked: delete {0} from cloud because it no longer exists locally.",
-        zh: "勾选后：从云端删除「{0}」，因为本地已经没有这份数据。",
+        en: "Remove this data from the cloud backup.",
+        zh: "从云端备份中删除这份数据。",
       },
       downloadOverwriteLocal: {
-        en: "Checked: replace the local copy of {0} with cloud data.",
-        zh: "勾选后：用云端的「{0}」覆盖本地。",
+        en: "Replace this browser's copy with the cloud backup.",
+        zh: "用云端备份覆盖当前浏览器的数据。",
       },
-      includedCategories: {
-        en: "Includes {0}. These must be handled together.",
-        zh: "包含：{0}。这几类数据必须一起处理。",
+      overwriteCloudStatus: {
+        en: "Overwrite cloud",
+        zh: "覆盖云端",
+      },
+      deleteCloudStatus: {
+        en: "Delete from cloud",
+        zh: "删除云端",
+      },
+      overwriteLocalStatus: {
+        en: "Overwrite local",
+        zh: "覆盖本地",
       },
       categoryJoiner: { en: ", ", zh: "、" },
     },
     status: {
+      checking: { en: "Checking", zh: "检查中" },
       uploading: { en: "Uploading", zh: "正在上传" },
       downloading: { en: "Downloading", zh: "正在下载" },
     },
@@ -2123,7 +2167,7 @@ export const i18nUiData = {
         en: "Import your character data using GOOD format (from Inventory Kamera or similar tools) or fetch directly from Enka.Network using your UID.",
         zh: "使用 GOOD 格式导入角色数据（来自 Inventory Kamera 等工具），或通过 UID 从 Enka.Network 获取。",
       },
-      charactersTitle: { en: "Character Overview", zh: "角色概览" },
+      charactersTitle: { en: "Character Overview", zh: "角色列表" },
       charactersContent: {
         en: "View all your imported characters with their equipped artifacts and weapons. Click any character to see detailed stats.",
         zh: "查看所有导入的角色及其装备的圣遗物和武器。点击任意角色查看详细属性。",
@@ -2975,8 +3019,6 @@ export const i18nUiData = {
     },
     addAction: { en: "Add action", zh: "添加动作" },
     addGrant: { en: "+ Energy Event", zh: "+ 能量事件" },
-
-    // Grant chip + popover
     grantLabel: { en: "Grant", zh: "赋能" },
     grantEventTitle: { en: "Custom energy", zh: "自定义能量" },
     grantDesc: {
@@ -3003,8 +3045,6 @@ export const i18nUiData = {
     enemyOrbElement: { en: "Element", zh: "元素" },
     enemyOrbClear: { en: "Clear", zh: "无色" },
     remove: { en: "Remove", zh: "删除" },
-
-    // Main chip popover
     selfEnergy: { en: "Self energy", zh: "自身充能" },
     particlesLabel: { en: "Particles", zh: "生成微粒" },
     periodicAbsorbed: { en: "Periodic absorbed", zh: "吸收周期微粒" },
@@ -3021,18 +3061,14 @@ export const i18nUiData = {
       zh: "添加持续产球",
     },
     allTarget: { en: "all", zh: "全队" },
-
     noParticleGen: {
       en: "No particle generation",
       zh: "此动作不产生微粒",
     },
-
-    // Warnings
     scholarNotImplemented: {
       en: "Note: Scholar 4pc (energy to bow/catalyst on particle gain) is not modeled; ER estimates ignore this bonus.",
       zh: "注意：学者 4 件套（触发粒子时为弓/法器队员回能）尚未实现，计算结果略偏高。",
     },
-
     addCharacter: { en: "Add character", zh: "添加角色" },
     noWeapon: { en: "No weapon", zh: "无武器" },
   },

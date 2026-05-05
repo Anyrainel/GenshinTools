@@ -30,6 +30,7 @@ interface LegacyPersistedState {
   tierLists?: Record<number, TierListInstanceMigration>;
   activeTierListId?: number;
   nextId?: number;
+  updatedAt?: number;
   // compatibility for persisted TierCustomization shape
   luckExpectation?: LuckExpectation;
 }
@@ -54,6 +55,7 @@ interface LegacyGenericTierState {
   tierLists?: Record<number, GenericTierListInstanceMigration>;
   activeTierListId?: number;
   nextId?: number;
+  updatedAt?: number;
 }
 
 export function migrateTierStore(
@@ -100,6 +102,10 @@ export function migrateTierStore(
     migratedState = { ...state, tierLists };
   }
 
+  if (version < 4) {
+    migratedState = { ...(migratedState ?? {}), updatedAt: Date.now() };
+  }
+
   return migratedState as Record<string, unknown>;
 }
 
@@ -108,7 +114,13 @@ export function migrateGenericTierStore(
   version: number
 ): Record<string, unknown> {
   if (version >= 1) {
-    return (persistedState ?? {}) as Record<string, unknown>;
+    const state = (persistedState ?? {}) as LegacyGenericTierState;
+    return {
+      ...state,
+      ...(version < 2 || !Number.isFinite(state.updatedAt)
+        ? { updatedAt: Date.now() }
+        : {}),
+    };
   }
 
   const old = (persistedState ?? {}) as LegacyGenericTierState;
@@ -125,5 +137,6 @@ export function migrateGenericTierStore(
     tierLists: { 1: instance },
     activeTierListId: 1,
     nextId: 2,
+    updatedAt: Date.now(),
   };
 }

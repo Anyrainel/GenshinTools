@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Tier } from "@/data/enums";
 import type { TierAssignment } from "@/data/types";
 import {
@@ -116,7 +116,14 @@ describe("useArtifactTierStore", () => {
         description: "Description",
       };
 
-      const result = migrateGenericTierStore(oldState, 0);
+      vi.useFakeTimers();
+      vi.setSystemTime(456_789);
+      let result: Record<string, unknown>;
+      try {
+        result = migrateGenericTierStore(oldState, 0);
+      } finally {
+        vi.useRealTimers();
+      }
 
       expect(result).toEqual({
         tierLists: {
@@ -131,10 +138,11 @@ describe("useArtifactTierStore", () => {
         },
         activeTierListId: 1,
         nextId: 2,
+        updatedAt: 456_789,
       });
     });
 
-    it("leaves current-version generic tier data untouched", () => {
+    it("fills missing data update time for v1 multi-list data", () => {
       const currentState = {
         tierLists: {
           2: {
@@ -150,7 +158,16 @@ describe("useArtifactTierStore", () => {
         nextId: 3,
       };
 
-      expect(migrateGenericTierStore(currentState, 1)).toBe(currentState);
+      vi.useFakeTimers();
+      vi.setSystemTime(567_890);
+      try {
+        expect(migrateGenericTierStore(currentState, 1)).toEqual({
+          ...currentState,
+          updatedAt: 567_890,
+        });
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

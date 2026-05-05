@@ -222,6 +222,7 @@ export const PersistedBuildsStoreSchema = z.object({
   computeOptions: ComputeOptionsSchema,
   author: z.string().catch(""),
   description: z.string().catch(""),
+  updatedAt: z.number().finite().optional().catch(undefined),
 });
 
 // ─── Team Store ───
@@ -334,6 +335,7 @@ export const PersistedTeamStoreSchema = z.object({
   configsByTeamId: z.record(z.string(), TeamSetupConfigSchema).catch({}),
   author: z.string().catch(""),
   description: z.string().catch(""),
+  updatedAt: z.number().finite().optional().catch(undefined),
 });
 
 // ─── Freeze ───
@@ -494,6 +496,7 @@ export const PersistedTierListStoreSchema = z.object({
   tierLists: z.record(z.string(), TierListInstanceSchema).catch({}),
   activeTierListId: z.number().catch(1),
   nextId: z.number().catch(2),
+  updatedAt: z.number().finite().optional().catch(undefined),
   showWeapons: z.boolean().catch(true),
   showTravelers: z.boolean().catch(false),
   showManekin: z.boolean().catch(false),
@@ -503,6 +506,7 @@ export const PersistedGenericTierListStoreSchema = z.object({
   tierLists: z.record(z.string(), GenericTierListInstanceSchema).catch({}),
   activeTierListId: z.number().catch(1),
   nextId: z.number().catch(2),
+  updatedAt: z.number().finite().optional().catch(undefined),
 });
 
 // ─── Preferences ───

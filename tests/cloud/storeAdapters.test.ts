@@ -85,6 +85,7 @@ describe("cloud store adapters", () => {
         artifactScore: { global: { flatAtk: 2, flatHp: 30, flatDef: 30 } },
         author: "build author",
         description: "build description",
+        updatedAt: 3000,
       },
       artifactScore: { global: { flatAtk: 2, flatHp: 30, flatDef: 30 } },
       teams: {
@@ -103,10 +104,12 @@ describe("cloud store adapters", () => {
         configsByTeamId: {},
         author: "team author",
         description: "team description",
+        updatedAt: 4000,
       },
       characterTierLists: {
         activeTierListId: 3,
         nextId: 4,
+        updatedAt: 5000,
         tierLists: {
           3: {
             id: 3,
@@ -138,6 +141,9 @@ describe("cloud store adapters", () => {
     expect(useTierStore.getState().tierLists[3].customTitle).toBe(
       "Cloud tiers"
     );
+    expect(useBuildsStore.getState().updatedAt).toBe(3000);
+    expect(useTeamStore.getState().updatedAt).toBe(4000);
+    expect(useTierStore.getState().updatedAt).toBe(5000);
   });
 
   it("merges partial account restores without dropping unrelated local profiles", () => {

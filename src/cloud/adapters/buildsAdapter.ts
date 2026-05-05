@@ -20,6 +20,7 @@ export type BuildsCloudSnapshot = {
   artifactScore: ArtifactScoreCloudConfig;
   author: string;
   description: string;
+  updatedAt: number;
 };
 
 export type BuildsCloudPayload = {
@@ -38,6 +39,7 @@ export type BuildsCloudPayload = {
   artifactScore?: ArtifactScoreCloudConfig;
   author?: string;
   description?: string;
+  updatedAt?: number;
 };
 
 export type BuildsRestorePatch = BuildsCloudSnapshot;
@@ -63,6 +65,7 @@ export function buildsToCloud(
         artifactScore: snapshot.artifactScore,
         author: snapshot.author,
         description: snapshot.description,
+        updatedAt: snapshot.updatedAt,
       },
     },
   ];
@@ -87,9 +90,10 @@ function isSameJson(first: unknown, second: unknown) {
 export function buildsFromCloud(
   partitions: CloudExportPartition[]
 ): BuildsRestorePatch {
-  const payload = partitions.find(
+  const partition = partitions.find(
     (partition) => partition.namespace === "builds"
-  )?.payload as BuildsCloudPayload | undefined;
+  );
+  const payload = partition?.payload as BuildsCloudPayload | undefined;
   const hiddenCharacterIds = Object.entries(
     payload?.characterMetadata ?? {}
   ).flatMap(([characterId, metadata]) =>
@@ -107,7 +111,19 @@ export function buildsFromCloud(
     artifactScore: payload?.artifactScore ?? { global: {} },
     author: payload?.author ?? "",
     description: payload?.description ?? "",
+    updatedAt:
+      getMetadataUpdatedAt(partition, "builds") ??
+      payload?.updatedAt ??
+      Date.now(),
   };
+}
+
+function getMetadataUpdatedAt(
+  partition: CloudExportPartition | undefined,
+  kind: "builds"
+): number | undefined {
+  return partition?.metadata?.records.find((record) => record.kind === kind)
+    ?.updatedAt;
 }
 
 function getCloudBuildPresetSelection(

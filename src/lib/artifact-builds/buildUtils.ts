@@ -9,7 +9,7 @@ import type {
 
 // Constants
 
-export const BUILD_DATA_VERSION = 7;
+export const BUILD_DATA_VERSION = 8;
 
 // Helpers
 

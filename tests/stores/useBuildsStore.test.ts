@@ -14,6 +14,7 @@ vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
   getCachedBuildPreset: vi.fn((id: string | null) =>
     id ? (presetCache.get(id) ?? null) : null
   ),
+  getDefaultBuildPresetId: vi.fn(() => "preset-default"),
   loadBuildPreset: vi.fn((id: string) =>
     Promise.resolve(presetCache.get(id) ?? null)
   ),
@@ -932,6 +933,18 @@ describe("useBuildsStore", () => {
       });
       expect(migrated).not.toHaveProperty("hiddenCharacters");
       expect(migrated).not.toHaveProperty("legacyHiddenCharacters");
+    });
+
+    it("fills missing data update time during migration", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(123_456);
+      try {
+        const migrated = migrateBuildsStore({ deltas: [], builds: {} }, 7);
+
+        expect(migrated.updatedAt).toBe(123_456);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

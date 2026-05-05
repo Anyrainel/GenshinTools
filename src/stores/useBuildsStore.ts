@@ -14,6 +14,7 @@ import {
 import {
   cacheBuildPreset,
   getCachedBuildPreset,
+  getDefaultBuildPresetId,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
   filterValidBuildGroups,
@@ -56,6 +57,7 @@ export type BuildsSourceState = {
   computeOptions: ComputeOptions;
   author: string;
   description: string;
+  updatedAt: number;
 };
 
 export interface BuildsState {
@@ -63,6 +65,7 @@ export interface BuildsState {
   // Metadata about the current "Net Sum" state
   author: string;
   description: string;
+  updatedAt: number;
 
   // Reference to the active preset ID (if any)
   activePresetId: string | null;
@@ -321,6 +324,16 @@ function getNextDisplayIndex(state: BuildsState, characterId: string): number {
   return state.characterToBuildIds[characterId]?.length ?? 0;
 }
 
+function touchBuildsState(state: Pick<BuildsState, "updatedAt">): void {
+  state.updatedAt = Date.now();
+}
+
+function cloudPresetSelection(
+  presetId: string | null
+): string | null | undefined {
+  return presetId === getDefaultBuildPresetId() ? undefined : presetId;
+}
+
 export const useBuildsStore = create<BuildsState>()(
   persist(
     immer((set, get) => ({
@@ -340,6 +353,7 @@ export const useBuildsStore = create<BuildsState>()(
       computeOptions: { ...DEFAULT_COMPUTE_OPTIONS },
       author: "",
       description: "",
+      updatedAt: Date.now(),
 
       // Getters
       getBuildIds: (characterId: string) => {
@@ -406,6 +420,7 @@ export const useBuildsStore = create<BuildsState>()(
             getNextDisplayIndex(state, characterId)
           );
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
 
         invalidateScores([characterId]);
@@ -436,6 +451,7 @@ export const useBuildsStore = create<BuildsState>()(
             getNextDisplayIndex(state, characterId)
           );
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
 
         invalidateScores([characterId]);
@@ -463,6 +479,7 @@ export const useBuildsStore = create<BuildsState>()(
           }
 
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
         invalidateScores([characterId]);
       },
@@ -528,6 +545,7 @@ export const useBuildsStore = create<BuildsState>()(
               ...(displayIndex != null ? { displayIndex } : {}),
             });
             refreshDerivedBuildState(state);
+            touchBuildsState(state);
             return;
           }
 
@@ -538,6 +556,7 @@ export const useBuildsStore = create<BuildsState>()(
               getNextDisplayIndex(state, targetBuild.characterId)
           );
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
         if (affectedCharId) invalidateScores([affectedCharId]);
         else invalidateScores();
@@ -572,6 +591,7 @@ export const useBuildsStore = create<BuildsState>()(
             preset
           );
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
         invalidateScores([characterId]);
       },
@@ -595,6 +615,7 @@ export const useBuildsStore = create<BuildsState>()(
             });
           }
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
         invalidateScores([characterId]);
       },
@@ -605,6 +626,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.activePresetPayload = payload;
           executeSubscribePreset(state, presetId, payload);
           refreshDerivedBuildState(state, payload);
+          touchBuildsState(state);
         });
         invalidateScores();
       },
@@ -647,6 +669,7 @@ export const useBuildsStore = create<BuildsState>()(
             preset
           );
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
         invalidateScores([characterId]);
       },
@@ -659,6 +682,7 @@ export const useBuildsStore = create<BuildsState>()(
             state.characterWeapons[characterId] = weaponIds.slice(0, 5);
           }
           refreshDerivedBuildState(state);
+          touchBuildsState(state);
         });
       },
 
@@ -668,6 +692,7 @@ export const useBuildsStore = create<BuildsState>()(
           executeImportBuilds(state, payload);
           state.activePresetPayload = null;
           refreshDerivedBuildState(state, null);
+          touchBuildsState(state);
         });
         invalidateScores();
       },
@@ -683,6 +708,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.computeOptions = source.computeOptions;
           state.author = source.author;
           state.description = source.description;
+          state.updatedAt = source.updatedAt;
           refreshDerivedBuildState(state);
         });
         invalidateScores();
@@ -705,6 +731,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.computeOptions = { ...DEFAULT_COMPUTE_OPTIONS };
           state.author = "";
           state.description = "";
+          touchBuildsState(state);
         });
         invalidateScores();
       },
@@ -715,6 +742,7 @@ export const useBuildsStore = create<BuildsState>()(
             ...state.computeOptions,
             ...options,
           };
+          touchBuildsState(state);
         });
       },
 
@@ -722,11 +750,15 @@ export const useBuildsStore = create<BuildsState>()(
         set((state) => {
           state.author = author;
           state.description = description;
+          touchBuildsState(state);
         });
       },
 
       setActivePreset: (presetId: string | null) => {
         set((state) => {
+          const previousCloudSelection = cloudPresetSelection(
+            state.activePresetId
+          );
           state.activePresetId = presetId;
           state.activePresetPayload = getCachedBuildPreset(presetId);
           state.deltas = state.deltas.map((delta) => {
@@ -737,6 +769,9 @@ export const useBuildsStore = create<BuildsState>()(
           const preset = getActivePresetPayload(state);
           state.deltas = dedupeBuildDeltasAgainstPreset(state.deltas, preset);
           refreshDerivedBuildState(state, preset);
+          if (previousCloudSelection !== cloudPresetSelection(presetId)) {
+            touchBuildsState(state);
+          }
         });
         invalidateScores();
       },
@@ -763,11 +798,19 @@ export const useBuildsStore = create<BuildsState>()(
         computeOptions: state.computeOptions,
         author: state.author,
         description: state.description,
+        updatedAt: state.updatedAt,
       }),
       merge: (persistedState, currentState) => {
         const parsed = PersistedBuildsStoreSchema.safeParse(persistedState);
-        const persisted = parsed.success ? parsed.data : {};
-        const merged = { ...currentState, ...persisted };
+        const persisted = parsed.success
+          ? (parsed.data as Partial<BuildsState>)
+          : ({} as Partial<BuildsState>);
+        const { updatedAt, ...persistedRest } = persisted;
+        const merged = {
+          ...currentState,
+          ...persistedRest,
+          ...(updatedAt != null ? { updatedAt } : {}),
+        };
         for (const delta of merged.deltas) {
           if (delta.kind === "custom") {
             migrateBuild(delta.value);

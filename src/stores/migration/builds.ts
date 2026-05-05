@@ -33,6 +33,7 @@ interface LegacyBuildsState {
   validationErrors?: Record<string, string[]>;
   activePresetId?: string | null;
   hiddenCharacters?: Record<string, boolean>;
+  updatedAt?: number;
 }
 
 /** Shape of a Build before v5 migration (string[] substats, optional kOverride). */
@@ -115,6 +116,10 @@ export function migrateBuildsStore(
       null
     );
     delete state.hiddenCharacters;
+  }
+
+  if (version < 8 || !Number.isFinite(state.updatedAt)) {
+    state.updatedAt = Date.now();
   }
 
   return state as Record<string, unknown>;

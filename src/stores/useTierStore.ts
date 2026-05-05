@@ -31,7 +31,7 @@ interface TierListState extends TierStoreBase<TierListInstance> {
 
 export const useTierStore = createTierStore<TierListState, TierListInstance>({
   storageKey: "tierlist-storage",
-  version: 3,
+  version: 4,
   migrate: migrateTierStore,
   persistedSchema: PersistedTierListStoreSchema,
   createInstanceExtra: () => ({ linkedAccountId: null }),
@@ -133,7 +133,7 @@ export const useTierStore = createTierStore<TierListState, TierListInstance>({
           })
         ) as Record<number, TierListInstance>;
 
-        return changed ? { tierLists } : state;
+        return changed ? { tierLists, updatedAt: Date.now() } : state;
       }),
 
     findTierListByAccount: (accountId) => {

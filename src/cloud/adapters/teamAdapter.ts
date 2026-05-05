@@ -8,6 +8,7 @@ export type TeamCloudSnapshot = {
   configsByTeamId: Record<string, TeamSetupConfig>;
   author: string;
   description: string;
+  updatedAt: number;
 };
 
 export type TeamCloudPayload = {
@@ -17,6 +18,7 @@ export type TeamCloudPayload = {
   configsByTeamId: Record<string, TeamSetupConfig>;
   author?: string;
   description?: string;
+  updatedAt?: number;
 };
 
 export type TeamRestorePatch = TeamCloudSnapshot;
@@ -37,6 +39,7 @@ export function teamToCloud(
         configsByTeamId: snapshot.configsByTeamId,
         author: snapshot.author,
         description: snapshot.description,
+        updatedAt: snapshot.updatedAt,
       } satisfies TeamCloudPayload,
     },
   ];
@@ -45,16 +48,32 @@ export function teamToCloud(
 export function teamFromCloud(
   partitions: CloudExportPartition[]
 ): TeamRestorePatch {
-  const current = partitions.find(
+  const partition = partitions.find(
     (partition) => partition.namespace === "teams"
-  )?.payload as TeamCloudPayload | undefined;
+  );
+  const current = partition?.payload as TeamCloudPayload | undefined;
   return {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],
     configsByTeamId: current?.configsByTeamId ?? {},
     author: current?.author ?? "",
     description: current?.description ?? "",
+    updatedAt:
+      getMetadataUpdatedAt(partition) ?? current?.updatedAt ?? Date.now(),
   };
+}
+
+function getMetadataUpdatedAt(
+  partition: CloudExportPartition | undefined
+): number | undefined {
+  const values = (partition?.metadata?.records ?? [])
+    .filter(
+      (record) => record.kind === "teams" || record.kind === "teamConfigs"
+    )
+    .flatMap((record) =>
+      typeof record.updatedAt === "number" ? [record.updatedAt] : []
+    );
+  return values.length ? Math.max(...values) : undefined;
 }
 
 function isEmptyTeamSnapshot(snapshot: TeamCloudSnapshot) {
