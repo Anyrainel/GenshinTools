@@ -35,7 +35,6 @@ describe("useBuildsStore", () => {
       expect(state.builds).toEqual({});
       expect(state.activePresetId).toBeNull();
       expect(state.presetDeletedBuildIds).toEqual([]);
-      expect(state.hiddenCharacters).toEqual({});
     });
 
     it("has default compute options", () => {
@@ -199,38 +198,6 @@ describe("useBuildsStore", () => {
     });
   });
 
-  describe("character visibility", () => {
-    it("sets character hidden state", () => {
-      const characterId = "test-character";
-
-      useBuildsStore.getState().setCharacterHidden(characterId, true);
-      expect(useBuildsStore.getState().hiddenCharacters[characterId]).toBe(
-        true
-      );
-
-      // Setting to false removes the key (storage optimization)
-      useBuildsStore.getState().setCharacterHidden(characterId, false);
-      expect(
-        useBuildsStore.getState().hiddenCharacters[characterId]
-      ).toBeFalsy();
-    });
-
-    it("toggles character hidden state", () => {
-      const characterId = "test-character";
-
-      useBuildsStore.getState().toggleCharacterHidden(characterId);
-      expect(useBuildsStore.getState().hiddenCharacters[characterId]).toBe(
-        true
-      );
-
-      // Toggling again removes the key (storage optimization)
-      useBuildsStore.getState().toggleCharacterHidden(characterId);
-      expect(
-        useBuildsStore.getState().hiddenCharacters[characterId]
-      ).toBeFalsy();
-    });
-  });
-
   describe("computeOptions", () => {
     it("updates partial compute options", () => {
       useBuildsStore
@@ -248,7 +215,6 @@ describe("useBuildsStore", () => {
     it("resets all state to initial values", () => {
       // Add some data
       useBuildsStore.getState().newBuild("char-1");
-      useBuildsStore.getState().setCharacterHidden("char-1", true);
       useBuildsStore.getState().setMetadata("Author", "Description");
 
       // Clear
@@ -258,7 +224,6 @@ describe("useBuildsStore", () => {
       const state = useBuildsStore.getState();
       expect(state.characterToBuildIds).toEqual({});
       expect(state.builds).toEqual({});
-      expect(state.hiddenCharacters).toEqual({});
       expect(state.author).toBe("");
       expect(state.description).toBe("");
     });
@@ -348,7 +313,7 @@ describe("useBuildsStore", () => {
       expect(state.builds["v4-b1"].characterId).toBe("char1");
       expect(state.getBuildIds("char1")).toContain("v4-b1");
       expect(state.characterWeapons.char1).toEqual(["staff_of_homa"]);
-      expect(state.hiddenCharacters.char1).toBe(true);
+      expect(state.builds["v4-b1"].visible).toBe(false);
     });
 
     it("resets activePresetId to null on import", () => {
@@ -558,6 +523,38 @@ describe("useBuildsStore", () => {
       useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
 
       expect(useBuildsStore.getState().getBuildIds("char1")).toContain("p-1");
+      expect(useBuildsStore.getState().deltas).toEqual([]);
+    });
+
+    it("stores preset order only after the user reorders builds", () => {
+      const twoBuildPreset: BuildPayloadV5 = {
+        ...presetPayload,
+        builds: {
+          ...presetPayload.builds,
+          "p-2": {
+            ...presetPayload.builds["p-1"],
+            id: "p-2",
+            name: "Second Preset Build",
+          },
+        },
+        characterBuilds: { char1: ["p-1", "p-2"] },
+      };
+      useBuildsStore.getState().subscribePreset("test-preset", twoBuildPreset);
+
+      expect(useBuildsStore.getState().deltas).toEqual([]);
+
+      useBuildsStore.getState().moveBuild("char1", ["p-1", "p-2"], "p-2", "up");
+
+      expect(useBuildsStore.getState().getBuildIds("char1")).toEqual([
+        "p-2",
+        "p-1",
+      ]);
+      expect(useBuildsStore.getState().deltas).toEqual(
+        expect.arrayContaining([
+          { kind: "preset", id: "p-2", displayIndex: 0 },
+          { kind: "preset", id: "p-1", displayIndex: 1 },
+        ])
+      );
     });
 
     it("preserves custom builds appended after preset builds", () => {
@@ -902,6 +899,39 @@ describe("useBuildsStore", () => {
           { kind: "preset", id: "preset-2", deleted: true },
         ])
       );
+    });
+
+    it("migrates legacy hidden characters into build visibility", () => {
+      const customBuild: Build = {
+        id: "custom-1",
+        characterId: "char1",
+        name: "Custom",
+        visible: true,
+        composition: "4pc",
+        substats: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
+        normalizer: 0,
+      };
+
+      const migrated = migrateBuildsStore(
+        {
+          activePresetId: "preset-a",
+          deltas: [{ kind: "custom", id: "custom-1", value: customBuild }],
+          builds: {},
+          hiddenCharacters: { char1: true },
+        },
+        6
+      );
+
+      expect(migrated.deltas).toContainEqual({
+        kind: "custom",
+        id: "custom-1",
+        value: expect.objectContaining({ visible: false }),
+      });
+      expect(migrated).not.toHaveProperty("hiddenCharacters");
+      expect(migrated).not.toHaveProperty("legacyHiddenCharacters");
     });
   });
 });

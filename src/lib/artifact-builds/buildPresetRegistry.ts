@@ -98,3 +98,7 @@ function normalizeToV5(payload: BuildPayload | BuildPayloadV5): BuildPayloadV5 {
 export function getAvailablePresets() {
   return Object.keys(presetModules);
 }
+
+export function getDefaultBuildPresetId(): string | null {
+  return getAvailablePresets()[0] ?? null;
+}

@@ -5,7 +5,6 @@ import {
   dedupeBuildDeltasAgainstPreset,
   setBuildDeltaOrderForCharacter,
   upsertCustomBuildDelta,
-  upsertPresetBuildDelta,
 } from "@/lib/artifact-builds/buildDeltas";
 import type { BuildsState } from "@/stores/useBuildsStore";
 import { migrateBuild } from "./buildMigration";
@@ -21,12 +20,6 @@ export function executeSubscribePreset(
   if (payload.description) state.description = payload.description;
 
   let nextDeltas: BuildDelta[] = [];
-
-  for (const presetBuildIds of Object.values(payload.characterBuilds)) {
-    presetBuildIds.forEach((id, displayIndex) => {
-      nextDeltas = upsertPresetBuildDelta(nextDeltas, id, { displayIndex });
-    });
-  }
 
   for (const [charId, presetBuildIds] of Object.entries(
     payload.characterBuilds
@@ -122,12 +115,13 @@ export function executeImportBuilds(
     // Legacy V4 Import
     const v4 = payload as BuildPayload;
 
-    for (const { characterId, builds } of v4.data) {
+    for (const { characterId, builds, hidden } of v4.data) {
       const buildIds: string[] = [];
       for (const build of builds) {
         const buildWithCharacterId: Build = {
           ...build,
           characterId,
+          ...(hidden ? { visible: false } : {}),
         };
         migrateBuild(buildWithCharacterId);
 
@@ -155,15 +149,6 @@ export function executeImportBuilds(
         state.characterWeapons[characterId] = weapons.slice(0, 5);
       } else {
         delete state.characterWeapons[characterId];
-      }
-    }
-
-    // Apply character hidden flags (Legacy only)
-    for (const { characterId, hidden } of v4.data) {
-      if (hidden) {
-        state.hiddenCharacters[characterId] = true;
-      } else {
-        delete state.hiddenCharacters[characterId];
       }
     }
 

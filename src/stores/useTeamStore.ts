@@ -9,6 +9,7 @@ import {
   deleteTeamCompDelta,
   deriveTeamCompsFromDeltas,
   getTeamDeltaDisplayIndex,
+  getTeamEffectiveDisplayIndex,
   isPresetTeamComp,
   normalizeTeamSetupConfig,
   setTeamDeltaGlobalOrder,
@@ -195,8 +196,9 @@ export const useTeamStore = create<TeamState>()(
         set((state) => {
           const comp = state.teamCompById[id];
           if (!comp) return;
+          const preset = getCachedTeamPreset(state.activePresetId);
           const displayIndex =
-            getTeamDeltaDisplayIndex(state.compDeltas, id) ??
+            getTeamEffectiveDisplayIndex(state.compDeltas, preset, id) ??
             state.teamComps.findIndex((team) => team.id === id);
           const nextComp =
             typeof updater === "function"
@@ -230,7 +232,7 @@ export const useTeamStore = create<TeamState>()(
           const preset = getCachedTeamPreset(state.activePresetId);
           const displayIndex =
             getTeamDeltaDisplayIndex(state.compDeltas, id) ??
-            state.teamComps.findIndex((t) => t.id === id);
+            state.teamComps.findIndex((team) => team.id === id);
           if (isPresetTeamComp(state.compDeltas, preset, id)) {
             state.compDeltas = deleteTeamCompDelta(
               state.compDeltas,

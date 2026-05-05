@@ -63,6 +63,17 @@ function getPresetCharacterIdByBuildId(
   return byBuildId;
 }
 
+function getPresetBuildIndex(
+  preset: BuildPayloadV5 | null,
+  buildId: string
+): number | undefined {
+  for (const ids of Object.values(preset?.characterBuilds ?? {})) {
+    const index = ids.indexOf(buildId);
+    if (index !== -1) return index;
+  }
+  return undefined;
+}
+
 function indexBuildDeltas(
   deltas: BuildDelta[],
   preset: BuildPayloadV5 | null
@@ -138,6 +149,58 @@ export function getBuildDeltaDisplayIndex(
   );
 }
 
+export function getBuildEffectiveDisplayIndex(
+  deltas: BuildDelta[],
+  preset: BuildPayloadV5 | null,
+  buildId: string
+): number | undefined {
+  return (
+    getBuildDeltaDisplayIndex(deltas, buildId) ??
+    getPresetBuildIndex(preset, buildId)
+  );
+}
+
+export function disableBuildsForCharacters(
+  deltas: BuildDelta[],
+  characterIds: Iterable<string>,
+  preset: BuildPayloadV5 | null
+): BuildDelta[] {
+  const hiddenCharacterIds = new Set(characterIds);
+  if (hiddenCharacterIds.size === 0) return deltas;
+
+  let next = deltas;
+  for (const delta of deltas) {
+    if (!isCustomDelta(delta)) continue;
+    if (!hiddenCharacterIds.has(delta.value.characterId)) continue;
+    if (delta.value.visible === false) continue;
+    next = upsertCustomBuildDelta(
+      next,
+      { ...delta.value, visible: false },
+      delta.displayIndex
+    );
+  }
+
+  const deletedPresetIds = new Set(
+    next
+      .filter((delta) => isPresetDelta(delta) && delta.deleted)
+      .map((delta) => delta.id)
+  );
+  for (const characterId of hiddenCharacterIds) {
+    for (const presetBuildId of preset?.characterBuilds[characterId] ?? []) {
+      if (deletedPresetIds.has(presetBuildId)) continue;
+      const presetBuild = preset?.builds[presetBuildId];
+      if (!presetBuild) continue;
+      next = upsertCustomBuildDelta(
+        next,
+        { ...presetBuild, visible: false },
+        getBuildEffectiveDisplayIndex(next, preset, presetBuildId)
+      );
+    }
+  }
+
+  return next;
+}
+
 export function upsertCustomBuildDelta(
   deltas: BuildDelta[],
   build: Build,
@@ -204,7 +267,10 @@ export function dedupeBuildDeltasAgainstPreset(
       .map((delta) => delta.id)
   );
   const matchedPresetIds = new Set<string>();
-  let next: BuildDelta[] = deltas.filter(isPresetDelta);
+  let next: BuildDelta[] = normalizePresetBuildDeltasAgainstPreset(
+    deltas.filter(isPresetDelta),
+    preset
+  );
 
   for (const delta of deltas) {
     if (!isCustomDelta(delta)) continue;
@@ -224,11 +290,12 @@ export function dedupeBuildDeltasAgainstPreset(
 
     if (matchingPresetId) {
       matchedPresetIds.add(matchingPresetId);
-      next = upsertPresetBuildDelta(next, matchingPresetId, {
-        ...(delta.displayIndex != null
-          ? { displayIndex: delta.displayIndex }
-          : {}),
-      });
+      const baseIndex = getPresetBuildIndex(preset, matchingPresetId);
+      if (delta.displayIndex != null && delta.displayIndex !== baseIndex) {
+        next = upsertPresetBuildDelta(next, matchingPresetId, {
+          displayIndex: delta.displayIndex,
+        });
+      }
       continue;
     }
 
@@ -236,6 +303,20 @@ export function dedupeBuildDeltasAgainstPreset(
   }
 
   return next;
+}
+
+function normalizePresetBuildDeltasAgainstPreset(
+  deltas: PresetBuildDelta[],
+  preset: BuildPayloadV5
+): PresetBuildDelta[] {
+  return deltas.flatMap((delta) => {
+    if (delta.deleted) return [delta];
+    const baseIndex = getPresetBuildIndex(preset, delta.id);
+    if (delta.displayIndex == null || delta.displayIndex === baseIndex) {
+      return [];
+    }
+    return [delta];
+  });
 }
 
 export function getCustomBuildMapFromDeltas(
@@ -312,11 +393,20 @@ function resolveBuildIdsForCharacterFromIndex(
     displayIndex: number;
     fallbackIndex: number;
   }[] = [];
-  let hasDeltaForCharacter = false;
   let customIndex = 0;
 
+  for (const id of presetIds) {
+    if (index.deletedPresetIds.has(id)) continue;
+    const delta = index.presetById.get(id);
+    const presetIndex = presetIndexById.get(id) ?? CUSTOM_SORT_OFFSET;
+    entries.push({
+      id,
+      displayIndex: delta?.displayIndex ?? presetIndex,
+      fallbackIndex: presetIndex,
+    });
+  }
+
   for (const delta of index.customByCharacterId.get(characterId) ?? []) {
-    hasDeltaForCharacter = true;
     const presetIndex = presetIndexById.get(delta.id);
     entries.push({
       id: delta.id,
@@ -328,18 +418,14 @@ function resolveBuildIdsForCharacterFromIndex(
   }
 
   for (const delta of index.presetByCharacterId.get(characterId) ?? []) {
-    hasDeltaForCharacter = true;
     if (delta.deleted) continue;
+    if (presetIndexById.has(delta.id)) continue;
     const presetIndex = presetIndexById.get(delta.id);
     entries.push({
       id: delta.id,
       displayIndex: delta.displayIndex ?? presetIndex ?? CUSTOM_SORT_OFFSET,
       fallbackIndex: presetIndex ?? CUSTOM_SORT_OFFSET,
     });
-  }
-
-  if (!hasDeltaForCharacter) {
-    return presetIds.filter((id) => !index.deletedPresetIds.has(id));
   }
 
   entries.sort((a, b) => {
@@ -355,11 +441,6 @@ function resolveBuildIdsForCharacterFromIndex(
     if (seen.has(entry.id)) continue;
     orderedIds.push(entry.id);
     seen.add(entry.id);
-  }
-
-  for (const id of presetIds) {
-    if (seen.has(id) || index.deletedPresetIds.has(id)) continue;
-    orderedIds.push(id);
   }
 
   return orderedIds;
@@ -426,6 +507,17 @@ export function setBuildDeltaOrderForCharacter(
     nextByKey.set(`${delta.kind}:${delta.id}`, delta);
   }
   const presetIds = new Set(preset?.characterBuilds[characterId] ?? []);
+  const presetIndexById = new Map(
+    (preset?.characterBuilds[characterId] ?? []).map(
+      (id, index) => [id, index] as const
+    )
+  );
+  for (const id of presetIds) {
+    const delta = nextByKey.get(`preset:${id}`);
+    if (delta && isPresetDelta(delta) && !delta.deleted) {
+      nextByKey.delete(`preset:${id}`);
+    }
+  }
   orderedIds.forEach((id, displayIndex) => {
     const customDelta = index.customById.get(id);
     if (customDelta) {
@@ -438,11 +530,13 @@ export function setBuildDeltaOrderForCharacter(
 
     const presetBuild = preset?.builds[id];
     if (presetBuild?.characterId === characterId || presetIds.has(id)) {
-      nextByKey.set(`preset:${id}`, {
-        kind: "preset",
-        id,
-        displayIndex,
-      });
+      if (presetIndexById.get(id) !== displayIndex) {
+        nextByKey.set(`preset:${id}`, {
+          kind: "preset",
+          id,
+          displayIndex,
+        });
+      }
     }
   });
   return [...nextByKey.values()];

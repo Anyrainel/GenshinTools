@@ -1,4 +1,3 @@
-import { act } from "react";
 import { CharacterBuildCard } from "@/components/artifact-builds/CharacterBuildCard";
 import type { CharacterResource } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -49,32 +48,5 @@ describe("CharacterBuildCard", () => {
     // Usually one button, or button + dialog trigger?
     // The button has text "Restore".
     expect(restoreButtons.length).toBeGreaterThan(0);
-  });
-
-  it("does not show restore button if only hidden (even if unhidden for test)", async () => {
-    // Scenario: Character is hidden, then unhidden. Should not trigger restore button if no builds.
-
-    // Hide character
-    useBuildsStore.getState().toggleCharacterHidden("hu_tao");
-
-    // Render
-    const { rerender } = render(
-      <CharacterBuildCard character={mockCharacter} />
-    );
-
-    // It is hidden, so NO buttons visible (CardContent is hidden)
-    expect(screen.queryByText(/Restore/i)).not.toBeInTheDocument();
-
-    // Now unhide via store (simulate user clicking eye icon, effectively).
-    // Wrap in act() because the store update triggers a React re-render.
-    act(() => {
-      useBuildsStore.getState().toggleCharacterHidden("hu_tao");
-    });
-
-    // Re-render to see update
-    rerender(<CharacterBuildCard character={mockCharacter} />);
-
-    // Now visible. Should NOT have restore button because NO builds.
-    expect(screen.queryByText(/Restore/i)).not.toBeInTheDocument();
   });
 });

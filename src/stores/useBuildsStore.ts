@@ -5,6 +5,7 @@ import {
   deleteBuildDelta,
   deriveBuildRuntimeFromDeltas,
   getBuildDeltaDisplayIndex,
+  getBuildEffectiveDisplayIndex,
   removeCustomBuildDelta,
   setBuildDeltaOrderForCharacter,
   upsertCustomBuildDelta,
@@ -51,7 +52,6 @@ import { migrateBuildsStore } from "./migration/builds";
 export type BuildsSourceState = {
   activePresetId: string | null;
   deltas: BuildDelta[];
-  hiddenCharacters: Record<string, boolean>;
   characterWeapons: Record<string, string[]>;
   computeOptions: ComputeOptions;
   author: string;
@@ -90,9 +90,6 @@ export interface BuildsState {
   // Global UI State
   hasPromptedForPreset: boolean;
 
-  // UI State (Local only)
-  hiddenCharacters: Record<string, boolean>;
-
   // Validation cache
   validationErrors: Record<string, string[]>;
 
@@ -124,10 +121,6 @@ export interface BuildsState {
     buildId: string,
     direction: "up" | "down"
   ) => void;
-
-  // Character visibility
-  setCharacterHidden: (characterId: string, hidden: boolean) => void;
-  toggleCharacterHidden: (characterId: string) => void;
 
   // Character weapons
   setCharacterWeapons: (characterId: string, weaponIds: string[]) => void;
@@ -261,7 +254,6 @@ function deriveResolvedBuildViews(
     const stableBuilds = reuseBuildArrayIfUnchanged(builds, previousBuilds);
     resolvedBuildsByCharacterId[characterId] = stableBuilds;
 
-    if (state.hiddenCharacters[characterId]) continue;
     resolvedBuildGroups.push({
       characterId,
       builds: stableBuilds,
@@ -329,27 +321,6 @@ function getNextDisplayIndex(state: BuildsState, characterId: string): number {
   return state.characterToBuildIds[characterId]?.length ?? 0;
 }
 
-function ensurePresetOrderDeltasForCharacter(
-  state: BuildsState,
-  characterId: string
-): void {
-  const preset = getActivePresetPayload(state);
-  const presetBuildIds = preset?.characterBuilds?.[characterId];
-  if (!presetBuildIds?.length) return;
-
-  const hasCharacterDelta = state.deltas.some((delta) => {
-    if (delta.kind === "custom") {
-      return delta.value.characterId === characterId;
-    }
-    return presetBuildIds.includes(delta.id);
-  });
-  if (hasCharacterDelta) return;
-
-  presetBuildIds.forEach((id, displayIndex) => {
-    state.deltas = upsertPresetBuildDelta(state.deltas, id, { displayIndex });
-  });
-}
-
 export const useBuildsStore = create<BuildsState>()(
   persist(
     immer((set, get) => ({
@@ -364,7 +335,6 @@ export const useBuildsStore = create<BuildsState>()(
       resolvedBuildGroups: [],
       validResolvedBuildGroups: [],
       hasPromptedForPreset: false,
-      hiddenCharacters: {},
       validationErrors: {},
       characterWeapons: {},
       computeOptions: { ...DEFAULT_COMPUTE_OPTIONS },
@@ -430,7 +400,6 @@ export const useBuildsStore = create<BuildsState>()(
         };
 
         set((state) => {
-          ensurePresetOrderDeltasForCharacter(state, characterId);
           state.deltas = upsertCustomBuildDelta(
             state.deltas,
             newBuild,
@@ -461,7 +430,6 @@ export const useBuildsStore = create<BuildsState>()(
         };
 
         set((state) => {
-          ensurePresetOrderDeltasForCharacter(state, characterId);
           state.deltas = upsertCustomBuildDelta(
             state.deltas,
             copiedBuild,
@@ -486,12 +454,6 @@ export const useBuildsStore = create<BuildsState>()(
             return !presetBuildIds?.includes(delta.id);
           });
 
-          presetBuildIds?.forEach((id, displayIndex) => {
-            state.deltas = upsertPresetBuildDelta(state.deltas, id, {
-              displayIndex,
-            });
-          });
-
           // Restore weapons from preset (or clear if no preset)
           const presetWeapons = preset?.characterWeapons?.[characterId];
           if (presetWeapons?.length) {
@@ -500,7 +462,6 @@ export const useBuildsStore = create<BuildsState>()(
             delete state.characterWeapons[characterId];
           }
 
-          delete state.hiddenCharacters[characterId];
           refreshDerivedBuildState(state);
         });
         invalidateScores([characterId]);
@@ -551,7 +512,11 @@ export const useBuildsStore = create<BuildsState>()(
           // (e.g. clicking the name input without typing, or editing back to original).
           const preset = getActivePresetPayload(state);
           const presetBuild = preset?.builds[buildId];
-          const displayIndex = getBuildDeltaDisplayIndex(state.deltas, buildId);
+          const displayIndex = getBuildEffectiveDisplayIndex(
+            state.deltas,
+            preset,
+            buildId
+          );
           if (presetBuild && areBuildsEqual(targetBuild, presetBuild)) {
             if (isNew) {
               // No actual change from preset — skip copy-on-write entirely
@@ -566,12 +531,10 @@ export const useBuildsStore = create<BuildsState>()(
             return;
           }
 
-          if (isNew)
-            ensurePresetOrderDeltasForCharacter(state, targetBuild.characterId);
           state.deltas = upsertCustomBuildDelta(
             state.deltas,
             targetBuild,
-            getBuildDeltaDisplayIndex(state.deltas, buildId) ??
+            getBuildEffectiveDisplayIndex(state.deltas, preset, buildId) ??
               getNextDisplayIndex(state, targetBuild.characterId)
           );
           refreshDerivedBuildState(state);
@@ -634,30 +597,6 @@ export const useBuildsStore = create<BuildsState>()(
           refreshDerivedBuildState(state);
         });
         invalidateScores([characterId]);
-      },
-
-      // Character visibility
-      setCharacterHidden: (characterId: string, hidden: boolean) => {
-        set((state) => {
-          if (hidden) {
-            state.hiddenCharacters[characterId] = true;
-          } else {
-            delete state.hiddenCharacters[characterId];
-          }
-          refreshDerivedBuildState(state);
-        });
-      },
-
-      toggleCharacterHidden: (characterId: string) => {
-        set((state) => {
-          const current = !!state.hiddenCharacters[characterId];
-          if (current) {
-            delete state.hiddenCharacters[characterId];
-          } else {
-            state.hiddenCharacters[characterId] = true;
-          }
-          refreshDerivedBuildState(state);
-        });
       },
 
       subscribePreset: (presetId: string, payload: BuildPayloadV5) => {
@@ -740,7 +679,6 @@ export const useBuildsStore = create<BuildsState>()(
             source.activePresetId
           );
           state.deltas = source.deltas;
-          state.hiddenCharacters = source.hiddenCharacters;
           state.characterWeapons = source.characterWeapons;
           state.computeOptions = source.computeOptions;
           state.author = source.author;
@@ -762,7 +700,6 @@ export const useBuildsStore = create<BuildsState>()(
           state.resolvedBuildsByCharacterId = {};
           state.resolvedBuildGroups = [];
           state.validResolvedBuildGroups = [];
-          state.hiddenCharacters = {};
           state.validationErrors = {};
           state.characterWeapons = {};
           state.computeOptions = { ...DEFAULT_COMPUTE_OPTIONS };
@@ -822,7 +759,6 @@ export const useBuildsStore = create<BuildsState>()(
         activePresetId: state.activePresetId,
         deltas: state.deltas,
         hasPromptedForPreset: state.hasPromptedForPreset,
-        hiddenCharacters: state.hiddenCharacters,
         characterWeapons: state.characterWeapons,
         computeOptions: state.computeOptions,
         author: state.author,
@@ -839,6 +775,10 @@ export const useBuildsStore = create<BuildsState>()(
         }
         merged.activePresetPayload = getCachedBuildPreset(
           merged.activePresetId
+        );
+        merged.deltas = dedupeBuildDeltasAgainstPreset(
+          merged.deltas,
+          merged.activePresetPayload
         );
         refreshDerivedBuildState(merged, merged.activePresetPayload);
         return merged;

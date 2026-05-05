@@ -315,7 +315,6 @@ describe("PersistedBuildsStoreSchema", () => {
       deltas: [],
       activePresetId: null,
       hasPromptedForPreset: false,
-      hiddenCharacters: {},
       characterWeapons: {},
       computeOptions: DEFAULT_COMPUTE_OPTIONS,
       author: "",
@@ -327,7 +326,6 @@ describe("PersistedBuildsStoreSchema", () => {
     const result = PersistedBuildsStoreSchema.parse({
       activePresetId: "gg-v1",
       hasPromptedForPreset: true,
-      hiddenCharacters: { diluc: true },
       characterWeapons: { diluc: ["wolfs_gravestone"] },
       computeOptions: { normalizeFlatStats: false },
       author: "me",
@@ -335,7 +333,6 @@ describe("PersistedBuildsStoreSchema", () => {
     });
     expect(result.activePresetId).toBe("gg-v1");
     expect(result.hasPromptedForPreset).toBe(true);
-    expect(result.hiddenCharacters).toEqual({ diluc: true });
     expect(result.characterWeapons).toEqual({ diluc: ["wolfs_gravestone"] });
     expect(result.computeOptions).toEqual({ normalizeFlatStats: false });
     expect(result.author).toBe("me");
@@ -771,7 +768,6 @@ describe("PersistedCloudSyncMetadataStoreSchema", () => {
     expect(PersistedCloudSyncMetadataStoreSchema.parse({})).toEqual({
       deviceId: "",
       partitionsById: {},
-      conflictsById: {},
     });
 
     const result = PersistedCloudSyncMetadataStoreSchema.parse({
@@ -808,11 +804,7 @@ describe("PersistedCloudSyncMetadataStoreSchema", () => {
       updatedAt: 0,
     });
     expect(result.partitionsById["builds/default"].dirty).toBeUndefined();
-    expect(result.conflictsById["builds/default"]).toMatchObject({
-      id: "builds/default",
-      reason: "both-changed",
-      detectedAt: 0,
-    });
+    expect("conflictsById" in result).toBe(false);
   });
 });
 

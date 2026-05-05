@@ -3,6 +3,7 @@ import type { Build, WeightedSubStat } from "@/data/types";
 import {
   type BuildDelta,
   createBuildDeltasFromLegacyState,
+  disableBuildsForCharacters,
 } from "@/lib/artifact-builds/buildDeltas";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
@@ -30,6 +31,8 @@ interface LegacyBuildsState {
   characterToBuildIds?: Record<string, string[]>;
   presetDeletedBuildIds?: string[];
   validationErrors?: Record<string, string[]>;
+  activePresetId?: string | null;
+  hiddenCharacters?: Record<string, boolean>;
 }
 
 /** Shape of a Build before v5 migration (string[] substats, optional kOverride). */
@@ -100,6 +103,18 @@ export function migrateBuildsStore(
     if (delta.kind === "custom") {
       migrateBuild(delta.value);
     }
+  }
+
+  if (version < 7 && state.hiddenCharacters) {
+    const hiddenCharacterIds = Object.entries(state.hiddenCharacters).flatMap(
+      ([characterId, hidden]) => (hidden ? [characterId] : [])
+    );
+    state.deltas = disableBuildsForCharacters(
+      state.deltas,
+      hiddenCharacterIds,
+      null
+    );
+    delete state.hiddenCharacters;
   }
 
   return state as Record<string, unknown>;

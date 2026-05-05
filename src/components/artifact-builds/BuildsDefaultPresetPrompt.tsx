@@ -13,7 +13,7 @@ import {
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  getAvailablePresets,
+  getDefaultBuildPresetId,
   loadBuildPreset,
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -54,14 +54,12 @@ export function BuildsDefaultPresetPrompt() {
 
     (async () => {
       try {
-        const presets = getAvailablePresets();
-        if (presets.length > 0) {
-          const id = presets[0]!;
-          const payload = await loadBuildPreset(id);
-          subscribePreset(id, payload);
-          toast.success(t.ui("app.presetLoaded"));
-          setConfirmOpen(true);
-        }
+        const id = getDefaultBuildPresetId();
+        if (!id) return;
+        const payload = await loadBuildPreset(id);
+        subscribePreset(id, payload);
+        toast.success(t.ui("app.presetLoaded"));
+        setConfirmOpen(true);
       } catch (e) {
         console.error("Failed to load default preset:", e);
         toast.error("Failed to load default preset");

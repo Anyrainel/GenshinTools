@@ -218,7 +218,6 @@ export const PersistedBuildsStoreSchema = z.object({
   deltas: BuildDeltasSchema,
   activePresetId: z.string().nullable().catch(null),
   hasPromptedForPreset: z.boolean().catch(false),
-  hiddenCharacters: z.record(z.string(), z.boolean()).catch({}),
   characterWeapons: z.record(z.string(), z.array(z.string())).catch({}),
   computeOptions: ComputeOptionsSchema,
   author: z.string().catch(""),
@@ -539,27 +538,9 @@ const CloudSyncPartitionMetaSchema = z
   })
   .loose();
 
-const CloudSyncConflictMetaSchema = z
-  .object({
-    id: z.string(),
-    namespace: z.string(),
-    partitionKey: z.string(),
-    groupKey: z.string(),
-    conflictPolicy: z.string(),
-    reason: z.string(),
-    detectedAt: z.number().catch(0),
-    localHash: z.string().optional(),
-    remoteHash: z.string().optional(),
-    localUpdatedAt: z.number().optional(),
-    remoteUpdatedAt: z.number().optional(),
-    remoteRev: z.string().optional(),
-  })
-  .loose();
-
 export const PersistedCloudSyncMetadataStoreSchema = z.object({
   deviceId: z.string().catch(""),
   partitionsById: z.record(z.string(), CloudSyncPartitionMetaSchema).catch({}),
-  conflictsById: z.record(z.string(), CloudSyncConflictMetaSchema).catch({}),
 });
 
 // ─── Greeting ───

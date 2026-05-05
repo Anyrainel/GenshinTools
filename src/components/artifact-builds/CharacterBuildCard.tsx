@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Plus, RotateCcw } from "lucide-react";
+import { Plus, RotateCcw } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
@@ -157,10 +157,6 @@ function CharacterBuildCardComponent({
   layout = DEFAULT_BUILD_LAYOUT,
 }: CharacterBuildCardProps) {
   const { t } = useLanguage();
-  const isHidden = useBuildsStore(
-    (state) => !!state.hiddenCharacters[character.id]
-  );
-  const toggleHidden = useBuildsStore((state) => state.toggleCharacterHidden);
 
   const characterWeapons = useBuildsStore((state) =>
     state.getCharacterWeapons(character.id)
@@ -179,10 +175,6 @@ function CharacterBuildCardComponent({
   const restoreCharacter = useBuildsStore((state) => state.restoreCharacter);
 
   const [confirmRestore, setConfirmRestore] = useState(false);
-
-  const handleToggle = useCallback(() => {
-    toggleHidden(character.id);
-  }, [toggleHidden, character.id]);
 
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
@@ -294,143 +286,105 @@ function CharacterBuildCardComponent({
           </Tooltip>
 
           <div className="flex-1 flex items-center justify-between gap-4">
-            <CharacterInfo
-              character={character}
-              nameClassName={
-                isHidden ? "text-muted-foreground" : "text-foreground"
-              }
-            >
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={handleToggle}
-                className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                aria-label={
-                  isHidden
-                    ? t.ui("characterCard.showBuilds")
-                    : t.ui("characterCard.hideBuilds")
-                }
-                title={
-                  isHidden
-                    ? t.ui("characterCard.showBuilds")
-                    : t.ui("characterCard.hideBuilds")
-                }
-              >
-                {isHidden ? (
-                  <EyeOff className="h-7 w-7" />
-                ) : (
-                  <Eye className="h-7 w-7" />
-                )}
-              </Button>
-              {isHidden && (
-                <span className="text-muted-foreground text-xs md:text-sm xl:text-base italic select-none">
-                  {t.ui("characterCard.hiddenNotice")}
-                </span>
-              )}
-            </CharacterInfo>
+            <CharacterInfo character={character} />
 
-            {!isHidden && (
-              <div className="flex items-center gap-2">
-                {visibleWeapons.map((weaponId, index) => (
-                  <WeaponSlot
-                    key={index}
-                    index={index}
-                    weaponId={weaponId}
-                    onUpdate={handleWeaponUpdate}
-                    onClear={handleWeaponClear}
-                    filter={weaponFilter}
-                    size={iconSize}
-                  />
-                ))}
-                {showFullPlaceholder && (
-                  <WeaponSlot
-                    index={characterWeapons.length}
-                    weaponId={null}
-                    onUpdate={handleWeaponUpdate}
-                    onClear={handleWeaponClear}
-                    filter={weaponFilter}
-                    isAddSlot
-                    size={iconSize}
-                  />
-                )}
-                {showCompactAdd && (
-                  <CompactAddWeapon
-                    index={characterWeapons.length}
-                    onUpdate={handleWeaponUpdate}
-                    filter={weaponFilter}
-                  />
-                )}
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {visibleWeapons.map((weaponId, index) => (
+                <WeaponSlot
+                  key={index}
+                  index={index}
+                  weaponId={weaponId}
+                  onUpdate={handleWeaponUpdate}
+                  onClear={handleWeaponClear}
+                  filter={weaponFilter}
+                  size={iconSize}
+                />
+              ))}
+              {showFullPlaceholder && (
+                <WeaponSlot
+                  index={characterWeapons.length}
+                  weaponId={null}
+                  onUpdate={handleWeaponUpdate}
+                  onClear={handleWeaponClear}
+                  filter={weaponFilter}
+                  isAddSlot
+                  size={iconSize}
+                />
+              )}
+              {showCompactAdd && (
+                <CompactAddWeapon
+                  index={characterWeapons.length}
+                  onUpdate={handleWeaponUpdate}
+                  filter={weaponFilter}
+                />
+              )}
+            </div>
           </div>
         </div>
       </CardHeader>
 
-      {!isHidden && (
-        <CardContent className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3")}>
-          <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
-            {builds.length === 0 ? (
-              <div className="flex justify-center py-2 text-muted-foreground col-span-full">
-                <Button
-                  onClick={handleAddBuild}
-                  variant="outline"
-                  className={cn(
-                    "gap-2",
-                    isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
-                  )}
-                >
-                  <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
-                  {t.ui("characterCard.addFirstBuild")}
-                </Button>
-              </div>
-            ) : (
-              builds.map((build, index) => (
-                <BuildCard
-                  key={build.id}
-                  build={build}
-                  buildId={build.id}
-                  onDuplicate={handleDuplicateBuild}
-                  onMove={handleMoveBuild}
-                  canMoveUp={index > 0}
-                  canMoveDown={index < builds.length - 1}
-                  element={charMeta.element ?? "Pyro"}
-                />
-              ))
-            )}
-          </div>
-          {builds.length > 0 && (
-            <div className="mt-2 flex gap-2">
-              {hasCustomizations && (
-                <Button
-                  onClick={() => setConfirmRestore(true)}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "w-auto max-w-[50%] gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10",
-                    isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
-                  )}
-                >
-                  <RotateCcw className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
-                  {t.ui("common.restore") || "Restore"}
-                </Button>
-              )}
+      <CardContent className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3")}>
+        <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
+          {builds.length === 0 ? (
+            <div className="flex justify-center py-2 text-muted-foreground col-span-full">
               <Button
                 onClick={handleAddBuild}
                 variant="outline"
-                size="sm"
                 className={cn(
-                  "gap-2 flex-1",
+                  "gap-2",
                   isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
                 )}
               >
                 <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
-                {t.ui("common.addBuild")}
+                {t.ui("characterCard.addFirstBuild")}
               </Button>
             </div>
+          ) : (
+            builds.map((build, index) => (
+              <BuildCard
+                key={build.id}
+                build={build}
+                buildId={build.id}
+                onDuplicate={handleDuplicateBuild}
+                onMove={handleMoveBuild}
+                canMoveUp={index > 0}
+                canMoveDown={index < builds.length - 1}
+                element={charMeta.element ?? "Pyro"}
+              />
+            ))
           )}
-        </CardContent>
-      )}
+        </div>
+        {builds.length > 0 && (
+          <div className="mt-2 flex gap-2">
+            {hasCustomizations && (
+              <Button
+                onClick={() => setConfirmRestore(true)}
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "w-auto max-w-[50%] gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                  isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+                )}
+              >
+                <RotateCcw className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
+                {t.ui("common.restore") || "Restore"}
+              </Button>
+            )}
+            <Button
+              onClick={handleAddBuild}
+              variant="outline"
+              size="sm"
+              className={cn(
+                "gap-2 flex-1",
+                isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+              )}
+            >
+              <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
+              {t.ui("common.addBuild")}
+            </Button>
+          </div>
+        )}
+      </CardContent>
 
       <AlertDialog open={confirmRestore} onOpenChange={setConfirmRestore}>
         <AlertDialogContent>

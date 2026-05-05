@@ -189,15 +189,48 @@ describe("useTeamStore", () => {
 
     const state = useTeamStore.getState();
     expect(state.teamComps.map((team) => team.id)).toEqual(["preset-team"]);
-    expect(state.compDeltas).toContainEqual({
-      kind: "preset",
-      id: "preset-team",
-      displayIndex: 0,
-    });
+    expect(state.compDeltas).toEqual([]);
     expect(state.configsByTeamId["preset-team"].charConfigs).toEqual({
       hu_tao: { minEr: 1.5 },
     });
     expect(state.configsByTeamId[duplicateId]).toBeUndefined();
+  });
+
+  it("stores preset comp order only after the user reorders teams", () => {
+    const presetPayload: TeamCompData = {
+      teams: [
+        {
+          id: "preset-a",
+          name: "A",
+          characters: ["hu_tao", null, null, null],
+          weapons: ["staff_of_homa", null, null, null],
+          artifacts: [null, null, null, null],
+        },
+        {
+          id: "preset-b",
+          name: "B",
+          characters: ["xingqiu", null, null, null],
+          weapons: ["sacrificial_sword", null, null, null],
+          artifacts: [null, null, null, null],
+        },
+      ],
+    };
+    useTeamStore.getState().subscribePreset("preset-a", presetPayload);
+
+    expect(useTeamStore.getState().compDeltas).toEqual([]);
+
+    useTeamStore.getState().moveTeam("preset-b", "up");
+
+    expect(useTeamStore.getState().teamComps.map((team) => team.id)).toEqual([
+      "preset-b",
+      "preset-a",
+    ]);
+    expect(useTeamStore.getState().compDeltas).toEqual(
+      expect.arrayContaining([
+        { kind: "preset", id: "preset-b", displayIndex: 0 },
+        { kind: "preset", id: "preset-a", displayIndex: 1 },
+      ])
+    );
   });
 
   it("exports the resolved comp view without setup config duplication", () => {

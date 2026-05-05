@@ -55,28 +55,6 @@ describe("ArtifactBuildsView", () => {
     });
   });
 
-  it("excludes hidden characters from computation", async () => {
-    // Set up a build for a character
-    useBuildsStore.getState().newBuild("hu_tao");
-    const buildId = Object.keys(useBuildsStore.getState().builds)[0];
-    useBuildsStore.getState().setBuild(buildId, {
-      artifactSet: "crimson_witch_of_flames",
-      composition: "4pc",
-      visible: true,
-    });
-
-    // Hide the character
-    useBuildsStore.getState().setCharacterHidden("hu_tao", true);
-
-    render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
-
-    // Hidden character's build should not generate artifact filters
-    // So we should see empty state after computation settles
-    await waitFor(() => {
-      expect(screen.getByText("Artifact Build Presets")).toBeInTheDocument();
-    });
-  });
-
   it("excludes non-visible builds from computation", async () => {
     // Set up a build but mark it as not visible
     useBuildsStore.getState().newBuild("hu_tao");

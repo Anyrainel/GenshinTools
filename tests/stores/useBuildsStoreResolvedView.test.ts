@@ -193,29 +193,4 @@ describe("build store resolved groups", () => {
     expect(result.current[0]!.characterId).toBe("hu_tao");
     expect(result.current[0]!.builds.length).toBe(1);
   });
-
-  it("skips hidden characters", async () => {
-    const state = useBuildsStore.getState();
-    state.newBuild("hu_tao");
-    state.setCharacterHidden("hu_tao", true);
-
-    const { result } = renderHook(() => useResolvedBuildGroups());
-    expect(result.current).toEqual([]);
-  });
-
-  it("updates when hiddenCharacters toggled", async () => {
-    const state = useBuildsStore.getState();
-    state.newBuild("hu_tao");
-
-    const { result, rerender } = renderHook(() => useResolvedBuildGroups());
-    expect(result.current.length).toBe(1);
-
-    act(() => {
-      useBuildsStore.getState().setCharacterHidden("hu_tao", true);
-    });
-    rerender();
-    await waitFor(() => {
-      expect(result.current.length).toBe(0);
-    });
-  });
 });

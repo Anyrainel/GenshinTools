@@ -95,7 +95,7 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
     expect(hasCrimsonConfig).toBe(true);
   });
 
-  it("excludes hidden characters from filter computation", async () => {
+  it("excludes invisible builds from filter computation", async () => {
     // Create builds for two characters
     act(() => {
       useBuildsStore.getState().newBuild("hu_tao");
@@ -120,18 +120,14 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
       });
     });
 
-    // Hide xingqiu
     act(() => {
-      useBuildsStore.getState().setCharacterHidden("xingqiu", true);
+      useBuildsStore.getState().setBuild(xingqiuBuildId, { visible: false });
     });
 
     const buildGroups = createBuildGroupsFromStore();
 
-    // Filter out hidden groups before passing to compute
-    const visibleGroups = buildGroups.filter((g) => !g.hidden);
-    const result = await computeFilters(visibleGroups);
+    const result = await computeFilters(buildGroups);
 
-    // xingqiu is hidden, so should not appear in results
     const hasXingqiu = result.some((cfg) =>
       cfg.configurations.some((c) =>
         c.servedCharacters.some((sc) => sc.characterId === "xingqiu")

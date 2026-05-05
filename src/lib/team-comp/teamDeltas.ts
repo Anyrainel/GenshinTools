@@ -253,6 +253,17 @@ export function getTeamDeltaDisplayIndex(
   );
 }
 
+export function getTeamEffectiveDisplayIndex(
+  deltas: TeamCompDelta[],
+  preset: TeamCompData | null,
+  teamId: string
+): number | undefined {
+  return (
+    getTeamDeltaDisplayIndex(deltas, teamId) ??
+    getPresetCompIndex(preset).indexById.get(teamId)
+  );
+}
+
 export function upsertCustomTeamCompDelta(
   deltas: TeamCompDelta[],
   comp: TeamComp,
@@ -357,6 +368,7 @@ export function dedupeTeamCompDeltasAgainstPreset(
   if (!preset) return { deltas, idMap: {} };
 
   const presetComps = normalizePresetPayload(preset);
+  const presetIndex = getPresetCompIndex(preset);
   const deletedPresetIds = new Set(
     deltas
       .filter((delta) => isPresetDelta(delta) && delta.deleted)
@@ -364,7 +376,10 @@ export function dedupeTeamCompDeltasAgainstPreset(
   );
   const matchedPresetIds = new Set<string>();
   const idMap: Record<string, string> = {};
-  let next: TeamCompDelta[] = deltas.filter(isPresetDelta);
+  let next: TeamCompDelta[] = normalizePresetTeamCompDeltasAgainstPreset(
+    deltas.filter(isPresetDelta),
+    presetIndex
+  );
 
   for (const delta of deltas) {
     if (!isCustomDelta(delta)) continue;
@@ -382,11 +397,12 @@ export function dedupeTeamCompDeltasAgainstPreset(
     if (matchingPreset) {
       matchedPresetIds.add(matchingPreset.id);
       idMap[delta.id] = matchingPreset.id;
-      next = upsertPresetTeamCompDelta(next, matchingPreset.id, {
-        ...(delta.displayIndex != null
-          ? { displayIndex: delta.displayIndex }
-          : {}),
-      });
+      const baseIndex = presetIndex.indexById.get(matchingPreset.id);
+      if (delta.displayIndex != null && delta.displayIndex !== baseIndex) {
+        next = upsertPresetTeamCompDelta(next, matchingPreset.id, {
+          displayIndex: delta.displayIndex,
+        });
+      }
       continue;
     }
 
@@ -394,6 +410,20 @@ export function dedupeTeamCompDeltasAgainstPreset(
   }
 
   return { deltas: next, idMap };
+}
+
+function normalizePresetTeamCompDeltasAgainstPreset(
+  deltas: PresetTeamCompDelta[],
+  presetIndex: PresetCompIndex
+): PresetTeamCompDelta[] {
+  return deltas.flatMap((delta) => {
+    if (delta.deleted) return [delta];
+    const baseIndex = presetIndex.indexById.get(delta.id);
+    if (delta.displayIndex == null || delta.displayIndex === baseIndex) {
+      return [];
+    }
+    return [delta];
+  });
 }
 
 function normalizePresetPayload(payload: TeamCompData | null): TeamComp[] {
@@ -498,6 +528,12 @@ export function setTeamDeltaGlobalOrder(
   for (const delta of deltas) {
     nextByKey.set(`${delta.kind}:${delta.id}`, delta);
   }
+  for (const id of presetIndex.ids) {
+    const delta = nextByKey.get(`preset:${id}`);
+    if (delta && isPresetDelta(delta) && !delta.deleted) {
+      nextByKey.delete(`preset:${id}`);
+    }
+  }
   orderedIds.forEach((id, displayIndex) => {
     const customDelta = deltaIndex.customById.get(id);
     if (customDelta) {
@@ -508,11 +544,13 @@ export function setTeamDeltaGlobalOrder(
       return;
     }
     if (presetIndex.byId.has(id)) {
-      nextByKey.set(`preset:${id}`, {
-        kind: "preset",
-        id,
-        displayIndex,
-      });
+      if (presetIndex.indexById.get(id) !== displayIndex) {
+        nextByKey.set(`preset:${id}`, {
+          kind: "preset",
+          id,
+          displayIndex,
+        });
+      }
     }
   });
   return [...nextByKey.values()];

@@ -5,6 +5,7 @@ import type {
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
 import {
+  dedupeTeamCompDeltasAgainstPreset,
   deriveTeamCompsFromDeltas,
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
@@ -547,17 +548,24 @@ export function mergeTeamStore<
     TeamSetupConfig
   >;
   const activePresetId = parsed.data.activePresetId;
-  const teamComps = deriveTeamCompsFromDeltas(
-    compDeltas,
-    getCachedTeamPreset(activePresetId)
-  );
+  const preset = getCachedTeamPreset(activePresetId);
+  const deduped = dedupeTeamCompDeltasAgainstPreset(compDeltas, preset);
+  const nextConfigsByTeamId = { ...configsByTeamId };
+  for (const [fromId, toId] of Object.entries(deduped.idMap)) {
+    if (fromId === toId) continue;
+    const config = nextConfigsByTeamId[fromId];
+    if (!config) continue;
+    nextConfigsByTeamId[toId] = config;
+    delete nextConfigsByTeamId[fromId];
+  }
+  const teamComps = deriveTeamCompsFromDeltas(deduped.deltas, preset);
   return {
     ...currentState,
     activePresetId,
     author: parsed.data.author ?? currentState.author,
     description: parsed.data.description ?? currentState.description,
-    compDeltas,
-    configsByTeamId,
+    compDeltas: deduped.deltas,
+    configsByTeamId: nextConfigsByTeamId,
     teamComps,
     teamCompById: Object.fromEntries(teamComps.map((team) => [team.id, team])),
   } as TState;
