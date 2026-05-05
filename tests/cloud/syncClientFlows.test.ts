@@ -7,11 +7,12 @@ import type {
   BackupObjectDownloadResponse,
   BackupWriteMode,
 } from "@/cloud/apiClient";
-import { getContentHash } from "@/cloud/payload";
+import { createEnvelope, getContentHash, gzipJson } from "@/cloud/payload";
 import {
   applyCloudRestoreAndMarkSynced,
   type BackupApi,
   downloadCloudSyncRestorePlan,
+  previewCloudSync,
   runCloudSyncOnce,
 } from "@/cloud/syncClient";
 import type {
@@ -28,6 +29,42 @@ import {
 } from "@/stores/useCloudSyncMetadataStore";
 
 describe("cloud sync client multi-device flows", () => {
+  it("previews cloud restore for a fresh device without uploading local defaults", async () => {
+    const remote = new StatefulBackupApi();
+    const deviceA = createMemoryMetadataStore("device-a");
+    const deviceB = createMemoryMetadataStore("device-b");
+
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [buildsPartition({ builds: ["from-cloud"] })],
+      createIdempotencyKey: () => "sync_restore_source",
+    });
+
+    const preview = await previewCloudSync({
+      apiClient: remote,
+      metadataStore: deviceB.store,
+      buildPartitions: () => [
+        buildsPartition({ builds: [] }, { isEmpty: true }),
+      ],
+    });
+
+    expect(preview.status).toBe("needs-download");
+    expect(preview.plan.downloads).toHaveLength(1);
+    expect(remote.commit).toHaveBeenCalledTimes(1);
+
+    const downloaded = await downloadCloudSyncRestorePlan({
+      apiClient: remote,
+      syncResult: preview,
+      buildRestorePlan: (partitions) => ({ builds: partitions[0]?.payload }),
+    });
+
+    expect(downloaded.restorePlan.builds).toEqual({
+      builds: ["from-cloud"],
+    });
+    expect(remote.commit).toHaveBeenCalledTimes(1);
+  });
+
   it("lets another device observe a newer cloud head when its local copy is unchanged", async () => {
     const remote = new StatefulBackupApi();
     const deviceA = createMemoryMetadataStore("device-a");
@@ -99,6 +136,66 @@ describe("cloud sync client multi-device flows", () => {
     expect(remote.commit).toHaveBeenCalledTimes(2);
   });
 
+  it("publishes deletes instead of restoring a previously synced missing partition", async () => {
+    const remote = new StatefulBackupApi();
+    const deviceA = createMemoryMetadataStore("device-a");
+
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [buildsPartition({ builds: ["local"] })],
+      createIdempotencyKey: () => "sync_delete_initial",
+    });
+
+    const deleted = await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [],
+      createIdempotencyKey: () => "sync_delete_missing_local",
+    });
+
+    expect(deleted.status).toBe("uploaded");
+    expect(deleted.plan.downloads).toEqual([]);
+    expect(remote.commit).toHaveBeenCalledTimes(2);
+    const deleteRequest = remote.commit.mock.calls[1]?.[0];
+    expect(deleteRequest).toMatchObject({
+      idempotencyKey: "sync_delete_missing_local",
+    });
+    expect(deleteRequest?.puts ?? []).toEqual([]);
+    expect(deleteRequest?.deletes).toEqual([
+      {
+        partitionKey: "builds/all",
+        writeMode: { kind: "ifMatch", expectedRev: "rev-1" },
+      },
+    ]);
+    expect(remote.heads.has("builds/all")).toBe(false);
+  });
+
+  it("skips cloud deletes when upload choices omit missing local shards", async () => {
+    const remote = new StatefulBackupApi();
+    const deviceA = createMemoryMetadataStore("device-a");
+
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [buildsPartition({ builds: ["local"] })],
+      createIdempotencyKey: () => "sync_skip_delete_initial",
+    });
+
+    const skipped = await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [],
+      explicitCloudDelete: { partitionIds: [] },
+      createIdempotencyKey: () => "sync_skip_delete_missing_local",
+    });
+
+    expect(skipped.plan.deletes).toHaveLength(1);
+    expect(skipped.status).toBe("synced");
+    expect(remote.commit).toHaveBeenCalledTimes(1);
+    expect(remote.heads.has("builds/all")).toBe(true);
+  });
+
   it("keeps independent manual edits conflicted instead of overwriting either device", async () => {
     const remote = new StatefulBackupApi();
     const deviceA = createMemoryMetadataStore("device-a");
@@ -139,6 +236,53 @@ describe("cloud sync client multi-device flows", () => {
       reason: "both-changed",
       detectedAt: 500,
     });
+  });
+
+  it("downloads an explicitly selected conflict shard without requiring a mixed sync", async () => {
+    const remote = new StatefulBackupApi();
+    const deviceA = createMemoryMetadataStore("device-a");
+    const deviceB = createMemoryMetadataStore("device-b");
+    const initial = teamPartition({ teams: ["initial"] });
+
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [initial],
+      createIdempotencyKey: () => "sync_selected_download_initial",
+    });
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceB.store,
+      buildPartitions: () => [initial],
+    });
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceA.store,
+      buildPartitions: () => [teamPartition({ teams: ["cloud-edit"] })],
+      createIdempotencyKey: () => "sync_selected_download_cloud_edit",
+    });
+
+    const conflict = await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: deviceB.store,
+      buildPartitions: () => [teamPartition({ teams: ["local-edit"] })],
+    });
+
+    expect(conflict.status).toBe("conflict");
+    const downloaded = await downloadCloudSyncRestorePlan({
+      apiClient: remote,
+      syncResult: conflict,
+      downloadScope: { partitionIds: ["teams/all"] },
+      buildRestorePlan: (partitions) => ({
+        teams: partitions.map((partition) => partition.payload),
+      }),
+    });
+
+    expect(downloaded.heads.map((head) => head.partitionKey)).toEqual([
+      "teams/all",
+    ]);
+    expect(downloaded.restorePlan.teams).toEqual([{ teams: ["cloud-edit"] }]);
+    expect(remote.commit).toHaveBeenCalledTimes(2);
   });
 
   it("requires explicit local overwrite before a new profile import replaces different cloud data", async () => {
@@ -273,6 +417,70 @@ describe("cloud sync client multi-device flows", () => {
       })
     ).rejects.toThrow("hash mismatch");
   });
+
+  it("rejects hash-valid downloaded objects with invalid payload shape", async () => {
+    const invalidPartition = buildsPartition({
+      activePresetId: null,
+      deltas: "not-an-array",
+    });
+    const envelope = await createEnvelope(invalidPartition, {
+      rev: "rev-invalid",
+      createdAt: 1,
+    });
+    const compressedBytes = await gzipJson(envelope);
+    const blob = new Blob([compressedBytes], { type: "application/gzip" });
+    const head: BackupHead = {
+      partitionKey: "builds/all",
+      objectId: "obj-invalid",
+      rev: "rev-invalid",
+      schemaVersion: 1,
+      contentHash: envelope.contentHash,
+      compressedHash: await sha256Bytes(compressedBytes),
+      compressedBytes: compressedBytes.byteLength,
+      updatedAt: 1,
+      metadata: { schemaVersion: 1, records: [] },
+    };
+
+    await expect(
+      downloadCloudSyncRestorePlan({
+        apiClient: {
+          downloadObjects: async () => ({
+            manifest: { objects: [head] },
+            objects: new Map([[head.objectId, blob]]),
+          }),
+        },
+        syncResult: {
+          status: "needs-download",
+          plan: {
+            uploads: [],
+            downloads: [
+              {
+                action: "download",
+                id: "builds/all",
+                namespace: "builds",
+                partitionKey: "all",
+                groupKey: "builds:all",
+                conflictPolicy: "explicit-choice",
+                reason: "remote-only",
+                remoteRev: head.rev,
+                contentHash: head.contentHash,
+                schemaVersion: head.schemaVersion,
+              },
+            ],
+            deletes: [],
+            conflicts: [],
+            noops: [],
+            skipped: [],
+            unsupported: [],
+            decisions: [],
+          },
+          remoteHeads: [head],
+          uploaded: [],
+          headSetRev: "hset-invalid",
+        },
+      })
+    ).rejects.toThrow(/invalid.*payload|payload.*invalid/i);
+  });
 });
 
 class StatefulBackupApi implements BackupApi {
@@ -311,12 +519,22 @@ class StatefulBackupApi implements BackupApi {
           compressedHash: put.compressedHash,
           compressedBytes: put.compressedBytes ?? put.bytes.size,
           updatedAt: this.revIndex,
+          metadata: put.metadata,
           sourceDeviceId: request.deviceId,
         };
         this.revIndex += 1;
         this.heads.set(put.partitionKey, head);
         this.objects.set(head.objectId, put.bytes);
         changed.push(head);
+      }
+      for (const del of request.deletes ?? []) {
+        this.assertWriteAllowed(del.partitionKey, del.writeMode);
+        const current = this.heads.get(del.partitionKey);
+        if (!current) continue;
+        const deletedAt = this.revIndex;
+        this.revIndex += 1;
+        this.heads.delete(del.partitionKey);
+        changed.push({ ...current, deletedAt });
       }
       this.headSetIndex += 1;
       return {
@@ -406,6 +624,14 @@ function createMemoryMetadataStore(deviceId: string) {
           },
         };
       },
+      removePartitionMeta: (namespace, partitionKey) => {
+        const id = getCloudSyncPartitionId(namespace, partitionKey);
+        const partitionsById = { ...state.partitionsById };
+        const conflictsById = { ...state.conflictsById };
+        delete partitionsById[id];
+        delete conflictsById[id];
+        state = { ...state, partitionsById, conflictsById };
+      },
     } satisfies Pick<
       CloudSyncMetadataState,
       | "ensureDeviceId"
@@ -414,6 +640,7 @@ function createMemoryMetadataStore(deviceId: string) {
       | "markPartitionSyncedFromDownload"
       | "markPartitionSyncedWithoutTransfer"
       | "markConflict"
+      | "removePartitionMeta"
     >,
   };
 
@@ -425,6 +652,7 @@ function createMemoryMetadataStore(deviceId: string) {
       rev: string;
       contentHash: string;
       syncedAt?: number;
+      updatedAt?: number;
     },
     source: "upload" | "download" | "none"
   ) {
@@ -450,7 +678,7 @@ function createMemoryMetadataStore(deviceId: string) {
               : {}),
           lastSyncedAt: syncedAt,
           dirty: false,
-          updatedAt: syncedAt,
+          updatedAt: input.updatedAt ?? syncedAt,
         } satisfies CloudSyncPartitionMeta,
       },
       conflictsById,
@@ -458,8 +686,11 @@ function createMemoryMetadataStore(deviceId: string) {
   }
 }
 
-function buildsPartition(payload: unknown): CloudExportPartition {
-  return partition("builds", "all", "explicit-choice", payload);
+function buildsPartition(
+  payload: unknown,
+  options: { isEmpty?: boolean } = {}
+): CloudExportPartition {
+  return partition("builds", "all", "explicit-choice", payload, options);
 }
 
 function teamPartition(payload: unknown): CloudExportPartition {
@@ -496,7 +727,8 @@ function partition(
   namespace: CloudNamespace,
   partitionKey: CloudPartitionKey,
   conflictPolicy: CloudConflictPolicy,
-  payload: unknown
+  payload: unknown,
+  options: { isEmpty?: boolean } = {}
 ): CloudExportPartition {
   return {
     namespace,
@@ -504,5 +736,13 @@ function partition(
     schemaVersion: 1,
     conflictPolicy,
     payload,
+    ...(options.isEmpty ? { isEmpty: true } : {}),
   };
+}
+
+async function sha256Bytes(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return `sha256:${[...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")}`;
 }

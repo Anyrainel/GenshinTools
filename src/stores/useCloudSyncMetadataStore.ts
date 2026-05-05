@@ -34,6 +34,7 @@ export type MarkCloudPartitionSyncedInput = {
   rev: string;
   contentHash: string;
   syncedAt?: number;
+  updatedAt?: number;
 };
 
 export type MarkCloudPartitionDirtyInput = {
@@ -167,7 +168,7 @@ function markSynced(
         : {}),
     lastSyncedAt: syncedAt,
     dirty: false,
-    updatedAt: syncedAt,
+    updatedAt: input.updatedAt ?? syncedAt,
   };
   return {
     partitionsById: upsertPartitionMeta(state.partitionsById, meta),
@@ -274,7 +275,6 @@ export const useCloudSyncMetadataStore = create<CloudSyncMetadataState>()(
       partialize: (state) => ({
         deviceId: state.deviceId,
         partitionsById: state.partitionsById,
-        conflictsById: state.conflictsById,
       }),
       merge: (persistedState, currentState) => {
         const parsed =
@@ -291,10 +291,7 @@ export const useCloudSyncMetadataStore = create<CloudSyncMetadataState>()(
               normalizePartitionMeta(id, meta),
             ])
           ) as Record<CloudPartitionId, CloudSyncPartitionMeta>,
-          conflictsById: persisted.conflictsById as Record<
-            CloudPartitionId,
-            CloudSyncConflictMeta
-          >,
+          conflictsById: {},
         };
       },
     }

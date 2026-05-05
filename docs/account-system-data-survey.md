@@ -249,30 +249,27 @@ Current `useBuildsStore` now uses the shared preset-delta model:
 
 Cloud decision:
 
-- Upload `activePresetId`, `deltas`, character metadata, compute options, and metadata.
+- Upload `activePresetId`, `deltas`, character weapon defaults, compute options, and metadata.
 - Exclude `validationErrors`; recompute with `getBuildValidationErrors()` during hydration or import.
 - Exclude `activePresetPayload` and every derived runtime view.
 
 Cloud payload shape:
 
 ```ts
-type CharacterBuildMetadata = {
-  /** Character-level visibility, separate from build removal. */
-  hidden?: boolean;
-  /** User override for recommended weapons. */
-  weaponIds?: string[];
-};
-
 type BuildsCloudPayload = {
   activePresetId: string | null;
   activePresetRevision?: string;
   deltas: PresetDelta<Build>[];
-  characterMetadata?: Record<string, CharacterBuildMetadata>;
+  characterWeapons?: Record<string, string[]>;
   computeOptions?: ComputeOptions;
   author?: string;
   description?: string;
 };
 ```
+
+Character-level hidden state is legacy. The build store migration converts old
+hidden characters into build-level `visible: false` edits, and new payloads keep
+only build visibility.
 
 Resolver rules:
 
@@ -758,7 +755,7 @@ Completed cloud adapter and backup API phase
 - `src/cloud/syncClient.ts` is a headless coordinator for reading heads, planning sync, committing safe uploads, committing explicitly confirmed local overwrites, marking no-op/upload metadata, recording unresolved conflicts, downloading selected objects, verifying envelopes, building restore plans, applying restore plans, and marking download metadata only after local apply succeeds.
 - `src/cloud/storeAdapters.ts` applies restore-plan sections through store-owned APIs so derived build/team runtime state and score caches refresh correctly.
 - `worker/backup.ts` implements the head, commit, and object endpoints with D1/R2 persistence and optimistic concurrency.
-- `worker/auth.ts` is the production-shaped auth and entitlement boundary. It currently has a dev-only `requireUser()` implementation backed by `BACKUP_DEV_AUTH_SECRET` and `x-backup-dev-user-id`.
+- `worker/auth.ts` is the production-shaped auth and entitlement boundary. It supports session-token auth backed by `app_users`, `auth_identities`, `auth_sessions`, and `user_entitlements`. The dev login route is a fake provider flow that creates a `provider = "dev"` identity and grants `cloud_sync`.
 - `migrations/0001_backup.sql` has been applied locally and remotely for the backup metadata tables.
 - `npm run smoke:backup-worker` exercises the local Worker backup path with local D1/R2 bindings.
 - `tests/cloud/syncClientFlows.test.ts` simulates multiple devices against a stateful fake backup API, including manual-edit conflict, explicit imported-profile overwrite, grouped profile downloads, verified download restore planning, post-apply metadata marking, and corrupt object rejection.
@@ -767,7 +764,7 @@ Completed manual cloud UI slice
 
 - In local dev builds, `src/components/layout/AppBar.tsx` uses an avatar-shaped account menu for account access, cloud backup, theme, language, and existing page menu actions.
 - Production builds keep the generic overflow menu and do not expose account or cloud backup entry points.
-- `/account` stores dev-gated backup credentials locally until production auth replaces the dev header path.
+- `/account` calls `/api/auth/dev-login` and stores the returned session token locally. The selected test account id is a fake provider subject, not the internal backup user id.
 - `/account/cloud-backup` provides manual "Sync now", "Apply cloud changes", and "Keep local" actions. It calls `runCloudSyncOnce()`, `downloadCloudSyncRestorePlan()`, and `applyCloudRestoreAndMarkSynced()`.
 - No passive background sync is wired.
 - `explicitLocalOverwrite` is only reachable from a user-clicked keep-local action. Passive sync still leaves conflicts unresolved.
@@ -783,7 +780,7 @@ Still pending: Backup Set and UI
 Still pending: Production auth and entitlement gate
 
 - Replace the dev implementation inside `worker/auth.ts` with SSO-backed session lookup.
-- Add `/api/me`, logout, and provider-linking skeleton.
+- Add `/api/auth/me`, logout, and provider-linking skeleton.
 - Persist and check the `cloud_sync` entitlement from D1 instead of the temporary dev grant.
 - Keep delete/download available even after entitlement expiry.
 

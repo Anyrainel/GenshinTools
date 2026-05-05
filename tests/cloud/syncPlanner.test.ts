@@ -38,6 +38,22 @@ describe("cloud sync planner", () => {
     expect(plan.uploads[0]).not.toHaveProperty("baseRev");
   });
 
+  it("skips default-only local partitions before the first cloud write", () => {
+    const plan = planCloudSync({
+      localPartitions: [local("builds", "all", "hash-default", 1, 1, true)],
+      localMeta: [],
+      remoteHeads: [],
+    });
+
+    expect(plan.uploads).toEqual([]);
+    expect(plan.skipped).toEqual([
+      expect.objectContaining({
+        action: "skip",
+        reason: "empty",
+      }),
+    ]);
+  });
+
   it("marks matching local and remote content as synced", () => {
     const plan = planCloudSync({
       localPartitions: [local("builds", "all", "hash-same")],
@@ -131,14 +147,14 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [],
       localMeta: [],
-      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 2)],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 3)],
     });
 
     expect(plan.unsupported).toHaveLength(1);
     expect(plan.unsupported[0]).toMatchObject({
       action: "unsupported",
       reason: "newer-cloud-schema",
-      remoteSchemaVersion: 2,
+      remoteSchemaVersion: 3,
       supportedSchemaVersion: 1,
     });
   });

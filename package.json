@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:wrangler": "wrangler pages dev --proxy 5173 -- vite",
-    "dev:worker": "vite",
+    "dev:wrangler": "node scripts/dev/start-worker-dev.js",
+    "dev:worker": "node scripts/dev/start-worker-dev.js",
+    "dev:worker:reset": "node scripts/dev/start-worker-dev.js --reset-backup-db",
     "deploy:worker": "npm run check:worker && wrangler deploy",
     "build": "tsc -b && vite build",
     "build:github": "tsc -b && vite build --mode github",

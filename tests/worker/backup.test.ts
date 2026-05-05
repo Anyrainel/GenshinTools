@@ -30,6 +30,7 @@ type HeadRecord = {
   compressed_hash: string;
   compressed_bytes: number;
   updated_at: number;
+  metadata_json: string;
   source_device_row_id: string | null;
   soft_deleted_at: number | null;
 };
@@ -53,6 +54,7 @@ type JoinedHeadRecord = {
   compressed_hash: string;
   compressed_bytes: number;
   updated_at: number;
+  metadata_json: string;
   soft_deleted_at: number | null;
   source_device_id: string | null;
   source_device_label: string | null;
@@ -72,16 +74,17 @@ type BackupCommitJson = {
     compressedBytes: number;
     sourceDeviceId?: string;
     sourceDeviceLabel?: string;
+    metadata?: unknown;
   }[];
 };
 
 describe("Worker backup API", () => {
-  it("stays unavailable until dev auth is configured", async () => {
+  it("rejects backup requests without an auth session", async () => {
     const response = await SELF.fetch("https://example.com/api/backup/v1/head");
 
-    expect(response.status).toBe(503);
+    expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({
-      error: "backup_auth_not_configured",
+      error: "unauthenticated",
     });
   });
 
@@ -112,6 +115,10 @@ describe("Worker backup API", () => {
             compressedHash,
             logicalBytes: 1,
             compressedBytes: body.byteLength,
+            metadata: {
+              schemaVersion: 1,
+              records: [{ kind: "builds", count: 2, updatedAt: 123 }],
+            },
             writeMode: { kind: "ifAbsent" },
           },
         ],
@@ -130,6 +137,10 @@ describe("Worker backup API", () => {
           contentHash,
           compressedHash,
           compressedBytes: body.byteLength,
+          metadata: {
+            schemaVersion: 1,
+            records: [{ kind: "builds", count: 2, updatedAt: 123 }],
+          },
           sourceDeviceId: "device-a",
           sourceDeviceLabel: "Test Browser",
         },
@@ -288,7 +299,6 @@ function createBackupTestEnv(): {
       ASSETS: { fetch: async () => new Response("asset") },
       BACKUP_DB: db as unknown as D1Database,
       BACKUP_BUCKET: bucket as unknown as R2Bucket,
-      BACKUP_DEV_AUTH_SECRET: "secret",
     } as unknown as BackupEnv,
   };
 }
@@ -299,8 +309,7 @@ function backupFetch(
   init: RequestInit = {}
 ): Promise<Response> {
   const headers = new Headers(init.headers);
-  headers.set("Authorization", "Bearer secret");
-  headers.set("x-backup-dev-user-id", "user_test");
+  headers.set("Authorization", "Bearer session-token");
   return handleBackupRequest(
     new Request(`https://example.com/api/backup/v1${path}`, {
       ...init,
@@ -325,7 +334,10 @@ function makeCommitForm(options: {
           idempotencyKey: options.idempotencyKey,
           deviceId: "device-a",
           deviceLabel: "Test Browser",
-          puts: options.puts,
+          puts: options.puts.map((put) => ({
+            metadata: { schemaVersion: 1, records: [] },
+            ...(put as object),
+          })),
           deletes: [],
         }),
       ],
@@ -377,6 +389,13 @@ class FakeD1PreparedStatement {
   }
 
   async first<T>(): Promise<T | null> {
+    if (this.sql.includes("FROM auth_sessions")) {
+      return {
+        user_id: "user_test",
+        display_name: "Test User",
+      } as T;
+    }
+
     if (this.sql.includes("FROM backup_user_state")) {
       const userId = String(this.args[0]);
       return (this.db.userStates.get(userId) ?? null) as T | null;
@@ -401,6 +420,14 @@ class FakeD1PreparedStatement {
   }
 
   async all<T>(): Promise<D1Result<T>> {
+    if (this.sql.includes("FROM user_entitlements")) {
+      return {
+        results: [{ code: "cloud_sync" }] as T[],
+        success: true,
+        meta: d1Meta(),
+      };
+    }
+
     if (this.sql.includes("h.partition_key IN")) {
       const userId = String(this.args[0]);
       const partitionKeys = new Set(this.args.slice(1).map(String));
@@ -453,6 +480,10 @@ class FakeD1PreparedStatement {
   }
 
   async run(): Promise<D1Result> {
+    if (this.sql.includes("UPDATE auth_sessions")) {
+      return d1Ok();
+    }
+
     if (this.sql.includes("INSERT INTO backup_devices")) {
       const [id, userId, deviceId, label, createdAt, lastSeenAt, lastBackupAt] =
         this.args;
@@ -490,6 +521,7 @@ class FakeD1PreparedStatement {
         compressedHash,
         compressedBytes,
         updatedAt,
+        metadataJson,
         sourceDeviceRowId,
       ] = this.args;
       this.db.heads.set(headKey(String(userId), String(partitionKey)), {
@@ -502,6 +534,7 @@ class FakeD1PreparedStatement {
         compressed_hash: String(compressedHash),
         compressed_bytes: Number(compressedBytes),
         updated_at: Number(updatedAt),
+        metadata_json: String(metadataJson),
         source_device_row_id:
           sourceDeviceRowId === null ? null : String(sourceDeviceRowId),
         soft_deleted_at: null,
@@ -586,6 +619,7 @@ class FakeD1PreparedStatement {
       compressed_hash: head.compressed_hash,
       compressed_bytes: head.compressed_bytes,
       updated_at: head.updated_at,
+      metadata_json: head.metadata_json,
       soft_deleted_at: head.soft_deleted_at,
       source_device_id: device?.device_id ?? null,
       source_device_label: device?.label ?? null,

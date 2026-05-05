@@ -343,16 +343,16 @@ Completed local/backend prerequisite
 - `worker/auth.ts` provides the `requireUser()` and entitlement-check boundary that SSO should replace internally.
 - Local dev builds expose account and cloud backup through an avatar-shaped menu in `src/components/layout/AppBar.tsx`.
 - Production builds keep the generic overflow menu and hide account/cloud backup entry points until production auth is wired.
-- `/account` and `/account/cloud-backup` are the first manual UI surfaces for dev-gated backup access and manual backup/restore.
+- `/account` and `/account/cloud-backup` are the first manual UI surfaces for dev-gated backup access and manual backup/restore. The dev account page is a fake provider login: it calls `/api/auth/dev-login`, creates or reuses an internal app user via `auth_identities`, stores a session token, and uses that token for backup requests.
 - Stateful multi-device flow tests cover unchanged second-device sync, independent manual-edit conflict, explicit imported-profile overwrite, grouped profile downloads, verified download restore planning, post-apply metadata marking, and corrupt object rejection.
 - The dev-gated Worker backup API exists at `/api/backup/v1/*` with D1/R2 bindings, a local smoke command, and remote `0001_backup.sql` migration applied.
 
 Remaining foundation
 
 - Session auth with one global provider and one China-friendly provider if feasible.
-- `/api/me`, logout, provider-linking skeleton.
+- `/api/auth/me`, logout, provider-linking skeleton.
 - Entitlement table and manual admin grants.
-- Replace the dev-only implementation inside `worker/auth.ts` before public backup reads or writes.
+- Replace `/api/auth/dev-login` with real provider callbacks before public backup reads or writes.
 
 Remaining cloud UI
 

@@ -26,6 +26,29 @@ export type CloudConflictPolicy =
 export type CloudPartitionKey = string;
 export type CloudPartitionId = `${CloudNamespace}/${CloudPartitionKey}`;
 
+export type CloudBackupRecordKind =
+  | "characters"
+  | "weapons"
+  | "artifacts"
+  | "frozen"
+  | "settings"
+  | "builds"
+  | "teams"
+  | "teamConfigs"
+  | "tiers";
+
+export type CloudBackupHeadMetadataRecord = {
+  kind: CloudBackupRecordKind;
+  count: number;
+  profileId?: string;
+  updatedAt?: number;
+};
+
+export type CloudBackupHeadMetadata = {
+  schemaVersion: 1;
+  records: CloudBackupHeadMetadataRecord[];
+};
+
 export type CloudPayloadEnvelope<TPayload> = {
   app: "GenshinTools";
   schemaVersion: number;
@@ -94,6 +117,8 @@ export type CloudBackupDescriptor = {
 
 export type CloudRestorePlan = {
   accounts?: unknown;
+  activeAccountId?: AccountProfileId | null;
+  accountShardPresenceByProfileId?: unknown;
   builds?: unknown;
   teams?: unknown;
   freezesByProfileId?: unknown;

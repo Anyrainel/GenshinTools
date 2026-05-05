@@ -64,6 +64,7 @@ describe("BackupApiClient", () => {
           compressedHash:
             "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           logicalBytes: 2,
+          metadata: { schemaVersion: 1, records: [] },
           writeMode: { kind: "ifAbsent" },
           bytes: blob,
         },

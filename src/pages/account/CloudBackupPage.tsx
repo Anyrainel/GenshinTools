@@ -1,27 +1,31 @@
 import {
   AlertCircle,
   CheckCircle2,
-  Cloud,
   CloudDownload,
   CloudUpload,
-  type LucideIcon,
-  RefreshCw,
-  ShieldAlert,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { BackupApiError } from "@/cloud/apiClient";
+import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
+import {
+  buildManualBackupMetadataRows,
+  downloadManualBackupSelection,
+  type PendingManualBackupAction,
+  previewManualBackupAction,
+  readCloudMetadataCache,
+  refreshManualBackupMetadata,
+  uploadManualBackupSelection,
+} from "@/cloud/manualBackupController";
 import {
   createCloudBackupApiClient,
   getCloudBackupDevSession,
 } from "@/cloud/session";
-import {
-  applyCloudRestoreAndMarkSynced,
-  type CloudSyncRunResult,
-  downloadCloudSyncRestorePlan,
-  runCloudSyncOnce,
-} from "@/cloud/syncClient";
+import type { CloudSyncRunResult } from "@/cloud/syncClient";
+import type { CloudPartitionId } from "@/cloud/types";
+import { CloudBackupMetadataTable } from "@/components/account/CloudBackupMetadataTable";
+import { ManualBackupChoiceDialog } from "@/components/account/ManualBackupChoiceDialog";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -31,48 +35,111 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { useCloudSyncMetadataStore } from "@/stores/useCloudSyncMetadataStore";
 
-type Operation = "sync" | "restore" | "overwrite" | null;
+type Operation = "upload" | "download" | null;
+type MetadataStatus = "idle" | "loading" | "refreshing";
 
 export default function CloudBackupPage() {
   const { t } = useLanguage();
-  const [lastResult, setLastResult] = useState<CloudSyncRunResult | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [lastNotice, setLastNotice] = useState<string | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
+  const [pendingAction, setPendingAction] =
+    useState<PendingManualBackupAction | null>(null);
+  const [selectedChoiceIds, setSelectedChoiceIds] = useState<
+    Set<CloudPartitionId>
+  >(new Set());
+  const [metadataStatus, setMetadataStatus] = useState<MetadataStatus>("idle");
+  const [metadataError, setMetadataError] = useState<string | null>(null);
+  const [cloudMetadata, setCloudMetadata] =
+    useState<CloudBackupMetadataSnapshot | null>(null);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
   );
-  const conflictsById = useCloudSyncMetadataStore(
-    (state) => state.conflictsById
-  );
   const session = getCloudBackupDevSession();
+  const sessionUserId = session?.userId ?? null;
 
-  const conflicts = useMemo(
-    () => Object.values(conflictsById),
-    [conflictsById]
-  );
   const partitionMeta = useMemo(
     () => Object.values(partitionsById),
     [partitionsById]
   );
-  const lastSyncedAt = Math.max(
-    0,
-    ...partitionMeta.map((meta) => meta.lastSyncedAt ?? 0)
+  const metadataRows = buildManualBackupMetadataRows(
+    partitionMeta,
+    cloudMetadata
   );
 
-  const runManualSync = async (explicitLocalOverwrite?: {
-    groupKeys: string[];
-  }) => {
-    setOperation(explicitLocalOverwrite ? "overwrite" : "sync");
+  const refreshCloudMetadata = useCallback(
+    async (status: MetadataStatus = "refreshing") => {
+      if (!sessionUserId) return;
+      setMetadataStatus(status);
+      setMetadataError(null);
+      try {
+        const snapshot = await refreshManualBackupMetadata(
+          createCloudBackupApiClient(),
+          sessionUserId
+        );
+        setCloudMetadata(snapshot);
+      } catch (error) {
+        const message = formatBackupError(error, t);
+        setMetadataError(message);
+      } finally {
+        setMetadataStatus("idle");
+      }
+    },
+    [sessionUserId, t]
+  );
+
+  useEffect(() => {
+    if (!sessionUserId) {
+      setCloudMetadata(null);
+      setMetadataError(null);
+      return;
+    }
+    const cached = readCloudMetadataCache(sessionUserId);
+    if (cached) {
+      setCloudMetadata(cached);
+      return;
+    }
+    void refreshCloudMetadata("loading");
+  }, [refreshCloudMetadata, sessionUserId]);
+
+  useEffect(() => {
+    if (operation === null) return;
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [operation]);
+
+  const beginUploadToCloud = async () => {
+    setOperation("upload");
     setLastError(null);
+    setLastNotice(null);
     try {
-      const result = await runCloudSyncOnce({
-        apiClient: createCloudBackupApiClient(),
-        ...(explicitLocalOverwrite ? { explicitLocalOverwrite } : {}),
-      });
-      setLastResult(result);
-      toast.success(statusToast(result.status, t));
+      const pending = await previewManualBackupAction(
+        "upload",
+        createCloudBackupApiClient()
+      );
+      const manualPlan = pending.plan;
+      if (manualPlan.choices.length > 0) {
+        setPendingAction(pending);
+        setSelectedChoiceIds(new Set());
+        return;
+      }
+      const result = await uploadManualBackupSelection(
+        createCloudBackupApiClient(),
+        pending,
+        []
+      );
+      await refreshCloudMetadata();
+      if (result.status === "skipped") {
+        setLastNotice(t.ui("accountSystem.uploadNotice.noLocalChanges"));
+        return;
+      }
+      toast.success(t.ui("accountSystem.statusToast.uploaded"));
     } catch (error) {
-      const message = formatBackupError(error);
+      const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
     } finally {
@@ -80,43 +147,129 @@ export default function CloudBackupPage() {
     }
   };
 
-  const applyCloudChanges = async () => {
-    if (!lastResult) return;
-    setOperation("restore");
+  const beginDownloadFromCloud = async () => {
+    setOperation("download");
     setLastError(null);
+    setLastNotice(null);
     try {
-      const downloaded = await downloadCloudSyncRestorePlan({
-        apiClient: createCloudBackupApiClient(),
-        syncResult: lastResult,
-      });
-      const applied = applyCloudRestoreAndMarkSynced({ downloaded });
+      const pending = await previewManualBackupAction(
+        "download",
+        createCloudBackupApiClient()
+      );
+      const syncResult = pending.syncResult;
+      if (syncResult.status === "unsupported") {
+        setLastNotice(restoreNotice(syncResult.status, t));
+        return;
+      }
+      const manualPlan = pending.plan;
+      if (manualPlan.choices.length > 0) {
+        setPendingAction(pending);
+        setSelectedChoiceIds(new Set());
+        return;
+      }
+      if (manualPlan.automaticPartitionIds.length === 0) {
+        setLastNotice(restoreNotice(syncResult.status, t));
+        return;
+      }
+      await applyCloudDownload(syncResult, manualPlan.automaticPartitionIds);
+    } catch (error) {
+      const message = formatBackupError(error, t);
+      setLastError(message);
+      toast.error(message);
+    } finally {
+      setOperation(null);
+    }
+  };
+
+  const confirmPendingAction = async () => {
+    if (!pendingAction) return;
+    const choiceIds = [...selectedChoiceIds];
+    setPendingAction(null);
+    setSelectedChoiceIds(new Set());
+    if (pendingAction.direction === "upload") {
+      await uploadSelectedShards(pendingAction, choiceIds);
+      return;
+    }
+    await applyCloudDownload(pendingAction.syncResult, [
+      ...pendingAction.plan.automaticPartitionIds,
+      ...choiceIds,
+    ]);
+  };
+
+  const togglePendingChoice = (
+    id: CloudPartitionId,
+    checked: boolean
+  ): void => {
+    setSelectedChoiceIds((current) => {
+      const next = new Set(current);
+      if (checked) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
+  };
+
+  const uploadSelectedShards = async (
+    pending: PendingManualBackupAction,
+    selectedIds: CloudPartitionId[]
+  ) => {
+    setOperation("upload");
+    setLastError(null);
+    setLastNotice(null);
+    try {
+      const result = await uploadManualBackupSelection(
+        createCloudBackupApiClient(),
+        pending,
+        selectedIds
+      );
+      if (result.status === "skipped") {
+        setLastNotice(t.ui("accountSystem.manualChoice.allSkipped"));
+        return;
+      }
+      await refreshCloudMetadata();
+      toast.success(t.ui("accountSystem.statusToast.uploaded"));
+    } catch (error) {
+      const message = formatBackupError(error, t);
+      setLastError(message);
+      toast.error(message);
+    } finally {
+      setOperation(null);
+    }
+  };
+
+  const applyCloudDownload = async (
+    syncResult: CloudSyncRunResult,
+    partitionIds: CloudPartitionId[]
+  ) => {
+    setOperation("download");
+    setLastError(null);
+    setLastNotice(null);
+    try {
+      if (partitionIds.length === 0) {
+        setLastNotice(t.ui("accountSystem.manualChoice.allSkipped"));
+        return;
+      }
+      const applied = await downloadManualBackupSelection(
+        createCloudBackupApiClient(),
+        syncResult,
+        partitionIds
+      );
       toast.success(
         t
           .ui("accountSystem.restoreApplied")
           .replace("{0}", String(applied.appliedSections.length))
       );
-      const refreshed = await runCloudSyncOnce({
-        apiClient: createCloudBackupApiClient(),
-      });
-      setLastResult(refreshed);
+      await refreshCloudMetadata();
     } catch (error) {
-      const message = formatBackupError(error);
+      const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
     } finally {
       setOperation(null);
     }
   };
-
-  const overwriteCloudWithLocal = async () => {
-    const groupKeys = [
-      ...new Set(conflicts.map((conflict) => conflict.groupKey)),
-    ];
-    if (groupKeys.length === 0) return;
-    await runManualSync({ groupKeys });
-  };
-
-  const status = lastResult?.status ?? "idle";
 
   return (
     <PageLayout>
@@ -132,7 +285,7 @@ export default function CloudBackupPage() {
                   {t.ui("accountSystem.cloudBackupDesc")}
                 </p>
               </div>
-              <StatusBadge status={status} />
+              {operation !== null && <OperationBadge operation={operation} />}
             </div>
 
             <div className="p-4 space-y-4">
@@ -165,177 +318,125 @@ export default function CloudBackupPage() {
                 </Alert>
               )}
 
-              <div className="grid gap-3 md:grid-cols-3">
-                <StatusTile
-                  icon={Cloud}
-                  label={t.ui("accountSystem.trackedPartitions")}
-                  value={String(partitionMeta.length)}
-                />
-                <StatusTile
-                  icon={ShieldAlert}
-                  label={t.ui("accountSystem.conflicts")}
-                  value={String(conflicts.length)}
-                  attention={conflicts.length > 0}
-                />
-                <StatusTile
-                  icon={CheckCircle2}
-                  label={t.ui("accountSystem.lastSync")}
-                  value={
-                    lastSyncedAt
-                      ? t.shortDate(new Date(lastSyncedAt))
-                      : t.ui("common.none")
-                  }
-                />
-              </div>
+              {lastNotice && (
+                <Alert>
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertTitle>{t.ui("accountSystem.restoreStatus")}</AlertTitle>
+                  <AlertDescription>{lastNotice}</AlertDescription>
+                </Alert>
+              )}
+
+              {metadataError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>
+                    {t.ui("accountSystem.metadataFailed")}
+                  </AlertTitle>
+                  <AlertDescription>{metadataError}</AlertDescription>
+                </Alert>
+              )}
+
+              <CloudBackupMetadataTable
+                rows={metadataRows}
+                checkedAt={cloudMetadata?.checkedAt}
+                loading={metadataStatus !== "idle"}
+                onRefresh={() => void refreshCloudMetadata()}
+              />
 
               <div className="flex flex-wrap gap-2">
                 <Button
                   type="button"
-                  onClick={() => void runManualSync()}
+                  onClick={() => void beginUploadToCloud()}
                   disabled={!session || operation !== null}
                 >
-                  <RefreshCw
+                  <CloudUpload
                     className={cn(
                       "h-4 w-4",
-                      operation === "sync" && "animate-spin"
+                      operation === "upload" && "animate-spin"
                     )}
                   />
-                  {t.ui("accountSystem.syncNow")}
+                  {t.ui("accountSystem.uploadToCloud")}
                 </Button>
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => void applyCloudChanges()}
-                  disabled={
-                    !session ||
-                    operation !== null ||
-                    lastResult?.status !== "needs-download"
-                  }
+                  onClick={() => void beginDownloadFromCloud()}
+                  disabled={!session || operation !== null}
                 >
-                  <CloudDownload className="h-4 w-4" />
-                  {t.ui("accountSystem.applyCloudChanges")}
-                </Button>
-                <Button
-                  type="button"
-                  variant="destructive-outline"
-                  onClick={() => void overwriteCloudWithLocal()}
-                  disabled={
-                    !session || operation !== null || conflicts.length === 0
-                  }
-                >
-                  <CloudUpload className="h-4 w-4" />
-                  {t.ui("accountSystem.keepLocal")}
+                  <CloudDownload
+                    className={cn(
+                      "h-4 w-4",
+                      operation === "download" && "animate-spin"
+                    )}
+                  />
+                  {t.ui("accountSystem.downloadFromCloud")}
                 </Button>
               </div>
             </div>
           </section>
-
-          {conflicts.length > 0 && (
-            <section className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
-              <div className="bg-gradient-select border-b border-border/70 px-4 py-2.5">
-                <h2 className="text-sm font-semibold">
-                  {t.ui("accountSystem.conflicts")}
-                </h2>
-              </div>
-              <div className="divide-y divide-border">
-                {conflicts.map((conflict) => (
-                  <div
-                    key={conflict.id}
-                    className="p-4 flex flex-wrap items-center justify-between gap-3"
-                  >
-                    <div className="min-w-0">
-                      <div className="text-sm font-medium">{conflict.id}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {conflict.reason}
-                      </div>
-                    </div>
-                    <Badge variant="outline">{conflict.groupKey}</Badge>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
         </div>
       </ScrollLayout>
+      <ManualBackupChoiceDialog
+        action={pendingAction}
+        selectedChoiceIds={selectedChoiceIds}
+        busy={operation !== null}
+        onToggleChoice={togglePendingChoice}
+        onCancel={() => {
+          setPendingAction(null);
+          setSelectedChoiceIds(new Set());
+        }}
+        onConfirm={() => void confirmPendingAction()}
+      />
     </PageLayout>
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const { t } = useLanguage();
-  const variant =
-    status === "conflict" || status === "unsupported"
-      ? "destructive"
-      : status === "needs-download"
-        ? "secondary"
-        : "default";
-  return <Badge variant={variant}>{statusLabel(status, t)}</Badge>;
-}
-
-function StatusTile({
-  icon: Icon,
-  label,
-  value,
-  attention,
+function OperationBadge({
+  operation,
 }: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-  attention?: boolean;
+  operation: Exclude<Operation, null>;
 }) {
+  const { t } = useLanguage();
   return (
-    <div className="rounded-lg border border-border bg-background/50 p-3 flex items-center gap-3">
-      <Icon
-        className={cn(
-          "h-5 w-5 shrink-0",
-          attention ? "text-destructive" : "text-primary"
-        )}
-      />
-      <div className="min-w-0">
-        <div className="text-xs text-muted-foreground">{label}</div>
-        <div className="text-sm font-semibold tabular-nums">{value}</div>
-      </div>
-    </div>
+    <Badge variant="secondary">
+      {operation === "upload"
+        ? t.ui("accountSystem.status.uploading")
+        : t.ui("accountSystem.status.downloading")}
+    </Badge>
   );
 }
 
-function statusLabel(status: string, t: ReturnType<typeof useLanguage>["t"]) {
-  switch (status) {
-    case "synced":
-      return t.ui("accountSystem.status.synced");
-    case "uploaded":
-      return t.ui("accountSystem.status.uploaded");
-    case "needs-download":
-      return t.ui("accountSystem.status.needsDownload");
-    case "conflict":
-      return t.ui("accountSystem.status.conflict");
-    case "unsupported":
-      return t.ui("accountSystem.status.unsupported");
-    default:
-      return t.ui("accountSystem.status.idle");
-  }
-}
-
-function statusToast(
+function restoreNotice(
   status: CloudSyncRunResult["status"],
   t: ReturnType<typeof useLanguage>["t"]
 ) {
   switch (status) {
     case "synced":
-      return t.ui("accountSystem.statusToast.synced");
     case "uploaded":
-      return t.ui("accountSystem.statusToast.uploaded");
+      return t.ui("accountSystem.restoreNotice.noCloudChanges");
+    case "conflict":
+      return t.ui("accountSystem.restoreNotice.conflict");
+    case "unsupported":
+      return t.ui("accountSystem.restoreNotice.unsupported");
     case "needs-download":
       return t.ui("accountSystem.statusToast.needsDownload");
-    case "conflict":
-      return t.ui("accountSystem.statusToast.conflict");
-    case "unsupported":
-      return t.ui("accountSystem.statusToast.unsupported");
   }
 }
 
-function formatBackupError(error: unknown): string {
+function formatBackupError(
+  error: unknown,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
   if (error instanceof BackupApiError) {
+    if (
+      error.status === 503 &&
+      error.payload &&
+      typeof error.payload === "object" &&
+      "error" in error.payload &&
+      error.payload.error === "backup_storage_not_configured"
+    ) {
+      return t.ui("accountSystem.devStorageNotConfigured");
+    }
     const detail =
       typeof error.payload === "string"
         ? error.payload

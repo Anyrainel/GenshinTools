@@ -48,15 +48,34 @@ function manualChunks(id: string): string | undefined {
   return undefined;
 }
 
+const localBackupBindings = {
+  d1_databases: [
+    {
+      binding: "BACKUP_DB",
+      database_name: "ggartifact-backup",
+      database_id: "bf430d1d-3063-4ce6-bf57-4558110bf55f",
+    },
+  ],
+  r2_buckets: [
+    {
+      bucket_name: "ggartifact-backup",
+      binding: "BACKUP_BUCKET",
+    },
+  ],
+};
+
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const staticOnlyBuild = mode === "github" || mode === "tauri";
 
   return {
     base: mode === "github" ? "/GenshinTools/" : "/",
     plugins: [
       react({ tsDecorators: true }),
-      !staticOnlyBuild && cloudflare(),
+      !staticOnlyBuild &&
+        cloudflare({
+          config: command === "serve" ? () => localBackupBindings : undefined,
+        }),
       presetWatcher(),
       {
         name: "cache-static-assets",

@@ -11,8 +11,7 @@ const BACKUP_API_PREFIX = "/api/backup/v1";
 const BACKUP_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "Authorization, Content-Type, x-backup-dev-user-id",
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
   "Access-Control-Max-Age": "86400",
 };
 
@@ -43,9 +42,33 @@ type BackupHeadRow = {
   compressed_hash: string;
   compressed_bytes: number;
   updated_at: number;
+  metadata_json: string;
   soft_deleted_at: number | null;
   source_device_id: string | null;
   source_device_label: string | null;
+};
+
+type BackupRecordKind =
+  | "characters"
+  | "weapons"
+  | "artifacts"
+  | "frozen"
+  | "settings"
+  | "builds"
+  | "teams"
+  | "teamConfigs"
+  | "tiers";
+
+type BackupHeadMetadataRecord = {
+  kind: BackupRecordKind;
+  count: number;
+  profileId?: string;
+  updatedAt?: number;
+};
+
+type BackupHeadMetadata = {
+  schemaVersion: 1;
+  records: BackupHeadMetadataRecord[];
 };
 
 type BackupHead = {
@@ -57,6 +80,7 @@ type BackupHead = {
   compressedHash: string;
   compressedBytes: number;
   updatedAt: number;
+  metadata: BackupHeadMetadata;
   sourceDeviceId?: string;
   sourceDeviceLabel?: string;
   deletedAt?: number;
@@ -78,6 +102,7 @@ type BackupCommitPut = {
   compressedHash: string;
   logicalBytes?: number;
   compressedBytes: number;
+  metadata: BackupHeadMetadata;
   writeMode: BackupWriteMode;
 };
 
@@ -315,6 +340,7 @@ async function handleBackupCommit(
       compressedHash: put.compressedHash,
       compressedBytes: put.compressedBytes,
       updatedAt: committedAt,
+      metadata: put.metadata,
       sourceDeviceId: manifest.deviceId,
       sourceDeviceLabel: manifest.deviceLabel,
     });
@@ -324,10 +350,10 @@ async function handleBackupCommit(
         .prepare(
           `INSERT INTO backup_heads (
             user_id, partition_key, object_id, rev, schema_version, content_hash,
-            compressed_hash, compressed_bytes, updated_at, source_device_row_id,
-            soft_deleted_at
+            compressed_hash, compressed_bytes, updated_at, metadata_json,
+            source_device_row_id, soft_deleted_at
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
           ON CONFLICT(user_id, partition_key) DO UPDATE SET
             object_id = excluded.object_id,
             rev = excluded.rev,
@@ -336,6 +362,7 @@ async function handleBackupCommit(
             compressed_hash = excluded.compressed_hash,
             compressed_bytes = excluded.compressed_bytes,
             updated_at = excluded.updated_at,
+            metadata_json = excluded.metadata_json,
             source_device_row_id = excluded.source_device_row_id,
             soft_deleted_at = NULL`
         )
@@ -349,6 +376,7 @@ async function handleBackupCommit(
           put.compressedHash,
           put.compressedBytes,
           committedAt,
+          JSON.stringify(put.metadata),
           deviceRowId
         )
     );
@@ -661,6 +689,8 @@ function validatePut(
   ) {
     return backupJson({ error: "invalid_payload", field: "logicalBytes" }, 422);
   }
+  const metadataError = validateHeadMetadata(put.metadata);
+  if (metadataError) return metadataError;
   return validateWriteMode(put.writeMode, "writeMode");
 }
 
@@ -679,6 +709,57 @@ function validateDelete(
   }
   partitionKeys.add(del.partitionKey);
   return validateWriteMode(del.writeMode, "writeMode");
+}
+
+function validateHeadMetadata(
+  metadata: BackupHeadMetadata | undefined
+): Response | null {
+  if (
+    !metadata ||
+    typeof metadata !== "object" ||
+    metadata.schemaVersion !== 1 ||
+    !Array.isArray(metadata.records) ||
+    metadata.records.length > 20
+  ) {
+    return backupJson({ error: "invalid_payload", field: "metadata" }, 422);
+  }
+  const encodedLength = JSON.stringify(metadata).length;
+  if (encodedLength > 4096) {
+    return backupJson({ error: "payload_too_large", field: "metadata" }, 413);
+  }
+  for (const record of metadata.records) {
+    if (!isKnownRecordKind(record.kind)) {
+      return backupJson(
+        { error: "invalid_payload", field: "metadata.kind" },
+        422
+      );
+    }
+    if (!Number.isInteger(record.count) || record.count < 0) {
+      return backupJson(
+        { error: "invalid_payload", field: "metadata.count" },
+        422
+      );
+    }
+    if (
+      record.profileId !== undefined &&
+      !/^[A-Za-z0-9_:-]{1,64}$/.test(record.profileId)
+    ) {
+      return backupJson(
+        { error: "invalid_payload", field: "metadata.profileId" },
+        422
+      );
+    }
+    if (
+      record.updatedAt !== undefined &&
+      (!Number.isFinite(record.updatedAt) || record.updatedAt < 0)
+    ) {
+      return backupJson(
+        { error: "invalid_payload", field: "metadata.updatedAt" },
+        422
+      );
+    }
+  }
+  return null;
 }
 
 function validateWriteMode(
@@ -747,6 +828,7 @@ async function selectActiveHeads(
         h.compressed_hash,
         h.compressed_bytes,
         h.updated_at,
+        h.metadata_json,
         h.soft_deleted_at,
         d.device_id AS source_device_id,
         d.label AS source_device_label
@@ -778,6 +860,7 @@ async function selectHeadsByPartitionKeys(
         h.compressed_hash,
         h.compressed_bytes,
         h.updated_at,
+        h.metadata_json,
         h.soft_deleted_at,
         d.device_id AS source_device_id,
         d.label AS source_device_label
@@ -808,6 +891,7 @@ async function selectHeadsByObjectIds(
         h.compressed_hash,
         h.compressed_bytes,
         h.updated_at,
+        h.metadata_json,
         h.soft_deleted_at,
         d.device_id AS source_device_id,
         d.label AS source_device_label
@@ -879,6 +963,7 @@ function toBackupHead(row: BackupHeadRow): BackupHead {
     compressedHash: row.compressed_hash,
     compressedBytes: row.compressed_bytes,
     updatedAt: row.updated_at,
+    metadata: JSON.parse(row.metadata_json) as BackupHeadMetadata,
     ...(row.source_device_id ? { sourceDeviceId: row.source_device_id } : {}),
     ...(row.source_device_label
       ? { sourceDeviceLabel: row.source_device_label }
@@ -920,6 +1005,20 @@ function isKnownPartitionKey(value: string): boolean {
     value === "builds/all" ||
     value === "teams/all" ||
     value === "tiers/all"
+  );
+}
+
+function isKnownRecordKind(value: string): value is BackupRecordKind {
+  return (
+    value === "characters" ||
+    value === "weapons" ||
+    value === "artifacts" ||
+    value === "frozen" ||
+    value === "settings" ||
+    value === "builds" ||
+    value === "teams" ||
+    value === "teamConfigs" ||
+    value === "tiers"
   );
 }
 

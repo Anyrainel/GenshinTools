@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS backup_heads (
   compressed_hash TEXT NOT NULL,
   compressed_bytes INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
+  metadata_json TEXT NOT NULL,
   source_device_row_id TEXT REFERENCES backup_devices(id) ON DELETE SET NULL,
   soft_deleted_at INTEGER,
   PRIMARY KEY(user_id, partition_key)

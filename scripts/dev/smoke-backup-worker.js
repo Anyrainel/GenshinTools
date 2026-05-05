@@ -11,11 +11,12 @@ import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 
 const port = Number(process.env.BACKUP_SMOKE_PORT ?? 8795);
-const secret =
-  process.env.BACKUP_DEV_AUTH_SECRET ?? "local-backup-smoke-secret";
 const userId = "backup_smoke_user";
+const backupUserId = `usr_dev_${userId}`;
+let sessionToken = "";
 const root = process.cwd();
 const testResultsDir = path.join(root, "test-results");
+const persistDir = path.join(testResultsDir, "backup-smoke-state");
 const stdoutPath = path.join(testResultsDir, "backup-smoke-wrangler.out.log");
 const stderrPath = path.join(testResultsDir, "backup-smoke-wrangler.err.log");
 const wranglerBin = path.resolve(
@@ -24,6 +25,7 @@ const wranglerBin = path.resolve(
 );
 
 mkdirSync(testResultsDir, { recursive: true });
+rmSync(persistDir, { recursive: true, force: true });
 rmSync(stdoutPath, { force: true });
 rmSync(stderrPath, { force: true });
 let stdoutFd;
@@ -45,6 +47,7 @@ async function main() {
   } finally {
     stopProcessTree(server.pid);
     cleanupSmokeUser();
+    rmSync(persistDir, { recursive: true, force: true });
     closeLogFiles();
     if (!failed) {
       rmSync(stdoutPath, { force: true });
@@ -56,7 +59,19 @@ async function main() {
 function applyLocalMigration() {
   const result = spawnSync(
     wranglerBin,
-    ["d1", "migrations", "apply", "ggartifact-backup", "--local"],
+    [
+      "--config",
+      "wrangler.jsonc",
+      "d1",
+      "migrations",
+      "apply",
+      "ggartifact-backup",
+      "--local",
+      "--persist-to",
+      persistDir,
+      "--env",
+      "dev",
+    ],
     {
       cwd: root,
       shell: process.platform === "win32",
@@ -77,12 +92,16 @@ function startWranglerDev() {
   return spawn(
     wranglerBin,
     [
+      "--config",
+      "wrangler.jsonc",
+      "dev",
+      "--env",
       "dev",
       "--port",
       String(port),
       "--local",
-      "--var",
-      `BACKUP_DEV_AUTH_SECRET:${secret}`,
+      "--persist-to",
+      persistDir,
       "--log-level",
       "error",
       "--show-interactive-dev-session=false",
@@ -101,6 +120,7 @@ async function waitForHead() {
   let lastError = "";
   while (Date.now() - startedAt < 30_000) {
     try {
+      await login();
       const response = await fetch(`${baseUrl()}/head`, { headers: authHeaders() });
       if (response.ok) return;
       lastError = `${response.status} ${await response.text()}`;
@@ -137,6 +157,10 @@ async function runBackupSmoke() {
         compressedHash: sha256(objectBytes),
         logicalBytes: logicalBytes.byteLength,
         compressedBytes: objectBytes.byteLength,
+        metadata: {
+          schemaVersion: 1,
+          records: [{ kind: "builds", count: 1, updatedAt: Date.now() }],
+        },
         writeMode: { kind: "overwrite" },
       },
     ],
@@ -209,20 +233,54 @@ async function runBackupSmoke() {
 
 function cleanupSmokeUser() {
   const sql = [
-    `DELETE FROM backup_commits WHERE user_id = '${userId}'`,
-    `DELETE FROM backup_heads WHERE user_id = '${userId}'`,
-    `DELETE FROM backup_devices WHERE user_id = '${userId}'`,
-    `DELETE FROM backup_user_state WHERE user_id = '${userId}'`,
+    `DELETE FROM backup_commits WHERE user_id = '${backupUserId}'`,
+    `DELETE FROM backup_heads WHERE user_id = '${backupUserId}'`,
+    `DELETE FROM backup_devices WHERE user_id = '${backupUserId}'`,
+    `DELETE FROM backup_user_state WHERE user_id = '${backupUserId}'`,
+    `DELETE FROM auth_sessions WHERE user_id = '${backupUserId}'`,
+    `DELETE FROM user_entitlements WHERE user_id = '${backupUserId}'`,
+    `DELETE FROM auth_identities WHERE provider = 'dev' AND provider_subject = '${userId}'`,
+    `DELETE FROM app_users WHERE id = '${backupUserId}'`,
   ].join("; ");
   spawnSync(
     wranglerBin,
-    ["d1", "execute", "ggartifact-backup", "--local", "--command", sql],
+    [
+      "--config",
+      "wrangler.jsonc",
+      "d1",
+      "execute",
+      "ggartifact-backup",
+      "--local",
+      "--persist-to",
+      persistDir,
+      "--env",
+      "dev",
+      "--command",
+      sql,
+    ],
     {
       cwd: root,
       shell: process.platform === "win32",
       stdio: "ignore",
     }
   );
+}
+
+async function login() {
+  if (sessionToken) return;
+  const response = await must(
+    fetch(`http://127.0.0.1:${port}/api/auth/dev-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accountId: userId }),
+    }),
+    "dev login"
+  );
+  const body = await readJson(response);
+  if (typeof body.sessionToken !== "string") {
+    throw new Error(`unexpected login response: ${JSON.stringify(body)}`);
+  }
+  sessionToken = body.sessionToken;
 }
 
 async function must(responsePromise, label) {
@@ -239,8 +297,7 @@ async function readJson(response) {
 
 function authHeaders() {
   return {
-    Authorization: `Bearer ${secret}`,
-    "x-backup-dev-user-id": userId,
+    Authorization: `Bearer ${sessionToken}`,
   };
 }
 

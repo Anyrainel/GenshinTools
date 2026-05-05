@@ -8,6 +8,7 @@ import type {
   CharacterData,
   WeaponData,
 } from "@/data/types";
+import { createLocatedCharacterPlaceholder } from "@/lib/account-data/import/locationCharacters";
 import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
 import {
   assignArtifactIdentities,
@@ -46,6 +47,7 @@ export type AccountAppPayload = {
   accountProfileId: AccountProfileId;
   name: string;
   uid?: number;
+  isActive?: boolean;
   lastImportedAt?: number;
   freeze?: FrozenProfileStateSnapshot;
   triageSettings?: unknown;
@@ -95,6 +97,15 @@ export type AccountArtifactsPayload = {
 
 export type AccountRestorePatch = {
   accounts: Record<AccountProfileId, AccountState>;
+  activeAccountId: AccountProfileId | null;
+  shardPresenceByProfileId: Record<
+    AccountProfileId,
+    {
+      app?: boolean;
+      game?: boolean;
+      artifacts?: boolean;
+    }
+  >;
   freezesByProfileId: Record<AccountProfileId, FrozenProfileStateSnapshot>;
   triageByProfileId: Record<AccountProfileId, unknown>;
   resourcesByProfileId: Record<AccountProfileId, unknown>;
@@ -138,8 +149,17 @@ export function accountFromCloud(
   const triageByProfileId: Record<AccountProfileId, unknown> = {};
   const resourcesByProfileId: Record<AccountProfileId, unknown> = {};
   const recommendationsByProfileId: Record<AccountProfileId, unknown> = {};
+  const shardPresenceByProfileId: AccountRestorePatch["shardPresenceByProfileId"] =
+    {};
+  let activeAccountId: AccountProfileId | null = null;
   for (const profileId of profileIds) {
     const app = apps.get(profileId);
+    shardPresenceByProfileId[profileId] = {
+      ...(app ? { app: true } : {}),
+      ...(rosters.has(profileId) ? { game: true } : {}),
+      ...(artifactsByProfile.has(profileId) ? { artifacts: true } : {}),
+    };
+    if (app?.isActive) activeAccountId = profileId;
     if (app?.freeze) freezesByProfileId[profileId] = app.freeze;
     if (app && "triageSettings" in app) {
       triageByProfileId[profileId] = app.triageSettings;
@@ -163,6 +183,8 @@ export function accountFromCloud(
 
   return {
     accounts,
+    activeAccountId,
+    shardPresenceByProfileId,
     freezesByProfileId,
     triageByProfileId,
     resourcesByProfileId,
@@ -190,6 +212,7 @@ function accountToCloudPartitions(
       accountProfileId: account.id,
       name: account.name,
       ...(account.id !== 0 ? { uid: account.id } : {}),
+      ...(account.id === snapshot.activeAccountId ? { isActive: true } : {}),
       lastImportedAt: account.lastUpdate,
       ...(snapshot.freezesByProfileId?.[account.id]
         ? {
@@ -463,8 +486,25 @@ function restoreAccountData(
     artifactsByCharId.set(artifact.equippedCharacterId, bySlot);
   }
 
-  const characters: CharacterData[] = (rosterPayload?.characters ?? []).map(
-    (character) => ({
+  const rosterCharacters = rosterPayload?.characters ?? [];
+  const rosterCharacterIds = new Set(
+    rosterCharacters.map((character) => character.key)
+  );
+  const locationOnlyCharacterIds = [
+    ...new Set(
+      [
+        ...(rosterPayload?.weapons ?? []),
+        ...(artifactPayload?.artifacts ?? []),
+      ].flatMap((item) =>
+        item.equippedCharacterId &&
+        !rosterCharacterIds.has(item.equippedCharacterId)
+          ? [item.equippedCharacterId]
+          : []
+      )
+    ),
+  ];
+  const characters: CharacterData[] = [
+    ...rosterCharacters.map((character) => ({
       key: character.key,
       level: character.level,
       constellation: character.constellation,
@@ -477,8 +517,15 @@ function restoreAccountData(
         ? { weapon: weaponByCharId.get(character.key) }
         : {}),
       artifacts: artifactsByCharId.get(character.key) ?? {},
-    })
-  );
+    })),
+    ...locationOnlyCharacterIds.map((characterId) => ({
+      ...createLocatedCharacterPlaceholder(characterId),
+      ...(weaponByCharId.get(characterId)
+        ? { weapon: weaponByCharId.get(characterId) }
+        : {}),
+      artifacts: artifactsByCharId.get(characterId) ?? {},
+    })),
+  ];
 
   return {
     characters,

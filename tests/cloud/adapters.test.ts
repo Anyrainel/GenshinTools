@@ -22,6 +22,9 @@ import {
 } from "@/cloud/adapters/tierAdapter";
 import { createEnvelope, verifyEnvelopePayload } from "@/cloud/payload";
 import type { ArtifactData, Build, WeaponData } from "@/data/types";
+import { getDefaultBuildPresetId } from "@/lib/artifact-builds/buildPresetRegistry";
+import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
 describe("account cloud adapter", () => {
   it("partitions profiles, game data, artifacts, and disposable weapons", () => {
@@ -153,6 +156,42 @@ describe("account cloud adapter", () => {
       allowPoolArtifactSteals: false,
     });
   });
+
+  it("serializes and restores the active account selection", () => {
+    const snapshot: AccountCloudSnapshot = {
+      activeAccountId: 600000001,
+      accounts: {
+        0: {
+          id: 0,
+          name: "Default",
+          lastUpdate: 100,
+          data: { characters: [], extraWeapons: [], extraArtifacts: [] },
+        },
+        600000001: {
+          id: 600000001,
+          name: "UID",
+          lastUpdate: 200,
+          data: { characters: [], extraWeapons: [], extraArtifacts: [] },
+        },
+      },
+    };
+
+    const partitions = accountToCloud(snapshot);
+    const appPayloads = new Map(
+      partitions
+        .filter((partition) => partition.namespace === "profile.app")
+        .map((partition) => [
+          partition.partitionKey,
+          partition.payload as Record<string, unknown>,
+        ])
+    );
+
+    expect(appPayloads.get("600000001")).toMatchObject({ isActive: true });
+    expect(appPayloads.get("0")).not.toHaveProperty("isActive");
+    expect(accountFromCloud(partitions)).toMatchObject({
+      activeAccountId: 600000001,
+    });
+  });
 });
 
 describe("cloud source adapters", () => {
@@ -173,7 +212,6 @@ describe("cloud source adapters", () => {
     const snapshot = {
       activePresetId: "preset-a",
       deltas: [{ kind: "custom", id: build.id, value: build }],
-      hiddenCharacters: { amber: true },
       characterWeapons: { amber: ["black_tassel"] },
       computeOptions: { normalizeFlatStats: true },
       artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
@@ -195,12 +233,75 @@ describe("cloud source adapters", () => {
     expect(buildsFromCloud([partition])).toEqual({
       activePresetId: "preset-a",
       deltas: snapshot.deltas,
-      hiddenCharacters: { amber: true },
       characterWeapons: { amber: ["black_tassel"] },
       computeOptions: { normalizeFlatStats: true },
       artifactScore: snapshot.artifactScore,
       author: "author",
       description: "description",
+    });
+  });
+
+  it("treats preset-only builds as default local state for first restore", () => {
+    const defaultPresetId = getDefaultBuildPresetId();
+    const [partition] = buildsToCloud({
+      activePresetId: defaultPresetId,
+      deltas: [],
+      characterWeapons: {},
+      computeOptions: DEFAULT_COMPUTE_OPTIONS,
+      artifactScore: { global: DEFAULT_GLOBAL_STAT_WEIGHTS },
+      author: "",
+      description: "",
+    });
+
+    expect(partition.isEmpty).toBe(true);
+    expect(partition.payload).not.toHaveProperty("activePresetId");
+    expect(buildsFromCloud([partition]).activePresetId).toBe(defaultPresetId);
+  });
+
+  it("serializes cleared build preset selection as explicit data", () => {
+    const [partition] = buildsToCloud({
+      activePresetId: null,
+      deltas: [],
+      characterWeapons: {},
+      computeOptions: DEFAULT_COMPUTE_OPTIONS,
+      artifactScore: { global: DEFAULT_GLOBAL_STAT_WEIGHTS },
+      author: "",
+      description: "",
+    });
+
+    expect(partition.isEmpty).toBe(false);
+    expect(partition.payload.activePresetId).toBeNull();
+    expect(buildsFromCloud([partition]).activePresetId).toBeNull();
+  });
+
+  it("reads legacy build character metadata while schema version remains one", () => {
+    const build = customBuild();
+    const restored = buildsFromCloud([
+      {
+        namespace: "builds",
+        partitionKey: "all",
+        schemaVersion: 1,
+        conflictPolicy: "explicit-choice",
+        payload: {
+          activePresetId: null,
+          deltas: [{ kind: "custom", id: build.id, value: build }],
+          characterMetadata: {
+            amber: {
+              hidden: true,
+              weaponIds: ["black_tassel"],
+            },
+          },
+        },
+      },
+    ]);
+
+    expect(restored.characterWeapons).toEqual({
+      amber: ["black_tassel"],
+    });
+    expect(restored.deltas).toContainEqual({
+      kind: "custom",
+      id: build.id,
+      value: expect.objectContaining({ visible: false }),
     });
   });
 
@@ -252,6 +353,18 @@ describe("cloud source adapters", () => {
     });
   });
 
+  it("treats preset-only teams as default local state for first restore", () => {
+    const [partition] = teamToCloud({
+      activePresetId: "preset-a",
+      compDeltas: [],
+      configsByTeamId: {},
+      author: "",
+      description: "",
+    });
+
+    expect(partition.isEmpty).toBe(true);
+  });
+
   it("round-trips combined character, weapon, and artifact tier lists", () => {
     const characterSnapshot: CharacterTierListSnapshot = {
       activeTierListId: 1,
@@ -288,11 +401,50 @@ describe("cloud source adapters", () => {
     );
   });
 
+  it("treats untouched tier-list defaults as default local state for first restore", () => {
+    const defaultCharacter: CharacterTierListSnapshot = {
+      activeTierListId: 1,
+      nextId: 2,
+      tierLists: {
+        1: {
+          id: 1,
+          tierAssignments: {},
+          tierCustomization: {},
+          customTitle: "",
+          author: "",
+          description: "",
+          linkedAccountId: null,
+        },
+      },
+    };
+    const defaultGeneric: GenericTierListSnapshot = {
+      activeTierListId: 1,
+      nextId: 2,
+      tierLists: {
+        1: {
+          id: 1,
+          tierAssignments: {},
+          tierCustomization: {},
+          customTitle: "",
+          author: "",
+          description: "",
+        },
+      },
+    };
+
+    const [partition] = tiersToCloud({
+      character: defaultCharacter,
+      weapon: defaultGeneric,
+      artifact: defaultGeneric,
+    });
+
+    expect(partition.isEmpty).toBe(true);
+  });
+
   it("creates verifiable cloud payload envelopes", async () => {
     const [partition] = buildsToCloud({
       activePresetId: null,
       deltas: [],
-      hiddenCharacters: {},
       characterWeapons: {},
       computeOptions: {},
       artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
@@ -318,6 +470,22 @@ function artifact(id: string): ArtifactData {
     mainStatKey: "hp",
     lock: false,
     substats: { cr: 3.9, cd: 7.8 },
+  };
+}
+
+function customBuild(): Build {
+  return {
+    id: "custom-build",
+    characterId: "amber",
+    visible: true,
+    name: "Custom",
+    composition: "4pc",
+    artifactSet: "gladiators_finale",
+    substats: [],
+    sandsWeights: [],
+    gobletWeights: [],
+    circletWeights: [],
+    normalizer: 0,
   };
 }
 

@@ -1,3 +1,4 @@
+import { type AppEnv, handleAuthRequest } from "./auth";
 import { type BackupEnv, handleBackupRequest } from "./backup";
 
 const ENKA_BASE_URL = "https://enka.network/api";
@@ -39,6 +40,9 @@ export default {
 
     if (url.pathname.startsWith("/api/backup/v1")) {
       return handleBackupRequest(request, url, env as BackupEnv);
+    }
+    if (url.pathname.startsWith("/api/auth")) {
+      return handleAuthRequest(request, url, env as AppEnv);
     }
     if (url.pathname.startsWith("/api/enka/")) {
       return handleEnkaProxy(request, url);

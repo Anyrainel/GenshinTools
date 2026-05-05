@@ -10,16 +10,17 @@ This document describes the current cloud backup transform logic and the intende
 - `src/cloud/adapters/*Adapter.ts` convert local snapshots into cloud payload partitions and back into local-compatible restore patches.
 - `src/cloud/payload.ts` canonicalizes payload JSON, computes `contentHash`, creates `CloudPayloadEnvelope`, verifies payload hashes, and gzip-compresses/decompresses JSON.
 - `src/cloud/syncPlanner.ts` compares local partition hashes, local sync metadata, and remote heads to produce upload, download, no-op, conflict, skip, and unsupported-schema decisions.
-- `src/stores/useCloudSyncMetadataStore.ts` persists device-local sync metadata and conflict records. It is excluded from cloud backup.
+- `src/stores/useCloudSyncMetadataStore.ts` persists device-local sync metadata. Conflict details are transient run output and are not persisted, because the manual backup page recalculates choices from a fresh head/local preview.
 - `src/cloud/storeAdapters.ts` is the only file in `src/cloud/` that imports Zustand stores.
 - `src/cloud/apiClient.ts` is a typed frontend client for `/api/backup/v1`.
-- `src/cloud/syncClient.ts` is a headless, dev-gated coordinator that reads Worker heads, builds local partitions, runs `planCloudSync()`, commits safe uploads, marks no-op/upload metadata, records conflicts, downloads selected backup objects, verifies downloaded envelopes, builds restore plans, applies downloaded restore plans, and marks download metadata only after local apply succeeds. It also supports `explicitLocalOverwrite` for already-confirmed local-wins actions such as replacing cloud profile partitions after an import.
+- `src/cloud/backupMetadata.ts` builds the small head-level metadata blob used by the backup UI: record counts and known source timestamps for characters, weapons, artifacts, frozen loadouts, profile settings, build deltas, team deltas, team configs, and tier lists. Profile-owned rows are displayed per profile id, for example `characters/600000001` and `weapons/0`, while shared rows remain global, for example `builds`, `teams`, `teamConfigs`, and `tiers`.
+- `src/cloud/syncClient.ts` is a headless, dev-gated coordinator that reads Worker heads, builds local partitions, attaches head metadata, runs `planCloudSync()`, commits safe uploads, marks no-op/upload metadata, exposes conflicts in the returned plan, downloads selected backup objects, verifies downloaded envelopes, builds restore plans, applies downloaded restore plans, and marks download metadata only after local apply succeeds. It also supports `explicitLocalOverwrite` for already-confirmed local-wins actions such as replacing cloud profile partitions after an import.
 - `src/cloud/storeAdapters.ts` applies restore-plan sections through store-owned APIs so build/team derived runtime views and score caches refresh correctly.
 - `tests/cloud/syncClientFlows.test.ts` covers stateful multi-device flows: unchanged second-device sync, independent manual-edit conflict, explicit imported-profile overwrite, grouped profile downloads, verified download restore planning, post-apply metadata marking, and corrupt downloaded object rejection.
 
-The dev-gated Worker backup API is implemented under `/api/backup/v1` and covered by worker tests plus the local `npm run smoke:backup-worker` path. `worker/auth.ts` owns the `requireUser()` and entitlement boundary, but its current implementation is still dev-only and resolves users from `BACKUP_DEV_AUTH_SECRET` plus `x-backup-dev-user-id`.
+The dev-gated Worker backup API is implemented under `/api/backup/v1` and covered by worker tests plus the local `npm run smoke:backup-worker` path. `worker/auth.ts` owns the `requireUser()` and entitlement boundary. The current dev login flow is intentionally fake-provider based: `/api/auth/dev-login` creates or reuses an internal app user from the selected dev provider subject, grants `cloud_sync`, issues an `auth_sessions` token, and backup requests authenticate with that session token.
 
-In local dev builds, the avatar account menu is wired in `src/components/layout/AppBar.tsx`. It links to `/account` for backup test credentials and `/account/cloud-backup` for the manual cloud backup surface. Production builds keep the generic overflow menu and do not expose account or cloud backup entry points until production auth is ready. No passive background sync is wired.
+In local dev builds, the avatar account menu is wired in `src/components/layout/AppBar.tsx`. It links to `/account` for fake provider login and `/account/cloud-backup` for the manual cloud backup surface. Production builds keep the generic overflow menu and do not expose account or cloud backup entry points until production auth is ready. No passive background sync is wired. The manual page caches only cloud head metadata in session storage; local rows and conflict choices are derived live when rendering or when opening the upload/download choice dialog.
 
 ## Three Version Axes
 
@@ -34,6 +35,16 @@ Do not collapse these into one field.
 `contentHash` is separate from all three. It verifies payload integrity and skips unchanged uploads, but it is not a conflict-control mechanism.
 
 The R2 payload envelope may include upload-time self-description such as `rev` and `baseRev`, but D1/Worker head metadata is authoritative for concurrency. The server generates the published head `rev` during commit; restore verification must compare namespace, partition key, schema version, `contentHash`, and compressed object hash, not require the envelope's upload-time `rev` to equal the server head `rev`.
+
+The Worker head metadata also owns the backup overview data. Do not download R2 objects just to display counts. Upload commits include per-partition metadata records, and `GET /head` returns them with the head so UI can show local-vs-cloud contents before the user chooses upload or restore.
+
+The backup overview should not aggregate multiple game profiles into one count with a profile suffix. It should render profile-owned metadata as separate data rows such as `角色（600000001）` or `武器（默认账号）`. This keeps a real zero-count partition distinguishable from no cloud/local record: a present shard can show count `0`, while the time column shows `无记录` when there is no known source change time. If a non-empty row is missing time metadata, the UI should say that the metadata is missing instead of showing a vague `未知`.
+
+Build and team overview counts are user-visible source changes, not raw resolved preset rows. Subscribing to a preset must not persist default `displayIndex` deltas, so an untouched subscribed preset does not appear as hundreds of local records. Once the user reorders preset-backed builds or teams, the affected `displayIndex` deltas are real source data and should count in the overview. Custom items, deleted preset items, and team configs also count as user data.
+
+Cloud adapters should stay faithful to the persisted store source format. They may package store fields into cloud partitions and rename groups for schema clarity, but they should not strip default preset order noise as a cloud-only normalization step. That cleanup belongs in the build/team domain delta helpers and store hydration paths, before the cloud layer reads local state.
+
+Tier-list overview counts are user-visible tier-list instances, not the three default empty store instances. The default character, weapon, and artifact tier lists should count as `0` until the user imports/edits a list, links a character tier list to an account, creates a named list, or otherwise stores non-empty list data.
 
 Fresh devices still initialize app stores with default local data. Export partitions can mark that default state as `isEmpty`; if a first sync sees remote cloud data and only default local state, the planner downloads cloud data instead of reporting a first-sync conflict. Real divergent local data without sync history still reports `first-sync-local-and-cloud`.
 
@@ -74,7 +85,7 @@ type LocalCloudPartitionMeta = {
 
 This metadata is keyed by `namespace/partitionKey`.
 
-Domain Zustand stores should not own cloud revisions. They only own local app state. The sync layer owns `lastSeenRev`, dirty state, retry state, and conflict state.
+Domain Zustand stores should not own cloud revisions. They only own local app state. The sync layer owns `lastSeenRev`, dirty state, and retry state. `lastSyncedAt` is operational telemetry for when this browser last accepted a head, while `updatedAt` is the source-version timestamp shown in backup metadata tables. After a no-op, upload, or restore, `updatedAt` should be copied from the accepted cloud head instead of set to the local sync time. Conflict decisions belong to the current preview/action result and should be recomputed from the current local payload and cloud head instead of restored from a cache.
 
 The metadata type exists in `src/cloud/types.ts`; the persisted device-local store is `src/stores/useCloudSyncMetadataStore.ts`.
 
@@ -164,6 +175,8 @@ Upload should be skipped when:
 - The descriptor is excluded from backup.
 - The payload is derived cache/session state.
 
+If `localHash === cloudHash` but the locally computed head metadata differs from the stored cloud head metadata, an explicit upload action may republish the same payload with fresh metadata under an `ifMatch` write. This keeps the backup contents table consistent after metadata-counting logic changes without requiring an unrelated data edit.
+
 Upload should require user intent when:
 
 - The partition is profile source data and the change comes from an explicit import replacing a profile.
@@ -191,7 +204,6 @@ This keeps the UI understandable while preserving per-partition revision checks.
 These are not implemented yet:
 
 - Dirty queue and retry state.
-- Full conflict resolver UI for choosing cloud per conflict.
 - Cloud payload migrations beyond V1.
 - Production SSO/session auth behind `worker/auth.ts`.
 - Durable entitlement storage and public backup access.

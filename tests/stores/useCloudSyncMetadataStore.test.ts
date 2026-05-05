@@ -45,6 +45,7 @@ describe("useCloudSyncMetadataStore", () => {
         rev: "rev-1",
         contentHash: "sha256:local",
         syncedAt: 200,
+        updatedAt: 150,
       });
     });
 
@@ -57,7 +58,7 @@ describe("useCloudSyncMetadataStore", () => {
       lastUploadedHash: "sha256:local",
       lastSyncedAt: 200,
       dirty: false,
-      updatedAt: 200,
+      updatedAt: 150,
     });
   });
 

@@ -44,6 +44,11 @@ export type CloudDownloadDecision = CloudSyncDecisionBase & {
   schemaVersion: number;
 };
 
+export type CloudDeleteDecision = CloudSyncDecisionBase & {
+  action: "delete";
+  baseRev: string;
+};
+
 export type CloudConflictDecision = CloudSyncDecisionBase & {
   action: "conflict";
   localHash?: string;
@@ -72,6 +77,7 @@ export type CloudUnsupportedDecision = CloudSyncDecisionBase & {
 export type CloudSyncDecision =
   | CloudUploadDecision
   | CloudDownloadDecision
+  | CloudDeleteDecision
   | CloudConflictDecision
   | CloudNoopDecision
   | CloudSkippedDecision
@@ -86,6 +92,7 @@ export type CloudSyncPlanInput = {
 export type CloudSyncPlan = {
   uploads: CloudUploadDecision[];
   downloads: CloudDownloadDecision[];
+  deletes: CloudDeleteDecision[];
   conflicts: CloudConflictDecision[];
   noops: CloudNoopDecision[];
   skipped: CloudSkippedDecision[];
@@ -128,6 +135,7 @@ export function planCloudSync(input: CloudSyncPlanInput): CloudSyncPlan {
   return {
     uploads: decisions.filter(isUploadDecision),
     downloads: decisions.filter(isDownloadDecision),
+    deletes: decisions.filter(isDeleteDecision),
     conflicts: decisions.filter(isConflictDecision),
     noops: decisions.filter(isNoopDecision),
     skipped: decisions.filter(isSkippedDecision),
@@ -164,6 +172,17 @@ export function planPartitionSync(
   }
 
   if (!state.local && state.remote) {
+    if (hasSyncHistory(state.meta)) {
+      if (state.remote.rev === state.meta?.lastSeenRev) {
+        return {
+          ...base,
+          action: "delete",
+          reason: "local-changed",
+          baseRev: state.remote.rev,
+        };
+      }
+      return conflictDecision(base, state, "both-changed");
+    }
     return {
       ...base,
       action: "download",
@@ -175,6 +194,9 @@ export function planPartitionSync(
   }
 
   if (state.local && !state.remote) {
+    if (!hasSyncHistory(state.meta) && state.local.isEmpty) {
+      return { ...base, action: "skip", reason: "empty" };
+    }
     return {
       ...base,
       action: "upload",
@@ -363,6 +385,12 @@ function isDownloadDecision(
   decision: CloudSyncDecision
 ): decision is CloudDownloadDecision {
   return decision.action === "download";
+}
+
+function isDeleteDecision(
+  decision: CloudSyncDecision
+): decision is CloudDeleteDecision {
+  return decision.action === "delete";
 }
 
 function isConflictDecision(

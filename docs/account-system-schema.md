@@ -263,6 +263,7 @@ CREATE TABLE backup_heads (
   compressed_hash TEXT NOT NULL,
   compressed_bytes INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
+  metadata_json TEXT NOT NULL,
   source_device_row_id TEXT REFERENCES backup_devices(id) ON DELETE SET NULL,
   soft_deleted_at INTEGER,
   PRIMARY KEY(user_id, partition_key)
@@ -284,7 +285,7 @@ CREATE TABLE backup_commits (
 
 The source of truth for the current cloud index is `backup_user_state` plus `backup_heads`. Do not add a stored manifest table in V1.
 
-In this design, "cloud head" means the response from `GET /api/backup/v1/head`: a compact list of current partition heads. It is the index the client reads before upload or restore, not a separate persisted document.
+In this design, "cloud head" means the response from `GET /api/backup/v1/head`: a compact list of current partition heads. It is the index the client reads before upload or restore, not a separate persisted document. Each head also carries a small `metadata_json` blob with record counts and known source timestamps, so restore/conflict UI can compare local and cloud contents without downloading R2 objects.
 
 Suggested namespaces:
 
@@ -524,16 +525,11 @@ Resolver rules:
 ## Build Payload
 
 ```ts
-type CharacterBuildMetadata = {
-  hidden?: boolean;
-  weaponIds?: string[];
-};
-
 type BuildsCloudPayload = {
   activePresetId: string | null;
   activePresetRevision?: string;
   deltas: PresetDelta<unknown>[];
-  characterMetadata?: Record<string, CharacterBuildMetadata>;
+  characterWeapons?: Record<string, string[]>;
   computeOptions?: unknown;
   author?: string;
   description?: string;
@@ -541,6 +537,10 @@ type BuildsCloudPayload = {
 ```
 
 Do not include `validationErrors`.
+
+Character-level hidden state has been retired. Store migration converts legacy
+hidden characters into build-level `visible: false` changes, so the cloud payload
+only needs build deltas plus weapon defaults.
 
 Do not infer preset removal from missing `displayIndex` or missing delta entries. The resolver must treat `deleted` as the only source of truth for preset removal so that new builds added by a subscribed preset update can appear automatically.
 
@@ -852,7 +852,7 @@ Auth:
 - `POST /api/auth/logout`
 - `POST /api/auth/link/:provider/start`
 - `DELETE /api/auth/identity/:identityId`
-- `GET /api/me`
+- `GET /api/auth/me`
 
 Future V2 email/password auth:
 

@@ -30,6 +30,7 @@ export function teamToCloud(
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
+      isEmpty: isEmptyTeamSnapshot(snapshot),
       payload: {
         activePresetId: snapshot.activePresetId,
         compDeltas: snapshot.compDeltas,
@@ -54,4 +55,13 @@ export function teamFromCloud(
     author: current?.author ?? "",
     description: current?.description ?? "",
   };
+}
+
+function isEmptyTeamSnapshot(snapshot: TeamCloudSnapshot) {
+  return (
+    snapshot.compDeltas.length === 0 &&
+    Object.keys(snapshot.configsByTeamId).length === 0 &&
+    snapshot.author === "" &&
+    snapshot.description === ""
+  );
 }

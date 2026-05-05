@@ -377,7 +377,7 @@ export function AppBar({
                     <DropdownMenuItem asChild className="gap-2">
                       <Link to="/account">
                         <LogIn className="w-4 h-4" />
-                        {t.ui("accountData.account")}
+                        {t.ui("accountSystem.devAccountTitle")}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="gap-2">

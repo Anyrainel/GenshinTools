@@ -5,6 +5,7 @@ import {
   type BackupObjectDownloadResponse,
   type BackupWriteMode,
 } from "@/cloud/apiClient";
+import { buildBackupHeadMetadataByPartition } from "@/cloud/backupMetadata";
 import {
   canonicalJson,
   createEnvelope,
@@ -27,6 +28,7 @@ import {
   planCloudSync,
 } from "@/cloud/syncPlanner";
 import type {
+  CloudBackupHeadMetadata,
   CloudExportPartition,
   CloudLocalPartitionState,
   CloudNamespace,
@@ -62,6 +64,11 @@ export type ExplicitLocalOverwriteScope = {
   groupKeys?: string[];
 };
 
+export type ExplicitCloudDeleteScope = {
+  partitionIds?: CloudPartitionId[];
+  groupKeys?: string[];
+};
+
 export type CloudSyncClientOptions = {
   apiClient?: BackupApi;
   buildPartitions?: () => CloudExportPartition[];
@@ -72,6 +79,7 @@ export type CloudSyncClientOptions = {
     | "markPartitionSyncedFromUpload"
     | "markPartitionSyncedWithoutTransfer"
     | "markConflict"
+    | "removePartitionMeta"
   >;
   now?: () => number;
   createIdempotencyKey?: () => string;
@@ -81,7 +89,13 @@ export type CloudSyncClientOptions = {
     index: number
   ) => string;
   explicitLocalOverwrite?: ExplicitLocalOverwriteScope;
+  explicitCloudDelete?: ExplicitCloudDeleteScope;
 };
+
+export type CloudSyncPreviewOptions = Pick<
+  CloudSyncClientOptions,
+  "apiClient" | "buildPartitions" | "metadataStore"
+>;
 
 export type BackupApi = Pick<BackupApiClient, "getHead" | "commit">;
 export type BackupDownloadApi = Pick<BackupApiClient, "downloadObjects">;
@@ -95,6 +109,9 @@ export type CloudDownloadedRestore = {
 export type CloudRestoreDownloadOptions = {
   apiClient?: BackupDownloadApi;
   syncResult: CloudSyncRunResult;
+  downloadScope?: {
+    partitionIds?: CloudPartitionId[];
+  };
   buildRestorePlan?: (partitions: CloudExportPartition[]) => CloudRestorePlan;
 };
 
@@ -115,6 +132,7 @@ type PreparedCloudPartition = {
   id: CloudPartitionId;
   partition: CloudExportPartition;
   local: CloudLocalPartitionState;
+  metadata: CloudBackupHeadMetadata;
 };
 
 export async function runCloudSyncOnce(
@@ -128,6 +146,7 @@ export async function runCloudSyncOnce(
   const prepared = await prepareLocalPartitions(
     options.buildPartitions?.() ?? buildLocalBackupPartitions()
   );
+  const remoteHeadById = buildRemoteHeadByPartitionId(head.heads);
   const plan = planCloudSync({
     localPartitions: prepared.map(({ local }) => local),
     localMeta: metadataStore.getAllPartitionMeta(),
@@ -137,12 +156,14 @@ export async function runCloudSyncOnce(
 
   for (const noop of plan.noops) {
     if (!noop.remoteRev || !noop.contentHash) continue;
+    const remoteUpdatedAt = remoteHeadById.get(noop.id)?.updatedAt;
     metadataStore.markPartitionSyncedWithoutTransfer({
       namespace: noop.namespace,
       partitionKey: noop.partitionKey,
       rev: noop.remoteRev,
       contentHash: noop.contentHash,
       syncedAt,
+      ...(remoteUpdatedAt != null ? { updatedAt: remoteUpdatedAt } : {}),
     });
   }
 
@@ -175,9 +196,11 @@ export async function runCloudSyncOnce(
   const uploads = collectUploadWork(
     plan,
     prepared,
-    options.explicitLocalOverwrite
+    options.explicitLocalOverwrite,
+    remoteHeadById
   );
-  if (uploads.length === 0) {
+  const deletes = collectDeleteWork(plan, options.explicitCloudDelete);
+  if (uploads.length === 0 && deletes.length === 0) {
     return {
       status: getPlanStatus(plan, [], unresolvedConflicts.length),
       plan,
@@ -199,17 +222,23 @@ export async function runCloudSyncOnce(
     idempotencyKey,
     deviceId,
     puts,
+    deletes,
   });
 
   for (const uploaded of commit.heads) {
     const parsed = toCloudRemoteHead(uploaded)[0];
     if (!parsed) continue;
+    if (uploaded.deletedAt != null) {
+      metadataStore.removePartitionMeta(parsed.namespace, parsed.partitionKey);
+      continue;
+    }
     metadataStore.markPartitionSyncedFromUpload({
       namespace: parsed.namespace,
       partitionKey: parsed.partitionKey,
       rev: uploaded.rev,
       contentHash: uploaded.contentHash,
       syncedAt: commit.committedAt,
+      updatedAt: uploaded.updatedAt,
     });
   }
 
@@ -222,10 +251,38 @@ export async function runCloudSyncOnce(
   };
 }
 
+export async function previewCloudSync(
+  options: CloudSyncPreviewOptions = {}
+): Promise<CloudSyncRunResult> {
+  const apiClient = options.apiClient ?? new BackupApiClient();
+  const metadataStore =
+    options.metadataStore ?? useCloudSyncMetadataStore.getState();
+  const head = await apiClient.getHead();
+  const prepared = await prepareLocalPartitions(
+    options.buildPartitions?.() ?? buildLocalBackupPartitions()
+  );
+  const plan = planCloudSync({
+    localPartitions: prepared.map(({ local }) => local),
+    localMeta: metadataStore.getAllPartitionMeta(),
+    remoteHeads: head.heads.flatMap(toCloudRemoteHead),
+  });
+
+  return {
+    status: getPlanStatus(plan, [], plan.conflicts.length),
+    plan,
+    remoteHeads: head.heads,
+    uploaded: [],
+    headSetRev: head.headSetRev,
+  };
+}
+
 export async function downloadCloudSyncRestorePlan(
   options: CloudRestoreDownloadOptions
 ): Promise<CloudDownloadedRestore> {
-  const heads = getCloudSyncDownloadHeads(options.syncResult);
+  const heads = getCloudSyncDownloadHeads(
+    options.syncResult,
+    options.downloadScope
+  );
   if (heads.length === 0) {
     return {
       heads: [],
@@ -249,8 +306,16 @@ export async function downloadCloudSyncRestorePlan(
 }
 
 export function getCloudSyncDownloadHeads(
-  syncResult: CloudSyncRunResult
+  syncResult: CloudSyncRunResult,
+  scope?: { partitionIds?: CloudPartitionId[] }
 ): BackupHead[] {
+  if (scope?.partitionIds) {
+    const scopedIds = new Set(scope.partitionIds);
+    return syncResult.remoteHeads.filter((head) =>
+      scopedIds.has(head.partitionKey)
+    );
+  }
+
   const downloadIds = new Set(
     syncResult.plan.downloads.map((download) => download.id)
   );
@@ -280,6 +345,7 @@ export function markCloudRestoreApplied(
       rev: head.rev,
       contentHash: head.contentHash,
       syncedAt: options.appliedAt,
+      updatedAt: head.updatedAt,
     });
   }
 }
@@ -297,6 +363,7 @@ export function applyCloudRestoreAndMarkSynced(
 async function prepareLocalPartitions(
   partitions: CloudExportPartition[]
 ): Promise<PreparedCloudPartition[]> {
+  const metadataById = buildBackupHeadMetadataByPartition(partitions);
   return Promise.all(
     partitions.map(async (partition) => {
       const id = getCloudPartitionId(
@@ -314,12 +381,13 @@ async function prepareLocalPartitions(
           contentHash: await getContentHash(partition.payload),
           ...(partition.isEmpty ? { isEmpty: true } : {}),
         },
+        metadata: metadataById.get(id)!,
       };
     })
   );
 }
 
-async function readDownloadedPartitions(
+export async function readDownloadedPartitions(
   expectedHeads: BackupHead[],
   response: BackupObjectDownloadResponse
 ): Promise<CloudExportPartition[]> {
@@ -470,6 +538,7 @@ async function createCommitPuts(
         compressedHash: await sha256Bytes(bytes),
         logicalBytes: utf8Bytes(canonicalJson(envelope)),
         compressedBytes: bytes.byteLength,
+        metadata: entry.metadata,
         writeMode: upload.baseRev
           ? { kind: "ifMatch", expectedRev: upload.baseRev }
           : upload.writeMode,
@@ -489,10 +558,16 @@ type CloudUploadWork = {
   writeMode: BackupWriteMode;
 };
 
+type CloudDeleteWork = {
+  partitionKey: CloudPartitionId;
+  writeMode: { kind: "ifMatch"; expectedRev: string };
+};
+
 function collectUploadWork(
   plan: CloudSyncPlan,
   prepared: PreparedCloudPartition[],
-  overwriteScope?: ExplicitLocalOverwriteScope
+  overwriteScope: ExplicitLocalOverwriteScope | undefined,
+  remoteHeadById: Map<CloudPartitionId, BackupHead>
 ): CloudUploadWork[] {
   const byId = new Map(prepared.map((entry) => [entry.id, entry]));
   const safeUploads: CloudUploadWork[] = plan.uploads.map((upload) => ({
@@ -523,7 +598,45 @@ function collectUploadWork(
       ];
     }
   );
-  return [...safeUploads, ...overwriteUploads];
+  const metadataRefreshUploads: CloudUploadWork[] = plan.noops.flatMap(
+    (noop) => {
+      const entry = byId.get(noop.id);
+      const remote = remoteHeadById.get(noop.id);
+      if (
+        !entry ||
+        !remote ||
+        isSameBackupMetadata(entry.metadata, remote.metadata)
+      ) {
+        return [];
+      }
+      return [
+        {
+          id: noop.id,
+          namespace: noop.namespace,
+          partitionKey: noop.partitionKey,
+          schemaVersion: entry.local.schemaVersion,
+          contentHash: entry.local.contentHash,
+          baseRev: remote.rev,
+          writeMode: { kind: "ifMatch", expectedRev: remote.rev },
+        },
+      ];
+    }
+  );
+  return [...safeUploads, ...overwriteUploads, ...metadataRefreshUploads];
+}
+
+function collectDeleteWork(
+  plan: CloudSyncPlan,
+  deleteScope?: ExplicitCloudDeleteScope
+): CloudDeleteWork[] {
+  return plan.deletes
+    .filter((entry) =>
+      deleteScope ? shouldExplicitlyDelete(entry, deleteScope) : true
+    )
+    .map((entry) => ({
+      partitionKey: entry.id,
+      writeMode: { kind: "ifMatch", expectedRev: entry.baseRev },
+    }));
 }
 
 function shouldExplicitlyOverwrite(
@@ -531,6 +644,16 @@ function shouldExplicitlyOverwrite(
   scope: ExplicitLocalOverwriteScope | undefined
 ): boolean {
   if (!scope) return false;
+  return Boolean(
+    scope.partitionIds?.includes(decision.id) ||
+      scope.groupKeys?.includes(decision.groupKey)
+  );
+}
+
+function shouldExplicitlyDelete(
+  decision: CloudSyncPlan["deletes"][number],
+  scope: ExplicitCloudDeleteScope
+): boolean {
   return Boolean(
     scope.partitionIds?.includes(decision.id) ||
       scope.groupKeys?.includes(decision.groupKey)
@@ -552,6 +675,19 @@ function toCloudRemoteHead(head: BackupHead): CloudRemoteHead[] {
       ...(head.deletedAt != null ? { deletedAt: head.deletedAt } : {}),
     },
   ];
+}
+
+function buildRemoteHeadByPartitionId(
+  heads: BackupHead[]
+): Map<CloudPartitionId, BackupHead> {
+  return new Map(heads.map((head) => [head.partitionKey, head]));
+}
+
+function isSameBackupMetadata(
+  local: CloudBackupHeadMetadata,
+  remote: CloudBackupHeadMetadata
+): boolean {
+  return canonicalJson(local) === canonicalJson(remote);
 }
 
 function headGroupKey(head: BackupHead): string | undefined {

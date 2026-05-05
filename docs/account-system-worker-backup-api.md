@@ -1,6 +1,6 @@
 # Worker Backup API Design
 
-Last updated: 2026-05-01.
+Last updated: 2026-05-05.
 
 ## Goal
 
@@ -52,8 +52,10 @@ Current implementation status:
 
 - Public SSO/session auth is not wired yet.
 - `worker/auth.ts` owns the production-shaped `requireUser()` and entitlement boundary.
-- The current `requireUser()` implementation is intentionally dev-gated with `Authorization: Bearer <BACKUP_DEV_AUTH_SECRET>` and `x-backup-dev-user-id`.
-- Without `BACKUP_DB`, `BACKUP_BUCKET`, and `BACKUP_DEV_AUTH_SECRET`, `/api/backup/v1/*` returns an unavailable JSON error and does not read or write anything.
+- `migrations/0002_auth.sql` defines the production-shaped account tables: `app_users`, `auth_identities`, `auth_sessions`, and `user_entitlements`.
+- The current local flow uses `/api/auth/dev-login` as a fake provider callback. It maps `provider = "dev"` and the selected test account id to an internal app user, grants `cloud_sync`, and returns a session token.
+- Backup requests use `Authorization: Bearer <session token>`.
+- Without `BACKUP_DB` and `BACKUP_BUCKET`, `/api/backup/v1/*` returns an unavailable JSON error and does not read or write anything.
 - `GET /api/backup/v1/head`, `POST /api/backup/v1/commits`, and `POST /api/backup/v1/objects` are implemented in `worker/backup.ts`.
 - `src/cloud/apiClient.ts` is the typed frontend contract layer for these endpoints.
 - `src/cloud/syncClient.ts` calls the client head/commit/download path for safe upload, explicit local overwrite, no-op, verified restore-plan download, restore-plan apply, and post-apply metadata decisions.
@@ -167,6 +169,7 @@ CREATE TABLE backup_heads (
   compressed_hash TEXT NOT NULL,
   compressed_bytes INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
+  metadata_json TEXT NOT NULL,
   source_device_row_id TEXT REFERENCES backup_devices(id) ON DELETE SET NULL,
   soft_deleted_at INTEGER,
   PRIMARY KEY(user_id, partition_key)
@@ -279,15 +282,37 @@ type BackupHead = {
   compressedHash: string;
   compressedBytes: number;
   updatedAt: number;
+  metadata: BackupHeadMetadata;
   sourceDeviceId?: string;
   sourceDeviceLabel?: string;
   deletedAt?: number;
+};
+
+type BackupHeadMetadata = {
+  schemaVersion: 1;
+  records: {
+    kind:
+      | "characters"
+      | "weapons"
+      | "artifacts"
+      | "frozen"
+      | "settings"
+      | "builds"
+      | "teams"
+      | "teamConfigs"
+      | "tiers";
+    count: number;
+    profileId?: string;
+    updatedAt?: number;
+  }[];
 };
 ```
 
 When `changed` is `false`, `heads` is empty and `headSetRev` is the still-current token. Capability values should be static Worker configuration values, not values calculated by scanning D1 or R2.
 
-`updatedAt`, `sourceDeviceId`, and `sourceDeviceLabel` are for user conflict decisions. Hashes are for machines.
+`updatedAt`, `sourceDeviceId`, `sourceDeviceLabel`, and `metadata` are for user conflict and restore decisions. Hashes are for machines. The `metadata` blob is intentionally small and head-level so the UI can show cloud record counts and timestamps without downloading or decompressing private backup objects.
+
+For profile-owned records, the frontend writes `profileId` into each metadata record and renders counts per profile instead of aggregating all profiles into one row. Example display rows are `Characters (600000001)`, `Weapons (default account)`, and `Artifacts (600000001)`. The partition itself is still the source of truth: `profile.app/{profileId}`, `profile.game/{profileId}`, and `profile.artifacts/{profileId}`.
 
 ## POST `/api/backup/v1/commits`
 
@@ -319,6 +344,7 @@ type BackupCommitRequest = {
     compressedHash: string;
     logicalBytes?: number;
     compressedBytes: number;
+    metadata: BackupHeadMetadata;
     writeMode:
       | { kind: "ifMatch"; expectedRev: string }
       | { kind: "ifAbsent" }
@@ -546,7 +572,7 @@ Build order and current status:
 
 1. Done: add D1 migration for `backup_user_state`, `backup_devices`, `backup_heads`, and `backup_commits`.
 2. Done: add Worker route skeleton under `/api/backup/v1/*`.
-3. Done: add `worker/auth.ts` with a production-shaped `requireUser()` and entitlement boundary. Current implementation remains dev-only.
+3. Done: add `worker/auth.ts` with a production-shaped `requireUser()` and entitlement boundary. Current login route remains dev-only, but backup auth already uses session tokens.
 4. Done: implement `GET /api/backup/v1/head` with the cheap `headSetRev` no-change path.
 5. Done: implement multipart `POST /api/backup/v1/commits`.
 6. Done: implement `POST /api/backup/v1/objects`.

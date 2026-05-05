@@ -70,6 +70,7 @@ export function tiersToCloud(
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
+      isEmpty: isEmptyTiersSnapshot(snapshot),
       payload: {
         character: characterTierPayload(snapshot.character),
         weapon: genericTierPayload(snapshot.weapon),
@@ -77,6 +78,14 @@ export function tiersToCloud(
       },
     },
   ];
+}
+
+export function isEmptyTiersSnapshot(snapshot: TiersCloudSnapshot): boolean {
+  return (
+    isEmptyTierSnapshot(snapshot.character, isEmptyCharacterTierList) &&
+    isEmptyTierSnapshot(snapshot.weapon, isEmptyGenericTierList) &&
+    isEmptyTierSnapshot(snapshot.artifact, isEmptyGenericTierList)
+  );
 }
 
 export function tiersFromCloud(partitions: CloudExportPartition[]) {
@@ -192,6 +201,37 @@ function tierSnapshot<TList extends TierListInstanceSnapshot>(
     activeTierListId,
     nextId: Math.max(nextId ?? 0, Math.max(...ids) + 1),
   };
+}
+
+function isEmptyTierSnapshot<TList extends TierListInstanceSnapshot>(
+  snapshot: {
+    tierLists: Record<number, TList>;
+    activeTierListId: number;
+  },
+  isEmptyList: (list: TList) => boolean
+): boolean {
+  const lists = Object.values(snapshot.tierLists);
+  return (
+    snapshot.activeTierListId === 1 &&
+    lists.length === 1 &&
+    lists.every(isEmptyList)
+  );
+}
+
+function isEmptyGenericTierList(list: TierListInstanceSnapshot): boolean {
+  return (
+    Object.keys(list.tierAssignments).length === 0 &&
+    Object.keys(list.tierCustomization).length === 0 &&
+    list.customTitle === "" &&
+    list.author === "" &&
+    list.description === ""
+  );
+}
+
+function isEmptyCharacterTierList(
+  list: CharacterTierListInstanceSnapshot
+): boolean {
+  return isEmptyGenericTierList(list) && list.linkedAccountId == null;
 }
 
 function emptyList(id: number): TierListInstanceSnapshot {

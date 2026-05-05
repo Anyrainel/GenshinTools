@@ -10,7 +10,11 @@ import {
   applyCloudRestoreAndMarkSynced,
   runCloudSyncOnce,
 } from "@/cloud/syncClient";
-import type { CloudExportPartition, CloudPartitionId } from "@/cloud/types";
+import type {
+  CloudBackupHeadMetadata,
+  CloudExportPartition,
+  CloudPartitionId,
+} from "@/cloud/types";
 import {
   type CloudSyncMetadataState,
   getCloudSyncPartitionId,
@@ -75,7 +79,12 @@ describe("cloud sync client", () => {
     const partition = buildsPartition({ builds: ["same"] });
     const contentHash = await getContentHash(partition.payload);
     const api = fakeApi({
-      heads: [remoteHead("builds/all", "rev-cloud", contentHash)],
+      heads: [
+        remoteHead("builds/all", "rev-cloud", contentHash, {
+          schemaVersion: 1,
+          records: [{ kind: "builds", count: 0 }],
+        }),
+      ],
     });
 
     const result = await runCloudSyncOnce({
@@ -96,7 +105,49 @@ describe("cloud sync client", () => {
       lastAppliedHash: contentHash,
       lastSyncedAt: 200,
       dirty: false,
-      updatedAt: 200,
+      updatedAt: 2,
+    });
+  });
+
+  it("refreshes stale cloud metadata when content already matches", async () => {
+    const partition = buildsPartition({
+      activePresetId: null,
+      deltas: [
+        {
+          kind: "custom",
+          id: "build-a",
+          value: { id: "build-a", characterId: "amber" },
+        },
+      ],
+    });
+    const contentHash = await getContentHash(partition.payload);
+    const api = fakeApi({
+      heads: [
+        remoteHead("builds/all", "rev-cloud", contentHash, {
+          schemaVersion: 1,
+          records: [{ kind: "builds", count: 99 }],
+        }),
+      ],
+      commitResponse: (request) => commitFromRequest(request, 500),
+    });
+
+    const result = await runCloudSyncOnce({
+      apiClient: api,
+      buildPartitions: () => [partition],
+      createIdempotencyKey: () => "sync_metadata_refresh",
+      now: () => 300,
+    });
+
+    expect(result.status).toBe("uploaded");
+    expect(api.commit).toHaveBeenCalledTimes(1);
+    expect(api.commit.mock.calls[0]?.[0].puts?.[0]).toMatchObject({
+      partitionKey: "builds/all",
+      contentHash,
+      writeMode: { kind: "ifMatch", expectedRev: "rev-cloud" },
+      metadata: {
+        schemaVersion: 1,
+        records: [{ kind: "builds", count: 1 }],
+      },
     });
   });
 
@@ -174,7 +225,7 @@ describe("cloud sync client", () => {
       heads: [
         {
           ...remoteHead("builds/all", "rev-newer", await getContentHash({})),
-          schemaVersion: 2,
+          schemaVersion: 3,
         },
       ],
     });
@@ -277,6 +328,7 @@ function commitFromRequest(
         compressedHash: put.compressedHash,
         compressedBytes: put.compressedBytes ?? put.bytes.size,
         updatedAt: committedAt,
+        metadata: put.metadata,
       })) ?? [],
   };
 }
@@ -304,7 +356,8 @@ function teamPartition(payload: unknown): CloudExportPartition {
 function remoteHead(
   partitionKey: CloudPartitionId,
   rev: string,
-  contentHash: string
+  contentHash: string,
+  metadata: CloudBackupHeadMetadata = { schemaVersion: 1, records: [] }
 ): BackupHead {
   return {
     partitionKey,
@@ -315,5 +368,6 @@ function remoteHead(
     compressedHash: "sha256:compressed",
     compressedBytes: 10,
     updatedAt: 2,
+    metadata,
   };
 }

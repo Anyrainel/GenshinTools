@@ -39,7 +39,9 @@ const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
   "/tier-list": { en: "Tier List", zh: "榜单" },
   "/archive": { en: "Archive", zh: "图鉴" },
   "/team-comp": { en: "Team DMG", zh: "队伍伤害" },
-  ...(import.meta.env.DEV ? { "/account": { en: "Account", zh: "账号" } } : {}),
+  ...(import.meta.env.DEV
+    ? { "/account": { en: "Dev Login", zh: "开发登录" } }
+    : {}),
 };
 
 function App() {

@@ -1,4 +1,4 @@
-import type { CloudPartitionId } from "@/cloud/types";
+import type { CloudBackupHeadMetadata, CloudPartitionId } from "@/cloud/types";
 
 export type BackupPartitionKey = CloudPartitionId;
 
@@ -11,6 +11,7 @@ export type BackupHead = {
   compressedHash: string;
   compressedBytes: number;
   updatedAt: number;
+  metadata: CloudBackupHeadMetadata;
   sourceDeviceId?: string;
   sourceDeviceLabel?: string;
   deletedAt?: number;
@@ -43,6 +44,7 @@ export type BackupCommitObjectInput = {
   compressedHash: string;
   logicalBytes?: number;
   compressedBytes?: number;
+  metadata: CloudBackupHeadMetadata;
   writeMode: BackupWriteMode;
   bytes: Blob;
 };
