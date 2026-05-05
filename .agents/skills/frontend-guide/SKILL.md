@@ -1,10 +1,9 @@
 ---
 name: frontend-guide
 description: >
-  UI design decision guide for GenshinTools frontend work. Use when building,
-  refactoring, reviewing, or materially changing user-facing React/TypeScript
-  UI, including pages, layouts, components, dialogs, cards, controls,
-  responsive behavior, visual systems, interaction states, or UX quality.
+  UI design decision guide for GenshinTools frontend work. Use when designing,
+  or redesigning user-facing React/TypeScript UI, including pages, layouts,
+  components, dialogs, controls, responsive behavior, interaction states.
   Skip for backend-only logic, data processing, tests, build config, or tiny
   mechanical edits where the UI pattern is already obvious from nearby code.
 ---

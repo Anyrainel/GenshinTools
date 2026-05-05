@@ -396,6 +396,47 @@ describe("convertGOODToAccountData", () => {
       expect(hutao?.artifacts?.flower?.setKey).toBe("shimenawas_reminiscence");
     });
 
+    it("creates placeholder characters from weapon and artifact locations", () => {
+      const locationOnlyGOOD: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        weapons: [
+          {
+            key: "FavoniusWarbow",
+            level: 80,
+            ascension: 5,
+            refinement: 3,
+            location: "Amber",
+            lock: false,
+          },
+        ],
+        artifacts: [
+          {
+            setKey: "GladiatorsFinale",
+            slotKey: "flower",
+            level: 20,
+            rarity: 5,
+            mainStatKey: "hp",
+            location: "Amber",
+            lock: true,
+            substats: [],
+          },
+        ],
+      };
+
+      const result = convertGOODToAccountData(locationOnlyGOOD);
+      const amber = result.data.characters.find((c) => c.key === "amber");
+      expect(amber).toMatchObject({
+        key: "amber",
+        level: 1,
+        constellation: 0,
+        talent: { auto: 1, skill: 1, burst: 1 },
+      });
+      expect(amber?.weapon?.key).toBe("favonius_warbow");
+      expect(amber?.artifacts.flower?.setKey).toBe("gladiators_finale");
+    });
+
     it("does not seed when characters section is present", () => {
       const charOnlyGOOD: GOODData = {
         format: "GOOD",

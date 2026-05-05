@@ -72,69 +72,166 @@ export const i18nUiData = {
   },
   accountSystem: {
     accountMenu: { en: "Account menu", zh: "账号菜单" },
+    devAccountTitle: { en: "Dev login", zh: "开发登录" },
     accountDesc: {
-      en: "Cloud sign-in is being wired. Use backup test credentials here to enable manual cloud sync.",
-      zh: "云端登录仍在接入中。当前可在这里填写备份测试凭证，启用手动云同步。",
+      en: "Local development only. This fake provider login creates a normal app session. Each test account ID has separate cloud backup data in the local Wrangler database.",
+      zh: "仅限本地开发使用。这里用假的第三方登录创建正常的应用会话。每个测试账号 ID 在本地 Wrangler 数据库中都有独立的云端备份数据。",
     },
-    devUserId: { en: "Backup test user", zh: "备份测试用户" },
-    devAuthSecret: { en: "Backup test secret", zh: "备份测试密钥" },
+    devUserId: { en: "Test account ID", zh: "测试账号 ID" },
     devSessionMissing: {
-      en: "Enter a backup test user and secret first.",
-      zh: "请先填写备份测试用户和密钥。",
+      en: "Enter a test account ID first.",
+      zh: "请先填写测试账号 ID。",
     },
     devSessionSaved: {
-      en: "Backup access saved.",
-      zh: "已保存备份访问凭证。",
+      en: "Dev login session is active.",
+      zh: "已启用开发登录会话。",
     },
-    signedOut: { en: "Backup access cleared.", zh: "已清除备份访问凭证。" },
-    signOut: { en: "Sign out", zh: "退出" },
+    loginFailed: { en: "Login failed", zh: "登录失败" },
+    signedOut: { en: "Dev login session cleared.", zh: "已清除开发登录会话。" },
+    useDevAccount: { en: "Log in as test account", zh: "以测试账号登录" },
+    clearDevAccount: { en: "Clear dev login", zh: "清除开发登录" },
     cloudBackup: { en: "Cloud Backup", zh: "云端备份" },
     cloudBackupDesc: {
       en: "Manual backup and restore only. No background sync runs from this page.",
       zh: "仅手动备份与恢复。此页面不会启动后台同步。",
     },
     devSessionRequired: {
-      en: "Backup access required",
-      zh: "需要备份访问凭证",
+      en: "Test account required",
+      zh: "需要测试账号",
     },
     devSessionRequiredDesc: {
-      en: "Save backup test credentials before using cloud backup.",
-      zh: "使用云端备份前，请先保存备份测试凭证。",
+      en: "Set up a local test account before using manual cloud backup.",
+      zh: "使用手动云端备份前，请先设置本地测试账号。",
     },
-    openAccount: { en: "Open account", zh: "打开账号页" },
+    openAccount: { en: "Set up test account", zh: "设置测试账号" },
     syncFailed: { en: "Cloud action failed", zh: "云端操作失败" },
-    trackedPartitions: { en: "Tracked partitions", zh: "已跟踪分区" },
-    conflicts: { en: "Conflicts", zh: "冲突" },
-    lastSync: { en: "Last sync", zh: "上次同步" },
-    syncNow: { en: "Sync now", zh: "立即同步" },
-    applyCloudChanges: { en: "Apply cloud changes", zh: "应用云端变更" },
-    keepLocal: { en: "Keep local", zh: "保留本地" },
+    metadataFailed: {
+      en: "Could not load backup metadata",
+      zh: "无法加载备份概览",
+    },
+    backupContents: { en: "Backup contents", zh: "备份内容" },
+    metadataCheckedAt: {
+      en: "Checked {0}",
+      zh: "上次检查 {0}",
+    },
+    metadataNotChecked: {
+      en: "Not checked this session",
+      zh: "本会话尚未检查",
+    },
+    refreshMetadata: { en: "Refresh metadata", zh: "刷新概览" },
+    dataType: { en: "Data", zh: "数据" },
+    localRecords: { en: "Local records", zh: "本地记录" },
+    localUpdated: { en: "Local updated", zh: "本地更新时间" },
+    cloudRecords: { en: "Cloud records", zh: "云端记录" },
+    cloudUpdated: { en: "Cloud updated", zh: "云端更新时间" },
+    noRecord: { en: "No record", zh: "无记录" },
+    missingUpdateTime: {
+      en: "Missing update time from metadata",
+      zh: "概览中缺少更新时间",
+    },
+    profileDataLabel: { en: "{0} ({1})", zh: "{0}（{1}）" },
+    defaultProfile: { en: "default account", zh: "默认账号" },
+    metadata: {
+      frozen: { en: "Frozen loadouts", zh: "冻结配装" },
+      settings: { en: "Profile settings", zh: "账号设置" },
+      builds: { en: "Build changes", zh: "配装改动" },
+      teams: { en: "Team changes", zh: "队伍改动" },
+      teamConfigs: { en: "Team configs", zh: "队伍配置" },
+      tiers: { en: "Tier lists", zh: "排行表" },
+    },
+    uploadToCloud: { en: "Upload to cloud", zh: "上传到云端" },
+    downloadFromCloud: { en: "Download from cloud", zh: "从云端下载" },
+    restoreStatus: { en: "Restore status", zh: "恢复状态" },
+    devStorageNotConfigured: {
+      en: "The local Worker is missing local backup storage. Restart with npm run dev:worker so the local D1 and R2 bindings are available.",
+      zh: "本地 Worker 缺少本地备份存储。请用 npm run dev:worker 重启，让本地 D1 和 R2 绑定生效。",
+    },
     restoreApplied: {
       en: "Applied cloud restore sections: {0}.",
       zh: "已应用云端恢复内容：{0} 项。",
     },
+    restoreNotice: {
+      noCloudChanges: {
+        en: "No cloud changes are available to restore for this test account.",
+        zh: "此测试账号当前没有可恢复的云端变更。",
+      },
+      conflict: {
+        en: "Cloud restore is paused because local and cloud data both changed. Review the conflicts before overwriting either side.",
+        zh: "本地和云端数据都发生了变化，云端恢复已暂停。请先查看冲突，再决定覆盖哪一侧。",
+      },
+      unsupported: {
+        en: "Cloud data was written by a newer app version and cannot be restored here.",
+        zh: "云端数据来自较新的应用版本，当前无法恢复。",
+      },
+    },
+    uploadNotice: {
+      noLocalChanges: {
+        en: "No local changes are available to upload for this test account.",
+        zh: "此测试账号当前没有可上传的本地变更。",
+      },
+    },
+    manualChoice: {
+      uploadTitle: {
+        en: "Choose what to upload",
+        zh: "选择要上传的数据",
+      },
+      downloadTitle: {
+        en: "Choose what to download",
+        zh: "选择要下载的数据",
+      },
+      uploadDescription: {
+        en: "Checked rows will use local data and update the cloud. Unchecked rows will be skipped.",
+        zh: "勾选的行会使用本地数据更新云端；未勾选的行会跳过。",
+      },
+      downloadDescription: {
+        en: "Checked rows will use cloud data and update this browser. Unchecked rows will be skipped.",
+        zh: "勾选的行会使用云端数据更新当前浏览器；未勾选的行会跳过。",
+      },
+      automaticUpload: {
+        en: "No conflict. {0} will be uploaded.",
+        zh: "没有冲突，将上传「{0}」。",
+      },
+      automaticDownload: {
+        en: "No conflict. {0} will be downloaded.",
+        zh: "没有冲突，将下载「{0}」。",
+      },
+      useLocalData: { en: "Use local data", zh: "使用本地数据" },
+      useCloudData: { en: "Use cloud data", zh: "使用云端数据" },
+      included: { en: "Included", zh: "已包含" },
+      skip: { en: "Skip row", zh: "跳过此项" },
+      confirmUpload: { en: "Upload selected", zh: "上传已选数据" },
+      confirmDownload: { en: "Download selected", zh: "下载已选数据" },
+      allSkipped: {
+        en: "No rows were selected, so no data was changed.",
+        zh: "未选择任何行，因此没有更改数据。",
+      },
+      uploadOverwriteCloud: {
+        en: "Checked: replace the cloud copy of {0} with local data.",
+        zh: "勾选后：用本地的「{0}」覆盖云端。",
+      },
+      uploadDeleteCloud: {
+        en: "Checked: delete {0} from cloud because it no longer exists locally.",
+        zh: "勾选后：从云端删除「{0}」，因为本地已经没有这份数据。",
+      },
+      downloadOverwriteLocal: {
+        en: "Checked: replace the local copy of {0} with cloud data.",
+        zh: "勾选后：用云端的「{0}」覆盖本地。",
+      },
+      includedCategories: {
+        en: "Includes {0}. These must be handled together.",
+        zh: "包含：{0}。这几类数据必须一起处理。",
+      },
+      categoryJoiner: { en: ", ", zh: "、" },
+    },
     status: {
-      idle: { en: "Idle", zh: "空闲" },
-      synced: { en: "Synced", zh: "已同步" },
-      uploaded: { en: "Uploaded", zh: "已上传" },
-      needsDownload: { en: "Cloud changed", zh: "云端有变更" },
-      conflict: { en: "Conflict", zh: "有冲突" },
-      unsupported: { en: "Upgrade needed", zh: "需要升级" },
+      uploading: { en: "Uploading", zh: "正在上传" },
+      downloading: { en: "Downloading", zh: "正在下载" },
     },
     statusToast: {
-      synced: { en: "Cloud backup is up to date.", zh: "云端备份已是最新。" },
       uploaded: { en: "Local data uploaded.", zh: "本地数据已上传。" },
       needsDownload: {
         en: "Cloud has newer data. Review before applying.",
         zh: "云端有较新的数据，请确认后再应用。",
-      },
-      conflict: {
-        en: "Sync paused because local and cloud both changed.",
-        zh: "本地和云端都发生了变化，同步已暂停。",
-      },
-      unsupported: {
-        en: "Cloud data was written by a newer app version.",
-        zh: "云端数据来自较新的应用版本。",
       },
     },
   },
@@ -1767,12 +1864,6 @@ export const i18nUiData = {
   },
   characterCard: {
     addFirstBuild: { en: "Add First Build", zh: "添加第一个配装" },
-    hideBuilds: { en: "Hide Builds", zh: "隐藏配装" },
-    showBuilds: { en: "Show Builds", zh: "显示配装" },
-    hiddenNotice: {
-      en: "This character is hidden. Builds are ignored in computations.",
-      zh: "该角色已隐藏。配装不参与计算。",
-    },
   },
   buildCard: {
     presetBuild: { en: "Preset Build", zh: "预设配装" },
@@ -2732,13 +2823,31 @@ export const i18nUiData = {
   },
   scanner: {
     syncFromGame: { en: "Sync from Game", zh: "从游戏同步" },
+    syncRecentArtifacts: {
+      en: "Scan Recent",
+      zh: "扫描最近",
+    },
     title: { en: "Scan from Game", zh: "从游戏扫描" },
+    recentTitle: { en: "Scan Recent Artifacts", zh: "扫描最近圣遗物" },
     description: {
       en: "Scan your in-game inventory with GOODScanner and sync the results into this account.",
       zh: "使用 GOODScanner 扫描游戏内背包，并将结果同步到当前账号。",
     },
+    recentDescription: {
+      en: "Scan only recently acquired 5-star artifacts and merge them into this account.",
+      zh: "仅扫描最近获得的五星圣遗物，并合并到当前账号。",
+    },
     scanTargets: { en: "What to scan", zh: "扫描内容" },
+    recentLimit: { en: "Recent artifacts", zh: "最近圣遗物数量" },
+    recentLimitInvalid: {
+      en: "Enter a whole number from {0} to {1}.",
+      zh: "请输入 {0} 到 {1} 之间的整数。",
+    },
     startScan: { en: "Start Scan", zh: "开始扫描" },
+    startRecentScan: {
+      en: "Start Recent Scan",
+      zh: "开始最近扫描",
+    },
     statePending: { en: "Pending", zh: "待扫描" },
     countScanned: { en: "{0} scanned", zh: "已扫描 {0}" },
     fetchingData: {

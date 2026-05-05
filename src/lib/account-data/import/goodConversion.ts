@@ -15,6 +15,7 @@ import {
   normalizeEntityName as normalize,
   weaponNameMap as weaponMap,
 } from "./entityMaps";
+import { ensureLocatedCharacter } from "./locationCharacters";
 
 // --- Types from GOOD v3 (Genshin Open Object Description) ---
 
@@ -351,8 +352,8 @@ export const convertGOODToAccountData = (
           );
           const locationId = charMap.get(normalize(charKey));
 
-          if (locationId && charactersMap.has(locationId)) {
-            const char = charactersMap.get(locationId)!;
+          if (locationId) {
+            const char = ensureLocatedCharacter(charactersMap, locationId);
             char.weapon = weaponData;
             assigned = true;
           }
@@ -406,8 +407,8 @@ export const convertGOODToAccountData = (
             );
             const locationId = charMap.get(normalize(charKey));
 
-            if (locationId && charactersMap.has(locationId)) {
-              const char = charactersMap.get(locationId)!;
+            if (locationId) {
+              const char = ensureLocatedCharacter(charactersMap, locationId);
               char.artifacts[artifactData.slotKey] = artifactData;
               assigned = true;
             }

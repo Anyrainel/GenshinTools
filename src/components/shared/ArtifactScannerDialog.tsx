@@ -25,7 +25,17 @@ import {
   convertGOODToAccountData,
   type GOODData,
 } from "@/lib/account-data/import/goodConversion";
-import { mergePartialAccountData } from "@/lib/account-data/import/mergeAccountData";
+import {
+  mergePartialAccountData,
+  mergeRecentArtifactsIntoAccount,
+} from "@/lib/account-data/import/mergeAccountData";
+import {
+  createRecentArtifactScanRequest,
+  parseRecentArtifactLimit,
+  RECENT_ARTIFACT_SCAN_DEFAULT_LIMIT,
+  RECENT_ARTIFACT_SCAN_MAX_LIMIT,
+  RECENT_ARTIFACT_SCAN_MIN_LIMIT,
+} from "@/lib/account-data/manager/scanRequest";
 import type {
   CategoryProgress,
   ScanProgress,
@@ -38,21 +48,27 @@ import { ConnectionStatus, SetupInstructions } from "./managerSharedUI";
 const DEFAULT_PORT = 8765;
 
 type ScanTarget = "characters" | "weapons" | "artifacts";
+type ScannerMode = "targets" | "recentArtifacts";
 
 interface ArtifactScannerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultTarget?: ScanTarget;
+  mode?: ScannerMode;
 }
 
 export function ArtifactScannerDialog({
   open,
   onOpenChange,
   defaultTarget = "artifacts",
+  mode = "targets",
 }: ArtifactScannerDialogProps) {
   const { t } = useLanguage();
   const [port, setPort] = useState(DEFAULT_PORT);
   const [portInput, setPortInput] = useState(String(DEFAULT_PORT));
+  const [recentLimitInput, setRecentLimitInput] = useState(
+    String(RECENT_ARTIFACT_SCAN_DEFAULT_LIMIT)
+  );
 
   const [scanCharacters, setScanCharacters] = useState(
     defaultTarget === "characters"
@@ -79,6 +95,7 @@ export function ArtifactScannerDialog({
       setScanCharacters(defaultTarget === "characters");
       setScanWeapons(defaultTarget === "weapons");
       setScanArtifacts(defaultTarget === "artifacts");
+      setRecentLimitInput(String(RECENT_ARTIFACT_SCAN_DEFAULT_LIMIT));
     } else if (phase.type === "completed" || phase.type === "error") {
       reset();
     }
@@ -90,7 +107,18 @@ export function ArtifactScannerDialog({
     connection.health.enabled &&
     connection.health.gameAlive &&
     !connection.health.busy;
-  const hasSelection = scanCharacters || scanWeapons || scanArtifacts;
+  const recentLimit = parseRecentArtifactLimit(recentLimitInput);
+  const recentLimitError =
+    mode === "recentArtifacts" && recentLimit === null
+      ? t
+          .ui("scanner.recentLimitInvalid")
+          .replace("{0}", String(RECENT_ARTIFACT_SCAN_MIN_LIMIT))
+          .replace("{1}", String(RECENT_ARTIFACT_SCAN_MAX_LIMIT))
+      : null;
+  const hasSelection =
+    mode === "recentArtifacts"
+      ? recentLimit !== null
+      : scanCharacters || scanWeapons || scanArtifacts;
   const isJobActive =
     phase.type === "submitting" ||
     phase.type === "submitted" ||
@@ -98,13 +126,27 @@ export function ArtifactScannerDialog({
     phase.type === "fetching";
 
   const handleScan = useCallback(() => {
+    if (mode === "recentArtifacts") {
+      const artifactLimit = parseRecentArtifactLimit(recentLimitInput);
+      if (artifactLimit === null) return;
+      submit(createRecentArtifactScanRequest(artifactLimit));
+      return;
+    }
+
     const targets: ScanRequest = {
       characters: scanCharacters,
       weapons: scanWeapons,
       artifacts: scanArtifacts,
     };
     submit(targets);
-  }, [scanCharacters, scanWeapons, scanArtifacts, submit]);
+  }, [
+    mode,
+    recentLimitInput,
+    scanCharacters,
+    scanWeapons,
+    scanArtifacts,
+    submit,
+  ]);
 
   const handleClose = useCallback(() => {
     if (phase.type === "completed" || phase.type === "error") {
@@ -156,7 +198,14 @@ export function ArtifactScannerDialog({
 
       let finalData = converted.data;
       let artifactIdMap: Map<string, string> | undefined;
-      if (!allPresent) {
+      if (mode === "recentArtifacts") {
+        const merged = mergeRecentArtifactsIntoAccount(
+          account.data,
+          converted.data
+        );
+        finalData = merged.data;
+        artifactIdMap = merged.artifactIdMap;
+      } else if (!allPresent) {
         const merged = mergePartialAccountData(
           account.data,
           converted.data,
@@ -199,15 +248,23 @@ export function ArtifactScannerDialog({
 
       handleClose();
     },
-    [t, handleClose]
+    [t, mode, handleClose]
   );
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t.ui("scanner.title")}</DialogTitle>
-          <DialogDescription>{t.ui("scanner.description")}</DialogDescription>
+          <DialogTitle>
+            {mode === "recentArtifacts"
+              ? t.ui("scanner.recentTitle")
+              : t.ui("scanner.title")}
+          </DialogTitle>
+          <DialogDescription>
+            {mode === "recentArtifacts"
+              ? t.ui("scanner.recentDescription")
+              : t.ui("scanner.description")}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
@@ -230,31 +287,51 @@ export function ArtifactScannerDialog({
                 </div>
                 <ConnectionStatus connection={connection} t={t} />
               </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium">
-                  {t.ui("scanner.scanTargets")}
-                </p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  <ScanTargetRow
-                    id="scan-characters"
-                    checked={scanCharacters}
-                    onChange={setScanCharacters}
-                    label={t.ui("accountData.characters")}
+              {mode === "recentArtifacts" ? (
+                <div className="space-y-1.5">
+                  <Label htmlFor="recent-artifact-limit" className="text-xs">
+                    {t.ui("scanner.recentLimit")}
+                  </Label>
+                  <Input
+                    id="recent-artifact-limit"
+                    className="w-28 h-8 text-sm"
+                    inputMode="numeric"
+                    value={recentLimitInput}
+                    onChange={(e) => setRecentLimitInput(e.target.value)}
                   />
-                  <ScanTargetRow
-                    id="scan-weapons"
-                    checked={scanWeapons}
-                    onChange={setScanWeapons}
-                    label={t.ui("accountData.weapons")}
-                  />
-                  <ScanTargetRow
-                    id="scan-artifacts"
-                    checked={scanArtifacts}
-                    onChange={setScanArtifacts}
-                    label={t.ui("accountData.artifacts")}
-                  />
+                  {recentLimitError && (
+                    <p className="text-xs text-destructive">
+                      {recentLimitError}
+                    </p>
+                  )}
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">
+                    {t.ui("scanner.scanTargets")}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <ScanTargetRow
+                      id="scan-characters"
+                      checked={scanCharacters}
+                      onChange={setScanCharacters}
+                      label={t.ui("accountData.characters")}
+                    />
+                    <ScanTargetRow
+                      id="scan-weapons"
+                      checked={scanWeapons}
+                      onChange={setScanWeapons}
+                      label={t.ui("accountData.weapons")}
+                    />
+                    <ScanTargetRow
+                      id="scan-artifacts"
+                      checked={scanArtifacts}
+                      onChange={setScanArtifacts}
+                      label={t.ui("accountData.artifacts")}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -305,7 +382,9 @@ export function ArtifactScannerDialog({
         <DialogFooter className="gap-2 sm:gap-0">
           {phase.type === "idle" && (
             <Button disabled={!isReady || !hasSelection} onClick={handleScan}>
-              {t.ui("scanner.startScan")}
+              {mode === "recentArtifacts"
+                ? t.ui("scanner.startRecentScan")
+                : t.ui("scanner.startScan")}
             </Button>
           )}
           <Button variant="outline" onClick={handleClose}>

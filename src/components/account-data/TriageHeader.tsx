@@ -3,6 +3,7 @@ import {
   ArrowUp,
   ChevronsDownUp,
   ChevronsUpDown,
+  History,
   Monitor,
   Puzzle,
   Settings,
@@ -14,6 +15,7 @@ import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { TriageSettingsPanel } from "@/components/account-data/TriageSettingsPanel";
 import type { TriageTabContentHandle } from "@/components/account-data/TriageTabContent";
 import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
+import { ArtifactScannerDialog } from "@/components/shared/ArtifactScannerDialog";
 import { FilterChip } from "@/components/shared/FilterChip";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { Badge } from "@/components/ui/badge";
@@ -99,6 +101,7 @@ export function TriageHeader({
   const [flexOpen, setFlexOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [managerOpen, setManagerOpen] = useState(false);
+  const [recentScannerOpen, setRecentScannerOpen] = useState(false);
   const [, forceRender] = useState(0);
 
   const totalArtifacts = decisions.length;
@@ -153,15 +156,26 @@ export function TriageHeader({
             </Badge>
           )}
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto gap-1.5"
-          onClick={() => setManagerOpen(true)}
-        >
-          <Monitor className="h-4 w-4" />
-          {t.ui("manager.applyToGame")}
-        </Button>
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setRecentScannerOpen(true)}
+          >
+            <History className="h-4 w-4" />
+            {t.ui("scanner.syncRecentArtifacts")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setManagerOpen(true)}
+          >
+            <Monitor className="h-4 w-4" />
+            {t.ui("manager.applyToGame")}
+          </Button>
+        </div>
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         <p className="text-sm">
@@ -282,6 +296,12 @@ export function TriageHeader({
         onOpenChange={setManagerOpen}
         job={{ type: "manage", build: buildManagerInstructions }}
         actionLabel={t.ui("manager.applyToGame")}
+      />
+      <ArtifactScannerDialog
+        open={recentScannerOpen}
+        onOpenChange={setRecentScannerOpen}
+        mode="recentArtifacts"
+        defaultTarget="artifacts"
       />
     </div>
   );

@@ -61,9 +61,11 @@ export interface SubmitResponse {
 
 // ---------- Scan ----------
 export interface ScanRequest {
-  characters: boolean;
-  weapons: boolean;
-  artifacts: boolean;
+  characters?: boolean;
+  weapons?: boolean;
+  artifacts?: boolean;
+  artifactMode?: "all" | "recent";
+  artifactLimit?: number;
 }
 
 export interface ScanSubmitResponse {
