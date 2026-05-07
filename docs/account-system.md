@@ -18,11 +18,11 @@ This document is the source of truth for the current account, auth, Worker API, 
 The React app uses `@logto/react`:
 
 - `src/main.tsx` wraps the app in `LogtoProvider`.
-- `src/cloud/authConfig.ts` owns Logto endpoint, app id, API resource, scopes, and redirect helpers.
+- `src/cloud/authConfig.ts` owns Logto endpoint, app id, optional API resource, scopes, and redirect helpers.
 - `src/pages/account/AuthCallbackPage.tsx` handles the sign-in callback.
 - `src/pages/account/AccountPage.tsx` owns sign-in, sign-out, and account status UI.
 - `src/pages/account/CloudBackupPage.tsx` reads Logto auth state before enabling manual backup and restore actions.
-- `src/cloud/session.ts` creates `BackupApiClient` instances that call `getAccessToken(LOGTO_API_RESOURCE)` and send `Authorization: Bearer <token>`.
+- `src/cloud/session.ts` creates `BackupApiClient` instances that send `Authorization: Bearer <token>`. By default this is the Logto ID token so the Free plan does not need API resources. If `VITE_LOGTO_API_RESOURCE` is set later, it uses a resource access token instead.
 
 Default frontend values:
 
@@ -30,7 +30,7 @@ Default frontend values:
 | --- | --- |
 | `VITE_LOGTO_ENDPOINT` | `https://synz8r.logto.app` |
 | `VITE_LOGTO_APP_ID` | `tglrsenlbfrfrnevjwlan` |
-| `VITE_LOGTO_API_RESOURCE` | `https://ggartifact.com/api` |
+| `VITE_LOGTO_API_RESOURCE` | empty |
 | `VITE_LOGTO_SCOPES` | empty |
 
 The Logto SPA app id is public client metadata. Do not put client secrets, management API secrets, private keys, or Worker secrets in the frontend.
@@ -51,7 +51,15 @@ Post sign-out redirect URIs:
 - `http://localhost:5173/`
 - the matching root URL for any other local dev origin
 
-Configure a Logto API resource whose identifier matches `VITE_LOGTO_API_RESOURCE` and `LOGTO_API_RESOURCE`. V1 does not require a permission scope; every authenticated Logto user receives `cloud_sync` in Worker code. A future paid/limited launch can add a Logto permission such as `cloud_sync` or use `user_entitlements` without changing the backup API routes.
+No API resource is required for v1. The Worker only needs to know that the user signed into this SPA, so it validates Logto ID tokens whose audience is the SPA app id. This keeps the app compatible with Logto Free plan tenants that cannot create API resources.
+
+Optional future API-resource mode:
+
+- Create a Logto API resource only when you need Logto-side API scopes/RBAC.
+- Set both `VITE_LOGTO_API_RESOURCE` and `LOGTO_API_RESOURCE` to the exact resource identifier.
+- The frontend will request a resource access token and the Worker will validate that resource audience instead of the app id.
+
+If local sign-in fails with `invalid_target`, the frontend is still requesting a Logto API resource. Clear `VITE_LOGTO_API_RESOURCE`, restart Vite, and start sign-in again from `/account`.
 
 Recommended Logto token posture for this app:
 
@@ -71,12 +79,13 @@ Worker config:
 | `LOGTO_ENDPOINT` | Logto tenant endpoint. Used to derive issuer and JWKS when explicit values are absent. |
 | `LOGTO_ISSUER` | Optional override. Defaults to `{LOGTO_ENDPOINT}/oidc`. |
 | `LOGTO_JWKS_URI` | Optional override. Defaults to `{LOGTO_ISSUER}/jwks`. |
-| `LOGTO_API_RESOURCE` | Expected JWT audience. Defaults to `https://ggartifact.com/api`. |
+| `LOGTO_APP_ID` | Expected ID-token audience. Defaults to `tglrsenlbfrfrnevjwlan`. |
+| `LOGTO_API_RESOURCE` | Optional resource-token audience for future API-resource mode. When set, it overrides `LOGTO_APP_ID`. |
 
 Every authenticated request must send:
 
 ```text
-Authorization: Bearer <Logto access token>
+Authorization: Bearer <Logto token>
 ```
 
 `requireUser(request, env)` validates:
@@ -84,7 +93,7 @@ Authorization: Bearer <Logto access token>
 - bearer token is present and JWT-shaped
 - JWT signature against Logto JWKS
 - issuer
-- audience/API resource
+- audience, either the SPA app id by default or the configured API resource
 - expiration
 - `sub`
 

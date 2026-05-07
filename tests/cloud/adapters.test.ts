@@ -261,7 +261,7 @@ describe("cloud source adapters", () => {
     expect(buildsFromCloud([partition]).activePresetId).toBe(defaultPresetId);
   });
 
-  it("serializes cleared build preset selection as explicit data", () => {
+  it("treats empty builds with no preset selection as default local state for first restore", () => {
     const [partition] = buildsToCloud({
       activePresetId: null,
       deltas: [],
@@ -273,9 +273,11 @@ describe("cloud source adapters", () => {
       updatedAt: 100,
     });
 
-    expect(partition.isEmpty).toBe(false);
-    expect(partition.payload.activePresetId).toBeNull();
-    expect(buildsFromCloud([partition]).activePresetId).toBeNull();
+    expect(partition.isEmpty).toBe(true);
+    expect(partition.payload).not.toHaveProperty("activePresetId");
+    expect(buildsFromCloud([partition]).activePresetId).toBe(
+      getDefaultBuildPresetId()
+    );
   });
 
   it("reads legacy build character metadata while schema version remains one", () => {

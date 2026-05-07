@@ -10,7 +10,7 @@
   },
   "vars": {
     "LOGTO_ENDPOINT": "https://synz8r.logto.app",
-    "LOGTO_API_RESOURCE": "https://ggartifact.com/api"
+    "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan"
   },
   "assets": {
     "directory": "./dist",
@@ -35,7 +35,7 @@
     "dev": {
       "vars": {
         "LOGTO_ENDPOINT": "https://synz8r.logto.app",
-        "LOGTO_API_RESOURCE": "https://ggartifact.com/api"
+        "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan"
       },
       "d1_databases": [
         {

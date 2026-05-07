@@ -79,7 +79,7 @@ type BackupCommitJson = {
   }[];
 };
 
-const LOGTO_AUDIENCE = "https://ggartifact.test/api";
+const LOGTO_AUDIENCE = "test-spa-app";
 let logtoIssuer = "";
 let accessToken = "";
 
@@ -325,7 +325,7 @@ function createBackupTestEnv(): {
       BACKUP_BUCKET: bucket as unknown as R2Bucket,
       LOGTO_ISSUER: logtoIssuer,
       LOGTO_JWKS_URI: `${logtoIssuer}/jwks`,
-      LOGTO_API_RESOURCE: LOGTO_AUDIENCE,
+      LOGTO_APP_ID: LOGTO_AUDIENCE,
     } as unknown as BackupEnv,
   };
 }

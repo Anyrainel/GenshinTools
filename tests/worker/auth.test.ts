@@ -47,9 +47,9 @@ describe("Worker auth boundary", () => {
     });
   });
 
-  it("validates Logto access tokens and upserts the app user", async () => {
+  it("validates Logto ID tokens and upserts the app user", async () => {
     const issuer = "https://logto.test/oidc";
-    const audience = "https://ggartifact.test/api";
+    const audience = "test-spa-app";
     const { token, jwks } = await createTestJwt({
       issuer,
       audience,
@@ -72,7 +72,7 @@ describe("Worker auth boundary", () => {
         BACKUP_DB: db,
         LOGTO_ISSUER: issuer,
         LOGTO_JWKS_URI: `${issuer}/jwks`,
-        LOGTO_API_RESOURCE: audience,
+        LOGTO_APP_ID: audience,
       } as unknown as AppEnv
     );
 
@@ -94,11 +94,11 @@ describe("Worker auth boundary", () => {
     });
   });
 
-  it("rejects Logto tokens with the wrong audience", async () => {
+  it("rejects Logto tokens with the wrong app audience", async () => {
     const issuer = "https://logto-audience.test/oidc";
     const { token, jwks } = await createTestJwt({
       issuer,
-      audience: "https://wrong.example/api",
+      audience: "wrong-spa-app",
       subject: "logto-user-1",
     });
     vi.stubGlobal(
@@ -112,7 +112,7 @@ describe("Worker auth boundary", () => {
         BACKUP_DB: new FakeAuthD1Database(),
         LOGTO_ISSUER: issuer,
         LOGTO_JWKS_URI: `${issuer}/jwks`,
-        LOGTO_API_RESOURCE: "https://ggartifact.test/api",
+        LOGTO_APP_ID: "test-spa-app",
       } as unknown as AppEnv
     );
 
@@ -126,7 +126,7 @@ describe("Worker auth boundary", () => {
     const issuer = "https://logto-issuer.test/oidc";
     const { token, jwks } = await createTestJwt({
       issuer: "https://other-issuer.test/oidc",
-      audience: "https://ggartifact.test/api",
+      audience: "test-spa-app",
       subject: "logto-user-1",
     });
     vi.stubGlobal(
@@ -140,7 +140,7 @@ describe("Worker auth boundary", () => {
         BACKUP_DB: new FakeAuthD1Database(),
         LOGTO_ISSUER: issuer,
         LOGTO_JWKS_URI: `${issuer}/jwks`,
-        LOGTO_API_RESOURCE: "https://ggartifact.test/api",
+        LOGTO_APP_ID: "test-spa-app",
       } as unknown as AppEnv
     );
 
@@ -154,7 +154,7 @@ describe("Worker auth boundary", () => {
     const issuer = "https://logto-expired.test/oidc";
     const { token, jwks } = await createTestJwt({
       issuer,
-      audience: "https://ggartifact.test/api",
+      audience: "test-spa-app",
       subject: "logto-user-1",
       expiresIn: Math.floor(Date.now() / 1000) - 60,
     });
@@ -169,7 +169,7 @@ describe("Worker auth boundary", () => {
         BACKUP_DB: new FakeAuthD1Database(),
         LOGTO_ISSUER: issuer,
         LOGTO_JWKS_URI: `${issuer}/jwks`,
-        LOGTO_API_RESOURCE: "https://ggartifact.test/api",
+        LOGTO_APP_ID: "test-spa-app",
       } as unknown as AppEnv
     );
 
@@ -183,7 +183,7 @@ describe("Worker auth boundary", () => {
     const issuer = "https://logto-sub.test/oidc";
     const { token, jwks } = await createTestJwt({
       issuer,
-      audience: "https://ggartifact.test/api",
+      audience: "test-spa-app",
     });
     vi.stubGlobal(
       "fetch",
@@ -196,7 +196,7 @@ describe("Worker auth boundary", () => {
         BACKUP_DB: new FakeAuthD1Database(),
         LOGTO_ISSUER: issuer,
         LOGTO_JWKS_URI: `${issuer}/jwks`,
-        LOGTO_API_RESOURCE: "https://ggartifact.test/api",
+        LOGTO_APP_ID: "test-spa-app",
       } as unknown as AppEnv
     );
 

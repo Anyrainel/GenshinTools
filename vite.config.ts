@@ -1,6 +1,7 @@
 import path from "node:path";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react-swc";
+import { exportJWK, generateKeyPair, SignJWT } from "jose";
 import { defineConfig } from "vite";
 import { presetWatcher } from "./scripts/dev/vite-plugin-preset-watcher";
 
@@ -41,6 +42,9 @@ const chunkAssignments: Array<[(id: string) => boolean, string]> = [
   [(id) => /[\\/]src[\\/]data[\\/][^\\/]+\.ts$/.test(id), "game-data"],
 ];
 
+const localDevPort = Number(process.env.VITE_DEV_PORT ?? 5173);
+const localDevOrigin = `http://127.0.0.1:${localDevPort}`;
+
 function manualChunks(id: string): string | undefined {
   for (const [predicate, chunk] of chunkAssignments) {
     if (predicate(id)) return chunk;
@@ -49,6 +53,16 @@ function manualChunks(id: string): string | undefined {
 }
 
 const localBackupBindings = {
+  vars: {
+    LOGTO_ENDPOINT: "https://synz8r.logto.app",
+    LOGTO_APP_ID: "tglrsenlbfrfrnevjwlan",
+    ...(process.env.VITE_E2E_FAKE_LOGTO === "1"
+      ? {
+          LOGTO_ISSUER: `${localDevOrigin}/__e2e__/issuer`,
+          LOGTO_JWKS_URI: `${localDevOrigin}/__e2e__/jwks`,
+        }
+      : {}),
+  },
   d1_databases: [
     {
       binding: "BACKUP_DB",
@@ -67,6 +81,7 @@ const localBackupBindings = {
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }) => {
   const staticOnlyBuild = mode === "github" || mode === "tauri";
+  const fakeLogtoForE2e = process.env.VITE_E2E_FAKE_LOGTO === "1";
 
   return {
     base: mode === "github" ? "/GenshinTools/" : "/",
@@ -75,8 +90,46 @@ export default defineConfig(({ command, mode }) => {
       !staticOnlyBuild &&
         cloudflare({
           config: command === "serve" ? () => localBackupBindings : undefined,
+          persistState: fakeLogtoForE2e
+            ? { path: ".wrangler/e2e-state" }
+            : undefined,
         }),
       presetWatcher(),
+      {
+        name: "e2e-fake-logto",
+        apply: "serve",
+        configureServer(server) {
+          if (!fakeLogtoForE2e) return;
+          const fixture = createE2eLogtoFixture();
+          server.middlewares.use(async (req, res, next) => {
+            if (!req.url?.startsWith("/__e2e__/")) {
+              next();
+              return;
+            }
+
+            const url = new URL(req.url, localDevOrigin);
+            if (url.pathname === "/__e2e__/jwks") {
+              const jwks = await fixture.jwks();
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify(jwks));
+              return;
+            }
+
+            if (url.pathname === "/__e2e__/token") {
+              const token = await fixture.token({
+                sub: url.searchParams.get("sub") ?? "e2e-default-user",
+                name: url.searchParams.get("name") ?? undefined,
+                email: url.searchParams.get("email") ?? undefined,
+              });
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify({ accessToken: token }));
+              return;
+            }
+
+            next();
+          });
+        },
+      },
       {
         name: "cache-static-assets",
         apply: "serve",
@@ -109,6 +162,14 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        ...(fakeLogtoForE2e
+          ? {
+              "@logto/react": path.resolve(
+                __dirname,
+                "./src/testing/e2e/fakeLogto.tsx"
+              ),
+            }
+          : {}),
       },
     },
     worker: {
@@ -129,9 +190,41 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     server: {
-      port: 5173,
+      port: localDevPort,
       strictPort: true,
       host: true,
     },
   };
 });
+
+function createE2eLogtoFixture() {
+  const kid = "e2e-logto-key";
+  const issuer = `${localDevOrigin}/__e2e__/issuer`;
+  const audience = "tglrsenlbfrfrnevjwlan";
+  const keyPair = generateKeyPair("ES256", { extractable: true });
+
+  return {
+    async jwks() {
+      const { publicKey } = await keyPair;
+      const jwk = await exportJWK(publicKey);
+      return {
+        keys: [{ ...jwk, kid, alg: "ES256", use: "sig" }],
+      };
+    },
+    async token(user: { sub: string; name?: string; email?: string }) {
+      const { privateKey } = await keyPair;
+      return new SignJWT({
+        scope: "cloud_sync",
+        ...(user.name ? { name: user.name } : {}),
+        ...(user.email ? { email: user.email } : {}),
+      })
+        .setProtectedHeader({ alg: "ES256", kid })
+        .setIssuer(issuer)
+        .setAudience(audience)
+        .setSubject(user.sub)
+        .setIssuedAt()
+        .setExpirationTime("1h")
+        .sign(privateKey);
+    },
+  };
+}

@@ -13,6 +13,7 @@ vi.mock("@logto/react", () => ({
   useLogto: () => ({
     ...logtoState,
     getAccessToken: vi.fn(),
+    getIdToken: vi.fn(),
     getIdTokenClaims: vi.fn(),
   }),
 }));

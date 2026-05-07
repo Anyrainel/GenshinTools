@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import { LOGTO_API_RESOURCE } from "@/cloud/authConfig";
+import { LOGTO_API_RESOURCE, LOGTO_APP_ID } from "@/cloud/authConfig";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -31,6 +31,7 @@ export default function AccountPage() {
     if (!account) return t.ui("accountSystem.signedIn");
     return account.displayName ?? account.email ?? account.subject;
   }, [account, t]);
+  const authAudienceLabel = LOGTO_API_RESOURCE || `app:${LOGTO_APP_ID}`;
 
   const handleSignIn = async () => {
     try {
@@ -114,7 +115,7 @@ export default function AccountPage() {
                 <div className="text-xs text-muted-foreground">
                   {t
                     .ui("accountSystem.apiResource")
-                    .replace("{0}", LOGTO_API_RESOURCE)}
+                    .replace("{0}", authAudienceLabel)}
                 </div>
               </div>
 

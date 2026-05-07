@@ -4,6 +4,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const shouldResetBackupState = process.argv.includes("--reset-backup-db");
+const localPersistTo = process.env.GGARTIFACT_WRANGLER_PERSIST_TO?.trim();
 
 const bin = (name) =>
   path.resolve(
@@ -27,6 +28,7 @@ const migration = spawnSync(
     "--local",
     "--env",
     "dev",
+    ...(localPersistTo ? ["--persist-to", localPersistTo] : []),
   ],
   {
     cwd: root,
@@ -56,9 +58,12 @@ vite.on("exit", (code, signal) => {
 });
 
 function resetLocalBackupState() {
+  const stateRoot = localPersistTo
+    ? path.resolve(root, localPersistTo)
+    : path.join(root, ".wrangler", "state");
   const targets = [
-    path.join(root, ".wrangler", "state", "v3", "d1"),
-    path.join(root, ".wrangler", "state", "v3", "r2", "ggartifact-backup"),
+    path.join(stateRoot, "v3", "d1"),
+    path.join(stateRoot, "v3", "r2", "ggartifact-backup"),
   ];
   for (const target of targets) {
     if (!existsSync(target)) continue;

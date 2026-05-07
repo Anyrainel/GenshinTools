@@ -141,7 +141,9 @@ function getRestoredBuildPresetSelection(
 }
 
 function isImplicitDefaultPreset(activePresetId: string | null): boolean {
-  return activePresetId === getDefaultBuildPresetId();
+  return (
+    activePresetId === null || activePresetId === getDefaultBuildPresetId()
+  );
 }
 
 function getRestoredCharacterWeapons(

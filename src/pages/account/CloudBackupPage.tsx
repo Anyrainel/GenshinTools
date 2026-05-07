@@ -47,6 +47,7 @@ export default function CloudBackupPage() {
     isAuthenticated,
     isLoading: isAuthLoading,
     getAccessToken,
+    getIdToken,
     getIdTokenClaims,
   } = useLogto();
   const [lastError, setLastError] = useState<string | null>(null);
@@ -65,7 +66,10 @@ export default function CloudBackupPage() {
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
   );
-  const auth = useMemo(() => ({ getAccessToken }), [getAccessToken]);
+  const auth = useMemo(
+    () => ({ getAccessToken, getIdToken }),
+    [getAccessToken, getIdToken]
+  );
   const apiClient = useMemo(() => createCloudBackupApiClient(auth), [auth]);
   const sessionUserId = logtoSubject ? `logto:${logtoSubject}` : null;
 

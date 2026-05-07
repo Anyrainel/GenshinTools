@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createCloudBackupApiClient } from "@/cloud/session";
 
 describe("cloud backup auth headers", () => {
-  it("injects the Logto API access token into backup requests", async () => {
+  it("injects the Logto ID token into backup requests by default", async () => {
     const fetchImpl = vi.fn(async () =>
       Response.json({
         serverTime: 1,
@@ -21,15 +21,15 @@ describe("cloud backup auth headers", () => {
     vi.stubGlobal("fetch", fetchImpl);
 
     const client = createCloudBackupApiClient({
-      getAccessToken: async (resource) =>
-        resource === "https://ggartifact.com/api" ? "logto-token" : undefined,
+      getAccessToken: async () => undefined,
+      getIdToken: async () => "logto-id-token",
     });
 
     await client.getHead();
 
     expect(fetchImpl).toHaveBeenCalledWith("/api/backup/v1/head", {
       method: "GET",
-      headers: { Authorization: "Bearer logto-token" },
+      headers: { Authorization: "Bearer logto-id-token" },
     });
     vi.unstubAllGlobals();
   });

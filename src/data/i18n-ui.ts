@@ -90,8 +90,8 @@ export const i18nUiData = {
     },
     logtoAccount: { en: "Logto account", zh: "Logto 账号" },
     apiResource: {
-      en: "Cloud backup API: {0}",
-      zh: "云端备份 API：{0}",
+      en: "Cloud backup token audience: {0}",
+      zh: "云端备份令牌受众：{0}",
     },
     loginCallback: {
       en: "Finishing sign-in...",

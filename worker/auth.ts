@@ -6,6 +6,7 @@ export type AppEnv = Env & {
   LOGTO_ENDPOINT?: string;
   LOGTO_ISSUER?: string;
   LOGTO_JWKS_URI?: string;
+  LOGTO_APP_ID?: string;
   LOGTO_API_RESOURCE?: string;
 };
 
@@ -27,7 +28,7 @@ export type AuthFailure = {
 const AUTH_API_PREFIX = "/api/auth";
 const LOGTO_PROVIDER = "logto";
 const DEFAULT_LOGTO_ENDPOINT = "https://synz8r.logto.app";
-const DEFAULT_LOGTO_API_RESOURCE = "https://ggartifact.com/api";
+const DEFAULT_LOGTO_APP_ID = "tglrsenlbfrfrnevjwlan";
 const AUTH_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -109,10 +110,10 @@ const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
 async function lookupLogtoUser(
   db: D1Database,
-  accessToken: string,
+  token: string,
   config: LogtoConfig
 ): Promise<AuthenticatedUser | AuthFailure> {
-  const claims = await verifyLogtoAccessToken(accessToken, config);
+  const claims = await verifyLogtoToken(token, config);
   if (!claims) {
     return { status: 401, payload: { error: "unauthenticated" } };
   }
@@ -132,13 +133,13 @@ async function lookupLogtoUser(
   };
 }
 
-async function verifyLogtoAccessToken(
-  accessToken: string,
+async function verifyLogtoToken(
+  token: string,
   config: LogtoConfig
 ): Promise<JWTPayload | null> {
   try {
     const jwks = getJwks(config.jwksUri);
-    const { payload } = await jwtVerify(accessToken, jwks, {
+    const { payload } = await jwtVerify(token, jwks, {
       issuer: config.issuer,
       audience: config.audience,
     });
@@ -249,7 +250,9 @@ function getLogtoConfig(env: AppEnv): LogtoConfig | null {
     env.LOGTO_JWKS_URI ?? (issuer ? `${issuer}/jwks` : undefined)
   );
   const audience = (
-    env.LOGTO_API_RESOURCE ?? DEFAULT_LOGTO_API_RESOURCE
+    env.LOGTO_API_RESOURCE ||
+    env.LOGTO_APP_ID ||
+    DEFAULT_LOGTO_APP_ID
   ).trim();
   if (!issuer || !jwksUri || !audience) return null;
   return { issuer, jwksUri, audience };
