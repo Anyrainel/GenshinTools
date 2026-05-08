@@ -22,7 +22,7 @@
     {
       "binding": "BACKUP_DB",
       "database_name": "ggartifact-backup",
-      "database_id": "bf430d1d-3063-4ce6-bf57-4558110bf55f"
+      "database_id": "5227b90e-8057-4068-8ec1-b498458075f4"
     }
   ],
   "r2_buckets": [
@@ -41,7 +41,7 @@
         {
           "binding": "BACKUP_DB",
           "database_name": "ggartifact-backup",
-          "database_id": "bf430d1d-3063-4ce6-bf57-4558110bf55f"
+          "database_id": "5227b90e-8057-4068-8ec1-b498458075f4"
         }
       ],
       "r2_buckets": [
