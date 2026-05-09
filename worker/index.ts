@@ -107,7 +107,10 @@ async function handleSpaIndexRequest(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const indexUrl = new URL("/index.html", request.url);
+  // Cloudflare Static Assets canonicalizes /index.html back to /. Since /
+  // routes through this Worker, asking the asset binding for /index.html would
+  // preserve a 307 Location: / response and create a redirect loop.
+  const indexUrl = new URL("/", request.url);
   const indexRequest = new Request(indexUrl, request);
   const response = await env.ASSETS.fetch(indexRequest);
   const headers = new Headers(response.headers);

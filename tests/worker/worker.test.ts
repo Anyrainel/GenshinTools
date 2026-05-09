@@ -45,6 +45,17 @@ describe("Worker API routing", () => {
     expect(await response.text()).toContain('<div id="root"></div>');
   });
 
+  it("does not propagate the static asset /index.html redirect for the root route", async () => {
+    const response = await worker.fetch(
+      new Request("https://example.com/"),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Location")).toBeNull();
+    expect(await response.text()).toContain('<div id="root"></div>');
+  });
+
   it("keeps missing static asset requests as real 404s", async () => {
     const response = await worker.fetch(
       new Request("https://example.com/assets/missing-test.js"),
@@ -72,7 +83,13 @@ function fakeAssetEnv(): Env {
     ASSETS: {
       fetch: async (request: Request) => {
         const url = new URL(request.url);
-        if (url.pathname !== "/index.html") {
+        if (url.pathname === "/index.html") {
+          return new Response(null, {
+            status: 307,
+            headers: { Location: "/" },
+          });
+        }
+        if (url.pathname !== "/") {
           return new Response("asset missing", { status: 404 });
         }
         return new Response(
