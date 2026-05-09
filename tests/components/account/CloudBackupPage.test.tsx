@@ -73,38 +73,67 @@ describe("CloudBackupPage", () => {
       isAuthenticated: true,
       isLoading: false,
     };
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        Response.json({
-          serverTime: 1,
-          changed: true,
-          headSetRev: "hset_1",
-          capabilities: {
-            apiVersion: 1,
-            commitContentTypes: ["multipart/form-data"],
-            maxObjectsPerCommit: 10,
-            maxCompressedBytesPerCommit: 100,
-            maxCompressedBytesPerObject: 50,
-          },
-          quota: {
-            period: "2026-05",
-            limit: 10,
-            used: 10,
-            remaining: 0,
-            resetsAt: Date.UTC(2026, 5, 1),
-          },
-          heads: [],
-        })
-      )
+    const fetchImpl = vi.fn(async () =>
+      Response.json({
+        serverTime: 1,
+        changed: true,
+        headSetRev: "hset_1",
+        capabilities: {
+          apiVersion: 1,
+          commitContentTypes: ["multipart/form-data"],
+          maxObjectsPerCommit: 10,
+          maxCompressedBytesPerCommit: 100,
+          maxCompressedBytesPerObject: 50,
+        },
+        quota: {
+          period: "2026-05",
+          limit: 10,
+          used: 10,
+          remaining: 0,
+          resetsAt: Date.UTC(2026, 5, 1),
+        },
+        heads: [],
+      })
     );
+    vi.stubGlobal("fetch", fetchImpl);
 
     render(<CloudBackupPage />);
 
     expect(
       await screen.findByText("Uploads this month: 10/10")
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Upload" })).toBeDisabled();
+    const uploadButton = screen.getByRole("button", { name: "Upload" });
+    expect(uploadButton).toBeDisabled();
     expect(screen.getByRole("button", { name: "Download" })).toBeEnabled();
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(uploadButton);
+
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("turns backup 401 metadata failures into a sign-in prompt", async () => {
+    logtoState = {
+      isAuthenticated: true,
+      isLoading: false,
+    };
+    const fetchImpl = vi.fn(async () =>
+      Response.json({ error: "unauthenticated" }, { status: 401 })
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    render(<CloudBackupPage />);
+
+    expect(
+      await screen.findByText(
+        "Your cloud backup sign-in expired. Sign in again before using cloud backup."
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/get backup head failed with HTTP 401/)
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Upload" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Download" })).toBeDisabled();
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 });

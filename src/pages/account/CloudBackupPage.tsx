@@ -74,6 +74,7 @@ export default function CloudBackupPage() {
   const [uploadQuota, setUploadQuota] = useState<BackupUploadQuota | null>(
     null
   );
+  const [backupAuthExpired, setBackupAuthExpired] = useState(false);
   const [logtoSubject, setLogtoSubject] = useState<string | null>(null);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
@@ -93,6 +94,8 @@ export default function CloudBackupPage() {
     partitionMeta,
     cloudMetadata
   );
+  const canUseCloudBackup =
+    isAuthenticated && sessionUserId !== null && !backupAuthExpired;
 
   const refreshCloudMetadata = useCallback(
     async (status: MetadataStatus = "refreshing") => {
@@ -106,8 +109,16 @@ export default function CloudBackupPage() {
         );
         setCloudMetadata(snapshot);
         setUploadQuota(snapshot.quota);
+        setBackupAuthExpired(false);
       } catch (error) {
         setUploadQuotaFromError(error, setUploadQuota);
+        if (isBackupUnauthenticatedError(error)) {
+          setBackupAuthExpired(true);
+          setCloudMetadata(null);
+          setUploadQuota(null);
+          setMetadataError(null);
+          return;
+        }
         const message = formatBackupError(error, t);
         setMetadataError(message);
       } finally {
@@ -134,6 +145,7 @@ export default function CloudBackupPage() {
   useEffect(() => {
     if (!isAuthenticated) {
       setLogtoSubject(null);
+      setBackupAuthExpired(false);
       return;
     }
 
@@ -217,6 +229,9 @@ export default function CloudBackupPage() {
       toast.success(t.ui("accountSystem.statusToast.uploaded"));
     } catch (error) {
       setUploadQuotaFromError(error, setUploadQuota);
+      if (isBackupUnauthenticatedError(error)) {
+        setBackupAuthExpired(true);
+      }
       const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
@@ -255,6 +270,9 @@ export default function CloudBackupPage() {
       }
       await applyCloudDownload(syncResult, manualPlan.automaticPartitionIds);
     } catch (error) {
+      if (isBackupUnauthenticatedError(error)) {
+        setBackupAuthExpired(true);
+      }
       const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
@@ -325,6 +343,9 @@ export default function CloudBackupPage() {
       toast.success(t.ui("accountSystem.statusToast.uploaded"));
     } catch (error) {
       setUploadQuotaFromError(error, setUploadQuota);
+      if (isBackupUnauthenticatedError(error)) {
+        setBackupAuthExpired(true);
+      }
       const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
@@ -361,6 +382,9 @@ export default function CloudBackupPage() {
       );
       await refreshCloudMetadata();
     } catch (error) {
+      if (isBackupUnauthenticatedError(error)) {
+        setBackupAuthExpired(true);
+      }
       const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
@@ -387,7 +411,7 @@ export default function CloudBackupPage() {
             </div>
 
             <div className="p-4 space-y-4">
-              {!isAuthenticated && (
+              {(!isAuthenticated || backupAuthExpired) && (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>
@@ -395,7 +419,11 @@ export default function CloudBackupPage() {
                   </AlertTitle>
                   <AlertDescription>
                     <div className="flex flex-wrap items-center gap-3">
-                      <span>{t.ui("accountSystem.signInRequiredDesc")}</span>
+                      <span>
+                        {backupAuthExpired
+                          ? t.ui("accountSystem.cloudSessionExpiredDesc")
+                          : t.ui("accountSystem.signInRequiredDesc")}
+                      </span>
                       <Button
                         type="button"
                         size="sm"
@@ -433,7 +461,7 @@ export default function CloudBackupPage() {
                   variant="secondary"
                   onClick={() => void beginUploadToCloud()}
                   disabled={
-                    !isAuthenticated ||
+                    !canUseCloudBackup ||
                     isAuthLoading ||
                     operation !== null ||
                     uploadQuota?.remaining === 0
@@ -451,7 +479,7 @@ export default function CloudBackupPage() {
                   type="button"
                   onClick={() => void beginDownloadFromCloud()}
                   disabled={
-                    !isAuthenticated || isAuthLoading || operation !== null
+                    !canUseCloudBackup || isAuthLoading || operation !== null
                   }
                 >
                   <CloudDownload
@@ -544,6 +572,9 @@ function formatBackupError(
   t: ReturnType<typeof useLanguage>["t"]
 ): string {
   if (error instanceof BackupApiError) {
+    if (isBackupUnauthenticatedError(error)) {
+      return t.ui("accountSystem.cloudSessionExpiredDesc");
+    }
     if (isQuotaExceededPayload(error.payload)) {
       return t
         .ui("accountSystem.uploadQuotaExceeded")
@@ -566,6 +597,17 @@ function formatBackupError(
   }
   if (error instanceof Error) return error.message;
   return String(error);
+}
+
+function isBackupUnauthenticatedError(error: unknown): boolean {
+  return (
+    error instanceof BackupApiError &&
+    error.status === 401 &&
+    !!error.payload &&
+    typeof error.payload === "object" &&
+    "error" in error.payload &&
+    error.payload.error === "unauthenticated"
+  );
 }
 
 function updateUploadQuota(

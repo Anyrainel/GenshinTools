@@ -8,7 +8,7 @@ import {
   type LucideIcon,
   Mail,
   Menu,
-  MoreHorizontal,
+  MoreVertical,
   Palette,
   Settings,
 } from "lucide-react";
@@ -565,7 +565,7 @@ export function AppBar({
                     aria-label={t.ui("common.more")}
                     className="h-9 gap-2 px-2 pt-1.5 pb-2.5 sm:px-3"
                   >
-                    <MoreHorizontal className="w-4 h-4" />
+                    <MoreVertical className="w-4 h-4" />
                     <span className="hidden sm:inline">
                       {t.ui("common.more")}
                     </span>

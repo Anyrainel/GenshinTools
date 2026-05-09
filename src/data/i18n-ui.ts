@@ -116,6 +116,10 @@ export const i18nUiData = {
       en: "Sign in before using manual cloud backup.",
       zh: "使用手动云端备份前，请先登录。",
     },
+    cloudSessionExpiredDesc: {
+      en: "Your cloud backup sign-in expired. Sign in again before using cloud backup.",
+      zh: "云端备份登录状态已过期。请重新登录后再使用云端备份。",
+    },
     syncFailed: { en: "Cloud action failed", zh: "云端操作失败" },
     metadataFailed: {
       en: "Could not load backup metadata",
@@ -149,7 +153,7 @@ export const i18nUiData = {
     restoreStatus: { en: "Download result", zh: "下载结果" },
     uploadQuota: {
       en: "Uploads this month: {0}/{1}",
-      zh: "本月上传：{0}/{1}",
+      zh: "本月已上传：{0}/{1}",
     },
     uploadQuotaExceeded: {
       en: "This account has reached the monthly upload limit of {0}. Download still works.",
