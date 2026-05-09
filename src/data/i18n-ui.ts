@@ -9,7 +9,7 @@ export const i18nUiData = {
     active: { en: "Active", zh: "使用中" },
     none: { en: "None", zh: "无" },
     home: { en: "Home", zh: "主页" },
-    more: { en: "More actions", zh: "更多操作" },
+    more: { en: "More", zh: "更多" },
     refresh: { en: "Refresh Page", zh: "刷新页面" },
     loading: { en: "Loading...", zh: "加载中..." },
     error: { en: "Something went wrong", zh: "出错了" },
@@ -985,7 +985,6 @@ export const i18nUiData = {
       en: "You won't know until you calculate — the results may surprise you.",
       zh: "不算不知道，一算吓一跳。",
     },
-    navMoreToCome: { en: "More", zh: "更多" },
     moreProblem: {
       en: "Got ideas or feedback?",
       zh: "有想法或建议？",

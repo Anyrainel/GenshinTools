@@ -199,7 +199,7 @@ export default function Home() {
             {/* Community Banner */}
             <FeatureCard
               icon={<Sparkles className="w-5 h-5" />}
-              title={t.ui("app.navMoreToCome")}
+              title={t.ui("common.more")}
               problem={t.ui("app.moreProblem")}
               guideline={t.ui("app.moreGuideline")}
               link="https://discord.gg/4RNAHYBaHa"
