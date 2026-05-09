@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import {
+  compactTeamSetupConfig,
+  compactTeamSetupConfigs,
   createEmptyTeamComp,
   createTeamPersistenceFromImportedData,
   createTeamSetupConfigsFromPresetPayload,
@@ -117,9 +119,12 @@ function dedupeTeamCompStateAgainstPreset(
   state.compDeltas = deltas;
   for (const [fromId, toId] of Object.entries(idMap)) {
     if (fromId === toId) continue;
-    const config = state.configsByTeamId[fromId];
-    if (!config) continue;
-    state.configsByTeamId[toId] = config;
+    const config = compactTeamSetupConfig(state.configsByTeamId[fromId]);
+    if (config) {
+      state.configsByTeamId[toId] = config;
+    } else {
+      delete state.configsByTeamId[toId];
+    }
     delete state.configsByTeamId[fromId];
   }
 }
@@ -183,9 +188,14 @@ export const useTeamStore = create<TeamState>()(
               ? teamCompInputToComp({ ...initialData, id })
               : createEmptyTeamComp(id);
           state.compDeltas = upsertCustomTeamCompDelta(state.compDeltas, comp);
-          state.configsByTeamId[id] = normalizeTeamSetupConfig(
+          const setupConfig = compactTeamSetupConfig(
             initialData?.setupConfig ?? {}
           );
+          if (setupConfig) {
+            state.configsByTeamId[id] = setupConfig;
+          } else {
+            delete state.configsByTeamId[id];
+          }
           reindexTeamOrder(
             state,
             insertIdInOrder(
@@ -227,11 +237,16 @@ export const useTeamStore = create<TeamState>()(
           const comp = state.teamCompById[id];
           if (!comp) return;
           const current = getSetupConfig(state.configsByTeamId, id);
-          state.configsByTeamId[id] = normalizeTeamSetupConfig(
+          const nextConfig = compactTeamSetupConfig(
             typeof updater === "function"
               ? updater(current)
               : { ...current, ...updater }
           );
+          if (nextConfig) {
+            state.configsByTeamId[id] = nextConfig;
+          } else {
+            delete state.configsByTeamId[id];
+          }
           refreshDerivedTeamState(state);
           touchTeamState(state);
         });
@@ -273,10 +288,14 @@ export const useTeamStore = create<TeamState>()(
             copiedComp,
             index + 1
           );
-          state.configsByTeamId[newId] = getSetupConfig(
-            state.configsByTeamId,
-            id
+          const setupConfig = compactTeamSetupConfig(
+            getSetupConfig(state.configsByTeamId, id)
           );
+          if (setupConfig) {
+            state.configsByTeamId[newId] = setupConfig;
+          } else {
+            delete state.configsByTeamId[newId];
+          }
           const nextOrder = state.teamComps.map((team) => team.id);
           nextOrder.splice(index + 1, 0, newId);
           reindexTeamOrder(state, nextOrder);
@@ -338,7 +357,9 @@ export const useTeamStore = create<TeamState>()(
         set((state) => {
           state.activePresetId = null;
           state.compDeltas = imported.compDeltas;
-          state.configsByTeamId = imported.configsByTeamId;
+          state.configsByTeamId = compactTeamSetupConfigs(
+            imported.configsByTeamId
+          );
           state.author = imported.author;
           state.description = imported.description;
           refreshDerivedTeamState(state, null);
@@ -351,7 +372,9 @@ export const useTeamStore = create<TeamState>()(
         set((state) => {
           state.activePresetId = source.activePresetId;
           state.compDeltas = source.compDeltas;
-          state.configsByTeamId = source.configsByTeamId;
+          state.configsByTeamId = compactTeamSetupConfigs(
+            source.configsByTeamId
+          );
           state.author = source.author;
           state.description = source.description;
           state.updatedAt = source.updatedAt;

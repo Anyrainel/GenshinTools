@@ -1,5 +1,8 @@
 import type { CloudExportPartition } from "@/cloud/types";
-import type { TeamCompDelta } from "@/lib/team-comp/teamDeltas";
+import {
+  compactTeamSetupConfigs,
+  type TeamCompDelta,
+} from "@/lib/team-comp/teamDeltas";
 import type { TeamSetupConfig } from "@/lib/team-comp/types";
 
 export type TeamCloudSnapshot = {
@@ -26,17 +29,18 @@ export type TeamRestorePatch = TeamCloudSnapshot;
 export function teamToCloud(
   snapshot: TeamCloudSnapshot
 ): CloudExportPartition<TeamCloudPayload>[] {
+  const configsByTeamId = compactTeamSetupConfigs(snapshot.configsByTeamId);
   return [
     {
       namespace: "teams",
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
-      isDefaultState: isDefaultTeamSnapshot(snapshot),
+      isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
         activePresetId: snapshot.activePresetId,
         compDeltas: snapshot.compDeltas,
-        configsByTeamId: snapshot.configsByTeamId,
+        configsByTeamId,
         author: snapshot.author,
         description: snapshot.description,
         updatedAt: snapshot.updatedAt,
@@ -76,11 +80,12 @@ function getMetadataUpdatedAt(
   return values.length ? Math.max(...values) : undefined;
 }
 
-function isDefaultTeamSnapshot(snapshot: TeamCloudSnapshot) {
-  return (
-    snapshot.compDeltas.length === 0 &&
-    Object.keys(snapshot.configsByTeamId).length === 0 &&
-    snapshot.author === "" &&
-    snapshot.description === ""
-  );
+function isDefaultTeamSnapshot(
+  snapshot: TeamCloudSnapshot,
+  configsByTeamId: Record<string, TeamSetupConfig>
+) {
+  if (snapshot.compDeltas.length > 0) return false;
+  if (Object.keys(configsByTeamId).length > 0) return false;
+  if (snapshot.activePresetId != null) return true;
+  return snapshot.author === "" && snapshot.description === "";
 }

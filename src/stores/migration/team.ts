@@ -5,6 +5,7 @@ import type {
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
 import {
+  compactTeamSetupConfigs,
   dedupeTeamCompDeltasAgainstPreset,
   deriveTeamCompsFromDeltas,
   type TeamCompDelta,
@@ -523,6 +524,7 @@ export function migrateTeamStore(
   if (version < 18 || !Number.isFinite(state.updatedAt)) {
     state.updatedAt = Date.now();
   }
+  state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});
 
   delete state.teams;
   return state;
@@ -556,7 +558,7 @@ export function mergeTeamStore<
   const activePresetId = parsed.data.activePresetId;
   const preset = getCachedTeamPreset(activePresetId);
   const deduped = dedupeTeamCompDeltasAgainstPreset(compDeltas, preset);
-  const nextConfigsByTeamId = { ...configsByTeamId };
+  const nextConfigsByTeamId = compactTeamSetupConfigs(configsByTeamId);
   for (const [fromId, toId] of Object.entries(deduped.idMap)) {
     if (fromId === toId) continue;
     const config = nextConfigsByTeamId[fromId];

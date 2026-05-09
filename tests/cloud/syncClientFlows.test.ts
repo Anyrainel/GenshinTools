@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { teamToCloud } from "@/cloud/adapters/teamAdapter";
 import type {
   BackupCommitRequest,
   BackupCommitResponse,
@@ -63,6 +64,114 @@ describe("cloud sync client multi-device flows", () => {
       builds: ["from-cloud"],
     });
     expect(remote.commit).toHaveBeenCalledTimes(1);
+  });
+
+  it("downloads cloud teams after local custom teams are cleared to default state", async () => {
+    const remote = new StatefulBackupApi();
+    const sourceDevice = createMemoryMetadataStore("source-device");
+    const freshDevice = createMemoryMetadataStore("fresh-device");
+
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: sourceDevice.store,
+      buildPartitions: () => [
+        ...teamToCloud({
+          activePresetId: null,
+          compDeltas: [
+            {
+              kind: "custom",
+              id: "custom-team",
+              value: {
+                id: "custom-team",
+                name: "Cloud Team",
+                slots: [{ charId: "amber", weaponId: null, artifactSet: null }],
+                reactions: [],
+              },
+            },
+          ],
+          configsByTeamId: {},
+          author: "",
+          description: "",
+          updatedAt: 100,
+        }),
+      ],
+      createIdempotencyKey: () => "sync_cloud_team_source",
+    });
+
+    const preview = await previewCloudSync({
+      apiClient: remote,
+      metadataStore: freshDevice.store,
+      buildPartitions: () => [
+        ...teamToCloud({
+          activePresetId: null,
+          compDeltas: [],
+          configsByTeamId: {},
+          author: "",
+          description: "",
+          updatedAt: 200,
+        }),
+      ],
+    });
+
+    expect(preview.status).toBe("needs-download");
+    expect(preview.plan.conflicts).toEqual([]);
+    expect(preview.plan.downloads.map((download) => download.id)).toEqual([
+      "teams/all",
+    ]);
+  });
+
+  it("downloads cloud teams when a fresh device only has preset teams", async () => {
+    const remote = new StatefulBackupApi();
+    const sourceDevice = createMemoryMetadataStore("source-device");
+    const freshDevice = createMemoryMetadataStore("fresh-device");
+
+    await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: sourceDevice.store,
+      buildPartitions: () => [
+        ...teamToCloud({
+          activePresetId: null,
+          compDeltas: [
+            {
+              kind: "custom",
+              id: "cloud-team",
+              value: {
+                id: "cloud-team",
+                name: "Cloud Team",
+                slots: [{ charId: "amber", weaponId: null, artifactSet: null }],
+                reactions: [],
+              },
+            },
+          ],
+          configsByTeamId: {},
+          author: "",
+          description: "",
+          updatedAt: 100,
+        }),
+      ],
+      createIdempotencyKey: () => "sync_cloud_team_source",
+    });
+
+    const preview = await previewCloudSync({
+      apiClient: remote,
+      metadataStore: freshDevice.store,
+      buildPartitions: () => [
+        ...teamToCloud({
+          activePresetId: "preset-teams",
+          compDeltas: [],
+          configsByTeamId: { "preset-team": { combatOptions: {} } },
+          author: "preset author",
+          description: "preset description",
+          updatedAt: 200,
+        }),
+      ],
+    });
+
+    expect(preview.status).toBe("needs-download");
+    expect(preview.plan.conflicts).toEqual([]);
+    expect(preview.plan.downloads.map((download) => download.id)).toEqual([
+      "teams/all",
+    ]);
   });
 
   it("uploads default-state partitions on a brand-new backup", async () => {

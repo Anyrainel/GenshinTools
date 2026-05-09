@@ -51,7 +51,8 @@ describe("useTeamStore", () => {
     expect(state.teamComps).toEqual([
       { id, name: "", slots: [], reactions: [] },
     ]);
-    expect(state.configsByTeamId[id]).toEqual({ combatOptions: {} });
+    expect(state.configsByTeamId[id]).toBeUndefined();
+    expect(state.getTeamSetupConfigById(id)).toEqual({ combatOptions: {} });
     expect(state.compDeltas).toEqual([
       {
         kind: "custom",
@@ -119,6 +120,15 @@ describe("useTeamStore", () => {
     expect(state.configsByTeamId[id].charConfigs?.hu_tao).toEqual({
       minEr: 1.4,
       minCr: 0.7,
+    });
+
+    useTeamStore.getState().updateTeamSetupConfig(id, () => ({
+      combatOptions: {},
+    }));
+
+    expect(useTeamStore.getState().configsByTeamId[id]).toBeUndefined();
+    expect(useTeamStore.getState().getTeamSetupConfigById(id)).toEqual({
+      combatOptions: {},
     });
   });
 
@@ -218,6 +228,7 @@ describe("useTeamStore", () => {
     useTeamStore.getState().subscribePreset("preset-a", presetPayload);
 
     expect(useTeamStore.getState().compDeltas).toEqual([]);
+    expect(useTeamStore.getState().configsByTeamId).toEqual({});
 
     useTeamStore.getState().moveTeam("preset-b", "up");
 
@@ -313,6 +324,25 @@ describe("team store migration", () => {
     }
   });
 
+  it("drops default setup config rows during migration", () => {
+    const result = migrateTeamStore(
+      {
+        activePresetId: null,
+        compDeltas: [],
+        configsByTeamId: {
+          empty: { combatOptions: {} },
+          configured: { combatOptions: { hu_tao: "charged" } },
+        },
+      },
+      18
+    );
+
+    expect(result.configsByTeamId?.empty).toBeUndefined();
+    expect(result.configsByTeamId?.configured).toMatchObject({
+      combatOptions: { hu_tao: "charged" },
+    });
+  });
+
   it("merge hydrates latest persisted data into the current runtime state", () => {
     const currentState = useTeamStore.getState();
     const result = mergeTeamStore(
@@ -331,6 +361,7 @@ describe("team store migration", () => {
         ],
         configsByTeamId: {
           "team-1": { combatOptions: { hu_tao: "charged" } },
+          empty: { combatOptions: {} },
         },
         author: "tester",
         description: "desc",
@@ -344,6 +375,7 @@ describe("team store migration", () => {
     expect(result.configsByTeamId["team-1"]).toMatchObject({
       combatOptions: { hu_tao: "charged" },
     });
+    expect(result.configsByTeamId.empty).toBeUndefined();
     expect(result.author).toBe("tester");
     expect(result.description).toBe("desc");
   });

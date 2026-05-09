@@ -361,9 +361,50 @@ describe("cloud source adapters", () => {
     });
   });
 
+  it("omits default team config rows from the cloud payload", () => {
+    const [partition] = teamToCloud({
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {
+        empty: { combatOptions: {} },
+        configured: { combatOptions: { aura: "pyro" } },
+      },
+      author: "",
+      description: "",
+      updatedAt: 200,
+    });
+
+    expect(partition.isDefaultState).toBe(false);
+    expect(partition.payload).toMatchObject({
+      configsByTeamId: {
+        configured: { combatOptions: { aura: "pyro" } },
+      },
+    });
+    expect(
+      (
+        partition.payload as {
+          configsByTeamId: Record<string, unknown>;
+        }
+      ).configsByTeamId.empty
+    ).toBeUndefined();
+  });
+
   it("treats preset-only teams as default local state for first restore", () => {
     const [partition] = teamToCloud({
       activePresetId: "preset-a",
+      compDeltas: [],
+      configsByTeamId: { empty: { combatOptions: {} } },
+      author: "preset author",
+      description: "preset description",
+      updatedAt: 200,
+    });
+
+    expect(partition.isDefaultState).toBe(true);
+  });
+
+  it("treats fully cleared teams as default local state for first restore", () => {
+    const [partition] = teamToCloud({
+      activePresetId: null,
       compDeltas: [],
       configsByTeamId: {},
       author: "",
@@ -372,6 +413,24 @@ describe("cloud source adapters", () => {
     });
 
     expect(partition.isDefaultState).toBe(true);
+    expect(partition.payload).toMatchObject({
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {},
+    });
+  });
+
+  it("does not treat user-authored empty team metadata as default state", () => {
+    const [partition] = teamToCloud({
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {},
+      author: "local author",
+      description: "",
+      updatedAt: 200,
+    });
+
+    expect(partition.isDefaultState).toBe(false);
   });
 
   it("round-trips combined character, weapon, and artifact tier lists", () => {

@@ -162,6 +162,24 @@ export function createDefaultTeamSetupConfig(): TeamSetupConfig {
   return { combatOptions: {} };
 }
 
+export function compactTeamSetupConfig(
+  config: Partial<TeamSetupConfig> = {}
+): TeamSetupConfig | undefined {
+  const normalized = normalizeTeamSetupConfig(config);
+  return hasMeaningfulConfigValue(normalized) ? normalized : undefined;
+}
+
+export function compactTeamSetupConfigs(
+  configsByTeamId: Record<string, TeamSetupConfig>
+): Record<string, TeamSetupConfig> {
+  return Object.fromEntries(
+    Object.entries(configsByTeamId).flatMap(([teamId, config]) => {
+      const compacted = compactTeamSetupConfig(config);
+      return compacted ? [[teamId, compacted]] : [];
+    })
+  );
+}
+
 function mergeCharConfig(
   charConfigs: Record<string, TeamCharConfig>,
   charId: string,
@@ -191,6 +209,13 @@ export function normalizeTeamSetupConfig(
     ...(config.energy ? { energy: config.energy } : {}),
     ...(config.investment ? { investment: config.investment } : {}),
   };
+}
+
+function hasMeaningfulConfigValue(value: unknown): boolean {
+  if (value == null) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value !== "object") return true;
+  return Object.values(value).some(hasMeaningfulConfigValue);
 }
 
 export function teamCompInputToComp(
@@ -603,10 +628,12 @@ function exportedTeamToSetupConfig(team: unknown): TeamSetupConfig {
         mergeCharConfig(charConfigs, charId, { minCr: numeric });
     }
   }
-  return normalizeTeamSetupConfig({
-    combatOptions: {},
-    ...(cleanRecord(charConfigs) ? { charConfigs } : {}),
-  });
+  return (
+    compactTeamSetupConfig({
+      combatOptions: {},
+      ...(cleanRecord(charConfigs) ? { charConfigs } : {}),
+    }) ?? createDefaultTeamSetupConfig()
+  );
 }
 
 export function createTeamPersistenceFromImportedData(data: unknown): {
@@ -646,7 +673,7 @@ export function createTeamPersistenceFromImportedData(data: unknown): {
   });
   return {
     compDeltas,
-    configsByTeamId,
+    configsByTeamId: compactTeamSetupConfigs(configsByTeamId),
     author: payload.author ?? "",
     description: payload.description ?? "",
   };
@@ -661,7 +688,7 @@ export function createTeamSetupConfigsFromPresetPayload(
     if (!comp) continue;
     configsByTeamId[comp.id] = exportedTeamToSetupConfig(team);
   }
-  return configsByTeamId;
+  return compactTeamSetupConfigs(configsByTeamId);
 }
 
 export function teamCompToExportedTeam(comp: TeamComp): ExportedTeam {
