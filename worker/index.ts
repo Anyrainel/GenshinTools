@@ -32,6 +32,18 @@ const HOYOLAB_CORS_HEADERS = {
   "Access-Control-Max-Age": "86400",
 };
 
+const STATIC_ASSET_PREFIXES = [
+  "/artifact/",
+  "/assets/",
+  "/character/",
+  "/element/",
+  "/enemy/",
+  "/food/",
+  "/good/",
+  "/weapon/",
+  "/weapontype/",
+] as const;
+
 type HoyolabRegion = keyof typeof HOYOLAB_BASES;
 
 export default {
@@ -65,35 +77,70 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return json({ error: "not_found" }, 404);
     }
-    if (url.pathname.startsWith("/assets/")) {
-      return handleAssetRequest(request, env);
-    }
-
-    return env.ASSETS.fetch(request);
+    return handleSiteRequest(request, url, env);
   },
 };
 
-async function handleAssetRequest(
+async function handleSiteRequest(
+  request: Request,
+  url: URL,
+  env: Env
+): Promise<Response> {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return plainNotFound();
+  }
+
+  const assetResponse = await env.ASSETS.fetch(request);
+  if (assetResponse.status !== 404) {
+    return assetResponse;
+  }
+
+  if (isStaticAssetRequest(url.pathname)) {
+    return plainNotFound();
+  }
+
+  return handleSpaIndexRequest(request, env);
+}
+
+async function handleSpaIndexRequest(
   request: Request,
   env: Env
 ): Promise<Response> {
-  const response = await env.ASSETS.fetch(request);
-  const contentType = response.headers.get("Content-Type") ?? "";
+  const indexUrl = new URL("/index.html", request.url);
+  const indexRequest = new Request(indexUrl, request);
+  const response = await env.ASSETS.fetch(indexRequest);
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "no-cache, must-revalidate");
+  headers.set("CDN-Cache-Control", "no-store");
+  headers.set("X-Content-Type-Options", "nosniff");
 
-  if (response.ok && contentType.includes("text/html")) {
-    return new Response("Not found", {
-      status: 404,
-      headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-        "CDN-Cache-Control": "no-store",
-        "Cloudflare-CDN-Cache-Control": "no-store",
-        "Content-Type": "text/plain; charset=utf-8",
-        "X-Content-Type-Options": "nosniff",
-      },
-    });
+  return new Response(request.method === "HEAD" ? null : response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+export function isStaticAssetRequest(pathname: string): boolean {
+  if (STATIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+    return true;
   }
 
-  return response;
+  const lastSegment = pathname.split("/").pop() ?? "";
+  return /\.[A-Za-z0-9]{1,16}$/.test(lastSegment);
+}
+
+function plainNotFound(): Response {
+  return new Response("Not found", {
+    status: 404,
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      "CDN-Cache-Control": "no-store",
+      "Cloudflare-CDN-Cache-Control": "no-store",
+      "Content-Type": "text/plain; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
 }
 
 async function handleEnkaProxy(request: Request, url: URL): Promise<Response> {

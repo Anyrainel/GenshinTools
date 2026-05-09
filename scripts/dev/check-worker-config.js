@@ -86,8 +86,8 @@ assert(existsSync(path.resolve(config.main)), "worker main file does not exist")
 assert(assets.directory === "./dist", "assets.directory must be ./dist");
 assert(assets.binding === "ASSETS", "assets.binding must be ASSETS");
 assert(
-  assets.not_found_handling === "single-page-application",
-  "SPA fallback must use assets.not_found_handling"
+  assets.not_found_handling === "none",
+  "SPA fallback and static misses must be routed by worker/index.ts"
 );
 assert(
   Array.isArray(assets.run_worker_first) &&

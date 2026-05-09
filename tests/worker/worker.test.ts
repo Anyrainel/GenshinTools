@@ -1,5 +1,6 @@
 import { SELF } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
+import { isStaticAssetRequest } from "../../worker/index";
 
 describe("Worker API routing", () => {
   it("handles Enka CORS preflight in the Workers runtime", async () => {
@@ -31,5 +32,14 @@ describe("Worker API routing", () => {
     expect(response.status).toBe(404);
     expect(response.headers.get("Content-Type")).toContain("application/json");
     await expect(response.json()).resolves.toEqual({ error: "not_found" });
+  });
+
+  it("classifies file-like and public asset paths as static assets", () => {
+    expect(isStaticAssetRequest("/assets/CloudBackupPage-old.js")).toBe(true);
+    expect(isStaticAssetRequest("/character/avatar.webp")).toBe(true);
+    expect(isStaticAssetRequest("/good/mappings.json")).toBe(true);
+    expect(isStaticAssetRequest("/favicon.svg")).toBe(true);
+    expect(isStaticAssetRequest("/account/cloud-backup")).toBe(false);
+    expect(isStaticAssetRequest("/team-comp/damage")).toBe(false);
   });
 });

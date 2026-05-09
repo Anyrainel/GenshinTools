@@ -33,8 +33,8 @@ assert(
   "generated Wrangler config must serve dist/client assets"
 );
 assert(
-  workerConfig.assets?.not_found_handling === "single-page-application",
-  "generated Wrangler config must preserve SPA fallback"
+  workerConfig.assets?.not_found_handling === "none",
+  "generated Wrangler config must let the Worker route SPA fallbacks and static 404s"
 );
 assert(
   Array.isArray(workerConfig.assets?.run_worker_first) &&
