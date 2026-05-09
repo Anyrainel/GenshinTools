@@ -27,6 +27,7 @@ const ArchivePage = lazy(() => import("./pages/Archive"));
 const AccountPage = lazy(() => import("./pages/account/AccountPage"));
 const CloudBackupPage = lazy(() => import("./pages/account/CloudBackupPage"));
 const AuthCallbackPage = lazy(() => import("./pages/account/AuthCallbackPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const SITE_NAME = "GGArtifact";
 
@@ -38,6 +39,7 @@ const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
   "/team-comp": { en: "Team DMG", zh: "队伍伤害" },
   "/account": { en: "Account", zh: "账号" },
 };
+const NOT_FOUND_TITLE = { en: "Page Not Found", zh: "页面未找到" };
 
 function App() {
   const location = useLocation();
@@ -47,10 +49,14 @@ function App() {
   useHydrateTeamPreset();
 
   useEffect(() => {
+    if (isHomePage) {
+      document.title = SITE_NAME;
+      return;
+    }
     const base = `/${location.pathname.split("/")[1]}`;
     const page = PAGE_TITLES[base];
-    document.title = page ? `${page[language]} — ${SITE_NAME}` : SITE_NAME;
-  }, [location.pathname, language]);
+    document.title = `${(page ?? NOT_FOUND_TITLE)[language]} — ${SITE_NAME}`;
+  }, [isHomePage, location.pathname, language]);
 
   // Tier B preload — fire-and-forget at app boot. Tooltip / table consumers
   // call resource.use() themselves and render skeletons until ready, so this
@@ -103,6 +109,7 @@ function App() {
                   path="/account/cloud-backup"
                   element={<CloudBackupPage />}
                 />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
           </main>
