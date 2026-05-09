@@ -73,7 +73,7 @@ export function tiersToCloud(
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
-      isEmpty: isEmptyTiersSnapshot(snapshot),
+      isDefaultState: isDefaultTiersSnapshot(snapshot),
       payload: {
         updatedAt: getTiersUpdatedAt(snapshot),
         character: characterTierPayload(snapshot.character),
@@ -84,11 +84,11 @@ export function tiersToCloud(
   ];
 }
 
-export function isEmptyTiersSnapshot(snapshot: TiersCloudSnapshot): boolean {
+export function isDefaultTiersSnapshot(snapshot: TiersCloudSnapshot): boolean {
   return (
-    isEmptyTierSnapshot(snapshot.character, isEmptyCharacterTierList) &&
-    isEmptyTierSnapshot(snapshot.weapon, isEmptyGenericTierList) &&
-    isEmptyTierSnapshot(snapshot.artifact, isEmptyGenericTierList)
+    isDefaultTierSnapshot(snapshot.character, isDefaultCharacterTierList) &&
+    isDefaultTierSnapshot(snapshot.weapon, isDefaultGenericTierList) &&
+    isDefaultTierSnapshot(snapshot.artifact, isDefaultGenericTierList)
   );
 }
 
@@ -254,22 +254,22 @@ function tierSnapshot<TList extends TierListInstanceSnapshot>(
   };
 }
 
-function isEmptyTierSnapshot<TList extends TierListInstanceSnapshot>(
+function isDefaultTierSnapshot<TList extends TierListInstanceSnapshot>(
   snapshot: {
     tierLists: Record<number, TList>;
     activeTierListId: number;
   },
-  isEmptyList: (list: TList) => boolean
+  isDefaultList: (list: TList) => boolean
 ): boolean {
   const lists = Object.values(snapshot.tierLists);
   return (
     snapshot.activeTierListId === 1 &&
     lists.length === 1 &&
-    lists.every(isEmptyList)
+    lists.every(isDefaultList)
   );
 }
 
-function isEmptyGenericTierList(list: TierListInstanceSnapshot): boolean {
+function isDefaultGenericTierList(list: TierListInstanceSnapshot): boolean {
   return (
     Object.keys(list.tierAssignments).length === 0 &&
     Object.keys(list.tierCustomization).length === 0 &&
@@ -279,10 +279,10 @@ function isEmptyGenericTierList(list: TierListInstanceSnapshot): boolean {
   );
 }
 
-function isEmptyCharacterTierList(
+function isDefaultCharacterTierList(
   list: CharacterTierListInstanceSnapshot
 ): boolean {
-  return isEmptyGenericTierList(list) && list.linkedAccountId == null;
+  return isDefaultGenericTierList(list) && list.linkedAccountId == null;
 }
 
 function emptyList(id: number): TierListInstanceSnapshot {

@@ -117,7 +117,7 @@ type CloudExportPartition<TPayload = unknown> = {
   partitionKey: string;
   schemaVersion: number;
   conflictPolicy: CloudConflictPolicy;
-  isEmpty?: boolean;
+  isDefaultState?: boolean;
   metadata?: CloudBackupHeadMetadata;
   payload: TPayload;
 };
@@ -183,7 +183,7 @@ type CloudBackupHeadMetadata = {
 };
 ```
 
-Profile-owned rows keep `profileId` so the UI can display rows such as `Characters (600000001)` and `Weapons (default account)`. A present zero-count partition is different from no known cloud/local record.
+Profile-owned rows keep `profileId` so the UI can display rows such as `Characters (600000001)` and `Weapons (default account)`. A present zero-count partition is different from no known cloud/local record: `hasRecord: true, count: 0` means the partition was backed up and currently has no user-visible entries, while `hasRecord: false` means there is no current local/cloud record.
 
 ## D1 Auth Tables
 
@@ -333,7 +333,7 @@ Default decisions:
 | Local changed and cloud rev still equals last seen rev | Upload local with `ifMatch`. |
 | Local changed and cloud also changed | Report conflict; require explicit choice. |
 
-Fresh devices initialize local stores with defaults. Partitions can mark default state as `isEmpty`; if cloud exists and local is only default state, the planner should download instead of reporting a first-sync conflict.
+Fresh devices initialize local stores with defaults. Partitions can mark default state as `isDefaultState`; if cloud exists and local is only default state, the planner should download instead of reporting a first-sync conflict. Default-state partitions are still uploaded when cloud has no head, so a brand-new backup publishes empty heads consistently and metadata can show `0` instead of "No record".
 
 ## Adding A Backed-Up Domain
 

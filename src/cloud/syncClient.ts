@@ -379,7 +379,7 @@ async function prepareLocalPartitions(
           schemaVersion: partition.schemaVersion,
           conflictPolicy: partition.conflictPolicy,
           contentHash: await getContentHash(partition.payload),
-          ...(partition.isEmpty ? { isEmpty: true } : {}),
+          ...(partition.isDefaultState ? { isDefaultState: true } : {}),
         },
         metadata: metadataById.get(id)!,
       };

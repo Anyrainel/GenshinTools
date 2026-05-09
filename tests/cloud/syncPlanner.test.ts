@@ -38,20 +38,19 @@ describe("cloud sync planner", () => {
     expect(plan.uploads[0]).not.toHaveProperty("baseRev");
   });
 
-  it("skips default-only local partitions before the first cloud write", () => {
+  it("uploads default-state local partitions before the first cloud write", () => {
     const plan = planCloudSync({
       localPartitions: [local("builds", "all", "hash-default", 1, 1, true)],
       localMeta: [],
       remoteHeads: [],
     });
 
-    expect(plan.uploads).toEqual([]);
-    expect(plan.skipped).toEqual([
-      expect.objectContaining({
-        action: "skip",
-        reason: "empty",
-      }),
-    ]);
+    expect(plan.uploads).toHaveLength(1);
+    expect(plan.uploads[0]).toMatchObject({
+      action: "upload",
+      reason: "local-only",
+    });
+    expect(plan.skipped).toEqual([]);
   });
 
   it("marks matching local and remote content as synced", () => {
@@ -200,14 +199,14 @@ function local(
   contentHash: string,
   updatedAt = 1,
   schemaVersion = 1,
-  isEmpty = false
+  isDefaultState = false
 ): CloudLocalPartitionState {
   return {
     namespace,
     partitionKey,
     schemaVersion,
     contentHash,
-    ...(isEmpty ? { isEmpty } : {}),
+    ...(isDefaultState ? { isDefaultState } : {}),
     updatedAt,
   };
 }

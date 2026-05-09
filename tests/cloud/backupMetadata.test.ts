@@ -7,6 +7,10 @@ import {
   fetchCloudBackupMetadata,
 } from "@/cloud/backupMetadata";
 import type { CloudExportPartition } from "@/cloud/types";
+import {
+  formatBackupCount,
+  formatOptionalBackupDate,
+} from "@/components/account/cloudBackupLabels";
 
 describe("backup metadata", () => {
   it("summarizes local backup contents into head metadata records", () => {
@@ -297,6 +301,63 @@ describe("backup metadata", () => {
       updatedAt: 2500,
       partitionCount: 1,
     });
+  });
+
+  it("formats present empty cloud heads separately from absent heads", async () => {
+    const snapshot = await fetchCloudBackupMetadata({
+      getHead: async () => ({
+        serverTime: 3100,
+        changed: true,
+        headSetRev: "hset_1",
+        capabilities: {
+          apiVersion: 1,
+          commitContentTypes: ["multipart/form-data"],
+          maxObjectsPerCommit: 10,
+          maxCompressedBytesPerCommit: 10,
+          maxCompressedBytesPerObject: 10,
+        },
+        heads: [
+          {
+            partitionKey: "tiers/all",
+            objectId: "obj_1",
+            rev: "rev_1",
+            schemaVersion: 1,
+            contentHash: "sha256:a",
+            compressedHash: "sha256:b",
+            compressedBytes: 10,
+            updatedAt: 3000,
+            metadata: {
+              schemaVersion: 1,
+              records: [{ kind: "tiers", count: 0 }],
+            },
+          },
+        ],
+      }),
+    });
+    const t = {
+      ui: (key: string) => {
+        if (key === "accountSystem.noRecord") return "No record";
+        if (key === "accountSystem.missingUpdateTime") return "No update time";
+        return key;
+      },
+    } as Parameters<typeof formatOptionalBackupDate>[1];
+
+    const tierCloud = snapshot.rows.find((row) => row.id === "tiers")?.cloud;
+    const buildsCloud = snapshot.rows.find((row) => row.id === "builds")?.cloud;
+    expect(tierCloud).toEqual({
+      hasRecord: true,
+      count: 0,
+      partitionCount: 1,
+    });
+    expect(formatBackupCount(tierCloud!)).toBe("0");
+    expect(formatOptionalBackupDate(tierCloud!, t)).toBe("No update time");
+    expect(buildsCloud).toEqual({
+      hasRecord: false,
+      count: 0,
+      partitionCount: 0,
+    });
+    expect(formatBackupCount(buildsCloud!)).toBe("-");
+    expect(formatOptionalBackupDate(buildsCloud!, t)).toBe("No record");
   });
 
   it("does not display backup upload time as data update time", async () => {

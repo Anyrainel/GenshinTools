@@ -54,7 +54,7 @@ export function buildsToCloud(
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
-      isEmpty: isEmptyBuildsSnapshot(snapshot),
+      isDefaultState: isDefaultBuildsSnapshot(snapshot),
       payload: {
         ...(activePresetId !== undefined ? { activePresetId } : {}),
         deltas: snapshot.deltas,
@@ -71,7 +71,7 @@ export function buildsToCloud(
   ];
 }
 
-function isEmptyBuildsSnapshot(snapshot: BuildsCloudSnapshot) {
+function isDefaultBuildsSnapshot(snapshot: BuildsCloudSnapshot) {
   return (
     isImplicitDefaultPreset(snapshot.activePresetId) &&
     snapshot.deltas.length === 0 &&

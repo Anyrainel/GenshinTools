@@ -256,7 +256,7 @@ describe("cloud source adapters", () => {
       updatedAt: 100,
     });
 
-    expect(partition.isEmpty).toBe(true);
+    expect(partition.isDefaultState).toBe(true);
     expect(partition.payload).not.toHaveProperty("activePresetId");
     expect(buildsFromCloud([partition]).activePresetId).toBe(defaultPresetId);
   });
@@ -273,7 +273,7 @@ describe("cloud source adapters", () => {
       updatedAt: 100,
     });
 
-    expect(partition.isEmpty).toBe(true);
+    expect(partition.isDefaultState).toBe(true);
     expect(partition.payload).not.toHaveProperty("activePresetId");
     expect(buildsFromCloud([partition]).activePresetId).toBe(
       getDefaultBuildPresetId()
@@ -371,7 +371,7 @@ describe("cloud source adapters", () => {
       updatedAt: 200,
     });
 
-    expect(partition.isEmpty).toBe(true);
+    expect(partition.isDefaultState).toBe(true);
   });
 
   it("round-trips combined character, weapon, and artifact tier lists", () => {
@@ -451,7 +451,7 @@ describe("cloud source adapters", () => {
       artifact: defaultGeneric,
     });
 
-    expect(partition.isEmpty).toBe(true);
+    expect(partition.isDefaultState).toBe(true);
   });
 
   it("creates verifiable cloud payload envelopes", async () => {

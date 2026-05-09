@@ -194,9 +194,6 @@ export function planPartitionSync(
   }
 
   if (state.local && !state.remote) {
-    if (!hasSyncHistory(state.meta) && state.local.isEmpty) {
-      return { ...base, action: "skip", reason: "empty" };
-    }
     return {
       ...base,
       action: "upload",
@@ -220,7 +217,7 @@ export function planPartitionSync(
     };
   }
 
-  if (!hasSyncHistory(state.meta) && state.local.isEmpty) {
+  if (!hasSyncHistory(state.meta) && state.local.isDefaultState) {
     return {
       ...base,
       action: "download",

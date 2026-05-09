@@ -45,7 +45,7 @@ describe("cloud sync client multi-device flows", () => {
       apiClient: remote,
       metadataStore: deviceB.store,
       buildPartitions: () => [
-        buildsPartition({ builds: [] }, { isEmpty: true }),
+        buildsPartition({ builds: [] }, { isDefaultState: true }),
       ],
     });
 
@@ -63,6 +63,50 @@ describe("cloud sync client multi-device flows", () => {
       builds: ["from-cloud"],
     });
     expect(remote.commit).toHaveBeenCalledTimes(1);
+  });
+
+  it("uploads default-state partitions on a brand-new backup", async () => {
+    const remote = new StatefulBackupApi();
+    const device = createMemoryMetadataStore("device-empty");
+
+    const result = await runCloudSyncOnce({
+      apiClient: remote,
+      metadataStore: device.store,
+      buildPartitions: () => [
+        buildsPartition(
+          { activePresetId: null, deltas: [] },
+          { isDefaultState: true }
+        ),
+        teamPartition(
+          { activePresetId: null, compDeltas: [], configsByTeamId: {} },
+          { isDefaultState: true }
+        ),
+        tiersPartition(emptyTiersPayload(), { isDefaultState: true }),
+      ],
+      createIdempotencyKey: () => "sync_empty_backup",
+    });
+
+    expect(result.status).toBe("uploaded");
+    expect(result.plan.uploads.map((upload) => upload.id).sort()).toEqual([
+      "builds/all",
+      "teams/all",
+      "tiers/all",
+    ]);
+    expect([...remote.heads.keys()].sort()).toEqual([
+      "builds/all",
+      "teams/all",
+      "tiers/all",
+    ]);
+    expect(remote.heads.get("builds/all")?.metadata.records).toEqual([
+      { kind: "builds", count: 0 },
+    ]);
+    expect(remote.heads.get("teams/all")?.metadata.records).toEqual([
+      { kind: "teams", count: 0 },
+      { kind: "teamConfigs", count: 0 },
+    ]);
+    expect(remote.heads.get("tiers/all")?.metadata.records).toEqual([
+      { kind: "tiers", count: 0 },
+    ]);
   });
 
   it("lets another device observe a newer cloud head when its local copy is unchanged", async () => {
@@ -688,13 +732,23 @@ function createMemoryMetadataStore(deviceId: string) {
 
 function buildsPartition(
   payload: unknown,
-  options: { isEmpty?: boolean } = {}
+  options: { isDefaultState?: boolean } = {}
 ): CloudExportPartition {
   return partition("builds", "all", "explicit-choice", payload, options);
 }
 
-function teamPartition(payload: unknown): CloudExportPartition {
-  return partition("teams", "all", "explicit-choice", payload);
+function teamPartition(
+  payload: unknown,
+  options: { isDefaultState?: boolean } = {}
+): CloudExportPartition {
+  return partition("teams", "all", "explicit-choice", payload, options);
+}
+
+function tiersPartition(
+  payload: unknown,
+  options: { isDefaultState?: boolean } = {}
+): CloudExportPartition {
+  return partition("tiers", "all", "explicit-choice", payload, options);
 }
 
 function profilePartitions(
@@ -728,7 +782,7 @@ function partition(
   partitionKey: CloudPartitionKey,
   conflictPolicy: CloudConflictPolicy,
   payload: unknown,
-  options: { isEmpty?: boolean } = {}
+  options: { isDefaultState?: boolean } = {}
 ): CloudExportPartition {
   return {
     namespace,
@@ -736,7 +790,35 @@ function partition(
     schemaVersion: 1,
     conflictPolicy,
     payload,
-    ...(options.isEmpty ? { isEmpty: true } : {}),
+    ...(options.isDefaultState ? { isDefaultState: true } : {}),
+  };
+}
+
+function emptyTiersPayload() {
+  const emptyGenericList = {
+    id: "list-1",
+    title: "",
+    author: "",
+    description: "",
+    tierAssignments: {},
+    tierCustomization: {},
+  };
+  return {
+    character: {
+      activeTierListId: 1,
+      nextId: 2,
+      lists: [{ ...emptyGenericList, linkedAccountProfileId: null }],
+    },
+    weapon: {
+      activeTierListId: 1,
+      nextId: 2,
+      lists: [emptyGenericList],
+    },
+    artifact: {
+      activeTierListId: 1,
+      nextId: 2,
+      lists: [emptyGenericList],
+    },
   };
 }
 

@@ -160,7 +160,6 @@ export function formatOptionalBackupDate(
   if (!side.hasRecord) return t.ui("accountSystem.noRecord");
   const value = side.updatedAt;
   if (value != null) return formatBackupDateTime(value);
-  if (side.count === 0) return t.ui("accountSystem.noRecord");
   return t.ui("accountSystem.missingUpdateTime");
 }
 

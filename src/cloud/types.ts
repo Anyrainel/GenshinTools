@@ -80,7 +80,7 @@ export type CloudLocalPartitionState = {
   schemaVersion: number;
   contentHash: string;
   conflictPolicy?: CloudConflictPolicy;
-  isEmpty?: boolean;
+  isDefaultState?: boolean;
   updatedAt?: number;
 };
 
@@ -100,7 +100,7 @@ export type CloudExportPartition<TPayload = unknown> = {
   partitionKey: CloudPartitionKey;
   schemaVersion: number;
   conflictPolicy: CloudConflictPolicy;
-  isEmpty?: boolean;
+  isDefaultState?: boolean;
   metadata?: CloudBackupHeadMetadata;
   payload: TPayload;
 };

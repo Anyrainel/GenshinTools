@@ -32,7 +32,7 @@ export function teamToCloud(
       partitionKey: "all",
       schemaVersion: 1,
       conflictPolicy: "explicit-choice",
-      isEmpty: isEmptyTeamSnapshot(snapshot),
+      isDefaultState: isDefaultTeamSnapshot(snapshot),
       payload: {
         activePresetId: snapshot.activePresetId,
         compDeltas: snapshot.compDeltas,
@@ -76,7 +76,7 @@ function getMetadataUpdatedAt(
   return values.length ? Math.max(...values) : undefined;
 }
 
-function isEmptyTeamSnapshot(snapshot: TeamCloudSnapshot) {
+function isDefaultTeamSnapshot(snapshot: TeamCloudSnapshot) {
   return (
     snapshot.compDeltas.length === 0 &&
     Object.keys(snapshot.configsByTeamId).length === 0 &&
