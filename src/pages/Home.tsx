@@ -22,7 +22,7 @@ export default function Home() {
   const guideRef = useRef<ControlHandle>(null);
 
   return (
-    <PageLayout>
+    <PageLayout standaloneUtilityActions>
       <div className="h-full w-full overflow-y-auto">
         <div className="container mx-auto px-8 pb-4 min-h-full flex flex-col gap-6 overflow-x-hidden">
           {/* Hero Section */}

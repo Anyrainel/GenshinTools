@@ -7,7 +7,11 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { BackupApiError } from "@/cloud/apiClient";
+import {
+  BackupApiError,
+  type BackupQuotaExceededPayload,
+  type BackupUploadQuota,
+} from "@/cloud/apiClient";
 import {
   getLogtoPostSignInRedirectUri,
   getLogtoRedirectUri,
@@ -67,6 +71,9 @@ export default function CloudBackupPage() {
   const [metadataError, setMetadataError] = useState<string | null>(null);
   const [cloudMetadata, setCloudMetadata] =
     useState<CloudBackupMetadataSnapshot | null>(null);
+  const [uploadQuota, setUploadQuota] = useState<BackupUploadQuota | null>(
+    null
+  );
   const [logtoSubject, setLogtoSubject] = useState<string | null>(null);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
@@ -98,7 +105,9 @@ export default function CloudBackupPage() {
           sessionUserId
         );
         setCloudMetadata(snapshot);
+        setUploadQuota(snapshot.quota);
       } catch (error) {
+        setUploadQuotaFromError(error, setUploadQuota);
         const message = formatBackupError(error, t);
         setMetadataError(message);
       } finally {
@@ -146,11 +155,13 @@ export default function CloudBackupPage() {
     if (!isAuthenticated || !sessionUserId) {
       setCloudMetadata(null);
       setMetadataError(null);
+      setUploadQuota(null);
       return;
     }
     const cached = readCloudMetadataCache(sessionUserId);
     if (cached) {
       setCloudMetadata(cached);
+      setUploadQuota(cached.quota);
       if (isCloudMetadataCacheStale(cached)) {
         void refreshCloudMetadata("refreshing");
       }
@@ -175,6 +186,7 @@ export default function CloudBackupPage() {
     setLastNotice(null);
     try {
       const pending = await previewManualBackupAction("upload", apiClient);
+      updateUploadQuota(pending.syncResult.quota, setUploadQuota);
       const manualPlan = pending.plan;
       if (manualPlan.choices.length > 0) {
         setPendingAction(pending);
@@ -183,17 +195,20 @@ export default function CloudBackupPage() {
       }
       if (manualPlan.automaticPartitionIds.length === 0) {
         setLastNotice({
-          title: t.ui("accountSystem.backupContents"),
+          title: t.ui("accountSystem.uploadStatus"),
           message: t.ui("accountSystem.uploadNotice.noLocalChanges"),
         });
         return;
       }
       setOperation("upload");
       const result = await uploadManualBackupSelection(apiClient, pending, []);
+      if (result.status === "uploaded") {
+        updateUploadQuota(result.result.quota, setUploadQuota);
+      }
       setOperation(null);
       if (result.status === "skipped") {
         setLastNotice({
-          title: t.ui("accountSystem.backupContents"),
+          title: t.ui("accountSystem.uploadStatus"),
           message: t.ui("accountSystem.uploadNotice.noLocalChanges"),
         });
         return;
@@ -201,6 +216,7 @@ export default function CloudBackupPage() {
       await refreshCloudMetadata();
       toast.success(t.ui("accountSystem.statusToast.uploaded"));
     } catch (error) {
+      setUploadQuotaFromError(error, setUploadQuota);
       const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
@@ -215,6 +231,7 @@ export default function CloudBackupPage() {
     setLastNotice(null);
     try {
       const pending = await previewManualBackupAction("download", apiClient);
+      updateUploadQuota(pending.syncResult.quota, setUploadQuota);
       const syncResult = pending.syncResult;
       if (syncResult.status === "unsupported") {
         setLastNotice({
@@ -293,10 +310,13 @@ export default function CloudBackupPage() {
         pending,
         selectedIds
       );
+      if (result.status === "uploaded") {
+        updateUploadQuota(result.result.quota, setUploadQuota);
+      }
       setOperation(null);
       if (result.status === "skipped") {
         setLastNotice({
-          title: t.ui("accountSystem.backupContents"),
+          title: t.ui("accountSystem.uploadStatus"),
           message: t.ui("accountSystem.manualChoice.allSkipped"),
         });
         return;
@@ -304,6 +324,7 @@ export default function CloudBackupPage() {
       await refreshCloudMetadata();
       toast.success(t.ui("accountSystem.statusToast.uploaded"));
     } catch (error) {
+      setUploadQuotaFromError(error, setUploadQuota);
       const message = formatBackupError(error, t);
       setLastError(message);
       toast.error(message);
@@ -412,7 +433,10 @@ export default function CloudBackupPage() {
                   variant="secondary"
                   onClick={() => void beginUploadToCloud()}
                   disabled={
-                    !isAuthenticated || isAuthLoading || operation !== null
+                    !isAuthenticated ||
+                    isAuthLoading ||
+                    operation !== null ||
+                    uploadQuota?.remaining === 0
                   }
                 >
                   <CloudUpload
@@ -439,6 +463,15 @@ export default function CloudBackupPage() {
                   {t.ui("accountSystem.downloadFromCloud")}
                 </Button>
               </div>
+
+              {uploadQuota && (
+                <p className="text-center text-sm text-muted-foreground">
+                  {t
+                    .ui("accountSystem.uploadQuota")
+                    .replace("{0}", String(uploadQuota.used))
+                    .replace("{1}", String(uploadQuota.limit))}
+                </p>
+              )}
 
               {lastError && (
                 <Alert variant="destructive">
@@ -511,6 +544,11 @@ function formatBackupError(
   t: ReturnType<typeof useLanguage>["t"]
 ): string {
   if (error instanceof BackupApiError) {
+    if (isQuotaExceededPayload(error.payload)) {
+      return t
+        .ui("accountSystem.uploadQuotaExceeded")
+        .replace("{0}", String(error.payload.quota.limit));
+    }
     if (
       error.status === 503 &&
       error.payload &&
@@ -518,7 +556,7 @@ function formatBackupError(
       "error" in error.payload &&
       error.payload.error === "backup_storage_not_configured"
     ) {
-      return t.ui("accountSystem.devStorageNotConfigured");
+      return t.ui("accountSystem.backupUnavailable");
     }
     const detail =
       typeof error.payload === "string"
@@ -528,4 +566,53 @@ function formatBackupError(
   }
   if (error instanceof Error) return error.message;
   return String(error);
+}
+
+function updateUploadQuota(
+  quota: BackupUploadQuota | undefined,
+  setUploadQuota: (quota: BackupUploadQuota) => void
+): void {
+  if (quota) setUploadQuota(quota);
+}
+
+function setUploadQuotaFromError(
+  error: unknown,
+  setUploadQuota: (quota: BackupUploadQuota) => void
+): void {
+  if (
+    error instanceof BackupApiError &&
+    isQuotaExceededPayload(error.payload)
+  ) {
+    setUploadQuota(error.payload.quota);
+  }
+}
+
+function isQuotaExceededPayload(
+  payload: unknown
+): payload is BackupQuotaExceededPayload {
+  return (
+    !!payload &&
+    typeof payload === "object" &&
+    "error" in payload &&
+    payload.error === "monthly_upload_limit_exceeded" &&
+    "quota" in payload &&
+    isBackupUploadQuota(payload.quota)
+  );
+}
+
+function isBackupUploadQuota(value: unknown): value is BackupUploadQuota {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    "period" in value &&
+    typeof value.period === "string" &&
+    "limit" in value &&
+    Number.isInteger(value.limit) &&
+    "used" in value &&
+    Number.isInteger(value.used) &&
+    "remaining" in value &&
+    Number.isInteger(value.remaining) &&
+    "resetsAt" in value &&
+    Number.isFinite(value.resetsAt)
+  );
 }

@@ -17,6 +17,14 @@ export type BackupHead = {
   deletedAt?: number;
 };
 
+export type BackupUploadQuota = {
+  period: string;
+  limit: number;
+  used: number;
+  remaining: number;
+  resetsAt: number;
+};
+
 export type BackupHeadResponse = {
   serverTime: number;
   changed: boolean;
@@ -28,6 +36,7 @@ export type BackupHeadResponse = {
     maxCompressedBytesPerCommit: number;
     maxCompressedBytesPerObject: number;
   };
+  quota: BackupUploadQuota;
   heads: BackupHead[];
 };
 
@@ -67,6 +76,12 @@ export type BackupCommitResponse = {
   committedAt: number;
   headSetRev: string;
   heads: BackupHead[];
+  quota: BackupUploadQuota;
+};
+
+export type BackupQuotaExceededPayload = {
+  error: "monthly_upload_limit_exceeded";
+  quota: BackupUploadQuota;
 };
 
 export type BackupObjectDownloadManifest = {

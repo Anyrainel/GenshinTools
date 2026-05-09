@@ -274,7 +274,7 @@ export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
   const useCfProxy = hasCloudflareProxyForLocation(window.location);
   if (!useCfProxy) {
     throw new Error(
-      "Enka import requires the Cloudflare proxy. Use the deployed site or run local dev through Wrangler."
+      "Enka import is not available from this app preview. Use the deployed site or try again later."
     );
   }
 

@@ -1,5 +1,6 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getNavigationConfig } from "@/components/layout/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FeatureMatrixItem {
@@ -148,6 +149,15 @@ function getFeatureMatrixGroups(
 export function FeatureMatrix() {
   const { t } = useLanguage();
   const groups = getFeatureMatrixGroups(t);
+  const iconsByHref = new Map<string, LucideIcon>();
+
+  for (const group of getNavigationConfig(t)) {
+    for (const tab of group.children ?? []) {
+      if (tab.icon) {
+        iconsByHref.set(tab.href, tab.icon);
+      }
+    }
+  }
 
   return (
     <section className="w-full pt-10 md:pt-16">
@@ -170,22 +180,32 @@ export function FeatureMatrix() {
               {group.label}
             </h3>
             <ul className="space-y-3">
-              {group.items.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    to={item.href}
-                    className="group/link block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                  >
-                    <span className="inline-flex items-center gap-1 border-b border-transparent text-sm font-semibold text-foreground group-hover/link:border-primary group-hover/link:text-primary">
-                      {item.label}
-                      <ArrowRight className="size-3.5 shrink-0 transition-transform group-hover/link:translate-x-0.5" />
-                    </span>
-                    <span className="block mt-0.5 text-xs leading-snug text-muted-foreground">
-                      {item.description}
-                    </span>
-                  </Link>
-                </li>
-              ))}
+              {group.items.map((item) => {
+                const Icon = iconsByHref.get(item.href);
+
+                return (
+                  <li key={item.href}>
+                    <Link
+                      to={item.href}
+                      className="group/link block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    >
+                      <span className="inline-flex items-center gap-1.5 border-b border-transparent text-sm font-semibold text-foreground group-hover/link:border-primary group-hover/link:text-primary">
+                        {Icon && (
+                          <Icon
+                            className="size-3.5 shrink-0"
+                            aria-hidden="true"
+                          />
+                        )}
+                        {item.label}
+                        <ArrowRight className="size-3.5 shrink-0 transition-transform group-hover/link:translate-x-0.5" />
+                      </span>
+                      <span className="block mt-0.5 text-xs leading-snug text-muted-foreground">
+                        {item.description}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

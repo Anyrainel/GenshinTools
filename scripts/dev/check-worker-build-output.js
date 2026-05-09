@@ -38,8 +38,9 @@ assert(
 );
 assert(
   Array.isArray(workerConfig.assets?.run_worker_first) &&
-    workerConfig.assets.run_worker_first.includes("/api/*"),
-  "generated Wrangler config must route /api/* through the Worker"
+    workerConfig.assets.run_worker_first.includes("/*") &&
+    workerConfig.assets.run_worker_first.includes("!/assets/*"),
+  "generated Wrangler config must route SPA/API paths through the Worker while excluding static asset paths"
 );
 
 console.log("Worker build output check passed.");

@@ -15,6 +15,7 @@ describe("BackupApiClient", () => {
           maxCompressedBytesPerCommit: 100,
           maxCompressedBytesPerObject: 50,
         },
+        quota: backupQuota(),
         heads: [],
       })
     ) as typeof fetch;
@@ -27,6 +28,7 @@ describe("BackupApiClient", () => {
     const response = await client.getHead({ headSetRev: "hset_old" });
 
     expect(response.changed).toBe(false);
+    expect(response.quota).toMatchObject({ limit: 10, used: 0, remaining: 10 });
     expect(fetchImpl).toHaveBeenCalledWith(
       "/api/backup/v1/head?headSetRev=hset_old",
       {
@@ -44,6 +46,7 @@ describe("BackupApiClient", () => {
         idempotencyKey: "commit_1",
         committedAt: 1,
         headSetRev: "hset_1",
+        quota: backupQuota(1),
         heads: [],
       });
     }) as typeof fetch;
@@ -139,14 +142,33 @@ describe("BackupApiClient", () => {
 
   it("throws typed API errors for non-2xx responses", async () => {
     const fetchImpl = vi.fn(async () =>
-      Response.json({ error: "revision_conflict" }, { status: 409 })
+      Response.json(
+        {
+          error: "monthly_upload_limit_exceeded",
+          quota: backupQuota(10),
+        },
+        { status: 429 }
+      )
     ) as typeof fetch;
     const client = new BackupApiClient({ fetchImpl });
 
     await expect(client.getHead()).rejects.toMatchObject({
       name: "BackupApiError",
-      status: 409,
-      payload: { error: "revision_conflict" },
+      status: 429,
+      payload: {
+        error: "monthly_upload_limit_exceeded",
+        quota: { limit: 10, used: 10, remaining: 0 },
+      },
     } satisfies Partial<BackupApiError>);
   });
 });
+
+function backupQuota(used = 0) {
+  return {
+    period: "2026-05",
+    limit: 10,
+    used,
+    remaining: Math.max(0, 10 - used),
+    resetsAt: Date.UTC(2026, 5, 1),
+  };
+}

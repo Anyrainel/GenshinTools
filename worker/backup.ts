@@ -15,6 +15,8 @@ const BACKUP_CORS_HEADERS = {
   "Access-Control-Max-Age": "86400",
 };
 
+const DEFAULT_BACKUP_MONTHLY_UPLOAD_LIMIT = 10;
+
 const BACKUP_LIMITS = {
   maxObjectsPerCommit: 10,
   maxCompressedBytesPerCommit: 5 * 1024 * 1024,
@@ -86,6 +88,18 @@ type BackupHead = {
   deletedAt?: number;
 };
 
+type BackupUploadQuota = {
+  period: string;
+  limit: number;
+  used: number;
+  remaining: number;
+  resetsAt: number;
+};
+
+type BackupUploadQuotaRow = {
+  successful_upload_count: number;
+};
+
 type BackupCommitManifest = {
   idempotencyKey: string;
   deviceId: string;
@@ -127,6 +141,7 @@ type BackupCommitResponse = {
   committedAt: number;
   headSetRev: string;
   heads: BackupHead[];
+  quota: BackupUploadQuota;
 };
 
 type BackupObjectDownloadRequest = {
@@ -137,6 +152,7 @@ type AuthenticatedBackupContext = {
   user: AuthenticatedUser;
   db: D1Database;
   bucket: R2Bucket;
+  monthlyUploadLimit: number;
 };
 
 export async function handleBackupRequest(
@@ -196,7 +212,12 @@ async function authenticateBackupRequest(
     return backupJson(missingEntitlement.payload, missingEntitlement.status);
   }
 
-  return { user, db: env.BACKUP_DB, bucket: env.BACKUP_BUCKET };
+  return {
+    user,
+    db: env.BACKUP_DB,
+    bucket: env.BACKUP_BUCKET,
+    monthlyUploadLimit: getMonthlyUploadLimit(env),
+  };
 }
 
 async function handleBackupHead(
@@ -205,6 +226,12 @@ async function handleBackupHead(
 ): Promise<Response> {
   const now = Date.now();
   const knownHeadSetRev = url.searchParams.get("headSetRev");
+  const quota = await readBackupUploadQuota(
+    context.db,
+    context.user.userId,
+    now,
+    context.monthlyUploadLimit
+  );
   const state = await context.db
     .prepare(
       "SELECT head_set_rev FROM backup_user_state WHERE user_id = ? LIMIT 1"
@@ -219,6 +246,7 @@ async function handleBackupHead(
       changed: false,
       headSetRev,
       capabilities: BACKUP_CAPABILITIES,
+      quota,
       heads: [],
     });
   }
@@ -229,6 +257,7 @@ async function handleBackupHead(
     changed: true,
     headSetRev,
     capabilities: BACKUP_CAPABILITIES,
+    quota,
     heads: rows.map(toBackupHead),
   });
 }
@@ -282,14 +311,26 @@ async function handleBackupCommit(
     return backupJson({ error: "revision_conflict", conflicts }, 409);
   }
 
+  const checkedAt = Date.now();
+  const quota = await readBackupUploadQuota(
+    context.db,
+    context.user.userId,
+    checkedAt,
+    context.monthlyUploadLimit
+  );
+  if (quota.remaining <= 0) {
+    return backupJson({ error: "monthly_upload_limit_exceeded", quota }, 429);
+  }
+
   const deviceRowId = await resolveDeviceRow(context.db, context.user.userId, {
     deviceId: manifest.deviceId,
     deviceLabel: manifest.deviceLabel,
   });
-  const committedAt = Date.now();
+  const committedAt = checkedAt;
   const headSetRev = makeRev("hset");
   const changedHeads: BackupHead[] = [];
   const statements: D1PreparedStatement[] = [];
+  const staleObjectIds = new Set<string>();
 
   for (const put of puts) {
     const part = form.get(put.commitObjectKey);
@@ -317,6 +358,7 @@ async function handleBackupCommit(
     const objectId = makeRev("obj");
     const rev = makeRev("rev");
     const r2Key = makeObjectKey(context.user.userId, objectId);
+    const replacedHead = currentHeads.get(put.partitionKey);
     await context.bucket.put(r2Key, part, {
       httpMetadata: {
         contentType: "application/json",
@@ -344,6 +386,10 @@ async function handleBackupCommit(
       sourceDeviceId: manifest.deviceId,
       sourceDeviceLabel: manifest.deviceLabel,
     });
+
+    if (replacedHead && replacedHead.objectId !== objectId) {
+      staleObjectIds.add(replacedHead.objectId);
+    }
 
     statements.push(
       context.db
@@ -386,6 +432,7 @@ async function handleBackupCommit(
     const currentHead = currentHeads.get(del.partitionKey);
     if (!currentHead) continue;
     changedHeads.push({ ...currentHead, deletedAt: committedAt });
+    staleObjectIds.add(currentHead.objectId);
     statements.push(
       context.db
         .prepare(
@@ -408,8 +455,21 @@ async function handleBackupCommit(
     committedAt,
     headSetRev,
     heads: changedHeads,
+    quota: consumeBackupUploadQuota(quota),
   };
 
+  statements.push(
+    upsertBackupUploadQuotaStatement(context.db, {
+      userId: context.user.userId,
+      period: quota.period,
+      putObjectCount: puts.length,
+      uploadedCompressedBytes: puts.reduce(
+        (sum, put) => sum + put.compressedBytes,
+        0
+      ),
+      now: committedAt,
+    })
+  );
   statements.push(
     context.db
       .prepare(
@@ -450,6 +510,11 @@ async function handleBackupCommit(
   if (statements.length > 0) {
     await context.db.batch(statements);
   }
+  await deleteBackupObjects(
+    context.bucket,
+    context.user.userId,
+    staleObjectIds
+  );
 
   return backupJson(result);
 }
@@ -518,6 +583,93 @@ async function handleBackupObjectDownload(
   return new Response(form, { headers: BACKUP_CORS_HEADERS });
 }
 
+async function readBackupUploadQuota(
+  db: D1Database,
+  userId: string,
+  now: number,
+  limit: number
+): Promise<BackupUploadQuota> {
+  const period = getUtcMonthPeriod(now);
+  const row = await db
+    .prepare(
+      `SELECT successful_upload_count
+      FROM backup_monthly_upload_quota
+      WHERE user_id = ? AND period_utc = ?
+      LIMIT 1`
+    )
+    .bind(userId, period)
+    .first<BackupUploadQuotaRow>();
+  return createBackupUploadQuota({
+    period,
+    limit,
+    used: row?.successful_upload_count ?? 0,
+    resetsAt: getNextUtcMonthStart(now),
+  });
+}
+
+function consumeBackupUploadQuota(quota: BackupUploadQuota): BackupUploadQuota {
+  return createBackupUploadQuota({
+    ...quota,
+    used: quota.used + 1,
+  });
+}
+
+function upsertBackupUploadQuotaStatement(
+  db: D1Database,
+  input: {
+    userId: string;
+    period: string;
+    putObjectCount: number;
+    uploadedCompressedBytes: number;
+    now: number;
+  }
+): D1PreparedStatement {
+  return db
+    .prepare(
+      `INSERT INTO backup_monthly_upload_quota (
+        user_id, period_utc, successful_upload_count, put_object_count,
+        uploaded_compressed_bytes, created_at, updated_at
+      )
+      VALUES (?, ?, 1, ?, ?, ?, ?)
+      ON CONFLICT(user_id, period_utc) DO UPDATE SET
+        successful_upload_count =
+          backup_monthly_upload_quota.successful_upload_count + 1,
+        put_object_count =
+          backup_monthly_upload_quota.put_object_count +
+          excluded.put_object_count,
+        uploaded_compressed_bytes =
+          backup_monthly_upload_quota.uploaded_compressed_bytes +
+          excluded.uploaded_compressed_bytes,
+        updated_at = excluded.updated_at`
+    )
+    .bind(
+      input.userId,
+      input.period,
+      input.putObjectCount,
+      input.uploadedCompressedBytes,
+      input.now,
+      input.now
+    );
+}
+
+async function deleteBackupObjects(
+  bucket: R2Bucket,
+  userId: string,
+  objectIds: Set<string>
+): Promise<void> {
+  if (objectIds.size === 0) return;
+  const results = await Promise.allSettled(
+    [...objectIds].map((objectId) =>
+      bucket.delete(makeObjectKey(userId, objectId))
+    )
+  );
+  for (const result of results) {
+    if (result.status === "rejected") {
+      console.error("Backup stale object cleanup failed:", result.reason);
+    }
+  }
+}
+
 async function resolveDeviceRow(
   db: D1Database,
   userId: string,
@@ -562,6 +714,44 @@ async function resolveDeviceRow(
     )
     .run();
   return id;
+}
+
+function getMonthlyUploadLimit(env: BackupEnv): number {
+  const parsed = Number(env.BACKUP_MONTHLY_UPLOAD_LIMIT);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return DEFAULT_BACKUP_MONTHLY_UPLOAD_LIMIT;
+  }
+  return Math.floor(parsed);
+}
+
+function createBackupUploadQuota(input: {
+  period: string;
+  limit: number;
+  used: number;
+  resetsAt: number;
+}): BackupUploadQuota {
+  const used = Math.max(0, Math.floor(input.used));
+  const limit = Math.max(0, Math.floor(input.limit));
+  return {
+    period: input.period,
+    limit,
+    used,
+    remaining: Math.max(0, limit - used),
+    resetsAt: input.resetsAt,
+  };
+}
+
+function getUtcMonthPeriod(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(
+    2,
+    "0"
+  )}`;
+}
+
+function getNextUtcMonthStart(timestamp: number): number {
+  const date = new Date(timestamp);
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 1);
 }
 
 function validateCommitManifest(

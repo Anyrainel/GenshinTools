@@ -28,7 +28,7 @@ Default frontend values:
 
 | Config | Default |
 | --- | --- |
-| `VITE_LOGTO_ENDPOINT` | `https://synz8r.logto.app` |
+| `VITE_LOGTO_ENDPOINT` | `https://auth.ggartifact.com` |
 | `VITE_LOGTO_APP_ID` | `tglrsenlbfrfrnevjwlan` |
 | `VITE_LOGTO_API_RESOURCE` | empty |
 | `VITE_LOGTO_SCOPES` | empty |

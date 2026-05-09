@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleAlert } from "lucide-react";
 import type {
   ManualBackupActionItemBase,
   ManualBackupAutomaticItem,
@@ -95,15 +95,15 @@ export function ManualBackupChoiceDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-lg border border-border bg-muted/30 p-3">
-          <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+        <div className="rounded-lg border border-border bg-muted/30 px-4 py-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-base font-semibold sm:text-lg">
             <span>
               {isUpload
                 ? t.ui("accountSystem.manualChoice.thisBrowser")
                 : t.ui("accountSystem.cloudBackup")}
             </span>
             <ArrowRight
-              className="h-4 w-4 text-muted-foreground"
+              className="h-5 w-5 text-muted-foreground"
               aria-hidden="true"
             />
             <span>
@@ -112,17 +112,12 @@ export function ManualBackupChoiceDialog({
                 : t.ui("accountSystem.manualChoice.thisBrowser")}
             </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {isUpload
-              ? t.ui("accountSystem.manualChoice.uploadScope")
-              : t.ui("accountSystem.manualChoice.downloadScope")}
-          </p>
         </div>
 
         <div className="space-y-4">
           {automaticRows.length > 0 && (
             <ManualBackupSection
-              title={t.ui("accountSystem.manualChoice.automaticSectionTitle")}
+              tone="safe"
               description={
                 isUpload
                   ? t.ui(
@@ -142,7 +137,7 @@ export function ManualBackupChoiceDialog({
 
           {choiceRows.length > 0 && (
             <ManualBackupSection
-              title={t.ui("accountSystem.manualChoice.choiceSectionTitle")}
+              tone="conflict"
               description={
                 isUpload
                   ? t.ui(
@@ -182,7 +177,7 @@ export function ManualBackupChoiceDialog({
 }
 
 function ManualBackupSection({
-  title,
+  tone,
   description,
   rows,
   busy,
@@ -190,7 +185,7 @@ function ManualBackupSection({
   onToggleChoice,
   t,
 }: {
-  title: string;
+  tone: "safe" | "conflict";
   description: string;
   rows: ManualBackupDialogRow[];
   busy: boolean;
@@ -198,11 +193,26 @@ function ManualBackupSection({
   onToggleChoice: (id: CloudPartitionId, checked: boolean) => void;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const Icon = tone === "safe" ? CheckCircle2 : CircleAlert;
+  const title =
+    tone === "safe"
+      ? t.ui("accountSystem.manualChoice.noConflictSectionTitle")
+      : t.ui("accountSystem.manualChoice.conflictSectionTitle");
+
   return (
     <section className="rounded-lg border border-border overflow-hidden">
       <div className="border-b border-border bg-muted/30 px-3 py-2">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="text-sm font-semibold">{title}</h3>
+          <h3 className="flex items-center gap-2 text-sm font-semibold">
+            <Icon
+              className={cn(
+                "h-4 w-4",
+                tone === "safe" ? "text-green-500" : "text-destructive"
+              )}
+              aria-hidden="true"
+            />
+            {title}
+          </h3>
           <span className="text-xs text-muted-foreground">
             {t
               .ui("accountSystem.manualChoice.rowCount")
@@ -212,9 +222,11 @@ function ManualBackupSection({
         <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       </div>
       <div className="hidden border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(11rem,0.8fr)_8rem] sm:gap-3">
-        <span>{t.ui("accountSystem.manualChoice.dataGroupColumn")}</span>
-        <span>{t.ui("accountSystem.manualChoice.resultColumn")}</span>
-        <span className="text-right">{t.ui("teamComp.extraBuffsStatus")}</span>
+        <span>{t.ui("accountSystem.metadataDataColumn")}</span>
+        <span>{t.ui("accountSystem.manualChoice.conflictInfoColumn")}</span>
+        <span className="text-right">
+          {t.ui("accountSystem.manualChoice.selectionColumn")}
+        </span>
       </div>
       <div className="divide-y divide-border">
         {rows.map((row) => (
@@ -276,9 +288,7 @@ function ManualBackupRow({
         </div>
       </div>
       <div className="pl-8 text-xs text-muted-foreground sm:pl-0 sm:text-sm">
-        {selectable
-          ? choiceDescription(item, checked, t)
-          : automaticDescription(item, t)}
+        {conflictInfo(item, t)}
       </div>
       <div className="flex justify-end pl-8 sm:pl-0">
         <Badge
@@ -333,29 +343,38 @@ function toBackupRecordGroup(item: ManualBackupActionItemBase) {
   };
 }
 
-function automaticDescription(
-  item: ManualBackupAutomaticItem,
+function conflictInfo(
+  item: ManualBackupAutomaticItem | ManualBackupChoice,
   t: ReturnType<typeof useLanguage>["t"]
 ): string {
-  if (item.kind === "upload-local") {
-    return t.ui("accountSystem.manualChoice.automaticUpload");
+  if (item.kind === "upload-delete-cloud") {
+    return t.ui("accountSystem.manualChoice.conflictInfoUploadDeleteCloud");
   }
-  return t.ui("accountSystem.manualChoice.automaticDownload");
-}
-
-function choiceDescription(
-  choice: ManualBackupChoice,
-  checked: boolean,
-  t: ReturnType<typeof useLanguage>["t"]
-): string {
-  if (!checked) return t.ui("accountSystem.manualChoice.keepBothUnchanged");
-  switch (choice.kind) {
-    case "upload-overwrite-cloud":
-      return t.ui("accountSystem.manualChoice.uploadOverwriteCloud");
-    case "upload-delete-cloud":
-      return t.ui("accountSystem.manualChoice.uploadDeleteCloud");
-    case "download-overwrite-local":
-      return t.ui("accountSystem.manualChoice.downloadOverwriteLocal");
+  switch (item.reason) {
+    case "local-only":
+      return t.ui("accountSystem.manualChoice.conflictInfoLocalOnly");
+    case "remote-only":
+      return t.ui("accountSystem.manualChoice.conflictInfoRemoteOnly");
+    case "local-changed":
+      return t.ui("accountSystem.manualChoice.conflictInfoLocalChanged");
+    case "remote-changed":
+      return t.ui("accountSystem.manualChoice.conflictInfoRemoteChanged");
+    case "both-changed":
+      return t.ui("accountSystem.manualChoice.conflictInfoBothChanged");
+    case "first-sync-local-and-cloud":
+      return t.ui(
+        "accountSystem.manualChoice.conflictInfoFirstSyncLocalAndCloud"
+      );
+    case "metadata-mismatch":
+      return t.ui("accountSystem.manualChoice.conflictInfoMetadataMismatch");
+    case "same-content":
+      return t.ui("accountSystem.manualChoice.conflictInfoSameContent");
+    case "excluded":
+      return t.ui("accountSystem.manualChoice.conflictInfoExcluded");
+    case "empty":
+      return t.ui("accountSystem.manualChoice.conflictInfoEmpty");
+    case "newer-cloud-schema":
+      return t.ui("accountSystem.manualChoice.conflictInfoNewerCloudSchema");
   }
 }
 
@@ -365,7 +384,7 @@ function statusVariant(
 ): "default" | "secondary" | "destructive" {
   if (!checked) return "secondary";
   if (!row.selectable) return "default";
-  return row.item.kind === "upload-delete-cloud" ? "destructive" : "default";
+  return "default";
 }
 
 function rowStatusLabel(
@@ -374,13 +393,6 @@ function rowStatusLabel(
   t: ReturnType<typeof useLanguage>["t"]
 ): string {
   if (!row.selectable) return t.ui("accountSystem.manualChoice.included");
-  if (!checked) return t.ui("accountSystem.manualChoice.keepBothStatus");
-  switch (row.item.kind) {
-    case "upload-overwrite-cloud":
-      return t.ui("accountSystem.manualChoice.overwriteCloudStatus");
-    case "upload-delete-cloud":
-      return t.ui("accountSystem.manualChoice.deleteCloudStatus");
-    case "download-overwrite-local":
-      return t.ui("accountSystem.manualChoice.overwriteLocalStatus");
-  }
+  if (!checked) return t.ui("accountSystem.manualChoice.notSelected");
+  return t.ui("accountSystem.manualChoice.selected");
 }

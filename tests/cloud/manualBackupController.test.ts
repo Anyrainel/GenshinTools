@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { BackupApiError } from "@/cloud/apiClient";
 import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
 import {
   CLOUD_METADATA_CACHE_MAX_AGE_MS,
@@ -76,6 +77,24 @@ describe("manual backup controller", () => {
     expect(result).toEqual({ status: "skipped" });
   });
 
+  it("propagates monthly upload quota errors without marking upload success", async () => {
+    const error = new BackupApiError(
+      "commit backup objects failed with HTTP 429",
+      429,
+      {
+        error: "monthly_upload_limit_exceeded",
+        quota: backupQuota(10),
+      }
+    );
+    vi.mocked(runCloudSyncOnce).mockRejectedValue(error);
+
+    await expect(
+      uploadManualBackupSelection({} as BackupApi, pendingUploadAction(), [
+        "builds/all",
+      ])
+    ).rejects.toBe(error);
+  });
+
   it("passes selected download partitions through restore and marks them synced", async () => {
     const apiClient = {} as BackupDownloadApi;
     const syncResult = runResult();
@@ -112,9 +131,10 @@ describe("manual backup controller", () => {
   it("treats cached metadata as stale after one week", () => {
     const checkedAt = 1000;
     const snapshot = {
-      schemaVersion: 4,
+      schemaVersion: 5,
       checkedAt,
       headSetRev: "hset-1",
+      quota: backupQuota(),
       rows: [],
     } satisfies CloudBackupMetadataSnapshot;
 
@@ -189,6 +209,17 @@ function runResult(): CloudSyncRunResult {
     remoteHeads: [],
     uploaded: [],
     headSetRev: "hset-1",
+    quota: backupQuota(),
+  };
+}
+
+function backupQuota(used = 0) {
+  return {
+    period: "2026-05",
+    limit: 10,
+    used,
+    remaining: Math.max(0, 10 - used),
+    resetsAt: Date.UTC(2026, 5, 1),
   };
 }
 

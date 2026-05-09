@@ -39,8 +39,12 @@ describe("AccountPage", () => {
   it("shows the signed-out Logto fallback state", async () => {
     render(<AccountPage />);
 
-    expect(await screen.findByText("Not signed in")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Sign in" })).toBeEnabled();
+    expect(
+      (await screen.findAllByText("Not signed in")).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole("button", { name: "Sign in" }).at(-1)
+    ).toBeEnabled();
     expect(
       screen.queryByRole("button", { name: "Sign out" })
     ).not.toBeInTheDocument();
@@ -49,7 +53,9 @@ describe("AccountPage", () => {
   it("starts Logto sign-in and returns to cloud backup", async () => {
     render(<AccountPage />);
 
-    await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await userEvent.click(
+      screen.getAllByRole("button", { name: "Sign in" }).at(-1)!
+    );
 
     expect(signIn).toHaveBeenCalledWith({
       redirectUri: "http://localhost:3000/callback",

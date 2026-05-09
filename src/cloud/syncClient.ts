@@ -3,6 +3,7 @@ import {
   type BackupCommitObjectInput,
   type BackupHead,
   type BackupObjectDownloadResponse,
+  type BackupUploadQuota,
   type BackupWriteMode,
 } from "@/cloud/apiClient";
 import { buildBackupHeadMetadataByPartition } from "@/cloud/backupMetadata";
@@ -57,6 +58,7 @@ export type CloudSyncRunResult = {
   remoteHeads: BackupHead[];
   uploaded: BackupHead[];
   headSetRev: string;
+  quota?: BackupUploadQuota;
 };
 
 export type ExplicitLocalOverwriteScope = {
@@ -207,6 +209,7 @@ export async function runCloudSyncOnce(
       remoteHeads: head.heads,
       uploaded: [],
       headSetRev: head.headSetRev,
+      quota: head.quota,
     };
   }
 
@@ -248,6 +251,7 @@ export async function runCloudSyncOnce(
     remoteHeads: head.heads,
     uploaded: commit.heads,
     headSetRev: commit.headSetRev,
+    quota: commit.quota,
   };
 }
 
@@ -273,6 +277,7 @@ export async function previewCloudSync(
     remoteHeads: head.heads,
     uploaded: [],
     headSetRev: head.headSetRev,
+    quota: head.quota,
   };
 }
 

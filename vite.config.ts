@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import path from "node:path";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react-swc";
@@ -54,8 +55,9 @@ function manualChunks(id: string): string | undefined {
 
 const localBackupBindings = {
   vars: {
-    LOGTO_ENDPOINT: "https://synz8r.logto.app",
+    LOGTO_ENDPOINT: "https://auth.ggartifact.com",
     LOGTO_APP_ID: "tglrsenlbfrfrnevjwlan",
+    BACKUP_MONTHLY_UPLOAD_LIMIT: "10",
     ...(process.env.VITE_E2E_FAKE_LOGTO === "1"
       ? {
           LOGTO_ISSUER: `${localDevOrigin}/__e2e__/issuer`,
@@ -67,7 +69,7 @@ const localBackupBindings = {
     {
       binding: "BACKUP_DB",
       database_name: "ggartifact-backup",
-      database_id: "bf430d1d-3063-4ce6-bf57-4558110bf55f",
+      database_id: "19048096-e6a9-42c1-99c2-d98b5b45ea0c",
     },
   ],
   r2_buckets: [
@@ -87,6 +89,38 @@ export default defineConfig(({ command, mode }) => {
     base: mode === "github" ? "/GenshinTools/" : "/",
     plugins: [
       react({ tsDecorators: true }),
+      {
+        name: "spa-route-fallback-before-cloudflare-assets",
+        enforce: "pre",
+        apply: "serve",
+        configureServer(server) {
+          // Match the production Worker: extensionless app routes such as
+          // /callback must reach React before Cloudflare's asset middleware.
+          server.middlewares.use(async (req, res, next) => {
+            if (!shouldServeDevSpaIndex(req.method, req.url, req.headers)) {
+              next();
+              return;
+            }
+
+            try {
+              const template = await fs.readFile(
+                path.resolve(__dirname, "index.html"),
+                "utf-8"
+              );
+              const html = await server.transformIndexHtml(
+                req.url ?? "/",
+                template
+              );
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "text/html; charset=utf-8");
+              res.setHeader("Cache-Control", "no-cache");
+              res.end(req.method === "HEAD" ? undefined : html);
+            } catch (error) {
+              next(error);
+            }
+          });
+        },
+      },
       !staticOnlyBuild &&
         cloudflare({
           config: command === "serve" ? () => localBackupBindings : undefined,
@@ -227,4 +261,62 @@ function createE2eLogtoFixture() {
         .sign(privateKey);
     },
   };
+}
+
+function shouldServeDevSpaIndex(
+  method: string | undefined,
+  value: string | undefined,
+  headers: Record<string, string | string[] | undefined>
+): boolean {
+  if (method !== "GET" && method !== "HEAD") return false;
+  if (!value) return false;
+  const url = new URL(value, localDevOrigin);
+  if (url.pathname.startsWith("/api/")) return false;
+  if (!isHtmlNavigationRequest(headers)) return false;
+  return !isStaticAssetDevRequest(url.pathname);
+}
+
+function isStaticAssetDevRequest(pathname: string): boolean {
+  if (
+    pathname.startsWith("/@") ||
+    pathname.startsWith("/src/") ||
+    pathname.startsWith("/node_modules/") ||
+    pathname.startsWith("/__vite") ||
+    pathname === "/favicon.ico"
+  ) {
+    return true;
+  }
+
+  if (
+    [
+      "/artifact/",
+      "/assets/",
+      "/character/",
+      "/element/",
+      "/enemy/",
+      "/food/",
+      "/good/",
+      "/weapon/",
+      "/weapontype/",
+    ].some((prefix) => pathname.startsWith(prefix))
+  ) {
+    return true;
+  }
+
+  const lastSegment = pathname.split("/").pop() ?? "";
+  return /\.[A-Za-z0-9]{1,16}$/.test(lastSegment);
+}
+
+function isHtmlNavigationRequest(
+  headers: Record<string, string | string[] | undefined>
+): boolean {
+  const fetchMode = headerValue(headers["sec-fetch-mode"]);
+  if (fetchMode === "navigate") return true;
+
+  const accept = headerValue(headers.accept);
+  return accept.split(",").some((value) => value.trim() === "text/html");
+}
+
+function headerValue(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? value.join(",") : (value ?? "");
 }

@@ -105,6 +105,63 @@ describe("AppBar", () => {
     expect(mockAction).toHaveBeenCalled();
   });
 
+  it("renders one promoted page action and moves the rest into More", async () => {
+    const primaryAction = vi.fn();
+    const secondaryAction = vi.fn();
+    const helpAction = vi.fn();
+    const actions = [
+      {
+        key: "secondary",
+        icon: Home,
+        label: "Secondary",
+        onTrigger: secondaryAction,
+      },
+      {
+        key: "primary",
+        icon: Home,
+        label: "Primary",
+        onTrigger: primaryAction,
+        alwaysShow: true,
+      },
+      {
+        key: "help",
+        icon: Home,
+        label: "Help",
+        onTrigger: helpAction,
+      },
+    ];
+
+    render(
+      <BrowserRouter>
+        <AppBar actions={actions} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByRole("button", { name: "Primary" })).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "accountSystem.accountMenu" })
+    );
+
+    expect(screen.queryByText("Secondary")).not.toBeInTheDocument();
+    expect(screen.queryByText("Help")).not.toBeInTheDocument();
+
+    await userEvent.keyboard("{Escape}");
+
+    await userEvent.click(screen.getByRole("button", { name: "common.more" }));
+
+    expect(
+      screen.getByRole("menuitem", { name: "Secondary" })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: "Help" })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("menuitem", { name: "Secondary" }));
+
+    expect(secondaryAction).toHaveBeenCalled();
+    expect(primaryAction).not.toHaveBeenCalled();
+    expect(helpAction).not.toHaveBeenCalled();
+  });
+
   it("renders tabs on desktop", () => {
     const mockTabChange = vi.fn();
     const tabs = [
@@ -139,7 +196,11 @@ describe("AppBar", () => {
       screen.getByRole("button", { name: "accountSystem.accountMenu" })
     );
 
-    expect(screen.getByText("accountSystem.signIn")).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "accountSystem.signIn" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("theme.switcherButton")).toBeInTheDocument();
+    expect(screen.getByText("app.language")).toBeInTheDocument();
     expect(
       screen.queryByText("accountSystem.manageAccount")
     ).not.toBeInTheDocument();
@@ -148,13 +209,56 @@ describe("AppBar", () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText("accountSystem.signOut")).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("accountSystem.signIn"));
+    fireEvent.click(
+      screen.getByRole("menuitem", { name: "accountSystem.signIn" })
+    );
 
-    expect(signIn).toHaveBeenCalledWith({
-      redirectUri: "http://localhost:3000/callback",
-      postRedirectUri: "http://localhost:3000/",
+    await waitFor(() => {
+      expect(signIn).toHaveBeenCalledWith({
+        redirectUri: "http://localhost:3000/callback",
+        postRedirectUri: "http://localhost:3000/",
+      });
     });
     expect(window.sessionStorage.getItem("logto:returnPath")).toBe("/");
+  });
+
+  it("can split account, theme, and language into standalone controls", async () => {
+    render(
+      <BrowserRouter>
+        <AppBar standaloneUtilityActions />
+      </BrowserRouter>
+    );
+
+    const themeButton = screen.getByRole("button", {
+      name: "theme.switcherButton",
+    });
+    const languageButton = screen.getByRole("button", {
+      name: "app.language",
+    });
+    const accountButton = screen.getByRole("button", {
+      name: "accountSystem.signIn",
+    });
+
+    expect(themeButton).toBeInTheDocument();
+    expect(languageButton).toBeInTheDocument();
+    expect(accountButton).toBeInTheDocument();
+    expect(
+      themeButton.compareDocumentPosition(languageButton) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+    expect(
+      languageButton.compareDocumentPosition(accountButton) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+
+    fireEvent.click(accountButton);
+
+    await waitFor(() => {
+      expect(signIn).toHaveBeenCalledWith({
+        redirectUri: "http://localhost:3000/callback",
+        postRedirectUri: "http://localhost:3000/",
+      });
+    });
   });
 
   it("shows account management, sync, and sign-out when signed in", async () => {
@@ -182,7 +286,9 @@ describe("AppBar", () => {
       screen.getByRole("button", { name: "accountSystem.accountMenu" })
     );
 
-    expect(screen.getByText("traveler@example.com")).toBeInTheDocument();
+    expect(screen.getAllByText("traveler@example.com").length).toBeGreaterThan(
+      0
+    );
     expect(screen.queryByText("accountSystem.signIn")).not.toBeInTheDocument();
     expect(screen.getByText("accountSystem.manageAccount")).toBeInTheDocument();
     expect(screen.getByText("accountSystem.syncData")).toBeInTheDocument();
@@ -192,15 +298,16 @@ describe("AppBar", () => {
       .getByText("accountSystem.manageAccount")
       .closest("a");
     expect(manageLink?.getAttribute("href")).toBe(
-      "https://synz8r.logto.app/account/security?redirect=http%3A%2F%2Flocalhost%3A3000%2F"
+      "https://auth.ggartifact.com/account/security?redirect=http%3A%2F%2Flocalhost%3A3000%2F"
     );
 
     const menuItems = screen
       .getAllByRole("menuitem")
       .map((item) => item.textContent);
-    expect(menuItems.indexOf("accountSystem.manageAccount")).toBeLessThan(
+    expect(menuItems.indexOf("accountSystem.manageAccount")).toBeGreaterThan(
       menuItems.indexOf("accountSystem.syncData")
     );
+    expect(menuItems.at(-2)).toBe("accountSystem.manageAccount");
     expect(menuItems.at(-1)).toBe("accountSystem.signOut");
 
     await userEvent.click(screen.getByText("accountSystem.signOut"));

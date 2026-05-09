@@ -654,6 +654,7 @@ class StatefulBackupApi implements BackupApi {
         maxCompressedBytesPerCommit: 5_000_000,
         maxCompressedBytesPerObject: 2_000_000,
       },
+      quota: backupQuota(),
       heads: [...this.heads.values()],
     })
   );
@@ -694,6 +695,7 @@ class StatefulBackupApi implements BackupApi {
         idempotencyKey: request.idempotencyKey,
         committedAt: this.revIndex,
         headSetRev: `hset-${this.headSetIndex}`,
+        quota: backupQuota(this.headSetIndex - 1),
         heads: changed,
       };
     }
@@ -745,6 +747,16 @@ class StatefulBackupApi implements BackupApi {
       throw new Error(`unexpected ifMatch mismatch for ${partitionKey}`);
     }
   }
+}
+
+function backupQuota(used = 0) {
+  return {
+    period: "2026-05",
+    limit: 10,
+    used,
+    remaining: Math.max(0, 10 - used),
+    resetsAt: Date.UTC(2026, 5, 1),
+  };
 }
 
 function createMemoryMetadataStore(deviceId: string) {

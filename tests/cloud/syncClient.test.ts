@@ -300,6 +300,7 @@ function fakeApi(options: {
           maxCompressedBytesPerCommit: 5_000_000,
           maxCompressedBytesPerObject: 2_000_000,
         },
+        quota: backupQuota(),
         heads: options.heads,
       })
     ),
@@ -318,6 +319,7 @@ function commitFromRequest(
     idempotencyKey: request.idempotencyKey,
     committedAt,
     headSetRev: "hset-committed",
+    quota: backupQuota(1),
     heads:
       request.puts?.map((put, index) => ({
         partitionKey: put.partitionKey,
@@ -330,6 +332,16 @@ function commitFromRequest(
         updatedAt: committedAt,
         metadata: put.metadata,
       })) ?? [],
+  };
+}
+
+function backupQuota(used = 0) {
+  return {
+    period: "2026-05",
+    limit: 10,
+    used,
+    remaining: Math.max(0, 10 - used),
+    resetsAt: Date.UTC(2026, 5, 1),
   };
 }
 

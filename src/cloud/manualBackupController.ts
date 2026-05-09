@@ -35,7 +35,7 @@ export type ManualBackupUploadSelectionResult =
   | { status: "uploaded"; result: CloudSyncRunResult };
 
 const CLOUD_METADATA_CACHE_PREFIX = "cloud_backup_metadata:";
-const CLOUD_METADATA_CACHE_SCHEMA_VERSION = 4;
+const CLOUD_METADATA_CACHE_SCHEMA_VERSION = 5;
 export const CLOUD_METADATA_CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function buildManualBackupMetadataRows(
@@ -128,6 +128,7 @@ export function readCloudMetadataCache(
       !parsed ||
       parsed.schemaVersion !== CLOUD_METADATA_CACHE_SCHEMA_VERSION ||
       !Number.isFinite(parsed.checkedAt) ||
+      !isCachedQuota(parsed.quota) ||
       !Array.isArray(parsed.rows) ||
       !parsed.rows.every(isCachedMetadataRow)
     ) {
@@ -179,5 +180,17 @@ function isCachedMetadataSide(side: BackupMetadataRow["local"]): boolean {
     typeof side?.hasRecord === "boolean" &&
     typeof side.count === "number" &&
     typeof side.partitionCount === "number"
+  );
+}
+
+function isCachedQuota(
+  quota: CloudBackupMetadataSnapshot["quota"] | undefined
+): boolean {
+  return (
+    typeof quota?.period === "string" &&
+    Number.isInteger(quota.limit) &&
+    Number.isInteger(quota.used) &&
+    Number.isInteger(quota.remaining) &&
+    Number.isFinite(quota.resetsAt)
   );
 }

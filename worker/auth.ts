@@ -8,6 +8,7 @@ export type AppEnv = Env & {
   LOGTO_JWKS_URI?: string;
   LOGTO_APP_ID?: string;
   LOGTO_API_RESOURCE?: string;
+  BACKUP_MONTHLY_UPLOAD_LIMIT?: string;
 };
 
 export type AuthenticatedUser = {
@@ -27,7 +28,7 @@ export type AuthFailure = {
 
 const AUTH_API_PREFIX = "/api/auth";
 const LOGTO_PROVIDER = "logto";
-const DEFAULT_LOGTO_ENDPOINT = "https://synz8r.logto.app";
+const DEFAULT_LOGTO_ENDPOINT = "https://auth.ggartifact.com";
 const DEFAULT_LOGTO_APP_ID = "tglrsenlbfrfrnevjwlan";
 const AUTH_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",

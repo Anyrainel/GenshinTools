@@ -36,7 +36,7 @@ describe("authConfig", () => {
     window.history.pushState(null, "", "/account?show_success=email");
 
     expect(getLogtoAccountCenterSecurityUrl()).toBe(
-      "https://synz8r.logto.app/account/security?redirect=http%3A%2F%2Flocalhost%3A3000%2Faccount%3Fshow_success%3Demail"
+      "https://auth.ggartifact.com/account/security?redirect=http%3A%2F%2Flocalhost%3A3000%2Faccount%3Fshow_success%3Demail"
     );
   });
 

@@ -75,7 +75,7 @@ describe("enka", () => {
       const fetchMock = vi.spyOn(globalThis, "fetch");
 
       await expect(fetchEnkaData("123456789")).rejects.toThrow(
-        "Enka import requires the Cloudflare proxy"
+        "Enka import is not available from this app preview"
       );
       expect(fetchMock).not.toHaveBeenCalled();
     });

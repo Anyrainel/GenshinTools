@@ -39,6 +39,28 @@ describe("ManualBackupChoiceDialog", () => {
       />
     );
 
+    expect(screen.getByText("No data conflict")).toBeInTheDocument();
+    expect(screen.getByText("Data conflict")).toBeInTheDocument();
+    expect(screen.getAllByText("Conflict info")).toHaveLength(2);
+    expect(screen.queryByText("What will happen")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Included automatically")
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Needs your choice")).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Only this browser has this data.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Both this browser and the cloud backup changed since the last sync."
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "The cloud backup has data that this browser no longer has. Selecting it removes the cloud copy."
+      )
+    ).toBeInTheDocument();
+
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes).toHaveLength(3);
     expect(checkboxes[0]).toBeChecked();
@@ -85,7 +107,7 @@ describe("ManualBackupChoiceDialog", () => {
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onCancel).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByRole("button", { name: "Restore" }));
+    await user.click(screen.getByRole("button", { name: "Download" }));
     expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 
@@ -109,7 +131,7 @@ describe("ManualBackupChoiceDialog", () => {
 
     expect(screen.getByRole("checkbox")).toBeDisabled();
     expect(screen.getByRole("button", { name: "Cancel" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Back Up" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Upload" })).toBeDisabled();
   });
 });
 

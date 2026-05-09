@@ -9,23 +9,43 @@
     "enabled": true
   },
   "vars": {
-    "LOGTO_ENDPOINT": "https://synz8r.logto.app",
-    "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan"
+    "LOGTO_ENDPOINT": "https://auth.ggartifact.com",
+    "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan",
+    "BACKUP_MONTHLY_UPLOAD_LIMIT": "10"
   },
   "assets": {
-    "directory": "./dist",
     "binding": "ASSETS",
     // Cloudflare's React + Vite template uses "single-page-application" here.
     // This app routes SPA fallbacks in worker/index.ts instead, so missing
     // hashed chunks and public assets return real 404s instead of index.html.
     "not_found_handling": "none",
-    "run_worker_first": ["/api/*"]
+    // Run the Worker for API and extensionless SPA routes, but let static
+    // asset paths bypass Worker invocation when they match an uploaded file.
+    "run_worker_first": [
+      "/*",
+      "!/assets/*",
+      "!/artifact/*",
+      "!/character/*",
+      "!/element/*",
+      "!/enemy/*",
+      "!/food/*",
+      "!/good/*",
+      "!/weapon/*",
+      "!/weapontype/*",
+      "!/*.ico",
+      "!/*.json",
+      "!/*.png",
+      "!/*.svg",
+      "!/*.txt",
+      "!/*.webmanifest",
+      "!/*.xml"
+    ]
   },
   "d1_databases": [
     {
       "binding": "BACKUP_DB",
       "database_name": "ggartifact-backup",
-      "database_id": "5227b90e-8057-4068-8ec1-b498458075f4"
+      "database_id": "19048096-e6a9-42c1-99c2-d98b5b45ea0c"
     }
   ],
   "r2_buckets": [
@@ -37,14 +57,15 @@
   "env": {
     "dev": {
       "vars": {
-        "LOGTO_ENDPOINT": "https://synz8r.logto.app",
-        "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan"
+        "LOGTO_ENDPOINT": "https://auth.ggartifact.com",
+        "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan",
+        "BACKUP_MONTHLY_UPLOAD_LIMIT": "10"
       },
       "d1_databases": [
         {
           "binding": "BACKUP_DB",
           "database_name": "ggartifact-backup",
-          "database_id": "5227b90e-8057-4068-8ec1-b498458075f4"
+          "database_id": "19048096-e6a9-42c1-99c2-d98b5b45ea0c"
         }
       ],
       "r2_buckets": [

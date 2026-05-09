@@ -46,6 +46,16 @@ type CommitRecord = {
   expires_at: number;
 };
 
+type QuotaRecord = {
+  user_id: string;
+  period_utc: string;
+  successful_upload_count: number;
+  put_object_count: number;
+  uploaded_compressed_bytes: number;
+  created_at: number;
+  updated_at: number;
+};
+
 type JoinedHeadRecord = {
   partition_key: string;
   object_id: string;
@@ -65,6 +75,13 @@ type BackupCommitJson = {
   idempotencyKey: string;
   committedAt: number;
   headSetRev: string;
+  quota: {
+    period: string;
+    limit: number;
+    used: number;
+    remaining: number;
+    resetsAt: number;
+  };
   heads: {
     partitionKey: string;
     objectId: string;
@@ -91,6 +108,7 @@ describe("Worker backup API", () => {
       audience: LOGTO_AUDIENCE,
       subject: "backup-user-1",
       claims: { name: "Backup User" },
+      expiresIn: "5y",
     });
     accessToken = token;
     vi.stubGlobal(
@@ -100,6 +118,7 @@ describe("Worker backup API", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
@@ -113,13 +132,18 @@ describe("Worker backup API", () => {
   });
 
   it("commits backup heads, supports no-change head polling, and is idempotent", async () => {
-    const { env } = createBackupTestEnv();
+    const { env, db } = createBackupTestEnv();
     const firstHead = await backupFetch(env, "/head");
 
     expect(firstHead.status).toBe(200);
     await expect(firstHead.json()).resolves.toMatchObject({
       changed: true,
       headSetRev: "empty",
+      quota: {
+        limit: 10,
+        used: 0,
+        remaining: 10,
+      },
       heads: [],
     });
 
@@ -154,6 +178,11 @@ describe("Worker backup API", () => {
     const commitJson = (await commit.json()) as BackupCommitJson;
     expect(commitJson).toMatchObject({
       idempotencyKey: "commit_first",
+      quota: {
+        limit: 10,
+        used: 1,
+        remaining: 9,
+      },
       heads: [
         {
           partitionKey: "builds/all",
@@ -180,6 +209,11 @@ describe("Worker backup API", () => {
       changed: false,
       heads: [],
       headSetRev: commitJson.headSetRev,
+      quota: {
+        limit: 10,
+        used: 1,
+        remaining: 9,
+      },
     });
 
     const retry = await backupFetch(env, "/commits", {
@@ -202,6 +236,151 @@ describe("Worker backup API", () => {
       }),
     });
     expect(await retry.json()).toEqual(commitJson);
+    expect([...db.quotas.values()][0]?.successful_upload_count).toBe(1);
+  });
+
+  it("allows ten monthly uploads, rejects the eleventh, and resets at the UTC month boundary", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-15T12:00:00Z"));
+    const { env } = createBackupTestEnv();
+    let currentRev: string | undefined;
+
+    async function commitVersion(
+      version: number,
+      idempotencyKey = `commit_limit_${version}`
+    ): Promise<Response> {
+      const body = new TextEncoder().encode(`backup-body-${version}`);
+      return backupFetch(env, "/commits", {
+        method: "POST",
+        body: makeCommitForm({
+          idempotencyKey,
+          puts: [
+            {
+              commitObjectKey: "builds",
+              partitionKey: "builds/all",
+              schemaVersion: 1,
+              contentHash: await sha256(
+                new TextEncoder().encode(JSON.stringify({ version }))
+              ),
+              compressedHash: await sha256(body),
+              compressedBytes: body.byteLength,
+              writeMode: currentRev
+                ? { kind: "ifMatch", expectedRev: currentRev }
+                : { kind: "ifAbsent" },
+            },
+          ],
+          body,
+        }),
+      });
+    }
+
+    for (let index = 1; index <= 10; index += 1) {
+      const response = await commitVersion(index);
+      expect(response.status).toBe(200);
+      const json = (await response.json()) as BackupCommitJson;
+      expect(json.quota).toMatchObject({
+        period: "2026-05",
+        limit: 10,
+        used: index,
+        remaining: 10 - index,
+        resetsAt: Date.UTC(2026, 5, 1),
+      });
+      currentRev = json.heads[0].rev;
+    }
+
+    const rejected = await commitVersion(11);
+    expect(rejected.status).toBe(429);
+    await expect(rejected.json()).resolves.toMatchObject({
+      error: "monthly_upload_limit_exceeded",
+      quota: {
+        period: "2026-05",
+        limit: 10,
+        used: 10,
+        remaining: 0,
+      },
+    });
+
+    vi.setSystemTime(new Date("2026-06-01T00:00:00Z"));
+    const afterReset = await commitVersion(12, "commit_limit_reset");
+    expect(afterReset.status).toBe(200);
+    await expect(afterReset.json()).resolves.toMatchObject({
+      quota: {
+        period: "2026-06",
+        limit: 10,
+        used: 1,
+        remaining: 9,
+      },
+    });
+  });
+
+  it("does not increment quota for validation failures or revision conflicts", async () => {
+    const { env, db } = createBackupTestEnv({ monthlyUploadLimit: "1" });
+    const body = new TextEncoder().encode("backup-body");
+    const compressedHash = await sha256(body);
+    const contentHash = await sha256(new TextEncoder().encode('{"a":1}'));
+
+    const invalid = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_invalid",
+        puts: [
+          {
+            commitObjectKey: "builds",
+            partitionKey: "builds/all",
+            schemaVersion: 1,
+            contentHash: "not-a-sha256",
+            compressedHash,
+            compressedBytes: body.byteLength,
+            writeMode: { kind: "ifAbsent" },
+          },
+        ],
+        body,
+      }),
+    });
+    expect(invalid.status).toBe(422);
+    expect(db.quotas.size).toBe(0);
+
+    const committed = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_valid",
+        puts: [
+          {
+            commitObjectKey: "builds",
+            partitionKey: "builds/all",
+            schemaVersion: 1,
+            contentHash,
+            compressedHash,
+            compressedBytes: body.byteLength,
+            writeMode: { kind: "ifAbsent" },
+          },
+        ],
+        body,
+      }),
+    });
+    expect(committed.status).toBe(200);
+    expect([...db.quotas.values()][0]?.successful_upload_count).toBe(1);
+
+    const conflict = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_conflict",
+        puts: [
+          {
+            commitObjectKey: "builds",
+            partitionKey: "builds/all",
+            schemaVersion: 1,
+            contentHash,
+            compressedHash,
+            compressedBytes: body.byteLength,
+            writeMode: { kind: "ifAbsent" },
+          },
+        ],
+        body,
+      }),
+    });
+    expect(conflict.status).toBe(409);
+    expect([...db.quotas.values()][0]?.successful_upload_count).toBe(1);
   });
 
   it("rejects stale write modes before writing R2 objects", async () => {
@@ -263,6 +442,79 @@ describe("Worker backup API", () => {
     expect(bucket.objects.size).toBe(objectCountBeforeConflict);
   });
 
+  it("deletes stale R2 objects after overwrite and delete commits", async () => {
+    const { env, bucket } = createBackupTestEnv();
+    const firstBody = new TextEncoder().encode("backup-body-1");
+    const firstCommit = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_cleanup_1",
+        puts: [
+          {
+            commitObjectKey: "builds",
+            partitionKey: "builds/all",
+            schemaVersion: 1,
+            contentHash: await sha256(new TextEncoder().encode('{"a":1}')),
+            compressedHash: await sha256(firstBody),
+            compressedBytes: firstBody.byteLength,
+            writeMode: { kind: "ifAbsent" },
+          },
+        ],
+        body: firstBody,
+      }),
+    });
+    const firstJson = (await firstCommit.json()) as BackupCommitJson;
+    const firstObjectKey = [...bucket.objects.keys()][0];
+    expect(firstObjectKey).toContain(firstJson.heads[0].objectId);
+
+    const secondBody = new TextEncoder().encode("backup-body-2");
+    const overwrite = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_cleanup_2",
+        puts: [
+          {
+            commitObjectKey: "builds",
+            partitionKey: "builds/all",
+            schemaVersion: 1,
+            contentHash: await sha256(new TextEncoder().encode('{"a":2}')),
+            compressedHash: await sha256(secondBody),
+            compressedBytes: secondBody.byteLength,
+            writeMode: {
+              kind: "ifMatch",
+              expectedRev: firstJson.heads[0].rev,
+            },
+          },
+        ],
+        body: secondBody,
+      }),
+    });
+    const overwriteJson = (await overwrite.json()) as BackupCommitJson;
+    expect(bucket.objects.has(firstObjectKey)).toBe(false);
+    const secondObjectKey = [...bucket.objects.keys()][0];
+    expect(secondObjectKey).toContain(overwriteJson.heads[0].objectId);
+
+    const deleted = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_cleanup_delete",
+        deletes: [
+          {
+            partitionKey: "builds/all",
+            writeMode: {
+              kind: "ifMatch",
+              expectedRev: overwriteJson.heads[0].rev,
+            },
+          },
+        ],
+      }),
+    });
+
+    expect(deleted.status).toBe(200);
+    expect(bucket.objects.has(secondObjectKey)).toBe(false);
+    expect(bucket.objects.size).toBe(0);
+  });
+
   it("downloads current backup objects by object id", async () => {
     const { env } = createBackupTestEnv();
     const body = new TextEncoder().encode("backup-body");
@@ -309,7 +561,7 @@ describe("Worker backup API", () => {
   });
 });
 
-function createBackupTestEnv(): {
+function createBackupTestEnv(options: { monthlyUploadLimit?: string } = {}): {
   env: BackupEnv;
   db: FakeD1Database;
   bucket: FakeR2Bucket;
@@ -326,6 +578,7 @@ function createBackupTestEnv(): {
       LOGTO_ISSUER: logtoIssuer,
       LOGTO_JWKS_URI: `${logtoIssuer}/jwks`,
       LOGTO_APP_ID: LOGTO_AUDIENCE,
+      BACKUP_MONTHLY_UPLOAD_LIMIT: options.monthlyUploadLimit,
     } as unknown as BackupEnv,
   };
 }
@@ -349,9 +602,11 @@ function backupFetch(
 
 function makeCommitForm(options: {
   idempotencyKey: string;
-  puts: unknown[];
-  body: Uint8Array;
+  puts?: unknown[];
+  deletes?: unknown[];
+  body?: Uint8Array;
 }): FormData {
+  const puts = options.puts ?? [];
   const form = new FormData();
   form.append(
     "manifest",
@@ -361,18 +616,20 @@ function makeCommitForm(options: {
           idempotencyKey: options.idempotencyKey,
           deviceId: "device-a",
           deviceLabel: "Test Browser",
-          puts: options.puts.map((put) => ({
+          puts: puts.map((put) => ({
             metadata: { schemaVersion: 1, records: [] },
             ...(put as object),
           })),
-          deletes: [],
+          deletes: options.deletes ?? [],
         }),
       ],
       { type: "application/json" }
     ),
     "manifest.json"
   );
-  form.append("builds", new Blob([options.body]), "builds.json.gz");
+  if (options.body) {
+    form.append("builds", new Blob([options.body]), "builds.json.gz");
+  }
   return form;
 }
 
@@ -390,6 +647,7 @@ class FakeD1Database {
   readonly devices = new Map<string, DeviceRecord>();
   readonly heads = new Map<string, HeadRecord>();
   readonly commits = new Map<string, CommitRecord>();
+  readonly quotas = new Map<string, QuotaRecord>();
 
   prepare(sql: string): FakeD1PreparedStatement {
     return new FakeD1PreparedStatement(this, sql);
@@ -426,6 +684,11 @@ class FakeD1PreparedStatement {
     if (this.sql.includes("FROM backup_commits")) {
       const key = commitKey(String(this.args[0]), String(this.args[1]));
       return (this.db.commits.get(key) ?? null) as T | null;
+    }
+
+    if (this.sql.includes("FROM backup_monthly_upload_quota")) {
+      const key = quotaKey(String(this.args[0]), String(this.args[1]));
+      return (this.db.quotas.get(key) ?? null) as T | null;
     }
 
     if (this.sql.includes("FROM backup_devices")) {
@@ -608,6 +871,36 @@ class FakeD1PreparedStatement {
       return d1Ok();
     }
 
+    if (this.sql.includes("INSERT INTO backup_monthly_upload_quota")) {
+      const [
+        userId,
+        periodUtc,
+        putObjectCount,
+        uploadedCompressedBytes,
+        createdAt,
+        updatedAt,
+      ] = this.args;
+      const key = quotaKey(String(userId), String(periodUtc));
+      const existing = this.db.quotas.get(key);
+      if (existing) {
+        existing.successful_upload_count += 1;
+        existing.put_object_count += Number(putObjectCount);
+        existing.uploaded_compressed_bytes += Number(uploadedCompressedBytes);
+        existing.updated_at = Number(updatedAt);
+      } else {
+        this.db.quotas.set(key, {
+          user_id: String(userId),
+          period_utc: String(periodUtc),
+          successful_upload_count: 1,
+          put_object_count: Number(putObjectCount),
+          uploaded_compressed_bytes: Number(uploadedCompressedBytes),
+          created_at: Number(createdAt),
+          updated_at: Number(updatedAt),
+        });
+      }
+      return d1Ok();
+    }
+
     if (this.sql.includes("INSERT INTO backup_commits")) {
       const [
         id,
@@ -671,6 +964,12 @@ class FakeR2Bucket {
     if (!blob) return null;
     return { blob: async () => blob } as R2ObjectBody;
   }
+
+  async delete(keys: string | string[]): Promise<void> {
+    for (const key of Array.isArray(keys) ? keys : [keys]) {
+      this.objects.delete(key);
+    }
+  }
 }
 
 function headKey(userId: string, partitionKey: string): string {
@@ -679,6 +978,10 @@ function headKey(userId: string, partitionKey: string): string {
 
 function commitKey(userId: string, idempotencyKey: string): string {
   return `${userId}\0${idempotencyKey}`;
+}
+
+function quotaKey(userId: string, periodUtc: string): string {
+  return `${userId}\0${periodUtc}`;
 }
 
 function d1Ok(): D1Result {

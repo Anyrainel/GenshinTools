@@ -291,10 +291,12 @@ describe("backup metadata", () => {
           maxCompressedBytesPerCommit: 10,
           maxCompressedBytesPerObject: 10,
         },
+        quota: backupQuota(),
         heads: [head],
       }),
     });
 
+    expect(snapshot.quota).toEqual(backupQuota());
     expect(snapshot.rows.find((row) => row.id === "builds")?.cloud).toEqual({
       hasRecord: true,
       count: 4,
@@ -316,6 +318,7 @@ describe("backup metadata", () => {
           maxCompressedBytesPerCommit: 10,
           maxCompressedBytesPerObject: 10,
         },
+        quota: backupQuota(),
         heads: [
           {
             partitionKey: "tiers/all",
@@ -373,6 +376,7 @@ describe("backup metadata", () => {
           maxCompressedBytesPerCommit: 10,
           maxCompressedBytesPerObject: 10,
         },
+        quota: backupQuota(),
         heads: [
           {
             partitionKey: "teams/all",
@@ -459,4 +463,14 @@ function createPartitions(): CloudExportPartition[] {
       },
     },
   ];
+}
+
+function backupQuota() {
+  return {
+    period: "2026-05",
+    limit: 10,
+    used: 3,
+    remaining: 7,
+    resetsAt: Date.UTC(2026, 5, 1),
+  };
 }

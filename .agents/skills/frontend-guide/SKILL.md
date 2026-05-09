@@ -1,18 +1,45 @@
 ---
 name: frontend-guide
 description: >
-  UI design decision guide for GenshinTools frontend work. Use when designing,
-  or redesigning user-facing React/TypeScript UI, including pages, layouts,
-  components, dialogs, controls, responsive behavior, interaction states.
-  Skip for backend-only logic, data processing, tests, build config, or tiny
-  mechanical edits where the UI pattern is already obvious from nearby code.
+  UI design decision guide for GenshinTools. Use only for open-ended frontend
+  design work: new surfaces, substantial redesigns, or unclear UX/layout
+  choices where the agent must choose the structure. Do not use for direct user
+  instructions, bug fixes, copy tweaks, mechanical UI changes, or routine edits
+  where nearby code already shows the pattern.
 ---
 
 # Frontend Guide
 
-Use this skill to make GenshinTools UI changes fit the existing app instead of
-inventing a new visual system. Keep the entrypoint light: load reference files
-only when the task needs that detail.
+Use this skill only when the task needs new design judgment for GenshinTools UI:
+new surfaces, substantial redesigns, or ambiguous layout/interaction choices.
+Keep the entrypoint light: load reference files only when the task needs that
+detail.
+
+Do not use this skill for direct implementation requests where the user already
+specified what to change. In those cases, follow the user's instruction, inspect
+nearby code, and make the narrowest compatible edit.
+
+## Applicability
+
+Use this skill for:
+
+- Creating a new page, dialog, drawer, workflow, or dense visual surface.
+- Redesigning or reorganizing an existing UI surface.
+- Choosing layout, surface hierarchy, responsive behavior, interaction states,
+  or explanatory structure when the request leaves those decisions open.
+- Reviewing a proposed UI direction when the user asks for design guidance.
+
+Skip this skill for:
+
+- Explicit changes with a clear target, such as "make this 3 columns", "move
+  this button", "rename this label", or "show this status text".
+- Bug fixes, data/store changes, tests, generated data, build config, and import
+  or persistence plumbing.
+- Small follow-up refinements to an established component or page pattern.
+- Copy or i18n wording updates unless the user asks for broader explanatory
+  design.
+- Routine control additions where the surrounding component already shows the
+  correct pattern.
 
 ## Core Workflow
 
@@ -31,29 +58,33 @@ only when the task needs that detail.
 
 ## When To Load References
 
-- `references/repo-invariants.md`: Always read before substantial UI edits.
-  It contains hard constraints for theming, assets, i18n, component imports,
-  error handling, and store/persistence boundaries.
+Only load these references after the task passes the applicability test above.
+
+- `references/repo-invariants.md`: Read after this skill applies and before
+  substantial design-led UI edits. It contains hard constraints for theming,
+  assets, i18n, component imports, error handling, and store/persistence
+  boundaries.
 - `references/layout-and-surfaces.md`: Read when creating or reorganizing a
-  page, choosing card/surface styles, displaying characters/items, or adding
+  page, choosing card/surface styles, displaying characters/items, or designing
   filters/toolbars.
 - `references/explanatory-copy-and-visuals.md`: Read when writing help dialogs,
   onboarding, empty states, tooltips, algorithm explanations, score
   explanations, or any visual aid whose job is to teach behavior.
-- `references/ux-checklist.md`: Read when adding interactions, forms, async
-  states, dense data views, responsive behavior, or before finishing a visible
-  UI change.
+- `references/ux-checklist.md`: Read when adding design-led interactions,
+  forms, async states, dense data views, responsive behavior, or before
+  finishing a visible redesign.
 
 ## Decision Priorities
 
 Use this order when rules compete:
 
-1. Repo invariants and accessibility.
-2. Accuracy against actual behavior and domain rules.
-3. Existing page-family patterns.
-4. Player workflow clarity, explanatory clarity, and scanability.
-5. Visual polish consistent with the theme system.
-6. Local convenience or implementation speed.
+1. Explicit user instructions for the requested surface.
+2. Repo invariants and accessibility.
+3. Accuracy against actual behavior and domain rules.
+4. Existing page-family patterns.
+5. Player workflow clarity, explanatory clarity, and scanability.
+6. Visual polish consistent with the theme system.
+7. Local convenience or implementation speed.
 
 ## Fast Defaults
 

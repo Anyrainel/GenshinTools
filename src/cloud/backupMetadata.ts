@@ -2,7 +2,11 @@ import type {
   TierListPayload,
   TiersCloudPayload,
 } from "@/cloud/adapters/tierAdapter";
-import type { BackupApiClient, BackupHead } from "@/cloud/apiClient";
+import type {
+  BackupApiClient,
+  BackupHead,
+  BackupUploadQuota,
+} from "@/cloud/apiClient";
 import type {
   CloudBackupHeadMetadata,
   CloudBackupRecordKind,
@@ -30,9 +34,10 @@ export type BackupMetadataRow = {
 };
 
 export type CloudBackupMetadataSnapshot = {
-  schemaVersion: 4;
+  schemaVersion: 5;
   checkedAt: number;
   headSetRev: string;
+  quota: BackupUploadQuota;
   rows: BackupMetadataRow[];
 };
 
@@ -69,9 +74,10 @@ export async function fetchCloudBackupMetadata(
 ): Promise<CloudBackupMetadataSnapshot> {
   const head = await apiClient.getHead();
   return {
-    schemaVersion: 4,
+    schemaVersion: 5,
     checkedAt: Date.now(),
     headSetRev: head.headSetRev,
+    quota: head.quota,
     rows: mergeBackupMetadataRows(
       emptyBackupMetadataRows(),
       buildCloudBackupMetadataRows(head.heads)

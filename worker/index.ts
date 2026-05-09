@@ -90,16 +90,17 @@ async function handleSiteRequest(
     return plainNotFound();
   }
 
+  if (!isStaticAssetRequest(url.pathname)) {
+    // Serve app routes explicitly so auth callbacks and deep links cannot be
+    // rewritten by the asset binding before React Router handles them.
+    return handleSpaIndexRequest(request, env);
+  }
+
   const assetResponse = await env.ASSETS.fetch(request);
   if (assetResponse.status !== 404) {
     return assetResponse;
   }
-
-  if (isStaticAssetRequest(url.pathname)) {
-    return plainNotFound();
-  }
-
-  return handleSpaIndexRequest(request, env);
+  return plainNotFound();
 }
 
 async function handleSpaIndexRequest(
@@ -122,6 +123,15 @@ async function handleSpaIndexRequest(
 }
 
 export function isStaticAssetRequest(pathname: string): boolean {
+  if (
+    pathname.startsWith("/@") ||
+    pathname.startsWith("/src/") ||
+    pathname.startsWith("/node_modules/") ||
+    pathname.startsWith("/__vite")
+  ) {
+    return true;
+  }
+
   if (STATIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     return true;
   }

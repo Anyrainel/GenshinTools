@@ -206,7 +206,9 @@ async function callProxy<T>(
   });
   if (!res.ok) {
     const label = region === "cn" ? "米游社" : "HoYoLAB";
-    throw new Error(`${label} proxy HTTP ${res.status}`);
+    throw new Error(
+      `Could not reach ${label} right now. Please try again later. (HTTP ${res.status})`
+    );
   }
   const envelope = (await res.json()) as HoyolabEnvelope<T>;
   if (envelope.retcode !== 0 || !envelope.data) {
@@ -215,10 +217,10 @@ async function callProxy<T>(
     // or salt is outdated. Surface a helpful hint so users can report it.
     const hint =
       envelope.retcode === 5003
-        ? " (API version may be outdated — please report this issue)"
+        ? " This import path may need an app update; please report this issue."
         : "";
     throw new Error(
-      `${label} API error (${envelope.retcode}): ${envelope.message || "unknown"}${hint}`
+      `${label} returned an error (${envelope.retcode}): ${envelope.message || "unknown"}${hint}`
     );
   }
   return envelope.data;

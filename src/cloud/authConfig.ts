@@ -1,6 +1,6 @@
 import { type LogtoConfig, UserScope } from "@logto/react";
 
-export const DEFAULT_LOGTO_ENDPOINT = "https://synz8r.logto.app";
+export const DEFAULT_LOGTO_ENDPOINT = "https://auth.ggartifact.com";
 export const DEFAULT_LOGTO_APP_ID = "tglrsenlbfrfrnevjwlan";
 
 export const LOGTO_ENDPOINT =
@@ -45,6 +45,10 @@ export function rememberLogtoReturnPath(returnPath?: string): string {
   const normalized = normalizeLogtoReturnPath(returnPath);
   window.sessionStorage.setItem(LOGTO_RETURN_PATH_KEY, normalized);
   return normalized;
+}
+
+export function peekLogtoReturnPath(): string | null {
+  return window.sessionStorage.getItem(LOGTO_RETURN_PATH_KEY);
 }
 
 export function consumeLogtoReturnPath(): string {

@@ -1,11 +1,8 @@
 import { useHandleSignInCallback } from "@logto/react";
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  consumeLogtoReturnPath,
-  getLogtoRedirectUri,
-  LOGTO_API_RESOURCE,
-} from "@/cloud/authConfig";
+import { consumeLogtoReturnPath } from "@/cloud/authConfig";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -15,10 +12,29 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { isLoading, error } = useHandleSignInCallback(() => {
-    navigate(consumeLogtoReturnPath(), { replace: true });
+  const { isLoading, isAuthenticated, error } = useHandleSignInCallback(() => {
+    const returnPath = consumeLogtoReturnPath();
+    navigate(returnPath, { replace: true });
   });
-  const errorMessage = error ? formatCallbackError(error) : null;
+  const [showStaleCallbackError, setShowStaleCallbackError] = useState(false);
+
+  useEffect(() => {
+    if (isLoading || isAuthenticated || error) {
+      setShowStaleCallbackError(false);
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      setShowStaleCallbackError(true);
+    }, 500);
+    return () => window.clearTimeout(timeoutId);
+  }, [error, isAuthenticated, isLoading]);
+
+  const staleCallbackMessage = showStaleCallbackError
+    ? t.ui("accountSystem.loginError.expired")
+    : null;
+  const errorMessage = error
+    ? formatCallbackError(error, t)
+    : staleCallbackMessage;
 
   return (
     <PageLayout>
@@ -26,7 +42,7 @@ export default function AuthCallbackPage() {
         <div className="space-y-4">
           <section className="rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
             <div className="p-4">
-              {error ? (
+              {errorMessage ? (
                 <>
                   <Alert variant="destructive">
                     <AlertTitle>{t.ui("accountSystem.loginFailed")}</AlertTitle>
@@ -57,38 +73,38 @@ type LogtoCallbackErrorShape = Error & {
   data?: unknown;
 };
 
-function formatCallbackError(error: Error): string {
-  const details = getLogtoCallbackErrorDetails(error);
+function formatCallbackError(
+  error: Error,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  const details = getLogtoCallbackErrorDetails(error, t);
   if (details) return details;
-  return error.message;
+  return t.ui("accountSystem.loginError.default");
 }
 
-function getLogtoCallbackErrorDetails(error: Error): string | null {
+function getLogtoCallbackErrorDetails(
+  error: Error,
+  t: ReturnType<typeof useLanguage>["t"]
+): string | null {
   const logtoError = error as LogtoCallbackErrorShape;
   if (logtoError.code === "callback_uri_verification.error_found") {
     const oidc = parseOidcError(logtoError.data);
     if (oidc?.error === "invalid_target") {
-      if (!LOGTO_API_RESOURCE) {
-        return `Logto rejected an API resource request even though this app is configured for Free-plan sign-in tokens. Clear old sign-in state and start sign-in again from the Account page. Details: ${oidc.errorDescription ?? "resource indicator is missing or unknown."}`;
-      }
-      return `Logto rejected the cloud backup API resource "${LOGTO_API_RESOURCE}". In Logto, create or enable an API resource with this exact identifier, or set VITE_LOGTO_API_RESOURCE to the identifier you configured. Details: ${oidc.errorDescription ?? "resource indicator is missing or unknown."}`;
+      return t.ui("accountSystem.loginError.cloudBackupUnavailable");
     }
-    const reason = oidc
-      ? `Logto returned ${oidc.error}${oidc.errorDescription ? `: ${oidc.errorDescription}` : ""}.`
-      : "Logto returned an error in the sign-in callback.";
-    return `${reason} If this is a redirect setup issue, check that the Logto app allows this exact redirect URI: ${getLogtoRedirectUri()}`;
+    return t.ui("accountSystem.loginError.rejected");
   }
   if (logtoError.code === "callback_uri_verification.redirect_uri_mismatched") {
-    return `The callback URL does not match the redirect URI used to start sign-in. The app expects: ${getLogtoRedirectUri()}`;
+    return t.ui("accountSystem.loginError.expired");
   }
   if (logtoError.code === "callback_uri_verification.missing_state") {
-    return "The sign-in callback is missing state. Start sign-in again from the Account page instead of opening /callback directly.";
+    return t.ui("accountSystem.loginError.expired");
   }
   if (logtoError.code === "callback_uri_verification.state_mismatched") {
-    return "The sign-in callback state does not match this browser session. Start sign-in again in the same browser tab.";
+    return t.ui("accountSystem.loginError.wrongSession");
   }
   if (logtoError.code === "callback_uri_verification.missing_code") {
-    return "The sign-in callback is missing the authorization code. Start sign-in again from the Account page.";
+    return t.ui("accountSystem.loginError.incomplete");
   }
   return null;
 }

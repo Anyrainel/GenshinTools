@@ -9,6 +9,7 @@ export const i18nUiData = {
     active: { en: "Active", zh: "使用中" },
     none: { en: "None", zh: "无" },
     home: { en: "Home", zh: "主页" },
+    more: { en: "More actions", zh: "更多操作" },
     refresh: { en: "Refresh Page", zh: "刷新页面" },
     loading: { en: "Loading...", zh: "加载中..." },
     error: { en: "Something went wrong", zh: "出错了" },
@@ -70,6 +71,16 @@ export const i18nUiData = {
       zh: "确定要删除此账号配置吗？",
     },
   },
+  notFound: {
+    title: { en: "Page not found", zh: "页面未找到" },
+    status: { en: "404", zh: "404" },
+    description: {
+      en: "This page does not exist, or the link is no longer valid.",
+      zh: "这个页面不存在，或链接已经失效。",
+    },
+    goBack: { en: "Go back", zh: "返回上一页" },
+    homeCta: { en: "Go to home", zh: "返回主页" },
+  },
   accountSystem: {
     accountMenu: { en: "Account menu", zh: "账号菜单" },
     accountTitle: { en: "Account access", zh: "账号访问" },
@@ -94,8 +105,8 @@ export const i18nUiData = {
     loginFailed: { en: "Login failed", zh: "登录失败" },
     cloudBackup: { en: "Cloud Backup", zh: "云端备份" },
     cloudBackupDesc: {
-      en: "Manual backup and restore only. No background sync runs from this page.",
-      zh: "仅手动备份与恢复。此页面不会启动后台同步。",
+      en: "For data transfer between devices or browsers. (Up to 10 uploads per month)",
+      zh: "用于多设备、多浏览器间同步数据。（每月最多10次上传）",
     },
     signInRequired: {
       en: "Sign in required",
@@ -132,29 +143,64 @@ export const i18nUiData = {
       teamConfigs: { en: "Team configs", zh: "队伍参数" },
       tiers: { en: "Tier lists", zh: "榜单" },
     },
-    uploadToCloud: { en: "Back Up", zh: "备份数据" },
-    downloadFromCloud: { en: "Restore", zh: "恢复数据" },
-    restoreStatus: { en: "Restore status", zh: "恢复状态" },
-    devStorageNotConfigured: {
-      en: "The local Worker is missing local backup storage. Restart with npm run dev:worker so the local D1 and R2 bindings are available.",
-      zh: "本地 Worker 缺少本地备份存储。请用 npm run dev:worker 重启，让本地 D1 和 R2 绑定生效。",
+    uploadToCloud: { en: "Upload", zh: "上传" },
+    downloadFromCloud: { en: "Download", zh: "下载" },
+    uploadStatus: { en: "Upload result", zh: "上传结果" },
+    restoreStatus: { en: "Download result", zh: "下载结果" },
+    uploadQuota: {
+      en: "Uploads this month: {0}/{1}",
+      zh: "本月上传：{0}/{1}",
+    },
+    uploadQuotaExceeded: {
+      en: "This account has reached the monthly upload limit of {0}. Download still works.",
+      zh: "此账号本月 {0} 次上传次数已用完，下载仍可使用。",
+    },
+    backupUnavailable: {
+      en: "Cloud backup is not available from this app right now. Your browser data is unchanged. Try again later.",
+      zh: "当前无法使用云端备份。你的浏览器本地数据不会受影响，请稍后再试。",
+    },
+    loginError: {
+      cloudBackupUnavailable: {
+        en: "Cloud backup sign-in is not available right now. Your browser data is unchanged. Try again later.",
+        zh: "当前无法登录云端备份。你的浏览器本地数据不会受影响，请稍后再试。",
+      },
+      rejected: {
+        en: "Sign-in was not accepted. Use the Sign in button and try again.",
+        zh: "登录未被接受。请重新点击登录。",
+      },
+      expired: {
+        en: "This sign-in link is incomplete or expired. Use the Sign in button again.",
+        zh: "此登录链接不完整或已过期。请重新点击登录。",
+      },
+      wrongSession: {
+        en: "This sign-in was started in a different browser tab or session. Use the Sign in button again in this tab.",
+        zh: "这次登录来自另一个标签页或浏览器会话。请在当前标签页重新点击登录。",
+      },
+      incomplete: {
+        en: "The sign-in service did not finish authorizing this browser. Use the Sign in button and try again.",
+        zh: "登录服务未完成授权。请重新点击登录。",
+      },
+      default: {
+        en: "Sign-in could not be completed. Use the Sign in button and try again.",
+        zh: "登录未能完成。请重新点击登录。",
+      },
     },
     restoreApplied: {
-      en: "Applied cloud restore sections: {0}.",
-      zh: "已应用云端恢复内容：{0} 项。",
+      en: "Downloaded cloud data sections: {0}.",
+      zh: "已下载 {0} 项云端数据。",
     },
     restoreNotice: {
       noCloudChanges: {
-        en: "No cloud changes are available to restore for this account.",
-        zh: "此账号当前没有可恢复的云端变更。",
+        en: "No cloud changes are available to download for this account.",
+        zh: "此账号当前没有可下载的云端变更。",
       },
       conflict: {
-        en: "Cloud restore is paused because local and cloud data both changed. Review the conflicts before overwriting either side.",
-        zh: "本地和云端数据都发生了变化，云端恢复已暂停。请先查看冲突，再决定覆盖哪一侧。",
+        en: "Local and cloud data both changed. Review the conflicts before choosing which cloud data to download.",
+        zh: "本地和云端数据都有改动。请先处理冲突，再选择要下载的云端数据。",
       },
       unsupported: {
-        en: "Cloud data was written by a newer app version and cannot be restored here.",
-        zh: "云端数据来自较新的应用版本，当前无法恢复。",
+        en: "Cloud data was written by a newer app version and cannot be downloaded here.",
+        zh: "云端数据来自较新的应用版本，当前无法下载。",
       },
     },
     uploadNotice: {
@@ -165,105 +211,95 @@ export const i18nUiData = {
     },
     manualChoice: {
       uploadDescription: {
-        en: "Review the data groups that will change in the cloud backup.",
-        zh: "请确认会更改云端备份的数据组。",
+        en: "Review the data categories that will be uploaded to the cloud backup.",
+        zh: "请确认要上传到云端备份的数据分类。",
       },
       downloadDescription: {
-        en: "Review the data groups that will change in this browser.",
-        zh: "请确认会更改当前浏览器的数据组。",
+        en: "Review the data categories that will be downloaded to this browser.",
+        zh: "请确认要下载到当前浏览器的数据分类。",
       },
       thisBrowser: {
         en: "This browser",
         zh: "当前浏览器",
       },
-      uploadScope: {
-        en: "Included groups update the cloud backup. Groups left out keep both sides as they are.",
-        zh: "已包含的数据组会更新云端备份；未包含的数据组两边都保持不变。",
-      },
-      downloadScope: {
-        en: "Included groups update this browser from the cloud backup. Groups left out keep both sides as they are.",
-        zh: "已包含的数据组会用云端备份更新当前浏览器；未包含的数据组两边都保持不变。",
-      },
-      automaticSectionTitle: {
-        en: "Included automatically",
-        zh: "自动包含",
-      },
+      noConflictSectionTitle: { en: "No data conflict", zh: "无数据冲突" },
+      conflictSectionTitle: { en: "Data conflict", zh: "数据冲突" },
       automaticUploadSectionDescription: {
-        en: "These local changes do not overwrite existing cloud data.",
-        zh: "这些本地改动不会覆盖已有的云端数据。",
+        en: "No conflict was found. Uploading these data categories will update the cloud backup from this browser.",
+        zh: "这些数据没有冲突。上传后，云端备份会以当前浏览器的数据为准。",
       },
       automaticDownloadSectionDescription: {
-        en: "These cloud changes do not overwrite existing local data.",
-        zh: "这些云端改动不会覆盖已有的本地数据。",
-      },
-      choiceSectionTitle: {
-        en: "Needs your choice",
-        zh: "需要选择",
+        en: "No conflict was found. Downloading these data categories will update this browser from the cloud backup.",
+        zh: "这些数据没有冲突。下载后，当前浏览器会以云端备份的数据为准。",
       },
       uploadChoiceSectionDescription: {
-        en: "Select only the rows where this browser should overwrite or remove cloud data.",
-        zh: "只勾选需要用当前浏览器覆盖或删除云端数据的行。",
+        en: "These data categories need a choice. Select a category to change the cloud backup to match this browser, or leave it unchecked to keep both sides unchanged.",
+        zh: "这些数据需要手动选择。勾选后，云端备份会改成当前浏览器这一侧；不勾选则两边都不改。",
       },
       downloadChoiceSectionDescription: {
-        en: "Select only the rows where the cloud backup should overwrite this browser.",
-        zh: "只勾选需要用云端备份覆盖当前浏览器数据的行。",
+        en: "These data categories need a choice. Select a category to download the cloud copy to this browser, or leave it unchecked to keep both sides unchanged.",
+        zh: "这些数据需要手动选择。勾选后，云端数据会下载到当前浏览器；不勾选则两边都不改。",
       },
       rowCount: {
-        en: "{0} groups",
-        zh: "{0} 组",
+        en: "{0} categories",
+        zh: "{0} 类",
       },
-      dataGroupColumn: {
-        en: "Data group",
-        zh: "数据组",
-      },
-      resultColumn: {
-        en: "What will happen",
-        zh: "将执行的操作",
-      },
-      automaticUpload: {
-        en: "Save this browser's copy to the cloud backup.",
-        zh: "将当前浏览器的数据保存到云端备份。",
-      },
-      automaticDownload: {
-        en: "Restore the cloud copy to this browser.",
-        zh: "将云端备份恢复到当前浏览器。",
-      },
+      conflictInfoColumn: { en: "Conflict info", zh: "冲突信息" },
+      selectionColumn: { en: "Selection", zh: "选择" },
       included: { en: "Included", zh: "已包含" },
+      selected: { en: "Selected", zh: "已选择" },
+      notSelected: { en: "Not selected", zh: "未选择" },
       allSkipped: {
-        en: "No data groups were included, so both sides were left unchanged.",
-        zh: "未包含任何数据组，两边都保持不变。",
+        en: "No data categories were included, so both sides were left unchanged.",
+        zh: "未包含任何数据分类，两边都保持不变。",
       },
-      keepBothUnchanged: {
-        en: "Keep this browser and the cloud backup as they are.",
-        zh: "当前浏览器和云端备份都保持不变。",
+      conflictInfoLocalOnly: {
+        en: "Only this browser has this data.",
+        zh: "只有当前浏览器有这份数据。",
       },
-      keepBothStatus: {
-        en: "Leave both unchanged",
-        zh: "两边都不更改",
+      conflictInfoRemoteOnly: {
+        en: "Only the cloud backup has this data.",
+        zh: "只有云端备份有这份数据。",
       },
-      uploadOverwriteCloud: {
-        en: "Replace the cloud backup with this browser's copy.",
-        zh: "用当前浏览器的数据覆盖云端备份。",
+      conflictInfoLocalChanged: {
+        en: "This browser changed since the last sync; the cloud backup did not.",
+        zh: "当前浏览器在上次同步后有改动，云端备份没有改动。",
       },
-      uploadDeleteCloud: {
-        en: "Remove this data from the cloud backup.",
-        zh: "从云端备份中删除这份数据。",
+      conflictInfoRemoteChanged: {
+        en: "The cloud backup changed since the last sync; this browser did not.",
+        zh: "云端备份在上次同步后有改动，当前浏览器没有改动。",
       },
-      downloadOverwriteLocal: {
-        en: "Replace this browser's copy with the cloud backup.",
-        zh: "用云端备份覆盖当前浏览器的数据。",
+      conflictInfoBothChanged: {
+        en: "Both this browser and the cloud backup changed since the last sync.",
+        zh: "当前浏览器和云端备份在上次同步后都有改动。",
       },
-      overwriteCloudStatus: {
-        en: "Overwrite cloud",
-        zh: "覆盖云端",
+      conflictInfoFirstSyncLocalAndCloud: {
+        en: "Both sides already have data, but this browser has no previous sync record.",
+        zh: "两边都有数据，但当前浏览器没有之前的同步记录。",
       },
-      deleteCloudStatus: {
-        en: "Delete from cloud",
-        zh: "删除云端",
+      conflictInfoMetadataMismatch: {
+        en: "The saved sync record does not match the current local or cloud data.",
+        zh: "保存的同步记录与当前本地或云端数据不一致。",
       },
-      overwriteLocalStatus: {
-        en: "Overwrite local",
-        zh: "覆盖本地",
+      conflictInfoUploadDeleteCloud: {
+        en: "The cloud backup has data that this browser no longer has. Selecting it removes the cloud copy.",
+        zh: "云端备份有当前浏览器已删除的数据。勾选后会删除云端副本。",
+      },
+      conflictInfoSameContent: {
+        en: "Both sides already have the same data.",
+        zh: "两边的数据已经相同。",
+      },
+      conflictInfoExcluded: {
+        en: "This data is excluded from cloud backup.",
+        zh: "这类数据不会进入云端备份。",
+      },
+      conflictInfoEmpty: {
+        en: "Neither side has data for this category.",
+        zh: "两边都没有这类数据。",
+      },
+      conflictInfoNewerCloudSchema: {
+        en: "The cloud copy was written by a newer app version.",
+        zh: "云端副本来自较新的应用版本。",
       },
       categoryJoiner: { en: ", ", zh: "、" },
     },
@@ -276,8 +312,8 @@ export const i18nUiData = {
     statusToast: {
       uploaded: { en: "Local data uploaded.", zh: "本地数据已上传。" },
       needsDownload: {
-        en: "Cloud has newer data. Review before applying.",
-        zh: "云端有较新的数据，请确认后再应用。",
+        en: "Cloud has newer data. Review before downloading.",
+        zh: "云端有较新的数据，请确认后再下载。",
       },
     },
   },

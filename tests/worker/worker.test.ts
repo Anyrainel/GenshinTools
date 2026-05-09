@@ -1,6 +1,6 @@
 import { SELF } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import { isStaticAssetRequest } from "../../worker/index";
+import worker, { isStaticAssetRequest } from "../../worker/index";
 
 describe("Worker API routing", () => {
   it("handles Enka CORS preflight in the Workers runtime", async () => {
@@ -34,8 +34,31 @@ describe("Worker API routing", () => {
     await expect(response.json()).resolves.toEqual({ error: "not_found" });
   });
 
+  it("serves app routes with query strings as the SPA shell", async () => {
+    const response = await worker.fetch(
+      new Request("https://example.com/callback?code=abc&state=xyz"),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toContain("text/html");
+    expect(await response.text()).toContain('<div id="root"></div>');
+  });
+
+  it("keeps missing static asset requests as real 404s", async () => {
+    const response = await worker.fetch(
+      new Request("https://example.com/assets/missing-test.js"),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get("Content-Type")).toContain("text/plain");
+  });
+
   it("classifies file-like and public asset paths as static assets", () => {
     expect(isStaticAssetRequest("/assets/CloudBackupPage-old.js")).toBe(true);
+    expect(isStaticAssetRequest("/@vite/client")).toBe(true);
+    expect(isStaticAssetRequest("/@react-refresh")).toBe(true);
     expect(isStaticAssetRequest("/character/avatar.webp")).toBe(true);
     expect(isStaticAssetRequest("/good/mappings.json")).toBe(true);
     expect(isStaticAssetRequest("/favicon.svg")).toBe(true);
@@ -43,3 +66,20 @@ describe("Worker API routing", () => {
     expect(isStaticAssetRequest("/team-comp/damage")).toBe(false);
   });
 });
+
+function fakeAssetEnv(): Env {
+  return {
+    ASSETS: {
+      fetch: async (request: Request) => {
+        const url = new URL(request.url);
+        if (url.pathname !== "/index.html") {
+          return new Response("asset missing", { status: 404 });
+        }
+        return new Response(
+          '<!doctype html><html><body><div id="root"></div></body></html>',
+          { headers: { "Content-Type": "text/html; charset=utf-8" } }
+        );
+      },
+    },
+  } as Env;
+}

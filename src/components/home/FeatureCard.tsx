@@ -105,7 +105,7 @@ export function FeatureCard({
           </div>
 
           <Button
-            className="gap-1.5 shrink-0 shadow-lg shadow-primary self-start md:self-center"
+            className="gap-1.5 shrink-0 bg-primary/90 hover:bg-primary shadow-lg shadow-primary self-start md:self-center"
             tabIndex={-1}
           >
             {ctaText}
@@ -140,7 +140,7 @@ export function FeatureCard({
 
           <div className="absolute bottom-4 right-5 z-10">
             <Button
-              className="gap-1.5 shadow-md shadow-primary/10 group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow"
+              className="gap-1.5 bg-primary/90 hover:bg-primary shadow-md shadow-primary/10 group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow"
               tabIndex={-1}
             >
               {ctaText}

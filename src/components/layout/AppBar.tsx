@@ -8,6 +8,7 @@ import {
   type LucideIcon,
   Mail,
   Menu,
+  MoreHorizontal,
   Palette,
   Settings,
 } from "lucide-react";
@@ -54,7 +55,7 @@ export interface ActionConfig {
   icon: LucideIcon;
   label: string;
   onTrigger: () => void;
-  /** If true, always visible; otherwise collapses into overflow menu on mobile (< md) */
+  /** If true, preferred as the single promoted page action. */
   alwaysShow?: boolean;
   /** Tour step ID for onboarding spotlight */
   tourStepId?: string;
@@ -71,6 +72,8 @@ export interface AppBarProps {
   onTabChange?: (tab: string) => void;
   /** Additional custom actions as ReactNode (legacy support) */
   legacyActions?: React.ReactNode;
+  /** If true, account, theme, and language render as separate header controls. */
+  standaloneUtilityActions?: boolean;
   className?: string;
 }
 
@@ -80,8 +83,8 @@ export interface AppBarProps {
  * Features:
  * - Navigation links collapse to hamburger Sheet on mobile (< lg)
  * - Tabs displayed inline on desktop (md+), collapse into hamburger on mobile
- * - Actions collapse to overflow DropdownMenu on mobile (< md)
- * - Theme and language switchers in overflow menu on mobile
+ * - Page actions render as one promoted action plus a page-only overflow menu
+ * - Theme and language switchers live in the account menu by default
  * - Supports both new ActionConfig[] pattern and legacy ReactNode actions
  */
 export function AppBar({
@@ -90,6 +93,7 @@ export function AppBar({
   activeTab,
   onTabChange,
   legacyActions,
+  standaloneUtilityActions = false,
   className,
 }: AppBarProps) {
   const { language, toggleLanguage, t } = useLanguage();
@@ -146,14 +150,17 @@ export function AppBar({
 
   const navItems = getNavigationConfig(t);
 
-  // Split actions: help & clear always go to context menu, rest split by alwaysShow
-  const menuOnlyActions =
-    actions?.filter((a) => a.key === "help" || a.key === "clear") ?? [];
-  const visibleActions =
-    actions?.filter((a) => a.key !== "help" && a.key !== "clear") ?? [];
-  const alwaysShowActions = visibleActions.filter((a) => a.alwaysShow);
-  const collapsibleActions = visibleActions.filter((a) => !a.alwaysShow);
-  const hasCollapsibleActions = collapsibleActions.length > 0;
+  const pageActions = actions ?? [];
+  const promotedAction =
+    pageActions.find((action) => action.alwaysShow) ??
+    pageActions.find(
+      (action) => action.key !== "help" && action.key !== "clear"
+    ) ??
+    pageActions[0];
+  const overflowActions = promotedAction
+    ? pageActions.filter((action) => action !== promotedAction)
+    : [];
+  const hasOverflowActions = overflowActions.length > 0;
   const hasTabs = tabs && tabs.length > 0;
   const accountLabel = accountError
     ? t.ui("accountSystem.accountLoadFailed")
@@ -163,6 +170,9 @@ export function AppBar({
         account?.displayName ??
         account?.subject ??
         t.ui("accountSystem.accountEmailFallback"));
+  const accountTriggerLabel = isAuthenticated
+    ? accountLabel
+    : t.ui("accountSystem.signedOut");
 
   const handleSignIn = async () => {
     try {
@@ -209,6 +219,181 @@ export function AppBar({
         return t.ui("theme.nodkrai");
     }
   };
+
+  const renderThemeItems = () =>
+    SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
+      <DropdownMenuItem
+        key={themeId}
+        onClick={() => setTheme(themeId)}
+        className="gap-2"
+      >
+        {theme === themeId && <Check className="w-4 h-4" />}
+        {theme !== themeId && <span className="w-4" />}
+        {getThemeLabel(themeId)}
+      </DropdownMenuItem>
+    ));
+
+  const renderLanguageItems = () => (
+    <>
+      <DropdownMenuItem onClick={toggleLanguage} className="gap-2">
+        <Check
+          className={cn(
+            "w-4 h-4",
+            language === "en" ? "opacity-100" : "opacity-0"
+          )}
+        />
+        English
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={toggleLanguage} className="gap-2">
+        <Check
+          className={cn(
+            "w-4 h-4",
+            language === "zh" ? "opacity-100" : "opacity-0"
+          )}
+        />
+        中文
+      </DropdownMenuItem>
+    </>
+  );
+
+  const renderAccountMenu = (
+    includeUtilityItems: boolean,
+    trailingMargin = true
+  ) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          aria-label={t.ui("accountSystem.accountMenu")}
+          className={cn(
+            "h-9 min-w-9 px-0 xl:max-w-52 xl:px-3",
+            trailingMargin && "2xl:mr-4"
+          )}
+        >
+          <CircleUserRound className="w-5 h-5" />
+          <span className="hidden xl:inline truncate">
+            {accountTriggerLabel}
+          </span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        {isAuthenticated ? (
+          <>
+            <DropdownMenuLabel className="xl:hidden flex items-center gap-2 font-normal">
+              <Mail className="w-4 h-4 text-primary" />
+              <span className="truncate">{accountLabel}</span>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="xl:hidden" />
+            <DropdownMenuItem asChild className="gap-2">
+              <Link to="/account/cloud-backup">
+                <Cloud className="w-4 h-4" />
+                {t.ui("accountSystem.syncData")}
+              </Link>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem
+            onClick={() => void handleSignIn()}
+            disabled={isAccountLoading}
+            className="gap-2"
+          >
+            <LogIn className="w-4 h-4" />
+            {t.ui("accountSystem.signIn")}
+          </DropdownMenuItem>
+        )}
+        {includeUtilityItems && <DropdownMenuSeparator />}
+
+        {includeUtilityItems && (
+          <>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="gap-2">
+                <Palette className="w-4 h-4" />
+                <span>{t.ui("theme.switcherButton")}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  {renderThemeItems()}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="gap-2">
+                <Languages className="w-4 h-4" />
+                <span>{t.ui("app.language")}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  {renderLanguageItems()}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </>
+        )}
+        {isAuthenticated && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="gap-2">
+              <a href={getLogtoAccountCenterSecurityUrl()}>
+                <Settings className="w-4 h-4" />
+                {t.ui("accountSystem.manageAccount")}
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => void handleSignOut()}
+              disabled={isAccountLoading}
+              className="gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              {t.ui("accountSystem.signOut")}
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const renderStandaloneUtilityActions = () => (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="h-9 gap-2 px-3">
+            <Palette className="w-4 h-4" />
+            <span>{t.ui("theme.switcherButton")}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {renderThemeItems()}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="h-9 gap-2 px-3">
+            <Languages className="w-4 h-4" />
+            <span>{t.ui("app.language")}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {renderLanguageItems()}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {isAuthenticated ? (
+        renderAccountMenu(false)
+      ) : (
+        <Button
+          variant="outline"
+          className="h-9 gap-2 px-3 2xl:mr-4"
+          onClick={() => void handleSignIn()}
+          disabled={isAccountLoading}
+        >
+          <LogIn className="w-4 h-4" />
+          <span>{t.ui("accountSystem.signIn")}</span>
+        </Button>
+      )}
+    </>
+  );
 
   return (
     <>
@@ -359,87 +544,35 @@ export function AppBar({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Always show actions */}
-            {alwaysShowActions.map((action) => (
+            {promotedAction && (
               <Button
-                key={action.key}
                 variant="outline"
-                className="h-9 gap-2 pt-1.5 pb-2.5"
-                onClick={action.onTrigger}
-                data-tour-step-id={action.tourStepId}
+                aria-label={promotedAction.label}
+                className="h-9 gap-2 px-2 pt-1.5 pb-2.5 sm:px-3"
+                onClick={promotedAction.onTrigger}
+                data-tour-step-id={promotedAction.tourStepId}
               >
-                <action.icon className="w-4 h-4" />
-                <span>{action.label}</span>
+                <promotedAction.icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{promotedAction.label}</span>
               </Button>
-            ))}
+            )}
 
-            {/* Desktop-only collapsible actions */}
-            <div className="hidden md:flex items-center gap-2">
-              {collapsibleActions.map((action) => (
-                <Button
-                  key={action.key}
-                  variant="outline"
-                  className="h-9 gap-2 pt-1.5 pb-2.5"
-                  onClick={action.onTrigger}
-                  data-tour-step-id={action.tourStepId}
-                >
-                  <action.icon className="w-4 h-4" />
-                  {action.label}
-                </Button>
-              ))}
-            </div>
-
-            {/* Legacy actions support */}
-            {legacyActions}
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full 2xl:mr-4"
-                >
-                  <CircleUserRound className="w-5 h-5" />
-                  <span className="sr-only">
-                    {t.ui("accountSystem.accountMenu")}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-56">
-                {isAuthenticated ? (
-                  <>
-                    <DropdownMenuLabel className="flex items-center gap-2 font-normal">
-                      <Mail className="w-4 h-4 text-primary" />
-                      <span className="truncate">{accountLabel}</span>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild className="gap-2">
-                      <a href={getLogtoAccountCenterSecurityUrl()}>
-                        <Settings className="w-4 h-4" />
-                        {t.ui("accountSystem.manageAccount")}
-                      </a>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="gap-2">
-                      <Link to="/account/cloud-backup">
-                        <Cloud className="w-4 h-4" />
-                        {t.ui("accountSystem.syncData")}
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <DropdownMenuItem
-                    onClick={() => void handleSignIn()}
-                    disabled={isAccountLoading}
-                    className="gap-2"
+            {hasOverflowActions && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    aria-label={t.ui("common.more")}
+                    className="h-9 gap-2 px-2 pt-1.5 pb-2.5 sm:px-3"
                   >
-                    <LogIn className="w-4 h-4" />
-                    {t.ui("accountSystem.signIn")}
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-
-                <div className="md:hidden">
-                  {collapsibleActions.map((action) => (
+                    <MoreHorizontal className="w-4 h-4" />
+                    <span className="hidden sm:inline">
+                      {t.ui("common.more")}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {overflowActions.map((action) => (
                     <DropdownMenuItem
                       key={action.key}
                       onClick={action.onTrigger}
@@ -449,96 +582,16 @@ export function AppBar({
                       {action.label}
                     </DropdownMenuItem>
                   ))}
-                  {hasCollapsibleActions && <DropdownMenuSeparator />}
-                </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-                {menuOnlyActions.length > 0 && (
-                  <>
-                    {menuOnlyActions.map((action) => (
-                      <DropdownMenuItem
-                        key={action.key}
-                        onClick={action.onTrigger}
-                        className="gap-2"
-                      >
-                        <action.icon className="w-4 h-4" />
-                        {action.label}
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                  </>
-                )}
+            {/* Legacy actions support */}
+            {legacyActions}
 
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="gap-2">
-                    <Palette className="w-4 h-4" />
-                    <span>{t.ui("theme.switcherButton")}</span>
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      {SELECTABLE_THEME_IDS.map((themeId: ThemeId) => (
-                        <DropdownMenuItem
-                          key={themeId}
-                          onClick={() => setTheme(themeId)}
-                          className="gap-2"
-                        >
-                          {theme === themeId && <Check className="w-4 h-4" />}
-                          {theme !== themeId && <span className="w-4" />}
-                          {getThemeLabel(themeId)}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="gap-2">
-                    <Languages className="w-4 h-4" />
-                    <span>{t.ui("app.language")}</span>
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem
-                        onClick={toggleLanguage}
-                        className="gap-2"
-                      >
-                        <Check
-                          className={cn(
-                            "w-4 h-4",
-                            language === "en" ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        English
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={toggleLanguage}
-                        className="gap-2"
-                      >
-                        <Check
-                          className={cn(
-                            "w-4 h-4",
-                            language === "zh" ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        中文
-                      </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-                {isAuthenticated && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => void handleSignOut()}
-                      disabled={isAccountLoading}
-                      className="gap-2"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      {t.ui("accountSystem.signOut")}
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {standaloneUtilityActions
+              ? renderStandaloneUtilityActions()
+              : renderAccountMenu(true)}
           </div>
         </div>
       </header>

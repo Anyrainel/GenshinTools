@@ -15,6 +15,13 @@ describe("cloud backup auth headers", () => {
           maxCompressedBytesPerCommit: 100,
           maxCompressedBytesPerObject: 50,
         },
+        quota: {
+          period: "2026-05",
+          limit: 10,
+          used: 0,
+          remaining: 10,
+          resetsAt: Date.UTC(2026, 5, 1),
+        },
         heads: [],
       })
     ) as typeof fetch;
