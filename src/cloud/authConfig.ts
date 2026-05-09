@@ -7,8 +7,6 @@ export const LOGTO_ENDPOINT =
   import.meta.env.VITE_LOGTO_ENDPOINT?.trim() || DEFAULT_LOGTO_ENDPOINT;
 export const LOGTO_APP_ID =
   import.meta.env.VITE_LOGTO_APP_ID?.trim() || DEFAULT_LOGTO_APP_ID;
-export const LOGTO_API_RESOURCE =
-  import.meta.env.VITE_LOGTO_API_RESOURCE?.trim() || "";
 const LOGTO_RETURN_PATH_KEY = "logto:returnPath";
 const FALLBACK_RETURN_PATH = "/";
 const ACCOUNT_FALLBACK_RETURN_PATH = "/account/cloud-backup";
@@ -16,7 +14,6 @@ const ACCOUNT_FALLBACK_RETURN_PATH = "/account/cloud-backup";
 export const logtoConfig: LogtoConfig = {
   endpoint: LOGTO_ENDPOINT,
   appId: LOGTO_APP_ID,
-  ...(LOGTO_API_RESOURCE ? { resources: [LOGTO_API_RESOURCE] } : {}),
   scopes: buildLogtoScopes(import.meta.env.VITE_LOGTO_SCOPES),
 };
 

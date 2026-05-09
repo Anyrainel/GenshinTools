@@ -97,6 +97,7 @@ export type BackupApiClientOptions = {
   baseUrl?: string;
   fetchImpl?: typeof fetch;
   getHeaders?: () => HeadersInit | Promise<HeadersInit>;
+  credentials?: RequestCredentials;
 };
 
 export class BackupApiError extends Error {
@@ -115,11 +116,13 @@ export class BackupApiClient {
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof fetch;
   private readonly getHeaders?: () => HeadersInit | Promise<HeadersInit>;
+  private readonly credentials: RequestCredentials;
 
   constructor(options: BackupApiClientOptions = {}) {
     this.baseUrl = (options.baseUrl ?? "/api/backup/v1").replace(/\/$/, "");
     this.fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
     this.getHeaders = options.getHeaders;
+    this.credentials = options.credentials ?? "same-origin";
   }
 
   async getHead(
@@ -132,6 +135,7 @@ export class BackupApiClient {
     const response = await this.fetchImpl(url, {
       method: "GET",
       headers: await this.headers(),
+      credentials: this.credentials,
     });
     return this.readJson<BackupHeadResponse>(response, "get backup head");
   }
@@ -163,6 +167,7 @@ export class BackupApiClient {
       method: "POST",
       headers: await this.headers(),
       body: form,
+      credentials: this.credentials,
     });
     return this.readJson<BackupCommitResponse>(
       response,
@@ -180,6 +185,7 @@ export class BackupApiClient {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ objectIds }),
+      credentials: this.credentials,
     });
     await throwIfError(response, "download backup objects");
 

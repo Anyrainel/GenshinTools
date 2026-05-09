@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   type AppEnv,
+  handleAuthRequest,
   isAuthFailure,
   requireEntitlement,
   requireUser,
@@ -91,6 +92,118 @@ describe("Worker auth boundary", () => {
       userId: result.userId,
       email: "traveler@example.com",
       displayName: "Traveler",
+    });
+  });
+
+  it("creates and accepts first-party app sessions", async () => {
+    const issuer = "https://logto-session.test/oidc";
+    const audience = "test-spa-app";
+    const { token, jwks } = await createTestJwt({
+      issuer,
+      audience,
+      subject: "logto-user-session",
+      claims: {
+        name: "Session Traveler",
+        email: "session@example.com",
+      },
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(jwks))
+    );
+    const db = new FakeAuthD1Database();
+    const env = {
+      BACKUP_DB: db,
+      LOGTO_ISSUER: issuer,
+      LOGTO_JWKS_URI: `${issuer}/jwks`,
+      LOGTO_APP_ID: audience,
+    } as unknown as AppEnv;
+
+    const response = await handleAuthRequest(
+      request(
+        { Authorization: `Bearer ${token}` },
+        "/api/auth/session",
+        "POST"
+      ),
+      new URL("https://example.com/api/auth/session"),
+      env
+    );
+    const payload = await response.json();
+    const setCookie = response.headers.get("Set-Cookie");
+    const sessionCookie = setCookie?.split(";")[0] ?? "";
+    const sessionResult = await requireUser(
+      request({ Cookie: sessionCookie }),
+      {
+        BACKUP_DB: db,
+      } as unknown as AppEnv
+    );
+
+    expect(response.status).toBe(200);
+    expect(payload).toMatchObject({
+      user: {
+        displayName: "Session Traveler",
+        authMode: "logto",
+        entitlements: ["cloud_sync"],
+      },
+    });
+    expect(setCookie).toContain("ggartifact_session=");
+    expect(setCookie).toContain("HttpOnly");
+    expect(isAuthFailure(sessionResult)).toBe(false);
+    if (isAuthFailure(sessionResult)) return;
+    expect(sessionResult).toMatchObject({
+      displayName: "Session Traveler",
+      authMode: "logto",
+    });
+  });
+
+  it("revokes app sessions on logout", async () => {
+    const issuer = "https://logto-logout.test/oidc";
+    const audience = "test-spa-app";
+    const { token, jwks } = await createTestJwt({
+      issuer,
+      audience,
+      subject: "logto-user-logout",
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(jwks))
+    );
+    const db = new FakeAuthD1Database();
+    const env = {
+      BACKUP_DB: db,
+      LOGTO_ISSUER: issuer,
+      LOGTO_JWKS_URI: `${issuer}/jwks`,
+      LOGTO_APP_ID: audience,
+    } as unknown as AppEnv;
+
+    const sessionResponse = await handleAuthRequest(
+      request(
+        { Authorization: `Bearer ${token}` },
+        "/api/auth/session",
+        "POST"
+      ),
+      new URL("https://example.com/api/auth/session"),
+      env
+    );
+    const sessionCookie = sessionResponse.headers
+      .get("Set-Cookie")
+      ?.split(";")[0];
+
+    const logoutResponse = await handleAuthRequest(
+      request({ Cookie: sessionCookie ?? "" }, "/api/auth/logout", "POST"),
+      new URL("https://example.com/api/auth/logout"),
+      env
+    );
+    const sessionResult = await requireUser(
+      request({ Cookie: sessionCookie ?? "" }),
+      { BACKUP_DB: db } as unknown as AppEnv
+    );
+
+    expect(logoutResponse.status).toBe(200);
+    expect(logoutResponse.headers.get("Set-Cookie")).toContain("Max-Age=0");
+    expect(sessionResult).toEqual({
+      status: 401,
+      payload: { error: "unauthenticated" },
     });
   });
 
@@ -219,8 +332,12 @@ describe("Worker auth boundary", () => {
   });
 });
 
-function request(headers: HeadersInit = {}) {
-  return new Request("https://example.com/api/backup/v1/head", { headers });
+function request(
+  headers: HeadersInit = {},
+  path = "/api/backup/v1/head",
+  method = "GET"
+) {
+  return new Request(`https://example.com${path}`, { headers, method });
 }
 
 class FakeAuthD1Database {
@@ -231,6 +348,14 @@ class FakeAuthD1Database {
       userId: string;
       email: string | null;
       displayName: string | null;
+    }
+  >();
+  readonly sessions = new Map<
+    string,
+    {
+      userId: string;
+      expiresAt: number;
+      revokedAt: number | null;
     }
   >();
 
@@ -280,7 +405,48 @@ class FakeAuthD1Statement {
       return d1Ok();
     }
 
+    if (this.sql.includes("INSERT INTO app_auth_sessions")) {
+      const [tokenHash, userId, _createdAt, expiresAt] = this.args;
+      this.db.sessions.set(String(tokenHash), {
+        userId: String(userId),
+        expiresAt: Number(expiresAt),
+        revokedAt: null,
+      });
+      return d1Ok();
+    }
+
+    if (this.sql.includes("UPDATE app_auth_sessions")) {
+      const [revokedAt, tokenHash] = this.args;
+      const session = this.db.sessions.get(String(tokenHash));
+      if (session && session.revokedAt === null) {
+        session.revokedAt = Number(revokedAt);
+      }
+      return d1Ok();
+    }
+
     throw new Error(`Unhandled fake run SQL: ${this.sql}`);
+  }
+
+  async first<T = unknown>(): Promise<T | null> {
+    if (this.sql.includes("FROM app_auth_sessions")) {
+      const [tokenHash, now] = this.args;
+      const session = this.db.sessions.get(String(tokenHash));
+      if (
+        !session ||
+        session.revokedAt !== null ||
+        session.expiresAt <= Number(now)
+      ) {
+        return null;
+      }
+      const user = this.db.appUsers.get(session.userId);
+      if (!user) return null;
+      return {
+        user_id: session.userId,
+        display_name: user.displayName,
+      } as T;
+    }
+
+    throw new Error(`Unhandled fake first SQL: ${this.sql}`);
   }
 }
 

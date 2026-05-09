@@ -6,6 +6,7 @@ import {
   getLogtoRedirectUri,
   rememberLogtoReturnPath,
 } from "@/cloud/authConfig";
+import { clearAppSession } from "@/cloud/session";
 
 export type LogtoAccountSummary = {
   subject: string;
@@ -85,6 +86,7 @@ export function useLogtoAccountSummary(): LogtoAccountSummaryHook {
   );
 
   const signOut = useCallback(async () => {
+    await clearAppSession().catch(() => undefined);
     await logtoSignOut(getLogtoPostSignOutRedirectUri());
   }, [logtoSignOut]);
 

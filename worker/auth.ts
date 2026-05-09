@@ -7,7 +7,6 @@ export type AppEnv = Env & {
   LOGTO_ISSUER?: string;
   LOGTO_JWKS_URI?: string;
   LOGTO_APP_ID?: string;
-  LOGTO_API_RESOURCE?: string;
   BACKUP_MONTHLY_UPLOAD_LIMIT?: string;
 };
 
@@ -30,6 +29,8 @@ const AUTH_API_PREFIX = "/api/auth";
 const LOGTO_PROVIDER = "logto";
 const DEFAULT_LOGTO_ENDPOINT = "https://auth.ggartifact.com";
 const DEFAULT_LOGTO_APP_ID = "tglrsenlbfrfrnevjwlan";
+const APP_SESSION_COOKIE = "ggartifact_session";
+const APP_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const AUTH_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -42,7 +43,8 @@ export async function requireUser(
   env: AppEnv
 ): Promise<AuthenticatedUser | AuthFailure> {
   const bearerToken = getBearerToken(request);
-  if (!bearerToken) {
+  const appSessionToken = getCookieValue(request, APP_SESSION_COOKIE);
+  if (!bearerToken && !appSessionToken) {
     return { status: 401, payload: { error: "unauthenticated" } };
   }
 
@@ -53,7 +55,18 @@ export async function requireUser(
     };
   }
 
-  if (!looksLikeJwt(bearerToken)) {
+  if (appSessionToken) {
+    const appSessionUser = await lookupAppSessionUser(
+      env.BACKUP_DB,
+      appSessionToken
+    );
+    if (appSessionUser) return appSessionUser;
+    if (!bearerToken) {
+      return { status: 401, payload: { error: "unauthenticated" } };
+    }
+  }
+
+  if (!bearerToken || !looksLikeJwt(bearerToken)) {
     return { status: 401, payload: { error: "unauthenticated" } };
   }
 
@@ -75,6 +88,13 @@ export async function handleAuthRequest(
   }
 
   const path = stripAuthPrefix(url.pathname);
+  if (path === "/session") {
+    if (request.method !== "POST") {
+      return authJson({ error: "method_not_allowed" }, 405);
+    }
+    return handleCreateSession(request, env);
+  }
+
   if (path === "/me") {
     if (request.method !== "GET") {
       return authJson({ error: "method_not_allowed" }, 405);
@@ -88,7 +108,7 @@ export async function handleAuthRequest(
     if (request.method !== "POST") {
       return authJson({ error: "method_not_allowed" }, 405);
     }
-    return handleLogout();
+    return handleLogout(request, env);
   }
 
   return authJson({ error: "not_found" }, 404);
@@ -100,11 +120,21 @@ type LogtoConfig = {
   audience: string;
 };
 
+type AppSessionRow = {
+  user_id: string;
+  display_name: string | null;
+};
+
 type LogtoIdentity = {
   subject: string;
   userId: string;
   displayName?: string;
   email?: string;
+};
+
+type AppSession = {
+  token: string;
+  expiresAt: number;
 };
 
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
@@ -202,8 +232,111 @@ async function upsertLogtoUser(
   ]);
 }
 
-async function handleLogout(): Promise<Response> {
-  return authJson({ ok: true });
+async function handleCreateSession(
+  request: Request,
+  env: AppEnv
+): Promise<Response> {
+  const bearerToken = getBearerToken(request);
+  if (!bearerToken || !looksLikeJwt(bearerToken)) {
+    return authJson({ error: "unauthenticated" }, 401);
+  }
+
+  if (!env.BACKUP_DB) {
+    return authJson({ error: "backup_storage_not_configured" }, 503);
+  }
+
+  const logtoConfig = getLogtoConfig(env);
+  if (!logtoConfig) return authJson({ error: "unauthenticated" }, 401);
+
+  const user = await lookupLogtoUser(env.BACKUP_DB, bearerToken, logtoConfig);
+  if (isAuthFailure(user)) return authJson(user.payload, user.status);
+
+  const session = await createAppSession(env.BACKUP_DB, user.userId);
+  return authJson(
+    {
+      user: toUserPayload(user),
+      expiresAt: session.expiresAt,
+    },
+    200,
+    {
+      "Set-Cookie": serializeAppSessionCookie(
+        request,
+        session.token,
+        session.expiresAt
+      ),
+    }
+  );
+}
+
+async function handleLogout(request: Request, env: AppEnv): Promise<Response> {
+  if (env.BACKUP_DB) {
+    const appSessionToken = getCookieValue(request, APP_SESSION_COOKIE);
+    if (appSessionToken) {
+      await revokeAppSession(env.BACKUP_DB, appSessionToken);
+    }
+  }
+  return authJson({ ok: true }, 200, {
+    "Set-Cookie": serializeExpiredAppSessionCookie(request),
+  });
+}
+
+async function lookupAppSessionUser(
+  db: D1Database,
+  token: string
+): Promise<AuthenticatedUser | null> {
+  const now = Date.now();
+  const tokenHash = await sha256Hex(token);
+  const row = await db
+    .prepare(
+      `SELECT s.user_id, u.display_name
+       FROM app_auth_sessions s
+       JOIN app_users u ON u.id = s.user_id
+       WHERE s.token_hash = ?
+         AND s.revoked_at IS NULL
+         AND s.expires_at > ?
+       LIMIT 1`
+    )
+    .bind(tokenHash, now)
+    .first<AppSessionRow>();
+  if (!row) return null;
+  return {
+    userId: row.user_id,
+    displayName: row.display_name ?? undefined,
+    entitlements: new Set(["cloud_sync"]),
+    authMode: "logto",
+  };
+}
+
+async function createAppSession(
+  db: D1Database,
+  userId: string
+): Promise<AppSession> {
+  const now = Date.now();
+  const token = randomToken();
+  const tokenHash = await sha256Hex(token);
+  const expiresAt = now + APP_SESSION_TTL_MS;
+  await db
+    .prepare(
+      `INSERT INTO app_auth_sessions (
+         token_hash, user_id, created_at, expires_at, last_seen_at, revoked_at
+       )
+       VALUES (?, ?, ?, ?, ?, NULL)`
+    )
+    .bind(tokenHash, userId, now, expiresAt, now)
+    .run();
+  return { token, expiresAt };
+}
+
+async function revokeAppSession(db: D1Database, token: string): Promise<void> {
+  const tokenHash = await sha256Hex(token);
+  await db
+    .prepare(
+      `UPDATE app_auth_sessions
+       SET revoked_at = COALESCE(revoked_at, ?)
+       WHERE token_hash = ?`
+    )
+    .bind(Date.now(), tokenHash)
+    .run();
 }
 
 export function requireEntitlement(
@@ -238,6 +371,52 @@ function getBearerToken(request: Request): string | null {
   return match?.[1]?.trim() || null;
 }
 
+function getCookieValue(request: Request, name: string): string | null {
+  const cookie = request.headers.get("Cookie");
+  if (!cookie) return null;
+  for (const part of cookie.split(";")) {
+    const [rawName, ...rawValue] = part.trim().split("=");
+    if (rawName !== name) continue;
+    return rawValue.join("=") || null;
+  }
+  return null;
+}
+
+function serializeAppSessionCookie(
+  request: Request,
+  token: string,
+  expiresAt: number
+): string {
+  const maxAge = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+  return [
+    `${APP_SESSION_COOKIE}=${token}`,
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Lax",
+    `Max-Age=${maxAge}`,
+    `Expires=${new Date(expiresAt).toUTCString()}`,
+    ...(new URL(request.url).protocol === "https:" ? ["Secure"] : []),
+  ].join("; ");
+}
+
+function serializeExpiredAppSessionCookie(request: Request): string {
+  return [
+    `${APP_SESSION_COOKIE}=`,
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Lax",
+    "Max-Age=0",
+    "Expires=Thu, 01 Jan 1970 00:00:00 GMT",
+    ...(new URL(request.url).protocol === "https:" ? ["Secure"] : []),
+  ].join("; ");
+}
+
+function randomToken(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return bytesToBase64Url(bytes);
+}
+
 function looksLikeJwt(value: string): boolean {
   return value.split(".").length === 3;
 }
@@ -250,11 +429,7 @@ function getLogtoConfig(env: AppEnv): LogtoConfig | null {
   const jwksUri = normalizeUrl(
     env.LOGTO_JWKS_URI ?? (issuer ? `${issuer}/jwks` : undefined)
   );
-  const audience = (
-    env.LOGTO_API_RESOURCE ||
-    env.LOGTO_APP_ID ||
-    DEFAULT_LOGTO_APP_ID
-  ).trim();
+  const audience = (env.LOGTO_APP_ID || DEFAULT_LOGTO_APP_ID).trim();
   if (!issuer || !jwksUri || !audience) return null;
   return { issuer, jwksUri, audience };
 }
@@ -302,15 +477,34 @@ function bytesToHex(bytes: Uint8Array): string {
   return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+function bytesToBase64Url(bytes: Uint8Array): string {
+  let binary = "";
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary)
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
+}
+
 function stripAuthPrefix(pathname: string): string {
   return pathname.startsWith(AUTH_API_PREFIX)
     ? pathname.slice(AUTH_API_PREFIX.length) || "/"
     : pathname;
 }
 
-function authJson(payload: unknown, status = 200): Response {
+function authJson(
+  payload: unknown,
+  status = 200,
+  headers: HeadersInit = {}
+): Response {
   return new Response(JSON.stringify(payload), {
     status,
-    headers: { ...AUTH_CORS_HEADERS, "Content-Type": "application/json" },
+    headers: {
+      ...AUTH_CORS_HEADERS,
+      ...Object.fromEntries(new Headers(headers).entries()),
+      "Content-Type": "application/json",
+    },
   });
 }

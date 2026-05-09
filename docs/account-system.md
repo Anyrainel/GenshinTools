@@ -1,6 +1,6 @@
 # Account System
 
-Last updated: 2026-05-05.
+Last updated: 2026-05-09.
 
 This document is the source of truth for the current account, auth, Worker API, and cloud-backup system shape. Data schemas and backup partition modeling live in `docs/backup-data-model.md`.
 
@@ -11,18 +11,18 @@ This document is the source of truth for the current account, auth, Worker API, 
 - Backup/restore is manual only. There are no passive background sync triggers.
 - The Worker backup API is implemented under `/api/backup/v1`.
 - D1 stores account/auth metadata and backup heads. R2 stores compressed backup object bodies.
-- There is no separate dev-login, session-token, or first-party auth-session path.
+- The Worker issues a first-party backup session cookie after Logto proves identity once.
 
 ## Frontend Auth
 
 The React app uses `@logto/react`:
 
 - `src/main.tsx` wraps the app in `LogtoProvider`.
-- `src/cloud/authConfig.ts` owns Logto endpoint, app id, optional API resource, scopes, and redirect helpers.
-- `src/pages/account/AuthCallbackPage.tsx` handles the sign-in callback.
+- `src/cloud/authConfig.ts` owns Logto endpoint, app id, scopes, and redirect helpers.
+- `src/pages/account/AuthCallbackPage.tsx` handles the sign-in callback and creates the first-party app session.
 - `src/pages/account/AccountPage.tsx` owns sign-in, sign-out, and account status UI.
-- `src/pages/account/CloudBackupPage.tsx` reads Logto auth state before enabling manual backup and restore actions.
-- `src/cloud/session.ts` creates `BackupApiClient` instances that send `Authorization: Bearer <token>`. By default this is the Logto ID token so the Free plan does not need API resources. If `VITE_LOGTO_API_RESOURCE` is set later, it uses a resource access token instead.
+- `src/pages/account/CloudBackupPage.tsx` reads Logto auth state before enabling manual backup and restore actions. If the backup session cookie is missing or expired, it retries once by creating a new app session from the current Logto ID token.
+- `src/cloud/session.ts` creates `BackupApiClient` instances that use the first-party app session cookie via `credentials: "same-origin"`.
 
 Default frontend values:
 
@@ -30,7 +30,6 @@ Default frontend values:
 | --- | --- |
 | `VITE_LOGTO_ENDPOINT` | `https://auth.ggartifact.com` |
 | `VITE_LOGTO_APP_ID` | `tglrsenlbfrfrnevjwlan` |
-| `VITE_LOGTO_API_RESOURCE` | empty |
 | `VITE_LOGTO_SCOPES` | empty |
 
 The Logto SPA app id is public client metadata. Do not put client secrets, management API secrets, private keys, or Worker secrets in the frontend.
@@ -51,15 +50,7 @@ Post sign-out redirect URIs:
 - `http://localhost:5173/`
 - the matching root URL for any other local dev origin
 
-No API resource is required for v1. The Worker only needs to know that the user signed into this SPA, so it validates Logto ID tokens whose audience is the SPA app id. This keeps the app compatible with Logto Free plan tenants that cannot create API resources.
-
-Optional future API-resource mode:
-
-- Create a Logto API resource only when you need Logto-side API scopes/RBAC.
-- Set both `VITE_LOGTO_API_RESOURCE` and `LOGTO_API_RESOURCE` to the exact resource identifier.
-- The frontend will request a resource access token and the Worker will validate that resource audience instead of the app id.
-
-If local sign-in fails with `invalid_target`, the frontend is still requesting a Logto API resource. Clear `VITE_LOGTO_API_RESOURCE`, restart Vite, and start sign-in again from `/account`.
+No API resource is required for v1. The Worker only needs to know that the user signed into this SPA, so `/api/auth/session` validates Logto ID tokens whose audience is the SPA app id. This keeps the app compatible with Logto Free plan tenants that cannot create API resources.
 
 Recommended Logto token posture for this app:
 
@@ -80,20 +71,33 @@ Worker config:
 | `LOGTO_ISSUER` | Optional override. Defaults to `{LOGTO_ENDPOINT}/oidc`. |
 | `LOGTO_JWKS_URI` | Optional override. Defaults to `{LOGTO_ISSUER}/jwks`. |
 | `LOGTO_APP_ID` | Expected ID-token audience. Defaults to `tglrsenlbfrfrnevjwlan`. |
-| `LOGTO_API_RESOURCE` | Optional resource-token audience for future API-resource mode. When set, it overrides `LOGTO_APP_ID`. |
 
-Every authenticated request must send:
+Browser backup requests authenticate with an HTTP-only first-party cookie:
 
 ```text
-Authorization: Bearer <Logto token>
+Cookie: ggartifact_session=<opaque random token>
 ```
 
-`requireUser(request, env)` validates:
+`POST /api/auth/session` creates that cookie from:
+
+```text
+Authorization: Bearer <Logto ID token>
+```
+
+The session cookie is stored in D1 as a SHA-256 token hash with a 30-day expiry. It is scoped to the app origin with `HttpOnly`, `SameSite=Lax`, and `Secure` on HTTPS.
+
+`requireUser(request, env)` validates app sessions by:
+
+- hashing the cookie token
+- looking up an unrevoked, unexpired row in `app_auth_sessions`
+- resolving the linked `app_users` row
+
+For smoke tests and bootstrap paths, `requireUser` can still accept a direct Logto bearer token. In that fallback path it validates:
 
 - bearer token is present and JWT-shaped
 - JWT signature against Logto JWKS
 - issuer
-- audience, either the SPA app id by default or the configured API resource
+- audience, the SPA app id
 - expiration
 - `sub`
 
@@ -107,7 +111,7 @@ app user id = usr_logto_<first 32 hex chars of sha256(sub)>
 
 The raw Logto subject is never used in R2 paths. Backup rows and R2 object keys use the opaque internal app user id.
 
-`/api/auth/me` returns the resolved app user. `/api/auth/logout` is a stateless no-op that returns `{ ok: true }`; the frontend signs out through Logto. There is no `/api/auth/dev-login`.
+`/api/auth/me` returns the resolved app user. `/api/auth/logout` revokes the app session cookie when present and clears the browser cookie; the frontend also signs out through Logto. There is no `/api/auth/dev-login`.
 
 ## Backup API
 
@@ -127,7 +131,7 @@ Implemented endpoints:
 
 All endpoints:
 
-- require a valid Logto access token
+- require a valid first-party app session cookie, or a direct Logto ID token for smoke/bootstrap paths
 - resolve one internal app user
 - require `cloud_sync`
 - scope D1 rows and R2 object keys by internal user id
@@ -185,10 +189,10 @@ Manual local verification should use real Logto with local D1/R2 bindings:
 6. Use a second browser profile, different browser, or separate container to sign in as another Logto user.
 7. Confirm each user sees only their own backup heads and restored objects.
 
-`npm run smoke:backup-worker` starts local Wrangler and exercises local D1/R2. Because there is no dev-login route, it requires:
+`npm run smoke:backup-worker` starts local Wrangler and exercises local D1/R2. Because there is no dev-login route, it requires a Logto ID token for the test user:
 
 ```text
-BACKUP_SMOKE_ACCESS_TOKEN=<Logto API access token>
+BACKUP_SMOKE_ACCESS_TOKEN=<Logto ID token>
 ```
 
 The automated Worker tests do not call Logto. They use a local JWT/JWKS fixture so auth tests are deterministic, offline, and close to production token syntax.

@@ -28,7 +28,12 @@ import {
   refreshManualBackupMetadata,
   uploadManualBackupSelection,
 } from "@/cloud/manualBackupController";
-import { createCloudBackupApiClient } from "@/cloud/session";
+import {
+  AppSessionError,
+  createAppSession,
+  createCloudBackupApiClient,
+  getAppSessionUser,
+} from "@/cloud/session";
 import type { CloudSyncRunResult } from "@/cloud/syncClient";
 import type { CloudPartitionId } from "@/cloud/types";
 import { CloudBackupMetadataTable } from "@/components/account/CloudBackupMetadataTable";
@@ -54,9 +59,7 @@ export default function CloudBackupPage() {
   const {
     isAuthenticated,
     isLoading: isAuthLoading,
-    getAccessToken,
     getIdToken,
-    getIdTokenClaims,
     signIn,
   } = useLogto();
   const [lastError, setLastError] = useState<string | null>(null);
@@ -75,16 +78,14 @@ export default function CloudBackupPage() {
     null
   );
   const [backupAuthExpired, setBackupAuthExpired] = useState(false);
-  const [logtoSubject, setLogtoSubject] = useState<string | null>(null);
+  const [appSessionUserId, setAppSessionUserId] = useState<string | null>(null);
+  const [appSessionChecked, setAppSessionChecked] = useState(false);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
   );
-  const auth = useMemo(
-    () => ({ getAccessToken, getIdToken }),
-    [getAccessToken, getIdToken]
-  );
-  const apiClient = useMemo(() => createCloudBackupApiClient(auth), [auth]);
-  const sessionUserId = logtoSubject ? `logto:${logtoSubject}` : null;
+  const auth = useMemo(() => ({ getIdToken }), [getIdToken]);
+  const apiClient = useMemo(() => createCloudBackupApiClient(), []);
+  const sessionUserId = appSessionUserId;
 
   const partitionMeta = useMemo(
     () => Object.values(partitionsById),
@@ -94,8 +95,31 @@ export default function CloudBackupPage() {
     partitionMeta,
     cloudMetadata
   );
-  const canUseCloudBackup =
-    isAuthenticated && sessionUserId !== null && !backupAuthExpired;
+  const canUseCloudBackup = sessionUserId !== null && !backupAuthExpired;
+
+  const establishAppSession = useCallback(async (): Promise<boolean> => {
+    try {
+      await createAppSession(auth);
+      setBackupAuthExpired(false);
+      return true;
+    } catch {
+      return false;
+    }
+  }, [auth]);
+
+  const withAppSessionRetry = useCallback(
+    async <T,>(run: () => Promise<T>): Promise<T> => {
+      try {
+        return await run();
+      } catch (error) {
+        if (!isBackupUnauthenticatedError(error)) throw error;
+        const established = await establishAppSession();
+        if (!established) throw error;
+        return run();
+      }
+    },
+    [establishAppSession]
+  );
 
   const refreshCloudMetadata = useCallback(
     async (status: MetadataStatus = "refreshing") => {
@@ -103,9 +127,8 @@ export default function CloudBackupPage() {
       setMetadataStatus(status);
       setMetadataError(null);
       try {
-        const snapshot = await refreshManualBackupMetadata(
-          apiClient,
-          sessionUserId
+        const snapshot = await withAppSessionRetry(() =>
+          refreshManualBackupMetadata(apiClient, sessionUserId)
         );
         setCloudMetadata(snapshot);
         setUploadQuota(snapshot.quota);
@@ -125,7 +148,7 @@ export default function CloudBackupPage() {
         setMetadataStatus("idle");
       }
     },
-    [apiClient, sessionUserId, t]
+    [apiClient, sessionUserId, t, withAppSessionRetry]
   );
 
   const handleSignIn = async () => {
@@ -143,28 +166,47 @@ export default function CloudBackupPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setLogtoSubject(null);
-      setBackupAuthExpired(false);
-      return;
-    }
-
     let cancelled = false;
-    void getIdTokenClaims()
-      .then((claims) => {
-        if (!cancelled) setLogtoSubject(claims?.sub ?? null);
-      })
-      .catch(() => {
-        if (!cancelled) setLogtoSubject(null);
-      });
+    setAppSessionChecked(false);
+    void (async () => {
+      try {
+        const user = await getAppSessionUser();
+        if (cancelled) return;
+        setAppSessionUserId(user.id);
+        setBackupAuthExpired(false);
+      } catch (error) {
+        if (cancelled) return;
+        if (isAppSessionUnauthenticatedError(error) && isAuthenticated) {
+          const established = await establishAppSession();
+          if (cancelled) return;
+          if (established) {
+            try {
+              const user = await getAppSessionUser();
+              if (cancelled) return;
+              setAppSessionUserId(user.id);
+              setBackupAuthExpired(false);
+              return;
+            } catch {
+              if (cancelled) return;
+            }
+          }
+          setBackupAuthExpired(true);
+        } else {
+          setBackupAuthExpired(false);
+        }
+        setAppSessionUserId(null);
+      } finally {
+        if (!cancelled) setAppSessionChecked(true);
+      }
+    })();
 
     return () => {
       cancelled = true;
     };
-  }, [getIdTokenClaims, isAuthenticated]);
+  }, [establishAppSession, isAuthenticated]);
 
   useEffect(() => {
-    if (!isAuthenticated || !sessionUserId) {
+    if (!sessionUserId) {
       setCloudMetadata(null);
       setMetadataError(null);
       setUploadQuota(null);
@@ -180,7 +222,7 @@ export default function CloudBackupPage() {
       return;
     }
     void refreshCloudMetadata("loading");
-  }, [isAuthenticated, refreshCloudMetadata, sessionUserId]);
+  }, [refreshCloudMetadata, sessionUserId]);
 
   useEffect(() => {
     if (operation === null) return;
@@ -197,7 +239,9 @@ export default function CloudBackupPage() {
     setLastError(null);
     setLastNotice(null);
     try {
-      const pending = await previewManualBackupAction("upload", apiClient);
+      const pending = await withAppSessionRetry(() =>
+        previewManualBackupAction("upload", apiClient)
+      );
       updateUploadQuota(pending.syncResult.quota, setUploadQuota);
       const manualPlan = pending.plan;
       if (manualPlan.choices.length > 0) {
@@ -213,7 +257,9 @@ export default function CloudBackupPage() {
         return;
       }
       setOperation("upload");
-      const result = await uploadManualBackupSelection(apiClient, pending, []);
+      const result = await withAppSessionRetry(() =>
+        uploadManualBackupSelection(apiClient, pending, [])
+      );
       if (result.status === "uploaded") {
         updateUploadQuota(result.result.quota, setUploadQuota);
       }
@@ -245,7 +291,9 @@ export default function CloudBackupPage() {
     setLastError(null);
     setLastNotice(null);
     try {
-      const pending = await previewManualBackupAction("download", apiClient);
+      const pending = await withAppSessionRetry(() =>
+        previewManualBackupAction("download", apiClient)
+      );
       updateUploadQuota(pending.syncResult.quota, setUploadQuota);
       const syncResult = pending.syncResult;
       if (syncResult.status === "unsupported") {
@@ -323,10 +371,8 @@ export default function CloudBackupPage() {
     setLastError(null);
     setLastNotice(null);
     try {
-      const result = await uploadManualBackupSelection(
-        apiClient,
-        pending,
-        selectedIds
+      const result = await withAppSessionRetry(() =>
+        uploadManualBackupSelection(apiClient, pending, selectedIds)
       );
       if (result.status === "uploaded") {
         updateUploadQuota(result.result.quota, setUploadQuota);
@@ -369,10 +415,8 @@ export default function CloudBackupPage() {
         return;
       }
       setOperation("download");
-      const applied = await downloadManualBackupSelection(
-        apiClient,
-        syncResult,
-        partitionIds
+      const applied = await withAppSessionRetry(() =>
+        downloadManualBackupSelection(apiClient, syncResult, partitionIds)
       );
       setOperation(null);
       toast.success(
@@ -411,7 +455,7 @@ export default function CloudBackupPage() {
             </div>
 
             <div className="p-4 space-y-4">
-              {(!isAuthenticated || backupAuthExpired) && (
+              {appSessionChecked && (!sessionUserId || backupAuthExpired) && (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>
@@ -602,6 +646,17 @@ function formatBackupError(
 function isBackupUnauthenticatedError(error: unknown): boolean {
   return (
     error instanceof BackupApiError &&
+    error.status === 401 &&
+    !!error.payload &&
+    typeof error.payload === "object" &&
+    "error" in error.payload &&
+    error.payload.error === "unauthenticated"
+  );
+}
+
+function isAppSessionUnauthenticatedError(error: unknown): boolean {
+  return (
+    error instanceof AppSessionError &&
     error.status === 401 &&
     !!error.payload &&
     typeof error.payload === "object" &&

@@ -34,6 +34,7 @@ describe("BackupApiClient", () => {
       {
         method: "GET",
         headers: { Authorization: "Bearer test" },
+        credentials: "same-origin",
       }
     );
   });
@@ -78,6 +79,7 @@ describe("BackupApiClient", () => {
       method: "POST",
       headers: {},
       body: capturedForm,
+      credentials: "same-origin",
     });
     expect(capturedForm).toBeDefined();
     const manifestPart = capturedForm?.get("manifest");
@@ -137,6 +139,7 @@ describe("BackupApiClient", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ objectIds: ["obj_1"] }),
+      credentials: "same-origin",
     });
   });
 

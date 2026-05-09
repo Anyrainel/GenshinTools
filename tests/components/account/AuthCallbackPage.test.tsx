@@ -5,6 +5,7 @@ import { render } from "../../utils/render";
 
 const signIn = vi.fn();
 const signOut = vi.fn();
+const getIdToken = vi.fn();
 const getIdTokenClaims = vi.fn();
 let callbackState = {
   isLoading: false,
@@ -21,6 +22,7 @@ vi.mock("@logto/react", () => ({
     error: undefined,
     signIn,
     signOut,
+    getIdToken,
     getIdTokenClaims,
   }),
 }));
@@ -31,6 +33,8 @@ describe("AuthCallbackPage", () => {
     window.sessionStorage.clear();
     signIn.mockReset();
     signOut.mockReset();
+    getIdToken.mockReset();
+    getIdToken.mockResolvedValue("id-token");
     getIdTokenClaims.mockReset();
     callbackState = {
       isLoading: false,

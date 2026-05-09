@@ -218,9 +218,9 @@ window.__ggE2E = {
     };
   },
   async readBackupHead() {
-    const accessToken = await readAccessToken();
+    await ensureAppSession();
     const response = await fetch("/api/backup/v1/head", {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      credentials: "same-origin",
     });
     return response.json();
   },
@@ -393,10 +393,20 @@ async function readAccessToken(): Promise<string> {
 }
 
 async function createAuthedBackupApiClient(): Promise<BackupApiClient> {
+  await ensureAppSession();
+  return new BackupApiClient({ credentials: "same-origin" });
+}
+
+async function ensureAppSession(): Promise<void> {
   const accessToken = await readAccessToken();
-  return new BackupApiClient({
-    getHeaders: async () => ({ Authorization: `Bearer ${accessToken}` }),
+  const response = await fetch("/api/auth/session", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "same-origin",
   });
+  if (!response.ok) {
+    throw new Error(`Failed to create E2E app session: ${response.status}`);
+  }
 }
 
 export function makeE2eAccount(

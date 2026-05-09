@@ -1,8 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { createCloudBackupApiClient } from "@/cloud/session";
+import {
+  createAppSession,
+  createCloudBackupApiClient,
+  getAppSessionUser,
+} from "@/cloud/session";
 
 describe("cloud backup auth headers", () => {
-  it("injects the Logto ID token into backup requests by default", async () => {
+  it("uses the first-party app session cookie for backup requests", async () => {
     const fetchImpl = vi.fn(async () =>
       Response.json({
         serverTime: 1,
@@ -27,17 +31,57 @@ describe("cloud backup auth headers", () => {
     ) as typeof fetch;
     vi.stubGlobal("fetch", fetchImpl);
 
-    const client = createCloudBackupApiClient({
-      getAccessToken: async () => undefined,
-      getIdToken: async () => "logto-id-token",
-    });
+    const client = createCloudBackupApiClient();
 
     await client.getHead();
 
     expect(fetchImpl).toHaveBeenCalledWith("/api/backup/v1/head", {
       method: "GET",
-      headers: { Authorization: "Bearer logto-id-token" },
+      headers: {},
+      credentials: "same-origin",
     });
     vi.unstubAllGlobals();
+  });
+
+  it("creates an app session from a Logto ID token", async () => {
+    const fetchImpl = vi.fn(async () =>
+      Response.json({
+        user: {
+          id: "usr_1",
+          authMode: "logto",
+          entitlements: ["cloud_sync"],
+        },
+        expiresAt: 1,
+      })
+    ) as typeof fetch;
+
+    await createAppSession(
+      { getIdToken: async () => "logto-id-token" },
+      fetchImpl
+    );
+
+    expect(fetchImpl).toHaveBeenCalledWith("/api/auth/session", {
+      method: "POST",
+      headers: { Authorization: "Bearer logto-id-token" },
+      credentials: "same-origin",
+    });
+  });
+
+  it("reads the current app session user through cookies", async () => {
+    const fetchImpl = vi.fn(async () =>
+      Response.json({
+        id: "usr_1",
+        authMode: "logto",
+        entitlements: ["cloud_sync"],
+      })
+    ) as typeof fetch;
+
+    const user = await getAppSessionUser(fetchImpl);
+
+    expect(user.id).toBe("usr_1");
+    expect(fetchImpl).toHaveBeenCalledWith("/api/auth/me", {
+      method: "GET",
+      credentials: "same-origin",
+    });
   });
 });
