@@ -1,7 +1,11 @@
 import { useHandleSignInCallback } from "@logto/react";
 import { Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { getLogtoRedirectUri, LOGTO_API_RESOURCE } from "@/cloud/authConfig";
+import {
+  consumeLogtoReturnPath,
+  getLogtoRedirectUri,
+  LOGTO_API_RESOURCE,
+} from "@/cloud/authConfig";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -12,7 +16,7 @@ export default function AuthCallbackPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { isLoading, error } = useHandleSignInCallback(() => {
-    navigate("/account", { replace: true });
+    navigate(consumeLogtoReturnPath(), { replace: true });
   });
   const errorMessage = error ? formatCallbackError(error) : null;
 
@@ -29,8 +33,8 @@ export default function AuthCallbackPage() {
                     <AlertDescription>{errorMessage}</AlertDescription>
                   </Alert>
                   <Button asChild variant="outline" size="sm" className="mt-3">
-                    <Link to="/account">
-                      {t.ui("accountSystem.openAccount")}
+                    <Link to="/account/cloud-backup">
+                      {t.ui("accountSystem.cloudBackup")}
                     </Link>
                   </Button>
                 </>

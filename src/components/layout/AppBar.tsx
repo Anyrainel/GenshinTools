@@ -166,7 +166,7 @@ export function AppBar({
 
   const handleSignIn = async () => {
     try {
-      await signIn();
+      await signIn(`${location.pathname}${location.search}${location.hash}`);
     } catch (signInError) {
       toast.error(
         signInError instanceof Error ? signInError.message : String(signInError)

@@ -72,7 +72,7 @@ export const i18nUiData = {
   },
   accountSystem: {
     accountMenu: { en: "Account menu", zh: "账号菜单" },
-    accountTitle: { en: "Account Login", zh: "账号登录" },
+    accountTitle: { en: "Account access", zh: "账号访问" },
     accountDesc: {
       en: "Sign in to use cloud backup across browsers and devices.",
       zh: "登录后即可在不同浏览器和设备之间使用云端备份。",
@@ -81,17 +81,11 @@ export const i18nUiData = {
     signOut: { en: "Sign out", zh: "退出登录" },
     manageAccount: { en: "Manage account", zh: "管理账号" },
     syncData: { en: "Sync data", zh: "同步数据" },
-    signedIn: { en: "Connected account", zh: "已连接账号" },
     signedOut: { en: "Not signed in", zh: "未登录" },
     accountEmailFallback: { en: "Signed-in account", zh: "已登录账号" },
     accountLoadFailed: {
       en: "Account details unavailable",
       zh: "无法读取账号信息",
-    },
-    logtoAccount: { en: "Logto account", zh: "Logto 账号" },
-    apiResource: {
-      en: "Cloud backup token audience: {0}",
-      zh: "云端备份令牌受众：{0}",
     },
     loginCallback: {
       en: "Finishing sign-in...",
@@ -111,7 +105,6 @@ export const i18nUiData = {
       en: "Sign in before using manual cloud backup.",
       zh: "使用手动云端备份前，请先登录。",
     },
-    openAccount: { en: "Open account", zh: "打开账号" },
     syncFailed: { en: "Cloud action failed", zh: "云端操作失败" },
     metadataFailed: {
       en: "Could not load backup metadata",
@@ -278,7 +271,6 @@ export const i18nUiData = {
       checking: { en: "Checking", zh: "检查中" },
       uploading: { en: "Uploading", zh: "正在上传" },
       downloading: { en: "Downloading", zh: "正在下载" },
-      signedIn: { en: "Authenticated", zh: "已认证" },
       signedOut: { en: "Signed out", zh: "未登录" },
     },
     statusToast: {

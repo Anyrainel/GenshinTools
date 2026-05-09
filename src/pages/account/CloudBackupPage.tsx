@@ -6,9 +6,13 @@ import {
   CloudUpload,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { BackupApiError } from "@/cloud/apiClient";
+import {
+  getLogtoPostSignInRedirectUri,
+  getLogtoRedirectUri,
+  rememberLogtoReturnPath,
+} from "@/cloud/authConfig";
 import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
 import {
   buildManualBackupMetadataRows,
@@ -49,6 +53,7 @@ export default function CloudBackupPage() {
     getAccessToken,
     getIdToken,
     getIdTokenClaims,
+    signIn,
   } = useLogto();
   const [lastError, setLastError] = useState<string | null>(null);
   const [lastNotice, setLastNotice] = useState<Notice | null>(null);
@@ -102,6 +107,20 @@ export default function CloudBackupPage() {
     },
     [apiClient, sessionUserId, t]
   );
+
+  const handleSignIn = async () => {
+    try {
+      const returnPath = rememberLogtoReturnPath("/account/cloud-backup");
+      await signIn({
+        redirectUri: getLogtoRedirectUri(),
+        postRedirectUri: getLogtoPostSignInRedirectUri(returnPath),
+      });
+    } catch (signInError) {
+      toast.error(
+        signInError instanceof Error ? signInError.message : String(signInError)
+      );
+    }
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -356,10 +375,14 @@ export default function CloudBackupPage() {
                   <AlertDescription>
                     <div className="flex flex-wrap items-center gap-3">
                       <span>{t.ui("accountSystem.signInRequiredDesc")}</span>
-                      <Button asChild size="sm" variant="outline">
-                        <Link to="/account">
-                          {t.ui("accountSystem.openAccount")}
-                        </Link>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => void handleSignIn()}
+                        disabled={isAuthLoading}
+                      >
+                        {t.ui("accountSystem.signIn")}
                       </Button>
                     </div>
                   </AlertDescription>

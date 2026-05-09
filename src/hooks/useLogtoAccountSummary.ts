@@ -4,6 +4,7 @@ import {
   getLogtoPostSignInRedirectUri,
   getLogtoPostSignOutRedirectUri,
   getLogtoRedirectUri,
+  rememberLogtoReturnPath,
 } from "@/cloud/authConfig";
 
 export type LogtoAccountSummary = {
@@ -12,7 +13,17 @@ export type LogtoAccountSummary = {
   email?: string;
 };
 
-export function useLogtoAccountSummary() {
+export type LogtoAccountSummaryHook = {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: Error | undefined;
+  account: LogtoAccountSummary | null;
+  accountError: string | null;
+  signIn: (returnTo?: string) => Promise<void>;
+  signOut: () => Promise<void>;
+};
+
+export function useLogtoAccountSummary(): LogtoAccountSummaryHook {
   const {
     isAuthenticated,
     isLoading,
@@ -60,12 +71,18 @@ export function useLogtoAccountSummary() {
     };
   }, [getIdTokenClaims, isAuthenticated]);
 
-  const signIn = useCallback(async () => {
-    await logtoSignIn({
-      redirectUri: getLogtoRedirectUri(),
-      postRedirectUri: getLogtoPostSignInRedirectUri(),
-    });
-  }, [logtoSignIn]);
+  const signIn = useCallback(
+    async (returnTo?: string) => {
+      const returnPath = rememberLogtoReturnPath(
+        returnTo ?? window.location.href
+      );
+      await logtoSignIn({
+        redirectUri: getLogtoRedirectUri(),
+        postRedirectUri: getLogtoPostSignInRedirectUri(returnPath),
+      });
+    },
+    [logtoSignIn]
+  );
 
   const signOut = useCallback(async () => {
     await logtoSignOut(getLogtoPostSignOutRedirectUri());

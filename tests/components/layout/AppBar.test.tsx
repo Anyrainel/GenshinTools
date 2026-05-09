@@ -54,6 +54,7 @@ vi.mock("@logto/react", () => ({
 describe("AppBar", () => {
   beforeEach(() => {
     window.history.pushState(null, "", "/");
+    window.sessionStorage.clear();
     signIn.mockReset();
     signOut.mockReset();
     getIdTokenClaims.mockReset();
@@ -151,8 +152,9 @@ describe("AppBar", () => {
 
     expect(signIn).toHaveBeenCalledWith({
       redirectUri: "http://localhost:3000/callback",
-      postRedirectUri: "http://localhost:3000/account",
+      postRedirectUri: "http://localhost:3000/",
     });
+    expect(window.sessionStorage.getItem("logto:returnPath")).toBe("/");
   });
 
   it("shows account management, sync, and sign-out when signed in", async () => {
