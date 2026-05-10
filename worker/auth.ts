@@ -31,7 +31,8 @@ const LOGTO_PROVIDER = "logto";
 const DEFAULT_LOGTO_ENDPOINT = "https://auth.ggartifact.com";
 const DEFAULT_LOGTO_APP_ID = "tglrsenlbfrfrnevjwlan";
 const APP_SESSION_COOKIE = "ggartifact_session";
-const APP_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const APP_SESSION_TTL_MS = 45 * 24 * 60 * 60 * 1000;
+const APP_SESSION_RENEW_WITHIN_MS = 7 * 24 * 60 * 60 * 1000;
 const AUTH_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -125,6 +126,7 @@ type AppSessionRow = {
   user_id: string;
   display_name: string | null;
   email: string | null;
+  expires_at: number;
 };
 
 type LogtoIdentity = {
@@ -139,6 +141,16 @@ type AppSession = {
   expiresAt: number;
 };
 
+type StoredAppSession = {
+  user: AuthenticatedUser;
+  expiresAt: number;
+};
+
+type VerifiedLogtoIdentity = {
+  claims: JWTPayload;
+  identity: LogtoIdentity;
+};
+
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
 async function lookupLogtoUser(
@@ -146,23 +158,35 @@ async function lookupLogtoUser(
   token: string,
   config: LogtoConfig
 ): Promise<AuthenticatedUser | AuthFailure> {
-  const claims = await verifyLogtoToken(token, config);
-  if (!claims) {
+  const verified = await verifyLogtoIdentity(token, config);
+  if (!verified) {
     return { status: 401, payload: { error: "unauthenticated" } };
   }
+
+  await upsertLogtoUser(db, verified.identity);
+  return toAuthenticatedLogtoUser(verified);
+}
+
+async function verifyLogtoIdentity(
+  token: string,
+  config: LogtoConfig
+): Promise<VerifiedLogtoIdentity | null> {
+  const claims = await verifyLogtoToken(token, config);
+  if (!claims) return null;
 
   const identity = await toLogtoIdentity(claims);
-  if (!identity) {
-    return { status: 401, payload: { error: "unauthenticated" } };
-  }
+  if (!identity) return null;
+  return { claims, identity };
+}
 
-  await upsertLogtoUser(db, identity);
-
+function toAuthenticatedLogtoUser(
+  verified: VerifiedLogtoIdentity
+): AuthenticatedUser {
   return {
-    userId: identity.userId,
-    displayName: identity.displayName,
-    email: identity.email,
-    entitlements: new Set(["cloud_sync", ...getClaimScopes(claims)]),
+    userId: verified.identity.userId,
+    displayName: verified.identity.displayName,
+    email: verified.identity.email,
+    entitlements: new Set(["cloud_sync", ...getClaimScopes(verified.claims)]),
     authMode: "logto",
   };
 }
@@ -251,9 +275,38 @@ async function handleCreateSession(
   const logtoConfig = getLogtoConfig(env);
   if (!logtoConfig) return authJson({ error: "unauthenticated" }, 401);
 
-  const user = await lookupLogtoUser(env.BACKUP_DB, bearerToken, logtoConfig);
-  if (isAuthFailure(user)) return authJson(user.payload, user.status);
+  const verified = await verifyLogtoIdentity(bearerToken, logtoConfig);
+  if (!verified) return authJson({ error: "unauthenticated" }, 401);
 
+  const appSessionToken = getCookieValue(request, APP_SESSION_COOKIE);
+  if (appSessionToken) {
+    const existingSession = await lookupAppSession(
+      env.BACKUP_DB,
+      appSessionToken
+    );
+    if (
+      existingSession?.user.userId === verified.identity.userId &&
+      existingSession.expiresAt - Date.now() > APP_SESSION_RENEW_WITHIN_MS
+    ) {
+      return authJson(
+        {
+          user: toUserPayload(existingSession.user),
+          expiresAt: existingSession.expiresAt,
+        },
+        200,
+        {
+          "Set-Cookie": serializeAppSessionCookie(
+            request,
+            appSessionToken,
+            existingSession.expiresAt
+          ),
+        }
+      );
+    }
+  }
+
+  await upsertLogtoUser(env.BACKUP_DB, verified.identity);
+  const user = toAuthenticatedLogtoUser(verified);
   const session = await createAppSession(env.BACKUP_DB, user.userId);
   return authJson(
     {
@@ -287,11 +340,18 @@ async function lookupAppSessionUser(
   db: D1Database,
   token: string
 ): Promise<AuthenticatedUser | null> {
+  return (await lookupAppSession(db, token))?.user ?? null;
+}
+
+async function lookupAppSession(
+  db: D1Database,
+  token: string
+): Promise<StoredAppSession | null> {
   const now = Date.now();
   const tokenHash = await sha256Hex(token);
   const row = await db
     .prepare(
-      `SELECT s.user_id, u.display_name, i.email
+      `SELECT s.user_id, s.expires_at, u.display_name, i.email
        FROM app_auth_sessions s
        JOIN app_users u ON u.id = s.user_id
        LEFT JOIN auth_identities i
@@ -306,11 +366,14 @@ async function lookupAppSessionUser(
     .first<AppSessionRow>();
   if (!row) return null;
   return {
-    userId: row.user_id,
-    displayName: row.display_name ?? undefined,
-    email: row.email ?? undefined,
-    entitlements: new Set(["cloud_sync"]),
-    authMode: "logto",
+    user: {
+      userId: row.user_id,
+      displayName: row.display_name ?? undefined,
+      email: row.email ?? undefined,
+      entitlements: new Set(["cloud_sync"]),
+      authMode: "logto",
+    },
+    expiresAt: row.expires_at,
   };
 }
 

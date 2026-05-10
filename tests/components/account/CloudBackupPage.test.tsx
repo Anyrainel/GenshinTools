@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppSessionProvider } from "@/contexts/AppSessionContext";
@@ -176,6 +176,68 @@ describe("CloudBackupPage", () => {
     await userEvent.click(uploadButton);
 
     expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("cooldowns repeated manual metadata refresh clicks", async () => {
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url === "/api/auth/me") {
+        return Response.json({
+          id: "usr_1",
+          email: "traveler@example.com",
+          authMode: "logto",
+          entitlements: ["cloud_sync"],
+        });
+      }
+      return Response.json({
+        serverTime: 1,
+        changed: true,
+        headSetRev: "hset_1",
+        capabilities: {
+          apiVersion: 1,
+          commitContentTypes: ["multipart/form-data"],
+          maxObjectsPerCommit: 10,
+          maxCompressedBytesPerCommit: 100,
+          maxCompressedBytesPerObject: 50,
+        },
+        quota: {
+          period: "2026-05",
+          limit: 10,
+          used: 2,
+          remaining: 8,
+          resetsAt: Date.UTC(2026, 5, 1),
+        },
+        heads: [],
+      });
+    });
+    vi.stubGlobal("fetch", fetchImpl);
+
+    renderCloudBackupPage();
+
+    expect(
+      await screen.findByText("Uploads this month: 2/10")
+    ).toBeInTheDocument();
+    const refreshButton = screen.getByRole("button", {
+      name: "Refresh status",
+    });
+
+    await userEvent.click(refreshButton);
+    await waitFor(() => {
+      expect(
+        fetchImpl.mock.calls.filter(([calledUrl]) =>
+          String(calledUrl).startsWith("/api/backup/v1/head")
+        )
+      ).toHaveLength(2);
+    });
+    expect(refreshButton).toBeDisabled();
+
+    await userEvent.click(refreshButton);
+
+    expect(
+      fetchImpl.mock.calls.filter(([calledUrl]) =>
+        String(calledUrl).startsWith("/api/backup/v1/head")
+      )
+    ).toHaveLength(2);
   });
 
   it("creates an app session and retries when backup metadata is unauthenticated", async () => {

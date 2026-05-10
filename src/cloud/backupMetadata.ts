@@ -70,17 +70,33 @@ const PROFILE_SCOPED_KINDS = new Set<CloudBackupRecordKind>([
 ]);
 
 export async function fetchCloudBackupMetadata(
-  apiClient: BackupMetadataApi
+  apiClient: BackupMetadataApi,
+  previousSnapshot: CloudBackupMetadataSnapshot | null = null
 ): Promise<CloudBackupMetadataSnapshot> {
-  const head = await apiClient.getHead();
+  const head = await apiClient.getHead(
+    previousSnapshot ? { headSetRev: previousSnapshot.headSetRev } : {}
+  );
+  if (
+    !head.changed &&
+    previousSnapshot &&
+    head.headSetRev === previousSnapshot.headSetRev
+  ) {
+    return {
+      ...previousSnapshot,
+      checkedAt: Date.now(),
+      quota: head.quota,
+    };
+  }
+
+  const fullHead = head.changed ? head : await apiClient.getHead();
   return {
     schemaVersion: 5,
     checkedAt: Date.now(),
-    headSetRev: head.headSetRev,
-    quota: head.quota,
+    headSetRev: fullHead.headSetRev,
+    quota: fullHead.quota,
     rows: mergeBackupMetadataRows(
       emptyBackupMetadataRows(),
-      buildCloudBackupMetadataRows(head.heads)
+      buildCloudBackupMetadataRows(fullHead.heads)
     ),
   };
 }

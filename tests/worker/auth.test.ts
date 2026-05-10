@@ -157,6 +157,89 @@ describe("Worker auth boundary", () => {
       email: "session@example.com",
       authMode: "logto",
     });
+
+    const secondResponse = await handleAuthRequest(
+      request(
+        {
+          Authorization: `Bearer ${token}`,
+          Cookie: sessionCookie,
+        },
+        "/api/auth/session",
+        "POST"
+      ),
+      new URL("https://example.com/api/auth/session"),
+      env
+    );
+
+    expect(secondResponse.status).toBe(200);
+    expect(secondResponse.headers.get("Set-Cookie")?.split(";")[0]).toBe(
+      sessionCookie
+    );
+    expect(db.sessions.size).toBe(1);
+  });
+
+  it("renews first-party app sessions that are close to expiry", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-10T00:00:00Z"));
+    const issuer = "https://logto-renew-session.test/oidc";
+    const audience = "test-spa-app";
+    const { token, jwks } = await createTestJwt({
+      issuer,
+      audience,
+      subject: "logto-user-renew",
+      claims: {
+        email: "renew@example.com",
+      },
+      expiresIn: "30d",
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(jwks))
+    );
+    const db = new FakeAuthD1Database();
+    const env = {
+      BACKUP_DB: db,
+      LOGTO_ISSUER: issuer,
+      LOGTO_JWKS_URI: `${issuer}/jwks`,
+      LOGTO_APP_ID: audience,
+    } as unknown as AppEnv;
+
+    const response = await handleAuthRequest(
+      request(
+        { Authorization: `Bearer ${token}` },
+        "/api/auth/session",
+        "POST"
+      ),
+      new URL("https://example.com/api/auth/session"),
+      env
+    );
+    const sessionCookie = response.headers.get("Set-Cookie")?.split(";")[0];
+    const [sessionHash, firstSession] = [...db.sessions.entries()][0];
+    firstSession.expiresAt = Date.now() + 6 * 24 * 60 * 60 * 1000;
+
+    const renewed = await handleAuthRequest(
+      request(
+        {
+          Authorization: `Bearer ${token}`,
+          Cookie: sessionCookie ?? "",
+        },
+        "/api/auth/session",
+        "POST"
+      ),
+      new URL("https://example.com/api/auth/session"),
+      env
+    );
+
+    expect(renewed.status).toBe(200);
+    expect(renewed.headers.get("Set-Cookie")?.split(";")[0]).not.toBe(
+      sessionCookie
+    );
+    expect(db.sessions.size).toBe(2);
+    expect(db.sessions.get(sessionHash)?.expiresAt).toBe(
+      Date.now() + 6 * 24 * 60 * 60 * 1000
+    );
+    const payload = (await renewed.json()) as { expiresAt: number };
+    expect(payload.expiresAt).toBe(Date.now() + 45 * 24 * 60 * 60 * 1000);
   });
 
   it("revokes app sessions on logout", async () => {
@@ -450,6 +533,7 @@ class FakeAuthD1Statement {
         user_id: session.userId,
         display_name: user.displayName,
         email: String(provider) === "logto" ? (identity?.email ?? null) : null,
+        expires_at: session.expiresAt,
       } as T;
     }
 

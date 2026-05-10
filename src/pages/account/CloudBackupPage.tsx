@@ -4,7 +4,7 @@ import {
   CloudDownload,
   CloudUpload,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   BackupApiError,
@@ -44,6 +44,8 @@ type Notice = {
   message: string;
 };
 
+const METADATA_REFRESH_COOLDOWN_MS = 3000;
+
 export default function CloudBackupPage() {
   const { t } = useLanguage();
   const {
@@ -69,6 +71,9 @@ export default function CloudBackupPage() {
     null
   );
   const [backupAuthExpired, setBackupAuthExpired] = useState(false);
+  const [isMetadataRefreshCoolingDown, setIsMetadataRefreshCoolingDown] =
+    useState(false);
+  const metadataRefreshCooldownTimer = useRef<number | null>(null);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
   );
@@ -130,6 +135,19 @@ export default function CloudBackupPage() {
     [apiClient, sessionUserId, t, withAppSessionRetry]
   );
 
+  const beginManualMetadataRefresh = useCallback(() => {
+    if (metadataStatus !== "idle" || isMetadataRefreshCoolingDown) return;
+    setIsMetadataRefreshCoolingDown(true);
+    if (metadataRefreshCooldownTimer.current !== null) {
+      window.clearTimeout(metadataRefreshCooldownTimer.current);
+    }
+    metadataRefreshCooldownTimer.current = window.setTimeout(() => {
+      metadataRefreshCooldownTimer.current = null;
+      setIsMetadataRefreshCoolingDown(false);
+    }, METADATA_REFRESH_COOLDOWN_MS);
+    void refreshCloudMetadata();
+  }, [isMetadataRefreshCoolingDown, metadataStatus, refreshCloudMetadata]);
+
   const handleSignIn = async () => {
     try {
       await signIn("/account/cloud-backup");
@@ -168,6 +186,14 @@ export default function CloudBackupPage() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [operation]);
+
+  useEffect(() => {
+    return () => {
+      if (metadataRefreshCooldownTimer.current !== null) {
+        window.clearTimeout(metadataRefreshCooldownTimer.current);
+      }
+    };
+  }, []);
 
   const beginUploadToCloud = async () => {
     setOperation("checking");
@@ -431,7 +457,8 @@ export default function CloudBackupPage() {
                 rows={metadataRows}
                 checkedAt={cloudMetadata?.checkedAt}
                 loading={metadataStatus !== "idle"}
-                onRefresh={() => void refreshCloudMetadata()}
+                refreshDisabled={isMetadataRefreshCoolingDown}
+                onRefresh={beginManualMetadataRefresh}
               />
 
               <div className="flex flex-wrap justify-center gap-2">

@@ -131,6 +131,23 @@ describe("Worker backup API", () => {
     });
   });
 
+  it("rejects oversized commit requests before parsing multipart bodies", async () => {
+    const { env } = createBackupTestEnv();
+    const response = await backupFetch(env, "/commits", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data; boundary=oversized",
+        "Content-Length": String(6 * 1024 * 1024),
+      },
+      body: "--oversized--",
+    });
+
+    expect(response.status).toBe(413);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "payload_too_large",
+    });
+  });
+
   it("commits backup heads, supports no-change head polling, and is idempotent", async () => {
     const { env, db } = createBackupTestEnv();
     const firstHead = await backupFetch(env, "/head");

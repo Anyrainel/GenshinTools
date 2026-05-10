@@ -1,9 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { tiersFromCloud, tiersToCloud } from "@/cloud/adapters/tierAdapter";
 import type { BackupHead } from "@/cloud/apiClient";
 import {
   buildBackupHeadMetadataByPartition,
   buildLocalBackupMetadataRows,
+  type CloudBackupMetadataSnapshot,
   fetchCloudBackupMetadata,
 } from "@/cloud/backupMetadata";
 import type { CloudExportPartition } from "@/cloud/types";
@@ -303,6 +304,51 @@ describe("backup metadata", () => {
       updatedAt: 2500,
       partitionCount: 1,
     });
+  });
+
+  it("reuses cached metadata rows when the cloud head revision is unchanged", async () => {
+    const quota = backupQuota();
+    const updatedQuota = { ...quota, used: 4, remaining: 6 };
+    const previous = {
+      schemaVersion: 5,
+      checkedAt: 1000,
+      headSetRev: "hset_1",
+      quota,
+      rows: [
+        {
+          id: "builds",
+          kind: "builds",
+          local: { hasRecord: false, count: 0, partitionCount: 0 },
+          cloud: {
+            hasRecord: true,
+            count: 4,
+            updatedAt: 2500,
+            partitionCount: 1,
+          },
+        },
+      ],
+    } satisfies CloudBackupMetadataSnapshot;
+    const getHead = vi.fn(async () => ({
+      serverTime: 3100,
+      changed: false,
+      headSetRev: "hset_1",
+      capabilities: {
+        apiVersion: 1 as const,
+        commitContentTypes: ["multipart/form-data"] as ["multipart/form-data"],
+        maxObjectsPerCommit: 10,
+        maxCompressedBytesPerCommit: 10,
+        maxCompressedBytesPerObject: 10,
+      },
+      quota: updatedQuota,
+      heads: [],
+    }));
+
+    const snapshot = await fetchCloudBackupMetadata({ getHead }, previous);
+
+    expect(getHead).toHaveBeenCalledWith({ headSetRev: "hset_1" });
+    expect(snapshot.rows).toEqual(previous.rows);
+    expect(snapshot.quota).toEqual(updatedQuota);
+    expect(snapshot.checkedAt).toBeGreaterThanOrEqual(previous.checkedAt);
   });
 
   it("formats present empty cloud heads separately from absent heads", async () => {

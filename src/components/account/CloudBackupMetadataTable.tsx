@@ -16,11 +16,13 @@ export function CloudBackupMetadataTable({
   rows,
   checkedAt,
   loading,
+  refreshDisabled = false,
   onRefresh,
 }: {
   rows: BackupMetadataRow[];
   checkedAt?: number;
   loading: boolean;
+  refreshDisabled?: boolean;
   onRefresh: () => void;
 }) {
   const { t } = useLanguage();
@@ -46,7 +48,7 @@ export function CloudBackupMetadataTable({
             variant="outline"
             size="sm"
             onClick={onRefresh}
-            disabled={loading}
+            disabled={loading || refreshDisabled}
           >
             <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             {t.ui("accountSystem.refreshMetadata")}

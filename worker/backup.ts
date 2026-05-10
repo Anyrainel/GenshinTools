@@ -16,10 +16,12 @@ const BACKUP_CORS_HEADERS = {
 };
 
 const DEFAULT_BACKUP_MONTHLY_UPLOAD_LIMIT = 10;
+const MAX_COMMIT_REQUEST_OVERHEAD_BYTES = 256 * 1024;
 
 const BACKUP_LIMITS = {
   maxObjectsPerCommit: 10,
   maxCompressedBytesPerCommit: 5 * 1024 * 1024,
+  maxCommitRequestBytes: 5 * 1024 * 1024 + MAX_COMMIT_REQUEST_OVERHEAD_BYTES,
   maxCompressedBytesPerObject: 2 * 1024 * 1024,
   maxObjectDownloads: 10,
   maxCompressedBytesPerDownload: 5 * 1024 * 1024,
@@ -266,6 +268,11 @@ async function handleBackupCommit(
   request: Request,
   context: AuthenticatedBackupContext
 ): Promise<Response> {
+  const requestSizeError = validateCommitRequestSize(request);
+  if (requestSizeError) {
+    return requestSizeError;
+  }
+
   const form = await readMultipartForm(request);
   if (form instanceof Response) {
     return form;
@@ -517,6 +524,25 @@ async function handleBackupCommit(
   );
 
   return backupJson(result);
+}
+
+function validateCommitRequestSize(request: Request): Response | null {
+  const contentLength = request.headers.get("Content-Length");
+  if (!contentLength) return null;
+  const requestBytes = Number(contentLength);
+  if (!Number.isFinite(requestBytes) || requestBytes < 0) {
+    return backupJson({ error: "invalid_content_length" }, 400);
+  }
+  if (requestBytes > BACKUP_LIMITS.maxCommitRequestBytes) {
+    return backupJson(
+      {
+        error: "payload_too_large",
+        maxBytes: BACKUP_LIMITS.maxCommitRequestBytes,
+      },
+      413
+    );
+  }
+  return null;
 }
 
 async function handleBackupObjectDownload(

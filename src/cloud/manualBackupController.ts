@@ -53,7 +53,10 @@ export async function refreshManualBackupMetadata(
   apiClient: BackupApi,
   userId: string
 ): Promise<CloudBackupMetadataSnapshot> {
-  const snapshot = await fetchCloudBackupMetadata(apiClient);
+  const snapshot = await fetchCloudBackupMetadata(
+    apiClient,
+    readCloudMetadataCache(userId)
+  );
   writeCloudMetadataCache(userId, snapshot);
   return snapshot;
 }
