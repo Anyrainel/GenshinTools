@@ -19,9 +19,10 @@ The React app uses `@logto/react`:
 
 - `src/main.tsx` wraps the app in `LogtoProvider`.
 - `src/cloud/authConfig.ts` owns Logto endpoint, app id, scopes, and redirect helpers.
-- `src/pages/account/AuthCallbackPage.tsx` handles the sign-in callback and creates the first-party app session.
-- `src/pages/account/AccountPage.tsx` owns sign-in, sign-out, and account status UI.
-- `src/pages/account/CloudBackupPage.tsx` reads Logto auth state before enabling manual backup and restore actions. If the backup session cookie is missing or expired, it retries once by creating a new app session from the current Logto ID token.
+- `src/pages/account/AuthCallbackPage.tsx` handles the sign-in callback and asks the app-session provider to create the first-party app session.
+- `src/contexts/AppSessionContext.tsx` is the frontend account source of truth. It reads `/api/auth/me`, bootstraps once from the Logto ID token only when the app session is missing, and owns sign-in/sign-out helpers.
+- `src/pages/account/AccountPage.tsx` and `src/components/layout/AppBar.tsx` read visible account state from the app session, not from Logto local token storage.
+- `src/pages/account/CloudBackupPage.tsx` reads the same app session before enabling manual backup and restore actions. If a backup request returns `401`, it asks the app-session provider to refresh/bootstrap once.
 - `src/cloud/session.ts` creates `BackupApiClient` instances that use the first-party app session cookie via `credentials: "same-origin"`.
 
 Default frontend values:
@@ -111,7 +112,7 @@ app user id = usr_logto_<first 32 hex chars of sha256(sub)>
 
 The raw Logto subject is never used in R2 paths. Backup rows and R2 object keys use the opaque internal app user id.
 
-`/api/auth/me` returns the resolved app user. `/api/auth/logout` revokes the app session cookie when present and clears the browser cookie; the frontend also signs out through Logto. There is no `/api/auth/dev-login`.
+`/api/auth/me` returns the resolved app user, including display name and email when present in `auth_identities`. `/api/auth/logout` revokes the app session cookie when present and clears the browser cookie; the frontend also signs out through Logto. There is no `/api/auth/dev-login`.
 
 ## Backup API
 

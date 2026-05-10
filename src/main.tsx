@@ -6,6 +6,7 @@ import App from "./App.tsx";
 import { logtoConfig } from "./cloud/authConfig";
 import { ErrorBoundary } from "./components/shared/ErrorBoundary";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { AppSessionProvider } from "./contexts/AppSessionContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
@@ -32,15 +33,17 @@ createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ErrorBoundary>
     <LogtoProvider config={logtoConfig}>
-      <ThemeProvider>
-        <LanguageProvider>
-          <TooltipProvider delayDuration={200}>
-            <Router basename={import.meta.env.BASE_URL}>
-              <App />
-            </Router>
-          </TooltipProvider>
-        </LanguageProvider>
-      </ThemeProvider>
+      <AppSessionProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <TooltipProvider delayDuration={200}>
+              <Router basename={import.meta.env.BASE_URL}>
+                <App />
+              </Router>
+            </TooltipProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </AppSessionProvider>
     </LogtoProvider>
   </ErrorBoundary>
   // </StrictMode>

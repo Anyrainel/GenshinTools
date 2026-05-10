@@ -1,22 +1,22 @@
-import { useHandleSignInCallback, useLogto } from "@logto/react";
+import { useHandleSignInCallback } from "@logto/react";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { consumeLogtoReturnPath } from "@/cloud/authConfig";
-import { createAppSession } from "@/cloud/session";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AuthCallbackPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { getIdToken } = useLogto();
+  const { createSession } = useAppSession();
   const { isLoading, isAuthenticated, error } = useHandleSignInCallback(() => {
     const returnPath = consumeLogtoReturnPath();
-    void createAppSession({ getIdToken })
+    void createSession()
       .catch(() => undefined)
       .finally(() => navigate(returnPath, { replace: true }));
   });

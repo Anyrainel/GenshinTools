@@ -1,13 +1,15 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Home } from "lucide-react";
+import type { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppBar } from "@/components/layout/AppBar";
+import { AppSessionProvider } from "@/contexts/AppSessionContext";
 
 const signIn = vi.fn();
 const signOut = vi.fn();
-const getIdTokenClaims = vi.fn();
+const getIdToken = vi.fn();
 let logtoState = {
   isAuthenticated: false,
   isLoading: false,
@@ -47,7 +49,7 @@ vi.mock("@logto/react", () => ({
     ...logtoState,
     signIn,
     signOut,
-    getIdTokenClaims,
+    getIdToken,
   }),
 }));
 
@@ -57,7 +59,14 @@ describe("AppBar", () => {
     window.sessionStorage.clear();
     signIn.mockReset();
     signOut.mockReset();
-    getIdTokenClaims.mockReset();
+    getIdToken.mockReset();
+    getIdToken.mockResolvedValue("id-token");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json({ error: "unauthenticated" }, { status: 401 })
+      )
+    );
     logtoState = {
       isAuthenticated: false,
       isLoading: false,
@@ -65,12 +74,12 @@ describe("AppBar", () => {
     };
   });
 
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("renders navigation links", () => {
-    render(
-      <BrowserRouter>
-        <AppBar />
-      </BrowserRouter>
-    );
+    renderAppBar(<AppBar />);
 
     // Check for logo/title
     expect(screen.getAllByAltText("Logo").length).toBeGreaterThan(0);
@@ -93,11 +102,7 @@ describe("AppBar", () => {
       },
     ];
 
-    render(
-      <BrowserRouter>
-        <AppBar actions={actions} />
-      </BrowserRouter>
-    );
+    renderAppBar(<AppBar actions={actions} />);
 
     const actionBtn = screen.getByText("Action 1");
     expect(actionBtn).toBeInTheDocument();
@@ -131,11 +136,7 @@ describe("AppBar", () => {
       },
     ];
 
-    render(
-      <BrowserRouter>
-        <AppBar actions={actions} />
-      </BrowserRouter>
-    );
+    renderAppBar(<AppBar actions={actions} />);
 
     expect(screen.getByRole("button", { name: "Primary" })).toBeInTheDocument();
 
@@ -169,10 +170,8 @@ describe("AppBar", () => {
       { value: "tab2", label: "Tab 2" },
     ];
 
-    render(
-      <BrowserRouter>
-        <AppBar tabs={tabs} activeTab="tab1" onTabChange={mockTabChange} />
-      </BrowserRouter>
+    renderAppBar(
+      <AppBar tabs={tabs} activeTab="tab1" onTabChange={mockTabChange} />
     );
 
     // Rendered in desktop view usually (hidden on mobile, but JSDOM default is usually wide enough or we assume visibility)
@@ -186,11 +185,7 @@ describe("AppBar", () => {
   });
 
   it("shows sign-in when the browser is signed out", async () => {
-    render(
-      <BrowserRouter>
-        <AppBar />
-      </BrowserRouter>
-    );
+    renderAppBar(<AppBar />);
 
     await userEvent.click(
       screen.getByRole("button", { name: "accountSystem.accountMenu" })
@@ -209,9 +204,11 @@ describe("AppBar", () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByText("accountSystem.signOut")).not.toBeInTheDocument();
 
-    fireEvent.click(
-      screen.getByRole("menuitem", { name: "accountSystem.signIn" })
-    );
+    const signInItem = screen.getByRole("menuitem", {
+      name: "accountSystem.signIn",
+    });
+    await waitFor(() => expect(signInItem).toBeEnabled());
+    await userEvent.click(signInItem);
 
     await waitFor(() => {
       expect(signIn).toHaveBeenCalledWith({
@@ -223,11 +220,7 @@ describe("AppBar", () => {
   });
 
   it("can split account, theme, and language into standalone controls", async () => {
-    render(
-      <BrowserRouter>
-        <AppBar standaloneUtilityActions />
-      </BrowserRouter>
-    );
+    renderAppBar(<AppBar standaloneUtilityActions />);
 
     const themeButton = screen.getByRole("button", {
       name: "theme.switcherButton",
@@ -251,7 +244,8 @@ describe("AppBar", () => {
         Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
 
-    fireEvent.click(accountButton);
+    await waitFor(() => expect(accountButton).toBeEnabled());
+    await userEvent.click(accountButton);
 
     await waitFor(() => {
       expect(signIn).toHaveBeenCalledWith({
@@ -262,25 +256,29 @@ describe("AppBar", () => {
   });
 
   it("shows account management, sync, and sign-out when signed in", async () => {
-    logtoState = {
-      isAuthenticated: true,
-      isLoading: false,
-      error: undefined,
-    };
-    getIdTokenClaims.mockResolvedValue({
-      sub: "user_1",
-      name: "Traveler",
-      email: "traveler@example.com",
-    });
-
-    render(
-      <BrowserRouter>
-        <AppBar />
-      </BrowserRouter>
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url === "/api/auth/logout") {
+          return Response.json({ ok: true });
+        }
+        return Response.json({
+          id: "usr_1",
+          displayName: "Traveler",
+          email: "traveler@example.com",
+          authMode: "logto",
+          entitlements: ["cloud_sync"],
+        });
+      })
     );
 
+    renderAppBar(<AppBar />);
+
     await waitFor(() => {
-      expect(getIdTokenClaims).toHaveBeenCalled();
+      expect(
+        screen.getAllByText("traveler@example.com").length
+      ).toBeGreaterThan(0);
     });
     await userEvent.click(
       screen.getByRole("button", { name: "accountSystem.accountMenu" })
@@ -315,3 +313,11 @@ describe("AppBar", () => {
     expect(signOut).toHaveBeenCalledWith("http://localhost:3000/");
   });
 });
+
+function renderAppBar(ui: ReactNode) {
+  return render(
+    <BrowserRouter>
+      <AppSessionProvider>{ui}</AppSessionProvider>
+    </BrowserRouter>
+  );
+}

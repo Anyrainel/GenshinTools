@@ -1,12 +1,12 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AppSessionProvider } from "@/contexts/AppSessionContext";
 import CloudBackupPage from "@/pages/account/CloudBackupPage";
 import { render } from "../../utils/render";
 
 const signIn = vi.fn();
 const getIdToken = vi.fn();
-const getIdTokenClaims = vi.fn();
 let logtoState = {
   isAuthenticated: false,
   isLoading: false,
@@ -17,7 +17,6 @@ vi.mock("@logto/react", () => ({
   useLogto: () => ({
     ...logtoState,
     getIdToken,
-    getIdTokenClaims,
     signIn,
   }),
 }));
@@ -28,8 +27,12 @@ describe("CloudBackupPage", () => {
     signIn.mockReset();
     getIdToken.mockReset();
     getIdToken.mockResolvedValue("id-token");
-    getIdTokenClaims.mockReset();
-    getIdTokenClaims.mockResolvedValue({ sub: "backup-user-1" });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json({ error: "unauthenticated" }, { status: 401 })
+      )
+    );
     logtoState = {
       isAuthenticated: false,
       isLoading: false,
@@ -41,7 +44,7 @@ describe("CloudBackupPage", () => {
   });
 
   it("requires sign-in before manual backup actions", async () => {
-    render(<CloudBackupPage />);
+    renderCloudBackupPage();
 
     expect(await screen.findByText("Sign in required")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Upload" })).toBeDisabled();
@@ -49,7 +52,7 @@ describe("CloudBackupPage", () => {
   });
 
   it("starts Logto sign-in from the signed-out cloud backup CTA", async () => {
-    render(<CloudBackupPage />);
+    renderCloudBackupPage();
 
     const signInButtons = await screen.findAllByRole("button", {
       name: "Sign in",
@@ -71,6 +74,7 @@ describe("CloudBackupPage", () => {
       if (url === "/api/auth/me") {
         return Response.json({
           id: "usr_1",
+          email: "traveler@example.com",
           authMode: "logto",
           entitlements: ["cloud_sync"],
         });
@@ -98,7 +102,7 @@ describe("CloudBackupPage", () => {
     });
     vi.stubGlobal("fetch", fetchImpl);
 
-    render(<CloudBackupPage />);
+    renderCloudBackupPage();
 
     expect(
       await screen.findByText("Uploads this month: 2/10")
@@ -122,6 +126,7 @@ describe("CloudBackupPage", () => {
       if (url === "/api/auth/me") {
         return Response.json({
           id: "usr_1",
+          email: "traveler@example.com",
           authMode: "logto",
           entitlements: ["cloud_sync"],
         });
@@ -149,7 +154,7 @@ describe("CloudBackupPage", () => {
     });
     vi.stubGlobal("fetch", fetchImpl);
 
-    render(<CloudBackupPage />);
+    renderCloudBackupPage();
 
     expect(
       await screen.findByText("Uploads this month: 10/10")
@@ -181,8 +186,15 @@ describe("CloudBackupPage", () => {
     const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url === "/api/auth/me") {
+        const authMeCalls = fetchImpl.mock.calls.filter(
+          ([calledUrl]) => String(calledUrl) === "/api/auth/me"
+        ).length;
+        if (authMeCalls > 1) {
+          return Response.json({ error: "unauthenticated" }, { status: 401 });
+        }
         return Response.json({
           id: "usr_1",
+          email: "traveler@example.com",
           authMode: "logto",
           entitlements: ["cloud_sync"],
         });
@@ -191,13 +203,17 @@ describe("CloudBackupPage", () => {
         return Response.json({
           user: {
             id: "usr_1",
+            email: "traveler@example.com",
             authMode: "logto",
             entitlements: ["cloud_sync"],
           },
           expiresAt: Date.UTC(2026, 5, 1),
         });
       }
-      if (url === "/api/backup/v1/head" && fetchImpl.mock.calls.length === 2) {
+      const headCalls = fetchImpl.mock.calls.filter(
+        ([calledUrl]) => String(calledUrl) === "/api/backup/v1/head"
+      ).length;
+      if (url === "/api/backup/v1/head" && headCalls === 1) {
         return Response.json({ error: "unauthenticated" }, { status: 401 });
       }
       return Response.json({
@@ -223,7 +239,7 @@ describe("CloudBackupPage", () => {
     });
     vi.stubGlobal("fetch", fetchImpl);
 
-    render(<CloudBackupPage />);
+    renderCloudBackupPage();
 
     expect(
       await screen.findByText("Uploads this month: 3/10")
@@ -233,8 +249,8 @@ describe("CloudBackupPage", () => {
         "Your cloud backup sign-in expired. Sign in again before using cloud backup."
       )
     ).not.toBeInTheDocument();
-    expect(fetchImpl).toHaveBeenCalledTimes(4);
-    expect(fetchImpl).toHaveBeenNthCalledWith(3, "/api/auth/session", {
+    expect(fetchImpl).toHaveBeenCalledTimes(5);
+    expect(fetchImpl).toHaveBeenNthCalledWith(4, "/api/auth/session", {
       method: "POST",
       headers: { Authorization: "Bearer id-token" },
       credentials: "same-origin",
@@ -249,8 +265,15 @@ describe("CloudBackupPage", () => {
     const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url === "/api/auth/me") {
+        const authMeCalls = fetchImpl.mock.calls.filter(
+          ([calledUrl]) => String(calledUrl) === "/api/auth/me"
+        ).length;
+        if (authMeCalls > 1) {
+          return Response.json({ error: "unauthenticated" }, { status: 401 });
+        }
         return Response.json({
           id: "usr_1",
+          email: "traveler@example.com",
           authMode: "logto",
           entitlements: ["cloud_sync"],
         });
@@ -259,7 +282,7 @@ describe("CloudBackupPage", () => {
     });
     vi.stubGlobal("fetch", fetchImpl);
 
-    render(<CloudBackupPage />);
+    renderCloudBackupPage();
 
     expect(
       await screen.findByText(
@@ -271,11 +294,19 @@ describe("CloudBackupPage", () => {
     ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Upload" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Download" })).toBeDisabled();
-    expect(fetchImpl).toHaveBeenCalledTimes(3);
-    expect(fetchImpl).toHaveBeenNthCalledWith(3, "/api/auth/session", {
+    expect(fetchImpl).toHaveBeenCalledTimes(4);
+    expect(fetchImpl).toHaveBeenNthCalledWith(4, "/api/auth/session", {
       method: "POST",
       headers: { Authorization: "Bearer id-token" },
       credentials: "same-origin",
     });
   });
 });
+
+function renderCloudBackupPage() {
+  return render(
+    <AppSessionProvider>
+      <CloudBackupPage />
+    </AppSessionProvider>
+  );
+}

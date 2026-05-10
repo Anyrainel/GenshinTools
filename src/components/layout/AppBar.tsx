@@ -40,10 +40,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
-import { useLogtoAccountSummary } from "@/hooks/useLogtoAccountSummary";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 /**
@@ -105,7 +105,7 @@ export function AppBar({
     accountError,
     signIn,
     signOut,
-  } = useLogtoAccountSummary();
+  } = useAppSession();
   const location = useLocation();
   const navigate = useNavigate();
   const [_isPending, startTransition] = useTransition();
@@ -168,7 +168,7 @@ export function AppBar({
       ? t.ui("common.loading")
       : (account?.email ??
         account?.displayName ??
-        account?.subject ??
+        account?.id ??
         t.ui("accountSystem.accountEmailFallback"));
   const accountTriggerLabel = isAuthenticated
     ? accountLabel

@@ -13,6 +13,7 @@ export type AppEnv = Env & {
 export type AuthenticatedUser = {
   userId: string;
   displayName?: string;
+  email?: string;
   entitlements: Set<string>;
   authMode: "logto";
 };
@@ -123,6 +124,7 @@ type LogtoConfig = {
 type AppSessionRow = {
   user_id: string;
   display_name: string | null;
+  email: string | null;
 };
 
 type LogtoIdentity = {
@@ -159,6 +161,7 @@ async function lookupLogtoUser(
   return {
     userId: identity.userId,
     displayName: identity.displayName,
+    email: identity.email,
     entitlements: new Set(["cloud_sync", ...getClaimScopes(claims)]),
     authMode: "logto",
   };
@@ -288,20 +291,24 @@ async function lookupAppSessionUser(
   const tokenHash = await sha256Hex(token);
   const row = await db
     .prepare(
-      `SELECT s.user_id, u.display_name
+      `SELECT s.user_id, u.display_name, i.email
        FROM app_auth_sessions s
        JOIN app_users u ON u.id = s.user_id
+       LEFT JOIN auth_identities i
+         ON i.user_id = s.user_id
+        AND i.provider = ?
        WHERE s.token_hash = ?
          AND s.revoked_at IS NULL
          AND s.expires_at > ?
        LIMIT 1`
     )
-    .bind(tokenHash, now)
+    .bind(LOGTO_PROVIDER, tokenHash, now)
     .first<AppSessionRow>();
   if (!row) return null;
   return {
     userId: row.user_id,
     displayName: row.display_name ?? undefined,
+    email: row.email ?? undefined,
     entitlements: new Set(["cloud_sync"]),
     authMode: "logto",
   };
@@ -360,6 +367,7 @@ function toUserPayload(user: AuthenticatedUser) {
   return {
     id: user.userId,
     displayName: user.displayName,
+    email: user.email,
     authMode: user.authMode,
     entitlements: [...user.entitlements].sort(),
   };

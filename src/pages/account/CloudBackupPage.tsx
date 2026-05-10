@@ -1,4 +1,3 @@
-import { useLogto } from "@logto/react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -12,11 +11,6 @@ import {
   type BackupQuotaExceededPayload,
   type BackupUploadQuota,
 } from "@/cloud/apiClient";
-import {
-  getLogtoPostSignInRedirectUri,
-  getLogtoRedirectUri,
-  rememberLogtoReturnPath,
-} from "@/cloud/authConfig";
 import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
 import {
   buildManualBackupMetadataRows,
@@ -28,12 +22,7 @@ import {
   refreshManualBackupMetadata,
   uploadManualBackupSelection,
 } from "@/cloud/manualBackupController";
-import {
-  AppSessionError,
-  createAppSession,
-  createCloudBackupApiClient,
-  getAppSessionUser,
-} from "@/cloud/session";
+import { createCloudBackupApiClient } from "@/cloud/session";
 import type { CloudSyncRunResult } from "@/cloud/syncClient";
 import type { CloudPartitionId } from "@/cloud/types";
 import { CloudBackupMetadataTable } from "@/components/account/CloudBackupMetadataTable";
@@ -43,6 +32,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { useCloudSyncMetadataStore } from "@/stores/useCloudSyncMetadataStore";
@@ -58,10 +48,11 @@ export default function CloudBackupPage() {
   const { t } = useLanguage();
   const {
     isAuthenticated,
-    isLoading: isAuthLoading,
-    getIdToken,
+    isLoading: isAccountLoading,
+    account,
+    ensureSession,
     signIn,
-  } = useLogto();
+  } = useAppSession();
   const [lastError, setLastError] = useState<string | null>(null);
   const [lastNotice, setLastNotice] = useState<Notice | null>(null);
   const [operation, setOperation] = useState<Operation>(null);
@@ -78,14 +69,11 @@ export default function CloudBackupPage() {
     null
   );
   const [backupAuthExpired, setBackupAuthExpired] = useState(false);
-  const [appSessionUserId, setAppSessionUserId] = useState<string | null>(null);
-  const [appSessionChecked, setAppSessionChecked] = useState(false);
   const partitionsById = useCloudSyncMetadataStore(
     (state) => state.partitionsById
   );
-  const auth = useMemo(() => ({ getIdToken }), [getIdToken]);
   const apiClient = useMemo(() => createCloudBackupApiClient(), []);
-  const sessionUserId = appSessionUserId;
+  const sessionUserId = account?.id ?? null;
 
   const partitionMeta = useMemo(
     () => Object.values(partitionsById),
@@ -95,17 +83,7 @@ export default function CloudBackupPage() {
     partitionMeta,
     cloudMetadata
   );
-  const canUseCloudBackup = sessionUserId !== null && !backupAuthExpired;
-
-  const establishAppSession = useCallback(async (): Promise<boolean> => {
-    try {
-      await createAppSession(auth);
-      setBackupAuthExpired(false);
-      return true;
-    } catch {
-      return false;
-    }
-  }, [auth]);
+  const canUseCloudBackup = isAuthenticated && !backupAuthExpired;
 
   const withAppSessionRetry = useCallback(
     async <T,>(run: () => Promise<T>): Promise<T> => {
@@ -113,12 +91,13 @@ export default function CloudBackupPage() {
         return await run();
       } catch (error) {
         if (!isBackupUnauthenticatedError(error)) throw error;
-        const established = await establishAppSession();
-        if (!established) throw error;
+        const session = await ensureSession();
+        if (!session) throw error;
+        setBackupAuthExpired(false);
         return run();
       }
     },
-    [establishAppSession]
+    [ensureSession]
   );
 
   const refreshCloudMetadata = useCallback(
@@ -153,57 +132,13 @@ export default function CloudBackupPage() {
 
   const handleSignIn = async () => {
     try {
-      const returnPath = rememberLogtoReturnPath("/account/cloud-backup");
-      await signIn({
-        redirectUri: getLogtoRedirectUri(),
-        postRedirectUri: getLogtoPostSignInRedirectUri(returnPath),
-      });
+      await signIn("/account/cloud-backup");
     } catch (signInError) {
       toast.error(
         signInError instanceof Error ? signInError.message : String(signInError)
       );
     }
   };
-
-  useEffect(() => {
-    let cancelled = false;
-    setAppSessionChecked(false);
-    void (async () => {
-      try {
-        const user = await getAppSessionUser();
-        if (cancelled) return;
-        setAppSessionUserId(user.id);
-        setBackupAuthExpired(false);
-      } catch (error) {
-        if (cancelled) return;
-        if (isAppSessionUnauthenticatedError(error) && isAuthenticated) {
-          const established = await establishAppSession();
-          if (cancelled) return;
-          if (established) {
-            try {
-              const user = await getAppSessionUser();
-              if (cancelled) return;
-              setAppSessionUserId(user.id);
-              setBackupAuthExpired(false);
-              return;
-            } catch {
-              if (cancelled) return;
-            }
-          }
-          setBackupAuthExpired(true);
-        } else {
-          setBackupAuthExpired(false);
-        }
-        setAppSessionUserId(null);
-      } finally {
-        if (!cancelled) setAppSessionChecked(true);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [establishAppSession, isAuthenticated]);
 
   useEffect(() => {
     if (!sessionUserId) {
@@ -455,7 +390,7 @@ export default function CloudBackupPage() {
             </div>
 
             <div className="p-4 space-y-4">
-              {appSessionChecked && (!sessionUserId || backupAuthExpired) && (
+              {!isAccountLoading && (!isAuthenticated || backupAuthExpired) && (
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>
@@ -473,7 +408,7 @@ export default function CloudBackupPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => void handleSignIn()}
-                        disabled={isAuthLoading}
+                        disabled={isAccountLoading}
                       >
                         {t.ui("accountSystem.signIn")}
                       </Button>
@@ -506,7 +441,7 @@ export default function CloudBackupPage() {
                   onClick={() => void beginUploadToCloud()}
                   disabled={
                     !canUseCloudBackup ||
-                    isAuthLoading ||
+                    isAccountLoading ||
                     operation !== null ||
                     uploadQuota?.remaining === 0
                   }
@@ -523,7 +458,7 @@ export default function CloudBackupPage() {
                   type="button"
                   onClick={() => void beginDownloadFromCloud()}
                   disabled={
-                    !canUseCloudBackup || isAuthLoading || operation !== null
+                    !canUseCloudBackup || isAccountLoading || operation !== null
                   }
                 >
                   <CloudDownload
@@ -646,17 +581,6 @@ function formatBackupError(
 function isBackupUnauthenticatedError(error: unknown): boolean {
   return (
     error instanceof BackupApiError &&
-    error.status === 401 &&
-    !!error.payload &&
-    typeof error.payload === "object" &&
-    "error" in error.payload &&
-    error.payload.error === "unauthenticated"
-  );
-}
-
-function isAppSessionUnauthenticatedError(error: unknown): boolean {
-  return (
-    error instanceof AppSessionError &&
     error.status === 401 &&
     !!error.payload &&
     typeof error.payload === "object" &&

@@ -12,6 +12,7 @@ export type AppSessionResponse = {
 export type AppSessionUser = {
   id: string;
   displayName?: string;
+  email?: string;
   authMode: "logto";
   entitlements: string[];
 };

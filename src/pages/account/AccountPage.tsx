@@ -6,13 +6,13 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useLogtoAccountSummary } from "@/hooks/useLogtoAccountSummary";
 
 export default function AccountPage() {
   const { t } = useLanguage();
   const { isAuthenticated, isLoading, error, accountError, signIn } =
-    useLogtoAccountSummary();
+    useAppSession();
 
   if (isAuthenticated) {
     return <Navigate to="/account/cloud-backup" replace />;

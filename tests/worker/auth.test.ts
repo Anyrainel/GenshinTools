@@ -82,6 +82,7 @@ describe("Worker auth boundary", () => {
     expect(result).toMatchObject({
       userId: `usr_logto_${(await sha256Hex("logto-user-1")).slice(0, 32)}`,
       displayName: "Traveler",
+      email: "traveler@example.com",
       authMode: "logto",
     });
     expect(result.entitlements.has("cloud_sync")).toBe(true);
@@ -142,6 +143,7 @@ describe("Worker auth boundary", () => {
     expect(payload).toMatchObject({
       user: {
         displayName: "Session Traveler",
+        email: "session@example.com",
         authMode: "logto",
         entitlements: ["cloud_sync"],
       },
@@ -152,6 +154,7 @@ describe("Worker auth boundary", () => {
     if (isAuthFailure(sessionResult)) return;
     expect(sessionResult).toMatchObject({
       displayName: "Session Traveler",
+      email: "session@example.com",
       authMode: "logto",
     });
   });
@@ -429,7 +432,7 @@ class FakeAuthD1Statement {
 
   async first<T = unknown>(): Promise<T | null> {
     if (this.sql.includes("FROM app_auth_sessions")) {
-      const [tokenHash, now] = this.args;
+      const [provider, tokenHash, now] = this.args;
       const session = this.db.sessions.get(String(tokenHash));
       if (
         !session ||
@@ -440,9 +443,13 @@ class FakeAuthD1Statement {
       }
       const user = this.db.appUsers.get(session.userId);
       if (!user) return null;
+      const identity = [...this.db.identities.values()].find(
+        (entry) => entry.userId === session.userId
+      );
       return {
         user_id: session.userId,
         display_name: user.displayName,
+        email: String(provider) === "logto" ? (identity?.email ?? null) : null,
       } as T;
     }
 
