@@ -1,6 +1,10 @@
 import { SELF } from "cloudflare:test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { type BackupEnv, handleBackupRequest } from "../../worker/backup";
+import {
+  type BackupEnv,
+  handleBackupRequest,
+  runBackupCleanup,
+} from "../../worker/backup";
 import { createTestJwt } from "./jwtTestUtils";
 
 type UserStateRecord = {
@@ -9,6 +13,11 @@ type UserStateRecord = {
   updated_at: number;
   key_count: number;
   total_compressed_bytes: number;
+  upload_period_utc: string | null;
+  monthly_upload_count: number;
+  monthly_put_object_count: number;
+  monthly_uploaded_compressed_bytes: number;
+  last_upload_at: number | null;
 };
 
 type DeviceRecord = {
@@ -44,16 +53,6 @@ type CommitRecord = {
   result_json: string;
   created_at: number;
   expires_at: number;
-};
-
-type QuotaRecord = {
-  user_id: string;
-  period_utc: string;
-  successful_upload_count: number;
-  put_object_count: number;
-  uploaded_compressed_bytes: number;
-  created_at: number;
-  updated_at: number;
 };
 
 type JoinedHeadRecord = {
@@ -253,7 +252,7 @@ describe("Worker backup API", () => {
       }),
     });
     expect(await retry.json()).toEqual(commitJson);
-    expect([...db.quotas.values()][0]?.successful_upload_count).toBe(1);
+    expect([...db.userStates.values()][0]?.monthly_upload_count).toBe(1);
   });
 
   it("allows ten monthly uploads, rejects the eleventh, and resets at the UTC month boundary", async () => {
@@ -355,7 +354,7 @@ describe("Worker backup API", () => {
       }),
     });
     expect(invalid.status).toBe(422);
-    expect(db.quotas.size).toBe(0);
+    expect(db.userStates.size).toBe(0);
 
     const committed = await backupFetch(env, "/commits", {
       method: "POST",
@@ -376,7 +375,7 @@ describe("Worker backup API", () => {
       }),
     });
     expect(committed.status).toBe(200);
-    expect([...db.quotas.values()][0]?.successful_upload_count).toBe(1);
+    expect([...db.userStates.values()][0]?.monthly_upload_count).toBe(1);
 
     const conflict = await backupFetch(env, "/commits", {
       method: "POST",
@@ -397,7 +396,7 @@ describe("Worker backup API", () => {
       }),
     });
     expect(conflict.status).toBe(409);
-    expect([...db.quotas.values()][0]?.successful_upload_count).toBe(1);
+    expect([...db.userStates.values()][0]?.monthly_upload_count).toBe(1);
   });
 
   it("rejects stale write modes before writing R2 objects", async () => {
@@ -459,8 +458,8 @@ describe("Worker backup API", () => {
     expect(bucket.objects.size).toBe(objectCountBeforeConflict);
   });
 
-  it("deletes stale R2 objects after overwrite and delete commits", async () => {
-    const { env, bucket } = createBackupTestEnv();
+  it("keeps only current R2 objects and D1 backup rows after commits", async () => {
+    const { env, bucket, db } = createBackupTestEnv();
     const firstBody = new TextEncoder().encode("backup-body-1");
     const firstCommit = await backupFetch(env, "/commits", {
       method: "POST",
@@ -483,6 +482,10 @@ describe("Worker backup API", () => {
     const firstJson = (await firstCommit.json()) as BackupCommitJson;
     const firstObjectKey = [...bucket.objects.keys()][0];
     expect(firstObjectKey).toContain(firstJson.heads[0].objectId);
+    expect(db.commits.size).toBe(1);
+    expect([...db.commits.values()][0]?.idempotency_key).toBe(
+      "commit_cleanup_1"
+    );
 
     const secondBody = new TextEncoder().encode("backup-body-2");
     const overwrite = await backupFetch(env, "/commits", {
@@ -510,6 +513,10 @@ describe("Worker backup API", () => {
     expect(bucket.objects.has(firstObjectKey)).toBe(false);
     const secondObjectKey = [...bucket.objects.keys()][0];
     expect(secondObjectKey).toContain(overwriteJson.heads[0].objectId);
+    expect(db.commits.size).toBe(1);
+    expect([...db.commits.values()][0]?.idempotency_key).toBe(
+      "commit_cleanup_2"
+    );
 
     const deleted = await backupFetch(env, "/commits", {
       method: "POST",
@@ -530,6 +537,80 @@ describe("Worker backup API", () => {
     expect(deleted.status).toBe(200);
     expect(bucket.objects.has(secondObjectKey)).toBe(false);
     expect(bucket.objects.size).toBe(0);
+    expect(db.heads.size).toBe(0);
+    expect(db.commits.size).toBe(1);
+    expect([...db.commits.values()][0]?.idempotency_key).toBe(
+      "commit_cleanup_delete"
+    );
+  });
+
+  it("cleanup removes orphaned R2 objects and legacy non-current D1 rows", async () => {
+    const { env, bucket, db } = createBackupTestEnv();
+    const body = new TextEncoder().encode("backup-body");
+    const commit = await backupFetch(env, "/commits", {
+      method: "POST",
+      body: makeCommitForm({
+        idempotencyKey: "commit_current",
+        puts: [
+          {
+            commitObjectKey: "builds",
+            partitionKey: "builds/all",
+            schemaVersion: 1,
+            contentHash: await sha256(new TextEncoder().encode('{"a":1}')),
+            compressedHash: await sha256(body),
+            compressedBytes: body.byteLength,
+            writeMode: { kind: "ifAbsent" },
+          },
+        ],
+        body,
+      }),
+    });
+    expect(commit.status).toBe(200);
+    const userId = [...db.userStates.keys()][0];
+    const currentObjectKey = [...bucket.objects.keys()][0];
+    const staleObjectId = `obj_${"a".repeat(32)}`;
+    const staleObjectKey = `users/${encodeURIComponent(
+      userId
+    )}/backup/objects/${staleObjectId}.json.gz`;
+    bucket.objects.set(staleObjectKey, new Blob(["stale"]));
+    db.heads.set(headKey(userId, "profile.app/0"), {
+      user_id: userId,
+      partition_key: "profile.app/0",
+      object_id: staleObjectId,
+      rev: `rev_${"b".repeat(32)}`,
+      schema_version: 1,
+      content_hash: `sha256:${"c".repeat(64)}`,
+      compressed_hash: `sha256:${"d".repeat(64)}`,
+      compressed_bytes: 5,
+      updated_at: 1,
+      metadata_json: JSON.stringify({ schemaVersion: 1, records: [] }),
+      source_device_row_id: null,
+      soft_deleted_at: 1,
+    });
+    db.commits.set(commitKey(userId, "commit_old"), {
+      id: "commit_old",
+      user_id: userId,
+      idempotency_key: "commit_old",
+      device_row_id: null,
+      result_json: "{}",
+      created_at: 1,
+      expires_at: 1,
+    });
+
+    const cleanup = await runBackupCleanup(env);
+
+    expect(cleanup).toMatchObject({
+      r2ObjectsScanned: 2,
+      r2ObjectsDeleted: 1,
+    });
+    expect(bucket.objects.has(currentObjectKey)).toBe(true);
+    expect(bucket.objects.has(staleObjectKey)).toBe(false);
+    expect(
+      [...db.heads.values()].every((head) => head.soft_deleted_at === null)
+    ).toBe(true);
+    expect(
+      [...db.commits.values()].map((record) => record.idempotency_key)
+    ).toEqual(["commit_current"]);
   });
 
   it("downloads current backup objects by object id", async () => {
@@ -664,7 +745,6 @@ class FakeD1Database {
   readonly devices = new Map<string, DeviceRecord>();
   readonly heads = new Map<string, HeadRecord>();
   readonly commits = new Map<string, CommitRecord>();
-  readonly quotas = new Map<string, QuotaRecord>();
 
   prepare(sql: string): FakeD1PreparedStatement {
     return new FakeD1PreparedStatement(this, sql);
@@ -701,11 +781,6 @@ class FakeD1PreparedStatement {
     if (this.sql.includes("FROM backup_commits")) {
       const key = commitKey(String(this.args[0]), String(this.args[1]));
       return (this.db.commits.get(key) ?? null) as T | null;
-    }
-
-    if (this.sql.includes("FROM backup_monthly_upload_quota")) {
-      const key = quotaKey(String(this.args[0]), String(this.args[1]));
-      return (this.db.quotas.get(key) ?? null) as T | null;
     }
 
     if (this.sql.includes("FROM backup_devices")) {
@@ -869,51 +944,146 @@ class FakeD1PreparedStatement {
       return d1Ok();
     }
 
-    if (this.sql.includes("INSERT INTO backup_user_state")) {
-      const [userId, headSetRev, updatedAt] = this.args;
-      const activeHeads = [...this.db.heads.values()].filter(
-        (head) =>
-          head.user_id === String(userId) && head.soft_deleted_at === null
-      );
-      this.db.userStates.set(String(userId), {
-        user_id: String(userId),
-        head_set_rev: String(headSetRev),
-        updated_at: Number(updatedAt),
-        key_count: activeHeads.length,
-        total_compressed_bytes: activeHeads.reduce(
-          (sum, head) => sum + head.compressed_bytes,
-          0
-        ),
-      });
+    if (
+      this.sql.includes("DELETE FROM backup_heads") &&
+      this.sql.includes("partition_key")
+    ) {
+      const [userId, partitionKey] = this.args;
+      this.db.heads.delete(headKey(String(userId), String(partitionKey)));
       return d1Ok();
     }
 
-    if (this.sql.includes("INSERT INTO backup_monthly_upload_quota")) {
+    if (this.sql.includes("DELETE FROM backup_heads")) {
+      for (const [key, head] of this.db.heads) {
+        if (head.soft_deleted_at !== null) {
+          this.db.heads.delete(key);
+        }
+      }
+      return d1Ok();
+    }
+
+    if (this.sql.includes("INSERT INTO backup_user_state")) {
       const [
         userId,
-        periodUtc,
+        updatedAt,
+        uploadPeriodUtc,
         putObjectCount,
         uploadedCompressedBytes,
-        createdAt,
-        updatedAt,
+        lastUploadAt,
+        limit,
       ] = this.args;
-      const key = quotaKey(String(userId), String(periodUtc));
-      const existing = this.db.quotas.get(key);
-      if (existing) {
-        existing.successful_upload_count += 1;
-        existing.put_object_count += Number(putObjectCount);
-        existing.uploaded_compressed_bytes += Number(uploadedCompressedBytes);
-        existing.updated_at = Number(updatedAt);
-      } else {
-        this.db.quotas.set(key, {
-          user_id: String(userId),
-          period_utc: String(periodUtc),
-          successful_upload_count: 1,
-          put_object_count: Number(putObjectCount),
-          uploaded_compressed_bytes: Number(uploadedCompressedBytes),
-          created_at: Number(createdAt),
+      const key = String(userId);
+      const existing = this.db.userStates.get(key);
+      if (!existing) {
+        this.db.userStates.set(key, {
+          user_id: key,
+          head_set_rev: "empty",
           updated_at: Number(updatedAt),
+          key_count: 0,
+          total_compressed_bytes: 0,
+          upload_period_utc: String(uploadPeriodUtc),
+          monthly_upload_count: 1,
+          monthly_put_object_count: Number(putObjectCount),
+          monthly_uploaded_compressed_bytes: Number(uploadedCompressedBytes),
+          last_upload_at: Number(lastUploadAt),
         });
+        return d1Ok(1);
+      }
+      if (
+        existing.upload_period_utc !== String(uploadPeriodUtc) ||
+        existing.monthly_upload_count < Number(limit)
+      ) {
+        const samePeriod =
+          existing.upload_period_utc === String(uploadPeriodUtc);
+        existing.upload_period_utc = String(uploadPeriodUtc);
+        existing.monthly_upload_count = samePeriod
+          ? existing.monthly_upload_count + 1
+          : 1;
+        existing.monthly_put_object_count = samePeriod
+          ? existing.monthly_put_object_count + Number(putObjectCount)
+          : Number(putObjectCount);
+        existing.monthly_uploaded_compressed_bytes = samePeriod
+          ? existing.monthly_uploaded_compressed_bytes +
+            Number(uploadedCompressedBytes)
+          : Number(uploadedCompressedBytes);
+        existing.last_upload_at = Number(lastUploadAt);
+        return d1Ok(1);
+      }
+      return d1Ok(0);
+    }
+
+    if (this.sql.includes("UPDATE backup_user_state")) {
+      if (this.sql.includes("monthly_upload_count = MAX")) {
+        const [putObjectCount, uploadedCompressedBytes, userId, uploadPeriod] =
+          this.args;
+        const state = this.db.userStates.get(String(userId));
+        if (state && state.upload_period_utc === String(uploadPeriod)) {
+          state.monthly_upload_count = Math.max(
+            0,
+            state.monthly_upload_count - 1
+          );
+          state.monthly_put_object_count = Math.max(
+            0,
+            state.monthly_put_object_count - Number(putObjectCount)
+          );
+          state.monthly_uploaded_compressed_bytes = Math.max(
+            0,
+            state.monthly_uploaded_compressed_bytes -
+              Number(uploadedCompressedBytes)
+          );
+        }
+        return d1Ok(1);
+      }
+
+      const [headSetRev, updatedAt, countUserId, sumUserId, userId] = this.args;
+      const activeHeads = [...this.db.heads.values()].filter(
+        (head) =>
+          head.user_id === String(countUserId) && head.soft_deleted_at === null
+      );
+      const state = this.db.userStates.get(String(userId));
+      if (state) {
+        state.head_set_rev = String(headSetRev);
+        state.updated_at = Number(updatedAt);
+        state.key_count = activeHeads.length;
+        state.total_compressed_bytes = [...this.db.heads.values()]
+          .filter(
+            (head) =>
+              head.user_id === String(sumUserId) &&
+              head.soft_deleted_at === null
+          )
+          .reduce((sum, head) => sum + head.compressed_bytes, 0);
+      }
+      return d1Ok(state ? 1 : 0);
+    }
+
+    if (this.sql.includes("DELETE FROM backup_commits WHERE user_id")) {
+      const userId = String(this.args[0]);
+      for (const [key, commit] of this.db.commits) {
+        if (commit.user_id === userId) {
+          this.db.commits.delete(key);
+        }
+      }
+      return d1Ok();
+    }
+
+    if (this.sql.includes("DELETE FROM backup_commits")) {
+      const now = Number(this.args[0]);
+      const latestByUser = new Map<string, CommitRecord>();
+      for (const commit of this.db.commits.values()) {
+        const latest = latestByUser.get(commit.user_id);
+        if (
+          !latest ||
+          commit.created_at > latest.created_at ||
+          (commit.created_at === latest.created_at && commit.id > latest.id)
+        ) {
+          latestByUser.set(commit.user_id, commit);
+        }
+      }
+      for (const [key, commit] of this.db.commits) {
+        const latest = latestByUser.get(commit.user_id);
+        if (commit.expires_at <= now || commit.id !== latest?.id) {
+          this.db.commits.delete(key);
+        }
       }
       return d1Ok();
     }
@@ -987,6 +1157,20 @@ class FakeR2Bucket {
       this.objects.delete(key);
     }
   }
+
+  async list(options: R2ListOptions = {}): Promise<R2Objects> {
+    const prefix = options.prefix ?? "";
+    const limit = options.limit ?? 1000;
+    const keys = [...this.objects.keys()]
+      .filter((key) => key.startsWith(prefix))
+      .sort()
+      .slice(0, limit);
+    return {
+      objects: keys.map((key) => ({ key, uploaded: new Date(0) }) as R2Object),
+      truncated: false,
+      delimitedPrefixes: [],
+    } as R2Objects;
+  }
 }
 
 function headKey(userId: string, partitionKey: string): string {
@@ -997,15 +1181,11 @@ function commitKey(userId: string, idempotencyKey: string): string {
   return `${userId}\0${idempotencyKey}`;
 }
 
-function quotaKey(userId: string, periodUtc: string): string {
-  return `${userId}\0${periodUtc}`;
+function d1Ok(changes = 1): D1Result {
+  return { success: true, meta: d1Meta(changes), results: [] };
 }
 
-function d1Ok(): D1Result {
-  return { success: true, meta: d1Meta(), results: [] };
-}
-
-function d1Meta(): D1Meta & Record<string, unknown> {
+function d1Meta(changes = 0): D1Meta & Record<string, unknown> {
   return {
     duration: 0,
     size_after: 0,
@@ -1013,6 +1193,6 @@ function d1Meta(): D1Meta & Record<string, unknown> {
     rows_written: 0,
     last_row_id: 0,
     changed_db: false,
-    changes: 0,
+    changes,
   };
 }

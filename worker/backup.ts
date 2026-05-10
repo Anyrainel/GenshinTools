@@ -27,6 +27,11 @@ const BACKUP_LIMITS = {
   maxCompressedBytesPerDownload: 5 * 1024 * 1024,
 };
 
+const BACKUP_CLEANUP_LIMITS = {
+  maxR2ObjectsPerRun: 1000,
+  orphanDeleteGraceMs: 60 * 60 * 1000,
+};
+
 const BACKUP_CAPABILITIES = {
   apiVersion: 1,
   commitContentTypes: ["multipart/form-data"],
@@ -98,8 +103,10 @@ type BackupUploadQuota = {
   resetsAt: number;
 };
 
-type BackupUploadQuotaRow = {
-  successful_upload_count: number;
+type BackupUserStateRow = {
+  head_set_rev: string;
+  upload_period_utc: string | null;
+  monthly_upload_count: number;
 };
 
 type BackupCommitManifest = {
@@ -150,6 +157,26 @@ type BackupObjectDownloadRequest = {
   objectIds: string[];
 };
 
+type BackupCleanupResult = {
+  r2ObjectsScanned: number;
+  r2ObjectsDeleted: number;
+};
+
+type BackupQuotaReservation = {
+  userId: string;
+  period: string;
+  putObjectCount: number;
+  uploadedCompressedBytes: number;
+  quota: BackupUploadQuota;
+};
+
+type ParsedBackupObjectKey = {
+  key: string;
+  userId: string;
+  objectId: string;
+  uploadedAt: number;
+};
+
 type AuthenticatedBackupContext = {
   user: AuthenticatedUser;
   db: D1Database;
@@ -196,6 +223,72 @@ export async function handleBackupRequest(
   return backupJson({ error: "not_found" }, 404);
 }
 
+export async function runBackupCleanup(
+  env: BackupEnv
+): Promise<BackupCleanupResult> {
+  const result: BackupCleanupResult = {
+    r2ObjectsScanned: 0,
+    r2ObjectsDeleted: 0,
+  };
+  if (!env.BACKUP_DB || !env.BACKUP_BUCKET) {
+    return result;
+  }
+  const now = Date.now();
+
+  await env.BACKUP_DB.batch([
+    env.BACKUP_DB.prepare(
+      "DELETE FROM backup_heads WHERE soft_deleted_at IS NOT NULL"
+    ),
+    env.BACKUP_DB.prepare(
+      `DELETE FROM backup_commits
+      WHERE expires_at <= ?
+        OR id NOT IN (
+          SELECT latest.id
+          FROM backup_commits latest
+          WHERE latest.user_id = backup_commits.user_id
+          ORDER BY latest.created_at DESC, latest.id DESC
+          LIMIT 1
+        )`
+    ).bind(now),
+  ]);
+
+  const listed = await env.BACKUP_BUCKET.list({
+    prefix: "users/",
+    limit: BACKUP_CLEANUP_LIMITS.maxR2ObjectsPerRun,
+  });
+  result.r2ObjectsScanned = listed.objects.length;
+
+  const objectsByUser = new Map<string, ParsedBackupObjectKey[]>();
+  for (const object of listed.objects) {
+    const parsed = parseBackupObjectKey(object.key, object.uploaded);
+    if (!parsed) continue;
+    const entries = objectsByUser.get(parsed.userId) ?? [];
+    entries.push(parsed);
+    objectsByUser.set(parsed.userId, entries);
+  }
+
+  for (const [userId, objects] of objectsByUser) {
+    const activeRows = await selectHeadsByObjectIds(
+      env.BACKUP_DB,
+      userId,
+      objects.map((object) => object.objectId)
+    );
+    const activeObjectIds = new Set(activeRows.map((row) => row.object_id));
+    const staleCutoff = now - BACKUP_CLEANUP_LIMITS.orphanDeleteGraceMs;
+    const staleKeys = objects
+      .filter(
+        (object) =>
+          !activeObjectIds.has(object.objectId) &&
+          object.uploadedAt <= staleCutoff
+      )
+      .map((object) => object.key);
+    await deleteBackupObjectKeys(env.BACKUP_BUCKET, staleKeys);
+    result.r2ObjectsDeleted += staleKeys.length;
+  }
+
+  return result;
+}
+
 async function authenticateBackupRequest(
   request: Request,
   env: BackupEnv
@@ -228,18 +321,20 @@ async function handleBackupHead(
 ): Promise<Response> {
   const now = Date.now();
   const knownHeadSetRev = url.searchParams.get("headSetRev");
-  const quota = await readBackupUploadQuota(
-    context.db,
-    context.user.userId,
+  const state = await context.db
+    .prepare(
+      `SELECT head_set_rev, upload_period_utc, monthly_upload_count
+      FROM backup_user_state
+      WHERE user_id = ?
+      LIMIT 1`
+    )
+    .bind(context.user.userId)
+    .first<BackupUserStateRow>();
+  const quota = createBackupUploadQuotaFromState(
+    state,
     now,
     context.monthlyUploadLimit
   );
-  const state = await context.db
-    .prepare(
-      "SELECT head_set_rev FROM backup_user_state WHERE user_id = ? LIMIT 1"
-    )
-    .bind(context.user.userId)
-    .first<{ head_set_rev: string }>();
 
   const headSetRev = state?.head_set_rev ?? "empty";
   if (knownHeadSetRev && knownHeadSetRev === headSetRev) {
@@ -319,15 +414,59 @@ async function handleBackupCommit(
   }
 
   const checkedAt = Date.now();
-  const quota = await readBackupUploadQuota(
-    context.db,
-    context.user.userId,
-    checkedAt,
-    context.monthlyUploadLimit
+  const putObjectCount = puts.length;
+  const uploadedCompressedBytes = puts.reduce(
+    (sum, put) => sum + put.compressedBytes,
+    0
   );
-  if (quota.remaining <= 0) {
-    return backupJson({ error: "monthly_upload_limit_exceeded", quota }, 429);
+  const reservation = await reserveBackupUploadQuota(context.db, {
+    userId: context.user.userId,
+    now: checkedAt,
+    limit: context.monthlyUploadLimit,
+    putObjectCount,
+    uploadedCompressedBytes,
+  });
+  if (reservation instanceof Response) {
+    return reservation;
   }
+
+  try {
+    return await writeBackupCommit({
+      context,
+      form,
+      manifest,
+      puts,
+      deletes,
+      currentHeads,
+      checkedAt,
+      quota: reservation.quota,
+    });
+  } catch (error) {
+    await releaseReservedUploadQuota(context.db, reservation);
+    throw error;
+  }
+}
+
+async function writeBackupCommit(input: {
+  context: AuthenticatedBackupContext;
+  form: FormData;
+  manifest: BackupCommitManifest;
+  puts: BackupCommitPut[];
+  deletes: BackupCommitDelete[];
+  currentHeads: Map<string, BackupHead>;
+  checkedAt: number;
+  quota: BackupUploadQuota;
+}): Promise<Response> {
+  const {
+    context,
+    form,
+    manifest,
+    puts,
+    deletes,
+    currentHeads,
+    checkedAt,
+    quota,
+  } = input;
 
   const deviceRowId = await resolveDeviceRow(context.db, context.user.userId, {
     deviceId: manifest.deviceId,
@@ -443,17 +582,10 @@ async function handleBackupCommit(
     statements.push(
       context.db
         .prepare(
-          `UPDATE backup_heads
-          SET soft_deleted_at = ?, updated_at = ?, source_device_row_id = ?
+          `DELETE FROM backup_heads
           WHERE user_id = ? AND partition_key = ?`
         )
-        .bind(
-          committedAt,
-          committedAt,
-          deviceRowId,
-          context.user.userId,
-          del.partitionKey
-        )
+        .bind(context.user.userId, del.partitionKey)
     );
   }
 
@@ -462,37 +594,40 @@ async function handleBackupCommit(
     committedAt,
     headSetRev,
     heads: changedHeads,
-    quota: consumeBackupUploadQuota(quota),
+    quota,
   };
 
   statements.push(
-    upsertBackupUploadQuotaStatement(context.db, {
-      userId: context.user.userId,
-      period: quota.period,
-      putObjectCount: puts.length,
-      uploadedCompressedBytes: puts.reduce(
-        (sum, put) => sum + put.compressedBytes,
-        0
-      ),
-      now: committedAt,
-    })
+    context.db
+      .prepare(
+        `UPDATE backup_user_state
+        SET
+          head_set_rev = ?,
+          updated_at = ?,
+          key_count = (
+            SELECT COUNT(*)
+            FROM backup_heads
+            WHERE user_id = ? AND soft_deleted_at IS NULL
+          ),
+          total_compressed_bytes = (
+            SELECT COALESCE(SUM(compressed_bytes), 0)
+            FROM backup_heads
+            WHERE user_id = ? AND soft_deleted_at IS NULL
+          )
+        WHERE user_id = ?`
+      )
+      .bind(
+        headSetRev,
+        committedAt,
+        context.user.userId,
+        context.user.userId,
+        context.user.userId
+      )
   );
   statements.push(
     context.db
-      .prepare(
-        `INSERT INTO backup_user_state (
-          user_id, head_set_rev, updated_at, key_count, total_compressed_bytes
-        )
-        SELECT ?, ?, ?, COUNT(*), COALESCE(SUM(compressed_bytes), 0)
-        FROM backup_heads
-        WHERE user_id = ? AND soft_deleted_at IS NULL
-        ON CONFLICT(user_id) DO UPDATE SET
-          head_set_rev = excluded.head_set_rev,
-          updated_at = excluded.updated_at,
-          key_count = excluded.key_count,
-          total_compressed_bytes = excluded.total_compressed_bytes`
-      )
-      .bind(context.user.userId, headSetRev, committedAt, context.user.userId)
+      .prepare("DELETE FROM backup_commits WHERE user_id = ?")
+      .bind(context.user.userId)
   );
   statements.push(
     context.db
@@ -615,67 +750,141 @@ async function readBackupUploadQuota(
   now: number,
   limit: number
 ): Promise<BackupUploadQuota> {
-  const period = getUtcMonthPeriod(now);
-  const row = await db
+  const state = await db
     .prepare(
-      `SELECT successful_upload_count
-      FROM backup_monthly_upload_quota
-      WHERE user_id = ? AND period_utc = ?
+      `SELECT head_set_rev, upload_period_utc, monthly_upload_count
+      FROM backup_user_state
+      WHERE user_id = ?
       LIMIT 1`
     )
-    .bind(userId, period)
-    .first<BackupUploadQuotaRow>();
-  return createBackupUploadQuota({
-    period,
-    limit,
-    used: row?.successful_upload_count ?? 0,
-    resetsAt: getNextUtcMonthStart(now),
-  });
+    .bind(userId)
+    .first<BackupUserStateRow>();
+  return createBackupUploadQuotaFromState(state, now, limit);
 }
 
-function consumeBackupUploadQuota(quota: BackupUploadQuota): BackupUploadQuota {
-  return createBackupUploadQuota({
-    ...quota,
-    used: quota.used + 1,
-  });
-}
-
-function upsertBackupUploadQuotaStatement(
+async function reserveBackupUploadQuota(
   db: D1Database,
   input: {
     userId: string;
-    period: string;
+    now: number;
+    limit: number;
     putObjectCount: number;
     uploadedCompressedBytes: number;
-    now: number;
   }
-): D1PreparedStatement {
-  return db
+): Promise<BackupQuotaReservation | Response> {
+  const period = getUtcMonthPeriod(input.now);
+  if (input.limit <= 0) {
+    const quota = await readBackupUploadQuota(
+      db,
+      input.userId,
+      input.now,
+      input.limit
+    );
+    return backupJson({ error: "monthly_upload_limit_exceeded", quota }, 429);
+  }
+
+  const result = await db
     .prepare(
-      `INSERT INTO backup_monthly_upload_quota (
-        user_id, period_utc, successful_upload_count, put_object_count,
-        uploaded_compressed_bytes, created_at, updated_at
+      `INSERT INTO backup_user_state (
+        user_id, head_set_rev, updated_at, key_count, total_compressed_bytes,
+        upload_period_utc, monthly_upload_count, monthly_put_object_count,
+        monthly_uploaded_compressed_bytes, last_upload_at
       )
-      VALUES (?, ?, 1, ?, ?, ?, ?)
-      ON CONFLICT(user_id, period_utc) DO UPDATE SET
-        successful_upload_count =
-          backup_monthly_upload_quota.successful_upload_count + 1,
-        put_object_count =
-          backup_monthly_upload_quota.put_object_count +
-          excluded.put_object_count,
-        uploaded_compressed_bytes =
-          backup_monthly_upload_quota.uploaded_compressed_bytes +
-          excluded.uploaded_compressed_bytes,
-        updated_at = excluded.updated_at`
+      VALUES (?, 'empty', ?, 0, 0, ?, 1, ?, ?, ?)
+      ON CONFLICT(user_id) DO UPDATE SET
+        upload_period_utc = excluded.upload_period_utc,
+        monthly_upload_count =
+          CASE
+            WHEN backup_user_state.upload_period_utc = excluded.upload_period_utc
+            THEN backup_user_state.monthly_upload_count + 1
+            ELSE excluded.monthly_upload_count
+          END,
+        monthly_put_object_count =
+          CASE
+            WHEN backup_user_state.upload_period_utc = excluded.upload_period_utc
+            THEN backup_user_state.monthly_put_object_count + excluded.monthly_put_object_count
+            ELSE excluded.monthly_put_object_count
+          END,
+        monthly_uploaded_compressed_bytes =
+          CASE
+            WHEN backup_user_state.upload_period_utc = excluded.upload_period_utc
+            THEN backup_user_state.monthly_uploaded_compressed_bytes + excluded.monthly_uploaded_compressed_bytes
+            ELSE excluded.monthly_uploaded_compressed_bytes
+          END,
+        last_upload_at = excluded.last_upload_at
+      WHERE backup_user_state.upload_period_utc IS NULL
+        OR backup_user_state.upload_period_utc <> excluded.upload_period_utc
+        OR backup_user_state.monthly_upload_count < ?`
     )
     .bind(
       input.userId,
-      input.period,
+      input.now,
+      period,
       input.putObjectCount,
       input.uploadedCompressedBytes,
       input.now,
-      input.now
-    );
+      input.limit
+    )
+    .run();
+
+  const quota = await readBackupUploadQuota(
+    db,
+    input.userId,
+    input.now,
+    input.limit
+  );
+  if ((result.meta as { changes?: number }).changes === 0) {
+    return backupJson({ error: "monthly_upload_limit_exceeded", quota }, 429);
+  }
+
+  return {
+    userId: input.userId,
+    period,
+    putObjectCount: input.putObjectCount,
+    uploadedCompressedBytes: input.uploadedCompressedBytes,
+    quota,
+  };
+}
+
+async function releaseReservedUploadQuota(
+  db: D1Database,
+  reservation: BackupQuotaReservation
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE backup_user_state
+      SET
+        monthly_upload_count = MAX(0, monthly_upload_count - 1),
+        monthly_put_object_count = MAX(0, monthly_put_object_count - ?),
+        monthly_uploaded_compressed_bytes =
+          MAX(0, monthly_uploaded_compressed_bytes - ?)
+      WHERE user_id = ? AND upload_period_utc = ?`
+    )
+    .bind(
+      reservation.putObjectCount,
+      reservation.uploadedCompressedBytes,
+      reservation.userId,
+      reservation.period
+    )
+    .run();
+}
+
+function createBackupUploadQuotaFromState(
+  state: BackupUserStateRow | null,
+  now: number,
+  limit: number
+): BackupUploadQuota {
+  const period = getUtcMonthPeriod(now);
+  const used =
+    state?.upload_period_utc === period
+      ? Number(state.monthly_upload_count)
+      : 0;
+  return createBackupUploadQuota({
+    period,
+    limit,
+    used,
+    resetsAt: getNextUtcMonthStart(now),
+  });
 }
 
 async function deleteBackupObjects(
@@ -684,10 +893,19 @@ async function deleteBackupObjects(
   objectIds: Set<string>
 ): Promise<void> {
   if (objectIds.size === 0) return;
+  return deleteBackupObjectKeys(
+    bucket,
+    [...objectIds].map((objectId) => makeObjectKey(userId, objectId))
+  );
+}
+
+async function deleteBackupObjectKeys(
+  bucket: R2Bucket,
+  keys: string[]
+): Promise<void> {
+  if (keys.length === 0) return;
   const results = await Promise.allSettled(
-    [...objectIds].map((objectId) =>
-      bucket.delete(makeObjectKey(userId, objectId))
-    )
+    keys.map((key) => bucket.delete(key))
   );
   for (const result of results) {
     if (result.status === "rejected") {
@@ -1195,6 +1413,26 @@ function stripBackupPrefix(pathname: string): string {
 
 function makeObjectKey(userId: string, objectId: string): string {
   return `users/${encodeURIComponent(userId)}/backup/objects/${objectId}.json.gz`;
+}
+
+function parseBackupObjectKey(
+  key: string,
+  uploaded: Date | undefined
+): ParsedBackupObjectKey | null {
+  const match =
+    /^users\/([^/]+)\/backup\/objects\/(obj_[a-f0-9]{32})\.json\.gz$/.exec(key);
+  if (!match) return null;
+  const uploadedAt = uploaded?.getTime() ?? 0;
+  try {
+    return {
+      key,
+      userId: decodeURIComponent(match[1]),
+      objectId: match[2],
+      uploadedAt: Number.isFinite(uploadedAt) ? uploadedAt : 0,
+    };
+  } catch {
+    return null;
+  }
 }
 
 function makeRev(prefix: string): string {

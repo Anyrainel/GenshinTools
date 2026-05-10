@@ -1,5 +1,9 @@
 import { type AppEnv, handleAuthRequest } from "./auth";
-import { type BackupEnv, handleBackupRequest } from "./backup";
+import {
+  type BackupEnv,
+  handleBackupRequest,
+  runBackupCleanup,
+} from "./backup";
 
 const ENKA_BASE_URL = "https://enka.network/api";
 
@@ -78,6 +82,14 @@ export default {
       return json({ error: "not_found" }, 404);
     }
     return handleSiteRequest(request, url, env);
+  },
+
+  async scheduled(
+    _controller: ScheduledController,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<void> {
+    ctx.waitUntil(runBackupCleanup(env as BackupEnv));
   },
 };
 

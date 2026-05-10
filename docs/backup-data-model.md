@@ -1,15 +1,15 @@
 # Backup Data Model
 
-Last updated: 2026-05-05.
+Last updated: 2026-05-10.
 
 This document is the source of truth for cloud backup data schemas, browser storage scope, partition modeling, and restore boundaries. Auth, API behavior, and operational setup live in `docs/account-system.md`.
 
 ## Model Summary
 
-Cloud backup is a per-user, domain-agnostic key-value backup service:
+Cloud backup is a per-user, domain-agnostic, latest-only key-value backup service:
 
-- D1 stores users, provider identities, entitlements, backup heads, device rows, and commit retry metadata.
-- R2 stores immutable compressed backup object bodies.
+- D1 stores users, provider identities, entitlements, current backup heads, device rows, and latest commit retry metadata.
+- R2 stores compressed backup object bodies referenced by current heads.
 - Browser-local Zustand stores remain the source of truth for app data.
 - Cloud adapters convert selected local state into stable backup partitions.
 - The Worker does not parse backup payload bodies.
@@ -231,7 +231,12 @@ CREATE TABLE IF NOT EXISTS backup_user_state (
   head_set_rev TEXT NOT NULL,
   updated_at INTEGER NOT NULL,
   key_count INTEGER NOT NULL DEFAULT 0,
-  total_compressed_bytes INTEGER NOT NULL DEFAULT 0
+  total_compressed_bytes INTEGER NOT NULL DEFAULT 0,
+  upload_period_utc TEXT,
+  monthly_upload_count INTEGER NOT NULL DEFAULT 0,
+  monthly_put_object_count INTEGER NOT NULL DEFAULT 0,
+  monthly_uploaded_compressed_bytes INTEGER NOT NULL DEFAULT 0,
+  last_upload_at INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS backup_devices (
@@ -273,7 +278,11 @@ CREATE TABLE IF NOT EXISTS backup_commits (
 );
 ```
 
-`backup_commits` is a retry ledger, not a staging table. If the client retries the same committed `idempotencyKey`, the Worker returns the original result.
+`backup_user_state` is the per-user aggregate row. It stores the current `headSetRev`, current live backup size/count totals, and the current upload quota period. When `upload_period_utc` differs from the current UTC month, the Worker treats the monthly counters as zero and resets them on the next successful commit.
+
+`backup_heads` is current-state metadata, not backup history. Normal delete commits remove the row for the deleted partition; `soft_deleted_at` remains in the schema only for legacy rows and is pruned by Worker cleanup.
+
+`backup_commits` is a short retry ledger, not a staging table or history table. The Worker keeps only the latest successful commit response per user. If the client retries that same latest `idempotencyKey`, the Worker returns the original result. Older commit rows are pruned by commit handling and scheduled cleanup.
 
 ## R2 Object Layout
 
@@ -289,7 +298,9 @@ users/{encodeURIComponent(userId)}/backup/objects/{objectId}.json.gz
 usr_logto_<32 hex chars>
 ```
 
-The Worker authorizes object downloads through current `backup_heads` rows. A stale object id that is no longer a current head can be rejected after the client refreshes `/head`.
+The Worker authorizes object downloads through current `backup_heads` rows. A stale object id that is no longer a current head is rejected after the client refreshes `/head`.
+
+R2 is latest-only. Successful commits delete superseded objects immediately when possible, and the scheduled Worker cleanup lists backup object keys and deletes any object id that is not referenced by an active `backup_heads` row. The scheduled path keeps a short age grace for unreferenced objects to avoid racing an in-flight commit between its R2 write and D1 batch. R2 is not an undo log or progression-history store.
 
 ## Sync Metadata
 

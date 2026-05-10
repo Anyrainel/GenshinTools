@@ -1,6 +1,6 @@
 # Account System
 
-Last updated: 2026-05-09.
+Last updated: 2026-05-10.
 
 This document is the source of truth for the current account, auth, Worker API, and cloud-backup system shape. Data schemas and backup partition modeling live in `docs/backup-data-model.md`.
 
@@ -12,6 +12,8 @@ This document is the source of truth for the current account, auth, Worker API, 
 - The Worker backup API is implemented under `/api/backup/v1`.
 - D1 stores account/auth metadata and backup heads. R2 stores compressed backup object bodies.
 - The Worker issues a first-party backup session cookie after Logto proves identity once.
+- Backup storage is latest-only. Successful commits replace prior backup heads, delete superseded R2 objects, and keep only the latest commit retry row per user.
+- A daily Worker Cron Trigger repairs storage drift by deleting legacy soft-deleted D1 heads, old commit retry rows, and R2 objects that are not referenced by active backup heads.
 
 ## Frontend Auth
 
@@ -177,6 +179,27 @@ Restore flow:
 7. Mark local sync metadata only after local apply succeeds.
 
 Cloud head metadata for the manual page may be cached in `sessionStorage` under `cloud_backup_metadata:<user>`. The cache is display-only and must not become an auth or conflict source of truth.
+
+## Backup Cleanup
+
+`worker/backup.ts` owns latest-only cleanup through `runBackupCleanup(...)`.
+
+The production Worker schedules it from `worker/index.ts` using a Cron Trigger configured in `wrangler.jsonc`:
+
+```text
+17 9 * * *
+```
+
+Cron times are UTC. The cleanup is intentionally conservative:
+
+- `backup_heads` remains the source of truth for current backup objects.
+- deleted partitions are removed from `backup_heads` instead of kept as soft-deleted history.
+- legacy soft-deleted head rows are deleted.
+- `backup_commits` keeps only the latest successful retry response per user and removes expired rows.
+- monthly upload quota counters live on `backup_user_state` and reset logically when `upload_period_utc` differs from the current UTC month.
+- R2 objects under `users/<user>/backup/objects/` are listed in bounded batches and deleted only when no active `backup_heads` row references the object id. The scheduled path skips very recent orphan objects so it cannot race a request that has written R2 but has not finished its D1 batch.
+
+This cleanup does not implement undo or version history. Progression analytics should run from current backup data and persist derived analytics somewhere else.
 
 ## Local Verification
 

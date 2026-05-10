@@ -8,6 +8,9 @@
   "observability": {
     "enabled": true
   },
+  "triggers": {
+    "crons": ["17 9 * * *"]
+  },
   "vars": {
     "LOGTO_ENDPOINT": "https://auth.ggartifact.com",
     "LOGTO_APP_ID": "tglrsenlbfrfrnevjwlan",
