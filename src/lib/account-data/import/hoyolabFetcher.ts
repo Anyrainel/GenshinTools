@@ -18,7 +18,7 @@ import type {
 // Unlike the Enka path (which reads the in-game profile showcase), this calls
 // the Battle Chronicle `/character/list` + `/character/detail` endpoints on
 // either hoyolab.com (overseas) or miyoushe.com (CN). The signed proxy lives
-// at /api/hoyolab/<os|cn>/<subpath> — see functions/api/hoyolab/[[path]].ts.
+// at /api/hoyolab/<os|cn>/<subpath> — see worker/index.ts.
 //
 // The shape of the response is completely different from Enka's, so we map
 // directly to the internal GOODData format rather than reusing any of the

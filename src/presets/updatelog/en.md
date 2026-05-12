@@ -2,6 +2,16 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-05-11
+
+### features
+- Cloud Backup is now available. You can back up your data to prevent loss or keep it in sync across multiple devices
+- GOODScanner now supports scanning recently obtained artifacts from Lock Helper, for updating only the latest N artifacts
+- GOODScanner Manager now supports lock/unlock actions starting from the most recently obtained artifacts
+
+### fixes
+- Fixed the Resource Planning page not working
+
 ## 2026-04-27
 
 ### features

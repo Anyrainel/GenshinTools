@@ -521,7 +521,7 @@ Features:
 
 ### 6.1 Web Application
 - **URL:** https://ggartifact.com
-- **Hosting:** Cloudflare Pages
+- **Hosting:** Cloudflare Workers, with GitHub Pages as a static fallback
 - **PWA Support:** Not currently implemented
 
 ### 6.2 Desktop Application

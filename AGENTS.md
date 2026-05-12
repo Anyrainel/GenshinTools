@@ -2,11 +2,11 @@
 
 ## Project Snapshot
 
-React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tailwind CSS 3, shadcn/ui, Radix primitives, Vaul drawers, Lucide icons, and Sonner toasts. State is Zustand 5 with Immer and persist middleware. Cloudflare Pages/Workers use `dist/`, `functions/api/`, and Wrangler.
+React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tailwind CSS 3, shadcn/ui, Radix primitives, Vaul drawers, Lucide icons, and Sonner toasts. State is Zustand 5 with Immer and persist middleware. Cloudflare Workers use `worker/`, `dist/`, and Wrangler; GitHub Pages remains a static fallback.
 
 ## Common Commands
 
-- `npm run dev` — Vite + Wrangler dev server with Cloudflare Functions proxy
+- `npm run dev` — Vite dev server
 - `npm run dev:vite` — Vite only
 - `npm run build` / `npm run build:tauri` — production web / Tauri build
 - `npm run lint` / `npm run lint:fix` — Biome check / auto-fix

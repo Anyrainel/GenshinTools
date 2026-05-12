@@ -17,7 +17,7 @@
 
 # === STATIC GAME DATA (images, icons) ===
 # Unhashed but rarely change. 30-day browser cache + 1-day SWR.
-# CDN cache same duration — purged automatically on each Pages deploy.
+# CDN cache same duration; purge after asset updates if needed.
 /artifact/*
   Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000

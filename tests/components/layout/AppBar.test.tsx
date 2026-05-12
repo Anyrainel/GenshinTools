@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Home } from "lucide-react";
 import type { ReactNode } from "react";
@@ -149,7 +155,12 @@ describe("AppBar", () => {
 
     await userEvent.keyboard("{Escape}");
 
-    await userEvent.click(screen.getByRole("button", { name: "common.more" }));
+    const moreButton = screen.getByRole("button", { name: "common.more" });
+    expect(
+      within(moreButton).queryByText("common.more")
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(moreButton);
 
     expect(
       screen.getByRole("menuitem", { name: "Secondary" })
@@ -191,6 +202,9 @@ describe("AppBar", () => {
       screen.getByRole("button", { name: "accountSystem.accountMenu" })
     );
 
+    const menu = screen.getByRole("menu");
+    expect(menu).not.toHaveClass("w-52");
+    expect(menu).not.toHaveClass("max-w-52");
     expect(
       screen.getByRole("menuitem", { name: "accountSystem.signIn" })
     ).toBeInTheDocument();
@@ -284,6 +298,13 @@ describe("AppBar", () => {
       screen.getByRole("button", { name: "accountSystem.accountMenu" })
     );
 
+    const menu = screen.getByRole("menu");
+    expect(menu).not.toHaveClass("w-52");
+    expect(menu).toHaveClass("w-max", "max-w-52", "xl:w-auto", "xl:max-w-none");
+    expect(within(menu).getByText("traveler@example.com")).toHaveClass(
+      "min-w-0",
+      "truncate"
+    );
     expect(screen.getAllByText("traveler@example.com").length).toBeGreaterThan(
       0
     );

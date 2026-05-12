@@ -21,7 +21,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "../..");
 
-const PROXY_PATH = resolve(ROOT, "functions/api/hoyolab/[[path]].ts");
+const WORKER_PATH = resolve(ROOT, "worker/index.ts");
 const PROBE_PATH = resolve(ROOT, "scripts/hoyolab-probe.ts");
 
 // Upstream reference URLs (raw GitHub)
@@ -39,9 +39,9 @@ const UPSTREAM = {
 
 function readLocal(filePath) {
   const src = readFileSync(filePath, "utf-8");
-  // Match the APP_VERSION block:  cn: "x.y.z"
+  // Match the Worker app-version block: cn: "x.y.z"
   const cnVersion = src.match(/APP_VERSION\s*=\s*\{[^}]*cn:\s*"([^"]+)"/s)?.[1];
-  // Match the SALTS block:  cn: "..."
+  // Match the Worker salt block: cn: "..."
   const cnSalt = src.match(/SALTS\s*=\s*\{[^}]*cn:\s*"([^"]+)"/s)?.[1];
   return { cnVersion, cnSalt };
 }
@@ -64,7 +64,7 @@ async function fetchText(url, timeoutMs = 10_000) {
 
 async function main() {
   const fix = process.argv.includes("--fix");
-  const local = readLocal(PROXY_PATH);
+  const local = readLocal(WORKER_PATH);
   let hasIssues = false;
 
   console.log("[hoyolab-version] Checking CN upstream (MihoyoBBSTools)...");
@@ -79,12 +79,12 @@ async function main() {
       );
       hasIssues = true;
       if (fix) {
-        applyFix(PROXY_PATH, local.cnVersion, upstreamVersion);
+        applyFix(WORKER_PATH, local.cnVersion, upstreamVersion);
         applyFix(PROBE_PATH, local.cnVersion, upstreamVersion);
         // Also update User-Agent strings that embed the version
-        applyFix(PROXY_PATH, `miHoYoBBS/${local.cnVersion}`, `miHoYoBBS/${upstreamVersion}`);
+        applyFix(WORKER_PATH, `miHoYoBBS/${local.cnVersion}`, `miHoYoBBS/${upstreamVersion}`);
         applyFix(PROBE_PATH, `miHoYoBBS/${local.cnVersion}`, `miHoYoBBS/${upstreamVersion}`);
-        console.log("  ✓ Fixed CN app_version in proxy + probe");
+        console.log("  ✓ Fixed CN app_version in worker + probe");
       }
     } else if (upstreamVersion) {
       console.log(`  ✓ CN app_version up-to-date (${local.cnVersion})`);
@@ -98,9 +98,9 @@ async function main() {
       );
       hasIssues = true;
       if (fix) {
-        applyFix(PROXY_PATH, local.cnSalt, upstreamSalt);
+        applyFix(WORKER_PATH, local.cnSalt, upstreamSalt);
         applyFix(PROBE_PATH, local.cnSalt, upstreamSalt);
-        console.log("  ✓ Fixed CN salt in proxy + probe");
+        console.log("  ✓ Fixed CN salt in worker + probe");
       }
     } else if (upstreamSalt) {
       console.log(`  ✓ CN salt (x4) up-to-date`);

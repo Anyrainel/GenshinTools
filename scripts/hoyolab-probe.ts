@@ -2,7 +2,7 @@
  * HoYoLAB / 米游社 Battle Chronicle probe.
  *
  * Run locally to verify the request/signing logic works against a real
- * account before porting to a Cloudflare Pages Function.
+ * account before updating the Cloudflare Worker proxy.
  *
  *   # CN (国服 / Bilibili)
  *   CN_UID=12345678 \

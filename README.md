@@ -84,7 +84,7 @@ npm run build
 
 Useful variants:
 
-- `npm run dev:wrangler` starts Vite behind Wrangler Pages dev.
+- `npm run dev:wrangler` starts the local Worker dev server.
 - `npm run depcheck` checks dependency boundaries.
 - `npm run regtest` runs artifact generator regression tests.
 
@@ -93,7 +93,7 @@ Useful variants:
 - React 19, TypeScript, Vite 7
 - Tailwind CSS, shadcn/ui, Radix primitives, Vaul, Lucide icons
 - Zustand with Immer and persist middleware
-- Cloudflare Pages/Workers
+- Cloudflare Workers, with GitHub Pages as a static fallback
 
 ## Contributing
 

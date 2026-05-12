@@ -84,7 +84,7 @@ npm run build
 
 常用变体：
 
-- `npm run dev:wrangler` 在 Wrangler Pages dev 代理后启动 Vite。
+- `npm run dev:wrangler` 启动本地 Worker 开发服务器。
 - `npm run depcheck` 检查依赖边界。
 - `npm run regtest` 运行圣遗物生成器回归测试。
 
@@ -93,7 +93,7 @@ npm run build
 - React 19、TypeScript、Vite 7
 - Tailwind CSS、shadcn/ui、Radix primitives、Vaul、Lucide icons
 - Zustand、Immer、persist middleware
-- Cloudflare Pages/Workers
+- Cloudflare Workers，GitHub Pages 作为静态备用部署
 
 ## 贡献
 

@@ -22,6 +22,17 @@ const HOYOLAB_APP_VERSION = {
   cn: "2.99.1",
 } as const;
 
+const HOYOLAB_SERVER_BY_UID_PREFIX = {
+  "1": "cn_gf01",
+  "2": "cn_gf01",
+  "3": "cn_gf01",
+  "5": "cn_qd01",
+  "6": "os_usa",
+  "7": "os_euro",
+  "8": "os_asia",
+  "9": "os_cht",
+} as const;
+
 const ENKA_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -49,6 +60,7 @@ const STATIC_ASSET_PREFIXES = [
 ] as const;
 
 type HoyolabRegion = keyof typeof HOYOLAB_BASES;
+type HoyolabEndpoint = "character/list" | "character/detail";
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -181,7 +193,11 @@ async function handleEnkaProxy(request: Request, url: URL): Promise<Response> {
   }
 
   const targetPath = stripPrefix(url.pathname, "/api/enka/");
-  const targetUrl = `${ENKA_BASE_URL}/${targetPath}${url.search}`;
+  const enkaUid = parseEnkaUidPath(targetPath);
+  if (!enkaUid) {
+    return json({ error: "path_not_allowed" }, 404, ENKA_CORS_HEADERS);
+  }
+  const targetUrl = `${ENKA_BASE_URL}/uid/${enkaUid}${url.search}`;
 
   try {
     const response = await fetch(targetUrl, {
@@ -242,13 +258,20 @@ async function handleHoyolabProxy(
     return json({ error: "invalid_region", region }, 400, HOYOLAB_CORS_HEADERS);
   }
 
+  const subPath = segments.slice(1).join("/");
+  if (!isHoyolabEndpoint(subPath)) {
+    return json({ error: "path_not_allowed" }, 404, HOYOLAB_CORS_HEADERS);
+  }
+
   const cookie = request.headers.get("x-hoyolab-cookie");
   if (!cookie) {
     return json({ error: "missing_cookie" }, 400, HOYOLAB_CORS_HEADERS);
   }
 
   const bodyText = await request.text();
-  const subPath = segments.slice(1).join("/");
+  if (!isValidHoyolabRequestBody(region, subPath, bodyText)) {
+    return json({ error: "invalid_body" }, 400, HOYOLAB_CORS_HEADERS);
+  }
   const targetUrl = `${HOYOLAB_BASES[region]}/${subPath}${url.search}`;
   const ds = region === "os" ? dsOs() : dsCn(bodyText, url.searchParams);
 
@@ -300,8 +323,76 @@ function stripPrefix(value: string, prefix: string): string {
   return value.startsWith(prefix) ? value.slice(prefix.length) : value;
 }
 
+function parseEnkaUidPath(value: string): string | null {
+  const segments = value.split("/").filter(Boolean);
+  if (segments.length !== 2 || segments[0] !== "uid") return null;
+  return /^\d{9}$/.test(segments[1]) ? segments[1] : null;
+}
+
 function isHoyolabRegion(value: string | undefined): value is HoyolabRegion {
   return value === "os" || value === "cn";
+}
+
+function isHoyolabEndpoint(value: string): value is HoyolabEndpoint {
+  return value === "character/list" || value === "character/detail";
+}
+
+function isValidHoyolabRequestBody(
+  region: HoyolabRegion,
+  endpoint: HoyolabEndpoint,
+  bodyText: string
+): boolean {
+  let body: unknown;
+  try {
+    body = JSON.parse(bodyText);
+  } catch {
+    return false;
+  }
+  if (!isRecord(body)) return false;
+  if (
+    !isUid(body.role_id) ||
+    typeof body.server !== "string" ||
+    !isExpectedHoyolabServer(region, body.role_id, body.server)
+  ) {
+    return false;
+  }
+  if (endpoint === "character/list") {
+    return !("character_ids" in body);
+  }
+  return (
+    Array.isArray(body.character_ids) &&
+    body.character_ids.length > 0 &&
+    body.character_ids.length <= 30 &&
+    body.character_ids.every(
+      (id) => Number.isInteger(id) && id > 0 && id < 1_000_000_000
+    )
+  );
+}
+
+function isUid(value: unknown): value is string {
+  return typeof value === "string" && /^\d{9,10}$/.test(value);
+}
+
+function isExpectedHoyolabServer(
+  region: HoyolabRegion,
+  uid: string,
+  server: string
+): boolean {
+  const expectedServer =
+    HOYOLAB_SERVER_BY_UID_PREFIX[
+      uid[0] as keyof typeof HOYOLAB_SERVER_BY_UID_PREFIX
+    ];
+  if (!expectedServer || server !== expectedServer) return false;
+  return region === "cn"
+    ? server === "cn_gf01" || server === "cn_qd01"
+    : server === "os_usa" ||
+        server === "os_euro" ||
+        server === "os_asia" ||
+        server === "os_cht";
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function json(

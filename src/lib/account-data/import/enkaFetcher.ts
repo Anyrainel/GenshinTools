@@ -240,14 +240,14 @@ const ENKA_DIRECT_API = "/api/enka/uid/";
 
 /**
  * Determines if we're running on a deployment that has our Cloudflare proxy.
- * Returns true for Cloudflare Pages, Workers, custom domains, and localhost
+ * Returns true for Worker-capable deployments, custom domains, and localhost
  * when running via Wrangler.
  */
 export function hasCloudflareProxyForLocation({
   hostname,
   port,
 }: Pick<Location, "hostname" | "port">): boolean {
-  // Production: Cloudflare Pages, Workers, and custom-domain deployments
+  // Production: Cloudflare Workers and custom-domain deployments
   if (
     hostname.endsWith(".pages.dev") ||
     hostname.endsWith(".workers.dev") ||

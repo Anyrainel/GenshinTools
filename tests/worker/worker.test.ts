@@ -1,8 +1,12 @@
 import { SELF } from "cloudflare:test";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import worker, { isStaticAssetRequest } from "../../worker/index";
 
 describe("Worker API routing", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("handles Enka CORS preflight in the Workers runtime", async () => {
     const response = await SELF.fetch("https://example.com/api/enka/uid/1", {
       method: "OPTIONS",
@@ -24,6 +28,116 @@ describe("Worker API routing", () => {
     await expect(response.json()).resolves.toMatchObject({
       error: "path_too_short",
     });
+  });
+
+  it("proxies only the Enka UID endpoint", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ playerInfo: {} }), {
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/enka/uid/123456789"),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://enka.network/api/uid/123456789",
+      expect.objectContaining({ method: "GET" })
+    );
+  });
+
+  it("rejects unsupported Enka proxy paths before upstream fetch", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/enka/avatar/123456789"),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(404);
+    await expect(response.json()).resolves.toEqual({
+      error: "path_not_allowed",
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("proxies only supported HoYoLAB endpoints", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ retcode: 0, message: "OK", data: {} }), {
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/hoyolab/os/character/list", {
+        method: "POST",
+        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
+      }),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://sg-public-api.hoyolab.com/event/game_record/genshin/api/character/list",
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
+  it("rejects unsupported HoYoLAB proxy paths before upstream fetch", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/hoyolab/os/account/info", {
+        method: "POST",
+        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
+      }),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(404);
+    await expect(response.json()).resolves.toEqual({
+      error: "path_not_allowed",
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects malformed HoYoLAB detail bodies before upstream fetch", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/hoyolab/os/character/detail", {
+        method: "POST",
+        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
+      }),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({ error: "invalid_body" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects HoYoLAB UID and server mismatches before upstream fetch", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/hoyolab/os/character/list", {
+        method: "POST",
+        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        body: JSON.stringify({ role_id: "800000000", server: "os_usa" }),
+      }),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({ error: "invalid_body" });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("returns JSON 404s for unknown API routes", async () => {

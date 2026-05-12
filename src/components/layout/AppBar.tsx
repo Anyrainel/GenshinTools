@@ -276,12 +276,17 @@ export function AppBar({
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
+      <DropdownMenuContent
+        align="end"
+        className={cn(
+          isAuthenticated && "w-max max-w-52 xl:w-auto xl:max-w-none"
+        )}
+      >
         {isAuthenticated ? (
           <>
             <DropdownMenuLabel className="xl:hidden flex items-center gap-2 font-normal">
               <Mail className="w-4 h-4 text-primary" />
-              <span className="truncate">{accountLabel}</span>
+              <span className="min-w-0 truncate">{accountLabel}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="xl:hidden" />
             <DropdownMenuItem asChild className="gap-2">
@@ -562,13 +567,10 @@ export function AppBar({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
+                    size="icon"
                     aria-label={t.ui("common.more")}
-                    className="h-9 gap-2 px-2 pt-1.5 pb-2.5 sm:px-3"
                   >
                     <MoreVertical className="w-4 h-4" />
-                    <span className="hidden sm:inline">
-                      {t.ui("common.more")}
-                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">

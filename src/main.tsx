@@ -25,7 +25,7 @@ if (new URLSearchParams(window.location.search).has("_r")) {
 }
 
 // GitHub Pages has no URL rewriting — must use HashRouter.
-// Cloudflare Pages (base="/") supports _redirects SPA fallback → use BrowserRouter.
+// Worker/static-asset deployments route SPA fallbacks server-side.
 const useHash = import.meta.env.BASE_URL !== "/";
 const Router = useHash ? HashRouter : BrowserRouter;
 
