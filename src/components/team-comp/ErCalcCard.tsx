@@ -56,6 +56,53 @@ import { TimelineStrip } from "./TimelineStrip";
 
 const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
 
+type TimelineListUpdate =
+  | ERTimeline[]
+  | ((currentTimelines: ERTimeline[]) => ERTimeline[]);
+
+function resolveEnergyTimelines(
+  timelines: ERTimeline[] | undefined
+): ERTimeline[] {
+  return timelines && timelines.length > 0 ? timelines : [EMPTY_ERT];
+}
+
+function applyFavoniusDefaultsToActions(
+  actions: TimelineAction[],
+  team: TeamSlot[]
+): TimelineAction[] {
+  const nextActions = actions.map((action) => ({ ...action }));
+  for (const slot of team) {
+    const weaponEnergy = slot.weaponId
+      ? weaponEnergyById[slot.weaponId]?.energy
+      : undefined;
+    if (weaponEnergy?.effect !== "particles") continue;
+
+    const defaultProcs =
+      weaponEnergy.defaultProcsByRefinement[slot.refinement ?? 0];
+    for (const action of nextActions) {
+      if (action.char === slot.charId) action.favoniusProc = false;
+    }
+    autoPlaceFavonius(nextActions, slot.charId, defaultProcs);
+  }
+  return nextActions;
+}
+
+function hasFavoniusDefaultsDiff(
+  timelines: ERTimeline[],
+  team: TeamSlot[]
+): boolean {
+  return timelines.some((timeline) => {
+    const defaultActions = applyFavoniusDefaultsToActions(
+      timeline.actions,
+      team
+    );
+    return timeline.actions.some(
+      (action, index) =>
+        !!action.favoniusProc !== !!defaultActions[index]?.favoniusProc
+    );
+  });
+}
+
 function resolveCharCtx(
   charId: string,
   setupConfig: TeamSetupConfig,
@@ -268,18 +315,21 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
   // Read timelines from team store, fallback to empty
   const timelines = useMemo<ERTimeline[]>(
-    () =>
-      setupConfig.energy?.timelines && setupConfig.energy.timelines.length > 0
-        ? setupConfig.energy.timelines
-        : [EMPTY_ERT],
+    () => resolveEnergyTimelines(setupConfig.energy?.timelines),
     [setupConfig.energy?.timelines]
   );
 
   const setTimelines = useCallback(
-    (newTimelines: ERTimeline[]) => {
+    (timelineUpdate: TimelineListUpdate) => {
       updateTeamSetupConfig(teamComp.id, (config) => ({
         ...config,
-        energy: { ...(config.energy ?? {}), timelines: newTimelines },
+        energy: {
+          ...(config.energy ?? {}),
+          timelines:
+            typeof timelineUpdate === "function"
+              ? timelineUpdate(resolveEnergyTimelines(config.energy?.timelines))
+              : timelineUpdate,
+        },
       }));
     },
     [teamComp.id, updateTeamSetupConfig]
@@ -349,12 +399,11 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
   const updateTimeline = useCallback(
     (tlIndex: number, updater: (ert: ERTimeline) => ERTimeline) => {
-      const newTimelines = timelines.map((ert, i) =>
-        i === tlIndex ? updater(ert) : ert
+      setTimelines((currentTimelines) =>
+        currentTimelines.map((ert, i) => (i === tlIndex ? updater(ert) : ert))
       );
-      setTimelines(newTimelines);
     },
-    [timelines, setTimelines]
+    [setTimelines]
   );
 
   const handleAddAction = useCallback(
@@ -478,8 +527,16 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
   );
 
   const handleReorderActions = useCallback(
-    (newActions: TimelineAction[], tlIndex: number) => {
-      updateTimeline(tlIndex, (ert) => ({ ...ert, actions: newActions }));
+    (
+      newActions: TimelineAction[],
+      newPeriodic: PeriodicProc[],
+      tlIndex: number
+    ) => {
+      updateTimeline(tlIndex, (ert) => ({
+        ...ert,
+        actions: newActions,
+        periodic: newPeriodic,
+      }));
     },
     [updateTimeline]
   );
@@ -606,22 +663,18 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
   // Manual "re-snap" for cases where the user edited Favonius flags by hand
   // and wants to return to default placement without touching the weapon.
+  const canResetFavDefaults = useMemo(
+    () => hasFavoniusDefaultsDiff(timelines, erTeam),
+    [timelines, erTeam]
+  );
+
   const handleResetFavDefaults = useCallback(() => {
-    let next = timelines;
-    for (const slot of erTeam) {
-      const we = slot.weaponId ? weaponEnergyById[slot.weaponId] : undefined;
-      if (we?.energy.effect !== "particles") continue;
-      const defaultProcs =
-        we.energy.defaultProcsByRefinement[slot.refinement ?? 0];
-      next = next.map((ert) => {
-        const actions = ert.actions.map((a) => ({ ...a }));
-        for (const a of actions)
-          if (a.char === slot.charId) a.favoniusProc = false;
-        autoPlaceFavonius(actions, slot.charId, defaultProcs);
-        return { ...ert, actions };
-      });
-    }
-    setTimelines(next);
+    setTimelines(
+      timelines.map((timeline) => ({
+        ...timeline,
+        actions: applyFavoniusDefaultsToActions(timeline.actions, erTeam),
+      }))
+    );
   }, [erTeam, timelines, setTimelines]);
 
   // Greedy optimizer: insert wait blocks (+ swap E↔Q) on the loop timeline
@@ -759,33 +812,6 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
               </div>
 
               <div className="h-6 border-r"></div>
-
-              <button
-                type="button"
-                onClick={handleResetFavDefaults}
-                className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
-                title={t.ui("erCalc.resetFavDefaultsTitle")}
-              >
-                {t.ui("erCalc.resetFavDefaults")}
-              </button>
-              <button
-                type="button"
-                onClick={handleOptimizeWaits}
-                className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
-                title={t.ui("erCalc.optimizeWaitsTitle")}
-              >
-                {t.ui("erCalc.optimizeWaits")}
-              </button>
-              <div className="ml-auto flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={handleAddStartup}
-                  className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
-                  title={t.ui("erCalc.addStartupTitle")}
-                >
-                  {t.ui("erCalc.addStartup")}
-                </button>
-              </div>
             </div>
 
             {hasScholarEquipped && (
@@ -793,6 +819,27 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                 {t.ui("erCalc.scholarNotImplemented")}
               </div>
             )}
+
+            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleAddStartup}
+                className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                title={t.ui("erCalc.addStartupTitle")}
+              >
+                {t.ui("erCalc.addStartup")}
+              </button>
+              {mainERT.actions.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleCloneLoopToStartup}
+                  className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                  title={t.ui("erCalc.cloneLoopTitle")}
+                >
+                  {t.ui("erCalc.cloneLoop")}
+                </button>
+              )}
+            </div>
 
             {/* Timeline editors */}
             {timelines.map((tl, tlIdx) => {
@@ -812,13 +859,13 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   >
                     <ToggleGroupItem
                       value="once"
-                      className="text-sm font-semibold h-7 px-2.5"
+                      className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                     >
                       {t.ui("erCalc.loopOnce")}
                     </ToggleGroupItem>
                     <ToggleGroupItem
                       value="repeat"
-                      className="text-sm font-semibold h-7 px-2.5"
+                      className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                     >
                       {t.ui("erCalc.loopRepeat")}
                     </ToggleGroupItem>
@@ -840,18 +887,6 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   {t.ui("erCalc.remove")}
                 </button>
               ) : null;
-              const cloneControl = isLast ? (
-                <button
-                  type="button"
-                  onClick={handleCloneLoopToStartup}
-                  disabled={tl.actions.length === 0}
-                  className="text-xs md:text-sm hover:text-primary px-2 py-0.5 rounded border border-border/30 hover:border-border disabled:opacity-40 disabled:cursor-not-allowed"
-                  title={t.ui("erCalc.cloneLoopTitle")}
-                >
-                  {t.ui("erCalc.cloneLoop")}
-                </button>
-              ) : null;
-
               return (
                 <TimelineStrip
                   key={tlIdx}
@@ -864,14 +899,14 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                     tlIdx > 0 ? boundaryBridges[tlIdx - 1] : undefined
                   }
                   outgoingBridge={boundaryBridges[tlIdx]}
-                  extraControls={removeControl ?? cloneControl}
+                  extraControls={removeControl}
                   onAddAction={(charId, action) =>
                     handleAddAction(charId, action, tlIdx)
                   }
                   onRemoveAction={(i) => handleRemoveAction(i, tlIdx)}
                   onUpdateAction={(i, a) => handleUpdateAction(i, a, tlIdx)}
-                  onReorderActions={(newActions) =>
-                    handleReorderActions(newActions, tlIdx)
+                  onReorderActions={(newActions, newPeriodic) =>
+                    handleReorderActions(newActions, newPeriodic, tlIdx)
                   }
                   onUpdatePeriodic={(newP) => handleUpdatePeriodic(newP, tlIdx)}
                   onClear={() => handleClearTimeline(tlIdx)}
@@ -885,6 +920,28 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                 results={results}
                 team={erTeam}
                 targetTeam={teamComp}
+                actionControls={
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleOptimizeWaits}
+                      className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary/70 text-primary-foreground transition-colors"
+                      title={t.ui("erCalc.optimizeWaitsTitle")}
+                    >
+                      {t.ui("erCalc.optimizeWaits")}
+                    </button>
+                    {canResetFavDefaults && (
+                      <button
+                        type="button"
+                        onClick={handleResetFavDefaults}
+                        className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                        title={t.ui("erCalc.resetFavDefaultsTitle")}
+                      >
+                        {t.ui("erCalc.resetFavDefaults")}
+                      </button>
+                    )}
+                  </>
+                }
                 embedded
               />
             )}

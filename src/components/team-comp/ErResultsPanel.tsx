@@ -1,4 +1,5 @@
-import { ChevronDown, Copy } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { CharAvatar } from "@/components/shared/CharAvatar";
@@ -27,6 +28,7 @@ interface ErResultsPanelProps {
   results: ERResult[];
   team: TeamSlot[];
   embedded?: boolean;
+  actionControls?: ReactNode;
   /**
    * When provided, Apply writes directly to this team's character config.
    * When absent, falls back to matching by character IDs.
@@ -172,6 +174,7 @@ function fmtFactor(n: number): string {
 export function ErResultsPanel({
   results,
   team,
+  actionControls,
   targetTeam,
 }: ErResultsPanelProps) {
   const { t, language } = useLanguage();
@@ -179,7 +182,6 @@ export function ErResultsPanel({
   const getTeamSetupConfigById = useTeamStore((s) => s.getTeamSetupConfigById);
   const updateTeamSetupConfig = useTeamStore((s) => s.updateTeamSetupConfig);
   const [allExpanded, setAllExpanded] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const handleApplyMinER = useCallback(() => {
     let target = targetTeam;
@@ -221,28 +223,6 @@ export function ErResultsPanel({
     t,
   ]);
 
-  const handleCopy = useCallback(() => {
-    const teamNames = team.map((s) => t.character(s.charId)).join(" / ");
-    const lines = results
-      .map((r, i) => {
-        const slot = team[i];
-        if (!slot) return "";
-        const er =
-          r.erNeeded === Number.POSITIVE_INFINITY
-            ? "∞"
-            : `${Math.ceil(r.erNeeded)}%`;
-        const weapon = slot.weaponId ? ` (${t.weapon(slot.weaponId)})` : "";
-        return `  ${t.character(r.characterId)}${weapon}: ${er}`;
-      })
-      .filter(Boolean)
-      .join("\n");
-    const text = `ER Requirements — ${teamNames}\n${lines}`;
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }, [results, team, t]);
-
   return (
     <section className={cn("overflow-hidden border-t border-border/40")}>
       <div className="flex items-center justify-between gap-2 px-3 py-1.5 bg-muted/10">
@@ -250,28 +230,18 @@ export function ErResultsPanel({
           <h3 className="text-sm md:text-base font-semibold">
             {t.ui("erCalc.erRequirements")}
           </h3>
+        </div>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {actionControls}
           <button
             type="button"
-            onClick={handleCopy}
-            className="hover:text-primary"
-            title={t.ui("erCalc.copyResults")}
+            onClick={handleApplyMinER}
+            className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary/70 text-primary-foreground transition-colors"
+            title={t.ui("erCalc.applyToTeamMinER")}
           >
-            <Copy className="w-4 h-4" />
+            {t.ui("erCalc.applyToTeamMinER")}
           </button>
-          {copied && (
-            <span className="text-xs md:text-sm text-green-400">
-              {t.ui("erCalc.copied")}
-            </span>
-          )}
         </div>
-        <button
-          type="button"
-          onClick={handleApplyMinER}
-          className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary/70 text-primary-foreground transition-colors"
-          title={t.ui("erCalc.applyToTeamMinER")}
-        >
-          {t.ui("erCalc.applyToTeamMinER")}
-        </button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 p-2">

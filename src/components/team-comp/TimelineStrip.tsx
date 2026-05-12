@@ -65,7 +65,10 @@ interface TimelineStripProps {
   onAddAction: (charId: string, action: ActionType) => void;
   onRemoveAction: (index: number) => void;
   onUpdateAction: (index: number, action: TimelineAction) => void;
-  onReorderActions: (newActions: TimelineAction[]) => void;
+  onReorderActions: (
+    newActions: TimelineAction[],
+    newPeriodic: PeriodicProc[]
+  ) => void;
   onUpdatePeriodic: (procs: PeriodicProc[]) => void;
   onClear: () => void;
 }
@@ -153,11 +156,10 @@ export function TimelineStrip({
         ...p,
         targetIndex: indexMap.get(p.targetIndex) ?? p.targetIndex,
       }));
-      onReorderActions(newActions);
-      onUpdatePeriodic(newPeriodic);
+      onReorderActions(newActions, newPeriodic);
       setDragIndex(overIndex);
     },
-    [dragIndex, actions, periodic, onReorderActions, onUpdatePeriodic]
+    [dragIndex, actions, periodic, onReorderActions]
   );
 
   const handleDragEnd = useCallback(() => setDragIndex(null), []);
@@ -340,9 +342,6 @@ export function TimelineStrip({
       <div className="flex items-center justify-between px-3 py-1.5 bg-muted/15 border-b border-border/40">
         <div className="flex items-center gap-2">
           <div className="text-sm md:text-base font-semibold">{label}</div>
-          <span className="text-xs md:text-sm tabular-nums">
-            {actions.length} {t.ui("erCalc.actionsLabel")}
-          </span>
         </div>
         <div className="flex items-center gap-1">
           {extraControls}

@@ -2993,9 +2993,7 @@ export const i18nUiData = {
     },
     title: { en: "ER Requirements Calc (WIP)", zh: "能量需求 (开发中)" },
     erRequirements: { en: "ER Requirements", zh: "充能需求" },
-    copyResults: { en: "Copy results", zh: "复制结果" },
     applyToTeamMinER: { en: "Apply to team Min ER", zh: "应用到队伍最低ER" },
-    copied: { en: "Copied", zh: "已复制" },
     bindingModeStart: { en: "start", zh: "启动" },
     bindingModeRepeat: { en: "repeat", zh: "循环" },
     qWindowScalableRow: { en: "scalable", zh: "可充能" },
@@ -3018,8 +3016,6 @@ export const i18nUiData = {
       en: "Fixed flat energy (NOT affected by ER)",
       zh: "固定能量（不受充能影响）",
     },
-    actionsLabel: { en: "actions", zh: "个动作" },
-
     // Settings bar labels
     startEnergy: { en: "Start energy", zh: "初始能量" },
     zeroEnergy: { en: "Empty", zh: "零能量" },
@@ -3028,7 +3024,7 @@ export const i18nUiData = {
     minEst: { en: "Min", zh: "最低" },
     avgEst: { en: "Avg", zh: "期望" },
     maxEst: { en: "Max", zh: "最高" },
-    optimizeWaits: { en: "Auto Waits", zh: "自动添加等待" },
+    optimizeWaits: { en: "Auto Optimize ER", zh: "自动优化充能" },
     optimizeWaitsTitle: {
       en: "Insert wait blocks to minimize team ER",
       zh: "插入等待节点以降低团队所需充能",
@@ -3044,7 +3040,7 @@ export const i18nUiData = {
     loopOnce: { en: "× Once", zh: "× 1次" },
     loopRepeat: { en: "× Repeat", zh: "× ∞ 重复" },
     startupLabel: { en: "Startup", zh: "启动轴" },
-    addStartup: { en: "+ Startup", zh: "+ 启动轴" },
+    addStartup: { en: "+ Add Startup", zh: "+ 添加启动轴" },
     addStartupTitle: {
       en: "Add startup rotation",
       zh: "在循环轴前添加启动轴",
