@@ -82,7 +82,7 @@ const localBackupBindings = {
 
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }) => {
-  const staticOnlyBuild = mode === "github" || mode === "tauri";
+  const staticOnlyBuild = mode === "github";
   const fakeLogtoForE2e = process.env.VITE_E2E_FAKE_LOGTO === "1";
 
   return {

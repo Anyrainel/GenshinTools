@@ -8,7 +8,7 @@ React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tail
 
 - `npm run dev` — Vite dev server
 - `npm run dev:vite` — Vite only
-- `npm run build` / `npm run build:tauri` — production web / Tauri build
+- `npm run build` — production web build
 - `npm run lint` / `npm run lint:fix` — Biome check / auto-fix
 - `npm run type-check` — TypeScript check for app and tests
 - `npm run depcheck` — dependency boundary rules via dependency-cruiser

@@ -524,11 +524,9 @@ Features:
 - **Hosting:** Cloudflare Workers, with GitHub Pages as a static fallback
 - **PWA Support:** Not currently implemented
 
-### 6.2 Desktop Application
-- **Technology:** Tauri (Rust-based wrapper)
-- **Platform:** Windows (primary)
-- **Benefits:** Offline capability, native performance
-- **Distribution:** Manual download (NSIS installer, no auto-update currently)
+### 6.2 Desktop Delivery (Retired)
+- **Status:** Not currently offered
+- **Primary delivery:** Browser-only web application via Cloudflare Workers and GitHub Pages
 
 ---
 

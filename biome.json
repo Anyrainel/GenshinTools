@@ -77,7 +77,6 @@
       "!**/node_modules",
       "!**/coverage",
       "!**/public",
-      "!**/src-tauri",
       "!**/scripts",
       "!**/*.min.js",
       "!**/*.d.ts",
