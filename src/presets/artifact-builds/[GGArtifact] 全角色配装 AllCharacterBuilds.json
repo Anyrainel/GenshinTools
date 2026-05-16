@@ -1,11 +1,11 @@
 {
   "version": 5,
-  "id": "export-1778564561660",
+  "id": "export-1778921085753",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
-    "FeFiQU8": {
-      "id": "FeFiQU8",
+    "FeFi23e": {
+      "id": "FeFi23e",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -53,8 +53,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "FeFi2JG": {
-      "id": "FeFi2JG",
+    "FeFhfum": {
+      "id": "FeFhfum",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -106,8 +106,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "FeFbxRe": {
-      "id": "FeFbxRe",
+    "FeFbZ18": {
+      "id": "FeFbZ18",
       "name": "",
       "visible": false,
       "composition": "4pc",
@@ -155,8 +155,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "FeFQVGG": {
-      "id": "FeFQVGG",
+    "FeFQ6rm": {
+      "id": "FeFQ6rm",
       "name": "",
       "visible": false,
       "composition": "4pc",
@@ -204,8 +204,8 @@
       ],
       "normalizer": 0.7102089878722937
     },
-    "EB7CPkm": {
-      "id": "EB7CPkm",
+    "EB7C1KG": {
+      "id": "EB7C1KG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -256,8 +256,8 @@
       ],
       "normalizer": 0.6965946968245731
     },
-    "EB6ymmG": {
-      "id": "EB6ymmG",
+    "EB6yOLm": {
+      "id": "EB6yOLm",
       "name": "队友带勇者",
       "visible": true,
       "composition": "4pc",
@@ -308,8 +308,8 @@
       ],
       "normalizer": 0.7243660438929604
     },
-    "EB7CPu8": {
-      "id": "EB7CPu8",
+    "EB7C1Te": {
+      "id": "EB7C1Te",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -353,8 +353,8 @@
       ],
       "normalizer": 0.7390989829074122
     },
-    "CRMdwFO": {
-      "id": "CRMdwFO",
+    "CRMdXqu": {
+      "id": "CRMdXqu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -406,8 +406,8 @@
       ],
       "normalizer": 0.6758651919288179
     },
-    "CagguVO": {
-      "id": "CagguVO",
+    "CaggW4u": {
+      "id": "CaggW4u",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -454,8 +454,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "D0cqE68": {
-      "id": "D0cqE68",
+    "D0cprhe": {
+      "id": "D0cprhe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -502,8 +502,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "D0cm1oG": {
-      "id": "D0cm1oG",
+    "D0clfNm": {
+      "id": "D0clfNm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -554,8 +554,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "DSYztEu": {
-      "id": "DSYztEu",
+    "DSYzUqO": {
+      "id": "DSYzUqO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -615,8 +615,8 @@
       ],
       "normalizer": 0.663524326045901
     },
-    "D9wtwku": {
-      "id": "D9wtwku",
+    "D9wtYKO": {
+      "id": "D9wtYKO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -659,8 +659,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "DuV6n-u": {
-      "id": "DuV6n-u",
+    "DuV6PaO": {
+      "id": "DuV6PaO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -703,8 +703,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "DuU-PN8": {
-      "id": "DuU-PN8",
+    "DuU-0ye": {
+      "id": "DuU-0ye",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -747,8 +747,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "E1p9r7O": {
-      "id": "E1p9r7O",
+    "E1p9Siu": {
+      "id": "E1p9Siu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -800,8 +800,8 @@
       ],
       "normalizer": 0.663524326045901
     },
-    "E1p0hBO": {
-      "id": "E1p0hBO",
+    "E1p0Imu": {
+      "id": "E1p0Imu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -853,8 +853,8 @@
       ],
       "normalizer": 0.663524326045901
     },
-    "CtIdh3O": {
-      "id": "CtIdh3O",
+    "CtIdIeu": {
+      "id": "CtIdIeu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -906,8 +906,8 @@
       ],
       "normalizer": 0.6516260513579072
     },
-    "EKR7NIG": {
-      "id": "EKR7NIG",
+    "EKR6-tm": {
+      "id": "EKR6-tm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -946,8 +946,8 @@
       ],
       "normalizer": 0.7671859236726724
     },
-    "EmNO_vO": {
-      "id": "EmNO_vO",
+    "EmNOdUu": {
+      "id": "EmNOdUu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -994,8 +994,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "F2_SKRO": {
-      "id": "F2_SKRO",
+    "F2_Ry0u": {
+      "id": "F2_Ry0u",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1051,8 +1051,8 @@
       ],
       "normalizer": 0.6587132530636342
     },
-    "F2_UEGG": {
-      "id": "F2_UEGG",
+    "F2_Trrm": {
+      "id": "F2_Trrm",
       "characterId": "escoffier",
       "name": "",
       "visible": true,
@@ -1153,8 +1153,8 @@
       ],
       "normalizer": 0.7102089878722937
     },
-    "Aqw0M2O": {
-      "id": "Aqw0M2O",
+    "Aqv_zdu": {
+      "id": "Aqv_zdu",
       "name": "物伤流",
       "visible": true,
       "composition": "4pc",
@@ -1205,8 +1205,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "Dbt0Wkm": {
-      "id": "Dbt0Wkm",
+    "Dbt08KG": {
+      "id": "Dbt08KG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1253,8 +1253,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "Dbspw5m": {
-      "id": "Dbspw5m",
+    "DbspXhG": {
+      "id": "DbspXhG",
       "name": "队友带勇者",
       "visible": true,
       "composition": "4pc",
@@ -1293,8 +1293,8 @@
       ],
       "normalizer": 0.8227710104862165
     },
-    "Dbt0reG": {
-      "id": "Dbt0reG",
+    "Dbt0TDm": {
+      "id": "Dbt0TDm",
       "name": "",
       "visible": false,
       "composition": "4pc",
@@ -1346,8 +1346,8 @@
       ],
       "normalizer": 0.696594696824573
     },
-    "BioON2u": {
-      "id": "BioON2u",
+    "BioN-eO": {
+      "id": "BioN-eO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1398,8 +1398,8 @@
       ],
       "normalizer": 0.7102089878722937
     },
-    "Bs6RhWm": {
-      "id": "Bs6RhWm",
+    "Bs6RJ6G": {
+      "id": "Bs6RJ6G",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1442,8 +1442,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "Bs6GdWG": {
-      "id": "Bs6GdWG",
+    "Bs6GF5m": {
+      "id": "Bs6GF5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1527,8 +1527,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "AYHw3pm": {
-      "id": "AYHw3pm",
+    "AYHvhPG": {
+      "id": "AYHvhPG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1579,8 +1579,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "AYHw3pn": {
-      "id": "AYHw3pn",
+    "AYHvhPH": {
+      "id": "AYHvhPH",
       "name": "超绽放（染雷）",
       "visible": true,
       "composition": "4pc",
@@ -1619,8 +1619,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "FnZeWYG": {
-      "id": "FnZeWYG",
+    "FnZe87m": {
+      "id": "FnZe87m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1671,8 +1671,8 @@
       ],
       "normalizer": 0.6965946968245731
     },
-    "FnZk_am": {
-      "id": "FnZk_am",
+    "FnZkdAG": {
+      "id": "FnZkdAG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1723,8 +1723,8 @@
       ],
       "normalizer": 0.6965946968245731
     },
-    "FnZkadm": {
-      "id": "FnZkadm",
+    "FnZkCDG": {
+      "id": "FnZkCDG",
       "characterId": "lauma",
       "name": "",
       "visible": true,
@@ -1772,8 +1772,8 @@
       ],
       "normalizer": 0.6587132530636342
     },
-    "FnZeWhe": {
-      "id": "FnZeWhe",
+    "FnZe8H8": {
+      "id": "FnZe8H8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1817,8 +1817,8 @@
       ],
       "normalizer": 0.7390989829074122
     },
-    "IhqgSam": {
-      "id": "IhqgSam",
+    "Ihqg4AG": {
+      "id": "Ihqg4AG",
       "characterId": "columbina",
       "name": "",
       "visible": true,
@@ -1878,8 +1878,8 @@
       ],
       "normalizer": 0.6563337851097554
     },
-    "IhqgrEu": {
-      "id": "IhqgrEu",
+    "IhqgSqO": {
+      "id": "IhqgSqO",
       "characterId": "columbina",
       "name": "",
       "visible": true,
@@ -1939,8 +1939,8 @@
       "normalizer": 0.6587132530636342,
       "source": "preset"
     },
-    "I-SmP7u": {
-      "id": "I-SmP7u",
+    "I-Sm0jO": {
+      "id": "I-Sm0jO",
       "characterId": "illuga",
       "name": "",
       "visible": true,
@@ -2053,8 +2053,8 @@
       ],
       "normalizer": 0.6834925443778894
     },
-    "GMpinGG": {
-      "id": "GMpinGG",
+    "GMpiOrm": {
+      "id": "GMpiOrm",
       "characterId": "durin",
       "name": "",
       "visible": true,
@@ -2106,8 +2106,8 @@
       ],
       "normalizer": 0.6563337851097554
     },
-    "GMpxfA8": {
-      "id": "GMpxfA8",
+    "GMpxGle": {
+      "id": "GMpxGle",
       "characterId": "durin",
       "name": "",
       "visible": true,
@@ -2159,8 +2159,8 @@
       ],
       "normalizer": 0.6587132530636342
     },
-    "G4BqW-O": {
-      "id": "G4BqW-O",
+    "G4Bq8Zu": {
+      "id": "G4Bq8Zu",
       "characterId": "flins",
       "name": "",
       "visible": true,
@@ -2212,8 +2212,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "Ir8i_kO": {
-      "id": "Ir8i_kO",
+    "Ir8idJu": {
+      "id": "Ir8idJu",
       "characterId": "zibai",
       "name": "",
       "visible": true,
@@ -2264,8 +2264,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "GW7ztpG": {
-      "id": "GW7ztpG",
+    "GW7zVOm": {
+      "id": "GW7zVOm",
       "characterId": "jahoda",
       "name": "",
       "visible": true,
@@ -2316,8 +2316,8 @@
       ],
       "normalizer": 0.7243660438929604
     },
-    "GW7pz2G": {
-      "id": "GW7pz2G",
+    "GW7padm": {
+      "id": "GW7padm",
       "characterId": "jahoda",
       "name": "",
       "visible": true,
@@ -2368,8 +2368,8 @@
       ],
       "normalizer": 0.7243660438929604
     },
-    "Fwtnzqm": {
-      "id": "Fwtnzqm",
+    "FwtnbQG": {
+      "id": "FwtnbQG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2416,8 +2416,8 @@
       ],
       "normalizer": 0.7243660438929604
     },
-    "FwtZU5m": {
-      "id": "FwtZU5m",
+    "FwtZ5hG": {
+      "id": "FwtZ5hG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2464,8 +2464,8 @@
       ],
       "normalizer": 0.7243660438929604
     },
-    "BQAI0BO": {
-      "id": "BQAI0BO",
+    "BQAHdmu": {
+      "id": "BQAHdmu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2521,8 +2521,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "BQA4H1m": {
-      "id": "BQA4H1m",
+    "BQA3udG": {
+      "id": "BQA3udG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2632,8 +2632,8 @@
       ],
       "normalizer": 0.6708741658099044
     },
-    "GDVtVEO": {
-      "id": "GDVtVEO",
+    "GDVt6pu": {
+      "id": "GDVt6pu",
       "characterId": "nefer",
       "name": "",
       "visible": true,
@@ -2676,8 +2676,8 @@
       ],
       "normalizer": 0.696594696824573
     },
-    "FUxQxmG": {
-      "id": "FUxQxmG",
+    "FUxQZLm": {
+      "id": "FUxQZLm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2720,8 +2720,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "C8kPzCG": {
-      "id": "C8kPzCG",
+    "C8kPanm": {
+      "id": "C8kPanm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2774,8 +2774,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "CI2ZrC8": {
-      "id": "CI2ZrC8",
+    "CI2ZSne": {
+      "id": "CI2ZSne",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2818,8 +2818,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "CI2MXIG": {
-      "id": "CI2MXIG",
+    "CI2M8tm": {
+      "id": "CI2M8tm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2912,8 +2912,8 @@
       ],
       "normalizer": 0.7482299684808127
     },
-    "B_QWXIm": {
-      "id": "B_QWXIm",
+    "B_QW8uG": {
+      "id": "B_QW8uG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2965,8 +2965,8 @@
       ],
       "normalizer": 0.696594696824573
     },
-    "Cj-jX_G": {
-      "id": "Cj-jX_G",
+    "Cj-j9am": {
+      "id": "Cj-j9am",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3071,8 +3071,8 @@
       ],
       "normalizer": 0.7803659916500839
     },
-    "DJEwZGG": {
-      "id": "DJEwZGG",
+    "DJEwArm": {
+      "id": "DJEwArm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3115,8 +3115,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "DlB3U0G": {
-      "id": "DlB3U0G",
+    "DlB35bm": {
+      "id": "DlB35bm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3168,8 +3168,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "EvhRG0G": {
-      "id": "EvhRG0G",
+    "EvhQtbm": {
+      "id": "EvhQtbm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3208,8 +3208,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "FLdbHJu": {
-      "id": "FLdbHJu",
+    "FLdauvO": {
+      "id": "FLdauvO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3256,8 +3256,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "B7YBeLO": {
-      "id": "B7YBeLO",
+    "B7YBFwu": {
+      "id": "B7YBFwu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3301,8 +3301,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "BGsEcbO": {
-      "id": "BGsEcbO",
+    "BGsEEAu": {
+      "id": "BGsEEAu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3349,8 +3349,8 @@
       ],
       "normalizer": 0.696594696824573
     },
-    "Ahc2jbO": {
-      "id": "Ahc2jbO",
+    "Ahc2LAu": {
+      "id": "Ahc2LAu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3393,8 +3393,8 @@
       ],
       "normalizer": 0.701977294544408
     },
-    "48Vp4GG": {
-      "id": "48Vp4GG",
+    "48Vohrm": {
+      "id": "48Vohrm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3516,8 +3516,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "AOzwYGm": {
-      "id": "AOzwYGm",
+    "AOzw9sG": {
+      "id": "AOzw9sG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3558,8 +3558,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "AFftZXW": {
-      "id": "AFftZXW",
+    "AFftB70": {
+      "id": "AFftB70",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3598,8 +3598,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "AFftZ2G": {
-      "id": "AFftZ2G",
+    "AFftAdm": {
+      "id": "AFftAdm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3683,8 +3683,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "4t45KYu": {
-      "id": "4t45KYu",
+    "4t44y8O": {
+      "id": "4t44y8O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3736,8 +3736,8 @@
       "normalizer": 0.6684061937859948,
       "source": "preset"
     },
-    "6cqYBmG": {
-      "id": "6cqYBmG",
+    "6cqXpLm": {
+      "id": "6cqXpLm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3776,8 +3776,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "7UixGOu": {
-      "id": "7UixGOu",
+    "7Uiwt-O": {
+      "id": "7Uiwt-O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3877,8 +3877,8 @@
       "normalizer": 0.6783886573416492,
       "source": "preset"
     },
-    "8fDNC0u": {
-      "id": "8fDNC0u",
+    "8fDMpcO": {
+      "id": "8fDMpcO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3926,8 +3926,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "9Nncq5u": {
-      "id": "9Nncq5u",
+    "9NncRhO": {
+      "id": "9NncRhO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3970,8 +3970,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "9NnUR8G": {
-      "id": "9NnUR8G",
+    "9NnU2jm": {
+      "id": "9NnU2jm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4015,8 +4015,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "9gPh_mu": {
-      "id": "9gPh_mu",
+    "9gPhdMO": {
+      "id": "9gPhdMO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4064,8 +4064,8 @@
       "normalizer": 0.6587132530636342,
       "source": "preset"
     },
-    "8xrSooG": {
-      "id": "8xrSooG",
+    "8xrSQNm": {
+      "id": "8xrSQNm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4120,8 +4120,8 @@
       ],
       "normalizer": 0.6587132530636342
     },
-    "8xrTDPO": {
-      "id": "8xrTDPO",
+    "8xrSq-u": {
+      "id": "8xrSq-u",
       "name": "队友带深林",
       "visible": true,
       "composition": "4pc",
@@ -4172,8 +4172,8 @@
       ],
       "normalizer": 0.6587132530636342
     },
-    "9z1jlpe": {
-      "id": "9z1jlpe",
+    "9z1jNP8": {
+      "id": "9z1jNP8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4226,8 +4226,8 @@
       "normalizer": 0.6587132530636342,
       "source": "preset"
     },
-    "9z1oNNG": {
-      "id": "9z1oNNG",
+    "9z1n-ym": {
+      "id": "9z1n-ym",
       "name": "烈绽放",
       "visible": true,
       "composition": "4pc",
@@ -4270,8 +4270,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "9z1cYXm": {
-      "id": "9z1cYXm",
+    "9z1cA7G": {
+      "id": "9z1cA7G",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4310,8 +4310,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "9X5eiHW": {
-      "id": "9X5eiHW",
+    "9X5eJt0": {
+      "id": "9X5eJt0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4354,8 +4354,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "9ETNhR8": {
-      "id": "9ETNhR8",
+    "9ETNJ0e": {
+      "id": "9ETNJ0e",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4408,8 +4408,8 @@
       "normalizer": 0.6809310370068995,
       "source": "preset"
     },
-    "9pjd00G": {
-      "id": "9pjd00G",
+    "9pjcdbm": {
+      "id": "9pjcdbm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4452,8 +4452,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "959KjX0": {
-      "id": "959KjX0",
+    "959KL6W": {
+      "id": "959KL6W",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4533,8 +4533,8 @@
       ],
       "normalizer": 0.7871273198117978
     },
-    "8VvBtLm": {
-      "id": "8VvBtLm",
+    "8VvBUxG": {
+      "id": "8VvBUxG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4569,8 +4569,8 @@
       ],
       "normalizer": 0.9047071915174653
     },
-    "A6LrIxO": {
-      "id": "A6LrIxO",
+    "A6LqwWu": {
+      "id": "A6LqwWu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4609,8 +4609,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "Ed3DGNW": {
-      "id": "Ed3DGNW",
+    "Ed3Ctz0": {
+      "id": "Ed3Ctz0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4649,8 +4649,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "FCJP9NW": {
-      "id": "FCJP9NW",
+    "FCJOmz0": {
+      "id": "FCJOmz0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4689,8 +4689,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "8oXICGG": {
-      "id": "8oXICGG",
+    "8oXHprm": {
+      "id": "8oXHprm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4779,8 +4779,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "8DH6JGG": {
-      "id": "8DH6JGG",
+    "8DH5wrm": {
+      "id": "8DH5wrm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4823,8 +4823,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "83zAzIG": {
-      "id": "83zAzIG",
+    "83zAatm": {
+      "id": "83zAatm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4875,8 +4875,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "7wf2cZO": {
-      "id": "7wf2cZO",
+    "7wf2E8u": {
+      "id": "7wf2E8u",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4923,8 +4923,8 @@
       ],
       "normalizer": 0.663524326045901
     },
-    "7nL1YdW": {
-      "id": "7nL1YdW",
+    "7nL1AD0": {
+      "id": "7nL1AD0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -4971,8 +4971,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "7e12q68": {
-      "id": "7e12q68",
+    "7e12Rhe": {
+      "id": "7e12Rhe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5011,8 +5011,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "4R7vMUu": {
-      "id": "4R7vMUu",
+    "4R7u-4O": {
+      "id": "4R7u-4O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5060,8 +5060,8 @@
       "normalizer": 0.6834925443778894,
       "source": "preset"
     },
-    "14w-xy8": {
-      "id": "14w-xy8",
+    "14w-ZXe": {
+      "id": "14w-ZXe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5145,8 +5145,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "2OlNo7e": {
-      "id": "2OlNo7e",
+    "2OlNPj8": {
+      "id": "2OlNPj8",
       "name": "烈绽放",
       "visible": true,
       "composition": "4pc",
@@ -5185,8 +5185,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "oIhfCG": {
-      "id": "oIhfCG",
+    "oIhGnm": {
+      "id": "oIhGnm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5229,8 +5229,8 @@
       "normalizer": 0.7214896597003834,
       "source": "preset"
     },
-    "oIkK5m": {
-      "id": "oIkK5m",
+    "oIjxhG": {
+      "id": "oIjxhG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5273,8 +5273,8 @@
       "normalizer": 0.7214896597003834,
       "source": "preset"
     },
-    "59i4o0O": {
-      "id": "59i4o0O",
+    "59i4Pbu": {
+      "id": "59i4Pbu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5317,8 +5317,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "3ZFZmWG": {
-      "id": "3ZFZmWG",
+    "3ZFZO5m": {
+      "id": "3ZFZO5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5361,8 +5361,8 @@
       ],
       "normalizer": 0.8227710104862165
     },
-    "3ZFlYfu": {
-      "id": "3ZFlYfu",
+    "3ZFlAFO": {
+      "id": "3ZFlAFO",
       "name": "原绽放",
       "visible": true,
       "composition": "4pc",
@@ -5405,8 +5405,8 @@
       ],
       "normalizer": 0.7243660438929604
     },
-    "72moNbu": {
-      "id": "72moNbu",
+    "72mn_BO": {
+      "id": "72mn_BO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5462,8 +5462,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "Vgia9G": {
-      "id": "Vgia9G",
+    "VgiBkm": {
+      "id": "VgiBkm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5515,8 +5515,8 @@
       "normalizer": 0.6809310370068995,
       "source": "preset"
     },
-    "2z_VVoG": {
-      "id": "2z_VVoG",
+    "2z_V7Nm": {
+      "id": "2z_V7Nm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5571,8 +5571,8 @@
       "normalizer": 0.7421177815131039,
       "source": "preset"
     },
-    "e-egyG": {
-      "id": "e-egyG",
+    "e-eIXm": {
+      "id": "e-eIXm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5661,8 +5661,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "e-gb0m": {
-      "id": "e-gb0m",
+    "e-gCcG": {
+      "id": "e-gCcG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5705,8 +5705,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "2FRJFnO": {
-      "id": "2FRJFnO",
+    "2FRItMu": {
+      "id": "2FRItMu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5749,8 +5749,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "2FRCmku": {
-      "id": "2FRCmku",
+    "2FRCOKO": {
+      "id": "2FRCOKO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5793,8 +5793,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "4aRtm0W": {
-      "id": "4aRtm0W",
+    "4aRtNc0": {
+      "id": "4aRtNc0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5837,8 +5837,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "4aRx_0G": {
-      "id": "4aRx_0G",
+    "4aRxcbm": {
+      "id": "4aRxcbm",
       "characterId": "kamisato_ayaka",
       "name": "",
       "visible": true,
@@ -5881,8 +5881,8 @@
       ],
       "normalizer": 0.7214896597003834
     },
-    "37JYT3m": {
-      "id": "37JYT3m",
+    "37JY4fG": {
+      "id": "37JY4fG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5921,8 +5921,8 @@
       ],
       "normalizer": 0.7871273198117978
     },
-    "xcsD2O": {
-      "id": "xcsD2O",
+    "xcrqdu": {
+      "id": "xcrqdu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -5974,8 +5974,8 @@
       "normalizer": 0.6939342341177971,
       "source": "preset"
     },
-    "6KCVg-m": {
-      "id": "6KCVg-m",
+    "6KCVIaG": {
+      "id": "6KCVIaG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6018,8 +6018,8 @@
       "normalizer": 0.7671859236726724,
       "source": "preset"
     },
-    "3Pxdc2u": {
-      "id": "3Pxdc2u",
+    "3PxdDeO": {
+      "id": "3PxdDeO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6070,8 +6070,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "4jl-zGG": {
-      "id": "4jl-zGG",
+    "4jl-arm": {
+      "id": "4jl-arm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6118,8 +6118,8 @@
       ],
       "normalizer": 0.7102089878722937
     },
-    "4jmBAWG": {
-      "id": "4jmBAWG",
+    "4jmAo5m": {
+      "id": "4jmAo5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6166,8 +6166,8 @@
       ],
       "normalizer": 0.7102089878722937
     },
-    "7LOww6u": {
-      "id": "7LOww6u",
+    "7LOwXiO": {
+      "id": "7LOwXiO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6215,8 +6215,8 @@
       ],
       "normalizer": 0.6834925443778894
     },
-    "7LO-LrO": {
-      "id": "7LO-LrO",
+    "7LOzzQu": {
+      "id": "7LOzzQu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6264,8 +6264,8 @@
       ],
       "normalizer": 0.6834925443778894
     },
-    "3_BoLpO": {
-      "id": "3_BoLpO",
+    "3_BnzOu": {
+      "id": "3_BnzOu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6312,8 +6312,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "3_Bpvve": {
-      "id": "3_Bpvve",
+    "3_BpXV8": {
+      "id": "3_BpXV8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6407,8 +6407,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "6m8bXCe": {
-      "id": "6m8bXCe",
+    "6m8b8o8": {
+      "id": "6m8b8o8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6455,8 +6455,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "6m8oti8": {
-      "id": "6m8oti8",
+    "6m8oVHe": {
+      "id": "6m8oVHe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -6544,8 +6544,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "61aYqmO": {
-      "id": "61aYqmO",
+    "61aYSLu": {
+      "id": "61aYSLu",
       "characterId": "tartaglia",
       "name": "",
       "visible": true,
@@ -6597,8 +6597,8 @@
       "normalizer": 0.6587132530636342,
       "source": "preset"
     },
-    "61aPjcW": {
-      "id": "61aPjcW",
+    "61aPLC0": {
+      "id": "61aPLC0",
       "characterId": "tartaglia",
       "name": "",
       "visible": true,
@@ -6643,8 +6643,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "1pVILju": {
-      "id": "1pVILju",
+    "1pVHzJO": {
+      "id": "1pVHzJO",
       "characterId": "klee",
       "name": "",
       "visible": true,
@@ -6687,8 +6687,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "1pV37uu": {
-      "id": "1pV37uu",
+    "1pV2lUO": {
+      "id": "1pV2lUO",
       "characterId": "klee",
       "name": "",
       "visible": true,
@@ -6740,8 +6740,8 @@
       ],
       "normalizer": 0.7102089878722937
     },
-    "1pV04au": {
-      "id": "1pV04au",
+    "1pU_iAO": {
+      "id": "1pU_iAO",
       "characterId": "klee",
       "name": "",
       "visible": true,
@@ -6789,8 +6789,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "7C4rJPe": {
-      "id": "7C4rJPe",
+    "7C4qw_8": {
+      "id": "7C4qw_8",
       "characterId": "xiangling",
       "name": "",
       "visible": true,
@@ -6846,8 +6846,8 @@
       "normalizer": 0.6809310370068995,
       "source": "preset"
     },
-    "ETlILGG": {
-      "id": "ETlILGG",
+    "ETlHyrm": {
+      "id": "ETlHyrm",
       "characterId": "traveler_pyro",
       "name": "",
       "visible": true,
@@ -6894,8 +6894,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "8MbGvoG": {
-      "id": "8MbGvoG",
+    "8MbGXNm": {
+      "id": "8MbGXNm",
       "characterId": "traveler_dendro",
       "name": "",
       "visible": true,
@@ -6942,8 +6942,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "D2bUv0": {
-      "id": "D2bUv0",
+    "D2b6UW": {
+      "id": "D2b6UW",
       "characterId": "qiqi",
       "name": "",
       "visible": true,
@@ -6991,8 +6991,8 @@
       "normalizer": 0.6684061937859946,
       "source": "preset"
     },
-    "1EF2GAO": {
-      "id": "1EF2GAO",
+    "1EF1tlu": {
+      "id": "1EF1tlu",
       "characterId": "ningguang",
       "name": "",
       "visible": true,
@@ -7040,8 +7040,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "1EF1VLO": {
-      "id": "1EF1VLO",
+    "1EF16wu": {
+      "id": "1EF16wu",
       "characterId": "ningguang",
       "name": "带芙",
       "visible": true,
@@ -7089,8 +7089,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "1WswsAu": {
-      "id": "1WswsAu",
+    "1WswTmO": {
+      "id": "1WswTmO",
       "characterId": "keqing",
       "name": "",
       "visible": true,
@@ -7142,8 +7142,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "1NY-PPe": {
-      "id": "1NY-PPe",
+    "1NY-0_8": {
+      "id": "1NY-0_8",
       "characterId": "kaeya",
       "name": "",
       "visible": true,
@@ -7190,8 +7190,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "3Gdm4Du": {
-      "id": "3Gdm4Du",
+    "3GdlhpO": {
+      "id": "3GdlhpO",
       "characterId": "venti",
       "name": "",
       "visible": true,
@@ -7243,8 +7243,8 @@
       "normalizer": 0.6809310370068995,
       "source": "preset"
     },
-    "3GdbRJm": {
-      "id": "3GdbRJm",
+    "3Gdb2vG": {
+      "id": "3Gdb2vG",
       "characterId": "venti",
       "name": "",
       "visible": true,
@@ -7291,8 +7291,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "3iZg9WG": {
-      "id": "3iZg9WG",
+    "3iZfn5m": {
+      "id": "3iZfn5m",
       "characterId": "bennett",
       "name": "",
       "visible": true,
@@ -7331,8 +7331,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "3rtnLIG": {
-      "id": "3rtnLIG",
+    "3rtmytm": {
+      "id": "3rtmytm",
       "characterId": "jean",
       "name": "",
       "visible": true,
@@ -7379,8 +7379,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "4HpwHW0": {
-      "id": "4HpwHW0",
+    "4Hpvv5W": {
+      "id": "4Hpvv5W",
       "characterId": "sucrose",
       "name": "",
       "visible": true,
@@ -7419,8 +7419,8 @@
       "normalizer": 0.7544436732353562,
       "source": "preset"
     },
-    "5J0AsGG": {
-      "id": "5J0AsGG",
+    "5J0ATrm": {
+      "id": "5J0ATrm",
       "characterId": "mona",
       "name": "",
       "visible": true,
@@ -7468,8 +7468,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "5J07QXm": {
-      "id": "5J07QXm",
+    "5J0727G": {
+      "id": "5J0727G",
       "characterId": "mona",
       "name": "",
       "visible": true,
@@ -7517,8 +7517,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "50OF-G0": {
-      "id": "50OF-G0",
+    "50OFbrW": {
+      "id": "50OFbrW",
       "characterId": "barbara",
       "name": "",
       "visible": true,
@@ -7565,8 +7565,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "5SKO7S8": {
-      "id": "5SKO7S8",
+    "5SKNl1e": {
+      "id": "5SKNl1e",
       "characterId": "fischl",
       "name": "",
       "visible": true,
@@ -7618,8 +7618,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "5SKSiQ8": {
-      "id": "5SKSiQ8",
+    "5SKSJ_e": {
+      "id": "5SKSJ_e",
       "characterId": "fischl",
       "name": "",
       "visible": true,
@@ -7671,8 +7671,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "1gB4N7m": {
-      "id": "1gB4N7m",
+    "1gB3-jG": {
+      "id": "1gB3-jG",
       "characterId": "beidou",
       "name": "",
       "visible": true,
@@ -7724,8 +7724,8 @@
       "normalizer": 0.6834925443778894,
       "source": "preset"
     },
-    "2679SmG": {
-      "id": "2679SmG",
+    "26794Lm": {
+      "id": "26794Lm",
       "characterId": "amber",
       "name": "",
       "visible": true,
@@ -7768,8 +7768,8 @@
       "normalizer": 0.7871273198117978,
       "source": "preset"
     },
-    "5beKcfe": {
-      "id": "5beKcfe",
+    "5beKEF8": {
+      "id": "5beKEF8",
       "characterId": "xingqiu",
       "name": "",
       "visible": true,
@@ -7816,8 +7816,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "5kyGh0O": {
-      "id": "5kyGh0O",
+    "5kyGIbu": {
+      "id": "5kyGIbu",
       "characterId": "noelle",
       "name": "",
       "visible": true,
@@ -7868,8 +7868,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "5kyTf5O": {
-      "id": "5kyTf5O",
+    "5kyTGgu": {
+      "id": "5kyTGgu",
       "characterId": "noelle",
       "name": "带芙",
       "visible": true,
@@ -7924,8 +7924,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "MMfbfe": {
-      "id": "MMfbfe",
+    "MMfDF8": {
+      "id": "MMfDF8",
       "characterId": "lisa",
       "name": "",
       "visible": true,
@@ -7972,8 +7972,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "6AuW4ou": {
-      "id": "6AuW4ou",
+    "6AuViOO": {
+      "id": "6AuViOO",
       "characterId": "diluc",
       "name": "",
       "visible": true,
@@ -8029,8 +8029,8 @@
       "normalizer": 0.6708741658099044,
       "source": "preset"
     },
-    "6vSwOTu": {
-      "id": "6vSwOTu",
+    "6vSw03O": {
+      "id": "6vSw03O",
       "characterId": "razor",
       "name": "",
       "visible": true,
@@ -8077,8 +8077,8 @@
       "normalizer": 0.7102089878722937,
       "source": "preset"
     },
-    "6TWYeGG": {
-      "id": "6TWYeGG",
+    "6TWYFrm": {
+      "id": "6TWYFrm",
       "characterId": "chongyun",
       "name": "",
       "visible": true,
@@ -8121,8 +8121,8 @@
       ],
       "normalizer": 0.7544436732353562
     },
-    "J7mq5Tu": {
-      "id": "J7mq5Tu",
+    "J7mpj3O": {
+      "id": "J7mpj3O",
       "characterId": "varka",
       "name": "",
       "visible": true,
@@ -8165,8 +8165,8 @@
       "normalizer": 0.696594696824573,
       "source": "preset"
     },
-    "J7mq5X0": {
-      "id": "J7mq5X0",
+    "J7mpj6W": {
+      "id": "J7mpj6W",
       "characterId": "varka",
       "name": "",
       "visible": true,
@@ -8212,10 +8212,10 @@
       ],
       "normalizer": 0.696594696824573,
       "minCons": 2,
-      "source": "custom"
+      "source": "preset"
     },
-    "JH4slDO": {
-      "id": "JH4slDO",
+    "JH4sMou": {
+      "id": "JH4sMou",
       "characterId": "linnea",
       "name": "",
       "visible": true,
@@ -8262,8 +8262,8 @@
       "artifactSet": "aubade_of_morningstar_and_moon",
       "source": "preset"
     },
-    "JH4bCBy": {
-      "id": "JH4bCBy",
+    "JH4apnS": {
+      "id": "JH4apnS",
       "characterId": "linnea",
       "name": "",
       "visible": true,
@@ -8310,122 +8310,252 @@
       "artifactSet": "husk_of_opulent_dreams",
       "source": "preset",
       "minCons": 1
+    },
+    "JQOl0fG": {
+      "id": "JQOl0fG",
+      "characterId": "prune",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "artifactSet": "viridescent_venerer",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "custom"
+    },
+    "JQOwT4G": {
+      "id": "JQOwT4G",
+      "characterId": "prune",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "artifactSet": "celestial_gift",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "custom"
+    },
+    "JZizSIm": {
+      "id": "JZizSIm",
+      "characterId": "nicole",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "artifactSet": "celestial_gift",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "custom"
     }
   },
   "characterBuilds": {
-    "ineffa": ["FeFiQU8", "FeFi2JG", "FeFbxRe", "FeFQVGG"],
-    "citlali": ["EB7CPkm", "EB6ymmG", "EB7CPu8"],
-    "arlecchino": ["CRMdwFO"],
-    "clorinde": ["CagguVO"],
-    "emilie": ["D0cqE68", "D0cm1oG"],
-    "mualani": ["DSYztEu"],
-    "kinich": ["D9wtwku"],
-    "chasca": ["DuV6n-u", "DuU-PN8"],
-    "mavuika": ["E1p9r7O", "E1p0hBO"],
-    "sethos": ["CtIdh3O"],
-    "lan_yan": ["EKR7NIG"],
-    "varesa": ["EmNO_vO"],
-    "escoffier": ["F2_SKRO", "F2_UEGG"],
-    "freminet": ["Apmx9Du", "Aqw0M2O"],
-    "xilonen": ["Dbt0Wkm", "Dbspw5m", "Dbt0reG"],
-    "navia": ["BioON2u"],
-    "chevreuse": ["Bs6RhWm", "Bs6GdWG"],
+    "ineffa": ["FeFi23e", "FeFhfum", "FeFbZ18", "FeFQ6rm"],
+    "citlali": ["EB7C1KG", "EB6yOLm", "EB7C1Te"],
+    "arlecchino": ["CRMdXqu"],
+    "clorinde": ["CaggW4u"],
+    "emilie": ["D0cprhe", "D0clfNm"],
+    "mualani": ["DSYzUqO"],
+    "kinich": ["D9wtYKO"],
+    "chasca": ["DuV6PaO", "DuU-0ye"],
+    "mavuika": ["E1p9Siu", "E1p0Imu"],
+    "sethos": ["CtIdIeu"],
+    "lan_yan": ["EKR6-tm"],
+    "varesa": ["EmNOdUu"],
+    "escoffier": ["F2_Ry0u", "F2_Trrm"],
+    "freminet": ["Apmx9Du", "Aqv_zdu"],
+    "xilonen": ["Dbt08KG", "DbspXhG", "Dbt0TDm"],
+    "navia": ["BioN-eO"],
+    "chevreuse": ["Bs6RJ6G", "Bs6GF5m"],
     "charlotte": ["BYQzdRG"],
-    "lynette": ["AYHw3pm", "AYHw3pn"],
-    "lauma": ["FnZeWYG", "FnZk_am", "FnZkadm", "FnZeWhe"],
-    "columbina": ["IhqgSam", "IhqgrEu"],
-    "illuga": ["I-SmP7u", "IyzxbmG"],
-    "durin": ["GMpinGG", "GMpxfA8"],
-    "flins": ["G4BqW-O"],
-    "zibai": ["Ir8i_kO"],
-    "jahoda": ["GW7ztpG", "GW7pz2G"],
-    "aino": ["Fwtnzqm", "FwtZU5m"],
-    "furina": ["BQAI0BO", "BQA4H1m", "BOfjRIm"],
-    "nefer": ["GDVtVEO"],
-    "dahlia": ["FUxQxmG"],
-    "gaming": ["C8kPzCG"],
-    "chiori": ["CI2ZrC8", "CI2MXIG"],
-    "xianyun": ["B-NPETm", "B_QWXIm"],
-    "sigewinne": ["Cj-jX_G", "Ci_roTG"],
-    "kachina": ["DJEwZGG"],
-    "ororon": ["DlB3U0G"],
-    "iansan": ["EvhRG0G"],
-    "skirk": ["FLdbHJu"],
-    "wriothesley": ["B7YBeLO"],
-    "neuvillette": ["BGsEcbO"],
-    "lyney": ["Ahc2jbO"],
-    "shenhe": ["48Vp4GG", "47Suh_G"],
-    "kirara": ["AN_6D-0", "AOzwYGm"],
-    "baizhu": ["AFftZXW", "AFftZ2G", "AEh3Fk0"],
-    "hu_tao": ["4t45KYu"],
-    "zhongli": ["6cqYBmG"],
-    "yelan": ["7UixGOu", "7TUW-dG"],
-    "cyno": ["8fDNC0u"],
-    "wanderer": ["9Nncq5u", "9NnUR8G"],
-    "alhaitham": ["9gPh_mu"],
-    "nahida": ["8xrSooG", "8xrTDPO"],
-    "dehya": ["9z1jlpe", "9z1oNNG", "9z1cYXm"],
-    "yaoyao": ["9X5eiHW"],
-    "faruzan": ["9ETNhR8"],
-    "mika": ["9pjd00G"],
-    "layla": ["959KjX0"],
-    "nilou": ["8UwVaEm", "8VvBtLm"],
-    "kaveh": ["A6LrIxO"],
-    "yumemizuki_mizuki": ["Ed3DGNW"],
-    "ifa": ["FCJP9NW"],
-    "candace": ["8oXICGG", "8n1DH-m"],
-    "dori": ["8DH6JGG"],
-    "collei": ["83zAzIG"],
-    "tighnari": ["7wf2cZO"],
-    "shikanoin_heizou": ["7nL1YdW"],
-    "kuki_shinobu": ["7e12q68"],
-    "kamisato_ayato": ["4R7vMUu"],
-    "yae_miko": ["14w-xy8"],
-    "thoma": ["2NFAU-m", "2OlNo7e"],
-    "gorou": ["oIhfCG", "oIkK5m"],
-    "arataki_itto": ["59i4o0O"],
-    "sangonomiya_kokomi": ["3ZFZmWG", "3ZFlYfu"],
-    "raiden_shogun": ["72moNbu"],
-    "kujou_sara": ["Vgia9G"],
-    "sayu": ["2z_VVoG"],
-    "yun_jin": ["e-egyG", "dnM9om", "e-gb0m"],
-    "yoimiya": ["2FRJFnO", "2FRCmku"],
-    "kamisato_ayaka": ["4aRtm0W", "4aRx_0G"],
-    "kaedehara_kazuha": ["37JYT3m"],
-    "eula": ["xcsD2O"],
-    "diona": ["6KCVg-m"],
-    "yanfei": ["3Pxdc2u"],
-    "rosaria": ["4jl-zGG", "4jmBAWG"],
-    "xiao": ["7LOww6u", "7LO-LrO"],
-    "ganyu": ["3_BoLpO", "3_Bpvve", "3zhLqYm"],
-    "albedo": ["6m8bXCe", "6m8oti8"],
+    "lynette": ["AYHvhPG", "AYHvhPH"],
+    "lauma": ["FnZe87m", "FnZkdAG", "FnZkCDG", "FnZe8H8"],
+    "columbina": ["Ihqg4AG", "IhqgSqO"],
+    "illuga": ["I-Sm0jO", "IyzxbmG"],
+    "durin": ["GMpiOrm", "GMpxGle"],
+    "flins": ["G4Bq8Zu"],
+    "zibai": ["Ir8idJu"],
+    "jahoda": ["GW7zVOm", "GW7padm"],
+    "aino": ["FwtnbQG", "FwtZ5hG"],
+    "furina": ["BQAHdmu", "BQA3udG", "BOfjRIm"],
+    "nefer": ["GDVt6pu"],
+    "dahlia": ["FUxQZLm"],
+    "gaming": ["C8kPanm"],
+    "chiori": ["CI2ZSne", "CI2M8tm"],
+    "xianyun": ["B-NPETm", "B_QW8uG"],
+    "sigewinne": ["Cj-j9am", "Ci_roTG"],
+    "kachina": ["DJEwArm"],
+    "ororon": ["DlB35bm"],
+    "iansan": ["EvhQtbm"],
+    "skirk": ["FLdauvO"],
+    "wriothesley": ["B7YBFwu"],
+    "neuvillette": ["BGsEEAu"],
+    "lyney": ["Ahc2LAu"],
+    "shenhe": ["48Vohrm", "47Suh_G"],
+    "kirara": ["AN_6D-0", "AOzw9sG"],
+    "baizhu": ["AFftB70", "AFftAdm", "AEh3Fk0"],
+    "hu_tao": ["4t44y8O"],
+    "zhongli": ["6cqXpLm"],
+    "yelan": ["7Uiwt-O", "7TUW-dG"],
+    "cyno": ["8fDMpcO"],
+    "wanderer": ["9NncRhO", "9NnU2jm"],
+    "alhaitham": ["9gPhdMO"],
+    "nahida": ["8xrSQNm", "8xrSq-u"],
+    "dehya": ["9z1jNP8", "9z1n-ym", "9z1cA7G"],
+    "yaoyao": ["9X5eJt0"],
+    "faruzan": ["9ETNJ0e"],
+    "mika": ["9pjcdbm"],
+    "layla": ["959KL6W"],
+    "nilou": ["8UwVaEm", "8VvBUxG"],
+    "kaveh": ["A6LqwWu"],
+    "yumemizuki_mizuki": ["Ed3Ctz0"],
+    "ifa": ["FCJOmz0"],
+    "candace": ["8oXHprm", "8n1DH-m"],
+    "dori": ["8DH5wrm"],
+    "collei": ["83zAatm"],
+    "tighnari": ["7wf2E8u"],
+    "shikanoin_heizou": ["7nL1AD0"],
+    "kuki_shinobu": ["7e12Rhe"],
+    "kamisato_ayato": ["4R7u-4O"],
+    "yae_miko": ["14w-ZXe"],
+    "thoma": ["2NFAU-m", "2OlNPj8"],
+    "gorou": ["oIhGnm", "oIjxhG"],
+    "arataki_itto": ["59i4Pbu"],
+    "sangonomiya_kokomi": ["3ZFZO5m", "3ZFlAFO"],
+    "raiden_shogun": ["72mn_BO"],
+    "kujou_sara": ["VgiBkm"],
+    "sayu": ["2z_V7Nm"],
+    "yun_jin": ["e-eIXm", "dnM9om", "e-gCcG"],
+    "yoimiya": ["2FRItMu", "2FRCOKO"],
+    "kamisato_ayaka": ["4aRtNc0", "4aRxcbm"],
+    "kaedehara_kazuha": ["37JY4fG"],
+    "eula": ["xcrqdu"],
+    "diona": ["6KCVIaG"],
+    "yanfei": ["3PxdDeO"],
+    "rosaria": ["4jl-arm", "4jmAo5m"],
+    "xiao": ["7LOwXiO", "7LOzzQu"],
+    "ganyu": ["3_BnzOu", "3_BpXV8", "3zhLqYm"],
+    "albedo": ["6m8b8o8", "6m8oVHe"],
     "xinyan": ["5t31BI0"],
-    "tartaglia": ["61aYqmO", "61aPjcW"],
-    "klee": ["1pVILju", "1pV37uu", "1pV04au"],
-    "xiangling": ["7C4rJPe"],
-    "traveler_pyro": ["ETlILGG"],
-    "traveler_dendro": ["8MbGvoG"],
-    "qiqi": ["D2bUv0"],
-    "ningguang": ["1EF2GAO", "1EF1VLO"],
-    "keqing": ["1WswsAu"],
-    "kaeya": ["1NY-PPe"],
-    "venti": ["3Gdm4Du", "3GdbRJm"],
-    "bennett": ["3iZg9WG"],
-    "jean": ["3rtnLIG"],
-    "sucrose": ["4HpwHW0"],
-    "mona": ["5J0AsGG", "5J07QXm"],
-    "barbara": ["50OF-G0"],
-    "fischl": ["5SKO7S8", "5SKSiQ8"],
-    "beidou": ["1gB4N7m"],
-    "amber": ["2679SmG"],
-    "xingqiu": ["5beKcfe"],
-    "noelle": ["5kyGh0O", "5kyTf5O"],
-    "lisa": ["MMfbfe"],
-    "diluc": ["6AuW4ou"],
-    "razor": ["6vSwOTu"],
-    "chongyun": ["6TWYeGG"],
-    "varka": ["J7mq5Tu", "J7mq5X0"],
-    "linnea": ["JH4slDO", "JH4bCBy"]
+    "tartaglia": ["61aYSLu", "61aPLC0"],
+    "klee": ["1pVHzJO", "1pV2lUO", "1pU_iAO"],
+    "xiangling": ["7C4qw_8"],
+    "traveler_pyro": ["ETlHyrm"],
+    "traveler_dendro": ["8MbGXNm"],
+    "qiqi": ["D2b6UW"],
+    "ningguang": ["1EF1tlu", "1EF16wu"],
+    "keqing": ["1WswTmO"],
+    "kaeya": ["1NY-0_8"],
+    "venti": ["3GdlhpO", "3Gdb2vG"],
+    "bennett": ["3iZfn5m"],
+    "jean": ["3rtmytm"],
+    "sucrose": ["4Hpvv5W"],
+    "mona": ["5J0ATrm", "5J0727G"],
+    "barbara": ["50OFbrW"],
+    "fischl": ["5SKNl1e", "5SKSJ_e"],
+    "beidou": ["1gB3-jG"],
+    "amber": ["26794Lm"],
+    "xingqiu": ["5beKEF8"],
+    "noelle": ["5kyGIbu", "5kyTGgu"],
+    "lisa": ["MMfDF8"],
+    "diluc": ["6AuViOO"],
+    "razor": ["6vSw03O"],
+    "chongyun": ["6TWYFrm"],
+    "varka": ["J7mpj3O", "J7mpj6W"],
+    "linnea": ["JH4sMou", "JH4apnS"],
+    "prune": ["JQOl0fG", "JQOwT4G"],
+    "nicole": ["JZizSIm"]
   },
   "characterWeapons": {
     "ineffa": ["fractured_halo"],
@@ -8550,7 +8680,8 @@
     "razor": ["serpent_spine"],
     "chongyun": ["favonius_greatsword"],
     "varka": ["gest_of_the_mighty_wolf"],
-    "linnea": ["golden_frostbound_oath"]
+    "linnea": ["golden_frostbound_oath"],
+    "nicole": ["angelos_heptades"]
   },
   "computeOptions": {
     "expandElementalGoblet": true,

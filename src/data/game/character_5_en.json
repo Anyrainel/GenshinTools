@@ -4389,6 +4389,104 @@
     ],
     "glossary": null
   },
+  "nicole": {
+    "id": "131",
+    "name": "Nicole",
+    "skills": [
+      {
+        "name": "A. Allegoria",
+        "descHtml": "<span style=\"color: #FFD780;\">Normal Attack</span><br/>Proclaims a decree in the primordial tongue and performs up to 3 attacks that deal <span style=\"color: #FF9999;\">Pyro DMG</span>.<br/><br/><span style=\"color: #FFD780;\">Charged Attack</span><br/>Consumes a certain amount of Stamina to deal <span style=\"color: #FF9999;\">AoE Pyro DMG</span> to opponents in front of her after a short casting time.<br/><br/><span style=\"color: #FFD780;\">Plunging Attack</span><br/>Nicole plunges towards the ground from mid-air, damaging all opponents in her path. Also deals <span style=\"color: #FF9999;\">AoE Pyro DMG</span> upon impact with the ground.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F2P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F2P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F2P}"},
+          {"label": "Charged Attack DMG", "template": "{param4:F2P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "50"},
+          {"label": "Plunge DMG", "template": "{param5:F2P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param6:F2P}/{param7:F2P}"}
+        ]
+      },
+      {
+        "name": "E. Revelation: Uncreated Light",
+        "descHtml": "Recreates a fleeting glimpse of an age long past, when the angels acted on the authority of the heavens, bestowing the <span style=\"color: #FFD780;\">Grace of Kenosis</span> effect on nearby party members. This increases their ATK and deals <span style=\"color: #FF9999;\">AoE Pyro DMG</span>, as well as creates a Shield of Blazing Light.<br/>The Shield of Blazing Light's DMG Absorption is based on Nicole's ATK, and it will absorb <span style=\"color: #FF9999;\">Pyro DMG</span> at 250% effectiveness.<br/><br/><br/><i>\"Light is not a product of creation, and yet it has been favored and shaped into the miracle of human reason. Only the uncreated may caress the visage of eternity. That is why the unwritten word has value beyond anything put to paper.\"<br/>\"What do you think? A fine excuse not to pick up the pen myself, wouldn't you say? Doesn't it sound just like one of those bits of 'ancient wisdom' that sound so profound, but no one really understands?\"</i>",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P}"},
+          {"label": "Shield DMG Absorption", "template": "{param2:F2P} ATK+{param3:I}"},
+          {"label": "Shield Duration", "template": "20s"},
+          {"label": "Grace of Kenosis ATK Bonus Ratio", "template": "{param4:F2P} ATK"},
+          {"label": "Grace of Kenosis Max ATK Bonus", "template": "{param5:I}"},
+          {"label": "Grace of Kenosis Duration", "template": "20s"},
+          {"label": "CD", "template": "16s"}
+        ]
+      },
+      {
+        "name": "Q. Revelation: Ladder of Divine Ascent",
+        "descHtml": "As Nicole weaves the path of anchored fate with golden threads of light, she deals <span style=\"color: #FF9999;\">AoE Pyro DMG</span> and switches to Silent Contemplation mode.<br/>In this mode, when nearby active party members hit an opponent, an Arcane Projection is summoned to perform a Coordinated Attack against the opponent, dealing AoE Elemental DMG of the character's corresponding Elemental Type. This DMG scales based on the corresponding character's ATK and will be considered as having been dealt by them.<br/>This effect can occur once every 3s, and can be triggered up to 4 times each time Nicole switches to Silent Contemplation mode.<br/><br/>It is worth noting that Hexerei characters' Arcane Projections appear to differ somehow in appearance from the others...<br/><br/><br/><i>\"Hmm? You want to know the principles that underpin the divine plan? Hah, that's an easy one — ever heard of the saying, 'The gods became human so that humans could become gods; the gods walked as humans so that humans could walk as gods'?\"<br/>\"Though the civilization that gave us this saying — I fear even uttering their name could invite disaster — is now gone, I don't see any harm in passing on their words to you... Well, even if there is harm in it, the harm's already done. Ahem... In any case, what you should understand is that they who dwell above...\"<br/>\"...Hmm, on second thought, I really shouldn't say — I'm afraid I can't answer your question right now. How about we talk about something else?\"</i>",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P}"},
+          {"label": "Arcane Projection DMG", "template": "{param2:P} Corresponding Character's ATK"},
+          {"label": "Arcane Projection Attack Count", "template": "4"},
+          {"label": "Silent Contemplation Duration", "template": "20s"},
+          {"label": "CD", "template": "15s"},
+          {"label": "Energy Cost", "template": "60"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Methexis",
+        "descHtml": "For 20s after unleashing the Elemental Skill <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span>, Nicole will continuously \"Observe\" the other current active party members. After the observed character has remained on the field for 3s, their <span style=\"color: #FFD780;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>, increasing their ATK by an additional 300. If the observed character is a Hexerei character, <span style=\"color: #FFD780;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span> straight away.<br/>When characters other than Nicole who have <span style=\"color: #FFD780;\">Guidance of Theosis</span> leave the field, their effect reverts to <span style=\"color: #FFD780;\">Grace of Kenosis</span>."
+      },
+      {
+        "name": "Philokalia",
+        "descHtml": "When Elemental DMG from nearby active party members hits an opponent, Nicole's own <span style=\"color: #FFD780;\">Grace of Kenosis</span> effect is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span> for 8s."
+      },
+      {
+        "name": "Nepsis",
+        "descHtml": "When you are in Teyvat and not in combat, Nicole's Charged Attack becomes \"Emissarial Guidance\" if you have already obtained the current region's Treasure Compass. Emissarial Guidance: Calls upon nearby Seelie to show the way, triggering an effect similar to the region's Treasure Compass.<br/>This effect has a cooldown time of 5 seconds and does not work in Domains, Trounce Domains, and the Spiral Abyss."
+      },
+      {
+        "name": "Witch's Eve Rite: Light in the Darkness",
+        "descHtml": "After completing <span style=\"color: #FFD780;\">Witch's Homework: The Role of a Guide...?</span>, Nicole becomes a <span style=\"color: #FFD780;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you gain the <span style=\"color: #FFD780;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br/><br/><span style=\"color: #FFD780;\">Hexerei: Secret Rite</span><br/>Increases the DMG dealt by Hexerei characters' <span style=\"color: #FFD780;\">Arcane Projections</span> by 300% of Nicole's ATK."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "\"Do Not Be Afraid, Child Who Is Loved\"",
+        "descHtml": "When the party's current active character hits an opponent, an additional special \"Arcane Projection: Unity\" will be summoned to perform a Coordinated Attack against the opponent, dealing AoE Elemental DMG of the character's corresponding Elemental Type at 600% of their ATK. This DMG will be considered as having been dealt by the corresponding character.<br/>This effect can trigger once every 6s."
+      },
+      {
+        "name": "\"I Will Guide You and Show You the Path You Should Tread\"",
+        "descHtml": "Enhances the effects of the Elemental Skill <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span>: <span style=\"color: #FFD780;\">Grace of Kenosis</span> increases ATK by an additional 300 (which does not count toward this effect's ATK Bonus limit), while <span style=\"color: #FFD780;\">Guidance of Theosis</span> decreases nearby opponents' Elemental RES against the corresponding character's Elemental Type by 25%. (Effect does not stack for the same element.)<br/>Additionally, when Nicole unleashes her Elemental Skill <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span>, nearby active party members will also gain a Shield of Blazing Light."
+      },
+      {
+        "name": "\"A Lamp by Your Side, A Light to Shine the Way\"",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span> by 3.<br/>Maximum upgrade level is 15."
+      },
+      {
+        "name": "\"Whether Left or Right, No Matter Which Way You Turn\"",
+        "descHtml": "When nearby party members have their <span style=\"color: #FFD780;\">Grace of Kenosis</span> upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>, Nicole also bestows them with the Pathfinder's Blessing effect for 20s. Each character can gain this effect once every 16s.<br/>The Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, and Elemental Burst DMG of characters with Pathfinder's Blessing is increased by 70% of Nicole's ATK. This effect will be removed once it has taken effect 8 times or when its duration is over.<br/>When multiple opponents are hit at the same time, the number of times Pathfinder's Blessing takes effect is based on the number of enemies hit. Each character's Pathfinder's Blessing is counted independently."
+      },
+      {
+        "name": "\"You Will Hear My Voice Beside You\"",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780;\">Revelation: Ladder of Divine Ascent</span> by 3.<br/>Maximum upgrade level is 15."
+      },
+      {
+        "name": "\"This Is the Path, Walk It Without Delay\"",
+        "descHtml": "When Nicole's <span style=\"color: #FFD780;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>, all nearby party members' <span style=\"color: #FFD780;\">Grace of Kenosis</span> will also be upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>. Once upgraded, <span style=\"color: #FFD780;\">Guidance of Theosis</span> will no longer revert to <span style=\"color: #FFD780;\">Grace of Kenosis</span>.<br/>Additionally, DMG dealt by characters with <span style=\"color: #FFD780;\">Guidance of Theosis</span> will ignore 40% of opponents' DEF."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "Grace of Kenosis",
+        "descHtml": "After unleashing the Elemental Skill Revelation: Uncreated Light, Nicole bestows the following effect on all nearby party members: ATK is increased based on Nicole's ATK.<br/>After certain conditions are met, the Grace of Kenosis effect will be upgraded to Guidance of Theosis, further increasing ATK."
+      },
+      {
+        "name": "Guidance of Theosis",
+        "descHtml": "Upgrading the Grace of Kenosis effect increases ATK by an additional 300.<br/>After unlocking the Passive Talent \"Methexis\" and meeting any of the following conditions, Grace of Kenosis will be upgraded to Guidance of Theosis for the remainder of its duration:<br/>· Another character under observation remains on the field for longer than 3s; or<br/>· Another character under observation is a Hexerei character.<br/><br/>Additionally, after unlocking the Passive Talent \"Philokalia,\" when a nearby active party member's Elemental DMG hits an opponent, Nicole's own Grace of Kenosis will be upgraded to Guidance of Theosis for 8s.<br/><br/>When characters other than Nicole who have Guidance of Theosis leave the field, their effect will revert to Grace of Kenosis."
+      }
+    ]
+  },
   "nilou": {
     "id": "10000070",
     "name": "Nilou",

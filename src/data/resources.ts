@@ -11,6 +11,8 @@ import type {
 } from './types';
 
 export const characters: CharacterResource[] = [
+  {"id": "nicole", "rarity": 5, "imagePath": "/character/nicole.webp"},
+  {"id": "prune", "rarity": 4, "imagePath": "/character/prune.webp"},
   {"id": "linnea", "rarity": 5, "imagePath": "/character/linnea.webp"},
   {"id": "varka", "rarity": 5, "imagePath": "/character/varka.webp"},
   {"id": "illuga", "rarity": 4, "imagePath": "/character/illuga.webp"},
@@ -164,6 +166,8 @@ export const weaponTypeResources: WeaponTypeResource[] = [
 ];
 
 export const artifacts: ArtifactSetResource[] = [
+  {"id": "celestial_gift", "rarity": 5, "imagePaths": {"flower": "/artifact/celestial_gift.webp", "plume": "/artifact/celestial_gift2.webp", "sands": "/artifact/celestial_gift3.webp", "goblet": "/artifact/celestial_gift4.webp", "circlet": "/artifact/celestial_gift5.webp"}},
+  {"id": "disenchantment_in_deep_shadow", "rarity": 5, "imagePaths": {"flower": "/artifact/disenchantment_in_deep_shadow.webp", "plume": "/artifact/disenchantment_in_deep_shadow2.webp", "sands": "/artifact/disenchantment_in_deep_shadow3.webp", "goblet": "/artifact/disenchantment_in_deep_shadow4.webp", "circlet": "/artifact/disenchantment_in_deep_shadow5.webp"}},
   {"id": "a_day_carved_from_rising_winds", "rarity": 5, "imagePaths": {"flower": "/artifact/a_day_carved_from_rising_winds.webp", "plume": "/artifact/a_day_carved_from_rising_winds2.webp", "sands": "/artifact/a_day_carved_from_rising_winds3.webp", "goblet": "/artifact/a_day_carved_from_rising_winds4.webp", "circlet": "/artifact/a_day_carved_from_rising_winds5.webp"}},
   {"id": "aubade_of_morningstar_and_moon", "rarity": 5, "imagePaths": {"flower": "/artifact/aubade_of_morningstar_and_moon.webp", "plume": "/artifact/aubade_of_morningstar_and_moon2.webp", "sands": "/artifact/aubade_of_morningstar_and_moon3.webp", "goblet": "/artifact/aubade_of_morningstar_and_moon4.webp", "circlet": "/artifact/aubade_of_morningstar_and_moon5.webp"}},
   {"id": "silken_moons_serenade", "rarity": 5, "imagePaths": {"flower": "/artifact/silken_moons_serenade.webp", "plume": "/artifact/silken_moons_serenade2.webp", "sands": "/artifact/silken_moons_serenade3.webp", "goblet": "/artifact/silken_moons_serenade4.webp", "circlet": "/artifact/silken_moons_serenade5.webp"}},
@@ -218,9 +222,9 @@ export const artifacts: ArtifactSetResource[] = [
 ];
 
 export const artifactHalfSets: ArtifactHalfSet[] = [
-  {"id": "atk%-18", "setIds": ["brave_heart", "echoes_of_an_offering", "resolution_of_sojourner", "gladiators_finale", "vermillion_hereafter", "shimenawas_reminiscence", "nighttime_whispers_in_the_echoing_woods", "fragment_of_harmonic_whimsy", "unfinished_reverie", "a_day_carved_from_rising_winds"]},
+  {"id": "atk%-18", "setIds": ["brave_heart", "echoes_of_an_offering", "resolution_of_sojourner", "gladiators_finale", "vermillion_hereafter", "shimenawas_reminiscence", "nighttime_whispers_in_the_echoing_woods", "fragment_of_harmonic_whimsy", "unfinished_reverie", "a_day_carved_from_rising_winds", "disenchantment_in_deep_shadow"]},
   {"id": "em-80", "setIds": ["instructor", "wanderers_troupe", "gilded_dreams", "flower_of_paradise_lost", "night_of_the_skys_unveiling", "aubade_of_morningstar_and_moon"]},
-  {"id": "er-20", "setIds": ["scholar", "the_exile", "emblem_of_severed_fate", "silken_moons_serenade"]},
+  {"id": "er-20", "setIds": ["scholar", "the_exile", "emblem_of_severed_fate", "silken_moons_serenade", "celestial_gift"]},
   {"id": "heal%-15", "setIds": ["oceanhued_clam", "maiden_beloved", "song_of_days_past"]},
   {"id": "anemo%-15", "setIds": ["viridescent_venerer", "desert_pavilion_chronicle"]},
   {"id": "cryo%-15", "setIds": ["blizzard_strayer", "finale_of_the_deep_galleries"]},
@@ -245,6 +249,7 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
 ];
 
 export const weapons: WeaponResource[] = [
+  {"id": "angelos_heptades", "rarity": 5, "imagePath": "/weapon/angelos_heptades.webp"},
   {"id": "golden_frostbound_oath", "rarity": 5, "imagePath": "/weapon/golden_frostbound_oath.webp"},
   {"id": "gest_of_the_mighty_wolf", "rarity": 5, "imagePath": "/weapon/gest_of_the_mighty_wolf.webp"},
   {"id": "nocturnes_curtain_call", "rarity": 5, "imagePath": "/weapon/nocturnes_curtain_call.webp"},

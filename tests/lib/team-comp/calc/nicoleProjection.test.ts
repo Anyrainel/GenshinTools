@@ -4,54 +4,16 @@
  * Nicole's Q projections evaluate in the triggering teammate's stat context
  * (their ATK, element, DMG%, crit, EM) via FormulaPart.statsCharId override.
  * Game text: "该伤害受益于该角色的攻击力,并视为由该角色造成的伤害"
- *
- * Nicole is a beta character. We mock betaEnabled() and the gzip loader so
- * that beta character/weapon stats are loaded in the test environment.
  */
-import { beforeAll, describe, expect, it, vi } from "vitest";
-
-// Mock betaEnabled BEFORE constants.ts evaluates.
-vi.mock("@/data/betaState", () => ({
-  betaEnabled: () => true,
-  setBetaEnabled: () => {},
-  maybeHandleBetaMagic: () => false,
-}));
-
-// Mock fetchGzipJson to resolve beta stat files from disk instead of fetch().
-vi.mock("@/data/utils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/data/utils")>();
-  const { readFileSync } = await import("node:fs");
-  const { resolve } = await import("node:path");
-  const { gunzipSync } = await import("node:zlib");
-
-  return {
-    ...actual,
-    fetchGzipJson: async (url: string) => {
-      // url is like "/src/data/game/character_beta_stats.json.gz"
-      const fileName = url.split("/").pop()!;
-      const filePath = resolve(
-        __dirname,
-        "../../../../src/data/game",
-        fileName
-      );
-      try {
-        const buf = readFileSync(filePath);
-        return JSON.parse(gunzipSync(buf).toString("utf-8"));
-      } catch {
-        // If file doesn't exist, return empty object (no beta data)
-        return {};
-      }
-    },
-  };
-});
+import { beforeAll, describe, expect, it } from "vitest";
 
 import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import { createCharacter } from "@/lib/dmgcalc/core/registry";
+import { createCharacter, getOptionDef } from "@/lib/dmgcalc/core/registry";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
-import type { FormulaEntry } from "@/lib/dmgcalc/types";
+import type { FormulaEntry, OptionMap } from "@/lib/dmgcalc/types";
 import "@/lib/dmgcalc";
 
 beforeAll(async () => {
@@ -61,11 +23,21 @@ beforeAll(async () => {
   ]);
 });
 
-function nicoleWithTeam(teammates: string[], constellation = 0) {
+function nicoleWithTeam(
+  teammates: string[],
+  constellation = 0,
+  combatOpts: OptionMap = {}
+) {
   const charIds = ["nicole", ...teammates];
   const constellations: Record<string, number> = { nicole: constellation };
   const teamMeta = new TeamMeta(charIds, constellations);
-  const char = createCharacter("nicole", 90, constellation, teamMeta);
+  const char = createCharacter(
+    "nicole",
+    90,
+    constellation,
+    teamMeta,
+    combatOpts
+  );
   return { char, teamMeta };
 }
 
@@ -84,6 +56,123 @@ function unityEntries(entries: Record<string, FormulaEntry>) {
     id.startsWith("nicole-c1-coord-slot")
   );
 }
+
+type InspectableBuff = {
+  source: { origin?: string };
+  target: {
+    receiver: string;
+    factions?: readonly string[];
+    filter?: { elements?: readonly string[] };
+  };
+  staticBuffs: readonly { key: string; value: number }[];
+};
+
+function inspectBuffs(char: { buffs: unknown[] }): InspectableBuff[] {
+  return char.buffs as InspectableBuff[];
+}
+
+function atkBuffsForOrigin(char: { buffs: unknown[] }, origin: string) {
+  return inspectBuffs(char).filter(
+    (buff) =>
+      buff.source.origin === origin &&
+      buff.staticBuffs.some((entry) => entry.key === "atk")
+  );
+}
+
+function resReductionElements(char: { buffs: unknown[] }) {
+  return inspectBuffs(char)
+    .filter(
+      (buff) =>
+        buff.source.origin === "C2" &&
+        buff.staticBuffs.some((entry) => entry.key === "resReduction%")
+    )
+    .flatMap((buff) => buff.target.filter?.elements ?? [])
+    .sort();
+}
+
+describe("Nicole E ATK buff option", () => {
+  it("registers all-Theosis as the default option", () => {
+    const option = getOptionDef("nicole");
+
+    expect(option?.label.en).toBe("E ATK Buff");
+    expect(option?.choices.map((choice) => choice.value)).toEqual([
+      "all-theosis",
+      "hexerei-theosis",
+    ]);
+  });
+
+  it("defaults to teamwide Theosis ATK uplift", () => {
+    const { char } = nicoleWithTeam(["prune", "kaeya"]);
+    const p1AtkBuffs = atkBuffsForOrigin(char, "P1");
+
+    expect(p1AtkBuffs).toHaveLength(1);
+    expect(p1AtkBuffs[0].target.receiver).toBe("team");
+    expect(p1AtkBuffs[0].target.factions).toBeUndefined();
+    expect(p1AtkBuffs[0].staticBuffs).toContainEqual({
+      key: "atk",
+      value: 300,
+    });
+  });
+
+  it("can keep only Hexerei characters on the higher Theosis ATK tier", () => {
+    const { char } = nicoleWithTeam(["prune", "kaeya"], 0, {
+      nicole: "hexerei-theosis",
+    });
+    const p1AtkBuffs = atkBuffsForOrigin(char, "P1");
+
+    expect(p1AtkBuffs).toHaveLength(1);
+    expect(p1AtkBuffs[0].target.receiver).toBe("team");
+    expect(p1AtkBuffs[0].target.factions).toEqual(["Hexerei"]);
+    expect(p1AtkBuffs[0].staticBuffs).toContainEqual({
+      key: "atk",
+      value: 300,
+    });
+  });
+
+  it("keeps C2 Grace ATK teamwide as the lower tier in split mode", () => {
+    const { char } = nicoleWithTeam(["prune", "kaeya"], 2, {
+      nicole: "hexerei-theosis",
+    });
+    const c2AtkBuffs = atkBuffsForOrigin(char, "C2");
+    const p1AtkBuffs = atkBuffsForOrigin(char, "P1");
+
+    expect(c2AtkBuffs).toHaveLength(1);
+    expect(c2AtkBuffs[0].target.receiver).toBe("team");
+    expect(c2AtkBuffs[0].target.factions).toBeUndefined();
+    expect(c2AtkBuffs[0].staticBuffs).toContainEqual({
+      key: "atk",
+      value: 300,
+    });
+
+    expect(p1AtkBuffs).toHaveLength(1);
+    expect(p1AtkBuffs[0].target.factions).toEqual(["Hexerei"]);
+  });
+
+  it("limits C2 RES shred to Theosis recipient elements in split mode", () => {
+    const defaultCase = nicoleWithTeam(["prune", "kaeya"], 2);
+    const splitCase = nicoleWithTeam(["prune", "kaeya"], 2, {
+      nicole: "hexerei-theosis",
+    });
+
+    expect(resReductionElements(defaultCase.char)).toEqual([
+      "Anemo",
+      "Cryo",
+      "Pyro",
+    ]);
+    expect(resReductionElements(splitCase.char)).toEqual(["Anemo", "Pyro"]);
+  });
+
+  it("treats C6 as teamwide Theosis even when split mode is selected", () => {
+    const { char } = nicoleWithTeam(["prune", "kaeya"], 6, {
+      nicole: "hexerei-theosis",
+    });
+    const p1AtkBuffs = atkBuffsForOrigin(char, "P1");
+
+    expect(p1AtkBuffs).toHaveLength(1);
+    expect(p1AtkBuffs[0].target.receiver).toBe("team");
+    expect(p1AtkBuffs[0].target.factions).toBeUndefined();
+  });
+});
 
 describe("Nicole Q Arcane Projection — slot-based formulas", () => {
   it("generates one projection formula per teammate slot", () => {
@@ -303,31 +392,34 @@ describe("Nicole P4 Hexerei bespoke buff", () => {
 describe("Nicole comboDescriptor", () => {
   it("uses slot1 projection in default combo", () => {
     const { char } = nicoleWithTeam(["amber", "kaeya"], 0);
-    const combo = (char as unknown as { comboDescriptor: { id: string }[] })
-      .comboDescriptor;
+    const combo = (
+      char as unknown as { comboDescriptor: { id: string; count: number }[] }
+    ).comboDescriptor;
 
-    expect(
-      combo.some((c: { id: string }) => c.id === "nicole-q-coord-slot1")
-    ).toBe(true);
+    expect(combo.find((c) => c.id === "nicole-q-coord-slot1")).toEqual({
+      id: "nicole-q-coord-slot1",
+      count: 4,
+    });
   });
 
-  it("includes C1 Unity in combo at C1+", () => {
+  it("includes 3 C1 Unity chances for slot 1 in combo at C1+", () => {
     const { char } = nicoleWithTeam(["amber"], 1);
-    const combo = (char as unknown as { comboDescriptor: { id: string }[] })
-      .comboDescriptor;
+    const combo = (
+      char as unknown as { comboDescriptor: { id: string; count: number }[] }
+    ).comboDescriptor;
 
-    expect(
-      combo.some((c: { id: string }) => c.id === "nicole-c1-coord-slot1")
-    ).toBe(true);
+    expect(combo.find((c) => c.id === "nicole-c1-coord-slot1")).toEqual({
+      id: "nicole-c1-coord-slot1",
+      count: 3,
+    });
   });
 
   it("no C1 Unity in combo at C0", () => {
     const { char } = nicoleWithTeam(["amber"], 0);
-    const combo = (char as unknown as { comboDescriptor: { id: string }[] })
-      .comboDescriptor;
+    const combo = (
+      char as unknown as { comboDescriptor: { id: string; count: number }[] }
+    ).comboDescriptor;
 
-    expect(
-      combo.some((c: { id: string }) => c.id === "nicole-c1-coord-slot1")
-    ).toBe(false);
+    expect(combo.find((c) => c.id === "nicole-c1-coord-slot1")).toBeUndefined();
   });
 });

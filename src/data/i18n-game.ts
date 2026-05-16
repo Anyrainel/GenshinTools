@@ -3,6 +3,8 @@
 
 export const i18nGameData = {
   "characters": {
+    "nicole": { "en": "Nicole", "zh": "尼可" },
+    "prune": { "en": "Prune", "zh": "布伦妮" },
     "linnea": { "en": "Linnea", "zh": "莉奈娅" },
     "varka": { "en": "Varka", "zh": "法尔伽" },
     "illuga": { "en": "Illuga", "zh": "叶洛亚" },
@@ -137,6 +139,8 @@ export const i18nGameData = {
     "qiqi": { "en": "Qiqi", "zh": "七七" }
   },
   "artifacts": {
+    "celestial_gift": { "en": "Celestial Gift", "zh": "天之美赐" },
+    "disenchantment_in_deep_shadow": { "en": "Disenchantment in Deep Shadow", "zh": "影中沉凝的幻灭" },
     "a_day_carved_from_rising_winds": { "en": "A Day Carved From Rising Winds", "zh": "风起之日" },
     "aubade_of_morningstar_and_moon": { "en": "Aubade of Morningstar and Moon", "zh": "晨星与月的晓歌" },
     "silken_moons_serenade": { "en": "Silken Moon's Serenade", "zh": "纺月的夜歌" },
@@ -190,6 +194,7 @@ export const i18nGameData = {
     "blizzard_strayer": { "en": "Blizzard Strayer", "zh": "冰风迷途的勇士" }
   },
   "weapons": {
+    "angelos_heptades": { "en": "Angelos' Heptades", "zh": "尘光七谕" },
     "golden_frostbound_oath": { "en": "Golden Frostbound Oath", "zh": "霜结的誓金枝" },
     "gest_of_the_mighty_wolf": { "en": "Gest of the Mighty Wolf", "zh": "狼的武功歌" },
     "nocturnes_curtain_call": { "en": "Nocturne's Curtain Call", "zh": "帷间夜曲" },

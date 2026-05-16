@@ -2,6 +2,14 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-05-16
+
+### features
+- Added support for new characters: Nicole and Prune; weapon: Angelos' Heptades; artifacts: Celestial Gift and Disenchantment in Deep Shadow
+- Added feedback submission for suggestions and bug reports
+
+### fixes
+
 ## 2026-05-11
 
 ### features

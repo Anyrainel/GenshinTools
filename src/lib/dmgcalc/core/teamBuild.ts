@@ -1100,14 +1100,21 @@ export class TeamBuild {
           }
 
           if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
-            const { formula, offField, bespokeBuffs } = entry.parts[eidx];
-            const baseVariant = offField
+            const part = entry.parts[eidx];
+            const { formula, bespokeBuffs } = part;
+            const baseVariant = part.statsCharId
               ? this.teamStats.getPostStats(
+                  part.statsCharId,
                   charId,
-                  this.teamStats.getDefaultOnFieldCharId(charId),
                   zeroBuffKeys
                 )
-              : this.teamStats.getPostStats(charId, charId, zeroBuffKeys);
+              : isPartOffField(part, forceOnField)
+                ? this.teamStats.getPostStats(
+                    charId,
+                    this.teamStats.getDefaultOnFieldCharId(charId),
+                    zeroBuffKeys
+                  )
+                : this.teamStats.getPostStats(charId, charId, zeroBuffKeys);
             const displayStats = bespokeBuffs?.length
               ? baseVariant.merge(
                   buildBespokeOverlay(bespokeBuffs, baseVariant, [])
@@ -1115,7 +1122,7 @@ export class TeamBuild {
               : baseVariant;
             const rebuilt = formula.displayFull(
               displayStats,
-              this.teamMeta.charLevels[charId] ?? 90,
+              this.teamMeta.charLevels[part.statsCharId ?? charId] ?? 90,
               ctx
             );
             const blendedDmg = blended.partDamages[eidx].damage;

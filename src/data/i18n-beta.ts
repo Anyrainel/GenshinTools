@@ -4,16 +4,11 @@
 export const i18nBetaData = {
   characters: {
     "lohen": { en: "Lohen", zh: "洛恩" },
-    "nicole": { en: "Nicole", zh: "尼可" },
-    "prune": { en: "Prune", zh: "布伦妮" },
   },
   weapons: {
-    "angelos_heptades": { en: "Angelos' Heptades", zh: "尘光七谕" },
     "disaster_and_remorse": { en: "Disaster and Remorse", zh: "灾悔" },
   },
   artifacts: {
-    "celestial_gift": { en: "Celestial Gift", zh: "天之美赐" },
-    "disenchantment_in_deep_shadow": { en: "Disenchantment in Deep Shadow", zh: "影中沉凝的幻灭" },
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },
   },
 };

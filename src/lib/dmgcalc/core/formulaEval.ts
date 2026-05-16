@@ -172,10 +172,22 @@ export function computeBlendedDamage(
     const h = totalHits ?? 1;
 
     const effectiveOffField = isPartOffField(part, forceOnField);
+    const routedStats = part.statsCharId
+      ? teamStats.getPostStats(part.statsCharId, charId)
+      : undefined;
+    const partCharLevel = part.statsCharId
+      ? teamStats.getCharLevel(part.statsCharId)
+      : charLevel;
     const baseStats =
-      effectiveOffField && offFieldPostStats ? offFieldPostStats : postStats;
-    const variants =
-      effectiveOffField && offFieldVariants ? offFieldVariants : statsVariants;
+      routedStats ??
+      (effectiveOffField && offFieldPostStats ? offFieldPostStats : postStats);
+    const variants = part.statsCharId
+      ? buildStatVariants(activation, parts, (excl) =>
+          teamStats.getPostStats(part.statsCharId!, charId, excl)
+        )
+      : effectiveOffField && offFieldVariants
+        ? offFieldVariants
+        : statsVariants;
 
     const bespokeOverlay = bespokeBuffs?.length
       ? buildBespokeOverlay(bespokeBuffs, baseStats, [])
@@ -199,7 +211,7 @@ export function computeBlendedDamage(
         withBespoke,
         bespokeOverlay,
         subBespoke,
-        charLevel,
+        partCharLevel,
         ctx,
         subHits,
         idx,
@@ -447,7 +459,13 @@ export function evaluateFormulaDamage(
     }
 
     const partVariants =
-      effectiveOffField && offFieldVariants ? offFieldVariants : statsVariants;
+      part.statsCharId && activation
+        ? buildStatVariants(activation, entry.parts, (excl) =>
+            teamStats.getPostStats(part.statsCharId!, charId, excl)
+          )
+        : effectiveOffField && offFieldVariants
+          ? offFieldVariants
+          : statsVariants;
 
     const hasReaction =
       reactionOverride?.reaction && reactionOverride.reaction !== "none";

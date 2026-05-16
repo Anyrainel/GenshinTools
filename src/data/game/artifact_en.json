@@ -48,6 +48,13 @@
     "effect2": "ATK +18%.",
     "effect4": "Increases DMG by 30% against opponents with more than 50% HP."
   },
+  "celestial_gift": {
+    "id": "15045",
+    "name": "Celestial Gift",
+    "rarity": 5,
+    "effect2": "Energy Recharge +20%.",
+    "effect4": "If the equipping character has completed Witch's Homework, after they use an Elemental Skill, they also gain \"Light's Guidance\" for 20s: All nearby party members gain a 20% Elemental DMG Bonus corresponding to the equipping character's Elemental Type. The equipping character can trigger this effect while off-field. DMG Bonuses provided by Artifact Sets with the same name do not stack.<br/>· When your party has the Hexerei: Secret Rite effect, Light's Guidance is upgraded to \"Mortal Hymn\": All nearby party members gain a 40% Elemental DMG Bonus corresponding to both the equipping character and the current active party member's Elemental Type instead. If both characters have the same Elemental Type, these bonuses will not stack."
+  },
   "crimson_witch_of_flames": {
     "id": "15006",
     "name": "Crimson Witch of Flames",
@@ -75,6 +82,13 @@
     "rarity": 5,
     "effect2": "Anemo DMG Bonus +15%",
     "effect4": "When Charged Attacks hit opponents, the equipping character's Normal Attack SPD will increase by 10% while Normal, Charged, and Plunging Attack DMG will increase by 40% for 15s."
+  },
+  "disenchantment_in_deep_shadow": {
+    "id": "15046",
+    "name": "Disenchantment in Deep Shadow",
+    "rarity": 5,
+    "effect2": "ATK +18%.",
+    "effect4": "Increases Superconduct Reaction DMG by 80%. When the wielder attacks opponents affected by Superconduct, this attack's CRIT Rate is increased by 16%. An all-new blessing may be obtained as you make your way toward Snezhnaya..."
   },
   "echoes_of_an_offering": {
     "id": "15024",

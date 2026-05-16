@@ -169,7 +169,12 @@ export function FlexPatternDialog({
             const input = settings.customFlexInputs.find((ci) => {
               const sorted = sortSubs(ci.requiredSubs);
               return (
-                `flex:${ci.slot}:${ci.mainStat}:${sorted.join(",")}` === fp.key
+                makeFlexPatternKey(
+                  ci.slot,
+                  ci.mainStat,
+                  sorted,
+                  ci.requiresFourInitialSubstats
+                ) === fp.key
               );
             });
             return (

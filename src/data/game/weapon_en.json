@@ -95,6 +95,18 @@
       ["24%", "16%"]
     ]
   },
+  "angelos_heptades": {
+    "id": "14523",
+    "name": "Angelos' Heptades",
+    "descHtmlTpl": "ATK is increased by {0}. After the equipping character creates a Shield, they gain \"Pathfinder's Light\" for 20s: Increases your active party member's DMG by {1} for every 1,000 ATK the equipping character has, up to a maximum of {2}. Additionally, when the equipping character creates a Shield, they will also gain \"Guide's Contentment\": Restores {3} Elemental Energy to the equipping character. The aforementioned effect can trigger once every 14s, and can also be triggered when all types of chests are opened outside of combat. The equipping character may trigger this effect even when they are an off-field.<br/>Hexerei: Secret Rite: When there are off-field Hexerei characters in your party, they will also gain 50% of the DMG increase from Pathfinder's Light.",
+    "refinements": [
+      ["12%", "10%", "26%", "14"],
+      ["15%", "13%", "34%", "15"],
+      ["18%", "16%", "42%", "16"],
+      ["21%", "19%", "50%", "17"],
+      ["24%", "22%", "58%", "18"]
+    ]
+  },
   "aqua_simulacra": {
     "id": "15508",
     "name": "Aqua Simulacra",

@@ -1,11 +1,18 @@
 import type { Element } from "@/data/enums";
+import { i18nBetaData } from "@/data/i18n-beta";
+import { i18nGameData } from "@/data/i18n-game";
 
 import { DirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { TeamMeta } from "../core/teamMeta";
-import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
+import type {
+  BuffTarget,
+  ComboTemplate,
+  FormulaEntry,
+  OptionDef,
+} from "../types";
 import { cbs, travelerP3Buff } from "./helpers";
 
 // Eligible elements for P1 虚境裂隙: Frozen(Hydro), Superconduct(Electro),
@@ -36,6 +43,20 @@ const skirkOption = {
       when: (tm) => skirkRiftEligible(tm) >= 1,
     },
     { value: "0", label: { zh: "0枚", en: "0 Rifts" } },
+  ] as const,
+} satisfies OptionDef;
+
+const nicoleOption = {
+  label: { zh: "E攻击加成", en: "E ATK Buff" },
+  choices: [
+    {
+      value: "all-theosis",
+      label: { zh: "全队圣祝之引", en: "All Theosis" },
+    },
+    {
+      value: "hexerei-theosis",
+      label: { zh: "仅魔导圣祝之引", en: "Hexerei Theosis" },
+    },
   ] as const,
 } satisfies OptionDef;
 
@@ -1087,6 +1108,228 @@ class TravelerPyro extends CharacterBase {
     return [
       { id: "traveler-pyro-skill", count: 1 },
       { id: "traveler-pyro-burst", count: 1 },
+    ];
+  }
+}
+
+// Nicole — 5★ Pyro Catalyst (Hexerei)
+// Key assumptions:
+// - Kenosis is treated as upgraded to Theosis by default; OptionMap can
+//   restrict the Theosis uplift to Hexerei characters before C6.
+// - Arcane Projections use the triggering slot's stats/element via statsCharId.
+// - C4 gets one independent 8-hit budget per character, including Nicole.
+// - Hexerei P4 is a bespoke projection buff and only applies to Hexerei slots.
+@RegisterCharacter("nicole", nicoleOption)
+class Nicole extends CharacterBase {
+  private readonly eAtkBuffMode = resolveOption(nicoleOption, this.option);
+
+  private readonly isHexereiActive =
+    this.teamMeta.countByFaction("Hexerei") >= 2;
+
+  private readonly useHexereiOnlyTheosis =
+    this.eAtkBuffMode === "hexerei-theosis" && this.constellation < 6;
+
+  private readonly theosisTarget: BuffTarget = this.useHexereiOnlyTheosis
+    ? { receiver: "team", factions: ["Hexerei"] }
+    : { receiver: "team" };
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+
+    const kenosisRatio = this.param("E", 4);
+    const kenosisCap = this.param("E", 5);
+    buffs.push(
+      new ScalingBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "team" },
+        [],
+        "atk",
+        "atk",
+        kenosisRatio,
+        kenosisCap
+      )
+    );
+
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+          { key: "atk", value: 300 },
+        ])
+      );
+    }
+
+    buffs.push(
+      new StatBuff(cbs(this, "P1", ["E"]), this.theosisTarget, [
+        { key: "atk", value: 300 },
+      ])
+    );
+
+    // Approximate corresponding-element RES shred with one buff per Theosis
+    // recipient element.
+    if (this.constellation >= 2) {
+      const theosisElements = this.useHexereiOnlyTheosis
+        ? Object.entries(this.teamMeta.elements)
+            .filter(([cid]) => this.teamMeta.factions[cid] === "Hexerei")
+            .map(([, element]) => element)
+        : Object.values(this.teamMeta.elements);
+      const teamEls = Array.from(
+        new Set(theosisElements.filter((e): e is Element => e !== undefined))
+      );
+      for (const el of teamEls) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "team", filter: { elements: [el] } },
+            [{ key: "resReduction%", value: 0.25 }]
+          )
+        );
+      }
+    }
+
+    // One maxStacks:8 C4 budget per character.
+    if (this.constellation >= 4) {
+      for (const cid of Object.keys(this.teamMeta.elements)) {
+        buffs.push(
+          new ScalingBuff(
+            { ...cbs(this, "C4", ["E"]), maxStacks: 8 },
+            {
+              receiver: "team",
+              charId: cid,
+              filter: {
+                abilities: ["normal", "charge", "plunge", "skill", "burst"],
+              },
+            },
+            [],
+            "atk",
+            "baseDmg",
+            0.7
+          )
+        );
+      }
+    }
+
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
+          { key: "defReduction%", value: 0.4 },
+        ])
+      );
+    }
+
+    // P4 is attached per projection below so it cannot affect Q's initial hit.
+
+    return buffs;
+  })();
+
+  // Q projection formulas are emitted per slot so statsCharId can vary.
+  protected readonly formulaMap = (() => {
+    const pyroSkill = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const pyroBurst = {
+      element: "Pyro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const formulas: Record<string, FormulaEntry> = {
+      "nicole-skill": {
+        label: { zh: "E伤害", en: "E" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), pyroSkill) }],
+      },
+      "nicole-burst": {
+        label: { zh: "Q伤害", en: "Q" },
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), pyroBurst) }],
+      },
+    };
+
+    const projRatio = this.param("Q", 2);
+    const charNames = {
+      ...i18nGameData.characters,
+      ...i18nBetaData.characters,
+    } as Record<string, { en: string; zh: string }>;
+
+    for (
+      let slotIdx = 0;
+      slotIdx < this.teamMeta.characters.length;
+      slotIdx++
+    ) {
+      const occupantId = this.teamMeta.characters[slotIdx];
+      if (!occupantId) continue;
+
+      const occupantElement =
+        this.teamMeta.elements[occupantId] ?? ("Pyro" as Element);
+      const name = charNames[occupantId] ?? { en: occupantId, zh: occupantId };
+
+      const projTag = {
+        element: occupantElement,
+        ability: "burst" as const,
+        reaction: "none" as const,
+      };
+
+      const occupantIsHexerei =
+        this.teamMeta.factions[occupantId] === "Hexerei";
+
+      // Hexerei slots get Nicole-scaling bonus base DMG on projections.
+      const p4Buff =
+        this.isHexereiActive && occupantIsHexerei
+          ? new ScalingBuff(
+              cbs(this, "P4", ["Q"]),
+              { receiver: "team", charId: occupantId },
+              [],
+              "atk",
+              "baseDmg",
+              3.0
+            )
+          : undefined;
+
+      formulas[`nicole-q-coord-slot${slotIdx + 1}`] = {
+        label: {
+          zh: `Q奥迹造影·${name.zh}`,
+          en: `Q Arcane (${name.en})`,
+        },
+        parts: [
+          {
+            formula: new DirectFormula(projRatio, projTag),
+            statsCharId: occupantId,
+            offField: false,
+            ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
+          },
+        ],
+      };
+
+      if (this.constellation >= 1) {
+        formulas[`nicole-c1-coord-slot${slotIdx + 1}`] = {
+          label: {
+            zh: `合一造影·${name.zh}`,
+            en: `Unity (${name.en})`,
+          },
+          minC: 1,
+          parts: [
+            {
+              formula: new DirectFormula(6.0, projTag),
+              statsCharId: occupantId,
+              offField: false,
+              ...(p4Buff ? { bespokeBuffs: [p4Buff] } : {}),
+            },
+          ],
+        };
+      }
+    }
+
+    return formulas;
+  })();
+
+  // Default combo uses slot 1 as the guaranteed occupied projection slot.
+  protected override get comboDescriptor(): ComboTemplate {
+    return [
+      { id: "nicole-skill", count: 1 },
+      { id: "nicole-burst", count: 1 },
+      { id: "nicole-q-coord-slot1", count: 4 },
+      ...(this.constellation >= 1
+        ? [{ id: "nicole-c1-coord-slot1", count: 3 }]
+        : []),
     ];
   }
 }

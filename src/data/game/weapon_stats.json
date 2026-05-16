@@ -55,6 +55,14 @@
       "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
+  "angelos_heptades": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {"baseAtk": 741, "secondaryStatValue": "16.5%"}
+    }
+  },
   "aqua_simulacra": {
     "rarity": 5,
     "type": "Bow",
