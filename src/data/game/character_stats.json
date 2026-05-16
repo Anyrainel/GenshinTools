@@ -6801,7 +6801,7 @@
     "rarity": 4,
     "element": "Anemo",
     "weaponType": "Catalyst",
-    "region": "Nod-Krai",
+    "region": "Mondstadt",
     "releaseDate": "",
     "levels": {
       "70": {"baseHp": "7477", "baseAtk": "171", "baseDef": "448", "atk%": "12%", "em": "0"},

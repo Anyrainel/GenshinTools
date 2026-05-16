@@ -17,4 +17,5 @@ from __future__ import annotations
 REGION_OVERRIDES: dict[str, str] = {
     "linnea": "Snezhnaya",
     "lohen": "Mondstadt",
+    "prune": "Mondstadt",
 }

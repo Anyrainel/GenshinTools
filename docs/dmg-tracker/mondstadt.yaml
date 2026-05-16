@@ -48,6 +48,22 @@
     count and the C2 duration-extension count need frame or rotation data before
     the formula count can be changed safely.
 
+- id: prune-q-bell-hit-count
+  entity: prune
+  rule: S8
+  status: open
+  category: needs-data
+  summary: >
+    Q Witchlure Bell Hunter-Seeker tick count is estimated at 4 hits over the
+    12s burst duration, while C6 extends the mode to 16s. Game text specifies
+    only "attacking surrounding opponents at intervals" without a concrete tick
+    rate; actual base and C6 tick counts require in-game verification.
+  detail: >
+    Implementation still uses the estimate: comboDescriptor counts 4 base ticks
+    and 5 ticks at C6, with a code comment noting the cadence is pending
+    release/frame verification. Keep this open until the actual Hunter-Seeker
+    attack interval is verified.
+
 - id: albedo-c4-silver-plunge-buff
   entity: albedo
   rule: U8
