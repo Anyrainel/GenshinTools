@@ -46,8 +46,8 @@ interface AccountImportControlProps {
 
 const TOOLS = [
   {
-    labelKey: "import.toolIrminsul" as const,
-    url: "https://konkers.github.io/irminsul/02-quickstart.html",
+    labelKey: "import.toolGoodCapture" as const,
+    url: "https://github.com/Anyrainel/GOODScanner/releases",
   },
   {
     labelKey: "import.toolGoodScanner" as const,
@@ -56,10 +56,6 @@ const TOOLS = [
 ] as const;
 
 const PROXY_TOOLS = [
-  {
-    label: "irminsul.exe",
-    url: "https://gh-proxy.org/https://github.com/konkers/irminsul/releases/latest/download/irminsul.exe",
-  },
   {
     label: "data_cache.json",
     url: "/good/data_cache.json",

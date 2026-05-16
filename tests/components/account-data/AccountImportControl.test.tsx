@@ -69,6 +69,19 @@ describe("AccountImportControl", () => {
     });
   });
 
+  it("renders GOODCapture tool link instead of Irminsul", async () => {
+    render(<TestWrapper />);
+    await waitFor(() => {
+      const link = screen.getByText("import.toolGoodCapture");
+      expect(link.closest("a")).toHaveAttribute(
+        "href",
+        "https://github.com/Anyrainel/GOODScanner/releases"
+      );
+      expect(screen.queryByText("import.toolIrminsul")).not.toBeInTheDocument();
+      expect(screen.queryByText("irminsul.exe")).not.toBeInTheDocument();
+    });
+  });
+
   it("handles UID import", async () => {
     const onUidImport = vi.fn().mockResolvedValue(undefined);
     render(<TestWrapper onUidImport={onUidImport} />);

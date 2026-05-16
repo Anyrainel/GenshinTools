@@ -2,12 +2,13 @@ import {
   Check,
   CircleUserRound,
   Cloud,
+  HeartHandshake,
   Languages,
   LogIn,
   LogOut,
   type LucideIcon,
-  Mail,
   Menu,
+  MessageSquare,
   MoreVertical,
   Palette,
   Settings,
@@ -16,6 +17,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { getLogtoAccountCenterSecurityUrl } from "@/cloud/authConfig";
+import { AccountFeedbackDialog } from "@/components/layout/AccountFeedbackDialog";
 import {
   getNavigationConfig,
   type TabConfig,
@@ -44,7 +46,26 @@ import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
+
+function hashString(value: string): number {
+  let hash = 0;
+  for (const char of value.trim().toLowerCase()) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return hash;
+}
+
+function getAccountAvatarMeta(label: string, seed: string) {
+  const trimmedLabel = label.trim();
+  const initial = (trimmedLabel[0] ?? "?").toLocaleUpperCase();
+  const hue = hashString(seed || trimmedLabel) % 360;
+  return {
+    color: `hsl(${hue} 64% 38%)`,
+    initial,
+  };
+}
 
 /**
  * Configuration for an action button in the AppBar.
@@ -55,7 +76,7 @@ export interface ActionConfig {
   icon: LucideIcon;
   label: string;
   onTrigger: () => void;
-  /** If true, preferred as the single promoted page action. */
+  /** If true, preferred as the desktop-visible page action. */
   alwaysShow?: boolean;
   /** Tour step ID for onboarding spotlight */
   tourStepId?: string;
@@ -83,8 +104,8 @@ export interface AppBarProps {
  * Features:
  * - Navigation links collapse to hamburger Sheet on mobile (< lg)
  * - Tabs displayed inline on desktop (md+), collapse into hamburger on mobile
- * - Page actions render as one promoted action plus a page-only overflow menu
- * - Theme and language switchers live in the account menu by default
+ * - Page actions render as one desktop action plus overflow; mobile uses overflow only
+ * - Theme and language switchers live in the More menu by default
  * - Supports both new ActionConfig[] pattern and legacy ReactNode actions
  */
 export function AppBar({
@@ -110,8 +131,10 @@ export function AppBar({
   const navigate = useNavigate();
   const [_isPending, startTransition] = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
+  const isExpandedActionBar = useMediaQuery("(min-width: 640px)");
 
   const handleLinkClick = (e: React.MouseEvent, href: string) => {
     // Allow default behavior for modifier keys (new tab, etc.)
@@ -151,16 +174,23 @@ export function AppBar({
   const navItems = getNavigationConfig(t);
 
   const pageActions = actions ?? [];
-  const promotedAction =
+  const desktopAction =
     pageActions.find((action) => action.alwaysShow) ??
     pageActions.find(
       (action) => action.key !== "help" && action.key !== "clear"
     ) ??
     pageActions[0];
-  const overflowActions = promotedAction
-    ? pageActions.filter((action) => action !== promotedAction)
+  const desktopOverflowActions = desktopAction
+    ? pageActions.filter((action) => action !== desktopAction)
     : [];
-  const hasOverflowActions = overflowActions.length > 0;
+  const menuActions = isExpandedActionBar
+    ? desktopOverflowActions
+    : pageActions;
+  const hasMoreMenuUtilities = !standaloneUtilityActions;
+  const hasMoreMenu = menuActions.length > 0 || hasMoreMenuUtilities;
+  const hasPageActionControls =
+    pageActions.length > 0 || Boolean(legacyActions);
+  const showDesktopAction = isExpandedActionBar && desktopAction;
   const hasTabs = tabs && tabs.length > 0;
   const accountLabel = accountError
     ? t.ui("accountSystem.accountLoadFailed")
@@ -170,9 +200,10 @@ export function AppBar({
         account?.displayName ??
         account?.id ??
         t.ui("accountSystem.accountEmailFallback"));
-  const accountTriggerLabel = isAuthenticated
-    ? accountLabel
-    : t.ui("accountSystem.signedOut");
+  const accountAvatar = getAccountAvatarMeta(
+    account?.email ?? account?.displayName ?? accountLabel,
+    account?.email ?? account?.id ?? accountLabel
+  );
 
   const handleSignIn = async () => {
     try {
@@ -256,83 +287,131 @@ export function AppBar({
     </>
   );
 
-  const renderAccountMenu = (
-    includeUtilityItems: boolean,
-    trailingMargin = true
-  ) => (
+  const renderAccountMark = (className = "h-8 w-8") => {
+    if (!isAuthenticated) {
+      return <CircleUserRound className="w-5 h-5" />;
+    }
+
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className={cn("shrink-0", className)}
+      >
+        <circle cx="12" cy="12" r="12" fill={accountAvatar.color} />
+        <text
+          x="12"
+          y="16"
+          textAnchor="middle"
+          fontSize="11"
+          fontWeight="700"
+          fill="white"
+        >
+          {accountAvatar.initial}
+        </text>
+      </svg>
+    );
+  };
+
+  const renderUtilityMenuItems = () => (
+    <>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger className="gap-2">
+          <Languages className="w-4 h-4" />
+          <span>{t.ui("app.language")}</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuPortal>
+          <DropdownMenuSubContent>
+            {renderLanguageItems()}
+          </DropdownMenuSubContent>
+        </DropdownMenuPortal>
+      </DropdownMenuSub>
+
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger className="gap-2">
+          <Palette className="w-4 h-4" />
+          <span>{t.ui("theme.switcherButton")}</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuPortal>
+          <DropdownMenuSubContent>{renderThemeItems()}</DropdownMenuSubContent>
+        </DropdownMenuPortal>
+      </DropdownMenuSub>
+    </>
+  );
+
+  const renderAccountMenu = (trailingMargin = true) => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
+          variant="ghost"
+          size="icon"
           aria-label={t.ui("accountSystem.accountMenu")}
           className={cn(
-            "h-9 min-w-9 px-0 xl:max-w-52 xl:px-3",
+            "h-9 w-9 rounded-full p-0 hover:bg-transparent",
+            isAuthenticated ? "[&_svg]:size-7" : "[&_svg]:size-5",
             trailingMargin && "2xl:mr-4"
           )}
         >
-          <CircleUserRound className="w-5 h-5" />
-          <span className="hidden xl:inline truncate">
-            {accountTriggerLabel}
-          </span>
+          {renderAccountMark()}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
         className={cn(
-          isAuthenticated && "w-max max-w-52 xl:w-auto xl:max-w-none"
+          isAuthenticated && "w-max max-w-[min(20rem,calc(100vw-2rem))]"
         )}
       >
         {isAuthenticated ? (
           <>
-            <DropdownMenuLabel className="xl:hidden flex items-center gap-2 font-normal">
-              <Mail className="w-4 h-4 text-primary" />
-              <span className="min-w-0 truncate">{accountLabel}</span>
+            <DropdownMenuLabel className="flex min-w-0 max-w-full font-normal">
+              <span className="min-w-0 max-w-full truncate text-xs leading-tight">
+                {accountLabel}
+              </span>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="xl:hidden" />
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild className="gap-2">
               <Link to="/account/cloud-backup">
                 <Cloud className="w-4 h-4" />
                 {t.ui("accountSystem.syncData")}
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setIsFeedbackOpen(true)}
+              className="gap-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              {t.ui("accountSystem.feedback")}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="gap-2">
+              <Link to="/account/support">
+                <HeartHandshake className="w-4 h-4" />
+                {t.ui("accountSystem.supportMe")}
+              </Link>
+            </DropdownMenuItem>
           </>
         ) : (
-          <DropdownMenuItem
-            onClick={() => void handleSignIn()}
-            disabled={isAccountLoading}
-            className="gap-2"
-          >
-            <LogIn className="w-4 h-4" />
-            {t.ui("accountSystem.signIn")}
-          </DropdownMenuItem>
-        )}
-        {includeUtilityItems && <DropdownMenuSeparator />}
-
-        {includeUtilityItems && (
           <>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="gap-2">
-                <Palette className="w-4 h-4" />
-                <span>{t.ui("theme.switcherButton")}</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  {renderThemeItems()}
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="gap-2">
-                <Languages className="w-4 h-4" />
-                <span>{t.ui("app.language")}</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  {renderLanguageItems()}
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
+            <DropdownMenuItem
+              onClick={() => void handleSignIn()}
+              disabled={isAccountLoading}
+              className="gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              {t.ui("accountSystem.signIn")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setIsFeedbackOpen(true)}
+              className="gap-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              {t.ui("accountSystem.feedback")}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="gap-2">
+              <Link to="/account/support">
+                <HeartHandshake className="w-4 h-4" />
+                {t.ui("accountSystem.supportMe")}
+              </Link>
+            </DropdownMenuItem>
           </>
         )}
         {isAuthenticated && (
@@ -360,6 +439,16 @@ export function AppBar({
 
   const renderStandaloneUtilityActions = () => (
     <>
+      <Button
+        variant="outline"
+        className="h-9 gap-2 px-3"
+        aria-label={t.ui("app.language")}
+        onClick={toggleLanguage}
+      >
+        <Languages className="w-4 h-4" />
+        <span>{language === "en" ? "中文" : "EN"}</span>
+      </Button>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="h-9 gap-2 px-3">
@@ -372,20 +461,8 @@ export function AppBar({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="h-9 gap-2 px-3">
-            <Languages className="w-4 h-4" />
-            <span>{t.ui("app.language")}</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {renderLanguageItems()}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
       {isAuthenticated ? (
-        renderAccountMenu(false)
+        renderAccountMenu()
       ) : (
         <Button
           variant="outline"
@@ -549,20 +626,20 @@ export function AppBar({
           </div>
 
           <div className="flex items-center gap-2">
-            {promotedAction && (
+            {showDesktopAction && (
               <Button
                 variant="outline"
-                aria-label={promotedAction.label}
-                className="h-9 gap-2 px-2 pt-1.5 pb-2.5 sm:px-3"
-                onClick={promotedAction.onTrigger}
-                data-tour-step-id={promotedAction.tourStepId}
+                aria-label={showDesktopAction.label}
+                className="h-9 gap-2 px-3 pt-1.5 pb-2.5"
+                onClick={showDesktopAction.onTrigger}
+                data-tour-step-id={showDesktopAction.tourStepId}
               >
-                <promotedAction.icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{promotedAction.label}</span>
+                <showDesktopAction.icon className="w-4 h-4" />
+                <span>{showDesktopAction.label}</span>
               </Button>
             )}
 
-            {hasOverflowActions && (
+            {hasMoreMenu && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -574,7 +651,7 @@ export function AppBar({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {overflowActions.map((action) => (
+                  {menuActions.map((action) => (
                     <DropdownMenuItem
                       key={action.key}
                       onClick={action.onTrigger}
@@ -584,6 +661,10 @@ export function AppBar({
                       {action.label}
                     </DropdownMenuItem>
                   ))}
+                  {menuActions.length > 0 && hasMoreMenuUtilities && (
+                    <DropdownMenuSeparator />
+                  )}
+                  {hasMoreMenuUtilities && renderUtilityMenuItems()}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -591,9 +672,13 @@ export function AppBar({
             {/* Legacy actions support */}
             {legacyActions}
 
+            {hasPageActionControls && (
+              <div className="h-6 w-px bg-foreground/30" aria-hidden="true" />
+            )}
+
             {standaloneUtilityActions
               ? renderStandaloneUtilityActions()
-              : renderAccountMenu(true)}
+              : renderAccountMenu()}
           </div>
         </div>
       </header>
@@ -630,6 +715,14 @@ export function AppBar({
           </div>
         </div>
       )}
+      <AccountFeedbackDialog
+        open={isFeedbackOpen}
+        onOpenChange={setIsFeedbackOpen}
+        isAuthenticated={isAuthenticated}
+        isAccountLoading={isAccountLoading}
+        accountId={account?.id ?? null}
+        onSignIn={handleSignIn}
+      />
     </>
   );
 }

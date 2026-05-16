@@ -357,10 +357,10 @@ function StepHelp({ t }: StepProps) {
               </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm text-muted-foreground">
-              <span className="text-sm">{t.ui("theme.switcherButton")}</span>
+              <span className="text-sm">{t.ui("app.language")}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm text-muted-foreground">
-              <span className="text-sm">{t.ui("app.language")}</span>
+              <span className="text-sm">{t.ui("theme.switcherButton")}</span>
             </div>
           </div>
         </div>

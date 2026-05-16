@@ -26,6 +26,7 @@ const TierListPage = lazy(() => import("./pages/TierList"));
 const ArchivePage = lazy(() => import("./pages/Archive"));
 const AccountPage = lazy(() => import("./pages/account/AccountPage"));
 const CloudBackupPage = lazy(() => import("./pages/account/CloudBackupPage"));
+const SupportMePage = lazy(() => import("./pages/account/SupportMePage"));
 const AuthCallbackPage = lazy(() => import("./pages/account/AuthCallbackPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
@@ -109,6 +110,7 @@ function App() {
                   path="/account/cloud-backup"
                   element={<CloudBackupPage />}
                 />
+                <Route path="/account/support" element={<SupportMePage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>

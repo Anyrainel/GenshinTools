@@ -92,6 +92,13 @@ export const i18nUiData = {
     signOut: { en: "Sign out", zh: "退出登录" },
     manageAccount: { en: "Manage account", zh: "管理账号" },
     syncData: { en: "Sync data", zh: "同步数据" },
+    feedback: { en: "Feedback", zh: "反馈" },
+    supportMe: { en: "Support development", zh: "支持开发" },
+    supportTitle: { en: "Support GGArtifact", zh: "支持 GGArtifact" },
+    supportDesc: {
+      en: "Thank you for supporting continued development and maintenance.",
+      zh: "感谢你支持项目的持续开发与维护。",
+    },
     signedOut: { en: "Not signed in", zh: "未登录" },
     accountEmailFallback: { en: "Signed-in account", zh: "已登录账号" },
     accountLoadFailed: {
@@ -321,6 +328,81 @@ export const i18nUiData = {
       },
     },
   },
+  feedback: {
+    title: { en: "Send feedback", zh: "提交反馈" },
+    description: {
+      en: "Thanks for your time.",
+      zh: "感谢您的宝贵时间。",
+    },
+    ratingLabel: {
+      en: "How satisfied are you with ggartifact.com?",
+      zh: "你对 ggartifact.com 的使用体验满意吗？",
+    },
+    ratingStarLabel: {
+      en: "{0} stars",
+      zh: "{0} 星",
+    },
+    suggestionLabel: { en: "Suggestion / Experience", zh: "建议/体验" },
+    suggestionPlaceholder: {
+      en: "What would make GGArtifact better? Or what would you like to share about your experience?",
+      zh: "你希望 GGArtifact 怎样改进？或者有什么使用体验想要分享？",
+    },
+    bugReportLabel: { en: "Bug report", zh: "问题反馈" },
+    bugReportPlaceholder: {
+      en: "What went wrong? Include steps if you can.",
+      zh: "哪里出了问题？如果方便，可以写下复现步骤。",
+    },
+    contactLabel: {
+      en: "Contact method (optional)",
+      zh: "联系方式（选填）",
+    },
+    contactPlaceholder: {
+      en: "Prefer Discord or QQ",
+      zh: "优先填写 Discord 或 QQ",
+    },
+    submit: { en: "Submit feedback", zh: "提交反馈" },
+    submitting: { en: "Submitting...", zh: "提交中..." },
+    submitSuccess: {
+      en: "Thanks, your feedback was sent.",
+      zh: "感谢反馈，已发送。",
+    },
+    submitFailed: {
+      en: "Your feedback could not be sent. Please try again later.",
+      zh: "反馈未能发送，请稍后再试。",
+    },
+    bodyRequired: {
+      en: "Write a suggestion or bug report before sending.",
+      zh: "请先填写建议或问题反馈中的一项。",
+    },
+    ratingRequired: {
+      en: "Choose a rating before sending.",
+      zh: "请先选择评分。",
+    },
+    suggestionTooLong: {
+      en: "Keep the suggestion under 1000 characters.",
+      zh: "建议请控制在 1000 字以内。",
+    },
+    bugReportTooLong: {
+      en: "Keep the bug report under 1000 characters.",
+      zh: "问题反馈请控制在 1000 字以内。",
+    },
+    contactTooLong: {
+      en: "Keep the contact method under 200 characters.",
+      zh: "联系方式请控制在 200 字以内。",
+    },
+    rateLimited: {
+      en: "Please wait a few minutes before sending more feedback.",
+      zh: "请稍等几分钟后再提交新的反馈。",
+    },
+    signInRequiredTitle: {
+      en: "Sign in to send feedback",
+      zh: "登录后提交反馈",
+    },
+    signInRequiredError: {
+      en: "Your sign-in expired. Sign in and try again.",
+      zh: "登录状态已过期，请重新登录后再试。",
+    },
+  },
   import: {
     action: { en: "Import", zh: "导入" },
     dialogDesc: {
@@ -377,9 +459,9 @@ export const i18nUiData = {
       en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
     },
-    toolIrminsul: {
-      en: "Irminsul (Packet Capture)",
-      zh: "Irminsul (抓包)",
+    toolGoodCapture: {
+      en: "GOODCapture (Packet Capture)",
+      zh: "GOODCapture (抓包)",
     },
     toolGoodScanner: {
       en: "GOODScanner (OCR, 16:9 Chinese client)",
@@ -2115,8 +2197,8 @@ export const i18nUiData = {
         zh: "1. 使用 {import} 加载社区榜单预设。\n2. 使用 {customize} 修改梯度名称和设置。\n3. 切换到武器标签页，为武器单独创建优先级排名。",
       },
       accountData: {
-        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.\n4. Use Set Evaluation to check build completeness, and Artifact Triage for lock/unlock advice.",
-        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。\n4. 套装评估可以查看配装完成度，锁定助手则帮你判断该锁定和回收哪些圣遗物。",
+        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from GOODScanner / GOODCapture) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.\n4. Use Set Evaluation to check build completeness, and Artifact Triage for lock/unlock advice.",
+        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 GOODScanner 或 GOODCapture）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。\n4. 套装评估可以查看配装完成度，锁定助手则帮你判断该锁定和回收哪些圣遗物。",
       },
       teamComp: {
         en: "1. Pick {characters} , weapons, and artifact sets in each team card.\n2. Click {optimize} to find the best artifact loadout.\n3. Use {import} to load community presets.",
@@ -2205,8 +2287,8 @@ export const i18nUiData = {
     accountData: {
       importTitle: { en: "Import Your Data", zh: "导入数据" },
       importContent: {
-        en: "Import your character data using GOOD format (from Inventory Kamera or similar tools) or fetch directly from Enka.Network using your UID.",
-        zh: "使用 GOOD 格式导入角色数据（来自 Inventory Kamera 等工具），或通过 UID 从 Enka.Network 获取。",
+        en: "Import your character data using GOOD format (from GOODScanner or similar tools) or fetch directly from Enka.Network using your UID.",
+        zh: "使用 GOOD 格式导入角色数据（来自 GOODScanner 等工具），或通过 UID 从 Enka.Network 获取。",
       },
       charactersTitle: { en: "Character Overview", zh: "角色列表" },
       charactersContent: {

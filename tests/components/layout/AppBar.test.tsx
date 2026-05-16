@@ -63,6 +63,7 @@ describe("AppBar", () => {
   beforeEach(() => {
     window.history.pushState(null, "", "/");
     window.sessionStorage.clear();
+    mockMatchMedia(true);
     signIn.mockReset();
     signOut.mockReset();
     getIdToken.mockReset();
@@ -116,7 +117,7 @@ describe("AppBar", () => {
     expect(mockAction).toHaveBeenCalled();
   });
 
-  it("renders one promoted page action and moves the rest into More", async () => {
+  it("renders one desktop page action and moves the rest into More", async () => {
     const primaryAction = vi.fn();
     const secondaryAction = vi.fn();
     const helpAction = vi.fn();
@@ -174,6 +175,47 @@ describe("AppBar", () => {
     expect(helpAction).not.toHaveBeenCalled();
   });
 
+  it("moves every page action into More on mobile", async () => {
+    mockMatchMedia(false);
+    const primaryAction = vi.fn();
+    const secondaryAction = vi.fn();
+    const actions = [
+      {
+        key: "primary",
+        icon: Home,
+        label: "Primary",
+        onTrigger: primaryAction,
+        alwaysShow: true,
+      },
+      {
+        key: "secondary",
+        icon: Home,
+        label: "Secondary",
+        onTrigger: secondaryAction,
+      },
+    ];
+
+    renderAppBar(<AppBar actions={actions} />);
+
+    expect(
+      screen.queryByRole("button", { name: "Primary" })
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "common.more" }));
+
+    expect(
+      screen.getByRole("menuitem", { name: "Primary" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Secondary" })
+    ).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("menuitem", { name: "Primary" }));
+
+    expect(primaryAction).toHaveBeenCalled();
+    expect(secondaryAction).not.toHaveBeenCalled();
+  });
+
   it("renders tabs on desktop", () => {
     const mockTabChange = vi.fn();
     const tabs = [
@@ -198,9 +240,17 @@ describe("AppBar", () => {
   it("shows sign-in when the browser is signed out", async () => {
     renderAppBar(<AppBar />);
 
-    await userEvent.click(
-      screen.getByRole("button", { name: "accountSystem.accountMenu" })
+    const accountButton = screen.getByRole("button", {
+      name: "accountSystem.accountMenu",
+    });
+    expect(accountButton).toHaveClass(
+      "h-9",
+      "w-9",
+      "rounded-full",
+      "[&_svg]:size-5"
     );
+
+    await userEvent.click(accountButton);
 
     const menu = screen.getByRole("menu");
     expect(menu).not.toHaveClass("w-52");
@@ -208,8 +258,20 @@ describe("AppBar", () => {
     expect(
       screen.getByRole("menuitem", { name: "accountSystem.signIn" })
     ).toBeInTheDocument();
-    expect(screen.getByText("theme.switcherButton")).toBeInTheDocument();
-    expect(screen.getByText("app.language")).toBeInTheDocument();
+    expect(screen.queryByText("theme.switcherButton")).not.toBeInTheDocument();
+    expect(screen.queryByText("app.language")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "accountSystem.feedback" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "accountSystem.supportMe" })
+    ).toBeInTheDocument();
+    expect(
+      screen
+        .getByText("accountSystem.feedback")
+        .compareDocumentPosition(screen.getByText("accountSystem.supportMe")) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
     expect(
       screen.queryByText("accountSystem.manageAccount")
     ).not.toBeInTheDocument();
@@ -217,6 +279,21 @@ describe("AppBar", () => {
       screen.queryByText("accountSystem.syncData")
     ).not.toBeInTheDocument();
     expect(screen.queryByText("accountSystem.signOut")).not.toBeInTheDocument();
+
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(screen.getByRole("button", { name: "common.more" }));
+
+    expect(screen.getByText("app.language")).toBeInTheDocument();
+    expect(screen.getByText("theme.switcherButton")).toBeInTheDocument();
+    expect(
+      screen
+        .getByText("app.language")
+        .compareDocumentPosition(screen.getByText("theme.switcherButton")) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+
+    await userEvent.keyboard("{Escape}");
+    await userEvent.click(accountButton);
 
     const signInItem = screen.getByRole("menuitem", {
       name: "accountSystem.signIn",
@@ -231,6 +308,21 @@ describe("AppBar", () => {
       });
     });
     expect(window.sessionStorage.getItem("logto:returnPath")).toBe("/");
+  });
+
+  it("opens the feedback sign-in prompt from the signed-out account menu", async () => {
+    renderAppBar(<AppBar />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "accountSystem.accountMenu" })
+    );
+    await userEvent.click(
+      screen.getByRole("menuitem", { name: "accountSystem.feedback" })
+    );
+
+    expect(
+      screen.getByText("feedback.signInRequiredTitle")
+    ).toBeInTheDocument();
   });
 
   it("can split account, theme, and language into standalone controls", async () => {
@@ -249,12 +341,13 @@ describe("AppBar", () => {
     expect(themeButton).toBeInTheDocument();
     expect(languageButton).toBeInTheDocument();
     expect(accountButton).toBeInTheDocument();
+    expect(within(languageButton).getByText("中文")).toBeInTheDocument();
     expect(
-      themeButton.compareDocumentPosition(languageButton) &
+      languageButton.compareDocumentPosition(themeButton) &
         Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
     expect(
-      languageButton.compareDocumentPosition(accountButton) &
+      themeButton.compareDocumentPosition(accountButton) &
         Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
 
@@ -289,28 +382,43 @@ describe("AppBar", () => {
 
     renderAppBar(<AppBar />);
 
-    await waitFor(() => {
-      expect(
-        screen.getAllByText("traveler@example.com").length
-      ).toBeGreaterThan(0);
+    expect(screen.queryByText("traveler@example.com")).not.toBeInTheDocument();
+
+    const accountButton = screen.getByRole("button", {
+      name: "accountSystem.accountMenu",
     });
-    await userEvent.click(
-      screen.getByRole("button", { name: "accountSystem.accountMenu" })
-    );
+    await waitFor(() => {
+      expect(accountButton).toHaveClass(
+        "h-9",
+        "w-9",
+        "rounded-full",
+        "p-0",
+        "hover:bg-transparent",
+        "[&_svg]:size-7"
+      );
+    });
+    expect(accountButton).not.toHaveClass("border");
+
+    await userEvent.click(accountButton);
 
     const menu = screen.getByRole("menu");
-    expect(menu).not.toHaveClass("w-52");
-    expect(menu).toHaveClass("w-max", "max-w-52", "xl:w-auto", "xl:max-w-none");
-    expect(within(menu).getByText("traveler@example.com")).toHaveClass(
-      "min-w-0",
-      "truncate"
-    );
-    expect(screen.getAllByText("traveler@example.com").length).toBeGreaterThan(
-      0
-    );
+    expect(menu).toHaveClass("w-max", "max-w-[min(20rem,calc(100vw-2rem))]");
+    await waitFor(() => {
+      expect(within(menu).getByText("traveler@example.com")).toHaveClass(
+        "min-w-0",
+        "max-w-full",
+        "truncate",
+        "text-xs"
+      );
+    });
+    expect(screen.getAllByText("traveler@example.com")).toHaveLength(1);
     expect(screen.queryByText("accountSystem.signIn")).not.toBeInTheDocument();
     expect(screen.getByText("accountSystem.manageAccount")).toBeInTheDocument();
     expect(screen.getByText("accountSystem.syncData")).toBeInTheDocument();
+    expect(screen.getByText("accountSystem.feedback")).toBeInTheDocument();
+    expect(screen.getByText("accountSystem.supportMe")).toBeInTheDocument();
+    expect(screen.queryByText("theme.switcherButton")).not.toBeInTheDocument();
+    expect(screen.queryByText("app.language")).not.toBeInTheDocument();
     expect(screen.getByText("accountSystem.signOut")).toBeInTheDocument();
 
     const manageLink = screen
@@ -325,6 +433,9 @@ describe("AppBar", () => {
       .map((item) => item.textContent);
     expect(menuItems.indexOf("accountSystem.manageAccount")).toBeGreaterThan(
       menuItems.indexOf("accountSystem.syncData")
+    );
+    expect(menuItems.indexOf("accountSystem.supportMe")).toBeGreaterThan(
+      menuItems.indexOf("accountSystem.feedback")
     );
     expect(menuItems.at(-2)).toBe("accountSystem.manageAccount");
     expect(menuItems.at(-1)).toBe("accountSystem.signOut");
@@ -341,4 +452,17 @@ function renderAppBar(ui: ReactNode) {
       <AppSessionProvider>{ui}</AppSessionProvider>
     </BrowserRouter>
   );
+}
+
+function mockMatchMedia(matches: boolean) {
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
 }

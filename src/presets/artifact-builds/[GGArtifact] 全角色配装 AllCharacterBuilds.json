@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1777243141024",
+  "id": "export-1778564561660",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -1202,7 +1202,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "Dbt0Wkm": {
       "id": "Dbt0Wkm",
@@ -1575,7 +1576,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "AYHw3pn": {
       "id": "AYHw3pn",
@@ -2715,7 +2717,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "C8kPzCG": {
       "id": "C8kPzCG",
@@ -2768,7 +2771,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "CI2ZrC8": {
       "id": "CI2ZrC8",
@@ -2811,7 +2815,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "CI2MXIG": {
       "id": "CI2MXIG",
@@ -2855,7 +2860,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "B-NPETm": {
       "id": "B-NPETm",
@@ -3106,7 +3112,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "DlB3U0G": {
       "id": "DlB3U0G",
@@ -3158,7 +3165,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "EvhRG0G": {
       "id": "EvhRG0G",
@@ -3197,7 +3205,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "FLdbHJu": {
       "id": "FLdbHJu",
@@ -3244,7 +3253,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "B7YBeLO": {
       "id": "B7YBeLO",
@@ -3420,7 +3430,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "47Suh_G": {
       "id": "47Suh_G",
@@ -3460,7 +3471,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "AN_6D-0": {
       "id": "AN_6D-0",
@@ -3501,7 +3513,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "AOzwYGm": {
       "id": "AOzwYGm",
@@ -3542,7 +3555,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "AFftZXW": {
       "id": "AFftZXW",
@@ -3581,7 +3595,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "AFftZ2G": {
       "id": "AFftZ2G",
@@ -3624,7 +3639,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.701977294544408
+      "normalizer": 0.701977294544408,
+      "source": "preset"
     },
     "AEh3Fk0": {
       "id": "AEh3Fk0",
@@ -3664,7 +3680,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "4t45KYu": {
       "id": "4t45KYu",
@@ -3716,7 +3733,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6684061937859948
+      "normalizer": 0.6684061937859948,
+      "source": "preset"
     },
     "6cqYBmG": {
       "id": "6cqYBmG",
@@ -3755,7 +3773,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "7UixGOu": {
       "id": "7UixGOu",
@@ -3803,7 +3822,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6783886573416492
+      "normalizer": 0.6783886573416492,
+      "source": "preset"
     },
     "7TUW-dG": {
       "id": "7TUW-dG",
@@ -3854,7 +3874,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6783886573416492
+      "normalizer": 0.6783886573416492,
+      "source": "preset"
     },
     "8fDNC0u": {
       "id": "8fDNC0u",
@@ -3902,7 +3923,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "9Nncq5u": {
       "id": "9Nncq5u",
@@ -3945,7 +3967,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "9NnUR8G": {
       "id": "9NnUR8G",
@@ -3989,7 +4012,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "9gPh_mu": {
       "id": "9gPh_mu",
@@ -4037,7 +4061,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6587132530636342
+      "normalizer": 0.6587132530636342,
+      "source": "preset"
     },
     "8xrSooG": {
       "id": "8xrSooG",
@@ -4198,7 +4223,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6587132530636342
+      "normalizer": 0.6587132530636342,
+      "source": "preset"
     },
     "9z1oNNG": {
       "id": "9z1oNNG",
@@ -4241,7 +4267,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "9z1cYXm": {
       "id": "9z1cYXm",
@@ -4280,7 +4307,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "9X5eiHW": {
       "id": "9X5eiHW",
@@ -4323,7 +4351,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "9ETNhR8": {
       "id": "9ETNhR8",
@@ -4420,7 +4449,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "959KjX0": {
       "id": "959KjX0",
@@ -4459,7 +4489,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "8UwVaEm": {
       "id": "8UwVaEm",
@@ -4575,7 +4606,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "Ed3DGNW": {
       "id": "Ed3DGNW",
@@ -4614,7 +4646,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "FCJP9NW": {
       "id": "FCJP9NW",
@@ -4653,7 +4686,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "8oXICGG": {
       "id": "8oXICGG",
@@ -4786,7 +4820,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "83zAzIG": {
       "id": "83zAzIG",
@@ -4837,7 +4872,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "7wf2cZO": {
       "id": "7wf2cZO",
@@ -4932,7 +4968,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "7e12q68": {
       "id": "7e12q68",
@@ -4971,7 +5008,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "4R7vMUu": {
       "id": "4R7vMUu",
@@ -5019,7 +5057,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6834925443778894
+      "normalizer": 0.6834925443778894,
+      "source": "preset"
     },
     "14w-xy8": {
       "id": "14w-xy8",
@@ -5062,7 +5101,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "2NFAU-m": {
       "id": "2NFAU-m",
@@ -5102,7 +5142,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "2OlNo7e": {
       "id": "2OlNo7e",
@@ -5141,7 +5182,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "oIhfCG": {
       "id": "oIhfCG",
@@ -5184,7 +5226,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7214896597003834
+      "normalizer": 0.7214896597003834,
+      "source": "preset"
     },
     "oIkK5m": {
       "id": "oIkK5m",
@@ -5227,7 +5270,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7214896597003834
+      "normalizer": 0.7214896597003834,
+      "source": "preset"
     },
     "59i4o0O": {
       "id": "59i4o0O",
@@ -5270,7 +5314,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "3ZFZmWG": {
       "id": "3ZFZmWG",
@@ -5414,7 +5459,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "Vgia9G": {
       "id": "Vgia9G",
@@ -5466,7 +5512,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6809310370068995
+      "normalizer": 0.6809310370068995,
+      "source": "preset"
     },
     "2z_VVoG": {
       "id": "2z_VVoG",
@@ -5521,7 +5568,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7421177815131039
+      "normalizer": 0.7421177815131039,
+      "source": "preset"
     },
     "e-egyG": {
       "id": "e-egyG",
@@ -5564,7 +5612,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "dnM9om": {
       "id": "dnM9om",
@@ -5609,7 +5658,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "e-gb0m": {
       "id": "e-gb0m",
@@ -5652,7 +5702,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "2FRJFnO": {
       "id": "2FRJFnO",
@@ -5695,7 +5746,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "2FRCmku": {
       "id": "2FRCmku",
@@ -5738,7 +5790,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "4aRtm0W": {
       "id": "4aRtm0W",
@@ -5918,7 +5971,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6939342341177971
+      "normalizer": 0.6939342341177971,
+      "source": "preset"
     },
     "6KCVg-m": {
       "id": "6KCVg-m",
@@ -5961,7 +6015,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7671859236726724
+      "normalizer": 0.7671859236726724,
+      "source": "preset"
     },
     "3Pxdc2u": {
       "id": "3Pxdc2u",
@@ -6012,7 +6067,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "4jl-zGG": {
       "id": "4jl-zGG",
@@ -6253,7 +6309,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "3_Bpvve": {
       "id": "3_Bpvve",
@@ -6305,7 +6362,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6587132530636342
+      "normalizer": 0.6587132530636342,
+      "source": "preset"
     },
     "3zhLqYm": {
       "id": "3zhLqYm",
@@ -6346,7 +6404,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "6m8bXCe": {
       "id": "6m8bXCe",
@@ -6393,7 +6452,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "6m8oti8": {
       "id": "6m8oti8",
@@ -6440,7 +6500,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "5t31BI0": {
       "id": "5t31BI0",
@@ -6480,7 +6541,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "61aYqmO": {
       "id": "61aYqmO",
@@ -6532,7 +6594,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6587132530636342
+      "normalizer": 0.6587132530636342,
+      "source": "preset"
     },
     "61aPjcW": {
       "id": "61aPjcW",
@@ -6577,7 +6640,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "1pVILju": {
       "id": "1pVILju",
@@ -6620,7 +6684,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "1pV37uu": {
       "id": "1pV37uu",
@@ -6721,7 +6786,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "7C4rJPe": {
       "id": "7C4rJPe",
@@ -6777,7 +6843,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6809310370068995
+      "normalizer": 0.6809310370068995,
+      "source": "preset"
     },
     "ETlILGG": {
       "id": "ETlILGG",
@@ -6824,7 +6891,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "8MbGvoG": {
       "id": "8MbGvoG",
@@ -6871,7 +6939,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "D2bUv0": {
       "id": "D2bUv0",
@@ -6919,7 +6988,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6684061937859946
+      "normalizer": 0.6684061937859946,
+      "source": "preset"
     },
     "1EF2GAO": {
       "id": "1EF2GAO",
@@ -6967,7 +7037,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "1EF1VLO": {
       "id": "1EF1VLO",
@@ -7015,7 +7086,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "1WswsAu": {
       "id": "1WswsAu",
@@ -7067,7 +7139,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "1NY-PPe": {
       "id": "1NY-PPe",
@@ -7114,7 +7187,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "3Gdm4Du": {
       "id": "3Gdm4Du",
@@ -7166,7 +7240,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6809310370068995
+      "normalizer": 0.6809310370068995,
+      "source": "preset"
     },
     "3GdbRJm": {
       "id": "3GdbRJm",
@@ -7213,7 +7288,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "3iZg9WG": {
       "id": "3iZg9WG",
@@ -7300,7 +7376,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "4HpwHW0": {
       "id": "4HpwHW0",
@@ -7339,7 +7416,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "5J0AsGG": {
       "id": "5J0AsGG",
@@ -7387,7 +7465,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "5J07QXm": {
       "id": "5J07QXm",
@@ -7435,7 +7514,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "50OF-G0": {
       "id": "50OF-G0",
@@ -7535,7 +7615,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "5SKSiQ8": {
       "id": "5SKSiQ8",
@@ -7587,7 +7668,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "1gB4N7m": {
       "id": "1gB4N7m",
@@ -7639,7 +7721,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6834925443778894
+      "normalizer": 0.6834925443778894,
+      "source": "preset"
     },
     "2679SmG": {
       "id": "2679SmG",
@@ -7682,7 +7765,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7871273198117978
+      "normalizer": 0.7871273198117978,
+      "source": "preset"
     },
     "5beKcfe": {
       "id": "5beKcfe",
@@ -7729,7 +7813,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "5kyGh0O": {
       "id": "5kyGh0O",
@@ -7780,7 +7865,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "5kyTf5O": {
       "id": "5kyTf5O",
@@ -7835,7 +7921,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "MMfbfe": {
       "id": "MMfbfe",
@@ -7882,7 +7969,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
     },
     "6AuW4ou": {
       "id": "6AuW4ou",
@@ -7938,7 +8026,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6708741658099044
+      "normalizer": 0.6708741658099044,
+      "source": "preset"
     },
     "6vSwOTu": {
       "id": "6vSwOTu",
@@ -7985,7 +8074,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "6TWYeGG": {
       "id": "6TWYeGG",
@@ -8072,7 +8162,57 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.696594696824573
+      "normalizer": 0.696594696824573,
+      "source": "preset"
+    },
+    "J7mq5X0": {
+      "id": "J7mq5X0",
+      "characterId": "varka",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573,
+      "minCons": 2,
+      "source": "custom"
     },
     "JH4slDO": {
       "id": "JH4slDO",
@@ -8284,7 +8424,7 @@
     "diluc": ["6AuW4ou"],
     "razor": ["6vSwOTu"],
     "chongyun": ["6TWYeGG"],
-    "varka": ["J7mq5Tu"],
+    "varka": ["J7mq5Tu", "J7mq5X0"],
     "linnea": ["JH4slDO", "JH4bCBy"]
   },
   "characterWeapons": {
