@@ -2,6 +2,12 @@ import { SELF } from "cloudflare:test";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import worker, { isStaticAssetRequest } from "../../worker/index";
 
+const hoyolabCredentialHeaders = {
+  "x-hoyolab-ltuid-v2": "uid",
+  "x-hoyolab-ltmid-v2": "mid",
+  "x-hoyolab-ltoken-v2": "token",
+};
+
 describe("Worker API routing", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -74,7 +80,7 @@ describe("Worker API routing", () => {
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/character/list", {
         method: "POST",
-        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        headers: hoyolabCredentialHeaders,
         body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
       }),
       fakeAssetEnv()
@@ -83,8 +89,36 @@ describe("Worker API routing", () => {
     expect(response.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledWith(
       "https://sg-public-api.hoyolab.com/event/game_record/genshin/api/character/list",
-      expect.objectContaining({ method: "POST" })
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Cookie: "ltuid_v2=uid; ltmid_v2=mid; ltoken_v2=token",
+        }),
+      })
     );
+  });
+
+  it("rejects incomplete HoYoLAB credentials before upstream fetch", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/hoyolab/os/character/list", {
+        method: "POST",
+        headers: {
+          "x-hoyolab-ltuid-v2": "uid",
+          "x-hoyolab-ltoken-v2": "token",
+        },
+        body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
+      }),
+      fakeAssetEnv()
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: "missing_credentials",
+      missing: ["ltmid_v2"],
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("rejects unsupported HoYoLAB proxy paths before upstream fetch", async () => {
@@ -93,7 +127,7 @@ describe("Worker API routing", () => {
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/account/info", {
         method: "POST",
-        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        headers: hoyolabCredentialHeaders,
         body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
       }),
       fakeAssetEnv()
@@ -112,7 +146,7 @@ describe("Worker API routing", () => {
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/character/detail", {
         method: "POST",
-        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        headers: hoyolabCredentialHeaders,
         body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
       }),
       fakeAssetEnv()
@@ -129,7 +163,7 @@ describe("Worker API routing", () => {
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/character/list", {
         method: "POST",
-        headers: { "x-hoyolab-cookie": "ltuid_v2=x; ltoken_v2=y" },
+        headers: hoyolabCredentialHeaders,
         body: JSON.stringify({ role_id: "800000000", server: "os_usa" }),
       }),
       fakeAssetEnv()

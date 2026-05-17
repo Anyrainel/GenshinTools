@@ -72,8 +72,7 @@ These localStorage values are intentionally not backed up:
 | `enable-beta` | Local beta-content toggle. |
 | `score-v1-300-announced` | Local announcement dismissal flag. |
 | `gg_last_local_uid` | Import form convenience value. |
-| `gg_hoyolab_region` | Import form convenience value. |
-| `gg_hoyolab_os_ltuid`, `gg_hoyolab_os_ltoken`, `gg_hoyolab_cn_account_id`, `gg_hoyolab_cn_cookie_token` | HoYoLAB credential/cookie inputs. These must not be copied into cloud backup. |
+| `gg_hoyolab_ltuid_v2`, `gg_hoyolab_ltmid_v2`, `gg_hoyolab_ltoken_v2`, and legacy `gg_hoyolab_*_ltuid` / `gg_hoyolab_*_ltoken` / `gg_hoyolab_cn_account_id` / `gg_hoyolab_cn_cookie_token` keys | HoYoLAB / 米游社 credential cookie inputs. These must not be copied into cloud backup. |
 | analyzer/recommendation/pupgrade caches | In-memory or derived local caches; recomputable. |
 | buff overrides | Session-only calculator state. |
 

@@ -11,7 +11,6 @@
     "dev:e2e": "node scripts/dev/start-e2e-server.js",
     "deploy:worker": "npm run check:worker && wrangler deploy",
     "build": "tsc -b && vite build",
-    "build:github": "tsc -b && vite build --mode github",
     "preview": "vite preview",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

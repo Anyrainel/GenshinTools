@@ -81,12 +81,10 @@ const localBackupBindings = {
 };
 
 // https://vite.dev/config/
-export default defineConfig(({ command, mode }) => {
-  const staticOnlyBuild = mode === "github";
+export default defineConfig(({ command }) => {
   const fakeLogtoForE2e = process.env.VITE_E2E_FAKE_LOGTO === "1";
 
   return {
-    base: mode === "github" ? "/GenshinTools/" : "/",
     plugins: [
       react({ tsDecorators: true }),
       {
@@ -121,13 +119,12 @@ export default defineConfig(({ command, mode }) => {
           });
         },
       },
-      !staticOnlyBuild &&
-        cloudflare({
-          config: command === "serve" ? () => localBackupBindings : undefined,
-          persistState: fakeLogtoForE2e
-            ? { path: ".wrangler/e2e-state" }
-            : undefined,
-        }),
+      cloudflare({
+        config: command === "serve" ? () => localBackupBindings : undefined,
+        persistState: fakeLogtoForE2e
+          ? { path: ".wrangler/e2e-state" }
+          : undefined,
+      }),
       presetWatcher(),
       {
         name: "e2e-fake-logto",

@@ -54,6 +54,7 @@ import {
 import {
   convertHoyolabToGOOD,
   fetchHoyolabData,
+  type HoyolabCredentials,
 } from "@/lib/account-data/import/hoyolabFetcher";
 import {
   type PendingImport,
@@ -364,11 +365,11 @@ export default function AccountDataPage() {
 
   const handleHoyolabImport = async (
     uid: string,
-    cookie: string,
+    credentials: HoyolabCredentials,
     clearBeforeImport: boolean
   ) => {
     try {
-      const fetched = await fetchHoyolabData(uid, cookie);
+      const fetched = await fetchHoyolabData(uid, credentials);
       const hoyoResult = convertHoyolabToGOOD(fetched);
       const result = convertGOODToAccountData(hoyoResult.data);
 

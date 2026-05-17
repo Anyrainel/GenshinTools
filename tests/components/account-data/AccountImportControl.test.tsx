@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useEffect, useRef } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import type { GOODData } from "@/lib/account-data/import/goodConversion";
@@ -17,12 +17,26 @@ vi.mock("@/contexts/LanguageContext", () => ({
   }),
 }));
 
+afterEach(() => {
+  localStorage.clear();
+});
+
 const TestWrapper = ({
   onLocalImport = vi.fn(),
   onUidImport = vi.fn().mockResolvedValue(undefined),
+  onHoyolabImport = vi.fn().mockResolvedValue(undefined),
 }: {
   onLocalImport?: (data: GOODData, uid: string) => void;
   onUidImport?: (uid: string, clear: boolean) => Promise<void>;
+  onHoyolabImport?: (
+    uid: string,
+    credentials: {
+      ltuidV2: string;
+      ltmidV2: string;
+      ltokenV2: string;
+    },
+    clear: boolean
+  ) => Promise<void>;
 }) => {
   const ref = useRef<ControlHandle>(null);
 
@@ -36,7 +50,7 @@ const TestWrapper = ({
       ref={ref}
       onLocalImport={onLocalImport}
       onUidImport={onUidImport}
-      onHoyolabImport={async () => {}}
+      onHoyolabImport={onHoyolabImport}
     />
   );
 };
@@ -126,6 +140,88 @@ describe("AccountImportControl", () => {
     await waitFor(() => {
       expect(screen.getByText("Network Error")).toBeInTheDocument();
     });
+  });
+
+  it("assembles CN HoYoLAB import with v2 LToken cookie fields", async () => {
+    const onHoyolabImport = vi.fn().mockResolvedValue(undefined);
+    render(<TestWrapper onHoyolabImport={onHoyolabImport} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByPlaceholderText("import.uidPlaceholder").length
+      ).toBeGreaterThan(1);
+    });
+
+    await userEvent.type(
+      screen.getAllByPlaceholderText("import.uidPlaceholder")[1],
+      "338699543"
+    );
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("ltuid_v2")).toBeInTheDocument();
+    });
+
+    await userEvent.type(screen.getByPlaceholderText("ltuid_v2"), "123456789");
+    await userEvent.type(screen.getByPlaceholderText("ltmid_v2"), "mid-value");
+    await userEvent.type(
+      screen.getByPlaceholderText("ltoken_v2"),
+      "token-value"
+    );
+
+    await userEvent.click(
+      screen.getAllByRole("button", { name: "import.action" })[1]
+    );
+
+    expect(onHoyolabImport).toHaveBeenCalledWith(
+      "338699543",
+      {
+        ltuidV2: "123456789",
+        ltmidV2: "mid-value",
+        ltokenV2: "token-value",
+      },
+      false
+    );
+  });
+
+  it("assembles global HoYoLAB import with the same v2 LToken cookie fields", async () => {
+    const onHoyolabImport = vi.fn().mockResolvedValue(undefined);
+    render(<TestWrapper onHoyolabImport={onHoyolabImport} />);
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByPlaceholderText("import.uidPlaceholder").length
+      ).toBeGreaterThan(1);
+    });
+
+    await userEvent.type(
+      screen.getAllByPlaceholderText("import.uidPlaceholder")[1],
+      "800000000"
+    );
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("ltuid_v2")).toBeInTheDocument();
+    });
+
+    await userEvent.type(screen.getByPlaceholderText("ltuid_v2"), "123456789");
+    await userEvent.type(screen.getByPlaceholderText("ltmid_v2"), "mid-value");
+    await userEvent.type(
+      screen.getByPlaceholderText("ltoken_v2"),
+      "token-value"
+    );
+
+    await userEvent.click(
+      screen.getAllByRole("button", { name: "import.action" })[1]
+    );
+
+    expect(onHoyolabImport).toHaveBeenCalledWith(
+      "800000000",
+      {
+        ltuidV2: "123456789",
+        ltmidV2: "mid-value",
+        ltokenV2: "token-value",
+      },
+      false
+    );
   });
 
   describe("format validation", () => {

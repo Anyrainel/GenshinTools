@@ -190,17 +190,25 @@ function resolveHoyolabCharacterKey(
 
 const PROXY_BASE = "/api/hoyolab";
 
+export interface HoyolabCredentials {
+  ltuidV2: string;
+  ltmidV2: string;
+  ltokenV2: string;
+}
+
 async function callProxy<T>(
   region: HoyolabRegion,
   path: string,
   body: unknown,
-  cookie: string
+  credentials: HoyolabCredentials
 ): Promise<T> {
   const res = await fetch(`${PROXY_BASE}/${region}/${path}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-hoyolab-cookie": cookie,
+      "x-hoyolab-ltuid-v2": credentials.ltuidV2,
+      "x-hoyolab-ltmid-v2": credentials.ltmidV2,
+      "x-hoyolab-ltoken-v2": credentials.ltokenV2,
     },
     body: JSON.stringify(body),
   });
@@ -213,11 +221,11 @@ async function callProxy<T>(
   const envelope = (await res.json()) as HoyolabEnvelope<T>;
   if (envelope.retcode !== 0 || !envelope.data) {
     const label = region === "cn" ? "米游社" : "HoYoLAB";
-    // 5003 = DS signature verification failed, usually means our app version
-    // or salt is outdated. Surface a helpful hint so users can report it.
+    // 5003 is returned for DS rejection and some miHoYo security challenges.
+    // Surface a helpful hint so users can report the upstream failure context.
     const hint =
       envelope.retcode === 5003
-        ? " This import path may need an app update; please report this issue."
+        ? " This import path may need an app update or may have triggered a miHoYo security check; please report this issue."
         : "";
     throw new Error(
       `${label} returned an error (${envelope.retcode}): ${envelope.message || "unknown"}${hint}`
@@ -239,7 +247,7 @@ const DETAIL_BATCH_SIZE = 30;
 
 export async function fetchHoyolabData(
   uid: string,
-  cookie: string
+  credentials: HoyolabCredentials
 ): Promise<HoyolabFetchResult> {
   if (!/^\d{9,10}$/.test(uid)) {
     throw new Error("Invalid UID format");
@@ -249,7 +257,11 @@ export async function fetchHoyolabData(
   if (!region || !server) {
     throw new Error(`Unknown UID prefix: ${uid[0]}`);
   }
-  if (!cookie.trim()) {
+  if (
+    !credentials.ltuidV2.trim() ||
+    !credentials.ltmidV2.trim() ||
+    !credentials.ltokenV2.trim()
+  ) {
     throw new Error("Missing cookie");
   }
 
@@ -257,7 +269,7 @@ export async function fetchHoyolabData(
     region,
     "character/list",
     { role_id: uid, server },
-    cookie
+    credentials
   );
 
   const ids = list.list.map((c) => c.id);
@@ -269,7 +281,7 @@ export async function fetchHoyolabData(
       region,
       "character/detail",
       { character_ids: batch, role_id: uid, server },
-      cookie
+      credentials
     );
     for (const entry of detail.list) {
       const listEntry = listEntryById.get(entry.base.id);

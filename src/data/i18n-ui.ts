@@ -502,58 +502,49 @@ export const i18nUiData = {
       zh: "米游社 / HoYoLAB 导入",
     },
     hoyolabDescription: {
-      en: "Fetch your full character roster (all owned characters with equipped gear) using your HoYoLAB or 米游社 account cookie.",
-      zh: "使用你的米游社 / HoYoLAB 账号 Cookie 获取所有已拥有角色及其装备。",
-    },
-    hoyolabRegionOs: { en: "HoYoLAB (Global)", zh: "HoYoLAB（国际服）" },
-    hoyolabRegionCn: {
-      en: "米游社 (CN / Bilibili)",
-      zh: "米游社（国服 / B 服）",
+      en: "Fetch your full character roster (all owned characters with equipped gear) using your HoYoLAB or 米游社 account cookie values.",
+      zh: "使用你的米游社 / HoYoLAB 账号 Cookie 值获取所有已拥有角色及其装备。",
     },
     hoyolabMissingCookie: {
-      en: "Paste your HoYoLAB / 米游社 cookie first.",
-      zh: "请先粘贴你的 HoYoLAB / 米游社 Cookie。",
+      en: "Fill in the HoYoLAB / 米游社 cookie fields first.",
+      zh: "请先填写 HoYoLAB / 米游社 Cookie 字段。",
     },
     hoyolabPrivacyNote: {
-      en: "Cookies are stored locally in your browser and only sent to our proxy to sign the request. Never persisted server-side.",
-      zh: "Cookie 仅保存在你的浏览器本地，仅在签名请求时发送到我们的代理服务，服务端不会存储。",
+      en: "Cookie values are stored locally in your browser and only sent to our proxy to sign the request. Never persisted server-side.",
+      zh: "Cookie 值仅保存在你的浏览器本地，仅在签名请求时发送到我们的代理服务，服务端不会存储。",
     },
     hoyolabGuideTitle: {
-      en: "How to get your HoYoLAB / 米游社 cookie",
-      zh: "如何获取 HoYoLAB / 米游社 Cookie",
+      en: "How to get HoYoLAB / 米游社 cookie values",
+      zh: "如何获取 HoYoLAB / 米游社 Cookie 值",
     },
     hoyolabGuideIntro: {
-      en: "Follow these steps in a desktop browser. The cookie authenticates you — treat it like a password and never share it.",
-      zh: "请在桌面浏览器中按以下步骤操作。Cookie 相当于你的登录凭证，请像密码一样妥善保管，切勿分享。",
+      en: "Follow these steps in a desktop browser. These values authenticate you — treat them like a password and never share them.",
+      zh: "请在桌面浏览器中按以下步骤操作。这些值相当于你的登录凭证，请像密码一样妥善保管，切勿分享。",
     },
-    hoyolabGuideStepOsTitle: {
-      en: "Global (HoYoLAB)",
-      zh: "国际服（HoYoLAB）",
+    hoyolabGuideStepTitle: {
+      en: "HoYoLAB / 米游社",
+      zh: "HoYoLAB / 米游社",
     },
-    hoyolabGuideStepCnTitle: {
-      en: "CN / Bilibili (米游社)",
-      zh: "国服 / B 服（米游社）",
-    },
-    hoyolabHowTo: { en: "How to get cookie", zh: "如何获取 Cookie" },
+    hoyolabHowTo: { en: "How to get cookie values", zh: "如何获取 Cookie 值" },
     hoyolabGuideStep1: {
-      en: "Open {0} in a desktop browser and log in to your account.",
-      zh: "在桌面浏览器中打开 {0} 并登录你的账号。",
+      en: "Open HoYoLAB (Global) or 米游社 (CN / Bilibili) in a desktop browser and log in.",
+      zh: "在桌面浏览器中打开 HoYoLAB（国际服）或米游社（国服 / B 服）并登录。",
     },
     hoyolabGuideStep2: {
-      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies → {0}.",
-      zh: "按 F12 → Application（Chrome/Edge）或 存储（Firefox）→ Cookies → {0}。",
+      en: "Press F12 → Application (Chrome/Edge) or Storage (Firefox) → Cookies, then select the site you logged in to.",
+      zh: "按 F12 → Application（Chrome/Edge）或存储（Firefox）→ Cookies，然后选择你刚才登录的网站。",
     },
     hoyolabGuideStep3: {
-      en: "Find the rows named {0} and {1}.",
-      zh: "找到名为 {0} 和 {1} 的两行。",
+      en: "Find the rows named {0}, {1}, and {2}.",
+      zh: "找到名为 {0}、{1} 和 {2} 的三行。",
     },
     hoyolabGuideStep4: {
       en: "Copy each value into the matching field in this dialog.",
-      zh: "分别将两个值粘贴到导入对话框中对应的位置。",
+      zh: "分别将这些值粘贴到导入对话框中对应的位置。",
     },
     hoyolabGuideSecurity: {
-      en: "Never paste your cookie into untrusted sites. You can log out on {0} to invalidate it at any time.",
-      zh: "切勿将 Cookie 粘贴到不受信任的网站。你可以随时在 {0} 退出登录以使其失效。",
+      en: "Never paste these cookie values into untrusted sites. Logging out of HoYoLAB / 米游社 will invalidate them.",
+      zh: "切勿将这些 Cookie 值粘贴到不受信任的网站。退出 HoYoLAB / 米游社登录后，这些值会失效。",
     },
   },
   export: {

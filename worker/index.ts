@@ -44,7 +44,8 @@ const ENKA_CORS_HEADERS = {
 const HOYOLAB_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, x-hoyolab-cookie",
+  "Access-Control-Allow-Headers":
+    "Content-Type, x-hoyolab-ltuid-v2, x-hoyolab-ltmid-v2, x-hoyolab-ltoken-v2",
   "Access-Control-Max-Age": "86400",
 };
 
@@ -267,9 +268,9 @@ async function handleHoyolabProxy(
     return json({ error: "path_not_allowed" }, 404, HOYOLAB_CORS_HEADERS);
   }
 
-  const cookie = request.headers.get("x-hoyolab-cookie");
-  if (!cookie) {
-    return json({ error: "missing_cookie" }, 400, HOYOLAB_CORS_HEADERS);
+  const cookieResult = buildHoyolabCookie(request);
+  if (!cookieResult.ok) {
+    return json(cookieResult.body, 400, HOYOLAB_CORS_HEADERS);
   }
 
   const bodyText = await request.text();
@@ -288,7 +289,7 @@ async function handleHoyolabProxy(
         "x-rpc-client_type": "5",
         "x-rpc-language": "en-us",
         DS: ds,
-        Cookie: cookie,
+        Cookie: cookieResult.cookie,
         Referer:
           region === "cn"
             ? "https://webstatic.mihoyo.com/"
@@ -321,6 +322,47 @@ async function handleHoyolabProxy(
       HOYOLAB_CORS_HEADERS
     );
   }
+}
+
+const HOYOLAB_CREDENTIAL_HEADERS = [
+  { header: "x-hoyolab-ltuid-v2", cookie: "ltuid_v2" },
+  { header: "x-hoyolab-ltmid-v2", cookie: "ltmid_v2" },
+  { header: "x-hoyolab-ltoken-v2", cookie: "ltoken_v2" },
+] as const;
+
+function buildHoyolabCookie(request: Request):
+  | { ok: true; cookie: string }
+  | {
+      ok: false;
+      body:
+        | { error: "missing_credentials"; missing: string[] }
+        | { error: "invalid_credentials"; fields: string[] };
+    } {
+  const entries = HOYOLAB_CREDENTIAL_HEADERS.map(({ header, cookie }) => ({
+    cookie,
+    value: request.headers.get(header)?.trim() || "",
+  }));
+  const missing = entries
+    .filter((entry) => !entry.value)
+    .map((entry) => entry.cookie);
+  if (missing.length > 0) {
+    return { ok: false, body: { error: "missing_credentials", missing } };
+  }
+
+  const invalid = entries
+    .filter((entry) => /[\r\n;]/.test(entry.value))
+    .map((entry) => entry.cookie);
+  if (invalid.length > 0) {
+    return {
+      ok: false,
+      body: { error: "invalid_credentials", fields: invalid },
+    };
+  }
+
+  return {
+    ok: true,
+    cookie: entries.map((entry) => `${entry.cookie}=${entry.value}`).join("; "),
+  };
 }
 
 function stripPrefix(value: string, prefix: string): string {

@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { LogtoProvider } from "@logto/react";
-import { BrowserRouter, HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import { logtoConfig } from "./cloud/authConfig";
 import { ErrorBoundary } from "./components/shared/ErrorBoundary";
@@ -24,11 +24,6 @@ if (new URLSearchParams(window.location.search).has("_r")) {
   window.history.replaceState(null, "", url.toString());
 }
 
-// GitHub Pages has no URL rewriting — must use HashRouter.
-// Worker/static-asset deployments route SPA fallbacks server-side.
-const useHash = import.meta.env.BASE_URL !== "/";
-const Router = useHash ? HashRouter : BrowserRouter;
-
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ErrorBoundary>
@@ -37,9 +32,9 @@ createRoot(document.getElementById("root")!).render(
         <ThemeProvider>
           <LanguageProvider>
             <TooltipProvider delayDuration={200}>
-              <Router basename={import.meta.env.BASE_URL}>
+              <BrowserRouter>
                 <App />
-              </Router>
+              </BrowserRouter>
             </TooltipProvider>
           </LanguageProvider>
         </ThemeProvider>

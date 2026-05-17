@@ -6,12 +6,12 @@
  *
  *   # CN (国服 / Bilibili)
  *   CN_UID=12345678 \
- *   CN_COOKIE="account_id=...; cookie_token=..." \
+ *   CN_COOKIE="ltuid_v2=...; ltmid_v2=...; ltoken_v2=..." \
  *   npx tsx scripts/hoyolab-probe.ts cn
  *
  *   # Overseas (America / Europe / Asia / TW-HK-MO)
  *   OS_UID=800000000 \
- *   OS_COOKIE="ltuid_v2=...; ltoken_v2=..." \
+ *   OS_COOKIE="ltuid_v2=...; ltmid_v2=...; ltoken_v2=..." \
  *   npx tsx scripts/hoyolab-probe.ts os
  *
  * The script will call /character/list and, if that succeeds, /character/detail

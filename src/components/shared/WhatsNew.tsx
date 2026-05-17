@@ -46,12 +46,18 @@ export function parseNews(raw: string): ParsedNews {
   let sec: NewsSection | null = null;
   let inRoadmap = false;
 
+  const pushSection = () => {
+    if (current && sec && sec.items.length > 0) {
+      current.sections.push(sec);
+    }
+  };
+
   for (const line of raw.split("\n")) {
     const t = line.trim();
     if (t.startsWith("## ")) {
       // Flush previous entry
       if (current) {
-        if (sec) current.sections.push(sec);
+        pushSection();
         result.entries.push(current);
       }
       const heading = t.slice(3).trim();
@@ -65,7 +71,7 @@ export function parseNews(raw: string): ParsedNews {
         sec = null;
       }
     } else if (t.startsWith("### ") && current) {
-      if (sec) current.sections.push(sec);
+      pushSection();
       sec = { category: t.slice(4).trim(), items: [] };
     } else if (t.startsWith("- ")) {
       const item = t.slice(2);
@@ -77,7 +83,7 @@ export function parseNews(raw: string): ParsedNews {
     }
   }
   if (current) {
-    if (sec) current.sections.push(sec);
+    pushSection();
     result.entries.push(current);
   }
   return result;

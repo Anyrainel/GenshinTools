@@ -21,10 +21,14 @@ export function useGlobalScroll(
     const handleWheel = (e: WheelEvent) => {
       if (!containerRef.current || !mainScrollRef?.current) return;
 
-      const target = e.target as HTMLElement;
+      const target = e.target;
+      const container = containerRef.current;
+      if (!(target instanceof Node) || !container.contains(target)) {
+        return;
+      }
 
       // Check if we're scrolling over the sidebar (it has its own scroll)
-      const sidebar = containerRef.current.querySelector(sidebarSelector);
+      const sidebar = container.querySelector(sidebarSelector);
       if (sidebar?.contains(target)) {
         // Let sidebar handle its own scrolling
         return;

@@ -41,14 +41,12 @@ export function StatDisplay({
       <div
         key={statKey}
         className={cn(
-          "relative z-10 flex justify-between items-center",
+          "relative z-10 flex min-w-0 justify-between items-center",
           compact ? "text-xs" : "text-sm",
           weight > 0 ? "text-foreground" : "text-gray-400"
         )}
       >
-        <span className="flex-1 whitespace-nowrap overflow-hidden">
-          {statName}
-        </span>
+        <span className="min-w-0 flex-1 truncate">{statName}</span>
         <span className={cn("flex-shrink-0", compact && "text-xs")}>
           {displayValue}
         </span>
@@ -57,13 +55,13 @@ export function StatDisplay({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full min-w-0 flex-col">
       {" "}
       {/* Main Stat + Level */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex min-w-0 items-center justify-between mb-2">
         <div
           className={cn(
-            "font-bold flex-1",
+            "min-w-0 flex-1 truncate font-bold",
             isMainStatWrong ? "text-amber-100/70" : "text-amber-100",
             compact ? "text-xs" : "text-base"
           )}

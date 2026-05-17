@@ -136,7 +136,7 @@ function CharacterCardComponent({
               nameClassName={isVeryNarrow ? "text-base" : undefined}
             >
               {!isVeryNarrow && (
-                <div className="3xl:ml-2 flex flex-shrink-0 items-center gap-1.5 text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                <div className="3xl:ml-2 flex flex-shrink-0 items-center gap-1.5 text-muted-foreground text-xs overflow-hidden text-ellipsis whitespace-nowrap">
                   <span>
                     {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
                     <span className="text-foreground/90">
@@ -279,7 +279,7 @@ function CharacterCardComponent({
 
       {/* Artifacts Body */}
       <CardContent className="p-0 bg-black/10">
-        <div className="grid grid-cols-5 divide-x divide-border/20 px-0.5">
+        <div className="grid grid-cols-5 auto-rows-fr divide-x divide-border/20 px-0.5">
           {allSlots.map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
@@ -300,8 +300,9 @@ function CharacterCardComponent({
             const content = (
               <div
                 className={cn(
-                  "flex flex-col relative transition-colors",
+                  "flex min-w-0 flex-col relative overflow-hidden transition-colors",
                   isArtifactCompact ? "p-1" : "p-2",
+                  isArtifactCompact ? "h-[108px]" : "h-[152px]",
                   art ? "group hover:bg-white/5" : "opacity-30"
                 )}
               >
@@ -324,14 +325,14 @@ function CharacterCardComponent({
                 ) : (
                   <div
                     className={cn(
-                      "flex-1 flex flex-col items-center justify-center gap-1",
-                      isArtifactCompact ? "min-h-[100px]" : "min-h-[136px]"
+                      "flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-border bg-black/10 px-1 text-center",
+                      isArtifactCompact ? "text-xs" : "text-sm"
                     )}
                   >
-                    <span className="text-sm text-muted-foreground font-medium">
+                    <span className="block max-w-full truncate text-muted-foreground font-medium">
                       {t.slot(slot)}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="block max-w-full truncate text-muted-foreground">
                       {t.ui("accountData.unequipped")}
                     </span>
                   </div>
@@ -339,7 +340,11 @@ function CharacterCardComponent({
               </div>
             );
 
-            return <div key={slot}>{content}</div>;
+            return (
+              <div key={slot} className="min-w-0">
+                {content}
+              </div>
+            );
           })}
         </div>
       </CardContent>

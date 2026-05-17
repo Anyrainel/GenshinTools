@@ -31,6 +31,10 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { GOODData } from "@/lib/account-data/import/goodConversion";
+import {
+  type HoyolabCredentials,
+  uidToRegion,
+} from "@/lib/account-data/import/hoyolabFetcher";
 import { cn } from "@/lib/utils";
 
 interface AccountImportControlProps {
@@ -38,7 +42,7 @@ interface AccountImportControlProps {
   onUidImport: (uid: string, clearData: boolean) => Promise<void>;
   onHoyolabImport: (
     uid: string,
-    cookie: string,
+    credentials: HoyolabCredentials,
     clearData: boolean
   ) => Promise<void>;
   initialUid?: string;
@@ -94,35 +98,46 @@ export const AccountImportControl = forwardRef<
   const [clearData, setClearData] = useState(false);
   // HoYoLAB cookie parts — stored per field so users don't need to assemble
   // the "k=v; k=v" string themselves.
-  const [osLtuid, setOsLtuid] = useState(
-    () => localStorage.getItem("gg_hoyolab_os_ltuid") || ""
+  const [hoyolabLtuidV2, setHoyolabLtuidV2] = useState(
+    () =>
+      localStorage.getItem("gg_hoyolab_ltuid_v2") ||
+      localStorage.getItem("gg_hoyolab_ltuid") ||
+      localStorage.getItem("gg_hoyolab_cn_ltuid") ||
+      localStorage.getItem("gg_hoyolab_os_ltuid") ||
+      ""
   );
-  const [osLtoken, setOsLtoken] = useState(
-    () => localStorage.getItem("gg_hoyolab_os_ltoken") || ""
+  const [hoyolabLtmidV2, setHoyolabLtmidV2] = useState(
+    () =>
+      localStorage.getItem("gg_hoyolab_ltmid_v2") ||
+      localStorage.getItem("gg_hoyolab_ltmid") ||
+      ""
   );
-  const [cnAccountId, setCnAccountId] = useState(
-    () => localStorage.getItem("gg_hoyolab_cn_account_id") || ""
-  );
-  const [cnCookieToken, setCnCookieToken] = useState(
-    () => localStorage.getItem("gg_hoyolab_cn_cookie_token") || ""
+  const [hoyolabLtokenV2, setHoyolabLtokenV2] = useState(
+    () =>
+      localStorage.getItem("gg_hoyolab_ltoken_v2") ||
+      localStorage.getItem("gg_hoyolab_ltoken") ||
+      localStorage.getItem("gg_hoyolab_cn_ltoken") ||
+      localStorage.getItem("gg_hoyolab_os_ltoken") ||
+      ""
   );
   const [hoyolabClear, setHoyolabClear] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
-  const [hoyolabRegion, setHoyolabRegion] = useState<"os" | "cn">(
-    () => (localStorage.getItem("gg_hoyolab_region") as "os" | "cn") || "os"
-  );
 
   const isValidUid = (uid: string) => /^\d{9,10}$/.test(uid.trim());
+  const hoyolabRegion = isValidUid(uidInput)
+    ? uidToRegion(uidInput.trim())
+    : null;
 
   const hoyolabCookieReady =
-    hoyolabRegion === "os"
-      ? !!osLtuid.trim() && !!osLtoken.trim()
-      : !!cnAccountId.trim() && !!cnCookieToken.trim();
+    !!hoyolabLtuidV2.trim() &&
+    !!hoyolabLtmidV2.trim() &&
+    !!hoyolabLtokenV2.trim();
 
-  const assembledCookie = () =>
-    hoyolabRegion === "os"
-      ? `ltuid_v2=${osLtuid.trim()}; ltoken_v2=${osLtoken.trim()}`
-      : `account_id=${cnAccountId.trim()}; cookie_token=${cnCookieToken.trim()}`;
+  const hoyolabCredentials = (): HoyolabCredentials => ({
+    ltuidV2: hoyolabLtuidV2.trim(),
+    ltmidV2: hoyolabLtmidV2.trim(),
+    ltokenV2: hoyolabLtokenV2.trim(),
+  });
 
   const isGOODFormat = (data: unknown): boolean =>
     typeof data === "object" &&
@@ -181,7 +196,7 @@ export const AccountImportControl = forwardRef<
   };
 
   const handleHoyolabImport = async () => {
-    if (!uidInput || !isValidUid(uidInput)) return;
+    if (!uidInput || !isValidUid(uidInput) || !hoyolabRegion) return;
     if (!hoyolabCookieReady) {
       setErrorMessage(t.ui("import.hoyolabMissingCookie"));
       return;
@@ -190,17 +205,10 @@ export const AccountImportControl = forwardRef<
     setIsBusy(true);
     setErrorMessage(null);
     try {
-      if (hoyolabRegion === "os") {
-        localStorage.setItem("gg_hoyolab_os_ltuid", osLtuid.trim());
-        localStorage.setItem("gg_hoyolab_os_ltoken", osLtoken.trim());
-      } else {
-        localStorage.setItem("gg_hoyolab_cn_account_id", cnAccountId.trim());
-        localStorage.setItem(
-          "gg_hoyolab_cn_cookie_token",
-          cnCookieToken.trim()
-        );
-      }
-      await onHoyolabImport(uidInput, assembledCookie(), hoyolabClear);
+      localStorage.setItem("gg_hoyolab_ltuid_v2", hoyolabLtuidV2.trim());
+      localStorage.setItem("gg_hoyolab_ltmid_v2", hoyolabLtmidV2.trim());
+      localStorage.setItem("gg_hoyolab_ltoken_v2", hoyolabLtokenV2.trim());
+      await onHoyolabImport(uidInput, hoyolabCredentials(), hoyolabClear);
       setIsOpen(false);
     } catch (error: unknown) {
       console.error("HoYoLAB Import failed", error);
@@ -490,31 +498,6 @@ export const AccountImportControl = forwardRef<
 
             <div className="flex flex-col gap-2 mt-3">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="inline-flex rounded-md border border-input overflow-hidden shrink-0">
-                  {(["os", "cn"] as const).map((r) => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => {
-                        setHoyolabRegion(r);
-                        localStorage.setItem("gg_hoyolab_region", r);
-                      }}
-                      disabled={isBusy}
-                      className={cn(
-                        "px-3 h-9 text-xs font-medium transition-colors",
-                        hoyolabRegion === r
-                          ? "bg-primary/15 text-foreground"
-                          : "bg-transparent text-muted-foreground hover:bg-muted/60"
-                      )}
-                    >
-                      {t.ui(
-                        r === "os"
-                          ? "import.hoyolabRegionOs"
-                          : "import.hoyolabRegionCn"
-                      )}
-                    </button>
-                  ))}
-                </div>
                 <button
                   type="button"
                   onClick={() => setIsGuideOpen(true)}
@@ -525,45 +508,32 @@ export const AccountImportControl = forwardRef<
                 </button>
               </div>
 
-              {hoyolabRegion === "os" ? (
-                <div className="flex flex-col gap-1.5">
-                  <input
-                    type="text"
-                    placeholder="ltuid_v2"
-                    value={osLtuid}
-                    onChange={(e) => setOsLtuid(e.target.value)}
-                    disabled={isBusy}
-                    className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                  <input
-                    type="password"
-                    placeholder="ltoken_v2"
-                    value={osLtoken}
-                    onChange={(e) => setOsLtoken(e.target.value)}
-                    disabled={isBusy}
-                    className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-col gap-1.5">
-                  <input
-                    type="text"
-                    placeholder="account_id"
-                    value={cnAccountId}
-                    onChange={(e) => setCnAccountId(e.target.value)}
-                    disabled={isBusy}
-                    className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                  <input
-                    type="password"
-                    placeholder="cookie_token"
-                    value={cnCookieToken}
-                    onChange={(e) => setCnCookieToken(e.target.value)}
-                    disabled={isBusy}
-                    className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </div>
-              )}
+              <div className="flex flex-col gap-1.5">
+                <input
+                  type="text"
+                  placeholder="ltuid_v2"
+                  value={hoyolabLtuidV2}
+                  onChange={(e) => setHoyolabLtuidV2(e.target.value)}
+                  disabled={isBusy}
+                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <input
+                  type="text"
+                  placeholder="ltmid_v2"
+                  value={hoyolabLtmidV2}
+                  onChange={(e) => setHoyolabLtmidV2(e.target.value)}
+                  disabled={isBusy}
+                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <input
+                  type="password"
+                  placeholder="ltoken_v2"
+                  value={hoyolabLtokenV2}
+                  onChange={(e) => setHoyolabLtokenV2(e.target.value)}
+                  disabled={isBusy}
+                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 <input
@@ -595,6 +565,7 @@ export const AccountImportControl = forwardRef<
                   disabled={
                     !uidInput ||
                     !isValidUid(uidInput) ||
+                    !hoyolabRegion ||
                     !hoyolabCookieReady ||
                     isBusy
                   }
@@ -635,70 +606,28 @@ export const AccountImportControl = forwardRef<
           </ResponsiveDialogHeader>
 
           <div className="flex flex-col gap-4 pt-1 text-sm">
-            <div className="inline-flex self-start rounded-md border border-input overflow-hidden">
-              {(["os", "cn"] as const).map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => {
-                    setHoyolabRegion(r);
-                    localStorage.setItem("gg_hoyolab_region", r);
-                  }}
-                  className={cn(
-                    "px-3 h-9 text-xs font-medium transition-colors",
-                    hoyolabRegion === r
-                      ? "bg-primary/15 text-foreground"
-                      : "bg-transparent text-muted-foreground hover:bg-muted/60"
-                  )}
-                >
-                  {t.ui(
-                    r === "os"
-                      ? "import.hoyolabRegionOs"
-                      : "import.hoyolabRegionCn"
-                  )}
-                </button>
-              ))}
-            </div>
             <section>
               <h4 className="font-semibold text-foreground mb-1.5">
-                {t.ui(
-                  hoyolabRegion === "os"
-                    ? "import.hoyolabGuideStepOsTitle"
-                    : "import.hoyolabGuideStepCnTitle"
-                )}
+                {t.ui("import.hoyolabGuideStepTitle")}
               </h4>
               <ol className="list-decimal pl-5 space-y-1 text-foreground/90">
-                {(() => {
-                  const site =
-                    hoyolabRegion === "os"
-                      ? "https://www.hoyolab.com"
-                      : "https://www.miyoushe.com";
-                  const [f1, f2] =
-                    hoyolabRegion === "os"
-                      ? ["ltuid_v2", "ltoken_v2"]
-                      : ["account_id", "cookie_token"];
-                  return (
-                    <>
-                      <li>{t.format("import.hoyolabGuideStep1", site)}</li>
-                      <li>{t.format("import.hoyolabGuideStep2", site)}</li>
-                      <li>{t.format("import.hoyolabGuideStep3", f1, f2)}</li>
-                      <li>{t.ui("import.hoyolabGuideStep4")}</li>
-                    </>
-                  );
-                })()}
+                <li>{t.ui("import.hoyolabGuideStep1")}</li>
+                <li>{t.ui("import.hoyolabGuideStep2")}</li>
+                <li>
+                  {t.format(
+                    "import.hoyolabGuideStep3",
+                    "ltuid_v2",
+                    "ltmid_v2",
+                    "ltoken_v2"
+                  )}
+                </li>
+                <li>{t.ui("import.hoyolabGuideStep4")}</li>
               </ol>
             </section>
 
             <div className="flex items-start gap-2 text-xs px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-yellow-600 dark:text-yellow-400">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>
-                {t.format(
-                  "import.hoyolabGuideSecurity",
-                  hoyolabRegion === "os"
-                    ? "https://www.hoyolab.com"
-                    : "https://www.miyoushe.com"
-                )}
-              </span>
+              <span>{t.ui("import.hoyolabGuideSecurity")}</span>
             </div>
 
             <div className="flex justify-end">

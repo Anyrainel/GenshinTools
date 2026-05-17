@@ -103,10 +103,24 @@ describe("hoyolabFetcher", () => {
         );
       });
 
-    const fetched = await fetchHoyolabData("800000000", "ltuid_v2=x");
+    const fetched = await fetchHoyolabData("800000000", {
+      ltuidV2: "uid",
+      ltmidV2: "mid",
+      ltokenV2: "token",
+    });
     const result = convertHoyolabToGOOD(fetched);
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/hoyolab/os/character/list",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "x-hoyolab-ltuid-v2": "uid",
+          "x-hoyolab-ltmid-v2": "mid",
+          "x-hoyolab-ltoken-v2": "token",
+        }),
+      })
+    );
     expect(fetched.characters[0]?.base.element).toBe("Hydro");
     expect(result.warnings).toEqual([]);
     expect(result.data.characters?.[0]?.key).toBe("manekin_hydro");
