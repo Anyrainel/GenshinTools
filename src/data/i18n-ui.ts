@@ -398,6 +398,10 @@ export const i18nUiData = {
       en: "Sign in to send feedback",
       zh: "登录后提交反馈",
     },
+    signInRequiredDesc: {
+      en: "Sign in before sending feedback.",
+      zh: "请登录后再提交反馈。",
+    },
     signInRequiredError: {
       en: "Your sign-in expired. Sign in and try again.",
       zh: "登录状态已过期，请重新登录后再试。",

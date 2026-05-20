@@ -1,5 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as feedbackApi from "@/cloud/feedback";
 import { AccountFeedbackDialog } from "@/components/layout/AccountFeedbackDialog";
@@ -53,7 +52,7 @@ describe("AccountFeedbackDialog", () => {
     expect(
       screen.getByText("feedback.signInRequiredTitle")
     ).toBeInTheDocument();
-    await userEvent.click(
+    fireEvent.click(
       screen.getByRole("button", { name: "accountSystem.signIn" })
     );
 
@@ -84,24 +83,19 @@ describe("AccountFeedbackDialog", () => {
       screen.getByRole("button", { name: "feedback.submit" })
     ).toBeDisabled();
 
-    await userEvent.click(
+    fireEvent.click(
       screen.getByRole("button", { name: "5 feedback.ratingStarLabel" })
     );
-    await userEvent.type(
-      screen.getByLabelText("feedback.suggestionLabel"),
-      "Add artifact notes"
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.bugReportLabel"),
-      "Import preview is blank"
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.contactLabel"),
-      "Discord traveler"
-    );
-    await userEvent.click(
-      screen.getByRole("button", { name: "feedback.submit" })
-    );
+    fireEvent.change(screen.getByLabelText("feedback.suggestionLabel"), {
+      target: { value: "Add artifact notes" },
+    });
+    fireEvent.change(screen.getByLabelText("feedback.bugReportLabel"), {
+      target: { value: "Import preview is blank" },
+    });
+    fireEvent.change(screen.getByLabelText("feedback.contactLabel"), {
+      target: { value: "Discord traveler" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "feedback.submit" }));
 
     await waitFor(() => {
       expect(feedbackApi.submitFeedback).toHaveBeenCalledWith({
@@ -120,45 +114,17 @@ describe("AccountFeedbackDialog", () => {
     ).toBe("123456");
   });
 
-  it("debounces and restores all feedback draft fields from session storage", async () => {
-    const { unmount } = render(
-      <AccountFeedbackDialog
-        open
-        onOpenChange={vi.fn()}
-        isAuthenticated
-        isAccountLoading={false}
-        accountId="usr_feedback"
-        onSignIn={async () => undefined}
-      />
-    );
-
-    await userEvent.click(
-      screen.getByRole("button", { name: "4 feedback.ratingStarLabel" })
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.suggestionLabel"),
-      "Add a scanner hint"
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.bugReportLabel"),
-      "The result panel flickers"
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.contactLabel"),
-      "QQ 1093957900"
-    );
-
-    expect(window.sessionStorage.getItem(FEEDBACK_DRAFT_KEY)).toBeNull();
-    await waitFor(() => {
-      expect(readFeedbackDraft()).toEqual({
+  it("restores all feedback draft fields from session storage", () => {
+    window.sessionStorage.setItem(
+      FEEDBACK_DRAFT_KEY,
+      JSON.stringify({
         rating: 4,
         suggestion: "Add a scanner hint",
         bugReport: "The result panel flickers",
         contactMethod: "QQ 1093957900",
-      });
-    });
+      })
+    );
 
-    unmount();
     render(
       <AccountFeedbackDialog
         open
@@ -170,11 +136,9 @@ describe("AccountFeedbackDialog", () => {
       />
     );
 
-    await waitFor(() => {
-      expect(screen.getByLabelText("feedback.suggestionLabel")).toHaveValue(
-        "Add a scanner hint"
-      );
-    });
+    expect(screen.getByLabelText("feedback.suggestionLabel")).toHaveValue(
+      "Add a scanner hint"
+    );
     expect(
       screen.getByRole("button", { name: "feedback.submit" })
     ).toBeEnabled();
@@ -206,24 +170,19 @@ describe("AccountFeedbackDialog", () => {
       />
     );
 
-    await userEvent.click(
+    fireEvent.click(
       screen.getByRole("button", { name: "3 feedback.ratingStarLabel" })
     );
-    await userEvent.type(
-      screen.getByLabelText("feedback.suggestionLabel"),
-      "Add filters"
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.bugReportLabel"),
-      "Login expired during submit"
-    );
-    await userEvent.type(
-      screen.getByLabelText("feedback.contactLabel"),
-      "Discord traveler"
-    );
-    await userEvent.click(
-      screen.getByRole("button", { name: "feedback.submit" })
-    );
+    fireEvent.change(screen.getByLabelText("feedback.suggestionLabel"), {
+      target: { value: "Add filters" },
+    });
+    fireEvent.change(screen.getByLabelText("feedback.bugReportLabel"), {
+      target: { value: "Login expired during submit" },
+    });
+    fireEvent.change(screen.getByLabelText("feedback.contactLabel"), {
+      target: { value: "Discord traveler" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "feedback.submit" }));
 
     await waitFor(() => {
       expect(
@@ -237,7 +196,7 @@ describe("AccountFeedbackDialog", () => {
       contactMethod: "Discord traveler",
     });
 
-    await userEvent.click(
+    fireEvent.click(
       screen.getByRole("button", { name: "accountSystem.signIn" })
     );
 

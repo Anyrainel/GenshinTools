@@ -194,6 +194,9 @@ export function AccountFeedbackDialog({
             <ResponsiveDialogTitle>
               {t.ui("feedback.signInRequiredTitle")}
             </ResponsiveDialogTitle>
+            <ResponsiveDialogDescription className="sr-only">
+              {t.ui("feedback.signInRequiredDesc")}
+            </ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
           <ResponsiveDialogFooter className="gap-2">
             <Button

@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { characters } from "@/data/resources";
@@ -6,6 +7,9 @@ import { render, screen, waitFor } from "../../utils/render";
 
 describe("ItemPicker", () => {
   const mockOnChange = vi.fn();
+  const characterSampleIds = new Set(characters.slice(0, 12).map((c) => c.id));
+  const characterSampleFilter = (item: { id: string }) =>
+    characterSampleIds.has(item.id);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,7 +36,12 @@ describe("ItemPicker", () => {
     it("opens popover when clicked", async () => {
       const user = userEvent.setup();
       const { container } = render(
-        <ItemPicker type="character" value={null} onChange={mockOnChange} />
+        <ItemPicker
+          type="character"
+          value={null}
+          onChange={mockOnChange}
+          filter={characterSampleFilter}
+        />
       );
       const trigger = container.querySelector("[data-state]") as HTMLElement;
       await user.click(trigger);
@@ -40,20 +49,20 @@ describe("ItemPicker", () => {
     });
 
     it("allows searching for a character", async () => {
-      const user = userEvent.setup({ delay: null });
       const { container } = render(
         <ItemPicker
           type="character"
           value={null}
           onChange={mockOnChange}
           defaultOpen
+          filter={characterSampleFilter}
         />
       );
 
       const searchInput = screen.getByRole("textbox");
 
       // Type a nonsense string
-      await user.type(searchInput, "xyznonsense");
+      fireEvent.change(searchInput, { target: { value: "xyznonsense" } });
 
       await waitFor(() => {
         expect(container.querySelectorAll("img").length).toBe(0);
@@ -70,6 +79,7 @@ describe("ItemPicker", () => {
           value={null}
           onChange={mockOnChange}
           defaultOpen
+          filter={characterSampleFilter}
         />
       );
 
@@ -156,6 +166,9 @@ describe("ItemPicker", () => {
     const unownedIds = characters
       .filter((c) => !ownedIds.includes(c.id))
       .map((c) => c.id);
+    const visibleOwnedIds = new Set([...ownedIds, ...unownedIds.slice(0, 3)]);
+    const focusedCharacterFilter = (item: { id: string }) =>
+      visibleOwnedIds.has(item.id);
 
     beforeEach(() => {
       useAccountStore.setState({
@@ -195,6 +208,7 @@ describe("ItemPicker", () => {
           value={null}
           onChange={mockOnChange}
           defaultOpen
+          filter={focusedCharacterFilter}
         />
       );
 
@@ -234,6 +248,7 @@ describe("ItemPicker", () => {
           value={null}
           onChange={mockOnChange}
           defaultOpen
+          filter={focusedCharacterFilter}
         />
       );
 

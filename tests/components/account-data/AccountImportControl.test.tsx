@@ -1,5 +1,4 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { useEffect, useRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
@@ -108,38 +107,50 @@ describe("AccountImportControl", () => {
 
     // First UID input belongs to the Enka/GOOD card; second belongs to hoyolab.
     const input = screen.getAllByPlaceholderText("import.uidPlaceholder")[0];
-    await userEvent.type(input, "123456789");
+    fireEvent.change(input, { target: { value: "123456789" } });
 
     const importBtn = screen.getAllByRole("button", {
       name: "import.action",
     })[0];
-    await userEvent.click(importBtn);
+    fireEvent.click(importBtn);
 
     expect(onUidImport).toHaveBeenCalledWith("123456789", false); // Default clearData is false
   });
 
   it("handles UID import error", async () => {
     const onUidImport = vi.fn().mockRejectedValue(new Error("Network Error"));
-    render(<TestWrapper onUidImport={onUidImport} />);
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
 
-    await waitFor(() => {
-      expect(
-        screen.getAllByPlaceholderText("import.uidPlaceholder").length
-      ).toBeGreaterThan(0);
-    });
+    try {
+      render(<TestWrapper onUidImport={onUidImport} />);
 
-    // First UID input belongs to the Enka/GOOD card; second belongs to hoyolab.
-    const input = screen.getAllByPlaceholderText("import.uidPlaceholder")[0];
-    await userEvent.type(input, "123456789");
+      await waitFor(() => {
+        expect(
+          screen.getAllByPlaceholderText("import.uidPlaceholder").length
+        ).toBeGreaterThan(0);
+      });
 
-    const importBtn = screen.getAllByRole("button", {
-      name: "import.action",
-    })[0];
-    await userEvent.click(importBtn);
+      // First UID input belongs to the Enka/GOOD card; second belongs to hoyolab.
+      const input = screen.getAllByPlaceholderText("import.uidPlaceholder")[0];
+      fireEvent.change(input, { target: { value: "123456789" } });
 
-    await waitFor(() => {
-      expect(screen.getByText("Network Error")).toBeInTheDocument();
-    });
+      const importBtn = screen.getAllByRole("button", {
+        name: "import.action",
+      })[0];
+      fireEvent.click(importBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText("Network Error")).toBeInTheDocument();
+      });
+      expect(consoleError).toHaveBeenCalledWith(
+        "UID Import failed",
+        expect.any(Error)
+      );
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it("assembles CN HoYoLAB import with v2 LToken cookie fields", async () => {
@@ -152,23 +163,28 @@ describe("AccountImportControl", () => {
       ).toBeGreaterThan(1);
     });
 
-    await userEvent.type(
+    fireEvent.change(
       screen.getAllByPlaceholderText("import.uidPlaceholder")[1],
-      "338699543"
+      {
+        target: { value: "338699543" },
+      }
     );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText("ltuid_v2")).toBeInTheDocument();
     });
 
-    await userEvent.type(screen.getByPlaceholderText("ltuid_v2"), "123456789");
-    await userEvent.type(screen.getByPlaceholderText("ltmid_v2"), "mid-value");
-    await userEvent.type(
-      screen.getByPlaceholderText("ltoken_v2"),
-      "token-value"
-    );
+    fireEvent.change(screen.getByPlaceholderText("ltuid_v2"), {
+      target: { value: "123456789" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("ltmid_v2"), {
+      target: { value: "mid-value" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("ltoken_v2"), {
+      target: { value: "token-value" },
+    });
 
-    await userEvent.click(
+    fireEvent.click(
       screen.getAllByRole("button", { name: "import.action" })[1]
     );
 
@@ -193,23 +209,28 @@ describe("AccountImportControl", () => {
       ).toBeGreaterThan(1);
     });
 
-    await userEvent.type(
+    fireEvent.change(
       screen.getAllByPlaceholderText("import.uidPlaceholder")[1],
-      "800000000"
+      {
+        target: { value: "800000000" },
+      }
     );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText("ltuid_v2")).toBeInTheDocument();
     });
 
-    await userEvent.type(screen.getByPlaceholderText("ltuid_v2"), "123456789");
-    await userEvent.type(screen.getByPlaceholderText("ltmid_v2"), "mid-value");
-    await userEvent.type(
-      screen.getByPlaceholderText("ltoken_v2"),
-      "token-value"
-    );
+    fireEvent.change(screen.getByPlaceholderText("ltuid_v2"), {
+      target: { value: "123456789" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("ltmid_v2"), {
+      target: { value: "mid-value" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("ltoken_v2"), {
+      target: { value: "token-value" },
+    });
 
-    await userEvent.click(
+    fireEvent.click(
       screen.getAllByRole("button", { name: "import.action" })[1]
     );
 

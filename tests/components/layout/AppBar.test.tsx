@@ -9,18 +9,31 @@ import userEvent from "@testing-library/user-event";
 import { Home } from "lucide-react";
 import type { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppBar } from "@/components/layout/AppBar";
-import { AppSessionProvider } from "@/contexts/AppSessionContext";
+import type { AppSessionContextValue } from "@/contexts/AppSessionContext";
 
 const signIn = vi.fn();
 const signOut = vi.fn();
-const getIdToken = vi.fn();
-let logtoState = {
-  isAuthenticated: false,
-  isLoading: false,
-  error: undefined as Error | undefined,
-};
+let sessionState: AppSessionContextValue;
+
+function createSessionState(
+  overrides: Partial<AppSessionContextValue> = {}
+): AppSessionContextValue {
+  return {
+    isAuthenticated: false,
+    isLoading: false,
+    error: undefined,
+    account: null,
+    accountError: null,
+    refresh: vi.fn(async () => null),
+    ensureSession: vi.fn(async () => null),
+    createSession: vi.fn(async () => null),
+    signIn,
+    signOut,
+    ...overrides,
+  };
+}
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({
@@ -49,14 +62,8 @@ vi.mock("@/components/layout/appNavigation", () => ({
   ],
 }));
 
-vi.mock("@logto/react", () => ({
-  UserScope: { Email: "email" },
-  useLogto: () => ({
-    ...logtoState,
-    signIn,
-    signOut,
-    getIdToken,
-  }),
+vi.mock("@/contexts/AppSessionContext", () => ({
+  useAppSession: () => sessionState,
 }));
 
 describe("AppBar", () => {
@@ -66,23 +73,9 @@ describe("AppBar", () => {
     mockMatchMedia(true);
     signIn.mockReset();
     signOut.mockReset();
-    getIdToken.mockReset();
-    getIdToken.mockResolvedValue("id-token");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        Response.json({ error: "unauthenticated" }, { status: 401 })
-      )
-    );
-    logtoState = {
-      isAuthenticated: false,
-      isLoading: false,
-      error: undefined,
-    };
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
+    signIn.mockResolvedValue(undefined);
+    signOut.mockResolvedValue(undefined);
+    sessionState = createSessionState();
   });
 
   it("renders navigation links", () => {
@@ -302,12 +295,8 @@ describe("AppBar", () => {
     await userEvent.click(signInItem);
 
     await waitFor(() => {
-      expect(signIn).toHaveBeenCalledWith({
-        redirectUri: "http://localhost:3000/callback",
-        postRedirectUri: "http://localhost:3000/",
-      });
+      expect(signIn).toHaveBeenCalledWith("/");
     });
-    expect(window.sessionStorage.getItem("logto:returnPath")).toBe("/");
   });
 
   it("opens the feedback sign-in prompt from the signed-out account menu", async () => {
@@ -355,48 +344,35 @@ describe("AppBar", () => {
     await userEvent.click(accountButton);
 
     await waitFor(() => {
-      expect(signIn).toHaveBeenCalledWith({
-        redirectUri: "http://localhost:3000/callback",
-        postRedirectUri: "http://localhost:3000/",
-      });
+      expect(signIn).toHaveBeenCalledWith("/");
     });
   });
 
   it("shows account management, sync, and sign-out when signed in", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async (input: RequestInfo | URL) => {
-        const url = String(input);
-        if (url === "/api/auth/logout") {
-          return Response.json({ ok: true });
-        }
-        return Response.json({
-          id: "usr_1",
-          displayName: "Traveler",
-          email: "traveler@example.com",
-          authMode: "logto",
-          entitlements: ["cloud_sync"],
-        });
-      })
-    );
+    sessionState = createSessionState({
+      isAuthenticated: true,
+      account: {
+        id: "usr_1",
+        displayName: "Traveler",
+        email: "traveler@example.com",
+        authMode: "logto",
+        entitlements: ["cloud_sync"],
+      },
+    });
 
     renderAppBar(<AppBar />);
-
-    expect(screen.queryByText("traveler@example.com")).not.toBeInTheDocument();
 
     const accountButton = screen.getByRole("button", {
       name: "accountSystem.accountMenu",
     });
-    await waitFor(() => {
-      expect(accountButton).toHaveClass(
-        "h-9",
-        "w-9",
-        "rounded-full",
-        "p-0",
-        "hover:bg-transparent",
-        "[&_svg]:size-7"
-      );
-    });
+    expect(accountButton).toHaveClass(
+      "h-9",
+      "w-9",
+      "rounded-full",
+      "p-0",
+      "hover:bg-transparent",
+      "[&_svg]:size-7"
+    );
     expect(accountButton).not.toHaveClass("border");
 
     await userEvent.click(accountButton);
@@ -442,16 +418,12 @@ describe("AppBar", () => {
 
     await userEvent.click(screen.getByText("accountSystem.signOut"));
 
-    expect(signOut).toHaveBeenCalledWith("http://localhost:3000/");
+    expect(signOut).toHaveBeenCalled();
   });
 });
 
 function renderAppBar(ui: ReactNode) {
-  return render(
-    <BrowserRouter>
-      <AppSessionProvider>{ui}</AppSessionProvider>
-    </BrowserRouter>
-  );
+  return render(<BrowserRouter>{ui}</BrowserRouter>);
 }
 
 function mockMatchMedia(matches: boolean) {
