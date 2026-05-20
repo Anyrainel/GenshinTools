@@ -1223,6 +1223,16 @@ class Nicole extends CharacterBase {
 
   // Q projection formulas are emitted per slot so statsCharId can vary.
   protected readonly formulaMap = (() => {
+    const pyroNormal = {
+      element: "Pyro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const pyroPlunge = {
+      element: "Pyro" as const,
+      ability: "plunge" as const,
+      reaction: "none" as const,
+    };
     const pyroSkill = {
       element: "Pyro" as const,
       ability: "skill" as const,
@@ -1234,6 +1244,26 @@ class Nicole extends CharacterBase {
       reaction: "none" as const,
     };
     const formulas: Record<string, FormulaEntry> = {
+      "nicole-normal": {
+        label: { zh: "普攻（3段）", en: "Normal (3-hit)" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), pyroNormal) },
+          { formula: new DirectFormula(this.param("A", 2), pyroNormal) },
+          { formula: new DirectFormula(this.param("A", 3), pyroNormal) },
+        ],
+      },
+      "nicole-plunge": {
+        label: { zh: "下落期间", en: "Plunge" },
+        parts: [{ formula: new DirectFormula(this.param("A", 6), pyroPlunge) }],
+      },
+      "nicole-plunge-low": {
+        label: { zh: "下落攻击(低空)", en: "Plunge (Low)" },
+        parts: [{ formula: new DirectFormula(this.param("A", 7), pyroPlunge) }],
+      },
+      "nicole-plunge-high": {
+        label: { zh: "下落攻击(高空)", en: "Plunge (High)" },
+        parts: [{ formula: new DirectFormula(this.param("A", 8), pyroPlunge) }],
+      },
       "nicole-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [{ formula: new DirectFormula(this.param("E", 1), pyroSkill) }],

@@ -45,6 +45,10 @@ function getEntries(char: { allFormulaEntries: Record<string, FormulaEntry> }) {
   return char.allFormulaEntries;
 }
 
+function talentMultipliers(entry: FormulaEntry) {
+  return entry.parts.map((part) => part.formula.talentMultiplier);
+}
+
 function projEntries(entries: Record<string, FormulaEntry>) {
   return Object.entries(entries).filter(([id]) =>
     id.startsWith("nicole-q-coord-slot")
@@ -70,6 +74,53 @@ type InspectableBuff = {
 function inspectBuffs(char: { buffs: unknown[] }): InspectableBuff[] {
   return char.buffs as InspectableBuff[];
 }
+
+describe("Nicole A attack formulas", () => {
+  it("adds the three-hit Pyro normal attack chain", () => {
+    const { char } = nicoleWithTeam(["amber"]);
+    const normal = getEntries(char)["nicole-normal"];
+
+    expect(normal.label.en).toBe("Normal (3-hit)");
+    expect(normal.parts).toHaveLength(3);
+    const multipliers = talentMultipliers(normal);
+    expect(multipliers[0]).toBeCloseTo(0.633, 3);
+    expect(multipliers[1]).toBeCloseTo(0.533, 3);
+    expect(multipliers[2]).toBeCloseTo(0.831, 3);
+    for (const part of normal.parts) {
+      expect(part.formula.tag).toEqual({
+        element: "Pyro",
+        ability: "normal",
+        reaction: "none",
+      });
+    }
+  });
+
+  it("adds Nicole's Pyro plunge formulas", () => {
+    const { char } = nicoleWithTeam(["amber"]);
+    const entries = getEntries(char);
+
+    expect(
+      entries["nicole-plunge"].parts[0].formula.talentMultiplier
+    ).toBeCloseTo(1.123, 3);
+    expect(
+      entries["nicole-plunge-low"].parts[0].formula.talentMultiplier
+    ).toBeCloseTo(2.246, 3);
+    expect(
+      entries["nicole-plunge-high"].parts[0].formula.talentMultiplier
+    ).toBeCloseTo(2.806, 3);
+    for (const id of [
+      "nicole-plunge",
+      "nicole-plunge-low",
+      "nicole-plunge-high",
+    ]) {
+      expect(entries[id].parts[0].formula.tag).toEqual({
+        element: "Pyro",
+        ability: "plunge",
+        reaction: "none",
+      });
+    }
+  });
+});
 
 function atkBuffsForOrigin(char: { buffs: unknown[] }, origin: string) {
   return inspectBuffs(char).filter(
