@@ -279,7 +279,7 @@ function CharacterCardComponent({
 
       {/* Artifacts Body */}
       <CardContent className="p-0 bg-black/10">
-        <div className="grid grid-cols-5 auto-rows-fr divide-x divide-border/20 px-0.5">
+        <div className="grid grid-cols-5 items-stretch divide-x divide-border/20 px-0.5">
           {allSlots.map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
@@ -300,9 +300,8 @@ function CharacterCardComponent({
             const content = (
               <div
                 className={cn(
-                  "flex min-w-0 flex-col relative overflow-hidden transition-colors",
+                  "flex h-full min-w-0 flex-col relative overflow-hidden transition-colors",
                   isArtifactCompact ? "p-1" : "p-2",
-                  isArtifactCompact ? "h-[108px]" : "h-[152px]",
                   art ? "group hover:bg-white/5" : "opacity-30"
                 )}
               >
@@ -341,7 +340,7 @@ function CharacterCardComponent({
             );
 
             return (
-              <div key={slot} className="min-w-0">
+              <div key={slot} className="flex min-w-0">
                 {content}
               </div>
             );
