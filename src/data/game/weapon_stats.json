@@ -335,6 +335,14 @@
       "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
+  "disaster_and_remorse": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
+    }
+  },
   "dodoco_tales": {
     "rarity": 4,
     "type": "Catalyst",

@@ -2867,6 +2867,118 @@
       }
     ]
   },
+  "lohen": {
+    "id": "10000129",
+    "name": "Lohen",
+    "skills": [
+      {
+        "name": "A. Spear of Favonius — Broken Oath",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to perform a forward thrust.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}×3"},
+          {"label": "4-Hit DMG", "template": "{param4:F1P}"},
+          {"label": "5-Hit DMG", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param7:F1P}×2"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param8:F1}"},
+          {"label": "Plunge DMG", "template": "{param9:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. Unforeseen Strike",
+        "descHtml": "As he searches for weaknesses, Lohen switches to <span style=\"color: #FFD780FF;\">Masterstroke</span> mode. While in this state:<br>· Lohen can actively accumulate <span style=\"color: #FFD780FF;\">Joy</span>, using it to unleash the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span>.<br>· Nearby party members can accumulate <span style=\"color: #FFD780FF;\">Will to Win</span> for Lohen, increasing the DMG dealt by <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span>.<br>Lohen can unleash <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span> up to 3 times while in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, after which, he will no longer be able to accumulate <span style=\"color: #FFD780FF;\">Joy</span>.<br><br><i>\"Chivalry? Hah, what better way to bait the trap? When an enemy dreams of an honorable victory, they inevitably fail to suspect the 'pleasant surprise' that awaits them.\"</i>",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}×3"},
+          {"label": "4-Hit DMG", "template": "{param4:F1P}"},
+          {"label": "5-Hit DMG", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param7:F1P}×2"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param8:F1}"},
+          {"label": "Plunge DMG", "template": "{param9:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param10:P}/{param11:P}"},
+          {"label": "Masterstroke", "template": "{param12:F1}s"},
+          {"label": "Etched Into Bone and Soul DMG", "template": "{param17:F1P}×4"},
+          {"label": "DMG Increase From Will to Win", "template": "{param18:F2P}/Point"},
+          {"label": "CD", "template": "{param19:F1}s"}
+        ]
+      },
+      {
+        "name": "Q. Manifest Judgment",
+        "descHtml": "Performs a swift series of forward strikes, consuming all <span style=\"color: #FFD780FF;\">Will to Win</span> and dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>. This DMG will be increased based on the amount of <span style=\"color: #FFD780FF;\">Will to Win</span> consumed. If Lohen is in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode when this is performed, the duration of <span style=\"color: #FFD780FF;\">Masterstroke</span> will be extended by 1.65s.<br><br><i>\"So quick to cave? What a pity, I was just starting to enjoy myself...\"</i>",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P}×6"},
+          {"label": "DMG Increase From Will to Win", "template": "{param2:F2P}/Point"},
+          {"label": "CD", "template": "{param3:F1}s"},
+          {"label": "Energy Cost", "template": "{param4:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Moratorium on Questioning",
+        "descHtml": "When nearby party members accumulate <span style=\"color: #FFD780FF;\">Will to Win</span> for Lohen by dealing DMG while he is in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, if that DMG is not less than 3,000% of Lohen's Base ATK, it will accumulate an extra 60 <span style=\"color: #FFD780FF;\">Will to Win</span>."
+      },
+      {
+        "name": "Flippant Masterpiece",
+        "descHtml": "While in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, for 8s after another nearby party member triggers a <span style=\"color: #99FFFFFF;\">Cryo Reaction</span>, that character's ATK is increased by 15%, while Lohen's ATK is increased by 15%."
+      },
+      {
+        "name": "When the Mood Strikes",
+        "descHtml": "Lohen gains \"High Spirits\" for 9s after he unleashes the Elemental Skill <span style=\"color: #FFD780FF;\">Unforeseen Strike</span>: Increases the Skill Level of <span style=\"color: #FFD780FF;\">Unforeseen Strike</span> by 1.<br>When unleashing an Elemental Skill, if the Level of any other party member's Normal Attack, Elemental Skill, or Elemental Burst is not lower than Lohen's Elemental Skill Level, the duration of this instance of High Spirits will be increased by an additional 6s.<br>High Spirits can be gained once every 18s."
+      },
+      {
+        "name": "Witch's Eve Rite: Unhealing Thorn",
+        "descHtml": "After completing <span style=\"color: #FFD780FF;\">Witch's Homework: Of Various Foes</span>, Lohen becomes a <span style=\"color: #FFD780FF;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you gain the <span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br><br><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span><br>When the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span> hits an opponent or the Elemental Burst <span style=\"color: #FFD780FF;\">Manifest Judgment</span> is unleashed, if Lohen's <span style=\"color: #FFD780FF;\">Will to Win</span> is at 50% or more of its max limit, his Normal Attack and Charged Attack DMG will be increased by 40% for 6s."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. O Breezes, That So Oft Bear Sorrowful Lament",
+        "descHtml": "Lohen's maximum <span style=\"color: #FFD780FF;\">Will to Win</span> limit is increased to 300% of its original value.<br>Additionally, when other nearby party members deal DMG while Lohen is in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, they accumulate 500% as much <span style=\"color: #FFD780FF;\">Will to Win</span> for him as they originally would have."
+      },
+      {
+        "name": "2. In Flight, I Strike Whatever Flies",
+        "descHtml": "When in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, after the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span> hits an opponent or the Elemental Burst <span style=\"color: #FFD780FF;\">Manifest Judgment</span> is unleashed, Lohen gains \"Evilsbane Blade\" for 4s: The next time Lohen hits an opponent with a Normal or Charged Attack while in Masterstroke mode, he will follow up with an additional strike that deals <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> equal to 500% of his ATK, and increase the Elemental Mastery of other nearby party members by 200 for 8s. Evilsbane Blade can be triggered once every 4s."
+      },
+      {
+        "name": "3. Only the Spear That Wounds Can Heal",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780FF;\">Unforeseen Strike</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. Radiant Love, Laughing Death",
+        "descHtml": "When Lohen unleashes the Elemental Burst <span style=\"color: #FFD780FF;\">Manifest Judgment</span> while in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, his <span style=\"color: #FFD780FF;\">Will to Win</span> will be maxed out, causing this instance of his Elemental Burst to gain the maximum possible DMG increase.<br><br>Additionally, when Lohen switches to <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, the following will occur depending on how much Elemental Energy he has:<br>· When Elemental Energy is not full: Lohen recovers 15 Elemental Energy.<br>· When Elemental Energy is full: If, during the next 15s, Lohen unleashes the Elemental Burst <span style=\"color: #FFD780FF;\">Manifest Judgment</span>, he will recover 15 Elemental Energy."
+      },
+      {
+        "name": "5. Never Ask, Nor Trouble You to Know",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780FF;\">Manifest Judgment</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. To Drown, to Sink, Unconscious — Supreme Joy",
+        "descHtml": "Using the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span> and hitting an opponent with it or, while <span style=\"color: #FFD780FF;\">Masterstroke</span> mode is active, unleashing the Elemental Burst <span style=\"color: #FFD780FF;\">Manifest Judgment</span>, will not consume any <span style=\"color: #FFD780FF;\">Will to Win</span>. Instead, Lohen's <span style=\"color: #FFD780FF;\">Joy</span> will be maxed out, and if he hits an opponent the next time he uses the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span>, the duration of this instance of <span style=\"color: #FFD780FF;\">Masterstroke</span> will be extended by 1.25s. This effect can be triggered once every 7s.<br>Additionally, the CRIT DMG of all the DMG described above is increased by 175%, and the number of times Lohen can unleash <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span> during this instance of <span style=\"color: #FFD780FF;\">Masterstroke</span> is increased by 2."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "Masterstroke",
+        "descHtml": "Lohen switches to this mode after he unleashes the Elemental Skill <span style=\"color: #FFD780FF;\">Unforeseen Strike</span>. Masterstroke mode has the following characteristics:<br>· DMG dealt by Lohen's Normal Attacks, Charged Attacks, and Plunging Attacks are converted to <span style=\"color: #99FFFFFF;\">Cryo DMG</span> that cannot be overridden by other infusions.<br>· When Lohen hits an opponent with a Normal Attack or Charged Attack, he accumulates <span style=\"color: #FFD780FF;\">Joy</span> that can be used to unleash the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span>. Lohen can unleash <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span> up to 3 times while in <span style=\"color: #FFD780FF;\">Masterstroke</span> mode, after which, he will no longer be able to accumulate <span style=\"color: #FFD780FF;\">Joy</span>.<br>· When nearby party members deal DMG, they also accumulate <span style=\"color: #FFD780FF;\">Will to Win</span> for Lohen that can be used to increase the DMG dealt by <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span>.<br>· Masterstroke mode ends when Lohen leaves the field. When Masterstroke mode ends, <span style=\"color: #FFD780FF;\">Joy</span> and <span style=\"color: #FFD780FF;\">Will to Win</span> will be reset to zero."
+      },
+      {
+        "name": "Etched Into Bone and Soul",
+        "descHtml": "A special Elemental Skill that Lohen can use after his <span style=\"color: #FFD780FF;\">Joy</span> reaches the max limit.<br>After hitting an opponent, consumes all <span style=\"color: #FFD780FF;\">Joy</span> and <span style=\"color: #FFD780FF;\">Will to Win</span> to deal <span style=\"color: #99FFFFFF;\">Cryo DMG</span>. This DMG increases based on the amount of <span style=\"color: #FFD780FF;\">Will to Win</span> consumed."
+      },
+      {
+        "name": "Joy",
+        "descHtml": "When Lohen hits opponents with a Normal Attack or Charged Attack while in Masterstroke mode, he will accumulate 17 <span style=\"color: #FFD780FF;\">Joy</span>. Up to 100 Joy may be accumulated at any one time.<br><span style=\"color: #FFD780FF;\">Joy</span> can be accumulated once every 0.1s. Once <span style=\"color: #FFD780FF;\">Joy</span> reaches its max limit, Lohen's Elemental Skill <span style=\"color: #FFD780FF;\">Unforeseen Strike</span> will be replaced with the special Elemental Skill <span style=\"color: #FFD780FF;\">Etched Into Bone and Soul</span>."
+      },
+      {
+        "name": "Will to Win",
+        "descHtml": "A special resource accumulated when other nearby party members deal DMG while Lohen is in Masterstroke mode. Up to 100 Will to Win may be accumulated at any one time.<br>While Masterstroke mode is active, when other nearby party members deal DMG, if that DMG is not less than 1000% of Lohen's Base ATK, he accumulates 20 <span style=\"color: #FFD780FF;\">Will to Win</span>. Otherwise, he accumulates 1 <span style=\"color: #FFD780FF;\">Will to Win</span>.<br>Each character can accumulate <span style=\"color: #FFD780FF;\">Will to Win</span> for Lohen once every 0.1s."
+      }
+    ]
+  },
   "lyney": {
     "id": "10000084",
     "name": "Lyney",
@@ -4390,100 +4502,100 @@
     "glossary": null
   },
   "nicole": {
-    "id": "131",
+    "id": "10000131",
     "name": "Nicole",
     "skills": [
       {
         "name": "A. Allegoria",
-        "descHtml": "<span style=\"color: #FFD780;\">Normal Attack</span><br/>Proclaims a decree in the primordial tongue and performs up to 3 attacks that deal <span style=\"color: #FF9999;\">Pyro DMG</span>.<br/><br/><span style=\"color: #FFD780;\">Charged Attack</span><br/>Consumes a certain amount of Stamina to deal <span style=\"color: #FF9999;\">AoE Pyro DMG</span> to opponents in front of her after a short casting time.<br/><br/><span style=\"color: #FFD780;\">Plunging Attack</span><br/>Nicole plunges towards the ground from mid-air, damaging all opponents in her path. Also deals <span style=\"color: #FF9999;\">AoE Pyro DMG</span> upon impact with the ground.",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Proclaims a decree in the primordial tongue and performs up to 3 attacks that deal <span style=\"color: #FF9999FF;\">Pyro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to deal <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span> to opponents in front of her after a short casting time.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Nicole plunges towards the ground from mid-air, damaging all opponents in her path. Also deals <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span> upon impact with the ground.",
         "details": [
-          {"label": "1-Hit DMG", "template": "{param1:F2P}"},
-          {"label": "2-Hit DMG", "template": "{param2:F2P}"},
-          {"label": "3-Hit DMG", "template": "{param3:F2P}"},
-          {"label": "Charged Attack DMG", "template": "{param4:F2P}"},
-          {"label": "Charged Attack Stamina Cost", "template": "50"},
-          {"label": "Plunge DMG", "template": "{param5:F2P}"},
-          {"label": "Low/High Plunge DMG", "template": "{param6:F2P}/{param7:F2P}"}
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param4:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param5:F1}"},
+          {"label": "Plunge DMG", "template": "{param6:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param7:F1P}/{param8:F1P}"}
         ]
       },
       {
         "name": "E. Revelation: Uncreated Light",
-        "descHtml": "Recreates a fleeting glimpse of an age long past, when the angels acted on the authority of the heavens, bestowing the <span style=\"color: #FFD780;\">Grace of Kenosis</span> effect on nearby party members. This increases their ATK and deals <span style=\"color: #FF9999;\">AoE Pyro DMG</span>, as well as creates a Shield of Blazing Light.<br/>The Shield of Blazing Light's DMG Absorption is based on Nicole's ATK, and it will absorb <span style=\"color: #FF9999;\">Pyro DMG</span> at 250% effectiveness.<br/><br/><br/><i>\"Light is not a product of creation, and yet it has been favored and shaped into the miracle of human reason. Only the uncreated may caress the visage of eternity. That is why the unwritten word has value beyond anything put to paper.\"<br/>\"What do you think? A fine excuse not to pick up the pen myself, wouldn't you say? Doesn't it sound just like one of those bits of 'ancient wisdom' that sound so profound, but no one really understands?\"</i>",
+        "descHtml": "Recreates a fleeting glimpse of an age long past, when the angels acted on the authority of the heavens, bestowing the <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> effect on nearby party members. This increases their ATK and deals <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span>, as well as creates a Shield of Blazing Light.<br>The Shield of Blazing Light's DMG Absorption is based on Nicole's ATK, and it will absorb <span style=\"color: #FF9999FF;\">Pyro DMG</span> at 250% effectiveness.",
         "details": [
           {"label": "Skill DMG", "template": "{param1:F1P}"},
-          {"label": "Shield DMG Absorption", "template": "{param2:F2P} ATK+{param3:I}"},
-          {"label": "Shield Duration", "template": "20s"},
-          {"label": "Grace of Kenosis ATK Bonus Ratio", "template": "{param4:F2P} ATK"},
-          {"label": "Grace of Kenosis Max ATK Bonus", "template": "{param5:I}"},
-          {"label": "Grace of Kenosis Duration", "template": "20s"},
-          {"label": "CD", "template": "16s"}
+          {"label": "Shield DMG Absorption", "template": "{param2:F1P} ATK+{param3:I}"},
+          {"label": "Shield Duration", "template": "{param4:F1}s"},
+          {"label": "Grace of Kenosis ATK Bonus Ratio", "template": "{param5:F2P} ATK"},
+          {"label": "Grace of Kenosis Max ATK Bonus", "template": "{param6:F1}"},
+          {"label": "Grace of Kenosis Duration", "template": "{param7:F1}s"},
+          {"label": "CD", "template": "{param8:F1}s"}
         ]
       },
       {
         "name": "Q. Revelation: Ladder of Divine Ascent",
-        "descHtml": "As Nicole weaves the path of anchored fate with golden threads of light, she deals <span style=\"color: #FF9999;\">AoE Pyro DMG</span> and switches to Silent Contemplation mode.<br/>In this mode, when nearby active party members hit an opponent, an Arcane Projection is summoned to perform a Coordinated Attack against the opponent, dealing AoE Elemental DMG of the character's corresponding Elemental Type. This DMG scales based on the corresponding character's ATK and will be considered as having been dealt by them.<br/>This effect can occur once every 3s, and can be triggered up to 4 times each time Nicole switches to Silent Contemplation mode.<br/><br/>It is worth noting that Hexerei characters' Arcane Projections appear to differ somehow in appearance from the others...<br/><br/><br/><i>\"Hmm? You want to know the principles that underpin the divine plan? Hah, that's an easy one — ever heard of the saying, 'The gods became human so that humans could become gods; the gods walked as humans so that humans could walk as gods'?\"<br/>\"Though the civilization that gave us this saying — I fear even uttering their name could invite disaster — is now gone, I don't see any harm in passing on their words to you... Well, even if there is harm in it, the harm's already done. Ahem... In any case, what you should understand is that they who dwell above...\"<br/>\"...Hmm, on second thought, I really shouldn't say — I'm afraid I can't answer your question right now. How about we talk about something else?\"</i>",
+        "descHtml": "As Nicole weaves the path of anchored fate with golden threads of light, she deals <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span> and switches to Silent Contemplation mode.<br>In this mode, when nearby active party members hit an opponent, an Arcane Projection is summoned to perform a Coordinated Attack against the opponent, dealing AoE Elemental DMG of the character's corresponding Elemental Type. This DMG scales based on the corresponding character's ATK and will be considered as having been dealt by them.<br>This effect can occur once every 3s, and can be triggered up to 4 times each time Nicole switches to Silent Contemplation mode.<br><br>It is worth noting that Hexerei characters' Arcane Projections appear to differ somehow in appearance from the others...",
         "details": [
           {"label": "Skill DMG", "template": "{param1:F1P}"},
-          {"label": "Arcane Projection DMG", "template": "{param2:P} Corresponding Character's ATK"},
-          {"label": "Arcane Projection Attack Count", "template": "4"},
-          {"label": "Silent Contemplation Duration", "template": "20s"},
-          {"label": "CD", "template": "15s"},
-          {"label": "Energy Cost", "template": "60"}
+          {"label": "Arcane Projection DMG", "template": "{param2:F1P} Corresponding Character's ATK"},
+          {"label": "Arcane Projection Attack Count", "template": "{param3:I}"},
+          {"label": "Silent Contemplation Duration", "template": "{param4:F1}s"},
+          {"label": "CD", "template": "{param5:F1}s"},
+          {"label": "Energy Cost", "template": "{param6:I}"}
         ]
       }
     ],
     "passives": [
       {
         "name": "Methexis",
-        "descHtml": "For 20s after unleashing the Elemental Skill <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span>, Nicole will continuously \"Observe\" the other current active party members. After the observed character has remained on the field for 3s, their <span style=\"color: #FFD780;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>, increasing their ATK by an additional 300. If the observed character is a Hexerei character, <span style=\"color: #FFD780;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span> straight away.<br/>When characters other than Nicole who have <span style=\"color: #FFD780;\">Guidance of Theosis</span> leave the field, their effect reverts to <span style=\"color: #FFD780;\">Grace of Kenosis</span>."
+        "descHtml": "For 20s after unleashing the Elemental Skill <span style=\"color: #FFD780FF;\">Revelation: Uncreated Light</span>, Nicole will continuously \"observe\" the other current active party members. After the observed character has remained on the field for 3s, their <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span>, increasing their ATK by an additional 300. If the observed character is a Hexerei character, <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> straight away.<br>When characters other than Nicole who have <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> leave the field, their effect reverts to <span style=\"color: #FFD780FF;\">Grace of Kenosis</span>."
       },
       {
         "name": "Philokalia",
-        "descHtml": "When Elemental DMG from nearby active party members hits an opponent, Nicole's own <span style=\"color: #FFD780;\">Grace of Kenosis</span> effect is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span> for 8s."
+        "descHtml": "When Elemental DMG from nearby active party members hits an opponent, Nicole's own <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> effect is upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> for 8s."
       },
       {
         "name": "Nepsis",
-        "descHtml": "When you are in Teyvat and not in combat, Nicole's Charged Attack becomes \"Emissarial Guidance\" if you have already obtained the current region's Treasure Compass. Emissarial Guidance: Calls upon nearby Seelie to show the way, triggering an effect similar to the region's Treasure Compass.<br/>This effect has a cooldown time of 5 seconds and does not work in Domains, Trounce Domains, and the Spiral Abyss."
+        "descHtml": "When you are in Teyvat and not in combat, Nicole's Charged Attack becomes \"Emissarial Guidance\" if you have already obtained the current region's Treasure Compass. Emissarial Guidance: Calls upon nearby Seelie to show the way, triggering an effect similar to the region's Treasure Compass.<br>This effect has a cooldown time of 5 seconds and does not work in Domains, Trounce Domains, and the Spiral Abyss."
       },
       {
         "name": "Witch's Eve Rite: Light in the Darkness",
-        "descHtml": "After completing <span style=\"color: #FFD780;\">Witch's Homework: The Role of a Guide...?</span>, Nicole becomes a <span style=\"color: #FFD780;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you gain the <span style=\"color: #FFD780;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br/><br/><span style=\"color: #FFD780;\">Hexerei: Secret Rite</span><br/>Increases the DMG dealt by Hexerei characters' <span style=\"color: #FFD780;\">Arcane Projections</span> by 300% of Nicole's ATK."
+        "descHtml": "After completing <span style=\"color: #FFD780FF;\">Witch's Homework: The Role of a Guide...?</span>, Nicole becomes a <span style=\"color: #FFD780FF;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you gain the <span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br><br><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span><br>Increases the DMG dealt by Hexerei characters' <span style=\"color: #FFD780FF;\">Arcane Projections</span> by 300% of Nicole's ATK."
       }
     ],
     "constellations": [
       {
-        "name": "\"Do Not Be Afraid, Child Who Is Loved\"",
-        "descHtml": "When the party's current active character hits an opponent, an additional special \"Arcane Projection: Unity\" will be summoned to perform a Coordinated Attack against the opponent, dealing AoE Elemental DMG of the character's corresponding Elemental Type at 600% of their ATK. This DMG will be considered as having been dealt by the corresponding character.<br/>This effect can trigger once every 6s."
+        "name": "1. \"Do Not Be Afraid, Child Who Is Loved\"",
+        "descHtml": "When the current active character of your own in the party hits an opponent, an additional special \"Arcane Projection: Unity\" will be summoned to perform a Coordinated Attack against the opponent, dealing AoE Elemental DMG of the character's corresponding Elemental Type at 600% of their ATK. This DMG will be considered as having been dealt by the corresponding character.<br>This effect can trigger once every 6s."
       },
       {
-        "name": "\"I Will Guide You and Show You the Path You Should Tread\"",
-        "descHtml": "Enhances the effects of the Elemental Skill <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span>: <span style=\"color: #FFD780;\">Grace of Kenosis</span> increases ATK by an additional 300 (which does not count toward this effect's ATK Bonus limit), while <span style=\"color: #FFD780;\">Guidance of Theosis</span> decreases nearby opponents' Elemental RES against the corresponding character's Elemental Type by 25%. (Effect does not stack for the same element.)<br/>Additionally, when Nicole unleashes her Elemental Skill <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span>, nearby active party members will also gain a Shield of Blazing Light."
+        "name": "2. \"I Will Guide You and Show You the Path You Should Tread\"",
+        "descHtml": "Enhances the effects of the Elemental Skill <span style=\"color: #FFD780FF;\">Revelation: Uncreated Light</span>: <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> increases ATK by an additional 300 (which does not count toward this effect's ATK Bonus limit), while <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> decreases nearby opponents' Elemental RES based on the corresponding character's Elemental Type by 25%. This effect does not stack for the same Element.<br>Additionally, when Nicole unleashes her Elemental Skill <span style=\"color: #FFD780FF;\">Revelation: Uncreated Light</span>, nearby active party members will also gain a Shield of Blazing Light."
       },
       {
-        "name": "\"A Lamp by Your Side, A Light to Shine the Way\"",
-        "descHtml": "Increases the Level of <span style=\"color: #FFD780;\">Revelation: Uncreated Light</span> by 3.<br/>Maximum upgrade level is 15."
+        "name": "3. \"A Lamp by Your Side, A Light to Shine the Way\"",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780FF;\">Revelation: Uncreated Light</span> by 3.<br>Maximum upgrade level is 15."
       },
       {
-        "name": "\"Whether Left or Right, No Matter Which Way You Turn\"",
-        "descHtml": "When nearby party members have their <span style=\"color: #FFD780;\">Grace of Kenosis</span> upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>, Nicole also bestows them with the Pathfinder's Blessing effect for 20s. Each character can gain this effect once every 16s.<br/>The Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, and Elemental Burst DMG of characters with Pathfinder's Blessing is increased by 70% of Nicole's ATK. This effect will be removed once it has taken effect 8 times or when its duration is over.<br/>When multiple opponents are hit at the same time, the number of times Pathfinder's Blessing takes effect is based on the number of enemies hit. Each character's Pathfinder's Blessing is counted independently."
+        "name": "4. \"Whether Left or Right, No Matter Which Way You Turn\"",
+        "descHtml": "When nearby party members have their <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span>, Nicole also bestows upon them the Pathfinder's Blessing effect for 20s. Each character can gain this effect once every 16s.<br>The Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, and Elemental Burst DMG of characters with Pathfinder's Blessing is increased by 70% of Nicole's ATK. This effect will be removed once it has taken effect 8 times or when its duration is over.<br>When multiple opponents are hit at once, instances of Pathfinder's Blessing are consumed equal to the number of opponents hit. Each character's Pathfinder's Blessing is counted independently."
       },
       {
-        "name": "\"You Will Hear My Voice Beside You\"",
-        "descHtml": "Increases the Level of <span style=\"color: #FFD780;\">Revelation: Ladder of Divine Ascent</span> by 3.<br/>Maximum upgrade level is 15."
+        "name": "5. \"You Will Hear My Voice Beside You\"",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780FF;\">Revelation: Ladder of Divine Ascent</span> by 3.<br>Maximum upgrade level is 15."
       },
       {
-        "name": "\"This Is the Path, Walk It Without Delay\"",
-        "descHtml": "When Nicole's <span style=\"color: #FFD780;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>, all nearby party members' <span style=\"color: #FFD780;\">Grace of Kenosis</span> will also be upgraded to <span style=\"color: #FFD780;\">Guidance of Theosis</span>. Once upgraded, <span style=\"color: #FFD780;\">Guidance of Theosis</span> will no longer revert to <span style=\"color: #FFD780;\">Grace of Kenosis</span>.<br/>Additionally, DMG dealt by characters with <span style=\"color: #FFD780;\">Guidance of Theosis</span> will ignore 40% of opponents' DEF."
+        "name": "6. \"This Is the Path, Walk It Without Delay\"",
+        "descHtml": "When Nicole's <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> is upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span>, all nearby party members' <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> will also be upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span>. Once upgraded, <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> will no longer revert to <span style=\"color: #FFD780FF;\">Grace of Kenosis</span>.<br>Additionally, DMG dealt by characters with <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> will ignore 40% of opponents' DEF."
       }
     ],
     "glossary": [
       {
         "name": "Grace of Kenosis",
-        "descHtml": "After unleashing the Elemental Skill Revelation: Uncreated Light, Nicole bestows the following effect on all nearby party members: ATK is increased based on Nicole's ATK.<br/>After certain conditions are met, the Grace of Kenosis effect will be upgraded to Guidance of Theosis, further increasing ATK."
+        "descHtml": "After unleashing the Elemental Skill <span style=\"color: #FFD780FF;\">Revelation: Uncreated Light</span>, Nicole bestows the following effect on all nearby party members: ATK is increased based on Nicole's ATK.<br>After certain conditions are met, the <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> effect will be upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span>, further increasing ATK."
       },
       {
         "name": "Guidance of Theosis",
-        "descHtml": "Upgrading the Grace of Kenosis effect increases ATK by an additional 300.<br/>After unlocking the Passive Talent \"Methexis\" and meeting any of the following conditions, Grace of Kenosis will be upgraded to Guidance of Theosis for the remainder of its duration:<br/>· Another character under observation remains on the field for longer than 3s; or<br/>· Another character under observation is a Hexerei character.<br/><br/>Additionally, after unlocking the Passive Talent \"Philokalia,\" when a nearby active party member's Elemental DMG hits an opponent, Nicole's own Grace of Kenosis will be upgraded to Guidance of Theosis for 8s.<br/><br/>When characters other than Nicole who have Guidance of Theosis leave the field, their effect will revert to Grace of Kenosis."
+        "descHtml": "Upgrading the <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> effect increases ATK by an additional 300.<br>After unlocking the Ascension Talent \"Methexis\" and meeting any of the following observation conditions, <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> will be upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> for the remainder of its duration:<br>· Another character under observation remains on the field for longer than 3s; or<br>· Another character under observation is a Hexerei character.<br><br>Additionally, after unlocking the Ascension Talent \"Philokalia,\" when a nearby active party member's Elemental DMG hits an opponent, Nicole's own <span style=\"color: #FFD780FF;\">Grace of Kenosis</span> will be upgraded to <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> for 8s.<br><br>When characters other than Nicole who have <span style=\"color: #FFD780FF;\">Guidance of Theosis</span> leave the field, their effect will revert to <span style=\"color: #FFD780FF;\">Grace of Kenosis</span>."
       }
     ]
   },

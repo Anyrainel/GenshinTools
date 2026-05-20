@@ -654,7 +654,7 @@
     "constellations": [
       {
         "name": "1. 正绢六通",
-        "descHtml": "<span style=\"color: #FFD780FF;\">羽袖一触</span>的自动制御人形「袖」的攻击范围提升50%。<br>此外，如果队伍中存在千织以外的<span style=\"color: #FFE699FF;\">岩元素</span>角色，羽袖一触的突进结束时，还将触发以下效果：<br>·额外唤出一名袖。通过这种方式唤出的千织自己的袖，与通过岩元素创造物额外唤出的千织自己的袖至多同时存在一名；<br>·触发、突破天赋「锦上添花」，此效果需要解锁突破天赋「锦上添花」。"
+        "descHtml": "<span style=\"color: #FFD780FF;\">羽袖一触</span>的自动制御人形「袖」的攻击范围提升50%。<br>此外，如果队伍中存在千织以外的<span style=\"color: #FFE699FF;\">岩元素</span>角色，羽袖一触的突进结束时，还将触发以下效果：<br>·额外唤出一名袖。通过这种方式唤出的千织自己的袖，与通过岩元素创造物额外唤出的千织自己的袖至多同时存在一名；<br>·触发突破天赋「锦上添花」，此效果需要解锁突破天赋「锦上添花」。"
       },
       {
         "name": "2. 落染五色",
@@ -2867,6 +2867,118 @@
       }
     ]
   },
+  "lohen": {
+    "id": "10000129",
+    "name": "洛恩",
+    "skills": [
+      {
+        "name": "A. 西风枪术·破誓",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续攻击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，进行向前的突刺攻击。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
+        "details": [
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}*3"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "重击伤害", "template": "{param7:F1P}*2"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. 奇兵诡出",
+        "descHtml": "寻觅敌人的破绽，切换至<span style=\"color: #FFD780FF;\">奇谋</span>状态。在这种状态下：<br>·洛恩可以主动积攒<span style=\"color: #FFD780FF;\">欢悦</span>，从而施放特殊的元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>；<br>·队伍中附近的其他角色可以为洛恩积攒<span style=\"color: #FFD780FF;\">争胜</span>，来提高<span style=\"color: #FFD780FF;\">镂骨彻心</span>的伤害。<br>在<span style=\"color: #FFD780FF;\">奇谋</span>状态下至多施放3次<span style=\"color: #FFD780FF;\">镂骨彻心</span>，之后无法获得<span style=\"color: #FFD780FF;\">欢悦</span>。<br><br><i>「骑士道？哈，那倒确实是绝佳的诱饵。当敌人还幻想着堂堂正正一决胜负时，绝不会想到等待他们的是怎样的『惊喜』。」</i>",
+        "details": [
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}*3"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}+{param6:F1P}"},
+          {"label": "重击伤害", "template": "{param7:F1P}*2"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"},
+          {"label": "奇谋持续时间", "template": "{param12:F1}秒"},
+          {"label": "镂骨彻心伤害", "template": "{param17:F1P}*4"},
+          {"label": "每点争胜提升原本伤害", "template": "{param18:F2P}"},
+          {"label": "冷却时间", "template": "{param19:F1}秒"}
+        ]
+      },
+      {
+        "name": "Q. 裁罚遂成",
+        "descHtml": "向前方快速连续斩击，消耗所有<span style=\"color: #FFD780FF;\">争胜</span>，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并依据消耗的<span style=\"color: #FFD780FF;\">争胜</span>，提升本次伤害。施放时，若洛恩处于<span style=\"color: #FFD780FF;\">奇谋</span>状态下，则本次<span style=\"color: #FFD780FF;\">奇谋</span>状态的持续时间还会延长1.65秒。<br><br><i>「这么快就全说了？我都还没尽兴呢。」</i>",
+        "details": [
+          {"label": "技能伤害", "template": "{param1:F1P}*6"},
+          {"label": "每点争胜提升原本伤害", "template": "{param2:F2P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "元素能量", "template": "{param4:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "禁问的训诫",
+        "descHtml": "在<span style=\"color: #FFD780FF;\">奇谋</span>状态下，队伍中附近的其他角色通过造成伤害为洛恩积攒<span style=\"color: #FFD780FF;\">争胜</span>时，若本次伤害不低于洛恩基础攻击力的3000%，则还会为洛恩额外积攒60点<span style=\"color: #FFD780FF;\">争胜</span>。"
+      },
+      {
+        "name": "戏言的杰作",
+        "descHtml": "在<span style=\"color: #FFD780FF;\">奇谋</span>状态下，队伍中附近的其他角色对敌人触发<span style=\"color: #99FFFFFF;\">冰元素相关反应</span>后的8秒内，该角色的攻击力提升15%，洛恩的攻击力提升15%。"
+      },
+      {
+        "name": "兴尽且去来",
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">奇兵诡出</span>后，洛恩还会获得9秒的「乘兴」效果：持续期间，元素战技<span style=\"color: #FFD780FF;\">奇兵诡出</span>的技能等级提高1级。<br>施放元素战技时，如果队伍中其他角色的普通攻击、元素战技或元素爆发中，任一技能等级不低于洛恩的元素战技的技能等级，则本次「乘兴」效果的持续时间额外延长6秒。<br>每18秒至多获得一次「乘兴」效果。"
+      },
+      {
+        "name": "魔女的前夜礼·不愈之刺",
+        "descHtml": "完成<span style=\"color: #FFD780FF;\">魔女的课业·诸敌之题</span>后，洛恩将成为<span style=\"color: #FFD780FF;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780FF;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br><br><span style=\"color: #FFD780FF;\">魔导·秘仪</span><br>特殊元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>命中敌人或施放元素爆发<span style=\"color: #FFD780FF;\">裁罚遂成</span>时，若<span style=\"color: #FFD780FF;\">争胜</span>至少为上限的50%，则洛恩的普通攻击与重击造成的伤害提升40%，持续6秒。"
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. 往昔微风，载满悲歌",
+        "descHtml": "洛恩的<span style=\"color: #FFD780FF;\">争胜</span>上限提升至原来的300%。<br>此外，处于<span style=\"color: #FFD780FF;\">奇谋</span>状态下时，队伍中附近的其他角色通过造成伤害为洛恩积攒的<span style=\"color: #FFD780FF;\">争胜</span>提升至原来的500%。"
+      },
+      {
+        "name": "2. 凡飞翔者，皆为靶标",
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">奇谋</span>状态下时，特殊元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>命中敌人或施放元素爆发<span style=\"color: #FFD780FF;\">裁罚遂成</span>后的4秒内，洛恩将获得「破邪之刃」效果：在奇谋状态下，洛恩的下一次普通攻击或重击命中敌人时，将会额外追加进行一次攻击，造成相当于洛恩攻击力500%的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并使队伍中附近的其他角色的元素精通提升200点，持续8秒，每4秒至多获得一次「破邪之刃」效果。"
+      },
+      {
+        "name": "3. 唯有锋刃，能愈此伤",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">奇兵诡出</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "4. 爱若流光，逝如欢歌",
+        "descHtml": "洛恩在<span style=\"color: #FFD780FF;\">奇谋</span>状态下施放元素爆发<span style=\"color: #FFD780FF;\">裁罚遂成</span>时，还会将洛恩的<span style=\"color: #FFD780FF;\">争胜</span>积攒至上限，从而使本次元素爆发获得最高的伤害提升效果。<br><br>此外，洛恩切换至<span style=\"color: #FFD780FF;\">奇谋</span>状态时，若元素能量：<br>·未充满：为洛恩恢复15点元素能量；<br>·已充满：接下来的15秒内，施放元素爆发<span style=\"color: #FFD780FF;\">裁罚遂成</span>后，为洛恩恢复15点元素能量。"
+      },
+      {
+        "name": "5. 无可窥探，无可质疑",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">裁罚遂成</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "6. 身沦魂销，唯余欢悦",
+        "descHtml": "施放特殊元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>命中敌人或在<span style=\"color: #FFD780FF;\">奇谋</span>状态下施放元素爆发<span style=\"color: #FFD780FF;\">裁罚遂成</span>不会消耗<span style=\"color: #FFD780FF;\">争胜</span>，并会使洛恩的<span style=\"color: #FFD780FF;\">欢悦</span>恢复至上限，且在下一次施放特殊元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>命中敌人时，使本次<span style=\"color: #FFD780FF;\">奇谋</span>状态的持续时间延长1.25秒，该效果每7秒至多触发一次。<br>此外，上述所有伤害的暴击伤害都将提升175%，且本次<span style=\"color: #FFD780FF;\">奇谋</span>期间，洛恩施放<span style=\"color: #FFD780FF;\">镂骨彻心</span>的最大次数增加2次。"
+      }
+    ],
+    "glossary": [
+      {
+        "name": "奇谋",
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">奇兵诡出</span>后，洛恩将会切换至该状态。奇谋状态具有如下特性：<br>·洛恩的普通攻击、重击与下落攻击将转为造成无法被附魔覆盖的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>；<br>·洛恩的普通攻击或重击命中敌人时，会为洛恩积攒特殊的<span style=\"color: #FFD780FF;\">欢悦</span>，用于施放特殊元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>；在<span style=\"color: #FFD780FF;\">奇谋</span>状态下至多施放3次<span style=\"color: #FFD780FF;\">镂骨彻心</span>，之后无法获得<span style=\"color: #FFD780FF;\">欢悦</span>。<br>·队伍中附近的其他角色造成伤害时，会为洛恩积攒特殊的<span style=\"color: #FFD780FF;\">争胜</span>，用于提升特殊元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>造成的伤害；<br>·洛恩退场时，奇谋状态将会解除；奇谋状态解除时，<span style=\"color: #FFD780FF;\">欢悦</span>与<span style=\"color: #FFD780FF;\">争胜</span>也会清除。"
+      },
+      {
+        "name": "镂骨彻心",
+        "descHtml": "洛恩的<span style=\"color: #FFD780FF;\">欢悦</span>积攒至上限后，可以施放的特殊元素战技。<br>命中敌人后消耗所有<span style=\"color: #FFD780FF;\">欢悦</span>与<span style=\"color: #FFD780FF;\">争胜</span>，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并依据消耗的<span style=\"color: #FFD780FF;\">争胜</span>，提升本次伤害。"
+      },
+      {
+        "name": "欢悦",
+        "descHtml": "在奇谋状态下，洛恩的普通攻击或重击命中敌人时，会获得17点<span style=\"color: #FFD780FF;\">欢悦</span>，上限为100点。<br>每0.1秒至多获得一次<span style=\"color: #FFD780FF;\">欢悦</span>。<span style=\"color: #FFD780FF;\">欢悦</span>积攒至上限后，洛恩的元素战技<span style=\"color: #FFD780FF;\">奇兵诡出</span>将会被替换为特殊的元素战技<span style=\"color: #FFD780FF;\">镂骨彻心</span>。"
+      },
+      {
+        "name": "争胜",
+        "descHtml": "在奇谋状态下，队伍中附近的其他角色造成伤害时，会为洛恩提供的特殊资源，上限为100点。<br>奇谋状态持续期间，队伍中附近的其他角色造成伤害时，若本次伤害不低于洛恩基础攻击力的1000%，将会为洛恩积攒20点<span style=\"color: #FFD780FF;\">争胜</span>，否则会为洛恩积攒1点<span style=\"color: #FFD780FF;\">争胜</span>。<br>同一个角色每0.1秒至多为洛恩积攒一次<span style=\"color: #FFD780FF;\">争胜</span>。"
+      }
+    ]
+  },
   "lyney": {
     "id": "10000084",
     "name": "林尼",
@@ -4390,100 +4502,100 @@
     "glossary": null
   },
   "nicole": {
-    "id": "131",
+    "id": "10000131",
     "name": "尼可",
     "skills": [
       {
         "name": "A. 托喻",
-        "descHtml": "<span style=\"color: #FFD780;\">普通攻击</span><br/>以原初的言语降下敕命，进行至多三段的攻击，造成<span style=\"color: #FF9999;\">火元素伤害</span>。<br/><br/><span style=\"color: #FFD780;\">重击</span><br/>消耗一定体力，短暂咏唱后，对前方区域造成<span style=\"color: #FF9999;\">火元素范围伤害</span>。<br/><br/><span style=\"color: #FFD780;\">下落攻击</span><br/>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FF9999;\">火元素范围伤害</span>。",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以原初的言语降下敕命，进行至多三段的攻击，造成<span style=\"color: #FF9999FF;\">火元素伤害</span>。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，短暂咏唱后，对前方区域造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>。",
         "details": [
-          {"label": "一段伤害", "template": "{param1:F2P}"},
-          {"label": "二段伤害", "template": "{param2:F2P}"},
-          {"label": "三段伤害", "template": "{param3:F2P}"},
-          {"label": "重击伤害", "template": "{param4:F2P}"},
-          {"label": "重击体力消耗", "template": "50点"},
-          {"label": "下坠期间伤害", "template": "{param5:F2P}"},
-          {"label": "低空/高空坠地冲击伤害", "template": "{param6:F2P}/{param7:F2P}"}
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:F1P}"},
+          {"label": "重击体力消耗", "template": "{param5:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param6:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param7:F1P}/{param8:F1P}"}
         ]
       },
       {
         "name": "E. 圣言默示·未现之光",
-        "descHtml": "重现旧日代行高天神权的片影，为队伍中附近的所有角色赋予<span style=\"color: #FFD780;\">虚己之赐</span>效果，提升这些角色的攻击力，造成<span style=\"color: #FF9999;\">火元素范围伤害</span>，并展开炽光护盾。<br/>炽光护盾的伤害吸收量受益于尼可的攻击力，对<span style=\"color: #FF9999;\">火元素伤害</span>有250%的吸收效果。<br/><br/><br/><i>「『光』非受造之物，却得以蒙受眷宠，受雕琢成为人理的事象。唯有非受造者，才能获准触碰永恒的面影。正因如此，未书写的词句才是最有价值的。」<br/>「怎么样，这个不亲自动笔的借口找得很好吧？是不是特别像那种虽然没人能听懂但还是会让人觉得很有道理的话？」</i>",
+        "descHtml": "重现旧日代行高天神权的片影，为队伍中附近的所有角色赋予<span style=\"color: #FFD780FF;\">虚己之赐</span>效果，提升这些角色的攻击力，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>，并展开炽光护盾。<br>炽光护盾的伤害吸收量受益于尼可的攻击力，对<span style=\"color: #FF9999FF;\">火元素伤害</span>有250%的吸收效果。",
         "details": [
           {"label": "技能伤害", "template": "{param1:F1P}"},
-          {"label": "护盾吸收量", "template": "{param2:F2P}攻击力+{param3:I}"},
-          {"label": "护盾持续时间", "template": "20秒"},
-          {"label": "虚己之赐攻击力加成比例", "template": "{param4:F2P}攻击力"},
-          {"label": "虚己之赐攻击力加成上限", "template": "{param5:I}点"},
-          {"label": "虚己之赐持续时间", "template": "20秒"},
-          {"label": "冷却时间", "template": "16秒"}
+          {"label": "护盾吸收量", "template": "{param2:F1P}攻击力+{param3:I}"},
+          {"label": "护盾持续时间", "template": "{param4:F1}秒"},
+          {"label": "虚己之赐攻击力加成比例", "template": "{param5:F2P}攻击力"},
+          {"label": "虚己之赐攻击力加成上限", "template": "{param6:F1}点"},
+          {"label": "虚己之赐持续时间", "template": "{param7:F1}秒"},
+          {"label": "冷却时间", "template": "{param8:F1}秒"}
         ]
       },
       {
         "name": "Q. 圣言默示·天路历程",
-        "descHtml": "以天光的金缕，纺出「锚定」的命途，造成<span style=\"color: #FF9999;\">火元素范围伤害</span>，并切换至「默观颂祷」模式。<br/>尼可处于该模式下时，队伍中附近的当前场上角色的攻击命中敌人时，将会召唤出「奥迹造影」，对敌人发起协同攻击，依据该角色的元素类型，造成对应的元素范围伤害。该伤害受益于该角色的攻击力，并视为由该角色造成的伤害。<br/>该效果每3秒至多触发一次，尼可每次切换至「默观颂祷」模式后，至多触发4次。<br/><br/>此外，魔导角色的「奥迹造影」在外观上似乎会有所不同…<br/><br/><br/><i>「嗯？你问神圣规划的原理？哎呀，很简单，不是有一种说法嘛，『神成为人，是为让人成为神；神像人那样行走，是为人能像神那样行走』…」<br/>「啊，虽然说出这话的文明已经消亡了，哪怕提起它的名字也会出事，不过这句话是直接说给你听的，应该没什么问题吧？嗯，应该没问题，要是有问题的话就已经出问题了。咳咳，总而言之呢，想要表达的意思就是，高天上的那一位——」<br/>「——不对，这个好像真不能说。你好，这个问题我暂时无法回答，让我们换个话题再聊聊吧。」</i>",
+        "descHtml": "以天光的金缕，纺出「锚定」的命途，造成<span style=\"color: #FF9999FF;\">火元素范围伤害</span>，并切换至「默观颂祷」模式。<br>尼可处于该模式下时，队伍中附近的当前场上角色的攻击命中敌人时，将会召唤出「奥迹造影」，对敌人发起协同攻击，依据该角色的元素类型，造成对应的元素范围伤害。该伤害受益于该角色的攻击力，并视为由该角色造成的伤害。<br>该效果每3秒至多触发一次，尼可每次切换至「默观颂祷」模式后，至多触发4次。<br><br>此外，魔导角色的「奥迹造影」在外观上似乎会有所不同…",
         "details": [
           {"label": "技能伤害", "template": "{param1:F1P}"},
-          {"label": "奥迹造影伤害", "template": "{param2:P}对应角色攻击力"},
-          {"label": "奥迹造影攻击次数", "template": "4次"},
-          {"label": "默观颂祷持续时间", "template": "20秒"},
-          {"label": "冷却时间", "template": "15秒"},
-          {"label": "元素能量", "template": "60"}
+          {"label": "奥迹造影伤害", "template": "{param2:F1P}对应角色攻击力"},
+          {"label": "奥迹造影攻击次数", "template": "{param3:I}次"},
+          {"label": "默观颂祷持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"},
+          {"label": "元素能量", "template": "{param6:I}"}
         ]
       }
     ],
     "passives": [
       {
         "name": "分有",
-        "descHtml": "施放元素战技<span style=\"color: #FFD780;\">圣言默示·未现之光</span>后的20秒内，尼可将持续「观测」队伍中自己的当前场上其他角色。受观测的角色持续处于场上3秒后，其拥有的<span style=\"color: #FFD780;\">虚己之赐</span>效果将会升变为<span style=\"color: #FFD780;\">圣祝之引</span>，使其额外提升300点攻击力；若受观测的角色为魔导角色，则<span style=\"color: #FFD780;\">虚己之赐</span>效果将会直接升变为<span style=\"color: #FFD780;\">圣祝之引</span>。<br/>除尼可外，其他角色拥有的<span style=\"color: #FFD780;\">圣祝之引</span>将在退场时还原为<span style=\"color: #FFD780;\">虚己之赐</span>。"
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">圣言默示·未现之光</span>后的20秒内，尼可将持续「观测」队伍中自己的当前场上其他角色。受观测的角色持续处于场上3秒后，其拥有的<span style=\"color: #FFD780FF;\">虚己之赐</span>效果将会升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>，使其额外提升300点攻击力；若受观测的角色为魔导角色，则<span style=\"color: #FFD780FF;\">虚己之赐</span>效果将会直接升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>。<br>除尼可外，其他角色拥有的<span style=\"color: #FFD780FF;\">圣祝之引</span>将在退场时还原为<span style=\"color: #FFD780FF;\">虚己之赐</span>。"
       },
       {
         "name": "慕善",
-        "descHtml": "队伍中附近的当前场上角色的元素伤害命中敌人后，尼可自己拥有的<span style=\"color: #FFD780;\">虚己之赐</span>将会升变为<span style=\"color: #FFD780;\">圣祝之引</span>，持续8秒。"
+        "descHtml": "队伍中附近的当前场上角色的元素伤害命中敌人后，尼可自己拥有的<span style=\"color: #FFD780FF;\">虚己之赐</span>将会升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>，持续8秒。"
       },
       {
         "name": "静念",
-        "descHtml": "在提瓦特，不处于战斗状态下时，若已获得当前区域的寻宝罗盘，则尼可的重击将会转而施放「御使之引」：呼唤附近的仙灵指引道路，触发等同于当前区域寻宝罗盘的效果。<br/>该效果有5秒的冷却时间，且在秘境、征讨领域、深境螺旋中无效。"
+        "descHtml": "在提瓦特，不处于战斗状态下时，若已获得当前区域的寻宝罗盘，则尼可的重击将会转而施放「御使之引」：呼唤附近的仙灵指引道路，触发等同于当前区域寻宝罗盘的效果。<br>该效果有5秒的冷却时间，且在秘境、征讨领域、深境螺旋中无效。"
       },
       {
         "name": "魔女的前夜礼·光自暗来",
-        "descHtml": "完成<span style=\"color: #FFD780;\">魔女的课业·导引之职…？</span>后，尼可将成为<span style=\"color: #FFD780;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br/><br/><span style=\"color: #FFD780;\">魔导·秘仪</span><br/>魔导角色的<span style=\"color: #FFD780;\">奥迹造影</span>造成的伤害提升，提升值相当于尼可攻击力的300%。"
+        "descHtml": "完成<span style=\"color: #FFD780FF;\">魔女的课业·导引之职…？</span>后，尼可将成为<span style=\"color: #FFD780FF;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780FF;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br><br><span style=\"color: #FFD780FF;\">魔导·秘仪</span><br>魔导角色的<span style=\"color: #FFD780FF;\">奥迹造影</span>造成的伤害提升，提升值相当于尼可攻击力的300%。"
       }
     ],
     "constellations": [
       {
-        "name": "「不要惧怕，蒙眷爱的人之子呀」",
-        "descHtml": "队伍中自己的当前场上角色攻击命中敌人时，将会额外召唤出特殊的「奥迹造影·合一」，对敌人进行协同攻击，依据该角色的元素类型，造成对应元素范围伤害，该伤害相当于该角色攻击力的600%，并视为由该角色造成的伤害。<br/>该效果每6秒至多触发一次。"
+        "name": "1. 「不要惧怕，蒙眷爱的人之子呀」",
+        "descHtml": "队伍中自己的当前场上角色攻击命中敌人时，将会额外召唤出特殊的「奥迹造影·合一」，对敌人进行协同攻击，依据该角色的元素类型，造成对应元素范围伤害，该伤害相当于该角色攻击力的600%，并视为由该角色造成的伤害。<br>该效果每6秒至多触发一次。"
       },
       {
-        "name": "「我要教导你，指引你应走的路」",
-        "descHtml": "元素战技<span style=\"color: #FFD780;\">圣言默示·未现之光</span>的效果获得强化：<span style=\"color: #FFD780;\">虚己之赐</span>还会额外提升300点攻击力（不计入该效果的攻击力加成上限），<span style=\"color: #FFD780;\">圣祝之引</span>还会依据角色的元素类型，使附近敌人的对应元素抗性降低25%，同元素类型的元素抗性降低效果不能叠加。<br/>此外，尼可施放元素战技<span style=\"color: #FFD780;\">圣言默示·未现之光</span>时，也会为附近的当前场上角色赋予炽光护盾。"
+        "name": "2. 「我要教导你，指引你应走的路」",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">圣言默示·未现之光</span>的效果获得强化：<span style=\"color: #FFD780FF;\">虚己之赐</span>还会额外提升300点攻击力（不计入该效果的攻击力加成上限），<span style=\"color: #FFD780FF;\">圣祝之引</span>还会依据角色的元素类型，使附近敌人的对应元素抗性降低25%，同元素类型的元素抗性降低效果不能叠加。<br>此外，尼可施放元素战技<span style=\"color: #FFD780FF;\">圣言默示·未现之光</span>时，也会为附近的当前场上角色赋予炽光护盾。"
       },
       {
-        "name": "「为你身边的灯，为你前方的光」",
-        "descHtml": "元素战技<span style=\"color: #FFD780;\">圣言默示·未现之光</span>的技能等级提高3级。<br/>至多提升至15级。"
+        "name": "3. 「为你身边的灯，为你前方的光」",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">圣言默示·未现之光</span>的技能等级提高3级。<br>至多提升至15级。"
       },
       {
-        "name": "「向左或向右，无论你行往何方」",
-        "descHtml": "队伍中附近的角色拥有的<span style=\"color: #FFD780;\">虚己之赐</span>升变为<span style=\"color: #FFD780;\">圣祝之引</span>时，尼可还会为其赋予「先导之佑」效果，持续20秒，每名角色每16秒至多获得一次该效果。<br/>拥有「先导之佑」的角色的普通攻击、重击、下落攻击、元素战技与元素爆发造成的伤害提升，提升值相当于尼可攻击力的70%。该效果将在生效8次或持续时间结束时解除。<br/>同时命中多名敌人时，会依据命中敌人的数量消耗生效次数；队伍中具有「先导之佑」的角色，其生效次数单独计算。"
+        "name": "4. 「向左或向右，无论你行往何方」",
+        "descHtml": "队伍中附近的角色拥有的<span style=\"color: #FFD780FF;\">虚己之赐</span>升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>时，尼可还会为其赋予「先导之佑」效果，持续20秒，每名角色每16秒至多获得一次该效果。<br>拥有「先导之佑」的角色的普通攻击、重击、下落攻击、元素战技与元素爆发造成的伤害提升，提升值相当于尼可攻击力的70%。该效果将在生效8次或持续时间结束时解除。<br>同时命中多名敌人时，会依据命中敌人的数量消耗生效次数；队伍中具有「先导之佑」的角色，其生效次数单独计算。"
       },
       {
-        "name": "「我就要有话对你说，在你身旁」",
-        "descHtml": "元素爆发<span style=\"color: #FFD780;\">圣言默示·天路历程</span>的技能等级提高3级。<br/>至多提升至15级。"
+        "name": "5. 「我就要有话对你说，在你身旁」",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">圣言默示·天路历程</span>的技能等级提高3级。<br>至多提升至15级。"
       },
       {
-        "name": "「这便是正确的道路，莫要彷徨」",
-        "descHtml": "尼可拥有的<span style=\"color: #FFD780;\">虚己之赐</span>升变为<span style=\"color: #FFD780;\">圣祝之引</span>时，队伍中附近的所有角色拥有的<span style=\"color: #FFD780;\">虚己之赐</span>将会一同升变为<span style=\"color: #FFD780;\">圣祝之引</span>。所有升变后的<span style=\"color: #FFD780;\">圣祝之引</span>不再会还原为<span style=\"color: #FFD780;\">虚己之赐</span>。<br/>此外，拥有<span style=\"color: #FFD780;\">圣祝之引</span>的角色造成的伤害将无视敌人40%的防御力。"
+        "name": "6. 「这便是正确的道路，莫要彷徨」",
+        "descHtml": "尼可拥有的<span style=\"color: #FFD780FF;\">虚己之赐</span>升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>时，队伍中附近的所有角色拥有的<span style=\"color: #FFD780FF;\">虚己之赐</span>将会一同升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>。所有升变后的<span style=\"color: #FFD780FF;\">圣祝之引</span>不再会还原为<span style=\"color: #FFD780FF;\">虚己之赐</span>。<br>此外，拥有<span style=\"color: #FFD780FF;\">圣祝之引</span>的角色造成的伤害将无视敌人40%的防御力。"
       }
     ],
     "glossary": [
       {
         "name": "虚己之赐",
-        "descHtml": "施放元素战技圣言默示·未现之光后，尼可会为队伍中附近的所有角色赋予该效果：基于尼可的攻击力，提升攻击力。<br/>满足特定条件后，虚己之赐效果将会升变为圣祝之引，进一步提升攻击力。"
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">圣言默示·未现之光</span>后，尼可会为队伍中附近的所有角色赋予该效果：基于尼可的攻击力，提升攻击力。<br>满足特定条件后，<span style=\"color: #FFD780FF;\">虚己之赐</span>效果将会升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>，进一步提升攻击力。"
       },
       {
         "name": "圣祝之引",
-        "descHtml": "虚己之赐升变后的效果，能额外提升300点攻击力。<br/>解锁固有天赋「分有」并满足其中的任意「观测」条件后，虚己之赐将会在剩余持续时间内升变为圣祝之引：<br/>·受观测的其他角色持续处于场上超过3秒；<br/>·受观测的其他角色为魔导角色。<br/><br/>此外，解锁固有天赋「慕善」后，队伍中附近的当前场上角色的元素伤害命中敌人后，尼可自己拥有的虚己之赐也会升变为圣祝之引，持续8秒。<br/><br/>除尼可外，其他角色拥有的圣祝之引将在退场时还原为虚己之赐。"
+        "descHtml": "<span style=\"color: #FFD780FF;\">虚己之赐</span>升变后的效果，能额外提升300点攻击力。<br>解锁突破天赋「分有」并满足其中的任意「观测」条件后，<span style=\"color: #FFD780FF;\">虚己之赐</span>将会在剩余持续时间内升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>：<br>·受观测的其他角色持续处于场上超过3秒；<br>·受观测的其他角色为魔导角色。<br><br>此外，解锁突破天赋「慕善」后，队伍中附近的当前场上角色的元素伤害命中敌人后，尼可自己拥有的<span style=\"color: #FFD780FF;\">虚己之赐</span>也会升变为<span style=\"color: #FFD780FF;\">圣祝之引</span>，持续8秒。<br><br>除尼可外，其他角色拥有的<span style=\"color: #FFD780FF;\">圣祝之引</span>将在退场时还原为<span style=\"color: #FFD780FF;\">虚己之赐</span>。"
       }
     ]
   },

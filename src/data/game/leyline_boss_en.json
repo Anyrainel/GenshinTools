@@ -1298,6 +1298,132 @@
           "name": "Radiant Moongecko"
         }
       ]
+    },
+    {
+      "id": 10091,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1009041,
+          "name": "Battle-Hardened Glacial Wolf: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1009051,
+          "name": "Battle-Hardened Glacial Wolf: Resilient Soul"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1009061,
+          "name": "Battle-Hardened Glacial Wolf: Glacial Soul"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "{SPRITE_PRESET#11028} {SPRITE_PRESET#11024} reactions have an advantage"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Ancestral Wolf Spirit",
+          "short": "During the combat, the powerful opponent will summon an \"Ancestral Wolf Spirit.\" While the spirit is on the field, the opponent's <color=#FFD780FF>all Elemental and Physical RES is significantly increased</color>. The \"Ancestral Wolf Spirit\" is protected by a special Cryo Ward that can only be broken by <color=#FFD780FF>Pyro or Electro Swirl Reactions</color>. Once the Ward is shattered, the spirit will vanish, leaving the opponent temporarily paralyzed.",
+          "detail": "During the combat, the powerful opponent will summon an \"Ancestral Wolf Spirit\" to fight by its side. While blessed by the spirit, the opponent's <color=#FFD780FF>all Elemental and Physical RES are significantly increased</color>. As a spiritual entity, the \"Ancestral Wolf Spirit\" is protected by a special Cryo Ward that can only be broken by <color=#FFD780FF>Pyro or Electro Swirl Reactions</color>. Once the Ward is shattered, the spirit will vanish, leaving the opponent temporarily paralyzed."
+        },
+        {
+          "tiers": [4],
+          "title": "Ancestral Wolf Spirit",
+          "short": "At the start of the combat, the powerful opponent will summon an \"Ancestral Wolf Spirit.\" While the spirit is on the field, the opponent's <color=#FFD780FF>all Elemental and Physical RES is significantly increased</color>. The \"Ancestral Wolf Spirit\" is protected by a special Cryo Ward that can only be broken by <color=#FFD780FF>Pyro or Electro Swirl Reactions</color>. Once the Ward is shattered, the spirit will vanish, leaving the opponent temporarily paralyzed.",
+          "detail": "At the start of the combat, the powerful opponent will summon an \"Ancestral Wolf Spirit\" to fight by its side. While blessed by the spirit, the opponent's <color=#FFD780FF>all Elemental and Physical RES are significantly increased</color>. As a spiritual entity, the \"Ancestral Wolf Spirit\" is protected by a special Cryo Ward that can only be broken by <color=#FFD780FF>Pyro or Electro Swirl Reactions</color>. Once the Ward is shattered, the spirit will vanish, leaving the opponent temporarily paralyzed."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Ancestral Wolf Spirit: Manifestation",
+          "short": "At the start of the combat, the powerful opponent will summon an \"Ancestral Wolf Spirit.\" While the spirit is on the field, the opponent <color=#FFD780FF>is invulnerable to all DMG</color>. The \"Ancestral Wolf Spirit\" is protected by a special Cryo Ward that can only be broken by <color=#FFD780FF>Pyro or Electro Swirl Reactions</color>. Once the Ward is shattered, the spirit will vanish, leaving the opponent temporarily paralyzed and dealing backlash DMG.",
+          "detail": "At the start of the combat, the powerful opponent will summon an \"Ancestral Wolf Spirit\" to fight by its side. Affected by the Ley Line disturbances, the opponent <color=#FFD780FF>is invulnerable to all DMG while blessed by the spirit</color>. As a spiritual entity, the \"Ancestral Wolf Spirit\" is protected by a special Cryo Ward that can only be broken by <color=#FFD780FF>Pyro or Electro Swirl Reactions</color>. Once the Ward is shattered, the spirit will vanish, leaving the opponent temporarily paralyzed and dealing massive backlash DMG. The more DMG the Ward absorbs while it is active, the greater the backlash DMG will be; furthermore, <color=#FFD780FF>Pyro and Anemo DMG</color> will further increase this backlash DMG."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 63005,
+          "name": "Battle-Hardened Glacial Wolf"
+        }
+      ]
+    },
+    {
+      "id": 10093,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1009043,
+          "name": "The Open-Eyed: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1009053,
+          "name": "The Open-Eyed: Scorn"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1009063,
+          "name": "The Open-Eyed: Overbearing Contempt"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "{SPRITE_PRESET#11027} {SPRITE_PRESET#11035} reactions have an advantage"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Supreme Overseer",
+          "short": "During combat, the Open-Eyed will enter the monitoring state: For a set duration, it tracks the number of times it takes <color=#FFD780FF>Pyro/Hydro/Electro/Cryo</color> damage. When the number of hits from any one element reaches 3, it will exit this state and <color=#FFD780FF>record that element as a monitored target</color>.",
+          "detail": "During combat, the Open-Eyed will enter the \"Supreme Overseer\" state. While in this state, it tracks the number of times it takes <color=#FFD780FF>Pyro/Hydro/Electro/Cryo</color> damage. When the number of hits from any one element reaches 3, it will exit this state and <color=#FFD780FF>record that element as a monitored target</color>. If no element is successfully monitored, the record will remain empty, and it will instead deal a single instance of Geo DMG. After the first monitoring state ends, the enemy will re-enter this state again after a set interval. During the second monitoring phase, elements that have already been recorded will require a significantly higher number of hits to be monitored again."
+        },
+        {
+          "tiers": [1, 2, 3],
+          "title": "Phenomena's Delirium",
+          "short": "After the first monitoring state ends, the enemy will re-enter this state after a set interval. During the second monitoring phase, elements that have already been recorded will require a greater number of hits to be monitored again.",
+          "detail": "After completing two rounds of Elemental Monitoring, the Open-Eyed will take to the air and begin preparing \"Phenomena's Delirium.\" It will release the previously recorded elements and summon two corresponding Active Elemental Stars. If no elements were recorded, it will instead summon Inert Elemental Stars with <color=#FFD780FF>high resistance to all elements and Physical DMG</color>. When an Active Elemental Star is destroyed, it deals a large amount of damage to the enemy based on the recorded element. If an Inert Elemental Star is destroyed, it instead deals Geo DMG to the enemy. <color=#D3BC8EFF>Destroy all Elemental Stars</color> to interrupt the preparation of \"Phenomena's Delirium.\" If both stars are not destroyed within the time limit, they will explode, dealing massive AoE damage."
+        },
+        {
+          "tiers": [4],
+          "title": "Supreme Overseer",
+          "short": "When combat begins, the Open-Eyed will enter the monitoring state: For a set duration, it tracks the number of times it takes <color=#FFD780FF>Pyro/Hydro/Electro/Cryo</color> damage. When the number of hits from any one element reaches 3, it will exit this state and <color=#FFD780FF>record that element as a monitored target</color>.",
+          "detail": "When combat begins, the Open-Eyed will enter the \"Supreme Overseer\" state. While in this state, it tracks the number of times it takes <color=#FFD780FF>Pyro/Hydro/Electro/Cryo</color> damage. When the number of hits from any one element reaches 3, it will exit this state and <color=#FFD780FF>record that element as a monitored target</color>. If no element is successfully monitored, the record will remain empty, and it will instead deal a single instance of Geo DMG. After the first monitoring state ends, the enemy will re-enter this state after a set interval. During the second monitoring phase, elements that have already been recorded will require a greater number of hits to be monitored again."
+        },
+        {
+          "tiers": [4],
+          "title": "Phenomena's Delirium",
+          "short": "After the first monitoring state ends, the enemy will re-enter this state after a set interval. During the second monitoring phase, elements that have already been recorded will require more hits to be monitored again.",
+          "detail": "After completing two rounds of Elemental Monitoring, the Open-Eyed will take to the air and begin preparing \"Phenomena's Delirium.\" It will release the previously recorded elements and summon two corresponding Active Elemental Stars. If no elements were recorded, it will instead summon Inert Elemental Stars with <color=#FFD780FF>high resistance to all elements and Physical DMG</color>. If the enemy summons two Active Elemental Stars of different elements, both stars will become easier to destroy. When an Active Elemental Star is destroyed, it deals a large amount of damage to the enemy based on the recorded element. If an Inert Elemental Star is destroyed, it instead deals Geo DMG to the enemy. <color=#D3BC8EFF>Destroy all Elemental Stars</color> to interrupt the preparation of \"Phenomena's Delirium.\" If both stars are not destroyed within the time limit, they will explode, dealing massive AoE damage."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Oversight of Vigil",
+          "short": "When combat begins, the Open-Eyed will enter the monitoring state: It tracks the number of times it takes <color=#FFD780FF>Pyro/Hydro/Electro/Cryo</color> damage. When the number of hits from any one element reaches 5, it will exit this state and <color=#FFD780FF>record that element as a monitored target</color>. Due to the effects of the Ley Line disturbance, the Open-Eyed will have increased Elemental and Physical RES in its monitoring state.",
+          "detail": "When combat begins, the Open-Eyed will enter the \"Oversight of Vigil\" state. While in this state, it tracks the number of times it takes <color=#FFD780FF>Pyro/Hydro/Electro/Cryo</color> DMG. When the number of hits from any one element reaches 5, it will exit this state and <color=#FFD780FF>record that element as a monitored target</color>. If no element is successfully monitored, the record will remain empty, and it will instead deal a single instance of Geo DMG. After the first \"Oversight of Vigil\" ends, the enemy will re-enter this state again after a set interval. Due to the effects of the Ley Line Disturbance, the second monitoring phase lasts longer, and elements that have already been recorded will require a significantly higher number of hits to be monitored again. Due to the effects of the Ley Line Disturbance, the Open-Eyed will have increased Elemental and Physical RES during \"Oversight of Vigil.\""
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Phenomena's Delirium",
+          "short": "After the first monitoring state ends, the enemy will re-enter this state after a set interval. Due to the Ley Line disruptions, the second monitoring phase will be extended, and elements that have already been recorded will require a much greater number of hits to be monitored again.",
+          "detail": "After completing two rounds of Elemental Monitoring, the Open-Eyed will take to the air and begin preparing \"Phenomena's Delirium.\" It will release the previously recorded elements and summon two corresponding Active Elemental Stars. If no elements were recorded, it will instead summon Inert Elemental Stars with <color=#FFD780FF>high resistance to all elements and Physical DMG</color>. If the enemy summons two Active Elemental Stars of different elements, both stars will become easier to destroy. When an Active Elemental Star is destroyed, it deals a large amount of damage to the enemy based on the recorded element. If an Inert Elemental Star is destroyed, it instead deals Geo DMG to the enemy. <color=#FFD780FF>Destroy all Elemental Stars</color> to interrupt the preparation of \"Phenomena's Delirium.\" If both stars are not destroyed within the time limit, they will explode, dealing massive AoE damage."
+        },
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "short": "After completing two instances of Elemental Monitoring, the Open-Eyed will prepare to unleash a powerful attack and summon 2 Elemental Stars. Destroying Elemental Stars deals massive damage to the enemy. <color=#FFD780FF>Break both Elemental Stars</color> to interrupt its skill preparation.\\nWhen summoning Elemental Stars, it will release the elements it has recorded and summon two corresponding Active Elemental Stars. If the element record is empty, it will instead summon Inert Elemental Stars, which are difficult to destroy. If the enemy summons two Active Elemental Stars of different elements, both stars will become easier to destroy."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 41111,
+          "name": "Watcher: Fallen Vigil"
+        }
+      ]
     }
   ],
   "schedules": [
@@ -1332,6 +1458,10 @@
     {
       "id": 5269008,
       "name": "Battle of Shattered Jade"
+    },
+    {
+      "id": 5269009,
+      "name": "Battle of the Howling Cyclone"
     }
   ]
 }

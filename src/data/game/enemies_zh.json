@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "anime_game_data",
-    "total_enemies": 1753,
+    "total_enemies": 1786,
     "lang_note": "Names/titles from TextMap. Affix/comment from MonsterAffixExcelConfigData (CHS in AGD).",
     "sources_included": [
       "world_monster",
@@ -2108,6 +2108,11 @@
       "name": "大型岩史莱姆",
       "title": "大型岩史莱姆"
     },
+    "20011591": {
+      "id": 20011591,
+      "name": "大型岩史莱姆",
+      "title": "大型岩史莱姆"
+    },
     "20011601": {
       "id": 20011601,
       "name": "无相之水·召唤物",
@@ -3283,6 +3288,14 @@
           "ability_names": [
             "MonsterEliteAffix_Level3_AttackUp_BossRushV52"
           ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
         }
       ]
     },
@@ -3314,6 +3327,14 @@
           "ability_names": [
             "MonsterAffix_LeyLineChallenge_LevelLow"
           ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
         }
       ]
     },
@@ -3328,6 +3349,14 @@
           "comment": "地脉挑战低难度标记",
           "ability_names": [
             "MonsterAffix_LeyLineChallenge_LevelLow"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
           ]
         }
       ]
@@ -10257,6 +10286,26 @@
       "name": "历经百战的愚人众·霜役人",
       "title": "役人·霜剑律从"
     },
+    "23060303": {
+      "id": 23060303,
+      "name": "历经百战的愚人众·霜役人",
+      "title": "役人·霜剑律从"
+    },
+    "23060304": {
+      "id": 23060304,
+      "name": "历经百战的愚人众·霜役人",
+      "title": "役人·霜剑律从",
+      "affixes": [
+        {
+          "id": 5634,
+          "affix": "6.6剑道活动简单难度标记",
+          "comment": "6.6剑道活动简单难度标记",
+          "ability_names": [
+            "MonsterAffix_Ninken_Difficulty"
+          ]
+        }
+      ]
+    },
     "23060401": {
       "id": 23060401,
       "name": "历经百战的愚人众·风役人",
@@ -10415,6 +10464,21 @@
       "name": "愚人众特辖队·线列军",
       "title": "特辖队"
     },
+    "23070191": {
+      "id": 23070191,
+      "name": "愚人众特辖队·线列军",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
     "23071101": {
       "id": 23071101,
       "name": "愚人众特辖队·线列军",
@@ -10447,6 +10511,21 @@
     },
     "23072101": {
       "id": 23072101,
+      "name": "愚人众特辖队·支援兵",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        }
+      ]
+    },
+    "23072190": {
+      "id": 23072190,
       "name": "愚人众特辖队·支援兵",
       "title": "特辖队",
       "affixes": [
@@ -10552,6 +10631,21 @@
     },
     "23076102": {
       "id": 23076102,
+      "name": "愚人众特辖队·疗愈师",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        }
+      ]
+    },
+    "23076190": {
+      "id": 23076190,
       "name": "愚人众特辖队·疗愈师",
       "title": "特辖队",
       "affixes": [
@@ -10749,6 +10843,37 @@
         }
       ]
     },
+    "23079191": {
+      "id": 23079191,
+      "name": "愚人众特辖队·火刃突击队",
+      "title": "愚人众特辖队·火刃突击队",
+      "affixes": [
+        {
+          "id": 30803,
+          "affix": "铁皮机器-N-红",
+          "comment": "铁皮机器-N-红",
+          "ability_names": [
+            "Monster_Fatuimecha_KuuvahkiType_North"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
     "23079201": {
       "id": 23079201,
       "name": "愚人众特辖队·冰雹重炮手",
@@ -10850,6 +10975,37 @@
         }
       ]
     },
+    "23079290": {
+      "id": 23079290,
+      "name": "愚人众特辖队·冰雹重炮手",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30803,
+          "affix": "铁皮机器-N-红",
+          "comment": "铁皮机器-N-红",
+          "ability_names": [
+            "Monster_Fatuimecha_KuuvahkiType_North"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
     "23079301": {
       "id": 23079301,
       "name": "愚人众特辖队·雷霰近卫军",
@@ -10947,6 +11103,37 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "23079390": {
+      "id": 23079390,
+      "name": "愚人众特辖队·雷霰近卫军",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30803,
+          "affix": "铁皮机器-N-红",
+          "comment": "铁皮机器-N-红",
+          "ability_names": [
+            "Monster_Fatuimecha_KuuvahkiType_North"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
           ]
         }
       ]
@@ -11101,6 +11288,44 @@
           "comment": "愚人众深境标记",
           "ability_names": [
             "Monster_Oprichnik_LanceArquebus_AbyssVersionLogic"
+          ]
+        }
+      ]
+    },
+    "23079407": {
+      "id": 23079407,
+      "name": "历经百战的火刃突击队员",
+      "title": "历经百战的火刃突击队员",
+      "affixes": [
+        {
+          "id": 5577,
+          "affix": "愚人众异化怪标记",
+          "comment": "愚人众异化怪标记",
+          "ability_names": [
+            "Monster_Oprichnik_LanceArquebus_LocalLegendLogic"
+          ]
+        }
+      ]
+    },
+    "23079408": {
+      "id": 23079408,
+      "name": "历经百战的火刃突击队员",
+      "title": "历经百战的火刃突击队员",
+      "affixes": [
+        {
+          "id": 5577,
+          "affix": "愚人众异化怪标记",
+          "comment": "愚人众异化怪标记",
+          "ability_names": [
+            "Monster_Oprichnik_LanceArquebus_LocalLegendLogic"
+          ]
+        },
+        {
+          "id": 5634,
+          "affix": "6.6剑道活动简单难度标记",
+          "comment": "6.6剑道活动简单难度标记",
+          "ability_names": [
+            "MonsterAffix_Ninken_Difficulty"
           ]
         }
       ]
@@ -15195,6 +15420,51 @@
       "name": "守望者·堕天",
       "title": "世界望楼之守望"
     },
+    "24111103": {
+      "id": 24111103,
+      "name": "守望者·堕天",
+      "title": "世界望楼之守望",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24111104": {
+      "id": 24111104,
+      "name": "守望者·堕天",
+      "title": "世界望楼之守望",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24111105": {
+      "id": 24111105,
+      "name": "守望者·堕天",
+      "title": "世界望楼之守望",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
     "24111201": {
       "id": 24111201,
       "name": "(test)守望者-大招创生物",
@@ -15204,6 +15474,66 @@
       "id": 24111202,
       "name": "(test)守望者-大招创生物",
       "title": "???"
+    },
+    "24111203": {
+      "id": 24111203,
+      "name": "(test)守望者-大招创生物",
+      "title": "???",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24111204": {
+      "id": 24111204,
+      "name": "(test)守望者-大招创生物",
+      "title": "???",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24111205": {
+      "id": 24111205,
+      "name": "(test)守望者-大招创生物",
+      "title": "???",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24111206": {
+      "id": 24111206,
+      "name": "(test)守望者-大招创生物",
+      "title": "???",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
     },
     "24111301": {
       "id": 24111301,
@@ -17186,6 +17516,21 @@
       "name": "厄灵·岩之魔蜥",
       "title": "厄灵·岩之魔蜥"
     },
+    "25110103": {
+      "id": 25110103,
+      "name": "厄灵·岩之魔蜥",
+      "title": "厄灵·岩之魔蜥",
+      "affixes": [
+        {
+          "id": 5648,
+          "affix": "6.6 镀金旅团魔兽独立词缀",
+          "comment": "可以跳过旧的创生逻辑 定制",
+          "ability_names": [
+            "Quest_Eremite_SummonMonster_Affix"
+          ]
+        }
+      ]
+    },
     "25110201": {
       "id": 25110201,
       "name": "厄灵·风之魔鸢",
@@ -17195,6 +17540,21 @@
       "id": 25110202,
       "name": "厄灵·风之魔鸢",
       "title": "厄灵·风之魔鸢"
+    },
+    "25110203": {
+      "id": 25110203,
+      "name": "厄灵·风之魔鸢",
+      "title": "厄灵·风之魔鸢",
+      "affixes": [
+        {
+          "id": 5648,
+          "affix": "6.6 镀金旅团魔兽独立词缀",
+          "comment": "可以跳过旧的创生逻辑 定制",
+          "ability_names": [
+            "Quest_Eremite_SummonMonster_Affix"
+          ]
+        }
+      ]
     },
     "25110291": {
       "id": 25110291,
@@ -17223,6 +17583,21 @@
       "id": 25110301,
       "name": "厄灵·炎之魔蝎",
       "title": "厄灵·炎之魔蝎"
+    },
+    "25110302": {
+      "id": 25110302,
+      "name": "厄灵·炎之魔蝎",
+      "title": "厄灵·炎之魔蝎",
+      "affixes": [
+        {
+          "id": 5648,
+          "affix": "6.6 镀金旅团魔兽独立词缀",
+          "comment": "可以跳过旧的创生逻辑 定制",
+          "ability_names": [
+            "Quest_Eremite_SummonMonster_Affix"
+          ]
+        }
+      ]
     },
     "25110391": {
       "id": 25110391,
@@ -17274,6 +17649,21 @@
       "id": 25110401,
       "name": "厄灵·草之灵蛇",
       "title": "厄灵·草之灵蛇"
+    },
+    "25110402": {
+      "id": 25110402,
+      "name": "厄灵·草之灵蛇",
+      "title": "厄灵·草之灵蛇",
+      "affixes": [
+        {
+          "id": 5648,
+          "affix": "6.6 镀金旅团魔兽独立词缀",
+          "comment": "可以跳过旧的创生逻辑 定制",
+          "ability_names": [
+            "Quest_Eremite_SummonMonster_Affix"
+          ]
+        }
+      ]
     },
     "25210101": {
       "id": 25210101,
@@ -23803,6 +24193,112 @@
         }
       ]
     },
+    "26300505": {
+      "id": 26300505,
+      "name": "历经百战的凛狼",
+      "title": "历经百战的凛狼",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "26300506": {
+      "id": 26300506,
+      "name": "历经百战的凛狼",
+      "title": "历经百战的凛狼",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "26300507": {
+      "id": 26300507,
+      "name": "历经百战的凛狼",
+      "title": "历经百战的凛狼",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "26300508": {
+      "id": 26300508,
+      "name": "历经百战的凛狼",
+      "title": "历经百战的凛狼",
+      "affixes": [
+        {
+          "id": 5605,
+          "affix": "6.3 地方传奇狼 地城词缀",
+          "comment": "入战直接切状态",
+          "ability_names": [
+            "Monster_Magbeast_Steppenwolf_Wind_MagPounce_DungeonMode"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "26300509": {
+      "id": 26300509,
+      "name": "历经百战的凛狼",
+      "title": "历经百战的凛狼",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "26300510": {
+      "id": 26300510,
+      "name": "历经百战的凛狼",
+      "title": "历经百战的凛狼",
+      "affixes": [
+        {
+          "id": 5605,
+          "affix": "6.3 地方传奇狼 地城词缀",
+          "comment": "入战直接切状态",
+          "ability_names": [
+            "Monster_Magbeast_Steppenwolf_Wind_MagPounce_DungeonMode"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
     "26301101": {
       "id": 26301101,
       "name": "蕴光月幻蝶",
@@ -24072,6 +24568,19 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "28020908": {
+      "id": 28020908,
+      "affixes": [
+        {
+          "id": 5634,
+          "affix": "6.6剑道活动简单难度标记",
+          "comment": "6.6剑道活动简单难度标记",
+          "ability_names": [
+            "MonsterAffix_Ninken_Difficulty"
           ]
         }
       ]
@@ -26322,6 +26831,44 @@
       "id": 29140101,
       "name": "？？？",
       "title": "渎死之罪"
+    },
+    "29140102": {
+      "id": 29140102,
+      "name": "？？？",
+      "title": "渎死之罪"
+    },
+    "29150102": {
+      "id": 29150102,
+      "name": "多托雷",
+      "title": "「左道的胜义尊」"
+    },
+    "29150103": {
+      "id": 29150103,
+      "affixes": [
+        {
+          "id": 91501,
+          "affix": "数据博士-一阶段-任务",
+          "comment": "数据博士-一阶段-任务",
+          "ability_names": [
+            "Monster_DrData_AQ"
+          ]
+        }
+      ]
+    },
+    "29150104": {
+      "id": 29150104,
+      "name": "多托雷",
+      "title": "「左道的胜义尊」",
+      "affixes": [
+        {
+          "id": 91502,
+          "affix": "数据博士-二阶段-任务",
+          "comment": "数据博士-二阶段-任务",
+          "ability_names": [
+            "Monster_DrData_Erosion_AQ"
+          ]
+        }
+      ]
     },
     "84001011": {
       "id": 84001011,

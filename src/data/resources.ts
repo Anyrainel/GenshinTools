@@ -11,8 +11,8 @@ import type {
 } from './types';
 
 export const characters: CharacterResource[] = [
-  {"id": "nicole", "rarity": 5, "imagePath": "/character/nicole.webp"},
   {"id": "prune", "rarity": 4, "imagePath": "/character/prune.webp"},
+  {"id": "nicole", "rarity": 5, "imagePath": "/character/nicole.webp"},
   {"id": "linnea", "rarity": 5, "imagePath": "/character/linnea.webp"},
   {"id": "varka", "rarity": 5, "imagePath": "/character/varka.webp"},
   {"id": "illuga", "rarity": 4, "imagePath": "/character/illuga.webp"},
@@ -166,8 +166,8 @@ export const weaponTypeResources: WeaponTypeResource[] = [
 ];
 
 export const artifacts: ArtifactSetResource[] = [
-  {"id": "celestial_gift", "rarity": 5, "imagePaths": {"flower": "/artifact/celestial_gift.webp", "plume": "/artifact/celestial_gift2.webp", "sands": "/artifact/celestial_gift3.webp", "goblet": "/artifact/celestial_gift4.webp", "circlet": "/artifact/celestial_gift5.webp"}},
   {"id": "disenchantment_in_deep_shadow", "rarity": 5, "imagePaths": {"flower": "/artifact/disenchantment_in_deep_shadow.webp", "plume": "/artifact/disenchantment_in_deep_shadow2.webp", "sands": "/artifact/disenchantment_in_deep_shadow3.webp", "goblet": "/artifact/disenchantment_in_deep_shadow4.webp", "circlet": "/artifact/disenchantment_in_deep_shadow5.webp"}},
+  {"id": "celestial_gift", "rarity": 5, "imagePaths": {"flower": "/artifact/celestial_gift.webp", "plume": "/artifact/celestial_gift2.webp", "sands": "/artifact/celestial_gift3.webp", "goblet": "/artifact/celestial_gift4.webp", "circlet": "/artifact/celestial_gift5.webp"}},
   {"id": "a_day_carved_from_rising_winds", "rarity": 5, "imagePaths": {"flower": "/artifact/a_day_carved_from_rising_winds.webp", "plume": "/artifact/a_day_carved_from_rising_winds2.webp", "sands": "/artifact/a_day_carved_from_rising_winds3.webp", "goblet": "/artifact/a_day_carved_from_rising_winds4.webp", "circlet": "/artifact/a_day_carved_from_rising_winds5.webp"}},
   {"id": "aubade_of_morningstar_and_moon", "rarity": 5, "imagePaths": {"flower": "/artifact/aubade_of_morningstar_and_moon.webp", "plume": "/artifact/aubade_of_morningstar_and_moon2.webp", "sands": "/artifact/aubade_of_morningstar_and_moon3.webp", "goblet": "/artifact/aubade_of_morningstar_and_moon4.webp", "circlet": "/artifact/aubade_of_morningstar_and_moon5.webp"}},
   {"id": "silken_moons_serenade", "rarity": 5, "imagePaths": {"flower": "/artifact/silken_moons_serenade.webp", "plume": "/artifact/silken_moons_serenade2.webp", "sands": "/artifact/silken_moons_serenade3.webp", "goblet": "/artifact/silken_moons_serenade4.webp", "circlet": "/artifact/silken_moons_serenade5.webp"}},

@@ -98,7 +98,7 @@
   "angelos_heptades": {
     "id": "14523",
     "name": "Angelos' Heptades",
-    "descHtmlTpl": "ATK is increased by {0}. After the equipping character creates a Shield, they gain \"Pathfinder's Light\" for 20s: Increases your active party member's DMG by {1} for every 1,000 ATK the equipping character has, up to a maximum of {2}. Additionally, when the equipping character creates a Shield, they will also gain \"Guide's Contentment\": Restores {3} Elemental Energy to the equipping character. The aforementioned effect can trigger once every 14s, and can also be triggered when all types of chests are opened outside of combat. The equipping character may trigger this effect even when they are an off-field.<br/>Hexerei: Secret Rite: When there are off-field Hexerei characters in your party, they will also gain 50% of the DMG increase from Pathfinder's Light.",
+    "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. After the equipping character creates a Shield, they gain \"Pathfinder's Light\" for 20s: Increases your active party member's DMG by <span style=\"color: #99FFFFFF;\">{1}</span> for every 1,000 ATK the equipping character has, up to a maximum of <span style=\"color: #99FFFFFF;\">{2}</span>. Additionally, when the equipping character creates a Shield, they will also gain \"Guide's Contentment\": Restores <span style=\"color: #99FFFFFF;\">{3}</span> Elemental Energy to the equipping character. The aforementioned effect can trigger once every 14s, and can also be triggered when any type of chest is opened outside of combat. The equipping character may trigger this effect even when they are an off-field.<br>Hexerei: Secret Rite: When your own Hexerei character is off-field in the party, they will also gain 50% of the DMG increase from Pathfinder's Light.",
     "refinements": [
       ["12%", "10%", "26%", "14"],
       ["15%", "13%", "34%", "15"],
@@ -513,6 +513,18 @@
       ["12"],
       ["14"],
       ["16"]
+    ]
+  },
+  "disaster_and_remorse": {
+    "id": "13517",
+    "name": "Disaster and Remorse",
+    "descHtmlTpl": "After the equipping character uses an Elemental Skill, they gain \"Path of Conflict\" for 17s, as well as \"Unforgivable\" and \"Irreparable\" for 3s each. This effect can trigger once every 18s.<br>Unforgivable: Increases the equipping character's Normal Attack and Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span>.<br>Irreparable: Increases the equipping character's Elemental Skill and Elemental Burst DMG by <span style=\"color: #99FFFFFF;\">{1}</span>.<br>While Path of Conflict is in effect, when the equipping character hits an opponent with a Normal Attack or Charged Attack, Irreparable's duration will be increased by 1s. When the equipping character hits an opponent with their Elemental Skill or Elemental Burst, Unforgivable's duration will be increased by 1s. Each of the above effects can be triggered once every 0.1s. When Path of Conflict ends or the equipping character leaves the field, both Unforgivable and Irreparable will be removed.<br>Hexerei: Secret Rite: The above DMG boosts are increased by 75%.",
+    "refinements": [
+      ["40%", "40%"],
+      ["50%", "50%"],
+      ["60%", "60%"],
+      ["70%", "70%"],
+      ["80%", "80%"]
     ]
   },
   "dodoco_tales": {
