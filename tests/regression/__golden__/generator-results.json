@@ -1,15 +1,15 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-04-24T23:29:26.234Z",
+  "generatedAt": "2026-05-20T11:34:35.326Z",
   "teams": {
-    "W808g3W1RCW53VB0T": {
-      "teamName": "varka / durin / bennett / venti",
+    "Wzm6RXhWC5aW2yDl0r": {
+      "teamName": "varka / durin / venti / nicole",
       "characters": [
         "varka",
         "durin",
-        "bennett",
-        "venti"
+        "venti",
+        "nicole"
       ],
       "carryCharId": "varka",
       "perChar": {
@@ -21,88 +21,136 @@
           "minEr": 1.5372,
           "minCr": 0.39
         },
-        "bennett": {
+        "venti": {
           "minEr": 2.2573,
           "minCr": 0.24
         },
-        "venti": {
+        "nicole": {
           "minEr": 1.4758,
           "minCr": 0.05
         }
       },
-      "damage": 23921230.0922,
+      "damage": 52384703.803,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 786891.7309,
-            "total": 1573783.4617
+            "perHit": 1249499.6921,
+            "total": 2498999.3842
           },
           {
-            "perHit": 1734854.9005,
-            "total": 3469709.8009
+            "perHit": 3248383.5917,
+            "total": 6496767.1833
           },
           {
-            "perHit": 1789017.9471,
-            "total": 3578035.8941
+            "perHit": 2875396.5655,
+            "total": 5750793.131
           },
           {
-            "perHit": 3639359.7328,
-            "total": 5524757.0215
+            "perHit": 5752906.85,
+            "total": 8930054.7377
           },
           {
-            "perHit": 479241.4407,
-            "total": 958482.8814
+            "perHit": 826190.016,
+            "total": 1652380.032
           },
           {
-            "perHit": 3492.5868,
-            "total": 6985.1736
+            "perHit": 3848.9732,
+            "total": 7697.9465
           },
           {
-            "perHit": 51559.9778,
-            "total": 103119.9556
+            "perHit": 119513.5919,
+            "total": 239027.1839
           },
           {
-            "perHit": 92807.9601,
-            "total": 185615.9201
+            "perHit": 258936.2564,
+            "total": 517872.5129
           },
           {
-            "perHit": 1354419.9392,
-            "total": 2708839.8785
+            "perHit": 3432700.4966,
+            "total": 6865400.9932
           },
           {
-            "perHit": 56999.3682,
-            "total": 113998.7364
+            "perHit": 2486182.2012,
+            "total": 4972364.4023
           },
           {
-            "perHit": 89822.0643,
-            "total": 179644.1286
+            "perHit": 1216669.7896,
+            "total": 2433339.5792
           },
           {
-            "perHit": 1044313.189,
-            "total": 2088626.378
+            "perHit": 634755.7363,
+            "total": 1269511.4725
           },
           {
-            "perHit": 320554.0918,
-            "total": 641108.1835
+            "perHit": 749809.9087,
+            "total": 1499619.8174
           },
           {
-            "perHit": 102715.7697,
-            "total": 205431.5395
+            "perHit": 1006396.6767,
+            "total": 2012793.3534
           },
           {
-            "perHit": 544188.1995,
-            "total": 1088376.399
+            "perHit": 4664.7237,
+            "total": 9329.4475
           },
           {
-            "perHit": 742985.545,
-            "total": 1485971.09
+            "perHit": 111468.8672,
+            "total": 222937.7344
           },
           {
-            "perHit": 4371.8248,
-            "total": 8743.6497
+            "perHit": 46876.3972,
+            "total": 93752.7943
+          },
+          {
+            "perHit": 70740.9091,
+            "total": 141481.8181
+          },
+          {
+            "perHit": 82630.5318,
+            "total": 165261.0635
+          },
+          {
+            "perHit": 85506.4706,
+            "total": 171012.9413
+          },
+          {
+            "perHit": 166076.1151,
+            "total": 332152.2303
+          },
+          {
+            "perHit": 427520.0285,
+            "total": 855040.057
+          },
+          {
+            "perHit": 678617.5896,
+            "total": 1357235.1793
+          },
+          {
+            "perHit": 305349.6425,
+            "total": 610699.2851
+          },
+          {
+            "perHit": 499021.2904,
+            "total": 998042.5808
+          },
+          {
+            "perHit": 295941.5859,
+            "total": 591883.1718
+          },
+          {
+            "perHit": 498447.7582,
+            "total": 996895.5164
+          },
+          {
+            "perHit": 131901.4941,
+            "total": 263802.9882
+          },
+          {
+            "perHit": 214277.6329,
+            "total": 428555.2657
           }
         ],
-        "totalDamage": 23921230.0922
+        "totalDamage": 52384703.803
       },
       "artifacts": {
         "varka": {
@@ -190,58 +238,6 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "atk%",
-            "substats": {
-              "cd": 26.42,
-              "cr": 6.61,
-              "atk": 16.54,
-              "hp%": 4.96
-            }
-          },
-          "circlet": {
-            "setKey": "generated",
-            "mainStat": "cr",
-            "substats": {
-              "cd": 33.02,
-              "atk%": 4.96,
-              "atk": 16.54,
-              "hp%": 4.96
-            }
-          }
-        },
-        "bennett": {
-          "flower": {
-            "setKey": "generated",
-            "mainStat": "hp",
-            "substats": {
-              "er": 22.02,
-              "cr": 6.61,
-              "cd": 6.6,
-              "atk%": 4.96
-            }
-          },
-          "plume": {
-            "setKey": "generated",
-            "mainStat": "atk",
-            "substats": {
-              "er": 22.02,
-              "cd": 6.6,
-              "cr": 6.61,
-              "atk%": 4.96
-            }
-          },
-          "sands": {
-            "setKey": "generated",
-            "mainStat": "atk%",
-            "substats": {
-              "cd": 19.81,
-              "cr": 9.92,
-              "atk": 16.54,
-              "hp%": 4.96
-            }
-          },
-          "goblet": {
-            "setKey": "generated",
             "mainStat": "pyro%",
             "substats": {
               "cd": 26.42,
@@ -266,20 +262,20 @@
             "setKey": "generated",
             "mainStat": "hp",
             "substats": {
-              "cr": 16.53,
+              "er": 22.02,
+              "cr": 6.61,
               "cd": 6.6,
-              "atk%": 4.96,
-              "atk": 16.54
+              "atk%": 4.96
             }
           },
           "plume": {
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 16.53,
+              "er": 22.02,
+              "cr": 6.61,
               "cd": 6.6,
-              "atk%": 4.96,
-              "em": 19.82
+              "atk%": 4.96
             }
           },
           "sands": {
@@ -296,8 +292,8 @@
             "setKey": "generated",
             "mainStat": "anemo%",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cr": 16.53,
+              "cd": 6.6,
               "atk%": 4.96,
               "atk": 16.54
             }
@@ -310,6 +306,58 @@
               "atk%": 4.96,
               "atk": 16.54,
               "em": 19.82
+            }
+          }
+        },
+        "nicole": {
+          "flower": {
+            "setKey": "generated",
+            "mainStat": "hp",
+            "substats": {
+              "er": 22.02,
+              "atk%": 9.91,
+              "atk": 16.54,
+              "cr": 3.31
+            }
+          },
+          "plume": {
+            "setKey": "generated",
+            "mainStat": "atk",
+            "substats": {
+              "er": 22.02,
+              "atk%": 9.91,
+              "cr": 3.31,
+              "cd": 6.6
+            }
+          },
+          "sands": {
+            "setKey": "generated",
+            "mainStat": "atk%",
+            "substats": {
+              "er": 5.51,
+              "atk": 82.67,
+              "cr": 3.31,
+              "cd": 6.6
+            }
+          },
+          "goblet": {
+            "setKey": "generated",
+            "mainStat": "atk%",
+            "substats": {
+              "atk": 82.67,
+              "cr": 3.31,
+              "cd": 6.6,
+              "hp%": 4.96
+            }
+          },
+          "circlet": {
+            "setKey": "generated",
+            "mainStat": "atk%",
+            "substats": {
+              "atk": 82.67,
+              "cr": 3.31,
+              "cd": 6.6,
+              "hp%": 4.96
             }
           }
         }
@@ -330,268 +378,349 @@
           "cd": 0.8587,
           "atk": 361
         },
-        "bennett": {
-          "hp": 4780,
-          "er": 0.4404,
-          "cr": 0.6085,
-          "cd": 0.9247,
-          "atk": 361
-        },
         "venti": {
           "hp": 4780,
-          "cr": 0.939,
-          "cd": 0.6605,
-          "atk": 377,
-          "em": 59
+          "er": 0.4404,
+          "cr": 0.7737,
+          "cd": 0.5944,
+          "atk": 361,
+          "em": 40
+        },
+        "nicole": {
+          "hp": 4780,
+          "er": 0.4955,
+          "atk": 576,
+          "cr": 0.1653,
+          "cd": 0.2642
         }
       },
       "display": {
-        "totalDamage": 23921230.0922,
+        "totalDamage": 52384703.803,
         "partsByFormula": {
           "varka.varka-e": [
             {
-              "damage": 786891.7309,
+              "damage": 1249499.6921,
               "template": "direct"
             }
           ],
           "varka.varka-normal": [
             {
-              "damage": 247194.6975,
+              "damage": 431013.4077,
               "template": "direct"
             },
             {
-              "damage": 106043.4674,
+              "damage": 227559.5698,
               "template": "direct"
             },
             {
-              "damage": 198760.7312,
+              "damage": 380261.2016,
               "template": "direct"
             },
             {
-              "damage": 134796.5652,
+              "damage": 269003.9702,
               "template": "direct"
             },
             {
-              "damage": 259055.708,
+              "damage": 469375.2164,
               "template": "direct"
             },
             {
-              "damage": 213062.8055,
+              "damage": 381816.0723,
               "template": "direct"
             },
             {
-              "damage": 142257.3423,
+              "damage": 296751.0305,
               "template": "direct"
             },
             {
-              "damage": 261796.1491,
+              "damage": 452059.7802,
               "template": "direct"
             },
             {
-              "damage": 171887.4343,
+              "damage": 340543.3428,
               "template": "direct"
             }
           ],
           "varka.varka-special-e": [
             {
-              "damage": 448954.9502,
+              "damage": 721828.4273,
               "template": "direct"
             },
             {
-              "damage": 285680.7675,
+              "damage": 508726.1885,
               "template": "direct"
             },
             {
-              "damage": 1054382.2294,
+              "damage": 1644841.9496,
               "template": "direct"
             }
           ],
           "varka.varka-special-ca": [
             {
-              "damage": 476588.9342,
+              "damage": 761659.7493,
               "template": "direct"
             },
             {
-              "damage": 250492.7015,
+              "damage": 435767.1146,
               "template": "direct"
             },
             {
-              "damage": 302482.354,
+              "damage": 533558.387,
               "template": "direct"
             },
             {
-              "damage": 165014.8281,
+              "damage": 330385.8544,
               "template": "direct"
             },
             {
-              "damage": 2081217.1565,
+              "damage": 3162470.5774,
               "template": "direct"
             },
             {
-              "damage": 1054382.2294,
+              "damage": 1644841.9496,
               "template": "direct"
             }
           ],
           "varka.varka-burst": [
             {
-              "damage": 291883.7941,
+              "damage": 480840.3039,
               "template": "direct"
             },
             {
-              "damage": 187357.6466,
+              "damage": 345349.7121,
               "template": "direct"
             }
           ],
           "varka.rx-swirl-Pyro-varka": [
             {
-              "damage": 3492.5868,
+              "damage": 3848.9732,
               "template": "transform"
             }
           ],
           "durin.durin-skill-purity": [
             {
-              "damage": 51559.9778,
+              "damage": 119513.5919,
               "template": "direct"
             }
           ],
           "durin.durin-skill-darkness": [
             {
-              "damage": 35271.7121,
+              "damage": 93291.9476,
               "template": "direct"
             },
             {
-              "damage": 25975.2919,
+              "damage": 78326.1171,
               "template": "direct"
             },
             {
-              "damage": 31560.9561,
+              "damage": 87318.1917,
               "template": "direct"
             }
           ],
           "durin.durin-burst-white": [
             {
-              "damage": 86915.2549,
+              "damage": 175630.6113,
               "template": "direct"
             },
             {
-              "damage": 70432.335,
+              "damage": 151676.4864,
               "template": "direct"
             },
             {
-              "damage": 81713.1986,
+              "damage": 168070.6216,
               "template": "direct"
             },
             {
-              "damage": 70977.4005,
+              "damage": 176384.2628,
               "template": "direct",
               "hits": 10
             },
             {
-              "damage": 40558.5146,
+              "damage": 117348.0149,
               "template": "direct",
               "hits": 10
-            }
-          ],
-          "bennett.bennett-skill": [
-            {
-              "damage": 56999.3682,
-              "template": "direct"
-            }
-          ],
-          "bennett.bennett-burst": [
-            {
-              "damage": 89822.0643,
-              "template": "direct"
             }
           ],
           "venti.venti-windsunder": [
             {
-              "damage": 46812.5333,
+              "damage": 107849.5527,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 82366.6739,
+              "damage": 153739.1092,
               "template": "direct"
             },
             {
-              "damage": 94218.0541,
+              "damage": 169035.6281,
               "template": "direct"
             },
             {
-              "damage": 55223.1902,
+              "damage": 118705.1467,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 91669.3702,
+              "damage": 165746.0542,
               "template": "direct"
             },
             {
-              "damage": 121743.8404,
+              "damage": 204563.0267,
               "template": "direct"
             },
             {
-              "damage": 22651.0097,
+              "damage": 76664.3916,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 29761.8379,
+              "damage": 85842.3029,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 32132.1139,
+              "damage": 88901.6067,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 24333.1411,
+              "damage": 78835.5104,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 31622.3771,
+              "damage": 88243.6919,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 37637.2712,
+              "damage": 96007.0864,
               "template": "direct",
               "hits": 2
             }
           ],
           "venti.venti-burst-total": [
             {
-              "damage": 16027.7046,
+              "damage": 60833.4895,
               "template": "direct",
               "hits": 20
             }
           ],
           "venti.venti-burst-absorb-pyro": [
             {
-              "damage": 5135.7885,
+              "damage": 31737.7868,
               "template": "direct",
               "hits": 20
             }
           ],
           "venti.venti-skill": [
             {
-              "damage": 544188.1995,
+              "damage": 749809.9087,
               "template": "direct"
             }
           ],
           "venti.venti-skill-hold": [
             {
-              "damage": 742985.545,
+              "damage": 1006396.6767,
               "template": "direct"
             }
           ],
           "venti.rx-swirl-Pyro-venti": [
             {
-              "damage": 4371.8248,
+              "damage": 4664.7237,
               "template": "transform"
+            }
+          ],
+          "nicole.nicole-normal": [
+            {
+              "damage": 36459.6411,
+              "template": "direct"
+            },
+            {
+              "damage": 34338.158,
+              "template": "direct"
+            },
+            {
+              "damage": 40671.0681,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-plunge": [
+            {
+              "damage": 46876.3972,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-plunge-low": [
+            {
+              "damage": 70740.9091,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-plunge-high": [
+            {
+              "damage": 82630.5318,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-skill": [
+            {
+              "damage": 85506.4706,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-burst": [
+            {
+              "damage": 166076.1151,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-q-coord-slot1": [
+            {
+              "damage": 259600.4609,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-c1-coord-slot1": [
+            {
+              "damage": 419271.2584,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-q-coord-slot2": [
+            {
+              "damage": 243555.9245,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-c1-coord-slot2": [
+            {
+              "damage": 395263.6113,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-q-coord-slot3": [
+            {
+              "damage": 187472.1878,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-c1-coord-slot3": [
+            {
+              "damage": 321752.5466,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-q-coord-slot4": [
+            {
+              "damage": 131901.4941,
+              "template": "direct"
+            }
+          ],
+          "nicole.nicole-c1-coord-slot4": [
+            {
+              "damage": 214277.6329,
+              "template": "direct"
             }
           ]
         },
@@ -730,7 +859,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2342.6799
+                "value": 2444.6704
               }
             ],
             "providerCharId": "durin"
@@ -744,7 +873,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2342.6799
+                "value": 2444.6704
               }
             ],
             "providerCharId": "durin"
@@ -758,7 +887,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2342.6799
+                "value": 2444.6704
               }
             ],
             "providerCharId": "durin"
@@ -860,76 +989,6 @@
               }
             ],
             "providerCharId": "durin"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "bennett",
-              "origin": "Q"
-            },
-            "entries": [
-              {
-                "key": "atk",
-                "value": 1178.72
-              }
-            ],
-            "providerCharId": "bennett"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "bennett",
-              "origin": "C6"
-            },
-            "entries": [
-              {
-                "key": "pyro%",
-                "value": 0.15
-              }
-            ],
-            "providerCharId": "bennett"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "bennett",
-              "origin": "C6"
-            },
-            "entries": [
-              {
-                "key": "pyro%",
-                "value": 0.15
-              }
-            ],
-            "providerCharId": "bennett"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "bennett",
-              "origin": "C6"
-            },
-            "entries": [
-              {
-                "key": "pyro%",
-                "value": 0.15
-              }
-            ],
-            "providerCharId": "bennett"
-          },
-          {
-            "source": {
-              "type": "weapon",
-              "id": "skyward_blade",
-              "origin": "R5"
-            },
-            "entries": [
-              {
-                "key": "cr",
-                "value": 0.08
-              }
-            ],
-            "providerCharId": "bennett"
           },
           {
             "source": {
@@ -1074,6 +1133,188 @@
           {
             "source": {
               "type": "character",
+              "id": "nicole",
+              "origin": "E"
+            },
+            "entries": [
+              {
+                "key": "atk",
+                "value": 0.177
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "atk",
+                "value": 300
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "P1"
+            },
+            "entries": [
+              {
+                "key": "atk",
+                "value": 300
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.25
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.25
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 4021.6463
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 4021.6463
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 4021.6463
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 4476.3663
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "C6"
+            },
+            "entries": [
+              {
+                "key": "defReduction%",
+                "value": 0.4
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "weapon",
+              "id": "angelos_heptades",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "atk%",
+                "value": 0.24
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "weapon",
+              "id": "angelos_heptades",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "dmg%",
+                "value": 0.58
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "weapon",
+              "id": "angelos_heptades",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "dmg%",
+                "value": 0.29
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
               "id": "varka",
               "origin": "C1"
             },
@@ -1112,6 +1353,62 @@
               }
             ],
             "providerCharId": "durin"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "P4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 19183.896
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "P4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 19183.896
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "P4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 19183.896
+              }
+            ],
+            "providerCharId": "nicole"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "nicole",
+              "origin": "P4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 19183.896
+              }
+            ],
+            "providerCharId": "nicole"
           }
         ],
         "detailStats": {
@@ -1120,24 +1417,24 @@
               "cd": 2.3902,
               "cr": 1.009,
               "er": 1.4404,
-              "dmg%": 1.12,
+              "dmg%": 1.7,
               "atkSpd%": 0.1,
-              "defReduction%": 0.3,
+              "defReduction%": 0.7,
+              "atk": 4383,
               "em": 259,
               "hp": 18290,
-              "atk": 4962,
               "def": 852
             },
             "offField": {
               "cd": 2.3902,
               "cr": 1.009,
               "er": 1.4404,
-              "dmg%": 0.62,
+              "dmg%": 0.91,
               "atkSpd%": 0.1,
-              "defReduction%": 0.3,
+              "defReduction%": 0.7,
+              "atk": 3801,
               "em": 259,
               "hp": 18290,
-              "atk": 3200,
               "def": 852
             }
           },
@@ -1146,216 +1443,220 @@
               "cd": 1.7426,
               "cr": 0.9895,
               "er": 1.5505,
-              "dmg%": 0.5,
-              "defReduction%": 0.3,
+              "dmg%": 1.08,
+              "defReduction%": 0.7,
+              "atk": 4074,
               "em": 200,
-              "hp": 19412,
-              "atk": 5083,
+              "hp": 18753,
               "def": 881
             },
             "offField": {
               "cd": 1.7426,
               "cr": 0.9895,
               "er": 1.5505,
-              "defReduction%": 0.3,
+              "dmg%": 0.29,
+              "defReduction%": 0.7,
+              "atk": 4074,
               "em": 200,
-              "hp": 19412,
-              "atk": 3904,
+              "hp": 18753,
               "def": 881
-            }
-          },
-          "bennett": {
-            "onField": {
-              "er": 2.2584,
-              "cr": 0.7385,
-              "cd": 1.4247,
-              "dmg%": 0.5,
-              "defReduction%": 0.3,
-              "atkSpd%": 0.1,
-              "em": 200,
-              "hp": 19349,
-              "atk": 3977,
-              "def": 825
-            },
-            "offField": {
-              "er": 2.2584,
-              "cr": 0.7385,
-              "cd": 1.4247,
-              "defReduction%": 0.3,
-              "atkSpd%": 0.1,
-              "em": 200,
-              "hp": 19349,
-              "atk": 2323,
-              "def": 825
             }
           },
           "venti": {
             "onField": {
-              "er": 1.871,
-              "cr": 0.989,
-              "cd": 2.1605,
-              "dmg%": 0.5,
-              "defReduction%": 0.3,
-              "em": 379,
+              "er": 2.3114,
+              "cr": 0.8237,
+              "cd": 2.0945,
+              "dmg%": 1.08,
+              "defReduction%": 0.7,
+              "em": 360,
+              "atk": 3634,
               "hp": 16060,
-              "atk": 4229,
               "def": 716
             },
             "offField": {
-              "er": 1.871,
-              "cr": 0.989,
-              "cd": 2.1605,
-              "defReduction%": 0.3,
-              "em": 379,
+              "er": 2.3114,
+              "cr": 0.8237,
+              "cd": 2.0945,
+              "dmg%": 0.29,
+              "defReduction%": 0.7,
+              "em": 360,
+              "atk": 3113,
               "hp": 16060,
-              "atk": 2529,
               "def": 716
+            }
+          },
+          "nicole": {
+            "onField": {
+              "cr": 0.2153,
+              "cd": 0.7642,
+              "er": 1.4955,
+              "dmg%": 1.08,
+              "defReduction%": 0.7,
+              "atk": 6395,
+              "em": 200,
+              "hp": 17034,
+              "def": 603
+            },
+            "offField": {
+              "cr": 0.2153,
+              "cd": 0.7642,
+              "er": 1.4955,
+              "dmg%": 0.29,
+              "defReduction%": 0.7,
+              "atk": 5745,
+              "em": 200,
+              "hp": 17034,
+              "def": 603
             }
           }
         },
         "maxStats": {
           "varka": {
             "onField": {
-              "atk": 4962,
+              "atk": 4383,
               "hp": 18290,
               "def": 852,
               "em": 259,
               "cr": 1.009,
               "cd": 3.1902,
               "er": 1.4404,
-              "dmg%": 2.62,
-              "baseDmg": 2342.6799,
+              "dmg%": 3.2,
+              "baseDmg": 6466.3167,
               "baseDmg%": 1.2,
-              "defReduction%": 0.3,
-              "resReduction%": 0.79,
+              "defReduction%": 0.7,
+              "resReduction%": 1.04,
               "atkSpd%": 0.1
             },
             "offField": {
-              "atk": 3200,
+              "atk": 3801,
               "hp": 18290,
               "def": 852,
               "em": 259,
               "cr": 1.009,
               "cd": 2.3902,
               "er": 1.4404,
-              "dmg%": 1.57,
-              "defReduction%": 0.3,
-              "resReduction%": 0.79,
+              "dmg%": 1.86,
+              "baseDmg": 4021.6463,
+              "defReduction%": 0.7,
+              "resReduction%": 1.04,
               "atkSpd%": 0.1
             }
           },
           "durin": {
             "onField": {
-              "atk": 5083,
-              "hp": 19412,
+              "atk": 4074,
+              "hp": 18753,
               "def": 881,
               "em": 200,
               "cr": 0.9895,
               "cd": 2.0626,
               "er": 1.5505,
-              "dmg%": 1.75,
-              "defReduction%": 0.3,
+              "dmg%": 2.646,
+              "baseDmg": 4021.6463,
+              "defReduction%": 0.7,
               "defIgnore%": 0.3,
-              "resReduction%": 0.55
+              "resReduction%": 0.8
             },
             "offField": {
-              "atk": 3904,
-              "hp": 19412,
+              "atk": 4074,
+              "hp": 18753,
               "def": 881,
               "em": 200,
               "cr": 0.9895,
               "cd": 2.0626,
               "er": 1.5505,
-              "dmg%": 1.1,
-              "defReduction%": 0.3,
+              "dmg%": 1.856,
+              "baseDmg": 4021.6463,
+              "defReduction%": 0.7,
               "defIgnore%": 0.3,
-              "resReduction%": 0.55
-            }
-          },
-          "bennett": {
-            "onField": {
-              "atk": 3977,
-              "hp": 19349,
-              "def": 825,
-              "em": 200,
-              "cr": 0.7385,
-              "cd": 1.4247,
-              "er": 2.2584,
-              "dmg%": 1.816,
-              "baseDmg": 2342.6799,
-              "defReduction%": 0.3,
-              "resReduction%": 0.55,
-              "atkSpd%": 0.1
-            },
-            "offField": {
-              "atk": 2323,
-              "hp": 19349,
-              "def": 825,
-              "em": 200,
-              "cr": 0.7385,
-              "cd": 1.4247,
-              "er": 2.2584,
-              "dmg%": 1.166,
-              "defReduction%": 0.3,
-              "resReduction%": 0.55,
-              "atkSpd%": 0.1
+              "resReduction%": 0.8
             }
           },
           "venti": {
             "onField": {
-              "atk": 4229,
+              "atk": 3634,
               "hp": 16060,
               "def": 716,
-              "em": 379,
-              "cr": 0.989,
-              "cd": 2.1605,
-              "er": 1.871,
-              "dmg%": 1.916,
-              "baseDmg": 2342.6799,
+              "em": 360,
+              "cr": 0.8237,
+              "cd": 2.0945,
+              "er": 2.3114,
+              "dmg%": 2.496,
+              "baseDmg": 6466.3167,
               "baseDmg%": 2,
-              "defReduction%": 0.3,
-              "resReduction%": 0.79
+              "defReduction%": 0.7,
+              "resReduction%": 1.04
             },
             "offField": {
-              "atk": 2529,
+              "atk": 3113,
               "hp": 16060,
               "def": 716,
-              "em": 379,
-              "cr": 0.989,
-              "cd": 2.1605,
-              "er": 1.871,
-              "dmg%": 1.416,
+              "em": 360,
+              "cr": 0.8237,
+              "cd": 2.0945,
+              "er": 2.3114,
+              "dmg%": 1.706,
+              "baseDmg": 4021.6463,
               "baseDmg%": 0.35,
-              "defReduction%": 0.3,
-              "resReduction%": 0.79
+              "defReduction%": 0.7,
+              "resReduction%": 1.04
+            }
+          },
+          "nicole": {
+            "onField": {
+              "atk": 6395,
+              "hp": 17034,
+              "def": 603,
+              "em": 200,
+              "cr": 0.2153,
+              "cd": 0.7642,
+              "er": 1.4955,
+              "dmg%": 2.03,
+              "baseDmg": 6921.0367,
+              "defReduction%": 0.7,
+              "resReduction%": 1.04
+            },
+            "offField": {
+              "atk": 5745,
+              "hp": 17034,
+              "def": 603,
+              "em": 200,
+              "cr": 0.2153,
+              "cd": 0.7642,
+              "er": 1.4955,
+              "dmg%": 0.99,
+              "baseDmg": 4021.6463,
+              "defReduction%": 0.7,
+              "resReduction%": 1.04
             }
           }
         },
         "marginalGains": {
           "varka": {
-            "atk": 0.002,
-            "atk%": 0.0061,
+            "atk": 0.0016,
+            "atk%": 0.0051,
             "em": 0,
-            "cd": 0.0101
+            "cd": 0.0086
           },
           "durin": {
             "atk": 0.0008,
-            "atk%": 0.0026,
-            "cr": 0.0009,
-            "cd": 0.0027
-          },
-          "bennett": {
-            "atk": 0,
-            "atk%": 0.0001,
-            "cr": 0.0003,
-            "cd": 0.0003
+            "atk%": 0.0025,
+            "cr": 0.0013,
+            "cd": 0.0038
           },
           "venti": {
-            "atk": 0.0009,
-            "atk%": 0.0024,
+            "atk": 0.0007,
+            "atk%": 0.0019,
             "em": 0,
-            "cr": 0.0018,
-            "cd": 0.0048
+            "cr": 0.0067,
+            "cd": 0.0053
+          },
+          "nicole": {
+            "atk": 0.0006,
+            "atk%": 0.0022,
+            "cr": 0.0008,
+            "cd": 0.0004
           }
         },
         "levelUpGains": {}
@@ -1364,10 +1665,14 @@
         "character:durin:C1": {
           "maxStacks": 20,
           "totalAllocated": 0
+        },
+        "character:nicole:C4": {
+          "maxStacks": 8,
+          "totalAllocated": 0
         }
       }
     },
-    "10G0W20Wm0ua0OA1W2": {
+    "WTe649kW4WbK6C1jWo": {
       "teamName": "zibai / linnea / illuga / columbina",
       "characters": [
         "zibai",
@@ -2861,7 +3166,7 @@
         }
       }
     },
-    "10G0W74W31GC0K15Wf": {
+    "WTe644gWnWDi6GAfWB": {
       "teamName": "zibai / illuga / columbina / gorou",
       "characters": [
         "zibai",
@@ -4185,7 +4490,7 @@
         }
       }
     },
-    "5WW0WA1W36Gq2YMhWf": {
+    "RzO641jWnRD441r3WB": {
       "teamName": "nefer / columbina / lauma / nilou",
       "characters": [
         "nefer",
@@ -5623,7 +5928,7 @@
         }
       }
     },
-    "5mi0WA1W36XK0JH40T": {
+    "RjC641jWnQya6Gwh0N": {
       "teamName": "flins / columbina / ineffa / sucrose",
       "characters": [
         "flins",
@@ -6870,7 +7175,7 @@
         "levelUpGains": {}
       }
     },
-    "71O0eyC0e91m11l90n": {
+    "QSW5xFZ0COS85YSc03": {
       "teamName": "skirk / escoffier / citlali / furina",
       "characters": [
         "skirk",
@@ -8112,7 +8417,7 @@
         }
       }
     },
-    "71O0eyC08Dv86BJSWe": {
+    "QSW5xFZ0iJam0OuIWC": {
       "teamName": "skirk / escoffier / furina / shenhe",
       "characters": [
         "skirk",
@@ -9398,7 +9703,7 @@
         }
       }
     },
-    "71O0eyC08Dv86BCI0e": {
+    "QSW5xFZ0iJam0O_T0C": {
       "teamName": "skirk / escoffier / furina / kamisato_ayaka",
       "characters": [
         "skirk",
@@ -10680,7 +10985,7 @@
         }
       }
     },
-    "7Hi3fFB07Dpa1h1Z0D": {
+    "QCC2wya0jJgK4vAC0d": {
       "teamName": "ifa / ororon / furina / fischl",
       "characters": [
         "ifa",
@@ -11603,7 +11908,7 @@
         "levelUpGains": {}
       }
     },
-    "81a0m_YW8CpM49l90n": {
+    "PSK5pCCWiKgdZ2Sc03": {
       "teamName": "varesa / iansan / xianyun / furina",
       "characters": [
         "varesa",
@@ -12793,7 +13098,7 @@
         }
       }
     },
-    "81a0m_YW8D3C1RPa0e": {
+    "PSK5pCCWiKQi58oB0C": {
       "teamName": "varesa / iansan / chevreuse / bennett",
       "characters": [
         "varesa",
@@ -13851,7 +14156,7 @@
         "levelUpGains": {}
       }
     },
-    "9Hq0v8E08A2G5BX90T": {
+    "OC45h3X0iNRe1Ogc0N": {
       "teamName": "mavuika / citlali / xilonen / kaedehara_kazuha",
       "characters": [
         "mavuika",
@@ -15249,7 +15554,7 @@
         }
       }
     },
-    "9Hq0v8E08A2G5BOvWe": {
+    "OC45h3X0iNRe1OorWC": {
       "teamName": "mavuika / citlali / xilonen / bennett",
       "characters": [
         "mavuika",
@@ -16487,7 +16792,7 @@
         }
       }
     },
-    "9Xu0v8E08A2G5BPa0e": {
+    "Ny05h3X0iNRe1OoB0C": {
       "teamName": "chasca / citlali / xilonen / bennett",
       "characters": [
         "chasca",
@@ -17651,7 +17956,7 @@
         }
       }
     },
-    "9Xu0v8E08DrS6BPa0e": {
+    "Ny05h3X0iJeS0OoB0C": {
       "teamName": "chasca / citlali / furina / bennett",
       "characters": [
         "chasca",
@@ -18802,7 +19107,7 @@
         }
       }
     },
-    "9Xu0vAEW8DrS6BOvWe": {
+    "Ny05h1WWiJeS0OorWC": {
       "teamName": "chasca / mavuika / furina / bennett",
       "characters": [
         "chasca",
@@ -19993,7 +20298,7 @@
         "levelUpGains": {}
       }
     },
-    "Aoq0ug3WeB2u1BPa0K": {
+    "Mh45hXhWCMR05OoB0W": {
       "teamName": "kinich / durin / emilie / bennett",
       "characters": [
         "kinich",
@@ -21177,7 +21482,7 @@
         }
       }
     },
-    "AIm0v8E089Hq0vGI0f": {
+    "NB85h3X0iOC45gxT0B": {
       "teamName": "mualani / citlali / mavuika / xilonen",
       "characters": [
         "mualani",
@@ -22416,7 +22721,7 @@
         }
       }
     },
-    "Bp01GA1W26XK0PGI08": {
+    "Lgu5K1jWoQya6AxT0i": {
       "teamName": "clorinde / columbina / ineffa / xilonen",
       "characters": [
         "clorinde",
@@ -23724,7 +24029,7 @@
         }
       }
     },
-    "Bp01Gg3WeD3C131B0n": {
+    "Lgu5JXhWCKQi5XAa03": {
       "teamName": "clorinde / durin / chevreuse / fischl",
       "characters": [
         "clorinde",
@@ -24827,7 +25132,7 @@
         }
       }
     },
-    "Bp01IGg0KS983h1Z0D": {
+    "Lgu5Hx50W5Km2vAC0d": {
       "teamName": "clorinde / nahida / kaedehara_kazuha / fischl",
       "characters": [
         "clorinde",
@@ -25849,7 +26154,7 @@
         "levelUpGains": {}
       }
     },
-    "BM44IGg0KMBS6B1Z0D": {
+    "M7q2Hx50WBIS0PAC0d": {
       "teamName": "sethos / nahida / zhongli / fischl",
       "characters": [
         "sethos",
@@ -26747,7 +27052,7 @@
         "levelUpGains": {}
       }
     },
-    "C381H8E08A2G5BOvWe": {
+    "LQm5J3X0iNRe1OorWC": {
       "teamName": "arlecchino / citlali / xilonen / bennett",
       "characters": [
         "arlecchino",
@@ -27868,7 +28173,7 @@
         }
       }
     },
-    "C381HGI08KcG3pOvWe": {
+    "LQm5IxT0iCte2morWC": {
       "teamName": "arlecchino / xilonen / yelan / bennett",
       "characters": [
         "arlecchino",
@@ -28946,7 +29251,7 @@
         }
       }
     },
-    "C381HkhWnKcG3pOvWe": {
+    "LQm5IT3W3Cte2morWC": {
       "teamName": "arlecchino / furina / yelan / bennett",
       "characters": [
         "arlecchino",
@@ -29965,7 +30270,7 @@
         "levelUpGains": {}
       }
     },
-    "CJG61GI08Dv81i15Wm": {
+    "LAe0YxT0iJam4uAfW4": {
       "teamName": "chiori / xilonen / furina / gorou",
       "characters": [
         "chiori",
@@ -31233,7 +31538,7 @@
         }
       }
     },
-    "Cey3vcQWTDpa1hOvWe": {
+    "Kqy2gbKWNJgK4uorWC": {
       "teamName": "gaming / xianyun / furina / bennett",
       "characters": [
         "gaming",
@@ -32231,7 +32536,7 @@
         }
       }
     },
-    "Cnc49l90DHei6BPa0e": {
+    "KiNZ2Sc0dFrC0OoB0C": {
       "teamName": "xianyun / furina / faruzan / bennett",
       "characters": [
         "xianyun",
@@ -33278,7 +33583,7 @@
         }
       }
     },
-    "DJS1WA1W3A2G11kSWn": {
+    "KAS541jWnNRe5YTIW3": {
       "teamName": "navia / columbina / xilonen / furina",
       "characters": [
         "navia",
@@ -34703,7 +35008,7 @@
         }
       }
     },
-    "DJS1XGI08Dpa1hOvWe": {
+    "KAS52xT0iJgK4uorWC": {
       "teamName": "navia / xilonen / furina / bennett",
       "characters": [
         "navia",
@@ -35887,7 +36192,7 @@
         }
       }
     },
-    "Dpa0mg3We91m11cQmX": {
+    "JgK5pXhWCOS85YbKyO": {
       "teamName": "furina / durin / citlali / xianyun",
       "characters": [
         "furina",
@@ -37144,7 +37449,7 @@
         }
       }
     },
-    "EJe1mg3W1QRa5BPa0e": {
+    "JAG4pXhWp72K1OoB0C": {
       "teamName": "wriothesley / durin / shenhe / bennett",
       "characters": [
         "wriothesley",
@@ -38360,7 +38665,7 @@
         }
       }
     },
-    "EJe1nGI08Dpa1hJSWe": {
+    "JAG4oxT0iJgK4uuIWC": {
       "teamName": "wriothesley / xilonen / furina / shenhe",
       "characters": [
         "wriothesley",
@@ -39679,7 +39984,7 @@
         }
       }
     },
-    "E3i1n8E08A2G61kSWD": {
+    "JQC4p3X0iNRe0YTIWd": {
       "teamName": "neuvillette / citlali / xilonen / furina",
       "characters": [
         "neuvillette",
@@ -40933,7 +41238,7 @@
         }
       }
     },
-    "E3i1nGI08Dpa1hX90T": {
+    "JQC4oxT0iJgK4ugc0N": {
       "teamName": "neuvillette / xilonen / furina / kaedehara_kazuha",
       "characters": [
         "neuvillette",
@@ -42197,7 +42502,7 @@
         }
       }
     },
-    "Ewi6OyC0eDpa1hJSWe": {
+    "IZC0BFZ0CJgK4uuIWC": {
       "teamName": "freminet / escoffier / furina / shenhe",
       "characters": [
         "freminet",
@@ -43348,7 +43653,7 @@
         }
       }
     },
-    "F4m1mg3W1D1W531B0n": {
+    "IP84pXhWpKSO1XAa03": {
       "teamName": "lyney / durin / chevreuse / fischl",
       "characters": [
         "lyney",
@@ -44494,7 +44799,7 @@
         }
       }
     },
-    "G502YGg0KKP82I_F0U": {
+    "HOu41x50WD4m4HCW0M": {
       "teamName": "kaveh / nahida / kuki_shinobu / xingqiu",
       "characters": [
         "kaveh",
@@ -45542,7 +45847,7 @@
         "levelUpGains": {}
       }
     },
-    "Gr42QGg0KKLO2I_DWf": {
+    "Geq49x50WD8W4HCXWB": {
       "teamName": "alhaitham / nahida / kuki_shinobu / xingqiu",
       "characters": [
         "alhaitham",
@@ -46602,7 +46907,7 @@
         "levelUpGains": {}
       }
     },
-    "HL828g3W1Hei6BPa0e": {
+    "G8m4RXhWpFrC0OoB0C": {
       "teamName": "wanderer / durin / faruzan / bennett",
       "characters": [
         "wanderer",
@@ -47689,7 +47994,7 @@
         }
       }
     },
-    "IrUX0o6WKI5G2RRC0I": {
+    "EeV6BPeWWFOe48mZ0Y": {
       "teamName": "nilou / lauma / nahida / sangonomiya_kokomi",
       "characters": [
         "nilou",
@@ -49009,7 +49314,7 @@
         }
       }
     },
-    "IbW2P-d0KI5G2Z1Z0D": {
+    "EuO4AD80WFOe41AC0d": {
       "teamName": "cyno / baizhu / nahida / fischl",
       "characters": [
         "cyno",
@@ -49994,7 +50299,7 @@
         "levelUpGains": {}
       }
     },
-    "Js42RzEWDMBS6B1Z0D": {
+    "Ddq48EWWdBIS0PAC0d": {
       "teamName": "tighnari / yae_miko / zhongli / fischl",
       "characters": [
         "tighnari",
@@ -50868,7 +51173,7 @@
         "levelUpGains": {}
       }
     },
-    "PwW4YGg0KKLO2JX90T": {
+    "7ZO21x50WD8W4Ggc0N": {
       "teamName": "kamisato_ayato / nahida / kuki_shinobu / kaedehara_kazuha",
       "characters": [
         "kamisato_ayato",
@@ -52032,7 +52337,7 @@
         "levelUpGains": {}
       }
     },
-    "Oe061GI08Dpa1i15We": {
+    "8ru0YxT0iJgK4uAfWC": {
       "teamName": "arataki_itto / xilonen / furina / gorou",
       "characters": [
         "arataki_itto",
@@ -53244,7 +53549,7 @@
         }
       }
     },
-    "Oe061GI08Lty0B340U": {
+    "8ru0YxT0iBby6P8h0M": {
       "teamName": "arataki_itto / xilonen / albedo / mona",
       "characters": [
         "arataki_itto",
@@ -54403,7 +54708,7 @@
         }
       }
     },
-    "LLW3mA1W2A2G11l90n": {
+    "C8O2q1jWoNRe5YSc03": {
       "teamName": "raiden_shogun / columbina / xilonen / furina",
       "characters": [
         "raiden_shogun",
@@ -55854,7 +56159,7 @@
         }
       }
     },
-    "LP03q5B0US983hOvWe": {
+    "C4u2m6a0M5Km2uorWC": {
       "teamName": "raiden_shogun / kujou_sara / kaedehara_kazuha / bennett",
       "characters": [
         "raiden_shogun",
@@ -56952,7 +57257,7 @@
         "levelUpGains": {}
       }
     },
-    "LP03of80UNvi3pOvWe": {
+    "C4u2nYd0M9aC2morWC": {
       "teamName": "raiden_shogun / xiangling / xingqiu / bennett",
       "characters": [
         "raiden_shogun",
@@ -57961,7 +58266,7 @@
         "levelUpGains": {}
       }
     },
-    "Td02n8E08A2G5C34Wm": {
+    "3su3p3X0iNRe1O8gW4": {
       "teamName": "yoimiya / citlali / xilonen / yun_jin",
       "characters": [
         "yoimiya",
@@ -59161,7 +59466,7 @@
         }
       }
     },
-    "PdK6OyC08Dv86BJSWe": {
+    "7sa0BFZ0iJam0OuIWC": {
       "teamName": "kamisato_ayaka / escoffier / furina / shenhe",
       "characters": [
         "kamisato_ayaka",
@@ -60414,7 +60719,7 @@
         }
       }
     },
-    "Vwi3XkSWDGea52h80U": {
+    "1ZC32TIWdGrK1XWd0M": {
       "teamName": "eula / furina / mika / raiden_shogun",
       "characters": [
         "eula",
@@ -61520,7 +61825,7 @@
         "levelUpGains": {}
       }
     },
-    "PBS3v8E08Duq1gb5WU": {
+    "8IS2h3X0iJb44vcfWM": {
       "teamName": "hu_tao / citlali / furina / yelan",
       "characters": [
         "hu_tao",
@@ -62555,7 +62860,7 @@
         }
       }
     },
-    "PBS3vGI08Dpa1g_DWU": {
+    "8IS2gxT0iJgK4vCXWM": {
       "teamName": "hu_tao / xilonen / furina / xingqiu",
       "characters": [
         "hu_tao",
@@ -63642,7 +63947,7 @@
         }
       }
     },
-    "Kyu2vcQWTDpa1gD5WT": {
+    "CX03gbKWNJgK4v-fWN": {
       "teamName": "xiao / xianyun / furina / faruzan",
       "characters": [
         "xiao",
@@ -64643,7 +64948,7 @@
         }
       }
     },
-    "QcG6PkSWDQRa53VB0T": {
+    "6te0ATIWd72K1Wia0N": {
       "teamName": "ganyu / furina / shenhe / venti",
       "characters": [
         "ganyu",
@@ -65892,7 +66197,7 @@
         "levelUpGains": {}
       }
     },
-    "NDW4ZX90TL903pOvWe": {
+    "AGO20gc0NCKu2morWC": {
       "teamName": "tartaglia / kaedehara_kazuha / xiangling / bennett",
       "characters": [
         "tartaglia",
@@ -66955,7 +67260,7 @@
         "levelUpGains": {}
       }
     },
-    "UtK5wGg0KS983h1Z0D": {
+    "2ca0fx50W5Km2vAC0d": {
       "teamName": "keqing / nahida / kaedehara_kazuha / fischl",
       "characters": [
         "keqing",
@@ -67980,7 +68285,7 @@
         "levelUpGains": {}
       }
     },
-    "UPq08g3W1D3C531B0n": {
+    "3446RXhWpKQi1XAa03": {
       "teamName": "klee / durin / chevreuse / fischl",
       "characters": [
         "klee",
@@ -69158,7 +69463,7 @@
         }
       }
     },
-    "UJe09GI08Dpa1gk_Wm": {
+    "3AG6QxT0iJgK4vSlW4": {
       "teamName": "klee / xilonen / furina / albedo",
       "characters": [
         "klee",
@@ -70525,7 +70830,7 @@
         }
       }
     },
-    "Ne062k_WmOOW3pPa0e": {
+    "9ru0XSlW495O2moB0C": {
       "teamName": "noelle / albedo / mona / bennett",
       "characters": [
         "noelle",
@@ -71490,7 +71795,7 @@
         "levelUpGains": {}
       }
     },
-    "LW809ePWBO0K0BPa0e": {
+    "Bzm6QZLWf9Ta6OoB0C": {
       "teamName": "razor / chevreuse / fischl / bennett",
       "characters": [
         "razor",
@@ -72498,7 +72803,7 @@
         "levelUpGains": {}
       }
     },
-    "RmK08g3W1Hei6BPa0e": {
+    "5ja6RXhWpFrC0OoB0C": {
       "teamName": "venti / durin / faruzan / bennett",
       "characters": [
         "venti",
