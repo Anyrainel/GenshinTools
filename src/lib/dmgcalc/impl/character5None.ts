@@ -1136,8 +1136,8 @@ class Nicole extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    const kenosisRatio = this.param("E", 4);
-    const kenosisCap = this.param("E", 5);
+    const kenosisRatio = this.param("E", 5);
+    const kenosisCap = this.param("E", 6);
     buffs.push(
       new ScalingBuff(
         cbs(this, "E", ["E"]),

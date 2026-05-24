@@ -69,6 +69,10 @@ type InspectableBuff = {
     filter?: { elements?: readonly string[] };
   };
   staticBuffs: readonly { key: string; value: number }[];
+  inputKey?: string;
+  outputKey?: string;
+  scale?: number;
+  cap?: number;
 };
 
 function inspectBuffs(char: { buffs: unknown[] }): InspectableBuff[] {
@@ -130,6 +134,15 @@ function atkBuffsForOrigin(char: { buffs: unknown[] }, origin: string) {
   );
 }
 
+function scalingAtkBuffsForOrigin(char: { buffs: unknown[] }, origin: string) {
+  return inspectBuffs(char).filter(
+    (buff) =>
+      buff.source.origin === origin &&
+      buff.inputKey === "atk" &&
+      buff.outputKey === "atk"
+  );
+}
+
 function resReductionElements(char: { buffs: unknown[] }) {
   return inspectBuffs(char)
     .filter(
@@ -150,6 +163,25 @@ describe("Nicole E ATK buff option", () => {
       "all-theosis",
       "hexerei-theosis",
     ]);
+  });
+
+  it("uses the official E ATK ratio and cap for Grace of Kenosis", () => {
+    const { char } = nicoleWithTeam(["amber"]);
+    const eAtkBuffs = scalingAtkBuffsForOrigin(char, "E");
+
+    expect(eAtkBuffs).toHaveLength(1);
+    expect(eAtkBuffs[0].target.receiver).toBe("team");
+    expect(eAtkBuffs[0].scale).toBeCloseTo(0.15, 3);
+    expect(eAtkBuffs[0].cap).toBeCloseTo(600, 3);
+  });
+
+  it("uses C3's effective E talent level for the Grace ratio and cap", () => {
+    const { char } = nicoleWithTeam(["amber"], 3);
+    const eAtkBuffs = scalingAtkBuffsForOrigin(char, "E");
+
+    expect(eAtkBuffs).toHaveLength(1);
+    expect(eAtkBuffs[0].scale).toBeCloseTo(0.177, 3);
+    expect(eAtkBuffs[0].cap).toBeCloseTo(708, 3);
   });
 
   it("defaults to teamwide Theosis ATK uplift", () => {

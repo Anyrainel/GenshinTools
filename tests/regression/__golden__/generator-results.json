@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-05-20T11:34:35.326Z",
+  "generatedAt": "2026-05-24T01:16:41.030Z",
   "teams": {
     "Wzm6RXhWC5aW2yDl0r": {
       "teamName": "varka / durin / venti / nicole",
@@ -30,127 +30,127 @@
           "minCr": 0.05
         }
       },
-      "damage": 52384703.803,
+      "damage": 61219636.4898,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 1249499.6921,
-            "total": 2498999.3842
+            "perHit": 1443763.2199,
+            "total": 2887526.4398
           },
           {
-            "perHit": 3248383.5917,
-            "total": 6496767.1833
+            "perHit": 3710420.1682,
+            "total": 7420840.3365
           },
           {
-            "perHit": 2875396.5655,
-            "total": 5750793.131
+            "perHit": 3318214.057,
+            "total": 6636428.114
           },
           {
-            "perHit": 5752906.85,
-            "total": 8930054.7377
+            "perHit": 6646402.2013,
+            "total": 10301084.3839
           },
           {
-            "perHit": 826190.016,
-            "total": 1652380.032
+            "perHit": 949107.8025,
+            "total": 1898215.6049
           },
           {
             "perHit": 3848.9732,
             "total": 7697.9465
           },
           {
-            "perHit": 119513.5919,
-            "total": 239027.1839
+            "perHit": 151441.9195,
+            "total": 302883.8391
           },
           {
-            "perHit": 258936.2564,
-            "total": 517872.5129
+            "perHit": 330068.4659,
+            "total": 660136.9319
           },
           {
-            "perHit": 3432700.4966,
-            "total": 6865400.9932
+            "perHit": 4276525.0827,
+            "total": 8553050.1653
           },
           {
-            "perHit": 2486182.2012,
-            "total": 4972364.4023
+            "perHit": 2817734.97,
+            "total": 5635469.9399
           },
           {
-            "perHit": 1216669.7896,
-            "total": 2433339.5792
+            "perHit": 1424238.8754,
+            "total": 2848477.7509
           },
           {
-            "perHit": 634755.7363,
-            "total": 1269511.4725
+            "perHit": 732434.2638,
+            "total": 1464868.5277
           },
           {
-            "perHit": 749809.9087,
-            "total": 1499619.8174
+            "perHit": 889501.1472,
+            "total": 1779002.2944
           },
           {
-            "perHit": 1006396.6767,
-            "total": 2012793.3534
+            "perHit": 1196068.2706,
+            "total": 2392136.5412
           },
           {
             "perHit": 4664.7237,
             "total": 9329.4475
           },
           {
-            "perHit": 111468.8672,
-            "total": 222937.7344
+            "perHit": 122769.9627,
+            "total": 245539.9254
           },
           {
-            "perHit": 46876.3972,
-            "total": 93752.7943
+            "perHit": 51719.3198,
+            "total": 103438.6395
           },
           {
-            "perHit": 70740.9091,
-            "total": 141481.8181
+            "perHit": 78225.3258,
+            "total": 156450.6516
           },
           {
-            "perHit": 82630.5318,
-            "total": 165261.0635
+            "perHit": 91430.9766,
+            "total": 182861.9533
           },
           {
-            "perHit": 85506.4706,
-            "total": 171012.9413
+            "perHit": 94625.2449,
+            "total": 189250.4898
           },
           {
-            "perHit": 166076.1151,
-            "total": 332152.2303
+            "perHit": 184112.9114,
+            "total": 368225.8228
           },
           {
-            "perHit": 427520.0285,
-            "total": 855040.057
+            "perHit": 490911.5831,
+            "total": 981823.1662
           },
           {
-            "perHit": 678617.5896,
-            "total": 1357235.1793
+            "perHit": 782559.0592,
+            "total": 1565118.1183
           },
           {
-            "perHit": 305349.6425,
-            "total": 610699.2851
+            "perHit": 378347.1591,
+            "total": 756694.3183
           },
           {
-            "perHit": 499021.2904,
-            "total": 998042.5808
+            "perHit": 616336.7794,
+            "total": 1232673.5589
           },
           {
-            "perHit": 295941.5859,
-            "total": 591883.1718
+            "perHit": 347224.1341,
+            "total": 694448.2682
           },
           {
-            "perHit": 498447.7582,
-            "total": 996895.5164
+            "perHit": 589176.3407,
+            "total": 1178352.6815
           },
           {
-            "perHit": 131901.4941,
-            "total": 263802.9882
+            "perHit": 146155.6,
+            "total": 292311.1999
           },
           {
-            "perHit": 214277.6329,
-            "total": 428555.2657
+            "perHit": 237649.7164,
+            "total": 475299.4328
           }
         ],
-        "totalDamage": 52384703.803
+        "totalDamage": 61219636.4898
       },
       "artifacts": {
         "varka": {
@@ -210,9 +210,9 @@
             "setKey": "generated",
             "mainStat": "hp",
             "substats": {
-              "er": 22.02,
-              "cr": 6.61,
-              "cd": 6.6,
+              "er": 5.51,
+              "cr": 13.22,
+              "cd": 13.21,
               "atk%": 4.96
             }
           },
@@ -220,19 +220,19 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "er": 22.02,
-              "cd": 6.6,
+              "cd": 26.42,
               "cr": 6.61,
-              "atk%": 4.96
+              "atk%": 4.96,
+              "hp%": 4.96
             }
           },
           "sands": {
             "setKey": "generated",
-            "mainStat": "atk%",
+            "mainStat": "er",
             "substats": {
-              "er": 11.01,
-              "cr": 9.92,
-              "cd": 13.21,
+              "cd": 26.42,
+              "cr": 6.61,
+              "atk%": 4.96,
               "atk": 16.54
             }
           },
@@ -240,8 +240,8 @@
             "setKey": "generated",
             "mainStat": "pyro%",
             "substats": {
-              "cd": 26.42,
-              "cr": 6.61,
+              "cd": 33.02,
+              "cr": 3.31,
               "atk%": 4.96,
               "atk": 16.54
             }
@@ -373,9 +373,9 @@
         },
         "durin": {
           "hp": 4780,
-          "er": 0.5505,
+          "er": 0.5731,
           "cr": 0.6085,
-          "cd": 0.8587,
+          "cd": 1.321,
           "atk": 361
         },
         "venti": {
@@ -395,99 +395,99 @@
         }
       },
       "display": {
-        "totalDamage": 52384703.803,
+        "totalDamage": 61219636.4898,
         "partsByFormula": {
           "varka.varka-e": [
             {
-              "damage": 1249499.6921,
+              "damage": 1443763.2199,
               "template": "direct"
             }
           ],
           "varka.varka-normal": [
             {
-              "damage": 431013.4077,
+              "damage": 494123.855,
               "template": "direct"
             },
             {
-              "damage": 227559.5698,
+              "damage": 257814.1193,
               "template": "direct"
             },
             {
-              "damage": 380261.2016,
+              "damage": 434150.8179,
               "template": "direct"
             },
             {
-              "damage": 269003.9702,
+              "damage": 305951.404,
               "template": "direct"
             },
             {
-              "damage": 469375.2164,
+              "damage": 537655.9152,
               "template": "direct"
             },
             {
-              "damage": 381816.0723,
+              "damage": 436981.6086,
               "template": "direct"
             },
             {
-              "damage": 296751.0305,
+              "damage": 337154.5328,
               "template": "direct"
             },
             {
-              "damage": 452059.7802,
+              "damage": 518569.0204,
               "template": "direct"
             },
             {
-              "damage": 340543.3428,
+              "damage": 388018.8952,
               "template": "direct"
             }
           ],
           "varka.varka-special-e": [
             {
-              "damage": 721828.4273,
+              "damage": 831902.7888,
               "template": "direct"
             },
             {
-              "damage": 508726.1885,
+              "damage": 583361.7023,
               "template": "direct"
             },
             {
-              "damage": 1644841.9496,
+              "damage": 1902949.5659,
               "template": "direct"
             }
           ],
           "varka.varka-special-ca": [
             {
-              "damage": 761659.7493,
+              "damage": 878166.4979,
               "template": "direct"
             },
             {
-              "damage": 435767.1146,
+              "damage": 499645.2413,
               "template": "direct"
             },
             {
-              "damage": 533558.387,
+              "damage": 612204.0693,
               "template": "direct"
             },
             {
-              "damage": 330385.8544,
+              "damage": 376221.0671,
               "template": "direct"
             },
             {
-              "damage": 3162470.5774,
+              "damage": 3665661.0669,
               "template": "direct"
             },
             {
-              "damage": 1644841.9496,
+              "damage": 1902949.5659,
               "template": "direct"
             }
           ],
           "varka.varka-burst": [
             {
-              "damage": 480840.3039,
+              "damage": 553636.2758,
               "template": "direct"
             },
             {
-              "damage": 345349.7121,
+              "damage": 395471.5267,
               "template": "direct"
             }
           ],
@@ -499,129 +499,129 @@
           ],
           "durin.durin-skill-purity": [
             {
-              "damage": 119513.5919,
+              "damage": 151441.9195,
               "template": "direct"
             }
           ],
           "durin.durin-skill-darkness": [
             {
-              "damage": 93291.9476,
+              "damage": 118730.2459,
               "template": "direct"
             },
             {
-              "damage": 78326.1171,
+              "damage": 100060.2739,
               "template": "direct"
             },
             {
-              "damage": 87318.1917,
+              "damage": 111277.9461,
               "template": "direct"
             }
           ],
           "durin.durin-burst-white": [
             {
-              "damage": 175630.6113,
+              "damage": 218944.4622,
               "template": "direct"
             },
             {
-              "damage": 151676.4864,
+              "damage": 189508.9039,
               "template": "direct"
             },
             {
-              "damage": 168070.6216,
+              "damage": 209654.5165,
               "template": "direct"
             },
             {
-              "damage": 176384.2628,
+              "damage": 219193.6298,
               "template": "direct",
               "hits": 10
             },
             {
-              "damage": 117348.0149,
+              "damage": 146648.0902,
               "template": "direct",
               "hits": 10
             }
           ],
           "venti.venti-windsunder": [
             {
-              "damage": 107849.5527,
+              "damage": 122493.7864,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 153739.1092,
+              "damage": 177322.1373,
               "template": "direct"
             },
             {
-              "damage": 169035.6281,
+              "damage": 195598.2543,
               "template": "direct"
             },
             {
-              "damage": 118705.1467,
+              "damage": 135463.934,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 165746.0542,
+              "damage": 191667.9066,
               "template": "direct"
             },
             {
-              "damage": 204563.0267,
+              "damage": 238046.0099,
               "template": "direct"
             },
             {
-              "damage": 76664.3916,
+              "damage": 85234.0899,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 85842.3029,
+              "damage": 96199.7601,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 88901.6067,
+              "damage": 99854.9835,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 78835.5104,
+              "damage": 87828.1194,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 88243.6919,
+              "damage": 99068.9139,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 96007.0864,
+              "damage": 108344.5346,
               "template": "direct",
               "hits": 2
             }
           ],
           "venti.venti-burst-total": [
             {
-              "damage": 60833.4895,
+              "damage": 71211.9438,
               "template": "direct",
               "hits": 20
             }
           ],
           "venti.venti-burst-absorb-pyro": [
             {
-              "damage": 31737.7868,
+              "damage": 36621.7132,
               "template": "direct",
               "hits": 20
             }
           ],
           "venti.venti-skill": [
             {
-              "damage": 749809.9087,
+              "damage": 889501.1472,
               "template": "direct"
             }
           ],
           "venti.venti-skill-hold": [
             {
-              "damage": 1006396.6767,
+              "damage": 1196068.2706,
               "template": "direct"
             }
           ],
@@ -633,93 +633,93 @@
           ],
           "nicole.nicole-normal": [
             {
-              "damage": 36459.6411,
+              "damage": 40149.563,
               "template": "direct"
             },
             {
-              "damage": 34338.158,
+              "damage": 37793.259,
               "template": "direct"
             },
             {
-              "damage": 40671.0681,
+              "damage": 44827.1407,
               "template": "direct"
             }
           ],
           "nicole.nicole-plunge": [
             {
-              "damage": 46876.3972,
+              "damage": 51719.3198,
               "template": "direct"
             }
           ],
           "nicole.nicole-plunge-low": [
             {
-              "damage": 70740.9091,
+              "damage": 78225.3258,
               "template": "direct"
             }
           ],
           "nicole.nicole-plunge-high": [
             {
-              "damage": 82630.5318,
+              "damage": 91430.9766,
               "template": "direct"
             }
           ],
           "nicole.nicole-skill": [
             {
-              "damage": 85506.4706,
+              "damage": 94625.2449,
               "template": "direct"
             }
           ],
           "nicole.nicole-burst": [
             {
-              "damage": 166076.1151,
+              "damage": 184112.9114,
               "template": "direct"
             }
           ],
           "nicole.nicole-q-coord-slot1": [
             {
-              "damage": 259600.4609,
+              "damage": 304282.0871,
               "template": "direct"
             }
           ],
           "nicole.nicole-c1-coord-slot1": [
             {
-              "damage": 419271.2584,
+              "damage": 493689.489,
               "template": "direct"
             }
           ],
           "nicole.nicole-q-coord-slot2": [
             {
-              "damage": 243555.9245,
+              "damage": 301393.7928,
               "template": "direct"
             }
           ],
           "nicole.nicole-c1-coord-slot2": [
             {
-              "damage": 395263.6113,
+              "damage": 487816.8195,
               "template": "direct"
             }
           ],
           "nicole.nicole-q-coord-slot3": [
             {
-              "damage": 187472.1878,
+              "damage": 225793.0832,
               "template": "direct"
             }
           ],
           "nicole.nicole-c1-coord-slot3": [
             {
-              "damage": 321752.5466,
+              "damage": 390605.7559,
               "template": "direct"
             }
           ],
           "nicole.nicole-q-coord-slot4": [
             {
-              "damage": 131901.4941,
+              "damage": 146155.6,
               "template": "direct"
             }
           ],
           "nicole.nicole-c1-coord-slot4": [
             {
-              "damage": 214277.6329,
+              "damage": 237649.7164,
               "template": "direct"
             }
           ]
@@ -859,7 +859,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2444.6704
+                "value": 2611.2485
               }
             ],
             "providerCharId": "durin"
@@ -873,7 +873,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2444.6704
+                "value": 2611.2485
               }
             ],
             "providerCharId": "durin"
@@ -887,7 +887,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2444.6704
+                "value": 2611.2485
               }
             ],
             "providerCharId": "durin"
@@ -1139,7 +1139,7 @@
             "entries": [
               {
                 "key": "atk",
-                "value": 0.177
+                "value": 708
               }
             ],
             "providerCharId": "nicole"
@@ -1209,7 +1209,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 4021.6463
+                "value": 4517.1224
               }
             ],
             "providerCharId": "nicole"
@@ -1223,7 +1223,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 4021.6463
+                "value": 4517.1224
               }
             ],
             "providerCharId": "nicole"
@@ -1237,7 +1237,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 4021.6463
+                "value": 4517.1224
               }
             ],
             "providerCharId": "nicole"
@@ -1251,7 +1251,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 4476.3663
+                "value": 4971.8424
               }
             ],
             "providerCharId": "nicole"
@@ -1420,7 +1420,7 @@
               "dmg%": 1.7,
               "atkSpd%": 0.1,
               "defReduction%": 0.7,
-              "atk": 4383,
+              "atk": 5091,
               "em": 259,
               "hp": 18290,
               "def": 852
@@ -1432,7 +1432,7 @@
               "dmg%": 0.91,
               "atkSpd%": 0.1,
               "defReduction%": 0.7,
-              "atk": 3801,
+              "atk": 4508,
               "em": 259,
               "hp": 18290,
               "def": 852
@@ -1440,25 +1440,25 @@
           },
           "durin": {
             "onField": {
-              "cd": 1.7426,
+              "cd": 2.205,
               "cr": 0.9895,
-              "er": 1.5505,
+              "er": 1.5731,
               "dmg%": 1.08,
               "defReduction%": 0.7,
-              "atk": 4074,
+              "atk": 4352,
               "em": 200,
-              "hp": 18753,
+              "hp": 19412,
               "def": 881
             },
             "offField": {
-              "cd": 1.7426,
+              "cd": 2.205,
               "cr": 0.9895,
-              "er": 1.5505,
+              "er": 1.5731,
               "dmg%": 0.29,
               "defReduction%": 0.7,
-              "atk": 4074,
+              "atk": 4352,
               "em": 200,
-              "hp": 18753,
+              "hp": 19412,
               "def": 881
             }
           },
@@ -1470,7 +1470,7 @@
               "dmg%": 1.08,
               "defReduction%": 0.7,
               "em": 360,
-              "atk": 3634,
+              "atk": 4342,
               "hp": 16060,
               "def": 716
             },
@@ -1481,7 +1481,7 @@
               "dmg%": 0.29,
               "defReduction%": 0.7,
               "em": 360,
-              "atk": 3113,
+              "atk": 3821,
               "hp": 16060,
               "def": 716
             }
@@ -1493,7 +1493,7 @@
               "er": 1.4955,
               "dmg%": 1.08,
               "defReduction%": 0.7,
-              "atk": 6395,
+              "atk": 7103,
               "em": 200,
               "hp": 17034,
               "def": 603
@@ -1504,7 +1504,7 @@
               "er": 1.4955,
               "dmg%": 0.29,
               "defReduction%": 0.7,
-              "atk": 5745,
+              "atk": 6453,
               "em": 200,
               "hp": 17034,
               "def": 603
@@ -1514,7 +1514,7 @@
         "maxStats": {
           "varka": {
             "onField": {
-              "atk": 4383,
+              "atk": 5091,
               "hp": 18290,
               "def": 852,
               "em": 259,
@@ -1522,14 +1522,14 @@
               "cd": 3.1902,
               "er": 1.4404,
               "dmg%": 3.2,
-              "baseDmg": 6466.3167,
+              "baseDmg": 7128.3709,
               "baseDmg%": 1.2,
               "defReduction%": 0.7,
               "resReduction%": 1.04,
               "atkSpd%": 0.1
             },
             "offField": {
-              "atk": 3801,
+              "atk": 4508,
               "hp": 18290,
               "def": 852,
               "em": 259,
@@ -1537,7 +1537,7 @@
               "cd": 2.3902,
               "er": 1.4404,
               "dmg%": 1.86,
-              "baseDmg": 4021.6463,
+              "baseDmg": 4517.1224,
               "defReduction%": 0.7,
               "resReduction%": 1.04,
               "atkSpd%": 0.1
@@ -1545,29 +1545,29 @@
           },
           "durin": {
             "onField": {
-              "atk": 4074,
-              "hp": 18753,
+              "atk": 4352,
+              "hp": 19412,
               "def": 881,
               "em": 200,
               "cr": 0.9895,
-              "cd": 2.0626,
-              "er": 1.5505,
+              "cd": 2.525,
+              "er": 1.5731,
               "dmg%": 2.646,
-              "baseDmg": 4021.6463,
+              "baseDmg": 4517.1224,
               "defReduction%": 0.7,
               "defIgnore%": 0.3,
               "resReduction%": 0.8
             },
             "offField": {
-              "atk": 4074,
-              "hp": 18753,
+              "atk": 4352,
+              "hp": 19412,
               "def": 881,
               "em": 200,
               "cr": 0.9895,
-              "cd": 2.0626,
-              "er": 1.5505,
+              "cd": 2.525,
+              "er": 1.5731,
               "dmg%": 1.856,
-              "baseDmg": 4021.6463,
+              "baseDmg": 4517.1224,
               "defReduction%": 0.7,
               "defIgnore%": 0.3,
               "resReduction%": 0.8
@@ -1575,7 +1575,7 @@
           },
           "venti": {
             "onField": {
-              "atk": 3634,
+              "atk": 4342,
               "hp": 16060,
               "def": 716,
               "em": 360,
@@ -1583,13 +1583,13 @@
               "cd": 2.0945,
               "er": 2.3114,
               "dmg%": 2.496,
-              "baseDmg": 6466.3167,
+              "baseDmg": 7128.3709,
               "baseDmg%": 2,
               "defReduction%": 0.7,
               "resReduction%": 1.04
             },
             "offField": {
-              "atk": 3113,
+              "atk": 3821,
               "hp": 16060,
               "def": 716,
               "em": 360,
@@ -1597,7 +1597,7 @@
               "cd": 2.0945,
               "er": 2.3114,
               "dmg%": 1.706,
-              "baseDmg": 4021.6463,
+              "baseDmg": 4517.1224,
               "baseDmg%": 0.35,
               "defReduction%": 0.7,
               "resReduction%": 1.04
@@ -1605,7 +1605,7 @@
           },
           "nicole": {
             "onField": {
-              "atk": 6395,
+              "atk": 7103,
               "hp": 17034,
               "def": 603,
               "em": 200,
@@ -1613,12 +1613,12 @@
               "cd": 0.7642,
               "er": 1.4955,
               "dmg%": 2.03,
-              "baseDmg": 6921.0367,
+              "baseDmg": 7583.0909,
               "defReduction%": 0.7,
               "resReduction%": 1.04
             },
             "offField": {
-              "atk": 5745,
+              "atk": 6453,
               "hp": 17034,
               "def": 603,
               "em": 200,
@@ -1626,7 +1626,7 @@
               "cd": 0.7642,
               "er": 1.4955,
               "dmg%": 0.99,
-              "baseDmg": 4021.6463,
+              "baseDmg": 4517.1224,
               "defReduction%": 0.7,
               "resReduction%": 1.04
             }
@@ -1634,28 +1634,28 @@
         },
         "marginalGains": {
           "varka": {
-            "atk": 0.0016,
-            "atk%": 0.0051,
+            "atk": 0.0014,
+            "atk%": 0.0043,
             "em": 0,
-            "cd": 0.0086
+            "cd": 0.0084
           },
           "durin": {
             "atk": 0.0008,
-            "atk%": 0.0025,
-            "cr": 0.0013,
-            "cd": 0.0038
+            "atk%": 0.0024,
+            "cr": 0.0014,
+            "cd": 0.0035
           },
           "venti": {
-            "atk": 0.0007,
-            "atk%": 0.0019,
+            "atk": 0.0006,
+            "atk%": 0.0016,
             "em": 0,
-            "cr": 0.0067,
-            "cd": 0.0053
+            "cr": 0.0066,
+            "cd": 0.0052
           },
           "nicole": {
             "atk": 0.0006,
-            "atk%": 0.0022,
-            "cr": 0.0008,
+            "atk%": 0.0019,
+            "cr": 0.0007,
             "cd": 0.0004
           }
         },
