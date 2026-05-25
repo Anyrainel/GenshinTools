@@ -219,13 +219,13 @@ describe("getCrBudget", () => {
 
   it("includes character constellation and weapon passive CR ceilings", () => {
     const char: CharacterData = {
-      key: "hu_tao",
+      key: "gaming",
       constellation: 6,
       level: 90,
       talent: { auto: 10, skill: 10, burst: 8 },
       weapon: {
         id: "w1",
-        key: "harbinger_of_dawn",
+        key: "fruitful_hook",
         level: 90,
         refinement: 5,
         lock: false,
@@ -233,14 +233,42 @@ describe("getCrBudget", () => {
       artifacts: {},
     };
 
-    const result = getBudgetFor(char, testBuild);
+    const result = getBudgetFor(char, {
+      ...testBuild,
+      characterId: "gaming",
+    });
 
-    expect(result.characterBuffCr).toBe(1);
-    expect(result.weaponPassiveCr).toBe(0.28);
+    expect(result.characterBuffCr).toBe(0.2);
+    expect(result.weaponPassiveCr).toBe(0.32);
     expect(result.totalNonArtifactCr).toBeCloseTo(
       result.baseCr +
         result.ascensionCr +
         result.characterBuffCr +
+        result.weaponSecondaryCr +
+        result.weaponPassiveCr +
+        result.artifactSetCr,
+      6
+    );
+  });
+
+  it("ignores Hu Tao C6 CR because it is an emergency trigger", () => {
+    const char: CharacterData = {
+      key: "hu_tao",
+      constellation: 6,
+      level: 90,
+      talent: { auto: 10, skill: 10, burst: 8 },
+      artifacts: {},
+    };
+
+    const result = getBudgetFor(char, {
+      ...testBuild,
+      characterId: "hu_tao",
+    });
+
+    expect(result.characterBuffCr).toBe(0);
+    expect(result.totalNonArtifactCr).toBeCloseTo(
+      result.baseCr +
+        result.ascensionCr +
         result.weaponSecondaryCr +
         result.weaponPassiveCr +
         result.artifactSetCr,
