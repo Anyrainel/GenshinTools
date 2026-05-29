@@ -22,6 +22,8 @@
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 
+// Signing constants mirror worker/index.ts. Refresh with
+// `npm run check:hoyolab`.
 const SALTS = {
   cn: "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs",
   os: "6s25p5ox5y14umn1p61aqyyvbvvl3lrt",

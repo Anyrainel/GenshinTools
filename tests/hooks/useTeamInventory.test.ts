@@ -105,6 +105,44 @@ describe("useTeamInventory", () => {
     expect(result.current.frozenArtifactIds.size).toBe(0);
   });
 
+  it("keeps stat-equivalent artifacts separately assignable", () => {
+    const duplicateA: ArtifactData = {
+      ...makeArt("dup-a", "flower"),
+      substats: { cd: 21, cr: 10.5, em: 23, atk: 35 },
+    };
+    const duplicateB: ArtifactData = {
+      ...makeArt("dup-b", "flower"),
+      substats: { atk: 35, cr: 10.5, cd: 21, em: 23 },
+    };
+    useAccountStore.setState((prev) => ({
+      ...prev,
+      accounts: {
+        ...prev.accounts,
+        1: {
+          ...prev.accounts[1],
+          data: {
+            characters: [],
+            extraArtifacts: [duplicateA, duplicateB],
+            extraWeapons: [],
+          },
+        },
+      },
+    }));
+
+    act(() => {
+      useTeamStore.getState().addTeam({ id: "team1" });
+    });
+    const { result } = renderHook(() => useTeamInventory("team1"));
+
+    expect(result.current.allArtifacts.map((artifact) => artifact.id)).toEqual([
+      "dup-a",
+      "dup-b",
+    ]);
+    expect(
+      result.current.availableArtifacts.map((artifact) => artifact.id)
+    ).toEqual(["dup-a", "dup-b"]);
+  });
+
   it("excludes frozen artifacts from availableArtifacts", () => {
     act(() => {
       useTeamStore

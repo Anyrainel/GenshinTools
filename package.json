@@ -22,6 +22,7 @@
     "check:worker-safety": "node scripts/dev/check-worker-safety.js",
     "check:worker:cheap": "npm run check:worker-config && npm run check:worker-safety && npm run cf:types:check",
     "check:worker": "npm run check:worker:cheap && npm run build && npm run check:worker-build && npm run test:worker && npm run cf:dry-run",
+    "feedback:fetch": "node scripts/dev/fetch-feedback-report.js",
     "type-check": "npm run cf:types && tsc -b --noEmit",
     "test": "vitest run",
     "test:worker": "vitest run -c vitest.worker.config.ts",

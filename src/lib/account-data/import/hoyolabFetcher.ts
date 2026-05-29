@@ -19,6 +19,9 @@ import type {
 // the Battle Chronicle `/character/list` + `/character/detail` endpoints on
 // either hoyolab.com (overseas) or miyoushe.com (CN). The signed proxy lives
 // at /api/hoyolab/<os|cn>/<subpath> — see worker/index.ts.
+// Endpoint and DS behavior were refreshed against Womsxd/MihoyoBBSTools
+// `setting.py`, seriaati/genshin.py `constants.py` + `utility/ds.py`, and live
+// unauthenticated endpoint probes on 2026-05-29.
 //
 // The shape of the response is completely different from Enka's, so we map
 // directly to the internal GOODData format rather than reusing any of the

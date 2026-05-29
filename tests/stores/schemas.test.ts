@@ -610,6 +610,28 @@ describe("PersistedTriageStoreSchema", () => {
     );
   });
 
+  it("preserves custom flex patterns that require four initial substats", () => {
+    const result = PersistedTriageStoreSchema.parse({
+      settingsByProfileId: {
+        "0": {
+          customFlexInputs: [
+            {
+              slot: "goblet",
+              mainStat: "pyro%",
+              requiredSubs: ["cd", "cr"],
+              requiresFourInitialSubstats: true,
+            },
+          ],
+        },
+      },
+    });
+
+    expect(
+      result.settingsByProfileId?.["0"].customFlexInputs[0]
+        ?.requiresFourInitialSubstats
+    ).toBe(true);
+  });
+
   it("heals missing backup amount mode from keep-rule values", () => {
     const result = PersistedTriageStoreSchema.parse({
       settingsByProfileId: {

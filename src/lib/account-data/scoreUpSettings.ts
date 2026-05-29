@@ -1,4 +1,5 @@
 import type { LuckExpectation, Tier } from "@/data/enums";
+import { cloneData } from "@/lib/utils";
 
 export interface ScoreUpSettings {
   allowPoolArtifactSteals: boolean;
@@ -18,7 +19,7 @@ export const DEFAULT_SCORE_UP_SETTINGS: ScoreUpSettings = {
 };
 
 export function cloneDefaultScoreUpSettings(): ScoreUpSettings {
-  return structuredClone(DEFAULT_SCORE_UP_SETTINGS);
+  return cloneData(DEFAULT_SCORE_UP_SETTINGS);
 }
 
 export function normalizeScoreUpSettings(

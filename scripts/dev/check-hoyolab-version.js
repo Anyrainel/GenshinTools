@@ -11,7 +11,7 @@
  *
  * Upstream sources:
  *   CN: github.com/Womsxd/MihoyoBBSTools  (setting.py)
- *   OS: github.com/seriaati/genshin.py     (genshin/utility/ds.py)
+ *   OS: github.com/seriaati/genshin.py     (constants.py + utility/ds.py)
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -33,6 +33,18 @@ const UPSTREAM = {
     parseSaltX4: (text) =>
       text.match(/mihoyobbs_salt_x4\s*=\s*"([^"]+)"/)?.[1],
   },
+  os: {
+    constantsUrl:
+      "https://raw.githubusercontent.com/seriaati/genshin.py/master/genshin/constants.py",
+    dsUrl:
+      "https://raw.githubusercontent.com/seriaati/genshin.py/master/genshin/utility/ds.py",
+    parseSalt: (text) =>
+      text.match(/types\.Region\.OVERSEAS:\s*"([^"]+)"/)?.[1],
+    parseVersion: (text) =>
+      text.match(
+        /region == types\.Region\.OVERSEAS:[\s\S]*?"x-rpc-app_version":\s*"([^"]+)"/
+      )?.[1],
+  },
 };
 
 // Read our local values
@@ -41,9 +53,11 @@ function readLocal(filePath) {
   const src = readFileSync(filePath, "utf-8");
   // Match the Worker app-version block: cn: "x.y.z"
   const cnVersion = src.match(/APP_VERSION\s*=\s*\{[^}]*cn:\s*"([^"]+)"/s)?.[1];
+  const osVersion = src.match(/APP_VERSION\s*=\s*\{[^}]*os:\s*"([^"]+)"/s)?.[1];
   // Match the Worker salt block: cn: "..."
   const cnSalt = src.match(/SALTS\s*=\s*\{[^}]*cn:\s*"([^"]+)"/s)?.[1];
-  return { cnVersion, cnSalt };
+  const osSalt = src.match(/SALTS\s*=\s*\{[^}]*os:\s*"([^"]+)"/s)?.[1];
+  return { cnVersion, cnSalt, osVersion, osSalt };
 }
 
 // Fetch with timeout
@@ -104,6 +118,50 @@ async function main() {
       }
     } else if (upstreamSalt) {
       console.log(`  ✓ CN salt (x4) up-to-date`);
+    }
+  } catch (err) {
+    // Network errors during pre-push should not block the push.
+    console.log(`  ⏭ Skipped (network error: ${err.message})`);
+    return;
+  }
+
+  console.log("[hoyolab-version] Checking OS upstream (genshin.py)...");
+  try {
+    const [constantsText, dsText] = await Promise.all([
+      fetchText(UPSTREAM.os.constantsUrl),
+      fetchText(UPSTREAM.os.dsUrl),
+    ]);
+    const upstreamVersion = UPSTREAM.os.parseVersion(dsText);
+    const upstreamSalt = UPSTREAM.os.parseSalt(constantsText);
+
+    if (upstreamVersion && upstreamVersion !== local.osVersion) {
+      console.log(
+        `  ⚠ OS app_version outdated: ours=${local.osVersion} upstream=${upstreamVersion}`
+      );
+      hasIssues = true;
+      if (fix) {
+        applyFix(WORKER_PATH, local.osVersion, upstreamVersion);
+        applyFix(PROBE_PATH, local.osVersion, upstreamVersion);
+        console.log("  ✓ Fixed OS app_version in worker + probe");
+      }
+    } else if (upstreamVersion) {
+      console.log(`  ✓ OS app_version up-to-date (${local.osVersion})`);
+    } else {
+      console.log("  ? Could not parse upstream OS version (format changed?)");
+    }
+
+    if (upstreamSalt && upstreamSalt !== local.osSalt) {
+      console.log(
+        `  ⚠ OS salt outdated: ours=${local.osSalt} upstream=${upstreamSalt}`
+      );
+      hasIssues = true;
+      if (fix) {
+        applyFix(WORKER_PATH, local.osSalt, upstreamSalt);
+        applyFix(PROBE_PATH, local.osSalt, upstreamSalt);
+        console.log("  ✓ Fixed OS salt in worker + probe");
+      }
+    } else if (upstreamSalt) {
+      console.log("  ✓ OS salt up-to-date");
     }
   } catch (err) {
     // Network errors during pre-push should not block the push.

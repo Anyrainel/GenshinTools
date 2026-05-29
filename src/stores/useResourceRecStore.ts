@@ -16,6 +16,7 @@ import {
   type TierCompletenessThresholds,
 } from "@/lib/account-data/resourceTips";
 import type { AccountProfileId } from "@/lib/account-data/types";
+import { cloneData } from "@/lib/utils";
 import { migrateResourceRecStore } from "./migration/resource";
 import { PersistedResourceRecStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
@@ -56,7 +57,7 @@ export interface ResourceRecState {
 
 const cloneDefaultSettings = (): ResourceRecSettings => ({
   thresholds: { ...DEFAULT_TIER_THRESHOLDS },
-  minScoreDiff: structuredClone(DEFAULT_MIN_SCORE_DIFF),
+  minScoreDiff: cloneData(DEFAULT_MIN_SCORE_DIFF),
   panelOpen: false,
   showCraft: true,
   showReroll: true,
@@ -197,7 +198,7 @@ export const useResourceRecStore = create<ResourceRecState>()(
         set((state) => {
           const next = {
             ...selectActiveResourceRecSettings(state),
-            minScoreDiff: structuredClone(DEFAULT_MIN_SCORE_DIFF),
+            minScoreDiff: cloneData(DEFAULT_MIN_SCORE_DIFF),
           };
           return {
             settingsByProfileId: {
@@ -274,7 +275,7 @@ export const useResourceRecStore = create<ResourceRecState>()(
             cloneDefaultSettings()
           )
             ? cloneDefaultSettings()
-            : structuredClone(sourceSettings);
+            : cloneData(sourceSettings);
           if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
             settingsByProfileId[targetProfileId] = nextSettings;
           }

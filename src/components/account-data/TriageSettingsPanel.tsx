@@ -15,6 +15,7 @@ import type {
   TriageBackupAmountMode,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
+import { cloneData } from "@/lib/utils";
 
 type Translator = ReturnType<typeof useLanguage>["t"];
 
@@ -146,7 +147,7 @@ export function TriageSettingsPanel({
           variant="outline"
           size="sm"
           className="h-6 gap-1 px-2 text-xs"
-          onClick={() => onChange(structuredClone(DEFAULT_TRIAGE_SETTINGS))}
+          onClick={() => onChange(cloneData(DEFAULT_TRIAGE_SETTINGS))}
         >
           <RotateCcw className="h-3.5 w-3.5" />
           {t.ui("triage.restoreDefaults")}

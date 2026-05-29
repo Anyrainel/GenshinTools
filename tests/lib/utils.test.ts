@@ -4,7 +4,7 @@ import {
   getRarityColor,
   getTierColor,
 } from "@/components/shared/colors";
-import { getAssetUrl } from "@/lib/utils";
+import { cloneData, getAssetUrl } from "@/lib/utils";
 
 describe("getAssetUrl", () => {
   it("prepends base URL to absolute paths", () => {
@@ -22,6 +22,30 @@ describe("getAssetUrl", () => {
   it("handles relative paths", () => {
     const result = getAssetUrl("character/hu_tao.png");
     expect(result).toContain("character/hu_tao.png");
+  });
+});
+
+describe("cloneData", () => {
+  it("falls back when structuredClone is unavailable", () => {
+    const originalStructuredClone = globalThis.structuredClone;
+    try {
+      Object.defineProperty(globalThis, "structuredClone", {
+        configurable: true,
+        value: undefined,
+      });
+
+      const source = { nested: { value: 1 } };
+      const cloned = cloneData(source);
+      cloned.nested.value = 2;
+
+      expect(source.nested.value).toBe(1);
+      expect(cloned.nested.value).toBe(2);
+    } finally {
+      Object.defineProperty(globalThis, "structuredClone", {
+        configurable: true,
+        value: originalStructuredClone,
+      });
+    }
   });
 });
 

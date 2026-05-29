@@ -78,6 +78,7 @@ docs/optimizer-research/
 docs/formulas/
 docs/superpowers/
 memory/
+feedback-reports/
 
 # Scratch / reverse-engineering workspace (may contain real cookies & UIDs)
 tmp_ysh/

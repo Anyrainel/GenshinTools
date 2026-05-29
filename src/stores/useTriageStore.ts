@@ -4,6 +4,7 @@ import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import type { TriageSettings } from "@/lib/account-data/triage/types";
 import type { AccountProfileId } from "@/lib/account-data/types";
+import { cloneData } from "@/lib/utils";
 import { migrateTriageStore } from "./migration/triage";
 import { PersistedTriageStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
@@ -95,7 +96,7 @@ export const useTriageStore = create<TriageState>()(
             cloneDefaultSettings()
           )
             ? cloneDefaultSettings()
-            : structuredClone(sourceSettings);
+            : cloneData(sourceSettings);
           if (!settingsEqual(nextSettings, cloneDefaultSettings())) {
             settingsByProfileId[targetProfileId] = nextSettings;
           }

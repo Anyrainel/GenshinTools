@@ -1,11 +1,9 @@
 import type { Slot } from "@/data/enums";
 import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
+import { artifactFingerprint } from "@/lib/artifact/artifactIdentity";
 import { getMaxIds } from "../idUtils";
 import type { PresentSections } from "./goodConversion";
-import {
-  artifactFingerprint,
-  mergeEnkaImportWithInventory,
-} from "./mergeEnkaImport";
+import { mergeEnkaImportWithInventory } from "./mergeEnkaImport";
 
 /** Result of any data operation that reassigns artifact IDs. */
 export interface MergeResult {

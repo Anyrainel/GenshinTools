@@ -417,6 +417,7 @@ const CustomFlexInputSchema = z.object({
   slot: z.string(),
   mainStat: z.string(),
   requiredSubs: z.array(z.string()).catch([]),
+  requiresFourInitialSubstats: z.boolean().optional().catch(undefined),
 });
 
 const TriageSettingsSchema = z

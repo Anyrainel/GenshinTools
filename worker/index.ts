@@ -13,6 +13,13 @@ const HOYOLAB_BASES = {
   cn: "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api",
 } as const;
 
+// HoYoLAB / 米游社 signing constants are compatibility values, not app-owned
+// secrets. Refresh with `npm run check:hoyolab`.
+//
+// Sources:
+// - CN x4 salt/version: Womsxd/MihoyoBBSTools `setting.py`
+// - OS salt/version and DS algorithms: seriaati/genshin.py `constants.py`
+//   and `utility/ds.py`
 const HOYOLAB_SALTS = {
   os: "6s25p5ox5y14umn1p61aqyyvbvvl3lrt",
   cn: "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs",

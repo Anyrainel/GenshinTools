@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { CharacterData } from "@/data/types";
+import { mergeEnkaImportWithInventory } from "@/lib/account-data/import/mergeEnkaImport";
 import {
   artifactFingerprint,
-  mergeEnkaImportWithInventory,
-} from "@/lib/account-data/import/mergeEnkaImport";
+  artifactStatFingerprint,
+  findEquivalentArtifactGroups,
+} from "@/lib/artifact/artifactIdentity";
 import {
   createAccountData,
   createArtifactData,
@@ -55,14 +57,39 @@ describe("artifactFingerprint", () => {
     expect(artifactFingerprint(a)).not.toBe(artifactFingerprint(b));
   });
 
-  it("returns same string when substats have same key-value pairs in different order", () => {
+  it("encodes substat order in exact artifact fingerprints", () => {
     const a = createArtifactData({
       substats: { cd: 21, cr: 10.5, em: 23, atk: 35 },
     });
     const b = createArtifactData({
       substats: { atk: 35, cr: 10.5, cd: 21, em: 23 },
     });
-    expect(artifactFingerprint(a)).toBe(artifactFingerprint(b));
+    expect(artifactFingerprint(a)).not.toBe(artifactFingerprint(b));
+  });
+
+  it("keeps order-insensitive stat matching diagnostic-only", () => {
+    const a = createArtifactData({
+      id: "ordered-a",
+      substats: { cd: 21, cr: 10.5, em: 23, atk: 35 },
+    });
+    const b = createArtifactData({
+      id: "ordered-b",
+      substats: { atk: 35, cr: 10.5, cd: 21, em: 23 },
+    });
+    const c = createArtifactData({
+      id: "different-stat",
+      substats: { cd: 14, cr: 10.5, em: 23, atk: 35 },
+    });
+
+    expect(artifactStatFingerprint(a)).toBe(artifactStatFingerprint(b));
+    expect(artifactFingerprint(a)).not.toBe(artifactFingerprint(b));
+
+    const groups = findEquivalentArtifactGroups([a, b, c]);
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.artifacts.map((artifact) => artifact.id)).toEqual([
+      "ordered-a",
+      "ordered-b",
+    ]);
   });
 
   it("includes optional totalRolls in fingerprint", () => {

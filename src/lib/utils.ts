@@ -8,6 +8,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function cloneData<T>(value: T): T {
+  if (typeof globalThis.structuredClone === "function") {
+    return globalThis.structuredClone(value);
+  }
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
 /**
  * Get the full URL for an asset path
  * Prepends the Vite base URL for proper asset loading

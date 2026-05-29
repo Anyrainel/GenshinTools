@@ -5,6 +5,7 @@ import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
 import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
 import type { AccountProfileId } from "@/lib/account-data/types";
+import { cloneData } from "@/lib/utils";
 import { migrateFreezeStore } from "./migration/freeze";
 import { PersistedFreezeStoreSchema } from "./schemas";
 import { getActiveAccount, useAccountStore } from "./useAccountStore";
@@ -221,7 +222,7 @@ function resolveFrozenTeams(
     }
     frozenTeams[teamId] = {
       frozenCharIds: [...loadout.frozenCharIds],
-      artifactIdsByChar: structuredClone(loadout.artifactIdsByChar),
+      artifactIdsByChar: cloneData(loadout.artifactIdsByChar),
       artifactsByChar,
     };
   }
