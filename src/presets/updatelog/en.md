@@ -2,6 +2,17 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-05-30
+
+### features
+- Added Nicole's attack damage formulas
+- Updated 6.6 game data, adding new enemies and Stygian Onslaught bosses to the archives
+
+### fixes
+- Various character damage formula fixes across Mondstadt, Liyue, and Sumeru, plus a fix to Angelos' Heptades' shield-based buff
+- Updated the HoYoLAB / 米游社 import logic so it keeps fetching your account data reliably
+- Fixed character card display on mobile and made cards in the account data grid share an even height
+
 ## 2026-05-16
 
 ### features
