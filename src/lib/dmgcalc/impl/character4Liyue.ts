@@ -235,16 +235,17 @@ class Yaoyao extends CharacterBase {
       reaction: "none" as const,
     };
 
-    // E: Yuegui Throwing Mode — 10 throws over 10s (1/sec)
-    // C6: every 2 normal throws → 1 Mega Radish (max 2), replacing normal throw slots
-    // C6: 8 normal + 2 mega = 10 total throws
+    // E: Yuegui Throwing Mode — 10 normal radish throws over 10s (1/sec)
+    // C6: every 2 normal throws also releases a Mega Radish (max 2 per Yuegui).
+    // The Mega Radishes are *additional* throws, not replacements — keep all 10
+    // normal White Jade Radish hits and add 2 Mega Radish hits (75% ATK).
     return {
       "yaoyao-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(this.param("E", 1), dendroSkill),
-            hits: this.constellation >= 6 ? 8 : 10,
+            hits: 10,
             offField: true,
           },
           ...(this.constellation >= 6
@@ -259,6 +260,9 @@ class Yaoyao extends CharacterBase {
         ],
       },
       // Q: initial burst hit + ~5 radishes from Jumping Mode Yuegui (unaffected by C6)
+      // + P1 Starscatter: while moving during Adeptal Legacy, Yaoyao throws 1 extra
+      //   White Jade Radish every 0.6s. Q lasts ~5s, so up to ~8 extra throws if she
+      //   keeps moving (all Adeptal Legacy radish DMG counts as Burst DMG).
       "yaoyao-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
@@ -266,6 +270,11 @@ class Yaoyao extends CharacterBase {
           {
             formula: new DirectFormula(this.param("Q", 1), dendroBurst),
             hits: 5,
+            offField: true,
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 1), dendroBurst),
+            hits: 8,
             offField: true,
           },
         ],
@@ -664,7 +673,7 @@ class Xingqiu extends CharacterBase {
         ],
       },
       "xingqiu-burst-tick": {
-        label: { zh: "Q伤害(单次)", en: "Q (×1)" },
+        label: { zh: "Q剑雨(单次)", en: "Q Sword Rain (×1)" },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 1), {
@@ -679,11 +688,18 @@ class Xingqiu extends CharacterBase {
     };
   })();
 
-  // Rotation: EQ > ~15 rain sword procs (off-field Hydro sub-DPS, 1 proc/sec over 15s Q)
+  // Rotation: EQ, then drive Rainbow Bladework with Normal Attacks for the full
+  // burst duration. Each Normal Attack proc fires a sword rain *wave*, and each
+  // wave is multiple sword hits (the talent's single Sword Rain DMG value per
+  // sword). The standard wave pattern delivers ~2 swords per proc; across a full
+  // Guhua combo cycle this works out to ~21 sword rain hits per burst (best-
+  // estimate, matches community/KQM full-uptime models — not frame-verified).
+  // C6: every 2 sword rain attacks greatly enhances the next (3rd) wave, which
+  // fires additional swords — roughly +6 extra sword hits over the burst.
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "xingqiu-skill", count: 1 },
-      { id: "xingqiu-burst-tick", count: 15 },
+      { id: "xingqiu-burst-tick", count: 21, bonus: [{ minC: 6, delta: 6 }] },
     ];
   }
 }
@@ -891,6 +907,15 @@ class Ningguang extends CharacterBase {
   // E: Lv10 415%, Lv13 (C5+) 490%
   // Q: 12 gems Lv10 157%×12 = 1884%, Lv13 (C3+) 185%×12 = 2220%
   protected readonly formulaMap = (() => {
+    const geoCharge = {
+      element: "Geo" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    // Star Jades fired with a Charged Attack: C6 grants 7 Star Jades on Q cast.
+    // Without C6, the count depends on the Normal Attack build-up (1 Star Jade
+    // per Normal Attack hit) — model a typical 3-NA build-up before charging.
+    const starJades = this.constellation >= 6 ? 7 : 3;
     return {
       "ningguang-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -901,6 +926,17 @@ class Ningguang extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
+          },
+        ],
+      },
+      // Charged Attack (giant gem) + all held Star Jades fired at once.
+      "ningguang-charge": {
+        label: { zh: "重击+星璇", en: "Charged + Star Jades" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 2), geoCharge) },
+          {
+            formula: new DirectFormula(this.param("A", 3), geoCharge),
+            hits: starJades,
           },
         ],
       },
@@ -920,11 +956,13 @@ class Ningguang extends CharacterBase {
     };
   })();
 
-  // Rotation: E > Q (Geo burst DPS, gems baked into Q ×12)
+  // Rotation: E > Q > Charged Attack (Geo burst DPS, gems baked into Q ×12,
+  // Star Jades fired with the Charged Attack)
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "ningguang-skill", count: 2 },
       { id: "ningguang-burst", count: 1 },
+      { id: "ningguang-charge", count: 1 },
     ];
   }
 }

@@ -250,11 +250,15 @@ class Zibai extends CharacterBase {
     };
   })();
 
-  // Rotation: E > 3×N4 combo > 3×Steed > Q (Geo carry, 15s Lunar Phase Shift)
+  // Rotation: E > 3×N4 combo > Steed casts > Q (Geo carry, 15s Lunar Phase Shift).
+  // Steed costs 70 of a 100-max Phase Shift Radiance pool (10/s passive + 5/NA hit
+  // + 35/nearby Lunar-Crystallize), so the cap is seldom reached: ~3 casts at C0,
+  // and C1's immediate +100 Radiance plus the higher cap bring it to ~4. These are
+  // best-estimate rotation counts, not frame-verified.
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "zibai-e-combo", count: 3 },
-      { id: "zibai-steed", count: 4 },
+      { id: "zibai-steed", count: 3, bonus: [{ minC: 1, delta: 1 }] },
       { id: "zibai-burst", count: 1 },
     ];
   }
@@ -495,8 +499,10 @@ class Baizhu extends CharacterBase {
           },
         ],
       },
+      // C2 Splice initiates 1 attack before returning (250% ATK Dendro, counted
+      // as Skill DMG). The 3-hit count belongs to the regular E sprite, not Splice.
       "baizhu-c2-sprite": {
-        label: { zh: "游丝徵灵·切×3", en: "Gossamer Splice ×3" },
+        label: { zh: "游丝徵灵·切", en: "Gossamer Splice" },
         minC: 2,
         parts: [
           {
@@ -505,7 +511,6 @@ class Baizhu extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
-            hits: 3,
             offField: true,
           },
         ],
@@ -514,11 +519,16 @@ class Baizhu extends CharacterBase {
   })();
 
   // Rotation: E > Q (Dendro healer/support)
-  // Q Spiritvein triggers on shield refresh/break; ~3 hits as conservative estimate
+  // Q Spiritvein triggers on shield refresh/break; ~3 hits as conservative estimate.
+  // C2: active character's hits unleash a Gossamer Sprite: Splice (~2 per rotation, 5s ICD).
+  // C6: each Gossamer Sprite and each C2 Splice hit generates one extra Seamless
+  // Shield, and each shield triggers one additional Spiritvein. With 1 E sprite +
+  // 2 C2 splices, that adds 3 extra Spiritvein instances at C6.
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "baizhu-skill", count: 1 },
-      { id: "baizhu-burst", count: 3 },
+      { id: "baizhu-burst", count: 3, bonus: [{ minC: 6, delta: 3 }] },
+      { id: "baizhu-c2-sprite", count: 0, bonus: [{ minC: 2, delta: 2 }] },
     ];
   }
 }
@@ -1053,67 +1063,88 @@ class Shenhe extends CharacterBase {
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
     // Quota: press 5 / hold 7 per character (stacks counted independently).
     // C1+ "both" mode: press+hold grant separate quills (5+7=12 total).
-    // C6: Normal+Charged don't consume → effectively unlimited.
+    // C6: ONLY Normal+Charged Cryo triggers stop consuming quota (unlimited);
+    //     Plunge/Skill/Burst Cryo hits still consume the press/hold quota.
     ...Object.keys(this.teamMeta.elements).flatMap((charId) => {
-      const quillTarget = {
-        receiver: "team" as const,
-        charId,
-        filter: {
-          elements: ["Cryo" as const],
-          abilities: [
-            "normal" as const,
-            "charge" as const,
-            "plunge" as const,
-            "skill" as const,
-            "burst" as const,
-          ],
-        },
-      };
       const scale = this.param("E", 3);
-      if (this.eType === "both") {
-        // Separate press (5 stacks) and hold (7 stacks) buffs
-        return [
-          new ScalingBuff(
+      const isC6 = this.constellation >= 6;
+
+      // Pre-C6: all Cryo abilities share one quota pool.
+      // C6: split into an unlimited Normal/Charged pool and a quota-limited
+      //     Plunge/Skill/Burst pool.
+      const abilityGroups = isC6
+        ? ([
             {
-              ...cbs(this, "E", ["E"]),
-              internalKey: "press",
-              ...(this.constellation < 6 && { maxStacks: 5 }),
+              suffix: "unlimited",
+              abilities: ["normal", "charge"],
+              capped: false,
             },
-            quillTarget,
-            [],
-            "atk",
-            "baseDmg",
-            scale
-          ),
-          new ScalingBuff(
             {
-              ...cbs(this, "E", ["E"]),
-              internalKey: "hold",
-              ...(this.constellation < 6 && { maxStacks: 7 }),
+              suffix: "quota",
+              abilities: ["plunge", "skill", "burst"],
+              capped: true,
             },
-            quillTarget,
-            [],
-            "atk",
-            "baseDmg",
-            scale
-          ),
-        ];
-      }
-      return [
+          ] as const)
+        : ([
+            {
+              suffix: "",
+              abilities: ["normal", "charge", "plunge", "skill", "burst"],
+              capped: true,
+            },
+          ] as const);
+
+      const buildQuill = (
+        abilities: readonly (
+          | "normal"
+          | "charge"
+          | "plunge"
+          | "skill"
+          | "burst"
+        )[],
+        internalKey: string,
+        maxStacks: number | undefined
+      ) =>
         new ScalingBuff(
           {
             ...cbs(this, "E", ["E"]),
-            ...(this.constellation < 6 && {
-              maxStacks: this.eType === "press" ? 5 : 7,
-            }),
+            ...(internalKey && { internalKey }),
+            ...(maxStacks != null && { maxStacks }),
           },
-          quillTarget,
+          {
+            receiver: "team" as const,
+            charId,
+            filter: { elements: ["Cryo" as const], abilities: [...abilities] },
+          },
           [],
           "atk",
           "baseDmg",
           scale
-        ),
-      ];
+        );
+
+      return abilityGroups.flatMap((group) => {
+        if (this.eType === "both") {
+          // Separate press (5 stacks) and hold (7 stacks) quills.
+          return [
+            buildQuill(
+              group.abilities,
+              `press${group.suffix}`,
+              group.capped ? 5 : undefined
+            ),
+            buildQuill(
+              group.abilities,
+              `hold${group.suffix}`,
+              group.capped ? 7 : undefined
+            ),
+          ];
+        }
+        return [
+          buildQuill(
+            group.abilities,
+            group.suffix,
+            group.capped ? (this.eType === "press" ? 5 : 7) : undefined
+          ),
+        ];
+      });
     }),
     // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
     new StatBuff(

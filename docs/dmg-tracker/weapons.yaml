@@ -51,20 +51,6 @@
     dependency is an acceptable assumption. The approximation has negligible
     impact on practical damage calculations.
 
-- id: royal-greatsword-stack-approx
-  entity: royal_greatsword
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Royal Greatsword CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
-    The effective stack count depends on the character's CRIT Rate, which cannot
-    be determined at construction time. No OptionMap or documentation of the
-    forced average exists.
-  detail: >
-    Added shared royalSeriesOption (3 default, 5, 1) to helpers.ts and applied
-    to royal_greatsword. Stack count now driven by user choice.
-
 - id: sapwood-blade-pickup-gap
   entity: sapwood_blade
   rule: U1
@@ -99,34 +85,6 @@
     which teamOnField models correctly in most rotations. Not worth engine
     changes for this case.
 
-- id: royal-spear-stack-approx
-  entity: royal_spear
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Royal Spear CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
-    The effective stack count depends on the character's CRIT Rate, which cannot
-    be determined at construction time. No OptionMap or documentation of the
-    forced average exists.
-  detail: >
-    Applied shared royalSeriesOption (3 default, 5, 1). Stack count now driven
-    by user choice.
-
-- id: royal-bow-stack-approx
-  entity: royal_bow
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Royal Bow CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
-    The effective stack count depends on the character's CRIT Rate, which cannot
-    be determined at construction time. No OptionMap or documentation of the
-    forced average exists.
-  detail: >
-    Applied shared royalSeriesOption (3 default, 5, 1). Stack count now driven
-    by user choice.
-
 - id: prized-isshin-blade-proc-dmg
   entity: prized_isshin_blade
   rule: U9
@@ -142,34 +100,6 @@
     Additionally, Prized Isshin Blade is a 4-star weapon with a -50% wielder DMG
     penalty, making it a niche choice. The 180% ATK proc every 8s is minor
     relative to character ability damage. Not worth engine changes for this case.
-
-- id: royal-longsword-stack-approx
-  entity: royal_longsword
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Royal Longsword CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
-    The effective stack count depends on the character's CRIT Rate, which cannot
-    be determined at construction time. No OptionMap or documentation of the
-    forced average exists.
-  detail: >
-    Applied shared royalSeriesOption (3 default, 5, 1). Stack count now driven
-    by user choice.
-
-- id: serpent-spine-ramp-approx
-  entity: serpent_spine
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Serpent Spine DMG% stacks (6%/7%/8%/9%/10% per stack, max 5) ramp over time
-    (1 stack per 4s of on-field time, 20s to reach max). Implementation hardcodes
-    max 5 stacks without OptionMap or documented approximation, violating S12's
-    time-ramping rule.
-  detail: >
-    Added serpentSpineOption with descending stack tiers (5 default, 4, 3, 2, 1).
-    Stack count now driven by user choice.
 
 - id: skyward-pride-vacuum-blade
   entity: skyward_pride
@@ -210,21 +140,6 @@
     Snow-Tombed Starsilver's Everfrost Icicle proc (110% ATK, or 280% vs Cryo-affected
     enemies at R1, on N/CA hit once every 10s) is not modeled.
   detail: ""
-
-- id: lions-roar-missing-team-element-check
-  entity: lions_roar
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Lion's Roar's "DMG against Pyro/Electro-affected opponents" buff is always
-    applied without checking team composition. Per S10, enemy element affection
-    should gate on whether the team contains a Pyro or Electro character. Same
-    pattern is correctly implemented in bloodtainted_greatsword — lions_roar
-    should mirror that pattern.
-  detail: >
-    Converted to a getter that gates on team having Pyro or Electro element,
-    mirroring bloodtainted_greatsword.
 
 - id: aquila-favonia-proc-dmg
   entity: aquila_favonia
@@ -309,19 +224,6 @@
     elemental DMG% portion is implemented; only the active proc is missing.
   detail: ""
 
-- id: royal-grimoire-stack-approx
-  entity: royal_grimoire
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Royal Grimoire CR stacks (max 5, reset on CRIT) are hardcoded to 3 stacks.
-    The effective stack count depends on the character's CRIT Rate, which cannot
-    be determined at construction time.
-  detail: >
-    Applied shared royalSeriesOption (3 default, 5, 1). Stack count now driven
-    by user choice.
-
 - id: lost-prayer-selfonfield-receiver
   entity: lost_prayer_to_the_sacred_winds
   rule: U1
@@ -376,98 +278,6 @@
     Skyward Spine's vacuum blade proc (40-100% ATK AoE, 50% chance on Normal/
     Charged hit, once every 2s) is not modeled.
   detail: ""
-
-- id: fractured-halo-wielder-shielder
-  entity: fractured_halo
-  rule: S6
-  status: completed
-  category: bug
-  summary: >
-    Electrifying Edict (team-wide lunarCharged reactionDmg+) is gated on
-    teamMeta.hasShielder(), but the game text requires the equipping character
-    to create a shield ("装备者创造了护盾"). Should use
-    teamMeta.isShielder[this.charId] instead so the buff only activates when
-    the wielder is a shielder, matching the starcallers_watch pattern.
-  detail: >
-    Replaced teamMeta.hasShielder() check with teamMeta.isShielder[this.charId]
-    so the team-wide reactionDmg+ only activates when the equipping character
-    is the shielder, matching starcallers_watch.
-
-- id: symphonist-of-scents-off-field-receiver
-  entity: symphonist_of_scents
-  rule: U1
-  status: completed
-  category: bug
-  summary: >
-    The extra +12-24% ATK for off-field state is summed into the base ATK buff
-    with receiver "self", causing it to apply on-field as well. The
-    "当装备此武器的角色处于队伍后台时" clause requires a separate StatBuff with
-    receiver "selfOffField" for the extra portion; the base 12-24% ATK stays on
-    "self".
-  detail: >
-    Split into two StatBuffs: base ATK% on receiver "self", off-field bonus
-    ATK% on receiver "selfOffField".
-
-- id: crimson-moons-semblance-bol-threshold
-  entity: crimson_moons_semblance
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    The 24-56% DMG bonus requires Bond of Life >= 30% Max HP, but the
-    implementation always sums both tiers unconditionally. The weapon's own
-    Charged Attack generates only 25% Max HP BoL (max once per 14s), so
-    reaching 30% requires external BoL sources (e.g., Arlecchino). Should be
-    gated behind an OptionMap of BoL states or recognized as a forced-average
-    approximation.
-  detail: >
-    Added crimsonMoonsSemblanceOption with above30 (default) / below30 BoL
-    states. The extra 24-56% DMG only applies in above30 mode.
-
-- id: raven-bow-missing-team-element-check
-  entity: raven_bow
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Raven Bow's "DMG against Hydro/Pyro-affected opponents" buff is always
-    applied without checking team composition. Same pattern as the
-    lions-roar-missing-team-element-check item — should gate on whether the
-    team contains a Hydro or Pyro character, matching the correct
-    implementation used in bloodtainted_greatsword and magic_guide.
-  detail: >
-    Converted to a getter that gates on team having Hydro or Pyro element,
-    mirroring bloodtainted_greatsword.
-
-- id: cool-steel-missing-team-element-check
-  entity: cool_steel
-  rule: S10
-  status: completed
-  category: bug
-  summary: >
-    Cool Steel's "DMG against Hydro/Cryo-affected opponents" buff is always
-    applied without checking team composition. Same pattern as the
-    lions-roar-missing-team-element-check item — should gate on whether the
-    team contains a Hydro or Cryo character, matching the correct
-    implementation used in bloodtainted_greatsword and magic_guide.
-  detail: >
-    Converted to a getter that gates on team having Hydro or Cryo element,
-    mirroring bloodtainted_greatsword.
-
-- id: alley-hunter-time-ramping-max
-  entity: alley_hunter
-  rule: S12
-  status: completed
-  category: approximation
-  summary: >
-    Alley Hunter's DMG% ramps from 0 to 20-40% over 10s while off-field, then
-    decays while on-field. Implementation hardcodes the max value with no
-    OptionMap or documented approximation. Per S12 (as applied to Fading
-    Twilight), time-dependent ramps should either offer OptionMap tiers or
-    be documented as a forced average.
-  detail: >
-    Added alleyHunterOption with stack tiers (10 default down to 0). DMG% now
-    scales with the chosen stack count.
 
 - id: scion-of-the-blazing-sun-proc-dmg
   entity: scion_of_the_blazing_sun
@@ -542,3 +352,22 @@
     Messenger's weak-spot CA proc (100-200% ATK bonus damage as guaranteed CRIT,
     once every 10s) is not modeled.
   detail: ""
+
+- id: angelos-heptades-shield-gate
+  entity: angelos_heptades
+  rule: U9
+  status: completed
+  category: bug
+  summary: >
+    Pathfinder's Light (ATK -> active-character dmg%) requires the equipping
+    character to create a shield ("装备者创造护盾后"), but the ScalingBuff is
+    emitted unconditionally without checking that the wielder is a shielder.
+    Should gate on teamMeta.isShielder[this.charId], mirroring the
+    starcallers_watch / fractured_halo shield-wielder pattern.
+  detail: >
+    Gated both Pathfinder's Light ScalingBuffs (main teamOnField dmg% and the
+    Hexerei off-field 50% variant) inside if (this.teamMeta.isShielder[this.charId]),
+    mirroring starcallers_watch / fractured_halo in this same file. The flat
+    +ATK% StatBuff stays unconditional. The Hexerei: Secret Rite off-field clause
+    keeps its countByFaction("Hexerei") >= 2 gate, now nested under the shielder
+    check. Type-check passes for weapon5Catalyst.ts.

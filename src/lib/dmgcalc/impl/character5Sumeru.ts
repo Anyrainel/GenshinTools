@@ -221,7 +221,39 @@ class Alhaitham extends CharacterBase {
           },
         ],
       },
-      // 3-Mirror Projection per hit
+      // 1-Mirror Projection per hit (E params 4/5, 1 instance)
+      "alhaitham-projection-1": {
+        label: { zh: "E伤害(1镜)", en: "E (1 Mirror)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 4),
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("E", 5) }
+            ),
+            hits: 1,
+            bespokeBuffs: [p2Skill],
+          },
+        ],
+      },
+      // 2-Mirror Projection per hit (E params 6/7, 2 instances)
+      "alhaitham-projection-2": {
+        label: { zh: "E伤害(2镜)", en: "E (2 Mirrors)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("E", 6),
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("E", 7) }
+            ),
+            hits: 2,
+            bespokeBuffs: [p2Skill],
+          },
+        ],
+      },
+      // 3-Mirror Projection per hit (E params 8/9, 3 instances)
       "alhaitham-projection": {
         label: { zh: "E伤害(3镜)", en: "E (3 Mirrors)" },
         parts: [
@@ -237,9 +269,9 @@ class Alhaitham extends CharacterBase {
           },
         ],
       },
-      // Burst single-instance, with 3 mirrors consumed = 10 hits
-      "alhaitham-burst": {
-        label: { zh: "Q×10 3镜", en: "Q ×10 (3 Mirrors)" },
+      // Burst — 0 Mirrors consumed = param3 (4) instances
+      "alhaitham-burst-0": {
+        label: { zh: "Q 0镜", en: "Q (0 Mirrors)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -248,7 +280,55 @@ class Alhaitham extends CharacterBase {
               "atk",
               { key: "em", multiplier: this.param("Q", 2) }
             ),
-            hits: 10,
+            hits: this.param("Q", 3),
+            bespokeBuffs: [p2Burst],
+          },
+        ],
+      },
+      // Burst — 1 Mirror consumed = param4 (6) instances
+      "alhaitham-burst-1": {
+        label: { zh: "Q 1镜", en: "Q (1 Mirror)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Dendro", ability: "burst", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("Q", 2) }
+            ),
+            hits: this.param("Q", 4),
+            bespokeBuffs: [p2Burst],
+          },
+        ],
+      },
+      // Burst — 2 Mirrors consumed = param5 (8) instances
+      "alhaitham-burst-2": {
+        label: { zh: "Q 2镜", en: "Q (2 Mirrors)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Dendro", ability: "burst", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("Q", 2) }
+            ),
+            hits: this.param("Q", 5),
+            bespokeBuffs: [p2Burst],
+          },
+        ],
+      },
+      // Burst — 3 Mirrors consumed = param6 (10) instances
+      "alhaitham-burst": {
+        label: { zh: "Q 3镜", en: "Q (3 Mirrors)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Dendro", ability: "burst", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("Q", 2) }
+            ),
+            hits: this.param("Q", 6),
             bespokeBuffs: [p2Burst],
           },
         ],
@@ -270,13 +350,24 @@ class Wanderer extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
 
-    // P1: On E, if Pyro absorbed → +30% ATK, Cryo → +20% CR (max 2 buffs)
-    // C4: Also obtain a random untriggered buff (max 3 buffs).
-    // Under peak-damage model, C4 gives the best untriggered offensive buff.
-    const hasPyro = Object.values(this.teamMeta.elements).includes("Pyro");
-    const hasCryo = Object.values(this.teamMeta.elements).includes("Cryo");
-    const p1Pyro = hasPyro || (this.constellation >= 4 && hasCryo);
-    const p1Cryo = hasCryo || (this.constellation >= 4 && hasPyro);
+    // P1: On E, contacting an element grants the matching buff (max 2 buffs):
+    //   Pyro → +30% ATK, Cryo → +20% CR (offensive); Hydro → Kuugoryoku cap,
+    //   Electro → energy (non-offensive, not modeled).
+    // C4: P1 also grants a random UNTRIGGERED buff (max 3 buffs total). P1
+    //   triggers whenever ANY of Hydro/Pyro/Cryo/Electro is contacted, so under
+    //   the peak-damage model C4 adds the best missing offensive buff (ATK%).
+    const contacted = Object.values(this.teamMeta.elements);
+    const hasPyro = contacted.includes("Pyro");
+    const hasCryo = contacted.includes("Cryo");
+    const hasHydro = contacted.includes("Hydro");
+    const hasElectro = contacted.includes("Electro");
+    // P1 triggers if any of the four reactable elements is contacted.
+    const p1Triggered = hasPyro || hasCryo || hasHydro || hasElectro;
+    const c4Active = this.constellation >= 4 && p1Triggered;
+    // C4 adds one untriggered offensive buff: prefer Pyro ATK% (the strongest);
+    // if Pyro is already contacted, add Cryo CR instead.
+    const p1Pyro = hasPyro || (c4Active && !hasPyro);
+    const p1Cryo = hasCryo || (c4Active && hasPyro && !hasCryo);
     if (p1Pyro) {
       buffs.push(
         new StatBuff(
@@ -713,7 +804,8 @@ class Cyno extends CharacterBase {
           },
         ],
       },
-      // Burst N1-N5 combo (5 distinct multipliers, N4 hits twice = 6 total hits)
+      // Burst N1-N5 combo. N4 is a two-hit row {param4}+{param5} with distinct
+      // multipliers — split into two parts so each gets baseDmg independently (S3).
       "cyno-combo": {
         label: { zh: "Q普攻+E", en: "Q Normal+E" },
         parts: [
@@ -726,7 +818,9 @@ class Cyno extends CharacterBase {
           },
           {
             formula: new DirectFormula(this.param("Q", 4), normalBaseTag),
-            hits: 2,
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 5), normalBaseTag),
           },
           {
             formula: new DirectFormula(this.param("Q", 6), normalBaseTag),

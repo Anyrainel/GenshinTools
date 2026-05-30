@@ -553,11 +553,17 @@ class Noelle extends CharacterBase {
       : []),
   ];
 
-  // Q-infused Normal Attack 4-hit string (Geo infusion during Q)
+  // Q-infused Normal/Charged attacks (Geo infusion during Q — S10 exception:
+  // Sweeping Time converts attack DMG to non-overridable Geo).
   protected readonly formulaMap = (() => {
     const geoNormal = {
       element: "Geo" as const,
       ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const geoCharge = {
+      element: "Geo" as const,
+      ability: "charge" as const,
       reaction: "none" as const,
     };
     return {
@@ -570,12 +576,27 @@ class Noelle extends CharacterBase {
           { formula: new DirectFormula(this.param("A", 4), geoNormal) },
         ],
       },
+      // Spinning Charged Attack — Noelle's primary DPS during Sweeping Time.
+      // A param5 = Cyclic DMG (per spin tick), A param6 = Final slash DMG.
+      // Cyclic tick count is an estimate: ~2 cyclic hits per CA action before
+      // the final slash (exact count is stamina/duration dependent).
+      "noelle-charge": {
+        label: { zh: "Q重击（旋转）", en: "Q Charged (spin)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 5), geoCharge),
+            hits: 2,
+          },
+          { formula: new DirectFormula(this.param("A", 6), geoCharge) },
+        ],
+      },
     };
   })();
 
-  // Rotation: 4N during Q (on-field Geo carry)
+  // Rotation: spin-to-win Charged Attacks during Q (on-field Geo carry).
+  // The spinning Charged Attack is Noelle's primary DPS during Sweeping Time.
   protected override get comboDescriptor(): ComboTemplate {
-    return [{ id: "noelle-na", count: 4 }];
+    return [{ id: "noelle-charge", count: 3 }];
   }
 }
 
@@ -640,6 +661,24 @@ class Fischl extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      // E on-cast summoning AoE hit (E param2 "Summoning DMG"). Cast while
+      // on-field, so no offField. C2 "Devourer of All Sins" adds a flat 200% ATK
+      // Electro hit on the same Nightrider cast.
+      "fischl-e-summon": {
+        label: { zh: "E召唤伤害", en: "E Summon" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), tag),
+          },
+          ...(this.constellation >= 2
+            ? [
+                {
+                  formula: new DirectFormula(2.0, tag),
+                },
+              ]
+            : []),
+        ],
+      },
       "fischl-oz-total": {
         label: { zh: "E奥兹连击", en: "E Oz Combo" },
         parts: [
@@ -697,10 +736,11 @@ class Fischl extends CharacterBase {
     };
   })();
 
-  // Rotation: Q (falling thunder + C4 hit) + Oz duration (hits baked in)
+  // Rotation: Q (falling thunder + C4 hit) + E summon + Oz duration (hits baked in)
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "fischl-burst", count: 1 },
+      { id: "fischl-e-summon", count: 1 },
       { id: "fischl-oz-total", count: 1 },
       { id: "fischl-p2", count: 1 },
     ];
@@ -935,6 +975,12 @@ class Sucrose extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            // Large Wind Spirit deals continuous Anemo DoT pulses over the burst
+            // duration. Community references (Fandom, guides) estimate ~3 pulses
+            // over the 6s base duration; C2 extends duration by 2s (8s) for ~1
+            // extra pulse (~4 total). Best-estimate community figure, not
+            // KQM-vault-verified. Deployable spirit, so offField.
+            hits: this.constellation >= 2 ? 4 : 3,
             offField: true,
           },
         ],

@@ -140,7 +140,42 @@ class Kaveh extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    // Kaveh is an on-field Bloom DPS who attacks during Painted Dome (Q). Q
+    // converts his Normal/Charged/Plunging Attacks to Dendro DMG that cannot be
+    // overridden (S10 infusion exception), so these formulas are Dendro and are
+    // modeled in the Q-infused state — the window where he actually attacks. The
+    // existing C2 atkSpd, P2 EM-per-hit, and C6 Pairidaeza buffs land here.
+    const naTag = {
+      element: "Dendro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const caTag = {
+      element: "Dendro" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
     return {
+      // Q-infused Normal Attack chain (N1-N4)
+      "kaveh-normal": {
+        label: { zh: "Q普攻（4段）", en: "Q Normal (4-hit)" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), naTag) },
+          { formula: new DirectFormula(this.param("A", 2), naTag) },
+          { formula: new DirectFormula(this.param("A", 3), naTag) },
+          { formula: new DirectFormula(this.param("A", 4), naTag) },
+        ],
+      },
+      // Q-infused Charged Attack — cyclic slashes (A5) then a final slash (A6).
+      // Cyclic tick count is an estimate (~2 per CA action before the final
+      // slash); the exact count is stamina/duration dependent.
+      "kaveh-charge": {
+        label: { zh: "Q重击", en: "Q Charged" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 5), caTag), hits: 2 },
+          { formula: new DirectFormula(this.param("A", 6), caTag) },
+        ],
+      },
       "kaveh-core": {
         label: { zh: "Q绽放", en: "Q Bloom" },
         parts: [
@@ -170,11 +205,14 @@ class Kaveh extends CharacterBase {
     };
   })();
 
-  // Rotation: Q E N# E N# E — on-field Bloom driver, ~5 cores detonated (KQM)
+  // Rotation: Q E N# E N# E — on-field Bloom driver, ~5 cores detonated (KQM).
+  // He drives Blooms with Normal Attacks during Q; C6 Pairidaeza procs once per
+  // 3s off those N/C/P hits (~2 procs per rotation when C6 is unlocked).
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "kaveh-core", count: 5 },
-      { id: "kaveh-c6-pairidaeza", count: 0 },
+      { id: "kaveh-normal", count: 2 },
+      { id: "kaveh-c6-pairidaeza", count: 0, bonus: [{ minC: 6, delta: 2 }] },
     ];
   }
 }
@@ -198,10 +236,12 @@ class Faruzan extends CharacterBase {
     // Game text: "基于珐露珊基础攻击力的32%，提高造成的伤害"
     // "每0.8秒至多产生一次…生效1次后消失" — each 烈风护持 fires once then disappears,
     // but regenerates every 0.8s during Q. Effectively unlimited over a rotation.
+    // Prayerful Wind's Benefit is granted to all nearby party members, so the
+    // buff reaches off-field Anemo damage from affected teammates → receiver "team".
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
-        receiver: "teamOnField",
+        receiver: "team",
         filter: {
           elements: ["Anemo"],
           abilities: ["normal", "charge", "plunge", "skill", "burst"],
@@ -248,12 +288,29 @@ class Faruzan extends CharacterBase {
           },
         ],
       },
+      // C6: While affected by Prayerful Wind's Benefit, the active character's
+      // damage applies Pressurized Collapse, creating an extra vortex (Anemo
+      // Skill DMG, same multiplier as the E vortex). Shared 3s CD party-wide.
+      "faruzan-c6-collapse": {
+        label: { zh: "C6风压坍陷风涡", en: "C6 Collapse Vortex" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), eTag),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E charged-shot Q — Anemo support, 1 vortex per rotation (KQM)
+  // C6: active character's damage applies an extra Pressurized Collapse vortex
+  // (shared 3s CD party-wide) — model 1 proc per rotation when C6 is unlocked.
   protected override get comboDescriptor(): ComboTemplate {
-    return [{ id: "faruzan-vortex", count: 1 }];
+    return [
+      { id: "faruzan-vortex", count: 1 },
+      { id: "faruzan-c6-collapse", count: 0, bonus: [{ minC: 6, delta: 1 }] },
+    ];
   }
 }
 
@@ -343,15 +400,46 @@ class Layla extends CharacterBase {
 class Candace extends CharacterBase {
   readonly buffs = [
     // Q: Prayer of Crimson Crown — on-field Normal ATK Elemental DMG bonus (Q param3)
+    // Game text: bonus only applies when Normal Attacks deal Elemental DMG, so
+    // scope to all elements except Physical.
     new StatBuff(
       cbs(this, "Q", ["Q"]),
-      { receiver: "teamOnField", filter: { abilities: ["normal"] } },
+      {
+        receiver: "teamOnField",
+        filter: {
+          abilities: ["normal"],
+          elements: [
+            "Pyro",
+            "Hydro",
+            "Cryo",
+            "Electro",
+            "Anemo",
+            "Geo",
+            "Dendro",
+          ],
+        },
+      },
       [{ key: "dmg%", value: this.param("Q", 3) }]
     ),
     // P2: Per 1000 Max HP, Normal ATK Elemental DMG +0.5%
+    // Game text: only when Normal Attacks deal Elemental DMG (exclude Physical).
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "teamOnField", filter: { abilities: ["normal"] } },
+      {
+        receiver: "teamOnField",
+        filter: {
+          abilities: ["normal"],
+          elements: [
+            "Pyro",
+            "Hydro",
+            "Cryo",
+            "Electro",
+            "Anemo",
+            "Geo",
+            "Dendro",
+          ],
+        },
+      },
       [],
       "hp",
       "dmg%",

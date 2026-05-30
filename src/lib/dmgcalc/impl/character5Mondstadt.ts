@@ -1357,6 +1357,35 @@ class Klee extends CharacterBase {
   // Charged ATK: A param4 (talent-level-dependent)
   protected readonly formulaMap = (() => {
     return {
+      // Normal Attack: 3-hit catalyst string (A param1/2/3), Pyro (catalyst user).
+      // Provides a target for Normal-triggered follow-ups (Hexerei/Boom-Boom
+      // Strike, C6) to be evaluated against real attack hits.
+      "klee-normal": {
+        label: { zh: "普通攻击", en: "NA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 1), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 2), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 3), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "klee-skill": {
         label: { zh: "E弹跳+诡雷", en: "E Bounce + Mine" },
         parts: [
@@ -1391,6 +1420,12 @@ class Klee extends CharacterBase {
         ],
       },
       // Q: Sparks 'n' Splash — continuous Pyro DMG (Q param1)
+      // Sparks 'n' Splash only persists while Klee remains on-field, so it is
+      // on-field damage (no offField) and receives on-field buffs.
+      // Hit count: KQM TCL documents 6 waves over the 10s duration, each wave
+      // dealing a probabilistic 3/4/5 hits at 35%/50%/15% (expected ~3.8 hits
+      // per wave, ~22.8 total ≈ 23). Source: KQM TCL
+      // (library.keqingmains.com/characters/pyro/klee).
       "klee-burst": {
         label: { zh: "Q轰轰火花", en: "Q Sparks" },
         parts: [
@@ -1400,7 +1435,7 @@ class Klee extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            offField: true,
+            hits: 23,
           },
         ],
       },
@@ -1950,17 +1985,29 @@ class Lohen extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    // Will to Win scales only the special E and Q damage.
-    const willBoost = 0.004 * this.willStacks;
-    if (willBoost > 0) {
+    // Will to Win scales the special E and Q damage. The per-point coefficient
+    // is talent-level-dependent and differs by ability: E param18 (special E,
+    // "Etched Into Bone and Soul") and Q param2 (burst), both {paramN:F2P}/Point.
+    // Scope each to its own ability so the correct per-point value applies.
+    if (this.willStacks > 0) {
+      const eWillBoost = this.param("E", 18) * this.willStacks;
+      const qWillBoost = this.param("Q", 2) * this.willStacks;
       buffs.push(
         new StatBuff(
           cbs(this, "E", ["E"]),
           {
             receiver: "selfOnField",
-            filter: { abilities: ["skill", "burst"] },
+            filter: { abilities: ["skill"] },
           },
-          [{ key: "baseDmg%", value: willBoost }]
+          [{ key: "baseDmg%", value: eWillBoost }]
+        ),
+        new StatBuff(
+          cbs(this, "Q", ["Q"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["burst"] },
+          },
+          [{ key: "baseDmg%", value: qWillBoost }]
         )
       );
     }
@@ -2072,16 +2119,21 @@ class Lohen extends CharacterBase {
         label: { zh: "镂骨彻心", en: "Etched Into Bone and Soul" },
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 11), cryoSkill),
+            // E param17 = "Etched Into Bone and Soul DMG {param17:F1P}×4"
+            // (108%×4 at L10). param11 is High Plunge DMG — the wrong row.
+            formula: new DirectFormula(this.param("E", 17), cryoSkill),
             hits: 4,
           },
         ],
       },
       // Optional plunge formula; not part of the default Masterstroke combo.
+      // E param9 = Plunge DMG (during fall, 126.4% at L10); param10 = Low Plunge
+      // impact (253% at L10). param8 was the Charged Attack Stamina Cost, not a
+      // damage multiplier.
       "lohen-e-plunge": {
         label: { zh: "奇谋 下落攻击", en: "Masterstroke Plunge" },
         parts: [
-          { formula: new DirectFormula(this.param("E", 8), cryoPlunge) },
+          { formula: new DirectFormula(this.param("E", 9), cryoPlunge) },
           { formula: new DirectFormula(this.param("E", 10), cryoPlunge) },
         ],
       },

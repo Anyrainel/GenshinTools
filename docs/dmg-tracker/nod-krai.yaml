@@ -109,3 +109,21 @@
     active at once. Current receiver/filter primitives cannot express that
     runtime branch cleanly. The existing heuristic avoids the worst double-count
     cases, so the remaining target mismatch is an acceptable approximation.
+
+- id: nefer-burst-excluded-from-rotation
+  entity: nefer
+  rule: U9
+  status: wont-do
+  category: approximation
+  summary: >
+    Q "Sacred Vow: True Eye's Phantasm" (nefer-burst) is registered in formulaMap
+    but has count: 0 in comboDescriptor, so it contributes nothing to the default
+    rotation total. The review agent flagged this as an undercount, but a default
+    count of 0 reflects how Nefer is actually played.
+  detail: >
+    Confirmed with user: Nefer's burst is commonly skipped in practice. The
+    standard rotation front-loads Phantasm Performances and players frequently do
+    not cast Q, so a default comboDescriptor count of 0 correctly represents the
+    realistic default rotation. The Q formula stays registered in formulaMap so
+    users who do run the burst can enable it manually; only the default-rotation
+    contribution is intentionally 0. No change needed.

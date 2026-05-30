@@ -490,32 +490,39 @@ class AngelosHeptades extends WeaponBase {
       new StatBuff(wbs(this), { receiver: "self" }, [
         { key: "atk%", value: atkPct },
       ]),
+    ];
+    // Pathfinder's Light is gated on the wielder being able to create a shield
+    // ("After the equipping character creates a Shield"). The flat ATK% above
+    // stays unconditional; only the DMG buff requires the shielder role.
+    if (this.teamMeta.isShielder[this.charId]) {
       // Pathfinder's Light: on-field teammate (including wielder) DMG, scaling with
       // wielder's ATK. Wielder provides the ATK so the buff is based on self stats.
-      new ScalingBuff(
-        wbs(this, ["shield"], "seven-edicts-pathfinders-light"),
-        { receiver: "teamOnField" },
-        [],
-        "atk",
-        "dmg%",
-        scale,
-        cap
-      ),
-    ];
-    // Hexerei: Secret Rite — off-field Hexerei party members (including the
-    // wielder themselves if Hexerei) gain half of the DMG buff.
-    if (this.teamMeta.countByFaction("Hexerei") >= 2) {
       buffs.push(
         new ScalingBuff(
-          wbs(this, ["shield"], "seven-edicts-pathfinders-light-hexerei"),
-          { receiver: "teamOffField", factions: ["Hexerei"] },
+          wbs(this, ["shield"], "seven-edicts-pathfinders-light"),
+          { receiver: "teamOnField" },
           [],
           "atk",
           "dmg%",
-          scale * 0.5,
-          cap * 0.5
+          scale,
+          cap
         )
       );
+      // Hexerei: Secret Rite — off-field Hexerei party members (including the
+      // wielder themselves if Hexerei) gain half of the DMG buff.
+      if (this.teamMeta.countByFaction("Hexerei") >= 2) {
+        buffs.push(
+          new ScalingBuff(
+            wbs(this, ["shield"], "seven-edicts-pathfinders-light-hexerei"),
+            { receiver: "teamOffField", factions: ["Hexerei"] },
+            [],
+            "atk",
+            "dmg%",
+            scale * 0.5,
+            cap * 0.5
+          )
+        );
+      }
     }
     return buffs;
   }

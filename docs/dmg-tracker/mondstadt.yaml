@@ -37,21 +37,24 @@
 - id: sucrose-q-dot-hit-count
   entity: sucrose
   rule: S7
-  status: open
+  status: completed
   category: needs-data
   summary: >
     Q continuous Anemo DoT is modeled as a single hit. Game text describes
     continuous Anemo damage over the burst duration, so the formula needs a
     verified hit count, including the C2 duration extension.
   detail: >
-    Keep open. The tracker claim is credible, but the exact continuous Anemo hit
-    count and the C2 duration-extension count need frame or rotation data before
-    the formula count can be changed safely.
+    Set sucrose-burst Anemo DoT part hits to constellation-dependent:
+    `hits: this.constellation >= 2 ? 4 : 3` (3 pulses over 6s base, 4 with the
+    C2 +2s duration extension). Added a code comment noting this is a
+    best-estimate community figure (Fandom/guides), not KQM-vault-verified.
+    offField:true preserved. Absorbed-element portion stays unmodeled per
+    sucrose-q-absorption-additional-dmg (wont-do).
 
 - id: prune-q-bell-hit-count
   entity: prune
   rule: S8
-  status: open
+  status: completed
   category: needs-data
   summary: >
     Q Witchlure Bell Hunter-Seeker tick count is estimated at 4 hits over the
@@ -59,10 +62,12 @@
     only "attacking surrounding opponents at intervals" without a concrete tick
     rate; actual base and C6 tick counts require in-game verification.
   detail: >
-    Implementation still uses the estimate: comboDescriptor counts 4 base ticks
-    and 5 ticks at C6, with a code comment noting the cadence is pending
-    release/frame verification. Keep this open until the actual Hunter-Seeker
-    attack interval is verified.
+    Resolved with the best-estimate placeholder per user. The prune-burst-bell
+    Hunter-Seeker formula is already implemented in character4Mondstadt.ts with
+    comboDescriptor count: this.constellation >= 6 ? 5 : 4 (4 ticks base / 5 at
+    C6, where C6 extends the mode 12s -> 16s), and the estimate is already noted
+    in a code comment as pending frame verification. No code change was needed.
+    Revisit once in-game frame data is published.
 
 - id: albedo-c4-silver-plunge-buff
   entity: albedo
@@ -82,40 +87,125 @@
 - id: klee-burst-offfield-flag
   entity: klee
   rule: S11
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Q Sparks 'n' Splash is marked `offField: true`, but Klee's burst damage only
     persists while Klee remains on-field. The off-field flag incorrectly excludes
     on-field buffs from her burst damage.
   detail: >
-    Sparks 'n' Splash only continues while Klee remains on-field, so its burst
-    damage should be treated as on-field damage and should receive on-field buffs.
+    Removed `offField: true` from the klee-burst part so Sparks 'n' Splash is
+    treated as on-field damage and receives on-field buffs.
 
 - id: klee-burst-hit-count
   entity: klee
   rule: S7
-  status: open
+  status: completed
   category: needs-data
   summary: >
     Q Sparks 'n' Splash is modeled as a single hit. Game text describes
     continuous attacks throughout the burst duration, so the formula needs a
     verified hit count.
   detail: >
-    Keep open. The continuous burst attack is significant enough to model, but
-    the correct default hit count needs gameplay or frame data rather than a
-    guessed duration divisor.
+    Set the klee-burst part to `hits: 23` (per-hit param1 multiplier preserved so
+    baseDmg flats apply per hit). Added a code comment with the KQM TCL
+    probabilistic basis (6 waves x ~3.8 expected hits ≈ 22.8 ≈ 23). Source: KQM
+    TCL (library.keqingmains.com/characters/pyro/klee).
 
 - id: klee-missing-normal-formula
   entity: klee
   rule: S7
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Klee has no Normal Attack formula even though her Hexerei passive and C6 add
     Boom-Boom Strike follow-up attacks from Normal Attack hits during her burst.
     Missing NA coverage prevents those kit-signaled follow-ups from being modeled.
   detail: >
-    Klee is a catalyst DPS and her Normal Attack sequence is a meaningful damage
-    source. Add normal attack coverage so Normal-triggered follow-up effects such
-    as Hexerei/Boom-Boom Strike and C6 can be evaluated against real attack hits.
+    Added a "klee-normal" formula with three parts (A param1/2/3) per S3, Pyro
+    element (catalyst user, S10 exception #1), ability "normal". Provides a target
+    for Normal-triggered follow-ups. Left out of the default comboDescriptor,
+    which stays Charged-Attack-focused (N1C/N2C playstyle); the formula is
+    selectable in the UI.
+
+- id: lohen-special-e-wrong-param
+  entity: lohen
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    The special Elemental Skill formula "lohen-e-special" (Etched Into Bone and
+    Soul) uses this.param("E", 11), which is the High Plunge multiplier (316% at
+    L10), instead of param17, the actual Etched Into Bone and Soul DMG (108% at
+    L10). This is Lohen's primary damage source and is computed off the wrong
+    talent row.
+  detail: >
+    Changed the lohen-e-special multiplier from this.param("E", 11) to
+    this.param("E", 17) (Etched Into Bone and Soul DMG, 108%×4 at L10). hits: 4
+    and Cryo/skill tag preserved. Added a code comment.
+
+- id: lohen-will-perpoint-hardcoded
+  entity: lohen
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    The Will to Win per-point DMG coefficient is hardcoded as 0.004 in willBoost,
+    but it is a talent-level-dependent value (E param18 and Q param2, both shown
+    as {paramN:F2P}/Point). It must use this.param() so it scales with talent
+    level, and E vs Q use different param rows.
+  detail: >
+    Split the single willBoost buff into two per-ability baseDmg% buffs:
+    this.param("E", 18) * willStacks scoped to abilities ["skill"] (the special E
+    is the only skill-tagged E formula), and this.param("Q", 2) * willStacks
+    scoped to abilities ["burst"]. Removes the hardcoded 0.004 so both scale with
+    talent level.
+
+- id: lohen-plunge-wrong-param
+  entity: lohen
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    The optional plunge formula "lohen-e-plunge" uses this.param("E", 8) (Charged
+    Attack Stamina Cost = 10) and this.param("E", 10) (Low Plunge). param8 is a
+    stamina value, not a damage multiplier, producing nonsensical damage.
+  detail: >
+    Changed the falling-part multiplier from this.param("E", 8) (stamina cost) to
+    this.param("E", 9) (Plunge DMG, 126.4% at L10); kept this.param("E", 10) (Low
+    Plunge, 253% at L10) for the impact. Cryo/plunge tag preserved. Added a code
+    comment.
+
+- id: noelle-missing-charged-formula
+  entity: noelle
+  rule: S7
+  status: completed
+  category: missing-formula
+  summary: >
+    Noelle has no Charged Attack formula even though her C2 explicitly buffs
+    Charged Attack DMG +15% and her Sweeping Time playstyle is centered on the
+    spinning Charged Attack (Geo-infused during Q). Only the 4-hit Normal string
+    is modeled.
+  detail: >
+    Added a "noelle-charge" formula: cyclic part this.param("A", 5) with hits: 2
+    (estimated cyclic ticks, noted in a code comment) + final slash part
+    this.param("A", 6). Geo/charge tag (S10 Sweeping Time infusion exception).
+    Gives the existing C2 +15% Charged Attack buff a target. Updated the default
+    comboDescriptor to spin-to-win (noelle-charge count: 3) to match her primary
+    Sweeping Time DPS; the noelle-na formula remains selectable.
+
+- id: fischl-missing-e-summon-c2
+  entity: fischl
+  rule: S7
+  status: completed
+  category: missing-formula
+  summary: >
+    The Nightrider summoning hit (E param2, "Summoning DMG") and C2's additional
+    200% ATK on Nightrider cast are not modeled. Only Oz tick damage is covered,
+    so the per-cast E hit and the C2 burst are missing.
+  detail: >
+    Added a "fischl-e-summon" formula: this.param("E", 2) (Summoning DMG, 208% at
+    L10) part, Electro/skill, on-field (no offField), plus a C2 part of
+    DirectFormula(2.0) gated on this.constellation >= 2 on the same formula.
+    Added the formula to the default comboDescriptor (count: 1). Oz tick damage
+    stays in fischl-oz-total.

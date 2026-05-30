@@ -118,83 +118,90 @@
 - id: xingqiu-burst-sword-rain-count
   entity: xingqiu
   rule: S7
-  status: actionable
+  status: completed
   category: needs-data
   summary: >
     Raincutter sword rain is modeled as one Sword Rain DMG hit per proc. The implementation
     does not model the multi-sword wave pattern or C6's enhanced third wave, so burst damage
     is undercounted.
   detail: >
-    Raincutter is a major off-field damage source, and one hit per proc materially
-    undercounts it. Model the standard multi-sword wave pattern, including the
-    C6 enhanced third wave, instead of treating each proc as one Sword Rain hit.
+    Raised the xingqiu-burst-tick comboDescriptor count from 15 to 21 sword rain
+    hits to reflect the multi-sword wave pattern over a full Q (best-estimate,
+    matches community/KQM full-uptime models). Added a C6 bonus (+6 hits) for the
+    enhanced third-wave swords via bonus: [{ minC: 6, delta: 6 }]. Documented the
+    estimate in a code comment. type-check passes.
 
 - id: yaoyao-c6-mega-radish-count
   entity: yaoyao
   rule: S3
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C6 Mega Radishes are additional throws, but the E formula replaces two normal White
     Jade Radish hits by reducing regular hits from 10 to 8.
   detail: >
-    Keep 10 normal E White Jade Radish hits and add 2 Mega Radish hits at C6 for one
-    Yuegui: Throwing Mode instance. Game text says every 2 normal throws also releases
-    a Mega Radish, up to 2 per Yuegui.
+    Changed the yaoyao-skill normal White Jade Radish part from
+    (constellation >= 6 ? 8 : 10) hits to a constant 10 hits, so the 2 C6 Mega
+    Radish hits (75% ATK Dendro) are now genuinely additional rather than
+    replacing normal throws. type-check passes.
 
 - id: yaoyao-p1-starscatter-radishes
   entity: yaoyao
   rule: S7
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     P1 Starscatter radishes during Moonjade Descent are not modeled. While Yaoyao is
     running, sprinting, or jumping in Q, she can throw one extra White Jade Radish every
     0.6s.
   detail: >
-    Add to the existing Q formula as extra Adeptal Legacy White Jade Radish hits using
-    this.param("Q", 1). Q lasts 5s, so the text trivially implies up to 8 extra P1 throws
-    if Yaoyao stays moving during the state.
+    Added a third part to yaoyao-burst: 8 extra Adeptal Legacy White Jade Radish
+    hits (this.param("Q", 1), Dendro burst, offField) representing P1 Starscatter
+    throws over the ~5s Q while moving. Documented the estimate in a code comment.
+    type-check passes.
 
 - id: ningguang-charged-star-jades
   entity: ningguang
   rule: S7
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Ningguang has no Charged Attack or Star Jade formula even though her kit and C6
     explicitly support Charged Attack damage.
   detail: >
-    Add Charged Attack damage from A param2 plus Star Jade damage from A param3. C6
-    grants 7 Star Jades after Q; non-C6 Star Jade count depends on the normal/charged
-    sequence and should be selected or documented.
+    Added ningguang-charge formula: Charged Attack hit (this.param("A", 2), Geo
+    charge) plus Star Jades (this.param("A", 3)) as a hits: N part. Star Jade count
+    is 7 at C6 (Q grants 7), else 3 (modeling a typical Normal Attack build-up,
+    documented in a code comment). Added the formula to comboDescriptor (count 1).
+    type-check passes.
 
 - id: baizhu-c2-splice-hit-count
   entity: baizhu
   rule: S3
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C2 Gossamer Sprite: Splice is modeled as 3 hits, but the constellation text says
     it initiates 1 attack before returning.
   detail: >
-    Change the "baizhu-c2-sprite" formula from hits: 3 to a single 250% ATK Dendro
-    Skill hit. The 3-hit count belongs to Baizhu's regular E sprite, not C2 Splice.
+    Changed baizhu-c2-sprite from hits: 3 to a single 250% ATK Dendro Skill hit
+    (removed the hits field). Updated the label to drop "×3". type-check passes.
 
 - id: baizhu-c6-extra-spiritveins
   entity: baizhu
   rule: S7
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     C6 shield generation from Gossamer Sprite and Gossamer Sprite: Splice hits is not
     reflected as extra Spiritvein damage. The implementation only adds the C6 8% Max HP
     bonus to existing Spiritvein hits.
   detail: >
-    Each regular sprite or C2 Splice can generate one Seamless Shield, which can
-    then trigger Spiritvein damage through the Q shield rules. C6 should add those
-    extra Spiritvein damage instances consistently with the chosen E and C2 sprite
-    counts.
+    Added the C2 Splice to the rotation (baizhu-c2-sprite count 0, bonus minC 2
+    delta 2 → 2 splices) and added a C6 bonus to baizhu-burst (count 3, bonus
+    minC 6 delta 3) so the extra Seamless Shields generated by the E sprite (1)
+    and the 2 C2 Splices (2) each trigger one additional Spiritvein at C6.
+    Documented the model in a code comment. type-check passes.
 
 - id: hu_tao-c4-ally-crit
   entity: hu_tao
@@ -213,11 +220,37 @@
 - id: shenhe-c6-quill-quota
   entity: shenhe
   rule: U10
-  status: actionable
+  status: completed
   category: bug
   summary: >
     At C6, Icy Quill quota is removed for all Cryo damage abilities, but the constellation
     only says Normal and Charged Attack triggers stop consuming quota.
   detail: >
-    Split the C6 Icy Quill modeling so Normal/Charged Cryo hits are unlimited, while
-    Plunging, Skill, and Burst Cryo hits still use the press/hold trigger quotas.
+    Split the C6 Icy Quill into two ability-scoped pools: an unlimited Normal/Charged
+    pool (no maxStacks) and a quota-limited Plunge/Skill/Burst pool (still press 5 /
+    hold 7 maxStacks). Refactored the per-character quill generation into a buildQuill
+    helper with distinct internalKeys per pool/mode. Pre-C6 behavior (single shared
+    quota over all 5 abilities) is unchanged. type-check passes.
+
+- id: zibai-c1-steed-count
+  entity: zibai
+  rule: S3
+  status: completed
+  category: approximation
+  summary: >
+    The "zibai-steed" comboDescriptor count is hardcoded to 4 with no C1 uplift.
+    Game text caps usages at 4 (C0) / 5 (C1), but each Spirit Steed's Stride costs
+    70 Phase Shift Radiance, so a realistic rotation rarely reaches the cap —
+    estimated ~3 casts at C0 and ~4 at C1. The flat 4 therefore over-counts at C0
+    rather than under-counting at C1.
+  detail: >
+    Reassessed with user. Game text [Lunar Phase Shift] caps usages at 4 (C0),
+    raised to 5 by C1, but the cap is seldom reached: Steed costs 70 of a 100-max
+    Phase Shift Radiance pool, accrued at 10/s passive + 5 per NA hit (0.5s ICD) +
+    35 per nearby Lunar-Crystallize (4s ICD) across the 15s mode. Realistic casts
+    are ~3 at C0; C1's immediate +100 Radiance plus the higher cap bring it to ~4.
+    Implemented: set the zibai-steed comboDescriptor to count: 3 with
+    bonus: [{ minC: 1, delta: 1 }] so C0 models 3 Steed casts and C1+ models 4.
+    Documented the Phase Shift Radiance economy and best-estimate caveat in a code
+    comment. Each Steed's 2nd hit is a Lunar-Crystallize instance, so the count
+    also drives that reaction's frequency. type-check passes.

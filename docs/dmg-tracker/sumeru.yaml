@@ -27,20 +27,21 @@
 - id: candace-q-p2-element-scope
   entity: candace
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Q Prayer of the Crimson Crown and P2 both buff all Normal Attack damage, but
     game text restricts them to Normal Attacks that deal Elemental DMG.
     Physical Normal Attack damage currently receives the bonus incorrectly.
   detail: >
-    Keep receiver:"teamOnField" and abilities:["normal"], but scope the buff to
-    elemental damage only (all elements except Physical).
+    Added elements filter (all 7 non-Physical elements) to both the Q dmg% and
+    P2 ScalingBuff teamOnField buffs, keeping receiver:"teamOnField" and
+    abilities:["normal"]. Physical Normal Attacks no longer receive the bonus.
 
 - id: faruzan-p2-receiver
   entity: faruzan
   rule: U1
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P2 Hurricane Guard uses receiver:"teamOnField", but game text grants the
@@ -48,8 +49,9 @@
     Benefit, not only the current active character. Off-field Anemo damage from
     affected teammates misses the buff.
   detail: >
-    Use a team-wide receiver with the existing Anemo and ability filters; Q's
-    Prayerful Wind's Benefit is applied to all nearby party members.
+    Changed P2 ScalingBuff receiver from "teamOnField" to "team", keeping the
+    existing Anemo element and ability filters. Off-field Anemo damage from
+    affected teammates now receives the flat baseDmg buff.
 
 - id: faruzan-q-pulse-formula
   entity: faruzan
@@ -68,21 +70,22 @@
 - id: faruzan-c6-collapse-formula
   entity: faruzan
   rule: S7
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     C6 applies Pressurized Collapse when the active character deals damage under
     Prayerful Wind's Benefit, but the resulting Anemo Skill DMG proc is not
     modeled.
   detail: >
-    Add a C6-gated Anemo/Skill formula for the Pressurized Collapse vortex using
-    the E vortex multiplier this.param("E", 2). The trigger is shared party-wide
-    and can occur once every 3s.
+    Added "faruzan-c6-collapse" formula (minC: 6) using DirectFormula with
+    this.param("E", 2) and the Anemo/skill/none tag (same multiplier as the E
+    vortex). Added it to comboDescriptor with a minC:6 +1 bonus (1 proc per
+    rotation when C6 is unlocked).
 
 - id: alhaitham-lower-mirror-variants
   entity: alhaitham
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Only the 3-Mirror Projection Attack and 3-Mirror burst case are modeled.
@@ -90,27 +93,32 @@
     Attack damage rows and lower-mirror burst instance variants should also be
     represented.
   detail: >
-    Add Projection variants for E params 4/5 and 6/7 (2-Mirror has hits: 2).
-    Add burst variants for 0/1/2 mirror consumption using Q params 3/4/5 for
-    attack instance counts; keep the existing 3-Mirror variant using param 6.
+    Added "alhaitham-projection-1" (E params 4/5, hits 1) and
+    "alhaitham-projection-2" (E params 6/7, hits 2), both with the p2Skill
+    bespokeBuff. Added burst variants "alhaitham-burst-0/1/2" using
+    this.param("Q", 3/4/5) as the hit count; converted the existing 3-Mirror
+    burst to use this.param("Q", 6). All carry the p2Burst bespokeBuff.
+    comboDescriptor still uses the 3-Mirror projection/burst for the default
+    rotation; lower-mirror variants are available for selection.
 
 - id: cyno-q-n4-second-hit
   entity: cyno
   rule: S3
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Pactsworn Pathclearer N4 is modeled as this.param("Q", 4) with hits: 2, but
     the talent row is {param4}+{param5}. The second N4 hit currently uses the
     first hit's multiplier.
   detail: >
-    Split the N4 part into two DirectFormula parts using this.param("Q", 4) and
-    this.param("Q", 5), or otherwise preserve the two distinct multipliers.
+    Replaced the single hits:2 N4 part with two separate DirectFormula parts
+    using this.param("Q", 4) and this.param("Q", 5), preserving the two distinct
+    multipliers and applying baseDmg to each hit independently.
 
 - id: wanderer-c4-hydro-electro-random-buff
   entity: wanderer
   rule: U9
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C4's extra random untriggered P1 buff is omitted when the team only enables
@@ -118,5 +126,26 @@
     untriggered offensive Pyro or Cryo buff, but the implementation grants
     neither.
   detail: >
-    Include Hydro/Electro contact when deciding whether C4 should add the best
-    missing offensive P1 buff under the peak-damage assumption.
+    Reworked the C4 gate: P1 now triggers when any of Hydro/Pyro/Cryo/Electro is
+    contacted (p1Triggered), and C4 (c4Active) adds the best missing offensive
+    buff under peak-damage — Pyro ATK% if Pyro not contacted, else Cryo CR. The
+    Hydro/Electro-only case now correctly grants the Pyro ATK% buff. Existing
+    Pyro-only/Cryo-only/both cases are preserved.
+
+- id: kaveh-normal-attack-formula
+  entity: kaveh
+  rule: S7
+  status: completed
+  category: missing-formula
+  summary: >
+    Kaveh's Normal/Charged Attack damage (Dendro-infused during Q) is not
+    modeled, despite his kit explicitly buffing these attacks (P2 EM per N/C/P
+    hit, C2 Normal ATK SPD +15%, C6 Pairidaeza proc on N/C/P hit).
+  detail: >
+    Added "kaveh-normal" (N1-N4 via this.param("A", 1..4), four parts) and
+    "kaveh-charge" (cyclic this.param("A", 5) hits:2 + final this.param("A", 6)),
+    all Dendro/normal|charge tags modeled in the Q-infused state (S10 infusion
+    exception). Added kaveh-normal (count 2) to comboDescriptor and gave
+    kaveh-c6-pairidaeza a minC:6 +2 bonus so it procs off the new N/C/P hits.
+    Existing P2 EM, C2 atkSpd, and C6 buffs land on these formulas.
+    File: character4Sumeru.ts.
