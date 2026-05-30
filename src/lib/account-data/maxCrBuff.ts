@@ -57,7 +57,6 @@ const STATIC_CHARACTER_CR_BUDGET: Record<string, CharacterBuffEntry> = {
   freminet: { constellations: [{ min: 1, cr: 0.15 }] },
   gaming: { constellations: [{ min: 6, cr: 0.2 }] },
   ganyu: { base: 0.2 },
-  hu_tao: { constellations: [{ min: 6, cr: 1 }] },
   kaeya: { constellations: [{ min: 1, cr: 0.15 }] },
   keqing: { base: 0.15 },
   nahida: { base: 0.24 },
@@ -80,6 +79,12 @@ const STATIC_CHARACTER_CR_BUDGET: Record<string, CharacterBuffEntry> = {
   xinyan: { constellations: [{ min: 2, cr: 1 }] },
   yanfei: { constellations: [{ min: 2, cr: 0.2 }] },
 };
+
+const IGNORED_CHARACTER_CR_BUDGET = new Set([
+  // Hu Tao C6 is a short emergency trigger, not a stable CR source for
+  // artifact recommendation over-cap avoidance.
+  "hu_tao",
+]);
 
 const ROYAL_WEAPON_CR = [0.4, 0.5, 0.6, 0.7, 0.8];
 const STATIC_WEAPON_CR_BUDGET: Record<string, number[]> = {
@@ -151,6 +156,7 @@ function getHalfSetCr(halfSetIds: Array<string | undefined>): number {
 }
 
 function getStaticCharBuff(charId: string, constellation: number): number {
+  if (IGNORED_CHARACTER_CR_BUDGET.has(charId)) return 0;
   const entry = STATIC_CHARACTER_CR_BUDGET[charId];
   if (!entry) return 0;
   return (
