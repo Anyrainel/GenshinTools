@@ -95,7 +95,7 @@ function CharacterCardComponent({
   const plusBurst = getTalentPlus("Q");
 
   return (
-    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-3xl mx-auto">
+    <Card className="flex h-full w-full flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-3xl mx-auto">
       {/* Header */}
       <div
         className={cn(
@@ -279,7 +279,7 @@ function CharacterCardComponent({
 
       {/* Artifacts Body */}
       <CardContent className="p-0 bg-black/10">
-        <div className="grid grid-cols-5 items-stretch divide-x divide-border/20 px-0.5">
+        <div className="grid grid-cols-5 divide-x divide-border/20 px-0.5">
           {allSlots.map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
@@ -300,7 +300,7 @@ function CharacterCardComponent({
             const content = (
               <div
                 className={cn(
-                  "flex h-full min-w-0 flex-col relative overflow-hidden transition-colors",
+                  "flex flex-col relative transition-colors",
                   isArtifactCompact ? "p-1" : "p-2",
                   art ? "group hover:bg-white/5" : "opacity-30"
                 )}
@@ -324,14 +324,14 @@ function CharacterCardComponent({
                 ) : (
                   <div
                     className={cn(
-                      "flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-border bg-black/10 px-1 text-center",
-                      isArtifactCompact ? "text-xs" : "text-sm"
+                      "flex-1 flex flex-col items-center justify-center gap-1",
+                      isArtifactCompact ? "min-h-[100px]" : "min-h-[136px]"
                     )}
                   >
-                    <span className="block max-w-full truncate text-muted-foreground font-medium">
+                    <span className="text-sm text-muted-foreground font-medium">
                       {t.slot(slot)}
                     </span>
-                    <span className="block max-w-full truncate text-muted-foreground">
+                    <span className="text-sm text-muted-foreground">
                       {t.ui("accountData.unequipped")}
                     </span>
                   </div>
@@ -339,11 +339,7 @@ function CharacterCardComponent({
               </div>
             );
 
-            return (
-              <div key={slot} className="flex min-w-0">
-                {content}
-              </div>
-            );
+            return <div key={slot}>{content}</div>;
           })}
         </div>
       </CardContent>

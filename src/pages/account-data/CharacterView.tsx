@@ -416,11 +416,11 @@ function VirtualizedCharacterGrid({
             }}
           >
             <div
-              className="grid gap-3 pb-3"
+              className="grid items-stretch gap-3 pb-3"
               style={{ gridTemplateColumns: `repeat(${numColumns}, 1fr)` }}
             >
               {rows[virtualRow.index].map((char) => (
-                <div key={char.key}>
+                <div key={char.key} className="h-full min-w-0">
                   <CharacterCard
                     char={char}
                     score={scores[char.key]}
