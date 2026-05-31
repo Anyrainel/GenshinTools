@@ -43,15 +43,21 @@ Rules the parser and existing entries rely on:
 
 ## Step 1 — Gather commits since the last published entry
 
+**Fetch first.** Commits can land on the remote from another device or agent that aren't in your local `HEAD` yet — if you scan only local history you'll silently miss them. Update remote-tracking refs before gathering, and scan up to whichever tip is ahead:
+
+```bash
+git fetch origin
+```
+
 The boundary is the commit that last touched the update log files, not a date guess:
 
 ```bash
 # boundary commit (last time the log was published)
 git log -1 --format='%H %ci %s' -- src/presets/updatelog/en.md src/presets/updatelog/zh.md
 
-# everything since, newest first
+# everything since, newest first. Use origin/master (not HEAD) as the tip if local is behind the remote.
 BASE=$(git log -1 --format=%H -- src/presets/updatelog/en.md src/presets/updatelog/zh.md)
-git log --format='%h %ci %s' "$BASE"..HEAD
+git log --format='%h %ci %s' "$BASE"..origin/master   # or "$BASE"..HEAD if local is ahead
 ```
 
 **The boundary is the last update-log edit, NOT the last push.** The log is published far less often than commits are pushed, so by the time you run this, essentially everything since `BASE` is already released and **belongs in the entry by default — include it.** Do not reflexively trim, flag, or second-guess the most recent commits; recency does not imply unreleased, and asking the user to "confirm the last few are released" every run is wrong.
