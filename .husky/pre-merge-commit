@@ -3,11 +3,15 @@
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [ "$current_branch" = "master" ] || [ "$current_branch" = "main" ]; then
-  merge_head=$(git rev-parse MERGE_HEAD 2>/dev/null)
-  beta_head=$(git rev-parse refs/heads/beta 2>/dev/null)
+  # `|| true` so a missing ref (e.g. no local `beta` branch) yields an empty
+  # string instead of aborting the hook with git's exit 128 under errexit.
+  merge_head=$(git rev-parse --verify -q MERGE_HEAD 2>/dev/null || true)
+  beta_head=$(git rev-parse --verify -q refs/heads/beta 2>/dev/null || true)
   if [ -n "$merge_head" ] && [ -n "$beta_head" ] && [ "$merge_head" = "$beta_head" ]; then
     echo "ERROR: Merging 'beta' into '$current_branch' is forbidden."
     echo "Beta content must not be included in the main branch."
     exit 1
   fi
 fi
+
+exit 0
