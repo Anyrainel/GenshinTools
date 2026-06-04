@@ -23,7 +23,8 @@ import type { CandidateArtifact } from "./candidatePool";
  */
 export function buildAllocationPool(
   char: { key: string; artifacts: Partial<Record<Slot, ArtifactData>> },
-  pool: ArtifactData[]
+  pool: ArtifactData[],
+  protectedArtifactIds: ReadonlySet<string> = new Set()
 ): Record<Slot, CandidateArtifact[]> {
   const result = {} as Record<Slot, CandidateArtifact[]>;
   const equipped = char.artifacts;
@@ -50,6 +51,7 @@ export function buildAllocationPool(
 
     for (const art of pool) {
       if (art.slotKey !== slot) continue;
+      if (protectedArtifactIds.has(art.id)) continue;
       if (equippedIds.has(art.id)) continue; // skip duplicates from equipped
       candidates.push({
         ...art,

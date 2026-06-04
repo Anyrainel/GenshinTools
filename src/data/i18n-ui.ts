@@ -475,6 +475,10 @@ export const i18nUiData = {
       en: "Slow GitHub connection? Direct download:",
       zh: "GitHub 下载慢？直接下载：",
     },
+    githubProject: {
+      en: "GitHub project:",
+      zh: "GitHub 项目：",
+    },
     wrongFormat: {
       en: "This file is not in GOOD format. Please export using a supported scanner tool.",
       zh: "该文件不是 GOOD 格式，请使用支持的扫描工具导出。",
@@ -889,9 +893,25 @@ export const i18nUiData = {
       en: "When unchecked, artifacts equipped by Pool characters are excluded from recommendation search.",
       zh: "取消勾选后，已装备在角色池角色身上的圣遗物不会进入提分推荐搜索。",
     },
+    respectFrozenArtifacts: {
+      en: "Respect frozen artifacts ({0})",
+      zh: "尊重已冻结的圣遗物（{0}）",
+    },
+    respectFrozenArtifactsDesc: {
+      en: "When enabled, frozen artifacts from Team Comp are protected from score-up recommendations for other characters.",
+      zh: "开启后，队伍配装中已冻结的圣遗物不会被提分推荐分配给其他角色。",
+    },
+    manageFrozen: {
+      en: "Manage frozen",
+      zh: "管理冻结",
+    },
     applyRecommendationsToGame: {
       en: "Apply recommendations to game",
       zh: "将推荐应用到游戏",
+    },
+    applyCharacterToGame: {
+      en: "Apply this character",
+      zh: "应用此角色",
     },
     applyRecommendationTiers: {
       en: "Tiers to apply",
@@ -900,6 +920,14 @@ export const i18nUiData = {
     applyRecommendationTiersDesc: {
       en: "Only best allocation equipment is applied. Upgrade suggestions are not included.",
       zh: "仅应用最佳分配的装备方案，不包括强化建议。",
+    },
+    applyRecommendationCharacter: {
+      en: "Character to apply",
+      zh: "应用角色",
+    },
+    applyRecommendationCharacterDesc: {
+      en: "Only {0}'s best allocation equipment is sent. Upgrade suggestions are not included.",
+      zh: "仅发送{0}的最佳分配装备方案，不包括强化建议。",
     },
     luckExpectation: {
       label: { en: "Upgrade Roll Value Expectation", zh: "升级词条值期望" },
@@ -2898,6 +2926,14 @@ export const i18nUiData = {
     },
     includeLock: { en: "Include lock instructions", zh: "包括锁定指令" },
     includeUnlock: { en: "Include unlock instructions", zh: "包括解锁指令" },
+    skipUnchangedEquip: {
+      en: "Only apply changed slots",
+      zh: "仅应用变化项",
+    },
+    skipUnchangedEquipDesc: {
+      en: "Assume local data matches the game and skip artifacts already equipped on the target character.",
+      zh: "假设网站数据与游戏内一致，跳过已在目标角色身上的圣遗物。",
+    },
     connectionDesc: {
       en: "Connect to the local artifact manager to apply changes in-game.",
       zh: "连接本地圣遗物管理器以在游戏中应用更改。",

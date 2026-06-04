@@ -180,7 +180,10 @@ export function recomputeTierUpgrades(
         allocation,
         allArtifacts,
         artifactById,
-        blockedArtifactIdsByTier.get(allocation.tier),
+        mergeBlockedArtifactIds(
+          blockedArtifactIdsByTier.get(allocation.tier),
+          options.protectedArtifactIds
+        ),
         MIN_RECOMMENDATION_SCORE_DIFF,
         buildScoreDiff
       );
@@ -346,7 +349,10 @@ function buildScoreActionsFromAllocation(
         alloc,
         allArtifacts,
         artifactById,
-        blockedArtifactIdsByTier.get(alloc.tier),
+        mergeBlockedArtifactIds(
+          blockedArtifactIdsByTier.get(alloc.tier),
+          options.protectedArtifactIds
+        ),
         MIN_RECOMMENDATION_SCORE_DIFF,
         buildScoreDiff
       );
@@ -496,6 +502,18 @@ function buildBlockedArtifactIdsByTier(
   }
 
   return blockedByTier;
+}
+
+function mergeBlockedArtifactIds(
+  blockedArtifactIds: ReadonlySet<string> | undefined,
+  protectedArtifactIds: readonly string[] | undefined
+): ReadonlySet<string> | undefined {
+  if (!protectedArtifactIds?.length) return blockedArtifactIds;
+  const merged = new Set(blockedArtifactIds ?? []);
+  for (const artifactId of protectedArtifactIds) {
+    merged.add(artifactId);
+  }
+  return merged;
 }
 
 function currentBuildScore(

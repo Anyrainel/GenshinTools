@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Slot } from "@/data/enums";
 import type { AccountData, ArtifactData } from "@/data/types";
-import { buildEquipInstructions } from "@/lib/account-data/manager/instructions";
+import {
+  buildEquipInstructions,
+  filterUnchangedEquipInstructions,
+} from "@/lib/account-data/manager/instructions";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {
@@ -161,5 +164,32 @@ describe("buildEquipInstructions", () => {
     const payload = buildEquipInstructions(characters, optimized, account);
 
     expect(payload.request.equip).toHaveLength(1);
+  });
+
+  it("can filter equip instructions already matching local ownership", () => {
+    const characters = makeCharacters(["furina"]);
+    const currentFlower = makeArtifact({ id: "current", slotKey: "flower" });
+    const swapPlume = makeArtifact({ id: "swap", slotKey: "plume" });
+    const optimized: Record<string, Record<string, ArtifactData>> = {
+      furina: {
+        flower: currentFlower,
+        plume: swapPlume,
+      },
+    };
+    const account = makeAccount([
+      { key: "furina", artifacts: { flower: currentFlower } },
+      { key: "raiden_shogun", artifacts: { plume: swapPlume } },
+    ]);
+
+    const payload = filterUnchangedEquipInstructions(
+      buildEquipInstructions(characters, optimized, account)
+    );
+
+    expect(payload.artifactIds).toEqual(["swap"]);
+    expect(payload.request.equip).toHaveLength(1);
+    expect(payload.swapMap.get("swap")).toEqual({
+      fromChar: "raiden_shogun",
+      toChar: "furina",
+    });
   });
 });

@@ -19,6 +19,7 @@ import type { JobInput } from "@/hooks/useArtifactManagerJob";
 import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
 import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
 import { fetchArtifacts } from "@/lib/account-data/manager/client";
+import { filterUnchangedEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   analyzeManageResults,
   computeSnapshotDiff,
@@ -75,6 +76,7 @@ export function ArtifactManagerDialog({
   const [portInput, setPortInput] = useState(String(DEFAULT_PORT));
   const [includeLock, setIncludeLock] = useState(true);
   const [includeUnlock, setIncludeUnlock] = useState(true);
+  const [skipUnchangedEquip, setSkipUnchangedEquip] = useState(false);
 
   const { connection } = useArtifactManagerConnection(open, port);
   const { phase, submit, reset } = useArtifactManagerJob(port);
@@ -126,12 +128,15 @@ export function ArtifactManagerDialog({
         submit({ type: "manage", payload });
       }
     } else {
-      const payload = job.build();
+      const full = job.build();
+      const payload = skipUnchangedEquip
+        ? filterUnchangedEquipInstructions(full)
+        : full;
       if (payload.request.equip.length > 0) {
         submit({ type: "equip", payload });
       }
     }
-  }, [job, submit, includeLock, includeUnlock]);
+  }, [job, submit, includeLock, includeUnlock, skipUnchangedEquip]);
 
   const applySnapshot = useCallback((snapshot: IGOODArtifact[]) => {
     const account = getActiveAccount(useAccountStore.getState());
@@ -229,6 +234,26 @@ export function ArtifactManagerDialog({
                       {t.ui("manager.includeUnlock")}
                     </label>
                   </div>
+                </div>
+              )}
+              {job.type === "equip" && (
+                <div className="space-y-1.5 rounded-lg border border-border p-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                      id="skip-unchanged-equip"
+                      checked={skipUnchangedEquip}
+                      onCheckedChange={(v) => setSkipUnchangedEquip(!!v)}
+                    />
+                    <label
+                      htmlFor="skip-unchanged-equip"
+                      className="cursor-pointer font-medium"
+                    >
+                      {t.ui("manager.skipUnchangedEquip")}
+                    </label>
+                  </div>
+                  <p className="pl-6 text-xs text-muted-foreground">
+                    {t.ui("manager.skipUnchangedEquipDesc")}
+                  </p>
                 </div>
               )}
               {idleContent}

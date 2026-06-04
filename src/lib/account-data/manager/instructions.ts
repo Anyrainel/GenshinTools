@@ -258,3 +258,32 @@ export function buildScoreUpEquipInstructions(
 
   return { request: { equip }, artifactIds, swapMap };
 }
+
+/**
+ * Drop equip instructions whose artifact is already on the target character.
+ * This is only correct when local account data is known to match in-game data.
+ */
+export function filterUnchangedEquipInstructions(
+  payload: EquipPayload
+): EquipPayload {
+  const equip: EquipPayload["request"]["equip"] = [];
+  const artifactIds: string[] = [];
+  const swapMap = new Map<
+    string,
+    { fromChar: string | null; toChar: string }
+  >();
+
+  for (let i = 0; i < payload.artifactIds.length; i++) {
+    const artifactId = payload.artifactIds[i];
+    const swap = payload.swapMap.get(artifactId);
+    if (swap && swap.fromChar === swap.toChar) continue;
+
+    const instruction = payload.request.equip[i];
+    if (!instruction) continue;
+    equip.push(instruction);
+    artifactIds.push(artifactId);
+    if (swap) swapMap.set(artifactId, swap);
+  }
+
+  return { request: { equip }, artifactIds, swapMap };
+}

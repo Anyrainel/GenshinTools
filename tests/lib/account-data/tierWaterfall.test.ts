@@ -42,9 +42,9 @@ const mainStatBySlot: Record<Slot, ArtifactData["mainStatKey"]> = {
   circlet: "cr",
 };
 
-function artifact(slot: Slot): ArtifactData {
+function artifact(slot: Slot, id = `pool-${slot}`): ArtifactData {
   return {
-    id: `pool-${slot}`,
+    id,
     setKey: "Main",
     slotKey: slot,
     level: 20,
@@ -149,5 +149,102 @@ describe("runTierWaterfall", () => {
 
     expect(allowed.perCharacter.ranked.build).not.toBeNull();
     expect(denied.perCharacter.ranked.build).toBeNull();
+  });
+
+  it("excludes protected equipped artifacts from other characters", () => {
+    const protectedArtifacts = Object.fromEntries(
+      allSlots.map((slot) => [slot, artifact(slot, `protected-${slot}`)])
+    ) as Record<Slot, ArtifactData>;
+    const accountData: AccountData = {
+      characters: [
+        {
+          key: "ranked",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts: {},
+        },
+        {
+          key: "frozen_owner",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts: protectedArtifacts,
+        },
+      ],
+      extraArtifacts: [],
+      extraWeapons: [],
+    };
+    const tierAssignments = {
+      ranked: { tier: "S", position: 0 },
+      frozen_owner: { tier: "A", position: 0 },
+    } as const;
+    const scores = {
+      ranked: createArtifactScoreResult({
+        buildMatch: {
+          build,
+          statWeights: { cr: 100, cd: 100, "atk%": 80 },
+        },
+      }),
+    };
+
+    const result = runTierWaterfall(
+      accountData,
+      scores,
+      tierAssignments,
+      {},
+      {
+        protectedArtifactIds: allSlots.map((slot) => `protected-${slot}`),
+      }
+    );
+
+    expect(result.perCharacter.ranked.build).toBeNull();
+  });
+
+  it("keeps protected current artifacts available to their owner", () => {
+    const currentArtifacts = Object.fromEntries(
+      allSlots.map((slot) => [slot, artifact(slot, `current-${slot}`)])
+    ) as Record<Slot, ArtifactData>;
+    const accountData: AccountData = {
+      characters: [
+        {
+          key: "ranked",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts: currentArtifacts,
+        },
+      ],
+      extraArtifacts: [],
+      extraWeapons: [],
+    };
+    const tierAssignments = {
+      ranked: { tier: "S", position: 0 },
+    } as const;
+    const scores = {
+      ranked: createArtifactScoreResult({
+        buildMatch: {
+          build,
+          statWeights: { cr: 100, cd: 100, "atk%": 80 },
+        },
+      }),
+    };
+
+    const result = runTierWaterfall(
+      accountData,
+      scores,
+      tierAssignments,
+      {},
+      {
+        protectedArtifactIds: allSlots.map((slot) => `current-${slot}`),
+      }
+    );
+
+    expect(result.perCharacter.ranked.build).not.toBeNull();
+    expect(
+      allSlots.map(
+        (slot) => result.perCharacter.ranked.build?.artifacts[slot]?.id
+      )
+    ).toEqual(allSlots.map((slot) => `current-${slot}`));
   });
 });

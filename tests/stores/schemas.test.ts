@@ -567,6 +567,7 @@ describe("PersistedScoreUpSettingsStoreSchema", () => {
     expect(result.settingsByProfileId?.["0"].allowPoolArtifactSteals).toBe(
       false
     );
+    expect(result.settingsByProfileId?.["0"].respectFrozenArtifacts).toBe(true);
     expect(result.settingsByProfileId?.["0"].luckExpectationByTier.S).toBe(
       "hopeful"
     );

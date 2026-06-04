@@ -244,4 +244,57 @@ describe("recomputeTierUpgradeRecommendations", () => {
       "hopeful"
     );
   });
+
+  it("does not recommend protected external artifacts as upgrades", () => {
+    const { accountData, allocation } = makeAllocation();
+    const protectedUpgrade = artifact("plume", "protected-upgrade", 0, {
+      cr: 15,
+      cd: 30,
+      "atk%": 10,
+      er: 10,
+    });
+    accountData.extraArtifacts = [protectedUpgrade];
+    const tierAssignments = {
+      hu_tao: { tier: "S", position: 0 },
+    } as const;
+    const base: AllActions = {
+      byActionType: { swap: [], equip: [], upgrade: [] },
+      perCharacter: {
+        hu_tao: {
+          characterId: "hu_tao",
+          tier: "S",
+          actions: [],
+          allocatedBuild: allocation.build,
+          allocation,
+        },
+      },
+    };
+
+    const unprotected = recomputeTierUpgrades(
+      base,
+      accountData,
+      tierAssignments,
+      "S",
+      "hopeful"
+    );
+    const protectedResult = recomputeTierUpgrades(
+      base,
+      accountData,
+      tierAssignments,
+      "S",
+      "hopeful",
+      { protectedArtifactIds: ["protected-upgrade"] }
+    );
+
+    expect(
+      unprotected.perCharacter.hu_tao.actions.some(
+        (action) => action.sourceArtifactId === "protected-upgrade"
+      )
+    ).toBe(true);
+    expect(
+      protectedResult.perCharacter.hu_tao.actions.some(
+        (action) => action.sourceArtifactId === "protected-upgrade"
+      )
+    ).toBe(false);
+  });
 });

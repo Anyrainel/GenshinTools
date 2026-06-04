@@ -85,6 +85,8 @@ export interface AllocationOptions {
   tierOrder?: Tier[];
   /** Whether artifacts equipped by Pool characters can enter recommendation search. */
   allowPoolArtifactSteals?: boolean;
+  /** Exact artifact IDs reserved by external user choices, such as frozen loadouts. */
+  protectedArtifactIds?: readonly string[];
 }
 
 const DEFAULT_TIER_ORDER: Tier[] = ["S", "A", "B", "C", "D"];
@@ -128,6 +130,7 @@ export function* runTierWaterfallSteps(
 ): Generator<TierAllocationStep, AllocationResult> {
   const topK = options.topK ?? DEFAULT_TOP_K;
   const tierOrder = options.tierOrder ?? DEFAULT_TIER_ORDER;
+  const protectedArtifactIds = new Set(options.protectedArtifactIds ?? []);
 
   const allArtifacts = collectEligibleArtifacts(
     accountData,
@@ -179,7 +182,11 @@ export function* runTierWaterfallSteps(
         );
       }
 
-      const candidates = buildAllocationPool(char, unclaimedSnapshot);
+      const candidates = buildAllocationPool(
+        char,
+        unclaimedSnapshot,
+        protectedArtifactIds
+      );
       const config: BuildOptimizerConfig = {
         weights: buildMatch.statWeights,
         candidates,
@@ -272,7 +279,11 @@ export function* runTierWaterfallSteps(
       const subConfigByChar = new Map<string, BuildOptimizerConfig>();
       for (const char of skippedAfterMain) {
         const ctx = ctxByChar.get(char.key)!;
-        const candidates = buildAllocationPool(char, leftoverPool);
+        const candidates = buildAllocationPool(
+          char,
+          leftoverPool,
+          protectedArtifactIds
+        );
         const subConfig: BuildOptimizerConfig = {
           ...ctx.config,
           candidates,
@@ -330,7 +341,8 @@ export function* runTierWaterfallSteps(
 
       const candidates = buildAllocationPool(
         char,
-        Array.from(unclaimedById.values())
+        Array.from(unclaimedById.values()),
+        protectedArtifactIds
       );
       const greedyConfig: BuildOptimizerConfig = {
         ...ctx.config,

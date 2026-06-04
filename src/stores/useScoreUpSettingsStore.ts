@@ -8,12 +8,14 @@ import {
   type ScoreUpSettings,
 } from "@/lib/account-data/scoreUpSettings";
 import type { AccountProfileId } from "@/lib/account-data/types";
+import { migrateScoreUpSettingsStore } from "./migration/scoreUpSettings";
 import { PersistedScoreUpSettingsStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";
 
 export interface ScoreUpSettingsState {
   settingsByProfileId: Record<AccountProfileId, ScoreUpSettings>;
   setAllowPoolArtifactSteals: (allow: boolean) => void;
+  setRespectFrozenArtifacts: (respect: boolean) => void;
   setTierLuckExpectation: (tier: Tier, luck: LuckExpectation) => void;
   renameProfileSettings: (
     sourceProfileId: AccountProfileId,
@@ -66,6 +68,20 @@ export const useScoreUpSettingsStore = create<ScoreUpSettingsState>()(
           };
         }),
 
+      setRespectFrozenArtifacts: (respect) =>
+        set((state) => {
+          const current = selectActiveScoreUpSettings(state);
+          return {
+            settingsByProfileId: {
+              ...state.settingsByProfileId,
+              [getActiveProfileId()]: {
+                ...current,
+                respectFrozenArtifacts: respect,
+              },
+            },
+          };
+        }),
+
       setTierLuckExpectation: (tier, luck) =>
         set((state) => {
           const current = selectActiveScoreUpSettings(state);
@@ -102,7 +118,8 @@ export const useScoreUpSettingsStore = create<ScoreUpSettingsState>()(
     }),
     {
       name: "recommendation-settings",
-      version: 1,
+      version: 2,
+      migrate: migrateScoreUpSettingsStore,
       partialize: (state) => ({
         settingsByProfileId: state.settingsByProfileId,
       }),

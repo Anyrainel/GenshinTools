@@ -1,4 +1,4 @@
-import { Info, Loader2, Monitor, RefreshCw } from "lucide-react";
+import { ArrowUpRight, Info, Loader2, Monitor, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelpButton";
@@ -16,7 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { LuckExpectation, Tier } from "@/data/enums";
-import { LUCK_MULTIPLIERS, tiers } from "@/data/enums";
+import { allSlots, LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { CharacterData, TierCustomization } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
@@ -37,6 +37,7 @@ import {
   selectValidResolvedBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
+import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useScoreUpCacheStore } from "@/stores/useScoreUpCacheStore";
 import {
   getScoreUpSettingsForProfile,
@@ -51,6 +52,15 @@ interface ScoreUpViewProps {
 }
 
 const APPLY_RECOMMENDATION_TIERS: Tier[] = ["S", "A", "B", "C", "D"];
+const EMPTY_PROTECTED_ARTIFACT_IDS: readonly string[] = [];
+
+type ApplyTarget =
+  | { type: "tiers" }
+  | {
+      type: "character";
+      characterId: string;
+      allocatedBuild: NonNullable<CharacterActions["allocatedBuild"]>;
+    };
 
 export function ScoreUpView({
   scores,
@@ -70,10 +80,37 @@ export function ScoreUpView({
   const setAllowPoolArtifactSteals = useScoreUpSettingsStore(
     (s) => s.setAllowPoolArtifactSteals
   );
+  const setRespectFrozenArtifacts = useScoreUpSettingsStore(
+    (s) => s.setRespectFrozenArtifacts
+  );
   const setTierLuckExpectation = useScoreUpSettingsStore(
     (s) => s.setTierLuckExpectation
   );
-  const { allowPoolArtifactSteals, luckExpectationByTier } = scoreUpSettings;
+  const {
+    allowPoolArtifactSteals,
+    respectFrozenArtifacts,
+    luckExpectationByTier,
+  } = scoreUpSettings;
+  const standaloneFrozenArtifactIds = useFreezeStore(
+    (s) => s.frozenArtifactIds
+  );
+  const frozenTeamLoadouts = useFreezeStore((s) => s.frozenTeamLoadouts);
+  const frozenArtifactIdsForRecommendations = useMemo(() => {
+    const ids = new Set(standaloneFrozenArtifactIds);
+    for (const loadout of Object.values(frozenTeamLoadouts)) {
+      for (const charId of loadout.frozenCharIds) {
+        const slotIds = loadout.artifactIdsByChar[charId] ?? {};
+        for (const slot of allSlots) {
+          const id = slotIds[slot];
+          if (id) ids.add(id);
+        }
+      }
+    }
+    return Array.from(ids).sort();
+  }, [standaloneFrozenArtifactIds, frozenTeamLoadouts]);
+  const protectedArtifactIds = respectFrozenArtifacts
+    ? frozenArtifactIdsForRecommendations
+    : EMPTY_PROTECTED_ARTIFACT_IDS;
   const tierLuckCustomization = useMemo<TierCustomization>(
     () =>
       Object.fromEntries(
@@ -88,8 +125,8 @@ export function ScoreUpView({
     [tierCustomization, luckExpectationByTier]
   );
   const allocationOptions = useMemo(
-    () => ({ allowPoolArtifactSteals }),
-    [allowPoolArtifactSteals]
+    () => ({ allowPoolArtifactSteals, protectedArtifactIds }),
+    [allowPoolArtifactSteals, protectedArtifactIds]
   );
   const {
     recommendations: allRecs,
@@ -107,6 +144,9 @@ export function ScoreUpView({
   const [recalculateNonce, setRecalculateNonce] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
   const [equipDialogOpen, setEquipDialogOpen] = useState(false);
+  const [applyTarget, setApplyTarget] = useState<ApplyTarget>({
+    type: "tiers",
+  });
   const [selectedApplyTiers, setSelectedApplyTiers] = useState<Tier[]>(
     APPLY_RECOMMENDATION_TIERS
   );
@@ -120,12 +160,16 @@ export function ScoreUpView({
         scores,
         tierAssignments,
         allowPoolArtifactSteals,
+        respectFrozenArtifacts,
+        protectedArtifactIds,
       })
     )}`;
   }, [
     activeAccount,
     accountData,
     allowPoolArtifactSteals,
+    respectFrozenArtifacts,
+    protectedArtifactIds,
     hasAnyBuilds,
     scores,
     tierAssignments,
@@ -358,6 +402,18 @@ export function ScoreUpView({
       }));
   }, [displayedRecommendations, selectedApplyTierSet]);
 
+  const currentApplyAllocations = useMemo(() => {
+    if (applyTarget.type === "character") {
+      return [
+        {
+          characterId: applyTarget.characterId,
+          allocatedBuild: applyTarget.allocatedBuild,
+        },
+      ];
+    }
+    return recommendationAllocationsForApply;
+  }, [applyTarget, recommendationAllocationsForApply]);
+
   const applyTierCounts = useMemo(() => {
     const counts = Object.fromEntries(
       APPLY_RECOMMENDATION_TIERS.map((tier) => [tier, 0])
@@ -374,11 +430,30 @@ export function ScoreUpView({
   const buildRecommendationEquipPayload = useCallback(
     () =>
       buildScoreUpEquipInstructions(
-        recommendationAllocationsForApply,
+        currentApplyAllocations,
         accountData,
         artifactLookup
       ),
-    [recommendationAllocationsForApply, accountData, artifactLookup]
+    [currentApplyAllocations, accountData, artifactLookup]
+  );
+
+  const handleOpenTierApply = useCallback(() => {
+    setApplyTarget({ type: "tiers" });
+    setEquipDialogOpen(true);
+  }, []);
+
+  const handleOpenCharacterApply = useCallback(
+    (characterId: string) => {
+      const entry = displayedRecommendations?.perCharacter[characterId];
+      if (!entry?.allocatedBuild) return;
+      setApplyTarget({
+        type: "character",
+        characterId,
+        allocatedBuild: entry.allocatedBuild,
+      });
+      setEquipDialogOpen(true);
+    },
+    [displayedRecommendations]
   );
 
   const handleToggleApplyTier = useCallback((tier: Tier, checked: boolean) => {
@@ -470,7 +545,7 @@ export function ScoreUpView({
       type="button"
       variant="outline"
       size="sm"
-      onClick={() => setEquipDialogOpen(true)}
+      onClick={handleOpenTierApply}
       disabled={
         isCalculating ||
         !displayedRecommendations ||
@@ -500,6 +575,37 @@ export function ScoreUpView({
       >
         {t.ui("accountData.allowPoolArtifactSteals")}
       </Label>
+    </div>
+  );
+
+  const renderRespectFrozenArtifactsSetting = () => (
+    <div className="flex items-center gap-2">
+      <Checkbox
+        id="recommendation-respect-frozen-artifacts"
+        checked={respectFrozenArtifacts}
+        onCheckedChange={(checked) =>
+          setRespectFrozenArtifacts(checked === true)
+        }
+      />
+      <Label
+        htmlFor="recommendation-respect-frozen-artifacts"
+        className="cursor-pointer whitespace-nowrap text-sm text-white"
+        title={t.ui("accountData.respectFrozenArtifactsDesc")}
+      >
+        {t.format(
+          "accountData.respectFrozenArtifacts",
+          frozenArtifactIdsForRecommendations.length
+        )}
+      </Label>
+      {frozenArtifactIdsForRecommendations.length > 0 && (
+        <Link
+          to="/team-comp/frozen"
+          className="flex items-center gap-0.5 whitespace-nowrap text-xs text-amber-400/70 hover:text-amber-400 transition-colors"
+        >
+          {t.ui("accountData.manageFrozen")}
+          <ArrowUpRight className="h-3 w-3" />
+        </Link>
+      )}
     </div>
   );
 
@@ -545,6 +651,38 @@ export function ScoreUpView({
     </div>
   );
 
+  const renderApplyCharacterSelection = () => {
+    if (applyTarget.type !== "character") return null;
+    const character = accountData.characters.find(
+      (char) => char.key === applyTarget.characterId
+    );
+    if (!character) return null;
+
+    return (
+      <div className="rounded-lg border border-border p-3">
+        <div className="flex items-center gap-3">
+          <ItemIcon
+            characterId={character.key}
+            badge={character.constellation}
+            level={`Lv. ${character.level}`}
+            size="sm"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium">
+              {t.ui("accountData.applyRecommendationCharacter")}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t.format(
+                "accountData.applyRecommendationCharacterDesc",
+                t.character(character.key)
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <ScrollLayout
       header={
@@ -558,6 +696,7 @@ export function ScoreUpView({
           />
           <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
           {renderPoolStealSetting()}
+          {renderRespectFrozenArtifactsSetting()}
           <div className="flex-1" />
           <div className="flex items-center gap-2">
             {renderRecalculateButton()}
@@ -679,6 +818,7 @@ export function ScoreUpView({
                     allocationStatus={allocationStatus}
                     score={scoreResult}
                     artifactLookup={artifactLookup}
+                    onApplyCharacter={handleOpenCharacterApply}
                   />
                 )
               )}
@@ -755,8 +895,12 @@ export function ScoreUpView({
         onOpenChange={setEquipDialogOpen}
         job={{ type: "equip", build: buildRecommendationEquipPayload }}
         actionLabel={t.ui("manager.equipToGame")}
-        actionDisabled={recommendationAllocationsForApply.length === 0}
-        idleContent={renderApplyTierSelection()}
+        actionDisabled={currentApplyAllocations.length === 0}
+        idleContent={
+          applyTarget.type === "tiers"
+            ? renderApplyTierSelection()
+            : renderApplyCharacterSelection()
+        }
       />
       <ScoreUpHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
     </ScrollLayout>

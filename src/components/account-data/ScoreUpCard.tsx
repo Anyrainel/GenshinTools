@@ -6,6 +6,7 @@ import {
   Gem,
   Info,
   Loader2,
+  Monitor,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -51,6 +52,7 @@ interface ScoreUpCardProps {
   allocationStatus?: "pending" | "allocated" | "unallocated";
   score?: ArtifactScoreResult;
   artifactLookup: Map<string, ArtifactData>;
+  onApplyCharacter?: (characterId: string) => void;
 }
 
 type DetailView = "swap" | "upgrade";
@@ -410,6 +412,7 @@ function ScoreUpCardComponent({
   allocationStatus,
   score,
   artifactLookup,
+  onApplyCharacter,
 }: ScoreUpCardProps) {
   const { t, language } = useLanguage();
   const [activeView, setActiveView] = useState<DetailView | null>(null);
@@ -645,6 +648,19 @@ function ScoreUpCardComponent({
                           </span>
                         )}
                     </>
+                  )}
+                  {onApplyCharacter && (
+                    <button
+                      type="button"
+                      onClick={() => onApplyCharacter(char.key)}
+                      title={t.ui("accountData.applyCharacterToGame")}
+                      className="ml-auto flex items-center gap-1 rounded-md border border-border/60 bg-background/40 px-1.5 py-0.5 text-xs font-semibold text-foreground/80 transition-colors hover:bg-background/70 hover:text-foreground"
+                    >
+                      <Monitor className="h-3 w-3" />
+                      <span className="hidden xl:inline">
+                        {t.ui("accountData.applyCharacterToGame")}
+                      </span>
+                    </button>
                   )}
                 </div>
                 <ArtifactStrip

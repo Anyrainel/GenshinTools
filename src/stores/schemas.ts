@@ -404,6 +404,9 @@ const ScoreUpSettingsSchema = z.object({
   allowPoolArtifactSteals: z
     .boolean()
     .catch(DEFAULT_SCORE_UP_SETTINGS.allowPoolArtifactSteals),
+  respectFrozenArtifacts: z
+    .boolean()
+    .catch(DEFAULT_SCORE_UP_SETTINGS.respectFrozenArtifacts),
   luckExpectationByTier: ScoreUpLuckByTierSchema,
 });
 

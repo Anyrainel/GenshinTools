@@ -26,6 +26,7 @@ describe("useScoreUpSettingsStore", () => {
     act(() => {
       useAccountStore.setState({ activeAccountId: 0 });
       useScoreUpSettingsStore.getState().setAllowPoolArtifactSteals(false);
+      useScoreUpSettingsStore.getState().setRespectFrozenArtifacts(false);
       useScoreUpSettingsStore.getState().setTierLuckExpectation("S", "hopeful");
       useAccountStore.setState({ activeAccountId: 123456789 });
     });
@@ -45,9 +46,13 @@ describe("useScoreUpSettingsStore", () => {
     expect(state.settingsByProfileId[123456789].allowPoolArtifactSteals).toBe(
       true
     );
+    expect(state.settingsByProfileId[123456789].respectFrozenArtifacts).toBe(
+      true
+    );
     expect(state.settingsByProfileId[123456789].luckExpectationByTier.A).toBe(
       "cautious"
     );
+    expect(getActiveScoreUpSettings().respectFrozenArtifacts).toBe(false);
   });
 
   it("returns a stable default snapshot for profiles without stored settings", () => {
@@ -83,6 +88,7 @@ describe("useScoreUpSettingsStore", () => {
     act(() => {
       useAccountStore.setState({ activeAccountId: 0 });
       useScoreUpSettingsStore.getState().setAllowPoolArtifactSteals(false);
+      useScoreUpSettingsStore.getState().setRespectFrozenArtifacts(false);
       useScoreUpSettingsStore.getState().renameProfileSettings(0, 800000001);
       useAccountStore.setState({ activeAccountId: 800000001 });
     });
@@ -93,5 +99,6 @@ describe("useScoreUpSettingsStore", () => {
       false
     );
     expect(getActiveScoreUpSettings().allowPoolArtifactSteals).toBe(false);
+    expect(getActiveScoreUpSettings().respectFrozenArtifacts).toBe(false);
   });
 });
