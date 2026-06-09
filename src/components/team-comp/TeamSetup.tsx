@@ -38,10 +38,12 @@ export function TeamSetup({ team, onChange }: TeamSetupProps) {
     (index: number, charId: string) => {
       const newTeam = [...team];
       const energy = charInfo[charId]?.energy ?? 60;
+      const specialBurstCost = charInfo[charId]?.specialBurstCost;
       newTeam[index] = {
         charId,
         element: inferElement(charId),
         burstCost: energy,
+        specialBurstCost,
         constellation: 0,
       };
       onChange(newTeam);
@@ -89,6 +91,7 @@ export function TeamSetup({ team, onChange }: TeamSetupProps) {
         charId: available,
         element: inferElement(available),
         burstCost: charInfo[available]?.energy ?? 60,
+        specialBurstCost: charInfo[available]?.specialBurstCost,
         constellation: 0,
       },
     ]);

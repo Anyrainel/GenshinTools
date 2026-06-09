@@ -258,14 +258,14 @@ export function ErResultsPanel({
           const particle = hasData ? result.energyBreakdown.particleEnergy : 0;
           const scalable = hasData ? result.energyBreakdown.scalableEnergy : 0;
           const flat = hasData ? result.energyBreakdown.flatEnergy : 0;
-          // Particles + scalable both ER-scale together (they share the same
-          // linear coefficient against ER%). The denominator in the formula
-          // is their sum; flat is subtracted from burst cost.
-          const burstCost = slot.burstCost;
-
           // Per-Q windows are already in authored sequence order: startup(s),
           // loop first pass, then loop subsequent pass when enabled.
           const qWindows: QWindow[] = hasData ? (result.qWindows ?? []) : [];
+          const bindingWindow = qWindows.find((w) => w.isBinding);
+          // Particles + scalable both ER-scale together (they share the same
+          // linear coefficient against ER%). The denominator in the formula
+          // is their sum; flat is subtracted from the binding burst's cost.
+          const burstCost = bindingWindow?.burstCost ?? slot.burstCost;
 
           const toggleExpand = () => {
             if (hasData) setAllExpanded((p) => !p);

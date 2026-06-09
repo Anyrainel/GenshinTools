@@ -93,6 +93,16 @@ def resolve_burst_cost(raw_value: str, char_id: str, talent_data: dict) -> int:
         return 0
 
 
+def is_special_burst_cost_label(label: str) -> bool:
+    """Whether a Q detail label is an alternate burst's energy cost row."""
+    return (
+        label != "元素能量"
+        and label.endswith("元素能量")
+        and "恢复" not in label
+        and "回复" not in label
+    )
+
+
 # ─── Healer / Shielder auto-detection ─────────────────────────────────────
 #
 # Strategy
@@ -419,8 +429,10 @@ def main():
 
     for char_id, char_data in data.items():
         energy = 0
+        special_burst_cost = None
         skills = char_data.get("skills", [])
         for skill in skills:
+            is_q_skill = str(skill.get("name", "")).startswith("Q.")
             for detail in skill.get("details", []):
                 kv = detail_kv(detail)
                 if kv is None:
@@ -428,6 +440,8 @@ def main():
                 key, val = kv
                 if key == "元素能量":
                     energy = resolve_burst_cost(val, char_id, talent_data)
+                elif is_q_skill and is_special_burst_cost_label(key):
+                    special_burst_cost = resolve_burst_cost(val, char_id, talent_data)
 
         constellations = char_data.get("constellations", [])
         c3_talent = "Q"
@@ -509,6 +523,7 @@ def main():
             {
                 "id": char_id,
                 "energy": energy,
+                "specialBurstCost": special_burst_cost,
                 "healerC": healer_c,
                 "shielderC": shielder_c,
                 "supStat": supstats,
@@ -529,6 +544,11 @@ def main():
     for c in output:
         k = c["id"]
         e = c["energy"]
+        sb_str = (
+            f" specialBurstCost: {c['specialBurstCost']},"
+            if c["specialBurstCost"] is not None
+            else ""
+        )
         h_str = f" healerC: {c['healerC']}," if c["healerC"] is not None else ""
         s_str = f" shielderC: {c['shielderC']}," if c["shielderC"] is not None else ""
         ha_str = f' healAction: "{c["healAction"]}",' if c.get("healAction") else ""
@@ -538,7 +558,7 @@ def main():
             sup_str = f" supStat: [{sup_items}],"
         f_str = f', faction: "{c["faction"]}"' if c["faction"] is not None else ""
         lines.append(
-            f'  {k}: {{ energy: {e},{h_str}{s_str}{ha_str}{sup_str} c3Talent: "{c["c3Talent"]}", c5Talent: "{c["c5Talent"]}"{f_str} }},'  # noqa: E501
+            f'  {k}: {{ energy: {e},{sb_str}{h_str}{s_str}{ha_str}{sup_str} c3Talent: "{c["c3Talent"]}", c5Talent: "{c["c5Talent"]}"{f_str} }},'  # noqa: E501
         )
     lines.append("};")
     lines.append("")

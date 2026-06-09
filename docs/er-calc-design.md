@@ -446,8 +446,7 @@ Expected agreement: within a few percent on well-structured rotations, larger on
 
 ## 14. Open Design Questions
 
-1. **`specialQ` burst cost.** Currently not first-class in character metadata. Options: per-char override field on `charInfo`, or a general `alternateBurstCost` concept on particle entries.
-2. **Reaction auto-detection.** `reactionProc` is a manual toggle today. A team-composition-aware heuristic (e.g. "Raiden holds Lumidouce + team has Dendro + Pyro → auto-enable on Raiden E") could auto-set the default without removing the override.
-3. **Scalable energy ceiling.** Sara/Dori `erScale.max` caps the energy at a given ER%. How do we solve when the cap binds? Currently we compute both unconstrained and constrained roots and take the valid one; an explicit solver would be cleaner.
-4. **Periodic proc re-distribution under timeline edits.** When the user deletes or reorders actions, periodic procs pinned to `targetIndex` may point to a now-implausible absorber. We currently leave the user to fix this; automated re-placement on edit is an open question.
-5. **Artifact 4pc CD modeling.** Per-set hooks have a scratch map for CD state, but there is no shared time model, so CDs are approximated by "fires at most once per *N* action indices". Acceptable for Scholar; some future set may demand better.
+1. **Reaction auto-detection.** `reactionProc` is a manual toggle today. A team-composition-aware heuristic (e.g. "Raiden holds Lumidouce + team has Dendro + Pyro → auto-enable on Raiden E") could auto-set the default without removing the override.
+2. **Scalable energy ceiling.** Sara/Dori `erScale.max` caps the energy at a given ER%. How do we solve when the cap binds? Currently we compute both unconstrained and constrained roots and take the valid one; an explicit solver would be cleaner.
+3. **Periodic proc re-distribution under timeline edits.** When the user deletes or reorders actions, periodic procs pinned to `targetIndex` may point to a now-implausible absorber. We currently leave the user to fix this; automated re-placement on edit is an open question.
+4. **Artifact 4pc CD modeling.** Per-set hooks have a scratch map for CD state, but there is no shared time model, so CDs are approximated by "fires at most once per *N* action indices". Acceptable for Scholar; some future set may demand better.

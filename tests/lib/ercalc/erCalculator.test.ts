@@ -4,11 +4,168 @@ import {
   autoPlaceReactionProcs,
   calculateTeamER,
   calculateTeamERSequence,
+  getActionParticles,
+  getAvailableActions,
+  getNodeEnergyEvents,
   hasReactionEnergyTrigger,
 } from "@/lib/ercalc/erCalculator";
 import type { ERTimeline, TeamMember } from "@/lib/ercalc/types";
 
 describe("calculateTeamER", () => {
+  it("uses the special burst cost for specialQ nodes", () => {
+    const team: TeamMember[] = [
+      {
+        id: "varesa",
+        element: "Electro",
+        burstCost: 70,
+        specialBurstCost: 30,
+      },
+    ];
+    const timeline: ERTimeline = {
+      actions: [
+        {
+          char: "varesa",
+          action: "grantEnergy",
+          energyGrants: { varesa: { flat: 30 } },
+        },
+        { char: "varesa", action: "specialQ" },
+      ],
+      periodic: [],
+    };
+
+    const [varesa] = calculateTeamER(team, timeline, {
+      calcMode: "zero-energy-start",
+    });
+
+    expect(varesa.erNeeded).toBe(100);
+    expect(varesa.qWindows?.[0]?.burstCost).toBe(30);
+    expect(varesa.energyBreakdown.flatEnergy).toBe(30);
+  });
+
+  it("keeps standard Q on the standard burst cost when special burst cost exists", () => {
+    const team: TeamMember[] = [
+      {
+        id: "varesa",
+        element: "Electro",
+        burstCost: 70,
+        specialBurstCost: 30,
+      },
+    ];
+    const timeline: ERTimeline = {
+      actions: [
+        {
+          char: "varesa",
+          action: "grantEnergy",
+          energyGrants: { varesa: { flat: 30 } },
+        },
+        { char: "varesa", action: "Q" },
+      ],
+      periodic: [],
+    };
+
+    const [varesa] = calculateTeamER(team, timeline, {
+      calcMode: "zero-energy-start",
+    });
+
+    expect(varesa.erNeeded).toBe(Number.POSITIVE_INFINITY);
+    expect(varesa.qWindows?.[0]?.burstCost).toBe(70);
+    expect(varesa.energyBreakdown.flatEnergy).toBe(30);
+  });
+
+  it("uses the current burst action cost for percent refunds", () => {
+    const team: TeamMember[] = [
+      {
+        id: "jean",
+        element: "Anemo",
+        burstCost: 80,
+        specialBurstCost: 40,
+        constellation: 0,
+      },
+    ];
+    const timeline: ERTimeline = {
+      actions: [{ char: "jean", action: "specialQ" }],
+      periodic: [],
+    };
+
+    const [jean] = calculateTeamER(team, timeline, {
+      calcMode: "zero-energy-start",
+    });
+
+    expect(jean.qWindows?.[0]?.burstCost).toBe(40);
+    expect(jean.qWindows?.[0]?.flatEnergy).toBe(8);
+  });
+
+  it("exposes specialQ actions and node drain from special burst cost data", () => {
+    expect(getAvailableActions("varesa")).toContain("specialQ");
+
+    const events = getNodeEnergyEvents({ char: "varesa", action: "specialQ" }, [
+      {
+        id: "varesa",
+        element: "Electro",
+        burstCost: 70,
+        specialBurstCost: 30,
+      },
+    ]);
+
+    expect(events.find((ev) => ev.category === "drain")?.amount).toBe(30);
+  });
+
+  it("uses exact holdE self-energy instead of also applying same-source E self-energy", () => {
+    const team: TeamMember[] = [
+      {
+        id: "kaedehara_kazuha",
+        element: "Anemo",
+        burstCost: 60,
+        constellation: 4,
+      },
+    ];
+    const timeline: ERTimeline = {
+      actions: [
+        { char: "kaedehara_kazuha", action: "holdE" },
+        { char: "kaedehara_kazuha", action: "Q" },
+      ],
+      periodic: [],
+    };
+
+    const [kazuha] = calculateTeamER(team, timeline, {
+      calcMode: "zero-energy-start",
+    });
+
+    expect(kazuha.qWindows?.[0]?.flatEnergy).toBe(4);
+  });
+
+  it("falls back from generic E self-energy to specialE when there is no exact specialE entry", () => {
+    const team: TeamMember[] = [
+      {
+        id: "kujou_sara",
+        element: "Electro",
+        burstCost: 80,
+        constellation: 0,
+      },
+    ];
+    const timeline: ERTimeline = {
+      actions: [
+        { char: "kujou_sara", action: "specialE" },
+        { char: "kujou_sara", action: "Q" },
+      ],
+      periodic: [],
+    };
+
+    const [sara] = calculateTeamER(team, timeline, {
+      calcMode: "zero-energy-start",
+    });
+
+    expect(sara.qWindows?.[0]?.scalableEnergy).toBeCloseTo(1.2);
+    expect(sara.qWindows?.[0]?.particleEnergy).toBe(9);
+  });
+
+  it("offers holdE when only self-energy needs a hold action and particles fall back to E", () => {
+    expect(getAvailableActions("traveler_hydro")).toContain("holdE");
+    expect(
+      getActionParticles("traveler_hydro", "holdE", "expected")
+    ).toBeCloseTo(3.333);
+  });
+
   it("auto-flags all skill variants for reaction-triggered weapon energy", () => {
     expect(hasReactionEnergyTrigger("lumidouce_elegy")).toBe(true);
     expect(hasReactionEnergyTrigger("favonius_lance")).toBe(false);

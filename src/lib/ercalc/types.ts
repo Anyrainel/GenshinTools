@@ -10,6 +10,7 @@ export interface TeamMember {
   id: string;
   element: string;
   burstCost: number;
+  specialBurstCost?: number;
   constellation?: number; // 0-6
   weaponId?: string;
   refinement?: number; // 0-4 for R1-R5
@@ -29,6 +30,7 @@ export type TeamSlot = {
   charId: string;
   element: Element;
   burstCost: number;
+  specialBurstCost?: number;
   constellation: number;
   weaponId?: string;
   refinement?: number; // 0-4 for R1-R5
@@ -294,7 +296,7 @@ export interface QWindow {
   qIndex: number;
   /** Burst variant. */
   qAction: "Q" | "specialQ";
-  /** Cost of the burst at this node (recipient.burstCost). */
+  /** Cost of the burst at this node. Uses specialBurstCost for specialQ when present. */
   burstCost: number;
   /** ER% required to clear this specific window. Infinity if unsolvable. */
   erNeeded: number;

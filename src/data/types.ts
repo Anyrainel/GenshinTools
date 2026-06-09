@@ -69,6 +69,8 @@ export type EnemyResource = {
 
 export type CharacterInfo = {
   energy: number;
+  /** Energy cost for an alternate/special Elemental Burst, when the kit has one. */
+  specialBurstCost?: number;
   healerC?: number; // min constellation starting from 0, omitted if none
   shielderC?: number; // min constellation starting from 0, omitted if none
   /** Which action primarily heals the party. Used by the ER calculator to

@@ -1,3 +1,4 @@
+import { charInfo } from "@/data/charInfo";
 import { getTalentParam } from "@/data/gameStatsLoader";
 import { getArtifactEnergyImpl } from "@/lib/ercalc/artifactEnergy";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
@@ -192,6 +193,20 @@ export function autoPlaceReactionProcs(
 
 // ─── Helpers ───
 
+export function getBurstCostForAction(
+  member: Pick<TeamMember, "burstCost" | "specialBurstCost">,
+  action: ActionType
+): number {
+  if (action === "specialQ" && member.specialBurstCost != null) {
+    return member.specialBurstCost;
+  }
+  return member.burstCost;
+}
+
+function hasAnyBurstCost(member: TeamMember): boolean {
+  return member.burstCost > 0 || (member.specialBurstCost ?? 0) > 0;
+}
+
 function resolveParamAmount(
   charId: string,
   param: { source: string; index: number; multiplier: number },
@@ -251,7 +266,8 @@ function elementMatchEnergy(
  *  apply the count separately. */
 function resolveEntryPerProcFlat(
   entry: SelfEnergyEntry,
-  source: TeamMember
+  source: TeamMember,
+  action: ActionType
 ): { amountPerProc: number; isErScaling: boolean } | null {
   if (entry.erScale) {
     return {
@@ -265,8 +281,9 @@ function resolveEntryPerProcFlat(
     return { amountPerProc: p, isErScaling: false };
   }
   if (entry.percentRefund != null) {
+    const burstCost = getBurstCostForAction(source, action);
     return {
-      amountPerProc: (source.burstCost * entry.percentRefund) / 100,
+      amountPerProc: (burstCost * entry.percentRefund) / 100,
       isErScaling: false,
     };
   }
@@ -585,8 +602,8 @@ function collectFlatEventsAt(
   const entries = allSelfEnergy[source.id] ?? [];
   for (const entry of entries) {
     if ((source.constellation ?? 0) < entry.minC) continue;
-    if (!entryMatchesAction(entry.action, act.action)) continue;
-    const resolved = resolveEntryPerProcFlat(entry, source);
+    if (!entryMatchesAction(entry, act.action, entries)) continue;
+    const resolved = resolveEntryPerProcFlat(entry, source, act.action);
     if (!resolved || resolved.amountPerProc === 0) continue;
     const entryProcs = entry.procs ?? 1;
     const recipients = resolveRecipients(
@@ -1020,9 +1037,10 @@ function simulateSequence(
         continue;
       }
 
-      if (member.burstCost > 0) {
+      const burstCost = getBurstCostForAction(member, act.action);
+      if (burstCost > 0) {
         const erForQ = solveER(
-          member.burstCost,
+          burstCost,
           s.particleAccum,
           s.flatAccum,
           s.erScalingAccum
@@ -1032,7 +1050,7 @@ function simulateSequence(
         s.qWindows.push({
           qIndex: wrappedQIdx,
           qAction: act.action as "Q" | "specialQ",
-          burstCost: member.burstCost,
+          burstCost,
           erNeeded: erForQ,
           particleEnergy: s.particleAccum,
           scalableEnergy: s.erScalingAccum,
@@ -1061,10 +1079,10 @@ function simulateSequence(
   }
 
   return team.map((member) => {
-    const { id, burstCost } = member;
+    const { id } = member;
     const s = state.get(id)!;
 
-    if (burstCost <= 0) {
+    if (!hasAnyBurstCost(member)) {
       return {
         characterId: id,
         erNeeded: 100,
@@ -1299,12 +1317,19 @@ export function calculateTeamERSequence(
 /** Get available action types for a character. */
 export function getAvailableActions(charId: string): ActionType[] {
   const data = particles[charId];
+  const selfEnergyActions = new Set(
+    (allSelfEnergy[charId] ?? []).map((e) => e.action)
+  );
   const out: ActionType[] = ["E"];
-  if (data?.holdE) out.push("holdE");
-  if (data?.specialE) out.push("specialE");
+  if (data?.holdE || selfEnergyActions.has("holdE")) out.push("holdE");
+  if (data?.specialE || selfEnergyActions.has("specialE")) out.push("specialE");
   out.push("Q");
-  // specialQ is only available for chars with an alternate-burst self-energy entry.
-  if ((allSelfEnergy[charId] ?? []).some((e) => e.action === "specialQ")) {
+  // specialQ is available when the char has alternate-burst cost data or
+  // alternate-burst self-energy data.
+  if (
+    charInfo[charId]?.specialBurstCost != null ||
+    (allSelfEnergy[charId] ?? []).some((e) => e.action === "specialQ")
+  ) {
     out.push("specialQ");
   }
   if (data?.NA) out.push("NA");
@@ -1350,6 +1375,7 @@ export function toTeamMember(slot: TeamSlot): TeamMember {
     id: slot.charId,
     element: slot.element,
     burstCost: slot.burstCost,
+    specialBurstCost: slot.specialBurstCost,
     constellation: slot.constellation,
     weaponId: slot.weaponId,
     refinement: slot.refinement,
@@ -1393,14 +1419,15 @@ export function getNodeEnergyEvents(
   const actor = team.find((m) => m.id === act.char);
 
   // Burst drain — shown first in the popover.
+  const actorBurstCost = actor ? getBurstCostForAction(actor, act.action) : 0;
   if (
     (act.action === "Q" || act.action === "specialQ") &&
     actor &&
-    actor.burstCost > 0
+    actorBurstCost > 0
   ) {
     events.push({
       sourceLabel: act.action === "specialQ" ? "Alt burst" : "Burst",
-      amount: actor.burstCost,
+      amount: actorBurstCost,
       recipients: [actor.id],
       category: "drain",
     });
@@ -1457,7 +1484,22 @@ export function getNodeEnergyEvents(
   return events;
 }
 
-function entryMatchesAction(entryAction: string, action: ActionType): boolean {
+function entryMatchesAction(
+  entry: SelfEnergyEntry,
+  action: ActionType,
+  allEntries: SelfEnergyEntry[]
+): boolean {
+  const entryAction = entry.action;
+  if (
+    ((entryAction === "E" && (action === "holdE" || action === "specialE")) ||
+      (entryAction === "Q" && action === "specialQ")) &&
+    allEntries.some(
+      (other) => other.source === entry.source && other.action === action
+    )
+  ) {
+    return false;
+  }
+
   // "A" (wildcard attack) matches any normal-attack family action — NOT every action.
   if (entryAction === "A")
     return action === "NA" || action === "CA" || action === "PA";

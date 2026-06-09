@@ -240,6 +240,7 @@ function teamToSlots(
       const pData = particles[charId];
       const element = (pData?.element ?? "Anemo") as Element;
       const burstCost = info?.energy ?? 60;
+      const specialBurstCost = info?.specialBurstCost;
       const weaponId = weapons[i] ?? undefined;
       const { constellation, talentLevels } = resolveCharCtx(
         charId,
@@ -257,6 +258,7 @@ function teamToSlots(
         charId,
         element,
         burstCost,
+        specialBurstCost,
         constellation,
         weaponId,
         artifactSet:
