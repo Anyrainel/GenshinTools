@@ -77,7 +77,7 @@ describe("AccountImportControl", () => {
       const link = screen.getByText("import.toolGoodScanner");
       expect(link.closest("a")).toHaveAttribute(
         "href",
-        "https://github.com/Anyrainel/GOODScanner/releases"
+        "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe"
       );
     });
   });
@@ -88,10 +88,21 @@ describe("AccountImportControl", () => {
       const link = screen.getByText("import.toolGoodCapture");
       expect(link.closest("a")).toHaveAttribute(
         "href",
-        "https://github.com/Anyrainel/GOODScanner/releases"
+        "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODCapture.exe"
       );
       expect(screen.queryByText("import.toolIrminsul")).not.toBeInTheDocument();
       expect(screen.queryByText("irminsul.exe")).not.toBeInTheDocument();
+    });
+  });
+
+  it("renders GOODScanner project link below the direct download buttons", async () => {
+    render(<TestWrapper />);
+    await waitFor(() => {
+      expect(screen.getByText("import.githubProject")).toBeInTheDocument();
+      expect(screen.getByText("GOODScanner").closest("a")).toHaveAttribute(
+        "href",
+        "https://github.com/Anyrainel/GOODScanner"
+      );
     });
   });
 

@@ -51,28 +51,17 @@ interface AccountImportControlProps {
 const TOOLS = [
   {
     labelKey: "import.toolGoodCapture" as const,
-    url: "https://github.com/Anyrainel/GOODScanner/releases",
+    fileName: "GOODCapture.exe",
+    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODCapture.exe",
   },
   {
     labelKey: "import.toolGoodScanner" as const,
-    url: "https://github.com/Anyrainel/GOODScanner/releases",
+    fileName: "GOODScanner.exe",
+    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe",
   },
 ] as const;
 
-const PROXY_TOOLS = [
-  {
-    label: "data_cache.json",
-    url: "/good/data_cache.json",
-  },
-  {
-    label: "GOODScanner.exe",
-    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe",
-  },
-  {
-    label: "GOODCapture.exe",
-    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODCapture.exe",
-  },
-] as const;
+const GOODSCANNER_PROJECT_URL = "https://github.com/Anyrainel/GOODScanner";
 
 /**
  * AccountImportControl - A dialog for importing account data.
@@ -310,6 +299,7 @@ export const AccountImportControl = forwardRef<
                     href={tool.url}
                     target="_blank"
                     rel="noreferrer"
+                    download={tool.fileName}
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
                       "text-xs font-medium",
@@ -319,37 +309,29 @@ export const AccountImportControl = forwardRef<
                     )}
                   >
                     {t.ui(tool.labelKey)}
-                    <ExternalLink className="w-3 h-3 opacity-60" />
+                    <Download className="w-3 h-3 opacity-60" />
                   </a>
                 ))}
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-1 mt-2">
               <span className="text-xs text-foreground/80">
-                {t.ui("import.proxyHint")}
+                {t.ui("import.githubProject")}
               </span>
-              {PROXY_TOOLS.map((tool, i) => (
-                <Fragment key={tool.label}>
-                  {i > 0 && (
-                    <span className="text-xs text-foreground/50">/</span>
-                  )}
-                  <a
-                    href={tool.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    download={tool.label}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
-                      "text-xs font-medium",
-                      "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-                      "transition-colors"
-                    )}
-                  >
-                    {tool.label}
-                    <Download className="w-3 h-3 opacity-60" />
-                  </a>
-                </Fragment>
-              ))}
+              <a
+                href={GOODSCANNER_PROJECT_URL}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
+                  "text-xs font-medium",
+                  "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+                  "transition-colors"
+                )}
+              >
+                GOODScanner
+                <ExternalLink className="w-3 h-3 opacity-60" />
+              </a>
             </div>
 
             <div className="mt-3 flex flex-col gap-1.5">

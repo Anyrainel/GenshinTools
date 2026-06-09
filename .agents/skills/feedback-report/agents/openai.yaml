@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feedback Report"
+  short_description: "Fetch and triage new user feedback"
+  default_prompt: "Use $feedback-report to pull the latest feedback delta and summarize what changed."
