@@ -177,3 +177,12 @@ export function resolveOption<const D extends OptionDef>(
   }
   return getDefaultOptionValue(def, teamMeta) as InferOption<D>;
 }
+
+export function resolveRegisteredOption(
+  entityId: string,
+  raw: string,
+  teamMeta: TeamMeta
+): string {
+  const def = getOptionDef(entityId);
+  return def ? resolveOption(def, raw, teamMeta) : raw;
+}

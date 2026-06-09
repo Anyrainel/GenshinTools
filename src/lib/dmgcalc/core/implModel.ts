@@ -15,7 +15,7 @@ import type {
   TalentLevels,
 } from "../types";
 import { resolveComboDescriptor } from "./combo";
-import { getOptionDef, resolveOption } from "./registry";
+import { resolveRegisteredOption } from "./registry";
 import type { StatBuff } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
 
@@ -31,15 +31,6 @@ export abstract class IFormulaProvider {
   abstract get formulaIds(): Record<string, I18nLabel>;
   /** Look up a formula entry by ID (used by all three damage paths) */
   abstract getFormulaEntry(formulaId: string): FormulaEntry | undefined;
-}
-
-function resolveProviderOption(
-  providerId: string,
-  rawOption: string,
-  teamMeta: TeamMeta
-): string {
-  const def = getOptionDef(providerId);
-  return def ? resolveOption(def, rawOption, teamMeta) : rawOption;
 }
 
 /**
@@ -65,7 +56,7 @@ export abstract class CharacterBase implements IStatProvider, IFormulaProvider {
     talentLevels?: TalentLevels
   ) {
     this.stats = resolveCharacterStats(charId, charLevel);
-    this.option = resolveProviderOption(
+    this.option = resolveRegisteredOption(
       charId,
       combatOpts[charId] ?? "",
       teamMeta
@@ -255,7 +246,7 @@ export abstract class WeaponBase implements IStatProvider {
     combatOpts: OptionMap = {}
   ) {
     this.stats = resolveWeaponStats(weaponId);
-    this.option = resolveProviderOption(
+    this.option = resolveRegisteredOption(
       weaponId,
       combatOpts[weaponId] ?? "",
       teamMeta
@@ -276,7 +267,7 @@ export abstract class ArtifactSetBase implements IStatProvider {
     readonly teamMeta: TeamMeta,
     combatOpts: OptionMap = {}
   ) {
-    this.option = resolveProviderOption(
+    this.option = resolveRegisteredOption(
       artifactSetId,
       combatOpts[artifactSetId] ?? "",
       teamMeta
