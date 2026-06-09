@@ -30,6 +30,12 @@ interface ArtifactDataContentProps {
   fillWidth?: boolean;
 }
 
+function hasInitialValueData(artifact: ArtifactData): boolean {
+  return Object.values(artifact.initialValues ?? {}).some(
+    (value) => value != null
+  );
+}
+
 export function ArtifactDataContent({
   artifact,
   slot,
@@ -41,6 +47,7 @@ export function ArtifactDataContent({
   const name = t.artifact(artifact.setKey);
   const badge = artifact.astralMark ? "⭐" : undefined;
   const totalRolls = artifact.totalRolls;
+  const showInitialValues = hasInitialValueData(artifact);
 
   return (
     <div
@@ -49,10 +56,16 @@ export function ArtifactDataContent({
         fillWidth
           ? "flex-1 basis-0"
           : compact
-            ? "min-w-32"
+            ? showInitialValues
+              ? "min-w-40"
+              : "min-w-32"
             : showIcon
-              ? "min-w-52"
-              : "min-w-44"
+              ? showInitialValues
+                ? "min-w-64"
+                : "min-w-52"
+              : showInitialValues
+                ? "min-w-56"
+                : "min-w-44"
       )}
     >
       {/* Header with optional icon */}
@@ -99,7 +112,11 @@ export function ArtifactDataContent({
 
       {/* Stats */}
       <div className={cn(compact ? "p-2" : "p-3")}>
-        <ArtifactStatList artifact={artifact} compact={compact} />
+        <ArtifactStatList
+          artifact={artifact}
+          compact={compact}
+          showInitialValues={showInitialValues}
+        />
       </div>
     </div>
   );

@@ -19,6 +19,7 @@ function getRollCount(statKey: SubStat, value: number, rarity: Rarity): number {
 interface ArtifactStatListProps {
   artifact: ArtifactData;
   compact?: boolean;
+  showInitialValues?: boolean;
 }
 
 /**
@@ -28,25 +29,65 @@ interface ArtifactStatListProps {
 export function ArtifactStatList({
   artifact,
   compact = false,
+  showInitialValues = false,
 }: ArtifactStatListProps) {
   const { t } = useLanguage();
+
+  const substatRowClass = cn(
+    "grid items-center text-sm",
+    compact
+      ? "gap-1.5 grid-cols-[minmax(0,1fr)_2.75rem_2.75rem]"
+      : "gap-2 grid-cols-[minmax(0,1fr)_4rem_4rem]"
+  );
+
+  const renderInitialValue = (statKey: SubStat) => {
+    const initialValue = artifact.initialValues?.[statKey];
+    const displayValue =
+      initialValue == null
+        ? "-"
+        : `(${fmtStat(statKey, initialValue, false, true).replace(".0%", "%")})`;
+    return (
+      <span className="font-mono tabular-nums text-right text-muted-foreground">
+        {displayValue}
+      </span>
+    );
+  };
 
   const renderStatLine = (statKey: SubStat, value: number | undefined) => {
     if (value == null) return null;
     const displayValue = fmtStat(statKey, value, false, true);
     const rollCount = getRollCount(statKey, value, artifact.rarity);
+    if (!showInitialValues) {
+      return (
+        <div
+          key={statKey}
+          className="flex justify-between items-center gap-2 text-sm text-gray-200"
+        >
+          <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
+            <span>{compact ? t.statMin(statKey) : t.statShort(statKey)}</span>
+            <span className="text-xs px-1 py-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums">
+              {rollCount.toFixed(1)}
+            </span>
+          </span>
+          <span className="flex-shrink-0 font-mono">{displayValue}</span>
+        </div>
+      );
+    }
+
     return (
-      <div
-        key={statKey}
-        className="flex justify-between items-center gap-2 text-sm text-gray-200"
-      >
-        <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
-          <span>{compact ? t.statMin(statKey) : t.statShort(statKey)}</span>
-          <span className="text-xs px-1 py-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums">
+      <div key={statKey} className={cn(substatRowClass, "text-gray-200")}>
+        <span className="flex items-center gap-1.5 min-w-0 whitespace-nowrap overflow-hidden">
+          <span className="min-w-0 truncate">
+            {compact ? t.statMin(statKey) : t.statShort(statKey)}
+          </span>
+          <span className="text-xs px-1 py-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums shrink-0">
             {rollCount.toFixed(1)}
           </span>
         </span>
-        <span className="flex-shrink-0 font-mono">{displayValue}</span>
+        <span className="font-mono tabular-nums text-right">
+          {displayValue}
+        </span>
+        {renderInitialValue(statKey)}
       </div>
     );
   };
@@ -98,19 +139,36 @@ export function ArtifactStatList({
         )}
         {Object.entries(artifact.unactivatedSubstats ?? {}).map(([key, val]) =>
           val != null ? (
-            <div
-              key={key}
-              className="flex justify-between items-center gap-2 text-sm text-muted-foreground"
-            >
-              <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
-                {compact
-                  ? t.statMin(key as SubStat)
-                  : t.statShort(key as SubStat)}
-              </span>
-              <span className="flex-shrink-0 font-mono">
-                {fmtStat(key as SubStat, val, false, true)}
-              </span>
-            </div>
+            showInitialValues ? (
+              <div
+                key={key}
+                className={cn(substatRowClass, "text-muted-foreground")}
+              >
+                <span className="min-w-0 truncate whitespace-nowrap overflow-hidden">
+                  {compact
+                    ? t.statMin(key as SubStat)
+                    : t.statShort(key as SubStat)}
+                </span>
+                <span className="font-mono tabular-nums text-right">
+                  {fmtStat(key as SubStat, val, false, true)}
+                </span>
+                {renderInitialValue(key as SubStat)}
+              </div>
+            ) : (
+              <div
+                key={key}
+                className="flex justify-between items-center gap-2 text-sm text-muted-foreground"
+              >
+                <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
+                  {compact
+                    ? t.statMin(key as SubStat)
+                    : t.statShort(key as SubStat)}
+                </span>
+                <span className="flex-shrink-0 font-mono">
+                  {fmtStat(key as SubStat, val, false, true)}
+                </span>
+              </div>
+            )
           ) : null
         )}
       </div>
