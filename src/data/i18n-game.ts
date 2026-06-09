@@ -4,6 +4,7 @@
 export const i18nGameData = {
   "characters": {
     "prune": { "en": "Prune", "zh": "布伦妮" },
+    "lohen": { "en": "Lohen", "zh": "洛恩" },
     "nicole": { "en": "Nicole", "zh": "尼可" },
     "linnea": { "en": "Linnea", "zh": "莉奈娅" },
     "varka": { "en": "Varka", "zh": "法尔伽" },
@@ -200,6 +201,7 @@ export const i18nGameData = {
     "nocturnes_curtain_call": { "en": "Nocturne's Curtain Call", "zh": "帷间夜曲" },
     "lightbearing_moonshard": { "en": "Lightbearing Moonshard", "zh": "朏魄含光" },
     "the_daybreak_chronicles": { "en": "The Daybreak Chronicles", "zh": "黎明破晓之史" },
+    "disaster_and_remorse": { "en": "Disaster and Remorse", "zh": "灾悔" },
     "rainbow_serpents_rain_bow": { "en": "Rainbow Serpent's Rain Bow", "zh": "虹蛇的雨弦" },
     "athame_artis": { "en": "Athame Artis", "zh": "黑蚀" },
     "reliquary_of_truth": { "en": "Reliquary of Truth", "zh": "真语秘匣" },

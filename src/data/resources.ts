@@ -12,6 +12,7 @@ import type {
 
 export const characters: CharacterResource[] = [
   {"id": "prune", "rarity": 4, "imagePath": "/character/prune.webp"},
+  {"id": "lohen", "rarity": 5, "imagePath": "/character/lohen.webp"},
   {"id": "nicole", "rarity": 5, "imagePath": "/character/nicole.webp"},
   {"id": "linnea", "rarity": 5, "imagePath": "/character/linnea.webp"},
   {"id": "varka", "rarity": 5, "imagePath": "/character/varka.webp"},
@@ -255,6 +256,7 @@ export const weapons: WeaponResource[] = [
   {"id": "nocturnes_curtain_call", "rarity": 5, "imagePath": "/weapon/nocturnes_curtain_call.webp"},
   {"id": "lightbearing_moonshard", "rarity": 5, "imagePath": "/weapon/lightbearing_moonshard.webp"},
   {"id": "the_daybreak_chronicles", "rarity": 5, "imagePath": "/weapon/the_daybreak_chronicles.webp"},
+  {"id": "disaster_and_remorse", "rarity": 5, "imagePath": "/weapon/disaster_and_remorse.webp"},
   {"id": "rainbow_serpents_rain_bow", "rarity": 4, "imagePath": "/weapon/rainbow_serpents_rain_bow.webp"},
   {"id": "athame_artis", "rarity": 5, "imagePath": "/weapon/athame_artis.webp"},
   {"id": "reliquary_of_truth", "rarity": 5, "imagePath": "/weapon/reliquary_of_truth.webp"},

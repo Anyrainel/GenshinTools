@@ -2116,7 +2116,7 @@ class Lohen extends CharacterBase {
         ],
       },
       "lohen-e-special": {
-        label: { zh: "镂骨彻心", en: "Etched Into Bone and Soul" },
+        label: { zh: "镂骨彻心", en: "Etched Bone and Soul" },
         parts: [
           {
             // E param17 = "Etched Into Bone and Soul DMG {param17:F1P}×4"
