@@ -1,6 +1,5 @@
 import type { Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { getMainStatValue } from "@/data/utils";
 import {
   type StatWeightMap,
@@ -9,6 +8,7 @@ import {
 import { computeCrDeduction } from "../artifact/scoring/utils";
 import type { CandidateArtifact } from "./candidatePool";
 import type { CrBudgetResult } from "./maxCrBuff";
+import { enumerateConcreteTwoPieceSetPairs } from "./setConstraints";
 
 export interface BuildOptimizerConfig {
   weights: StatWeightMap;
@@ -103,6 +103,7 @@ function rankScore(build: OptimizedBuild): number {
 type SlotPattern = {
   slotIdx: number;
   setRequirement: "set1" | "set2" | "flex";
+  concreteSetKey?: string;
 }[];
 
 function generate4pcPatterns(): SlotPattern[] {
@@ -121,7 +122,7 @@ function generate4pcPatterns(): SlotPattern[] {
   return patterns;
 }
 
-function generate2pc2pcPatterns(): SlotPattern[] {
+function generate2pc2pcRolePatterns(): SlotPattern[] {
   // C(5,2) ways to pick slots for set1, C(3,2) for set2, rest is flex
   const patterns: SlotPattern[] = [];
   const indices = [0, 1, 2, 3, 4];
@@ -148,6 +149,37 @@ function generate2pc2pcPatterns(): SlotPattern[] {
       }
     }
   }
+  return patterns;
+}
+
+function generate2pc2pcPatterns(
+  setConstraint: BuildOptimizerConfig["setConstraint"],
+  availableSetKeys: ReadonlySet<string>
+): SlotPattern[] {
+  const concretePairs = enumerateConcreteTwoPieceSetPairs(
+    setConstraint.halfSet1,
+    setConstraint.halfSet2,
+    availableSetKeys
+  );
+  const rolePatterns = generate2pc2pcRolePatterns();
+  const patterns: SlotPattern[] = [];
+
+  for (const pair of concretePairs) {
+    for (const rolePattern of rolePatterns) {
+      patterns.push(
+        rolePattern.map((entry) => {
+          if (entry.setRequirement === "set1") {
+            return { ...entry, concreteSetKey: pair.halfSet1SetKey };
+          }
+          if (entry.setRequirement === "set2") {
+            return { ...entry, concreteSetKey: pair.halfSet2SetKey };
+          }
+          return entry;
+        })
+      );
+    }
+  }
+
   return patterns;
 }
 
@@ -205,7 +237,7 @@ export function optimizeBuild(
   const patterns =
     setConstraint.composition === "4pc"
       ? generate4pcPatterns()
-      : generate2pc2pcPatterns();
+      : generate2pc2pcPatterns(setConstraint, getAvailableSetKeys(candidates));
 
   for (const pattern of patterns) {
     // Filter candidates per slot by set requirement
@@ -214,24 +246,16 @@ export function optimizeBuild(
     const adjustedSlotScoresCache: number[][] = [];
     let anyEmpty = false;
 
-    for (const { slotIdx, setRequirement } of pattern) {
+    for (const { slotIdx, setRequirement, concreteSetKey } of pattern) {
       const slot = slots[slotIdx];
       let filtered = candidates[slot];
 
-      if (setRequirement === "set1") {
+      if (concreteSetKey != null) {
+        filtered = filtered.filter((c) => c.setKey === concreteSetKey);
+      } else if (setRequirement === "set1") {
         if (setConstraint.composition === "4pc" && setConstraint.artifactSet) {
           filtered = filtered.filter(
             (c) => c.setKey === setConstraint.artifactSet
-          );
-        } else if (setConstraint.halfSet1 != null) {
-          filtered = filtered.filter(
-            (c) => artifactIdToHalfSetId[c.setKey] === setConstraint.halfSet1
-          );
-        }
-      } else if (setRequirement === "set2") {
-        if (setConstraint.halfSet2 != null) {
-          filtered = filtered.filter(
-            (c) => artifactIdToHalfSetId[c.setKey] === setConstraint.halfSet2
           );
         }
       }
@@ -367,6 +391,18 @@ export function optimizeBuild(
     currentScore,
     combinationsEvaluated,
   };
+}
+
+function getAvailableSetKeys(
+  candidates: Record<Slot, CandidateArtifact[]>
+): Set<string> {
+  const setKeys = new Set<string>();
+  for (const slot of allSlots) {
+    for (const candidate of candidates[slot]) {
+      setKeys.add(candidate.setKey);
+    }
+  }
+  return setKeys;
 }
 
 // ─── CR/CD Circlet Exploration ───

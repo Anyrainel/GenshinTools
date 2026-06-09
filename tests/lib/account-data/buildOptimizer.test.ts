@@ -296,6 +296,144 @@ describe("buildOptimizer", () => {
     expect(result.builds[0].artifacts.flower.setKey).toBe("WrongSet");
   });
 
+  it("requires 2pc+2pc half-set picks to use concrete in-game 2pc sets", () => {
+    const candidates: Record<Slot, CandidateArtifact[]> = {
+      flower: [
+        makeCandidate({
+          slotKey: "flower",
+          source: "current",
+          id: "atk-flower",
+          setKey: "gladiators_finale",
+          substats: { cd: 10 },
+        }),
+      ],
+      plume: [
+        makeCandidate({
+          slotKey: "plume",
+          source: "current",
+          id: "atk-plume",
+          setKey: "gladiators_finale",
+          substats: { cd: 10 },
+        }),
+      ],
+      sands: [
+        makeCandidate({
+          slotKey: "sands",
+          source: "current",
+          id: "hp-sands",
+          setKey: "tenacity_of_the_millelith",
+          substats: { cd: 10 },
+        }),
+      ],
+      goblet: [
+        makeCandidate({
+          slotKey: "goblet",
+          source: "swap",
+          id: "invalid-mixed-hp-goblet",
+          setKey: "vourukashas_glow",
+          substats: { cd: 100 },
+        }),
+        makeCandidate({
+          slotKey: "goblet",
+          source: "current",
+          id: "valid-hp-goblet",
+          setKey: "tenacity_of_the_millelith",
+          substats: {},
+        }),
+      ],
+      circlet: [
+        makeCandidate({
+          slotKey: "circlet",
+          source: "current",
+          id: "atk-circlet",
+          setKey: "gladiators_finale",
+          mainStatKey: "cr",
+          substats: { cd: 10 },
+        }),
+      ],
+    };
+
+    const result = optimizeBuild({
+      weights: testWeights,
+      candidates,
+      crBudget: baseCrBudget,
+      targetMainStats: defaultTargetMainStats,
+      setConstraint: {
+        composition: "2pc+2pc",
+        halfSet1: "atk%-18",
+        halfSet2: "hp%-20",
+      },
+    });
+
+    expect(result.builds.length).toBeGreaterThan(0);
+    expect(result.builds[0].artifacts.goblet.id).toBe("valid-hp-goblet");
+    expect(
+      Object.values(result.builds[0].artifacts).filter(
+        (artifact) => artifact.setKey === "gladiators_finale"
+      )
+    ).toHaveLength(3);
+    expect(
+      Object.values(result.builds[0].artifacts).filter(
+        (artifact) => artifact.setKey === "tenacity_of_the_millelith"
+      )
+    ).toHaveLength(2);
+  });
+
+  it("does not count one concrete 4pc set as two same-half 2pc bonuses", () => {
+    const candidates: Record<Slot, CandidateArtifact[]> = {
+      flower: [
+        makeCandidate({
+          slotKey: "flower",
+          source: "current",
+          setKey: "gladiators_finale",
+        }),
+      ],
+      plume: [
+        makeCandidate({
+          slotKey: "plume",
+          source: "current",
+          setKey: "gladiators_finale",
+        }),
+      ],
+      sands: [
+        makeCandidate({
+          slotKey: "sands",
+          source: "current",
+          setKey: "gladiators_finale",
+        }),
+      ],
+      goblet: [
+        makeCandidate({
+          slotKey: "goblet",
+          source: "current",
+          setKey: "gladiators_finale",
+        }),
+      ],
+      circlet: [
+        makeCandidate({
+          slotKey: "circlet",
+          source: "current",
+          setKey: "shimenawas_reminiscence",
+          mainStatKey: "cr",
+        }),
+      ],
+    };
+
+    const result = optimizeBuild({
+      weights: testWeights,
+      candidates,
+      crBudget: baseCrBudget,
+      targetMainStats: defaultTargetMainStats,
+      setConstraint: {
+        composition: "2pc+2pc",
+        halfSet1: "atk%-18",
+        halfSet2: "atk%-18",
+      },
+    });
+
+    expect(result.builds).toEqual([]);
+  });
+
   it("skips patterns where any slot has 0 candidates", () => {
     // Only one candidate for each slot, all same set
     const candidates: Record<Slot, CandidateArtifact[]> = {

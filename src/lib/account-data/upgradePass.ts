@@ -20,11 +20,14 @@
 
 import type { LuckExpectation, Slot, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import { artifactIdToHalfSetId } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
 import { getExpectedRollValue } from "./artifactProjection";
 import { scoreFullBuild } from "./buildOptimizer";
 import type { CandidateArtifact } from "./candidatePool";
+import {
+  countArtifactsBySetKey,
+  findActiveConcreteTwoPieceSetPair,
+} from "./setConstraints";
 import type { AllocatedBuild } from "./tierWaterfall";
 
 export type UpgradeStrategy = 1 | 2 | 3;
@@ -289,9 +292,8 @@ export function runUpgradePassForCharacter(
 type SlotMembership =
   | { kind: "fixed4pc"; mainSet: string }
   | { kind: "flex4pc"; mainSet: string }
-  | { kind: "fixedHalf1"; halfSet: string }
-  | { kind: "fixedHalf2"; halfSet: string }
-  | { kind: "flex22"; halfSet1: string; halfSet2: string };
+  | { kind: "fixedConcrete2pc"; setKey: string }
+  | { kind: "flex22" };
 
 function classifySlot(
   slot: Slot,
@@ -312,10 +314,19 @@ function classifySlot(
   const h1 = setConstraint.halfSet1;
   const h2 = setConstraint.halfSet2;
   if (!h1 || !h2) return null;
-  const slotHalf = artifactIdToHalfSetId[equipped.setKey];
-  if (slotHalf === h1) return { kind: "fixedHalf1", halfSet: h1 };
-  if (slotHalf === h2) return { kind: "fixedHalf2", halfSet: h2 };
-  return { kind: "flex22", halfSet1: h1, halfSet2: h2 };
+  const activePair = findActiveConcreteTwoPieceSetPair(artifacts, h1, h2);
+  if (!activePair) return null;
+  const activeSetKeys = new Set([
+    activePair.halfSet1SetKey,
+    activePair.halfSet2SetKey,
+  ]);
+  if (!activeSetKeys.has(equipped.setKey)) return { kind: "flex22" };
+
+  const countsBySetKey = countArtifactsBySetKey(artifacts);
+  const activeSetCount = countsBySetKey.get(equipped.setKey) ?? 0;
+  return activeSetCount > 2
+    ? { kind: "flex22" }
+    : { kind: "fixedConcrete2pc", setKey: equipped.setKey };
 }
 
 function matchesSlotMembership(
@@ -328,14 +339,10 @@ function matchesSlotMembership(
       return candidate.setKey === membership.mainSet;
     case "flex4pc":
       return candidate.setKey !== membership.mainSet;
-    case "fixedHalf1":
-      return artifactIdToHalfSetId[candidate.setKey] === membership.halfSet;
-    case "fixedHalf2":
-      return artifactIdToHalfSetId[candidate.setKey] === membership.halfSet;
-    case "flex22": {
-      const h = artifactIdToHalfSetId[candidate.setKey];
-      return h !== membership.halfSet1 && h !== membership.halfSet2;
-    }
+    case "fixedConcrete2pc":
+      return candidate.setKey === membership.setKey;
+    case "flex22":
+      return true;
   }
 }
 

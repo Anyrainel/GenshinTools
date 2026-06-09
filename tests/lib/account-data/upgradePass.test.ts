@@ -207,4 +207,90 @@ describe("runUpgradePassForCharacter", () => {
       ])
     );
   });
+
+  it("does not replace fixed 2pc slots with a different set from the same half-set group", () => {
+    const allocatedArtifacts = {
+      flower: candidate(
+        artifact("flower", "current-atk-flower", "gladiators_finale", 20, {})
+      ),
+      plume: candidate(
+        artifact("plume", "current-atk-plume", "gladiators_finale", 20, {})
+      ),
+      sands: candidate(
+        artifact(
+          "sands",
+          "current-hp-sands",
+          "tenacity_of_the_millelith",
+          20,
+          {}
+        )
+      ),
+      goblet: candidate(
+        artifact(
+          "goblet",
+          "current-hp-goblet",
+          "tenacity_of_the_millelith",
+          20,
+          {}
+        )
+      ),
+      circlet: candidate(
+        artifact("circlet", "current-flex-circlet", "berserker", 20, {})
+      ),
+    } satisfies Record<Slot, CandidateArtifact>;
+    const build = makeAllocatedBuild(allocatedArtifacts);
+    const mixedSetUpgrade = artifact(
+      "flower",
+      "mixed-set-atk-flower",
+      "shimenawas_reminiscence",
+      0,
+      {
+        cr: 10,
+        cd: 40,
+        "atk%": 20,
+        er: 10,
+      }
+    );
+
+    const alloc: AllocatedBuild = {
+      characterId: "hutao",
+      tier: "S",
+      build,
+      context: {
+        config: {
+          weights,
+          candidates: {
+            flower: [],
+            plume: [],
+            sands: [],
+            goblet: [],
+            circlet: [],
+          },
+          crBudget,
+          targetMainStats,
+          setConstraint: {
+            composition: "2pc+2pc",
+            halfSet1: "atk%-18",
+            halfSet2: "hp%-20",
+          },
+        },
+        crBudget,
+        scoreResult: null as never,
+      },
+      equipped: {},
+      luckExpectation: "balanced",
+    };
+
+    const result = runUpgradePassForCharacter(
+      alloc,
+      [...allSlots.map((slot) => allocatedArtifacts[slot]), mixedSetUpgrade],
+      { minScoreDiff: 0.001 }
+    );
+
+    expect(result.recommendations).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ upgradeArtifactId: "mixed-set-atk-flower" }),
+      ])
+    );
+  });
 });
