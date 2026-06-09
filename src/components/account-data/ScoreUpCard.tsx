@@ -640,7 +640,7 @@ function ScoreUpCardComponent({
                               "font-bold",
                               normalizedScoreGain > 0
                                 ? "text-emerald-400"
-                                : "text-amber-400"
+                                : "text-rose-400"
                             )}
                           >
                             ({normalizedScoreGain > 0 ? "+" : ""}
