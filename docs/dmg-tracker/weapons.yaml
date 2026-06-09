@@ -371,3 +371,4 @@
     +ATK% StatBuff stays unconditional. The Hexerei: Secret Rite off-field clause
     keeps its countByFaction("Hexerei") >= 2 gate, now nested under the shielder
     check. Type-check passes for weapon5Catalyst.ts.
+

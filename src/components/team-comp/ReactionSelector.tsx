@@ -5,6 +5,7 @@ import {
   ELEMENT_ELIGIBLE_REACTIONS,
   LUNAR_REACTIONS,
   MULTI_ELEMENT_CHARS,
+  STELLAR_REACTIONS,
 } from "@/lib/dmgcalc/constants";
 import type { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import type { FormulaEntry, ReactionOverride } from "@/lib/dmgcalc/types";
@@ -27,6 +28,9 @@ const TRANSFORMATIVE_REACTIONS = new Set<ReactionType>([
 
 /** Lunar reactions — same: baked-in, no selector. */
 const LUNAR_REACTIONS_SET = new Set<ReactionType>(LUNAR_REACTIONS);
+
+/** Stellar reactions — baked-in, no selector. */
+const STELLAR_REACTIONS_SET = new Set<ReactionType>(STELLAR_REACTIONS);
 
 interface ReactionSelectorProps {
   /** The formula entry (to read parts) */
@@ -68,7 +72,11 @@ export function ReactionSelector({
   const firstPart = formulaEntry.parts[0];
   if (firstPart) {
     const baked = firstPart.formula.tag.reaction;
-    if (TRANSFORMATIVE_REACTIONS.has(baked) || LUNAR_REACTIONS_SET.has(baked)) {
+    if (
+      TRANSFORMATIVE_REACTIONS.has(baked) ||
+      LUNAR_REACTIONS_SET.has(baked) ||
+      STELLAR_REACTIONS_SET.has(baked)
+    ) {
       return null;
     }
   }

@@ -72,6 +72,12 @@ const LUNAR_REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
   lunarBloom: 1.0,
 };
 
+// Stellar-Conduct: 1.5 matches Superconduct parity (U0b approximation — no beta
+// coefficient text; retain until verified in-game).
+const STELLAR_REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
+  stellarConduct: 1.5,
+};
+
 // DamageFormula Hierarchy
 //
 // Covers the standard Genshin damage formulas (see DmgResearch.md).
@@ -1161,6 +1167,296 @@ export class LunarDirectFormula extends DamageFormula {
 
     return {
       template: "lunarDirect",
+      statValues,
+      params: {
+        directCoeff,
+        emCoeff,
+        emDenom,
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+      },
+      scalingKeys: keys,
+      scalingMulti: multi,
+      damage,
+      tag: this.tag,
+    };
+  }
+}
+
+/**
+ * Stellar-Conduct reaction damage (level-based, like LunarFormula).
+ * Uses reactionBaseDmg%, elevated%, and lunar-style EM bonus.
+ */
+export class StellarFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...REACTION_KEYS,
+      "baseDmg%",
+      "reactionBaseDmg%",
+      "elevated%",
+      ...CRIT_KEYS,
+      ...RES_KEYS,
+    ]);
+  }
+
+  protected override validateReaction(): void {
+    if (!(this.tag.reaction in STELLAR_REACTION_COEFFICIENTS)) {
+      throw new Error(
+        `StellarFormula requires a stellar reaction, got "${this.tag.reaction}"`
+      );
+    }
+  }
+
+  buildExpr(stats: ExprStatSheet, charLevel: number, ctx: CalcContext): Expr {
+    const em = stats.get("em", this.tag);
+    const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const reactionCoeff =
+      STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.5;
+    const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const resMult = this.computeResMultExpr(stats, ctx);
+    const critMult = this.computeCritMultExpr(stats, ctx);
+
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+
+    const baseDmg = levelMult * reactionCoeff;
+    return simplify(
+      E.mul(
+        E.const(baseDmg),
+        E.add(E.const(1), baseDmgBonus),
+        E.add(E.const(1), reactionBaseDmg),
+        E.add(E.const(1), emBonus, reactionDmgBonus),
+        E.add(E.const(1), elevated),
+        resMult,
+        critMult
+      )
+    );
+  }
+
+  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
+    const em = stats.get("em", this.tag);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const reactionCoeff =
+      STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.5;
+    const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+
+    const baseDmg = levelMult * reactionCoeff;
+    return (
+      baseDmg *
+      (1 + baseDmgBonus) *
+      (1 + reactionBaseDmg) *
+      (1 + emBonus + reactionDmgBonus) *
+      (1 + elevated) *
+      resMult *
+      critMult
+    );
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const em = stats.get("em", this.tag);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
+    const reactionCoeff =
+      STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.5;
+    const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+
+    const baseDmg = levelCoeff * reactionCoeff;
+    const damage =
+      baseDmg *
+      (1 + baseDmgBonus) *
+      (1 + reactionBaseDmg) *
+      (1 + emBonus + reactionDmgBonus) *
+      (1 + elevated) *
+      resMult *
+      critMult;
+
+    return {
+      template: "stellar",
+      statValues: {
+        em,
+        "reactionDmg%": reactionDmgBonus,
+        "baseDmg%": baseDmgBonus,
+        "reactionBaseDmg%": reactionBaseDmg,
+        "elevated%": elevated,
+        cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
+        cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
+        "resReduction%": stats.get("resReduction%", this.tag),
+      },
+      params: {
+        reactionCoeff,
+        levelCoeff,
+        emCoeff,
+        emDenom,
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+      },
+      scalingKeys: [],
+      scalingMulti: [],
+      damage,
+      tag: this.tag,
+    };
+  }
+}
+
+/**
+ * Stellar Direct: character abilities that deal Stellar-Conduct DMG.
+ * Pass the raw game% as talentMult; DirectCoeff is 1.0 (params are pre-scaled).
+ */
+export class StellarDirectFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...this.baseScalingKeys(),
+      ...REACTION_KEYS,
+      ...BASE_DMG_KEYS,
+      "reactionBaseDmg%",
+      "elevated%",
+      ...CRIT_KEYS,
+      ...RES_KEYS,
+    ]);
+  }
+
+  protected override validateReaction(): void {
+    if (!(this.tag.reaction in STELLAR_REACTION_COEFFICIENTS)) {
+      throw new Error(
+        `StellarDirectFormula requires a stellar reaction, got "${this.tag.reaction}"`
+      );
+    }
+  }
+
+  buildExpr(stats: ExprStatSheet, _charLevel: number, ctx: CalcContext): Expr {
+    let scalingDmg: Expr = E.mul(
+      stats.get(this.scalingKey, this.tag),
+      E.const(this.talentMultiplier)
+    );
+    if (this.extraTerm) {
+      scalingDmg = E.add(
+        scalingDmg,
+        E.mul(
+          stats.get(this.extraTerm.key, this.tag),
+          E.const(this.extraTerm.multiplier)
+        )
+      );
+    }
+    const directCoeff = STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+
+    const em = stats.get("em", this.tag);
+    const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+    const resMult = this.computeResMultExpr(stats, ctx);
+    const critMult = this.computeCritMultExpr(stats, ctx);
+
+    const talentDmg = E.mul(
+      scalingDmg,
+      E.const(directCoeff),
+      E.add(E.const(1), baseDmgBonus),
+      E.add(E.const(1), reactionBaseDmg),
+      E.add(E.const(1), emBonus, reactionDmgBonus)
+    );
+    const baseDmg = E.add(talentDmg, flatBaseDmg);
+    return simplify(
+      E.mul(baseDmg, E.add(E.const(1), elevated), critMult, resMult)
+    );
+  }
+
+  calc(stats: StatSheet, _charLevel: number, ctx: CalcContext): number {
+    let scalingDmg =
+      stats.get(this.scalingKey, this.tag) * this.talentMultiplier;
+    if (this.extraTerm) {
+      scalingDmg +=
+        stats.get(this.extraTerm.key, this.tag) * this.extraTerm.multiplier;
+    }
+    const directCoeff = STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+
+    const em = stats.get("em", this.tag);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+
+    const talentDmg =
+      scalingDmg *
+      directCoeff *
+      (1 + baseDmgBonus) *
+      (1 + reactionBaseDmg) *
+      (1 + emBonus + reactionDmgBonus);
+    const baseDmg = talentDmg + flatBaseDmg;
+    return baseDmg * (1 + elevated) * critMult * resMult;
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const { keys, multi } = this.getScalingInfo();
+    const directCoeff = STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+
+    const em = stats.get("em", this.tag);
+    const { emCoeff, emDenom } = EM_BONUS.lunar;
+    const emBonus = getEmBonus(em, emCoeff, emDenom);
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+
+    let scalingDmg =
+      stats.get(this.scalingKey, this.tag) * this.talentMultiplier;
+    if (this.extraTerm) {
+      scalingDmg +=
+        stats.get(this.extraTerm.key, this.tag) * this.extraTerm.multiplier;
+    }
+    const talentDmg =
+      scalingDmg *
+      directCoeff *
+      (1 + reactionBaseDmg) *
+      (1 + baseDmgBonus) *
+      (1 + emBonus + reactionDmgBonus);
+    const baseDmg = talentDmg + flatBaseDmg;
+    const damage = baseDmg * (1 + elevated) * critMult * resMult;
+
+    const statValues: Partial<Record<StatKey, number>> = {
+      [this.scalingKey]: stats.get(this.scalingKey, this.tag),
+      em,
+      "reactionDmg%": reactionDmgBonus,
+      "reactionBaseDmg%": reactionBaseDmg,
+      "baseDmg%": baseDmgBonus,
+      "elevated%": elevated,
+      cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
+      cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
+      "resReduction%": stats.get("resReduction%", this.tag),
+    };
+    if (this.extraTerm)
+      statValues[this.extraTerm.key] = stats.get(this.extraTerm.key, this.tag);
+    if (flatBaseDmg !== 0) statValues.baseDmg = flatBaseDmg;
+
+    return {
+      template: "stellarDirect",
       statValues,
       params: {
         directCoeff,

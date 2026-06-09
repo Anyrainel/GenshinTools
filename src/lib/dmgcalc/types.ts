@@ -29,6 +29,8 @@ export type ReactionRequirement = {
   readonly requiredElements: Element[][];
   /** Additional constraint: at least one participant must be a 5★ Moonsign faction member */
   readonly requiresMoonsign5StarParticipant?: boolean;
+  /** Additional constraint: Sandrone must be in the party (enables Stellar-Conduct) */
+  readonly requiresStellarConductEnabler?: boolean;
   /** Additional constraint: at least one team member (doesn't have to be the participants) must be a Geo or Claymore */
   readonly requiresGeoOrClaymore?: boolean;
 };
@@ -282,7 +284,9 @@ export type FormulaTemplate =
   | "catalyze"
   | "transform"
   | "lunar"
-  | "lunarDirect";
+  | "lunarDirect"
+  | "stellar"
+  | "stellarDirect";
 
 /**
  * One formula part's structured display data.

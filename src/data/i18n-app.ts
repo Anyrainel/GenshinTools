@@ -169,6 +169,7 @@ export const i18nAppData = {
     lunarCharged: { en: "Lunar Charged", zh: "月感电" },
     lunarBloom: { en: "Lunar Bloom", zh: "月绽放" },
     lunarCrystallize: { en: "Lunar Crystallize", zh: "月结晶" },
+    stellarConduct: { en: "Stellar-Conduct", zh: "星超导" },
   },
   abilities: {
     normal: { en: "Normal", zh: "普攻" },

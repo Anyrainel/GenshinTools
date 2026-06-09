@@ -17,6 +17,17 @@ The `show` output indicates which file the implementation is in. **[BUG]** if mi
 - Weapons: `weapon{rarity}{WeaponType}.ts` — rarity and weapon type must match.
 - Artifacts: 2pc bonus in `artifact2pc.ts`, 4pc bonus in `artifact4pc.ts`.
 
+### U0b. Beta Game Text (EN/ZH Conflicts)
+
+Applies to entities listed by `impl_audit.py beta` (data in `character_beta_*.json` / `weapon_beta_*.json`, not yet in official game JSON).
+
+Beta EN and ZH strings are often inconsistent. When they disagree on a **number** (multiplier, %, scale, hit count) or on **which stat zone** a bonus uses (e.g., flat `baseDmg` vs `cd`), **favor ZH** — it is the source of truth during beta.
+
+- **[BUG]** if implementation follows EN when ZH gives a different value or stat key.
+- Implement the ZH reading; note the EN discrepancy in a code comment only when useful for future reconciliation.
+- Do not defer to external sources (KQM, HHW, Wiki) for beta entities — they generally lack coverage.
+- Review and triage agents must apply this rule when classifying EN/ZH mismatches: treat EN-following as **[BUG]** / `actionable`, not `needs-data` pending locale verification.
+
 ### U1. `BuffTarget.receiver` Type
 
 Map every buff's game text to the correct receiver. Wrong receiver = **[BUG]**:

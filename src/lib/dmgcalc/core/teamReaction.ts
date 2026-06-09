@@ -8,7 +8,11 @@
 
 import type { Element, ElementalOrPhysical, ReactionType } from "@/data/enums";
 import { i18nAppData } from "@/data/i18n-app";
-import { LUNAR_REACTIONS, PHEC_ELEMENTS } from "../constants";
+import {
+  LUNAR_REACTIONS,
+  PHEC_ELEMENTS,
+  STELLAR_REACTIONS,
+} from "../constants";
 import type {
   CalcContext,
   FormulaEntry,
@@ -16,7 +20,11 @@ import type {
   I18nLabel,
   ReactionComboEntry,
 } from "../types";
-import { LunarFormula, TransformFormula } from "./damageFormula";
+import {
+  LunarFormula,
+  StellarFormula,
+  TransformFormula,
+} from "./damageFormula";
 import type { IFormulaProvider } from "./implModel";
 import { computeLunarRankWeights } from "./stackRank";
 import type { StatSheet } from "./statSheet";
@@ -29,6 +37,7 @@ const REACTION_DAMAGE_ELEMENT: Partial<
   overloaded: "Pyro",
   electroCharged: "Electro",
   superconduct: "Cryo",
+  stellarConduct: "Cryo",
   bloom: "Dendro",
   hyperbloom: "Dendro",
   burgeon: "Dendro",
@@ -42,6 +51,7 @@ const REACTION_TRIGGER_ELEMENTS: Partial<Record<ReactionType, Element[]>> = {
   overloaded: ["Pyro", "Electro"],
   electroCharged: ["Hydro", "Electro"],
   superconduct: ["Cryo", "Electro"],
+  stellarConduct: ["Cryo", "Electro"],
   swirl: ["Anemo"],
   bloom: ["Hydro", "Dendro"],
   hyperbloom: ["Electro"],
@@ -177,7 +187,8 @@ export class TeamReaction implements IFormulaProvider {
     for (const reaction of TRANSFORMATIVE_REACTIONS) {
       if (
         !teamMeta.hasReaction(reaction) &&
-        !(reaction === "bloom" && teamMeta.hasReaction("lunarBloom"))
+        !(reaction === "bloom" && teamMeta.hasReaction("lunarBloom")) &&
+        !(reaction === "superconduct" && teamMeta.hasReaction("stellarConduct"))
       )
         continue;
       const element = REACTION_DAMAGE_ELEMENT[reaction];
@@ -204,6 +215,27 @@ export class TeamReaction implements IFormulaProvider {
       ) {
         label = { en: "Bountiful Core", zh: "丰穰之核" };
       }
+
+      this.registerPerTriggerer(baseId, label, [{ formula }], eligible);
+    }
+
+    // Generate stellar reaction formulas (per-triggerer)
+    for (const reaction of STELLAR_REACTIONS) {
+      if (!teamMeta.hasReaction(reaction)) continue;
+      const element = REACTION_DAMAGE_ELEMENT[reaction];
+      if (!element) continue;
+
+      const baseId = `rx-${reaction}`;
+      const label = i18nAppData.reactions[reaction] ?? {
+        en: reaction,
+        zh: reaction,
+      };
+      const formula = new StellarFormula(0, {
+        element,
+        ability: "special",
+        reaction,
+      });
+      const eligible = this.findEligibleChars(reaction, teamElementChars);
 
       this.registerPerTriggerer(baseId, label, [{ formula }], eligible);
     }

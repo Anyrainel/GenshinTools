@@ -1,6 +1,10 @@
 import type { Element, Faction, ReactionType } from "@/data/enums";
 import { LUNAR_REACTIONS } from "../constants";
-import { DirectFormula, LunarDirectFormula } from "../core/damageFormula";
+import {
+  DirectFormula,
+  LunarDirectFormula,
+  StellarDirectFormula,
+} from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
@@ -1386,6 +1390,299 @@ class Linnea extends CharacterBase {
             formula: new LunarDirectFormula(millionTonMult, lcSkillTag, "def"),
             ...millionTonBespoke,
             offField: true,
+          },
+        ],
+      },
+    };
+  })();
+}
+
+const sandroneOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("sandrone", sandroneOption)
+class Sandrone extends CharacterBase {
+  private readonly radianceOn =
+    resolveOption(sandroneOption, this.option) === "on";
+
+  // Peak model: max 10 Refined Tactics stacks consumed on burst (P1)
+  private readonly refinedTacticsStacks = this.radianceOn ? 10 : 0;
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P3: Per 100 ATK → +0.7% Stellar-Conduct reactionBaseDmg%, cap 14%
+      new ScalingBuff(
+        cbs(this, "P3", ["passive"]),
+        { receiver: "team", filter: { reactions: ["stellarConduct"] } },
+        [],
+        "atk",
+        "reactionBaseDmg%",
+        0.00007,
+        0.14
+      ),
+    ];
+
+    // P2 (ZH/U0b): EM = 8% ATK (cap 160) — no 辉映 gate
+    buffs.push(
+      new ScalingBuff(
+        cbs(this, "P2", ["passive"]),
+        { receiver: "self" },
+        [],
+        "atk",
+        "em",
+        0.08,
+        160
+      )
+    );
+
+    // C1 (ZH/U0b): Team Stellar-Conduct DMG +30% in Decoding mode (peak: always on)
+    if (this.constellation >= 1) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C1", ["charge"]),
+          { receiver: "team", filter: { reactions: ["stellarConduct"] } },
+          [{ key: "reactionDmg%", value: 0.3 }]
+        )
+      );
+    }
+
+    // C6 (ZH/U0b): Stellar-Conduct DMG elevated 20% — unconditional at C6
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", []),
+          { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+          [{ key: "elevated%", value: 0.2 }]
+        )
+      );
+    }
+
+    if (this.radianceOn) {
+      // P1: Refined Tactics cleared on burst → ray deals 100% + stacks×10% of original
+      if (this.refinedTacticsStacks > 0) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "P1", ["Q"]),
+            {
+              receiver: "selfOnField",
+              filter: {
+                abilities: ["burst"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            [{ key: "baseDmg%", value: this.refinedTacticsStacks * 0.1 }]
+          )
+        );
+      }
+
+      // C2 (ZH/U0b): CA condensed beam CRIT DMG +40%; +20% per beam this Decoding (max 3)
+      if (this.constellation >= 2) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["charge"]),
+            {
+              receiver: "selfOnField",
+              filter: {
+                abilities: ["charge"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            [{ key: "cd", value: 0.4 }]
+          ),
+          new StatBuff(
+            cbs(this, "C2", ["charge"]),
+            {
+              receiver: "selfOnField",
+              filter: {
+                abilities: ["charge"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            // Peak Decoding: 3 beam stacks × 20%
+            [{ key: "cd", value: 0.6 }]
+          )
+        );
+      }
+    }
+
+    return buffs;
+  })();
+
+  // Rotation: NA > CA decoding (~5 beams) > E > Q; ~2 C4 coord procs per rotation
+  protected override get comboDescriptor(): ComboTemplate {
+    const lines: ComboTemplate = [
+      { id: "sandrone-normal", count: 1 },
+      { id: "sandrone-charge-sweep", count: 1 },
+      { id: "sandrone-charge-beam", count: 5 },
+      { id: "sandrone-skill", count: 1 },
+      { id: "sandrone-burst", count: 1 },
+    ];
+    if (this.radianceOn) {
+      lines.push(
+        { id: "sandrone-c4-coord", count: 0, bonus: [{ minC: 4, delta: 2 }] },
+        { id: "sandrone-c6-cluster", count: 0, bonus: [{ minC: 6, delta: 1 }] }
+      );
+    }
+    return lines;
+  }
+
+  protected readonly formulaMap = (() => {
+    const physNormal = {
+      element: "Physical" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const physPlunge = {
+      element: "Physical" as const,
+      ability: "plunge" as const,
+      reaction: "none" as const,
+    };
+    const cryoCharge = {
+      element: "Cryo" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const cryoBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const scCharge = {
+      element: "Cryo" as const,
+      ability: "charge" as const,
+      reaction: "stellarConduct" as const,
+    };
+    const scSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "stellarConduct" as const,
+    };
+    const scBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "stellarConduct" as const,
+    };
+
+    const eSecondShotBespoke =
+      this.radianceOn && this.refinedTacticsStacks > 0
+        ? {
+            bespokeBuffs: [
+              new StatBuff(
+                { ...cbs(this, "P1", ["E"]), maxStacks: 1 },
+                {
+                  receiver: "selfOnField",
+                  filter: {
+                    abilities: ["skill"],
+                    reactions: ["stellarConduct"],
+                  },
+                },
+                // Peak: Decoding Power > 50 → second shot deals 400% of original
+                [{ key: "baseDmg%", value: 3.0 }]
+              ),
+            ],
+          }
+        : {};
+
+    return {
+      "sandrone-normal": {
+        label: { zh: "普攻", en: "NA" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), physNormal) },
+          { formula: new DirectFormula(this.param("A", 2), physNormal) },
+          { formula: new DirectFormula(this.param("A", 3), physNormal) },
+        ],
+      },
+      "sandrone-plunge-low": {
+        label: { zh: "下落·低", en: "Plunge Low" },
+        parts: [{ formula: new DirectFormula(this.param("A", 9), physPlunge) }],
+      },
+      "sandrone-plunge-high": {
+        label: { zh: "下落·高", en: "Plunge High" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 10), physPlunge) },
+        ],
+      },
+      "sandrone-charge-sweep": {
+        label: { zh: "重击扫射", en: "CA Sweep" },
+        parts: [{ formula: new DirectFormula(this.param("A", 4), cryoCharge) }],
+      },
+      "sandrone-charge-beam": {
+        label: {
+          zh: this.radianceOn ? "重击冷凝射线·星超导" : "重击冷凝射线",
+          en: this.radianceOn ? "CA Beam (SC)" : "CA Beam",
+        },
+        parts: [
+          {
+            formula: this.radianceOn
+              ? new StellarDirectFormula(this.param("A", 6), scCharge)
+              : new DirectFormula(this.param("A", 5), cryoCharge),
+          },
+        ],
+      },
+      "sandrone-charge-overdrive": {
+        label: { zh: "功率过载射击", en: "Power Overdrive" },
+        parts: [{ formula: new DirectFormula(this.param("A", 7), cryoCharge) }],
+      },
+      "sandrone-skill": {
+        label: { zh: "E棱晶弹", en: "E Prism Shots" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), cryoSkill) },
+          {
+            formula: this.radianceOn
+              ? new StellarDirectFormula(this.param("E", 2), scSkill)
+              : new DirectFormula(this.param("E", 1), cryoSkill),
+            ...eSecondShotBespoke,
+          },
+        ],
+      },
+      "sandrone-burst": {
+        label: { zh: "Q", en: "Q" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), cryoBurst),
+            hits: 3,
+          },
+          {
+            formula: this.radianceOn
+              ? new StellarDirectFormula(this.param("Q", 3), scBurst)
+              : new DirectFormula(this.param("Q", 2), cryoBurst),
+          },
+        ],
+      },
+      "sandrone-c4-coord": {
+        label: { zh: "C4协同炮击", en: "C4 Coordinated Cannon" },
+        minC: 4,
+        when: this.radianceOn,
+        parts: [
+          {
+            formula: new StellarDirectFormula(1.25, scSkill, "atk"),
+          },
+        ],
+      },
+      "sandrone-c6-cluster": {
+        label: { zh: "C6集束射线", en: "C6 Cluster Beam" },
+        minC: 6,
+        when: this.radianceOn,
+        parts: [
+          {
+            formula: this.radianceOn
+              ? new StellarDirectFormula(0.8, scCharge, "atk")
+              : new DirectFormula(1.0, cryoCharge, "atk"),
+            hits: 4,
           },
         ],
       },

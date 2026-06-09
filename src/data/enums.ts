@@ -162,6 +162,7 @@ export type LunarReactionType =
   | "lunarCharged"
   | "lunarBloom"
   | "lunarCrystallize";
+export type StellarReactionType = "stellarConduct";
 export type ReactionType =
   | "none"
   // Amplifying
@@ -184,7 +185,9 @@ export type ReactionType =
   | "burning"
   | "crystallize"
   // Lunar
-  | LunarReactionType;
+  | LunarReactionType
+  // Stellar
+  | StellarReactionType;
 
 export type EnemyType =
   | "human"

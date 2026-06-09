@@ -304,4 +304,5 @@ export const TEAM_REACTION_OPTIONS: ReactionType[] = [
   "lunarCharged",
   "lunarBloom",
   "lunarCrystallize",
+  "stellarConduct",
 ];

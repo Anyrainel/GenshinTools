@@ -5,6 +5,7 @@ import {
 } from "@/data/gameStatsLoader";
 import { CharacterBase } from "@/lib/dmgcalc/core/implModel";
 import {
+  createArtifactSet,
   createCharacter,
   createWeapon,
   getOptionDef,
@@ -854,6 +855,30 @@ describe("resolveOption", () => {
   it("falls back to default for empty string", () => {
     expect(resolveOption(testOption, "")).toBe("alpha");
   });
+
+  it("falls back past disabled choices when team context is provided", () => {
+    const gatedOption = {
+      label: { zh: "测试条件", en: "Conditional Test" },
+      choices: [
+        {
+          value: "cryo",
+          label: { zh: "冰", en: "Cryo" },
+          when: (tm: TeamMeta) => tm.countByElement("Cryo") > 0,
+        },
+        { value: "none", label: { zh: "无", en: "None" } },
+      ],
+    } satisfies OptionDef;
+
+    expect(resolveOption(gatedOption, "", new TeamMeta(["diluc"]))).toBe(
+      "none"
+    );
+    expect(resolveOption(gatedOption, "cryo", new TeamMeta(["diluc"]))).toBe(
+      "none"
+    );
+    expect(resolveOption(gatedOption, "", new TeamMeta(["kaeya"]))).toBe(
+      "cryo"
+    );
+  });
 });
 
 describe("createCharacter / createWeapon", () => {
@@ -882,6 +907,43 @@ describe("createCharacter / createWeapon", () => {
     expect(() => createWeapon("nonexistent", 1, "diluc", meta)).toThrow(
       "No weapon registered"
     );
+  });
+
+  it("normalizes artifact options against team-gated choices", () => {
+    const nonCryoMeta = new TeamMeta(["diluc"]);
+
+    const defaultArtifact = createArtifactSet(
+      "blizzard_strayer",
+      "diluc",
+      nonCryoMeta
+    );
+    expect(defaultArtifact.buffs).toEqual([]);
+
+    const staleFrozenOption = createArtifactSet(
+      "blizzard_strayer",
+      "diluc",
+      nonCryoMeta,
+      { blizzard_strayer: "40" }
+    );
+    expect(staleFrozenOption.buffs).toEqual([]);
+  });
+
+  it("forwards combat options through custom artifact constructors", () => {
+    const hexereiMeta = new TeamMeta(["fischl", "sucrose"]);
+    const artifact = createArtifactSet(
+      "celestial_gift",
+      "fischl",
+      hexereiMeta,
+      { celestial_gift: "team" }
+    );
+
+    expect(
+      artifact.buffs.some(
+        (buff) =>
+          buff.target.receiver === "team" &&
+          buff.target.filter?.elements?.includes("Anemo")
+      )
+    ).toBe(true);
   });
 });
 

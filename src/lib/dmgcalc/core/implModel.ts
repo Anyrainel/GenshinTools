@@ -15,6 +15,7 @@ import type {
   TalentLevels,
 } from "../types";
 import { resolveComboDescriptor } from "./combo";
+import { getOptionDef, resolveOption } from "./registry";
 import type { StatBuff } from "./statBuff";
 import type { TeamMeta } from "./teamMeta";
 
@@ -30,6 +31,15 @@ export abstract class IFormulaProvider {
   abstract get formulaIds(): Record<string, I18nLabel>;
   /** Look up a formula entry by ID (used by all three damage paths) */
   abstract getFormulaEntry(formulaId: string): FormulaEntry | undefined;
+}
+
+function resolveProviderOption(
+  providerId: string,
+  rawOption: string,
+  teamMeta: TeamMeta
+): string {
+  const def = getOptionDef(providerId);
+  return def ? resolveOption(def, rawOption, teamMeta) : rawOption;
 }
 
 /**
@@ -55,7 +65,11 @@ export abstract class CharacterBase implements IStatProvider, IFormulaProvider {
     talentLevels?: TalentLevels
   ) {
     this.stats = resolveCharacterStats(charId, charLevel);
-    this.option = combatOpts[charId] ?? "";
+    this.option = resolveProviderOption(
+      charId,
+      combatOpts[charId] ?? "",
+      teamMeta
+    );
 
     const base = talentLevels ?? { auto: 10, skill: 10, burst: 10 };
     const info = charInfo[charId];
@@ -241,7 +255,11 @@ export abstract class WeaponBase implements IStatProvider {
     combatOpts: OptionMap = {}
   ) {
     this.stats = resolveWeaponStats(weaponId);
-    this.option = combatOpts[weaponId] ?? "";
+    this.option = resolveProviderOption(
+      weaponId,
+      combatOpts[weaponId] ?? "",
+      teamMeta
+    );
   }
 
   abstract readonly buffs: StatBuff[];
@@ -258,7 +276,11 @@ export abstract class ArtifactSetBase implements IStatProvider {
     readonly teamMeta: TeamMeta,
     combatOpts: OptionMap = {}
   ) {
-    this.option = combatOpts[artifactSetId] ?? "";
+    this.option = resolveProviderOption(
+      artifactSetId,
+      combatOpts[artifactSetId] ?? "",
+      teamMeta
+    );
   }
 
   abstract readonly stats: StatEntry[];

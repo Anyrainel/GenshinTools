@@ -15,6 +15,8 @@ const TEMPLATE_KEYS: Record<FormulaTemplate, string> = {
   transform: "TransformativeReaction",
   lunar: "LunarReaction",
   lunarDirect: "LunarDirect",
+  stellar: "LunarReaction",
+  stellarDirect: "LunarDirect",
 };
 
 /**

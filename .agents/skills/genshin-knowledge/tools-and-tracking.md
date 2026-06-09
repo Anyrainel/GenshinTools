@@ -22,7 +22,7 @@ uv run --project scripts/pyproject.toml scripts/impl_audit.py <command> [args]
 
 **`beta [C|W]`** — List characters/weapons that exist only in beta data files (not yet in official `character_{4,5}_*.json` / `weapon_*.json`), with their metadata (rarity, element, region, type) and implementation status. Omit mode to list both. Use this to discover unreleased entities that still need damage implementations.
 
-**Beta EN/ZH conflicts**: beta translations are often inconsistent. When EN and ZH text disagree on a number (multiplier, %, scale, hit count), **favor ZH** — it is the source of truth during beta. Implement the ZH value; note the discrepancy in a comment or tracker item only if the magnitude is large enough to matter. External sources (KQM, HHW, Wiki) generally do not cover beta entities, so don't suggest consulting them.
+**Beta EN/ZH conflicts**: see **U0b** in `translator-rules.md` — ZH is authoritative when beta locales disagree. Review, triage, and implement agents all read that rule.
 
 ---
 

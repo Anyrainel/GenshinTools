@@ -29,7 +29,7 @@ When `Entities:` is present, `<scope>` can be omitted.
 
 Read these files (you need all of them throughout the review):
 
-1. `.agents/skills/genshin-knowledge/translator-rules.md` — the review checklist (U-series universal, S-series character-only)
+1. `.agents/skills/genshin-knowledge/translator-rules.md` — the review checklist (U-series universal, S-series character-only), including **U0b beta EN/ZH conflicts (favor ZH)**
 2. `.agents/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
 
 Consult as needed (don't need to load up-front):

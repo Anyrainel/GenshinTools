@@ -25,7 +25,7 @@ Multiple scopes can be comma-separated (e.g., `Scopes: mondstadt, liyue, inazuma
 
 Read these files:
 
-1. `.agents/skills/genshin-knowledge/translator-rules.md` — review rules (to validate rule citations and understand what the review agent flagged)
+1. `.agents/skills/genshin-knowledge/translator-rules.md` — review rules (to validate rule citations and understand what the review agent flagged), including **U0b beta EN/ZH conflicts (favor ZH — do not defer to locale verification)**
 2. `.agents/skills/genshin-knowledge/elemental-reactions.md` — reaction reference
 3. `.agents/skills/genshin-knowledge/tools-and-tracking.md` — tracker YAML schema and state machine
 

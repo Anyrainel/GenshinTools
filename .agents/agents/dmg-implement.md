@@ -28,7 +28,7 @@ Ad-hoc tasks skip Step 1 (tracker loading) and go directly to Step 2. No tracker
 
 Read these files:
 
-1. `.agents/skills/genshin-knowledge/translator-rules.md` — implementation checklist (U-series universal, S-series character-only). Same checklist the reviewer uses — apply it while writing code to catch scope mistakes, faction filters, per-char stacks, `offField` marking, etc. before you commit.
+1. `.agents/skills/genshin-knowledge/translator-rules.md` — implementation checklist (U-series universal, S-series character-only). Same checklist the reviewer uses — apply it while writing code to catch scope mistakes, faction filters, per-char stacks, `offField` marking, **U0b beta EN/ZH conflicts (favor ZH)**, etc. before you commit.
 2. `.agents/skills/genshin-knowledge/tools-and-tracking.md` — tracker schema
 
 Consult as needed (don't need to load up-front):

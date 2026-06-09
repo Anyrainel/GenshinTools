@@ -13,6 +13,7 @@ import {
   LUNAR_SUPERSEDES,
   REACTION_AURA_TRIGGER,
   REACTION_ELEMENT_REQUIREMENTS,
+  STELLAR_SUPERSEDES,
 } from "../constants";
 
 /**
@@ -104,7 +105,15 @@ export class TeamMeta {
     return Object.values(this.factions).filter((f) => f === faction).length;
   }
 
-  hasReaction(reaction: ReactionType, charId?: string): boolean {
+  /**
+   * Element + enabler checks for a reaction, without lunar/stellar supersede.
+   * Used internally so stellar supersede can test Stellar-Conduct availability
+   * without recursive hasReaction calls.
+   */
+  private meetsReactionRequirements(
+    reaction: ReactionType,
+    charId?: string
+  ): boolean {
     const req = REACTION_ELEMENT_REQUIREMENTS[reaction];
     if (!req) return false;
 
@@ -119,21 +128,17 @@ export class TeamMeta {
     // fixes the aura side — the character must supply the trigger element.
     const auraTrigger = REACTION_AURA_TRIGGER[reaction];
     if (auraTrigger && this.enemyAura) {
-      // Find pairings where the enemy aura matches the aura side
       const matchingPairs = auraTrigger.filter(
         (p) => p.aura === this.enemyAura
       );
       if (matchingPairs.length === 0) return false;
 
       if (charEl) {
-        // Character's element must be the trigger
         return matchingPairs.some((p) => p.trigger === charEl);
       }
-      // No charId — check if any team member can be the trigger
       return matchingPairs.some((p) => teamElements.includes(p.trigger));
     }
 
-    // Fallback: check basic element requirements for the team
     if (this.enemyAura && !teamElements.includes(this.enemyAura)) {
       teamElements.push(this.enemyAura);
     }
@@ -148,16 +153,20 @@ export class TeamMeta {
 
     if (!hasElements || !charParticipates) return false;
 
-    // Check a 5-star Moonsign faction member participates in lunar reactions
+    // Sandrone P3: Stellar-Conduct requires her in the party (Cryo+Electro alone is not enough).
+    if (req.requiresStellarConductEnabler) {
+      if (!this.characters.includes("sandrone")) return false;
+    }
+
     if (req.requiresMoonsign5StarParticipant) {
       const validMoonsign5 = this.characters.some((id) => {
         const isMoonsign5 =
           this.factions[id] === "Moonsign" && this.rarities[id] === 5;
         if (!isMoonsign5) return false;
-        const charEl = this.elements[id];
+        const participantEl = this.elements[id];
         return (
-          charEl != null &&
-          req.requiredElements.some((group) => group.includes(charEl))
+          participantEl != null &&
+          req.requiredElements.some((group) => group.includes(participantEl))
         );
       });
       if (!validMoonsign5) return false;
@@ -171,13 +180,31 @@ export class TeamMeta {
       if (!hasGeoOrClaymore) return false;
     }
 
+    return true;
+  }
+
+  hasReaction(reaction: ReactionType, charId?: string): boolean {
+    if (!this.meetsReactionRequirements(reaction, charId)) return false;
+
+    const teamElements = Object.values(this.elements).filter(
+      (e): e is Element => e != null
+    );
+
     // Lunar reactions supersede base reactions when possible.
-    // e.g. lunarCharged replaces electroCharged on teams with a Moonsign 5★.
     const supersede = LUNAR_SUPERSEDES[reaction];
     if (supersede && this.hasReaction(supersede.lunar)) {
-      // Full supersede unless team has elements that still trigger the base
       if (!supersede.survivalElements) return false;
       return supersede.survivalElements.some((el) => teamElements.includes(el));
+    }
+
+    // Sandrone P3 (ZH): 超导 → 星超导 — transformative Superconduct is replaced,
+    // not coexistent, when Stellar-Conduct is available.
+    const stellarSupersede = STELLAR_SUPERSEDES[reaction];
+    if (
+      stellarSupersede &&
+      this.meetsReactionRequirements(stellarSupersede.stellar, charId)
+    ) {
+      return false;
     }
 
     return true;

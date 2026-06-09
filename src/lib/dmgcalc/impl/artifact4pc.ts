@@ -6,7 +6,7 @@ import { ArtifactSetBase } from "../core/implModel";
 import { RegisterArtifactSet, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { TeamMeta } from "../core/teamMeta";
-import type { OptionDef } from "../types";
+import type { OptionDef, OptionMap } from "../types";
 import { getReactionAuraElements } from "./helpers";
 
 // Artifact 4-Piece Set Bonuses
@@ -1409,8 +1409,13 @@ class CelestialGift4pc extends ArtifactSetBase {
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[];
 
-  constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
-    super(artifactSetId, charId, teamMeta);
+  constructor(
+    artifactSetId: string,
+    charId: string,
+    teamMeta: TeamMeta,
+    combatOpts: OptionMap = {}
+  ) {
+    super(artifactSetId, charId, teamMeta, combatOpts);
     const isHexerei = teamMeta.factions[charId] === "Hexerei";
     const isSecretRite = teamMeta.countByFaction("Hexerei") >= 2;
     const wielderElement = teamMeta.elements[charId];

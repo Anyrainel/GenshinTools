@@ -127,3 +127,35 @@
     realistic default rotation. The Q formula stays registered in formulaMap so
     users who do run the burst can enable it manually; only the default-rotation
     contribution is intentionally 0. No change needed.
+
+- id: sandrone-zh-unconditional-buffs
+  entity: sandrone
+  rule: U0b
+  status: completed
+  category: bug
+  summary: >
+    P2 EM, C1 team Stellar-Conduct reactionDmg%, and C6 elevated% are emitted only
+    inside the radianceOn branch, but ZH does not require 辉映·星超导 for P2 or C1
+    (C1 only requires 解算模式); C6 擢升 is fully unconditional at C6.
+  detail: >
+    Moved P2 ScalingBuff (em from ATK, cap 160), C1 team reactionDmg% +30% (cbs
+    charge trigger), and C6 elevated% +20% (constellation >= 6 only) outside
+    radianceOn in character5NodKrai.ts. P1 Refined Tactics and C2 CRIT DMG remain
+    radiance-gated.
+
+- id: sandrone-stellar-coefficient
+  entity: sandrone
+  rule: S1
+  status: open
+  category: needs-data
+  summary: >
+    StellarFormula / StellarDirectFormula math is unverified: transformative
+    coefficient assumed 1.5 (superconduct parity), EM bonus copied from lunar-style
+    6/(2000+EM), and StellarDirect uses the same directCoeff on ATK×talent% hits.
+  detail: >
+    Game text describes Stellar-Conduct modifiers (reactionBaseDmg%, reactionDmg%,
+    elevated%, separate SC talent param rows) but not the base transformative
+    coefficient or EM curve. Current impl in damageFormula.ts STELLAR_REACTION_
+    COEFFICIENTS and StellarFormula.buildExpr. Needs in-game or datamine verification
+    before closing. Supersede policy (超导→星超导, not coexistence) is implemented in
+    teamMeta.hasReaction + teamReaction; coefficient is independent of that choice.

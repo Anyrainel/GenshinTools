@@ -248,4 +248,5 @@ export const REACTION_COLORS: Partial<Record<ReactionType, string>> = {
   lunarCharged: "#B8A5E3", // Lighter electro-charged purple
   lunarBloom: "#A5D86E", // Lighter bloom green
   lunarCrystallize: "#FFE082", // Lighter Geo golden
+  stellarConduct: "#9AD4FF", // Cryo-Electro stellar (bright icy blue)
 };

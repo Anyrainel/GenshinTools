@@ -3,6 +3,7 @@ import type {
   LunarReactionType,
   ReactionType,
   StatKey,
+  StellarReactionType,
 } from "@/data/enums";
 import type { CalcContext, ReactionRequirement } from "./types";
 
@@ -32,6 +33,8 @@ export const LUNAR_REACTIONS: LunarReactionType[] = [
   "lunarCrystallize",
 ];
 
+export const STELLAR_REACTIONS: StellarReactionType[] = ["stellarConduct"];
+
 export const PHEC_ELEMENTS: Element[] = [
   "Pyro",
   "Hydro",
@@ -49,6 +52,10 @@ export const REACTION_ELEMENT_REQUIREMENTS: Record<
   overloaded: { requiredElements: [["Pyro"], ["Electro"]] },
   electroCharged: { requiredElements: [["Hydro"], ["Electro"]] },
   superconduct: { requiredElements: [["Cryo"], ["Electro"]] },
+  stellarConduct: {
+    requiredElements: [["Cryo"], ["Electro"]],
+    requiresStellarConductEnabler: true,
+  },
   swirl: {
     requiredElements: [["Anemo"], PHEC_ELEMENTS],
   },
@@ -150,6 +157,19 @@ export const LUNAR_SUPERSEDES: Partial<
     lunar: "lunarCrystallize",
     survivalElements: ["Pyro", "Electro", "Cryo"],
   },
+};
+
+/**
+ * Stellar-Conduct supersedes transformative Superconduct when Sandrone is in
+ * the party (Sandrone P3: party Superconduct procs become Stellar-Conduct).
+ * hasReaction("superconduct") returns false in that case; only one transformative
+ * Cryo+Electro proc exists. Cryo+Electro team resonance (Physical RES shred) is
+ * unchanged — it is not gated by this map.
+ */
+export const STELLAR_SUPERSEDES: Partial<
+  Record<ReactionType, { stellar: StellarReactionType }>
+> = {
+  superconduct: { stellar: "stellarConduct" },
 };
 
 /** Stats that can appear on artifacts, for idle stats extraction. */

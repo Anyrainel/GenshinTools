@@ -233,6 +233,29 @@ class SkywardPride extends WeaponBase {
   ];
 }
 
+@RegisterWeapon("a_teaspoon_of_transcendence")
+class ATeaspoonOfTranscendence extends WeaponBase {
+  // ATK% + Surmount (ZH/U0b): max 3 stacks of Stellar-Conduct DMG after CA hits
+  readonly buffs = [
+    new StatBuff(wbs(this), { receiver: "self" }, [
+      {
+        key: "atk%",
+        value: r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
+      },
+    ]),
+    new StatBuff(
+      wbs(this, ["charge"]),
+      { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+      [
+        {
+          key: "reactionDmg%",
+          value: 3 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
+  ];
+}
+
 @RegisterWeapon("beacon_of_the_reed_sea")
 class BeaconOfTheReedSea extends WeaponBase {
   // Both ATK buffs assumed active; HP% only when NOT shielded

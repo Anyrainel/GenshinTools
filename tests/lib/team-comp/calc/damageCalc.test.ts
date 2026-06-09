@@ -81,6 +81,39 @@ describe("TeamMeta — Dendro team", () => {
   });
 });
 
+describe("TeamMeta — stellarConduct supersede", () => {
+  // Cryo + Electro without Sandrone → Superconduct only
+  const cryoElectroMeta = new TeamMeta([
+    "kamisato_ayaka",
+    "fischl",
+    "bennett",
+    "xingqiu",
+  ]);
+
+  it("has superconduct when Cryo+Electro without Sandrone enabler", () => {
+    expect(cryoElectroMeta.hasReaction("superconduct")).toBe(true);
+    expect(cryoElectroMeta.hasReaction("stellarConduct")).toBe(false);
+  });
+
+  it("superconduct and stellarConduct are not both available on the same team", () => {
+    const meta = new TeamMeta([
+      "kamisato_ayaka",
+      "fischl",
+      "bennett",
+      "xingqiu",
+    ]);
+    const stellarAvailable = meta.hasReaction("stellarConduct");
+    const superconductAvailable = meta.hasReaction("superconduct");
+    expect(stellarAvailable && superconductAvailable).toBe(false);
+  });
+
+  it("stellarConduct requires Sandrone in party (enabler gate)", () => {
+    expect(cryoElectroMeta.characters.includes("sandrone")).toBe(false);
+    expect(cryoElectroMeta.hasReaction("stellarConduct")).toBe(false);
+    expect(cryoElectroMeta.hasReaction("superconduct")).toBe(true);
+  });
+});
+
 describe("TeamMeta — charLevels", () => {
   it("stores charLevels passed to constructor", () => {
     const meta = new TeamMeta(["hu_tao", "xingqiu"], {}, {}, undefined, {

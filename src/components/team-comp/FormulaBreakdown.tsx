@@ -951,6 +951,9 @@ const RENDERERS: Record<FormulaTemplate, React.FC<RendererProps>> = {
   transform: TransformEq,
   lunar: LunarEq,
   lunarDirect: LunarDirectEq,
+  // Stellar-Conduct uses the same equation structure as lunar reactions
+  stellar: LunarEq,
+  stellarDirect: LunarDirectEq,
 };
 
 export function FormulaBreakdown({
