@@ -2,6 +2,21 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-06-09
+
+### features
+- Artifact upgrade recommendations now have finer apply-to-game controls: apply one character, skip unchanged equipment slots, and protect artifacts frozen in Team Comp
+- Account Data import now offers direct latest GOODCapture / GOODScanner downloads while keeping the GitHub project link
+- Updated Nod-Krai data: Lohen and Disaster and Remorse moved into the official archive, with beta data for Sandrone and A Teaspoon of Transcendence
+- Added Sandrone damage formulas, Stellar-Conduct reaction calculation, and A Teaspoon of Transcendence weapon buffs
+- Artifact hover cards now show recorded initial substat values, making upgrade starting points easier to judge
+
+### fixes
+- Fixed 2+2 artifact set matching so upgrade recommendations keep the correct set combinations more reliably
+- Fixed ER calculation for alternate bursts and action variants, so characters like Varesa and Flins use the right energy costs and refunds
+- Weapon and artifact choice now pick team-appropriate combat options for candidate gear instead of always using the highest-buff state
+- Hu Tao C6 is no longer counted as a stable CR budget source, preventing recommendations from over-suppressing her CR
+
 ## 2026-05-30
 
 ### features
