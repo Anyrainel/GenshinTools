@@ -108,6 +108,9 @@ export function runUpgradePassForCharacter(
       )
       .map((a) => projectUpgrade(a, luck))
   );
+  // In-build artifacts deliberately skip the blocked/protected filter:
+  // upgrading an artifact in place keeps it on its owner, so frozen loadouts
+  // stay intact, and in-build ids are always part of the own-tier blocked set.
   const inBuildUpgradeBySlot = bucketBySlot(
     pool
       .filter((a) => inBuildIds.has(a.id) && isUpgradeable(a))
@@ -138,7 +141,7 @@ export function runUpgradePassForCharacter(
       const { finalScore } = scoreFullBuild(
         next,
         config.weights,
-        config.targetMainStats,
+        config.targetMainStatWeights,
         config.crBudget
       );
       const diff = finalScore - baseScore;
@@ -162,7 +165,7 @@ export function runUpgradePassForCharacter(
       const { finalScore } = scoreFullBuild(
         next,
         config.weights,
-        config.targetMainStats,
+        config.targetMainStatWeights,
         config.crBudget
       );
       const diff = finalScore - baseScore;
@@ -194,7 +197,7 @@ export function runUpgradePassForCharacter(
         const { finalScore: s2a } = scoreFullBuild(
           next,
           config.weights,
-          config.targetMainStats,
+          config.targetMainStatWeights,
           config.crBudget
         );
         if (s2a - baseScore >= minDiff) {
@@ -222,7 +225,7 @@ export function runUpgradePassForCharacter(
             const { finalScore } = scoreFullBuild(
               trial,
               config.weights,
-              config.targetMainStats,
+              config.targetMainStatWeights,
               config.crBudget
             );
             const diff = finalScore - baseScore;
@@ -262,7 +265,7 @@ export function runUpgradePassForCharacter(
             const { finalScore } = scoreFullBuild(
               trial,
               config.weights,
-              config.targetMainStats,
+              config.targetMainStatWeights,
               config.crBudget
             );
             const diff = finalScore - baseScore;
@@ -378,9 +381,12 @@ function isMaxLevel(art: ArtifactData): boolean {
 }
 
 /**
- * Project a submax artifact to its max-level state, distributing the remaining
- * upgrade rolls equally across all 4 substats. For 5★ at level <4 with an
- * unactivated 4th line, the first +4 upgrade activates that line first.
+ * Project a submax artifact to its max-level state. Upgrade rolls land at
+ * fixed level thresholds (4/8/.../max), so the remaining roll count is
+ * floor(max/4) − floor(level/4). Known unactivated lines are activated first
+ * (one roll each, using the recorded value when the scanner revealed it);
+ * the rest of the rolls are split equally across the active lines — the
+ * unbiased expectation, since each roll hits one of the 4 lines uniformly.
  */
 function projectUpgrade(
   art: ArtifactData,
@@ -391,25 +397,19 @@ function projectUpgrade(
     return { ...art, source: "upgrade", sourceArtifactId: art.id };
   }
   const substats: Partial<Record<SubStat, number>> = { ...art.substats };
-  let remainingLevels = max - art.level;
+  let remainingRolls = Math.floor(max / 4) - Math.floor(art.level / 4);
 
-  // Special case: 5★ lv 0–3 with 3 active + ≥1 unactivated → first upgrade
-  // activates the 4th line.
-  const activated = Object.keys(substats) as SubStat[];
-  const unactivated = Object.keys(art.unactivatedSubstats ?? {}) as SubStat[];
-  if (
-    art.rarity === 5 &&
-    art.level < 4 &&
-    activated.length === 3 &&
-    unactivated.length > 0
-  ) {
-    const fourth = unactivated[0];
-    substats[fourth] =
-      (substats[fourth] ?? 0) + getExpectedRollValue(fourth, art.rarity, luck);
-    remainingLevels -= 4;
+  for (const [stat, recorded] of Object.entries(
+    art.unactivatedSubstats ?? {}
+  ) as [SubStat, number][]) {
+    if (remainingRolls <= 0) break;
+    if (Object.keys(substats).length >= 4) break;
+    substats[stat] =
+      (substats[stat] ?? 0) +
+      (recorded > 0 ? recorded : getExpectedRollValue(stat, art.rarity, luck));
+    remainingRolls -= 1;
   }
 
-  const remainingRolls = Math.max(0, Math.floor(remainingLevels / 4));
   const stats = Object.keys(substats) as SubStat[];
   if (stats.length > 0 && remainingRolls > 0) {
     const perStat = remainingRolls / stats.length;

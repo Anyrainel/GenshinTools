@@ -48,12 +48,12 @@ const baseCrBudget: CrBudgetResult = {
   totalNonArtifactCr: 0.05,
 };
 
-const defaultTargetMainStats: Record<Slot, Set<string>> = {
-  flower: new Set(["hp"]),
-  plume: new Set(["atk"]),
-  sands: new Set(["atk%"]),
-  goblet: new Set(["atk%"]),
-  circlet: new Set(["cr"]),
+const defaultTargetMainStats: Record<Slot, ReadonlyMap<string, number>> = {
+  flower: new Map([["hp", 100]]),
+  plume: new Map([["atk", 100]]),
+  sands: new Map([["atk%", 100]]),
+  goblet: new Map([["atk%", 100]]),
+  circlet: new Map([["cr", 100]]),
 };
 
 describe("buildOptimizer", () => {
@@ -107,7 +107,7 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: {
         composition: "4pc",
         artifactSet: "CrimsonWitchOfFlames",
@@ -160,7 +160,7 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: highCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: {
         composition: "4pc",
         artifactSet: "CrimsonWitchOfFlames",
@@ -224,7 +224,10 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: { ...baseCrBudget, totalNonArtifactCr: 0.95 },
-      targetMainStats: { ...defaultTargetMainStats, circlet: new Set(["cd"]) },
+      targetMainStatWeights: {
+        ...defaultTargetMainStats,
+        circlet: new Map([["cd", 100]]),
+      },
       setConstraint: {
         composition: "4pc",
         artifactSet: "CrimsonWitchOfFlames",
@@ -244,7 +247,10 @@ describe("buildOptimizer", () => {
     };
     const scoreConfig = {
       weights: testWeights,
-      targetMainStats: { ...defaultTargetMainStats, circlet: new Set(["cd"]) },
+      targetMainStats: {
+        ...defaultTargetMainStats,
+        circlet: new Map<string, number>([["cd", 100]]),
+      },
       crBudget: { ...baseCrBudget, totalNonArtifactCr: 0.95 },
     };
     expect(
@@ -283,7 +289,7 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: {
         composition: "4pc",
         artifactSet: "CrimsonWitchOfFlames",
@@ -357,7 +363,7 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: {
         composition: "2pc+2pc",
         halfSet1: "atk%-18",
@@ -423,7 +429,7 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: {
         composition: "2pc+2pc",
         halfSet1: "atk%-18",
@@ -448,7 +454,7 @@ describe("buildOptimizer", () => {
       weights: testWeights,
       candidates,
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: {
         composition: "4pc",
         artifactSet: "CrimsonWitchOfFlames",

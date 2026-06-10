@@ -316,6 +316,7 @@ export function ScoreUpView({
         scoreResult: ArtifactScoreResult;
         recommendations: ScoreUpAction[];
         allocatedBuild: CharacterActions["allocatedBuild"];
+        currentScore: number | null;
         allocationStatus: "pending" | "allocated" | "unallocated";
       }[]
     > = {};
@@ -333,6 +334,7 @@ export function ScoreUpView({
       const charRecs = displayedRecommendations.perCharacter[char.key];
       const recommendations = charRecs?.actions ?? [];
       const allocatedBuild = charRecs?.allocatedBuild ?? null;
+      const currentScore = charRecs?.currentScore ?? null;
       const allocationStatus =
         !charRecs && isCalculating
           ? "pending"
@@ -340,23 +342,19 @@ export function ScoreUpView({
             ? "allocated"
             : "unallocated";
 
+      const entry = {
+        char,
+        scoreResult,
+        recommendations,
+        allocatedBuild,
+        currentScore,
+        allocationStatus,
+      } as const;
       if (!byTier[tier]) {
         if (!byTier.Pool) byTier.Pool = [];
-        byTier.Pool.push({
-          char,
-          scoreResult,
-          recommendations,
-          allocatedBuild,
-          allocationStatus,
-        });
+        byTier.Pool.push(entry);
       } else {
-        byTier[tier].push({
-          char,
-          scoreResult,
-          recommendations,
-          allocatedBuild,
-          allocationStatus,
-        });
+        byTier[tier].push(entry);
       }
     }
 
@@ -807,6 +805,7 @@ export function ScoreUpView({
                   scoreResult,
                   recommendations,
                   allocatedBuild,
+                  currentScore,
                   allocationStatus,
                 }) => (
                   <ScoreUpCard
@@ -816,6 +815,7 @@ export function ScoreUpView({
                     recommendations={recommendations}
                     allocatedBuild={allocatedBuild}
                     allocationStatus={allocationStatus}
+                    currentScore={currentScore}
                     score={scoreResult}
                     artifactLookup={artifactLookup}
                     onApplyCharacter={handleOpenCharacterApply}

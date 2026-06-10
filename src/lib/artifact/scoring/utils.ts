@@ -119,10 +119,40 @@ export function computeCrDeduction(
   nonArtifactCr: number,
   crWeight: number
 ): number {
-  const artifactCrBudget = 1.0 - nonArtifactCr;
+  const artifactCrBudget = Math.max(0, 1.0 - nonArtifactCr);
   const excessCr = Math.max(0, totalArtifactCr - artifactCrBudget);
   if (excessCr <= 0) return 0;
   return excessCr * 100 * SUBSTAT_COEFFICIENTS.cr * (crWeight / 100);
+}
+
+/**
+ * CR deduction when CR sources are credited at different weights (substat CR
+ * at the build's cr substat weight, a CR main stat at its slot main-stat
+ * weight). The budget keeps the highest-weighted CR; everything beyond is
+ * deducted at exactly the rate it was credited, so over-cap CR nets zero.
+ *
+ * With a single source this reduces to computeCrDeduction.
+ */
+export function computeWeightedCrDeduction(
+  crSources: ReadonlyArray<{ amount: number; weightPct: number }>,
+  nonArtifactCr: number
+): number {
+  const budget = Math.max(0, 1.0 - nonArtifactCr);
+  const sorted = crSources
+    .filter((source) => source.amount > 0)
+    .sort((a, b) => b.weightPct - a.weightPct);
+  let remaining = budget;
+  let deduction = 0;
+  for (const source of sorted) {
+    const kept = Math.min(source.amount, remaining);
+    remaining -= kept;
+    const excess = source.amount - kept;
+    if (excess > 0) {
+      deduction +=
+        excess * 100 * SUBSTAT_COEFFICIENTS.cr * (source.weightPct / 100);
+    }
+  }
+  return deduction;
 } /** Create empty sub rolls record */
 
 export function emptySubRolls(): Record<

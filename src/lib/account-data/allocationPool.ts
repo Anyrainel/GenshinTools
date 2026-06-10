@@ -8,9 +8,32 @@
  *
  * The upgrade pass (separate module) is what reasons about upgrade actions.
  */
-import { allSlots, type Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
+import { allSlots, type Slot, type Tier } from "@/data/enums";
+import type { AccountData, ArtifactData, TierAssignment } from "@/data/types";
 import type { CandidateArtifact } from "./candidatePool";
+
+/**
+ * Collect every artifact eligible for allocation or upgrade search:
+ * unequipped inventory plus equipped artifacts, optionally excluding
+ * artifacts worn by Pool-tier characters. Shared by the tier waterfall
+ * and the scoreUp action engine so their pools cannot drift apart.
+ */
+export function collectEligibleArtifacts(
+  accountData: AccountData,
+  tierAssignments: TierAssignment,
+  allowPoolArtifactSteals: boolean
+): ArtifactData[] {
+  return [
+    ...accountData.extraArtifacts,
+    ...accountData.characters.flatMap((character) => {
+      const ownerTier: Tier = tierAssignments[character.key]?.tier || "Pool";
+      if (!allowPoolArtifactSteals && ownerTier === "Pool") return [];
+      return Object.values(character.artifacts).filter(
+        (artifact): artifact is ArtifactData => !!artifact
+      );
+    }),
+  ];
+}
 
 /**
  * Build per-slot candidate lists from an unclaimed artifact pool. The

@@ -1,11 +1,13 @@
 import type { Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";
-import { getMainStatValue } from "@/data/utils";
 import {
   type StatWeightMap,
-  scoreSlotWithMainStat,
+  scoreSlotWithMainStatWeights,
 } from "../artifact/scoring/artifactScore";
-import { computeCrDeduction } from "../artifact/scoring/utils";
+import {
+  computeWeightedCrDeduction,
+  getMainStatValueAtLevel,
+} from "../artifact/scoring/utils";
 import type { CandidateArtifact } from "./candidatePool";
 import type { CrBudgetResult } from "./maxCrBuff";
 import { enumerateConcreteTwoPieceSetPairs } from "./setConstraints";
@@ -14,7 +16,8 @@ export interface BuildOptimizerConfig {
   weights: StatWeightMap;
   candidates: Record<Slot, CandidateArtifact[]>;
   crBudget: CrBudgetResult;
-  targetMainStats: Record<Slot, Set<string>>;
+  /** Accepted main stats per slot with their effective weight percent. */
+  targetMainStatWeights: Record<Slot, ReadonlyMap<string, number>>;
   /** Optional artifact shadow prices used only to rank generated builds. */
   artifactPrices?: ReadonlyMap<string, number>;
   slotCaps?: {
@@ -47,21 +50,33 @@ export interface BuildOptimizerResult {
   combinationsEvaluated: number;
 }
 
-/** Extract total CR contribution from a candidate artifact (main + sub, in decimal). */
-function getCandidateCr(art: CandidateArtifact): number {
-  let cr = 0;
-  if (art.mainStatKey === "cr") {
-    cr += getMainStatValue("cr", art.rarity) / 100;
-  }
-  if (art.substats.cr) {
-    cr += art.substats.cr / 100;
-  }
-  return cr;
+/**
+ * Extract CR contributions from a candidate artifact, split by source
+ * (decimal). Main-stat CR uses the at-level value so the cap accounting
+ * matches the at-level credit from scoreSlotWithMainStatWeights.
+ */
+function getCandidateCrParts(art: CandidateArtifact): {
+  mainCr: number;
+  subCr: number;
+} {
+  return {
+    mainCr:
+      art.mainStatKey === "cr"
+        ? getMainStatValueAtLevel("cr", art.rarity, art.level) / 100
+        : 0,
+    subCr: (art.substats.cr ?? 0) / 100,
+  };
 }
 
-/** Top-N min-heap for tracking best builds. */
+/**
+ * Top-N min-heap for tracking best builds, unique by artifact-ID signature.
+ * Set-composition patterns can re-evaluate the same 5-artifact assignment
+ * (e.g. an all-on-set 4pc build matches all 5 flex patterns); without dedup
+ * those duplicates evict genuinely distinct runner-up builds.
+ */
 class TopNTracker {
   private readonly items: OptimizedBuild[] = [];
+  private readonly signatures = new Set<string>();
   private readonly n: number;
   private minScore = Number.NEGATIVE_INFINITY;
 
@@ -69,15 +84,19 @@ class TopNTracker {
     this.n = n;
   }
 
-  insert(build: OptimizedBuild): void {
+  insert(build: OptimizedBuild, signature: string): void {
+    if (this.signatures.has(signature)) return;
     if (this.items.length < this.n) {
       this.items.push(build);
+      this.signatures.add(signature);
       if (this.items.length === this.n) {
         this.items.sort((a, b) => rankScore(a) - rankScore(b));
         this.minScore = rankScore(this.items[0]);
       }
     } else if (rankScore(build) > this.minScore) {
+      this.signatures.delete(buildSignature(this.items[0]));
       this.items[0] = build;
+      this.signatures.add(signature);
       this.items.sort((a, b) => rankScore(a) - rankScore(b));
       this.minScore = rankScore(this.items[0]);
     }
@@ -92,6 +111,14 @@ class TopNTracker {
   getResults(): OptimizedBuild[] {
     return [...this.items].sort((a, b) => rankScore(b) - rankScore(a));
   }
+}
+
+/** Slot-order-independent identity of a build's 5 artifacts. */
+function buildSignature(build: OptimizedBuild): string {
+  return allSlots
+    .map((slot) => build.artifacts[slot]?.id ?? "")
+    .sort()
+    .join("|");
 }
 
 function rankScore(build: OptimizedBuild): number {
@@ -206,7 +233,7 @@ export function optimizeBuild(
     weights,
     candidates,
     crBudget,
-    targetMainStats,
+    targetMainStatWeights,
     artifactPrices,
     slotCaps,
     setConstraint,
@@ -222,10 +249,10 @@ export function optimizeBuild(
   for (const slot of slots) {
     const current = candidates[slot].find((c) => c.source === "current");
     if (current) {
-      currentScore += scoreSlotWithMainStat(
+      currentScore += scoreSlotWithMainStatWeights(
         current,
         weights,
-        targetMainStats[slot]
+        targetMainStatWeights[slot]
       );
     }
   }
@@ -244,6 +271,8 @@ export function optimizeBuild(
     const slotCandidates: CandidateArtifact[][] = [];
     const slotScoresCache: number[][] = [];
     const adjustedSlotScoresCache: number[][] = [];
+    const slotCrPartsCache: { mainCr: number; subCr: number }[][] = [];
+    const slotCrMainWeights: number[] = [];
     let anyEmpty = false;
 
     for (const { slotIdx, setRequirement, concreteSetKey } of pattern) {
@@ -266,15 +295,16 @@ export function optimizeBuild(
         break;
       }
 
-      // Score and sort (including main stat contribution)
-      const slotTargetMains = targetMainStats[slot];
-      const scored = filtered.map((c) => ({
-        candidate: c,
-        score: scoreSlotWithMainStat(c, weights, slotTargetMains),
-        adjustedScore:
-          scoreSlotWithMainStat(c, weights, slotTargetMains) -
-          (artifactPrices?.get(c.id) ?? 0),
-      }));
+      // Score and sort (including weighted main stat contribution)
+      const slotTargetMains = targetMainStatWeights[slot];
+      const scored = filtered.map((c) => {
+        const score = scoreSlotWithMainStatWeights(c, weights, slotTargetMains);
+        return {
+          candidate: c,
+          score,
+          adjustedScore: score - (artifactPrices?.get(c.id) ?? 0),
+        };
+      });
       scored.sort((a, b) => b.adjustedScore - a.adjustedScore);
 
       // Take top-K: set-constrained slots get a higher cap since they're already filtered
@@ -286,6 +316,8 @@ export function optimizeBuild(
       slotCandidates.push(topK.map((s) => s.candidate));
       slotScoresCache.push(topK.map((s) => s.score));
       adjustedSlotScoresCache.push(topK.map((s) => s.adjustedScore));
+      slotCrPartsCache.push(topK.map((s) => getCandidateCrParts(s.candidate)));
+      slotCrMainWeights.push(slotTargetMains.get("cr") ?? 0);
     }
 
     if (anyEmpty) continue;
@@ -298,7 +330,12 @@ export function optimizeBuild(
     const indices = new Array(depths).fill(0);
     const partialScores = new Array(depths + 1).fill(0);
     const partialAdjustedScores = new Array(depths + 1).fill(0);
-    const partialCr = new Array(depths + 1).fill(0);
+    // CR tracked by source: substat CR is credited at the build's cr substat
+    // weight, main-stat CR at its slot's main-stat weight. At most one slot
+    // (circlet) can carry a CR main, so a single weight accumulator suffices.
+    const partialSubCr = new Array(depths + 1).fill(0);
+    const partialMainCr = new Array(depths + 1).fill(0);
+    const partialMainCrWeight = new Array(depths + 1).fill(0);
 
     let depth = 0;
     while (depth >= 0) {
@@ -307,14 +344,19 @@ export function optimizeBuild(
         combinationsEvaluated++;
         const rawScore = partialScores[depth];
         const adjustedRawScore = partialAdjustedScores[depth];
-        // Excess CR contributes 0 to the score: subtract the raw value the
-        // over-cap CR substats added, leaving them as net-zero. The build is
-        // still feasible — going to e.g. 101% CR is allowed if the rest of
-        // the substats make it worthwhile.
-        const crPenalty = computeCrDeduction(
-          partialCr[depth],
-          crBudget.totalNonArtifactCr,
-          crWeight
+        // Excess CR contributes 0 to the score: deduct over-cap CR at the
+        // rate it was credited, keeping the highest-weighted CR within
+        // budget. The build is still feasible — going to e.g. 101% CR is
+        // allowed if the rest of the substats make it worthwhile.
+        const crPenalty = computeWeightedCrDeduction(
+          [
+            { amount: partialSubCr[depth], weightPct: crWeight },
+            {
+              amount: partialMainCr[depth],
+              weightPct: partialMainCrWeight[depth],
+            },
+          ],
+          crBudget.totalNonArtifactCr
         );
         const finalScore = rawScore - crPenalty;
         const adjustedScore = adjustedRawScore - crPenalty;
@@ -329,15 +371,16 @@ export function optimizeBuild(
             slotScoresRecord[slot] = slotScoresCache[i][indices[i]];
           }
 
-          tracker.insert({
+          const build: OptimizedBuild = {
             artifacts,
             slotScores: slotScoresRecord,
             rawScore,
             crPenalty,
             finalScore,
             adjustedScore,
-            totalArtifactCr: partialCr[depth],
-          });
+            totalArtifactCr: partialSubCr[depth] + partialMainCr[depth],
+          };
+          tracker.insert(build, buildSignature(build));
         }
 
         // Backtrack
@@ -377,10 +420,15 @@ export function optimizeBuild(
       }
 
       // Extend
-      const candidate = slotCandidates[depth][indices[depth]];
+      const crParts = slotCrPartsCache[depth][indices[depth]];
       partialScores[depth + 1] = newPartial;
       partialAdjustedScores[depth + 1] = newAdjustedPartial;
-      partialCr[depth + 1] = partialCr[depth] + getCandidateCr(candidate);
+      partialSubCr[depth + 1] = partialSubCr[depth] + crParts.subCr;
+      partialMainCr[depth + 1] = partialMainCr[depth] + crParts.mainCr;
+      partialMainCrWeight[depth + 1] =
+        crParts.mainCr > 0
+          ? slotCrMainWeights[depth]
+          : partialMainCrWeight[depth];
 
       depth++;
     }
@@ -440,11 +488,21 @@ export function optimizeBuildWithCrCdExploration(
     candidates: { ...config.candidates, circlet: altCirclet },
   });
 
-  // Merge top builds from both runs, deduplicate by finalScore, keep topN
+  // Merge top builds from both runs, deduplicate by artifact signature
+  // (the alt run can rediscover primary builds whose circlet main differs
+  // from the primary top build's), keep topN.
   const topN = config.topN ?? 3;
-  const merged = [...primary.builds, ...altResult.builds]
-    .sort((a, b) => rankScore(b) - rankScore(a))
-    .slice(0, topN);
+  const seen = new Set<string>();
+  const merged: OptimizedBuild[] = [];
+  for (const build of [...primary.builds, ...altResult.builds].sort(
+    (a, b) => rankScore(b) - rankScore(a)
+  )) {
+    const signature = buildSignature(build);
+    if (seen.has(signature)) continue;
+    seen.add(signature);
+    merged.push(build);
+    if (merged.length >= topN) break;
+  }
 
   return {
     builds: merged,
@@ -464,44 +522,50 @@ export function optimizeBuildWithCrCdExploration(
 export function scoreFullBuild(
   artifacts: Record<Slot, CandidateArtifact>,
   weights: StatWeightMap,
-  targetMainStats: Record<Slot, Set<string>>,
+  targetMainStatWeights: Record<Slot, ReadonlyMap<string, number>>,
   crBudget: CrBudgetResult
 ): { rawScore: number; finalScore: number; totalArtifactCr: number } {
   const crWeight = weights.cr ?? 0;
   let rawScore = 0;
-  let totalArtifactCr = 0;
+  let subCr = 0;
+  let mainCr = 0;
+  let mainCrWeight = 0;
   for (const slot of allSlots) {
     const a = artifacts[slot];
     if (!a) continue;
-    rawScore += scoreSlotWithMainStat(a, weights, targetMainStats[slot]);
-    totalArtifactCr += getCandidateCr(a);
+    rawScore += scoreSlotWithMainStatWeights(
+      a,
+      weights,
+      targetMainStatWeights[slot]
+    );
+    const crParts = getCandidateCrParts(a);
+    subCr += crParts.subCr;
+    if (crParts.mainCr > 0) {
+      mainCr += crParts.mainCr;
+      mainCrWeight = targetMainStatWeights[slot].get("cr") ?? 0;
+    }
   }
-  const crPenalty = computeCrDeduction(
-    totalArtifactCr,
-    crBudget.totalNonArtifactCr,
-    crWeight
+  const crPenalty = computeWeightedCrDeduction(
+    [
+      { amount: subCr, weightPct: crWeight },
+      { amount: mainCr, weightPct: mainCrWeight },
+    ],
+    crBudget.totalNonArtifactCr
   );
-  return { rawScore, finalScore: rawScore - crPenalty, totalArtifactCr };
+  return {
+    rawScore,
+    finalScore: rawScore - crPenalty,
+    totalArtifactCr: subCr + mainCr,
+  };
 }
 
 // ─── Top-K Enumeration (for cross-character allocation) ───
 
 /**
- * The per-pattern inner enumeration can produce the same 5-artifact assignment
- * under multiple patterns (e.g., a 4pc build with all 5 artifacts of the main
- * set satisfies all 5 "flex-slot" patterns). We over-request by this factor
- * and dedupe by sorted artifact-ID signature.
- *
- * Kept small because inflating topN weakens the TopNTracker's pruning threshold
- * and can blow up inner B&B runtime on large candidate pools (particularly for
- * 2pc+2pc builds with their 30 patterns).
- */
-const DEDUP_INFLATE = 1;
-
-/**
  * Enumerate the top-K *unique* feasible builds for a single character, in
  * score-descending order. Two builds are considered equal when they use the
- * same set of artifact IDs (regardless of which slot is the "flex" slot).
+ * same set of artifact IDs (regardless of which slot is the "flex" slot);
+ * the TopNTracker and the CR/CD-exploration merge both enforce uniqueness.
  *
  * Used by the allocation pass: each character contributes K "columns" (full builds)
  * to the cross-character packer, which then picks one column per character such
@@ -514,21 +578,5 @@ export function enumerateBuilds(
   config: BuildOptimizerConfig,
   k: number
 ): BuildOptimizerResult {
-  const inner = optimizeBuildWithCrCdExploration({
-    ...config,
-    topN: k * DEDUP_INFLATE,
-  });
-  const seen = new Set<string>();
-  const deduped: typeof inner.builds = [];
-  for (const b of inner.builds) {
-    const ids = allSlots
-      .map((s) => b.artifacts[s]?.id ?? "")
-      .sort()
-      .join("|");
-    if (seen.has(ids)) continue;
-    seen.add(ids);
-    deduped.push(b);
-    if (deduped.length >= k) break;
-  }
-  return { ...inner, builds: deduped };
+  return optimizeBuildWithCrCdExploration({ ...config, topN: k });
 }

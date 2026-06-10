@@ -43,6 +43,13 @@ const SUB_STATS: SubStat[] = [
   "def",
 ];
 
+/**
+ * Substat keys that can never be a sands/goblet/circlet main stat. Note this
+ * is NOT isFlatStat: that display-format predicate also counts em, which is
+ * a legitimate main stat for all three slots.
+ */
+const NON_MAIN_SUBSTATS: ReadonlySet<string> = new Set(["hp", "atk", "def"]);
+
 /** Per-stat breakdown for UI (value and weighted sub-score only; main score not exposed). */
 export interface StatScoreBreakdown {
   subValue: number;
@@ -379,9 +386,55 @@ export function getTargetMainStatsForSlot(
     return new Set([equippedForSlot.mainStatKey]);
   const fallback = new Set<MainStat>();
   for (const [stat, w] of Object.entries(weights)) {
-    if (w > 40 && !stat.includes("flat")) fallback.add(stat as MainStat);
+    if (w > 40 && !NON_MAIN_SUBSTATS.has(stat)) fallback.add(stat as MainStat);
   }
   return fallback.size > 0 ? fallback : new Set();
+}
+
+/**
+ * Weighted variant of getTargetMainStatsForSlot for the scoreUp optimizer.
+ *
+ * Each accepted main stat carries an effective weight percent matching
+ * computeNormalizedScore's valuation: the build's per-slot main-stat weight,
+ * scaled by any autotune cdEquiv override, with 100 for fallback paths and
+ * DPS-expanded cr/cd (the display formula resolves `matched?.weight ?? 100`
+ * to 100 in all of those cases).
+ */
+export function getTargetMainStatWeightsForSlot(
+  slot: Slot,
+  build: Build,
+  equippedForSlot?: ArtifactData | null
+): Map<MainStat, number> {
+  if (slot === "flower") return new Map([["hp" as MainStat, 100]]);
+  if (slot === "plume") return new Map([["atk" as MainStat, 100]]);
+  const weights = buildToWeightMap(build);
+  if (mainStatSlots.includes(slot as MainStatSlot)) {
+    const recommended = getEffectiveMainStats(slot as MainStatSlot, build);
+    if (recommended?.length > 0) {
+      const listed = build[SLOT_TO_WEIGHTS_KEY[slot as MainStatSlot]];
+      const result = new Map<MainStat, number>();
+      for (const stat of recommended) {
+        const matched = listed.find((w) => w.stat === stat);
+        const cdEquivScale =
+          (matched?.cdEquiv ?? MAIN_STAT_CD_EQUIV_5STAR) /
+          MAIN_STAT_CD_EQUIV_5STAR;
+        result.set(stat, (matched?.weight ?? 100) * cdEquivScale);
+      }
+      return result;
+    }
+  }
+  if (
+    equippedForSlot &&
+    (weights[equippedForSlot.mainStatKey as SubStat] ?? 0) > 0
+  )
+    return new Map([[equippedForSlot.mainStatKey, 100]]);
+  const fallback = new Map<MainStat, number>();
+  for (const [stat, w] of Object.entries(weights)) {
+    if (w > 40 && !NON_MAIN_SUBSTATS.has(stat)) {
+      fallback.set(stat as MainStat, 100);
+    }
+  }
+  return fallback;
 }
 
 export function scoreSlot(
@@ -424,6 +477,31 @@ export function scoreSlotWithMainStat(
   // Score the main stat value using the same system
   score += scoreMainStat(mainStat, artifact.rarity, artifact.level);
   return score;
+}
+
+/**
+ * Weighted variant of scoreSlotWithMainStat: the main stat contributes
+ * scoreMainStat scaled by its effective weight percent (build main-stat
+ * weight × cdEquiv override), so the score is a true weighted sum of stats.
+ * Used by the scoreUp optimizer; pair with getTargetMainStatWeightsForSlot.
+ */
+export function scoreSlotWithMainStatWeights(
+  artifact: ArtifactData,
+  weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>
+): number {
+  const score = scoreSlot(artifact, weights);
+
+  const mainStat = artifact.mainStatKey;
+  if (mainStat === "hp" || mainStat === "atk") return score;
+
+  const weight = mainStatWeights.get(mainStat) ?? 0;
+  if (weight <= 0) return score;
+
+  return (
+    score +
+    scoreMainStat(mainStat, artifact.rarity, artifact.level) * (weight / 100)
+  );
 }
 
 export function scoreAllSlots(
@@ -605,7 +683,7 @@ export function scoreWithBuilds(
   char: CharacterData,
   builds: Build[],
   globalConfig: GlobalStatWeights,
-  nonArtifactCr?: number
+  nonArtifactCr?: number | ((build: Build) => number)
 ): ArtifactScoreResult | null {
   const buildMatch = matchBuild(
     char.artifacts,
@@ -614,10 +692,16 @@ export function scoreWithBuilds(
     globalConfig
   );
   if (!buildMatch) return null;
+  // The CR budget can depend on the matched build (artifact-set CR sources),
+  // which is only known after matchBuild — hence the resolver form.
+  const resolvedNonArtifactCr =
+    typeof nonArtifactCr === "function"
+      ? nonArtifactCr(buildMatch.build)
+      : nonArtifactCr;
   const substatScore = scoreAllSlots(
     char,
     buildMatch.statWeights,
-    nonArtifactCr
+    resolvedNonArtifactCr
   );
   const normalized = computeNormalizedScore(
     char.artifacts,

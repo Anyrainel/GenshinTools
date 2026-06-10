@@ -50,6 +50,8 @@ interface ScoreUpCardProps {
   recommendations?: ScoreUpAction[];
   allocatedBuild?: OptimizedBuild | null;
   allocationStatus?: "pending" | "allocated" | "unallocated";
+  /** Equipped-build score under the same engine formula as allocatedBuild.finalScore. */
+  currentScore?: number | null;
   score?: ArtifactScoreResult;
   artifactLookup: Map<string, ArtifactData>;
   onApplyCharacter?: (characterId: string) => void;
@@ -410,6 +412,7 @@ function ScoreUpCardComponent({
   recommendations,
   allocatedBuild,
   allocationStatus,
+  currentScore,
   score,
   artifactLookup,
   onApplyCharacter,
@@ -524,9 +527,17 @@ function ScoreUpCardComponent({
             )
           )
       : null;
+  // Gain must compare the allocated and equipped builds under the SAME
+  // scoring formula (the engine's), not against the normalized display
+  // score — mixing the two showed phantom gains for stat-wise downgrades.
   const normalizedScoreGain =
-    normalizedAllocationScore != null && currentNormalizedScore != null
-      ? normalizedAllocationScore - currentNormalizedScore
+    allocatedBuild && score && currentScore != null
+      ? allocationMatchesCurrent
+        ? 0
+        : Math.round(
+            (allocatedBuild.finalScore - currentScore) *
+              score.normalized.normalizer
+          )
       : null;
 
   const charInfo = charactersById[char.key];

@@ -155,10 +155,6 @@ export function packColumnsBeam(
   const repairSweeps = options.repairSweeps ?? 2;
   const ordered = [...chars].sort(compareCharacterDifficulty);
   const n = ordered.length;
-  const bestSuffix = new Array(n + 1).fill(0);
-  for (let i = n - 1; i >= 0; i--) {
-    bestSuffix[i] = bestSuffix[i + 1] + (ordered[i].columns[0]?.score ?? 0);
-  }
 
   type BeamState = {
     chosen: (PackerColumn | null)[];
@@ -199,10 +195,11 @@ export function packColumnsBeam(
       }
     }
 
+    // States at the same depth share the same optimistic suffix, so ranking
+    // by cumulative score is equivalent to ranking by score + suffix bound.
     next.sort(
       (a, b) =>
-        b.score + bestSuffix[idx + 1] - (a.score + bestSuffix[idx + 1]) ||
-        assignedCount(b.chosen) - assignedCount(a.chosen)
+        b.score - a.score || assignedCount(b.chosen) - assignedCount(a.chosen)
     );
     beam = next.slice(0, beamWidth);
   }

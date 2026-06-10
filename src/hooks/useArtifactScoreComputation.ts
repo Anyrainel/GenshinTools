@@ -90,13 +90,17 @@ export function useArtifactScoreComputation(): void {
           char,
           builds,
           scoreConfig.global,
-          getCrBudget({
-            characterId: char.key,
-            characterLevel: char.level,
-            constellation: char.constellation,
-            weaponId: char.weapon?.key,
-            weaponRefinement: char.weapon?.refinement,
-          }).totalNonArtifactCr
+          // Resolver form: the CR budget includes the matched build's
+          // artifact-set CR, matching the scoreUp engine's budget.
+          (build) =>
+            getCrBudget({
+              characterId: char.key,
+              characterLevel: char.level,
+              constellation: char.constellation,
+              weaponId: char.weapon?.key,
+              weaponRefinement: char.weapon?.refinement,
+              artifact: build,
+            }).totalNonArtifactCr
         );
       }
       mergeScores(activeAccountId, results);

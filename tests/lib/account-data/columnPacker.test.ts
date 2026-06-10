@@ -203,3 +203,152 @@ describe("packColumns", () => {
     }
   });
 });
+
+// ─── Seeded fuzz ───
+
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), a | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function randInt(rand: () => number, min: number, max: number): number {
+  return min + Math.floor(rand() * (max - min + 1));
+}
+
+function randomColumn(
+  rand: () => number,
+  universe: string[],
+  minIds: number,
+  maxIds: number
+): PackerColumn {
+  const size = randInt(rand, minIds, maxIds);
+  const remaining = [...universe];
+  const ids: string[] = [];
+  while (ids.length < size && remaining.length > 0) {
+    const idx = Math.floor(rand() * remaining.length);
+    ids.push(remaining.splice(idx, 1)[0]);
+  }
+  return col(randInt(rand, 10, 150), ids);
+}
+
+function randomChars(
+  rand: () => number,
+  charCount: number,
+  universe: string[],
+  colRange: { min: number; max: number },
+  idRange: { min: number; max: number }
+): PackerCharacter[] {
+  return Array.from({ length: charCount }, (_, c) => {
+    const columns = Array.from(
+      { length: randInt(rand, colRange.min, colRange.max) },
+      () => randomColumn(rand, universe, idRange.min, idRange.max)
+    );
+    columns.sort((a, b) => b.score - a.score);
+    return { characterId: `C${c}`, columns };
+  });
+}
+
+/** Greedy baseline using packColumnsBeam's difficulty ordering. */
+function difficultyOrderGreedyScore(chars: PackerCharacter[]): number {
+  const ordered = [...chars].sort((a, b) => {
+    const aTop = a.columns[0]?.score ?? 0;
+    const bTop = b.columns[0]?.score ?? 0;
+    const aSpread =
+      aTop - (a.columns[Math.min(4, a.columns.length - 1)]?.score ?? 0);
+    const bSpread =
+      bTop - (b.columns[Math.min(4, b.columns.length - 1)]?.score ?? 0);
+    return bSpread - aSpread || bTop - aTop;
+  });
+
+  const claimed = new Set<string>();
+  let total = 0;
+  for (const char of ordered) {
+    for (const candidate of char.columns) {
+      if (candidate.artifactIds.some((id) => claimed.has(id))) continue;
+      for (const id of candidate.artifactIds) claimed.add(id);
+      total += candidate.score;
+      break;
+    }
+  }
+  return total;
+}
+
+function collectChosen(
+  byCharacter: Record<string, PackerColumn | null>
+): PackerColumn[] {
+  return Object.values(byCharacter).filter(
+    (c): c is PackerColumn => c !== null
+  );
+}
+
+function expectDisjoint(columns: PackerColumn[], label: string): void {
+  const used = new Set<string>();
+  for (const chosen of columns) {
+    for (const id of chosen.artifactIds) {
+      expect(used.has(id), `${label}: artifact ${id} claimed twice`).toBe(
+        false
+      );
+      used.add(id);
+    }
+  }
+}
+
+describe("packColumns seeded fuzz", () => {
+  it("equals the brute-force optimum on seeded 3-char x 3-column instances", () => {
+    const universe = Array.from({ length: 7 }, (_, i) => `u${i}`);
+    for (let seed = 1; seed <= 20; seed++) {
+      const rand = mulberry32(seed * 2654435761 + 1);
+      const chars = randomChars(
+        rand,
+        3,
+        universe,
+        { min: 3, max: 3 },
+        { min: 2, max: 3 }
+      );
+
+      const r = packColumns(chars);
+      const bf = bruteForceBest(chars);
+      expect(r.totalScore, `seed ${seed}`).toBe(bf.totalScore);
+
+      const chosen = collectChosen(r.byCharacter);
+      expectDisjoint(chosen, `seed ${seed}`);
+      expect(
+        chosen.reduce((sum, c) => sum + c.score, 0),
+        `seed ${seed}: totalScore must equal sum of chosen columns`
+      ).toBe(r.totalScore);
+    }
+  });
+});
+
+describe("packColumnsBeam seeded fuzz", () => {
+  it("returns disjoint assignments scoring at least the difficulty-order greedy baseline", () => {
+    const universe = Array.from({ length: 14 }, (_, i) => `a${i}`);
+    for (let seed = 1; seed <= 50; seed++) {
+      const rand = mulberry32(seed * 7919 + 3);
+      const chars = randomChars(
+        rand,
+        randInt(rand, 4, 6),
+        universe,
+        { min: 2, max: 5 },
+        { min: 3, max: 5 }
+      );
+
+      const r = packColumnsBeam(chars);
+      const chosen = collectChosen(r.byCharacter);
+      expectDisjoint(chosen, `seed ${seed}`);
+      expect(
+        chosen.reduce((sum, c) => sum + c.score, 0),
+        `seed ${seed}: totalScore must equal sum of chosen columns`
+      ).toBe(r.totalScore);
+      expect(
+        r.totalScore,
+        `seed ${seed}: beam below greedy baseline`
+      ).toBeGreaterThanOrEqual(difficultyOrderGreedyScore(chars));
+    }
+  });
+});

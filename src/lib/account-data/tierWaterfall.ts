@@ -17,9 +17,12 @@ import type {
 } from "@/data/types";
 import {
   type ArtifactScoreResult,
-  getTargetMainStatsForSlot,
+  getTargetMainStatWeightsForSlot,
 } from "../artifact/scoring/artifactScore";
-import { buildAllocationPool } from "./allocationPool";
+import {
+  buildAllocationPool,
+  collectEligibleArtifacts,
+} from "./allocationPool";
 import {
   type BuildOptimizerConfig,
   enumerateBuilds,
@@ -173,9 +176,12 @@ export function* runTierWaterfallSteps(
 
       const crBudget = safeGetCrBudget(char, buildMatch);
 
-      const targetMainStats = {} as Record<Slot, Set<string>>;
+      const targetMainStatWeights = {} as Record<
+        Slot,
+        ReadonlyMap<string, number>
+      >;
       for (const slot of allSlots) {
-        targetMainStats[slot] = getTargetMainStatsForSlot(
+        targetMainStatWeights[slot] = getTargetMainStatWeightsForSlot(
           slot,
           buildMatch.build,
           char.artifacts[slot] ?? undefined
@@ -191,7 +197,7 @@ export function* runTierWaterfallSteps(
         weights: buildMatch.statWeights,
         candidates,
         crBudget,
-        targetMainStats,
+        targetMainStatWeights,
         slotCaps: options.slotCaps,
         setConstraint: {
           composition: buildMatch.build.composition,
@@ -415,23 +421,6 @@ function snapshotAllocation(
     unclaimedAfterWaterfall: Array.from(unclaimedById.values()),
     totalNodesExplored,
   };
-}
-
-function collectEligibleArtifacts(
-  accountData: AccountData,
-  tierAssignments: TierAssignment,
-  allowPoolArtifactSteals: boolean
-): ArtifactData[] {
-  return [
-    ...accountData.extraArtifacts,
-    ...accountData.characters.flatMap((character) => {
-      const ownerTier: Tier = tierAssignments[character.key]?.tier || "Pool";
-      if (!allowPoolArtifactSteals && ownerTier === "Pool") return [];
-      return Object.values(character.artifacts).filter(
-        (artifact): artifact is ArtifactData => !!artifact
-      );
-    }),
-  ];
 }
 
 function safeGetCrBudget(

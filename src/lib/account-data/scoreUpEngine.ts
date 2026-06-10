@@ -19,8 +19,9 @@ import type {
 } from "@/data/types";
 import {
   type ArtifactScoreResult,
-  scoreSlotWithMainStat,
+  scoreSlotWithMainStatWeights,
 } from "../artifact/scoring/artifactScore";
+import { collectEligibleArtifacts } from "./allocationPool";
 import { type OptimizedBuild, scoreFullBuild } from "./buildOptimizer";
 import {
   type AllocatedBuild,
@@ -72,6 +73,12 @@ export interface CharacterActions {
   tier: Tier;
   /** Allocated build (post-waterfall). Null when no allocation could be made. */
   allocatedBuild: OptimizedBuild | null;
+  /**
+   * Score of the currently equipped artifacts under the same formula as
+   * allocatedBuild.finalScore — the only valid baseline for displaying a
+   * score gain. Null when no allocation context exists.
+   */
+  currentScore: number | null;
   /** Allocation context used to refresh upgrade-only recommendations without rerunning the waterfall. */
   allocation: AllocatedBuild | null;
 }
@@ -293,18 +300,25 @@ function buildScoreActionsFromAllocation(
         actions: [],
         tier: tierAssignments[char.key]?.tier || "Pool",
         allocatedBuild: null,
+        currentScore: null,
         allocation: null,
       };
       continue;
     }
 
     const actions: ScoreUpAction[] = [];
+    const currentScore =
+      alloc.build && alloc.context ? currentBuildScore(alloc, char) : null;
     const buildScoreDiff =
-      alloc.build && alloc.context
-        ? alloc.build.finalScore - currentBuildScore(alloc, char)
+      alloc.build && currentScore != null
+        ? alloc.build.finalScore - currentScore
         : 0;
 
-    // 1. Allocation diff actions
+    // 1. Allocation diff actions. Every changed slot is surfaced — including
+    // negative per-slot diffs. The allocation is one atomic unit: a slot can
+    // lose raw score yet be required for the set composition or CR-budget
+    // relief, and dropping it would leave actions that no longer reproduce
+    // the allocated build.
     if (alloc.build && alloc.context) {
       for (const slot of allSlots) {
         const allocated = alloc.build.artifacts[slot];
@@ -315,14 +329,13 @@ function buildScoreActionsFromAllocation(
 
         const slotScore = alloc.build.slotScores[slot] ?? 0;
         const currentSlotScore = equipped
-          ? scoreSlotWithMainStat(
+          ? scoreSlotWithMainStatWeights(
               equipped,
               alloc.context.config.weights,
-              alloc.context.config.targetMainStats[slot]
+              alloc.context.config.targetMainStatWeights[slot]
             )
           : 0;
         const slotScoreDiff = slotScore - currentSlotScore;
-        if (slotScoreDiff < MIN_RECOMMENDATION_SCORE_DIFF) continue;
 
         const donor = ownerByArtifactId.get(allocated.id);
         const isSteal = !!donor && donor !== char.key;
@@ -366,6 +379,7 @@ function buildScoreActionsFromAllocation(
       actions,
       tier: alloc.tier,
       allocatedBuild: alloc.build,
+      currentScore,
       allocation: alloc,
     };
 
@@ -386,23 +400,6 @@ function emptyActions(): AllActions {
     byActionType: { swap: [], equip: [], upgrade: [] },
     perCharacter: {},
   };
-}
-
-function collectEligibleArtifacts(
-  accountData: AccountData,
-  tierAssignments: TierAssignment,
-  allowPoolArtifactSteals: boolean
-): ArtifactData[] {
-  return [
-    ...accountData.extraArtifacts,
-    ...accountData.characters.flatMap((character) => {
-      const ownerTier: Tier = tierAssignments[character.key]?.tier || "Pool";
-      if (!allowPoolArtifactSteals && ownerTier === "Pool") return [];
-      return Object.values(character.artifacts).filter(
-        (artifact): artifact is ArtifactData => !!artifact
-      );
-    }),
-  ];
 }
 
 function buildUpgradeActions(
@@ -540,7 +537,7 @@ function currentBuildScore(
     return scoreFullBuild(
       completeArtifacts,
       config.weights,
-      config.targetMainStats,
+      config.targetMainStatWeights,
       config.crBudget
     ).finalScore;
   }
@@ -549,10 +546,10 @@ function currentBuildScore(
   for (const slot of allSlots) {
     const eq = char.artifacts[slot];
     if (!eq) continue;
-    total += scoreSlotWithMainStat(
+    total += scoreSlotWithMainStatWeights(
       eq,
       config.weights,
-      config.targetMainStats[slot]
+      config.targetMainStatWeights[slot]
     );
   }
   return total;

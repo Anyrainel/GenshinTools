@@ -8,7 +8,7 @@ import {
 } from "@/lib/account-data/buildOptimizer";
 import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
 import type { CrBudgetResult } from "@/lib/account-data/maxCrBuff";
-import { scoreSlotWithMainStat } from "@/lib/artifact/scoring/artifactScore";
+import { scoreSlotWithMainStatWeights } from "@/lib/artifact/scoring/artifactScore";
 
 const weights = { cr: 100, cd: 100, "atk%": 80 } as const;
 
@@ -22,12 +22,12 @@ const baseCrBudget: CrBudgetResult = {
   totalNonArtifactCr: 0.05,
 };
 
-const defaultTargetMainStats: Record<Slot, Set<string>> = {
-  flower: new Set(["hp"]),
-  plume: new Set(["atk"]),
-  sands: new Set(["atk%"]),
-  goblet: new Set(["atk%"]),
-  circlet: new Set(["cr"]),
+const defaultTargetMainStats: Record<Slot, ReadonlyMap<string, number>> = {
+  flower: new Map([["hp", 100]]),
+  plume: new Map([["atk", 100]]),
+  sands: new Map([["atk%", 100]]),
+  goblet: new Map([["atk%", 100]]),
+  circlet: new Map([["cr", 100]]),
 };
 
 function art(
@@ -81,7 +81,7 @@ function bruteForceTopK(
       const { finalScore } = scoreFullBuild(
         current,
         config.weights,
-        config.targetMainStats,
+        config.targetMainStatWeights,
         config.crBudget
       );
       builds.push({ artifacts: { ...current }, score: finalScore });
@@ -123,7 +123,7 @@ describe("enumerateBuilds", () => {
         circlet: [art("circlet", "c1", "CW", { cd: 22, cr: 5 })],
       },
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
     const result = enumerateBuilds(config, 1);
@@ -158,7 +158,7 @@ describe("enumerateBuilds", () => {
         ],
       },
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
     const result = enumerateBuilds(config, 1);
@@ -184,7 +184,7 @@ describe("enumerateBuilds", () => {
         circlet: [art("circlet", "c1", "CW", { cd: 20 })],
       },
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
     const result = enumerateBuilds(config, 10);
@@ -208,7 +208,7 @@ describe("enumerateBuilds", () => {
         circlet: [art("circlet", "c1", "CW", { cd: 20 })],
       },
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
     const result = enumerateBuilds(config, 10);
@@ -236,7 +236,7 @@ describe("enumerateBuilds", () => {
         circlet: [art("circlet", "c1", "CW", { cd: 20 })],
       },
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
     const result = enumerateBuilds(config, 1);
@@ -244,12 +244,12 @@ describe("enumerateBuilds", () => {
 
     // Sanity: the picked artifact contributes more (substat sum dominates the
     // missing main stat for these inflated values).
-    const goodScore = scoreSlotWithMainStat(
+    const goodScore = scoreSlotWithMainStatWeights(
       correctMainWeakSub,
       weights,
       defaultTargetMainStats.sands
     );
-    const badScore = scoreSlotWithMainStat(
+    const badScore = scoreSlotWithMainStatWeights(
       wrongMainStrongSub,
       weights,
       defaultTargetMainStats.sands
@@ -279,7 +279,7 @@ describe("enumerateBuilds", () => {
         ],
       },
       crBudget: { ...baseCrBudget, totalNonArtifactCr: 0.5 },
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
     const result = enumerateBuilds(cfg, 1);
@@ -302,7 +302,7 @@ describe("enumerateBuilds", () => {
         circlet: [art("circlet", "c1", "CW", { cd: 20 })],
       },
       crBudget: baseCrBudget,
-      targetMainStats: defaultTargetMainStats,
+      targetMainStatWeights: defaultTargetMainStats,
       setConstraint: { composition: "4pc", artifactSet: "CW" },
     };
 
