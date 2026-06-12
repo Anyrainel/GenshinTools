@@ -1,5 +1,10 @@
 import type { ArtifactSetConfig } from "@/data/types";
-import { DEFAULT_CALC_CONTEXT } from "./constants";
+import {
+  DEFAULT_CALC_CONTEXT,
+  STELLAR_DIRECT_COEFF_DEFAULT,
+  STELLAR_DIRECT_COEFF_MAX,
+  STELLAR_DIRECT_COEFF_MIN,
+} from "./constants";
 import type { CalcContext, DamageTag, DamageTagFilter } from "./types";
 
 export function filterMatchesTag(
@@ -15,7 +20,18 @@ export function filterMatchesTag(
 
 export function resolveCalcContext(ctx?: Partial<CalcContext>): CalcContext {
   return { ...DEFAULT_CALC_CONTEXT, ...ctx };
-} /** Extract the 4pc set ID, or null if not a 4pc config. */
+}
+
+/** Attach-count directCoeff for StellarDirectFormula (1.45–1.9; default 1.6). */
+export function resolveStellarDirectCoeff(ctx: CalcContext): number {
+  const raw = ctx.stellarDirectCoeff ?? STELLAR_DIRECT_COEFF_DEFAULT;
+  return Math.min(
+    STELLAR_DIRECT_COEFF_MAX,
+    Math.max(STELLAR_DIRECT_COEFF_MIN, raw)
+  );
+}
+
+/** Extract the 4pc set ID, or null if not a 4pc config. */
 
 export function getSetId(
   cfg: ArtifactSetConfig | null | undefined

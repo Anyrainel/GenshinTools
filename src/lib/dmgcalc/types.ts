@@ -423,6 +423,11 @@ export type CalcContext = {
   perCharCrTarget?: Record<string, number>; // charId → 0-100 integer; per-char CR targets
   rollMultiplier: number; // 0.7–1.0
   substatBudget: SubstatBudgetPreset;
+  /**
+   * Stellar-Conduct direct damage attach-count coefficient (1.45–1.9).
+   * TODO: expose in team damage UI when Polestar Field attach tracking is available.
+   */
+  stellarDirectCoeff?: number;
 };
 
 // ─── Reaction Override (Formula v2) ───

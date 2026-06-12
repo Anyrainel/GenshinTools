@@ -1,5 +1,10 @@
 import type { ReactionType, StatKey } from "@/data/enums";
+import {
+  STELLAR_REACTION_PROC_COEFF_PLACEHOLDER,
+  STELLAR_REACTIONS,
+} from "../constants";
 import type { CalcContext, DamageTag, DisplayPart } from "../types";
+import { resolveStellarDirectCoeff } from "../utils";
 import { E, type Expr, simplify } from "./expr";
 import type { ExprStatSheet } from "./exprStatSheet";
 import type { StatSheet } from "./statSheet";
@@ -70,12 +75,6 @@ const LUNAR_REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
   lunarCharged: 3,
   lunarCrystallize: 1.6,
   lunarBloom: 1.0,
-};
-
-// Stellar-Conduct: 1.5 matches Superconduct parity (U0b approximation — no beta
-// coefficient text; retain until verified in-game).
-const STELLAR_REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
-  stellarConduct: 1.5,
 };
 
 // DamageFormula Hierarchy
@@ -1185,8 +1184,10 @@ export class LunarDirectFormula extends DamageFormula {
 }
 
 /**
- * Stellar-Conduct reaction damage (level-based, like LunarFormula).
- * Uses reactionBaseDmg%, elevated%, and lunar-style EM bonus.
+ * Stellar-Conduct reaction proc (level-based, like LunarFormula).
+ * Auto-generated for rx-stellarConduct when Sandrone enables SC.
+ * Proc coefficient and EM curve are placeholders — skill direct SC hits use
+ * StellarDirectFormula instead.
  */
 export class StellarFormula extends DamageFormula {
   override getReadKeys(): ReadonlySet<StatKey> {
@@ -1201,7 +1202,11 @@ export class StellarFormula extends DamageFormula {
   }
 
   protected override validateReaction(): void {
-    if (!(this.tag.reaction in STELLAR_REACTION_COEFFICIENTS)) {
+    if (
+      !STELLAR_REACTIONS.includes(
+        this.tag.reaction as (typeof STELLAR_REACTIONS)[number]
+      )
+    ) {
       throw new Error(
         `StellarFormula requires a stellar reaction, got "${this.tag.reaction}"`
       );
@@ -1212,8 +1217,7 @@ export class StellarFormula extends DamageFormula {
     const em = stats.get("em", this.tag);
     const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
-    const reactionCoeff =
-      STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.5;
+    const reactionCoeff = STELLAR_REACTION_PROC_COEFF_PLACEHOLDER;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const resMult = this.computeResMultExpr(stats, ctx);
     const critMult = this.computeCritMultExpr(stats, ctx);
@@ -1241,8 +1245,7 @@ export class StellarFormula extends DamageFormula {
     const { emCoeff, emDenom } = EM_BONUS.lunar;
     const emBonus = getEmBonus(em, emCoeff, emDenom);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
-    const reactionCoeff =
-      STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.5;
+    const reactionCoeff = STELLAR_REACTION_PROC_COEFF_PLACEHOLDER;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
@@ -1267,8 +1270,7 @@ export class StellarFormula extends DamageFormula {
     const em = stats.get("em", this.tag);
     const { emCoeff, emDenom } = EM_BONUS.lunar;
     const emBonus = getEmBonus(em, emCoeff, emDenom);
-    const reactionCoeff =
-      STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.5;
+    const reactionCoeff = STELLAR_REACTION_PROC_COEFF_PLACEHOLDER;
     const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const resMult = this.computeResMult(stats, ctx);
@@ -1317,8 +1319,10 @@ export class StellarFormula extends DamageFormula {
 }
 
 /**
- * Stellar Direct: character abilities that deal Stellar-Conduct DMG.
- * Pass the raw game% as talentMult; DirectCoeff is 1.0 (params are pre-scaled).
+ * Stellar Direct (星超导直伤): character abilities tagged 视为星超导反应伤害.
+ * Same zone layout as LunarDirectFormula; no dmg% or DEF multiplier.
+ * Pass the raw game% as talentMult; attach-count directCoeff from CalcContext
+ * (default 1.6, range 1.45–1.9 — TODO: team damage UI control).
  */
 export class StellarDirectFormula extends DamageFormula {
   override getReadKeys(): ReadonlySet<StatKey> {
@@ -1334,7 +1338,11 @@ export class StellarDirectFormula extends DamageFormula {
   }
 
   protected override validateReaction(): void {
-    if (!(this.tag.reaction in STELLAR_REACTION_COEFFICIENTS)) {
+    if (
+      !STELLAR_REACTIONS.includes(
+        this.tag.reaction as (typeof STELLAR_REACTIONS)[number]
+      )
+    ) {
       throw new Error(
         `StellarDirectFormula requires a stellar reaction, got "${this.tag.reaction}"`
       );
@@ -1355,7 +1363,7 @@ export class StellarDirectFormula extends DamageFormula {
         )
       );
     }
-    const directCoeff = STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+    const directCoeff = resolveStellarDirectCoeff(ctx);
 
     const em = stats.get("em", this.tag);
     const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
@@ -1387,7 +1395,7 @@ export class StellarDirectFormula extends DamageFormula {
       scalingDmg +=
         stats.get(this.extraTerm.key, this.tag) * this.extraTerm.multiplier;
     }
-    const directCoeff = STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+    const directCoeff = resolveStellarDirectCoeff(ctx);
 
     const em = stats.get("em", this.tag);
     const { emCoeff, emDenom } = EM_BONUS.lunar;
@@ -1412,7 +1420,7 @@ export class StellarDirectFormula extends DamageFormula {
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
     const { keys, multi } = this.getScalingInfo();
-    const directCoeff = STELLAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+    const directCoeff = resolveStellarDirectCoeff(ctx);
 
     const em = stats.get("em", this.tag);
     const { emCoeff, emDenom } = EM_BONUS.lunar;

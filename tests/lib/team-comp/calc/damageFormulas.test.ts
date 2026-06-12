@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
-
+import { STELLAR_DIRECT_COEFF_DEFAULT } from "@/lib/dmgcalc/constants";
 import {
   AmplifyFormula,
   CatalyzeFormula,
   DirectFormula,
   LunarDirectFormula,
   LunarFormula,
+  StellarDirectFormula,
   TransformFormula,
 } from "@/lib/dmgcalc/core/damageFormula";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
@@ -245,6 +246,84 @@ describe("LunarFormula", () => {
   });
 });
 
+describe("StellarDirectFormula", () => {
+  const formula = new StellarDirectFormula(1.0, {
+    element: "Cryo",
+    ability: "charge",
+    reaction: "stellarConduct",
+  });
+
+  const baseStats = new StatSheet([
+    { key: "baseAtk", value: 1000 },
+    { key: "atk%", value: 0.5 },
+    { key: "em", value: 200 },
+    { key: "reactionBaseDmg%", value: 0.14 },
+    { key: "reactionDmg%", value: 0.3 },
+    { key: "cr", value: 0.5 },
+    { key: "cd", value: 1.0 },
+  ]);
+
+  it("uses default directCoeff placeholder", () => {
+    const dp = formula.display(baseStats, 90, CTX);
+    expect(dp.template).toBe("stellarDirect");
+    expect(dp.params.directCoeff).toBeCloseTo(STELLAR_DIRECT_COEFF_DEFAULT);
+  });
+
+  it("respects ctx.stellarDirectCoeff within 1.45–1.9", () => {
+    const dp = formula.display(baseStats, 90, {
+      ...CTX,
+      stellarDirectCoeff: 1.9,
+    });
+    expect(dp.params.directCoeff).toBeCloseTo(1.9);
+  });
+
+  it("clamps ctx.stellarDirectCoeff to valid range", () => {
+    const dp = formula.display(baseStats, 90, {
+      ...CTX,
+      stellarDirectCoeff: 2.5,
+    });
+    expect(dp.params.directCoeff).toBeCloseTo(1.9);
+  });
+
+  it("ignores dmg% zone", () => {
+    const entries = [
+      { key: "baseAtk" as const, value: 1000 },
+      { key: "atk%" as const, value: 0.5 },
+      { key: "em" as const, value: 200 },
+      { key: "reactionBaseDmg%" as const, value: 0.14 },
+      { key: "reactionDmg%" as const, value: 0.3 },
+      { key: "cr" as const, value: 0.5 },
+      { key: "cd" as const, value: 1.0 },
+    ];
+    const without = formula.calc(new StatSheet(entries), 90, CTX);
+    const withDmg = formula.calc(
+      new StatSheet([...entries, { key: "dmg%", value: 0.5 }]),
+      90,
+      CTX
+    );
+    expect(withDmg).toBeCloseTo(without);
+  });
+
+  it("ignores DEF zone", () => {
+    const entries = [
+      { key: "baseAtk" as const, value: 1000 },
+      { key: "atk%" as const, value: 0.5 },
+      { key: "em" as const, value: 200 },
+      { key: "reactionBaseDmg%" as const, value: 0.14 },
+      { key: "reactionDmg%" as const, value: 0.3 },
+      { key: "cr" as const, value: 0.5 },
+      { key: "cd" as const, value: 1.0 },
+    ];
+    const without = formula.calc(new StatSheet(entries), 90, CTX);
+    const withDef = formula.calc(
+      new StatSheet([...entries, { key: "defReduction%", value: 0.5 }]),
+      90,
+      CTX
+    );
+    expect(withDef).toBeCloseTo(without);
+  });
+});
+
 describe("LunarDirectFormula", () => {
   const formula = new LunarDirectFormula(1.5, {
     element: "Hydro",
@@ -353,6 +432,21 @@ describe("display() ↔ calc() consistency", () => {
       stats: new StatSheet([
         { key: "baseAtk", value: 1000 },
         { key: "em", value: 100 },
+        { key: "cr", value: 0.5 },
+        { key: "cd", value: 1.0 },
+      ]),
+    },
+    {
+      name: "StellarDirect (stellarConduct)",
+      formula: new StellarDirectFormula(1.25, {
+        element: "Cryo",
+        ability: "skill",
+        reaction: "stellarConduct",
+      }),
+      stats: new StatSheet([
+        { key: "baseAtk", value: 1000 },
+        { key: "em", value: 100 },
+        { key: "reactionBaseDmg%", value: 0.14 },
         { key: "cr", value: 0.5 },
         { key: "cd", value: 1.0 },
       ]),

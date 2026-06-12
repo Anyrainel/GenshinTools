@@ -1496,7 +1496,7 @@ class Sandrone extends CharacterBase {
                 reactions: ["stellarConduct"],
               },
             },
-            [{ key: "cd", value: 0.4 }]
+            [{ key: "reactionCd", value: 0.4 }]
           ),
           new StatBuff(
             cbs(this, "C2", ["charge"]),
@@ -1508,7 +1508,7 @@ class Sandrone extends CharacterBase {
               },
             },
             // Peak Decoding: 3 beam stacks × 20%
-            [{ key: "cd", value: 0.6 }]
+            [{ key: "reactionCd", value: 0.6 }]
           )
         );
       }

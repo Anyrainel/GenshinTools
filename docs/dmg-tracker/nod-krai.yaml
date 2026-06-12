@@ -128,34 +128,45 @@
     users who do run the burst can enable it manually; only the default-rotation
     contribution is intentionally 0. No change needed.
 
-- id: sandrone-zh-unconditional-buffs
+- id: sandrone-c2-reaction-cd
   entity: sandrone
-  rule: U0b
+  rule: U3
   status: completed
   category: bug
   summary: >
-    P2 EM, C1 team Stellar-Conduct reactionDmg%, and C6 elevated% are emitted only
-    inside the radianceOn branch, but ZH does not require 辉映·星超导 for P2 or C1
-    (C1 only requires 解算模式); C6 擢升 is fully unconditional at C6.
+    C2 condensed-beam CRIT DMG buffs use key "cd" instead of "reactionCd" on
+    Stellar-Conduct charge hits; reaction-scoped crit must use reactionCd per U3.
   detail: >
-    Moved P2 ScalingBuff (em from ATK, cap 160), C1 team reactionDmg% +30% (cbs
-    charge trigger), and C6 elevated% +20% (constellation >= 6 only) outside
-    radianceOn in character5NodKrai.ts. P1 Refined Tactics and C2 CRIT DMG remain
-    radiance-gated.
+    Changed both C2 StatBuff entries (+40% base and +60% peak from three beam
+    stacks) from key "cd" to "reactionCd" with existing stellarConduct reaction
+    filter on charge hits.
 
-- id: sandrone-stellar-coefficient
+- id: stellar-direct-coeff-ui
+  entity: sandrone
+  rule: S1
+  status: open
+  category: engine-gap
+  summary: >
+    StellarDirectFormula directCoeff uses CalcContext placeholder (default 1.6,
+    range 1.45–1.9); team damage UI must expose attach-count control.
+  detail: >
+    Skill direct SC hits (StellarDirectFormula) multiply talent% by an attach-count
+    coefficient (~1.45× at 1 Cryo/Electro hit to ~1.9× at 10 per 3s window).
+    resolveStellarDirectCoeff() reads CalcContext.stellarDirectCoeff with
+    STELLAR_DIRECT_COEFF_DEFAULT=1.6 until UI wires Polestar Field attach tracking.
+    EM curve 6/(2000+EM) copied from lunar — still unverified but separate from coeff.
+
+- id: stellar-reaction-proc-formula
   entity: sandrone
   rule: S1
   status: open
   category: needs-data
   summary: >
-    StellarFormula / StellarDirectFormula math is unverified: transformative
-    coefficient assumed 1.5 (superconduct parity), EM bonus copied from lunar-style
-    6/(2000+EM), and StellarDirect uses the same directCoeff on ATK×talent% hits.
+    StellarFormula (rx-stellarConduct proc) coefficient and EM curve unverified;
+    do not treat as Superconduct parity.
   detail: >
-    Game text describes Stellar-Conduct modifiers (reactionBaseDmg%, reactionDmg%,
-    elevated%, separate SC talent param rows) but not the base transformative
-    coefficient or EM curve. Current impl in damageFormula.ts STELLAR_REACTION_
-    COEFFICIENTS and StellarFormula.buildExpr. Needs in-game or datamine verification
-    before closing. Supersede policy (超导→星超导, not coexistence) is implemented in
-    teamMeta.hasReaction + teamReaction; coefficient is independent of that choice.
+    Auto-generated team reaction proc uses STELLAR_REACTION_PROC_COEFF_PLACEHOLDER=1.6
+    and lunar EM bonus. Official text documents skill-direct SC modifiers (P3
+    reactionBaseDmg%, C6 elevated%) but not transformative proc math. Audit proc
+    separately from StellarDirectFormula skill hits once datamine or in-game data
+    confirms level-based coeff and zones.

@@ -136,12 +136,16 @@ All in `calc/damageFormula.ts`. Base class: `DamageFormula(talentMultiplier, tag
 | `AmplifyFormula` | melt, vaporize | DirectFormula |
 | `CatalyzeFormula` | spread, aggravate | DamageFormula |
 | `TransformFormula` | overloaded, electroCharged, superconduct, swirl, shatter, bloom, hyperbloom, burgeon, burning | DamageFormula |
-| `LunarFormula` | lunarCharged, lunarCrystallize | DamageFormula |
-| `LunarDirectFormula` | lunarCharged, lunarCrystallize | DamageFormula |
+| `LunarFormula` | lunarCharged, lunarCrystallize, lunarBloom | DamageFormula |
+| `LunarDirectFormula` | lunarCharged, lunarCrystallize, lunarBloom | DamageFormula |
+| `StellarFormula` | stellarConduct | DamageFormula |
+| `StellarDirectFormula` | stellarConduct | DamageFormula |
 
 **Unified reaction selection:** Characters register only `DirectFormula` entries. Amplifying/catalyze variants are created at evaluation time via `formula.createAmplified()`, `formula.createCatalyzed()`, or the dispatcher `createReactionVariant()`. Custom formula subclasses override these factory methods.
 
-**LunarDirectFormula:** Pass the raw game% as `talentMult`. `DirectCoeff` (×3 lunarCharged, ×1.6 lunarCrystallize) is applied internally.
+**LunarDirectFormula:** Pass the raw game% as `talentMult`. `DirectCoeff` (×3 lunarCharged, ×1.6 lunarCrystallize, ×1 lunarBloom) is applied internally.
+
+**StellarDirectFormula:** Pass the raw game% as `talentMult`. `directCoeff` is attach-count dependent (1.45–1.9; default 1.6 via `CalcContext.stellarDirectCoeff`). Same reaction zones as Lunar Direct — no `dmg%` or DEF. `StellarFormula` covers auto-generated SC procs (`rx-stellarConduct`); proc math is a placeholder separate from skill direct hits.
 
 **Dual-stat scaling:** `extraTerm: { key, multiplier }` for "X% ATK + Y% EM" type talents.
 

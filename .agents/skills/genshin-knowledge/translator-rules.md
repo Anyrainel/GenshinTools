@@ -109,6 +109,7 @@ For every `key` in every `StatEntry`:
 - Both require `filter: { reactions: [...] }`. Missing filter = **[BUG]** (runtime-enforced for CRIT keys).
 - Filter must be exact: **[BUG]** if it includes reactions not in the game text, omits reactions that are covered, or collapses two different bonus amounts into one entry.
 - **lunarBloom pitfall**: "绽放 (bloom)" does **not** cover 月绽放. LunarBloom's direct-damage portion is immune to bloom `reactionDmg%` — wrongly including `"lunarBloom"` amplifies Lunar Direct damage by 4–5×. Only add it when the text explicitly mentions 月绽放.
+- **superconduct pitfall**: `superconduct` in a `reactions` filter does **not** cover Stellar-Conduct direct damage. SC-tagged formulas and buffs need `reactions: ["stellarConduct"]`. **[BUG]** if a SC skill buff uses `superconduct` because the ability replaced 超导.
 
 **3. Special keys:**
 - "擢升" → `elevated%`, not `dmg%`.
@@ -251,6 +252,7 @@ Buffs that ramp up or down over time (not instant) should be implemented as `Opt
 ### U12. Team Element & Reaction Conditions
 
 - **Reaction conditions**: use `teamMeta.hasReaction(reactionName)`. To determine which aura elements a given trigger element can react with, call `getReactionAuraElements(triggerElement)` from `src/lib/team-comp/helpers.ts` rather than re-deriving the table manually. **Lunar superseding:** when a lunar reaction is possible (requires a 5★ Moonsign teammate), `hasReaction()` for the base reaction returns **false** — e.g., `hasReaction("electroCharged")` is false when `hasReaction("lunarCharged")` is true (see `LUNAR_SUPERSEDES` in constants.ts). Any `hasReaction` gate for electroCharged, bloom, or crystallize (Hydro+Geo only) must also check the corresponding lunar variant (`lunarCharged`, `lunarBloom`, `lunarCrystallize`), or the buff will incorrectly deactivate on Moonsign teams. **[BUG]** if a reaction gate checks only the base reaction without the lunar variant.
+- **Stellar superseding:** when `hasReaction("stellarConduct")` (Sandrone in party), `hasReaction("superconduct")` returns **false** (see `STELLAR_SUPERSEDES` in constants.ts). Buffs gated on `superconduct` must also check `stellarConduct`, or deactivate incorrectly on SC teams. **[BUG]** if a reaction gate checks only `superconduct` without `stellarConduct`.
 - **Enemy element affection** ("对处于X元素影响下的敌人"): active if any team character applies element X. Check `Object.values(this.teamMeta.elements).includes("X")`.
 - **Element absorption** (buffs): when an absorbed element changes a **buff's** scope or value (e.g., Sucrose C6 "+20% DMG of the absorbed element"), iterate `Object.values(this.teamMeta.elements)` to find which absorbable elements are present and add one buff per match. Derive the absorbable set from game text — do not assume.
 - **Element absorption** (formulas): when absorption changes the **damage element** of a formula (e.g., Kazuha Q additional hits, Traveler Anemo Q), the absorbed element depends on in-game aura priority (Pyro > Hydro > Electro > Cryo) and enemy state — it cannot be determined from team composition alone. **[TRACK]** create a tracker item with category `engine-gap`. **[BUG]** if the implementation picks the first team element or any single element by default — this produces incorrect results when multiple absorbable elements are present.
@@ -273,10 +275,33 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 | Overloaded / ElectroCharged / Superconduct / Swirl / Shatter / Bloom / Hyperbloom / Burgeon / Burning | `TransformFormula` |
 | Lunar reaction damage (雷暴云, 月笼, etc.) | `LunarFormula` |
 | Character ability text says "视为月XX反应伤害" | `LunarDirectFormula` — **[BUG]** if `DirectFormula` was used |
+| Auto-generated Stellar-Conduct proc (`rx-stellarConduct`, 超导→星超导) | `StellarFormula` — proc math is placeholder until verified |
+| Character ability text says "视为星超导反应伤害" | `StellarDirectFormula` — **[BUG]** if `DirectFormula` or `TransformFormula` was used |
 
 **Amplifying/Catalyze reactions** (Melt, Vaporize, Spread, Aggravate) are NOT registered as `AmplifyFormula` or `CatalyzeFormula` in `formulaMap`. The base hit is always `DirectFormula`; the UI's ReactionSelector applies the reaction at evaluation time. See S8 for details. **[BUG]** if `AmplifyFormula` or `CatalyzeFormula` appears in `formulaMap`.
 
 **`LunarDirectFormula` talentMult convention**: Pass the **raw game%** directly. The class multiplies by `directCoeff` internally (`lunarCharged ×3`, `lunarCrystallize ×1.6`, `lunarBloom ×1`). **[BUG]** if the passed value is `gameText% / directCoeff` — this cancels the internal multiplication and produces damage 3× (or 1.6×) too low.
+
+**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Unlike Lunar (fixed per reaction subtype), Stellar `directCoeff` depends on Cryo/Electro attach count on the enemy (range **1.45–1.9**, default **1.6** via `CalcContext.stellarDirectCoeff`). **[BUG]** if talentMult is pre-divided by `directCoeff`. **[TRACK]** if no UI exposes attach-count coeff yet (category `engine-gap`).
+
+**Stellar vs Lunar — two damage paths** (mirror lunar design):
+- **Reaction proc** (`StellarFormula`): level-based transformative-style proc when SC triggers in combat. Coefficient and EM curve are **unverified** — do not audit against Superconduct or assume skill-direct math applies.
+- **Skill direct** (`StellarDirectFormula`): talent% × stat scaling, same zone count as `LunarDirectFormula`. This is what Sandrone kit hits use under 辉映.
+
+**Stellar Direct zone model** (same layers as Lunar Direct; no traditional `dmg%` or DEF):
+| Zone | Key | Notes |
+|---|---|---|
+| Stat scaling | `atk` / `hp` / `em` / `def` + `atk%` etc. | Per `scalingKey` |
+| 倍率乘区 | `baseDmg%` | e.g. P1 refined-tactics burst bonus |
+| Flat base | `baseDmg` | Yun Jin / Shenhe-style |
+| 反应基础 | `reactionBaseDmg%` | Nod-Krai P3 (+0.7%/100 ATK, cap 14%) |
+| 反应伤害 | `reactionDmg%` + EM term `6/(2000+EM)` | Not `dmg%` |
+| 擢升 | `elevated%` | C6 etc. |
+| Crit | `cr`/`cd` + `reactionCr`/`reactionCd` | **Tentative** for SC — follow U3 until in-game verification |
+| RES | `resReduction%` | ✓ |
+| **Excluded** | `dmg%`, DEF | **[BUG]** if formula reads or multiplies these |
+
+Do **not** use Superconduct's transformative coefficient (1.5) for `StellarDirectFormula` skill hits.
 
 ### S2. `scalingKey` & `extraTerm`
 
@@ -359,10 +384,10 @@ Conversely, values from passives (P1–P4) and constellations (C1–C6) are fixe
 
 **Unified reaction selection (amplifying/catalyze only):** Do NOT create separate formula entries for the same attack with different amplifying or catalyze reaction variants (e.g., "vaporize version", "aggravate version"). Reaction selection for these is handled by the UI's ReactionSelector. Register only the base `DirectFormula` entry. For multi-hit formulas with partial reaction eligibility (ICD), note which hits get `eligibleReactions` in a code comment. Eligible reactions are derived from the character's element via `ELEMENT_ELIGIBLE_REACTIONS`.
 
-This does NOT apply to transformative, lunar, or other inherent reaction damage. If an attack *is* a reaction (e.g., hyperbloom seeds, swirl procs, burning ticks, lunar direct damage), it must use the appropriate formula class (`TransformFormula`, `LunarFormula`, `LunarDirectFormula`) and be its own `formulaMap` entry — these are distinct damage sources, not variants of a base attack.
+This does NOT apply to transformative, lunar, stellar, or other inherent reaction damage. If an attack *is* a reaction (e.g., hyperbloom seeds, swirl procs, burning ticks, lunar direct damage, Stellar-Conduct skill hits), it must use the appropriate formula class (`TransformFormula`, `LunarFormula`, `LunarDirectFormula`, `StellarFormula`, `StellarDirectFormula`) and be its own `formulaMap` entry — these are distinct damage sources, not variants of a base attack.
 
 - **[BUG]** if separate `formulaMap` entries exist for the same attack with different amplifying/catalyze reactions (e.g., `"hutao-charge-vape"` and `"hutao-charge-melt"` as two entries).
-- **[BUG]** if inherent reaction damage (hyperbloom, swirl, lunar, etc.) is missing its own formula entry because it was conflated with "no separate reaction variants."
+- **[BUG]** if inherent reaction damage (hyperbloom, swirl, lunar, stellar direct, etc.) is missing its own formula entry because it was conflated with "no separate reaction variants."
 
 ### S8. 5★ E/Q Formula Completeness
 

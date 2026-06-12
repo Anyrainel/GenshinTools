@@ -172,6 +172,18 @@ export const STELLAR_SUPERSEDES: Partial<
   superconduct: { stellar: "stellarConduct" },
 };
 
+/** Cryo/Electro attach-count multiplier for StellarDirectFormula (skill direct SC hits). */
+export const STELLAR_DIRECT_COEFF_MIN = 1.45;
+export const STELLAR_DIRECT_COEFF_MAX = 1.9;
+/** Placeholder until damage UI exposes attach-count control. */
+export const STELLAR_DIRECT_COEFF_DEFAULT = 1.6;
+
+/**
+ * Level-based SC proc coefficient for StellarFormula (auto-generated rx-stellarConduct).
+ * Proc math is unverified — do not treat as Superconduct parity.
+ */
+export const STELLAR_REACTION_PROC_COEFF_PLACEHOLDER = 1.6;
+
 /** Stats that can appear on artifacts, for idle stats extraction. */
 export const ARTIFACT_STAT_KEYS: StatKey[] = [
   "hp",
