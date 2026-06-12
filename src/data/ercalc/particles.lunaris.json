@@ -378,7 +378,14 @@
   "qiqi": {
     "element": "Cryo",
     "rarity": 5,
-    "events": []
+    "events": [
+      {
+        "source": "UNIQUE_ElementalArt_StarStrengthen_AOE_ElemBall_CD",
+        "particles": 2,
+        "chance": 1.0,
+        "cd": "6s"
+      }
+    ]
   },
   "chongyun": {
     "element": "Cryo",
@@ -1767,6 +1774,18 @@
         "particles": 5,
         "chance": 1.0,
         "cd": "0.3s"
+      }
+    ]
+  },
+  "sandrone": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "Elemball_Proc",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2.5s"
       }
     ]
   }
