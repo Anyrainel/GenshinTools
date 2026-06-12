@@ -317,6 +317,32 @@ describe("runTriage", () => {
     );
   });
 
+  it("highLevelProtection off: promotes artifacts with half of upgrade rolls concentrated", () => {
+    const art = makeArt({
+      setKey: "unrelated_set",
+      level: 16,
+      substats: rolls({ "hp%": 3, def: 2, atk: 2, hp: 1 }),
+    });
+    const account = makeAccount([], [art]);
+    const { decisions } = runTriage(
+      account,
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        setSlotKeep: 0,
+        levelProtection: 12,
+        highLevelProtection: false,
+      }
+    );
+
+    expect(decisions[0].label).toBe("lock");
+    expect(decisions[0].decidingResult?.ruleId).toBe("concentrationValue");
+    expect(decisions[0].specialRules).toContain(
+      "concentrationValue:concentrated-hp%"
+    );
+  });
+
   it("equipped protection tags equipped artifacts", () => {
     const art = makeArt({});
     const account = makeAccount([

@@ -56,7 +56,7 @@ const MIN_UPGRADE_ROLLS = 3;
  * substat contributes one "initial" roll regardless of allocation, so we
  * subtract those before computing concentration — otherwise a 4-sub artifact
  * maxes out around 66% even in the most extreme CR/CD-stacked case. */
-const CONCENTRATION_THRESHOLD = 0.6;
+const CONCENTRATION_THRESHOLD = 0.5;
 
 /** Convert a substat's accumulated value into an estimated roll count using
  * the average roll value for its rarity. Returns 0 for missing substats. */
@@ -95,7 +95,7 @@ function rollCountsByStat(artifact: ArtifactData): {
   return { total, perStat };
 }
 
-/** Concentrated-stat rule: fires if ≥60% of upgrade rolls landed in one
+/** Concentrated-stat rule: fires if ≥50% of upgrade rolls landed in one
  * category. Upgrade rolls = total rolls − number of distinct substats. */
 export const concentratedStatRule: ConcentrationValueRule = (artifact) => {
   const { total, perStat } = rollCountsByStat(artifact);

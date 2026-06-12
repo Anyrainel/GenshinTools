@@ -2858,8 +2858,8 @@ export const i18nUiData = {
         zh: "关闭高等级保护后",
       },
       spHighLevelOffDetail: {
-        en: "Leveled artifacts run through normal triage. Any that would be unlocked are re-checked and kept if ≥60% of their upgrade rolls fall into one category: CR+CD, ER, EM, ATK%, HP%, or DEF%.",
-        zh: "已升级的圣遗物将走一遍正常评级。本应被淘汰的，会再判定一次：若其升级词条中 ≥60% 集中在单一类别（双暴、充能、精通、攻击%、生命%、防御%），则予以保留。",
+        en: "Leveled artifacts run through normal triage. Any that would be unlocked are re-checked and kept if ≥50% of their upgrade rolls fall into one category: CR+CD, ER, EM, ATK%, HP%, or DEF%.",
+        zh: "已升级的圣遗物将走一遍正常评级。本应被淘汰的，会再判定一次：若其升级词条中 ≥50% 集中在单一类别（双暴、充能、精通、攻击%、生命%、防御%），则予以保留。",
       },
     },
     flexDialogDesc: {

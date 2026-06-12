@@ -30,10 +30,18 @@ function artifactWithRolls(
 }
 
 describe("concentratedStatRule", () => {
-  it("fires when ≥60% of rolls are crit (CR+CD combined)", () => {
+  it("fires for concentrated crit (CR+CD combined)", () => {
     const art = artifactWithRolls({ cr: 4, cd: 4, atk: 1, hp: 1 });
     const r = concentratedStatRule(art);
     expect(r).toEqual({ kept: true, reason: "concentrated-crit" });
+  });
+
+  it("fires when exactly half of upgrade rolls are concentrated", () => {
+    const art = artifactWithRolls({ "hp%": 3, def: 2, atk: 2, hp: 1 });
+    expect(concentratedStatRule(art)).toEqual({
+      kept: true,
+      reason: "concentrated-hp%",
+    });
   });
 
   it("fires for concentrated ER", () => {
