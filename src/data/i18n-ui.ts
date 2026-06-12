@@ -1939,6 +1939,8 @@ export const i18nUiData = {
     elements: { en: "Elements", zh: "元素" },
     weaponTypes: { en: "Weapon Types", zh: "武器类型" },
     regions: { en: "Regions", zh: "地区" },
+    factions: { en: "Factions", zh: "阵营" },
+    utilities: { en: "Utility", zh: "功能" },
     rarity: { en: "Rarity", zh: "稀有度" },
   },
   computeFilters: {

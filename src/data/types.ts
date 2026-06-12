@@ -3,6 +3,7 @@ import type {
   BuildRole,
   BuildSource,
   BuildStyle,
+  CharacterUtility,
   Element,
   ElementalOrPhysical,
   EnemyType,
@@ -291,6 +292,8 @@ export interface CharacterFilters {
   elements: Element[];
   weaponTypes: WeaponType[];
   regions: Region[];
+  factions: Faction[];
+  utilities: CharacterUtility[];
   rarities: Rarity[];
   tierSort: SortDirection;
   releaseSort: SortDirection;

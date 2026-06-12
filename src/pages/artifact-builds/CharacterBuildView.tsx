@@ -108,6 +108,8 @@ export function CharacterBuildView({
       weaponTypes: meta.weaponType != null ? [meta.weaponType] : [],
       rarities: [meta.rarity],
       regions: meta.region != null ? [meta.region] : [],
+      factions: [],
+      utilities: [],
       ownedOnly: false,
       showManekin: targetCharacterId.startsWith("manekin"),
       searchQuery: "",

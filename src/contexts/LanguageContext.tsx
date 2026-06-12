@@ -42,6 +42,7 @@ interface I18n {
   ability: (key: string) => string;
   erAction: (key: string) => string;
   faction: (key: string) => string;
+  characterUtility: (key: string) => string;
   resonance: (key: string) => string;
   weaponType: (type: string) => string;
   weapon: (id: string) => string;
@@ -389,6 +390,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getCharacterUtilityName = useCallback(
+    (utilityKey: string): string => {
+      const utilities = i18nAppData.characterUtilities as Record<
+        string,
+        Record<string, string>
+      >;
+      return utilities[utilityKey]?.[language] || utilityKey;
+    },
+    [language]
+  );
+
   const getReceiverName = useCallback(
     (receiverKey: string): string => {
       const recs = (
@@ -587,6 +599,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       ability: getAbilityName,
       erAction: getErActionName,
       faction: getFactionName,
+      characterUtility: getCharacterUtilityName,
       receiver: getReceiverName,
       resonance: getResonanceName,
       weaponType: getWeaponTypeName,
@@ -629,6 +642,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getAbilityName,
       getErActionName,
       getFactionName,
+      getCharacterUtilityName,
       getReceiverName,
       getResonanceName,
       getWeaponTypeName,

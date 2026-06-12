@@ -172,6 +172,43 @@ describe("filterAndSortCharacters", () => {
     expect(result.length).toBeGreaterThan(0);
   });
 
+  it("filters by faction", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, factions: ["None"] },
+      options
+    );
+    expect(result).toHaveLength(nonManekinCount);
+  });
+
+  it("filters by healer utility", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, utilities: ["healer"] },
+      options
+    );
+    expect(result.map((c) => c.id)).toEqual(["xingqiu", "bennett"]);
+  });
+
+  it("filters by shielder utility", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, utilities: ["shielder"] },
+      options
+    );
+    expect(result).toHaveLength(0);
+  });
+
+  it("filters by other utility", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, utilities: ["other"] },
+      options
+    );
+    expect(result.find((c) => c.id === "bennett")).toBeUndefined();
+    expect(result).toHaveLength(nonManekinCount - 2);
+  });
+
   it("combines multiple filters with AND logic", () => {
     const result = filterAndSortCharacters(
       mockCharacters,
@@ -372,6 +409,12 @@ describe("hasActiveFilters", () => {
     ).toBe(true);
     expect(
       hasActiveFilters({ ...defaultCharacterFilters, regions: ["Liyue"] })
+    ).toBe(true);
+    expect(
+      hasActiveFilters({ ...defaultCharacterFilters, factions: ["None"] })
+    ).toBe(true);
+    expect(
+      hasActiveFilters({ ...defaultCharacterFilters, utilities: ["healer"] })
     ).toBe(true);
     expect(
       hasActiveFilters({ ...defaultCharacterFilters, rarities: [5] })

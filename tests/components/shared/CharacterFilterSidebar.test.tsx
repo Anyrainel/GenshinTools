@@ -36,6 +36,21 @@ describe("CharacterFilterSidebar", () => {
     expect(checkboxes.length).toBeGreaterThan(0);
   });
 
+  it("renders faction and utility filters", () => {
+    render(
+      <CharacterFilterSidebar
+        filters={defaultCharacterFilters}
+        onFiltersChange={mockOnFiltersChange}
+      />
+    );
+
+    expect(screen.getByText("Factions")).toBeInTheDocument();
+    expect(screen.getByText("Nightsoul")).toBeInTheDocument();
+    expect(screen.getByText("Utility")).toBeInTheDocument();
+    expect(screen.getByText("Healer")).toBeInTheDocument();
+    expect(screen.getByText("Shielder")).toBeInTheDocument();
+  });
+
   it("renders sort toggle groups", () => {
     render(
       <CharacterFilterSidebar

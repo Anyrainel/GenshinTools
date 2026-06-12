@@ -13,8 +13,10 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/enums";
 import {
+  characterUtilities,
   type Element,
   elements,
+  factions,
   type Rarity,
   regions,
   type WeaponType,
@@ -73,6 +75,8 @@ export function CharacterFilterSidebar({
     filters.elements.length > 0 ||
     filters.weaponTypes.length > 0 ||
     filters.regions.length > 0 ||
+    filters.factions.length > 0 ||
+    filters.utilities.length > 0 ||
     filters.rarities.length > 0 ||
     filters.ownedOnly;
 
@@ -82,6 +86,8 @@ export function CharacterFilterSidebar({
       elements: [],
       weaponTypes: [],
       regions: [],
+      factions: [],
+      utilities: [],
       rarities: [],
       ownedOnly: false,
     });
@@ -419,6 +425,92 @@ export function CharacterFilterSidebar({
                     className="text-sm xl:text-base text-foreground cursor-pointer flex-1 truncate capitalize"
                   >
                     {t.region(region)}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Factions */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-foreground text-sm xl:text-base font-medium">
+                {t.ui("filters.factions")}
+              </Label>
+              {filters.factions.length > 0 && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onFiltersChange({ ...filters, factions: [] })}
+                  className="text-xs rounded-full h-5 px-2.5"
+                >
+                  {t.ui("common.clear")}
+                </Button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 xl:gap-2">
+              {factions.map((faction) => (
+                <div key={faction} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`faction-${faction}`}
+                    checked={filters.factions.includes(faction)}
+                    onCheckedChange={(checked) =>
+                      handleFilterChange(
+                        "factions",
+                        faction,
+                        checked as boolean
+                      )
+                    }
+                    className="h-4 w-4"
+                  />
+                  <Label
+                    htmlFor={`faction-${faction}`}
+                    className="text-sm xl:text-base text-foreground cursor-pointer flex-1 truncate"
+                  >
+                    {t.faction(faction)}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Utility */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-foreground text-sm xl:text-base font-medium">
+                {t.ui("filters.utilities")}
+              </Label>
+              {filters.utilities.length > 0 && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onFiltersChange({ ...filters, utilities: [] })}
+                  className="text-xs rounded-full h-5 px-2.5"
+                >
+                  {t.ui("common.clear")}
+                </Button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 xl:gap-2">
+              {characterUtilities.map((utility) => (
+                <div key={utility} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`utility-${utility}`}
+                    checked={filters.utilities.includes(utility)}
+                    onCheckedChange={(checked) =>
+                      handleFilterChange(
+                        "utilities",
+                        utility,
+                        checked as boolean
+                      )
+                    }
+                    className="h-4 w-4"
+                  />
+                  <Label
+                    htmlFor={`utility-${utility}`}
+                    className="text-sm xl:text-base text-foreground cursor-pointer flex-1 truncate"
+                  >
+                    {t.characterUtility(utility)}
                   </Label>
                 </div>
               ))}

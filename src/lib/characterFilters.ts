@@ -1,3 +1,5 @@
+import { charInfo } from "@/data/charInfo";
+import type { CharacterUtility, Faction } from "@/data/enums";
 import { tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
@@ -21,9 +23,23 @@ function getCharName(
   return nameResolver ? nameResolver(id) : id;
 }
 
+function getCharacterFaction(id: string): Faction {
+  return charInfo[id]?.faction ?? "None";
+}
+
+function getCharacterUtilities(id: string): CharacterUtility[] {
+  const info = charInfo[id];
+  const utilities: CharacterUtility[] = [];
+  if (info?.healerC != null) utilities.push("healer");
+  if (info?.shielderC != null) utilities.push("shielder");
+  if (utilities.length === 0) utilities.push("other");
+  return utilities;
+}
+
 /**
  * Check if a character matches the given filters (including text search).
  * Uses character_stats when characterStatsMap is provided (element, weaponType, region, releaseDate, rarity).
+ * Uses charInfo for faction and healer/shielder utility filters.
  */
 function matchesFilters(
   character: CharacterResource,
@@ -62,6 +78,20 @@ function matchesFilters(
   if (
     filters.regions.length > 0 &&
     (meta.region == null || !filters.regions.includes(meta.region))
+  ) {
+    return false;
+  }
+  if (
+    filters.factions.length > 0 &&
+    !filters.factions.includes(getCharacterFaction(character.id))
+  ) {
+    return false;
+  }
+  if (
+    filters.utilities.length > 0 &&
+    !getCharacterUtilities(character.id).some((utility) =>
+      filters.utilities.includes(utility)
+    )
   ) {
     return false;
   }
@@ -205,13 +235,15 @@ export function filterAndSortCharacterData(
 }
 
 /**
- * Check if any filters are active (elements, weapons, regions, or rarities).
+ * Check if any dimension filters are active.
  */
 export function hasActiveFilters(filters: CharacterFilters): boolean {
   return (
     filters.elements.length > 0 ||
     filters.weaponTypes.length > 0 ||
     filters.regions.length > 0 ||
+    filters.factions.length > 0 ||
+    filters.utilities.length > 0 ||
     filters.rarities.length > 0
   );
 }
@@ -223,6 +255,8 @@ export const defaultCharacterFilters: CharacterFilters = {
   elements: [],
   weaponTypes: [],
   regions: [],
+  factions: [],
+  utilities: [],
   rarities: [],
   tierSort: "off",
   releaseSort: "desc",

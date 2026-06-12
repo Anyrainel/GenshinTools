@@ -76,6 +76,13 @@ export const regions: Region[] = [
 export type Faction = "Hexerei" | "Moonsign" | "Nightsoul" | "None";
 export const factions: Faction[] = ["Hexerei", "Moonsign", "Nightsoul", "None"];
 
+export type CharacterUtility = "healer" | "shielder" | "other";
+export const characterUtilities: CharacterUtility[] = [
+  "healer",
+  "shielder",
+  "other",
+];
+
 export type MainStat =
   | "cr"
   | "cd"

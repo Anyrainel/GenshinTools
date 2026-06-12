@@ -224,6 +224,8 @@ export const CharacterView = forwardRef<
                     elements: [],
                     weaponTypes: [],
                     regions: [],
+                    factions: [],
+                    utilities: [],
                     rarities: [],
                     ownedOnly: false,
                     showManekin: false,

@@ -202,7 +202,13 @@ export const i18nAppData = {
   factions: {
     Hexerei: { en: "Hexerei", zh: "魔导" },
     Moonsign: { en: "Moonsign", zh: "月兆" },
+    Nightsoul: { en: "Nightsoul", zh: "夜魂" },
     None: { en: "None", zh: "无" },
+  },
+  characterUtilities: {
+    healer: { en: "Healer", zh: "治疗" },
+    shielder: { en: "Shielder", zh: "护盾" },
+    other: { en: "Other", zh: "其他" },
   },
   receivers: {
     self: { en: "Self", zh: "自身" },

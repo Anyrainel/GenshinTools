@@ -123,6 +123,45 @@ describe("Integration: Character Build View Filter Flow", () => {
       ).toBe(true);
     });
 
+    it("filters characters by faction", () => {
+      const filters: CharacterFilters = {
+        ...defaultCharacterFilters,
+        factions: ["Nightsoul"],
+      };
+
+      const result = filterAndSortCharacters(characters, filters, options());
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.some((c) => c.id === "mavuika")).toBe(true);
+      expect(result.every((c) => !c.id.startsWith("manekin"))).toBe(true);
+    });
+
+    it("filters characters by utility", () => {
+      const filters: CharacterFilters = {
+        ...defaultCharacterFilters,
+        utilities: ["healer"],
+      };
+
+      const result = filterAndSortCharacters(characters, filters, options());
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.some((c) => c.id === "bennett")).toBe(true);
+      expect(result.some((c) => c.id === "hu_tao")).toBe(false);
+    });
+
+    it("filters characters by shielder utility", () => {
+      const filters: CharacterFilters = {
+        ...defaultCharacterFilters,
+        utilities: ["shielder"],
+      };
+
+      const result = filterAndSortCharacters(characters, filters, options());
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.some((c) => c.id === "zhongli")).toBe(true);
+      expect(result.some((c) => c.id === "hu_tao")).toBe(false);
+    });
+
     it("combines multiple filter types (AND logic)", () => {
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
@@ -298,6 +337,22 @@ describe("Integration: Character Build View Filter Flow", () => {
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
         regions: ["Liyue"],
+      };
+      expect(hasActiveFilters(filters)).toBe(true);
+    });
+
+    it("returns true when factions filter is set", () => {
+      const filters: CharacterFilters = {
+        ...defaultCharacterFilters,
+        factions: ["Nightsoul"],
+      };
+      expect(hasActiveFilters(filters)).toBe(true);
+    });
+
+    it("returns true when utility filter is set", () => {
+      const filters: CharacterFilters = {
+        ...defaultCharacterFilters,
+        utilities: ["healer"],
       };
       expect(hasActiveFilters(filters)).toBe(true);
     });

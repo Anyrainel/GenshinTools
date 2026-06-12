@@ -25,6 +25,8 @@ export function useCharacterFilters({
     elements: defaultCharacterFilters.elements,
     weaponTypes: defaultCharacterFilters.weaponTypes,
     regions: defaultCharacterFilters.regions,
+    factions: defaultCharacterFilters.factions,
+    utilities: defaultCharacterFilters.utilities,
     rarities: defaultCharacterFilters.rarities,
     ownedOnly: defaultOwnedOnly,
     showManekin: defaultCharacterFilters.showManekin,
@@ -50,6 +52,8 @@ export function useCharacterFilters({
         elements: newFilters.elements,
         weaponTypes: newFilters.weaponTypes,
         regions: newFilters.regions,
+        factions: newFilters.factions,
+        utilities: newFilters.utilities,
         rarities: newFilters.rarities,
         ownedOnly: newFilters.ownedOnly,
         showManekin: newFilters.showManekin,
@@ -89,6 +93,8 @@ export function useCharacterFilters({
     filters.elements,
     filters.weaponTypes,
     filters.regions,
+    filters.factions,
+    filters.utilities,
     filters.rarities,
   ].flat().length;
 
