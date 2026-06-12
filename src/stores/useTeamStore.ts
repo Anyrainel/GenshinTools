@@ -129,6 +129,15 @@ function dedupeTeamCompStateAgainstPreset(
   }
 }
 
+function pruneTeamConfigsToVisibleTeams(state: TeamState): void {
+  const visibleTeamIds = new Set(state.teamComps.map((team) => team.id));
+  state.configsByTeamId = Object.fromEntries(
+    Object.entries(state.configsByTeamId).filter(([teamId]) =>
+      visibleTeamIds.has(teamId)
+    )
+  );
+}
+
 function reindexTeamOrder(
   state: TeamState,
   orderedIds: string[],
@@ -393,6 +402,7 @@ export const useTeamStore = create<TeamState>()(
           state.description = data.description ?? "";
           dedupeTeamCompStateAgainstPreset(state, data);
           refreshDerivedTeamState(state, data);
+          pruneTeamConfigsToVisibleTeams(state);
           touchTeamState(state);
           useTeamResultCacheStore.getState().clearAll();
         });
@@ -404,6 +414,7 @@ export const useTeamStore = create<TeamState>()(
           if (state.activePresetId !== presetId) return;
           dedupeTeamCompStateAgainstPreset(state, data);
           refreshDerivedTeamState(state, data);
+          pruneTeamConfigsToVisibleTeams(state);
         });
       },
 

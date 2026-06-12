@@ -244,6 +244,78 @@ describe("useTeamStore", () => {
     );
   });
 
+  it("prunes setup config for preset teams removed during hydrate", () => {
+    const originalPreset: TeamCompData = {
+      teams: [
+        {
+          id: "old-preset-team",
+          name: "Old",
+          characters: ["hu_tao", null, null, null],
+          weapons: ["staff_of_homa", null, null, null],
+          artifacts: [null, null, null, null],
+        },
+        {
+          id: "kept-preset-team",
+          name: "Kept",
+          characters: ["xingqiu", null, null, null],
+          weapons: ["sacrificial_sword", null, null, null],
+          artifacts: [null, null, null, null],
+        },
+      ],
+    };
+    const updatedPreset: TeamCompData = {
+      teams: [
+        {
+          id: "kept-preset-team",
+          name: "Kept",
+          characters: ["xingqiu", null, null, null],
+          weapons: ["sacrificial_sword", null, null, null],
+          artifacts: [null, null, null, null],
+        },
+        {
+          id: "new-preset-team",
+          name: "New",
+          characters: ["zhongli", null, null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+        },
+      ],
+    };
+
+    useTeamStore.getState().subscribePreset("preset-a", originalPreset);
+    useTeamStore.getState().updateTeamSetupConfig("old-preset-team", {
+      charConfigs: { hu_tao: { minEr: 1.4 } },
+    });
+    useTeamStore.getState().updateTeamSetupConfig("kept-preset-team", {
+      charConfigs: { xingqiu: { minEr: 1.5 } },
+    });
+    const customId = useTeamStore.getState().addTeam({
+      id: "custom-team",
+      name: "Custom",
+      characters: ["bennett", null, null, null],
+      setupConfig: {
+        combatOptions: {},
+        charConfigs: { bennett: { minEr: 1.8 } },
+      },
+    });
+
+    useTeamStore.getState().hydratePreset("preset-a", updatedPreset);
+
+    const state = useTeamStore.getState();
+    expect(state.teamComps.map((team) => team.id)).toEqual([
+      "kept-preset-team",
+      "new-preset-team",
+      customId,
+    ]);
+    expect(state.configsByTeamId["old-preset-team"]).toBeUndefined();
+    expect(state.configsByTeamId["kept-preset-team"].charConfigs).toEqual({
+      xingqiu: { minEr: 1.5 },
+    });
+    expect(state.configsByTeamId[customId].charConfigs).toEqual({
+      bennett: { minEr: 1.8 },
+    });
+  });
+
   it("exports the resolved comp view without setup config duplication", () => {
     useTeamStore.getState().addTeam({
       name: "Exported",
