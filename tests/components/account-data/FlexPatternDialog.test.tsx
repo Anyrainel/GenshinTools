@@ -59,4 +59,43 @@ describe("FlexPatternDialog", () => {
       expect.objectContaining({ customFlexInputs: [] })
     );
   });
+
+  it("restores Flex registry defaults without changing other triage settings", () => {
+    const customInput: CustomFlexInput = {
+      slot: "sands",
+      mainStat: "em",
+      requiredSubs: ["cr", "cd"],
+    };
+    const onSettingsChange = vi.fn();
+
+    render(
+      <FlexPatternDialog
+        open
+        onOpenChange={vi.fn()}
+        flexPatterns={[]}
+        settings={{
+          ...makeSettings([customInput]),
+          mainStatThreshold: 95,
+          erHoardingEnabled: false,
+          disabledFlexPatterns: ["flex:flower:hp:cr,cd,atk%"],
+          enabledFlexPatterns: ["flex:sands:er:atk%,atk"],
+        }}
+        onSettingsChange={onSettingsChange}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /restore flex defaults/i })
+    );
+
+    expect(onSettingsChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mainStatThreshold: 95,
+        erHoardingEnabled: false,
+        disabledFlexPatterns: [],
+        enabledFlexPatterns: [],
+        customFlexInputs: [],
+      })
+    );
+  });
 });

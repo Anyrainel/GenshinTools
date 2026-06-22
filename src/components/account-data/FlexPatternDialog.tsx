@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { StatSelect } from "@/components/artifact-builds/StatSelect";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { statPools } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
 import {
   buildCustomFlexPattern,
   makeFlexPatternKey,
@@ -33,7 +34,38 @@ import type {
   FlexPattern,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
-import { cn } from "@/lib/utils";
+import { cloneData, cn } from "@/lib/utils";
+
+function stringArraysEqual(first: string[], second: string[]) {
+  return (
+    first.length === second.length &&
+    first.every((value, index) => value === second[index])
+  );
+}
+
+function flexRegistryMatchesDefault(settings: TriageSettings) {
+  return (
+    stringArraysEqual(
+      settings.disabledFlexPatterns,
+      DEFAULT_TRIAGE_SETTINGS.disabledFlexPatterns
+    ) &&
+    stringArraysEqual(
+      settings.enabledFlexPatterns,
+      DEFAULT_TRIAGE_SETTINGS.enabledFlexPatterns
+    ) &&
+    JSON.stringify(settings.customFlexInputs) ===
+      JSON.stringify(DEFAULT_TRIAGE_SETTINGS.customFlexInputs)
+  );
+}
+
+function restoreFlexRegistryDefaults(settings: TriageSettings): TriageSettings {
+  return {
+    ...settings,
+    disabledFlexPatterns: [...DEFAULT_TRIAGE_SETTINGS.disabledFlexPatterns],
+    enabledFlexPatterns: [...DEFAULT_TRIAGE_SETTINGS.enabledFlexPatterns],
+    customFlexInputs: cloneData(DEFAULT_TRIAGE_SETTINGS.customFlexInputs),
+  };
+}
 
 export function FlexPatternDialog({
   open,
@@ -49,6 +81,7 @@ export function FlexPatternDialog({
   onSettingsChange: (s: TriageSettings) => void;
 }) {
   const { t } = useLanguage();
+  const flexRegistryIsDefault = flexRegistryMatchesDefault(settings);
   const isPatternEnabled = (fp: FlexPattern) =>
     fp.defaultOff
       ? settings.enabledFlexPatterns.includes(fp.key)
@@ -112,12 +145,29 @@ export function FlexPatternDialog({
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent className="sm:max-w-2xl">
         <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>
-            {t.ui("triage.flexPatterns")}
-          </ResponsiveDialogTitle>
-          <ResponsiveDialogDescription>
-            {t.ui("triage.flexDialogDesc")}
-          </ResponsiveDialogDescription>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-1">
+              <ResponsiveDialogTitle>
+                {t.ui("triage.flexPatterns")}
+              </ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
+                {t.ui("triage.flexDialogDesc")}
+              </ResponsiveDialogDescription>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 self-start"
+              disabled={flexRegistryIsDefault}
+              onClick={() =>
+                onSettingsChange(restoreFlexRegistryDefaults(settings))
+              }
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              {t.ui("triage.restoreFlexDefaults")}
+            </Button>
+          </div>
         </ResponsiveDialogHeader>
 
         <div className="space-y-2 max-h-[60vh] overflow-y-auto">

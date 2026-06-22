@@ -2891,6 +2891,10 @@ export const i18nUiData = {
       en: "Invalid substat combination",
       zh: "副词条组合无效",
     },
+    restoreFlexDefaults: {
+      en: "Restore Flex defaults",
+      zh: "恢复散件默认",
+    },
     removeCustomFlex: { en: "Remove custom pattern", zh: "删除自定义散件" },
   },
   manager: {
