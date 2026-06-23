@@ -491,12 +491,14 @@ function buildHeuristicAssignment(
  * Build heuristic baseSheets for all characters. Carries get first pick.
  * Returns baseSheets where each character's entry uses set-valid artifacts.
  */
-function buildHeuristicBaseSheets(
+/** @internal Exported for testing only. */
+export function buildHeuristicBaseSheets(
   allCharIds: string[],
   carryCharIds: string[],
   perChar: Record<string, CharOptConfig>,
   inventory: ArtifactData[],
-  baseSheets: Record<string, StatSheet>
+  baseSheets: Record<string, StatSheet>,
+  getInventoryForChar?: (charId: string) => ArtifactData[]
 ): Record<string, StatSheet> {
   const result = { ...baseSheets };
   const assignedIds = new Set<string>();
@@ -510,10 +512,11 @@ function buildHeuristicBaseSheets(
   for (const charId of ordered) {
     const charConfig = perChar[charId];
     if (!charConfig) continue;
+    const charInventory = getInventoryForChar?.(charId) ?? inventory;
     const picked = buildHeuristicAssignment(
       charId,
       charConfig,
-      inventory,
+      charInventory,
       assignedIds
     );
     const pieces = allSlots
@@ -706,7 +709,8 @@ export async function* runTeamOptimization(
     carryCharIds,
     effectivePerChar,
     inventory,
-    baseSheets
+    baseSheets,
+    getCharInventory
   );
 
   // Yield: Phase 1 starting
@@ -1032,8 +1036,7 @@ export async function* runTeamOptimization(
     if (
       failReasons[charId] &&
       opts.ignoreArtifactSets?.[charId] &&
-      charConfig &&
-      !!charConfig.artifactSet
+      charConfig?.artifactSet
     ) {
       effectivePerChar[charId] = {
         ...charConfig,

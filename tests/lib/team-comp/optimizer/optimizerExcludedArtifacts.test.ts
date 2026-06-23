@@ -15,7 +15,10 @@ import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
+import {
+  buildHeuristicBaseSheets,
+  runTeamOptimization,
+} from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
   CharOptConfig,
   TeamOptimizerOptions,
@@ -79,6 +82,39 @@ function getAssignedIds(
 }
 
 describe("perCharExcludedArtifactIds", () => {
+  it("uses per-character exclusions when building heuristic base sheets", () => {
+    const protectedFlower = makeArt("flower", "crimson_witch_of_flames", "hp", {
+      cd: 80,
+    });
+    const allowedFlower = makeArt("flower", "crimson_witch_of_flames", "hp", {
+      cd: 4,
+    });
+    const inventory = [protectedFlower, allowedFlower];
+    const perChar: Record<string, CharOptConfig> = {
+      xingqiu: { minEr: 0, minCr: 0, buildMatch: makeBuildMatch() },
+    };
+    const baseSheets = { xingqiu: new StatSheet([]) };
+
+    const unfiltered = buildHeuristicBaseSheets(
+      ["xingqiu"],
+      [],
+      perChar,
+      inventory,
+      baseSheets
+    );
+    expect(unfiltered.xingqiu.getRaw("cd")).toBeCloseTo(0.8);
+
+    const filtered = buildHeuristicBaseSheets(
+      ["xingqiu"],
+      [],
+      perChar,
+      inventory,
+      baseSheets,
+      () => inventory.filter((artifact) => artifact.id !== protectedFlower.id)
+    );
+    expect(filtered.xingqiu.getRaw("cd")).toBeCloseTo(0.04);
+  });
+
   it("excluded artifacts are not assigned to the specified character", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "hu_tao");
