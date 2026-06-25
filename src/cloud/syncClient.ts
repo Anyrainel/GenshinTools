@@ -8,6 +8,7 @@ import {
 } from "@/cloud/apiClient";
 import { buildBackupHeadMetadataByPartition } from "@/cloud/backupMetadata";
 import {
+  bytesToArrayBuffer,
   canonicalJson,
   createEnvelope,
   getContentHash,
@@ -535,7 +536,9 @@ async function createCommitPuts(
         sourceDeviceId: options.deviceId,
       });
       const bytes = await gzipJson(envelope);
-      const blob = new Blob([bytes], { type: "application/gzip" });
+      const blob = new Blob([bytesToArrayBuffer(bytes)], {
+        type: "application/gzip",
+      });
       return {
         commitObjectKey: `upload_${index}`,
         partitionKey: upload.id,
@@ -725,7 +728,10 @@ function isCloudNamespace(value: string): value is CloudNamespace {
 }
 
 async function sha256Bytes(bytes: Uint8Array): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    bytesToArrayBuffer(bytes)
+  );
   return `sha256:${hex(new Uint8Array(digest))}`;
 }
 

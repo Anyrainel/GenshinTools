@@ -67,15 +67,23 @@ export function encodePathSegment(value: string | number): string {
 
 export async function gzipJson(value: unknown): Promise<Uint8Array> {
   const stream = textStream(canonicalJson(value)).pipeThrough(
-    new CompressionStream("gzip")
+    byteTransform(new CompressionStream("gzip"))
   );
   return streamToBytes(stream);
 }
 
 export async function gunzipJson<T>(bytes: Uint8Array): Promise<T> {
-  const stream = byteStream(bytes).pipeThrough(new DecompressionStream("gzip"));
+  const stream = byteStream(bytes).pipeThrough(
+    byteTransform(new DecompressionStream("gzip"))
+  );
   const text = new TextDecoder().decode(await streamToBytes(stream));
   return JSON.parse(text) as T;
+}
+
+export function bytesToArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return copy.buffer;
 }
 
 function textStream(text: string): ReadableStream<Uint8Array> {
@@ -85,9 +93,15 @@ function textStream(text: string): ReadableStream<Uint8Array> {
 }
 
 function byteStream(bytes: Uint8Array): ReadableStream<Uint8Array> {
-  const body = new Response(bytes).body;
+  const body = new Response(bytesToArrayBuffer(bytes)).body;
   if (!body) throw new Error("Unable to create payload byte stream");
   return body;
+}
+
+function byteTransform(
+  stream: CompressionStream | DecompressionStream
+): ReadableWritablePair<Uint8Array, Uint8Array> {
+  return stream as unknown as ReadableWritablePair<Uint8Array, Uint8Array>;
 }
 
 async function streamToBytes(stream: ReadableStream<Uint8Array>) {

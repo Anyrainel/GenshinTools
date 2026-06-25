@@ -8,7 +8,12 @@ import type {
   BackupObjectDownloadResponse,
   BackupWriteMode,
 } from "@/cloud/apiClient";
-import { createEnvelope, getContentHash, gzipJson } from "@/cloud/payload";
+import {
+  bytesToArrayBuffer,
+  createEnvelope,
+  getContentHash,
+  gzipJson,
+} from "@/cloud/payload";
 import {
   applyCloudRestoreAndMarkSynced,
   type BackupApi,
@@ -581,7 +586,9 @@ describe("cloud sync client multi-device flows", () => {
       createdAt: 1,
     });
     const compressedBytes = await gzipJson(envelope);
-    const blob = new Blob([compressedBytes], { type: "application/gzip" });
+    const blob = new Blob([bytesToArrayBuffer(compressedBytes)], {
+      type: "application/gzip",
+    });
     const head: BackupHead = {
       partitionKey: "builds/all",
       objectId: "obj-invalid",
@@ -944,7 +951,10 @@ function emptyTiersPayload() {
 }
 
 async function sha256Bytes(bytes: Uint8Array): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    bytesToArrayBuffer(bytes)
+  );
   return `sha256:${[...new Uint8Array(digest)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("")}`;

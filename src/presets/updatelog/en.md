@@ -2,6 +2,20 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-06-25
+
+### features
+- Character filters now include faction and utility options, so you can find characters by Hexerei, Moonsign, Nightsoul, healer, shielder, and similar roles
+- Updated GGArtifact build and team presets
+- ER calculation now includes particle data for Qiqi
+- The off-piece rule dialog now has a restore defaults button for quickly resetting built-in flex rules
+
+### fixes
+- Score-up recommendations now compare current and suggested builds with the same scoring method, so gains match the stat changes and decreases are shown in red
+- Lock Helper now protects high-level artifacts with concentrated useful rolls more reliably, reducing mistaken fodder decisions
+- Team preset refreshes now clean up settings for removed preset teams, so hidden stale teams no longer affect your setup
+- Team optimization now respects each character's excluded artifacts during heuristic setup, preventing excluded pieces from being assigned to the wrong character
+
 ## 2026-06-09
 
 ### features
