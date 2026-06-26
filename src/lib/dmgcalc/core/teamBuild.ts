@@ -153,6 +153,7 @@ export class TeamBuild {
       enemyRes: baselineCtx?.enemyRes ?? 0.1,
       rollMultiplier: baselineCtx?.rollMultiplier ?? 0.85,
       substatBudget: baselineCtx?.substatBudget ?? "8_6",
+      stellarDirectCoeff: baselineCtx?.stellarDirectCoeff,
     };
     const charIds = configs.map((c) => c.charId);
     const constellations: Record<string, number> = {};

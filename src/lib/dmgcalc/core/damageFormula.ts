@@ -1322,7 +1322,7 @@ export class StellarFormula extends DamageFormula {
  * Stellar Direct (星超导直伤): character abilities tagged 视为星超导反应伤害.
  * Same zone layout as LunarDirectFormula; no dmg% or DEF multiplier.
  * Pass the raw game% as talentMult; attach-count directCoeff from CalcContext
- * (default 1.6, range 1.45–1.9 — TODO: team damage UI control).
+ * (default 1.6, range 1.45–1.9).
  */
 export class StellarDirectFormula extends DamageFormula {
   override getReadKeys(): ReadonlySet<StatKey> {

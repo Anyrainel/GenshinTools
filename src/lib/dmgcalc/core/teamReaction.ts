@@ -187,8 +187,7 @@ export class TeamReaction implements IFormulaProvider {
     for (const reaction of TRANSFORMATIVE_REACTIONS) {
       if (
         !teamMeta.hasReaction(reaction) &&
-        !(reaction === "bloom" && teamMeta.hasReaction("lunarBloom")) &&
-        !(reaction === "superconduct" && teamMeta.hasReaction("stellarConduct"))
+        !(reaction === "bloom" && teamMeta.hasReaction("lunarBloom"))
       )
         continue;
       const element = REACTION_DAMAGE_ELEMENT[reaction];

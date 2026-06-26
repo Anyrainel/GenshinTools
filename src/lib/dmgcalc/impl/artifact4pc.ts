@@ -1478,7 +1478,10 @@ class GlacierAndSnowfield4pc extends ArtifactSetBase {
         id: this.artifactSetId,
         triggers: ["on-reaction"],
       },
-      { receiver: "self", filter: { reactions: ["superconduct"] } },
+      {
+        receiver: "self",
+        filter: { reactions: ["stellarConduct", "superconduct"] },
+      },
       [{ key: "reactionDmg%", value: 1.0 }]
     ),
     new StatBuff(

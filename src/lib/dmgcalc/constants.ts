@@ -175,7 +175,7 @@ export const STELLAR_SUPERSEDES: Partial<
 /** Cryo/Electro attach-count multiplier for StellarDirectFormula (skill direct SC hits). */
 export const STELLAR_DIRECT_COEFF_MIN = 1.45;
 export const STELLAR_DIRECT_COEFF_MAX = 1.9;
-/** Placeholder until damage UI exposes attach-count control. */
+/** Default attach-count coefficient for Sandrone's team damage UI control. */
 export const STELLAR_DIRECT_COEFF_DEFAULT = 1.6;
 
 /**

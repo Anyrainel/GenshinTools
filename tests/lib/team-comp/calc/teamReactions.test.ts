@@ -4,6 +4,7 @@
  */
 
 import { describe, expect, it } from "vitest";
+import type { Element, ReactionType } from "@/data/enums";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -25,10 +26,12 @@ import type {
   ReactionComboGridRow,
   TeamFormulaCatalog,
 } from "@/lib/dmgcalc/core/teamFormulaCatalog";
+import type { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import {
   LUNAR_RANK_WEIGHTS,
   MULTI_CONTRIBUTOR_REACTIONS,
   resolveReactionComboEntries,
+  TeamReaction,
 } from "@/lib/dmgcalc/core/teamReaction";
 import type { TeamStatSheet } from "@/lib/dmgcalc/core/teamStatSheet";
 import type {
@@ -65,6 +68,24 @@ function hasReactionFormula(
     if (key.startsWith(`${baseId}-`)) return true;
   }
   return false;
+}
+
+function hasReactionFormulaId(
+  formulaIds: Record<string, I18nLabel>,
+  baseId: string
+): boolean {
+  return Object.keys(formulaIds).some((key) => key.startsWith(`${baseId}-`));
+}
+
+function createReactionProvider(
+  elements: Record<string, Element>,
+  reactions: ReadonlySet<ReactionType>
+): TeamReaction {
+  return new TeamReaction({
+    characters: Object.keys(elements),
+    elements,
+    hasReaction: (reaction: ReactionType) => reactions.has(reaction),
+  } as unknown as TeamMeta);
 }
 
 /** Get the label of the first per-triggerer formula matching this base ID. */
@@ -240,6 +261,26 @@ const SWIRL_TEAM: TeamSlotConfig[] = [
   },
 ];
 
+/** Cryo + Electro team -> superconduct */
+const CRYO_ELECTRO_TEAM: TeamSlotConfig[] = [
+  {
+    charId: "kamisato_ayaka",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "mistsplitter_reforged",
+    refinement: 1,
+    artifactSet: null,
+  },
+  {
+    charId: "fischl",
+    charLevel: 90,
+    constellation: 0,
+    weaponId: "the_stringless",
+    refinement: 1,
+    artifactSet: null,
+  },
+];
+
 // Tests
 
 describe("TeamReactionProvider — formula generation", () => {
@@ -281,6 +322,23 @@ describe("TeamReactionProvider — formula generation", () => {
   it("does NOT generate superconduct when missing Cryo+Electro pair", () => {
     const tb = new TeamBuild(BLOOM_TEAM);
     expect(hasReactionFormula(tb.catalog, "rx-superconduct")).toBe(false);
+  });
+
+  it("generates superconduct for Cryo+Electro without Sandrone", () => {
+    const tb = new TeamBuild(CRYO_ELECTRO_TEAM);
+    expect(hasReactionFormula(tb.catalog, "rx-superconduct")).toBe(true);
+    expect(hasReactionFormula(tb.catalog, "rx-stellarConduct")).toBe(false);
+  });
+
+  it("generates Stellar-Conduct instead of superconduct for Sandrone teams", () => {
+    const reactions = new Set<ReactionType>(["stellarConduct"]);
+    const provider = createReactionProvider(
+      { sandrone: "Cryo", fischl: "Electro" },
+      reactions
+    );
+    const formulaIds = provider.getFormulaIds();
+    expect(hasReactionFormulaId(formulaIds, "rx-stellarConduct")).toBe(true);
+    expect(hasReactionFormulaId(formulaIds, "rx-superconduct")).toBe(false);
   });
 });
 
@@ -2254,7 +2312,7 @@ describe("weight prefix for smaller teams", () => {
 
     const grid = tb.catalog.getReactionComboGrid();
     const row = findGridRow(grid, "rx-lunarCharged");
-    if (!row || row.eligible.size !== 3) return; // team might not produce 3 eligible
+    if (row?.eligible.size !== 3) return; // team might not produce 3 eligible
 
     expect(entry.parts).toHaveLength(3);
     const weights = entry.parts.map(

@@ -945,6 +945,24 @@ describe("createCharacter / createWeapon", () => {
       )
     ).toBe(true);
   });
+
+  it("keeps Glacier and Snowfield Superconduct bonus available to Stellar-Conduct", () => {
+    const artifact = createArtifactSet(
+      "glacier_and_snowfield",
+      "kamisato_ayaka",
+      new TeamMeta(["kamisato_ayaka", "fischl"])
+    );
+    const scBuff = artifact.buffs.find((buff) =>
+      buff.staticBuffs.some(
+        (entry) => entry.key === "reactionDmg%" && entry.value === 1
+      )
+    );
+
+    expect(scBuff?.target.filter?.reactions).toEqual([
+      "stellarConduct",
+      "superconduct",
+    ]);
+  });
 });
 
 describe("getOptionDef", () => {

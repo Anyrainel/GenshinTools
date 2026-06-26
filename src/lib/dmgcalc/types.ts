@@ -425,7 +425,7 @@ export type CalcContext = {
   substatBudget: SubstatBudgetPreset;
   /**
    * Stellar-Conduct direct damage attach-count coefficient (1.45–1.9).
-   * TODO: expose in team damage UI when Polestar Field attach tracking is available.
+   * Sandrone teams expose this in team damage calculation settings.
    */
   stellarDirectCoeff?: number;
 };

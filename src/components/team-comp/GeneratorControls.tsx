@@ -14,9 +14,14 @@ import {
   numericInputFilter,
   useDeferredTextInput,
 } from "@/hooks/useDeferredTextInput";
+import {
+  STELLAR_DIRECT_COEFF_DEFAULT,
+  STELLAR_DIRECT_COEFF_MAX,
+  STELLAR_DIRECT_COEFF_MIN,
+} from "@/lib/dmgcalc/constants";
 import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
 import type { TeamCharConfig } from "@/lib/team-comp/types";
-import { getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
@@ -24,6 +29,13 @@ const INPUT_CLS =
   "text-center font-bold border-border/20 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1";
 const SPINNER_HIDE =
   "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+
+function clampStellarDirectCoeff(value: number): number {
+  return Math.min(
+    STELLAR_DIRECT_COEFF_MAX,
+    Math.max(STELLAR_DIRECT_COEFF_MIN, value)
+  );
+}
 
 type EnemyInputsProps = {
   enemyLevel: number | string;
@@ -148,6 +160,51 @@ export function RollQualityInputs({
         </Select>
       </div>
     </>
+  );
+}
+
+// ─── Stellar-Conduct Direct Coefficient ───
+
+type StellarDirectCoeffInputProps = {
+  stellarDirectCoeff?: number;
+  onStellarDirectCoeffChange: (v: number) => void;
+  t: ReturnType<typeof useLanguage>["t"];
+};
+
+export function StellarDirectCoeffInput({
+  stellarDirectCoeff,
+  onStellarDirectCoeffChange,
+  t,
+}: StellarDirectCoeffInputProps) {
+  const coeff = useDeferredTextInput(
+    String(stellarDirectCoeff ?? STELLAR_DIRECT_COEFF_DEFAULT),
+    (raw) => {
+      const trimmed = raw.trim();
+      const parsed =
+        trimmed === "" ? STELLAR_DIRECT_COEFF_DEFAULT : Number(trimmed);
+      const next = Number.isNaN(parsed) ? STELLAR_DIRECT_COEFF_DEFAULT : parsed;
+      onStellarDirectCoeffChange(clampStellarDirectCoeff(next));
+    },
+    { filter: numericInputFilter }
+  );
+
+  return (
+    <div
+      className="flex items-center gap-0.5 md:gap-1"
+      title={t.ui("teamComp.stellarDirectCoeffTip")}
+    >
+      <span className={LABEL_CLS}>{t.ui("teamComp.stellarDirectCoeff")}</span>
+      <Input
+        type="text"
+        inputMode="decimal"
+        value={coeff.value}
+        placeholder={String(STELLAR_DIRECT_COEFF_DEFAULT)}
+        onChange={coeff.onChange}
+        onBlur={coeff.onBlur}
+        onKeyDown={coeff.onKeyDown}
+        className={cn(INPUT_CLS, SPINNER_HIDE, "w-12 md:w-14")}
+      />
+    </div>
   );
 }
 

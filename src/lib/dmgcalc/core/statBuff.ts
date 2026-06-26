@@ -1,6 +1,10 @@
 import type { Faction, Region, StatKey } from "@/data/enums";
 import type { StatEntry } from "@/data/types";
-import { FINAL_STAT_KEYS, LUNAR_REACTIONS } from "../constants";
+import {
+  FINAL_STAT_KEYS,
+  LUNAR_REACTIONS,
+  STELLAR_REACTIONS,
+} from "../constants";
 import type {
   BuffReceiverType,
   BuffSource,
@@ -36,7 +40,10 @@ export function assertNoDuplicateStatKeys(
   }
 }
 
-const LUNAR_REACTION_SET = new Set<string>(LUNAR_REACTIONS);
+const ELEVATED_REACTION_SET = new Set<string>([
+  ...LUNAR_REACTIONS,
+  ...STELLAR_REACTIONS,
+]);
 
 const VALID_CHARACTER_ORIGINS = new Set([
   "A",
@@ -126,7 +133,7 @@ function isAllowlisted(
  *  - duplicate keys
  *  - invalid filter shapes (empty arrays, duplicate elements)
  *  - key/receiver constraints from KEY_CONSTRAINTS
- *  - special-cased rules (e.g. elevated% must only scope to lunar reactions)
+ *  - special-cased rules (e.g. elevated% must only scope to elevated-capable reactions)
  *
  * Exported for use in tests. Not called in the production StatBuff constructor.
  */
@@ -242,14 +249,14 @@ export function validateStatBuff(
       }
     }
 
-    // Special case: elevated% may only be scoped to lunar reactions
+    // Special case: elevated% may only be scoped to reactions with an elevated zone.
     if (key === "elevated%" && filter?.reactions) {
-      const nonLunar = filter.reactions.filter(
-        (r) => !LUNAR_REACTION_SET.has(r)
+      const unsupported = filter.reactions.filter(
+        (r) => !ELEVATED_REACTION_SET.has(r)
       );
-      if (nonLunar.length > 0) {
+      if (unsupported.length > 0) {
         throw new Error(
-          `${label} elevated% is not expected to apply to non-lunar reactions yet. Ask for review for this case.`
+          `${label} elevated% is not expected to apply to reactions without an elevated zone. Ask for review for this case.`
         );
       }
     }

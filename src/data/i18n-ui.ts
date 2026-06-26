@@ -1459,6 +1459,11 @@ export const i18nUiData = {
       en: "Rolls Count",
       zh: "词条数",
     },
+    stellarDirectCoeff: { en: "Stellar coeff.", zh: "星超导系数" },
+    stellarDirectCoeffTip: {
+      en: "Stellar-Conduct direct coefficient (1.45-1.9).",
+      zh: "星超导直伤系数（1.45-1.9）。",
+    },
     emptyOptMsg: {
       en: "Press Run Optimization to find the best artifact loadout.",
       zh: "点击「开始优化」寻找最优圣遗物配装。",
@@ -2359,6 +2364,12 @@ export const i18nUiData = {
     tierThresholds: { en: "Completeness goal", zh: "完成度目标" },
     minScoreDiff: { en: "Min score gain", zh: "最低收益" },
     gainLabel: { en: "Avg. Gain", zh: "平均收益" },
+    setSummaryTitle: { en: "By artifact set", zh: "按套装汇总" },
+    setSummaryDesc: {
+      en: "Suggestion count and average expected score gain per set — a quick read on where resources may pay off most.",
+      zh: "各套装的建议条数与平均预期提分，便于判断资源投入方向。",
+    },
+    setSummaryCount: { en: "{0} suggestions", zh: "{0} 条建议" },
     sanctifyingElixir: { en: "Sanctifying Elixir", zh: "祝圣之霜" },
     dustOfEnlightenment: { en: "Dust of Enlightenment", zh: "启圣之尘" },
     pUpgradeLabel: { en: "P(upgrade)", zh: "升级概率" },
@@ -2906,6 +2917,10 @@ export const i18nUiData = {
     connect: { en: "Connect", zh: "连接" },
     ready: { en: "Ready", zh: "就绪" },
     offline: { en: "Offline", zh: "离线" },
+    offlineHint: {
+      en: "If the status continues to be offline even if local server has started, the traffic might be interfered by browser extensions. Try incognito mode to see if it helps.",
+      zh: "若本地服务器已启动但状态仍为离线，可能是浏览器扩展干扰了连接。可尝试无痕模式排查。",
+    },
     busy: { en: "Busy", zh: "忙碌中" },
     gameNotRunning: { en: "Game not running", zh: "游戏未运行" },
     paused: { en: "Paused", zh: "已暂停" },

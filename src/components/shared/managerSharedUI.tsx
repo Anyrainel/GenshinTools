@@ -1,4 +1,9 @@
-import { Download, ExternalLink } from "lucide-react";
+import { Download, ExternalLink, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { cn } from "@/lib/utils";
@@ -22,6 +27,20 @@ export function ConnectionStatus({
         <span className="text-sm text-muted-foreground">
           {t.ui("manager.offline")}
         </span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex text-muted-foreground hover:text-foreground"
+              aria-label={t.ui("manager.offlineHint")}
+            >
+              <Info className="h-3.5 w-3.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-xs">
+            <p>{t.ui("manager.offlineHint")}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     );
   }

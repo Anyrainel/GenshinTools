@@ -26,7 +26,11 @@ import {
   CARD_TITLE_CLS,
   CONTROLS_CLS,
 } from "./cardStyles";
-import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
+import {
+  EnemyInputs,
+  RollQualityInputs,
+  StellarDirectCoeffInput,
+} from "./GeneratorControls";
 
 interface AnalyzerResultCardProps {
   calcContext: Partial<CalcContext>;
@@ -67,6 +71,7 @@ export function AnalyzerResultCard({
   );
 
   const charIds = charConfigs.map((c) => c.charId);
+  const hasSandrone = charIds.includes("sandrone");
 
   return (
     <Card className={CARD_CLS}>
@@ -104,6 +109,15 @@ export function AnalyzerResultCard({
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
+          {hasSandrone && (
+            <StellarDirectCoeffInput
+              stellarDirectCoeff={ctx.stellarDirectCoeff}
+              onStellarDirectCoeffChange={(v) =>
+                patchCtx({ stellarDirectCoeff: v })
+              }
+              t={t}
+            />
+          )}
 
           <Button
             onClick={isComputing ? onStop : onRun}

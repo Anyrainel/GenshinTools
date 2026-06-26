@@ -658,6 +658,32 @@ describe("Entity Instantiation", () => {
       return errors;
     }
 
+    it("allows elevated% only on elevated-capable reaction filters", () => {
+      const source = { type: "character" as const, id: "test", origin: "C6" };
+
+      expect(() =>
+        validateStatBuff(
+          [{ key: "elevated%", value: 0.2 }],
+          { receiver: "self", filter: { reactions: ["lunarBloom"] } },
+          source
+        )
+      ).not.toThrow();
+      expect(() =>
+        validateStatBuff(
+          [{ key: "elevated%", value: 0.2 }],
+          { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+          source
+        )
+      ).not.toThrow();
+      expect(() =>
+        validateStatBuff(
+          [{ key: "elevated%", value: 0.2 }],
+          { receiver: "self", filter: { reactions: ["superconduct"] } },
+          source
+        )
+      ).toThrow("reactions without an elevated zone");
+    });
+
     describe.each([2, 6] as const)("Characters C%i", (constellation) => {
       it.each(Object.keys(charactersById))("%s", (charId) => {
         try {

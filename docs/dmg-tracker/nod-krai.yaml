@@ -128,34 +128,6 @@
     users who do run the burst can enable it manually; only the default-rotation
     contribution is intentionally 0. No change needed.
 
-- id: sandrone-c2-reaction-cd
-  entity: sandrone
-  rule: U3
-  status: completed
-  category: bug
-  summary: >
-    C2 condensed-beam CRIT DMG buffs use key "cd" instead of "reactionCd" on
-    Stellar-Conduct charge hits; reaction-scoped crit must use reactionCd per U3.
-  detail: >
-    Changed both C2 StatBuff entries (+40% base and +60% peak from three beam
-    stacks) from key "cd" to "reactionCd" with existing stellarConduct reaction
-    filter on charge hits.
-
-- id: stellar-direct-coeff-ui
-  entity: sandrone
-  rule: S1
-  status: open
-  category: engine-gap
-  summary: >
-    StellarDirectFormula directCoeff uses CalcContext placeholder (default 1.6,
-    range 1.45–1.9); team damage UI must expose attach-count control.
-  detail: >
-    Skill direct SC hits (StellarDirectFormula) multiply talent% by an attach-count
-    coefficient (~1.45× at 1 Cryo/Electro hit to ~1.9× at 10 per 3s window).
-    resolveStellarDirectCoeff() reads CalcContext.stellarDirectCoeff with
-    STELLAR_DIRECT_COEFF_DEFAULT=1.6 until UI wires Polestar Field attach tracking.
-    EM curve 6/(2000+EM) copied from lunar — still unverified but separate from coeff.
-
 - id: stellar-reaction-proc-formula
   entity: sandrone
   rule: S1
@@ -165,8 +137,11 @@
     StellarFormula (rx-stellarConduct proc) coefficient and EM curve unverified;
     do not treat as Superconduct parity.
   detail: >
-    Auto-generated team reaction proc uses STELLAR_REACTION_PROC_COEFF_PLACEHOLDER=1.6
-    and lunar EM bonus. Official text documents skill-direct SC modifiers (P3
-    reactionBaseDmg%, C6 elevated%) but not transformative proc math. Audit proc
-    separately from StellarDirectFormula skill hits once datamine or in-game data
-    confirms level-based coeff and zones.
+    Rechecked against current Sandrone beta text. P3 documents the Superconduct
+    -> Stellar-Conduct conversion plus Sandrone's reactionBaseDmg% boost, and
+    C6 documents elevated% for Sandrone's Stellar-Conduct damage, but no beta
+    text exposes the generated rx-stellarConduct reaction proc's level
+    coefficient, EM curve, or full zone model. S1 still treats StellarFormula
+    proc math as placeholder until verified. Keep this open until datamine or
+    in-game testing confirms the proc math; do not implement it from
+    Superconduct parity.

@@ -53,6 +53,7 @@ import {
   CharCrErSettings,
   EnemyInputs,
   RollQualityInputs,
+  StellarDirectCoeffInput,
 } from "./GeneratorControls";
 
 // Substat display order (most common optimization targets first)
@@ -723,6 +724,7 @@ export function WeaponChoiceResultCard({
 }: WeaponChoiceResultCardProps) {
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const ctx = setupConfig.damage?.calcContext ?? {};
+  const hasSandrone = characters.includes("sandrone");
 
   const patchCtx = useCallback(
     (patch: Partial<CalcContext>) => {
@@ -822,6 +824,15 @@ export function WeaponChoiceResultCard({
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
+          {hasSandrone && (
+            <StellarDirectCoeffInput
+              stellarDirectCoeff={ctx.stellarDirectCoeff}
+              onStellarDirectCoeffChange={(v) =>
+                patchCtx({ stellarDirectCoeff: v })
+              }
+              t={t}
+            />
+          )}
 
           <Button
             onClick={isComputing ? onStop : onRun}

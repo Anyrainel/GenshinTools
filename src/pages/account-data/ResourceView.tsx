@@ -13,6 +13,7 @@ import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelp
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
+import { ResourceSetSummarySection } from "@/components/account-data/ResourceSetSummarySection";
 import { ResourceTierSection } from "@/components/account-data/ResourceTierSection";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
@@ -39,6 +40,7 @@ import {
   type ResourceKind,
   type ResourceSuggestion,
   suggestionCacheKey,
+  summarizeResourceSuggestionsBySet,
 } from "@/lib/account-data/resourceTips";
 import { getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
@@ -239,6 +241,10 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
         (s.kind === "levelup" && showLevelup)) &&
       setCategoryFilters[getResourceSetCategory(s.setId)]
   );
+  const setSummaries = useMemo(
+    () => summarizeResourceSuggestionsBySet(filteredSuggestions),
+    [filteredSuggestions]
+  );
   const byTier = new Map<Tier, ResourceSuggestion[]>();
   for (const tier of tiers) byTier.set(tier as Tier, []);
   for (const s of filteredSuggestions) {
@@ -358,7 +364,9 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
         <p className="text-sm text-muted-foreground italic pt-4">
           {t.ui("evaluation.noSuggestions")}
         </p>
-      ) : null}
+      ) : (
+        <ResourceSetSummarySection summaries={setSummaries} />
+      )}
       {allTiers.map((tier) => {
         const tierSuggestions = byTier.get(tier) ?? [];
         if (tier === "Pool" && tierSuggestions.length === 0) return null;

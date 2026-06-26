@@ -1527,11 +1527,17 @@ class Sandrone extends CharacterBase {
       { id: "sandrone-burst", count: 1 },
     ];
     if (this.radianceOn) {
-      lines.push(
-        { id: "sandrone-c4-coord", count: 0, bonus: [{ minC: 4, delta: 2 }] },
-        { id: "sandrone-c6-cluster", count: 0, bonus: [{ minC: 6, delta: 1 }] }
-      );
+      lines.push({
+        id: "sandrone-c4-coord",
+        count: 0,
+        bonus: [{ minC: 4, delta: 2 }],
+      });
     }
+    lines.push({
+      id: "sandrone-c6-cluster",
+      count: 0,
+      bonus: [{ minC: 6, delta: 1 }],
+    });
     return lines;
   }
 
@@ -1676,7 +1682,6 @@ class Sandrone extends CharacterBase {
       "sandrone-c6-cluster": {
         label: { zh: "C6集束射线", en: "C6 Cluster Beam" },
         minC: 6,
-        when: this.radianceOn,
         parts: [
           {
             formula: this.radianceOn

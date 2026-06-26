@@ -84,6 +84,7 @@ import {
   CharCrErSettings,
   EnemyInputs,
   RollQualityInputs,
+  StellarDirectCoeffInput,
 } from "./GeneratorControls";
 import { type ReuseEntry, StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
@@ -1498,6 +1499,22 @@ function RollQualityFields({
   );
 }
 
+function StellarDirectCoeffFields({
+  activeContext,
+  onCalcContextChange,
+  t,
+}: CtxProps) {
+  return (
+    <StellarDirectCoeffInput
+      stellarDirectCoeff={activeContext.stellarDirectCoeff}
+      onStellarDirectCoeffChange={(v) =>
+        onCalcContextChange({ stellarDirectCoeff: v })
+      }
+      t={t}
+    />
+  );
+}
+
 function ActionButton({
   onClick,
   disabled,
@@ -1669,6 +1686,7 @@ export function DamageCard({
   };
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
+  const hasSandrone = characters.includes("sandrone");
 
   // DPS calculator state (per-session)
   const [dpsSeconds, setDpsSeconds] = useSessionState("dpsSeconds", "");
@@ -1794,6 +1812,7 @@ export function DamageCard({
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
+            {hasSandrone && <StellarDirectCoeffFields {...ctxProps} />}
           </div>
           {currentDisplayResult && teamBuild ? (
             formulaMode === "single" && resolvedFormula ? (
@@ -1882,6 +1901,7 @@ export function DamageCard({
 
             <div className={CONTROLS_CLS}>
               <EnemyFields {...ctxProps} />
+              {hasSandrone && <StellarDirectCoeffFields {...ctxProps} />}
               <div className="flex items-center gap-0.5 md:gap-1">
                 <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
                 <Select
@@ -2264,6 +2284,7 @@ export function DamageCard({
           />
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
+            {hasSandrone && <StellarDirectCoeffFields {...ctxProps} />}
             <RollQualityFields {...ctxProps} />
             <ActionButton
               onClick={handleGenerate}

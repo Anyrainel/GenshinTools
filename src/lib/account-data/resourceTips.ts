@@ -111,6 +111,36 @@ export type ResourceSuggestion = {
   pUpgrade: number;
 };
 
+export type ResourceSetSummary = {
+  setId: string;
+  count: number;
+  avgExpectedScoreGain: number;
+};
+
+/** Roll up filtered resource suggestions by target artifact set. */
+export function summarizeResourceSuggestionsBySet(
+  suggestions: ResourceSuggestion[]
+): ResourceSetSummary[] {
+  const bySet = new Map<string, { count: number; totalGain: number }>();
+  for (const suggestion of suggestions) {
+    const entry = bySet.get(suggestion.setId) ?? { count: 0, totalGain: 0 };
+    entry.count += 1;
+    entry.totalGain += suggestion.expectedScoreGain;
+    bySet.set(suggestion.setId, entry);
+  }
+
+  return Array.from(bySet.entries())
+    .map(([setId, { count, totalGain }]) => ({
+      setId,
+      count,
+      avgExpectedScoreGain: count > 0 ? totalGain / count : 0,
+    }))
+    .sort(
+      (a, b) =>
+        b.avgExpectedScoreGain - a.avgExpectedScoreGain || b.count - a.count
+    );
+}
+
 /**
  * Stable cache key for the pUpgrade value of a suggestion. Includes
  * everything that affects the output: the build identity (captured by
