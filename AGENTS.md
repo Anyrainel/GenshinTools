@@ -15,6 +15,11 @@ React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tail
 - `npm run test` / `npm run test:watch` / `npm run test:coverage` — Vitest
 - `npm run regtest` — artifact generator golden-file regression test
 
+## Production Deployment
+
+- Production is auto-deployed after pushing to GitHub. For normal prod pushes, validate locally, push the intended commit to `origin/master`, and let the GitHub/Cloudflare deployment pipeline publish it.
+- Do not run manual production deploy commands such as `wrangler deploy` or `npm run deploy:worker` unless the user explicitly asks for a manual Cloudflare deploy.
+
 ## Page Map
 
 Use this as the first routing hint when the user refers to a page or tab in natural language. Navigation is defined in `src/components/layout/appNavigation.tsx`.

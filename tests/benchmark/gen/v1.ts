@@ -389,7 +389,7 @@ export async function* runTeamOptimization(
     if (
       lastResult?.failReason &&
       opts.ignoreArtifactSets?.[charId] &&
-      !!effectivePerChar[charId]?.artifactSet
+      effectivePerChar[charId]?.artifactSet
     ) {
       // Strip set constraints for this character
       effectivePerChar[charId] = {

@@ -1,6 +1,14 @@
-import { Check, CheckCircle2, Circle, Loader2, XCircle } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  Circle,
+  Info,
+  Loader2,
+  XCircle,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -287,6 +295,14 @@ export function ArtifactScannerDialog({
                 </div>
                 <ConnectionStatus connection={connection} t={t} />
               </div>
+              {connection.status === "disconnected" && (
+                <Alert className="bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-400 [&>svg]:text-yellow-600 dark:[&>svg]:text-yellow-400">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    {t.ui("manager.offlineHint")}
+                  </AlertDescription>
+                </Alert>
+              )}
               {mode === "recentArtifacts" ? (
                 <div className="space-y-1.5">
                   <Label htmlFor="recent-artifact-limit" className="text-xs">

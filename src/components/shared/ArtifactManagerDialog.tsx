@@ -1,5 +1,6 @@
-import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { CheckCircle2, Info, Loader2, XCircle } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -212,6 +213,14 @@ export function ArtifactManagerDialog({
                 </div>
                 <ConnectionStatus connection={connection} t={t} />
               </div>
+              {connection.status === "disconnected" && (
+                <Alert className="bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-400 [&>svg]:text-yellow-600 dark:[&>svg]:text-yellow-400">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    {t.ui("manager.offlineHint")}
+                  </AlertDescription>
+                </Alert>
+              )}
               {job.type === "manage" && (
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 text-sm">
