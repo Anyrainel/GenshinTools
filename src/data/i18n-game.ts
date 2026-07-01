@@ -3,6 +3,7 @@
 
 export const i18nGameData = {
   "characters": {
+    "sandrone": { "en": "Sandrone", "zh": "桑多涅" },
     "prune": { "en": "Prune", "zh": "布伦妮" },
     "lohen": { "en": "Lohen", "zh": "洛恩" },
     "nicole": { "en": "Nicole", "zh": "尼可" },
@@ -195,13 +196,14 @@ export const i18nGameData = {
     "blizzard_strayer": { "en": "Blizzard Strayer", "zh": "冰风迷途的勇士" }
   },
   "weapons": {
+    "a_teaspoon_of_transcendence": { "en": "A Teaspoon of Transcendence", "zh": "超越之匙" },
+    "disaster_and_remorse": { "en": "Disaster and Remorse", "zh": "灾悔" },
     "angelos_heptades": { "en": "Angelos' Heptades", "zh": "尘光七谕" },
     "golden_frostbound_oath": { "en": "Golden Frostbound Oath", "zh": "霜结的誓金枝" },
     "gest_of_the_mighty_wolf": { "en": "Gest of the Mighty Wolf", "zh": "狼的武功歌" },
     "nocturnes_curtain_call": { "en": "Nocturne's Curtain Call", "zh": "帷间夜曲" },
     "lightbearing_moonshard": { "en": "Lightbearing Moonshard", "zh": "朏魄含光" },
     "the_daybreak_chronicles": { "en": "The Daybreak Chronicles", "zh": "黎明破晓之史" },
-    "disaster_and_remorse": { "en": "Disaster and Remorse", "zh": "灾悔" },
     "rainbow_serpents_rain_bow": { "en": "Rainbow Serpent's Rain Bow", "zh": "虹蛇的雨弦" },
     "athame_artis": { "en": "Athame Artis", "zh": "黑蚀" },
     "reliquary_of_truth": { "en": "Reliquary of Truth", "zh": "真语秘匣" },

@@ -11,6 +11,7 @@ import type {
 } from './types';
 
 export const characters: CharacterResource[] = [
+  {"id": "sandrone", "rarity": 5, "imagePath": "/character/sandrone.webp"},
   {"id": "prune", "rarity": 4, "imagePath": "/character/prune.webp"},
   {"id": "lohen", "rarity": 5, "imagePath": "/character/lohen.webp"},
   {"id": "nicole", "rarity": 5, "imagePath": "/character/nicole.webp"},
@@ -250,13 +251,14 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
 ];
 
 export const weapons: WeaponResource[] = [
+  {"id": "a_teaspoon_of_transcendence", "rarity": 5, "imagePath": "/weapon/a_teaspoon_of_transcendence.webp"},
+  {"id": "disaster_and_remorse", "rarity": 5, "imagePath": "/weapon/disaster_and_remorse.webp"},
   {"id": "angelos_heptades", "rarity": 5, "imagePath": "/weapon/angelos_heptades.webp"},
   {"id": "golden_frostbound_oath", "rarity": 5, "imagePath": "/weapon/golden_frostbound_oath.webp"},
   {"id": "gest_of_the_mighty_wolf", "rarity": 5, "imagePath": "/weapon/gest_of_the_mighty_wolf.webp"},
   {"id": "nocturnes_curtain_call", "rarity": 5, "imagePath": "/weapon/nocturnes_curtain_call.webp"},
   {"id": "lightbearing_moonshard", "rarity": 5, "imagePath": "/weapon/lightbearing_moonshard.webp"},
   {"id": "the_daybreak_chronicles", "rarity": 5, "imagePath": "/weapon/the_daybreak_chronicles.webp"},
-  {"id": "disaster_and_remorse", "rarity": 5, "imagePath": "/weapon/disaster_and_remorse.webp"},
   {"id": "rainbow_serpents_rain_bow", "rarity": 4, "imagePath": "/weapon/rainbow_serpents_rain_bow.webp"},
   {"id": "athame_artis", "rarity": 5, "imagePath": "/weapon/athame_artis.webp"},
   {"id": "reliquary_of_truth", "rarity": 5, "imagePath": "/weapon/reliquary_of_truth.webp"},
