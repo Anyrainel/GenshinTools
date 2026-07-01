@@ -372,3 +372,26 @@
     keeps its countByFaction("Hexerei") >= 2 gate, now nested under the shielder
     check. Type-check passes for weapon5Catalyst.ts.
 
+- id: disaster-and-remorse-receiver
+  entity: disaster_and_remorse
+  rule: U1
+  status: open
+  category: bug
+  summary: >
+    Unforgivable and Irreparable buffs should use selfOnField receiver.
+  detail: >
+    Game text states both buffs are removed when the equipping character leaves
+    the field. Per Rule U1, the correct receiver is selfOnField instead of self.
+
+- id: a-teaspoon-of-transcendence-missing-data
+  entity: a_teaspoon_of_transcendence
+  rule: U0b
+  status: open
+  category: needs-data
+  summary: >
+    Official game text and stats data are missing from weapon_zh.json and weapon_stats.json.
+  detail: >
+    The weapon is implemented based on beta specifications, but official JSON data
+    is missing. Needs update once official datamine is available.
+
+

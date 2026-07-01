@@ -145,3 +145,37 @@
     proc math as placeholder until verified. Keep this open until datamine or
     in-game testing confirms the proc math; do not implement it from
     Superconduct parity.
+
+- id: sandrone-normal-element-bug
+  entity: sandrone
+  rule: S10
+  status: open
+  category: bug
+  summary: >
+    Normal and Plunge attack formulas use Physical element instead of Cryo.
+  detail: >
+    Sandrone is a Catalyst wielder, so her Normal and Plunge attacks must deal Cryo
+    damage instead of Physical damage per Rule S10.
+
+- id: sandrone-c4-coord-offfield
+  entity: sandrone
+  rule: S11
+  status: open
+  category: bug
+  summary: >
+    C4 Coordinated Cannon formula part is missing the offField flag.
+  detail: >
+    C4 coordinated cannon is a coordinated attack triggered while off-field.
+    According to Rule S11, it must be marked with offField: true.
+
+- id: sandrone-c1-radiance-gate
+  entity: sandrone
+  rule: U9
+  status: open
+  category: bug
+  summary: >
+    C1 team buff is active even when Radiance: Stellar-Conduct is toggled Off.
+  detail: >
+    The C1 team buff (+30% Stellar-Conduct DMG in Decoding mode) should be gated on
+    this.radianceOn (Decoding mode active) per Rule U9, but is currently pushed unconditionally.
+
