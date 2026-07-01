@@ -3,10 +3,8 @@
 
 export const i18nBetaData = {
   characters: {
-    "sandrone": { en: "Sandrone", zh: "桑多涅" },
   },
   weapons: {
-    "a_teaspoon_of_transcendence": { en: "A Teaspoon of Transcendence", zh: "超越之匙" },
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
   },
   artifacts: {
