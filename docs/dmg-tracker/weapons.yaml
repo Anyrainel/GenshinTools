@@ -375,23 +375,30 @@
 - id: disaster-and-remorse-receiver
   entity: disaster_and_remorse
   rule: U1
-  status: open
+  status: actionable
   category: bug
   summary: >
     Unforgivable and Irreparable buffs should use selfOnField receiver.
   detail: >
-    Game text states both buffs are removed when the equipping character leaves
-    the field. Per Rule U1, the correct receiver is selfOnField instead of self.
+    The weapon description states that both 'Unforgivable' and 'Irreparable' buffs
+    are removed when the equipping character leaves the field ('装备者退场将解除').
+    According to Rule U1, buffs that are removed when the character leaves the
+    field must use receiver: "selfOnField" instead of "self". Change the receiver
+    to "selfOnField" for both buffs in DisasterAndRemorse (weapon5Polearm.ts).
 
 - id: a-teaspoon-of-transcendence-missing-data
   entity: a_teaspoon_of_transcendence
   rule: U0b
-  status: open
+  status: actionable
   category: needs-data
   summary: >
     Official game text and stats data are missing from weapon_zh.json and weapon_stats.json.
   detail: >
-    The weapon is implemented based on beta specifications, but official JSON data
-    is missing. Needs update once official datamine is available.
+    Retrieved data for A Teaspoon of Transcendence (超越之匙):
+      - Base ATK: 674, Substat: 44.1% CRIT DMG at Lv90.
+      - Passive: ATK +28% (R1). Charged Attacks grant Transcendence stack (max 3),
+        increasing Stellar-Conduct DMG by 16% (R1, scaling 16/20/24/28/32%) for 5s.
+    Add this data to weapon_en.json, weapon_zh.json, and weapon_stats.json, and
+    register the weapon as a 5★ Claymore.
 
 

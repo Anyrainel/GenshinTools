@@ -141,41 +141,50 @@
     -> Stellar-Conduct conversion plus Sandrone's reactionBaseDmg% boost, and
     C6 documents elevated% for Sandrone's Stellar-Conduct damage, but no beta
     text exposes the generated rx-stellarConduct reaction proc's level
-    coefficient, EM curve, or full zone model. S1 still treats StellarFormula
-    proc math as placeholder until verified. Keep this open until datamine or
-    in-game testing confirms the proc math; do not implement it from
-    Superconduct parity.
+    coefficient, EM curve, or full zone model. Web search shows Stellar-Conduct
+    is a specialized reaction meta-mechanic (creates Polestar Field to boost Cryo/Electro
+    DMG and lower Physical RES, rather than dealing typical transformative proc damage),
+    confirming there is no singular level-based reaction proc formula for it.
+    Keep this open until datamine or in-game testing confirms any proc math.
 
 - id: sandrone-normal-element-bug
   entity: sandrone
   rule: S10
-  status: open
+  status: actionable
   category: bug
   summary: >
     Normal and Plunge attack formulas use Physical element instead of Cryo.
   detail: >
-    Sandrone is a Catalyst wielder, so her Normal and Plunge attacks must deal Cryo
-    damage instead of Physical damage per Rule S10.
+    Sandrone is a Cryo Catalyst wielder. According to Rule S10, Catalyst users'
+    Normal, Charged, and Plunge attacks must always deal their Vision element
+    (Cryo) and never Physical damage. Change the element of "sandrone-normal",
+    "sandrone-plunge-low", and "sandrone-plunge-high" from Physical to Cryo
+    in character5NodKrai.ts.
 
 - id: sandrone-c4-coord-offfield
   entity: sandrone
   rule: S11
-  status: open
+  status: actionable
   category: bug
   summary: >
     C4 Coordinated Cannon formula part is missing the offField flag.
   detail: >
-    C4 coordinated cannon is a coordinated attack triggered while off-field.
-    According to Rule S11, it must be marked with offField: true.
+    The C4 Coordinated Cannon is a coordinated attack that can trigger while
+    Sandrone is off-field. According to Rule S11, off-field coordinated attacks
+    must be marked with offField: true on their formula parts. Add offField: true
+    to the formula part of "sandrone-c4-coord" in character5NodKrai.ts.
 
 - id: sandrone-c1-radiance-gate
   entity: sandrone
   rule: U9
-  status: open
+  status: actionable
   category: bug
   summary: >
     C1 team buff is active even when Radiance: Stellar-Conduct is toggled Off.
   detail: >
-    The C1 team buff (+30% Stellar-Conduct DMG in Decoding mode) should be gated on
-    this.radianceOn (Decoding mode active) per Rule U9, but is currently pushed unconditionally.
+    The C1 team buff (+30% Stellar-Conduct reaction damage) is only active in
+    Decoding mode (which is represented by the option radianceOn being enabled).
+    According to Rule U9, conditional/state-based buffs must not be active
+    unconditionally. Gate the C1 team buff under if (this.radianceOn) (similar to
+    C2/P1 buffs) in character5NodKrai.ts.
 
