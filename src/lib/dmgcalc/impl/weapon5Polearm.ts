@@ -303,13 +303,16 @@ class DisasterAndRemorse extends WeaponBase {
       // Unforgivable: NA + CA DMG
       new StatBuff(
         wbs(this, ["E"]),
-        { receiver: "self", filter: { abilities: ["normal", "charge"] } },
+        {
+          receiver: "selfOnField",
+          filter: { abilities: ["normal", "charge"] },
+        },
         [{ key: "dmg%", value: dmgPct }]
       ),
       // Irreparable: E + Q DMG
       new StatBuff(
         wbs(this, ["E"]),
-        { receiver: "self", filter: { abilities: ["skill", "burst"] } },
+        { receiver: "selfOnField", filter: { abilities: ["skill", "burst"] } },
         [{ key: "dmg%", value: dmgPct }]
       ),
     ];

@@ -1,4 +1,16 @@
 {
+  "a_teaspoon_of_transcendence": {
+    "id": "12516",
+    "name": "A Teaspoon of Transcendence",
+    "descHtmlTpl": "ATK increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When Charged Attacks hit opponents, they grant 1 stack of Transcendence. Max 3 stacks. Lasts for 5s. Each stack increases Stellar-Conduct DMG by <span style=\"color: #99FFFFFF;\">{1}</span>.",
+    "refinements": [
+      ["28%", "16%"],
+      ["35%", "20%"],
+      ["42%", "24%"],
+      ["49%", "28%"],
+      ["56%", "32%"]
+    ]
+  },
   "a_thousand_blazing_suns": {
     "id": "12514",
     "name": "A Thousand Blazing Suns",

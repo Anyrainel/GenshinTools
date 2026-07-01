@@ -1445,7 +1445,7 @@ class Sandrone extends CharacterBase {
     );
 
     // C1 (ZH/U0b): Team Stellar-Conduct DMG +30% in Decoding mode (peak: always on)
-    if (this.constellation >= 1) {
+    if (this.constellation >= 1 && this.radianceOn) {
       buffs.push(
         new StatBuff(
           cbs(this, "C1", ["charge"]),
@@ -1542,13 +1542,13 @@ class Sandrone extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    const physNormal = {
-      element: "Physical" as const,
+    const cryoNormal = {
+      element: "Cryo" as const,
       ability: "normal" as const,
       reaction: "none" as const,
     };
-    const physPlunge = {
-      element: "Physical" as const,
+    const cryoPlunge = {
+      element: "Cryo" as const,
       ability: "plunge" as const,
       reaction: "none" as const,
     };
@@ -1607,19 +1607,19 @@ class Sandrone extends CharacterBase {
       "sandrone-normal": {
         label: { zh: "普攻", en: "NA" },
         parts: [
-          { formula: new DirectFormula(this.param("A", 1), physNormal) },
-          { formula: new DirectFormula(this.param("A", 2), physNormal) },
-          { formula: new DirectFormula(this.param("A", 3), physNormal) },
+          { formula: new DirectFormula(this.param("A", 1), cryoNormal) },
+          { formula: new DirectFormula(this.param("A", 2), cryoNormal) },
+          { formula: new DirectFormula(this.param("A", 3), cryoNormal) },
         ],
       },
       "sandrone-plunge-low": {
         label: { zh: "下落·低", en: "Plunge Low" },
-        parts: [{ formula: new DirectFormula(this.param("A", 9), physPlunge) }],
+        parts: [{ formula: new DirectFormula(this.param("A", 9), cryoPlunge) }],
       },
       "sandrone-plunge-high": {
         label: { zh: "下落·高", en: "Plunge High" },
         parts: [
-          { formula: new DirectFormula(this.param("A", 10), physPlunge) },
+          { formula: new DirectFormula(this.param("A", 10), cryoPlunge) },
         ],
       },
       "sandrone-charge-sweep": {
@@ -1676,6 +1676,7 @@ class Sandrone extends CharacterBase {
         parts: [
           {
             formula: new StellarDirectFormula(1.25, scSkill, "atk"),
+            offField: true,
           },
         ],
       },

@@ -1,4 +1,12 @@
 {
+  "a_teaspoon_of_transcendence": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
+    }
+  },
   "a_thousand_blazing_suns": {
     "rarity": 5,
     "type": "Claymore",

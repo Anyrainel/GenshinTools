@@ -1,4 +1,16 @@
 {
+  "a_teaspoon_of_transcendence": {
+    "id": "12516",
+    "name": "超越之匙",
+    "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。重击命中敌人后，获得1层「超越」效果。该效果至多叠加3层，持续5秒。每层使星超导造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
+    "refinements": [
+      ["28%", "16%"],
+      ["35%", "20%"],
+      ["42%", "24%"],
+      ["49%", "28%"],
+      ["56%", "32%"]
+    ]
+  },
   "a_thousand_blazing_suns": {
     "id": "12514",
     "name": "焚曜千阳",

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-06-12T18:25:50.830Z",
+  "generatedAt": "2026-07-01T08:30:00.399Z",
   "teams": {
     "Xja6aBlWrSDS1gxT0j": {
       "teamName": "lohen / nicole / durin / xilonen",
@@ -498,13 +498,13 @@
           ],
           "nicole.nicole-q-coord-slot1": [
             {
-              "damage": 371578.8683,
+              "damage": 246768.3079,
               "template": "direct"
             }
           ],
           "nicole.nicole-c1-coord-slot1": [
             {
-              "damage": 596904.1907,
+              "damage": 396408.5413,
               "template": "direct"
             }
           ],
@@ -1374,9 +1374,9 @@
               "cd": 2.2106,
               "cr": 0.9786,
               "er": 1.4404,
-              "dmg%": 0.29,
               "atk": 3931,
               "defReduction%": 0.7,
+              "dmg%": 0.29,
               "hp": 19917,
               "def": 840
             }
@@ -1476,7 +1476,7 @@
               "cr": 0.9786,
               "cd": 2.2106,
               "er": 1.4404,
-              "dmg%": 3.168,
+              "dmg%": 1.768,
               "baseDmg": 4983.7739,
               "defReduction%": 0.7,
               "resReduction%": 1.05
@@ -2656,7 +2656,7 @@
               "cr": 1.0007,
               "cd": 2.8505,
               "er": 1.3854,
-              "dmg%": 4.026,
+              "dmg%": 2.626,
               "resReduction%": 0.55
             }
           },
