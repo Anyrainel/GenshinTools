@@ -27,7 +27,7 @@ const HOYOLAB_SALTS = {
 
 const HOYOLAB_APP_VERSION = {
   os: "1.5.0",
-  cn: "2.99.1",
+  cn: "2.109.0",
 } as const;
 
 const HOYOLAB_SERVER_BY_UID_PREFIX = {
@@ -307,7 +307,7 @@ async function handleHoyolabProxy(
             : "https://act.hoyolab.com",
         "User-Agent":
           region === "cn"
-            ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/2.99.1"
+            ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/2.109.0"
             : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
       body: bodyText,
