@@ -1855,6 +1855,7 @@ export const i18nUiData = {
     tabFrozen: { en: "Frozen Teams", zh: "冻结管理" },
     tabInvestment: { en: "Investment", zh: "补金分析" },
     tabWeaponChoice: { en: "Weapon & Artifact Choice", zh: "武器圣遗物选择" },
+    tabRedesignedEr: { en: "Redesigned ER", zh: "充能计算 (新)" },
     weaponChoiceDesc: {
       en: "Select a team to compare weapons and artifact sets",
       zh: "选择队伍来比较武器与圣遗物套装",

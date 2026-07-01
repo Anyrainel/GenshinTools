@@ -268,11 +268,12 @@ function resolveEntryPerProcFlat(
   entry: SelfEnergyEntry,
   source: TeamMember,
   action: ActionType
-): { amountPerProc: number; isErScaling: boolean } | null {
+): { amountPerProc: number; isErScaling: boolean; erScaleMax?: number } | null {
   if (entry.erScale) {
     return {
       amountPerProc: entry.erScale.per100 ?? 0,
       isErScaling: true,
+      erScaleMax: entry.erScale.max,
     };
   }
   if (entry.param) {
@@ -308,17 +309,62 @@ function resolveRecipients(
 
 // ─── Solver ───
 
+function erScalingContribution(
+  ER: number,
+  erScalingSources: Record<string, { per100: number; max?: number }>
+): number {
+  let contrib = 0;
+  for (const s of Object.values(erScalingSources)) {
+    const val = (s.per100 * (ER - 100)) / 100;
+    if (s.max !== undefined) {
+      contrib += Math.min(s.max, Math.max(0, val));
+    } else {
+      contrib += Math.max(0, val);
+    }
+  }
+  return contrib;
+}
+
 function solveER(
   burstCost: number,
   particleEnergy: number,
   flatEnergy: number,
-  erScaling = 0
+  erScalingSources: Record<string, { per100: number; max?: number }>
 ): number {
   const needed = burstCost - flatEnergy;
   if (needed <= 0) return 100;
-  const totalScaling = particleEnergy + erScaling;
-  if (totalScaling <= 0) return Number.POSITIVE_INFINITY;
-  return Math.max(100, (needed / totalScaling) * 100);
+
+  // Check if base ER 100% is enough
+  if (needed <= erScalingContribution(100, erScalingSources) + particleEnergy) {
+    return 100;
+  }
+
+  // Binary search for ER% in [100, 1000]
+  let low = 100;
+  let high = 1000;
+
+  const check = (erVal: number) => {
+    const scale = erScalingContribution(erVal, erScalingSources);
+    const part = particleEnergy * (erVal / 100);
+    return scale + part;
+  };
+
+  if (check(high) < needed) {
+    high = 5000; // expand search space if needed
+    if (check(high) < needed) {
+      return Number.POSITIVE_INFINITY; // unsolvable
+    }
+  }
+
+  for (let iter = 0; iter < 50; iter++) {
+    const mid = (low + high) / 2;
+    if (check(mid) >= needed) {
+      high = mid;
+    } else {
+      low = mid;
+    }
+  }
+  return high;
 }
 
 // ─── Absorber ───
@@ -348,6 +394,7 @@ interface PendingProc {
   remaining: number;
   amount: number;
   isErScaling: boolean;
+  erScaleMax?: number;
   sourceChar: string;
   sourceAction: ActionType;
   sourceLabel: string;
@@ -357,6 +404,8 @@ interface CharSimState {
   particleAccum: number;
   flatAccum: number;
   erScalingAccum: number;
+  erScalingSources: Record<string, { per100: number; max?: number }>;
+  weaponLastFireTime: number;
   /** Current NA on-hit pity probability (0–1). Increments each miss, resets on proc or swap-in. */
   naPityProb: number;
   /** Probability that no pity proc has fired yet this cycle (expected mode only). */
@@ -382,6 +431,8 @@ function freshState(pityBase: number): CharSimState {
     particleAccum: 0,
     flatAccum: 0,
     erScalingAccum: 0,
+    erScalingSources: {},
+    weaponLastFireTime: -999,
     naPityProb: pityBase,
     naSurvivalProb: 1.0,
     hitCounts: { NA: 0, CA: 0, PA: 0 },
@@ -542,6 +593,7 @@ interface FlatEventDescriptor {
   sourceLabel: string;
   amount: number;
   isErScaling: boolean;
+  erScaleMax?: number;
   /** Mirrors `SelfEnergyEntry.procs`: total number of ticks this effect
    *  fires per trigger. When > 1, proc #1 fires at the trigger and the
    *  remaining (procs - 1) are enqueued onto subsequent NA/CA/PA actions. */
@@ -620,6 +672,7 @@ function collectFlatEventsAt(
         sourceLabel: entry.source ?? "passive",
         amount: resolved.amountPerProc,
         isErScaling: resolved.isErScaling,
+        erScaleMax: resolved.erScaleMax,
         procs: entryProcs > 1 ? entryProcs : undefined,
         conditionEn: entry.conditionEn as string | undefined,
         conditionZh: entry.conditionZh as string | undefined,
@@ -711,7 +764,8 @@ function emitFlatEventsAt(
   i: number,
   team: TeamMember[],
   state: Map<string, CharSimState>,
-  rotationLength: number
+  rotationLength: number,
+  currentTime: number
 ): void {
   const wrappedIndex = rotationLength > 0 ? i % rotationLength : i;
   const onFieldId = act.char;
@@ -727,8 +781,16 @@ function emitFlatEventsAt(
       for (const p of rs.pendingProcs) {
         if (p.remaining <= 0) continue;
         p.remaining -= 1;
-        if (p.isErScaling) rs.erScalingAccum += p.amount;
-        else rs.flatAccum += p.amount;
+        if (p.isErScaling) {
+          rs.erScalingAccum += p.amount;
+          const key = `${p.sourceChar}:${p.sourceLabel}`;
+          if (!rs.erScalingSources[key]) {
+            rs.erScalingSources[key] = { per100: 0, max: p.erScaleMax };
+          }
+          rs.erScalingSources[key].per100 += p.amount;
+        } else {
+          rs.flatAccum += p.amount;
+        }
         rs.currentEvents.push({
           sourceIndex: wrappedIndex,
           sourceChar: p.sourceChar,
@@ -739,6 +801,7 @@ function emitFlatEventsAt(
           energyAt100: p.amount,
           onField: m.id === onFieldId,
           type: p.isErScaling ? "scalable" : "flat",
+          erScaleMax: p.isErScaling ? p.erScaleMax : undefined,
         });
       }
       rs.pendingProcs = rs.pendingProcs.filter((p) => p.remaining > 0);
@@ -749,9 +812,35 @@ function emitFlatEventsAt(
   for (const ev of events) {
     const rs = state.get(ev.recipientId);
     if (!rs) continue;
+
+    // Check weapon cooldown if applicable
+    const we = weaponEnergyById[ev.sourceLabel];
+    if (
+      we &&
+      we.energy.effect === "flatEnergy" &&
+      we.energy.cooldown !== undefined
+    ) {
+      const sState = state.get(ev.sourceChar);
+      if (sState) {
+        if (currentTime - sState.weaponLastFireTime < we.energy.cooldown) {
+          // Trigger is on cooldown! Skip this event.
+          continue;
+        }
+        sState.weaponLastFireTime = currentTime;
+      }
+    }
+
     // Fire proc #1 now.
-    if (ev.isErScaling) rs.erScalingAccum += ev.amount;
-    else rs.flatAccum += ev.amount;
+    if (ev.isErScaling) {
+      rs.erScalingAccum += ev.amount;
+      const key = `${ev.sourceChar}:${ev.sourceLabel}`;
+      if (!rs.erScalingSources[key]) {
+        rs.erScalingSources[key] = { per100: 0, max: ev.erScaleMax };
+      }
+      rs.erScalingSources[key].per100 += ev.amount;
+    } else {
+      rs.flatAccum += ev.amount;
+    }
     rs.currentEvents.push({
       sourceIndex: wrappedIndex,
       sourceChar: ev.sourceChar,
@@ -762,6 +851,7 @@ function emitFlatEventsAt(
       energyAt100: ev.amount,
       onField: ev.recipientId === onFieldId,
       type: ev.isErScaling ? "scalable" : "flat",
+      erScaleMax: ev.isErScaling ? ev.erScaleMax : undefined,
     });
     // Enqueue remaining (procs - 1) for subsequent attacks.
     if (ev.procs && ev.procs > 1) {
@@ -769,6 +859,7 @@ function emitFlatEventsAt(
         remaining: ev.procs - 1,
         amount: ev.amount,
         isErScaling: ev.isErScaling,
+        erScaleMax: ev.erScaleMax,
         sourceChar: ev.sourceChar,
         sourceAction: ev.sourceAction as ActionType,
         sourceLabel: ev.sourceLabel,
@@ -840,6 +931,7 @@ function simulateSequence(
   const artifactScratch = new Map<string, Record<string, unknown>>();
   const repeatStartIndex = sequenceOptions?.repeatStartIndex ?? 0;
   let prevActChar: string | undefined;
+  let currentTime = 0;
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
@@ -1022,7 +1114,7 @@ function simulateSequence(
     }
 
     // ── 3. Per-action flat / erScaling events (self + party + weapon + artifact + grantEnergy) ──
-    emitFlatEventsAt(act, i, team, state, rotationLength);
+    emitFlatEventsAt(act, i, team, state, rotationLength, currentTime);
 
     // ── 4. Burst checkpoint ──
     if (BURST_ACTIONS.has(act.action)) {
@@ -1033,7 +1125,19 @@ function simulateSequence(
         s.particleAccum = 0;
         s.flatAccum = 0;
         s.erScalingAccum = 0;
+        s.erScalingSources = {};
         s.currentEvents = [];
+
+        let duration = 0.5;
+        if (act.action === "Q" || act.action === "specialQ") duration = 1.5;
+        else if (
+          act.action === "E" ||
+          act.action === "holdE" ||
+          act.action === "specialE"
+        )
+          duration = 1.0;
+        else if (act.action === "wait") duration = 1.0;
+        currentTime += duration;
         continue;
       }
 
@@ -1043,7 +1147,7 @@ function simulateSequence(
           burstCost,
           s.particleAccum,
           s.flatAccum,
-          s.erScalingAccum
+          s.erScalingSources
         );
 
         const wrappedQIdx = rotationLength > 0 ? i % rotationLength : i;
@@ -1074,8 +1178,20 @@ function simulateSequence(
       s.particleAccum = 0;
       s.flatAccum = 0;
       s.erScalingAccum = 0;
+      s.erScalingSources = {};
       s.currentEvents = [];
     }
+
+    let duration = 0.5;
+    if (act.action === "Q" || act.action === "specialQ") duration = 1.5;
+    else if (
+      act.action === "E" ||
+      act.action === "holdE" ||
+      act.action === "specialE"
+    )
+      duration = 1.0;
+    else if (act.action === "wait") duration = 1.0;
+    currentTime += duration;
   }
 
   return team.map((member) => {

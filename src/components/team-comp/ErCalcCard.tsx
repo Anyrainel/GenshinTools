@@ -1,5 +1,6 @@
-import { Battery, ChevronDown } from "lucide-react";
+import { Battery, ChevronDown, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Collapsible,
@@ -33,6 +34,7 @@ import {
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
 import { optimizeWaitBlocks } from "@/lib/ercalc/optimizer";
+import { compileHighLevelRotation } from "@/lib/ercalc/synthesizer";
 import type {
   ActionType,
   CalcMode,
@@ -340,6 +342,62 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
   const [startEmpty, setStartEmpty] = useState(false);
   const [repeatLast, setRepeatLast] = useState(true);
   const [particleMode, setParticleMode] = useState<ParticleMode>("expected");
+
+  // Easy mode synthesizer states
+  const [isEasyMode, setIsEasyMode] = useState(false);
+  const [easyCasts, setEasyCasts] = useState<
+    Record<
+      string,
+      { skillCount: number; burstCount: number; normalAttackCount: number }
+    >
+  >({});
+  const [easyFunnels, setEasyFunnels] = useState<
+    Array<{ sourceCharId: string; targetCharId: string; castIndex?: number }>
+  >([]);
+  const [easyDriver, setEasyDriver] = useState<string>("");
+
+  useEffect(() => {
+    if (erTeam.length > 0) {
+      const initialCasts: typeof easyCasts = {};
+      for (const m of erTeam) {
+        initialCasts[m.charId] = {
+          skillCount: 1,
+          burstCount: 1,
+          normalAttackCount: 0,
+        };
+      }
+      setEasyCasts(initialCasts);
+      setEasyDriver(erTeam[0]?.charId ?? "");
+    }
+  }, [erTeam]);
+
+  const handleCompileRotation = useCallback(() => {
+    if (erTeam.length === 0) return;
+    const teamCharIds = erTeam.map((m) => m.charId);
+
+    const castsRecord: Record<
+      string,
+      { skillCount: number; burstCount: number; normalAttackCount?: number }
+    > = {};
+    for (const [charId, c] of Object.entries(easyCasts)) {
+      castsRecord[charId] = {
+        skillCount: c.skillCount,
+        burstCount: c.burstCount,
+        normalAttackCount: charId === easyDriver ? c.normalAttackCount : 0,
+      };
+    }
+
+    const compiled = compileHighLevelRotation({
+      teamCharIds,
+      casts: castsRecord,
+      funnels: easyFunnels,
+      driverCharId: easyDriver,
+    });
+
+    setTimelines([...timelines.slice(0, -1), compiled]);
+    setIsEasyMode(false);
+    toast.success("Rotation compiled successfully!");
+  }, [erTeam, easyCasts, easyFunnels, easyDriver, timelines, setTimelines]);
 
   const calcMode: CalcMode = startEmpty
     ? repeatLast
@@ -822,99 +880,376 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
               </div>
             )}
 
-            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={handleAddStartup}
-                className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
-                title={t.ui("erCalc.addStartupTitle")}
-              >
-                {t.ui("erCalc.addStartup")}
-              </button>
-              {mainERT.actions.length > 0 && (
+            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center justify-between gap-2 bg-muted/10">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  onClick={handleCloneLoopToStartup}
-                  className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
-                  title={t.ui("erCalc.cloneLoopTitle")}
+                  onClick={handleAddStartup}
+                  className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                  title={t.ui("erCalc.addStartupTitle")}
                 >
-                  {t.ui("erCalc.cloneLoop")}
+                  {t.ui("erCalc.addStartup")}
                 </button>
-              )}
+                {mainERT.actions.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleCloneLoopToStartup}
+                    className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                    title={t.ui("erCalc.cloneLoopTitle")}
+                  >
+                    {t.ui("erCalc.cloneLoop")}
+                  </button>
+                )}
+              </div>
+
+              {/* Mode Selector */}
+              <ToggleGroup
+                type="single"
+                value={isEasyMode ? "easy" : "timeline"}
+                onValueChange={(v) => v && setIsEasyMode(v === "easy")}
+                variant="outline"
+                size="sm"
+              >
+                <ToggleGroupItem
+                  value="easy"
+                  className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+                >
+                  <Sparkles className="w-3.5 h-3.5 mr-1" /> Easy Mode
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="timeline"
+                  className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+                >
+                  Expert Timeline
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
 
             {/* Timeline editors */}
-            {timelines.map((tl, tlIdx) => {
-              const isLast = tlIdx === timelines.length - 1;
-              const startupNum = tlIdx + 1;
-              const labelNode = isLast ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm md:text-base font-semibold">
-                    {t.ui("erCalc.loopLabel")}
-                  </span>
-                  <ToggleGroup
-                    type="single"
-                    value={repeatLast ? "repeat" : "once"}
-                    onValueChange={(v) => v && setRepeatLast(v === "repeat")}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <ToggleGroupItem
-                      value="once"
-                      className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-                    >
-                      {t.ui("erCalc.loopOnce")}
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      value="repeat"
-                      className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-                    >
-                      {t.ui("erCalc.loopRepeat")}
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-              ) : (
-                <span className="text-sm md:text-base font-semibold">
-                  {t.ui("erCalc.startupLabel")} {startupNum}
-                </span>
-              );
+            {isEasyMode ? (
+              <div className="p-4 space-y-6 bg-muted/20 border-b border-border/30">
+                {/* Character Configuration Grid */}
+                <div>
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                    Character Casts
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {erTeam.map((member) => {
+                      const casts = easyCasts[member.charId] || {
+                        skillCount: 1,
+                        burstCount: 1,
+                        normalAttackCount: 0,
+                      };
+                      const isDriver = easyDriver === member.charId;
 
-              const removeControl = !isLast ? (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTimeline(tlIdx)}
-                  className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded border border-border/30 hover:border-destructive/40"
-                  title={t.ui("erCalc.removeStartupTitle")}
-                >
-                  {t.ui("erCalc.remove")}
-                </button>
-              ) : null;
-              return (
-                <TimelineStrip
-                  key={tlIdx}
-                  label={labelNode}
-                  ert={tl}
-                  team={erTeam}
-                  particleMode={particleMode}
-                  bindingQIndices={isLast ? bindingQIndices : undefined}
-                  incomingBridge={
-                    tlIdx > 0 ? boundaryBridges[tlIdx - 1] : undefined
-                  }
-                  outgoingBridge={boundaryBridges[tlIdx]}
-                  extraControls={removeControl}
-                  onAddAction={(charId, action) =>
-                    handleAddAction(charId, action, tlIdx)
-                  }
-                  onRemoveAction={(i) => handleRemoveAction(i, tlIdx)}
-                  onUpdateAction={(i, a) => handleUpdateAction(i, a, tlIdx)}
-                  onReorderActions={(newActions, newPeriodic) =>
-                    handleReorderActions(newActions, newPeriodic, tlIdx)
-                  }
-                  onUpdatePeriodic={(newP) => handleUpdatePeriodic(newP, tlIdx)}
-                  onClear={() => handleClearTimeline(tlIdx)}
-                />
-              );
-            })}
+                      const updateCast = (
+                        field:
+                          | "skillCount"
+                          | "burstCount"
+                          | "normalAttackCount",
+                        val: number
+                      ) => {
+                        setEasyCasts((prev) => ({
+                          ...prev,
+                          [member.charId]: {
+                            ...(prev[member.charId] || {
+                              skillCount: 1,
+                              burstCount: 1,
+                              normalAttackCount: 0,
+                            }),
+                            [field]: val,
+                          },
+                        }));
+                      };
+
+                      return (
+                        <div
+                          key={member.charId}
+                          className="p-3 bg-card border border-border rounded-lg space-y-3 shadow-sm"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-foreground capitalize">
+                              {member.charId.replace("_", " ")}
+                            </span>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground">
+                              <input
+                                type="radio"
+                                name="easyDriver"
+                                checked={isDriver}
+                                onChange={() => setEasyDriver(member.charId)}
+                                className="w-3 h-3 text-primary focus:ring-0 focus:ring-offset-0"
+                              />
+                              Driver
+                            </label>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="space-y-1">
+                              <span className="text-muted-foreground">
+                                Skills (E)
+                              </span>
+                              <input
+                                type="number"
+                                min="0"
+                                max="5"
+                                value={casts.skillCount}
+                                onChange={(e) =>
+                                  updateCast(
+                                    "skillCount",
+                                    Math.max(0, Number(e.target.value))
+                                  )
+                                }
+                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <span className="text-muted-foreground">
+                                Bursts (Q)
+                              </span>
+                              <input
+                                type="number"
+                                min="0"
+                                max="2"
+                                value={casts.burstCount}
+                                onChange={(e) =>
+                                  updateCast(
+                                    "burstCount",
+                                    Math.max(0, Number(e.target.value))
+                                  )
+                                }
+                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                              />
+                            </div>
+                          </div>
+
+                          {isDriver && (
+                            <div className="space-y-1 text-xs">
+                              <span className="text-muted-foreground">
+                                Normal Attacks (NA)
+                              </span>
+                              <input
+                                type="number"
+                                min="0"
+                                max="20"
+                                value={casts.normalAttackCount}
+                                onChange={(e) =>
+                                  updateCast(
+                                    "normalAttackCount",
+                                    Math.max(0, Number(e.target.value))
+                                  )
+                                }
+                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Funnel Configuration Section */}
+                <div className="border-t border-border/30 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Particle Funneling Rules
+                  </h4>
+
+                  {easyFunnels.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {easyFunnels.map((funnel, fIdx) => (
+                        <div
+                          key={fIdx}
+                          className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/40 border border-border rounded-lg text-xs"
+                        >
+                          <span className="font-medium text-foreground capitalize">
+                            {funnel.sourceCharId.replace("_", " ")}
+                          </span>
+                          <span className="text-muted-foreground">
+                            E &rarr;
+                          </span>
+                          <span className="font-medium text-foreground capitalize">
+                            {funnel.targetCharId.replace("_", " ")}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setEasyFunnels((prev) =>
+                                prev.filter((_, idx) => idx !== fIdx)
+                              )
+                            }
+                            className="text-muted-foreground hover:text-destructive ml-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-end gap-3 p-3 bg-muted/40 border border-border rounded-lg max-w-xl text-xs">
+                    <div className="space-y-1 flex-1 min-w-[120px]">
+                      <span className="text-muted-foreground">
+                        Source Character
+                      </span>
+                      <select
+                        id="funnel-source"
+                        className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
+                      >
+                        {erTeam.map((m) => (
+                          <option
+                            key={m.charId}
+                            value={m.charId}
+                            className="capitalize"
+                          >
+                            {m.charId.replace("_", " ")}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="text-muted-foreground self-center pb-2">
+                      &rarr;
+                    </div>
+
+                    <div className="space-y-1 flex-1 min-w-[120px]">
+                      <span className="text-muted-foreground">
+                        Target Character
+                      </span>
+                      <select
+                        id="funnel-target"
+                        className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
+                      >
+                        {erTeam.map((m) => (
+                          <option
+                            key={m.charId}
+                            value={m.charId}
+                            className="capitalize"
+                          >
+                            {m.charId.replace("_", " ")}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const srcSelect = document.getElementById(
+                          "funnel-source"
+                        ) as HTMLSelectElement;
+                        const tgtSelect = document.getElementById(
+                          "funnel-target"
+                        ) as HTMLSelectElement;
+                        if (srcSelect && tgtSelect) {
+                          const src = srcSelect.value;
+                          const tgt = tgtSelect.value;
+                          if (src && tgt) {
+                            const exists = easyFunnels.some(
+                              (f) =>
+                                f.sourceCharId === src && f.targetCharId === tgt
+                            );
+                            if (!exists) {
+                              setEasyFunnels((prev) => [
+                                ...prev,
+                                { sourceCharId: src, targetCharId: tgt },
+                              ]);
+                            }
+                          }
+                        }
+                      }}
+                      className="h-8 px-3 bg-primary hover:bg-primary/95 text-primary-foreground font-medium rounded flex items-center justify-center gap-1 transition shadow-sm"
+                    >
+                      <Plus className="w-4 h-4" /> Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* Compilation Action */}
+                <div className="border-t border-border/30 pt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleCompileRotation}
+                    className="py-2 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg flex items-center gap-1.5 transition-colors shadow-sm text-sm"
+                  >
+                    <Sparkles className="w-4 h-4" /> Compile Rotation
+                  </button>
+                </div>
+              </div>
+            ) : (
+              timelines.map((tl, tlIdx) => {
+                const isLast = tlIdx === timelines.length - 1;
+                const startupNum = tlIdx + 1;
+                const labelNode = isLast ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm md:text-base font-semibold">
+                      {t.ui("erCalc.loopLabel")}
+                    </span>
+                    <ToggleGroup
+                      type="single"
+                      value={repeatLast ? "repeat" : "once"}
+                      onValueChange={(v) => v && setRepeatLast(v === "repeat")}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <ToggleGroupItem
+                        value="once"
+                        className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+                      >
+                        {t.ui("erCalc.loopOnce")}
+                      </ToggleGroupItem>
+                      <ToggleGroupItem
+                        value="repeat"
+                        className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+                      >
+                        {t.ui("erCalc.loopRepeat")}
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+                ) : (
+                  <span className="text-sm md:text-base font-semibold">
+                    {t.ui("erCalc.startupLabel")} {startupNum}
+                  </span>
+                );
+
+                const removeControl = !isLast ? (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTimeline(tlIdx)}
+                    className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded border border-border/30 hover:border-destructive/40"
+                    title={t.ui("erCalc.removeStartupTitle")}
+                  >
+                    {t.ui("erCalc.remove")}
+                  </button>
+                ) : null;
+                return (
+                  <TimelineStrip
+                    key={tlIdx}
+                    label={labelNode}
+                    ert={tl}
+                    team={erTeam}
+                    particleMode={particleMode}
+                    bindingQIndices={isLast ? bindingQIndices : undefined}
+                    incomingBridge={
+                      tlIdx > 0 ? boundaryBridges[tlIdx - 1] : undefined
+                    }
+                    outgoingBridge={boundaryBridges[tlIdx]}
+                    extraControls={removeControl}
+                    onAddAction={(charId, action) =>
+                      handleAddAction(charId, action, tlIdx)
+                    }
+                    onRemoveAction={(i) => handleRemoveAction(i, tlIdx)}
+                    onUpdateAction={(i, a) => handleUpdateAction(i, a, tlIdx)}
+                    onReorderActions={(newActions, newPeriodic) =>
+                      handleReorderActions(newActions, newPeriodic, tlIdx)
+                    }
+                    onUpdatePeriodic={(newP) =>
+                      handleUpdatePeriodic(newP, tlIdx)
+                    }
+                    onClear={() => handleClearTimeline(tlIdx)}
+                  />
+                );
+              })
+            )}
 
             {/* Results */}
             {results.length > 0 && (

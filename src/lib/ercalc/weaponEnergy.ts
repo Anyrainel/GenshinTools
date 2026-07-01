@@ -27,6 +27,8 @@ export type WeaponEnergyEffect =
         | "heal" // Wearer is a healer (approximated: fires at wearer's Q)
         | "reaction" // Wearer participates in a reaction (fires at wearer's Q)
         | "partyPlunge"; // Per plunge (NA/CA/PA gated to plunge) by any team member
+      /** Cooldown in seconds (optional) */
+      cooldown?: number;
       /** For `trigger: "reaction"` weapons — which reaction the wearer must
        *  participate in. Rendered in the timeline node popover so users
        *  know when to enable the toggle. */
@@ -100,6 +102,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [6, 7.5, 9, 10.5, 12],
       trigger: "skill",
+      cooldown: 10,
     },
   },
   // Katsuragikiri Nagamasa: same mechanic as Kitain
@@ -110,6 +113,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [6, 7.5, 9, 10.5, 12],
       trigger: "skill",
+      cooldown: 10,
     },
   },
   // Bloodsoaked Ruins: 12/13/14/15/16 energy after triggering Lunar-Charged, 14s CD
@@ -121,6 +125,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       totalEnergy: [12, 13, 14, 15, 16],
       trigger: "reaction",
       reactionCondition: { en: "Lunar-Charged", zh: "月感电" },
+      cooldown: 14,
     },
   },
   // Crane's Echoing Call: 2.5/2.75/3/3.25/3.5 energy per party plunge hit, 0.7s CD.
@@ -132,6 +137,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [2.5, 2.75, 3, 3.25, 3.5],
       trigger: "partyPlunge",
+      cooldown: 0.7,
     },
   },
   // Nocturne's Curtain Call: 14/15/16/17/18 energy when wearer triggers or
@@ -169,6 +175,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [8, 9, 10, 11, 12],
       trigger: "heal",
+      cooldown: 10,
     },
   },
   // Rightful Reward: 8/9/10/11/12 energy when healed, 10s CD
@@ -179,6 +186,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [8, 9, 10, 11, 12],
       trigger: "heal",
+      cooldown: 10,
     },
   },
   // Fleuve Cendre Ferryman: 16/20/24/28/32% ER for 5s after E (stat buff, not flat energy)
@@ -203,6 +211,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       totalEnergy: [12, 13, 14, 15, 16],
       trigger: "reaction",
       reactionCondition: { en: "Burning", zh: "燃烧" },
+      cooldown: 12,
     },
   },
   // Flame-Forged Insight: 12/15/18/21/24 energy on Electro-Charged / Lunar-
@@ -218,6 +227,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
         en: "Electro-Charged / Lunar-Charged / Bloom / Lunar-Bloom / Crystallize / Lunar-Crystallize",
         zh: "感电 / 月感电 / 绽放 / 月绽放 / 结晶 / 月结晶",
       },
+      cooldown: 15,
     },
   },
   // Portable Power Saw: 6/7.5/9/10.5/12 energy from Stoic Symbols on burst (max 3 symbols)
@@ -262,6 +272,7 @@ const otherWeapons: WeaponEnergyEntry[] = [
       effect: "flatEnergy",
       totalEnergy: [14, 15, 16, 17, 18],
       trigger: "skill",
+      cooldown: 14,
     },
   },
 ];

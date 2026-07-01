@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
+  Battery,
   Book,
   Box,
   Crosshair,
@@ -124,6 +125,12 @@ export const getNavigationConfig = (
         href: "/team-comp/weapon",
         value: "weapon",
         icon: Medal,
+      },
+      {
+        label: t.ui("teamComp.tabRedesignedEr"),
+        href: "/team-comp/redesigned-er",
+        value: "redesigned-er",
+        icon: Battery,
       },
     ],
   },

@@ -23,6 +23,7 @@ function member(
 type FlatEntry = {
   char: string;
   action: TimelineAction["action"] | "periodicE";
+  favoniusProc?: boolean;
 };
 function ert(flat: FlatEntry[]): ERTimeline {
   const actions: TimelineAction[] = [];
@@ -36,7 +37,11 @@ function ert(flat: FlatEntry[]): ERTimeline {
       for (const src of pending)
         periodic.push({ sourceChar: src, trigger: "E", targetIndex: idx });
       pending.length = 0;
-      actions.push({ char: e.char, action: e.action });
+      actions.push({
+        char: e.char,
+        action: e.action,
+        favoniusProc: e.favoniusProc,
+      });
     }
   }
   if (pending.length && actions.length > 0) {
@@ -257,5 +262,61 @@ describe("optimizeWaitBlocks", () => {
     const maxBefore = Math.max(...before.map((r) => r.erNeeded));
     const maxAfter = Math.max(...result.results.map((r) => r.erNeeded));
     expect(maxAfter).toBeLessThanOrEqual(maxBefore);
+  });
+
+  it("aligns Favonius CDs correctly to prevent illegal double triggers", () => {
+    // Bennett holds a Favonius Sword (R5 = 6s CD).
+    // Bennett casts E twice in rapid succession (1s apart).
+    // The optimizer should only enable favoniusProc on one of the casts.
+    const team: TeamMember[] = [
+      {
+        id: "bennett",
+        element: "Pyro",
+        burstCost: 60,
+        constellation: 0,
+        weaponId: "favonius_sword",
+        refinement: 4, // R5
+      },
+    ];
+    const timeline = ert([
+      { char: "bennett", action: "E", favoniusProc: true },
+      { char: "bennett", action: "E", favoniusProc: true },
+    ]);
+
+    const result = optimizeWaitBlocks(team, timeline);
+    // Bennett should only have 1 favoniusProc active because of CD spacing
+    const favCount = result.timeline.actions.filter(
+      (a) => a.favoniusProc
+    ).length;
+    expect(favCount).toBe(1);
+  });
+
+  it("can reorder skill E casts to optimize funneling for high ER characters", () => {
+    const team: TeamMember[] = [
+      member("bennett", "Pyro", 60),
+      member("xiangling", "Pyro", 80),
+      member("sucrose", "Anemo", 80),
+    ];
+    // Initially: Bennett E -> Sucrose wait -> Xiangling Q -> Bennett wait.
+    // Bennett's E is absorbed by Sucrose.
+    // The optimizer should move Bennett E to index 1 (preceding Xiangling Q)
+    // so Xiangling absorbs it on-field.
+    const timeline = ert([
+      { char: "bennett", action: "E" },
+      { char: "sucrose", action: "wait" },
+      { char: "xiangling", action: "Q" },
+      { char: "bennett", action: "wait" },
+    ]);
+
+    const result = optimizeWaitBlocks(team, timeline);
+    const idxE = result.timeline.actions.findIndex(
+      (a) => a.char === "bennett" && a.action === "E"
+    );
+    const idxQ = result.timeline.actions.findIndex(
+      (a) => a.char === "xiangling" && a.action === "Q"
+    );
+
+    // Bennett E should now be positioned immediately before Xiangling Q (index = indexQ - 1)
+    expect(idxE).toBe(idxQ - 1);
   });
 });

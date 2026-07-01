@@ -287,6 +287,8 @@ export interface EnergyEvent {
    *                   with ER% (e.g. orb-typed grants, scalable artifact procs).
    *   - `flat`      — fixed energy, NOT affected by ER%. */
   type: "particle" | "flat" | "scalable";
+  /** Optional cap for scalable energy sources. */
+  erScaleMax?: number;
 }
 
 /** A single energy-spending event (Q / specialQ) and the energy that
@@ -366,3 +368,97 @@ export interface SelfEnergyEntry {
 }
 
 export type SelfEnergyMap = Record<string, SelfEnergyEntry[]>;
+
+// ─── Redesigned ER calculation types ───
+
+export interface ProbProbability {
+  value: number;
+  prob: number;
+}
+
+export type RedesignedParticles = number | ProbProbability[];
+
+export interface RedesignedBurstRequirement {
+  type: "regular" | "special";
+  raw: string;
+  regularCost?: number;
+  specialFixedCount?: number;
+  specialFixedCost?: number;
+  specialInterval?: number;
+  specialAdditionalCost?: number;
+}
+
+export interface RedesignedCharTiming {
+  name: string;
+  element: string;
+  actionCount: number;
+  tIn: number;
+  tOut: number;
+}
+
+export interface RedesignedParticleConfig {
+  delta: number;
+  tProd: number;
+  e0: RedesignedParticles;
+}
+
+export interface RedesignedRecoveryTuple {
+  a: number;
+  b: number;
+  lambda: number;
+  k: number;
+}
+
+export interface RedesignedRecoveryConfig {
+  S: number;
+  n: number;
+  dIn: number;
+  V: number;
+  P: number;
+  tuples: RedesignedRecoveryTuple[];
+}
+
+export interface RedesignedInput {
+  raw: string;
+  charOrders: string[]; // names of characters in order
+  burstRequirements: Record<string, RedesignedBurstRequirement>;
+  axisLengths: number[]; // [T1, T2]
+  actionSequence: string;
+  customTiming?: RedesignedCharTiming[];
+  actionCosts: { Q: number; E: number; A: number };
+  elements: Record<string, string>;
+  particles: Record<string, RedesignedParticleConfig>;
+  recoveries: Record<string, RedesignedRecoveryConfig>;
+}
+
+export interface RedesignedResultItem {
+  name: string;
+  element: string;
+  burstType: "regular" | "special";
+  demandLabels: string[];
+  demands: number[]; // values of D_min, D_avg, D_peak, etc.
+  qValues: {
+    expected: number;
+    options: Array<{ val: number; prob: number }>;
+  };
+  rValues: {
+    avg: number;
+    min: number;
+    max: number;
+  };
+  erNeeded: {
+    // mapped by demand label, e.g. "D=60" -> { avg: number, min: number, max: number }
+    [demandLabel: string]: {
+      avg: number;
+      min: number;
+      max: number;
+      recommended: number;
+    };
+  };
+}
+
+export interface RedesignedSuperTableCol {
+  header: string;
+  prob: number;
+  cells: Record<string, string>; // name -> "avg(min,max)"
+}
