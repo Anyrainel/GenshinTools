@@ -115,7 +115,7 @@ interface BuildCardProps {
   onMove?: (buildId: string, direction: "up" | "down") => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
-  element: Element;
+  element: Element | undefined;
 }
 
 function BuildCardComponent({
@@ -450,12 +450,14 @@ function BuildCardComponent({
                     </>
                   )}
 
-                  {isMobile && currentRoles.includes("dps") && (
-                    <DropdownMenuItem onClick={() => setAutoTuneOpen(true)}>
-                      <Wand2 className="mr-2 h-4 w-4" />
-                      <span>{t.ui("buildCard.autoTune")}</span>
-                    </DropdownMenuItem>
-                  )}
+                  {isMobile &&
+                    currentRoles.includes("dps") &&
+                    element != null && (
+                      <DropdownMenuItem onClick={() => setAutoTuneOpen(true)}>
+                        <Wand2 className="mr-2 h-4 w-4" />
+                        <span>{t.ui("buildCard.autoTune")}</span>
+                      </DropdownMenuItem>
+                    )}
 
                   {build.source === "modified" && (
                     <DropdownMenuItem
@@ -544,7 +546,7 @@ function BuildCardComponent({
                       compact={isMobile}
                     />
                   </div>
-                  {currentRoles.includes("dps") && (
+                  {currentRoles.includes("dps") && element != null && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -601,7 +603,7 @@ function BuildCardComponent({
         </AlertDialogContent>
       </AlertDialog>
 
-      {autoTuneOpen && (
+      {autoTuneOpen && element != null && (
         <Suspense fallback={null}>
           <AutoTuneDialog
             open={autoTuneOpen}

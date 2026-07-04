@@ -2,7 +2,7 @@
   "a_teaspoon_of_transcendence": {
     "id": "12516",
     "name": "A Teaspoon of Transcendence",
-    "descHtmlTpl": "ATK increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When Charged Attacks hit opponents, they grant 1 stack of Transcendence. Max 3 stacks. Lasts for 5s. Each stack increases Stellar-Conduct DMG by <span style=\"color: #99FFFFFF;\">{1}</span>.",
+    "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>.<br>Additionally, each time the equipping character hits an opponent with their Charged Attack, they attain \"Transcendence\" for a short time: their Stellar-Conduct DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s. This effect can stack once every 0.2s, max 3 stacks.",
     "refinements": [
       ["28%", "16%"],
       ["35%", "20%"],
@@ -362,13 +362,13 @@
   "cashflow_supervision": {
     "id": "14513",
     "name": "Cashflow Supervision",
-    "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When current HP increases or decreases, Normal Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{1}</span> and Charged Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{2}</span> for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the wielder has 3 stacks, ATK SPD will be increased by <span style=\"color: #99FFFFFF;\">{3}</span>.",
+    "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When current HP increases or decreases, Normal Attack DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span>, Charged Attack DMG is increased by <span style=\"color: #99FFFFFF;\">{2}</span>, and Stellar-Conduct DMG is increased by <span style=\"color: #99FFFFFF;\">{3}</span> for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the wielder has 3 stacks, ATK SPD will be increased by <span style=\"color: #99FFFFFF;\">{4}</span>.",
     "refinements": [
-      ["16%", "16%", "14%", "8%"],
-      ["20%", "20%", "17.5%", "10%"],
-      ["24%", "24%", "21%", "12%"],
-      ["28%", "28%", "24.5%", "14%"],
-      ["32%", "32%", "28%", "16%"]
+      ["16%", "16%", "14%", "14%", "8%"],
+      ["20%", "20%", "17.5%", "17.5%", "10%"],
+      ["24%", "24%", "21%", "21%", "12%"],
+      ["28%", "28%", "24.5%", "24.5%", "14%"],
+      ["32%", "32%", "28%", "28%", "16%"]
     ]
   },
   "chain_breaker": {
@@ -470,7 +470,7 @@
   "dark_iron_sword": {
     "id": "11304",
     "name": "Dark Iron Sword",
-    "descHtmlTpl": "Upon causing an Overloaded, Superconduct, Electro-Charged, Quicken, Aggravate, Hyperbloom, Lunar-Charged, or Electro-infused Swirl reaction, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s.",
+    "descHtmlTpl": "Upon causing an Overloaded, Superconduct, Stellar-Conduct, Electro-Charged, Quicken, Aggravate, Hyperbloom, Lunar-Charged, or Electro-infused Swirl reaction, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s.",
     "refinements": [
       ["20%"],
       ["25%"],
@@ -1102,13 +1102,13 @@
   "kaguras_verity": {
     "id": "14509",
     "name": "Kagura's Verity",
-    "descHtmlTpl": "Gains the Kagura Dance effect when using an Elemental Skill, causing the Elemental Skill DMG of the character wielding this weapon to increase by <span style=\"color: #99FFFFFF;\">{0}</span> for 16s. Max 3 stacks. This character will gain <span style=\"color: #99FFFFFF;\">{1}</span> All Elemental DMG Bonus when they possess 3 stacks.",
+    "descHtmlTpl": "Using an Elemental Skill grants the Kagura Dance effect, increasing the wielding character's Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{0}</span> as well as their Stellar-Conduct DMG by <span style=\"color: #99FFFFFF;\">{1}</span> for 24s. Max 3 stacks. This character will gain a <span style=\"color: #99FFFFFF;\">{2}</span> All Elemental DMG Bonus when they possess 3 stacks.",
     "refinements": [
-      ["12%", "12%"],
-      ["15%", "15%"],
-      ["18%", "18%"],
-      ["21%", "21%"],
-      ["24%", "24%"]
+      ["12%", "12%", "12%"],
+      ["15%", "15%", "15%"],
+      ["18%", "18%", "18%"],
+      ["21%", "21%", "21%"],
+      ["24%", "24%", "24%"]
     ]
   },
   "katsuragikiri_nagamasa": {

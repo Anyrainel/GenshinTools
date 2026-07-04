@@ -1424,6 +1424,158 @@
           "name": "Watcher: Fallen Vigil"
         }
       ]
+    },
+    {
+      "id": 10101,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1010041,
+          "name": "Shadow of the Precursor's Secret Source Matrix of Overseer Network: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1010051,
+          "name": "Shadow of the Precursor's Secret Source Matrix of Overseer Network: Collective"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1010061,
+          "name": "Shadow of the Precursor's Secret Source Matrix of Overseer Network: Will of the Hive"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Cryo Characters | Ranged Characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Cryo Electro Characters | Ranged Characters"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Hydro Characters | Melee Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Suppression Field",
+          "short": "During combat, the Nemesis will deploy a suppression field that <color=#FFD780FF>increases all its Elemental and Physical RES</color> and places 4 detection devices protected by <color=#FFD780FF>Hydro Wards</color>. After the field is active for a while, the Nemesis will unleash a single wide AoE attack and retrieve the remaining detection devices. It will then gain a <color=#FFD780FF>Hydro Ward</color> whose absorption is based on the number of devices retrieved.",
+          "detail": "During combat, the Nemesis will deploy 4 detection devices protected by <color=#FFD780FF>Hydro Wards</color>, constructing a Suppression Field that will increase <color=#FFD780FF>its All Elemental and Physical RES</color>. When the field has been active for some time, the Nemesis will unleash Alpha Strike, dealing AoE DMG over a massive area and retrieving all detection devices deployed. It will then deploy a <color=#FFD780FF>Hydro Ward</color> whose absorption is based on the number of devices retrieved."
+        },
+        {
+          "tiers": [4],
+          "title": "Suppression Field",
+          "short": "When combat begins, the Nemesis will deploy a suppression field that <color=#FFD780FF>increases all its Elemental and Physical RES</color> and places 4 detection devices protected by <color=#FFD780FF>Hydro Wards</color>. After the field is active for a while, the Nemesis will unleash a single wide AoE attack and retrieve the remaining detection devices. It will then gain a <color=#FFD780FF>Hydro Ward</color> whose absorption is based on the number of devices retrieved.",
+          "detail": "When the battle begins, the Nemesis will deploy 4 detection devices protected by <color=#FFD780FF>Hydro Wards</color>, constructing a Suppression Field that will increase <color=#FFD780FF>its All Elemental and Physical RES</color>. When the field has been active for some time, the Nemesis will unleash Alpha Strike, dealing AoE DMG over a massive area and retrieving all detection devices deployed. It will then deploy a <color=#FFD780FF>Hydro Ward</color> whose absorption is based on the number of devices retrieved."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Detection Device",
+          "short": "Detection devices will be destroyed when <color=#FFD780FF>their Hydro Ward is broken</color> or <color=#FFD780FF>if they are Frozen and then affected by Shatter, Melt, or other Elemental Reaction DMG</color>. After all detection devices are destroyed, the Suppression Field will also be destroyed, and the Nemesis will be paralyzed temporarily.",
+          "detail": "Detection devices will be destroyed when <color=#FFD780FF>their Hydro Ward is broken</color> or <color=#FFD780FF>if they are Frozen and then affected by Shatter, Melt, or other Elemental Reaction DMG</color>. After all detection devices are destroyed, the Suppression Field will also be destroyed, and the Nemesis will be paralyzed temporarily."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Suppression Field: Energy Cycler",
+          "short": "When combat begins, the Nemesis will deploy a Suppression Field, creating an <color=#FFD780FF>Force Shield for itself</color> that <color=#FFD780FF>increases all its RES except Cryo and Electro RES</color> and places 4 detection devices protected by <color=#FFD780FF>Hydro Wards</color>. After the field is active for a while, the Nemesis will unleash a single wide AoE attack and retrieve the remaining detection devices. It will then gain a <color=#FFD780FF>Hydro Ward</color> whose absorption is based on the number of devices retrieved.",
+          "detail": "When combat begins, the Nemesis will deploy 4 detection devices protected by <color=#FFD780FF>Hydro Wards</color>, constructing a special Suppression Field that will create a <color=#FFD780FF>Force Shield</color> for the Nemesis and increase <color=#FFD780FF>all its RES except for Cryo and Electro RES</color>. When the field has been active for some time, the Nemesis will unleash Alpha Strike, dealing AoE DMG over a massive area and retrieving all detection devices. It will then deploy a <color=#FFD780FF>Hydro Ward</color> whose absorption is based on the number of devices retrieved. Failing to retrieve any detection devices will only grant a weak Hydro Ward."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Force Shield",
+          "short": "Due to the Ley Line disturbance, the Nemesis' Suppression Field will fail when the Force Shield is broken, causing the Nemesis to take one instance of massive backlash DMG and enter a state of paralysis.\\nAdditionally, triggering <color=#FFD780FF>Superconduct and Stellar-Conduct</color> reactions can quickly break this Shield and further increase the backlash DMG the Nemesis will take.",
+          "detail": "Due to the Ley Line disturbance, the Nemesis' Suppression Field will fail when the Force Shield is broken, causing the Nemesis to take one instance of massive backlash DMG and enter a state of paralysis. Additionally, each time the Nemesis is <color=#FFD780FF>affected by a Superconduct or Stellar-Conduct reaction</color>, it will lose a fixed amount of Shield. <color=#FFD780FF>Superconduct and Stellar-Conduct DMG</color> is more effective at breaking its Shield and will further increase the backlash DMG it takes when the Shield is broken."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Detection Device: Pressurized Component",
+          "short": "Detection devices will be destroyed when <color=#FFD780FF>their Hydro Ward is broken</color> or <color=#FFD780FF>if they are Frozen and then affected by Shatter, Melt, or other Elemental Reaction DMG</color>. Due to the Ley Line disturbance, the Nemesis' Shield will be damaged for every detection device that is destroyed.",
+          "detail": "Detection devices will be destroyed when <color=#FFD780FF>their Hydro Ward is broken</color> or <color=#FFD780FF>if they are Frozen and then affected by Shatter, Melt, or other Elemental Reaction DMG</color>. Due to the Ley Line disturbance, the Nemesis' Shield will be damaged for every detection device that is destroyed."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 40907,
+          "name": "Battle-Hardened Precursor's Secret Source Matrix of Overseer Network"
+        }
+      ]
+    },
+    {
+      "id": 10103,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1010043,
+          "name": "Secret Source Automaton: Configuration Device - Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1010053,
+          "name": "Secret Source Automaton: Configuration Device - Giant Claw"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1010063,
+          "name": "Secret Source Automaton: Configuration Device - Lysis Shears"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Nightsoul's Blessing Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Adaptive Countermeasures",
+          "short": "When the battle begins, the Nemesis will have <color=#FFD780FF>slightly higher All Elemental and Physical RES</color>. Once a character enters and maintains the Nightsoul's Blessing state, the Nemesis will accumulate progress toward Adaptive Countermeasures. When this progress is full, it will start charging its Boltsphere Cannon.",
+          "detail": "When the battle begins, the Nemesis will have <color=#FFD780FF>slightly higher All Elemental and Physical RES</color>. When a character enters and maintains the Nightsoul's Blessing state, the Nemesis will accumulate progress toward Adaptive Countermeasures. When this progress is full, it will start charging its Boltsphere Cannon."
+        },
+        {
+          "tiers": [4],
+          "title": "Adaptive Countermeasures",
+          "short": "When the battle begins, the Nemesis will have <color=#FFD780FF>slightly higher All Elemental and Physical RES</color>. When a character enters and maintains the Nightsoul's Blessing state, the Nemesis will accumulate progress toward Adaptive Countermeasures. When this progress is full, it will start charging its Boltsphere Cannon.",
+          "detail": "When the battle begins, the Nemesis will have <color=#FFD780FF>slightly higher All Elemental and Physical RES</color>. When a character enters and maintains the Nightsoul's Blessing state, the Nemesis will accumulate progress toward Adaptive Countermeasures. When this progress is full, it will start charging its Boltsphere Cannon."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Boltsphere Cannon",
+          "short": "While the Boltsphere Cannon is being readied, the Nemesis will activate Accretion Mechanisms. The Accretion Mechanisms will generate force fields to protect themselves. You must <color=#FFD780FF>climb up solid Phlogiston to get inside the force fields</color> to destroy them. After all the Accretion Mechanisms are destroyed, Boltsphere Cannon charging will be interrupted, while the Nemesis will <color=#FFD780FF>get paralyzed and simultaneously take backlash DMG</color>.",
+          "detail": "While the Boltsphere Cannon is being readied, the Nemesis will activate Accretion Mechanisms and excavate 2 blocks of solid Phlogiston before absorbing energy from within them. The Accretion Mechanisms will generate force fields to protect themselves. You must <color=#FFD780FF>climb up solid Phlogiston to get inside the force fields</color> to destroy them. After all the Accretion Mechanisms are destroyed, Boltsphere Cannon charging will be interrupted, while the Nemesis will <color=#FFD780FF>get paralyzed and simultaneously take backlash DMG</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Adaptive Countermeasures: Cold Start",
+          "short": "When the battle begins, the Nemesis is <color=#FFD780FF>shielded</color>. When a character enters and maintains the Nightsoul's Blessing state, the Nemesis will accumulate progress toward Adaptive Countermeasures. Due to the Ley Line disturbance, after the Nemesis finishes accumulating Adaptive Countermeasures for the first time, its Shield will be broken, and it will take backlash DMG.",
+          "detail": "When the battle begins, the Nemesis will be protected by <color=#FFD780FF>a strong Shield</color> and gain high All Elemental and Physical RES. When a character enters and maintains the Nightsoul's Blessing state, the Nemesis will accumulate progress toward Adaptive Countermeasures. Due to the Ley Line disturbance, after the Nemesis finishes accumulating Adaptive Countermeasures for the first time, it will lose the <color=#FFD780FF>All RES increase it gained at the start of the battle</color>, its <color=#FFD780FF>Shield</color> will be broken, and then it will take backlash DMG based on the amount of DMG absorbed by the Shield."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Boltsphere Cannon: High-Pressure Pumps",
+          "short": "After Adaptive Countermeasures progress fills up, the Nemesis will activate Accretion Mechanisms and charge the Boltsphere Cannon. The Accretion Mechanisms will generate force fields to protect themselves. You must <color=#FFD780FF>climb up solid Phlogiston to get inside the force fields</color> to destroy them. After all the Accretion Mechanisms are destroyed, Boltsphere Cannon charging will be interrupted, while the Nemesis will <color=#FFD780FF>get paralyzed and simultaneously take backlash DMG</color>.",
+          "detail": "After Adaptive Countermeasures progress fills up, the Nemesis will activate Accretion Mechanisms and excavate 2 blocks of solid Phlogiston before absorbing energy from within them to charge the Boltsphere Cannon. The Accretion Mechanisms will generate force fields to protect themselves. You must <color=#FFD780FF>climb up solid Phlogiston to get inside the force fields</color> to destroy them. After all the Accretion Mechanisms are destroyed, Boltsphere Cannon charging will be interrupted, while the Nemesis will <color=#FFD780FF>get paralyzed and simultaneously take backlash DMG</color>. Due to the Ley Line disorder, Adaptive Countermeasures will accrue progress as time passes, but the threshold required to activate Boltsphere Cannon will be higher."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 40902,
+          "name": "Secret Source Automaton: Configuration Device"
+        },
+        {
+          "id": 40903,
+          "name": "Primeval Source Dragon Mech"
+        },
+        {
+          "id": 40904,
+          "name": "Primeval Source Dragon Mech"
+        }
+      ]
     }
   ],
   "schedules": [
@@ -1462,6 +1614,10 @@
     {
       "id": 5269009,
       "name": "Battle of the Howling Cyclone"
+    },
+    {
+      "id": 5269010,
+      "name": "Savage Tremors"
     }
   ]
 }

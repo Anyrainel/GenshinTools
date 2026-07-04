@@ -116,27 +116,32 @@ export default function ArtifactBuildsPage() {
   }, []);
 
   const handleExportTrigger = useCallback(() => {
-    const issues = getResolvedBuildValidationIssues(
-      getResolvedBuildGroupsSnapshot()
-    );
-    const warnings: string[] = [];
-
-    for (const issue of issues.slice(0, 3)) {
-      const charName = t.character(issue.characterId);
-      const buildName = issue.buildName || t.ui("common.unnamed");
-      const details = issue.errorKeys.map((k) => t.ui(k)).join(", ");
-      warnings.push(`${charName} (${buildName}): ${details}`);
-    }
-
-    if (issues.length > warnings.length) {
-      warnings.push(
-        t
-          .ui("export.invalidBuildsMore")
-          .replace("{0}", String(issues.length - warnings.length))
+    try {
+      const issues = getResolvedBuildValidationIssues(
+        getResolvedBuildGroupsSnapshot()
       );
-    }
+      const warnings: string[] = [];
 
-    exportRef.current?.open({ warnings, count: issues.length });
+      for (const issue of issues.slice(0, 3)) {
+        const charName = t.character(issue.characterId);
+        const buildName = issue.buildName || t.ui("common.unnamed");
+        const details = issue.errorKeys.map((k) => t.ui(k)).join(", ");
+        warnings.push(`${charName} (${buildName}): ${details}`);
+      }
+
+      if (issues.length > warnings.length) {
+        warnings.push(
+          t
+            .ui("export.invalidBuildsMore")
+            .replace("{0}", String(issues.length - warnings.length))
+        );
+      }
+
+      exportRef.current?.open({ warnings, count: issues.length });
+    } catch (error) {
+      console.error("Build export dialog failed to open:", error);
+      toast.error(t.ui("common.error"));
+    }
   }, [t]);
 
   // Tab configuration for AppBar

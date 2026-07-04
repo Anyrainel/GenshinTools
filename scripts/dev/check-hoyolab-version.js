@@ -28,10 +28,16 @@ const PROBE_PATH = resolve(ROOT, "scripts/hoyolab-probe.ts");
 
 const UPSTREAM = {
   cn: {
-    url: "https://raw.githubusercontent.com/Womsxd/MihoyoBBSTools/master/setting.py",
-    parseVersion: (text) => text.match(/mihoyobbs_version\s*=\s*"([^"]+)"/)?.[1],
-    parseSaltX4: (text) =>
-      text.match(/mihoyobbs_salt_x4\s*=\s*"([^"]+)"/)?.[1],
+    constantsUrl:
+      "https://raw.githubusercontent.com/seriaati/genshin.py/master/genshin/constants.py",
+    dsUrl:
+      "https://raw.githubusercontent.com/seriaati/genshin.py/master/genshin/utility/ds.py",
+    parseSalt: (text) =>
+      text.match(/types\.Region\.CHINESE:\s*"([^"]+)"/)?.[1],
+    parseVersion: (text) =>
+      text.match(
+        /region == types\.Region\.CHINESE:[\s\S]*?"x-rpc-app_version":\s*"([^"]+)"/
+      )?.[1],
   },
   os: {
     constantsUrl:
@@ -74,6 +80,58 @@ async function fetchText(url, timeoutMs = 10_000) {
   }
 }
 
+// Helper to check and fix a region
+async function checkRegion(region, label, local, fix) {
+  const cfg = UPSTREAM[region];
+  const [constantsText, dsText] = await Promise.all([
+    fetchText(cfg.constantsUrl),
+    fetchText(cfg.dsUrl),
+  ]);
+  const upstreamVersion = cfg.parseVersion(dsText);
+  const upstreamSalt = cfg.parseSalt(constantsText);
+
+  let regionIssues = false;
+
+  const localVersion = region === "cn" ? local.cnVersion : local.osVersion;
+  const localSalt = region === "cn" ? local.cnSalt : local.osSalt;
+
+  if (upstreamVersion && upstreamVersion !== localVersion) {
+    console.log(
+      `  ⚠ ${label} app_version outdated: ours=${localVersion} upstream=${upstreamVersion}`
+    );
+    regionIssues = true;
+    if (fix) {
+      applyFix(WORKER_PATH, localVersion, upstreamVersion);
+      applyFix(PROBE_PATH, localVersion, upstreamVersion);
+      if (region === "cn") {
+        applyFix(WORKER_PATH, `miHoYoBBS/${localVersion}`, `miHoYoBBS/${upstreamVersion}`);
+        applyFix(PROBE_PATH, `miHoYoBBS/${localVersion}`, `miHoYoBBS/${upstreamVersion}`);
+      }
+      console.log(`  ✓ Fixed ${label} app_version in worker + probe`);
+    }
+  } else if (upstreamVersion) {
+    console.log(`  ✓ ${label} app_version up-to-date (${localVersion})`);
+  } else {
+    console.log(`  ? Could not parse upstream ${label} version (format changed?)`);
+  }
+
+  if (upstreamSalt && upstreamSalt !== localSalt) {
+    console.log(
+      `  ⚠ ${label} salt outdated: ours=${localSalt} upstream=${upstreamSalt}`
+    );
+    regionIssues = true;
+    if (fix) {
+      applyFix(WORKER_PATH, localSalt, upstreamSalt);
+      applyFix(PROBE_PATH, localSalt, upstreamSalt);
+      console.log(`  ✓ Fixed ${label} salt in worker + probe`);
+    }
+  } else if (upstreamSalt) {
+    console.log(`  ✓ ${label} salt up-to-date`);
+  }
+
+  return regionIssues;
+}
+
 // Main
 
 async function main() {
@@ -81,92 +139,20 @@ async function main() {
   const local = readLocal(WORKER_PATH);
   let hasIssues = false;
 
-  console.log("[hoyolab-version] Checking CN upstream (MihoyoBBSTools)...");
+  console.log("[hoyolab-version] Checking CN upstream (genshin.py)...");
   try {
-    const text = await fetchText(UPSTREAM.cn.url);
-    const upstreamVersion = UPSTREAM.cn.parseVersion(text);
-    const upstreamSalt = UPSTREAM.cn.parseSaltX4(text);
-
-    if (upstreamVersion && upstreamVersion !== local.cnVersion) {
-      console.log(
-        `  ⚠ CN app_version outdated: ours=${local.cnVersion} upstream=${upstreamVersion}`
-      );
-      hasIssues = true;
-      if (fix) {
-        applyFix(WORKER_PATH, local.cnVersion, upstreamVersion);
-        applyFix(PROBE_PATH, local.cnVersion, upstreamVersion);
-        // Also update User-Agent strings that embed the version
-        applyFix(WORKER_PATH, `miHoYoBBS/${local.cnVersion}`, `miHoYoBBS/${upstreamVersion}`);
-        applyFix(PROBE_PATH, `miHoYoBBS/${local.cnVersion}`, `miHoYoBBS/${upstreamVersion}`);
-        console.log("  ✓ Fixed CN app_version in worker + probe");
-      }
-    } else if (upstreamVersion) {
-      console.log(`  ✓ CN app_version up-to-date (${local.cnVersion})`);
-    } else {
-      console.log("  ? Could not parse upstream CN version (format changed?)");
-    }
-
-    if (upstreamSalt && upstreamSalt !== local.cnSalt) {
-      console.log(
-        `  ⚠ CN salt (x4) outdated: ours=${local.cnSalt} upstream=${upstreamSalt}`
-      );
-      hasIssues = true;
-      if (fix) {
-        applyFix(WORKER_PATH, local.cnSalt, upstreamSalt);
-        applyFix(PROBE_PATH, local.cnSalt, upstreamSalt);
-        console.log("  ✓ Fixed CN salt in worker + probe");
-      }
-    } else if (upstreamSalt) {
-      console.log(`  ✓ CN salt (x4) up-to-date`);
-    }
+    const cnIssues = await checkRegion("cn", "CN", local, fix);
+    if (cnIssues) hasIssues = true;
   } catch (err) {
-    // Network errors during pre-push should not block the push.
-    console.log(`  ⏭ Skipped (network error: ${err.message})`);
-    return;
+    console.log(`  ⏭ Skipped CN (network error: ${err.message})`);
   }
 
   console.log("[hoyolab-version] Checking OS upstream (genshin.py)...");
   try {
-    const [constantsText, dsText] = await Promise.all([
-      fetchText(UPSTREAM.os.constantsUrl),
-      fetchText(UPSTREAM.os.dsUrl),
-    ]);
-    const upstreamVersion = UPSTREAM.os.parseVersion(dsText);
-    const upstreamSalt = UPSTREAM.os.parseSalt(constantsText);
-
-    if (upstreamVersion && upstreamVersion !== local.osVersion) {
-      console.log(
-        `  ⚠ OS app_version outdated: ours=${local.osVersion} upstream=${upstreamVersion}`
-      );
-      hasIssues = true;
-      if (fix) {
-        applyFix(WORKER_PATH, local.osVersion, upstreamVersion);
-        applyFix(PROBE_PATH, local.osVersion, upstreamVersion);
-        console.log("  ✓ Fixed OS app_version in worker + probe");
-      }
-    } else if (upstreamVersion) {
-      console.log(`  ✓ OS app_version up-to-date (${local.osVersion})`);
-    } else {
-      console.log("  ? Could not parse upstream OS version (format changed?)");
-    }
-
-    if (upstreamSalt && upstreamSalt !== local.osSalt) {
-      console.log(
-        `  ⚠ OS salt outdated: ours=${local.osSalt} upstream=${upstreamSalt}`
-      );
-      hasIssues = true;
-      if (fix) {
-        applyFix(WORKER_PATH, local.osSalt, upstreamSalt);
-        applyFix(PROBE_PATH, local.osSalt, upstreamSalt);
-        console.log("  ✓ Fixed OS salt in worker + probe");
-      }
-    } else if (upstreamSalt) {
-      console.log("  ✓ OS salt up-to-date");
-    }
+    const osIssues = await checkRegion("os", "OS", local, fix);
+    if (osIssues) hasIssues = true;
   } catch (err) {
-    // Network errors during pre-push should not block the push.
-    console.log(`  ⏭ Skipped (network error: ${err.message})`);
-    return;
+    console.log(`  ⏭ Skipped OS (network error: ${err.message})`);
   }
 
   if (hasIssues && !fix) {

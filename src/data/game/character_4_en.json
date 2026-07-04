@@ -303,6 +303,10 @@
       {
         "name": "Conqueror of Tides",
         "descHtml": "Decreases swimming Stamina consumption for your own party members by 20%.<br>Not stackable with Passive Talents that provide the exact same effects."
+      },
+      {
+        "name": "Polaris",
+        "descHtml": "When holding down on the Elemental Skill <span style=\"color: #FFD780FF;\">Tidecaller</span>, 1 stack of power will accumulate every 0.8s, even when not under attack. This increases the DMG dealt at the point of unleashing.<br>Additionally, holding down to unleash <span style=\"color: #FFD780FF;\">Tidecaller</span> and hitting the opponent also gives extra boosts based on the power accumulated: every stack active decreases Beidou's Elemental Skill CD by 4s, as well as regenerates 8 Elemental Energy for her. This effect can trigger once every 15s.<br>Additionally, when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Beidou will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
       }
     ],
     "constellations": [
@@ -328,10 +332,15 @@
       },
       {
         "name": "6. Bane of Evil",
-        "descHtml": "During the duration of <span style=\"color: #FFD780FF;\">Stormbreaker</span>, the <span style=\"color: #FFACFFFF;\">Electro RES</span> of surrounding opponents is decreased by 15%."
+        "descHtml": "While <span style=\"color: #FFD780FF;\">Stormbreaker</span> is active, nearby opponents' <span style=\"color: #FFACFFFF;\">Electro RES</span> is reduced by 15%.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The <span style=\"color: #99FFFFFF;\">Cryo RES</span> of nearby opponents is decreased by 15%, and the Elemental Mastery of the current active character is increased by 200, while Stormbreaker is active."
       }
     ],
-    "glossary": null
+    "glossary": [
+      {
+        "name": "Polestar Field",
+        "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      }
+    ]
   },
   "bennett": {
     "id": "10000032",
@@ -976,6 +985,10 @@
       {
         "name": "Complimentary Bar Food",
         "descHtml": "When a Perfect Cooking is achieved on a dish with restorative effects, there is a 12% chance to obtain double the product."
+      },
+      {
+        "name": "Choice Treasures",
+        "descHtml": "Within 20s after using the Elemental Skill <span style=\"color: #FFD780FF;\">Icy Paws</span>, Diona will also fire off three <span style=\"color: #FFD780FF;\">Icy Paws</span> when party members trigger Superconduct or Stellar-Conduct reactions. <span style=\"color: #FFD780FF;\">Icy Paws</span> fired this way cannot generate Elemental Particles, nor will they generate a shield upon hitting opponents. This effect can occur once every 3.5s.<br>Additionally, when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Diona will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
       }
     ],
     "constellations": [
@@ -1001,10 +1014,15 @@
       },
       {
         "name": "6. Cat's Tail Closing Time",
-        "descHtml": "Characters within <span style=\"color: #FFD780FF;\">Signature Mix</span>'s radius will gain the following effects based on their HP amounts:<br>·Increases Incoming Healing Bonus by 30% when HP falls below or is equal to 50%.<br>·Elemental Mastery increased by 200 when HP is above 50%."
+        "descHtml": "Characters within <span style=\"color: #FFD780FF;\">Signature Mix</span>'s radius gain the following effects based on their HP levels:<br>· The Incoming Healing Bonus is increased by 30% when HP is at, or lower than, 50%.<br>· Elemental Mastery is increased by 200 when HP is above 50%.<br><br>Additionally, Diona's Max HP is increased by 25%.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Characters within <span style=\"color: #FFD780FF;\">Signature Mix</span>'s radius deal 40% increased Superconduct and Stellar-Conduct Reaction DMG."
       }
     ],
-    "glossary": null
+    "glossary": [
+      {
+        "name": "Polestar Field",
+        "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      }
+    ]
   },
   "dori": {
     "id": "10000068",
@@ -1050,7 +1068,7 @@
     "passives": [
       {
         "name": "An Eye for Gold",
-        "descHtml": "After a character connected to the <span style=\"color: #FFD780FF;\">Jinni</span> triggers an Electro-Charged, Lunar-Charged, Superconduct, Overloaded, Quicken, Aggravate, Hyperbloom, Electro Swirl, or Electro Crystallize reaction, the CD of <span style=\"color: #FFD780FF;\">Spirit-Warding Lamp: Troubleshooter Cannon</span> is decreased by 1s.<br>This effect can be triggered once every 3s."
+        "descHtml": "After a character connected to the <span style=\"color: #FFD780FF;\">Jinni</span> triggers an Electro-Charged, Lunar-Charged, Superconduct, Stellar-Conduct, Overloaded, Quicken, Aggravate, Hyperbloom, Electro Swirl, or Electro Crystallize reaction, the CD of <span style=\"color: #FFD780FF;\">Spirit-Warding Lamp: Troubleshooter Cannon</span> is decreased by 1s.<br>This effect can be triggered once every 3s."
       },
       {
         "name": "Compound Interest",
@@ -1335,7 +1353,7 @@
       },
       {
         "name": "4. Dance of the Snowy Moon and Flute",
-        "descHtml": "After Freminet triggers Frozen, Shatter, or Superconduct against opponents, his ATK will be increased by 9% for 6s. Max 2 stacks. This can be triggered once every 0.3s."
+        "descHtml": "After Freminet triggers Frozen, Shatter, Superconduct, or Stellar-Conduct against opponents, his ATK will be increased by 9% for 6s. Max 2 stacks. This can be triggered once every 0.3s."
       },
       {
         "name": "5. Nights of Hearth and Happiness",
@@ -1343,7 +1361,7 @@
       },
       {
         "name": "6. Moment of Waking and Resolve",
-        "descHtml": "After Freminet triggers Frozen, Shatter, or Superconduct against opponents, his CRIT DMG will be increased by 12% for 6s. Max 3 stacks. This can be triggered once every 0.3s."
+        "descHtml": "After Freminet triggers Frozen, Shatter, Superconduct, or Stellar-Conduct against opponents, his CRIT DMG will be increased by 12% for 6s. Max 3 stacks. This can be triggered once every 0.3s."
       }
     ],
     "glossary": null
@@ -3434,7 +3452,7 @@
       },
       {
         "name": "E. Ancient Rite: The Thundering Sands",
-        "descHtml": "Gathers the might of thunder, dealing <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> and quickly retreating. If this attack triggers Electro-Charged, Lunar-Charged, Superconduct, Overloaded, Quicken, Aggravate, Hyperbloom, or Electro Swirl reactions, Sethos recovers a certain amount of Elemental Energy.<br><br><i>\"The God indwelt Priest, the Magi who turned pits to springs, the singers of the sea of sand still spread their stories... But I know those are not legends, for they are our ancestors.\"</i>",
+        "descHtml": "Gathers the might of thunder, dealing <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> and quickly retreating. If this attack triggers Electro-Charged, Lunar-Charged, Superconduct, Stellar-Conduct, Overloaded, Quicken, Aggravate, Hyperbloom, or Electro Swirl reactions, Sethos recovers a certain amount of Elemental Energy.<br><br><i>\"The God indwelt Priest, the Magi who turned pits to springs, the singers of the sea of sand still spread their stories... But I know those are not legends, for they are our ancestors.\"</i>",
         "details": [
           {"label": "Skill DMG", "template": "{param1:F1P}"},
           {"label": "Energy Regeneration", "template": "{param2:I}"},

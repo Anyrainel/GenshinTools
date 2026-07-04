@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "anime_game_data",
-    "total_enemies": 1786,
+    "total_enemies": 1869,
     "lang_note": "Names/titles from TextMap. Affix/comment from MonsterAffixExcelConfigData (CHS in AGD).",
     "sources_included": [
       "world_monster",
@@ -14,6 +14,11 @@
   "enemies": {
     "20010101": {
       "id": 20010101,
+      "name": "草史莱姆",
+      "title": "草史莱姆"
+    },
+    "20010102": {
+      "id": 20010102,
       "name": "草史莱姆",
       "title": "草史莱姆"
     },
@@ -124,6 +129,11 @@
     },
     "20010305": {
       "id": 20010305,
+      "name": "风史莱姆",
+      "title": "风史莱姆"
+    },
+    "20010306": {
+      "id": 20010306,
       "name": "风史莱姆",
       "title": "风史莱姆"
     },
@@ -402,6 +412,21 @@
     },
     "20010506": {
       "id": 20010506,
+      "name": "雷史莱姆",
+      "title": "雷史莱姆",
+      "affixes": [
+        {
+          "id": 2002,
+          "affix": "感电免疫",
+          "comment": "免疫感电伤害和效果",
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        }
+      ]
+    },
+    "20010507": {
+      "id": 20010507,
       "name": "雷史莱姆",
       "title": "雷史莱姆",
       "affixes": [
@@ -694,6 +719,29 @@
           "comment": "免疫感电伤害和效果",
           "ability_names": [
             "MonsterAffix_ShockResist"
+          ]
+        }
+      ]
+    },
+    "20010608": {
+      "id": 20010608,
+      "name": "大型雷史莱姆",
+      "title": "大型雷史莱姆",
+      "affixes": [
+        {
+          "id": 2002,
+          "affix": "感电免疫",
+          "comment": "免疫感电伤害和效果",
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        },
+        {
+          "id": 1065,
+          "affix": "试用关木桩怪物 Limbo 100%",
+          "comment": "试用关木桩怪物 Limbo 100%",
+          "ability_names": [
+            "GeneralSkill_Monster_FullHPLimbo"
           ]
         }
       ]
@@ -1089,6 +1137,21 @@
         }
       ]
     },
+    "20010809": {
+      "id": 20010809,
+      "name": "冰史莱姆",
+      "title": "冰史莱姆",
+      "affixes": [
+        {
+          "id": 2003,
+          "affix": "寒气免疫",
+          "comment": "免疫冰冻和寒元素的减速效果",
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        }
+      ]
+    },
     "20010881": {
       "id": 20010881,
       "affixes": [
@@ -1415,6 +1478,11 @@
       "name": "水史莱姆",
       "title": "水史莱姆"
     },
+    "20011005": {
+      "id": 20011005,
+      "name": "水史莱姆",
+      "title": "水史莱姆"
+    },
     "20011081": {
       "id": 20011081,
       "affixes": [
@@ -1697,6 +1765,11 @@
     },
     "20011209": {
       "id": 20011209,
+      "name": "火史莱姆",
+      "title": "火史莱姆"
+    },
+    "20011210": {
+      "id": 20011210,
       "name": "火史莱姆",
       "title": "火史莱姆"
     },
@@ -1995,6 +2068,11 @@
       "name": "岩史莱姆",
       "title": "岩史莱姆"
     },
+    "20011404": {
+      "id": 20011404,
+      "name": "岩史莱姆",
+      "title": "岩史莱姆"
+    },
     "20011481": {
       "id": 20011481,
       "affixes": [
@@ -2177,6 +2255,26 @@
           ]
         }
       ]
+    },
+    "20012301": {
+      "id": 20012301,
+      "name": "历经百战的虹彩史莱姆",
+      "title": "历经百战的虹彩史莱姆",
+      "affixes": [
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "20012302": {
+      "id": 20012302,
+      "name": "历经百战的虹彩史莱姆",
+      "title": "历经百战的虹彩史莱姆"
     },
     "20020101": {
       "id": 20020101,
@@ -3357,6 +3455,21 @@
           "comment": "地脉挑战怪物成就屏蔽判定gv",
           "ability_names": [
             "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "20051206": {
+      "id": 20051206,
+      "name": "水形幻人",
+      "title": "水形幻人",
+      "affixes": [
+        {
+          "id": 5661,
+          "affix": "6.7大水人任务标记",
+          "comment": "6.7大水人任务标记",
+          "ability_names": [
+            "MonsterAffix_Monster_Narcissusborn_ConstantEffect"
           ]
         }
       ]
@@ -13064,6 +13177,37 @@
         }
       ]
     },
+    "24060303": {
+      "id": 24060303,
+      "name": "机关·水下勘测型",
+      "title": "机关·水下勘测型",
+      "affixes": [
+        {
+          "id": 40601,
+          "affix": "正义机器-荒",
+          "comment": "正义机器-荒性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40603,
+          "affix": "正义机器-天线",
+          "comment": "正义机器-天线词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24060401": {
       "id": 24060401,
       "name": "机关·地质勘探型",
@@ -13156,6 +13300,37 @@
         }
       ]
     },
+    "24060503": {
+      "id": 24060503,
+      "name": "机关·水下巡游型",
+      "title": "机关·水下巡游型",
+      "affixes": [
+        {
+          "id": 40601,
+          "affix": "正义机器-荒",
+          "comment": "正义机器-荒性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40603,
+          "affix": "正义机器-天线",
+          "comment": "正义机器-天线词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24060601": {
       "id": 24060601,
       "name": "机关·深海攻击型",
@@ -13198,6 +13373,37 @@
           "comment": "正义机器-电池词缀",
           "ability_names": [
             "Monster_MachinaIustitia_Coil_02"
+          ]
+        }
+      ]
+    },
+    "24060603": {
+      "id": 24060603,
+      "name": "机关·深海攻击型",
+      "title": "机关·深海攻击型",
+      "affixes": [
+        {
+          "id": 40601,
+          "affix": "正义机器-荒",
+          "comment": "正义机器-荒性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40603,
+          "affix": "正义机器-天线",
+          "comment": "正义机器-天线词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -14054,6 +14260,37 @@
         }
       ]
     },
+    "24065303": {
+      "id": 24065303,
+      "name": "机关·水下勘测型",
+      "title": "机关·水下勘测型",
+      "affixes": [
+        {
+          "id": 40602,
+          "affix": "正义机器-光",
+          "comment": "正义机器-光性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40603,
+          "affix": "正义机器-天线",
+          "comment": "正义机器-天线词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24065401": {
       "id": 24065401,
       "name": "机关·地质勘探型",
@@ -14146,6 +14383,37 @@
         }
       ]
     },
+    "24065503": {
+      "id": 24065503,
+      "name": "机关·水下巡游型",
+      "title": "机关·水下巡游型",
+      "affixes": [
+        {
+          "id": 40602,
+          "affix": "正义机器-光",
+          "comment": "正义机器-光性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40603,
+          "affix": "正义机器-天线",
+          "comment": "正义机器-天线词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24065601": {
       "id": 24065601,
       "name": "机关·深海攻击型",
@@ -14188,6 +14456,37 @@
           "comment": "正义机器-电池词缀",
           "ability_names": [
             "Monster_MachinaIustitia_Coil_02"
+          ]
+        }
+      ]
+    },
+    "24065603": {
+      "id": 24065603,
+      "name": "机关·深海攻击型",
+      "title": "机关·深海攻击型",
+      "affixes": [
+        {
+          "id": 40602,
+          "affix": "正义机器-光",
+          "comment": "正义机器-光性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40603,
+          "affix": "正义机器-天线",
+          "comment": "正义机器-天线词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -15310,6 +15609,51 @@
         }
       ]
     },
+    "24090204": {
+      "id": 24090204,
+      "name": "秘源机兵·构型械",
+      "title": "秘源机兵·构型械",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090205": {
+      "id": 24090205,
+      "name": "秘源机兵·构型械",
+      "title": "秘源机兵·构型械",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090206": {
+      "id": 24090206,
+      "name": "秘源机兵·构型械",
+      "title": "秘源机兵·构型械",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
     "24090301": {
       "id": 24090301,
       "name": "深古秘源机龙",
@@ -15364,6 +15708,102 @@
       "id": 24090504,
       "name": "秘源机兵·统御械",
       "title": "秘源机兵·统御械"
+    },
+    "24090601": {
+      "id": 24090601,
+      "name": "先驱秘源统辖阵列",
+      "title": "升起光明的独行者"
+    },
+    "24090701": {
+      "id": 24090701,
+      "name": "历经百战的先驱秘源统辖阵列",
+      "title": "历经百战的先驱秘源统辖阵列",
+      "affixes": [
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "24090702": {
+      "id": 24090702,
+      "name": "历经百战的先驱秘源统辖阵列",
+      "title": "历经百战的先驱秘源统辖阵列",
+      "affixes": [
+        {
+          "id": 4090601,
+          "affix": "古龙科技深渊词缀",
+          "comment": "古龙科技深渊词缀",
+          "ability_names": [
+            "MonsterAffix_Monitor_AbyssTag"
+          ]
+        }
+      ]
+    },
+    "24090703": {
+      "id": 24090703,
+      "name": "历经百战的先驱秘源统辖阵列",
+      "title": "历经百战的先驱秘源统辖阵列",
+      "affixes": [
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090704": {
+      "id": 24090704,
+      "name": "历经百战的先驱秘源统辖阵列",
+      "title": "历经百战的先驱秘源统辖阵列",
+      "affixes": [
+        {
+          "id": 4090601,
+          "affix": "古龙科技深渊词缀",
+          "comment": "古龙科技深渊词缀",
+          "ability_names": [
+            "MonsterAffix_Monitor_AbyssTag"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090705": {
+      "id": 24090705,
+      "name": "历经百战的先驱秘源统辖阵列",
+      "title": "历经百战的先驱秘源统辖阵列",
+      "affixes": [
+        {
+          "id": 4090601,
+          "affix": "古龙科技深渊词缀",
+          "comment": "古龙科技深渊词缀",
+          "ability_names": [
+            "MonsterAffix_Monitor_AbyssTag"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
     },
     "24100101": {
       "id": 24100101,
@@ -15467,17 +15907,17 @@
     },
     "24111201": {
       "id": 24111201,
-      "name": "(test)守望者-大招创生物",
+      "name": "守望者·元素星",
       "title": "???"
     },
     "24111202": {
       "id": 24111202,
-      "name": "(test)守望者-大招创生物",
+      "name": "守望者·元素星",
       "title": "???"
     },
     "24111203": {
       "id": 24111203,
-      "name": "(test)守望者-大招创生物",
+      "name": "守望者·元素星",
       "title": "???",
       "affixes": [
         {
@@ -15492,7 +15932,7 @@
     },
     "24111204": {
       "id": 24111204,
-      "name": "(test)守望者-大招创生物",
+      "name": "守望者·元素星",
       "title": "???",
       "affixes": [
         {
@@ -15507,7 +15947,7 @@
     },
     "24111205": {
       "id": 24111205,
-      "name": "(test)守望者-大招创生物",
+      "name": "守望者·元素星",
       "title": "???",
       "affixes": [
         {
@@ -15522,7 +15962,7 @@
     },
     "24111206": {
       "id": 24111206,
-      "name": "(test)守望者-大招创生物",
+      "name": "守望者·元素星",
       "title": "???",
       "affixes": [
         {
@@ -15537,7 +15977,7 @@
     },
     "24111301": {
       "id": 24111301,
-      "name": "(test)守望者-忧郁",
+      "name": "守望者·忧郁",
       "title": "???"
     },
     "24810101": {
@@ -22721,6 +23161,36 @@
       "name": "猎刀鳐",
       "title": "猎刀鳐"
     },
+    "26151003": {
+      "id": 26151003,
+      "name": "猎刀鳐",
+      "title": "猎刀鳐",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26151004": {
+      "id": 26151004,
+      "name": "猎刀鳐",
+      "title": "猎刀鳐",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26151101": {
       "id": 26151101,
       "name": "猎刀鳐",
@@ -22730,6 +23200,36 @@
       "id": 26151102,
       "name": "猎刀鳐",
       "title": "猎刀鳐"
+    },
+    "26151103": {
+      "id": 26151103,
+      "name": "猎刀鳐",
+      "title": "猎刀鳐",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26151104": {
+      "id": 26151104,
+      "name": "猎刀鳐",
+      "title": "猎刀鳐",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26152101": {
       "id": 26152101,
@@ -22757,6 +23257,29 @@
           "comment": "杂兵海兔 - 颜色种类标记1",
           "ability_names": [
             "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        }
+      ]
+    },
+    "26152103": {
+      "id": 26152103,
+      "name": "重甲蟹",
+      "title": "重甲蟹",
+      "affixes": [
+        {
+          "id": 61501,
+          "affix": "杂兵海兔 - 颜色种类标记1",
+          "comment": "杂兵海兔 - 颜色种类标记1",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -22791,6 +23314,29 @@
         }
       ]
     },
+    "26152203": {
+      "id": 26152203,
+      "name": "重甲蟹",
+      "title": "重甲蟹",
+      "affixes": [
+        {
+          "id": 61502,
+          "affix": "杂兵海兔 - 颜色种类标记2",
+          "comment": "杂兵海兔 - 颜色种类标记2",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26153101": {
       "id": 26153101,
       "name": "膨膨兽",
@@ -22810,6 +23356,36 @@
       "id": 26153104,
       "name": "膨膨兽",
       "title": "膨膨兽"
+    },
+    "26153105": {
+      "id": 26153105,
+      "name": "膨膨兽",
+      "title": "膨膨兽",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26153106": {
+      "id": 26153106,
+      "name": "膨膨兽",
+      "title": "膨膨兽",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26154101": {
       "id": 26154101,
@@ -22837,6 +23413,52 @@
           "comment": "杂兵海兔 - 颜色种类标记1",
           "ability_names": [
             "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        }
+      ]
+    },
+    "26154103": {
+      "id": 26154103,
+      "name": "帽子水母",
+      "title": "帽子水母",
+      "affixes": [
+        {
+          "id": 61501,
+          "affix": "杂兵海兔 - 颜色种类标记1",
+          "comment": "杂兵海兔 - 颜色种类标记1",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26154104": {
+      "id": 26154104,
+      "name": "帽子水母",
+      "title": "帽子水母",
+      "affixes": [
+        {
+          "id": 61501,
+          "affix": "杂兵海兔 - 颜色种类标记1",
+          "comment": "杂兵海兔 - 颜色种类标记1",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -22871,30 +23493,151 @@
         }
       ]
     },
+    "26154203": {
+      "id": 26154203,
+      "name": "帽子水母",
+      "title": "帽子水母",
+      "affixes": [
+        {
+          "id": 61502,
+          "affix": "杂兵海兔 - 颜色种类标记2",
+          "comment": "杂兵海兔 - 颜色种类标记2",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26154204": {
+      "id": 26154204,
+      "name": "帽子水母",
+      "title": "帽子水母",
+      "affixes": [
+        {
+          "id": 61502,
+          "affix": "杂兵海兔 - 颜色种类标记2",
+          "comment": "杂兵海兔 - 颜色种类标记2",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26155101": {
       "id": 26155101,
       "name": "泡泡海马",
       "title": "泡泡海马"
+    },
+    "26155102": {
+      "id": 26155102,
+      "name": "泡泡海马",
+      "title": "泡泡海马",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26155201": {
       "id": 26155201,
       "name": "泡泡海马",
       "title": "泡泡海马"
     },
+    "26155202": {
+      "id": 26155202,
+      "name": "泡泡海马",
+      "title": "泡泡海马",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26155301": {
       "id": 26155301,
       "name": "泡泡海马",
       "title": "泡泡海马"
+    },
+    "26155302": {
+      "id": 26155302,
+      "name": "泡泡海马",
+      "title": "泡泡海马",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26156101": {
       "id": 26156101,
       "name": "球球章鱼",
       "title": "球球章鱼"
     },
+    "26156102": {
+      "id": 26156102,
+      "name": "球球章鱼",
+      "title": "球球章鱼",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26156201": {
       "id": 26156201,
       "name": "球球章鱼",
       "title": "球球章鱼"
+    },
+    "26156202": {
+      "id": 26156202,
+      "name": "球球章鱼",
+      "title": "球球章鱼",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26157101": {
       "id": 26157101,
@@ -22911,6 +23654,29 @@
         }
       ]
     },
+    "26157102": {
+      "id": 26157102,
+      "name": "天使海兔",
+      "title": "天使海兔",
+      "affixes": [
+        {
+          "id": 61501,
+          "affix": "杂兵海兔 - 颜色种类标记1",
+          "comment": "杂兵海兔 - 颜色种类标记1",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26157201": {
       "id": 26157201,
       "name": "天使海兔",
@@ -22922,6 +23688,29 @@
           "comment": "杂兵海兔 - 颜色种类标记2",
           "ability_names": [
             "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        }
+      ]
+    },
+    "26157202": {
+      "id": 26157202,
+      "name": "天使海兔",
+      "title": "天使海兔",
+      "affixes": [
+        {
+          "id": 61502,
+          "affix": "杂兵海兔 - 颜色种类标记2",
+          "comment": "杂兵海兔 - 颜色种类标记2",
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -22981,6 +23770,26 @@
         }
       ]
     },
+    "26160106": {
+      "id": 26160106,
+      "name": "坚盾重甲蟹",
+      "title": "坚盾重甲蟹",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26160107": {
+      "id": 26160107,
+      "name": "坚盾重甲蟹",
+      "title": "坚盾重甲蟹"
+    },
     "26160191": {
       "id": 26160191,
       "name": "坚盾重甲蟹",
@@ -23021,6 +23830,26 @@
       "name": "大天使海兔",
       "title": "大天使海兔"
     },
+    "26160203": {
+      "id": 26160203,
+      "name": "大天使海兔",
+      "title": "大天使海兔",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26160204": {
+      "id": 26160204,
+      "name": "大天使海兔",
+      "title": "大天使海兔"
+    },
     "26160301": {
       "id": 26160301,
       "name": "泡泡雄海马",
@@ -23028,6 +23857,26 @@
     },
     "26160302": {
       "id": 26160302,
+      "name": "泡泡雄海马",
+      "title": "泡泡雄海马"
+    },
+    "26160303": {
+      "id": 26160303,
+      "name": "泡泡雄海马",
+      "title": "泡泡雄海马",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26160304": {
+      "id": 26160304,
       "name": "泡泡雄海马",
       "title": "泡泡雄海马"
     },
@@ -23091,6 +23940,26 @@
         }
       ]
     },
+    "26162102": {
+      "id": 26162102,
+      "name": "地方传奇·重甲蟹",
+      "title": "重甲蟹",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26162103": {
+      "id": 26162103,
+      "name": "地方传奇·重甲蟹",
+      "title": "重甲蟹"
+    },
     "26162201": {
       "id": 26162201,
       "name": "地方传奇·猎刀鳐",
@@ -23102,6 +23971,21 @@
           "comment": "地方传奇标记",
           "ability_names": [
             "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "26162202": {
+      "id": 26162202,
+      "name": "地方传奇·猎刀鳐",
+      "title": "猎刀鳐",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -23121,6 +24005,21 @@
         }
       ]
     },
+    "26162302": {
+      "id": 26162302,
+      "name": "地方传奇·膨膨兽",
+      "title": "膨膨兽",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26162401": {
       "id": 26162401,
       "name": "地方传奇·大天使海兔",
@@ -23136,6 +24035,21 @@
         }
       ]
     },
+    "26162402": {
+      "id": 26162402,
+      "name": "地方传奇·大天使海兔",
+      "title": "大天使海兔",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26162501": {
       "id": 26162501,
       "name": "地方传奇·帽子水母",
@@ -23147,6 +24061,21 @@
           "comment": "地方传奇标记",
           "ability_names": [
             "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "26162502": {
+      "id": 26162502,
+      "name": "地方传奇·帽子水母",
+      "title": "夏萨尼翁",
+      "affixes": [
+        {
+          "id": 5655,
+          "affix": "6.7 水下捕鱼活动怪物主控",
+          "comment": "假死、拾取、销毁  TD/怪物两边维护",
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -25145,6 +26074,19 @@
         }
       ]
     },
+    "28041902": {
+      "id": 28041902,
+      "affixes": [
+        {
+          "id": 5654,
+          "affix": "月球水母洞穴环境靠近发光",
+          "comment": "洞穴环境的水母专用词缀",
+          "ability_names": [
+            "Animal_JellyFish_02_Glow"
+          ]
+        }
+      ]
+    },
     "28050201": {
       "id": 28050201,
       "affixes": [
@@ -25820,6 +26762,110 @@
           "comment": "3.0 动物通用血条显示控件",
           "ability_names": [
             "Monster_Animal_Common_BillboardControl"
+          ]
+        }
+      ]
+    },
+    "28070103": {
+      "id": 28070103,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070104": {
+      "id": 28070104,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070202": {
+      "id": 28070202,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070303": {
+      "id": 28070303,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070304": {
+      "id": 28070304,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070403": {
+      "id": 28070403,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070404": {
+      "id": 28070404,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070602": {
+      "id": 28070602,
+      "affixes": [
+        {
+          "id": 5663,
+          "affix": "6.7 水下捕鱼能力鱼词缀",
+          "comment": "吸收能力后会销毁",
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
           ]
         }
       ]
@@ -26875,6 +27921,11 @@
       "name": "草史莱姆",
       "title": "草史莱姆"
     },
+    "84001012": {
+      "id": 84001012,
+      "name": "草史莱姆",
+      "title": "草史莱姆"
+    },
     "84001021": {
       "id": 84001021,
       "name": "大型草史莱姆",
@@ -26900,6 +27951,11 @@
       "name": "风史莱姆",
       "title": "风史莱姆"
     },
+    "84001032": {
+      "id": 84001032,
+      "name": "风史莱姆",
+      "title": "风史莱姆"
+    },
     "84001041": {
       "id": 84001041,
       "name": "大型风史莱姆",
@@ -26912,6 +27968,21 @@
     },
     "84001051": {
       "id": 84001051,
+      "name": "雷史莱姆",
+      "title": "雷史莱姆",
+      "affixes": [
+        {
+          "id": 2002,
+          "affix": "感电免疫",
+          "comment": "免疫感电伤害和效果",
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        }
+      ]
+    },
+    "84001052": {
+      "id": 84001052,
       "name": "雷史莱姆",
       "title": "雷史莱姆",
       "affixes": [
@@ -26960,6 +28031,21 @@
         }
       ]
     },
+    "84001082": {
+      "id": 84001082,
+      "name": "冰史莱姆",
+      "title": "冰史莱姆",
+      "affixes": [
+        {
+          "id": 2003,
+          "affix": "寒气免疫",
+          "comment": "免疫冰冻和寒元素的减速效果",
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        }
+      ]
+    },
     "84001091": {
       "id": 84001091,
       "name": "大型冰史莱姆",
@@ -26985,6 +28071,11 @@
       "name": "水史莱姆",
       "title": "水史莱姆"
     },
+    "84001102": {
+      "id": 84001102,
+      "name": "水史莱姆",
+      "title": "水史莱姆"
+    },
     "84001111": {
       "id": 84001111,
       "name": "大型水史莱姆",
@@ -27000,6 +28091,11 @@
       "name": "火史莱姆",
       "title": "火史莱姆"
     },
+    "84001122": {
+      "id": 84001122,
+      "name": "火史莱姆",
+      "title": "火史莱姆"
+    },
     "84001131": {
       "id": 84001131,
       "name": "大型火史莱姆",
@@ -27012,6 +28108,11 @@
     },
     "84001141": {
       "id": 84001141,
+      "name": "岩史莱姆",
+      "title": "岩史莱姆"
+    },
+    "84001142": {
+      "id": 84001142,
       "name": "岩史莱姆",
       "title": "岩史莱姆"
     },
@@ -27170,6 +28271,16 @@
       "name": "雷深渊法师",
       "title": "雷之咏者"
     },
+    "84202022": {
+      "id": 84202022,
+      "name": "深渊使徒·霜落",
+      "title": "锋刃凝冰的守密敕使"
+    },
+    "84203012": {
+      "id": 84203012,
+      "name": "深渊咏者·紫电",
+      "title": "降下紫电的福音使者"
+    },
     "84301011": {
       "id": 84301011,
       "name": "愚人众先遣队·冰铳重卫士",
@@ -27245,6 +28356,11 @@
       "name": "盗宝团·海上男儿",
       "title": "盗宝团·海上男儿"
     },
+    "84508012": {
+      "id": 84508012,
+      "name": "野伏·阵刀番",
+      "title": "野伏·阵刀番"
+    },
     "84509011": {
       "id": 84509011,
       "name": "魔偶剑鬼",
@@ -27264,6 +28380,31 @@
       "id": 84509012,
       "name": "魔偶剑鬼",
       "title": "魔偶剑鬼"
+    },
+    "84510012": {
+      "id": 84510012,
+      "name": "海乱鬼·雷腾",
+      "title": "海乱鬼·雷腾"
+    },
+    "84510022": {
+      "id": 84510022,
+      "name": "海乱鬼·炎威",
+      "title": "海乱鬼·炎威"
+    },
+    "84521012": {
+      "id": 84521012,
+      "name": "镀金旅团·阵前斧手",
+      "title": "镀金旅团·阵前斧手"
+    },
+    "84531012": {
+      "id": 84531012,
+      "name": "镀金旅团·沙中净水",
+      "title": "镀金旅团·沙中净水"
+    },
+    "84550122": {
+      "id": 84550122,
+      "name": "疾迅勇士·引索客",
+      "title": "疾迅勇士·引索客"
     },
     "84601011": {
       "id": 84601011,
@@ -27323,6 +28464,16 @@
       "id": 84623032,
       "name": "金焰绒翼龙暴君",
       "title": "金焰绒翼龙暴君"
+    },
+    "84626012": {
+      "id": 84626012,
+      "name": "窟岩·大灵显化身",
+      "title": "溯流·大灵显化身"
+    },
+    "84626022": {
+      "id": 84626022,
+      "name": "溯流·大灵显化身",
+      "title": "窟岩·大灵显化身"
     }
   }
 }

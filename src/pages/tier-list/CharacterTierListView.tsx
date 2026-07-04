@@ -114,6 +114,17 @@ export function CharacterTierListView({
     () => getSortedCharacters(characterStats ?? null),
     [characterStats]
   );
+  const tierListCharacters = useMemo(
+    () =>
+      sortedCharacters.filter((character) => {
+        const element = getCharacterDisplayMeta(
+          character,
+          characterStats?.[character.id]
+        ).element;
+        return element != null;
+      }),
+    [sortedCharacters, characterStats]
+  );
   const tour = useTour();
 
   const tierAssignments = useTierStore(selectActiveTierAssignments);
@@ -463,16 +474,24 @@ export function CharacterTierListView({
         filters={filterGroups}
       >
         <TierTable<CharacterResource, Element>
-          items={sortedCharacters}
+          items={tierListCharacters}
           itemsById={charactersById}
           tierAssignments={tierAssignments}
           tierCustomization={tierCustomization}
           onAssignmentsChange={handleAssignmentsChange}
           groups={elements}
-          getGroupKey={(character) =>
-            getCharacterDisplayMeta(character, characterStats?.[character.id])
-              .element ?? "Pyro"
-          }
+          getGroupKey={(character) => {
+            const element = getCharacterDisplayMeta(
+              character,
+              characterStats?.[character.id]
+            ).element;
+            if (element == null) {
+              throw new Error(
+                `Character tier list item missing element: ${character.id}`
+              );
+            }
+            return element;
+          }}
           groupConfig={elementGroupConfig}
           getGroupName={(group) => t.element(group)}
           getItemName={(item) => t.character(item.id)}

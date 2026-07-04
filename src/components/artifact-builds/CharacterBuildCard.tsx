@@ -1,4 +1,4 @@
-import { Plus, RotateCcw } from "lucide-react";
+import { Plus, RotateCcw, TriangleAlert } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
@@ -324,6 +324,12 @@ function CharacterBuildCardComponent({
       </CardHeader>
 
       <CardContent className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3")}>
+        {charMeta.element == null && (
+          <div className="mb-2 flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-destructive text-sm">
+            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{t.ui("characterCard.missingElement")}</span>
+          </div>
+        )}
         <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
           {builds.length === 0 ? (
             <div className="flex justify-center py-2 text-muted-foreground col-span-full">
@@ -349,7 +355,7 @@ function CharacterBuildCardComponent({
                 onMove={handleMoveBuild}
                 canMoveUp={index > 0}
                 canMoveDown={index < builds.length - 1}
-                element={charMeta.element ?? "Pyro"}
+                element={charMeta.element}
               />
             ))
           )}

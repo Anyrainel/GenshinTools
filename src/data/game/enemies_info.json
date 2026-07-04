@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "anime_game_data",
-    "total_unique_enemies": 2406,
+    "total_unique_enemies": 2496,
     "sources_included": [
       "world_monster",
       "dungeon_preview",
@@ -19,6 +19,96 @@
     "20010101": {
       "id": 20010101,
       "monster_name": "Slime_Grass_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Grass_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010013,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "20010102": {
+      "id": 20010102,
+      "monster_name": "Slime_Grass_02_SimplifiedAI",
       "type": "MONSTER_ORDINARY",
       "icon": "UI_MonsterIcon_Slime_Grass_02",
       "resistance": {
@@ -627,6 +717,96 @@
     "20010305": {
       "id": 20010305,
       "monster_name": "Slime_Wind_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Wind_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 30,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 81,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 201,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 328,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 490,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 756,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 1064,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 1469,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 1890,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 2284,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 2620,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 2860,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 2955,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010015,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "20010306": {
+      "id": 20010306,
+      "monster_name": "Slime_Wind_02_SimplifiedAI",
       "type": "MONSTER_ORDINARY",
       "icon": "UI_MonsterIcon_Slime_Wind_02",
       "resistance": {
@@ -2185,6 +2365,104 @@
         }
       ]
     },
+    "20010507": {
+      "id": 20010507,
+      "monster_name": "Slime_Electric_02_SimplifiedAI",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Electric_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010014,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER",
+      "affixes": [
+        {
+          "id": 2002,
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        }
+      ]
+    },
     "20010581": {
       "id": 20010581,
       "monster_name": "Slime_Electric_02",
@@ -3409,6 +3687,110 @@
           "id": 2002,
           "ability_names": [
             "MonsterAffix_ShockResist"
+          ]
+        }
+      ]
+    },
+    "20010608": {
+      "id": 20010608,
+      "monster_name": "Slime_Electric_03_NoAI",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Electric_03",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 146,
+          "atk": 107,
+          "def": 505
+        },
+        "10": {
+          "hp": 573,
+          "atk": 285,
+          "def": 550
+        },
+        "20": {
+          "hp": 1770,
+          "atk": 702,
+          "def": 600
+        },
+        "30": {
+          "hp": 2946,
+          "atk": 1147,
+          "def": 650
+        },
+        "40": {
+          "hp": 5390,
+          "atk": 1715,
+          "def": 700
+        },
+        "50": {
+          "hp": 9993,
+          "atk": 2645,
+          "def": 750
+        },
+        "60": {
+          "hp": 16763,
+          "atk": 3725,
+          "def": 800
+        },
+        "70": {
+          "hp": 26104,
+          "atk": 5142,
+          "def": 850
+        },
+        "80": {
+          "hp": 37131,
+          "atk": 6616,
+          "def": 900
+        },
+        "90": {
+          "hp": 48708,
+          "atk": 7993,
+          "def": 950
+        },
+        "95": {
+          "hp": 55498,
+          "atk": 9169,
+          "def": 975
+        },
+        "98": {
+          "hp": 61316,
+          "atk": 10011,
+          "def": 990
+        },
+        "100": {
+          "hp": 73530,
+          "atk": 10341,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010034,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER",
+      "affixes": [
+        {
+          "id": 2002,
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        },
+        {
+          "id": 1065,
+          "ability_names": [
+            "GeneralSkill_Monster_FullHPLimbo"
           ]
         }
       ]
@@ -5101,6 +5483,104 @@
           "id": 5501,
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20010809": {
+      "id": 20010809,
+      "monster_name": "Slime_Ice_02_SimplifiedAI",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Ice_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010016,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER",
+      "affixes": [
+        {
+          "id": 2003,
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
           ]
         }
       ]
@@ -6851,6 +7331,96 @@
         }
       },
       "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "20011005": {
+      "id": 20011005,
+      "monster_name": "Slime_Water_02_SimplifiedAI",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Water_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010012,
       "sources": {
         "source_types": [
           "world_monster"
@@ -8938,6 +9508,96 @@
     "20011209": {
       "id": 20011209,
       "monster_name": "Slime_Fire_02_CooperateChallenge",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Fire_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010011,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "20011210": {
+      "id": 20011210,
+      "monster_name": "Slime_Fire_02_SimplifiedAI",
       "type": "MONSTER_ORDINARY",
       "icon": "UI_MonsterIcon_Slime_Fire_02",
       "resistance": {
@@ -11157,6 +11817,96 @@
       },
       "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
     },
+    "20011404": {
+      "id": 20011404,
+      "monster_name": "Slime_Rock_02_SimplifiedAI",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Rock_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010017,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
     "20011481": {
       "id": 20011481,
       "monster_name": "Slime_Rock_02",
@@ -12602,6 +13352,196 @@
           ]
         }
       ]
+    },
+    "20012301": {
+      "id": 20012301,
+      "monster_name": "Slime_Moon_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Moon_01",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 9045,
+          "atk": 279,
+          "def": 505
+        },
+        "10": {
+          "hp": 35626,
+          "atk": 746,
+          "def": 550
+        },
+        "20": {
+          "hp": 104859,
+          "atk": 1840,
+          "def": 600
+        },
+        "30": {
+          "hp": 195268,
+          "atk": 3005,
+          "def": 650
+        },
+        "40": {
+          "hp": 350608,
+          "atk": 4493,
+          "def": 700
+        },
+        "50": {
+          "hp": 646003,
+          "atk": 6319,
+          "def": 750
+        },
+        "60": {
+          "hp": 1091422,
+          "atk": 8440,
+          "def": 800
+        },
+        "70": {
+          "hp": 1805138,
+          "atk": 11224,
+          "def": 850
+        },
+        "80": {
+          "hp": 2912031,
+          "atk": 16305,
+          "def": 900
+        },
+        "90": {
+          "hp": 4570755,
+          "atk": 20935,
+          "def": 950
+        },
+        "95": {
+          "hp": 5596811,
+          "atk": 24014,
+          "def": 975
+        },
+        "98": {
+          "hp": 6344873,
+          "atk": 26219,
+          "def": 990
+        },
+        "100": {
+          "hp": 6832674,
+          "atk": 27084,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 2101,
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "20012302": {
+      "id": 20012302,
+      "monster_name": "Slime_Moon_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Moon_01",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2261,
+          "atk": 167,
+          "def": 505
+        },
+        "10": {
+          "hp": 8906,
+          "atk": 447,
+          "def": 550
+        },
+        "20": {
+          "hp": 26215,
+          "atk": 1104,
+          "def": 600
+        },
+        "30": {
+          "hp": 48817,
+          "atk": 1803,
+          "def": 650
+        },
+        "40": {
+          "hp": 87652,
+          "atk": 2696,
+          "def": 700
+        },
+        "50": {
+          "hp": 161501,
+          "atk": 3792,
+          "def": 750
+        },
+        "60": {
+          "hp": 272855,
+          "atk": 5064,
+          "def": 800
+        },
+        "70": {
+          "hp": 451285,
+          "atk": 6734,
+          "def": 850
+        },
+        "80": {
+          "hp": 728008,
+          "atk": 9783,
+          "def": 900
+        },
+        "90": {
+          "hp": 1142689,
+          "atk": 12561,
+          "def": 950
+        },
+        "95": {
+          "hp": 1399203,
+          "atk": 14408,
+          "def": 975
+        },
+        "98": {
+          "hp": 1586218,
+          "atk": 15731,
+          "def": 990
+        },
+        "100": {
+          "hp": 1708169,
+          "atk": 16251,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "dungeon_preview"
+        ],
+        "dungeon_ids": [
+          86
+        ]
+      }
     },
     "20020101": {
       "id": 20020101,
@@ -19212,6 +20152,103 @@
           "id": 5599,
           "ability_names": [
             "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "20051206": {
+      "id": 20051206,
+      "monster_name": "Monster_Narcissusborn_Normal_01",
+      "type": "MONSTER_BOSS",
+      "icon": "UI_MonsterIcon_Narcissusborn_Normal_01",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1211,
+          "atk": 152,
+          "def": 505
+        },
+        "10": {
+          "hp": 4771,
+          "atk": 407,
+          "def": 550
+        },
+        "20": {
+          "hp": 14044,
+          "atk": 1004,
+          "def": 600
+        },
+        "30": {
+          "hp": 26152,
+          "atk": 1639,
+          "def": 650
+        },
+        "40": {
+          "hp": 46956,
+          "atk": 2450,
+          "def": 700
+        },
+        "50": {
+          "hp": 86518,
+          "atk": 3447,
+          "def": 750
+        },
+        "60": {
+          "hp": 146173,
+          "atk": 4604,
+          "def": 800
+        },
+        "70": {
+          "hp": 241760,
+          "atk": 6122,
+          "def": 850
+        },
+        "80": {
+          "hp": 390004,
+          "atk": 8894,
+          "def": 900
+        },
+        "90": {
+          "hp": 612155,
+          "atk": 11419,
+          "def": 950
+        },
+        "95": {
+          "hp": 749573,
+          "atk": 13099,
+          "def": 975
+        },
+        "98": {
+          "hp": 849760,
+          "atk": 14301,
+          "def": 990
+        },
+        "100": {
+          "hp": 915090,
+          "atk": 14773,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010022,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5661,
+          "ability_names": [
+            "MonsterAffix_Monster_Narcissusborn_ConstantEffect"
           ]
         }
       ]
@@ -43418,11 +44455,7 @@
       "kill_drop_id": 22010050,
       "sources": {
         "source_types": [
-          "world_monster",
-          "dungeon_preview"
-        ],
-        "dungeon_ids": [
-          86
+          "world_monster"
         ]
       },
       "affixes": [
@@ -79554,6 +80587,115 @@
         }
       ]
     },
+    "24060303": {
+      "id": 24060303,
+      "monster_name": "MachinaIustitia_Recon_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MachinaIustitia_Recon",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2057,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 8085,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 24971,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 41547,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 76021,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 140949,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 236432,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 368192,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 523733,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 687021,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 782785,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 864858,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 1037132,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 40601,
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40603,
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24060401": {
       "id": 24060401,
       "monster_name": "MachinaIustitia_Probe_01",
@@ -79971,6 +81113,115 @@
         }
       ]
     },
+    "24060503": {
+      "id": 24060503,
+      "monster_name": "MachinaIustitia_Nautilus_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MachinaIustitia_Nautilus",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2057,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 8085,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 24971,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 41547,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 76021,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 140949,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 236432,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 368192,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 523733,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 687021,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 782785,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 864858,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 1037132,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 40601,
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40603,
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24060601": {
       "id": 24060601,
       "monster_name": "MachinaIustitia_Frigate_01",
@@ -80173,6 +81424,115 @@
           "id": 40604,
           "ability_names": [
             "Monster_MachinaIustitia_Coil_02"
+          ]
+        }
+      ]
+    },
+    "24060603": {
+      "id": 24060603,
+      "monster_name": "MachinaIustitia_Frigate_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MachinaIustitia_Frigate",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2057,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 8085,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 24971,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 41547,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 76021,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 140949,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 236432,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 368192,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 523733,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 687021,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 782785,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 864858,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 1037132,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 40601,
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40603,
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -83772,6 +85132,115 @@
         }
       ]
     },
+    "24065303": {
+      "id": 24065303,
+      "monster_name": "MachinaIustitia_Recon_03_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MachinaIustitia_Recon",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2057,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 8085,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 24971,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 41547,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 76021,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 140949,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 236432,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 368192,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 523733,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 687021,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 782785,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 864858,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 1037132,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 40602,
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40603,
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24065401": {
       "id": 24065401,
       "monster_name": "MachinaIustitia_Probe_03",
@@ -84191,6 +85660,115 @@
         }
       ]
     },
+    "24065503": {
+      "id": 24065503,
+      "monster_name": "MachinaIustitia_Nautilus_03_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MachinaIustitia_Nautilus",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2057,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 8085,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 24971,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 41547,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 76021,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 140949,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 236432,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 368192,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 523733,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 687021,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 782785,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 864858,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 1037132,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 40602,
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40603,
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "24065601": {
       "id": 24065601,
       "monster_name": "MachinaIustitia_Frigate_03",
@@ -84393,6 +85971,115 @@
           "id": 40604,
           "ability_names": [
             "Monster_MachinaIustitia_Coil_02"
+          ]
+        }
+      ]
+    },
+    "24065603": {
+      "id": 24065603,
+      "monster_name": "MachinaIustitia_Frigate_03_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MachinaIustitia_Frigate",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2057,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 8085,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 24971,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 41547,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 76021,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 140949,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 236432,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 368192,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 523733,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 687021,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 782785,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 864858,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 1037132,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 40602,
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40603,
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -89396,6 +91083,297 @@
         }
       ]
     },
+    "24090204": {
+      "id": 24090204,
+      "monster_name": "DragonClaw",
+      "type": "MONSTER_BOSS",
+      "icon": "UI_MonsterIcon_DragonClaw",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2657,
+          "atk": 203,
+          "def": 505
+        },
+        "10": {
+          "hp": 10464,
+          "atk": 542,
+          "def": 550
+        },
+        "20": {
+          "hp": 30798,
+          "atk": 1338,
+          "def": 600
+        },
+        "30": {
+          "hp": 57353,
+          "atk": 2185,
+          "def": 650
+        },
+        "40": {
+          "hp": 102978,
+          "atk": 3267,
+          "def": 700
+        },
+        "50": {
+          "hp": 189739,
+          "atk": 4596,
+          "def": 750
+        },
+        "60": {
+          "hp": 320564,
+          "atk": 6138,
+          "def": 800
+        },
+        "70": {
+          "hp": 530191,
+          "atk": 8163,
+          "def": 850
+        },
+        "80": {
+          "hp": 855298,
+          "atk": 11858,
+          "def": 900
+        },
+        "90": {
+          "hp": 1342485,
+          "atk": 15225,
+          "def": 950
+        },
+        "95": {
+          "hp": 1643850,
+          "atk": 17465,
+          "def": 975
+        },
+        "98": {
+          "hp": 1863565,
+          "atk": 19068,
+          "def": 990
+        },
+        "100": {
+          "hp": 2006838,
+          "atk": 19698,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010030,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5599,
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090205": {
+      "id": 24090205,
+      "monster_name": "DragonClaw",
+      "type": "MONSTER_BOSS",
+      "icon": "UI_MonsterIcon_DragonClaw",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2657,
+          "atk": 203,
+          "def": 505
+        },
+        "10": {
+          "hp": 10464,
+          "atk": 542,
+          "def": 550
+        },
+        "20": {
+          "hp": 30798,
+          "atk": 1338,
+          "def": 600
+        },
+        "30": {
+          "hp": 57353,
+          "atk": 2185,
+          "def": 650
+        },
+        "40": {
+          "hp": 102978,
+          "atk": 3267,
+          "def": 700
+        },
+        "50": {
+          "hp": 189739,
+          "atk": 4596,
+          "def": 750
+        },
+        "60": {
+          "hp": 320564,
+          "atk": 6138,
+          "def": 800
+        },
+        "70": {
+          "hp": 530191,
+          "atk": 8163,
+          "def": 850
+        },
+        "80": {
+          "hp": 855298,
+          "atk": 11858,
+          "def": 900
+        },
+        "90": {
+          "hp": 1342485,
+          "atk": 15225,
+          "def": 950
+        },
+        "95": {
+          "hp": 1643850,
+          "atk": 17465,
+          "def": 975
+        },
+        "98": {
+          "hp": 1863565,
+          "atk": 19068,
+          "def": 990
+        },
+        "100": {
+          "hp": 2006838,
+          "atk": 19698,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010030,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5599,
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090206": {
+      "id": 24090206,
+      "monster_name": "DragonClaw",
+      "type": "MONSTER_BOSS",
+      "icon": "UI_MonsterIcon_DragonClaw",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 2657,
+          "atk": 203,
+          "def": 505
+        },
+        "10": {
+          "hp": 10464,
+          "atk": 542,
+          "def": 550
+        },
+        "20": {
+          "hp": 30798,
+          "atk": 1338,
+          "def": 600
+        },
+        "30": {
+          "hp": 57353,
+          "atk": 2185,
+          "def": 650
+        },
+        "40": {
+          "hp": 102978,
+          "atk": 3267,
+          "def": 700
+        },
+        "50": {
+          "hp": 189739,
+          "atk": 4596,
+          "def": 750
+        },
+        "60": {
+          "hp": 320564,
+          "atk": 6138,
+          "def": 800
+        },
+        "70": {
+          "hp": 530191,
+          "atk": 8163,
+          "def": 850
+        },
+        "80": {
+          "hp": 855298,
+          "atk": 11858,
+          "def": 900
+        },
+        "90": {
+          "hp": 1342485,
+          "atk": 15225,
+          "def": 950
+        },
+        "95": {
+          "hp": 1643850,
+          "atk": 17465,
+          "def": 975
+        },
+        "98": {
+          "hp": 1863565,
+          "atk": 19068,
+          "def": 990
+        },
+        "100": {
+          "hp": 2006838,
+          "atk": 19698,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010030,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5599,
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
     "24090301": {
       "id": 24090301,
       "monster_name": "DragonClaw_WQ_L",
@@ -90029,6 +92007,956 @@
         }
       },
       "kill_drop_id": 22010030,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
+    "24090601": {
+      "id": 24090601,
+      "monster_name": "Monitor_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Monitor_01",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 617,
+          "atk": 152,
+          "def": 505
+        },
+        "10": {
+          "hp": 2429,
+          "atk": 407,
+          "def": 550
+        },
+        "20": {
+          "hp": 7149,
+          "atk": 1004,
+          "def": 600
+        },
+        "30": {
+          "hp": 13314,
+          "atk": 1639,
+          "def": 650
+        },
+        "40": {
+          "hp": 23905,
+          "atk": 2450,
+          "def": 700
+        },
+        "50": {
+          "hp": 44046,
+          "atk": 3447,
+          "def": 750
+        },
+        "60": {
+          "hp": 74415,
+          "atk": 4604,
+          "def": 800
+        },
+        "70": {
+          "hp": 123078,
+          "atk": 6122,
+          "def": 850
+        },
+        "80": {
+          "hp": 198548,
+          "atk": 8894,
+          "def": 900
+        },
+        "90": {
+          "hp": 311642,
+          "atk": 11419,
+          "def": 950
+        },
+        "95": {
+          "hp": 381601,
+          "atk": 13099,
+          "def": 975
+        },
+        "98": {
+          "hp": 432605,
+          "atk": 14301,
+          "def": 990
+        },
+        "100": {
+          "hp": 465864,
+          "atk": 14773,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010030,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "dungeon_preview"
+        ],
+        "dungeon_ids": [
+          75
+        ]
+      }
+    },
+    "24090701": {
+      "id": 24090701,
+      "monster_name": "Monitor_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Monitor_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 6608,
+          "atk": 279,
+          "def": 505
+        },
+        "10": {
+          "hp": 26025,
+          "atk": 746,
+          "def": 550
+        },
+        "20": {
+          "hp": 76601,
+          "atk": 1840,
+          "def": 600
+        },
+        "30": {
+          "hp": 142647,
+          "atk": 3005,
+          "def": 650
+        },
+        "40": {
+          "hp": 256126,
+          "atk": 4493,
+          "def": 700
+        },
+        "50": {
+          "hp": 471918,
+          "atk": 6319,
+          "def": 750
+        },
+        "60": {
+          "hp": 797305,
+          "atk": 8440,
+          "def": 800
+        },
+        "70": {
+          "hp": 1318689,
+          "atk": 11224,
+          "def": 850
+        },
+        "80": {
+          "hp": 2127296,
+          "atk": 16305,
+          "def": 900
+        },
+        "90": {
+          "hp": 3339026,
+          "atk": 20935,
+          "def": 950
+        },
+        "95": {
+          "hp": 4088579,
+          "atk": 24014,
+          "def": 975
+        },
+        "98": {
+          "hp": 4635053,
+          "atk": 26219,
+          "def": 990
+        },
+        "100": {
+          "hp": 4991402,
+          "atk": 27084,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 2101,
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "24090702": {
+      "id": 24090702,
+      "monster_name": "Monitor_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Monitor_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1447,
+          "atk": 167,
+          "def": 505
+        },
+        "10": {
+          "hp": 5700,
+          "atk": 447,
+          "def": 550
+        },
+        "20": {
+          "hp": 16776,
+          "atk": 1104,
+          "def": 600
+        },
+        "30": {
+          "hp": 31240,
+          "atk": 1803,
+          "def": 650
+        },
+        "40": {
+          "hp": 56092,
+          "atk": 2696,
+          "def": 700
+        },
+        "50": {
+          "hp": 103350,
+          "atk": 3792,
+          "def": 750
+        },
+        "60": {
+          "hp": 174610,
+          "atk": 5064,
+          "def": 800
+        },
+        "70": {
+          "hp": 288793,
+          "atk": 6734,
+          "def": 850
+        },
+        "80": {
+          "hp": 465878,
+          "atk": 9783,
+          "def": 900
+        },
+        "90": {
+          "hp": 731247,
+          "atk": 12561,
+          "def": 950
+        },
+        "95": {
+          "hp": 895399,
+          "atk": 14408,
+          "def": 975
+        },
+        "98": {
+          "hp": 1015077,
+          "atk": 15731,
+          "def": 990
+        },
+        "100": {
+          "hp": 1093117,
+          "atk": 16251,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "dungeon_preview"
+        ],
+        "dungeon_ids": [
+          76
+        ]
+      },
+      "affixes": [
+        {
+          "id": 4090601,
+          "ability_names": [
+            "MonsterAffix_Monitor_AbyssTag"
+          ]
+        }
+      ]
+    },
+    "24090703": {
+      "id": 24090703,
+      "monster_name": "Monitor_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Monitor_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1578,
+          "atk": 167,
+          "def": 505
+        },
+        "10": {
+          "hp": 6214,
+          "atk": 447,
+          "def": 550
+        },
+        "20": {
+          "hp": 18289,
+          "atk": 1104,
+          "def": 600
+        },
+        "30": {
+          "hp": 34058,
+          "atk": 1803,
+          "def": 650
+        },
+        "40": {
+          "hp": 61152,
+          "atk": 2696,
+          "def": 700
+        },
+        "50": {
+          "hp": 112674,
+          "atk": 3792,
+          "def": 750
+        },
+        "60": {
+          "hp": 190363,
+          "atk": 5064,
+          "def": 800
+        },
+        "70": {
+          "hp": 314847,
+          "atk": 6734,
+          "def": 850
+        },
+        "80": {
+          "hp": 507908,
+          "atk": 9783,
+          "def": 900
+        },
+        "90": {
+          "hp": 797218,
+          "atk": 12561,
+          "def": 950
+        },
+        "95": {
+          "hp": 976179,
+          "atk": 14408,
+          "def": 975
+        },
+        "98": {
+          "hp": 1106654,
+          "atk": 15731,
+          "def": 990
+        },
+        "100": {
+          "hp": 1191735,
+          "atk": 16251,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5599,
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090704": {
+      "id": 24090704,
+      "monster_name": "Monitor_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Monitor_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1578,
+          "atk": 167,
+          "def": 505
+        },
+        "10": {
+          "hp": 6214,
+          "atk": 447,
+          "def": 550
+        },
+        "20": {
+          "hp": 18289,
+          "atk": 1104,
+          "def": 600
+        },
+        "30": {
+          "hp": 34058,
+          "atk": 1803,
+          "def": 650
+        },
+        "40": {
+          "hp": 61152,
+          "atk": 2696,
+          "def": 700
+        },
+        "50": {
+          "hp": 112674,
+          "atk": 3792,
+          "def": 750
+        },
+        "60": {
+          "hp": 190363,
+          "atk": 5064,
+          "def": 800
+        },
+        "70": {
+          "hp": 314847,
+          "atk": 6734,
+          "def": 850
+        },
+        "80": {
+          "hp": 507908,
+          "atk": 9783,
+          "def": 900
+        },
+        "90": {
+          "hp": 797218,
+          "atk": 12561,
+          "def": 950
+        },
+        "95": {
+          "hp": 976179,
+          "atk": 14408,
+          "def": 975
+        },
+        "98": {
+          "hp": 1106654,
+          "atk": 15731,
+          "def": 990
+        },
+        "100": {
+          "hp": 1191735,
+          "atk": 16251,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 4090601,
+          "ability_names": [
+            "MonsterAffix_Monitor_AbyssTag"
+          ]
+        },
+        {
+          "id": 5599,
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090705": {
+      "id": 24090705,
+      "monster_name": "Monitor_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Monitor_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1578,
+          "atk": 167,
+          "def": 505
+        },
+        "10": {
+          "hp": 6214,
+          "atk": 447,
+          "def": 550
+        },
+        "20": {
+          "hp": 18289,
+          "atk": 1104,
+          "def": 600
+        },
+        "30": {
+          "hp": 34058,
+          "atk": 1803,
+          "def": 650
+        },
+        "40": {
+          "hp": 61152,
+          "atk": 2696,
+          "def": 700
+        },
+        "50": {
+          "hp": 112674,
+          "atk": 3792,
+          "def": 750
+        },
+        "60": {
+          "hp": 190363,
+          "atk": 5064,
+          "def": 800
+        },
+        "70": {
+          "hp": 314847,
+          "atk": 6734,
+          "def": 850
+        },
+        "80": {
+          "hp": 507908,
+          "atk": 9783,
+          "def": 900
+        },
+        "90": {
+          "hp": 797218,
+          "atk": 12561,
+          "def": 950
+        },
+        "95": {
+          "hp": 976179,
+          "atk": 14408,
+          "def": 975
+        },
+        "98": {
+          "hp": 1106654,
+          "atk": 15731,
+          "def": 990
+        },
+        "100": {
+          "hp": 1191735,
+          "atk": 16251,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010050,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 4090601,
+          "ability_names": [
+            "MonsterAffix_Monitor_AbyssTag"
+          ]
+        },
+        {
+          "id": 5599,
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "24090801": {
+      "id": 24090801,
+      "monster_name": "MonitorUnderling_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 6608,
+          "atk": 140,
+          "def": 505
+        },
+        "10": {
+          "hp": 26025,
+          "atk": 373,
+          "def": 550
+        },
+        "20": {
+          "hp": 76601,
+          "atk": 920,
+          "def": 600
+        },
+        "30": {
+          "hp": 142647,
+          "atk": 1502,
+          "def": 650
+        },
+        "40": {
+          "hp": 256126,
+          "atk": 2246,
+          "def": 700
+        },
+        "50": {
+          "hp": 471918,
+          "atk": 3160,
+          "def": 750
+        },
+        "60": {
+          "hp": 797305,
+          "atk": 4220,
+          "def": 800
+        },
+        "70": {
+          "hp": 1318689,
+          "atk": 5612,
+          "def": 850
+        },
+        "80": {
+          "hp": 2127296,
+          "atk": 8152,
+          "def": 900
+        },
+        "90": {
+          "hp": 3339026,
+          "atk": 10467,
+          "def": 950
+        },
+        "95": {
+          "hp": 4088579,
+          "atk": 12007,
+          "def": 975
+        },
+        "98": {
+          "hp": 4635053,
+          "atk": 13109,
+          "def": 990
+        },
+        "100": {
+          "hp": 4991402,
+          "atk": 13542,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
+    "24090802": {
+      "id": 24090802,
+      "monster_name": "MonitorUnderling_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1447,
+          "atk": 84,
+          "def": 505
+        },
+        "10": {
+          "hp": 5700,
+          "atk": 224,
+          "def": 550
+        },
+        "20": {
+          "hp": 16776,
+          "atk": 552,
+          "def": 600
+        },
+        "30": {
+          "hp": 31240,
+          "atk": 901,
+          "def": 650
+        },
+        "40": {
+          "hp": 56092,
+          "atk": 1348,
+          "def": 700
+        },
+        "50": {
+          "hp": 103350,
+          "atk": 1896,
+          "def": 750
+        },
+        "60": {
+          "hp": 174610,
+          "atk": 2532,
+          "def": 800
+        },
+        "70": {
+          "hp": 288793,
+          "atk": 3367,
+          "def": 850
+        },
+        "80": {
+          "hp": 465878,
+          "atk": 4891,
+          "def": 900
+        },
+        "90": {
+          "hp": 731247,
+          "atk": 6280,
+          "def": 950
+        },
+        "95": {
+          "hp": 895399,
+          "atk": 7204,
+          "def": 975
+        },
+        "98": {
+          "hp": 1015077,
+          "atk": 7866,
+          "def": 990
+        },
+        "100": {
+          "hp": 1093117,
+          "atk": 8125,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
+    "24090803": {
+      "id": 24090803,
+      "monster_name": "MonitorUnderling_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1578,
+          "atk": 84,
+          "def": 505
+        },
+        "10": {
+          "hp": 6214,
+          "atk": 224,
+          "def": 550
+        },
+        "20": {
+          "hp": 18289,
+          "atk": 552,
+          "def": 600
+        },
+        "30": {
+          "hp": 34058,
+          "atk": 901,
+          "def": 650
+        },
+        "40": {
+          "hp": 61152,
+          "atk": 1348,
+          "def": 700
+        },
+        "50": {
+          "hp": 112674,
+          "atk": 1896,
+          "def": 750
+        },
+        "60": {
+          "hp": 190363,
+          "atk": 2532,
+          "def": 800
+        },
+        "70": {
+          "hp": 314847,
+          "atk": 3367,
+          "def": 850
+        },
+        "80": {
+          "hp": 507908,
+          "atk": 4891,
+          "def": 900
+        },
+        "90": {
+          "hp": 797218,
+          "atk": 6280,
+          "def": 950
+        },
+        "95": {
+          "hp": 976179,
+          "atk": 7204,
+          "def": 975
+        },
+        "98": {
+          "hp": 1106654,
+          "atk": 7866,
+          "def": 990
+        },
+        "100": {
+          "hp": 1191735,
+          "atk": 8125,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
+    "24090804": {
+      "id": 24090804,
+      "monster_name": "MonitorUnderling_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1578,
+          "atk": 84,
+          "def": 505
+        },
+        "10": {
+          "hp": 6214,
+          "atk": 224,
+          "def": 550
+        },
+        "20": {
+          "hp": 18289,
+          "atk": 552,
+          "def": 600
+        },
+        "30": {
+          "hp": 34058,
+          "atk": 901,
+          "def": 650
+        },
+        "40": {
+          "hp": 61152,
+          "atk": 1348,
+          "def": 700
+        },
+        "50": {
+          "hp": 112674,
+          "atk": 1896,
+          "def": 750
+        },
+        "60": {
+          "hp": 190363,
+          "atk": 2532,
+          "def": 800
+        },
+        "70": {
+          "hp": 314847,
+          "atk": 3367,
+          "def": 850
+        },
+        "80": {
+          "hp": 507908,
+          "atk": 4891,
+          "def": 900
+        },
+        "90": {
+          "hp": 797218,
+          "atk": 6280,
+          "def": 950
+        },
+        "95": {
+          "hp": 976179,
+          "atk": 7204,
+          "def": 975
+        },
+        "98": {
+          "hp": 1106654,
+          "atk": 7866,
+          "def": 990
+        },
+        "100": {
+          "hp": 1191735,
+          "atk": 8125,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
       "sources": {
         "source_types": [
           "world_monster"
@@ -90670,11 +93598,7 @@
       "kill_drop_id": 22010030,
       "sources": {
         "source_types": [
-          "world_monster",
-          "dungeon_preview"
-        ],
-        "dungeon_ids": [
-          76
+          "world_monster"
         ]
       }
     },
@@ -90852,11 +93776,7 @@
       "kill_drop_id": 22010030,
       "sources": {
         "source_types": [
-          "world_monster",
-          "dungeon_preview"
-        ],
-        "dungeon_ids": [
-          75
+          "world_monster"
         ]
       }
     },
@@ -153628,6 +156548,200 @@
         ]
       }
     },
+    "26151003": {
+      "id": 26151003,
+      "monster_name": "MantaRay_Larva_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MantaRay_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26151004": {
+      "id": 26151004,
+      "monster_name": "MantaRay_Larva_01_Large_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MantaRay_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26151101": {
       "id": 26151101,
       "monster_name": "MantaRay_Larva_02",
@@ -153805,6 +156919,200 @@
           "world_monster"
         ]
       }
+    },
+    "26151103": {
+      "id": 26151103,
+      "monster_name": "MantaRay_Larva_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MantaRay_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26151104": {
+      "id": 26151104,
+      "monster_name": "MantaRay_Larva_02_Large_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MantaRay_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26152101": {
       "id": 26152101,
@@ -154000,6 +157308,109 @@
         }
       ]
     },
+    "26152103": {
+      "id": 26152103,
+      "monster_name": "HermitCrab_Larva_01_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_HermitCrab_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 29,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 113,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 348,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 579,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 1059,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 1964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 3295,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 5131,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 7298,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 9574,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 10908,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 12052,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 14453,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61501,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26152201": {
       "id": 26152201,
       "monster_name": "HermitCrab_Larva_02_Sea",
@@ -154190,6 +157601,109 @@
           "id": 61502,
           "ability_names": [
             "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        }
+      ]
+    },
+    "26152203": {
+      "id": 26152203,
+      "monster_name": "HermitCrab_Larva_02_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_HermitCrab_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 29,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 113,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 348,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 579,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 1059,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 1964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 3295,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 5131,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 7298,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 9574,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 10908,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 12052,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 14453,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61502,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -154550,6 +158064,200 @@
         ]
       }
     },
+    "26153105": {
+      "id": 26153105,
+      "monster_name": "Seal_Larva_01_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Seal_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26153106": {
+      "id": 26153106,
+      "monster_name": "Seal_Larva_01_Small_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Seal_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26154101": {
       "id": 26154101,
       "monster_name": "JellyFish_Larva_01",
@@ -154740,6 +158448,212 @@
           "id": 61501,
           "ability_names": [
             "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        }
+      ]
+    },
+    "26154103": {
+      "id": 26154103,
+      "monster_name": "JellyFish_Larva_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_JellyFish_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61501,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26154104": {
+      "id": 26154104,
+      "monster_name": "JellyFish_Larva_01_Large_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_JellyFish_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61501,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -154938,6 +158852,212 @@
         }
       ]
     },
+    "26154203": {
+      "id": 26154203,
+      "monster_name": "JellyFish_Larva_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_JellyFish_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61502,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26154204": {
+      "id": 26154204,
+      "monster_name": "JellyFish_Larva_02_Large_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_JellyFish_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61502,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26155101": {
       "id": 26155101,
       "monster_name": "SeaHorse_Larva_01",
@@ -155026,6 +159146,103 @@
           "world_monster"
         ]
       }
+    },
+    "26155102": {
+      "id": 26155102,
+      "monster_name": "SeaHorse_Larva_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_SeaHorse_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 29,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 113,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 348,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 579,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 1059,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 1964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 3295,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 5131,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 7298,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 9574,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 10908,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 12052,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 14453,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26155201": {
       "id": 26155201,
@@ -155116,6 +159333,103 @@
         ]
       }
     },
+    "26155202": {
+      "id": 26155202,
+      "monster_name": "SeaHorse_Larva_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_SeaHorse_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 29,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 113,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 348,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 579,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 1059,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 1964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 3295,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 5131,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 7298,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 9574,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 10908,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 12052,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 14453,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26155301": {
       "id": 26155301,
       "monster_name": "SeaHorse_Larva_03",
@@ -155204,6 +159518,103 @@
           "world_monster"
         ]
       }
+    },
+    "26155302": {
+      "id": 26155302,
+      "monster_name": "SeaHorse_Larva_03_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_SeaHorse_Larva_03",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 29,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 113,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 348,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 579,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 1059,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 1964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 3295,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 5131,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 7298,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 9574,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 10908,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 12052,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 14453,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26156101": {
       "id": 26156101,
@@ -155294,6 +159705,103 @@
         ]
       }
     },
+    "26156102": {
+      "id": 26156102,
+      "monster_name": "Octopus_Larva_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Octopus_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26156201": {
       "id": 26156201,
       "monster_name": "Octopus_Larva_02",
@@ -155382,6 +159890,103 @@
           "world_monster"
         ]
       }
+    },
+    "26156202": {
+      "id": 26156202,
+      "monster_name": "Octopus_Larva_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Octopus_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
     },
     "26157101": {
       "id": 26157101,
@@ -155480,6 +160085,109 @@
         }
       ]
     },
+    "26157102": {
+      "id": 26157102,
+      "monster_name": "Aplysia_Larva_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Aplysia_Larva_01",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61501,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_01"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26157201": {
       "id": 26157201,
       "monster_name": "Aplysia_Larva_02",
@@ -155573,6 +160281,109 @@
           "id": 61502,
           "ability_names": [
             "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        }
+      ]
+    },
+    "26157202": {
+      "id": 26157202,
+      "monster_name": "Aplysia_Larva_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Aplysia_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 72,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 285,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 879,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 1463,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 2676,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 4962,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 8323,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 12962,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 18437,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 24186,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 27557,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 30446,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 36511,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 61502,
+          "ability_names": [
+            "FauneAbyssale_Aplysia_Larva_Material_02"
+          ]
+        },
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -156051,6 +160862,192 @@
         }
       ]
     },
+    "26160106": {
+      "id": 26160106,
+      "monster_name": "HermitCrab_Mature_01_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_HermitCrab_Mature",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26160107": {
+      "id": 26160107,
+      "monster_name": "HermitCrab_Mature_01_Sea_FishingEvent_FishTank",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_HermitCrab_Mature",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1115,
+          "atk": 121,
+          "def": 505
+        },
+        "10": {
+          "hp": 2217,
+          "atk": 324,
+          "def": 550
+        },
+        "20": {
+          "hp": 5233,
+          "atk": 799,
+          "def": 600
+        },
+        "30": {
+          "hp": 8851,
+          "atk": 1305,
+          "def": 650
+        },
+        "40": {
+          "hp": 13467,
+          "atk": 1951,
+          "def": 700
+        },
+        "50": {
+          "hp": 21014,
+          "atk": 2744,
+          "def": 750
+        },
+        "60": {
+          "hp": 31851,
+          "atk": 3665,
+          "def": 800
+        },
+        "70": {
+          "hp": 46766,
+          "atk": 4874,
+          "def": 850
+        },
+        "80": {
+          "hp": 61455,
+          "atk": 7081,
+          "def": 900
+        },
+        "90": {
+          "hp": 78108,
+          "atk": 9091,
+          "def": 950
+        },
+        "95": {
+          "hp": 91675,
+          "atk": 10429,
+          "def": 975
+        },
+        "98": {
+          "hp": 102405,
+          "atk": 11386,
+          "def": 990
+        },
+        "100": {
+          "hp": 108758,
+          "atk": 11762,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
     "26160191": {
       "id": 26160191,
       "monster_name": "HermitCrab_Mature_01_Land",
@@ -156428,6 +161425,192 @@
         ]
       }
     },
+    "26160203": {
+      "id": 26160203,
+      "monster_name": "Aplysia_Mature_01_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Aplysia_Mature",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26160204": {
+      "id": 26160204,
+      "monster_name": "Aplysia_Mature_01_Sea_FishingEvent_FishTank",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Aplysia_Mature",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1115,
+          "atk": 121,
+          "def": 505
+        },
+        "10": {
+          "hp": 2217,
+          "atk": 324,
+          "def": 550
+        },
+        "20": {
+          "hp": 5233,
+          "atk": 799,
+          "def": 600
+        },
+        "30": {
+          "hp": 8851,
+          "atk": 1305,
+          "def": 650
+        },
+        "40": {
+          "hp": 13467,
+          "atk": 1951,
+          "def": 700
+        },
+        "50": {
+          "hp": 21014,
+          "atk": 2744,
+          "def": 750
+        },
+        "60": {
+          "hp": 31851,
+          "atk": 3665,
+          "def": 800
+        },
+        "70": {
+          "hp": 46766,
+          "atk": 4874,
+          "def": 850
+        },
+        "80": {
+          "hp": 61455,
+          "atk": 7081,
+          "def": 900
+        },
+        "90": {
+          "hp": 78108,
+          "atk": 9091,
+          "def": 950
+        },
+        "95": {
+          "hp": 91675,
+          "atk": 10429,
+          "def": 975
+        },
+        "98": {
+          "hp": 102405,
+          "atk": 11386,
+          "def": 990
+        },
+        "100": {
+          "hp": 108758,
+          "atk": 11762,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
     "26160301": {
       "id": 26160301,
       "monster_name": "SeaHorse_Mature_01_Sea",
@@ -156608,6 +161791,192 @@
         "dungeon_ids": [
           4485,
           4487
+        ]
+      }
+    },
+    "26160303": {
+      "id": 26160303,
+      "monster_name": "SeaHorse_Mature_01_Sea_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_SeaHorse_Mature",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 350,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 1375,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 4245,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 7064,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 12925,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 23964,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 40197,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 62598,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 89043,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 116804,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 133086,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 147039,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 176329,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26160304": {
+      "id": 26160304,
+      "monster_name": "SeaHorse_Mature_01_Sea_FishingEvent_FishTank",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_SeaHorse_Mature",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1115,
+          "atk": 121,
+          "def": 505
+        },
+        "10": {
+          "hp": 2217,
+          "atk": 324,
+          "def": 550
+        },
+        "20": {
+          "hp": 5233,
+          "atk": 799,
+          "def": 600
+        },
+        "30": {
+          "hp": 8851,
+          "atk": 1305,
+          "def": 650
+        },
+        "40": {
+          "hp": 13467,
+          "atk": 1951,
+          "def": 700
+        },
+        "50": {
+          "hp": 21014,
+          "atk": 2744,
+          "def": 750
+        },
+        "60": {
+          "hp": 31851,
+          "atk": 3665,
+          "def": 800
+        },
+        "70": {
+          "hp": 46766,
+          "atk": 4874,
+          "def": 850
+        },
+        "80": {
+          "hp": 61455,
+          "atk": 7081,
+          "def": 900
+        },
+        "90": {
+          "hp": 78108,
+          "atk": 9091,
+          "def": 950
+        },
+        "95": {
+          "hp": 91675,
+          "atk": 10429,
+          "def": 975
+        },
+        "98": {
+          "hp": 102405,
+          "atk": 11386,
+          "def": 990
+        },
+        "100": {
+          "hp": 108758,
+          "atk": 11762,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
         ]
       }
     },
@@ -156999,6 +162368,192 @@
         }
       ]
     },
+    "26162102": {
+      "id": 26162102,
+      "monster_name": "HermitCrab_Mature_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_HermitCrab_Mature_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1120,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 4404,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 13601,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 22630,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 41407,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 76772,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 128779,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 200545,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 285265,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 374204,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 426365,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 471068,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 564901,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
+    "26162103": {
+      "id": 26162103,
+      "monster_name": "HermitCrab_Mature_02_FishingEvent_FishTank",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_HermitCrab_Mature_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1115,
+          "atk": 121,
+          "def": 505
+        },
+        "10": {
+          "hp": 2217,
+          "atk": 324,
+          "def": 550
+        },
+        "20": {
+          "hp": 5233,
+          "atk": 799,
+          "def": 600
+        },
+        "30": {
+          "hp": 8851,
+          "atk": 1305,
+          "def": 650
+        },
+        "40": {
+          "hp": 13467,
+          "atk": 1951,
+          "def": 700
+        },
+        "50": {
+          "hp": 21014,
+          "atk": 2744,
+          "def": 750
+        },
+        "60": {
+          "hp": 31851,
+          "atk": 3665,
+          "def": 800
+        },
+        "70": {
+          "hp": 46766,
+          "atk": 4874,
+          "def": 850
+        },
+        "80": {
+          "hp": 61455,
+          "atk": 7081,
+          "def": 900
+        },
+        "90": {
+          "hp": 78108,
+          "atk": 9091,
+          "def": 950
+        },
+        "95": {
+          "hp": 91675,
+          "atk": 10429,
+          "def": 975
+        },
+        "98": {
+          "hp": 102405,
+          "atk": 11386,
+          "def": 990
+        },
+        "100": {
+          "hp": 108758,
+          "atk": 11762,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
     "26162201": {
       "id": 26162201,
       "monster_name": "MantaRay_Larva_03",
@@ -157092,6 +162647,103 @@
           "id": 2101,
           "ability_names": [
             "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "26162202": {
+      "id": 26162202,
+      "monster_name": "MantaRay_Larva_03_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_MantaRay_Larva_03",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1260,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 4954,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 15301,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 25458,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 46583,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 86368,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 144877,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 225614,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 320923,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 420979,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 479660,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 529951,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 635514,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -157193,6 +162845,103 @@
         }
       ]
     },
+    "26162302": {
+      "id": 26162302,
+      "monster_name": "Seal_Larva_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Seal_Larva_02",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1541,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 6055,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 18702,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 31116,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 56934,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 105561,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 177071,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 275750,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 392239,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 514530,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 586251,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 647718,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 776739,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26162401": {
       "id": 26162401,
       "monster_name": "Aplysia_Mature_02",
@@ -157290,6 +163039,103 @@
         }
       ]
     },
+    "26162402": {
+      "id": 26162402,
+      "monster_name": "Aplysia_Mature_02_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Aplysia_Mature",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 910,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 3578,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 11051,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 18387,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 33643,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 62377,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 104633,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 162943,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 231778,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 304041,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 346421,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 382743,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 458982,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
+          ]
+        }
+      ]
+    },
     "26162501": {
       "id": 26162501,
       "monster_name": "JellyFish_Larva_03",
@@ -157383,6 +163229,103 @@
           "id": 2101,
           "ability_names": [
             "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "26162502": {
+      "id": 26162502,
+      "monster_name": "JellyFish_Larva_03_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Aplysia_Mature",
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 1681,
+          "atk": 101,
+          "def": 0
+        },
+        "10": {
+          "hp": 6606,
+          "atk": 270,
+          "def": 0
+        },
+        "20": {
+          "hp": 20402,
+          "atk": 666,
+          "def": 0
+        },
+        "30": {
+          "hp": 33945,
+          "atk": 1087,
+          "def": 0
+        },
+        "40": {
+          "hp": 62110,
+          "atk": 1626,
+          "def": 0
+        },
+        "50": {
+          "hp": 115157,
+          "atk": 2507,
+          "def": 0
+        },
+        "60": {
+          "hp": 193169,
+          "atk": 3531,
+          "def": 0
+        },
+        "70": {
+          "hp": 300818,
+          "atk": 4874,
+          "def": 0
+        },
+        "80": {
+          "hp": 427897,
+          "atk": 6271,
+          "def": 0
+        },
+        "90": {
+          "hp": 561306,
+          "atk": 7576,
+          "def": 0
+        },
+        "95": {
+          "hp": 639547,
+          "atk": 8691,
+          "def": 0
+        },
+        "98": {
+          "hp": 706602,
+          "atk": 9488,
+          "def": 0
+        },
+        "100": {
+          "hp": 847352,
+          "atk": 9802,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5655,
+          "ability_names": [
+            "MonsterAffix_AquarUnderWater_InteractHandler"
           ]
         }
       ]
@@ -194111,6 +200054,192 @@
         ]
       }
     },
+    "28041901": {
+      "id": 28041901,
+      "monster_name": "JellyFish_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 9999,
+          "atk": 1,
+          "def": 0
+        },
+        "10": {
+          "hp": 9999,
+          "atk": 3,
+          "def": 0
+        },
+        "20": {
+          "hp": 9999,
+          "atk": 7,
+          "def": 0
+        },
+        "30": {
+          "hp": 9999,
+          "atk": 11,
+          "def": 0
+        },
+        "40": {
+          "hp": 9999,
+          "atk": 17,
+          "def": 0
+        },
+        "50": {
+          "hp": 9999,
+          "atk": 26,
+          "def": 0
+        },
+        "60": {
+          "hp": 9999,
+          "atk": 36,
+          "def": 0
+        },
+        "70": {
+          "hp": 9999,
+          "atk": 50,
+          "def": 0
+        },
+        "80": {
+          "hp": 9999,
+          "atk": 64,
+          "def": 0
+        },
+        "90": {
+          "hp": 9999,
+          "atk": 77,
+          "def": 0
+        },
+        "95": {
+          "hp": 9999,
+          "atk": 89,
+          "def": 0
+        },
+        "98": {
+          "hp": 9999,
+          "atk": 97,
+          "def": 0
+        },
+        "100": {
+          "hp": 9999,
+          "atk": 100,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
+    "28041902": {
+      "id": 28041902,
+      "monster_name": "JellyFish_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 9999,
+          "atk": 1,
+          "def": 0
+        },
+        "10": {
+          "hp": 9999,
+          "atk": 3,
+          "def": 0
+        },
+        "20": {
+          "hp": 9999,
+          "atk": 7,
+          "def": 0
+        },
+        "30": {
+          "hp": 9999,
+          "atk": 11,
+          "def": 0
+        },
+        "40": {
+          "hp": 9999,
+          "atk": 17,
+          "def": 0
+        },
+        "50": {
+          "hp": 9999,
+          "atk": 26,
+          "def": 0
+        },
+        "60": {
+          "hp": 9999,
+          "atk": 36,
+          "def": 0
+        },
+        "70": {
+          "hp": 9999,
+          "atk": 50,
+          "def": 0
+        },
+        "80": {
+          "hp": 9999,
+          "atk": 64,
+          "def": 0
+        },
+        "90": {
+          "hp": 9999,
+          "atk": 77,
+          "def": 0
+        },
+        "95": {
+          "hp": 9999,
+          "atk": 89,
+          "def": 0
+        },
+        "98": {
+          "hp": 9999,
+          "atk": 97,
+          "def": 0
+        },
+        "100": {
+          "hp": 9999,
+          "atk": 100,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5654,
+          "ability_names": [
+            "Animal_JellyFish_02_Glow"
+          ]
+        }
+      ]
+    },
     "28050201": {
       "id": 28050201,
       "monster_name": "Thoarder_Weasel_01",
@@ -200775,6 +206904,200 @@
         ]
       }
     },
+    "28070103": {
+      "id": 28070103,
+      "monster_name": "MantaRay_Enormous_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070104": {
+      "id": 28070104,
+      "monster_name": "MantaRay_Enormous_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
     "28070201": {
       "id": 28070201,
       "monster_name": "HermitCrab_Special_01",
@@ -200863,6 +207186,103 @@
           "world_monster"
         ]
       }
+    },
+    "28070202": {
+      "id": 28070202,
+      "monster_name": "HermitCrab_Special_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
     },
     "28070301": {
       "id": 28070301,
@@ -201042,6 +207462,200 @@
         ]
       }
     },
+    "28070303": {
+      "id": 28070303,
+      "monster_name": "Seal_Special_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070304": {
+      "id": 28070304,
+      "monster_name": "Seal_Enormous_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
     "28070401": {
       "id": 28070401,
       "monster_name": "JellyFish_Special_01",
@@ -201220,6 +207834,200 @@
         ]
       }
     },
+    "28070403": {
+      "id": 28070403,
+      "monster_name": "JellyFish_Special_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
+    "28070404": {
+      "id": 28070404,
+      "monster_name": "JellyFish_Enormous_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
+    },
     "28070601": {
       "id": 28070601,
       "monster_name": "Octopus_Larva_01",
@@ -201308,6 +208116,103 @@
           "world_monster"
         ]
       }
+    },
+    "28070602": {
+      "id": 28070602,
+      "monster_name": "Octopus_Larva_01_FishingEvent",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 15,
+          "atk": 25,
+          "def": 505
+        },
+        "10": {
+          "hp": 57,
+          "atk": 68,
+          "def": 550
+        },
+        "20": {
+          "hp": 177,
+          "atk": 167,
+          "def": 600
+        },
+        "30": {
+          "hp": 295,
+          "atk": 273,
+          "def": 650
+        },
+        "40": {
+          "hp": 539,
+          "atk": 408,
+          "def": 700
+        },
+        "50": {
+          "hp": 999,
+          "atk": 630,
+          "def": 750
+        },
+        "60": {
+          "hp": 1676,
+          "atk": 887,
+          "def": 800
+        },
+        "70": {
+          "hp": 2610,
+          "atk": 1224,
+          "def": 850
+        },
+        "80": {
+          "hp": 3713,
+          "atk": 1575,
+          "def": 900
+        },
+        "90": {
+          "hp": 4871,
+          "atk": 1903,
+          "def": 950
+        },
+        "95": {
+          "hp": 5550,
+          "atk": 2183,
+          "def": 975
+        },
+        "98": {
+          "hp": 6132,
+          "atk": 2384,
+          "def": 990
+        },
+        "100": {
+          "hp": 7353,
+          "atk": 2462,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      },
+      "affixes": [
+        {
+          "id": 5663,
+          "ability_names": [
+            "MonsterAffix_AbilityAnimal"
+          ]
+        }
+      ]
     },
     "28070701": {
       "id": 28070701,
@@ -201490,6 +208395,95 @@
     "28070703": {
       "id": 28070703,
       "monster_name": "Orca_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 9999,
+          "atk": 1,
+          "def": 0
+        },
+        "10": {
+          "hp": 9999,
+          "atk": 3,
+          "def": 0
+        },
+        "20": {
+          "hp": 9999,
+          "atk": 7,
+          "def": 0
+        },
+        "30": {
+          "hp": 9999,
+          "atk": 11,
+          "def": 0
+        },
+        "40": {
+          "hp": 9999,
+          "atk": 17,
+          "def": 0
+        },
+        "50": {
+          "hp": 9999,
+          "atk": 26,
+          "def": 0
+        },
+        "60": {
+          "hp": 9999,
+          "atk": 36,
+          "def": 0
+        },
+        "70": {
+          "hp": 9999,
+          "atk": 50,
+          "def": 0
+        },
+        "80": {
+          "hp": 9999,
+          "atk": 64,
+          "def": 0
+        },
+        "90": {
+          "hp": 9999,
+          "atk": 77,
+          "def": 0
+        },
+        "95": {
+          "hp": 9999,
+          "atk": 89,
+          "def": 0
+        },
+        "98": {
+          "hp": 9999,
+          "atk": 97,
+          "def": 0
+        },
+        "100": {
+          "hp": 9999,
+          "atk": 100,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
+    "28070801": {
+      "id": 28070801,
+      "monster_name": "Orca_03",
       "type": "MONSTER_ORDINARY",
       "icon": null,
       "resistance": {
@@ -216891,6 +223885,95 @@
         ]
       }
     },
+    "28241404": {
+      "id": 28241404,
+      "monster_name": "Homeworld_Fishable_Maritime_Ostracion_04",
+      "type": "MONSTER_ORDINARY",
+      "icon": null,
+      "resistance": {
+        "physical": 0,
+        "pyro": 0,
+        "hydro": 0,
+        "electro": 0,
+        "dendro": 0,
+        "anemo": 0,
+        "geo": 0,
+        "cryo": 0
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 0,
+          "atk": 1,
+          "def": 0
+        },
+        "10": {
+          "hp": 0,
+          "atk": 3,
+          "def": 0
+        },
+        "20": {
+          "hp": 0,
+          "atk": 7,
+          "def": 0
+        },
+        "30": {
+          "hp": 0,
+          "atk": 11,
+          "def": 0
+        },
+        "40": {
+          "hp": 0,
+          "atk": 17,
+          "def": 0
+        },
+        "50": {
+          "hp": 0,
+          "atk": 26,
+          "def": 0
+        },
+        "60": {
+          "hp": 0,
+          "atk": 36,
+          "def": 0
+        },
+        "70": {
+          "hp": 0,
+          "atk": 50,
+          "def": 0
+        },
+        "80": {
+          "hp": 0,
+          "atk": 64,
+          "def": 0
+        },
+        "90": {
+          "hp": 0,
+          "atk": 77,
+          "def": 0
+        },
+        "95": {
+          "hp": 0,
+          "atk": 89,
+          "def": 0
+        },
+        "98": {
+          "hp": 0,
+          "atk": 97,
+          "def": 0
+        },
+        "100": {
+          "hp": 0,
+          "atk": 100,
+          "def": 0
+        }
+      },
+      "kill_drop_id": null,
+      "sources": {
+        "source_types": [
+          "world_monster"
+        ]
+      }
+    },
     "28241501": {
       "id": 28241501,
       "monster_name": "Homeworld_Fishable_Maritime_DragonStatue_01",
@@ -226824,6 +233907,97 @@
       },
       "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
     },
+    "84001012": {
+      "id": 84001012,
+      "monster_name": "Slime_Grass_Custom_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Grass_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010013,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
     "84001021": {
       "id": 84001021,
       "monster_name": "Slime_Grass_03",
@@ -227105,6 +234279,97 @@
       },
       "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
     },
+    "84001032": {
+      "id": 84001032,
+      "monster_name": "Slime_Wind_Custom_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Wind_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 30,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 81,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 201,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 328,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 490,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 756,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 1064,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 1469,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 1890,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 2284,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 2620,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 2860,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 2955,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010015,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
     "84001041": {
       "id": 84001041,
       "monster_name": "Slime_Wind_03",
@@ -227290,6 +234555,105 @@
     "84001051": {
       "id": 84001051,
       "monster_name": "Slime_Electric_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Electric_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010014,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER",
+      "affixes": [
+        {
+          "id": 2002,
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        }
+      ]
+    },
+    "84001052": {
+      "id": 84001052,
+      "monster_name": "Slime_Electric_Custom_02",
       "type": "MONSTER_ORDINARY",
       "icon": "UI_MonsterIcon_Slime_Electric_02",
       "resistance": {
@@ -227675,6 +235039,105 @@
         }
       ]
     },
+    "84001082": {
+      "id": 84001082,
+      "monster_name": "Slime_Ice_Custom_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Ice_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010016,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER",
+      "affixes": [
+        {
+          "id": 2003,
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        }
+      ]
+    },
     "84001091": {
       "id": 84001091,
       "monster_name": "Slime_Ice_03",
@@ -227868,6 +235331,97 @@
     "84001101": {
       "id": 84001101,
       "monster_name": "Slime_Water_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Water_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010012,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "84001102": {
+      "id": 84001102,
+      "monster_name": "Slime_Water_Custom_02",
       "type": "MONSTER_ORDINARY",
       "icon": "UI_MonsterIcon_Slime_Water_02",
       "resistance": {
@@ -228229,6 +235783,97 @@
       },
       "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
     },
+    "84001122": {
+      "id": 84001122,
+      "monster_name": "Slime_Fire_Custom_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Fire_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010011,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
     "84001131": {
       "id": 84001131,
       "monster_name": "Slime_Fire_03",
@@ -228414,6 +236059,97 @@
     "84001141": {
       "id": 84001141,
       "monster_name": "Slime_Rock_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Slime_Rock_02",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 58,
+          "atk": 15,
+          "def": 505
+        },
+        "10": {
+          "hp": 229,
+          "atk": 41,
+          "def": 550
+        },
+        "20": {
+          "hp": 708,
+          "atk": 100,
+          "def": 600
+        },
+        "30": {
+          "hp": 1178,
+          "atk": 164,
+          "def": 650
+        },
+        "40": {
+          "hp": 2156,
+          "atk": 245,
+          "def": 700
+        },
+        "50": {
+          "hp": 3997,
+          "atk": 378,
+          "def": 750
+        },
+        "60": {
+          "hp": 6705,
+          "atk": 532,
+          "def": 800
+        },
+        "70": {
+          "hp": 10442,
+          "atk": 735,
+          "def": 850
+        },
+        "80": {
+          "hp": 14853,
+          "atk": 945,
+          "def": 900
+        },
+        "90": {
+          "hp": 19483,
+          "atk": 1142,
+          "def": 950
+        },
+        "95": {
+          "hp": 22199,
+          "atk": 1310,
+          "def": 975
+        },
+        "98": {
+          "hp": 24527,
+          "atk": 1430,
+          "def": 990
+        },
+        "100": {
+          "hp": 29412,
+          "atk": 1477,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010017,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "84001142": {
+      "id": 84001142,
+      "monster_name": "Slime_Rock_Custom_02",
       "type": "MONSTER_ORDINARY",
       "icon": "UI_MonsterIcon_Slime_Rock_02",
       "resistance": {
@@ -230627,6 +238363,188 @@
       },
       "monster_rarity": "MONSTER_RARITY_ELITE_MONSTER"
     },
+    "84202022": {
+      "id": 84202022,
+      "monster_name": "Invoker_Herald_Ice_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Invoker_Herald_Ice",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 583,
+          "atk": 114,
+          "def": 505
+        },
+        "10": {
+          "hp": 2293,
+          "atk": 305,
+          "def": 550
+        },
+        "20": {
+          "hp": 7082,
+          "atk": 753,
+          "def": 600
+        },
+        "30": {
+          "hp": 11782,
+          "atk": 1229,
+          "def": 650
+        },
+        "40": {
+          "hp": 21559,
+          "atk": 1838,
+          "def": 700
+        },
+        "50": {
+          "hp": 39972,
+          "atk": 2585,
+          "def": 750
+        },
+        "60": {
+          "hp": 67050,
+          "atk": 3453,
+          "def": 800
+        },
+        "70": {
+          "hp": 104416,
+          "atk": 4592,
+          "def": 850
+        },
+        "80": {
+          "hp": 148526,
+          "atk": 6670,
+          "def": 900
+        },
+        "90": {
+          "hp": 194833,
+          "atk": 8564,
+          "def": 950
+        },
+        "95": {
+          "hp": 221991,
+          "atk": 9824,
+          "def": 975
+        },
+        "98": {
+          "hp": 245266,
+          "atk": 10726,
+          "def": 990
+        },
+        "100": {
+          "hp": 294121,
+          "atk": 11080,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010026,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_ELITE_MONSTER"
+    },
+    "84203012": {
+      "id": 84203012,
+      "monster_name": "Invoker_Deacon_Electric_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Invoker_Deacon_Electric_01",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 583,
+          "atk": 114,
+          "def": 505
+        },
+        "10": {
+          "hp": 2293,
+          "atk": 305,
+          "def": 550
+        },
+        "20": {
+          "hp": 7082,
+          "atk": 753,
+          "def": 600
+        },
+        "30": {
+          "hp": 11782,
+          "atk": 1229,
+          "def": 650
+        },
+        "40": {
+          "hp": 21559,
+          "atk": 1838,
+          "def": 700
+        },
+        "50": {
+          "hp": 39972,
+          "atk": 2834,
+          "def": 750
+        },
+        "60": {
+          "hp": 67050,
+          "atk": 3991,
+          "def": 800
+        },
+        "70": {
+          "hp": 104416,
+          "atk": 5510,
+          "def": 850
+        },
+        "80": {
+          "hp": 148526,
+          "atk": 7089,
+          "def": 900
+        },
+        "90": {
+          "hp": 194833,
+          "atk": 8564,
+          "def": 950
+        },
+        "95": {
+          "hp": 221991,
+          "atk": 9824,
+          "def": 975
+        },
+        "98": {
+          "hp": 245266,
+          "atk": 10726,
+          "def": 990
+        },
+        "100": {
+          "hp": 294121,
+          "atk": 11080,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010024,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_ELITE_MONSTER"
+    },
     "84301011": {
       "id": 84301011,
       "monster_name": "Skirmisher_Male_Fat_SprayGun_Ice_01",
@@ -231991,6 +239909,97 @@
       },
       "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
     },
+    "84508012": {
+      "id": 84508012,
+      "monster_name": "Samurai_Ronin_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Samurai_Ronin_01",
+      "resistance": {
+        "physical": -20,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 147,
+          "atk": 41,
+          "def": 505
+        },
+        "10": {
+          "hp": 578,
+          "atk": 108,
+          "def": 550
+        },
+        "20": {
+          "hp": 1702,
+          "atk": 268,
+          "def": 600
+        },
+        "30": {
+          "hp": 3170,
+          "atk": 437,
+          "def": 650
+        },
+        "40": {
+          "hp": 5692,
+          "atk": 653,
+          "def": 700
+        },
+        "50": {
+          "hp": 10487,
+          "atk": 919,
+          "def": 750
+        },
+        "60": {
+          "hp": 17718,
+          "atk": 1228,
+          "def": 800
+        },
+        "70": {
+          "hp": 29304,
+          "atk": 1633,
+          "def": 850
+        },
+        "80": {
+          "hp": 47273,
+          "atk": 2372,
+          "def": 900
+        },
+        "90": {
+          "hp": 74201,
+          "atk": 3045,
+          "def": 950
+        },
+        "95": {
+          "hp": 90857,
+          "atk": 3493,
+          "def": 975
+        },
+        "98": {
+          "hp": 103001,
+          "atk": 3814,
+          "def": 990
+        },
+        "100": {
+          "hp": 110920,
+          "atk": 3940,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010010,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
     "84509011": {
       "id": 84509011,
       "monster_name": "Samurai_Ningyo_01",
@@ -232180,6 +240189,460 @@
         ]
       },
       "monster_rarity": "MONSTER_RARITY_BOSS_MONSTER"
+    },
+    "84510012": {
+      "id": 84510012,
+      "monster_name": "Samurai_Kairagi_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Samurai_Kairagi_01",
+      "resistance": {
+        "physical": -20,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 352,
+          "atk": 190,
+          "def": 505
+        },
+        "10": {
+          "hp": 1388,
+          "atk": 509,
+          "def": 550
+        },
+        "20": {
+          "hp": 4085,
+          "atk": 1254,
+          "def": 600
+        },
+        "30": {
+          "hp": 7608,
+          "atk": 2049,
+          "def": 650
+        },
+        "40": {
+          "hp": 13660,
+          "atk": 3063,
+          "def": 700
+        },
+        "50": {
+          "hp": 25169,
+          "atk": 4309,
+          "def": 750
+        },
+        "60": {
+          "hp": 42523,
+          "atk": 5755,
+          "def": 800
+        },
+        "70": {
+          "hp": 70330,
+          "atk": 7653,
+          "def": 850
+        },
+        "80": {
+          "hp": 113456,
+          "atk": 11117,
+          "def": 900
+        },
+        "90": {
+          "hp": 178081,
+          "atk": 14274,
+          "def": 950
+        },
+        "95": {
+          "hp": 218058,
+          "atk": 16373,
+          "def": 975
+        },
+        "98": {
+          "hp": 247203,
+          "atk": 17876,
+          "def": 990
+        },
+        "100": {
+          "hp": 266208,
+          "atk": 18467,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010020,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "84510022": {
+      "id": 84510022,
+      "monster_name": "Samurai_Kairagi_02",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Samurai_Kairagi_02",
+      "resistance": {
+        "physical": -20,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 352,
+          "atk": 190,
+          "def": 505
+        },
+        "10": {
+          "hp": 1388,
+          "atk": 509,
+          "def": 550
+        },
+        "20": {
+          "hp": 4085,
+          "atk": 1254,
+          "def": 600
+        },
+        "30": {
+          "hp": 7608,
+          "atk": 2049,
+          "def": 650
+        },
+        "40": {
+          "hp": 13660,
+          "atk": 3063,
+          "def": 700
+        },
+        "50": {
+          "hp": 25169,
+          "atk": 4309,
+          "def": 750
+        },
+        "60": {
+          "hp": 42523,
+          "atk": 5755,
+          "def": 800
+        },
+        "70": {
+          "hp": 70330,
+          "atk": 7653,
+          "def": 850
+        },
+        "80": {
+          "hp": 113456,
+          "atk": 11117,
+          "def": 900
+        },
+        "90": {
+          "hp": 178081,
+          "atk": 14274,
+          "def": 950
+        },
+        "95": {
+          "hp": 218058,
+          "atk": 16373,
+          "def": 975
+        },
+        "98": {
+          "hp": 247203,
+          "atk": 17876,
+          "def": 990
+        },
+        "100": {
+          "hp": 266208,
+          "atk": 18467,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010020,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "84521012": {
+      "id": 84521012,
+      "monster_name": "Eremite_Female_Hatchet_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Eremite_Female_Hatchet",
+      "resistance": {
+        "physical": -20,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 117,
+          "atk": 41,
+          "def": 505
+        },
+        "10": {
+          "hp": 463,
+          "atk": 108,
+          "def": 550
+        },
+        "20": {
+          "hp": 1362,
+          "atk": 268,
+          "def": 600
+        },
+        "30": {
+          "hp": 2536,
+          "atk": 437,
+          "def": 650
+        },
+        "40": {
+          "hp": 4553,
+          "atk": 653,
+          "def": 700
+        },
+        "50": {
+          "hp": 8390,
+          "atk": 919,
+          "def": 750
+        },
+        "60": {
+          "hp": 14174,
+          "atk": 1228,
+          "def": 800
+        },
+        "70": {
+          "hp": 23443,
+          "atk": 1633,
+          "def": 850
+        },
+        "80": {
+          "hp": 37819,
+          "atk": 2372,
+          "def": 900
+        },
+        "90": {
+          "hp": 59360,
+          "atk": 3045,
+          "def": 950
+        },
+        "95": {
+          "hp": 72686,
+          "atk": 3493,
+          "def": 975
+        },
+        "98": {
+          "hp": 82401,
+          "atk": 3814,
+          "def": 990
+        },
+        "100": {
+          "hp": 88736,
+          "atk": 3940,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010010,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "84531012": {
+      "id": 84531012,
+      "monster_name": "Eremite_Female_Slim_PushDagger_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Eremite_Female_Slim_PushDagger",
+      "resistance": {
+        "physical": -20,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 264,
+          "atk": 81,
+          "def": 505
+        },
+        "10": {
+          "hp": 1041,
+          "atk": 217,
+          "def": 550
+        },
+        "20": {
+          "hp": 3064,
+          "atk": 535,
+          "def": 600
+        },
+        "30": {
+          "hp": 5706,
+          "atk": 874,
+          "def": 650
+        },
+        "40": {
+          "hp": 10245,
+          "atk": 1307,
+          "def": 700
+        },
+        "50": {
+          "hp": 18877,
+          "atk": 1838,
+          "def": 750
+        },
+        "60": {
+          "hp": 31892,
+          "atk": 2455,
+          "def": 800
+        },
+        "70": {
+          "hp": 52748,
+          "atk": 3265,
+          "def": 850
+        },
+        "80": {
+          "hp": 85092,
+          "atk": 4743,
+          "def": 900
+        },
+        "90": {
+          "hp": 133561,
+          "atk": 6090,
+          "def": 950
+        },
+        "95": {
+          "hp": 163543,
+          "atk": 6986,
+          "def": 975
+        },
+        "98": {
+          "hp": 185402,
+          "atk": 7627,
+          "def": 990
+        },
+        "100": {
+          "hp": 199656,
+          "atk": 7879,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010022,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      },
+      "monster_rarity": "MONSTER_RARITY_SMALL_MONSTER"
+    },
+    "84550122": {
+      "id": 84550122,
+      "monster_name": "Human_Female_Sword_Hookwalker_03",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Human_Female_Sword_Hookwalker",
+      "resistance": {
+        "physical": -20,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 117,
+          "atk": 46,
+          "def": 505
+        },
+        "10": {
+          "hp": 463,
+          "atk": 122,
+          "def": 550
+        },
+        "20": {
+          "hp": 1362,
+          "atk": 301,
+          "def": 600
+        },
+        "30": {
+          "hp": 2536,
+          "atk": 492,
+          "def": 650
+        },
+        "40": {
+          "hp": 4553,
+          "atk": 735,
+          "def": 700
+        },
+        "50": {
+          "hp": 8390,
+          "atk": 1034,
+          "def": 750
+        },
+        "60": {
+          "hp": 14174,
+          "atk": 1381,
+          "def": 800
+        },
+        "70": {
+          "hp": 23443,
+          "atk": 1837,
+          "def": 850
+        },
+        "80": {
+          "hp": 37819,
+          "atk": 2668,
+          "def": 900
+        },
+        "90": {
+          "hp": 59360,
+          "atk": 3426,
+          "def": 950
+        },
+        "95": {
+          "hp": 72686,
+          "atk": 3930,
+          "def": 975
+        },
+        "98": {
+          "hp": 82401,
+          "atk": 4290,
+          "def": 990
+        },
+        "100": {
+          "hp": 88736,
+          "atk": 4432,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010010,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      }
     },
     "84601011": {
       "id": 84601011,
@@ -232923,6 +241386,186 @@
         ]
       }
     },
+    "84626012": {
+      "id": 84626012,
+      "monster_name": "Wayob_Drillhead_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Wayob_Drillhead",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 10,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 50,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 514,
+          "atk": 117,
+          "def": 505
+        },
+        "10": {
+          "hp": 2024,
+          "atk": 312,
+          "def": 550
+        },
+        "20": {
+          "hp": 5958,
+          "atk": 769,
+          "def": 600
+        },
+        "30": {
+          "hp": 11095,
+          "atk": 1257,
+          "def": 650
+        },
+        "40": {
+          "hp": 19921,
+          "atk": 1879,
+          "def": 700
+        },
+        "50": {
+          "hp": 36705,
+          "atk": 2643,
+          "def": 750
+        },
+        "60": {
+          "hp": 62013,
+          "atk": 3530,
+          "def": 800
+        },
+        "70": {
+          "hp": 102565,
+          "atk": 4694,
+          "def": 850
+        },
+        "80": {
+          "hp": 165456,
+          "atk": 6818,
+          "def": 900
+        },
+        "90": {
+          "hp": 259702,
+          "atk": 8754,
+          "def": 950
+        },
+        "95": {
+          "hp": 318001,
+          "atk": 10042,
+          "def": 975
+        },
+        "98": {
+          "hp": 360504,
+          "atk": 10964,
+          "def": 990
+        },
+        "100": {
+          "hp": 388220,
+          "atk": 11326,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010027,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      }
+    },
+    "84626022": {
+      "id": 84626022,
+      "monster_name": "Wayob_Mosasaurus_01",
+      "type": "MONSTER_ORDINARY",
+      "icon": "UI_MonsterIcon_Wayob_Mosasaurus",
+      "resistance": {
+        "physical": 10,
+        "pyro": 10,
+        "hydro": 50,
+        "electro": 10,
+        "dendro": 10,
+        "anemo": 10,
+        "geo": 10,
+        "cryo": 10
+      },
+      "stats_by_level": {
+        "1": {
+          "hp": 514,
+          "atk": 117,
+          "def": 505
+        },
+        "10": {
+          "hp": 2024,
+          "atk": 312,
+          "def": 550
+        },
+        "20": {
+          "hp": 5958,
+          "atk": 769,
+          "def": 600
+        },
+        "30": {
+          "hp": 11095,
+          "atk": 1257,
+          "def": 650
+        },
+        "40": {
+          "hp": 19921,
+          "atk": 1879,
+          "def": 700
+        },
+        "50": {
+          "hp": 36705,
+          "atk": 2643,
+          "def": 750
+        },
+        "60": {
+          "hp": 62013,
+          "atk": 3530,
+          "def": 800
+        },
+        "70": {
+          "hp": 102565,
+          "atk": 4694,
+          "def": 850
+        },
+        "80": {
+          "hp": 165456,
+          "atk": 6818,
+          "def": 900
+        },
+        "90": {
+          "hp": 259702,
+          "atk": 8754,
+          "def": 950
+        },
+        "95": {
+          "hp": 318001,
+          "atk": 10042,
+          "def": 975
+        },
+        "98": {
+          "hp": 360504,
+          "atk": 10964,
+          "def": 990
+        },
+        "100": {
+          "hp": 388220,
+          "atk": 11326,
+          "def": 1000
+        }
+      },
+      "kill_drop_id": 22010022,
+      "sources": {
+        "source_types": [
+          "world_monster",
+          "beyond"
+        ]
+      }
+    },
     "84802031": {
       "id": 84802031,
       "monster_name": "Boar_01",
@@ -233108,12 +241751,14 @@
     "world_monster": {
       "monster_ids": [
         20010101,
+        20010102,
         20010201,
         20010202,
         20010301,
         20010302,
         20010303,
         20010305,
+        20010306,
         20010381,
         20010401,
         20010402,
@@ -233128,6 +241773,7 @@
         20010504,
         20010505,
         20010506,
+        20010507,
         20010581,
         20010590,
         20010591,
@@ -233139,6 +241785,7 @@
         20010605,
         20010606,
         20010607,
+        20010608,
         20010681,
         20010690,
         20010701,
@@ -233154,6 +241801,7 @@
         20010806,
         20010807,
         20010808,
+        20010809,
         20010881,
         20010901,
         20010902,
@@ -233170,6 +241818,7 @@
         20011002,
         20011003,
         20011004,
+        20011005,
         20011081,
         20011090,
         20011091,
@@ -233191,6 +241840,7 @@
         20011207,
         20011208,
         20011209,
+        20011210,
         20011281,
         20011290,
         20011291,
@@ -233212,6 +241862,7 @@
         20011401,
         20011402,
         20011403,
+        20011404,
         20011481,
         20011501,
         20011502,
@@ -233227,6 +241878,8 @@
         20012001,
         20012101,
         20012201,
+        20012301,
+        20012302,
         20020101,
         20020191,
         20020192,
@@ -233292,6 +241945,7 @@
         20051203,
         20051204,
         20051205,
+        20051206,
         20051301,
         20051302,
         20051303,
@@ -233890,12 +242544,15 @@
         24060202,
         24060301,
         24060302,
+        24060303,
         24060401,
         24060402,
         24060501,
         24060502,
+        24060503,
         24060601,
         24060602,
+        24060603,
         24060701,
         24060702,
         24060801,
@@ -233930,12 +242587,15 @@
         24065203,
         24065301,
         24065302,
+        24065303,
         24065401,
         24065402,
         24065501,
         24065502,
+        24065503,
         24065601,
         24065602,
+        24065603,
         24065701,
         24065702,
         24065790,
@@ -233984,6 +242644,9 @@
         24090201,
         24090202,
         24090203,
+        24090204,
+        24090205,
+        24090206,
         24090301,
         24090302,
         24090401,
@@ -233991,6 +242654,16 @@
         24090502,
         24090503,
         24090504,
+        24090601,
+        24090701,
+        24090702,
+        24090703,
+        24090704,
+        24090705,
+        24090801,
+        24090802,
+        24090803,
+        24090804,
         24100101,
         24100102,
         24100103,
@@ -234650,46 +243323,77 @@
         26140201,
         26151001,
         26151002,
+        26151003,
+        26151004,
         26151101,
         26151102,
+        26151103,
+        26151104,
         26152101,
         26152102,
+        26152103,
         26152201,
         26152202,
+        26152203,
         26153101,
         26153102,
         26153103,
         26153104,
+        26153105,
+        26153106,
         26154101,
         26154102,
+        26154103,
+        26154104,
         26154201,
         26154202,
+        26154203,
+        26154204,
         26155101,
+        26155102,
         26155201,
+        26155202,
         26155301,
+        26155302,
         26156101,
+        26156102,
         26156201,
+        26156202,
         26157101,
+        26157102,
         26157201,
+        26157202,
         26160101,
         26160102,
         26160103,
         26160104,
         26160105,
+        26160106,
+        26160107,
         26160191,
         26160192,
         26160201,
         26160202,
+        26160203,
+        26160204,
         26160301,
         26160302,
+        26160303,
+        26160304,
         26160390,
         26160391,
         26160392,
         26162101,
+        26162102,
+        26162103,
         26162201,
+        26162202,
         26162301,
+        26162302,
         26162401,
+        26162402,
         26162501,
+        26162502,
         26162601,
         26162602,
         26162603,
@@ -235091,6 +243795,8 @@
         28031104,
         28031201,
         28040703,
+        28041901,
+        28041902,
         28050201,
         28050202,
         28050203,
@@ -235161,15 +243867,24 @@
         28061502,
         28070101,
         28070102,
+        28070103,
+        28070104,
         28070201,
+        28070202,
         28070301,
         28070302,
+        28070303,
+        28070304,
         28070401,
         28070402,
+        28070403,
+        28070404,
         28070601,
+        28070602,
         28070701,
         28070702,
         28070703,
+        28070801,
         28080101,
         28210101,
         28210102,
@@ -235341,6 +244056,7 @@
         28241401,
         28241402,
         28241403,
+        28241404,
         28241501,
         28241601,
         28241602,
@@ -235445,24 +244161,31 @@
         29150103,
         29150104,
         84001011,
+        84001012,
         84001021,
         84001022,
         84001031,
+        84001032,
         84001041,
         84001042,
         84001051,
+        84001052,
         84001061,
         84001062,
         84001081,
+        84001082,
         84001091,
         84001092,
         84001101,
+        84001102,
         84001111,
         84001112,
         84001121,
+        84001122,
         84001131,
         84001132,
         84001141,
+        84001142,
         84001151,
         84001152,
         84101011,
@@ -235486,6 +244209,8 @@
         84201032,
         84201041,
         84201042,
+        84202022,
+        84203012,
         84301011,
         84301012,
         84301031,
@@ -235501,8 +244226,14 @@
         84501021,
         84501022,
         84503031,
+        84508012,
         84509011,
         84509012,
+        84510012,
+        84510022,
+        84521012,
+        84531012,
+        84550122,
         84601011,
         84601021,
         84601031,
@@ -235511,10 +244242,12 @@
         84612021,
         84623031,
         84623032,
+        84626012,
+        84626022,
         84802031,
         84803091
       ],
-      "count": 2406
+      "count": 2496
     },
     "dungeon_preview": {
       "monster_ids": [
@@ -235537,6 +244270,7 @@
         20011304,
         20011401,
         20011501,
+        20012302,
         20020101,
         20040102,
         20040201,
@@ -235592,7 +244326,6 @@
         21030401,
         21030501,
         21030601,
-        21030802,
         21040101,
         21040201,
         22010101,
@@ -235672,8 +244405,8 @@
         24066101,
         24066201,
         24090101,
-        24110101,
-        24111101,
+        24090601,
+        24090702,
         25010201,
         25010301,
         25010401,
@@ -235840,10 +244573,10 @@
           22132002
         ],
         "75": [
-          24111101
+          24090601
         ],
         "76": [
-          24110101
+          24090702
         ],
         "77": [
           23079406
@@ -235870,7 +244603,7 @@
           25600104
         ],
         "86": [
-          21030802
+          20012302
         ],
         "87": [
           26120502
@@ -239187,24 +247920,31 @@
     "beyond": {
       "monster_ids": [
         84001011,
+        84001012,
         84001021,
         84001022,
         84001031,
+        84001032,
         84001041,
         84001042,
         84001051,
+        84001052,
         84001061,
         84001062,
         84001081,
+        84001082,
         84001091,
         84001092,
         84001101,
+        84001102,
         84001111,
         84001112,
         84001121,
+        84001122,
         84001131,
         84001132,
         84001141,
+        84001142,
         84001151,
         84001152,
         84101011,
@@ -239228,6 +247968,8 @@
         84201032,
         84201041,
         84201042,
+        84202022,
+        84203012,
         84301011,
         84301012,
         84301031,
@@ -239242,8 +247984,14 @@
         84501021,
         84501022,
         84503031,
+        84508012,
         84509011,
         84509012,
+        84510012,
+        84510022,
+        84521012,
+        84531012,
+        84550122,
         84601011,
         84601021,
         84601031,
@@ -239251,10 +247999,12 @@
         84612021,
         84623031,
         84623032,
+        84626012,
+        84626022,
         84802031,
         84803091
       ],
-      "count": 67
+      "count": 84
     },
     "hunting": {
       "monster_ids": [

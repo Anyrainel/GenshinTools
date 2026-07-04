@@ -98,7 +98,7 @@ function LinkedBuildSection({
                 getCharacterDisplayMeta(
                   character,
                   characterStats?.[character.id]
-                ).element ?? "Pyro"
+                ).element
               }
             />
           ))}

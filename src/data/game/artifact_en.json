@@ -88,7 +88,7 @@
     "name": "Disenchantment in Deep Shadow",
     "rarity": 5,
     "effect2": "ATK +18%.",
-    "effect4": "Increases Superconduct Reaction DMG by 80%. When the equipping character attacks opponents affected by Superconduct, this attack's CRIT Rate is increased by 16%. An all-new blessing may be obtained as you make your way toward Snezhnaya..."
+    "effect4": "Increases Superconduct Reaction DMG by 80% and Stellar-Conduct Reaction DMG by 40%. When the wielder attacks opponents affected by Superconduct or Stellar-Conduct, this attack's CRIT Rate is increased by 16%."
   },
   "echoes_of_an_offering": {
     "id": "15024",
@@ -333,7 +333,7 @@
     "name": "Thundering Fury",
     "rarity": 5,
     "effect2": "Electro DMG Bonus +15%",
-    "effect4": "Increases the DMG caused by Overloaded, Electro-Charged, Superconduct, and Hyperbloom by 40%, the DMG Bonus conferred by Aggravate by 20%, and the DMG caused by Lunar-Charged by 20%. When Quicken or the aforementioned Elemental Reactions are triggered, Elemental Skill CD is decreased by 1s. Can only occur once every 0.8s."
+    "effect4": "Increases the DMG caused by Overloaded, Electro-Charged, Superconduct, and Hyperbloom by 40%, the DMG Bonus conferred by Aggravate by 20%, and the DMG caused by Lunar-Charged and Stellar-Conduct by 20%. When Quicken or the aforementioned Elemental Reactions are triggered, Elemental Skill CD is decreased by 1s. Can only occur once every 0.8s."
   },
   "thundersoother": {
     "id": "14002",

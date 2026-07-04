@@ -654,7 +654,11 @@ export function AppBar({
                   {menuActions.map((action) => (
                     <DropdownMenuItem
                       key={action.key}
-                      onClick={action.onTrigger}
+                      onSelect={() => {
+                        // Defer so the menu closes before opening a dialog/download.
+                        // Opening synchronously from onSelect fails on some browsers.
+                        setTimeout(() => action.onTrigger(), 0);
+                      }}
                       className="gap-2"
                     >
                       <action.icon className="w-4 h-4" />
