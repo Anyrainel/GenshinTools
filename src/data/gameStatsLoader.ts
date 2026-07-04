@@ -141,6 +141,8 @@ const UNRELEASED_OVERRIDES: Record<
   Partial<Pick<CharacterStats, "element" | "weaponType" | "region">>
 > = {
   linnea: { element: "Geo" },
+  // Remove once sandrone ships in character_stats.json (6.6+).
+  sandrone: { element: "Cryo", weaponType: "Claymore" },
 };
 
 export type CharacterDisplayMeta = {

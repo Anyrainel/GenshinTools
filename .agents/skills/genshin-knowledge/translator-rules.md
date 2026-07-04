@@ -275,17 +275,17 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 | Overloaded / ElectroCharged / Superconduct / Swirl / Shatter / Bloom / Hyperbloom / Burgeon / Burning | `TransformFormula` |
 | Lunar reaction damage (雷暴云, 月笼, etc.) | `LunarFormula` |
 | Character ability text says "视为月XX反应伤害" | `LunarDirectFormula` — **[BUG]** if `DirectFormula` was used |
-| Auto-generated Stellar-Conduct proc (`rx-stellarConduct`, 超导→星超导) | `StellarFormula` — proc math is placeholder until verified |
+| Auto-generated Stellar-Conduct proc (`rx-stellarConduct`, 超导→星超导) | `StellarFormula` — **zero proc damage** (Polestar Field only; all SC DPS is `StellarDirectFormula`) |
 | Character ability text says "视为星超导反应伤害" | `StellarDirectFormula` — **[BUG]** if `DirectFormula` or `TransformFormula` was used |
 
 **Amplifying/Catalyze reactions** (Melt, Vaporize, Spread, Aggravate) are NOT registered as `AmplifyFormula` or `CatalyzeFormula` in `formulaMap`. The base hit is always `DirectFormula`; the UI's ReactionSelector applies the reaction at evaluation time. See S8 for details. **[BUG]** if `AmplifyFormula` or `CatalyzeFormula` appears in `formulaMap`.
 
 **`LunarDirectFormula` talentMult convention**: Pass the **raw game%** directly. The class multiplies by `directCoeff` internally (`lunarCharged ×3`, `lunarCrystallize ×1.6`, `lunarBloom ×1`). **[BUG]** if the passed value is `gameText% / directCoeff` — this cancels the internal multiplication and produces damage 3× (or 1.6×) too low.
 
-**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Unlike Lunar (fixed per reaction subtype), Stellar `directCoeff` depends on Cryo/Electro attach count on the enemy (range **1.45–1.9**, default **1.6** via `CalcContext.stellarDirectCoeff`). **[BUG]** if talentMult is pre-divided by `directCoeff`. **[TRACK]** if no UI exposes attach-count coeff yet (category `engine-gap`).
+**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Unlike Lunar (fixed per reaction subtype), Stellar `directCoeff` depends on Cryo/Electro attach count on the enemy (range **1.45–1.9**, default **1.6** via `CalcContext.stellarDirectCoeff`). **[BUG]** if talentMult is pre-divided by `directCoeff`.
 
 **Stellar vs Lunar — two damage paths** (mirror lunar design):
-- **Reaction proc** (`StellarFormula`): level-based transformative-style proc when SC triggers in combat. Coefficient and EM curve are **unverified** — do not audit against Superconduct or assume skill-direct math applies.
+- **Reaction trigger** (`StellarFormula`): SC replaces Superconduct but deals **no proc damage** — only enables Polestar Field. `rx-stellarConduct` auto-formulas contribute 0 DPS.
 - **Skill direct** (`StellarDirectFormula`): talent% × stat scaling, same zone count as `LunarDirectFormula`. This is what Sandrone kit hits use under 辉映.
 
 **Stellar Direct zone model** (same layers as Lunar Direct; no traditional `dmg%` or DEF):

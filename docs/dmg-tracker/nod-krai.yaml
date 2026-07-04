@@ -131,21 +131,18 @@
 - id: stellar-reaction-proc-formula
   entity: sandrone
   rule: S1
-  status: open
+  status: completed
   category: needs-data
   summary: >
     StellarFormula (rx-stellarConduct proc) coefficient and EM curve unverified;
     do not treat as Superconduct parity.
   detail: >
-    Rechecked against current Sandrone beta text. P3 documents the Superconduct
-    -> Stellar-Conduct conversion plus Sandrone's reactionBaseDmg% boost, and
-    C6 documents elevated% for Sandrone's Stellar-Conduct damage, but no beta
-    text exposes the generated rx-stellarConduct reaction proc's level
-    coefficient, EM curve, or full zone model. Web search shows Stellar-Conduct
-    is a specialized reaction meta-mechanic (creates Polestar Field to boost Cryo/Electro
-    DMG and lower Physical RES, rather than dealing typical transformative proc damage),
-    confirming there is no singular level-based reaction proc formula for it.
-    Keep this open until datamine or in-game testing confirms any proc math.
+    Zeroed StellarFormula (rx-stellarConduct auto-proc): calc/buildExpr/display
+    always return 0 — SC trigger creates Polestar Field only, no transformative
+    proc damage. Removed STELLAR_REACTION_PROC_COEFF_PLACEHOLDER. StellarDirectFormula
+    unchanged; ctx.stellarDirectCoeff (1.45–1.9, default 1.6) remains the sole SC
+    damage knob. Updated teamComp i18n labels to "Polestar coeff." with attach-count
+    tooltip. Added StellarFormula unit tests.
 
 - id: sandrone-normal-element-bug
   entity: sandrone

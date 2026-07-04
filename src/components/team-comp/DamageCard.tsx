@@ -1506,9 +1506,13 @@ function StellarDirectCoeffFields({
 }: CtxProps) {
   return (
     <StellarDirectCoeffInput
+      stellarAttachHits={activeContext.stellarAttachHits}
       stellarDirectCoeff={activeContext.stellarDirectCoeff}
-      onStellarDirectCoeffChange={(v) =>
-        onCalcContextChange({ stellarDirectCoeff: v })
+      onStellarAttachHitsChange={(hits) =>
+        onCalcContextChange({
+          stellarAttachHits: hits,
+          stellarDirectCoeff: undefined,
+        })
       }
       t={t}
     />

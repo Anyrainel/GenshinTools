@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { STELLAR_DIRECT_COEFF_DEFAULT } from "@/lib/dmgcalc/constants";
+import {
+  STELLAR_ATTACH_HITS_DEFAULT,
+  STELLAR_DIRECT_COEFF_BY_HITS,
+  STELLAR_DIRECT_COEFF_DEFAULT,
+} from "@/lib/dmgcalc/constants";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -7,10 +11,17 @@ import {
   LunarDirectFormula,
   LunarFormula,
   StellarDirectFormula,
+  StellarFormula,
   TransformFormula,
 } from "@/lib/dmgcalc/core/damageFormula";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import type { CalcContext } from "@/lib/dmgcalc/types";
+import {
+  getStellarDirectCoeffForHits,
+  nearestStellarAttachHitsForCoeff,
+  resolveStellarAttachHits,
+  resolveStellarDirectCoeff,
+} from "@/lib/dmgcalc/utils";
 
 const CTX: CalcContext = {
   enemyLevel: 100,
@@ -246,6 +257,32 @@ describe("LunarFormula", () => {
   });
 });
 
+describe("StellarFormula", () => {
+  const formula = new StellarFormula(0, {
+    element: "Cryo",
+    ability: "special",
+    reaction: "stellarConduct",
+  });
+
+  const stats = new StatSheet([
+    { key: "em", value: 800 },
+    { key: "reactionDmg%", value: 0.5 },
+    { key: "cr", value: 0.5 },
+    { key: "cd", value: 1.0 },
+  ]);
+
+  it("calc() always returns zero (SC trigger has no proc damage)", () => {
+    expect(formula.calc(stats, 90, CTX)).toBe(0);
+  });
+
+  it("display() reports zero damage with stellar template", () => {
+    const dp = formula.display(stats, 90, CTX);
+    expect(dp.template).toBe("stellar");
+    expect(dp.damage).toBe(0);
+    expect(dp.scalingKeys).toEqual([]);
+  });
+});
+
 describe("StellarDirectFormula", () => {
   const formula = new StellarDirectFormula(1.0, {
     element: "Cryo",
@@ -263,26 +300,59 @@ describe("StellarDirectFormula", () => {
     { key: "cd", value: 1.0 },
   ]);
 
-  it("uses default directCoeff placeholder", () => {
+  it("uses default attach hits from datamine table", () => {
     const dp = formula.display(baseStats, 90, CTX);
     expect(dp.template).toBe("stellarDirect");
+    expect(dp.params.attachHits).toBe(STELLAR_ATTACH_HITS_DEFAULT);
     expect(dp.params.directCoeff).toBeCloseTo(STELLAR_DIRECT_COEFF_DEFAULT);
   });
 
-  it("respects ctx.stellarDirectCoeff within 1.45–1.9", () => {
+  it("maps attach hits to datamine coefficients", () => {
+    expect(getStellarDirectCoeffForHits(1)).toBeCloseTo(1.45);
+    expect(getStellarDirectCoeffForHits(10)).toBeCloseTo(1.89);
+    expect(STELLAR_DIRECT_COEFF_BY_HITS[12]).toBeCloseTo(2.0);
+  });
+
+  it("respects ctx.stellarAttachHits at launch max", () => {
+    const dp = formula.display(baseStats, 90, {
+      ...CTX,
+      stellarAttachHits: 12,
+    });
+    expect(dp.params.attachHits).toBe(12);
+    expect(dp.params.directCoeff).toBeCloseTo(2.0);
+  });
+
+  it("maps legacy ctx.stellarDirectCoeff to nearest hit step", () => {
     const dp = formula.display(baseStats, 90, {
       ...CTX,
       stellarDirectCoeff: 1.9,
     });
-    expect(dp.params.directCoeff).toBeCloseTo(1.9);
+    expect(dp.params.attachHits).toBe(10);
+    expect(dp.params.directCoeff).toBeCloseTo(1.89);
   });
 
-  it("clamps ctx.stellarDirectCoeff to valid range", () => {
-    const dp = formula.display(baseStats, 90, {
-      ...CTX,
-      stellarDirectCoeff: 2.5,
-    });
-    expect(dp.params.directCoeff).toBeCloseTo(1.9);
+  it("maps legacy ctx.stellarDirectCoeff 2.0 to hit 12", () => {
+    expect(nearestStellarAttachHitsForCoeff(2.0)).toBe(12);
+    expect(
+      resolveStellarDirectCoeff({ ...CTX, stellarDirectCoeff: 2.0 })
+    ).toBeCloseTo(2.0);
+  });
+
+  it("resolveStellarAttachHits prefers explicit hits over legacy coeff", () => {
+    expect(
+      resolveStellarAttachHits({
+        ...CTX,
+        stellarAttachHits: 3,
+        stellarDirectCoeff: 1.9,
+      })
+    ).toBe(3);
+  });
+
+  it("nearestStellarAttachHitsForCoeff maps 1.6 to hit 4", () => {
+    expect(nearestStellarAttachHitsForCoeff(1.6)).toBe(4);
+    expect(
+      resolveStellarDirectCoeff({ ...CTX, stellarDirectCoeff: 1.6 })
+    ).toBeCloseTo(1.6);
   });
 
   it("ignores dmg% zone", () => {

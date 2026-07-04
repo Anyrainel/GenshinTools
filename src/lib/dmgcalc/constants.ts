@@ -173,16 +173,30 @@ export const STELLAR_SUPERSEDES: Partial<
 };
 
 /** Cryo/Electro attach-count multiplier for StellarDirectFormula (skill direct SC hits). */
-export const STELLAR_DIRECT_COEFF_MIN = 1.45;
-export const STELLAR_DIRECT_COEFF_MAX = 1.9;
-/** Default attach-count coefficient for Sandrone's team damage UI control. */
-export const STELLAR_DIRECT_COEFF_DEFAULT = 1.6;
-
 /**
- * Level-based SC proc coefficient for StellarFormula (auto-generated rx-stellarConduct).
- * Proc math is unverified — do not treat as Superconduct parity.
+ * Datamine Base Stellar-Conduct DMG coefficient by recorded hit count (index = hits).
+ * Source: kuroo / meowtews via 6.7 live data; Honey Impact / Gachabase tutorials.
+ * Index 0 = no buff; 1–10 = pre-launch cap; 11–12 = 6.7 launch stack extension.
  */
-export const STELLAR_REACTION_PROC_COEFF_PLACEHOLDER = 1.6;
+export const STELLAR_DIRECT_COEFF_BY_HITS: readonly number[] = [
+  1.0, 1.45, 1.5, 1.54, 1.6, 1.64, 1.7, 1.75, 1.79, 1.85, 1.89, 1.95, 2.0,
+];
+
+/** UI slider range for Polestar Field attach hits (launch cap: 12 hits / 2.0×). */
+export const STELLAR_ATTACH_HITS_MIN = 1;
+export const STELLAR_ATTACH_HITS_MAX = 12;
+/** Default attach hits (index 5 → 1.64×, near old 1.6 placeholder). */
+export const STELLAR_ATTACH_HITS_DEFAULT = 5;
+/** Launch datamine table supports up to 12 hits (coeff 2.0). */
+export const STELLAR_ATTACH_HITS_TABLE_MAX =
+  STELLAR_DIRECT_COEFF_BY_HITS.length - 1;
+
+export const STELLAR_DIRECT_COEFF_MIN = STELLAR_DIRECT_COEFF_BY_HITS[1]!;
+/** Max coeff at 12 recorded hits (datamine index 12). */
+export const STELLAR_DIRECT_COEFF_MAX =
+  STELLAR_DIRECT_COEFF_BY_HITS[STELLAR_ATTACH_HITS_TABLE_MAX]!;
+export const STELLAR_DIRECT_COEFF_DEFAULT =
+  STELLAR_DIRECT_COEFF_BY_HITS[STELLAR_ATTACH_HITS_DEFAULT]!;
 
 /** Stats that can appear on artifacts, for idle stats extraction. */
 export const ARTIFACT_STAT_KEYS: StatKey[] = [

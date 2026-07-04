@@ -1459,10 +1459,10 @@ export const i18nUiData = {
       en: "Rolls Count",
       zh: "词条数",
     },
-    stellarDirectCoeff: { en: "Stellar coeff.", zh: "星超导系数" },
-    stellarDirectCoeffTip: {
-      en: "Stellar-Conduct direct coefficient (1.45-1.9).",
-      zh: "星超导直伤系数（1.45-1.9）。",
+    stellarAttachHits: { en: "Polestar hits", zh: "极星附着" },
+    stellarAttachHitsTip: {
+      en: "Cryo+Electro hits recorded in Polestar Field each 3s (1–12). Coeff from datamine table (1.45× at 1 hit → 2.0× at 12).",
+      zh: "极星力场每 3 秒记录的冰/雷附着次数（1–12）。系数取自解包表（1 次 1.45×，12 次 2.0×）。",
     },
     emptyOptMsg: {
       en: "Press Run Optimization to find the best artifact loadout.",
@@ -2062,6 +2062,10 @@ export const i18nUiData = {
   },
   characterCard: {
     addFirstBuild: { en: "Add First Build", zh: "添加第一个配装" },
+    missingElement: {
+      en: "Character element data is missing. Element goblet options and AutoTune are unavailable.",
+      zh: "缺少角色元素数据，元素杯选项和自动调参不可用。",
+    },
   },
   buildCard: {
     presetBuild: { en: "Preset Build", zh: "预设配装" },

@@ -8,7 +8,10 @@ import type {
   WeaponType,
 } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
-import { characterStatsResource } from "@/data/gameStatsLoader";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/data/gameStatsLoader";
 import {
   LUNAR_SUPERSEDES,
   REACTION_AURA_TRIGGER,
@@ -67,10 +70,11 @@ export class TeamMeta {
       const resource = charactersById[id];
       if (!resource) throw new Error(`Unknown character ID: ${id}`);
       const stats = charStatsData?.[id];
-      this.elements[id] = stats?.element;
-      this.regions[id] = stats?.region;
-      this.rarities[id] = (stats?.rarity ?? resource.rarity) as Rarity;
-      this.weaponTypes[id] = stats?.weaponType;
+      const meta = getCharacterDisplayMeta(resource, stats);
+      this.elements[id] = meta.element;
+      this.regions[id] = meta.region;
+      this.rarities[id] = meta.rarity;
+      this.weaponTypes[id] = meta.weaponType;
 
       const info = charInfo[id];
       const cons = constellations[id] ?? 0;

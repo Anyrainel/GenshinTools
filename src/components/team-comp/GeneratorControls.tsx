@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
 import type { TierAssignment } from "@/data/types";
@@ -15,11 +16,15 @@ import {
   useDeferredTextInput,
 } from "@/hooks/useDeferredTextInput";
 import {
-  STELLAR_DIRECT_COEFF_DEFAULT,
-  STELLAR_DIRECT_COEFF_MAX,
-  STELLAR_DIRECT_COEFF_MIN,
+  STELLAR_ATTACH_HITS_DEFAULT,
+  STELLAR_ATTACH_HITS_MAX,
+  STELLAR_ATTACH_HITS_MIN,
 } from "@/lib/dmgcalc/constants";
 import type { SubstatBudgetPreset } from "@/lib/dmgcalc/types";
+import {
+  getStellarDirectCoeffForHits,
+  nearestStellarAttachHitsForCoeff,
+} from "@/lib/dmgcalc/utils";
 import type { TeamCharConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 
@@ -30,10 +35,10 @@ const INPUT_CLS =
 const SPINNER_HIDE =
   "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
-function clampStellarDirectCoeff(value: number): number {
+function clampStellarAttachHits(value: number): number {
   return Math.min(
-    STELLAR_DIRECT_COEFF_MAX,
-    Math.max(STELLAR_DIRECT_COEFF_MIN, value)
+    STELLAR_ATTACH_HITS_MAX,
+    Math.max(STELLAR_ATTACH_HITS_MIN, Math.round(value))
   );
 }
 
@@ -163,47 +168,50 @@ export function RollQualityInputs({
   );
 }
 
-// ─── Stellar-Conduct Direct Coefficient ───
+// ─── Stellar-Conduct Polestar attach hits ───
 
-type StellarDirectCoeffInputProps = {
+type StellarAttachHitsInputProps = {
+  stellarAttachHits?: number;
   stellarDirectCoeff?: number;
-  onStellarDirectCoeffChange: (v: number) => void;
+  onStellarAttachHitsChange: (hits: number) => void;
   t: ReturnType<typeof useLanguage>["t"];
 };
 
 export function StellarDirectCoeffInput({
+  stellarAttachHits,
   stellarDirectCoeff,
-  onStellarDirectCoeffChange,
+  onStellarAttachHitsChange,
   t,
-}: StellarDirectCoeffInputProps) {
-  const coeff = useDeferredTextInput(
-    String(stellarDirectCoeff ?? STELLAR_DIRECT_COEFF_DEFAULT),
-    (raw) => {
-      const trimmed = raw.trim();
-      const parsed =
-        trimmed === "" ? STELLAR_DIRECT_COEFF_DEFAULT : Number(trimmed);
-      const next = Number.isNaN(parsed) ? STELLAR_DIRECT_COEFF_DEFAULT : parsed;
-      onStellarDirectCoeffChange(clampStellarDirectCoeff(next));
-    },
-    { filter: numericInputFilter }
-  );
+}: StellarAttachHitsInputProps) {
+  const hits =
+    stellarAttachHits != null
+      ? clampStellarAttachHits(stellarAttachHits)
+      : stellarDirectCoeff != null
+        ? nearestStellarAttachHitsForCoeff(stellarDirectCoeff)
+        : STELLAR_ATTACH_HITS_DEFAULT;
+  const coeff = getStellarDirectCoeffForHits(hits);
 
   return (
     <div
-      className="flex items-center gap-0.5 md:gap-1"
-      title={t.ui("teamComp.stellarDirectCoeffTip")}
+      className="flex min-w-0 items-center gap-1 md:gap-1.5"
+      title={t.ui("teamComp.stellarAttachHitsTip")}
     >
-      <span className={LABEL_CLS}>{t.ui("teamComp.stellarDirectCoeff")}</span>
-      <Input
-        type="text"
-        inputMode="decimal"
-        value={coeff.value}
-        placeholder={String(STELLAR_DIRECT_COEFF_DEFAULT)}
-        onChange={coeff.onChange}
-        onBlur={coeff.onBlur}
-        onKeyDown={coeff.onKeyDown}
-        className={cn(INPUT_CLS, SPINNER_HIDE, "w-12 md:w-14")}
+      <span className={cn(LABEL_CLS, "hidden sm:inline")}>
+        {t.ui("teamComp.stellarAttachHits")}
+      </span>
+      <Slider
+        className="w-16 md:w-20"
+        value={[hits]}
+        min={STELLAR_ATTACH_HITS_MIN}
+        max={STELLAR_ATTACH_HITS_MAX}
+        step={1}
+        onValueChange={([next]) =>
+          onStellarAttachHitsChange(clampStellarAttachHits(next ?? hits))
+        }
       />
+      <span className="whitespace-nowrap font-mono text-[10px] text-foreground/80 md:text-xs">
+        {hits} (×{coeff.toFixed(2)})
+      </span>
     </div>
   );
 }

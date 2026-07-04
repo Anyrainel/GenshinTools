@@ -1,6 +1,11 @@
 import type { ArtifactSetConfig } from "@/data/types";
 import {
   DEFAULT_CALC_CONTEXT,
+  STELLAR_ATTACH_HITS_DEFAULT,
+  STELLAR_ATTACH_HITS_MAX,
+  STELLAR_ATTACH_HITS_MIN,
+  STELLAR_ATTACH_HITS_TABLE_MAX,
+  STELLAR_DIRECT_COEFF_BY_HITS,
   STELLAR_DIRECT_COEFF_DEFAULT,
   STELLAR_DIRECT_COEFF_MAX,
   STELLAR_DIRECT_COEFF_MIN,
@@ -22,13 +27,58 @@ export function resolveCalcContext(ctx?: Partial<CalcContext>): CalcContext {
   return { ...DEFAULT_CALC_CONTEXT, ...ctx };
 }
 
-/** Attach-count directCoeff for StellarDirectFormula (1.45–1.9; default 1.6). */
-export function resolveStellarDirectCoeff(ctx: CalcContext): number {
-  const raw = ctx.stellarDirectCoeff ?? STELLAR_DIRECT_COEFF_DEFAULT;
-  return Math.min(
-    STELLAR_DIRECT_COEFF_MAX,
-    Math.max(STELLAR_DIRECT_COEFF_MIN, raw)
+/** Datamine coeff for a Polestar Field attach hit count (clamped to table). */
+export function getStellarDirectCoeffForHits(hits: number): number {
+  const clamped = Math.min(
+    STELLAR_ATTACH_HITS_TABLE_MAX,
+    Math.max(0, Math.round(hits))
   );
+  return STELLAR_DIRECT_COEFF_BY_HITS[clamped] ?? STELLAR_DIRECT_COEFF_DEFAULT;
+}
+
+function clampStellarAttachHits(hits: number): number {
+  return Math.min(
+    STELLAR_ATTACH_HITS_MAX,
+    Math.max(STELLAR_ATTACH_HITS_MIN, Math.round(hits))
+  );
+}
+
+/** Map legacy raw coeff setting to nearest datamine hit count. */
+export function nearestStellarAttachHitsForCoeff(coeff: number): number {
+  const clamped = Math.min(
+    STELLAR_DIRECT_COEFF_MAX,
+    Math.max(STELLAR_DIRECT_COEFF_MIN, coeff)
+  );
+  let bestHits = STELLAR_ATTACH_HITS_DEFAULT;
+  let bestDelta = Number.POSITIVE_INFINITY;
+  for (
+    let hits = STELLAR_ATTACH_HITS_MIN;
+    hits <= STELLAR_ATTACH_HITS_MAX;
+    hits++
+  ) {
+    const delta = Math.abs(getStellarDirectCoeffForHits(hits) - clamped);
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      bestHits = hits;
+    }
+  }
+  return bestHits;
+}
+
+/** Resolve UI attach hit count (1–12 slider; legacy coeff maps to nearest step). */
+export function resolveStellarAttachHits(ctx: CalcContext): number {
+  if (ctx.stellarAttachHits != null) {
+    return clampStellarAttachHits(ctx.stellarAttachHits);
+  }
+  if (ctx.stellarDirectCoeff != null) {
+    return nearestStellarAttachHitsForCoeff(ctx.stellarDirectCoeff);
+  }
+  return STELLAR_ATTACH_HITS_DEFAULT;
+}
+
+/** Attach-count directCoeff for StellarDirectFormula (datamine table lookup). */
+export function resolveStellarDirectCoeff(ctx: CalcContext): number {
+  return getStellarDirectCoeffForHits(resolveStellarAttachHits(ctx));
 }
 
 /** Extract the 4pc set ID, or null if not a 4pc config. */

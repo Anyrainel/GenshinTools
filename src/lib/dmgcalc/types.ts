@@ -424,8 +424,12 @@ export type CalcContext = {
   rollMultiplier: number; // 0.7–1.0
   substatBudget: SubstatBudgetPreset;
   /**
-   * Stellar-Conduct direct damage attach-count coefficient (1.45–1.9).
-   * Sandrone teams expose this in team damage calculation settings.
+   * Polestar Field Cryo+Electro attach hits (1–12 UI slider).
+   * Maps to datamine Base Stellar-Conduct DMG coefficient table.
+   */
+  stellarAttachHits?: number;
+  /**
+   * @deprecated Legacy raw coeff override; maps to nearest attach hit step.
    */
   stellarDirectCoeff?: number;
 };

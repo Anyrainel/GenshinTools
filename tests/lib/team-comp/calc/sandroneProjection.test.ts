@@ -73,13 +73,17 @@ vi.mock("@/data/gameStatsLoader", () => ({
     baseDef: "700",
   }),
   getWeaponStatsAt90: () => undefined,
-  getCharacterDisplayMeta: () => ({
-    element: "Cryo",
-    weaponType: "Catalyst",
-    region: "Nod-Krai",
-    releaseDate: "2026-01-01",
-    rarity: 5,
-  }),
+  getCharacterDisplayMeta: (resource: { id: string }) => {
+    const stats =
+      fakeCharacterStats[resource.id as keyof typeof fakeCharacterStats];
+    return {
+      element: stats?.element ?? "Cryo",
+      weaponType: stats?.weaponType ?? "Catalyst",
+      region: stats?.region ?? "Mondstadt",
+      releaseDate: stats?.releaseDate ?? "2020-01-01",
+      rarity: stats?.rarity ?? 4,
+    };
+  },
   getWeaponDisplayMeta: () => ({
     type: undefined,
     secondaryStat: undefined,

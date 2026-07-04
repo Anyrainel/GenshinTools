@@ -145,7 +145,7 @@ All in `calc/damageFormula.ts`. Base class: `DamageFormula(talentMultiplier, tag
 
 **LunarDirectFormula:** Pass the raw game% as `talentMult`. `DirectCoeff` (×3 lunarCharged, ×1.6 lunarCrystallize, ×1 lunarBloom) is applied internally.
 
-**StellarDirectFormula:** Pass the raw game% as `talentMult`. `directCoeff` is attach-count dependent (1.45–1.9; default 1.6 via `CalcContext.stellarDirectCoeff`). Same reaction zones as Lunar Direct — no `dmg%` or DEF. `StellarFormula` covers auto-generated SC procs (`rx-stellarConduct`); proc math is a placeholder separate from skill direct hits.
+**StellarDirectFormula:** Pass the raw game% as `talentMult`. `directCoeff` is attach-count dependent (1.45–1.9; default 1.6 via `CalcContext.stellarDirectCoeff`). Same reaction zones as Lunar Direct — no `dmg%` or DEF. `StellarFormula` covers auto-generated `rx-stellarConduct` triggers; SC proc deals zero damage (Polestar Field only).
 
 **Dual-stat scaling:** `extraTerm: { key, multiplier }` for "X% ATK + Y% EM" type talents.
 

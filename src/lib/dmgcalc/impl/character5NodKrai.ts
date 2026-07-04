@@ -1412,7 +1412,7 @@ const sandroneOption = {
 @RegisterCharacter("sandrone", sandroneOption)
 class Sandrone extends CharacterBase {
   private readonly radianceOn =
-    resolveOption(sandroneOption, this.option) === "on";
+    resolveOption(sandroneOption, this.option, this.teamMeta) === "on";
 
   // Peak model: max 10 Refined Tactics stacks consumed on burst (P1)
   private readonly refinedTacticsStacks = this.radianceOn ? 10 : 0;

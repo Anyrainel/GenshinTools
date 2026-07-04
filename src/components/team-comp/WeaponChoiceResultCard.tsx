@@ -826,9 +826,13 @@ export function WeaponChoiceResultCard({
           />
           {hasSandrone && (
             <StellarDirectCoeffInput
+              stellarAttachHits={ctx.stellarAttachHits}
               stellarDirectCoeff={ctx.stellarDirectCoeff}
-              onStellarDirectCoeffChange={(v) =>
-                patchCtx({ stellarDirectCoeff: v })
+              onStellarAttachHitsChange={(hits) =>
+                patchCtx({
+                  stellarAttachHits: hits,
+                  stellarDirectCoeff: undefined,
+                })
               }
               t={t}
             />
