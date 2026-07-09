@@ -303,6 +303,54 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 
 Do **not** use Superconduct's transformative coefficient (1.5) for `StellarDirectFormula` skill hits.
 
+### S1b. Radiance: Stellar-Conduct (Witch's Revelation, 6.7)
+
+Genshin 6.7 **Witch's Revelation** adds Stellar-Conduct compatibility to seven existing characters: **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou, Yumemizuki Mizuki**. Game text adds an **Additional Talent** (A4 slot) and enhanced constellation clauses keyed to **辉映·星超导 / Radiance: Stellar-Conduct**.
+
+**Who enters Radiance:** Six of the seven gain a **Radiance: Stellar-Conduct** state while inside a **Polestar Field** (极星辉域). **Yumemizuki Mizuki is the exception** — her 6.7 buffs are Swirl/EM-focused and do **not** add a Radiance state or Polestar entry. **Sandrone** (Nod-Krai) is not in the Witch's Revelation seven but is the Stellar-Conduct enabler: she converts party Superconduct into Stellar-Conduct and enters Radiance in a Polestar Field herself. Reference implementation: `character5NodKrai.ts`.
+
+**User option (Radiance characters):** Register with `@RegisterCharacter("id", radianceOption)`. Each entity supports **only one** `OptionDef` (see U11). When Radiance is added to a character that already had an `OptionMap` (e.g., Diona C6 HP states), the Radiance toggle **occupies that slot**; displaced modes may be hardcoded to a peak branch (always-on EM+200 ≈ HP>50%) with a tracker `approximation` item if needed.
+
+Standard schema:
+
+```typescript
+const radianceOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+// In class body:
+private readonly radianceOn =
+  resolveOption(radianceOption, this.option, this.teamMeta) === "on";
+```
+
+- **[BUG]** if Radiance-gated buffs or SC formulas are active when `radianceOn` is false.
+- **[BUG]** if the "on" choice is not gated on `teamMeta.hasReaction("stellarConduct")`.
+
+**Radiance replaces, not stacks:** Game text under `辉映·星超导` **changes** the base mechanic (e.g., Rebuke → Luster, Judication bolts → Starsame). Implement as `if (this.radianceOn) { … } else { … }` for buffs and formula variants — not additive overlays on the pre-6.7 path. When a constellation scales differently in vs out of Radiance (Wriothesley C2), implement **both** branches; do not assume Radiance is always on for the non-Radiance branch.
+
+**SC direct damage:** Any hit tagged "视为星超导反应伤害" → `StellarDirectFormula` + `reaction: "stellarConduct"` (see S1). Use `reactionDmg%` / `reactionCr` / `reactionCd` / `baseDmg%` / `elevated%` zones — not `dmg%` or DEF.
+
+**Reaction filters:** SC skill hits and SC-tagged buffs → `filter: { reactions: ["stellarConduct"] }`. When game text names both 超导 and 星超导 for a **reaction DMG** team buff (Qiqi P4, Diona C6 Radiance), include `["stellarConduct", "superconduct"]` per U12 stellar-supersede note. Never use `superconduct` alone for SC **direct** damage.
+
+**Cast-triggered vs tick-triggered procs:** Procs keyed to **skill cast** ("施放…时", "unleashing E/Q", "when there are ≥N Sakura nearby" on E press) are **not** the same as periodic tick damage. Do **not** bundle cast procs into per-tick formula parts (e.g., Yae P1 extra lightning on E cast vs Sakura lightning ticks). Use a **separate `formulaMap` entry** and `comboDescriptor` count for casts per rotation. ICD-gated follow-up procs (e.g., P4 "每2.5秒至多触发一次") may be modeled as a separate formula with a best-estimate count; if bundled into always-on ticks, **[TRACK]** with category `approximation`.
+
+**Peak-model simplifications (acceptable wont-do):**
+- **Field / summon uptime:** Radiance effects scoped to a deployable (Qiqi Herald of Frost during E, Diona inside Q Drunken Mist) — peak model assumes deployable is active when the combo uses that ability; no runtime field-presence flag.
+- **Swap-order inheritance:** Cyno **Together We Rise** (C1 EM on swap, C2 SC stacks on TWR characters only) — `receiver: "team"` for SC buffs is an acceptable peak approximation when rotation assumes SC dealers are TWR-affected.
+- **Utility Radiance branches:** DR, energy restore, heal-on-proc — skip per U9 even when Radiance text replaces a combat-adjacent effect (e.g., Wriothesley C4 DR instead of heal-overflow ATK SPD).
+
+**Locale (U0b):** 6.7 Radiance strings live in main `character_*_*.json`, not only beta audit data. EN/ZH conflicts on Radiance clauses (e.g., Wriothesley C6 icicle 60% EN vs 20% ZH) follow **U0b — favor ZH**.
+
+**Non-Radiance 6.7 kits:** Mizuki-style unconditional buffs need no Radiance option, but receiver and reaction-filter rules still apply (e.g., party-triggered Swirl bonuses → `receiver: "team"` + swirl filter, not `self`).
+
 ### S2. `scalingKey` & `extraTerm`
 
 - **[BUG]** if a talent scaling *only* off HP uses `scalingKey: "atk"` with `extraTerm: { key: "hp", ... }`. Must use `scalingKey: "hp"` directly.

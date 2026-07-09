@@ -163,6 +163,31 @@
     should reach the whole party rather than only the active non-Wriothesley
     teammate.
 
+- id: "wriothesley-c2-non-radiance-na-ca"
+  entity: "wriothesley"
+  rule: "U4"
+  status: completed
+  category: "bug"
+  summary: >
+    C2 at five Prosecution Edict stacks outside Radiance should boost Normal
+    Attacks to 125% and Charged Attacks to 130% of original DMG, but the
+    non-Radiance formula path has no baseDmg% buff or multiplier for this branch.
+  detail: >
+    Added non-Radiance C2 StatBuffs at peak stacks: normal baseDmg% +0.25,
+    charge baseDmg% +0.30 when constellation >= 2 and radianceOn is false.
+
+- id: "wriothesley-c6-radiance-icicle-mult"
+  entity: "wriothesley"
+  rule: "U0b"
+  status: completed
+  category: "needs-data"
+  summary: >
+    C6 Radiance extra icicles use talentMult ×0.6 (following EN "60% of original
+    DMG") but bundled ZH text says 原本20%. Resolve locale before fixing.
+  detail: >
+    Changed C6 Radiance StellarDirectFormula icicle multiplier from ×0.6 to ×0.2
+    per ZH (原本20%) for enhanced NA5 and Luster: Vaulting Fist icicles.
+
 - id: "lyney-e-hat-explosion"
   entity: "lyney"
   rule: "S7"

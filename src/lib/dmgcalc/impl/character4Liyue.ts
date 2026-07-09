@@ -816,29 +816,66 @@ class Yanfei extends CharacterBase {
   }
 }
 
-@RegisterCharacter("beidou")
+const beidouOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("beidou", beidouOption)
 class Beidou extends CharacterBase {
-  readonly buffs = [
-    // P2: After max-counter E, Normal/Charged DMG +15% and ATK SPD +15% for 10s
-    new StatBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
-      [
-        { key: "dmg%", value: 0.15 },
-        { key: "atkSpd%", value: 0.15 },
-      ]
-    ),
-    // C6: During Q, enemies' Electro RES -15%
-    ...(this.constellation >= 6
-      ? [
+  private readonly radianceOn =
+    resolveOption(beidouOption, this.option, this.teamMeta) === "on";
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff>[] = [
+      // P2: After max-counter E, Normal/Charged DMG +15% and ATK SPD +15% for 10s
+      new StatBuff(
+        cbs(this, "P2", ["E"]),
+        {
+          receiver: "selfOnField",
+          filter: { abilities: ["normal", "charge"] },
+        },
+        [
+          { key: "dmg%", value: 0.15 },
+          { key: "atkSpd%", value: 0.15 },
+        ]
+      ),
+    ];
+
+    if (this.constellation >= 6) {
+      // C6: During Q, enemies' Electro RES -15%
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["Q"]),
+          { receiver: "team", filter: { elements: ["Electro"] } },
+          [{ key: "resReduction%", value: 0.15 }]
+        )
+      );
+
+      if (this.radianceOn) {
+        // C6 Radiance: Cryo RES -15% and active character EM +200 while Q active
+        buffs.push(
           new StatBuff(
             cbs(this, "C6", ["Q"]),
-            { receiver: "team", filter: { elements: ["Electro"] } },
+            { receiver: "team", filter: { elements: ["Cryo"] } },
             [{ key: "resReduction%", value: 0.15 }]
           ),
-        ]
-      : []),
-  ];
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
+            { key: "em", value: 200 },
+          ])
+        );
+      }
+    }
+
+    return buffs;
+  })();
 
   protected readonly formulaMap = (() => {
     const electroSkillTag = {

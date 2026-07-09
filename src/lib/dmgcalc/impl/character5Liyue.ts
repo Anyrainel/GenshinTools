@@ -1,4 +1,8 @@
-import { DirectFormula, LunarDirectFormula } from "../core/damageFormula";
+import {
+  DirectFormula,
+  LunarDirectFormula,
+  StellarDirectFormula,
+} from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { DynamicCapScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
@@ -1536,13 +1540,37 @@ class Keqing extends CharacterBase {
   }
 }
 
-@RegisterCharacter("qiqi")
+const qiqiOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("qiqi", qiqiOption)
 class Qiqi extends CharacterBase {
-  readonly buffs = [
-    // C2: Normal/Charged ATK DMG +15% vs Cryo-affected enemies
-    // Qiqi is Cryo so enemies will always be Cryo-affected; always active
-    ...(this.constellation >= 2
-      ? [
+  private readonly radianceOn =
+    resolveOption(qiqiOption, this.option, this.teamMeta) === "on";
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+
+    if (this.constellation >= 2) {
+      if (this.radianceOn) {
+        // C2 Radiance: +50% ATK (replaces Cryo-affected NA/CA DMG bonus)
+        buffs.push(
+          new StatBuff(cbs(this, "C2", ["passive"]), { receiver: "self" }, [
+            { key: "atk%", value: 0.5 },
+          ])
+        );
+      } else {
+        // C2: Normal/Charged ATK DMG +15% vs Cryo-affected enemies
+        buffs.push(
           new StatBuff(
             cbs(this, "C2", ["normal", "charge"]),
             {
@@ -1550,12 +1578,66 @@ class Qiqi extends CharacterBase {
               filter: { abilities: ["normal", "charge"] },
             },
             [{ key: "dmg%", value: 0.15 }]
-          ),
-        ]
-      : []),
-  ];
+          )
+        );
+      }
+    }
+
+    if (this.radianceOn) {
+      // P4 Radiance: While Herald of Frost is active, team Superconduct + SC reactionDmg +50%
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["E"]),
+          {
+            receiver: "team",
+            filter: { reactions: ["stellarConduct", "superconduct"] },
+          },
+          [{ key: "reactionDmg%", value: 0.5 }]
+        )
+      );
+    }
+
+    // C6: Glimpse of Mystery — 4 stacks; active ally SC hits +600% Qiqi ATK flat baseDmg per stack
+    if (this.constellation >= 6) {
+      for (const cid of Object.keys(this.teamMeta.elements)) {
+        if (cid === "qiqi") continue;
+        buffs.push(
+          new ScalingBuff(
+            { ...cbs(this, "C6", ["Q"]), maxStacks: 4 },
+            {
+              receiver: "teamOnField",
+              charId: cid,
+              filter: { reactions: ["stellarConduct"] },
+            },
+            [],
+            "atk",
+            "baseDmg",
+            6.0
+          )
+        );
+      }
+    }
+
+    return buffs;
+  })();
 
   protected readonly formulaMap = (() => {
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const cryoBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const scBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "stellarConduct" as const,
+    };
+
     // E Herald of Frost DMG: Lv10 64.8%, Lv13 (C5+ upgrades E): 76.5%
     // ~8 hits over 15s duration
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
@@ -1564,33 +1646,34 @@ class Qiqi extends CharacterBase {
         label: { zh: "E初始+鬼差×9", en: "E Initial + Herald ×9" },
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 8), {
-              element: "Cryo",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("E", 8), cryoSkill),
           },
           {
-            formula: new DirectFormula(this.param("E", 5), {
-              element: "Cryo",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("E", 5), cryoSkill),
             hits: 9,
             offField: true,
           },
         ],
       },
       "qiqi-burst": {
-        label: { zh: "Q伤害", en: "Q DMG" },
+        label: {
+          zh: this.radianceOn ? "Q伤害·星超导" : "Q伤害",
+          en: this.radianceOn ? "Q DMG (SC)" : "Q DMG",
+        },
         parts: [
           {
-            formula: new DirectFormula(this.param("Q", 3), {
-              element: "Cryo",
-              ability: "burst",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("Q", 3), cryoBurst),
           },
+          ...(this.radianceOn
+            ? [
+                {
+                  formula: new StellarDirectFormula(
+                    this.param("Q", 7),
+                    scBurst
+                  ),
+                },
+              ]
+            : []),
         ],
       },
     };

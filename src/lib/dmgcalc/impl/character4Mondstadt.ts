@@ -473,22 +473,25 @@ class Razor extends CharacterBase {
 }
 
 const dionaOption = {
-  label: { zh: "场上角色血量（6命）", en: "On-field HP (C6)" },
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
   choices: [
     {
-      value: "above50",
-      label: { zh: "HP>50% (EM+200)", en: "HP>50% (EM+200)" },
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
     },
-    {
-      value: "below50",
-      label: { zh: "HP≤50% (治疗加成)", en: "HP≤50% (Heal bonus)" },
-    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,
 } satisfies OptionDef;
 
 @RegisterCharacter("diona", dionaOption)
 class Diona extends CharacterBase {
-  private readonly hpState = resolveOption(dionaOption, this.option);
+  private readonly radianceOn =
+    resolveOption(dionaOption, this.option, this.teamMeta) === "on";
+
+  private readonly hasScReaction =
+    this.teamMeta.hasReaction("stellarConduct") ||
+    this.teamMeta.hasReaction("superconduct");
 
   readonly buffs = [
     // C2: Icy Paws DMG +15%
@@ -502,18 +505,54 @@ class Diona extends CharacterBase {
           ),
         ]
       : []),
-    // C6: In Q field, HP > 50% → EM +200; HP ≤ 50% → Incoming Healing +30% (skip non-damage stat)
-    ...(this.constellation >= 6 && this.hpState === "above50"
+    // C6: In Q field, HP > 50% → EM +200 (peak model)
+    ...(this.constellation >= 6
       ? [
           new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
             { key: "em", value: 200 },
           ]),
         ]
       : []),
+    // C6 Radiance: party in Q field → Superconduct + SC reactionDmg +40%
+    ...(this.constellation >= 6 && this.radianceOn
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["Q"]),
+            {
+              receiver: "team",
+              filter: { reactions: ["stellarConduct", "superconduct"] },
+            },
+            [{ key: "reactionDmg%", value: 0.4 }]
+          ),
+        ]
+      : []),
   ];
 
-  // Shielder/healer — no significant damage formulas
-  protected readonly formulaMap = {};
+  protected override get comboDescriptor(): ComboTemplate {
+    if (!this.hasScReaction) return [];
+    return [{ id: "diona-a4-paws", count: 1 }];
+  }
+
+  protected readonly formulaMap = (() => {
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    return {
+      "diona-a4-paws": {
+        label: { zh: "A4协同猫爪×3", en: "A4 Coordinated Paws (×3)" },
+        when: this.hasScReaction,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), cryoSkill),
+            hits: 3,
+            offField: true,
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("noelle")

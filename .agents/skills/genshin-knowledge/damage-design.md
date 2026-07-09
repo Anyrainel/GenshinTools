@@ -145,7 +145,9 @@ All in `calc/damageFormula.ts`. Base class: `DamageFormula(talentMultiplier, tag
 
 **LunarDirectFormula:** Pass the raw game% as `talentMult`. `DirectCoeff` (×3 lunarCharged, ×1.6 lunarCrystallize, ×1 lunarBloom) is applied internally.
 
-**StellarDirectFormula:** Pass the raw game% as `talentMult`. `directCoeff` is attach-count dependent (1.45–1.9; default 1.6 via `CalcContext.stellarDirectCoeff`). Same reaction zones as Lunar Direct — no `dmg%` or DEF. `StellarFormula` covers auto-generated `rx-stellarConduct` triggers; SC proc deals zero damage (Polestar Field only).
+**StellarDirectFormula:** Pass the raw game% as `talentMult`. `directCoeff` is attach-count dependent (1.45–1.9; default 1.6 via `CalcContext.stellarDirectCoeff`). Same reaction zones as Lunar Direct — no `dmg%` or DEF. `StellarFormula` covers auto-generated `rx-stellarConduct` triggers; SC proc deals zero damage (Polestar Field only). All kit SC DPS flows through `StellarDirectFormula`, not `StellarFormula`.
+
+**Radiance: Stellar-Conduct (6.7 Witch's Revelation):** Six enhanced characters use a shared `OptionDef` (`辉映·星超导`) with `radianceOn = resolveOption(...) === "on"` and `when: (tm) => tm.hasReaction("stellarConduct")` on the "on" choice. Radiance branches **replace** base mechanics (`if (radianceOn) … else …`). Mizuki is the seventh enhanced character but has no Radiance state. See `translator-rules.md` §S1b for cast-vs-tick proc placement, OptionDef migration when displacing an existing option, and peak-model caveats.
 
 **Dual-stat scaling:** `extraTerm: { key, multiplier }` for "X% ATK + Y% EM" type talents.
 

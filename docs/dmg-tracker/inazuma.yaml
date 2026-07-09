@@ -240,3 +240,67 @@
     on aura priority and enemy state, so choosing the first present team element
     can be wrong in multi-absorbable teams. Treat the current team-order default
     as an unsupported approximation and do not rely on it for tracked damage.
+
+- id: yae_miko-p1-e-cast-proc
+  entity: yae_miko
+  rule: S7
+  status: completed
+  category: bug
+  summary: >
+    P1 extra lightning (40% ATK / 50% SC ATK) is bundled into the per-tick
+    yae_miko-skill formula, but game text triggers it on E cast when 3 Sakura
+    are nearby — not on every Sesshou Sakura lightning strike.
+  detail: >
+    Split P1 proc into yae_miko-p1-proc (Direct/StellarDirect 0.4/0.5 ATK,
+    offField) with combo count 4; removed from yae_miko-skill per-tick bundle.
+
+- id: yae_miko-p4-sc-proc-overcount
+  entity: yae_miko
+  rule: S7
+  status: completed
+  category: approximation
+  summary: >
+    P4 Radiance 200% ATK StellarDirect proc is included on every yae_miko-skill
+    tick (combo count 15) without the 2.5s ICD, inflating SC proc DPS.
+  detail: >
+    Split into yae_miko-p4-sc-proc (StellarDirect 2.0 ATK) with combo count 7
+    when radianceOn && hasScReaction; removed from per-tick yae_miko-skill.
+
+- id: yae_miko-c2-em-buff
+  entity: yae_miko
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    C2 EM grant (60/90/120/200 by Sakura level) for Yae and the active
+    character is not implemented. Only the Sakura level multiplier in the E
+    formula reflects C2.
+  detail: >
+    Added C2 StatBuff +200 EM for self and teamOnField (peak Sakura level 4),
+    gated on ["E"] Sakura present trigger.
+
+- id: mizuki-c1-swirl-receiver
+  entity: yumemizuki_mizuki
+  rule: U1
+  status: completed
+  category: bug
+  summary: >
+    C1 Twenty-Three Nights' Awaiting +1100% EM Swirl bonus uses receiver
+    "self", but the mark buff applies to Swirl against the marked enemy from
+    any nearby party member's Anemo damage.
+  detail: >
+    Changed C1 ScalingBuff receiver from "self" to "team" with filter
+    reactions ["swirl"].
+
+- id: mizuki-p4-periodic-scope
+  entity: yumemizuki_mizuki
+  rule: U8
+  status: completed
+  category: approximation
+  summary: >
+    P4 +1000% EM baseDmg buff uses abilities ["skill"] and applies to all
+    skill hits, but game text limits it to the next periodic Dreamdrifter AoE
+    tick after a Swirl — not the initial E cast damage.
+  detail: >
+    Moved P4 +1000% EM baseDmg to bespokeBuffs on mizuki-skill-swirl periodic
+    DirectFormula only; initial E cast (mizuki-skill-initial) excluded.

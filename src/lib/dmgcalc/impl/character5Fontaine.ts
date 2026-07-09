@@ -1,10 +1,10 @@
 import type { ReactionType } from "@/data/enums";
-import { DirectFormula } from "../core/damageFormula";
+import { DirectFormula, StellarDirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { TeamMeta } from "../core/teamMeta";
-import type { ComboTemplate, OptionDef } from "../types";
+import type { ComboTemplate, FormulaPart, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 @RegisterCharacter("escoffier")
@@ -1119,16 +1119,32 @@ class Neuvillette extends CharacterBase {
   }
 }
 
-@RegisterCharacter("wriothesley")
+const wriothesleyOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("wriothesley", wriothesleyOption)
 class Wriothesley extends CharacterBase {
+  private readonly radianceOn =
+    resolveOption(wriothesleyOption, this.option, this.teamMeta) === "on";
+
+  // Peak: 5 Prosecution Edict stacks during Chilling Penalty (P2 max)
+  private readonly c2RadianceEnhanced =
+    this.radianceOn && this.constellation >= 2;
+  private readonly scNa3Mult = this.c2RadianceEnhanced ? 0.9 : 0.6;
+  private readonly scNa5Mult = this.c2RadianceEnhanced ? 1.2 : 0.8;
+  private readonly lusterMult = this.c2RadianceEnhanced ? 1.5 : 1.0;
+
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
-      // P1/C1: Gracious Rebuke → CA DMG Bonus (50% or 200%)
-      new StatBuff(
-        cbs(this, "P1/C1", ["charge"]),
-        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        [{ key: "dmg%", value: this.constellation >= 1 ? 2.0 : 0.5 }]
-      ),
       // P2: Prosecution Edict (max 5 stacks * 6% = 30% ATK)
       new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
         { key: "atk%", value: 0.3 },
@@ -1142,6 +1158,128 @@ class Wriothesley extends CharacterBase {
       ),
     ];
 
+    if (this.radianceOn) {
+      // P4: Stellar-Conduct DMG +30%
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["passive"]),
+          { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+          [{ key: "reactionDmg%", value: 0.3 }]
+        )
+      );
+      // C1: Luster ↔ NA5 cross-buff (+50% SC DMG each, peak: both active)
+      if (this.constellation >= 1) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C1", ["normal"]),
+            {
+              receiver: "selfOnField",
+              filter: {
+                abilities: ["normal"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            [{ key: "reactionDmg%", value: 0.5 }]
+          ),
+          new StatBuff(
+            cbs(this, "C1", ["charge"]),
+            {
+              receiver: "selfOnField",
+              filter: {
+                abilities: ["charge"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            [{ key: "reactionDmg%", value: 0.5 }]
+          )
+        );
+      }
+      // C4: self ATK SPD +20%, nearby allies ATK SPD +10%
+      if (this.constellation >= 4) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C4", ["passive"]),
+            { receiver: "selfOnField" },
+            [{ key: "atkSpd%", value: 0.2 }]
+          ),
+          new StatBuff(cbs(this, "C4", ["passive"]), { receiver: "other" }, [
+            { key: "atkSpd%", value: 0.1 },
+          ])
+        );
+      }
+      // C6: enhanced NA5 + Luster SC hits +10% CR, +80% CD
+      if (this.constellation >= 6) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C6", ["normal", "charge"]),
+            {
+              receiver: "selfOnField",
+              filter: {
+                abilities: ["normal", "charge"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            [
+              { key: "reactionCr", value: 0.1 },
+              { key: "reactionCd", value: 0.8 },
+            ]
+          )
+        );
+      }
+    } else {
+      // P1/C1: Gracious Rebuke → CA DMG Bonus (50% or 200%)
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P1/C1", ["charge"]),
+          { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+          [{ key: "dmg%", value: this.constellation >= 1 ? 2.0 : 0.5 }]
+        )
+      );
+      // C4: Heal overflow → on-field ATK SPD +20%, off-field → active character ATK SPD +10%
+      if (this.constellation >= 4) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C4", ["heal-overflow"]),
+            { receiver: "selfOnField" },
+            [{ key: "atkSpd%", value: 0.2 }]
+          ),
+          new StatBuff(
+            cbs(this, "C4", ["heal-overflow"]),
+            { receiver: "otherOnField" },
+            [{ key: "atkSpd%", value: 0.1 }]
+          )
+        );
+      }
+      // C6: Gracious Rebuke +10% CR, +80% CD
+      if (this.constellation >= 6) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C6", ["charge"]),
+            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+            [
+              { key: "cr", value: 0.1 },
+              { key: "cd", value: 0.8 },
+            ]
+          )
+        );
+      }
+      // C2: 5 Prosecution Edict stacks → NA 125%, CA 130% of original DMG
+      if (this.constellation >= 2) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["normal"]),
+            { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+            [{ key: "baseDmg%", value: 0.25 }]
+          ),
+          new StatBuff(
+            cbs(this, "C2", ["charge"]),
+            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+            [{ key: "baseDmg%", value: 0.3 }]
+          )
+        );
+      }
+    }
+
     // C2: Each P2 stack gives +40% Q DMG (max 5 = 200%)
     if (this.constellation >= 2) {
       buffs.push(
@@ -1149,34 +1287,6 @@ class Wriothesley extends CharacterBase {
           cbs(this, "C2", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 2.0 }]
-        )
-      );
-    }
-    // C4: Heal overflow → on-field ATK SPD +20%, off-field → active character ATK SPD +10%
-    if (this.constellation >= 4) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C4", ["heal-overflow"]),
-          { receiver: "selfOnField" },
-          [{ key: "atkSpd%", value: 0.2 }]
-        ),
-        new StatBuff(
-          cbs(this, "C4", ["heal-overflow"]),
-          { receiver: "otherOnField" },
-          [{ key: "atkSpd%", value: 0.1 }]
-        )
-      );
-    }
-    // C6: Gracious Rebuke +10% CR, +80% CD
-    if (this.constellation >= 6) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C6", ["charge"]),
-          { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-          [
-            { key: "cr", value: 0.1 },
-            { key: "cd", value: 0.8 },
-          ]
         )
       );
     }
@@ -1194,13 +1304,109 @@ class Wriothesley extends CharacterBase {
   // Q Burst (Lv10): 5 × 228.96% + Surging Blade 76.32%
   // Q Burst (Lv13 C5+): 5 × 270.30% + Surging Blade 90.10%
   protected readonly formulaMap = (() => {
-    const cHits = this.constellation >= 6 ? 2 : 1; // C6: additional icicle at 100% base DMG
-
     const normalTag = {
       element: "Cryo" as const,
       ability: "normal" as const,
       reaction: "none" as const,
     };
+    const chargeTag = {
+      element: "Cryo" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const scNormalTag = {
+      element: "Cryo" as const,
+      ability: "normal" as const,
+      reaction: "stellarConduct" as const,
+    };
+    const scChargeTag = {
+      element: "Cryo" as const,
+      ability: "charge" as const,
+      reaction: "stellarConduct" as const,
+    };
+
+    const cHits = this.constellation >= 6 ? 2 : 1;
+
+    if (this.radianceOn) {
+      const na5Parts: FormulaPart[] = [
+        {
+          formula: new StellarDirectFormula(
+            this.param("A", 6) * this.scNa5Mult,
+            scNormalTag
+          ),
+        },
+      ];
+      const lusterParts: FormulaPart[] = [
+        {
+          formula: new StellarDirectFormula(
+            this.param("A", 7) * this.lusterMult,
+            scChargeTag
+          ),
+        },
+      ];
+      if (this.constellation >= 6) {
+        na5Parts.push({
+          formula: new StellarDirectFormula(
+            this.param("A", 6) * 0.2,
+            scNormalTag
+          ),
+        });
+        lusterParts.push({
+          formula: new StellarDirectFormula(
+            this.param("A", 7) * 0.2,
+            scChargeTag
+          ),
+        });
+      }
+
+      return {
+        "wriothesley-normal": {
+          label: {
+            zh: "普攻（5段·星超导）",
+            en: "Normal (5-hit SC)",
+          },
+          parts: [
+            { formula: new DirectFormula(this.param("A", 1), normalTag) },
+            { formula: new DirectFormula(this.param("A", 2), normalTag) },
+            {
+              formula: new StellarDirectFormula(
+                this.param("A", 3) * this.scNa3Mult,
+                scNormalTag
+              ),
+            },
+            {
+              formula: new DirectFormula(this.param("A", 4), normalTag),
+              hits: 2,
+            },
+            ...na5Parts,
+          ],
+        },
+        "wriothesley-charge": {
+          label: { zh: "天辉·凌跃拳", en: "Luster: Vaulting Fist" },
+          parts: lusterParts,
+        },
+        "wriothesley-burst": {
+          label: { zh: "Q伤害", en: "Q" },
+          parts: [
+            {
+              formula: new DirectFormula(this.param("Q", 1), {
+                element: "Cryo",
+                ability: "burst",
+                reaction: "none",
+              }),
+              hits: 5,
+            },
+            {
+              formula: new DirectFormula(this.param("Q", 2), {
+                element: "Cryo",
+                ability: "burst",
+                reaction: "none",
+              }),
+            },
+          ],
+        },
+      };
+    }
 
     return {
       "wriothesley-normal": {
@@ -1223,11 +1429,7 @@ class Wriothesley extends CharacterBase {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(this.param("A", 7), {
-              element: "Cryo",
-              ability: "charge",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("A", 7), chargeTag),
             hits: cHits,
           },
         ],

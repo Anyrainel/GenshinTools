@@ -61,6 +61,22 @@
   detail: >
     Being attacked is hard to reliably trigger in combat, and we usually ignore the effect.
 
+- id: qiqi-p4-e-uptime-gate
+  entity: qiqi
+  rule: U8
+  status: wont-do
+  category: approximation
+  summary: >
+    P4 Radiance team Superconduct/Stellar-Conduct reactionDmg +50% is always
+    active when radianceOn, but game text requires Herald of Frost to be on the
+    field during E duration.
+  detail: >
+    Peak-model simplification per U9: comboDescriptor already assumes one E
+    cast per rotation with Herald of Frost field active during SC windows.
+    Treating the P4 reactionDmg buff as active whenever radianceOn matches
+    standard Qiqi sub-DPS rotation modeling; E-uptime gating would need runtime
+    deployable tracking with negligible impact when E is cast before reactions.
+
 - id: baizhu-p1-hp-option
   entity: baizhu
   rule: S6

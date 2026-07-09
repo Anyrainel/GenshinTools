@@ -1,4 +1,8 @@
-import { DirectFormula, TransformFormula } from "../core/damageFormula";
+import {
+  DirectFormula,
+  StellarDirectFormula,
+  TransformFormula,
+} from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { CrossScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
@@ -22,6 +26,15 @@ class YumemizukiMizuki extends CharacterBase {
       new StatBuff(cbs(this, "P2", ["A4", "E"]), { receiver: "self" }, [
         { key: "em", value: 100 },
       ]),
+      // P4: Dreamdrifter — party EM +10% of Mizuki's EM
+      new ScalingBuff(
+        cbs(this, "P4", ["E"]),
+        { receiver: "team" },
+        [],
+        "em",
+        "em",
+        0.1
+      ),
     ];
 
     // C1: 二十三夜待 mark — peak-damage model assumes mark always active;
@@ -30,7 +43,7 @@ class YumemizukiMizuki extends CharacterBase {
       buffs.push(
         new ScalingBuff(
           cbs(this, "C1", ["passive"]),
-          { receiver: "self", filter: { reactions: ["swirl"] } },
+          { receiver: "team", filter: { reactions: ["swirl"] } },
           [],
           "em",
           "baseDmg",
@@ -55,6 +68,19 @@ class YumemizukiMizuki extends CharacterBase {
           0.0004
         )
       );
+      // C2: RES shred 20% on five elements while in Dreamdrifter
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          {
+            receiver: "team",
+            filter: {
+              elements: ["Pyro", "Hydro", "Cryo", "Electro", "Anemo"],
+            },
+          },
+          [{ key: "resReduction%", value: 0.2 }]
+        )
+      );
     }
     if (this.constellation >= 6) {
       // C6: Swirl can crit — fixed CR 30%, CD 100%
@@ -66,6 +92,27 @@ class YumemizukiMizuki extends CharacterBase {
             { key: "reactionCr", value: 0.3 },
             { key: "reactionCd", value: 1.0 },
           ]
+        ),
+        // C6: EM above 500 → up to +20% CR / +80% CD on team Swirl
+        new ScalingBuff(
+          cbs(this, "C6", ["E"]),
+          { receiver: "team", filter: { reactions: ["swirl"] } },
+          [],
+          "em",
+          "reactionCr",
+          0.0004,
+          0.2,
+          500
+        ),
+        new ScalingBuff(
+          cbs(this, "C6", ["E"]),
+          { receiver: "team", filter: { reactions: ["swirl"] } },
+          [],
+          "em",
+          "reactionCd",
+          0.0016,
+          0.8,
+          500
         )
       );
     }
@@ -90,6 +137,20 @@ class YumemizukiMizuki extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
+    const anemoSkill = {
+      element: "Anemo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    // P4: next periodic Dreamdrifter AoE tick +1000% EM — not the initial E cast
+    const p4Periodic = new ScalingBuff(
+      cbs(this, "P4", ["E"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [],
+      "em",
+      "baseDmg",
+      10.0
+    );
 
     return {
       "mizuki-skill-initial": {
@@ -125,11 +186,8 @@ class YumemizukiMizuki extends CharacterBase {
         when: canSwirl,
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 1), {
-              element: "Anemo",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("E", 1), anemoSkill),
+            bespokeBuffs: [p4Periodic],
           },
           {
             formula: new TransformFormula(1.0, {
@@ -138,6 +196,14 @@ class YumemizukiMizuki extends CharacterBase {
               reaction: "swirl",
             }),
           },
+          // C1: extra 1000% EM Anemo hit on Swirl cancel
+          ...(this.constellation >= 1
+            ? [
+                {
+                  formula: new DirectFormula(10.0, anemoSkill, "em"),
+                },
+              ]
+            : []),
         ],
       },
     };
@@ -1494,8 +1560,27 @@ class Yoimiya extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("yae_miko")
+const yaeMikoOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("yae_miko", yaeMikoOption)
 class YaeMiko extends CharacterBase {
+  private readonly radianceOn =
+    resolveOption(yaeMikoOption, this.option, this.teamMeta) === "on";
+
+  private readonly hasScReaction =
+    this.teamMeta.hasReaction("stellarConduct") ||
+    this.teamMeta.hasReaction("superconduct");
+
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Each point of EM → Sesshou Sakura DMG +0.15%
@@ -1509,6 +1594,46 @@ class YaeMiko extends CharacterBase {
         0.0015
       ),
     ];
+
+    // P4: SC/superconduct proc → next Sakura hit +80% ATK (peak model when team has reaction)
+    if (this.hasScReaction) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P4", ["E"]),
+          { receiver: "self", filter: { abilities: ["skill"] } },
+          [],
+          "atk",
+          "baseDmg",
+          0.8
+        )
+      );
+    }
+
+    if (this.constellation >= 1 && this.hasScReaction) {
+      // C1: Team Electro DMG +50% and Stellar-Conduct DMG +50% for 10s
+      buffs.push(
+        new StatBuff(cbs(this, "C1", ["passive"]), { receiver: "team" }, [
+          { key: "electro%", value: 0.5 },
+        ]),
+        new StatBuff(
+          cbs(this, "C1", ["passive"]),
+          { receiver: "team", filter: { reactions: ["stellarConduct"] } },
+          [{ key: "reactionDmg%", value: 0.5 }]
+        )
+      );
+    }
+
+    if (this.constellation >= 2) {
+      // C2: Sakura present → Yae + active character EM +200 (peak level 4)
+      buffs.push(
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
+          { key: "em", value: 200 },
+        ]),
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "teamOnField" }, [
+          { key: "em", value: 200 },
+        ])
+      );
+    }
 
     if (this.constellation >= 4) {
       // C4: Totem hit -> Team Electro DMG +20%
@@ -1526,40 +1651,92 @@ class YaeMiko extends CharacterBase {
           cbs(this, "C6", ["E"]),
           { receiver: "self", filter: { abilities: ["skill"] } },
           [{ key: "defIgnore%", value: 0.6 }]
+        ),
+        // C6: Stellar-Conduct CRIT DMG +200%
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+          [{ key: "reactionCd", value: 2.0 }]
         )
       );
     }
     return buffs;
   })();
 
-  // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + 1 burst per rotation
+  // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + ~4 E-cast procs + 1 burst
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yae_miko-skill", count: 15 },
+      { id: "yae_miko-p1-proc", count: 4 },
+      ...(this.radianceOn && this.hasScReaction
+        ? [{ id: "yae_miko-p4-sc-proc" as const, count: 7 }]
+        : []),
       { id: "yae_miko-burst", count: 1 },
     ];
   }
 
   protected readonly formulaMap = (() => {
     // C2 raises Sakura from Level 3 to Level 4 → param3 vs param4
+    const electroSkill = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const scSkill = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "stellarConduct" as const,
+    };
     const electroBurst = {
       element: "Electro" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
+    const sakuraMult =
+      this.constellation >= 2 ? this.param("E", 4) : this.param("E", 3);
+
     return {
       "yae_miko-skill": {
-        label: { zh: "E(单次)", en: "E (×1)" },
+        label: {
+          zh: this.radianceOn ? "E(单次)·星超导" : "E(单次)",
+          en: this.radianceOn ? "E (×1, SC procs)" : "E (×1)",
+        },
         parts: [
           {
-            formula: new DirectFormula(
-              this.constellation >= 2 ? this.param("E", 4) : this.param("E", 3),
-              { element: "Electro", ability: "skill", reaction: "none" }
-            ),
+            formula: new DirectFormula(sakuraMult, electroSkill),
             offField: true,
           },
         ],
       },
+      // P1: 3 Sakura nearby → extra lightning on E cast (not per Sakura tick)
+      "yae_miko-p1-proc": {
+        label: {
+          zh: this.radianceOn ? "P1雷击·星超导" : "P1雷击",
+          en: this.radianceOn ? "P1 Lightning (SC)" : "P1 Lightning",
+        },
+        parts: [
+          {
+            formula: this.radianceOn
+              ? new StellarDirectFormula(0.5, scSkill, "atk")
+              : new DirectFormula(0.4, electroSkill, "atk"),
+            offField: true,
+          },
+        ],
+      },
+      // P4 Radiance: enhanced Sakura hit → 200% ATK SC (2.5s ICD, ~7/rotation)
+      ...(this.radianceOn && this.hasScReaction
+        ? {
+            "yae_miko-p4-sc-proc": {
+              label: { zh: "P4星超导", en: "P4 SC Proc" },
+              parts: [
+                {
+                  formula: new StellarDirectFormula(2.0, scSkill, "atk"),
+                  offField: true,
+                },
+              ],
+            },
+          }
+        : {}),
       "yae_miko-burst": {
         label: { zh: "Q 1段+3落雷", en: "Q Hit + 3 Thunderbolts" },
         parts: [

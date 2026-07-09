@@ -209,3 +209,36 @@
     DirectFormula(2.0) gated on this.constellation >= 2 on the same formula.
     Added the formula to the default comboDescriptor (count: 1). Oz tick damage
     stays in fischl-oz-total.
+
+- id: diona-c6-hp-option-removed
+  entity: diona
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    6.7 Radiance option replaced Diona's C6 HP-state OptionMap (HP>50% EM+200
+    vs HP≤50% heal%). C6 EM is now always-on and the heal% branch is gone.
+  detail: >
+    Radiance toggle intentionally occupies Diona's sole OptionDef slot (U11
+    forced-averaging when a more important OptionMap exists). When radianceOff,
+    always-on EM+200 matches the peak HP>50% branch for damage calc; Diona is a
+    healer/shielder so teammates in her Q field are typically above 50% HP. The
+    heal% branch (HP≤50%) is secondary for offensive modeling. When radianceOn,
+    C6 Radiance replaces both HP branches with +40% SC/Superconduct reactionDmg
+    inside the field per game text.
+
+- id: diona-c6-radiance-field-gate
+  entity: diona
+  rule: U8
+  status: wont-do
+  category: approximation
+  summary: >
+    C6 Radiance +40% Superconduct/Stellar-Conduct reactionDmg% applies to the
+    whole team whenever radianceOn, but game text limits it to characters
+    inside Signature Mix's Drunken Mist field.
+  detail: >
+    Peak-model simplification per U9: default rotation assumes Q field uptime
+    with active characters inside Drunken Mist. Gating reactionDmg to field
+    presence requires runtime field tracking beyond current buff pipeline; the
+    unconditional radianceOn gate is acceptable when comboDescriptor models Q
+    cast and field duration.

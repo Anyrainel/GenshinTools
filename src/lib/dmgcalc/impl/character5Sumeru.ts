@@ -1,4 +1,8 @@
-import { DirectFormula, TransformFormula } from "../core/damageFormula";
+import {
+  DirectFormula,
+  StellarDirectFormula,
+  TransformFormula,
+} from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff, TeamAggregationBuff } from "../core/statBuff";
@@ -744,43 +748,85 @@ class Nahida extends CharacterBase {
   }
 }
 
-@RegisterCharacter("cyno")
+const cynoOption = {
+  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  choices: [
+    {
+      value: "on",
+      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("cyno", cynoOption)
 class Cyno extends CharacterBase {
-  readonly buffs = [
-    // Q: EM bonus during Pactsworn Pathclearer (Q param12)
-    new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "selfOnField" }, [
-      { key: "em", value: this.param("Q", 12) },
-    ]),
-    ...(this.constellation >= 1
-      ? [
-          new StatBuff(
-            cbs(this, "C1", ["Q"]),
-            { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-            [{ key: "atkSpd%", value: 0.2 }]
-          ),
-        ]
-      : []),
-    // P2: Normal ATK DMG += 150% EM as baseDmg (during Q)
-    new ScalingBuff(
-      cbs(this, "P2", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      [],
-      "em",
-      "baseDmg",
-      1.5
-    ),
-    // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-    // Applied via bespokeBuff on C6 bolts to avoid leaking to Mortuary Rite (also ability: "skill")
-    // P1: Mortuary Rite (Judication) +35% DMG — applied via bespokeBuff on formula part
+  private readonly radianceOn =
+    resolveOption(cynoOption, this.option, this.teamMeta) === "on";
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // Q: EM bonus during Pactsworn Pathclearer (Q param12)
+      new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "selfOnField" }, [
+        { key: "em", value: this.param("Q", 12) },
+      ]),
+      // P2: Normal ATK DMG += 150% EM as baseDmg (during Q)
+      new ScalingBuff(
+        cbs(this, "P2", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+        [],
+        "em",
+        "baseDmg",
+        1.5
+      ),
+    ];
+
+    if (this.constellation >= 1) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C1", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+          [{ key: "atkSpd%", value: 0.2 }]
+        )
+      );
+      // C1 Radiance: Together We Rise +200 EM (persists on swap during Pathclearer)
+      if (this.radianceOn) {
+        buffs.push(
+          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "team" }, [
+            { key: "em", value: 200 },
+          ])
+        );
+      }
+    }
+
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
-    ...(this.constellation >= 2
-      ? [
-          new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
-            { key: "electro%", value: 0.5 },
-          ]),
-        ]
-      : []),
-  ];
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
+          { key: "electro%", value: 0.5 },
+        ])
+      );
+      // C2 Radiance: Together We Rise allies NA/CA → SC DMG +16% × 5 stacks
+      if (this.radianceOn) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["Q"]),
+            {
+              receiver: "team",
+              filter: {
+                abilities: ["normal", "charge"],
+                reactions: ["stellarConduct"],
+              },
+            },
+            [{ key: "reactionDmg%", value: 0.8 }]
+          )
+        );
+      }
+    }
+
+    return buffs;
+  })();
 
   protected readonly formulaMap = (() => {
     const normalBaseTag = {
@@ -793,6 +839,34 @@ class Cyno extends CharacterBase {
       ability: "skill" as const,
       reaction: "none" as const,
     };
+    const scSkillTag = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "stellarConduct" as const,
+    };
+
+    const duststalkerEmScaling = new ScalingBuff(
+      cbs(this, "P2", ["E"]),
+      {
+        receiver: "selfOnField",
+        filter: { abilities: ["skill"] },
+      },
+      [],
+      "em",
+      "baseDmg",
+      2.5
+    );
+    const starsameEmScaling = new ScalingBuff(
+      cbs(this, "P2", ["E"]),
+      {
+        receiver: "selfOnField",
+        filter: { abilities: ["skill"], reactions: ["stellarConduct"] },
+      },
+      [],
+      "em",
+      "baseDmg",
+      6.0
+    );
 
     return {
       // Base E Skill DMG (non-Q swift thrust)
@@ -840,53 +914,52 @@ class Cyno extends CharacterBase {
         ],
       },
       // P1 Duststalker Bolts: 3 bolts per Judication (100% ATK, Electro skill DMG)
-      // Available at C0+. P2 adds 250% EM as baseDmg.
       "cyno-p1-bolts": {
         label: { zh: "P1渡荒之雷", en: "P1 Duststalker Bolts" },
+        when: !this.radianceOn,
         parts: [
           {
             formula: new DirectFormula(1.0, eBaseTag),
             hits: 3,
-            // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-            bespokeBuffs: [
-              new ScalingBuff(
-                cbs(this, "P2", ["E"]),
-                {
-                  receiver: "selfOnField",
-                  filter: { abilities: ["skill"] },
-                },
-                [],
-                "em",
-                "baseDmg",
-                2.5
-              ),
-            ],
+            bespokeBuffs: [duststalkerEmScaling],
           },
         ],
       },
-      // C6 "Day of the Jackal": Each Normal ATK fires an extra Duststalker Bolt
-      // (100% ATK, Electro skill DMG). ~5 bolts per combo. P2 EM->baseDmg applies automatically.
+      // P1 Radiance: 3 Duststalker Bolts - Starsame (200% ATK, Stellar-Conduct skill DMG)
+      "cyno-p1-starsame": {
+        label: { zh: "P1渡荒之雷·星偕", en: "P1 Starsame Bolts" },
+        when: this.radianceOn,
+        parts: [
+          {
+            formula: new StellarDirectFormula(2.0, scSkillTag, "atk"),
+            hits: 3,
+            bespokeBuffs: [starsameEmScaling],
+          },
+        ],
+      },
+      // C6 "Day of the Jackal": Each Normal ATG fires an extra Duststalker Bolt
       "cyno-c6-bolts": {
         label: { zh: "渡荒之雷", en: "Duststalker Bolts" },
         minC: 6,
+        when: !this.radianceOn,
         parts: [
           {
             formula: new DirectFormula(1.0, eBaseTag),
-            hits: 5,
-            // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-            bespokeBuffs: [
-              new ScalingBuff(
-                cbs(this, "P2", ["E"]),
-                {
-                  receiver: "selfOnField",
-                  filter: { abilities: ["skill"] },
-                },
-                [],
-                "em",
-                "baseDmg",
-                2.5
-              ),
-            ],
+            hits: 8,
+            bespokeBuffs: [duststalkerEmScaling],
+          },
+        ],
+      },
+      // C6 Radiance: Day of the Jackal fires Starsame bolts under Together We Rise
+      "cyno-c6-starsame": {
+        label: { zh: "渡荒之雷·星偕", en: "Starsame Bolts" },
+        minC: 6,
+        when: this.radianceOn,
+        parts: [
+          {
+            formula: new StellarDirectFormula(2.0, scSkillTag, "atk"),
+            hits: 8,
+            bespokeBuffs: [starsameEmScaling],
           },
         ],
       },
@@ -897,8 +970,14 @@ class Cyno extends CharacterBase {
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "cyno-combo", count: 6 },
-      { id: "cyno-p1-bolts", count: 6 },
-      { id: "cyno-c6-bolts", count: 6 },
+      {
+        id: this.radianceOn ? "cyno-p1-starsame" : "cyno-p1-bolts",
+        count: 6,
+      },
+      {
+        id: this.radianceOn ? "cyno-c6-starsame" : "cyno-c6-bolts",
+        count: 1,
+      },
     ];
   }
 }

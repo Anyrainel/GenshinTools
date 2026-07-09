@@ -101,19 +101,35 @@
     comboDescriptor still uses the 3-Mirror projection/burst for the default
     rotation; lower-mirror variants are available for selection.
 
-- id: cyno-q-n4-second-hit
+- id: cyno-c2-twr-sc-receiver
   entity: cyno
-  rule: S3
-  status: completed
-  category: bug
+  rule: U1
+  status: wont-do
+  category: approximation
   summary: >
-    Pactsworn Pathclearer N4 is modeled as this.param("Q", 4) with hits: 2, but
-    the talent row is {param4}+{param5}. The second N4 hit currently uses the
-    first hit's multiplier.
+    C2 Radiance Stellar-Conduct DMG +16%×5 is modeled with receiver "team", but
+    game text limits the buff to characters affected by Together We Rise (Cyno
+    and the character who inherits it on swap), not the whole party at once.
   detail: >
-    Replaced the single hits:2 N4 part with two separate DirectFormula parts
-    using this.param("Q", 4) and this.param("Q", 5), preserving the two distinct
-    multipliers and applying baseDmg to each hit independently.
+    Together We Rise inheritance is swap-order dependent (cross-character runtime
+    state). Narrowing C2 SC stacks to Cyno plus the swap partner requires engine
+    swap tracking not available in current patterns. Team receiver is an acceptable
+    peak approximation for SC-team damage modeling where rotation members dealing
+    SC damage are assumed TWR-affected; off-field over-buff on non-SC dealers is
+    negligible.
+
+- id: cyno-c6-jackal-proc-count
+  entity: cyno
+  rule: S8
+  status: completed
+  category: approximation
+  summary: >
+    C6 Day of the Jackal Starsame uses comboDescriptor count 6 with hits 5
+    (30 bolt procs per burst), exceeding the 4–8 stack cap and 0.4s ICD from
+    game text.
+  detail: >
+    Reduced C6 bolt procs to 8 hits × combo count 1 (max stack cap per
+    Pathclearer) for both cyno-c6-bolts and cyno-c6-starsame, replacing 6×5=30.
 
 - id: wanderer-c4-hydro-electro-random-buff
   entity: wanderer
