@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-07-01T08:30:00.399Z",
+  "generatedAt": "2026-07-09T23:25:34.533Z",
   "teams": {
     "Xja6aBlWrSDS1gxT0j": {
       "teamName": "lohen / nicole / durin / xilonen",
@@ -45593,16 +45593,16 @@
           "minCr": 0.1
         }
       },
-      "damage": 8967784.8378,
+      "damage": 9418983.708,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 910183.8335,
-            "total": 1820367.6669
+            "perHit": 1015641.6704,
+            "total": 2031283.3407
           },
           {
-            "perHit": 729175.4222,
-            "total": 1458350.8444
+            "perHit": 849317.0204,
+            "total": 1698634.0408
           },
           {
             "perHit": 1227374.6545,
@@ -45645,7 +45645,7 @@
             "total": 136364.8339
           }
         ],
-        "totalDamage": 8967784.8378
+        "totalDamage": 9418983.708
       },
       "artifacts": {
         "wriothesley": {
@@ -45886,34 +45886,34 @@
         }
       },
       "display": {
-        "totalDamage": 8967784.8378,
+        "totalDamage": 9418983.708,
         "partsByFormula": {
           "wriothesley.wriothesley-normal": [
             {
-              "damage": 147803.0249,
+              "damage": 164405.7609,
               "template": "direct"
             },
             {
-              "damage": 145860.34,
+              "damage": 161977.4048,
               "template": "direct"
             },
             {
-              "damage": 165057.0635,
+              "damage": 185973.3092,
               "template": "direct"
             },
             {
-              "damage": 128567.2284,
+              "damage": 140361.0153,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 194328.9481,
+              "damage": 222563.1649,
               "template": "direct"
             }
           ],
           "wriothesley.wriothesley-charge": [
             {
-              "damage": 364587.7111,
+              "damage": 424658.5102,
               "template": "direct",
               "hits": 2
             }
@@ -46041,20 +46041,6 @@
             "source": {
               "type": "character",
               "id": "wriothesley",
-              "origin": "P1/C1"
-            },
-            "entries": [
-              {
-                "key": "dmg%",
-                "value": 2
-              }
-            ],
-            "providerCharId": "wriothesley"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "wriothesley",
               "origin": "P2"
             },
             "entries": [
@@ -46083,7 +46069,7 @@
             "source": {
               "type": "character",
               "id": "wriothesley",
-              "origin": "C2"
+              "origin": "P1/C1"
             },
             "entries": [
               {
@@ -46107,6 +46093,48 @@
               {
                 "key": "cd",
                 "value": 0.8
+              }
+            ],
+            "providerCharId": "wriothesley"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "wriothesley",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "baseDmg%",
+                "value": 0.25
+              }
+            ],
+            "providerCharId": "wriothesley"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "wriothesley",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "baseDmg%",
+                "value": 0.3
+              }
+            ],
+            "providerCharId": "wriothesley"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "wriothesley",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "dmg%",
+                "value": 2
               }
             ],
             "providerCharId": "wriothesley"
@@ -46673,7 +46701,7 @@
               "er": 1.2202,
               "dmg%": 4.106,
               "baseDmg": 12140.2767,
-              "baseDmg%": 0.7031,
+              "baseDmg%": 1.1289,
               "defReduction%": 0.3,
               "resReduction%": 0.35,
               "atkSpd%": 0.36
@@ -46776,28 +46804,28 @@
         },
         "marginalGains": {
           "wriothesley": {
-            "atk": 0.0011,
-            "atk%": 0.0036,
-            "cr": 0.0113,
-            "cd": 0.0121
+            "atk": 0.0013,
+            "atk%": 0.004,
+            "cr": 0.0112,
+            "cd": 0.0124
           },
           "durin": {
-            "atk": 0.0017,
-            "atk%": 0.0053,
-            "cr": 0.0013,
-            "cd": 0.0059
+            "atk": 0.0016,
+            "atk%": 0.005,
+            "cr": 0.0012,
+            "cd": 0.0056
           },
           "shenhe": {
-            "atk": 0.001,
-            "atk%": 0.0033,
-            "cr": 0.0011,
-            "cd": 0.0009
+            "atk": 0.0009,
+            "atk%": 0.0031,
+            "cr": 0.001,
+            "cd": 0.0008
           },
           "bennett": {
             "atk": 0.0001,
             "atk%": 0.0003,
-            "cr": 0.0006,
-            "cd": 0.0006
+            "cr": 0.0005,
+            "cd": 0.0005
           }
         },
         "levelUpGains": {}
@@ -46844,16 +46872,16 @@
           "minCr": 0.05
         }
       },
-      "damage": 17864719.7783,
+      "damage": 18276412.2223,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 1248189.8009,
-            "total": 2496379.6018
+            "perHit": 1353051.5756,
+            "total": 2706103.1512
           },
           {
-            "perHit": 808149.1267,
-            "total": 1616298.2534
+            "perHit": 909133.574,
+            "total": 1818267.148
           },
           {
             "perHit": 1288907.4218,
@@ -46912,7 +46940,7 @@
             "total": 101085.9071
           }
         ],
-        "totalDamage": 17864719.7783
+        "totalDamage": 18276412.2223
       },
       "artifacts": {
         "wriothesley": {
@@ -46930,8 +46958,8 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cr": 9.92,
+              "cd": 19.81,
               "atk%": 4.96,
               "hp%": 4.96
             }
@@ -46940,8 +46968,8 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 3.31,
-              "cd": 33.02,
+              "cr": 6.61,
+              "cd": 26.42,
               "atk": 16.54,
               "hp%": 4.96
             }
@@ -47154,34 +47182,34 @@
         }
       },
       "display": {
-        "totalDamage": 17864719.7783,
+        "totalDamage": 18276412.2223,
         "partsByFormula": {
           "wriothesley.wriothesley-normal": [
             {
-              "damage": 204159.3638,
+              "damage": 220668.2589,
               "template": "direct"
             },
             {
-              "damage": 202227.6593,
+              "damage": 218253.6282,
               "template": "direct"
             },
             {
-              "damage": 221315.8803,
+              "damage": 242113.9044,
               "template": "direct"
             },
             {
-              "damage": 185032.2907,
+              "damage": 196759.4175,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 250422.3161,
+              "damage": 278496.9492,
               "template": "direct"
             }
           ],
           "wriothesley.wriothesley-charge": [
             {
-              "damage": 404074.5634,
+              "damage": 454566.787,
               "template": "direct",
               "hits": 2
             }
@@ -47333,20 +47361,6 @@
             "source": {
               "type": "character",
               "id": "wriothesley",
-              "origin": "P1/C1"
-            },
-            "entries": [
-              {
-                "key": "dmg%",
-                "value": 2
-              }
-            ],
-            "providerCharId": "wriothesley"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "wriothesley",
               "origin": "P2"
             },
             "entries": [
@@ -47375,7 +47389,7 @@
             "source": {
               "type": "character",
               "id": "wriothesley",
-              "origin": "C2"
+              "origin": "P1/C1"
             },
             "entries": [
               {
@@ -47399,6 +47413,48 @@
               {
                 "key": "cd",
                 "value": 0.8
+              }
+            ],
+            "providerCharId": "wriothesley"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "wriothesley",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "baseDmg%",
+                "value": 0.25
+              }
+            ],
+            "providerCharId": "wriothesley"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "wriothesley",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "baseDmg%",
+                "value": 0.3
+              }
+            ],
+            "providerCharId": "wriothesley"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "wriothesley",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "dmg%",
+                "value": 2
               }
             ],
             "providerCharId": "wriothesley"
@@ -48034,7 +48090,7 @@
               "er": 1.0551,
               "dmg%": 5.358,
               "baseDmg": 12614.3531,
-              "baseDmg%": 0.7031,
+              "baseDmg%": 1.1289,
               "resReduction%": 0.6,
               "atkSpd%": 0.36
             },
@@ -48129,28 +48185,28 @@
         },
         "marginalGains": {
           "wriothesley": {
-            "atk": 0.0009,
-            "atk%": 0.0027,
+            "atk": 0.001,
+            "atk%": 0.0031,
             "cr": 0.0008,
-            "cd": 0.0059
+            "cd": 0.0061
           },
           "xilonen": {
             "def": 0.0005,
             "def%": 0.0016,
-            "cr": 0.0019,
+            "cr": 0.0018,
             "cd": 0.0019
           },
           "furina": {
-            "hp": 0.0017,
-            "hp%": 0.0054,
+            "hp": 0.0016,
+            "hp%": 0.0053,
             "atk": 0.0001,
-            "atk%": 0.0003,
-            "cd": 0.0089
+            "atk%": 0.0002,
+            "cd": 0.0087
           },
           "shenhe": {
             "atk": 0.0008,
-            "atk%": 0.0027,
-            "cr": 0.001,
+            "atk%": 0.0026,
+            "cr": 0.0009,
             "cd": 0.0009
           }
         },
@@ -57671,7 +57727,7 @@
           "minCr": 0.29
         }
       },
-      "damage": 1350582.9741,
+      "damage": 1431902.036,
       "comboResult": {
         "lineDamages": [
           {
@@ -57687,8 +57743,8 @@
             "total": 81319.0619
           },
           {
-            "perHit": 67765.8849,
-            "total": 135531.7698
+            "perHit": 108425.4158,
+            "total": 216850.8316
           },
           {
             "perHit": 16074.1293,
@@ -57735,7 +57791,7 @@
             "total": 55174.5471
           }
         ],
-        "totalDamage": 1350582.9741
+        "totalDamage": 1431902.036
       },
       "artifacts": {
         "cyno": {
@@ -57980,7 +58036,7 @@
         }
       },
       "display": {
-        "totalDamage": 1350582.9741,
+        "totalDamage": 1431902.036,
         "partsByFormula": {
           "cyno.cyno-base-e": [
             {
@@ -58029,7 +58085,7 @@
             {
               "damage": 13553.177,
               "template": "direct",
-              "hits": 5
+              "hits": 8
             }
           ],
           "baizhu.baizhu-skill": [
@@ -58617,10 +58673,10 @@
         "marginalGains": {
           "cyno": {
             "atk": 0.0018,
-            "atk%": 0.0049,
-            "em": 0.008,
-            "cr": 0.0094,
-            "cd": 0.0091
+            "atk%": 0.0051,
+            "em": 0.0087,
+            "cr": 0.0102,
+            "cd": 0.0099
           },
           "baizhu": {
             "hp": 0.0001,
@@ -58628,20 +58684,20 @@
             "atk": 0.0003,
             "atk%": 0.0008,
             "cr": 0.0009,
-            "cd": 0.0009
+            "cd": 0.0008
           },
           "nahida": {
-            "atk": 0.0013,
-            "atk%": 0.0036,
-            "em": 0.0035,
-            "cr": 0.0062,
-            "cd": 0.0063
+            "atk": 0.0012,
+            "atk%": 0.0034,
+            "em": 0.0033,
+            "cr": 0.0058,
+            "cd": 0.0059
           },
           "fischl": {
-            "atk": 0.0019,
-            "atk%": 0.0057,
-            "cr": 0.0065,
-            "cd": 0.0064
+            "atk": 0.0018,
+            "atk%": 0.0054,
+            "cr": 0.0061,
+            "cd": 0.006
           }
         },
         "levelUpGains": {}
@@ -58674,24 +58730,28 @@
           "minCr": 0.1
         }
       },
-      "damage": 1222914.261,
+      "damage": 1286126.3592,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 19332.1156,
-            "total": 38664.2312
+            "perHit": 19233.2237,
+            "total": 38466.4474
           },
           {
-            "perHit": 58597.4573,
-            "total": 117194.9147
+            "perHit": 77648.5695,
+            "total": 155297.1389
           },
           {
-            "perHit": 102366.1154,
-            "total": 204732.2308
+            "perHit": 107057.2359,
+            "total": 214114.4718
           },
           {
-            "perHit": 28292.079,
-            "total": 56584.158
+            "perHit": 31285.187,
+            "total": 62570.374
+          },
+          {
+            "perHit": 4969.6003,
+            "total": 9939.2006
           },
           {
             "perHit": 140219.8555,
@@ -58730,7 +58790,7 @@
             "total": 49702.9678
           }
         ],
-        "totalDamage": 1222914.261
+        "totalDamage": 1286126.3592
       },
       "artifacts": {
         "tighnari": {
@@ -58739,8 +58799,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 5.51,
-              "atk%": 4.96,
               "cd": 33.02,
+              "atk%": 4.96,
               "cr": 3.31
             }
           },
@@ -58748,9 +58808,9 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "atk%": 9.91,
-              "cd": 19.81,
               "cr": 6.61,
+              "cd": 26.42,
+              "atk%": 4.96,
               "em": 19.82
             }
           },
@@ -58758,8 +58818,8 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cd": 26.42,
+              "cr": 6.61,
               "em": 19.82,
               "atk": 16.54
             }
@@ -58768,9 +58828,9 @@
             "setKey": "generated",
             "mainStat": "dendro%",
             "substats": {
+              "cr": 9.92,
+              "cd": 19.81,
               "atk%": 4.96,
-              "cd": 26.42,
-              "cr": 6.61,
               "em": 19.82
             }
           },
@@ -58778,8 +58838,8 @@
             "setKey": "generated",
             "mainStat": "cd",
             "substats": {
-              "atk%": 14.87,
-              "cr": 9.92,
+              "cr": 13.22,
+              "atk%": 9.91,
               "em": 19.82,
               "atk": 16.54
             }
@@ -58946,7 +59006,7 @@
         "tighnari": {
           "hp": 4780,
           "er": 0.0551,
-          "cd": 1.5467,
+          "cd": 1.6788,
           "cr": 0.3966,
           "atk": 344,
           "em": 79
@@ -58975,44 +59035,50 @@
         }
       },
       "display": {
-        "totalDamage": 1222914.261,
+        "totalDamage": 1286126.3592,
         "partsByFormula": {
           "tighnari.tighnari-skill": [
             {
-              "damage": 19332.1156,
+              "damage": 19233.2237,
               "template": "direct"
             }
           ],
           "tighnari.tighnari-charge": [
             {
-              "damage": 13945.4625,
+              "damage": 17319.4287,
               "template": "direct"
             },
             {
-              "damage": 7798.89,
+              "damage": 10880.5,
               "template": "direct",
               "hits": 4
             },
             {
-              "damage": 13456.4348,
+              "damage": 16807.1408,
               "template": "direct"
             }
           ],
           "tighnari.tighnari-burst": [
             {
-              "damage": 7677.4587,
+              "damage": 8029.2927,
               "template": "direct",
               "hits": 6
             },
             {
-              "damage": 9383.5606,
+              "damage": 9813.58,
               "template": "direct",
               "hits": 6
             }
           ],
           "yae_miko.yae_miko-skill": [
             {
-              "damage": 28292.079,
+              "damage": 31285.187,
+              "template": "direct"
+            }
+          ],
+          "yae_miko.yae_miko-p1-proc": [
+            {
+              "damage": 4969.6003,
               "template": "direct"
             }
           ],
@@ -59119,7 +59185,7 @@
             "entries": [
               {
                 "key": "dmg%",
-                "value": 0.1496
+                "value": 0.2696
               }
             ],
             "providerCharId": "tighnari"
@@ -59189,7 +59255,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 797.632
+                "value": 1437.632
               }
             ],
             "providerCharId": "tighnari"
@@ -59203,7 +59269,35 @@
             "entries": [
               {
                 "key": "dmg%",
-                "value": 0.2097
+                "value": 0.5097
+              }
+            ],
+            "providerCharId": "yae_miko"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "yae_miko",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "em",
+                "value": 200
+              }
+            ],
+            "providerCharId": "yae_miko"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "yae_miko",
+              "origin": "C2"
+            },
+            "entries": [
+              {
+                "key": "em",
+                "value": 200
               }
             ],
             "providerCharId": "yae_miko"
@@ -59315,22 +59409,22 @@
           "tighnari": {
             "onField": {
               "cr": 0.8876,
-              "cd": 2.0467,
+              "cd": 2.1788,
               "er": 1.0551,
-              "em": 249,
+              "em": 449,
               "resReduction%": 0.2,
               "hp": 16401,
-              "atk": 1921,
+              "atk": 1835,
               "def": 675
             },
             "offField": {
               "cr": 0.8876,
-              "cd": 2.0467,
+              "cd": 2.1788,
               "er": 1.0551,
               "em": 199,
               "resReduction%": 0.2,
               "hp": 16401,
-              "atk": 1921,
+              "atk": 1835,
               "def": 675
             }
           },
@@ -59339,7 +59433,7 @@
               "cr": 0.8174,
               "cd": 1.6244,
               "er": 1.7157,
-              "em": 140,
+              "em": 540,
               "resReduction%": 0.2,
               "hp": 15889,
               "atk": 2302,
@@ -59349,7 +59443,7 @@
               "cr": 0.8174,
               "cd": 1.6244,
               "er": 1.7157,
-              "em": 140,
+              "em": 340,
               "resReduction%": 0.2,
               "hp": 15889,
               "atk": 2302,
@@ -59361,7 +59455,7 @@
               "cr": 0.7246,
               "cd": 1.7565,
               "er": 2.1786,
-              "em": 120,
+              "em": 320,
               "resReduction%": 0.2,
               "hp": 30716,
               "atk": 2379,
@@ -59383,7 +59477,7 @@
               "cr": 0.6346,
               "cd": 1.2963,
               "er": 2.1786,
-              "em": 120,
+              "em": 320,
               "resReduction%": 0.2,
               "hp": 15092,
               "atk": 2407,
@@ -59404,24 +59498,24 @@
         "maxStats": {
           "tighnari": {
             "onField": {
-              "atk": 1921,
+              "atk": 1835,
               "hp": 16401,
               "def": 675,
-              "em": 249,
+              "em": 449,
               "cr": 1.0376,
-              "cd": 2.0467,
+              "cd": 2.1788,
               "er": 1.0551,
-              "dmg%": 1.3436,
-              "baseDmg": 797.632,
+              "dmg%": 1.4636,
+              "baseDmg": 1437.632,
               "resReduction%": 0.2
             },
             "offField": {
-              "atk": 1921,
+              "atk": 1835,
               "hp": 16401,
               "def": 675,
               "em": 199,
               "cr": 0.8876,
-              "cd": 2.0467,
+              "cd": 2.1788,
               "er": 1.0551,
               "dmg%": 0.994,
               "baseDmg": 637.632,
@@ -59433,11 +59527,11 @@
               "atk": 2302,
               "hp": 15889,
               "def": 609,
-              "em": 140,
+              "em": 540,
               "cr": 0.8174,
               "cd": 1.6244,
               "er": 1.7157,
-              "dmg%": 1.8357,
+              "dmg%": 2.4357,
               "defIgnore%": 0.6,
               "resReduction%": 0.2
             },
@@ -59445,11 +59539,11 @@
               "atk": 2302,
               "hp": 15889,
               "def": 609,
-              "em": 140,
+              "em": 340,
               "cr": 0.8174,
               "cd": 1.6244,
               "er": 1.7157,
-              "dmg%": 1.8357,
+              "dmg%": 2.1357,
               "defIgnore%": 0.6,
               "resReduction%": 0.2
             }
@@ -59459,7 +59553,7 @@
               "atk": 2379,
               "hp": 30716,
               "def": 790,
-              "em": 120,
+              "em": 320,
               "cr": 0.7246,
               "cd": 1.7565,
               "er": 2.1786,
@@ -59483,7 +59577,7 @@
               "atk": 2407,
               "hp": 15092,
               "def": 635,
-              "em": 120,
+              "em": 320,
               "cr": 0.6346,
               "cd": 1.2963,
               "er": 2.1786,
@@ -59505,32 +59599,32 @@
         },
         "marginalGains": {
           "tighnari": {
-            "atk": 0.0023,
-            "atk%": 0.006,
-            "em": 0.0036,
+            "atk": 0.0024,
+            "atk%": 0.0062,
+            "em": 0.0038,
             "cr": 0.0048,
-            "cd": 0.0062
+            "cd": 0.0064
           },
           "yae_miko": {
             "atk": 0.002,
-            "atk%": 0.0061,
+            "atk%": 0.006,
             "em": 0.0005,
-            "cr": 0.0064,
+            "cr": 0.0063,
             "cd": 0.0064
           },
           "zhongli": {
             "hp": 0.0007,
-            "hp%": 0.0023,
-            "atk": 0.0008,
-            "atk%": 0.0021,
-            "cr": 0.0039,
-            "cd": 0.0032
+            "hp%": 0.0022,
+            "atk": 0.0007,
+            "atk%": 0.002,
+            "cr": 0.0037,
+            "cd": 0.003
           },
           "fischl": {
-            "atk": 0.0019,
-            "atk%": 0.0056,
-            "cr": 0.0065,
-            "cd": 0.0064
+            "atk": 0.0018,
+            "atk%": 0.0053,
+            "cr": 0.0062,
+            "cd": 0.0061
           }
         },
         "levelUpGains": {}
