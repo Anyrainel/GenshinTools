@@ -659,11 +659,6 @@
             "characterId": "nicole",
             "hasPerfectMerge": true,
             "has4pcBuild": true
-          },
-          {
-            "characterId": "prune",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
           }
         ]
       },
@@ -1461,7 +1456,8 @@
             "cd",
             "cr",
             "atk%",
-            "em"
+            "em",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -1480,7 +1476,8 @@
             "cd",
             "cr",
             "atk%",
-            "em"
+            "em",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -1498,7 +1495,8 @@
             "cd",
             "cr",
             "atk%",
-            "em"
+            "em",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -1517,7 +1515,8 @@
             "cd",
             "cr",
             "atk%",
-            "em"
+            "em",
+            "er"
           ],
           "mustPresent": [
             "cd",
@@ -3718,10 +3717,9 @@
           "substats": [
             "cd",
             "cr",
-            "em",
-            "er",
             "atk%",
-            "def%"
+            "def%",
+            "em"
           ],
           "mustPresent": [
             "cd",
@@ -3738,10 +3736,9 @@
           "substats": [
             "cd",
             "cr",
-            "em",
-            "er",
             "atk%",
-            "def%"
+            "def%",
+            "em"
           ],
           "mustPresent": [
             "cd",
@@ -3758,10 +3755,9 @@
           "substats": [
             "cd",
             "cr",
-            "em",
-            "er",
             "atk%",
-            "def%"
+            "def%",
+            "em"
           ],
           "mustPresent": [
             "cd",
@@ -3778,10 +3774,9 @@
           "substats": [
             "cd",
             "cr",
-            "em",
-            "er",
             "atk%",
-            "def%"
+            "def%",
+            "em"
           ],
           "mustPresent": [
             "cd",
@@ -3792,11 +3787,6 @@
         "servedCharacters": [
           {
             "characterId": "flins",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
-          {
-            "characterId": "lauma",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },
