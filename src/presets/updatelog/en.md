@@ -2,6 +2,19 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-07-15
+
+### features
+- Added a dedicated "Redesigned ER" tab under Team Comp, featuring a fully rewritten Energy Recharge calculator and optimizer
+- Implemented "Radiance: Stellar-Conduct" combat options and damage calculations for Witch's Revelation characters, including Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou, and Yumemizuki Mizuki
+- Exposed a "Polestar hits" slider in the Team Comp analyzer to customize attach-hit counts and apply the corresponding datamined reaction damage coefficients
+- Added support for the 5-star Claymore "A Teaspoon of Transcendence", including its stats and Stellar-Conduct damage refinement buffs
+- Show offline troubleshooting tips as a prominent banner in the scanner and manager dialogs when disconnected
+
+### fixes
+- Fixed Sandrone's Normal and Plunging Attack elements to correctly deal Cryo damage, and adjusted her C1 coordinated attack trigger conditions
+- Fixed the passive buffs for the "Disaster and Remorse" polearm to correctly target only the on-field character
+
 ## 2026-06-25
 
 ### features
