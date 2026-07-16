@@ -963,6 +963,45 @@ describe("createCharacter / createWeapon", () => {
       "superconduct",
     ]);
   });
+
+  it("handles Disenchantment in Deep Shadow superconduct and stellarConduct buffs", () => {
+    // Case 1: Cryo + Electro (Superconduct)
+    const scMeta = new TeamMeta(["kamisato_ayaka", "fischl"]);
+    const scArtifact = createArtifactSet(
+      "disenchantment_in_deep_shadow",
+      "kamisato_ayaka",
+      scMeta
+    );
+
+    const superconductBuff = scArtifact.buffs.find((b) =>
+      b.target.filter?.reactions?.includes("superconduct")
+    );
+    const stellarConductBuff = scArtifact.buffs.find((b) =>
+      b.target.filter?.reactions?.includes("stellarConduct")
+    );
+    const crBuff = scArtifact.buffs.find((b) =>
+      b.staticBuffs.some((e) => e.key === "cr")
+    );
+
+    expect(superconductBuff?.staticBuffs[0].value).toBe(0.8);
+    expect(stellarConductBuff?.staticBuffs[0].value).toBe(0.4);
+    expect(crBuff).toBeDefined();
+    expect(crBuff?.staticBuffs[0].value).toBe(0.16);
+
+    // Case 2: Sandrone team (Stellar-Conduct)
+    const stellarMeta = new TeamMeta(["sandrone", "fischl"]);
+    const stellarArtifact = createArtifactSet(
+      "disenchantment_in_deep_shadow",
+      "sandrone",
+      stellarMeta
+    );
+
+    const crBuffStellar = stellarArtifact.buffs.find((b) =>
+      b.staticBuffs.some((e) => e.key === "cr")
+    );
+    expect(crBuffStellar).toBeDefined();
+    expect(crBuffStellar?.staticBuffs[0].value).toBe(0.16);
+  });
 });
 
 describe("getOptionDef", () => {

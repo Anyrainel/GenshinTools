@@ -119,10 +119,13 @@ export function withBetaOverlay<T extends Record<string, unknown>>(
 ): () => Promise<T> {
   return async () => {
     if (!loadBeta || !betaEnabledNow()) return loadReleased();
-    const [released, beta] = await Promise.all([
-      loadReleased(),
-      loadBeta().catch(() => ({}) as T),
-    ]);
+    let beta: T;
+    try {
+      beta = await loadBeta();
+    } catch {
+      beta = {} as T;
+    }
+    const released = await loadReleased();
     return { ...beta, ...released };
   };
 }

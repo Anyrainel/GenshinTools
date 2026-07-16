@@ -429,3 +429,38 @@ class LionsRoar extends WeaponBase {
     ];
   }
 }
+
+@RegisterWeapon("emberwell")
+class Emberwell extends WeaponBase {
+  get buffs() {
+    const buffs = [
+      new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]),
+    ];
+    if (
+      this.teamMeta.hasReaction("stellarConduct") ||
+      this.teamMeta.hasReaction("stellarSwirl")
+    ) {
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["elemental-reaction"]),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+            },
+          ]
+        )
+      );
+    }
+    return buffs;
+  }
+}

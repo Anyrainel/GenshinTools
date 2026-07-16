@@ -249,4 +249,5 @@ export const REACTION_COLORS: Partial<Record<ReactionType, string>> = {
   lunarBloom: "#A5D86E", // Lighter bloom green
   lunarCrystallize: "#FFE082", // Lighter Geo golden
   stellarConduct: "#9AD4FF", // Cryo-Electro stellar (bright icy blue)
+  stellarSwirl: "#8FFFD4", // Cryo-Anemo stellar (bright icy teal)
 };

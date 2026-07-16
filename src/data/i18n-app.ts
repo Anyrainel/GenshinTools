@@ -170,6 +170,7 @@ export const i18nAppData = {
     lunarBloom: { en: "Lunar Bloom", zh: "月绽放" },
     lunarCrystallize: { en: "Lunar Crystallize", zh: "月结晶" },
     stellarConduct: { en: "Stellar-Conduct", zh: "星超导" },
+    stellarSwirl: { en: "Stellar Swirl", zh: "星扩散" },
   },
   abilities: {
     normal: { en: "Normal", zh: "普攻" },

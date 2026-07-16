@@ -416,3 +416,28 @@ class LithicBlade extends WeaponBase {
     ];
   }
 }
+
+@RegisterWeapon("blade_of_atonement")
+class BladeOfAtonement extends WeaponBase {
+  get buffs() {
+    const buffs = [
+      new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+        { key: "em", value: r(this.refinement, [64, 80, 96, 112, 128]) },
+      ]),
+    ];
+    if (
+      this.teamMeta.hasReaction("stellarConduct") ||
+      this.teamMeta.hasReaction("stellarSwirl")
+    ) {
+      buffs.push(
+        new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          },
+        ])
+      );
+    }
+    return buffs;
+  }
+}

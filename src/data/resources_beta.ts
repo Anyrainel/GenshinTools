@@ -7,10 +7,21 @@ import type {
 } from "./types";
 
 export const betaCharacters: CharacterResource[] = [
+  {"id":"alyosha","rarity":4,"imagePath":"/character/alyosha.webp"},
+  {"id":"odette","rarity":5,"imagePath":"/character/odette.webp"},
 ];
 export const betaWeapons: WeaponResource[] = [
   {"id":"prized_isshin_blade","rarity":4,"imagePath":"/weapon/prized_isshin_blade.webp"},
+  {"id":"emberwell","rarity":4,"imagePath":"/weapon/emberwell.webp"},
+  {"id":"whitelake_frostfeather","rarity":5,"imagePath":"/weapon/whitelake_frostfeather.webp"},
+  {"id":"exaiphanes_blade","rarity":5,"imagePath":"/weapon/exaiphanes_blade.webp"},
+  {"id":"blade_of_atonement","rarity":4,"imagePath":"/weapon/blade_of_atonement.webp"},
+  {"id":"song_of_the_vigil","rarity":4,"imagePath":"/weapon/song_of_the_vigil.webp"},
+  {"id":"echoes_of_the_heart","rarity":4,"imagePath":"/weapon/echoes_of_the_heart.webp"},
+  {"id":"covenant_of_frost_and_snow","rarity":4,"imagePath":"/weapon/covenant_of_frost_and_snow.webp"},
 ];
 export const betaArtifacts: ArtifactSetResource[] = [
   {"id":"glacier_and_snowfield","rarity":5,"imagePaths":{"flower":"/artifact/glacier_and_snowfield.webp","plume":"/artifact/glacier_and_snowfield2.webp","sands":"/artifact/glacier_and_snowfield3.webp","goblet":"/artifact/glacier_and_snowfield4.webp","circlet":"/artifact/glacier_and_snowfield5.webp"}},
+  {"id":"scarlet_proof","rarity":5,"imagePaths":{"flower":"/artifact/scarlet_proof.webp","plume":"/artifact/scarlet_proof2.webp","sands":"/artifact/scarlet_proof3.webp","goblet":"/artifact/scarlet_proof4.webp","circlet":"/artifact/scarlet_proof5.webp"}},
+  {"id":"heart_of_the_furnace","rarity":5,"imagePaths":{"flower":"/artifact/heart_of_the_furnace.webp","plume":"/artifact/heart_of_the_furnace2.webp","sands":"/artifact/heart_of_the_furnace3.webp","goblet":"/artifact/heart_of_the_furnace4.webp","circlet":"/artifact/heart_of_the_furnace5.webp"}},
 ];

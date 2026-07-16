@@ -439,3 +439,35 @@ class MappaMare extends WeaponBase {
     ),
   ];
 }
+
+@RegisterWeapon("echoes_of_the_heart")
+class EchoesOfTheHeart extends WeaponBase {
+  get buffs() {
+    const buffs = [
+      new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+        { key: "em", value: r(this.refinement, [60, 75, 90, 105, 120]) },
+      ]),
+    ];
+    if (
+      this.teamMeta.hasReaction("stellarConduct") ||
+      this.teamMeta.hasReaction("stellarSwirl")
+    ) {
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["elemental-reaction"]),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+            },
+          ]
+        )
+      );
+    }
+    return buffs;
+  }
+}

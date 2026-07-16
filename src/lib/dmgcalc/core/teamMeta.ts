@@ -157,9 +157,13 @@ export class TeamMeta {
 
     if (!hasElements || !charParticipates) return false;
 
-    // Sandrone P3: Stellar-Conduct requires her in the party (Cryo+Electro alone is not enough).
+    // Sandrone P3/Odette P3: Stellar-Conduct/Stellar-Swirl requires them in the party.
     if (req.requiresStellarConductEnabler) {
-      if (!this.characters.includes("sandrone")) return false;
+      if (
+        !this.characters.includes("sandrone") &&
+        !this.characters.includes("odette")
+      )
+        return false;
     }
 
     if (req.requiresMoonsign5StarParticipant) {
@@ -201,14 +205,17 @@ export class TeamMeta {
       return supersede.survivalElements.some((el) => teamElements.includes(el));
     }
 
-    // Sandrone P3 (ZH): 超导 → 星超导 — transformative Superconduct is replaced,
-    // not coexistent, when Stellar-Conduct is available.
+    // Sandrone P3/Odette P3: 超导 → 星超导, 扩散 → 星扩散 — transformative reactions are replaced
+    // when Stellar reactions are available.
     const stellarSupersede = STELLAR_SUPERSEDES[reaction];
     if (
       stellarSupersede &&
       this.meetsReactionRequirements(stellarSupersede.stellar, charId)
     ) {
-      return false;
+      if (!stellarSupersede.survivalElements) return false;
+      return stellarSupersede.survivalElements.some((el) =>
+        teamElements.includes(el)
+      );
     }
 
     return true;

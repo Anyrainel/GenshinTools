@@ -806,8 +806,14 @@ def scrape_weapon(
     en_refinements = en_passive.get("refinements", {})
     zh_refinements = zh_passive.get("refinements", {})
 
-    en_formatted = {k: _format_desc(v) for k, v in en_refinements.items()}
-    zh_formatted = {k: _format_desc(v) for k, v in zh_refinements.items()}
+    en_formatted = {
+        k: _format_desc(v.get("description", "") if isinstance(v, dict) else v)
+        for k, v in en_refinements.items()
+    }
+    zh_formatted = {
+        k: _format_desc(v.get("description", "") if isinstance(v, dict) else v)
+        for k, v in zh_refinements.items()
+    }
 
     en_desc_tpl, en_refs = _templatize_weapon_desc(en_formatted)
     zh_desc_tpl, zh_refs = _templatize_weapon_desc(zh_formatted)
@@ -872,19 +878,25 @@ def scrape_artifact(
 
     print(f"    {en_name}: {rarity}* (set {set_id_num})")
 
+    def _get_effect(bonuses: dict, key: str) -> str:
+        val = bonuses.get(key, "")
+        if isinstance(val, dict):
+            return val.get("description", "")
+        return str(val)
+
     en_out = {
         "id": str(set_id_num),
         "name": en_name,
         "rarity": rarity,
-        "effect2": _format_desc(en_bonuses.get("2pc", "")),
-        "effect4": _format_desc(en_bonuses.get("4pc", "")),
+        "effect2": _format_desc(_get_effect(en_bonuses, "2pc")),
+        "effect4": _format_desc(_get_effect(en_bonuses, "4pc")),
     }
     zh_out = {
         "id": str(set_id_num),
         "name": zh_name,
         "rarity": rarity,
-        "effect2": _format_desc(zh_bonuses.get("2pc", "")),
-        "effect4": _format_desc(zh_bonuses.get("4pc", "")),
+        "effect2": _format_desc(_get_effect(zh_bonuses, "2pc")),
+        "effect4": _format_desc(_get_effect(zh_bonuses, "4pc")),
     }
 
     # Map slot → icon name (e.g. "flower" → "UI_RelicIcon_15044_4")
@@ -1041,6 +1053,10 @@ def main() -> None:
         for num_id, _derived_id, _meta in unreleased_weapons:
             try:
                 weapon_id, en_out, zh_out, stats_out, icon_name = scrape_weapon(num_id, version)
+
+                if not weapon_id:
+                    print("    Skipping placeholder weapon: empty derived ID")
+                    continue
 
                 # Skip weapons without effect text (test/placeholder weapons)
                 if not en_out["descHtmlTpl"]:

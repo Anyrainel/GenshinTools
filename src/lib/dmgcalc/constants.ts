@@ -33,7 +33,10 @@ export const LUNAR_REACTIONS: LunarReactionType[] = [
   "lunarCrystallize",
 ];
 
-export const STELLAR_REACTIONS: StellarReactionType[] = ["stellarConduct"];
+export const STELLAR_REACTIONS: StellarReactionType[] = [
+  "stellarConduct",
+  "stellarSwirl",
+];
 
 export const PHEC_ELEMENTS: Element[] = [
   "Pyro",
@@ -54,6 +57,10 @@ export const REACTION_ELEMENT_REQUIREMENTS: Record<
   superconduct: { requiredElements: [["Cryo"], ["Electro"]] },
   stellarConduct: {
     requiredElements: [["Cryo"], ["Electro"]],
+    requiresStellarConductEnabler: true,
+  },
+  stellarSwirl: {
+    requiredElements: [["Anemo"], ["Cryo"]],
     requiresStellarConductEnabler: true,
   },
   swirl: {
@@ -167,9 +174,16 @@ export const LUNAR_SUPERSEDES: Partial<
  * unchanged — it is not gated by this map.
  */
 export const STELLAR_SUPERSEDES: Partial<
-  Record<ReactionType, { stellar: StellarReactionType }>
+  Record<
+    ReactionType,
+    { stellar: StellarReactionType; survivalElements?: Element[] }
+  >
 > = {
   superconduct: { stellar: "stellarConduct" },
+  swirl: {
+    stellar: "stellarSwirl",
+    survivalElements: ["Pyro", "Hydro", "Electro"],
+  },
 };
 
 /** Cryo/Electro attach-count multiplier for StellarDirectFormula (skill direct SC hits). */

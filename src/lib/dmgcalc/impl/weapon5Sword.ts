@@ -1,8 +1,10 @@
 import { elements } from "@/data/enums";
+import type { StatEntry } from "@/data/types";
 import { ZERO_ENERGY_CHARS } from "../constants";
 import { WeaponBase } from "../core/implModel";
-import { RegisterWeapon } from "../core/registry";
+import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
+import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
 @RegisterWeapon("athame_artis")
@@ -394,4 +396,68 @@ class Azurelight extends WeaponBase {
         ]
       : []),
   ];
+}
+
+const whitelakeFrostfeatherOption = {
+  label: { zh: "湖光之哀层数", en: "Lake-Hued Lament Stacks" },
+  choices: [
+    { value: "3", label: { zh: "3层", en: "3 Stacks" } },
+    { value: "2", label: { zh: "2层", en: "2 Stacks" } },
+    { value: "1", label: { zh: "1层", en: "1 Stack" } },
+    { value: "0", label: { zh: "0层", en: "0 Stacks" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("whitelake_frostfeather", whitelakeFrostfeatherOption)
+class WhitelakeFrostfeather extends WeaponBase {
+  private readonly o = resolveOption(whitelakeFrostfeatherOption, this.option);
+
+  get buffs() {
+    const stacks = Number(this.o);
+    const buffs: StatBuff[] = [];
+    if (stacks > 0) {
+      buffs.push(
+        new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+          },
+        ])
+      );
+    }
+    if (stacks === 3) {
+      buffs.push(
+        new StatBuff(
+          wbs(this),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionCd",
+              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+            },
+          ]
+        )
+      );
+    }
+    return buffs;
+  }
+}
+
+@RegisterWeapon("exaiphanes_blade")
+class ExaiphanesBlade extends WeaponBase {
+  get buffs() {
+    if (!this.charId.startsWith("traveler_")) return [];
+
+    const stats: StatEntry[] = [
+      {
+        key: "atk%",
+        value: r(this.refinement, [0.16, 0.2, 0.24, 0.32, 0.4]),
+      },
+    ];
+
+    return [new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, stats)];
+  }
 }

@@ -1346,10 +1346,9 @@ class TheExile4pc extends ArtifactSetBase {
 @RegisterArtifactSet("disenchantment_in_deep_shadow")
 class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
   // 2pc: ATK +18% (via halfSetId)
-  // 4pc: Superconduct DMG +80% (ZH: 80%, EN mistranslation says 40%);
-  //      when attacking Superconducted opponents, CRIT Rate +16%.
-  //      The "all-new blessing" flavor text has no mechanical effect.
-  // CR gate: active whenever team can trigger Superconduct (Cryo + Electro).
+  // 4pc: Superconduct DMG +80%, Stellar-Conduct DMG +40%;
+  //      when attacking opponents affected by Superconduct or Stellar-Conduct, CRIT Rate +16%.
+  // CR gate: active whenever team can trigger Superconduct or Stellar-Conduct.
   readonly halfSetId = "atk%-18";
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[] = [
@@ -1362,13 +1361,23 @@ class DisenchantmentInDeepShadow4pc extends ArtifactSetBase {
       { receiver: "self", filter: { reactions: ["superconduct"] } },
       [{ key: "reactionDmg%", value: 0.8 }]
     ),
-    ...(this.teamMeta.hasReaction("superconduct")
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-reaction"],
+      },
+      { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+      [{ key: "reactionDmg%", value: 0.4 }]
+    ),
+    ...(this.teamMeta.hasReaction("superconduct") ||
+    this.teamMeta.hasReaction("stellarConduct")
       ? [
           new StatBuff(
             {
               type: "artifactSet",
               id: this.artifactSetId,
-              triggers: ["vs-superconduct"],
+              triggers: ["vs-superconduct", "vs-stellarConduct"],
             },
             { receiver: "self" },
             [{ key: "cr", value: 0.16 }]

@@ -114,6 +114,40 @@ describe("TeamMeta — stellarConduct supersede", () => {
   });
 });
 
+describe("TeamMeta — Odette and stellarSwirl / stellarConduct", () => {
+  it("stellarConduct is enabled by Odette", () => {
+    const meta = new TeamMeta(["odette", "fischl", "bennett"]);
+    expect(meta.hasReaction("stellarConduct")).toBe(true);
+    expect(meta.hasReaction("superconduct")).toBe(false);
+  });
+
+  it("stellarSwirl requires Odette in party (enabler gate)", () => {
+    const noOdetteMeta = new TeamMeta(["kamisato_ayaka", "kaedehara_kazuha"]);
+    expect(noOdetteMeta.hasReaction("stellarSwirl")).toBe(false);
+    expect(noOdetteMeta.hasReaction("swirl")).toBe(true);
+  });
+
+  it("stellarSwirl is enabled by Odette and supersedes Cryo Swirl", () => {
+    const meta = new TeamMeta(["odette", "kaedehara_kazuha"]);
+    expect(meta.hasReaction("stellarSwirl")).toBe(true);
+    // Cryo Swirl is superseded, and there are no other swirlable elements on the team,
+    // so regular swirl should be false.
+    expect(meta.hasReaction("swirl")).toBe(false);
+  });
+
+  it("regular swirl survives when other swirlable elements are present", () => {
+    const meta = new TeamMeta([
+      "odette",
+      "kaedehara_kazuha",
+      "bennett",
+      "xingqiu",
+    ]);
+    expect(meta.hasReaction("stellarSwirl")).toBe(true);
+    // Since Pyro and Hydro are present, regular Swirl survives.
+    expect(meta.hasReaction("swirl")).toBe(true);
+  });
+});
+
 describe("TeamMeta — charLevels", () => {
   it("stores charLevels passed to constructor", () => {
     const meta = new TeamMeta(["hu_tao", "xingqiu"], {}, {}, undefined, {

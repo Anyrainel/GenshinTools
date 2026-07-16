@@ -395,3 +395,23 @@ class TheCatch extends WeaponBase {
     ),
   ];
 }
+
+@RegisterWeapon("song_of_the_vigil")
+class SongOfTheVigil extends WeaponBase {
+  get buffs() {
+    if (
+      this.teamMeta.hasReaction("stellarConduct") ||
+      this.teamMeta.hasReaction("stellarSwirl")
+    ) {
+      return [
+        new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+          },
+        ]),
+      ];
+    }
+    return [];
+  }
+}

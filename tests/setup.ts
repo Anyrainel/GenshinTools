@@ -1,3 +1,5 @@
+process.env.__BETA_ENABLED_OVERRIDE__ = "true";
+
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";

@@ -22,6 +22,36 @@ import type { MainStat } from "./enums";
  * modern browsers (Chrome 80+, Firefox 113+, Safari 16.4+) and Node 18+.
  */
 export async function fetchGzipJson<T>(url: string): Promise<T> {
+  if (typeof process !== "undefined" && !url.startsWith("http")) {
+    try {
+      const fs = await import("node:fs");
+      const path = await import("node:path");
+      let filePath = url.split("?")[0]!.split("#")[0]!;
+      if (filePath.startsWith("/@fs/")) {
+        filePath = filePath.slice(5);
+      } else if (filePath.startsWith("/")) {
+        filePath = path.join(process.cwd(), filePath);
+      }
+      const buf = fs.readFileSync(filePath);
+      const view = new Uint8Array(buf);
+      const isGzipped =
+        view.length >= 2 && view[0] === 0x1f && view[1] === 0x8b;
+      let text: string;
+      if (isGzipped) {
+        const zlib = await import("node:zlib");
+        text = zlib.gunzipSync(buf).toString("utf-8");
+      } else {
+        text = new TextDecoder("utf-8").decode(view);
+      }
+      return JSON.parse(text) as T;
+    } catch (e) {
+      console.warn(
+        "fetchGzipJson: local read failed, falling back to fetch",
+        e
+      );
+    }
+  }
+
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);

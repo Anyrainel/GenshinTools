@@ -1695,3 +1695,379 @@ class Sandrone extends CharacterBase {
     };
   })();
 }
+
+const odetteOption = {
+  label: { zh: "辉映状态", en: "Radiance State" },
+  choices: [
+    {
+      value: "stellarConduct",
+      label: {
+        zh: "辉映·星超导 (极星辉域)",
+        en: "Radiance: Stellar-Conduct (Polestar Field)",
+      },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "stellarSwirl",
+      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
+      when: (tm) => tm.hasReaction("stellarSwirl"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("odette", odetteOption)
+class Odette extends CharacterBase {
+  private readonly rState = resolveOption(
+    odetteOption,
+    this.option,
+    this.teamMeta
+  );
+
+  readonly buffs = (() => {
+    const maxSplendorStacks = this.constellation >= 1 ? 6 : 4;
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P1: Marvelous Splendor stacks -> Stellar Glimmer reaction DMG +15% per stack
+      new StatBuff(
+        cbs(this, "P1", []),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [{ key: "reactionDmg%", value: maxSplendorStacks * 0.15 }]
+      ),
+      // P2: ATK-to-reaction DMG scaling (baseDmg% +1.5% per 100 ATK over 1000, cap 30%)
+      new ScalingBuff(
+        cbs(this, "P2", []),
+        {
+          receiver: "self",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [],
+        "atk",
+        "baseDmg%",
+        0.00015,
+        0.3,
+        1000
+      ),
+      // P3: ATK-to-reaction base DMG scaling (reactionBaseDmg% +0.7% per 100 ATK, cap 14%)
+      new ScalingBuff(
+        cbs(this, "P3", []),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [],
+        "atk",
+        "reactionBaseDmg%",
+        0.00007,
+        0.14
+      ),
+      // Q: Snow Swan's Dream self buff
+      new StatBuff(
+        cbs(this, "Q", ["Q"]),
+        {
+          receiver: "self",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [{ key: "reactionDmg%", value: this.param("Q", 3) }]
+      ),
+    ];
+
+    // C2: Marvelous Splendor ATK buff (+7% per stack)
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(cbs(this, "C2", []), { receiver: "team" }, [
+          { key: "atk%", value: maxSplendorStacks * 0.07 },
+        ])
+      );
+
+      // C2: RES reduction based on active Radiance state
+      if (this.rState === "stellarConduct") {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "team", filter: { elements: ["Cryo", "Electro"] } },
+            [{ key: "resReduction%", value: 0.2 }]
+          )
+        );
+      } else if (this.rState === "stellarSwirl") {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "team", filter: { elements: ["Cryo", "Anemo"] } },
+            [{ key: "resReduction%", value: 0.2 }]
+          )
+        );
+      }
+    }
+
+    // C4: Snow Swan's Dream teammate buff
+    if (this.constellation >= 4) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["Q"]),
+          {
+            receiver: "other",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [{ key: "reactionDmg%", value: this.param("Q", 3) * 0.5 }]
+        )
+      );
+    }
+
+    // C6: Elevated reaction DMG (25% team, 20% self additional)
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", []),
+          {
+            receiver: "team",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [{ key: "elevated%", value: 0.25 }]
+        ),
+        new StatBuff(
+          cbs(this, "C6", []),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [{ key: "elevated%", value: 0.2 }]
+        )
+      );
+    }
+
+    return buffs;
+  })();
+
+  protected override get comboDescriptor(): ComboTemplate {
+    const lines: ComboTemplate = [
+      { id: "odette-normal", count: 1 },
+      { id: "odette-charge", count: 1 },
+      { id: "odette-skill-initial", count: 1 },
+      { id: "odette-coda-dot", count: 6 },
+      { id: "odette-coda-end", count: 1 },
+      { id: "odette-plume-move", count: 4 },
+      { id: "odette-wing-move", count: 4 },
+      { id: "odette-burst", count: 1 },
+    ];
+    if (this.constellation >= 1) {
+      lines.push({ id: "odette-c1-extra", count: 1 });
+    }
+    if (this.constellation >= 4) {
+      lines.push({ id: "odette-c4-coord", count: 4 });
+    }
+    return lines;
+  }
+
+  protected readonly formulaMap = (() => {
+    const physNormal = {
+      element: "Physical" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const physCharge = {
+      element: "Physical" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const physPlunge = {
+      element: "Physical" as const,
+      ability: "plunge" as const,
+      reaction: "none" as const,
+    };
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const cryoBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+
+    return {
+      "odette-normal": {
+        label: { zh: "普通攻击", en: "Normal Attack" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), physNormal) },
+          { formula: new DirectFormula(this.param("A", 2), physNormal) },
+          { formula: new DirectFormula(this.param("A", 3), physNormal) },
+          { formula: new DirectFormula(this.param("A", 4), physNormal) },
+          { formula: new DirectFormula(this.param("A", 5), physNormal) },
+          { formula: new DirectFormula(this.param("A", 6), physNormal) },
+        ],
+      },
+      "odette-charge": {
+        label: { zh: "重击", en: "Charged Attack" },
+        parts: [{ formula: new DirectFormula(this.param("A", 7), physCharge) }],
+      },
+      "odette-plunge-low": {
+        label: { zh: "下落·低", en: "Plunge Low" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 8), physPlunge) },
+          { formula: new DirectFormula(this.param("A", 9), physPlunge) },
+        ],
+      },
+      "odette-plunge-high": {
+        label: { zh: "下落·高", en: "Plunge High" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 8), physPlunge) },
+          { formula: new DirectFormula(this.param("A", 10), physPlunge) },
+        ],
+      },
+      "odette-skill-initial": {
+        label: { zh: "E技能伤害", en: "E Skill DMG" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), cryoSkill) }],
+      },
+      "odette-coda-dot": {
+        label: { zh: "E共舞持续伤害", en: "E Coda DoT" },
+        parts: [{ formula: new DirectFormula(this.param("E", 2), cryoSkill) }],
+      },
+      "odette-coda-end": {
+        label: { zh: "E共舞结束伤害", en: "E Coda End DMG" },
+        parts: [
+          {
+            formula:
+              this.rState === "stellarSwirl"
+                ? new StellarDirectFormula(this.param("E", 4), {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarSwirl",
+                  })
+                : new StellarDirectFormula(this.param("E", 3), {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarConduct",
+                  }),
+          },
+        ],
+      },
+      "odette-plume-move": {
+        label: { zh: "独舞·拂羽舞步", en: "Plume Dance Move" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 5), cryoSkill),
+            offField: true,
+          },
+          ...(this.rState === "stellarConduct"
+            ? [
+                {
+                  formula: new StellarDirectFormula(this.param("E", 6), {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarConduct",
+                  }),
+                  offField: true,
+                },
+              ]
+            : []),
+          ...(this.rState === "stellarSwirl"
+            ? [
+                {
+                  formula: new StellarDirectFormula(this.param("E", 7), {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarSwirl",
+                  }),
+                  offField: true,
+                },
+              ]
+            : []),
+        ],
+      },
+      "odette-wing-move": {
+        label: { zh: "独舞·旋翼舞步", en: "Wing Dance Move" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 8), cryoSkill),
+            offField: true,
+          },
+          ...(this.rState === "stellarConduct"
+            ? [
+                {
+                  formula: new StellarDirectFormula(this.param("E", 9), {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarConduct",
+                  }),
+                  offField: true,
+                },
+              ]
+            : []),
+          ...(this.rState === "stellarSwirl"
+            ? [
+                {
+                  formula: new StellarDirectFormula(this.param("E", 10), {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarSwirl",
+                  }),
+                  offField: true,
+                },
+              ]
+            : []),
+        ],
+      },
+      "odette-burst": {
+        label: { zh: "Q斩击", en: "Q Slashes" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), cryoBurst),
+            hits: 3,
+          },
+          {
+            formula: new DirectFormula(this.param("Q", 2), cryoBurst),
+          },
+        ],
+      },
+      "odette-c1-extra": {
+        label: { zh: "C1额外冰伤", en: "C1 Extra DMG" },
+        minC: 1,
+        parts: [
+          {
+            // Note: ZH text specifies 300% and 450% multipliers; EN is lower (200%/300%).
+            // Following Rule U0b, we use the ZH source of truth.
+            formula:
+              this.rState === "stellarSwirl"
+                ? new StellarDirectFormula(4.5, {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarSwirl",
+                  })
+                : new StellarDirectFormula(3.0, {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarConduct",
+                  }),
+          },
+        ],
+      },
+      "odette-c4-coord": {
+        label: { zh: "C4协同攻击", en: "C4 Coordinated Attack" },
+        minC: 4,
+        parts: [
+          {
+            // Note: ZH text specifies 66% and 99% multipliers; EN is lower (50%/75%).
+            // Following Rule U0b, we use the ZH source of truth.
+            formula:
+              this.rState === "stellarSwirl"
+                ? new StellarDirectFormula(0.99, {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarSwirl",
+                  })
+                : new StellarDirectFormula(0.66, {
+                    element: "Cryo",
+                    ability: "skill",
+                    reaction: "stellarConduct",
+                  }),
+            offField: true,
+          },
+        ],
+      },
+    };
+  })();
+}

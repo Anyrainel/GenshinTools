@@ -169,7 +169,7 @@ export type LunarReactionType =
   | "lunarCharged"
   | "lunarBloom"
   | "lunarCrystallize";
-export type StellarReactionType = "stellarConduct";
+export type StellarReactionType = "stellarConduct" | "stellarSwirl";
 export type ReactionType =
   | "none"
   // Amplifying

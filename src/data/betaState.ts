@@ -77,6 +77,12 @@ const useBetaStore = create<BetaState>()(
 );
 
 export function betaEnabled(): boolean {
+  if (
+    typeof process !== "undefined" &&
+    process.env?.__BETA_ENABLED_OVERRIDE__ === "true"
+  ) {
+    return true;
+  }
   if (isTestEnv) return false;
   return useBetaStore.getState().enabled;
 }

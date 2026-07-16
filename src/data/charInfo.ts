@@ -112,6 +112,7 @@ export const charInfo: Record<string, CharacterInfo> = {
   nilou: { energy: 70, c3Talent: "Q", c5Talent: "E" },
   qiqi: { energy: 80, healerC: 0, healAction: "E", supStat: ["atk%"], c3Talent: "Q", c5Talent: "E" },
   raiden_shogun: { energy: 90, c3Talent: "Q", c5Talent: "E" },
+  sandrone: { energy: 60, c3Talent: "A", c5Talent: "Q" },
   sangonomiya_kokomi: { energy: 70, healerC: 0, healAction: "E", supStat: ["hp%"], c3Talent: "Q", c5Talent: "E" },
   shenhe: { energy: 80, c3Talent: "E", c5Talent: "Q" },
   sigewinne: { energy: 70, healerC: 0, shielderC: 2, healAction: "E", supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
@@ -138,5 +139,6 @@ export const charInfo: Record<string, CharacterInfo> = {
   yumemizuki_mizuki: { energy: 60, healerC: 0, supStat: ["em"], c3Talent: "E", c5Talent: "Q" },
   zhongli: { energy: 40, healerC: 6, shielderC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
   zibai: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Moonsign" },
-  sandrone: { energy: 60, c3Talent: "A", c5Talent: "Q" },
+  alyosha: { energy: 70, healerC: 0, supStat: ["atk%"], c3Talent: "E", c5Talent: "Q" },
+  odette: { energy: 60, c3Talent: "E", c5Talent: "Q" },
 };

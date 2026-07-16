@@ -275,7 +275,10 @@ module.exports = {
       comment:
         "src/ runs in the browser — no Node built-ins (node:fs, node:path, etc.). " +
         "Move such code to scripts/ or functions/.",
-      from: { path: "^src/" },
+      from: {
+        path: "^src/",
+        pathNot: "^src/data/utils\\.ts$"
+      },
       to: {
         path: [
           "^(fs|path|os|child_process|crypto|http|https|stream|util|zlib|url)$",

@@ -3,11 +3,22 @@
 
 export const i18nBetaData = {
   characters: {
+    "alyosha": { en: "Alyosha", zh: "阿罗夏" },
+    "odette": { en: "Odette", zh: "奥黛塔" },
   },
   weapons: {
+    "blade_of_atonement": { en: "Blade of Atonement", zh: "救赎之斩" },
+    "covenant_of_frost_and_snow": { en: "Covenant of Frost and Snow", zh: "霜雪誓约" },
+    "echoes_of_the_heart": { en: "Echoes of the Heart", zh: "寸心余响" },
+    "emberwell": { en: "Emberwell", zh: "引火之源" },
+    "exaiphanes_blade": { en: "Exaiphanes Blade", zh: "星锋剑" },
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
+    "song_of_the_vigil": { en: "Song of the Vigil", zh: "戍望谣歌" },
+    "whitelake_frostfeather": { en: "Whitelake Frostfeather", zh: "白湖冬羽" },
   },
   artifacts: {
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },
+    "heart_of_the_furnace": { en: "Heart of the Furnace", zh: "炉火融炼之心" },
+    "scarlet_proof": { en: "Scarlet Proof", zh: "血红之证" },
   },
 };

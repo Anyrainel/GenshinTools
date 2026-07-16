@@ -465,3 +465,12 @@ class RoyalBow extends WeaponBase {
     ];
   }
 }
+
+@RegisterWeapon("covenant_of_frost_and_snow")
+class CovenantOfFrostAndSnow extends WeaponBase {
+  readonly buffs = [
+    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+      { key: "em", value: r(this.refinement, [120, 150, 180, 210, 240]) },
+    ]),
+  ];
+}
