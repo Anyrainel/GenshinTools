@@ -6,6 +6,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   getExpectedE0,
   runRedesignedCalculation,
@@ -53,6 +54,7 @@ t_i:=｛t_Q=1, t_E=1, t_A=0.8｝
 伊涅芙、砂糖: 无`;
 
 export function RedesignedErView() {
+  const { t } = useLanguage();
   const [inputText, setInputText] = useState(DEFAULT_EXAMPLE);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -80,9 +82,7 @@ export function RedesignedErView() {
       setErrorMsg(null);
       const parsed = parseRedesignedInput(inputText);
       if (parsed.charOrders.length === 0) {
-        throw new Error(
-          "No characters parsed from team config (N). Please check format."
-        );
+        throw new Error(t.ui("redesignedEr.noCharactersParsed"));
       }
       const res = runRedesignedCalculation(parsed);
 
@@ -125,13 +125,10 @@ export function RedesignedErView() {
         <div className="max-w-3xl space-y-2">
           <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent flex items-center gap-2">
             <BarChart2 className="w-6 h-6 text-primary" />
-            Redesigned ER Calculator (新版充能方案)
+            {t.ui("redesignedEr.title")}
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            This module implements the continuous-time ER calculation model. It
-            models timing axis lengths, action durations, particle flight
-            delays, and periodic recoveries using a mathematical derivation
-            scheme.
+            {t.ui("redesignedEr.description")}
           </p>
         </div>
       </div>
@@ -142,21 +139,22 @@ export function RedesignedErView() {
           <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">
-                Metadata Input
+                {t.ui("redesignedEr.metadataInput")}
               </span>
               <button
                 type="button"
                 onClick={loadExample}
                 className="text-xs text-primary hover:underline flex items-center gap-1"
               >
-                <RefreshCw className="w-3 h-3" /> Load Example
+                <RefreshCw className="w-3 h-3" />
+                {t.ui("redesignedEr.loadExample")}
               </button>
             </div>
 
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste metadata here..."
+              placeholder={t.ui("redesignedEr.metadataPlaceholder")}
               className="w-full h-[400px] text-xs font-mono p-3 bg-muted/40 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/40 resize-y"
             />
 
@@ -172,7 +170,8 @@ export function RedesignedErView() {
               onClick={handleRun}
               className="w-full py-2.5 px-4 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/95 transition flex items-center justify-center gap-2 text-sm shadow-sm"
             >
-              <Play className="w-4 h-4 fill-current" /> Run Calculation
+              <Play className="w-4 h-4 fill-current" />
+              {t.ui("redesignedEr.runCalculation")}
             </button>
           </div>
         </div>
@@ -185,12 +184,10 @@ export function RedesignedErView() {
                 <Play className="w-8 h-8 text-muted-foreground/60" />
               </div>
               <h3 className="text-sm font-medium text-foreground">
-                No Calculation Executed
+                {t.ui("redesignedEr.noCalculationExecuted")}
               </h3>
               <p className="text-xs text-muted-foreground max-w-xs">
-                Paste your configuration metadata in the input area and click
-                &quot;Run Calculation&quot; to inspect the timings, recoveries,
-                and ER results.
+                {t.ui("redesignedEr.noCalculationDescription")}
               </p>
             </div>
           ) : (
@@ -199,24 +196,41 @@ export function RedesignedErView() {
               <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
                 <div className="border-b border-border pb-3">
                   <h3 className="text-sm font-semibold text-foreground">
-                    1. 时序解析 (Timeline Bounds)
+                    {t.ui("redesignedEr.timelineBounds")}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Startup Axis \(T_1 = {parsedInput.axisLengths[0]}\)s, Loop
-                    Axis \(T_2 = {parsedInput.axisLengths[1]}\)s
+                    {t.format(
+                      "redesignedEr.axisDescription",
+                      parsedInput.axisLengths[0],
+                      parsedInput.axisLengths[1]
+                    )}
                   </p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
                       <tr className="border-b border-border text-muted-foreground font-medium">
-                        <th className="py-2 px-3">角色 (Character)</th>
-                        <th className="py-2 px-3">属性 (Element)</th>
-                        <th className="py-2 px-3">动作数 (Actions)</th>
-                        <th className="py-2 px-3">进场时刻 (t_in)</th>
-                        <th className="py-2 px-3">退场时刻 (t_out)</th>
-                        <th className="py-2 px-3">前台时间 (Field)</th>
-                        <th className="py-2 px-3">后台时间 (Off-field)</th>
+                        <th className="py-2 px-3">
+                          {t.ui("teamComp.analyzerChart")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("erCalc.enemyOrbElement")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.actions")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.entryTime")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.exitTime")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.fieldTime")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.offFieldTime")}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -266,23 +280,34 @@ export function RedesignedErView() {
               <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
                 <div className="border-b border-border pb-3">
                   <h3 className="text-sm font-semibold text-foreground">
-                    2. 计算组 A：元素微粒 (Particles Output)
+                    {t.ui("redesignedEr.particleOutput")}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Calculated energy from character element matching and field
-                    state multipliers
+                    {t.ui("redesignedEr.particleDescription")}
                   </p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
                       <tr className="border-b border-border text-muted-foreground font-medium">
-                        <th className="py-2 px-3">角色 (Character)</th>
-                        <th className="py-2 px-3">产球参数</th>
-                        <th className="py-2 px-3 text-right">有效微粒 (E)</th>
-                        <th className="py-2 px-3 text-right">Q_同前</th>
-                        <th className="py-2 px-3 text-right">Q_同后</th>
-                        <th className="py-2 px-3 text-right">Q_异后</th>
+                        <th className="py-2 px-3">
+                          {t.ui("teamComp.analyzerChart")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.particleParams")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.effectiveParticles")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.qSameFront")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.qSameBack")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.qDifferentBack")}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border font-mono">
@@ -326,22 +351,31 @@ export function RedesignedErView() {
               <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
                 <div className="border-b border-border pb-3">
                   <h3 className="text-sm font-semibold text-foreground">
-                    3. 计算组 B：周期性与普攻回复 (Flat Recoveries)
+                    {t.ui("redesignedEr.flatRecoveries")}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Fixed flat energy from weapons, constellations, and normal
-                    attack pity
+                    {t.ui("redesignedEr.flatRecoveryDescription")}
                   </p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left border-collapse">
                     <thead>
                       <tr className="border-b border-border text-muted-foreground font-medium">
-                        <th className="py-2 px-3">角色 (Character)</th>
-                        <th className="py-2 px-3">回复项</th>
-                        <th className="py-2 px-3 text-right">R_avg (均值)</th>
-                        <th className="py-2 px-3 text-right">R_min (极小)</th>
-                        <th className="py-2 px-3 text-right">R_max (极大)</th>
+                        <th className="py-2 px-3">
+                          {t.ui("teamComp.analyzerChart")}
+                        </th>
+                        <th className="py-2 px-3">
+                          {t.ui("redesignedEr.recoveryItem")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.average")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.minimum")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.maximum")}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border font-mono">
@@ -352,7 +386,7 @@ export function RedesignedErView() {
                         const displayRecoveries =
                           cfg && cfg.S > 0
                             ? `S=${cfg.S}s, n=${cfg.n}, V=${cfg.V}, P=${cfg.P}`
-                            : "无";
+                            : t.ui("common.none");
                         return (
                           <tr key={char.name} className="hover:bg-muted/30">
                             <td className="py-2.5 px-3 font-sans font-medium text-foreground">
@@ -382,24 +416,31 @@ export function RedesignedErView() {
               <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
                 <div className="border-b border-border pb-3">
                   <h3 className="text-sm font-semibold text-foreground">
-                    4. 充能效率计算结果 (ER% Results)
+                    {t.ui("redesignedEr.erResults")}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Minimum ER requirement. Value in parenthesis indicates (min,
-                    max). Recommended is ceiling to 5%.
+                    {t.ui("redesignedEr.erResultsDescription")}
                   </p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs border-collapse">
                     <thead>
                       <tr className="border-b border-border text-muted-foreground font-medium text-left">
-                        <th className="py-2 px-3">角色 (Character)</th>
-                        <th className="py-2 px-3">需求 (Demand)</th>
-                        <th className="py-2 px-3 text-right">需求数值</th>
-                        <th className="py-2 px-3 text-right">
-                          充能效率 (均值(极小, 极大))
+                        <th className="py-2 px-3">
+                          {t.ui("teamComp.analyzerChart")}
                         </th>
-                        <th className="py-2 px-3 text-right">推荐充能</th>
+                        <th className="py-2 px-3">
+                          {t.ui("triage.detail.demand")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.demandValue")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.erRange")}
+                        </th>
+                        <th className="py-2 px-3 text-right">
+                          {t.ui("redesignedEr.recommendedEr")}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -430,7 +471,7 @@ export function RedesignedErView() {
                               <td className="py-2.5 px-3 text-right font-mono">
                                 {isOverflow ? (
                                   <span className="text-muted-foreground/60 italic">
-                                    溢出 (Overflow)
+                                    {t.ui("redesignedEr.overflow")}
                                   </span>
                                 ) : (
                                   <span className="text-foreground">
@@ -467,19 +508,22 @@ export function RedesignedErView() {
                 <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
                   <div className="border-b border-border pb-3">
                     <h3 className="text-sm font-semibold text-foreground">
-                      5. 全概率组合超级表 (Probability Combinations Matrix)
+                      {t.ui("redesignedEr.probabilityMatrix")}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      ER requirements under each concrete random particle
-                      generator output combination
+                      {t.ui("redesignedEr.probabilityMatrixDescription")}
                     </p>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-[11px] border-collapse">
                       <thead>
                         <tr className="border-b border-border text-muted-foreground font-medium text-left">
-                          <th className="py-2 px-3">组合状态 (Combinations)</th>
-                          <th className="py-2 px-3 text-right">概率 (Prob)</th>
+                          <th className="py-2 px-3">
+                            {t.ui("redesignedEr.combinations")}
+                          </th>
+                          <th className="py-2 px-3 text-right">
+                            {t.ui("redesignedEr.probability")}
+                          </th>
                           {erResults.map((char) => (
                             <th
                               key={char.name}

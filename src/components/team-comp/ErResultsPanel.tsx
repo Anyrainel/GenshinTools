@@ -208,9 +208,10 @@ export function ErResultsPanel({
     }
     updateTeamSetupConfig(target.id, { charConfigs });
     toast.success(
-      language === "zh"
-        ? `已应用到「${target.name || "队伍"}」的最低ER`
-        : `Applied to "${target.name || "team"}" min ER`
+      t.format(
+        "erCalc.applyMinERSuccess",
+        target.name || t.ui("erCalc.teamFallback")
+      )
     );
   }, [
     team,
@@ -218,7 +219,6 @@ export function ErResultsPanel({
     results,
     getTeamSetupConfigById,
     updateTeamSetupConfig,
-    language,
     targetTeam,
     t,
   ]);

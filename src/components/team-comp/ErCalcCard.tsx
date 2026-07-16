@@ -396,8 +396,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
     setTimelines([...timelines.slice(0, -1), compiled]);
     setIsEasyMode(false);
-    toast.success("Rotation compiled successfully!");
-  }, [erTeam, easyCasts, easyFunnels, easyDriver, timelines, setTimelines]);
+    toast.success(t.ui("erCalc.rotationCompiled"));
+  }, [erTeam, easyCasts, easyFunnels, easyDriver, timelines, setTimelines, t]);
 
   const calcMode: CalcMode = startEmpty
     ? repeatLast
@@ -914,13 +914,14 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   value="easy"
                   className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                 >
-                  <Sparkles className="w-3.5 h-3.5 mr-1" /> Easy Mode
+                  <Sparkles className="w-3.5 h-3.5 mr-1" />
+                  {t.ui("erCalc.easyMode")}
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="timeline"
                   className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                 >
-                  Expert Timeline
+                  {t.ui("erCalc.expertTimeline")}
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
@@ -931,7 +932,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                 {/* Character Configuration Grid */}
                 <div>
                   <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                    Character Casts
+                    {t.ui("erCalc.characterCasts")}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {erTeam.map((member) => {
@@ -979,14 +980,14 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                                 onChange={() => setEasyDriver(member.charId)}
                                 className="w-3 h-3 text-primary focus:ring-0 focus:ring-offset-0"
                               />
-                              Driver
+                              {t.ui("erCalc.driver")}
                             </label>
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 text-xs">
                             <div className="space-y-1">
                               <span className="text-muted-foreground">
-                                Skills (E)
+                                {t.ui("erCalc.skills")}
                               </span>
                               <input
                                 type="number"
@@ -1004,7 +1005,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                             </div>
                             <div className="space-y-1">
                               <span className="text-muted-foreground">
-                                Bursts (Q)
+                                {t.ui("erCalc.bursts")}
                               </span>
                               <input
                                 type="number"
@@ -1025,7 +1026,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                           {isDriver && (
                             <div className="space-y-1 text-xs">
                               <span className="text-muted-foreground">
-                                Normal Attacks (NA)
+                                {t.ui("erCalc.normalAttacks")}
                               </span>
                               <input
                                 type="number"
@@ -1051,7 +1052,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                 {/* Funnel Configuration Section */}
                 <div className="border-t border-border/30 pt-4 space-y-4">
                   <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Particle Funneling Rules
+                    {t.ui("erCalc.particleFunnelingRules")}
                   </h4>
 
                   {easyFunnels.length > 0 && (
@@ -1089,7 +1090,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   <div className="flex flex-wrap items-end gap-3 p-3 bg-muted/40 border border-border rounded-lg max-w-xl text-xs">
                     <div className="space-y-1 flex-1 min-w-[120px]">
                       <span className="text-muted-foreground">
-                        Source Character
+                        {t.ui("erCalc.sourceCharacter")}
                       </span>
                       <select
                         id="funnel-source"
@@ -1113,7 +1114,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
                     <div className="space-y-1 flex-1 min-w-[120px]">
                       <span className="text-muted-foreground">
-                        Target Character
+                        {t.ui("erCalc.targetCharacter")}
                       </span>
                       <select
                         id="funnel-target"
@@ -1159,7 +1160,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                       }}
                       className="h-8 px-3 bg-primary hover:bg-primary/95 text-primary-foreground font-medium rounded flex items-center justify-center gap-1 transition shadow-sm"
                     >
-                      <Plus className="w-4 h-4" /> Add
+                      <Plus className="w-4 h-4" />
+                      {t.ui("erCalc.addFunnel")}
                     </button>
                   </div>
                 </div>
@@ -1171,7 +1173,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                     onClick={handleCompileRotation}
                     className="py-2 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg flex items-center gap-1.5 transition-colors shadow-sm text-sm"
                   >
-                    <Sparkles className="w-4 h-4" /> Compile Rotation
+                    <Sparkles className="w-4 h-4" />
+                    {t.ui("erCalc.compileRotation")}
                   </button>
                 </div>
               </div>
