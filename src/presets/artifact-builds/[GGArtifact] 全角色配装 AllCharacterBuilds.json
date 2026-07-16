@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1781288420483",
+  "id": "export-1784189761562",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -1727,7 +1727,7 @@
       "id": "FnZkadm",
       "characterId": "lauma",
       "name": "",
-      "visible": true,
+      "visible": false,
       "composition": "4pc",
       "substats": [
         {
@@ -1751,7 +1751,6 @@
       "styles": ["on-field"],
       "roles": ["dps"],
       "minCons": 6,
-      "source": "preset",
       "sandsWeights": [
         {
           "stat": "em",
@@ -1770,7 +1769,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6587132530636342
+      "normalizer": 0.6587132530636342,
+      "source": "modified"
     },
     "FnZeWhe": {
       "id": "FnZeWhe",
@@ -3977,7 +3977,7 @@
         }
       ],
       "normalizer": 0.6708741658099044,
-      "source": "custom"
+      "source": "preset"
     },
     "9Nncq5u": {
       "id": "9Nncq5u",
@@ -5207,7 +5207,7 @@
       "artifactSet": "disenchantment_in_deep_shadow",
       "styles": ["off-field"],
       "roles": ["dps", "support"],
-      "source": "custom"
+      "source": "preset"
     },
     "2NFAU-m": {
       "id": "2NFAU-m",
@@ -7134,7 +7134,7 @@
       "artifactSet": "tenacity_of_the_millelith",
       "styles": ["off-field"],
       "roles": ["sustain", "support"],
-      "source": "custom"
+      "source": "preset"
     },
     "1EF2GAO": {
       "id": "1EF2GAO",
@@ -8504,7 +8504,7 @@
       "id": "Jj10PaG",
       "characterId": "prune",
       "name": "",
-      "visible": true,
+      "visible": false,
       "composition": "4pc",
       "substats": [
         {
@@ -8542,7 +8542,7 @@
       "artifactSet": "celestial_gift",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "modified"
     },
     "JQOwU2m": {
       "id": "JQOwU2m",
@@ -8634,7 +8634,7 @@
       "artifactSet": "a_day_carved_from_rising_winds",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "custom"
+      "source": "preset"
     },
     "JsL3jYu": {
       "id": "JsL3jYu",
@@ -8657,7 +8657,11 @@
         },
         {
           "stat": "em",
-          "weight": 50
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 75
         }
       ],
       "sandsWeights": [
@@ -8694,7 +8698,7 @@
       "artifactSet": "disenchantment_in_deep_shadow",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "custom"
+      "source": "modified"
     }
   },
   "characterBuilds": {

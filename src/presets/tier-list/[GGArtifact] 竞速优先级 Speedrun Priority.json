@@ -50,7 +50,7 @@
     },
     "aino": {
       "tier": "D",
-      "position": 10
+      "position": 11
     },
     "mona": {
       "tier": "B",
@@ -82,11 +82,11 @@
     },
     "ororon": {
       "tier": "D",
-      "position": 1
+      "position": 2
     },
     "kuki_shinobu": {
       "tier": "D",
-      "position": 5
+      "position": 6
     },
     "kujou_sara": {
       "tier": "C",
@@ -110,7 +110,7 @@
     },
     "wriothesley": {
       "tier": "C",
-      "position": 12
+      "position": 13
     },
     "shenhe": {
       "tier": "A",
@@ -126,7 +126,7 @@
     },
     "diona": {
       "tier": "D",
-      "position": 2
+      "position": 0
     },
     "chasca": {
       "tier": "S",
@@ -170,11 +170,11 @@
     },
     "zhongli": {
       "tier": "D",
-      "position": 6
+      "position": 7
     },
     "yun_jin": {
       "tier": "D",
-      "position": 7
+      "position": 8
     },
     "gorou": {
       "tier": "B",
@@ -198,7 +198,7 @@
     },
     "yaoyao": {
       "tier": "C",
-      "position": 18
+      "position": 19
     },
     "flins": {
       "tier": "S",
@@ -214,11 +214,11 @@
     },
     "lan_yan": {
       "tier": "D",
-      "position": 1
+      "position": 3
     },
     "baizhu": {
       "tier": "C",
-      "position": 17
+      "position": 18
     },
     "nahida": {
       "tier": "B",
@@ -226,7 +226,7 @@
     },
     "jean": {
       "tier": "D",
-      "position": 0
+      "position": 1
     },
     "wanderer": {
       "tier": "C",
@@ -246,11 +246,11 @@
     },
     "tartaglia": {
       "tier": "D",
-      "position": 9
+      "position": 10
     },
     "xiangling": {
       "tier": "C",
-      "position": 13
+      "position": 14
     },
     "lyney": {
       "tier": "C",
@@ -258,11 +258,11 @@
     },
     "kachina": {
       "tier": "D",
-      "position": 8
+      "position": 9
     },
     "traveler_geo": {
       "tier": "D",
-      "position": 11
+      "position": 12
     },
     "varka": {
       "tier": "S",
@@ -273,40 +273,32 @@
       "position": 8
     },
     "yae_miko": {
-      "tier": "D",
-      "position": 13
+      "tier": "A",
+      "position": 15
     },
     "kamisato_ayato": {
       "tier": "D",
-      "position": 12
+      "position": 13
     },
     "hu_tao": {
       "tier": "C",
-      "position": 14
+      "position": 15
     },
     "eula": {
       "tier": "C",
-      "position": 15
+      "position": 16
     },
     "mika": {
       "tier": "D",
-      "position": 14
-    },
-    "charlotte": {
-      "tier": "D",
-      "position": 15
-    },
-    "layla": {
-      "tier": "D",
-      "position": 16
+      "position": 1
     },
     "sangonomiya_kokomi": {
       "tier": "D",
-      "position": 17
+      "position": 18
     },
     "xiao": {
       "tier": "C",
-      "position": 16
+      "position": 17
     },
     "arataki_itto": {
       "tier": "D",
@@ -329,10 +321,18 @@
       "position": 22
     },
     "lohen": {
-      "tier": "S",
-      "position": 10
+      "tier": "C",
+      "position": 12
     },
     "prune": {
+      "tier": "D",
+      "position": 5
+    },
+    "sandrone": {
+      "tier": "S",
+      "position": 12
+    },
+    "qiqi": {
       "tier": "D",
       "position": 2
     }

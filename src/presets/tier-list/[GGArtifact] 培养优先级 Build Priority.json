@@ -97,8 +97,8 @@
       "position": 6
     },
     "yae_miko": {
-      "tier": "C",
-      "position": 11
+      "tier": "B",
+      "position": 19
     },
     "raiden_shogun": {
       "tier": "C",
@@ -137,7 +137,7 @@
       "position": 9
     },
     "wriothesley": {
-      "tier": "C",
+      "tier": "A",
       "position": 15
     },
     "shenhe": {
@@ -234,7 +234,7 @@
     },
     "alhaitham": {
       "tier": "C",
-      "position": 12
+      "position": 11
     },
     "tighnari": {
       "tier": "C",
@@ -282,11 +282,11 @@
     },
     "wanderer": {
       "tier": "C",
-      "position": 13
+      "position": 12
     },
     "xiao": {
       "tier": "C",
-      "position": 14
+      "position": 13
     },
     "columbina": {
       "tier": "A",
@@ -327,6 +327,18 @@
     "prune": {
       "tier": "D",
       "position": 19
+    },
+    "sandrone": {
+      "tier": "S",
+      "position": 12
+    },
+    "cyno": {
+      "tier": "C",
+      "position": 15
+    },
+    "qiqi": {
+      "tier": "B",
+      "position": 20
     }
   },
   "tierCustomization": {
