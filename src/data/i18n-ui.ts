@@ -2369,12 +2369,10 @@ export const i18nUiData = {
     tierThresholds: { en: "Completeness goal", zh: "完成度目标" },
     minScoreDiff: { en: "Min score gain", zh: "最低收益" },
     gainLabel: { en: "Avg. Gain", zh: "平均收益" },
-    setSummaryTitle: { en: "By artifact set", zh: "按套装汇总" },
-    setSummaryDesc: {
-      en: "Suggestion count and average expected score gain per set — a quick read on where resources may pay off most.",
-      zh: "各套装的建议条数与平均预期提分，便于判断资源投入方向。",
+    setFilterLabel: {
+      en: "Filter by artifact set",
+      zh: "按套装筛选",
     },
-    setSummaryCount: { en: "{0} suggestions", zh: "{0} 条建议" },
     sanctifyingElixir: { en: "Sanctifying Elixir", zh: "祝圣之霜" },
     dustOfEnlightenment: { en: "Dust of Enlightenment", zh: "启圣之尘" },
     pUpgradeLabel: { en: "P(upgrade)", zh: "升级概率" },

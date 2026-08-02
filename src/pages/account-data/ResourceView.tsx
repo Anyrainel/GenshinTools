@@ -13,7 +13,6 @@ import { AccountDataHelpButton } from "@/components/account-data/AccountDataHelp
 import { AccountDataNeedsBothState } from "@/components/account-data/AccountDataNeedsBothState";
 import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountDataSourceAge";
 import { ResourceHelpDialog } from "@/components/account-data/ResourceHelpDialog";
-import { ResourceSetSummarySection } from "@/components/account-data/ResourceSetSummarySection";
 import { ResourceTierSection } from "@/components/account-data/ResourceTierSection";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
@@ -42,7 +41,7 @@ import {
   suggestionCacheKey,
   summarizeResourceSuggestionsBySet,
 } from "@/lib/account-data/resourceTips";
-import { getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   selectValidResolvedBuildGroups,
@@ -231,10 +230,10 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
     support: true,
     other: true,
   });
+  const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
 
-  // Filter by kind toggles, group by tier
-  const filteredSuggestions = suggestions.filter(
+  const categoryFilteredSuggestions = suggestions.filter(
     (s) =>
       ((s.kind === "craft" && showCraft) ||
         (s.kind === "reroll" && showReroll) ||
@@ -242,9 +241,17 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
       setCategoryFilters[getResourceSetCategory(s.setId)]
   );
   const setSummaries = useMemo(
-    () => summarizeResourceSuggestionsBySet(filteredSuggestions),
-    [filteredSuggestions]
+    () => summarizeResourceSuggestionsBySet(categoryFilteredSuggestions),
+    [categoryFilteredSuggestions]
   );
+  const activeSetId = setSummaries.some(
+    (summary) => summary.setId === selectedSetId
+  )
+    ? selectedSetId
+    : null;
+  const filteredSuggestions = activeSetId
+    ? categoryFilteredSuggestions.filter((s) => s.setId === activeSetId)
+    : categoryFilteredSuggestions;
   const byTier = new Map<Tier, ResourceSuggestion[]>();
   for (const tier of tiers) byTier.set(tier as Tier, []);
   for (const s of filteredSuggestions) {
@@ -356,6 +363,60 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
               ))}
             </div>
           </div>
+          {setSummaries.length > 1 && (
+            <fieldset
+              aria-label={t.ui("evaluation.setFilterLabel")}
+              className="scrollbar-none m-0 flex min-w-0 items-center gap-1.5 overflow-x-scroll border-0 p-0 pb-1"
+            >
+              <button
+                type="button"
+                aria-pressed={activeSetId === null}
+                onClick={() => setSelectedSetId(null)}
+                className={cn(
+                  "inline-flex h-8 shrink-0 items-center rounded-full border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  activeSetId === null
+                    ? "border-primary bg-primary/15 text-foreground"
+                    : "border-border bg-background/40 text-foreground hover:bg-muted/50"
+                )}
+              >
+                {t.ui("evaluation.all")}
+              </button>
+              {setSummaries.map((summary) => {
+                const isActive = activeSetId === summary.setId;
+                const artifactSet = artifactsById[summary.setId];
+                return (
+                  <button
+                    key={summary.setId}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() =>
+                      setSelectedSetId(isActive ? null : summary.setId)
+                    }
+                    className={cn(
+                      "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border pl-1 pr-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      isActive
+                        ? "border-primary bg-primary/15 text-foreground"
+                        : "border-border bg-background/40 text-foreground hover:bg-muted/50"
+                    )}
+                  >
+                    {artifactSet && (
+                      <img
+                        src={getAssetUrl(artifactSet.imagePaths.flower)}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-6 w-6 rounded-full object-cover"
+                        draggable={false}
+                      />
+                    )}
+                    <span>{t.artifact(summary.setId)}</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">
+                      {summary.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </fieldset>
+          )}
         </div>
       }
       bodyClassName="space-y-4"
@@ -364,9 +425,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
         <p className="text-sm text-muted-foreground italic pt-4">
           {t.ui("evaluation.noSuggestions")}
         </p>
-      ) : (
-        <ResourceSetSummarySection summaries={setSummaries} />
-      )}
+      ) : null}
       {allTiers.map((tier) => {
         const tierSuggestions = byTier.get(tier) ?? [];
         if (tier === "Pool" && tierSuggestions.length === 0) return null;
