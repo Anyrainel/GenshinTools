@@ -3,6 +3,8 @@
 
 export const i18nGameData = {
   "characters": {
+    "alyosha": { "en": "Alyosha", "zh": "阿罗夏" },
+    "odette": { "en": "Odette", "zh": "奥黛塔" },
     "sandrone": { "en": "Sandrone", "zh": "桑多涅" },
     "prune": { "en": "Prune", "zh": "布伦妮" },
     "lohen": { "en": "Lohen", "zh": "洛恩" },

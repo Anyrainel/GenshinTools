@@ -378,7 +378,7 @@ class Alyosha extends CharacterBase {
 
   readonly buffs = (() => {
     const isC6 = this.constellation >= 6;
-    const precisionAtk = this.param("E", 3) * (isC6 ? 2 : 1);
+    const precisionAtk = this.param("E", 5) * (isC6 ? 2 : 1);
 
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // E: Hunter's Precision ATK% buff

@@ -84,6 +84,107 @@
     ],
     "glossary": null
   },
+  "alyosha": {
+    "id": "10000148",
+    "name": "阿罗夏",
+    "skills": [
+      {
+        "name": "A. 角枪驰弋",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多四段的连续枪击，并对最后一击命中的敌人施加<span style=\"color: #FFD780FF;\">弋猎印记</span>效果。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方突进，对路径上的敌人造成伤害。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
+        "details": [
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}"},
+          {"label": "重击体力消耗", "template": "{param7:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param8:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param9:F1P}/{param10:F1P}"}
+        ]
+      },
+      {
+        "name": "E. 伏袭霆击",
+        "descHtml": "循借猎人的本能，依据点按、长按，以不同的方式产生效果，并对命中的敌人施加<span style=\"color: #FFD780FF;\">弋猎印记</span>效果。<br><br><span style=\"color: #FFD780FF;\">点按</span><br>向前方射击，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">长按</span><br>进入瞄准状态，并选定前方一定范围内的敌人，在该状态下提高阿罗夏的抗打断能力。<br>长按结束时，对选定的敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br><br><i>莽撞的猎手曾向枪尖攀爬，随后，有幸熬过血的教训，领悟雪原的生存至理。</i>",
+        "details": [
+          {"label": "点按伤害", "template": "{param1:F1P}"},
+          {"label": "长按伤害", "template": "{param2:F1P}"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"},
+          {"label": "弋猎印记持续时间", "template": "{param4:F1}秒"},
+          {"label": "猎者之准攻击力提升", "template": "{param5:F1P}"},
+          {"label": "猎者之准持续时间", "template": "{param6:F1}秒"}
+        ]
+      },
+      {
+        "name": "Q. 守猎进踞",
+        "descHtml": "召唤信赖的好伙伴<span style=\"color: #FFD780FF;\">图加林</span>一同战斗，并将前方区域短暂变换为<span style=\"color: #FFD780FF;\">轰霆猎场</span>。<br><br><span style=\"color: #FFD780FF;\">轰霆猎场</span><br>·持续嘲讽周围的敌人，吸引敌人攻击；<br>·每隔2秒，对踏入其中的敌人造成一次<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">图加林</span><br>·若周围存在敌人，每隔2秒，图加林将快速移动至一名敌人附近，对其进行撕咬攻击，造成<span style=\"color: #FFD780FF;\">雷元素伤害</span>。<br>·若命中的敌人处于<span style=\"color: #FFD780FF;\">弋猎印记</span>效果影响下，还会激活<span style=\"color: #FFD780FF;\">弋猎印记</span>。<br>·图加林会优先攻击处于<span style=\"color: #FFD780FF;\">弋猎印记</span>效果影响下的敌人。<br><br><i>等待，等待到不再心焦，便有赤腹兰鸻飞越白桦林，迎接他的射击。</i>",
+        "details": [
+          {"label": "轰霆猎场伤害", "template": "{param1:F1P}"},
+          {"label": "图加林伤害", "template": "{param2:F1P}"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "惊醒沉睡的林线",
+        "descHtml": "<span style=\"color: #FFD780FF;\">图加林</span>进行攻击时，还会为队伍中附近的当前场上角色恢复生命值，回复量相当于阿罗夏攻击力的120%。"
+      },
+      {
+        "name": "告别冬麦与残叶",
+        "descHtml": "基于阿罗夏的元素充能效率，提升阿罗夏的元素战技与元素爆发造成的伤害：每1%元素充能效率都会使上述伤害提升0.35%，至多提升至70%。"
+      },
+      {
+        "name": "星赴险域",
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时，阿罗夏将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：激活<span style=\"color: #FFD780FF;\">弋猎印记</span>时获得的<span style=\"color: #FFD780FF;\">猎者之准</span>效果还会使角色处于场上时造成的星超导反应伤害提升20%。"
+      },
+      {
+        "name": "树梢察伺",
+        "descHtml": "在小地图上显示周围的<span style=\"color: #FFD780FF;\">至冬区域特产</span>的位置。"
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. 寒谷轰雷",
+        "descHtml": "队伍中附近的角色对敌人触发<span style=\"color: #FFACFFFF;\">雷元素相关反应</span>后，将为阿罗夏恢复15点元素能量，该效果每18秒至多触发一次。"
+      },
+      {
+        "name": "2. 长嗥远讯",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">守猎进踞</span>的持续时间延长6秒。<br>此外，<span style=\"color: #FFD780FF;\">图加林</span>每次攻击敌人前，还会为一名目标施加<span style=\"color: #FFD780FF;\">弋猎印记</span>；该效果不会激活已有的<span style=\"color: #FFD780FF;\">弋猎印记</span>。"
+      },
+      {
+        "name": "3. 僚朋相唤",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">伏袭霆击</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "4. 衔取猎品",
+        "descHtml": "<span style=\"color: #FFD780FF;\">图加林</span>进行攻击时，还会为队伍中附近的生命值百分比最低的角色恢复生命值，回复量相当于阿罗夏攻击力的60%。"
+      },
+      {
+        "name": "5. 莺啼止时",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">守猎进踞</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "6. 复夺旌幡",
+        "descHtml": "激活<span style=\"color: #FFD780FF;\">弋猎印记</span>时获得的<span style=\"color: #FFD780FF;\">猎者之准</span>效果可以叠加。该效果至多叠加2层，叠加至2层时，还会使处于该效果影响下的当前场上角色的元素精通提升100点。"
+      }
+    ],
+    "glossary": [
+      {
+        "name": "极星辉域",
+        "descHtml": "触发星超导反应时，附近的区域会短暂变化为<span style=\"color: #FFD780FF;\">极星辉域</span>；处于极星辉域中时，特定角色将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，使其不同技能分别获得对应的强化效果。"
+      },
+      {
+        "name": "弋猎印记",
+        "descHtml": "阿罗夏向敌人施加的特殊效果。<br>对已经处于<span style=\"color: #FFD780FF;\">弋猎印记</span>影响下的敌人再次施加该效果时，将会改为激活<span style=\"color: #FFD780FF;\">弋猎印记</span>：移除该印记，并使队伍中附近的所有角色获得<span style=\"color: #FFD780FF;\">猎者之准</span>效果：处于场上时，攻击力提升。"
+      },
+      {
+        "name": "图加林",
+        "descHtml": "深受阿罗夏信赖的猎犬伙伴，可以通过施放元素爆发<span style=\"color: #FFD780FF;\">守猎进踞</span>召唤至场上，会间歇性快速移动至一名敌人附近，对其进行撕咬攻击，并激活已有的<span style=\"color: #FFD780FF;\">弋猎印记</span>。"
+      }
+    ]
+  },
   "amber": {
     "id": "10000021",
     "name": "安柏",
@@ -988,7 +1089,7 @@
       },
       {
         "name": "珍选秘藏",
-        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">猫爪冻冻</span>后的20秒内，队伍中的角色触发超导、星超导反应时，迪奥娜还会协同发射3枚<span style=\"color: #FFD780FF;\">冻冻猫猫爪</span>；通过这种方式发射的<span style=\"color: #FFD780FF;\">冻冻猫猫爪</span>无法产生元素微粒，在命中敌人时也无法产生护盾。该效果每3.5秒至多触发一次。<br>此外，处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时，迪奥娜将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态。"
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">猫爪冻冻</span>后的20秒内，队伍中的角色触发星超导、超导、冰元素扩散、星扩散反应时，迪奥娜还会协同发射3枚<span style=\"color: #FFD780FF;\">冻冻猫猫爪</span>；通过这种方式发射的<span style=\"color: #FFD780FF;\">冻冻猫猫爪</span>无法产生元素微粒，在命中敌人时也无法产生护盾。该效果每3.5秒至多触发一次。<br>此外，处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时/队伍中的角色在附近触发星扩散反应后的8秒内，迪奥娜将分别进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>/<span style=\"color: #FFD780FF;\">辉映·星扩散</span>状态。"
       }
     ],
     "constellations": [
@@ -1014,7 +1115,7 @@
       },
       {
         "name": "6. 猫尾打烊之时",
-        "descHtml": "处在<span style=\"color: #FFD780FF;\">最烈特调</span>领域内的角色，依据生命值获得如下效果：<br>·生命值低于或等于50%时，受治疗加成提升30%；<br>·生命值高于50%时，元素精通提升200。<br><br>此外，迪奥娜的生命值上限提升25%。<br><br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：处在<span style=\"color: #FFD780FF;\">最烈特调</span>领域内的角色造成的超导、星超导反应伤害提升40%。"
+        "descHtml": "处在<span style=\"color: #FFD780FF;\">最烈特调</span>领域内的角色，依据生命值获得如下效果：<br>·生命值低于或等于50%时，受治疗加成提升30%；<br>·生命值高于50%时，元素精通提升200。<br><br>此外，迪奥娜的生命值上限提升25%。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：处于最烈特调领域内的角色造成的对应反应的伤害提高：<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：超导、星超导反应伤害提升40%；<br><span style=\"color: #FFD780FF;\">辉映·星扩散</span>：冰元素扩散、星扩散反应伤害提升40%。"
       }
     ],
     "glossary": [
@@ -1661,7 +1762,7 @@
     "passives": [
       {
         "name": "场中医者视野",
-        "descHtml": "伊法处于夜魂加持状态下时，将基于队伍中所有角色当前夜魂值的总和，每1点夜魂值都将使伊法获得1点<span style=\"color: #FFD780FF;\">「救援要义」</span>。救援要义可以提升队伍中附近的角色触发的扩散、感电、月感电反应造成的伤害。"
+        "descHtml": "伊法处于夜魂加持状态下时，将基于队伍中所有角色当前夜魂值的总和，每1点夜魂值都将使伊法获得1点<span style=\"color: #FFD780FF;\">「救援要义」</span>。救援要义可以提升队伍中附近的角色触发的扩散、星扩散、感电、月感电反应造成的伤害。"
       },
       {
         "name": "互助救援协议",
@@ -1709,7 +1810,7 @@
       },
       {
         "name": "「救援要义」",
-        "descHtml": "上限为150点。基于伊法持有的救援要义，每1点救援要义会使队伍中附近的角色触发的扩散反应与感电反应造成的伤害提升1.5%，月感电反应造成的伤害提升0.2%。救援要义将在伊法的夜魂加持结束时被移除。"
+        "descHtml": "上限为150点。基于伊法持有的救援要义，每1点救援要义会使队伍中附近的角色触发的扩散反应与感电反应造成的伤害提升1.5%，月感电反应造成的伤害提升0.2%，星扩散反应造成的伤害提升0.24%。救援要义将在伊法的夜魂加持结束时被移除。"
       },
       {
         "name": "夜魂加持",
@@ -3099,7 +3200,7 @@
       },
       {
         "name": "E. 叮铃铃·猎魔之音",
-        "descHtml": "怀揣着打败「邪恶」魔女、拯救「德斯卡戴」的决心，解放风的力量吧！布伦妮使用「狩灾誓锤」敲击「诱巫饵铃」，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br>若布伦妮通过该次攻击对敌人触发了扩散反应，则在接下来6秒内，<span style=\"color: #FFD780FF;\">叮铃铃·猎魔之音</span>将被替换为<span style=\"color: #FFD780FF;\">咚锵锵·裁魔之惩</span>。<br><br><span style=\"color: #FFD780FF;\">咚锵锵·裁魔之惩</span><br>将先前参与扩散反应的元素类型缠绕于锤，并使<span style=\"color: #FFD780FF;\">「狩灾誓锤」</span>发生元素转化，点按施放时，布伦妮跃起并将「狩灾誓锤」向前踢出，对面前的敌人造成对应的元素类型伤害。",
+        "descHtml": "怀揣着打败「邪恶」魔女、拯救「德斯卡戴」的决心，解放风的力量吧！布伦妮使用「狩灾誓锤」敲击「诱巫饵铃」，造成<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br>若布伦妮通过该次攻击对敌人触发了扩散或星扩散反应，则在接下来6秒内，<span style=\"color: #FFD780FF;\">叮铃铃·猎魔之音</span>将被替换为<span style=\"color: #FFD780FF;\">咚锵锵·裁魔之惩</span>。<br><br><span style=\"color: #FFD780FF;\">咚锵锵·裁魔之惩</span><br>将先前参与扩散或星扩散反应的元素类型缠绕于锤，并使<span style=\"color: #FFD780FF;\">「狩灾誓锤」</span>发生元素转化，点按施放时，布伦妮跃起并将「狩灾誓锤」向前踢出，对面前的敌人造成对应的元素类型伤害。",
         "details": [
           {"label": "叮铃铃·猎魔之音伤害", "template": "{param1:F1P}"},
           {"label": "咚锵锵·裁魔之惩伤害", "template": "{param2:F1P}"},
@@ -3121,7 +3222,7 @@
     "passives": [
       {
         "name": "裁断追惩",
-        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">铃鸣·狩魔之刻</span>中，处于「寻猎」模式下的「诱巫饵铃」对敌人造成伤害后，若该次伤害对敌人触发了扩散反应，则还会在敌人面前召唤出一柄依据本次扩散反应进行元素转化的<span style=\"color: #FFD780FF;\">「狩灾誓锤」</span>向其砸下，造成布伦妮攻击力150%的对应类型的元素伤害，该伤害视为元素爆发伤害。"
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">铃鸣·狩魔之刻</span>中，处于「寻猎」模式下的「诱巫饵铃」对敌人造成伤害后，若该次伤害对敌人触发了扩散或星扩散反应，则还会在敌人面前召唤出一柄依据本次扩散或星扩散反应进行元素转化的<span style=\"color: #FFD780FF;\">「狩灾誓锤」</span>向其砸下，造成布伦妮攻击力150%的对应类型的元素伤害，该伤害视为元素爆发伤害。"
       },
       {
         "name": "振铃同心",
@@ -3133,7 +3234,7 @@
       },
       {
         "name": "魔女的前夜礼·寻魔之誓",
-        "descHtml": "完成<span style=\"color: #FFD780FF;\">魔女的课业·辩驳之题</span>后，布伦妮将成为<span style=\"color: #FFD780FF;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780FF;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br><br><span style=\"color: #FFD780FF;\">魔导·秘仪</span><br>队伍中处于「振铃鼓舞」效果影响下的魔导角色对敌人触发任意元素反应后，布伦妮自身的攻击力提高60%，持续5秒；若该角色触发的元素反应为扩散反应，则其自身的攻击力还将额外提高30%，持续5秒。"
+        "descHtml": "完成<span style=\"color: #FFD780FF;\">魔女的课业·辩驳之题</span>后，布伦妮将成为<span style=\"color: #FFD780FF;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780FF;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br><br><span style=\"color: #FFD780FF;\">魔导·秘仪</span><br>队伍中处于「振铃鼓舞」效果影响下的魔导角色对敌人触发任意元素反应后，布伦妮自身的攻击力提高60%，持续5秒；若该角色触发的元素反应为扩散或星扩散反应，则其自身的攻击力还将额外提高30%，持续5秒。"
       }
     ],
     "constellations": [
@@ -3165,7 +3266,7 @@
     "glossary": [
       {
         "name": "「狩灾誓锤」",
-        "descHtml": "值得信任的追猎魔女好伙伴！在一定条件下可以发生元素转化，所有原本由「狩灾誓锤」造成的伤害，都会转为对敌人造成对应元素类型的伤害。<br>布伦妮可以通过以下方式，召唤出发生元素转化的「狩灾誓锤」：<br>·布伦妮施放元素战技<span style=\"color: #FFD780FF;\">叮铃铃·猎魔之音</span>对敌人触发扩散反应后的一定时间内，可以施放特殊的元素战技<span style=\"color: #FFD780FF;\">咚锵锵·裁魔之惩</span>；施放该特殊元素战技时，「狩灾誓锤」将会转化为参与先前扩散反应的其他元素类型。<br>·解锁突破天赋「裁断追惩」后，如果处于「寻猎」模式下的「诱巫饵铃」对敌人触发了扩散反应，则会召唤出一柄依据本次扩散反应进行元素转化的「狩灾誓锤」对敌人进行攻击。"
+        "descHtml": "值得信任的追猎魔女好伙伴！在一定条件下可以发生元素转化，所有原本由「狩灾誓锤」造成的伤害，都会转为对敌人造成对应元素类型的伤害。<br>布伦妮可以通过以下方式，召唤出发生元素转化的「狩灾誓锤」：<br>·布伦妮施放元素战技<span style=\"color: #FFD780FF;\">叮铃铃·猎魔之音</span>对敌人触发扩散或星扩散反应后的一定时间内，可以施放特殊的元素战技<span style=\"color: #FFD780FF;\">咚锵锵·裁魔之惩</span>；施放该特殊元素战技时，「狩灾誓锤」将会转化为参与先前扩散或星扩散反应的其他元素类型。<br>·解锁突破天赋「裁断追惩」后，如果处于「寻猎」模式下的「诱巫饵铃」对敌人触发了扩散或星扩散反应，则会召唤出一柄依据本次扩散或星扩散反应进行元素转化的「狩灾誓锤」对敌人进行攻击。"
       }
     ]
   },
@@ -3393,7 +3494,7 @@
     "passives": [
       {
         "name": "更加合适的人选",
-        "descHtml": "早柚在场上触发扩散反应时，为队伍中自己的角色以及附近的友方角色恢复300点生命值。除此之外，早柚的每点元素精通将额外恢复1.2点生命值。<br>该效果每2秒只能触发一次。"
+        "descHtml": "早柚在场上触发扩散或星扩散反应时，为队伍中自己的角色以及附近的友方角色恢复300点生命值。除此之外，早柚的每点元素精通将额外恢复1.2点生命值。<br>该效果每2秒只能触发一次。"
       },
       {
         "name": "早柚不用工作啦",
@@ -3419,7 +3520,7 @@
       },
       {
         "name": "4. 偷懒的新方法",
-        "descHtml": "早柚在场上触发扩散反应时，将恢复1.2点元素能量。<br>该效果每2秒只能触发一次。"
+        "descHtml": "早柚在场上触发扩散或星扩散反应时，将恢复1.2点元素能量。<br>该效果每2秒只能触发一次。"
       },
       {
         "name": "5. 快是第一奥义",
@@ -3556,7 +3657,7 @@
     "passives": [
       {
         "name": "反论稽古",
-        "descHtml": "鹿野院平藏在场上触发扩散反应时，将获得1层<span style=\"color: #FFD780FF;\">勠心拳</span>的「变格」效果，该效果每0.1秒至多触发一次。"
+        "descHtml": "鹿野院平藏在场上触发扩散、星扩散反应时，将获得1层<span style=\"color: #FFD780FF;\">勠心拳</span>的「变格」效果，该效果每0.1秒至多触发一次。"
       },
       {
         "name": "因由勘破",
@@ -3636,7 +3737,7 @@
     "passives": [
       {
         "name": "触媒置换术",
-        "descHtml": "砂糖触发扩散反应时，使队伍中所有对应元素类型的角色（不包括砂糖自己）元素精通提升50，持续8秒。"
+        "descHtml": "砂糖触发扩散、星扩散反应时，使队伍中所有对应元素类型的角色（不包括砂糖自己）元素精通提升50，持续8秒。"
       },
       {
         "name": "小小的慧风",

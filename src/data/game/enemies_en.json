@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "anime_game_data",
-    "total_enemies": 1869,
+    "total_enemies": 2103,
     "lang_note": "Names/titles from TextMap. Affix/comment from MonsterAffixExcelConfigData (CHS in AGD).",
     "sources_included": [
       "world_monster",
@@ -2291,6 +2291,37 @@
         }
       ]
     },
+    "20020102": {
+      "id": 20020102,
+      "name": "Eye of the Storm",
+      "title": "Eye of the Storm",
+      "affixes": [
+        {
+          "id": 3015,
+          "affix": "风抗-100%",
+          "comment": "同系伤害抵抗-风-100%",
+          "ability_names": [
+            "MonsterAffix_ElementResist_Wind_03"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "20020191": {
       "id": 20020191,
       "name": "Eye of the Storm",
@@ -4218,6 +4249,11 @@
     },
     "21010111": {
       "id": 21010111,
+      "name": "Hilichurl",
+      "title": "Hilichurl"
+    },
+    "21010121": {
+      "id": 21010121,
       "name": "Hilichurl",
       "title": "Hilichurl"
     },
@@ -10439,6 +10475,21 @@
       "name": "Veteran Wind Operative",
       "title": "Gale-Lily Servant"
     },
+    "23060403": {
+      "id": 23060403,
+      "name": "Veteran Wind Operative",
+      "title": "Gale-Lily Servant"
+    },
+    "23060404": {
+      "id": 23060404,
+      "name": "Veteran Wind Operative",
+      "title": "Gale-Lily Servant"
+    },
+    "23060405": {
+      "id": 23060405,
+      "name": "Veteran Wind Operative",
+      "title": "Gale-Lily Servant"
+    },
     "23060501": {
       "id": 23060501,
       "name": "Veteran Frost Operative",
@@ -10474,6 +10525,52 @@
       "name": "Oprichniki Line Trooper",
       "title": "Oprichniki",
       "affixes": [
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23070103": {
+      "id": 23070103,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23070104": {
+      "id": 23070104,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
         {
           "id": 30815,
           "affix": "铁皮集群-远程",
@@ -10592,6 +10689,2009 @@
         }
       ]
     },
+    "23070200": {
+      "id": 23070200,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070201": {
+      "id": 23070201,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070202": {
+      "id": 23070202,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070203": {
+      "id": 23070203,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070208": {
+      "id": 23070208,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070209": {
+      "id": 23070209,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070210": {
+      "id": 23070210,
+      "name": "Fatui Skirmisher - Hydrogunner",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070211": {
+      "id": 23070211,
+      "name": "Fatui Skirmisher - Hydrogunner",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070212": {
+      "id": 23070212,
+      "name": "Fatui Skirmisher - Hydrogunner",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070213": {
+      "id": 23070213,
+      "name": "Fatui Skirmisher - Pyroslinger",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070214": {
+      "id": 23070214,
+      "name": "Fatui Skirmisher - Pyroslinger",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30970,
+          "affix": "TPS-爬塔词缀-丢火雷",
+          "comment": "TPS-爬塔词缀-丢火雷",
+          "ability_names": [
+            "Monster_Soldier_Rifle_Throw_Levelup"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070220": {
+      "id": 23070220,
+      "name": "Oprichniki Sniper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070221": {
+      "id": 23070221,
+      "name": "Oprichniki Sniper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070225": {
+      "id": 23070225,
+      "name": "Oprichniki Support Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070230": {
+      "id": 23070230,
+      "name": "Oprichniki Vanguard",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070231": {
+      "id": 23070231,
+      "name": "Oprichniki Vanguard",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070232": {
+      "id": 23070232,
+      "name": "Oprichniki Vanguard",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070240": {
+      "id": 23070240,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070241": {
+      "id": 23070241,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070242": {
+      "id": 23070242,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070245": {
+      "id": 23070245,
+      "name": "Oprichniki Engineer",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070246": {
+      "id": 23070246,
+      "name": "Oprichniki Engineer",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070250": {
+      "id": 23070250,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30992,
+          "affix": "愚人众小车词缀-水",
+          "comment": "愚人众小车词缀-水",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_02"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070251": {
+      "id": 23070251,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30994,
+          "affix": "愚人众小车词缀-雷",
+          "comment": "愚人众小车词缀-雷",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_04"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070255": {
+      "id": 23070255,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30992,
+          "affix": "愚人众小车词缀-水",
+          "comment": "愚人众小车词缀-水",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_02"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070256": {
+      "id": 23070256,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30994,
+          "affix": "愚人众小车词缀-雷",
+          "comment": "愚人众小车词缀-雷",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_04"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070300": {
+      "id": 23070300,
+      "name": "Force Recon Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070301": {
+      "id": 23070301,
+      "name": "Force Recon Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070305": {
+      "id": 23070305,
+      "name": "Force Recon Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070306": {
+      "id": 23070306,
+      "name": "Force Recon Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070390": {
+      "id": 23070390,
+      "name": "Cutting Edge All-Purpose Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30818,
+          "affix": "TPS-铁皮机器-通用标记",
+          "comment": "TPS-铁皮机器-通用标记",
+          "ability_names": [
+            "Monster_Fatuimecha_CommonConfig_ForTPS"
+          ]
+        },
+        {
+          "id": 30819,
+          "affix": "TPS-铁皮机器-精英2",
+          "comment": "TPS-铁皮机器-精英2",
+          "ability_names": [
+            "Monster_Fatuimecha_CoreC_MoveC_AttackD_AttackC_AttackB_Water_ForTPS"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070391": {
+      "id": 23070391,
+      "name": "Cutting Edge All-Purpose Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30818,
+          "affix": "TPS-铁皮机器-通用标记",
+          "comment": "TPS-铁皮机器-通用标记",
+          "ability_names": [
+            "Monster_Fatuimecha_CommonConfig_ForTPS"
+          ]
+        },
+        {
+          "id": 30819,
+          "affix": "TPS-铁皮机器-精英2",
+          "comment": "TPS-铁皮机器-精英2",
+          "ability_names": [
+            "Monster_Fatuimecha_CoreC_MoveC_AttackD_AttackC_AttackB_Water_ForTPS"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070400": {
+      "id": 23070400,
+      "name": "Fatui Skirmisher - Hydrogunner",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070401": {
+      "id": 23070401,
+      "name": "Fatui Skirmisher - Hydrogunner",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070500": {
+      "id": 23070500,
+      "name": "Oprichniki Fireblade Shock Trooper",
+      "title": "Oprichniki Fireblade Shock Trooper",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070510": {
+      "id": 23070510,
+      "name": "Oprichniki Hailstorm Cannoneer",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070511": {
+      "id": 23070511,
+      "name": "Oprichniki Hailstorm Cannoneer",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070520": {
+      "id": 23070520,
+      "name": "Oprichniki Thunderblitz Gvardiya",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070530": {
+      "id": 23070530,
+      "name": "Fatui Skirmisher - Cryogunner Legionnaire",
+      "title": "Fatui Skirmisher - Cryogunner Legionnaire",
+      "affixes": [
+        {
+          "id": 30971,
+          "affix": "TPS-爬塔词缀-同步回血",
+          "comment": "TPS-爬塔词缀-同步回血",
+          "ability_names": [
+            "MonsterAffix_TPSMercenaries_LifeBalance"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070540": {
+      "id": 23070540,
+      "name": "Fatui Skirmisher - Hydrogunner Legionnaire",
+      "title": "Fatui Skirmisher - Hydrogunner Legionnaire",
+      "affixes": [
+        {
+          "id": 30971,
+          "affix": "TPS-爬塔词缀-同步回血",
+          "comment": "TPS-爬塔词缀-同步回血",
+          "ability_names": [
+            "MonsterAffix_TPSMercenaries_LifeBalance"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070550": {
+      "id": 23070550,
+      "name": "Fatui Cryo Cicin Mage",
+      "title": "Cicin Mage: Hoarfrost Wielder",
+      "affixes": [
+        {
+          "id": 9002,
+          "affix": "召唤怪同生同死",
+          "comment": "召唤怪跟随创建者的生命周期",
+          "ability_names": [
+            "MonsterAffix_Summon_Lifetime"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070551": {
+      "id": 23070551,
+      "name": "Fatui Cryo Cicin Mage",
+      "title": "Cicin Mage: Hoarfrost Wielder",
+      "affixes": [
+        {
+          "id": 9002,
+          "affix": "召唤怪同生同死",
+          "comment": "召唤怪跟随创建者的生命周期",
+          "ability_names": [
+            "MonsterAffix_Summon_Lifetime"
+          ]
+        },
+        {
+          "id": 5001,
+          "affix": "强攻",
+          "comment": "精英化词缀-详见对应文档",
+          "ability_names": [
+            "MonsterEliteAffix_Attack_Enhance"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070560": {
+      "id": 23070560,
+      "name": "Mirror Maiden",
+      "title": "Snezhnayan Maiden: Mirror Envoy",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070600": {
+      "id": 23070600,
+      "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070601": {
+      "id": 23070601,
+      "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070901": {
+      "id": 23070901,
+      "name": "Electro Cicin",
+      "title": "Electro Cicin",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070902": {
+      "id": 23070902,
+      "name": "Cryo Cicin",
+      "title": "Cryo Cicin",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070903": {
+      "id": 23070903,
+      "name": "Electro Cicin",
+      "title": "Electro Cicin",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070904": {
+      "id": 23070904,
+      "name": "Cryo Cicin",
+      "title": "Cryo Cicin",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070911": {
+      "id": 23070911,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30992,
+          "affix": "愚人众小车词缀-水",
+          "comment": "愚人众小车词缀-水",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_02"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070912": {
+      "id": 23070912,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30994,
+          "affix": "愚人众小车词缀-雷",
+          "comment": "愚人众小车词缀-雷",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_04"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070913": {
+      "id": 23070913,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30992,
+          "affix": "愚人众小车词缀-水",
+          "comment": "愚人众小车词缀-水",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_02"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070914": {
+      "id": 23070914,
+      "name": "Roaring Thunder: Self-Destructing Roaming Device",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30994,
+          "affix": "愚人众小车词缀-雷",
+          "comment": "愚人众小车词缀-雷",
+          "ability_names": [
+            "Monster_ExplosiveDrone_Element_04"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "23071101": {
       "id": 23071101,
       "name": "Oprichniki Line Trooper",
@@ -10622,11 +12722,80 @@
         }
       ]
     },
+    "23071103": {
+      "id": 23071103,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23071104": {
+      "id": 23071104,
+      "name": "Oprichniki Line Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
     "23072101": {
       "id": 23072101,
       "name": "Oprichniki Support Trooper",
       "title": "Oprichniki",
       "affixes": [
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        }
+      ]
+    },
+    "23072102": {
+      "id": 23072102,
+      "name": "Oprichniki Support Trooper",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
         {
           "id": 30814,
           "affix": "铁皮集群-坦克4",
@@ -10682,6 +12851,52 @@
         }
       ]
     },
+    "23073103": {
+      "id": 23073103,
+      "name": "Oprichniki Grenadier",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23073104": {
+      "id": 23073104,
+      "name": "Oprichniki Grenadier",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
     "23074101": {
       "id": 23074101,
       "name": "Oprichniki Vanguard",
@@ -10712,11 +12927,80 @@
         }
       ]
     },
+    "23074103": {
+      "id": 23074103,
+      "name": "Oprichniki Vanguard",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        }
+      ]
+    },
+    "23074104": {
+      "id": 23074104,
+      "name": "Oprichniki Vanguard",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        }
+      ]
+    },
     "23075101": {
       "id": 23075101,
       "name": "Oprichniki Vanguard",
       "title": "Oprichniki",
       "affixes": [
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        }
+      ]
+    },
+    "23075102": {
+      "id": 23075102,
+      "name": "Oprichniki Vanguard",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
         {
           "id": 30814,
           "affix": "铁皮集群-坦克4",
@@ -10747,6 +13031,52 @@
       "name": "Oprichniki Medic",
       "title": "Oprichniki",
       "affixes": [
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        }
+      ]
+    },
+    "23076103": {
+      "id": 23076103,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        }
+      ]
+    },
+    "23076104": {
+      "id": 23076104,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
         {
           "id": 30816,
           "affix": "铁皮集群-辅助",
@@ -10802,6 +13132,52 @@
         }
       ]
     },
+    "23077103": {
+      "id": 23077103,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        }
+      ]
+    },
+    "23077104": {
+      "id": 23077104,
+      "name": "Oprichniki Medic",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        }
+      ]
+    },
     "23078101": {
       "id": 23078101,
       "name": "Oprichniki Bombardier",
@@ -10822,6 +13198,52 @@
       "name": "Oprichniki Bombardier",
       "title": "Oprichniki",
       "affixes": [
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23078103": {
+      "id": 23078103,
+      "name": "Oprichniki Bombardier",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23078104": {
+      "id": 23078104,
+      "name": "Oprichniki Bombardier",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
         {
           "id": 30815,
           "affix": "铁皮集群-远程",
@@ -10882,6 +13304,29 @@
           "comment": "铁皮机器-磁单极",
           "ability_names": [
             "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
+    "23079103": {
+      "id": 23079103,
+      "name": "Oprichniki Fireblade Shock Trooper",
+      "title": "Oprichniki Fireblade Shock Trooper",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
           ]
         },
         {
@@ -11049,6 +13494,29 @@
         }
       ]
     },
+    "23079203": {
+      "id": 23079203,
+      "name": "Oprichniki Hailstorm Cannoneer",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
     "23079204": {
       "id": 23079204,
       "name": "Oprichniki Hailstorm Cannoneer",
@@ -11169,6 +13637,29 @@
           "comment": "铁皮机器-磁单极",
           "ability_names": [
             "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23079303": {
+      "id": 23079303,
+      "name": "Oprichniki Thunderblitz Gvardiya",
+      "title": "Oprichniki",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
           ]
         },
         {
@@ -11482,6 +13973,68 @@
         }
       ]
     },
+    "23080103": {
+      "id": 23080103,
+      "name": "Close Combat Storm Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
+    "23080104": {
+      "id": 23080104,
+      "name": "Close Combat Storm Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
     "23080201": {
       "id": 23080201,
       "name": "Close Combat Scout Landcruiser",
@@ -11501,6 +14054,68 @@
           "comment": "铁皮机器-N-红",
           "ability_names": [
             "Monster_Fatuimecha_KuuvahkiType_North"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
+    "23080202": {
+      "id": 23080202,
+      "name": "Close Combat Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        }
+      ]
+    },
+    "23080203": {
+      "id": 23080203,
+      "name": "Close Combat Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
           ]
         },
         {
@@ -11599,6 +14214,68 @@
         }
       ]
     },
+    "23080303": {
+      "id": 23080303,
+      "name": "Force Recon Storm Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23080304": {
+      "id": 23080304,
+      "name": "Force Recon Storm Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
     "23080401": {
       "id": 23080401,
       "name": "Force Recon Scout Landcruiser",
@@ -11677,6 +14354,68 @@
         }
       ]
     },
+    "23080403": {
+      "id": 23080403,
+      "name": "Force Recon Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
+    "23080404": {
+      "id": 23080404,
+      "name": "Force Recon Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        }
+      ]
+    },
     "23080501": {
       "id": 23080501,
       "name": "Force Recon Ground Effect Landcruiser",
@@ -11696,6 +14435,68 @@
           "comment": "铁皮机器-N-红",
           "ability_names": [
             "Monster_Fatuimecha_KuuvahkiType_North"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        }
+      ]
+    },
+    "23080502": {
+      "id": 23080502,
+      "name": "Force Recon Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        }
+      ]
+    },
+    "23080503": {
+      "id": 23080503,
+      "name": "Force Recon Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
           ]
         },
         {
@@ -11794,6 +14595,68 @@
         }
       ]
     },
+    "23085103": {
+      "id": 23085103,
+      "name": "Cutting Edge All-Purpose Storm Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30812,
+          "affix": "铁皮集群-坦克2",
+          "comment": "铁皮集群-坦克2",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank2"
+          ]
+        }
+      ]
+    },
+    "23085104": {
+      "id": 23085104,
+      "name": "Cutting Edge All-Purpose Storm Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30812,
+          "affix": "铁皮集群-坦克2",
+          "comment": "铁皮集群-坦克2",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank2"
+          ]
+        }
+      ]
+    },
     "23085201": {
       "id": 23085201,
       "name": "Cutting Edge All-Purpose Scout Landcruiser",
@@ -11852,6 +14715,68 @@
           "comment": "铁皮机器-S-蓝",
           "ability_names": [
             "Monster_Fatuimecha_KuuvahkiType_South"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30811,
+          "affix": "铁皮集群-坦克1",
+          "comment": "铁皮集群-坦克1",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank1"
+          ]
+        }
+      ]
+    },
+    "23085203": {
+      "id": 23085203,
+      "name": "Cutting Edge All-Purpose Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30811,
+          "affix": "铁皮集群-坦克1",
+          "comment": "铁皮集群-坦克1",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank1"
+          ]
+        }
+      ]
+    },
+    "23085204": {
+      "id": 23085204,
+      "name": "Cutting Edge All-Purpose Scout Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
           ]
         },
         {
@@ -12012,6 +14937,68 @@
         }
       ]
     },
+    "23085305": {
+      "id": 23085305,
+      "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        }
+      ]
+    },
+    "23085306": {
+      "id": 23085306,
+      "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
+      "title": "Landcruiser",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30817,
+          "affix": "铁皮集群-远程飞行",
+          "comment": "铁皮集群-远程飞行",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_RangeAir"
+          ]
+        }
+      ]
+    },
     "23090101": {
       "id": 23090101,
       "name": "Super-Heavy Landrover: Mechanized Fortress",
@@ -12147,6 +15134,11 @@
     },
     "24010112": {
       "id": 24010112,
+      "name": "Ruin Guard",
+      "title": "Ruin Guard"
+    },
+    "24010113": {
+      "id": 24010113,
       "name": "Ruin Guard",
       "title": "Ruin Guard"
     },
@@ -18104,6 +21096,3565 @@
         }
       ]
     },
+    "25130101": {
+      "id": 25130101,
+      "name": "Winged Halberd-Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25130102": {
+      "id": 25130102,
+      "name": "Winged Halberd-Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25130191": {
+      "id": 25130191,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25130201": {
+      "id": 25130201,
+      "name": "Winged Soarer Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25130202": {
+      "id": 25130202,
+      "name": "Winged Soarer Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25130203": {
+      "id": 25130203,
+      "name": "Winged Soarer Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25130204": {
+      "id": 25130204,
+      "name": "Winged Soarer Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25130301": {
+      "id": 25130301,
+      "name": "Winged Soarer Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25130302": {
+      "id": 25130302,
+      "name": "Winged Soarer Knight",
+      "title": "Vila of the Dancing Wings",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131001": {
+      "id": 25131001,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131002": {
+      "id": 25131002,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55315,
+          "affix": "兽灵-元素词缀-岩",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_RockType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131003": {
+      "id": 25131003,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131004": {
+      "id": 25131004,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131005": {
+      "id": 25131005,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131008": {
+      "id": 25131008,
+      "affixes": [
+        {
+          "id": 55315,
+          "affix": "兽灵-元素词缀-岩",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_RockType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131011": {
+      "id": 25131011,
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131101": {
+      "id": 25131101,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131102": {
+      "id": 25131102,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55315,
+          "affix": "兽灵-元素词缀-岩",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_RockType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131103": {
+      "id": 25131103,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131104": {
+      "id": 25131104,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131105": {
+      "id": 25131105,
+      "name": "Volkodlak Lobber",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131201": {
+      "id": 25131201,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55315,
+          "affix": "兽灵-元素词缀-岩",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_RockType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131202": {
+      "id": 25131202,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131203": {
+      "id": 25131203,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131205": {
+      "id": 25131205,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131206": {
+      "id": 25131206,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131211": {
+      "id": 25131211,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131221": {
+      "id": 25131221,
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131222": {
+      "id": 25131222,
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131301": {
+      "id": 25131301,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55315,
+          "affix": "兽灵-元素词缀-岩",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_RockType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131302": {
+      "id": 25131302,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131303": {
+      "id": 25131303,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131305": {
+      "id": 25131305,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131306": {
+      "id": 25131306,
+      "name": "Volkodlak Basher",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131309": {
+      "id": 25131309,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131310": {
+      "id": 25131310,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131311": {
+      "id": 25131311,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131321": {
+      "id": 25131321,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 55317,
+          "affix": "壮兽灵-7.0中剧场NPC怪物关闭喝酒技能",
+          "comment": "壮兽灵-7.0中剧场NPC怪物关闭喝酒技能",
+          "ability_names": [
+            "Monster_Volkodlak_DisableDrinkFreeIdle"
+          ]
+        }
+      ]
+    },
+    "25131322": {
+      "id": 25131322,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131401": {
+      "id": 25131401,
+      "name": "Volkodlak Raider",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131402": {
+      "id": 25131402,
+      "name": "Volkodlak Raider",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131403": {
+      "id": 25131403,
+      "name": "Volkodlak Raider",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55314,
+          "affix": "兽灵-元素词缀-雷",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_ElectricType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131411": {
+      "id": 25131411,
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131501": {
+      "id": 25131501,
+      "name": "Volkodlak Raider",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131502": {
+      "id": 25131502,
+      "name": "Volkodlak Raider",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131503": {
+      "id": 25131503,
+      "name": "Volkodlak Raider",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55314,
+          "affix": "兽灵-元素词缀-雷",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_ElectricType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131507": {
+      "id": 25131507,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131510": {
+      "id": 25131510,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55314,
+          "affix": "兽灵-元素词缀-雷",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_ElectricType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131521": {
+      "id": 25131521,
+      "affixes": [
+        {
+          "id": 55301,
+          "affix": "兽灵-单手钝器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_BluntType"
+          ]
+        },
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131601": {
+      "id": 25131601,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55303,
+          "affix": "兽灵-射击弩",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_CrossbowType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131602": {
+      "id": 25131602,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55303,
+          "affix": "兽灵-射击弩",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_CrossbowType"
+          ]
+        },
+        {
+          "id": 55310,
+          "affix": "兽灵-元素词缀-风",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_WindType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131603": {
+      "id": 25131603,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55303,
+          "affix": "兽灵-射击弩",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_CrossbowType"
+          ]
+        },
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131701": {
+      "id": 25131701,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131702": {
+      "id": 25131702,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55310,
+          "affix": "兽灵-元素词缀-风",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_WindType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131703": {
+      "id": 25131703,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131704": {
+      "id": 25131704,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131705": {
+      "id": 25131705,
+      "name": "Volkodlak Sharpshooter",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55310,
+          "affix": "兽灵-元素词缀-风",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_WindType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131711": {
+      "id": 25131711,
+      "affixes": [
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25131791": {
+      "id": 25131791,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 55302,
+          "affix": "兽灵-射击火铳",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GunType"
+          ]
+        },
+        {
+          "id": 55312,
+          "affix": "兽灵-元素词缀-冰",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_IceType"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25132601": {
+      "id": 25132601,
+      "name": "Leomastiff Guard",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25132701": {
+      "id": 25132701,
+      "name": "Long-Eared Striker",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25132702": {
+      "id": 25132702,
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25132791": {
+      "id": 25132791,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25132792": {
+      "id": 25132792,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 4918,
+          "affix": "7.0-兽人必须死-Buff-闪光",
+          "comment": "7.0-兽人必须死-Buff-闪光",
+          "ability_names": [
+            "Activity_V7_0_TpsDefense_GlitteringBuff"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25132801": {
+      "id": 25132801,
+      "name": "Channel Contact",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25132802": {
+      "id": 25132802,
+      "name": "Channel Contact",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25132803": {
+      "id": 25132803,
+      "name": "Channel Contact",
+      "title": "Volkodlak Brute",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25133601": {
+      "id": 25133601,
+      "name": "Fanged Zealot",
+      "title": "Enchanted Beast of Unrivaled Might",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25133602": {
+      "id": 25133602,
+      "name": "Fanged Zealot",
+      "title": "Enchanted Beast of Unrivaled Might",
+      "affixes": [
+        {
+          "id": 5666,
+          "affix": "7.0列车大劫案WQ猛犸词缀",
+          "comment": "7.0列车大劫案WQ猛犸定制逻辑-丝血跪地Loop",
+          "ability_names": [
+            "MonsterAffix_Volkodlak_Mammoth_SpecialDeath"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25133691": {
+      "id": 25133691,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25133701": {
+      "id": 25133701,
+      "name": "Voywolf Hunter",
+      "title": "Enchanted Beast of Unrivaled Might",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25133702": {
+      "id": 25133702,
+      "name": "Voywolf Hunter",
+      "title": "Enchanted Beast of Unrivaled Might",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25133801": {
+      "id": 25133801,
+      "name": "Battle-Hardened Chimeric Volkodlak Archer",
+      "title": "Battle-Hardened Chimeric Volkodlak Archer",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "25133802": {
+      "id": 25133802,
+      "name": "Battle-Hardened Chimeric Volkodlak Archer",
+      "title": "Battle-Hardened Chimeric Volkodlak Archer",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25133803": {
+      "id": 25133803,
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135001": {
+      "id": 25135001,
+      "name": "Glaciomancer",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135002": {
+      "id": 25135002,
+      "name": "Glaciomancer",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135003": {
+      "id": 25135003,
+      "name": "Glaciomancer",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135004": {
+      "id": 25135004,
+      "name": "Glaciomancer",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135101": {
+      "id": 25135101,
+      "name": "Glacial Warden",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135102": {
+      "id": 25135102,
+      "name": "Glacial Warden",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135103": {
+      "id": 25135103,
+      "name": "Glacial Warden",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135104": {
+      "id": 25135104,
+      "name": "Glacial Warden",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135105": {
+      "id": 25135105,
+      "name": "Glacial Warden",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135106": {
+      "id": 25135106,
+      "name": "Glacial Warden",
+      "title": "Snegovik Created From Ice",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135191": {
+      "id": 25135191,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135201": {
+      "id": 25135201,
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25137001": {
+      "id": 25137001,
+      "name": "Rugged Elder Leshy",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25137002": {
+      "id": 25137002,
+      "name": "Rugged Elder Leshy",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25137003": {
+      "id": 25137003,
+      "name": "Rugged Elder Leshy",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25137004": {
+      "id": 25137004,
+      "name": "Rugged Elder Leshy",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25137005": {
+      "id": 25137005,
+      "name": "Rugged Elder Leshy",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5670,
+          "affix": "7.0 掩护射击WQ树灵标记",
+          "comment": "开启束缚捆绑技能",
+          "ability_names": [
+            "MonsterAffix_LeshyMature_CoverShootIndex"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25137006": {
+      "id": 25137006,
+      "name": "Rugged Elder Leshy",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25137091": {
+      "id": 25137091,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25138001": {
+      "id": 25138001,
+      "name": "Juvenile Tree Segment",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25138002": {
+      "id": 25138002,
+      "name": "Juvenile Tree Segment",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25138003": {
+      "id": 25138003,
+      "name": "Juvenile Tree Segment",
+      "title": "Leshy Born of the Mystic Wilds",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5670,
+          "affix": "7.0 掩护射击WQ树灵标记",
+          "comment": "开启束缚捆绑技能",
+          "ability_names": [
+            "MonsterAffix_LeshyMature_CoverShootIndex"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25138091": {
+      "id": 25138091,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25139001": {
+      "id": 25139001,
+      "name": "Battle-Hardened Domovoy Sculptor",
+      "title": "Battle-Hardened Domovoy Sculptor",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "25139002": {
+      "id": 25139002,
+      "name": "Battle-Hardened Domovoy Sculptor",
+      "title": "Battle-Hardened Domovoy Sculptor",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 51391,
+          "affix": "矮灵-地方传奇-深渊词缀",
+          "comment": "矮灵-地方传奇-深渊词缀",
+          "ability_names": [
+            "Monster_Karzelek_Tsereteli_Abyss"
+          ]
+        }
+      ]
+    },
+    "25140101": {
+      "id": 25140101,
+      "name": "Immortal Construct",
+      "title": "Immortal Construct",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25140201": {
+      "id": 25140201,
+      "name": "Ever-Burning Illusion",
+      "title": "Remains of a Sudden Light Lost in Shadow",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25140202": {
+      "id": 25140202,
+      "name": "Ever-Burning Illusion",
+      "title": "Remains of a Sudden Light Lost in Shadow",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5673,
+          "affix": "7.0 火鸟精英词缀",
+          "comment": "7.0 火鸟精英词缀",
+          "ability_names": [
+            "MonsterAffix_Zharptitsa_Elite"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25141101": {
+      "id": 25141101,
+      "title": "Spirit of Omen: Dendro Spirit-Serpent",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25141102": {
+      "id": 25141102,
+      "title": "Spirit of Omen: Dendro Spirit-Serpent",
+      "affixes": [
+        {
+          "id": 30911,
+          "affix": "TPS-光之巨人-阶段2-影域战斗",
+          "comment": "TPS-光之巨人-阶段2-影域战斗",
+          "ability_names": [
+            "MonsterAbility_Svarod_01_BattleState_FightState"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25141110": {
+      "id": 25141110,
+      "title": "Spirit of Omen: Dendro Spirit-Serpent",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25141111": {
+      "id": 25141111,
+      "title": "Spirit of Omen: Dendro Spirit-Serpent",
+      "affixes": [
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "25210101": {
       "id": 25210101,
       "name": "Eremite Axe Vanguard",
@@ -21375,6 +27926,29 @@
       "name": "Cryo Whopperflower",
       "title": "Cryo Whopperflower"
     },
+    "26010111": {
+      "id": 26010111,
+      "name": "Cryo Whopperflower",
+      "title": "Cryo Whopperflower",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "26010190": {
       "id": 26010190,
       "name": "Cryo Whopperflower",
@@ -21385,10 +27959,56 @@
       "name": "Pyro Whopperflower",
       "title": "Pyro Whopperflower"
     },
+    "26010211": {
+      "id": 26010211,
+      "name": "Pyro Whopperflower",
+      "title": "Pyro Whopperflower",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "26010301": {
       "id": 26010301,
       "name": "Electro Whopperflower",
       "title": "Electro Whopperflower"
+    },
+    "26010311": {
+      "id": 26010311,
+      "name": "Electro Whopperflower",
+      "title": "Electro Whopperflower",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
     },
     "26020101": {
       "id": 26020101,
@@ -25370,6 +31990,539 @@
         }
       ]
     },
+    "26310101": {
+      "id": 26310101,
+      "name": "Chimeric Armored Beast",
+      "title": "Patchwork Beast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "26310102": {
+      "id": 26310102,
+      "name": "Chimeric Armored Beast",
+      "title": "Patchwork Beast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310201": {
+      "id": 26310201,
+      "name": "Chimeric Burrowbeast",
+      "title": "Patchwork Beast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "26310301": {
+      "id": 26310301,
+      "name": "Chimeric Winged Elephant",
+      "title": "Patchwork Beast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "26310302": {
+      "id": 26310302,
+      "name": "Chimeric Winged Elephant",
+      "title": "Patchwork Beast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310401": {
+      "id": 26310401,
+      "name": "Chimeric Horned Bear",
+      "title": "Manmade Wildwood Spirit",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "26310402": {
+      "id": 26310402,
+      "name": "Chimeric Horned Bear",
+      "title": "Manmade Wildwood Spirit",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30103,
+          "affix": "【废弃】TPS-通用词缀-影域特效3",
+          "comment": "【废弃】TPS-通用词缀-影域特效3",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310501": {
+      "id": 26310501,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63103,
+          "affix": "奇美拉-挑战-大世界",
+          "comment": "奇美拉挑战-大世界词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_IsBigWorld"
+          ]
+        }
+      ]
+    },
+    "26310502": {
+      "id": 26310502,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63101,
+          "affix": "奇美拉-白沙皇守墓兽-7.0WQ",
+          "comment": "奇美拉挑战-7.0WQ词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_WQ70"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310503": {
+      "id": 26310503,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63102,
+          "affix": "奇美拉-挑战-深渊",
+          "comment": "奇美拉挑战-深渊词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_IsAbyss"
+          ]
+        }
+      ]
+    },
+    "26310504": {
+      "id": 26310504,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63104,
+          "affix": "奇美拉-白沙皇守墓兽-TPS爬塔",
+          "comment": "奇美拉挑战-TPS爬塔词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_TPSMercenaries"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310505": {
+      "id": 26310505,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "26310506": {
+      "id": 26310506,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63102,
+          "affix": "奇美拉-挑战-深渊",
+          "comment": "奇美拉挑战-深渊词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_IsAbyss"
+          ]
+        }
+      ]
+    },
+    "26310507": {
+      "id": 26310507,
+      "name": "Chimeric Winged Lion",
+      "title": "Solo Accompanist",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63102,
+          "affix": "奇美拉-挑战-深渊",
+          "comment": "奇美拉挑战-深渊词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_IsAbyss"
+          ]
+        }
+      ]
+    },
+    "26310601": {
+      "id": 26310601,
+      "name": "Battle-Hardened Chimeric Burrowbeast",
+      "title": "Battle-Hardened Chimeric Burrowbeast",
+      "affixes": [
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "26310602": {
+      "id": 26310602,
+      "name": "Battle-Hardened Chimeric Burrowbeast",
+      "title": "Battle-Hardened Chimeric Burrowbeast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5703,
+          "affix": "主线定制奇美拉词缀",
+          "comment": "主线定制奇美拉词缀",
+          "ability_names": [
+            "Monster_Chimera_OwlPangolin_02_StoryModeAdjust"
+          ]
+        }
+      ]
+    },
+    "26310603": {
+      "id": 26310603,
+      "name": "Battle-Hardened Chimeric Burrowbeast",
+      "title": "Battle-Hardened Chimeric Burrowbeast",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5705,
+          "affix": "7.0穿山鹰爬塔词缀",
+          "comment": "7.0穿山鹰爬塔词缀",
+          "ability_names": [
+            "Monster_Chimera_OwlPangolin_02_TowerMark"
+          ]
+        }
+      ]
+    },
+    "26310901": {
+      "id": 26310901,
+      "name": "Ever-Lingering Illusion",
+      "title": "Trace of the Everlight in Shadow",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63101,
+          "affix": "奇美拉-白沙皇守墓兽-7.0WQ",
+          "comment": "奇美拉挑战-7.0WQ词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_WQ70"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310902": {
+      "id": 26310902,
+      "name": "Ever-Lingering Illusion",
+      "title": "Trace of the Everlight in Shadow",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 63104,
+          "affix": "奇美拉-白沙皇守墓兽-TPS爬塔",
+          "comment": "奇美拉挑战-TPS爬塔词缀",
+          "ability_names": [
+            "Monster_Chimera_Manticore_TPSMercenaries"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "28010211": {
       "id": 28010211,
       "affixes": [
@@ -25949,6 +33102,27 @@
           "comment": "6.0磁力小动物用（区分特效用）",
           "ability_names": [
             "MonsterAffix_Animal_NodAnimal_01_Mark_S"
+          ]
+        }
+      ]
+    },
+    "28023009": {
+      "id": 28023009,
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
           ]
         }
       ]
@@ -26755,6 +33929,69 @@
     "28061501": {
       "id": 28061501,
       "affixes": [
+        {
+          "id": 5206,
+          "affix": "3.0 动物通用血条显示控件",
+          "comment": "3.0 动物通用血条显示控件",
+          "ability_names": [
+            "Monster_Animal_Common_BillboardControl"
+          ]
+        }
+      ]
+    },
+    "28061601": {
+      "id": 28061601,
+      "affixes": [
+        {
+          "id": 5167,
+          "affix": "3.0驮兽词缀-巨大体型",
+          "comment": "巨大体型驮兽",
+          "ability_names": [
+            "Monster_Megamoth_GiantSize"
+          ]
+        },
+        {
+          "id": 5206,
+          "affix": "3.0 动物通用血条显示控件",
+          "comment": "3.0 动物通用血条显示控件",
+          "ability_names": [
+            "Monster_Animal_Common_BillboardControl"
+          ]
+        }
+      ]
+    },
+    "28061602": {
+      "id": 28061602,
+      "affixes": [
+        {
+          "id": 5167,
+          "affix": "3.0驮兽词缀-巨大体型",
+          "comment": "巨大体型驮兽",
+          "ability_names": [
+            "Monster_Megamoth_GiantSize"
+          ]
+        },
+        {
+          "id": 5206,
+          "affix": "3.0 动物通用血条显示控件",
+          "comment": "3.0 动物通用血条显示控件",
+          "ability_names": [
+            "Monster_Animal_Common_BillboardControl"
+          ]
+        }
+      ]
+    },
+    "28061603": {
+      "id": 28061603,
+      "affixes": [
+        {
+          "id": 5167,
+          "affix": "3.0驮兽词缀-巨大体型",
+          "comment": "巨大体型驮兽",
+          "ability_names": [
+            "Monster_Megamoth_GiantSize"
+          ]
+        },
         {
           "id": 5206,
           "affix": "3.0 动物通用血条显示控件",
@@ -28125,6 +35362,21 @@
       "name": "Large Geo Slime",
       "title": "Large Geo Slime"
     },
+    "84008022": {
+      "id": 84008022,
+      "name": "Tangled Vines: Frostnight Scion",
+      "title": "Frostnight Scion"
+    },
+    "84008062": {
+      "id": 84008062,
+      "name": "Veiled Cloudchaser: Frostnight Scion",
+      "title": "Frostnight Scion"
+    },
+    "84008072": {
+      "id": 84008072,
+      "name": "Gilded Sunshard: Frostnight Scion",
+      "title": "Frostnight Scion"
+    },
     "84101011": {
       "id": 84101011,
       "name": "Hilichurl",
@@ -28270,6 +35522,11 @@
       "name": "Electro Abyss Mage",
       "title": "Electrochanter"
     },
+    "84202012": {
+      "id": 84202012,
+      "name": "Abyss Herald: Wicked Torrents",
+      "title": "Dark Usher of Wicked Torrents"
+    },
     "84202022": {
       "id": 84202022,
       "name": "Abyss Herald: Frost Fall",
@@ -28279,6 +35536,11 @@
       "id": 84203012,
       "name": "Abyss Lector: Violet Lightning",
       "title": "Evangelist of Striking Thunder"
+    },
+    "84203022": {
+      "id": 84203022,
+      "name": "Abyss Lector: Fathomless Flames",
+      "title": "The Devouring Benthic Flame"
     },
     "84301011": {
       "id": 84301011,
@@ -28405,6 +35667,11 @@
       "name": "Swiftstep Seeker",
       "title": "Swiftstep Seeker"
     },
+    "84551022": {
+      "id": 84551022,
+      "name": "Tepetlisaurus Warrior: Rockbreaker Blade",
+      "title": "Tepetlisaurus Warrior: Rockbreaker Blade"
+    },
     "84601011": {
       "id": 84601011,
       "name": "Cryo Whopperflower",
@@ -28453,6 +35720,11 @@
       "id": 84612021,
       "name": "Winged Cryoshroom",
       "title": "Winged Cryoshroom"
+    },
+    "84622032": {
+      "id": 84622032,
+      "name": "Gluttonous Yumkasaur Mountain King",
+      "title": "Gluttonous Yumkasaur Mountain King"
     },
     "84623031": {
       "id": 84623031,

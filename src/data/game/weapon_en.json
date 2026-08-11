@@ -2,7 +2,7 @@
   "a_teaspoon_of_transcendence": {
     "id": "12516",
     "name": "A Teaspoon of Transcendence",
-    "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>.<br>Additionally, each time the equipping character hits an opponent with their Charged Attack, they attain \"Transcendence\" for a short time: their Stellar-Conduct DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s. This effect can stack once every 0.2s, max 3 stacks.",
+    "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>.<br>Additionally, each time the equipping character hits an opponent with their Charged Attack, they attain \"Transcendence\" for a short time: their Stellar-Conduct and Stellar Swirl reaction DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s. This effect can stack once every 0.2s, max 3 stacks.",
     "refinements": [
       ["28%", "16%"],
       ["35%", "20%"],
@@ -158,7 +158,7 @@
   "astral_vultures_crimson_plumage": {
     "id": "15514",
     "name": "Astral Vulture's Crimson Plumage",
-    "descHtmlTpl": "For 12s after triggering a Swirl reaction, ATK increases by <span style=\"color: #99FFFFFF;\">{0}</span>. In addition, when 1/2 or more characters in the party are of a different Elemental Type from the equipping character, the DMG dealt by the equipping character's Charged Attacks is increased by <span style=\"color: #99FFFFFF;\">{1}/{2}</span> and Elemental Burst DMG dealt is increased by <span style=\"color: #99FFFFFF;\">{3}/{4}</span>.",
+    "descHtmlTpl": "For 12s after triggering a Swirl or Stellar Swirl reaction, ATK increases by <span style=\"color: #99FFFFFF;\">{0}</span>. In addition, when 1/2 or more characters in the party are of a different Elemental Type from the equipping character, the DMG dealt by the equipping character's Charged Attacks is increased by <span style=\"color: #99FFFFFF;\">{1}/{2}</span>, and Elemental Burst DMG dealt is increased by <span style=\"color: #99FFFFFF;\">{3}/{4}</span>.",
     "refinements": [
       ["24%", "20%", "48%", "10%", "24%"],
       ["30%", "25%", "60%", "12.5%", "30%"],
@@ -311,6 +311,18 @@
       ["96%", "24%", "24%"]
     ]
   },
+  "blade_of_atonement": {
+    "id": "12436",
+    "name": "Blade of Atonement",
+    "descHtmlTpl": "Triggering an Elemental Reaction increases the equipping character's Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s, while triggering a Stellar Glimmer reaction increases their ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 12s. The aforementioned effects can trigger even when the character is not on the field.",
+    "refinements": [
+      ["64", "16%"],
+      ["80", "20%"],
+      ["96", "24%"],
+      ["112", "28%"],
+      ["128", "32%"]
+    ]
+  },
   "bloodsoaked_ruins": {
     "id": "13516",
     "name": "Bloodsoaked Ruins",
@@ -395,6 +407,18 @@
       ["80%"]
     ]
   },
+  "clash_of_kings": {
+    "id": "14435",
+    "name": "Clash of Kings",
+    "descHtmlTpl": "Using an Elemental Skill grants the equipping character \"Laws of the Board,\" which increases their ATK by <span style=\"color: #99FFFFFF;\">{0}</span> and their Elemental Mastery by <span style=\"color: #99FFFFFF;\">{1}</span>. This effect lasts 6s and can trigger once every 12s. Does not stack. The duration of this effect will also be extended by 6s if the equipping character hits an opponent with a Charged Attack while it is active. The effect can be extended for max 6s in this way.",
+    "refinements": [
+      ["20%", "100"],
+      ["25%", "125"],
+      ["30%", "150"],
+      ["35%", "175"],
+      ["40%", "200"]
+    ]
+  },
   "cloudforged": {
     "id": "15426",
     "name": "Cloudforged",
@@ -429,6 +453,18 @@
       ["18%"],
       ["21%"],
       ["24%"]
+    ]
+  },
+  "covenant_of_frost_and_snow": {
+    "id": "15436",
+    "name": "Covenant of Frost and Snow",
+    "descHtmlTpl": "For 12s after the equipping character uses an Elemental Skill, their Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{0}</span>.",
+    "refinements": [
+      ["120"],
+      ["150"],
+      ["180"],
+      ["210"],
+      ["240"]
     ]
   },
   "cranes_echoing_call": {
@@ -599,6 +635,18 @@
       ["80%"]
     ]
   },
+  "echoes_of_the_heart": {
+    "id": "14436",
+    "name": "Echoes of the Heart",
+    "descHtmlTpl": "Triggering an Elemental Reaction increases the equipping character's Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s, while triggering a Stellar Glimmer reaction increases their Stellar Glimmer reaction DMG dealt by <span style=\"color: #99FFFFFF;\">{1}</span> for 12s. The aforementioned effects can trigger even when the character is not on the field.",
+    "refinements": [
+      ["60", "16%"],
+      ["75", "20%"],
+      ["90", "24%"],
+      ["105", "28%"],
+      ["120", "32%"]
+    ]
+  },
   "elegy_for_the_end": {
     "id": "15503",
     "name": "Elegy for the End",
@@ -609,6 +657,18 @@
       ["90", "150", "30%"],
       ["105", "175", "35%"],
       ["120", "200", "40%"]
+    ]
+  },
+  "emberwell": {
+    "id": "11436",
+    "name": "Emberwell",
+    "descHtmlTpl": "Triggering an Elemental Reaction increases the equipping character's ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s. Triggering a Stellar Glimmer reaction increases their Stellar Glimmer reaction DMG dealt by <span style=\"color: #99FFFFFF;\">{1}</span> for 12s. The aforementioned effects can trigger even when the character is not on the field.",
+    "refinements": [
+      ["16%", "16%"],
+      ["20%", "20%"],
+      ["24%", "24%"],
+      ["28%", "28%"],
+      ["32%", "32%"]
     ]
   },
   "emerald_orb": {
@@ -669,6 +729,18 @@
       ["15%", "2%"],
       ["17.5%", "2.5%"],
       ["20%", "3%"]
+    ]
+  },
+  "exaiphanes_blade": {
+    "id": "11521",
+    "name": "Exaiphanes Blade",
+    "descHtmlTpl": "{0}",
+    "refinements": [
+      ["When the Traveler equips this, their ATK will increase by <span style=\"color: #99FFFFFF;\">16%</span> for <span style=\"color: #99FFFFFF;\">8</span>s after they hit an opponent. At the same time, they will also regenerate <span style=\"color: #99FFFFFF;\">3</span> Elemental Energy. This effect can trigger once every <span style=\"color: #99FFFFFF;\">5</span>s. This can be triggered even when the character is not on the field."],
+      ["When the Traveler equips this, their CRIT DMG increases by 6% for every Element they have resonated with. Additionally, the Traveler's ATK will also increase by <span style=\"color: #99FFFFFF;\">20%</span> for 8s, and regenerate <span style=\"color: #99FFFFFF;\">3</span> Elemental Energy, after they attack and hit an opponent. This effect can trigger once every 5s. This can be triggered even when the character is not on the field."],
+      ["When the Traveler equips this, their CRIT DMG increases by 6% for every Element they have resonated with. Additionally, the Traveler's ATK will also increase by <span style=\"color: #99FFFFFF;\">24%</span> for 8s, and regenerate <span style=\"color: #99FFFFFF;\">5</span> Elemental Energy, after they attack and hit an opponent. This effect can trigger once every 5s. This can be triggered even when the character is not on the field."],
+      ["When the Traveler equips this, their CRIT DMG increases by 6% for every Element they have resonated with. Additionally, the Traveler's ATK will also increase by <span style=\"color: #99FFFFFF;\">32%</span> for 8s, and regenerate <span style=\"color: #99FFFFFF;\">5</span> Elemental Energy, after they attack and hit an opponent. This effect can trigger once every 5s. This can be triggered even when the character is not on the field."],
+      ["When the Traveler equips this, their CRIT DMG increases by 6% for every Element they have resonated with. Additionally, the Traveler's ATK will also increase by <span style=\"color: #99FFFFFF;\">40%</span> for 8s, and regenerate <span style=\"color: #99FFFFFF;\">5</span> Elemental Energy, after they attack and hit an opponent. This effect can trigger once every 5s. This can be triggered even when the character is not on the field."]
     ]
   },
   "eye_of_perception": {
@@ -899,6 +971,18 @@
       ["120"]
     ]
   },
+  "forged_by_the_golden_melody": {
+    "id": "12435",
+    "name": "Forged by the Golden Melody",
+    "descHtmlTpl": "Every 10s, the equipping character plays a \"Harmonic Movement\" of the corresponding type for a boost in the following order: <span style=\"color: #99FFFFFF;\">+{0}</span> ATK > <span style=\"color: #99FFFFFF;\">+{1}</span> Elemental Mastery > <span style=\"color: #99FFFFFF;\">+{2}</span> Stellar Glimmer reaction DMG. Each instance of Harmonic Movement lasts 10s. This effect can trigger even when the equipping character is not on the field.<br>Triggering a Stellar Glimmer reaction will also grant an additional 12-second instance of \"Harmonic Movement: Contrapuntal\" with the same effects as the Harmonic Movement active when Stellar Glimmer is triggered. This effect stacks with the original Harmonic Movement effect, and can trigger once every 12s.",
+    "refinements": [
+      ["18%", "120", "28%"],
+      ["22.5%", "150", "35%"],
+      ["27%", "180", "42%"],
+      ["31.5%", "210", "49%"],
+      ["36%", "240", "56%"]
+    ]
+  },
   "fractured_halo": {
     "id": "13515",
     "name": "Fractured Halo",
@@ -933,6 +1017,18 @@
       ["80%", "110%", "280%"],
       ["90%", "125%", "320%"],
       ["100%", "140%", "360%"]
+    ]
+  },
+  "frostbreath": {
+    "id": "13435",
+    "name": "Frostbreath",
+    "descHtmlTpl": "Triggering a Cryo or Hydro-related elemental reaction increases the equipping character's ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for the next 15s, as well as regenerates <span style=\"color: #99FFFFFF;\">{1}</span> Elemental Energy for other members of their party. This effect can trigger once every 16s.",
+    "refinements": [
+      ["20%", "6"],
+      ["25%", "7.5"],
+      ["30%", "9"],
+      ["35%", "10.5"],
+      ["40%", "12"]
     ]
   },
   "fruit_of_fulfillment": {
@@ -1043,6 +1139,18 @@
       ["28%"]
     ]
   },
+  "heretics_molten_blade": {
+    "id": "11435",
+    "name": "Heretic's Molten Blade",
+    "descHtmlTpl": "After the equipping character uses their Elemental Skill, they gain \"Gleam of First Light.\" While active, Gleam of First Light tracks their distance traveled. Each second, the equipping character gains an ATK Bonus ranging from <span style=\"color: #99FFFFFF;\">{0}</span> to <span style=\"color: #99FFFFFF;\">{1}</span> based on the distance traveled during the previous second. Gleam of First Light lasts 14s, can be triggered once every 14s, and is removed when the equipping character leaves the field.",
+    "refinements": [
+      ["18%", "36%"],
+      ["22.5%", "45%"],
+      ["27%", "54%"],
+      ["31.5%", "63%"],
+      ["36%", "72%"]
+    ]
+  },
   "hunters_path": {
     "id": "15511",
     "name": "Hunter's Path",
@@ -1077,6 +1185,18 @@
       ["9%"],
       ["10.5%"],
       ["12%"]
+    ]
+  },
+  "jade_vista": {
+    "id": "15435",
+    "name": "Jade Vista",
+    "descHtmlTpl": "For every party member other than the equipping character: · Who is of the same Elemental Type as the equipper: The equipping character's Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{0}</span>; · Who is not of the same Elemental Type as the equipper: The equipping character's ATK increases by <span style=\"color: #99FFFFFF;\">{1}</span>. The two effects described above can stack up to 3 times in total, with Elemental Mastery buffs applied first.",
+    "refinements": [
+      ["64", "12%"],
+      ["80", "15%"],
+      ["96", "18%"],
+      ["112", "21%"],
+      ["128", "24%"]
     ]
   },
   "jadefalls_splendor": {
@@ -2151,6 +2271,18 @@
       ["32%"]
     ]
   },
+  "song_of_the_vigil": {
+    "id": "13436",
+    "name": "Song of the Vigil",
+    "descHtmlTpl": "Triggering an Elemental Reaction regenerates <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Energy for the equipping character. This effect can trigger once every 9s. On the other hand, triggering a Stellar Glimmer reaction increases their ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 12s. The aforementioned effects can trigger even when the character is not on the field.",
+    "refinements": [
+      ["4", "20%"],
+      ["5", "25%"],
+      ["6", "30%"],
+      ["7", "35%"],
+      ["8", "40%"]
+    ]
+  },
   "splendor_of_tranquil_waters": {
     "id": "11513",
     "name": "Splendor of Tranquil Waters",
@@ -2226,7 +2358,7 @@
   "sunny_morning_sleepin": {
     "id": "14518",
     "name": "Sunny Morning Sleep-In",
-    "descHtmlTpl": "Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s after triggering Swirl. Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{1}</span> for 9s after the wielder's Elemental Skill hits an opponent. Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{2}</span> for 30s after the wielder's Elemental Burst hits an opponent.",
+    "descHtmlTpl": "Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s after triggering Swirl or Stellar Swirl. Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{1}</span> for 9s after the wielder's Elemental Skill hits an opponent. Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{2}</span> for 30s after the wielder's Elemental Burst hits an opponent.",
     "refinements": [
       ["120", "96", "32"],
       ["150", "120", "40"],
@@ -2693,6 +2825,18 @@
       ["9%"],
       ["10.5%"],
       ["12%"]
+    ]
+  },
+  "whitelake_frostfeather": {
+    "id": "11520",
+    "name": "Whitelake Frostfeather",
+    "descHtmlTpl": "When the equipping character hits an opponent with their Elemental Skill, they gain \"Lake-Hued Lament\": ATK increases by <span style=\"color: #99FFFFFF;\">{0}</span> for 8s. This effect can trigger once every 0.1s. Max 3 stacks, and each stack's duration is independent. At 3 stacks, the CRIT DMG of any Stellar Glimmer reaction DMG caused by the equipping character is increased by <span style=\"color: #99FFFFFF;\">{1}</span>, and triggering Stellar Glimmer reactions or Stellar Glimmer reaction DMG will also restore <span style=\"color: #99FFFFFF;\">{2}</span> Elemental Energy to the character. This Energy recovery effect can trigger once every 3.5s. Can be triggered even when the equipping character is off-field.",
+    "refinements": [
+      ["8%", "50%", "4"],
+      ["10%", "65%", "4.5"],
+      ["12%", "80%", "5"],
+      ["14%", "95%", "5.5"],
+      ["16%", "110%", "6"]
     ]
   },
   "windblume_ode": {

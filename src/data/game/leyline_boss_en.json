@@ -1576,6 +1576,124 @@
           "name": "Primeval Source Dragon Mech"
         }
       ]
+    },
+    {
+      "id": 10111,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1011041,
+          "name": "Chimeric Winged Lion: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1011051,
+          "name": "Chimeric Winged Lion: Turbulence"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1011061,
+          "name": "Chimeric Winged Lion: Power Overwhelming"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "{SPRITE_PRESET#11022} Reactions | Cryo Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Thundercall",
+          "short": "At the start of battle, the Nemesis will generate an <color=#FFD780FF>Electro Ward</color> to protect itself. When the Nemesis channels Anemo power into its Electro greatsword, placing it under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> will interrupt its attack and damage its Ward. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will stop attacking and become paralyzed.",
+          "detail": "At the start of battle, the Nemesis will draw on the power of its Electro head to generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. At regular intervals, the Nemesis's two heads will act in tandem, channeling Anemo power into its Electro greatsword to unleash a large Electro shockwave. If the Nemesis is under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> at this time, its power will be thrown into disarray and backfire, <color=#FFD780FF>damaging its Ward</color>. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will stop attacking from exhaustion and become paralyzed."
+        },
+        {
+          "tiers": [4],
+          "title": "Thundercall",
+          "short": "At the start of battle, the Nemesis will generate an <color=#FFD780FF>Electro Ward</color> to protect itself. When the Nemesis channels Anemo power into its Electro greatsword, placing it under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> will interrupt its attack and damage its Ward. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will stop attacking due to exhaustion and become paralyzed.",
+          "detail": "At the start of battle, the Nemesis will draw on the power of its Electro head to generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. At regular intervals, the Nemesis's two heads will act in tandem, channeling Anemo power into its Electro greatsword to unleash a large Electro shockwave. If the Nemesis is under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> at this time, its power will be thrown into disarray and backfire, <color=#FFD780FF>damaging its Ward</color>. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will stop attacking from exhaustion and become paralyzed."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Galeforce",
+          "short": "During battle, the Nemesis will circle rapidly and attack by firing Gale Bolts. After it finishes circling, it will continuously draw in and absorb Anemo Orbs on the field. Anemo Orbs can be <color=#FFD780FF>destroyed with Hydro/Pyro/Electro/Cryo DMG</color>. You can also place the Nemesis under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> to prevent it from absorbing Anemo Orbs. If the Nemesis fails to absorb enough Anemo Orbs, it will become paralyzed.",
+          "detail": "During battle, the Nemesis will draw on the power of its Anemo head to take to the air, circle rapidly, and attack by firing Gale Bolts. After it finishes circling, the Nemesis will create a vortex, attempting to draw in and absorb Anemo Orbs on the field to recover its power. After absorbing enough Anemo Orbs, it will take to the air once more and launch another circling attack. Anemo Orbs can be destroyed with <color=#FFD780FF>Hydro/Pyro/Electro/Cryo DMG</color>. You can also place the Nemesis under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> to prevent it from absorbing Anemo Orbs. If the vortex dissipates before the Nemesis has absorbed enough Anemo Orbs, it will immediately become paralyzed."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Thundercall: Sturdy Shield",
+          "short": "Due to the effects of the Ley Line disturbance, at the start of battle, the Nemesis will generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. When the Nemesis channels Anemo power into its Electro greatsword, placing it under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> will interrupt its attack and damage its Ward. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will become paralyzed, its <color=#FFD780FF>Cryo and Anemo RES will be greatly reduced</color>, and it will take a single instance of massive backlash DMG based on the DMG blocked by the Ward. <color=#FFD780FF>Stellar Glimmer reaction DMG</color> will increase the backlash DMGthe Nemesis takes when the Ward is broken.",
+          "detail": "Due to the effects of the Ley Line disturbance, at the start of battle, the Nemesis will draw on the power of its Electro head to generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. At regular intervals, the Nemesis's two heads will act in tandem, channeling Anemo power into its Electro greatsword to unleash a large Electro shockwave. If the Nemesis is under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> at this time, its power will be thrown into disarray and backfire, <color=#FFD780FF>damaging its Ward</color>. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will stop attacking from exhaustion and become paralyzed. Its <color=#FFD780FF>Cryo and Anemo RES will also be greatly reduced</color>, and it will take a single instance of high backlash DMG based on the DMG blocked by the Ward. <color=#FFD780FF>Stellar Glimmer reaction DMG</color> will increase the backlash DMG the Nemesis takes when the Ward is broken."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Galeforce: Fierce Assault",
+          "short": "During battle, the Nemesis will circle rapidly and attack by firing Gale Bolts. After it finishes circling, it will continuously draw in and absorb Anemo Orbs on the field. Anemo Orbs can be <color=#FFD780FF>destroyed with Hydro/Pyro/Electro/Cryo DMG</color>. You can also place the Nemesis under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> to prevent it from absorbing Anemo Orbs. If the Nemesis fails to absorb enough Anemo Orbs, it will become paralyzed instantly, and its <color=#FFD780FF>Cryo and Anemo RES will be greatly reduced</color>.",
+          "detail": "Due to the effects of the Ley Line disturbance, during battle, the Nemesis will draw on the power of its Anemo head to take to the air, circle rapidly, and attack by firing Gale Bolts. After it finishes circling, the Nemesis will create a vortex, attempting to draw in and absorb Anemo Orbs on the field to recover its power. After absorbing enough Anemo Orbs, it will take to the air once more and launch another circling attack. Anemo Orbs can be destroyed with <color=#FFD780FF>Hydro/Pyro/Electro/Cryo DMG</color>. You can also place the Nemesis under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> to prevent it from absorbing Anemo Orbs. If the vortex dissipates before the Nemesis has absorbed enough Anemo Orbs, it will immediately become paralyzed. Its <color=#FFD780FF>Cryo and Anemo RES will also be greatly reduced</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 63105,
+          "name": "Chimeric Winged Lion"
+        }
+      ]
+    },
+    {
+      "id": 10112,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1011042,
+          "name": "Veteran Wind Operative: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1011052,
+          "name": "Veteran Wind Operative: Swift Slash"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1011062,
+          "name": "Veteran Wind Operative: Treacherous Blade"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Healing Characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Bond of Life Characters | Shield Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Rapid Kill",
+          "short": "Consumes HP in combat to use \"Hunt Down\": When this hits, restores a percentage of her own HP and attaches a Bond of Life to the character hit. While Bond of Life is active, the affected character will take continuous DMG. Characters with Bond of Life attached will take increased DMG from this attack.",
+          "detail": "Consumes a certain percentage of HP in combat to use Hunt Down: When this hits a character, it restores a certain percentage of her HP and attaches a Bond of Life to the character hit. While Bond of Life is active, the affected character will take continuous DMG. Characters with Bond of Life attached will take increased DMG from this attack."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Bloody Pursuit: Treacherous",
+          "short": "Affected by the Ley Line disturbance, her interruption capabilities and interruption resistance are both increased. When her stance breaks, she can immediately teleport away. When preparing to use Hunt Down, she creates a Shield to protect herself. While the Shield is active, the foe will <color=#FFD780FF>continuously attach Bonds of Life to all characters</color>. After the Shield is broken, the foe will take immense DMG.",
+          "detail": "Affected by the Ley Line disturbance, the foe's interruption capabilities and interruption resistance are both greatly increased. When her stance breaks in midair, she can immediately teleport away and quickly regain her footing. When preparing to use Hunt Down, she will enter the Bloody Pursuit state, creating a Shield to protect herself. While the Shield is active, the foe will <color=#FFD780FF>continuously attach Bonds of Life to all characters</color>. After the Shield is broken, the foe will take immense DMG."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 30602,
+          "name": "Wind Operative"
+        },
+        {
+          "id": 30604,
+          "name": "Veteran Wind Operative"
+        }
+      ]
     }
   ],
   "schedules": [
@@ -1618,6 +1736,10 @@
     {
       "id": 5269010,
       "name": "Savage Tremors"
+    },
+    {
+      "id": 5269011,
+      "name": "Battle of the Starburst"
     }
   ]
 }

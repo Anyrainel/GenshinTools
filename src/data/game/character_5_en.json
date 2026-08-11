@@ -2199,7 +2199,7 @@
       },
       {
         "name": "Poetics of Fuubutsu",
-        "descHtml": "Upon triggering a Swirl reaction, Kaedehara Kazuha will grant all party members a 0.04% Elemental DMG Bonus to the element absorbed by Swirl for every point of Elemental Mastery he has for 8s. Bonuses for different elements obtained through this method can co-exist."
+        "descHtml": "Upon triggering a Swirl or Stellar Swirl reaction, Kaedehara Kazuha will grant all party members a 0.04% Elemental DMG Bonus to the element absorbed by Swirl for every point of Elemental Mastery he has for 8s. Bonuses for different elements obtained through this method can co-exist."
       },
       {
         "name": "Cloud Strider",
@@ -4692,6 +4692,126 @@
     ],
     "glossary": null
   },
+  "odette": {
+    "id": "10000150",
+    "name": "Odette",
+    "skills": [
+      {
+        "name": "A. Snow Swan Variation",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Unleashes a sword attack of up to 5 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash a dazzling slash on opponents in front of her.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Attacks opponents in her path while plunging from mid-air, then deals AoE DMG upon landing.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "4-Hit DMG", "template": "{param5:F1P}"},
+          {"label": "5-Hit DMG", "template": "{param6:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param7:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param8:F1}"},
+          {"label": "Plunge DMG", "template": "{param9:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. Adagio: Phantom Night Dancers",
+        "descHtml": "With slow, graceful dance steps, Odette deals <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> to the opponent, and also summons her <span style=\"color: #FFD780FF;\">Solo Dance Double</span> to the field.<br>If a <span style=\"color: #FFD780FF;\">Dance Double</span> summoned by Odette is already on the field, this will re-summon the Dance Double and reset its duration.<br><br><span style=\"color: #FFD780FF;\">Solo Dance Double</span><br>Alternates between the <span style=\"color: #FFD780FF;\">Plume</span> and <span style=\"color: #FFD780FF;\">Wing</span> dance moves, periodically attacking nearby opponents and dealing to them <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br>Additionally, for 6s after unleashing the Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Phantom Night Dancers</span>, Odette's Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Phantom Night Dancers</span> will become the special Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Coda at Dawn's Tolling</span> instead, where a dance duet deals <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> to nearby opponents over time. Then, when the duet ends, she deals another instance of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered Stellar-Conduct or Stellar Swirl DMG.",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P}"},
+          {"label": "Coda at Dawn's Tolling DoT", "template": "{param2:F1P}"},
+          {"label": "Coda at Dawn's Tolling Stellar-Conduct/Stellar Swirl DMG", "template": "{param3:P}/{param4:P}"},
+          {"label": "\"Plume\" Dance Move DMG", "template": "{param5:F1P}"},
+          {"label": "\"Plume\" Dance Move Stellar-Conduct/Stellar Swirl DMG", "template": "{param6:P}/{param7:P}"},
+          {"label": "\"Wing\" Dance Move DMG", "template": "{param8:F1P}"},
+          {"label": "\"Wing\" Dance Move Stellar-Conduct/Stellar Swirl DMG", "template": "{param9:P}/{param10:P}"},
+          {"label": "Coda at Dawn's Tolling CD", "template": "{param13:F1}s"},
+          {"label": "Solo Dance Double Duration", "template": "{param11:F1}s"},
+          {"label": "CD", "template": "{param12:F1}s"}
+        ]
+      },
+      {
+        "name": "Q. Presto: Bluebird Finale",
+        "descHtml": "With quick, lively dance steps, Odette deals multiple instances of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>, and summons her <span style=\"color: #FFD780FF;\">Solo Dance Double</span>. She also gains <span style=\"color: #FFD780FF;\">Snow Swan's Dream</span>, which increases the Stellar Glimmer reaction DMG Odette deals.<br>Additionally, for 6s after unleashing the Elemental Burst <span style=\"color: #FFD780FF;\">Presto: Bluebird Finale</span>, Odette's Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Phantom Night Dancers</span> will be replaced with the special Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Coda at Dawn's Tolling</span> instead.<br><br>If there is a Solo Dance Double summoned by Odette on the field, it will be summoned to her side with its duration refreshed.",
+        "details": [
+          {"label": "Slash DMG", "template": "{param1:F1P} ×3"},
+          {"label": "Final Slash DMG", "template": "{param2:F1P}"},
+          {"label": "Snow Swan's Dream Stellar Glimmer Reaction DMG Bonus", "template": "{param3:F1P}"},
+          {"label": "Snow Swan's Dream Duration", "template": "{param4:F1}s"},
+          {"label": "Solo Dance Double Duration", "template": "{param5:F1}s"},
+          {"label": "CD", "template": "{param6:F1}s"},
+          {"label": "Energy Cost", "template": "{param7:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Spring Rite of the Chosen One",
+        "descHtml": "When Odette summons her <span style=\"color: #FFD780FF;\">Solo Dance Double</span>, she also obtains 4 stacks of <span style=\"color: #FFD780FF;\">Marvelous Splendor</span>."
+      },
+      {
+        "name": "Pathetique of Pateticheskaya",
+        "descHtml": "For every 100 ATK Odette has over 1,000, her Stellar Glimmer DMG is additionally increased by 1.5% of the original DMG. She can deal up to 30% more additional DMG in this way."
+      },
+      {
+        "name": "Stellar Jubilee: Dance of Aurore",
+        "descHtml": "Odette will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state when she is inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, or the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s after a nearby party member triggers a Stellar Swirl reaction.<br>When a party member triggers a Superconduct or Cryo Swirl reaction, it becomes a Stellar-Conduct or Stellar Swirl reaction instead, and the Base DMG of said reaction is also increased by 0.7% for every 100 points of Odette's ATK. A maximum increase of 14% can be obtained in this way."
+      },
+      {
+        "name": "Echo of Winter Daydreams",
+        "descHtml": "Shows the locations of <span style=\"color: #FFD780FF;\">Snezhnaya's Local Specialties</span> on the mini-map.<br>Practicing dance in one's spare time might even trigger other effects..."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. \"On This Danceless Morn, She Gazes at Her Reflection\"",
+        "descHtml": "After unleashing the special Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Coda at Dawn's Tolling</span>, at the dance duet's end Odette will deal an additional instance of <span style=\"color: #99FFFFFF;\">Cryo AoE DMG</span> to nearby opponents that is considered:<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> or when not in a Radiance state: Stellar-Conduct reaction DMG at 300% of Odette's ATK;<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: Stellar Swirl reaction DMG at 450% of Odette's ATK.<br><br>Additionally, the Ascension Talent \"Spring Rite of the Chosen One\" is also enhanced: now, when the <span style=\"color: #FFD780FF;\">Solo Dance Double</span> is summoned, Odette also gains 2 stacks of <span style=\"color: #FFD780FF;\">Marvelous Splendor</span>. When Odette is off-field, the rate at which <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> is removed is sped up to 2 stacks per second."
+      },
+      {
+        "name": "2. \"I Must See the Snow Swan's Unseen Dream for Myself, She Thought\"",
+        "descHtml": "The Ascension Talent \"Spring Rite of the Chosen One\" is enhanced as follows: every stack of <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> active also increases the character's ATK by 7%.<br>Additionally, if Odette is in the <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> state when there is a <span style=\"color: #FFD780FF;\">Solo Dance Double</span> on the field, opponents near the <span style=\"color: #FFD780FF;\">Dance Double</span> will also have their corresponding Elemental RES lowered by 20%.<br>·<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: <span style=\"color: #99FFFFFF;\">Cryo</span> and <span style=\"color: #FFACFFFF;\">Electro</span>.<br>·<span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: <span style=\"color: #99FFFFFF;\">Cryo</span> and <span style=\"color: #80FFD7FF;\">Anemo</span>."
+      },
+      {
+        "name": "3. \"I'll Chase the Shouting Wind Along, Climbing Alone As I Go\"",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780FF;\">Adagio: Phantom Night Dancers</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. \"Up, Up the Long, Delirious, Burning Blue\"",
+        "descHtml": "The Elemental Burst <span style=\"color: #FFD780FF;\">Presto: Bluebird Finale</span> is enhanced as follows: when Odette obtains <span style=\"color: #FFD780FF;\">Snow Swan's Dream</span>, Stellar Glimmer reaction DMG dealt by other nearby party members is increased by 50% of <span style=\"color: #FFD780FF;\">Snow Swan Dream</span>'s effects.<br><br>Additionally, when a party member deals Stellar Glimmer reaction DMG to an opponent, Odette will also join in with a coordinated attack, dealing an instance of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>. This effect, which can trigger once every 3.5s, will be considered:<br>·<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> or when not in a Radiance state: Stellar-Conduct reaction DMG at 66% of Odette's ATK.<br>·<span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: Stellar Swirl reaction DMG at 99% of Odette's ATK."
+      },
+      {
+        "name": "5. \"Oh! I Have Slipped the Surly Bonds of Earth\"",
+        "descHtml": "Increases the Level of <span style=\"color: #FFD780FF;\">Presto: Bluebird Finale </span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. \"Put Out My Hand, and Touched the Face of the Divine\"",
+        "descHtml": "The Ascension Talent \"Spring Rite of the Chosen One\" is enhanced as follows: When Odette grants <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> to all nearby party members, her own Marvelous Splendor stacks will no longer decrease.<br>Additionally, characters affected by <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> have their Stellar Glimmer reaction DMG dealt to opponents <span style=\"color: #FFD780FF;\">elevated</span> by 25%, and Stellar Glimmer reaction DMG dealt by Odette is elevated by an additional 20%."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "elevated",
+        "descHtml": "Special DMG Boost effect. It is calculated independently of other DMG Boost effects."
+      },
+      {
+        "name": "Polestar Field",
+        "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      },
+      {
+        "name": "Solo Dance Double",
+        "descHtml": "A psychic double of Odette's that dances a duet with her. May be summoned to the field through her Elemental Skill or Elemental Burst.<br>Alternates between the <span style=\"color: #FFD780FF;\">Plume</span> and <span style=\"color: #FFD780FF;\">Wing</span> dance moves to periodically attack nearby opponents, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br>A maximum of one <span style=\"color: #FFD780FF;\">Solo Dance Double</span> summoned by Odette is allowed on the field at any one time.<br><br>Additionally, when there is a <span style=\"color: #FFD780FF;\">Dance Double</span> summoned by Odette nearby, her Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Phantom Night Dancers</span> is changed to the special Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Coda at Dawn's Tolling</span>."
+      },
+      {
+        "name": "Adagio: Coda at Dawn's Tolling",
+        "descHtml": "Odette's special Elemental Skill, which deals to nearby opponents <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> over time. Then, when the dance duet ends, she deals another instance of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered Stellar-Conduct DMG. During the dance duet, Odette can control the direction of the dance steps.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The DMG dealt when the dance duet ends is changed to <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> of the corresponding Stellar reaction type.<br><br>Additionally, after Odette unleashes the special Elemental Skill <span style=\"color: #FFD780FF;\">Adagio: Coda at Dawn's Tolling</span>, should she be in the <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> state while her <span style=\"color: #FFD780FF;\">Dance Double</span> is still on the field, the <span style=\"color: #FFD780FF;\">Dance Double</span>'s two dance moves types will also deal additional <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> of the corresponding Stellar Glimmer reaction type."
+      },
+      {
+        "name": "Marvelous Splendor",
+        "descHtml": "After unlocking the Ascension Talent \"Spring Rite of the Chosen One,\" Odette will obtain a special effect when she summons her <span style=\"color: #FFD780FF;\">Solo Dance Double</span>.<br>Every stack of <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> active increases the character's Stellar Glimmer DMG by 15%. This lasts until her <span style=\"color: #FFD780FF;\">Dance Double</span> exits the field or when she summons her <span style=\"color: #FFD780FF;\">Solo Dance Double</span> again.<br>When Odette is off-field, she loses 1 stack of <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> every 1 second, while other nearby party members gain the corresponding number of <span style=\"color: #FFD780FF;\">Marvelous Splendor</span> stacks at the same time."
+      },
+      {
+        "name": "Radiance: Stellar Glimmer",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> and <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> are both considered <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> states.<br>Characters can only be affected by one Radiance state at any one time, and where more than one state can be triggered, <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> shall apply first."
+      }
+    ]
+  },
   "qiqi": {
     "id": "10000035",
     "name": "Qiqi",
@@ -4746,7 +4866,7 @@
       },
       {
         "name": "A Glimpse Into Arcanum",
-        "descHtml": "When Qiqi hits opponents with her Normal and Charged Attacks, she has a 50% chance to apply a Fortune-Preserving Talisman to them for 6s. This effect can only occur once every 30s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The effect now has a 100% chance to trigger, and cooldown time is reduced to 15s."
+        "descHtml": "When Qiqi hits opponents with her Normal and Charged Attacks, she has a 50% chance to apply a Fortune-Preserving Talisman to them for 6s. This effect can only occur once every 30s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The effect now has a 100% chance to trigger, and cooldown time is reduced to 15s."
       },
       {
         "name": "Former Life Memories",
@@ -4754,17 +4874,17 @@
       },
       {
         "name": "Seven Sacred Treasures",
-        "descHtml": "The cooldown of the Elemental Skill <span style=\"color: #FFD780FF;\">Adeptus Art: Herald of Frost</span> is reduced to 15s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: While the Herald of Frost is on the field, characters in Qiqi's party have their Superconduct and Stellar-Conduct Reaction DMG increased by 50%.<br>Additionally, when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Qiqi will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
+        "descHtml": "The cooldown of the Elemental Skill <span style=\"color: #FFD780FF;\">Adeptus Art: Herald of Frost</span> is reduced to 15s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: While the Herald of Frost is on the field, Qiqi's own party members will have the DMG they deal via the corresponding reactions enhanced:<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Superconduct and Stellar-Conduct reaction DMG is increased by 50%.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: Cryo Swirl and Stellar Swirl reaction DMG dealt is increased by 50%.<br>Additionally, Qiqi will also enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state when she is inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, or the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s after a nearby party character triggers a Stellar Swirl reaction."
       }
     ],
     "constellations": [
       {
         "name": "1. Ascetics of Frost",
-        "descHtml": "Qiqi regenerates 2 Energy when the Herald of Frost hits an opponent marked by a Fortune-Preserving Talisman.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Qiqi also regenerates 6 Elemental Energy when the Herald of Frost's attacks and coordinated attacks hit opponents. This effect can trigger once every 6s."
+        "descHtml": "Qiqi regenerates 2 Energy when the Herald of Frost hits an opponent marked by a Fortune-Preserving Talisman.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: Qiqi also regenerates 6 Elemental Energy when the Herald of Frost's attacks and coordinated attacks hit opponents. This effect can trigger once every 6s."
       },
       {
         "name": "2. Frozen to the Bone",
-        "descHtml": "Qiqi's Normal and Charged Attack DMG against opponents affected by <span style=\"color: #99FFFFFF;\">Cryo</span> is increased by 15%.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Qiqi's ATK is increased by 50%."
+        "descHtml": "Qiqi's Normal and Charged Attack DMG against opponents affected by <span style=\"color: #99FFFFFF;\">Cryo</span> is increased by 15%.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: Qiqi's ATK is increased by 50%."
       },
       {
         "name": "3. Ascendant Praise",
@@ -4780,13 +4900,17 @@
       },
       {
         "name": "6. Rite of Resurrection",
-        "descHtml": "Using <span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span> revives all fallen party members nearby and regenerates 50% of their HP.<br>This effect can only occur once every 15 mins.<br>Additionally, after using <span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span>, Qiqi will also gain 4 stacks of <span style=\"color: #FFD780FF;\">Glimpse of Mystery</span>, and when your current active character (other than Qiqi) deals Stellar-Conduct DMG, 1 stack of <span style=\"color: #FFD780FF;\">Glimpse of Mystery</span> is consumed, and DMG dealt is increased by 600% of Qiqi's ATK. The <span style=\"color: #FFD780FF;\">Glimpse of Mystery</span> effect lasts up to 12s, and unleashing <span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span> refreshes the stack count."
+        "descHtml": "Using <span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span> revives all fallen party members nearby and regenerates 50% of their HP.<br>This effect can only occur once every 15 mins.<br>Additionally, after using <span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span>, Qiqi will also gain 4 stacks of <span style=\"color: #FFD780FF;\">Glimpse of Mystery</span>, and when your current active character (other than Qiqi) deals Stellar-Conduct or Stellar Swirl reaction DMG with their Talent or skill, 1 stack of <span style=\"color: #FFD780FF;\">Glimpse of Mystery</span> is consumed, and DMG dealt is increased by 600% of Qiqi's ATK. The <span style=\"color: #FFD780FF;\">Glimpse of Mystery</span> effect lasts up to 12s, and unleashing <span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span> refreshes the stack count."
       }
     ],
     "glossary": [
       {
         "name": "Polestar Field",
         "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      },
+      {
+        "name": "Radiance: Stellar Glimmer",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> and <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> are both considered <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> states.<br>Characters can only be affected by one Radiance state at any one time, and where more than one state can be triggered, <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> shall apply first."
       }
     ]
   },
@@ -4891,7 +5015,7 @@
     "skills": [
       {
         "name": "A. Formule Phenomenale: Self-Evident Proposition",
-        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Generates threads that control her weapon using formulae, performing up to 3 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Summons the Facilitatrice Automatisee Generaliste Interactive et Omnitache, or \"<span style=\"color: #FFD780FF;\">Fagio</span>,\" and switches it to <span style=\"color: #FFD780FF;\">Decoding</span> mode: Unleashes a sweeping fire attack on enemies in front, as well as periodically fires condensed beams, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The condensed beams will instead deal <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered Stellar-Conduct DMG.<br>While in <span style=\"color: #FFD780FF;\">Decoding</span> mode, Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> will continuously increase. Firing condensed beams will also further increase its Decoding Power.<br>When Fagio's Decoding Power reaches the maximum of 100 points, it switches to <span style=\"color: #FFD780FF;\">Power Overdrive</span> mode, in which it fires at opponents with longer intervals, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>. It will be unable to switch to Decoding mode at this time.<br>When not in <span style=\"color: #FFD780FF;\">Decoding</span> mode, Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> gradually decreases. When Sandrone is off-field, she will focus on maintaining Fagio, causing its Decoding Power to decrease at 300% the original rate.<br>Fagio exits <span style=\"color: #FFD780FF;\">Power Overdrive</span> mode when its <span style=\"color: #FFD780FF;\">Decoding Power</span> has decreased to under 50.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from midair to strike the ground below, dealing DMG to opponents along their path and causing AoE DMG on landing.",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Generates threads that control her weapon using formulae, performing up to 3 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Summons the Facilitatrice Automatisee Generaliste Interactive et Omnitache, or \"<span style=\"color: #FFD780FF;\">Fagio</span>,\" and switches it to <span style=\"color: #FFD780FF;\">Decoding</span> mode: Unleashes a sweeping fire attack on enemies in front, as well as periodically fires condensed beams, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The condensed beams will instead deal <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered the corresponding Stellar Glimmer reaction DMG.<br>While in <span style=\"color: #FFD780FF;\">Decoding</span> mode, Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> will continuously increase. Firing condensed beams will also further increase its Decoding Power.<br>When Fagio's Decoding Power reaches the maximum of 100 points, it switches to <span style=\"color: #FFD780FF;\">Power Overdrive</span> mode, in which it fires at opponents with longer intervals, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>. It will be unable to switch to Decoding mode at this time.<br>When not in <span style=\"color: #FFD780FF;\">Decoding</span> mode, Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> gradually decreases. When Sandrone is off-field, she will focus on maintaining Fagio, causing its Decoding Power to decrease at 300% the original rate.<br>Fagio exits <span style=\"color: #FFD780FF;\">Power Overdrive</span> mode when its <span style=\"color: #FFD780FF;\">Decoding Power</span> has decreased to under 50.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from midair to strike the ground below, dealing DMG to opponents along their path and causing AoE DMG on landing.",
         "details": [
           {"label": "1-Hit DMG", "template": "{param1:F1P}"},
           {"label": "2-Hit DMG", "template": "{param2:F1P}"},
@@ -4899,6 +5023,7 @@
           {"label": "Charged Attack Sweeping Fire DMG", "template": "{param4:F1P}"},
           {"label": "Charged Attack Condensed Beam DMG", "template": "{param5:F1P}"},
           {"label": "Charged Attack Condensed Beam Stellar-Conduct DMG", "template": "{param6:F1P}"},
+          {"label": "Charged Attack Condensed Beam Stellar Swirl DMG", "template": "{param11:F1P}"},
           {"label": "DMG When in Power Overdrive", "template": "{param7:F1P}"},
           {"label": "Plunge DMG", "template": "{param8:F1P}"},
           {"label": "Low/High Plunge DMG", "template": "{param9:P}/{param10:P}"}
@@ -4906,20 +5031,22 @@
       },
       {
         "name": "E. Formule Phenomenale: Differential Analysis",
-        "descHtml": "With her impeccable, ladylike poise, Sandrone boards the <span style=\"color: #FFD780FF;\">Tea Party Tactical Assault Hovermech</span> and hovers forward for 6s. During this time, Sandrone can control the travel direction of the craft. Pressing Sprint consumes 10 Stamina and launches her into an elegant high-speed hover mode, in which she will move even faster at the cost of 15 Stamina per second.<br><br>When Sandrone starts hovering, if there are opponents nearby, she will also summon a Prismatic Resonance Cannon and fire 2 Prism Shots at any opponents who have yet to cool down, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The second Prism Shot will instead deal <span style=\"color: #99FFFFFF;\">Cryo DMG</span> that is considered Stellar-Conduct DMG.<br><br>When on the Tea Party Tactical Assault Hovermech, Sandrone will also elegantly and quietly repair Fagio, causing <span style=\"color: #FFD780FF;\">Decoding Power</span> to swiftly decrease.",
+        "descHtml": "With her impeccable, ladylike poise, Sandrone boards the <span style=\"color: #FFD780FF;\">Tea Party Tactical Assault Hovermech</span> and hovers forward for 6s. During this time, Sandrone can control the travel direction of the craft. Pressing Sprint consumes 10 Stamina and launches her into an elegant high-speed hover mode, in which she will move even faster at the cost of 15 Stamina per second.<br><br>When Sandrone starts hovering, if there are opponents nearby, she will also summon a Prismatic Resonance Cannon and fire 2 Prism Shots at any opponents who have yet to cool down, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The second Prism Shot will instead deal <span style=\"color: #99FFFFFF;\">Cryo DMG</span> that is considered the corresponding Stellar Glimmer reaction DMG.<br><br>When on the Tea Party Tactical Assault Hovermech, Sandrone will also elegantly and quietly repair Fagio, causing <span style=\"color: #FFD780FF;\">Decoding Power</span> to swiftly decrease.",
         "details": [
           {"label": "Prism Shot DMG", "template": "{param1:F1P}"},
           {"label": "Prism Shot Stellar-Conduct DMG", "template": "{param2:F1P}"},
+          {"label": "Prism Shot Stellar Swirl DMG", "template": "{param4:F1P}"},
           {"label": "CD", "template": "{param3:F1}s"}
         ]
       },
       {
         "name": "Q. Formule Phenomenale: Q.E.D.",
-        "descHtml": "In line with established ladylike behavior, Sandrone summons a large number of Prismatic Resonance Cannons for a frontal bombardment before firing on her foes with a Convective Inhibition Ray, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The Convective Inhibition Ray instead deals <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered Stellar-Conduct DMG.",
+        "descHtml": "In line with established ladylike behavior, Sandrone summons a large number of Prismatic Resonance Cannons for a frontal bombardment before firing on her foes with a Convective Inhibition Ray, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The Convective Inhibition Ray instead deals <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered the corresponding Stellar Glimmer reaction DMG.",
         "details": [
           {"label": "Bombardment DMG", "template": "{param1:F1P} ×3"},
           {"label": "Convective Inhibition Ray DMG", "template": "{param2:F1P}"},
           {"label": "Convective Inhibition Ray Stellar-Conduct DMG", "template": "{param3:F1P}"},
+          {"label": "Convective Inhibition Ray Stellar Swirl DMG", "template": "{param6:F1P}"},
           {"label": "CD", "template": "{param4:F1}s"},
           {"label": "Energy Cost", "template": "{param5:I}"}
         ]
@@ -4928,15 +5055,15 @@
     "passives": [
       {
         "name": "Eternal Speculation Engine",
-        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: When using the Elemental Skill <span style=\"color: #FFD780FF;\">Formule Phenomenale: Differential Analysis</span>, if Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> is greater than 50, the second Prism Shot fired by Fagio at nearby opponents will deal 400% of its original DMG as Fagio's Decoding Power is decreased.<br>Additionally, for every 10 points of <span style=\"color: #FFD780FF;\">Decoding Power</span> Fagio loses, it gains 1 stack of <span style=\"color: #FFD780FF;\">Refined Tactics</span> for 60s (max 10 stacks). When Sandrone uses the Elemental Burst <span style=\"color: #FFD780FF;\">Formule Phenomenale: Q.E.D.</span> while in the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, all stacks of Refined Tactics are cleared, causing the Convective Inhibition Ray to deal 100% + (number of stacks cleared) × 10% of its original DMG."
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: When using the Elemental Skill <span style=\"color: #FFD780FF;\">Formule Phenomenale: Differential Analysis</span>, if Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> is greater than 50, the second Prism Shot fired by Fagio at nearby opponents will deal 400% of its original DMG as Fagio's Decoding Power is decreased.<br>Additionally, for every 10 points of <span style=\"color: #FFD780FF;\">Decoding Power</span> Fagio loses, it gains 1 stack of <span style=\"color: #FFD780FF;\">Refined Tactics</span> for 60s (max 10 stacks). When Sandrone uses the Elemental Burst <span style=\"color: #FFD780FF;\">Formule Phenomenale: Q.E.D.</span> while in the <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> state, all stacks of Refined Tactics are cleared, causing the Convective Inhibition Ray to deal 100% + (number of stacks cleared) × 10% of its original DMG."
       },
       {
         "name": "A Lady's Code of Conduct",
         "descHtml": "Increases Sandrone's Elemental Mastery based on her ATK. Every 100 ATK will increase her Elemental Mastery by 8. The maximum increase she can gain this way is 160."
       },
       {
-        "name": "Light of Rationalisme",
-        "descHtml": "When party members trigger Superconduct, it will be changed to Stellar-Conduct, and party members' Base Stellar-Conduct DMG will be increased based on Sandrone's ATK: Every 100 ATK she has increases the Base Stellar-Conduct DMG by 0.7%. The maximum increase that can be gained this way is 14%.<br>Additionally, when Sandrone is within a <span style=\"color: #FFD780FF;\">Polestar Field</span>, she will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
+        "name": "Stellar Jubilee: Light of Rationalisme",
+        "descHtml": "Sandrone will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state when she is inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, or the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s after a nearby party member triggers a Stellar Swirl reaction.<br>When a party member triggers a Superconduct or Cryo Swirl reaction, it becomes a Stellar-Conduct or Stellar Swirl reaction instead, and the Base DMG of the aforementioned reaction is also increased by 0.7% for every 100 points of Sandrone's ATK. A maximum increase of 14% can be obtained in this way."
       },
       {
         "name": "A Caucus Prelude and a Long Tale",
@@ -4946,11 +5073,11 @@
     "constellations": [
       {
         "name": "1. Morrow After the Golden Dusk",
-        "descHtml": "When in <span style=\"color: #FFD780FF;\">Decoding</span> mode, Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> increases at a 50% lower rate, and all party members deal 30% increased Stellar-Conduct DMG."
+        "descHtml": "When in <span style=\"color: #FFD780FF;\">Decoding</span> mode, Fagio's <span style=\"color: #FFD780FF;\">Decoding Power</span> increases at a 50% lower rate, and all party members deal 30% increased Stellar Glimmer reaction DMG."
       },
       {
         "name": "2. An Heiress Gazed Into the Looking-Glass",
-        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Increases CRIT DMG from Charged Attack condensed beams by 40%. Also, each time a beam is fired, CRIT DMG dealt by all condensed beams fired during this <span style=\"color: #FFD780FF;\">Decoding</span> mode period will be further increased by 20%. Max 3 stacks."
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: Increases CRIT DMG from Charged Attack condensed beams by 40%. Also, each time a beam is fired, CRIT DMG dealt by all condensed beams fired during this <span style=\"color: #FFD780FF;\">Decoding</span> mode period will be further increased by 20%. Max 3 stacks."
       },
       {
         "name": "3. Refuse the Wake of Dusk, the Moonlit Yoke",
@@ -4958,7 +5085,7 @@
       },
       {
         "name": "4. In Knowledge Lies the World's True Ground",
-        "descHtml": "When Sandrone deals Stellar-Conduct DMG to an opponent, she will also summon an extra Prismatic Resonance Cannon to fire off a coordinated attack which deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> at 125% of her ATK. This DMG is considered Stellar-Conduct DMG, and the effect can occur once every 4s."
+        "descHtml": "When Sandrone deals Stellar-Conduct or Stellar Swirl DMG to an opponent, she will also summon an extra Prismatic Resonance Cannon to fire off a coordinated attack which deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> at 125% or 187.5% of her ATK, respectively. This DMG is considered the corresponding Stellar Glimmer reaction DMG, and the effect can occur once every 4s."
       },
       {
         "name": "5. Of All Beside, She Takes No Part",
@@ -4966,7 +5093,7 @@
       },
       {
         "name": "6. Narcissus Wakes, Her Eyes Upon the Dawn",
-        "descHtml": "When Fagio fires a condensed beam for the third time while in <span style=\"color: #FFD780FF;\">Decoding</span> mode, the beam becomes a more powerful <span style=\"color: #FFD780FF;\">Condensed Cluster Beam</span> that fires continuously. This beam will deal up to 4 additional instances of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> at 100% of Sandrone's ATK on top of any subsequent original beam fired.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The <span style=\"color: #FFD780FF;\">Condensed Cluster Beam</span> will instead deal 4 additional instances of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> at 80% of Sandrone's ATK. This DMG is considered Stellar-Conduct DMG.<br>Additionally, all Stellar-Conduct DMG dealt by Sandrone is <span style=\"color: #FFD780FF;\">elevated</span> by 20%."
+        "descHtml": "When Fagio fires a condensed beam for the third time while in <span style=\"color: #FFD780FF;\">Decoding</span> mode, the beam becomes a more powerful <span style=\"color: #FFD780FF;\">Condensed Cluster Beam</span> that fires continuously. This beam will deal up to 4 additional instances of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> at 100% of Sandrone's ATK on top of any subsequent original beam fired.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The <span style=\"color: #FFD780FF;\">Condensed Cluster Beam</span> attack deals 4 additional instances of <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>. The DMG dealt with this attack, which is considered the corresponding Stellar Glimmer reaction DMG, is equal to:<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: 80% of Sandrone's ATK.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: 120% of Sandrone's ATK.<br>Additionally, all Stellar Glimmer reaction DMG dealt by Sandrone is <span style=\"color: #FFD780FF;\">elevated</span> by 20%."
       }
     ],
     "glossary": [
@@ -4976,7 +5103,7 @@
       },
       {
         "name": "Decoding",
-        "descHtml": "Fagio will switch to this mode when using a Charged Attack.<br>When in this mode, Fagio will engage any opponents ahead with a sweeping fire attack, as well as fire condensed beams at intervals, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The condensed beams will instead deal <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered Stellar-Conduct DMG."
+        "descHtml": "Fagio will switch to this mode when using a Charged Attack.<br>When in this mode, Fagio will engage any opponents ahead with a sweeping fire attack, as well as fire condensed beams at intervals, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: The condensed beams will instead deal <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> that is considered the corresponding Stellar Glimmer DMG."
       },
       {
         "name": "Decoding Power",
@@ -4985,6 +5112,10 @@
       {
         "name": "Polestar Field",
         "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      },
+      {
+        "name": "Radiance: Stellar Glimmer",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> and <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> are both considered <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> states.<br>Characters can only be affected by one Radiance state at any one time, and where more than one state can be triggered, <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> shall apply first."
       }
     ]
   },
@@ -5298,7 +5429,7 @@
     "passives": [
       {
         "name": "Reason Beyond Reason",
-        "descHtml": "When nearby party members trigger Frozen, Superconduct, Stellar-Conduct, Cryo Swirl, or Cryo Crystallize reactions against opponents, a Void Rift will be created near this opponent. This effect can be triggered once every 2.5s. 3 Void Rifts created by Skirk herself can exist on the field at once.<br><br>Skirk can use the following methods to absorb nearby Void Rifts:<br>· When she hits an opponent with a Charged Attack in her <span style=\"color: #FFD780FF;\">Seven-Phase Flash</span> mode.<br>· When she uses the special Elemental Burst <span style=\"color: #FFD780FF;\">Havoc: Extinction</span> while in Seven-Phase Flash mode.<br>· When she Holds her Elemental Skill <span style=\"color: #FFD780FF;\">Havoc: Warp</span> to engage in rapid movement.<br><br>Each Rift absorbed will grant her 8 <span style=\"color: #FFD780FF;\">Serpent's Subtlety</span> points."
+        "descHtml": "When nearby party members trigger Frozen, Superconduct, Stellar-Conduct, Cryo Swirl, Stellar Swirl, or Cryo Crystallize reactions against opponents, a Void Rift will be created near this opponent. This effect can be triggered once every 2.5s. 3 Void Rifts created by Skirk herself can exist on the field at once.<br><br>Skirk can use the following methods to absorb nearby Void Rifts:<br>· When she hits an opponent with a Charged Attack in her <span style=\"color: #FFD780FF;\">Seven-Phase Flash</span> mode.<br>· When she uses the special Elemental Burst <span style=\"color: #FFD780FF;\">Havoc: Extinction</span> while in Seven-Phase Flash mode.<br>· When she Holds her Elemental Skill <span style=\"color: #FFD780FF;\">Havoc: Warp</span> to engage in rapid movement.<br><br>Each Rift absorbed will grant her 8 <span style=\"color: #FFD780FF;\">Serpent's Subtlety</span> points."
       },
       {
         "name": "Return to Oblivion",
@@ -5346,7 +5477,7 @@
       },
       {
         "name": "Reason Beyond Reason",
-        "descHtml": "When nearby party members trigger Frozen, Superconduct, Cryo Swirl, or Cryo Crystallize reactions against opponents, a Void Rift will be created near this opponent. This effect can be triggered once every 2.5s. A maximum of 3 Void Rifts created by Skirk herself can exist on the field at once.<br><br>Skirk can use the following methods to absorb nearby Void Rifts:<br>· When she hits an opponent with a Charged Attack in her Seven-Phase Flash mode.<br>· When she uses the special Elemental Burst <span style=\"color: #FFD780FF;\">Havoc: Extinction</span> while in Seven-Phase Flash mode.<br>· When she Holds her Elemental Skill <span style=\"color: #FFD780FF;\">Havoc: Warp</span> to engage in rapid movement.<br><br>Each Rift absorbed will grant her 8 Serpent's Subtlety points."
+        "descHtml": "When nearby party members trigger Frozen, Superconduct, Stellar-Conduct, Cryo Swirl, Stellar Swirl, or Cryo Crystallize reactions against opponents, a Void Rift will be created near this opponent. This effect can be triggered once every 2.5s. A maximum of 3 Void Rifts created by Skirk herself can exist on the field at once.<br><br>Skirk can use the following methods to absorb nearby Void Rifts:<br>· When she hits an opponent with a Charged Attack in her Seven-Phase Flash mode.<br>· When she uses the special Elemental Burst <span style=\"color: #FFD780FF;\">Havoc: Extinction</span> while in Seven-Phase Flash mode.<br>· When she Holds her Elemental Skill <span style=\"color: #FFD780FF;\">Havoc: Warp</span> to engage in rapid movement.<br><br>Each Rift absorbed will grant her 8 Serpent's Subtlety points."
       },
       {
         "name": "Return to Oblivion",
@@ -5621,6 +5752,115 @@
       {
         "name": "buffs",
         "descHtml": "The Traveler gains an attribute bonus for every element they have resonated with: <br><span style=\"color: #80FFD7FF;\">Anemo</span>: CRIT Rate is increased by 10%,<br><span style=\"color: #FFE699FF;\">Geo</span>: DEF is increased by 20%,<br><span style=\"color: #FFACFFFF;\">Electro</span>: Energy Recharge is increased by 20%, <br><span style=\"color: #99FF88FF;\">Dendro</span>: Elemental Mastery is increased by 60,<br><span style=\"color: #80C0FFFF;\">Hydro</span>: HP is increased by 20%,<br><span style=\"color: #FF9999FF;\">Pyro</span>: ATK is increased by 20%,<br><span style=\"color: #99FFFFFF;\">Cryo</span>: CRIT DMG is increased by 20%."
+      }
+    ]
+  },
+  "traveler_cryo": {
+    "id": "10000005-505",
+    "name": "Traveler",
+    "skills": [
+      {
+        "name": "A. Foreign Frostglint",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 5 rapid strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to unleash 2 rapid sword strikes.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}"},
+          {"label": "4-Hit DMG", "template": "{param4:F1P}"},
+          {"label": "5-Hit DMG", "template": "{param5:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param8:F1}"},
+          {"label": "Plunge DMG", "template": "{param9:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. Ice Fog Piercer",
+        "descHtml": "Stabs at the opponent with the Traveler's weapon, which releases an ice-cold fog. This deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> to opponents up ahead and forms a Frostpierce Star next to the Traveler.<br><br><span style=\"color: #FFD780FF;\">Frostpierce Star</span><br>· Follows your own party members around the field and periodically fires ice crystals at nearby opponents, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The Frostpierce Star will no longer fire ice crystals at opponents at intervals but will instead fire an ice crystal at opponents in a coordinated attack when the Traveler hits an opponent with a Normal Attack, Charged Attack, or Plunging Attack. This effect can trigger once every 0.2s.<br>· When an opponent is hit with an ice crystal, the Traveler gains 1 stack of <span style=\"color: #FFD780FF;\">Frostglow</span> (max 8 stacks).<br>· When not in combat, <span style=\"color: #FFD780FF;\">Frostglow</span> expires after 30s.<br><br><i>You observed the formation of frost together with Paimon.</i>",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P}"},
+          {"label": "Ice Crystal DMG", "template": "{param2:F1P}"},
+          {"label": "Frostpierce Star Duration", "template": "{param4:F1}s"},
+          {"label": "CD", "template": "{param3:F1}s"}
+        ]
+      },
+      {
+        "name": "Q. Frostbound Javelin",
+        "descHtml": "Generates an ice javelin with the power of Cryo, then directs it at enemies to deal multiple instances of <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br>When cast, the Traveler consumes all existing stacks of <span style=\"color: #FFD780FF;\">Frostglow</span>, which in turn increases the DMG dealt by this Elemental Burst. When 8 stacks of <span style=\"color: #FFD780FF;\">Frostglow</span> are consumed, the number of DMG instances caused by the javelins is also increased.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: DMG from the current Elemental Burst is changed to <span style=\"color: #99FFFFFF;\">Cryo DMG</span> of the corresponding Stellar Glimmer reaction type.<br><br><i>You felt the keen edge of the icicles alongside Paimon.</i>",
+        "details": [
+          {"label": "Ice Javelin DMG", "template": "{param1:F1P}/Strike"},
+          {"label": "Frostglow DMG Bonus", "template": "{param2:F1P}"},
+          {"label": "Stellar-Conduct Ice Javelin Single Strike DMG", "template": "{param8:F1P}"},
+          {"label": "Stellar-Conduct Frostglow DMG Bonus", "template": "{param9:F1P}"},
+          {"label": "Stellar Swirl Ice Javelin Single Strike DMG", "template": "{param10:F1P}"},
+          {"label": "Stellar Swirl Frostglow DMG Bonus", "template": "{param11:F1P}"},
+          {"label": "No. of Strikes in Attack", "template": "{param3:I}"},
+          {"label": "Additional Frostglow Attack Strikes at Stack Max", "template": "{param4:I}"},
+          {"label": "CD", "template": "{param6:F1}s"},
+          {"label": "Energy Cost", "template": "{param7:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Ever-Keen Frost",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: When a <span style=\"color: #FFD780FF;\">Frostpierce Star</span> is on the field, DMG from the Traveler's Normal Attacks, Charged Attacks, and Plunging Attacks are converted to <span style=\"color: #99FFFFFF;\">Cryo DMG</span> that cannot be overridden by another elemental infusion, and DMG dealt is also increased by 80% of the Traveler's ATK."
+      },
+      {
+        "name": "Lucent Ice",
+        "descHtml": "The Traveler's Elemental Mastery is increased by 8% of their ATK. Up to 160 Elemental Mastery can be gained in this way."
+      },
+      {
+        "name": "Stellar Jubilee: Illusory Frostmirror",
+        "descHtml": "The Traveler will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, or the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s after a nearby party member triggers a Stellar Swirl reaction.<br>When a party member triggers a Superconduct or Cryo Swirl reaction, it becomes a Stellar-Conduct or Stellar Swirl reaction instead, and the Base DMG of said reaction is also increased by 0.35% for every 100 points of the Traveler's ATK. A maximum 7% increase can be obtained in this way."
+      },
+      {
+        "name": "Foreign Permafrost",
+        "descHtml": "Draws new strength and power from their past travels: Every Elemental Type the Traveler has resonated with now grants an additional <span style=\"color: #FFD780FF;\">enhancement effect</span>.<br><br>Additionally, when a nearby party member deals Stellar-Conduct or Stellar Swirl DMG, the Traveler gains 1 stack of \"Icepoint.\" 1 stack of Icepoint can be obtained in this way once every 2s, max 3 stacks. When the Traveler unleashes a Charged Attack at 3 stacks of Icepoint, all stacks are consumed to change the attack into a special <span style=\"color: #FFD780FF;\">Charged Attack: Freezing Ice</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack: Freezing Ice</span><br>· <span style=\"color: #99FFFFFF;\">Cryo DMG</span> dealt is increased by 140% of the Traveler's ATK, and the Traveler also gains 2 stacks of <span style=\"color: #FFD780FF;\">Frostglow</span>.<br>· <span style=\"color: #FFD780FF;\">Charged Attack: Freezing Ice</span> can be unleashed once every 15s. Additionally, the DMG Bonus from the Ascension Talent \"Ever-Keen Frost\" does not apply to <span style=\"color: #FFD780FF;\">Charged Attack: Freezing Ice</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: DMG from <span style=\"color: #FFD780FF;\">Charged Attack: Freezing Ice</span> is instead considered <span style=\"color: #99FFFFFF;\">Cryo DMG</span> of the corresponding Stellar Glimmer reaction type."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. Somber Freeze",
+        "descHtml": "The Traveler regenerates 5 Elemental Energy when they deal Stellar Glimmer DMG. This effect can trigger once every 0.5s."
+      },
+      {
+        "name": "2. Frostfall Reverberation",
+        "descHtml": "The active character's Elemental Mastery is increased by 60 for 5s when an opponent is hit by an <span style=\"color: #FFD780FF;\">ice crystal</span> fired by the Elemental Skill <span style=\"color: #FFD780FF;\">Ice Fog Piercer</span>.<br>Additionally, when a character affected by the aforementioned effect triggers a Stellar Glimmer reaction or deals Stellar Glimmer reaction DMG, the Elemental Mastery boost described above will be increased to 120 for its duration."
+      },
+      {
+        "name": "3. Glacial Shard",
+        "descHtml": "Increases the Level of the Elemental Burst <span style=\"color: #FFD780FF;\">Frostbound Javelin</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. Enduring Ice",
+        "descHtml": "The duration of the <span style=\"color: #FFD780FF;\">Frostpierce Star</span> created by the Elemental Skill <span style=\"color: #FFD780FF;\">Ice Fog Piercer</span> is increased by 25%."
+      },
+      {
+        "name": "5. Bittercold Fog",
+        "descHtml": "Increases the Level of the Elemental Skill <span style=\"color: #FFD780FF;\">Ice Fog Piercer</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. Brumal Grimfrost",
+        "descHtml": "Every stack of <span style=\"color: #FFD780FF;\">Frostglow</span> consumed when using the Elemental Burst <span style=\"color: #FFD780FF;\">Frostbound Javelin</span> increases Stellar Glimmer reaction DMG dealt by other party members by 5% for 15s. A maximum 40% increase can be obtained in this way."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "enhancement effect",
+        "descHtml": "The Traveler gains an attribute bonus for every element they have resonated with: <br><span style=\"color: #80FFD7FF;\">Anemo</span>: CRIT Rate is increased by 10%,<br><span style=\"color: #FFE699FF;\">Geo</span>: DEF is increased by 20%,<br><span style=\"color: #FFACFFFF;\">Electro</span>: Energy Recharge is increased by 20%, <br><span style=\"color: #99FF88FF;\">Dendro</span>: Elemental Mastery is increased by 60,<br><span style=\"color: #80C0FFFF;\">Hydro</span>: HP is increased by 20%,<br><span style=\"color: #FF9999FF;\">Pyro</span>: ATK is increased by 20%,<br><span style=\"color: #99FFFFFF;\">Cryo</span>: CRIT DMG is increased by 20%."
+      },
+      {
+        "name": "Frostglow",
+        "descHtml": "The following special effect is granted when an ice crystal from a <span style=\"color: #FFD780FF;\">Frostpierce Star</span> generated by the Traveler hits an opponent, or when the Traveler unleashes a <span style=\"color: #FFD780FF;\">Charged Attack: Freezing Ice</span> after unlocking the Talent <span style=\"color: #FFD780FF;\">Foreign Permafrost</span>. Max 8 stacks.<br>Unleashing the Elemental Burst <span style=\"color: #FFD780FF;\">Frostbound Javelin</span> consumes all of the Traveler's <span style=\"color: #FFD780FF;\">Frostglow</span> stacks to increase the DMG dealt by the current Elemental Burst. If 8 stacks are consumed, the number of strikes in the Elemental Burst is also increased."
+      },
+      {
+        "name": "Radiance: Stellar-Conduct",
+        "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      },
+      {
+        "name": "Radiance: Stellar Glimmer",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> and <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> are both considered <span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span> states.<br>Characters can only be affected by one Radiance state at any one time, and where more than one state can be triggered, <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> shall apply first."
       }
     ]
   },
@@ -6215,7 +6455,7 @@
       },
       {
         "name": "Wind's Vanguard",
-        "descHtml": "When nearby party members trigger Swirl reaction(s), Varka gains one stack of <span style=\"color: #FFD780FF;\">Azure Fang's Oath</span>, increasing the DMG dealt by his Normal Attacks, Charged Attacks, special Charged Attack <span style=\"color: #FFD780FF;\">Azure Devour</span> and special Elemental Skill <span style=\"color: #FFD780FF;\">Four Winds' Ascension</span> by 7.5% for 8s. Max 4 stacks. Each character can grant Varka with 1 stack of <span style=\"color: #FFD780FF;\">Azure Fang's Oath</span> every second this way."
+        "descHtml": "When nearby party members trigger a Swirl or Stellar Swirl reaction, Varka gains 1 stack of <span style=\"color: #FFD780FF;\">Azure Fang's Oath</span>, increasing the DMG dealt by his Normal Attacks, Charged Attacks, special Charged Attack <span style=\"color: #FFD780FF;\">Azure Devour</span> and special Elemental Skill <span style=\"color: #FFD780FF;\">Four Winds' Ascension</span> by 7.5% for 8s. Max 4 stacks. Each character can grant Varka with 1 stack of <span style=\"color: #FFD780FF;\">Azure Fang's Oath</span> every second this way."
       },
       {
         "name": "Homebound Wind's Paean",
@@ -6241,7 +6481,7 @@
       },
       {
         "name": "4. \"For None May Take From Us Our Freedom of Song\"",
-        "descHtml": "When Varka triggers a Swirl reaction, based on the Elemental Types involved in the reaction, all nearby party members gain a 20% <span style=\"color: #80FFD7FF;\">Anemo DMG Bonus</span> and the corresponding Elemental DMG Bonus for 10s."
+        "descHtml": "When Varka triggers a Swirl or Stellar Swirl reaction, based on the Elemental Types involved in the reaction, all nearby party members gain a 20% <span style=\"color: #80FFD7FF;\">Anemo DMG Bonus</span> and the corresponding Elemental DMG Bonus for 10s."
       },
       {
         "name": "5. \"Fill High the Cup With Fine Wine, for Tyrants Come and Go\"",
@@ -6321,7 +6561,7 @@
       },
       {
         "name": "Witch's Eve Rite: Temporal Wind's Eulogy",
-        "descHtml": "After completing <span style=\"color: #FFD780FF;\">Witch's Homework: Of the Waking of Wind</span>, Venti will become a <span style=\"color: #FFD780FF;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you will gain the <span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br><br><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span><br>While the Stormeye created by the Elemental Burst <span style=\"color: #FFD780FF;\">Wind's Grand Ode</span> is active, for 4s after a nearby active character triggers a Swirl reaction, that character's DMG is increased by 50%, and Venti's Stormeye deals 135% of its original DMG."
+        "descHtml": "After completing <span style=\"color: #FFD780FF;\">Witch's Homework: Of the Waking of Wind</span>, Venti will become a <span style=\"color: #FFD780FF;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you will gain the <span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br><br><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span><br>While the Stormeye created by the Elemental Burst <span style=\"color: #FFD780FF;\">Wind's Grand Ode</span> is active, for 4s after a nearby active character triggers a Swirl or Stellar Swirl reaction, that character's DMG is increased by 50%, and Venti's Stormeye deals 135% of its original DMG."
       }
     ],
     "constellations": [
@@ -6488,7 +6728,7 @@
       },
       {
         "name": "There Shall Be an Unveiling for Injustice",
-        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The Ascension Talent \"There Shall Be a Plea for Justice\" is changed to the following:<br>When Wriothesley's HP is less than 60%, he will obtain a \"Gracious Rebuke: Unveiling.\" This enhances the next Charged Attack of his <span style=\"color: #FFD780FF;\">Normal Attack: Forceful Fists of Frost</span> into Luster: Vaulting Fist, which will not consume Stamina and restores 30% Max HP to Wriothesley upon hit. Wriothesley can gain HP in this way once every 2s.<br>Additionally, the third and fifth strikes of Repelling Fist enhanced by <span style=\"color: #FFD780FF;\">Chilling Penalty</span> will deal 60% and 80% of their original <span style=\"color: #99FFFFFF;\">Cryo DMG</span> respectively, while Luster: Vaulting Fist will deal 100% of its original <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>. The aforementioned DMG is considered as Stellar-Conduct DMG, and Wriothesley deals 30% increased Stellar-Conduct DMG.<br>Additionally, when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Wriothesley will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The Ascension Talent \"There Shall Be a Plea for Justice\" is changed to the following:<br>When Wriothesley's HP is less than 60%, he will obtain a \"Gracious Rebuke: Unveiling.\" This turns the Charged Attack of his <span style=\"color: #FFD780FF;\">Normal Attack: Forceful Fists of Frost</span> into the enhanced Luster: Vaulting Fist, which will not consume Stamina and restores 30% Max HP to Wriothesley upon hit. Wriothesley can gain HP in this way once every 2s.<br>Additionally, the third and fifth strikes of Repelling Fist enhanced by <span style=\"color: #FFD780FF;\">Chilling Penalty</span> will deal 60% and 80% of their original <span style=\"color: #99FFFFFF;\">Cryo DMG</span> respectively, while Luster: Vaulting Fist will deal 100% of its original <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>. The aforementioned DMG is considered as Stellar-Conduct DMG, and Wriothesley deals 30% increased Stellar-Conduct DMG.<br>Additionally, when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Wriothesley will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
       }
     ],
     "constellations": [
@@ -6514,7 +6754,7 @@
       },
       {
         "name": "6. Esteem for the Innocent",
-        "descHtml": "The CRIT Rate of Rebuke: Vaulting Fist will be increased by 10%, and its CRIT DMG by 80%. When unleashed, it will also create an additional icicle that deals 100% of Rebuke: Vaulting Fist's original DMG as <span style=\"color: #99FFFFFF;\">Cryo DMG</span>. DMG dealt this way is regarded as Charged Attack DMG.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The aforementioned effect is changed to:<br>· The Repelling Fist enhanced by <span style=\"color: #FFD780FF;\">Chilling Penalty</span>, as well as Luster: Vaulting Fist, gain a 10% CRIT Rate and 80% CRIT DMG boost. In addition, the fifth attack of Repelling Fists enhanced by <span style=\"color: #FFD780FF;\">Chilling Penalty</span>, as well as Luster: Vaulting Fist, will each generate an additional icicle that deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> at 60% of its original DMG. This DMG will be considered Stellar-Conduct DMG.<br><br>You must first unlock the Ascension Talent \"There Shall Be a Plea for Justice.\""
+        "descHtml": "The CRIT Rate of Rebuke: Vaulting Fist will be increased by 10%, and its CRIT DMG by 80%. When unleashed, it will also create an additional icicle that deals 100% of Rebuke: Vaulting Fist's Base DMG as <span style=\"color: #99FFFFFF;\">Cryo DMG</span>. DMG dealt this way is regarded as Charged Attack DMG.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The aforementioned effect is changed to:<br>· The Repelling Fist enhanced by <span style=\"color: #FFD780FF;\">Chilling Penalty</span>, as well as Luster: Vaulting Fist, gain a 10% CRIT Rate and 80% CRIT DMG boost. In addition, the fifth attack of Repelling Fists enhanced by <span style=\"color: #FFD780FF;\">Chilling Penalty</span>, as well as Luster: Vaulting Fist, will each generate an additional icicle that deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> at 20% of its original DMG. This DMG will be considered Stellar-Conduct DMG.<br><br>You must first unlock the Ascension Talent \"There Shall Be a Plea for Justice.\""
       }
     ],
     "glossary": [
@@ -7056,12 +7296,13 @@
       },
       {
         "name": "E. Aisa Utamakura Pilgrimage",
-        "descHtml": "Weaves memories of lovely dreams, entering a <span style=\"color: #FFD780FF;\">Dreamdrifter</span> state where Yumemizuki Mizuki floats above the ground, and dealing 1 instance of <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> to nearby opponents.<br><br><span style=\"color: #FFD780FF;\">Dreamdrifter</span><br>·While in the Dreamdrifter state, Yumemizuki Mizuki will continuously drift forward, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> to nearby opponents at regular intervals.<br>·During this time, Yumemizuki Mizuki can control her direction of drift, and the pick-up distance of <span style=\"color: #FFD780FF;\">Yumemi Style Special Snacks</span> from the Elemental Burst <span style=\"color: #FFD780FF;\">Anraku Secret Spring Therapy</span> will be increased.<br>·Increases the Swirl DMG that nearby party members deal based on Yumemizuki Mizuki's Elemental Mastery.<br>·Dreamdrifter will end when Mizuki leaves the field or uses her Elemental Skill again.<br><br><i>\"Our dreams touch at midnight, their song ringing on in our hearts.\"</i>",
+        "descHtml": "Weaves memories of lovely dreams, entering a <span style=\"color: #FFD780FF;\">Dreamdrifter</span> state where Yumemizuki Mizuki floats above the ground, and dealing 1 instance of <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> to nearby opponents.<br><br><span style=\"color: #FFD780FF;\">Dreamdrifter</span><br>·While in the Dreamdrifter state, Yumemizuki Mizuki will continuously drift forward, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> to nearby opponents at regular intervals.<br>·During this time, Yumemizuki Mizuki can control her direction of drift, and the pick-up distance of <span style=\"color: #FFD780FF;\">Yumemi Style Special Snacks</span> from the Elemental Burst <span style=\"color: #FFD780FF;\">Anraku Secret Spring Therapy</span> will be increased.<br>·Increases the Swirl DMG and Stellar Swirl reaction DMG that nearby party members deal based on Yumemizuki Mizuki's Elemental Mastery.<br>·Dreamdrifter will end when Mizuki leaves the field or uses her Elemental Skill again.<br><br><i>\"Our dreams touch at midnight, their song ringing on in our hearts.\"</i>",
         "details": [
           {"label": "Skill DMG", "template": "{param4:F1P}"},
           {"label": "Continuous Attack DMG", "template": "{param1:F1P}"},
           {"label": "Dreamdrifter Duration", "template": "{param5:F1}s"},
-          {"label": "Elemental Mastery-Based Swirl DMG Increase", "template": "{param2:F2P} per Point"},
+          {"label": "Elemental Mastery-Based Swirl DMG Increase", "template": "{param2:F2P} per 100 Points"},
+          {"label": "Elemental Mastery-Based Stellar Swirl DMG Increase", "template": "{param6:F2P} per 100 Points"},
           {"label": "CD", "template": "{param3:F1}s"}
         ]
       },
@@ -7081,7 +7322,7 @@
     "passives": [
       {
         "name": "Bright Moon's Restless Voice",
-        "descHtml": "When Yumemizuki Mizuki triggers Swirl while in her Dreamdrifter state, Dreamdrifter's duration increases by 2.5s. This effect can trigger once every 0.3s for a maximum of 2 times per Dreamdrifter state."
+        "descHtml": "When Yumemizuki Mizuki triggers a Swirl or Stellar Swirl reaction while in her Dreamdrifter state, Dreamdrifter's duration increases by 2.5s. This effect can trigger once every 0.3s for a maximum of 2 times per Dreamdrifter state."
       },
       {
         "name": "Thoughts by Day Bring Dreams by Night",
@@ -7093,13 +7334,13 @@
       },
       {
         "name": "Vast Be the Dream",
-        "descHtml": "When Yumemizuki Mizuki triggers a Swirl reaction while in the Dreamdrifter state, the next instance of periodic <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> she deals to nearby enemies during that same state will be increased by 1,000% of her Elemental Mastery. The aforementioned effect can trigger once every 2.5s.<br>Additionally, while Yumemizuki Mizuki is in the Dreamdrifter state, the Elemental Mastery of nearby party characters is increased by 10% of Yumemizuki Mizuki's Elemental Mastery."
+        "descHtml": "When Yumemizuki Mizuki triggers a Swirl or Stellar Swirl reaction while in the Dreamdrifter state, the next instance of periodic <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> she deals to nearby enemies during that same state will be increased by 1,000% of her Elemental Mastery. The aforementioned effect can trigger once every 2.5s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: When Yumemizuki Mizuki deals to an opponent the above enhanced <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span>, she will also deal an additional instance of <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 1,000% of her Elemental Mastery. This DMG is considered Stellar Swirl reaction DMG.<br><br>Additionally, while Yumemizuki Mizuki is in the Dreamdrifter state, the Elemental Mastery of nearby party characters is also increased by 10% of her Elemental Mastery.<br>Yumemizuki Mizuki will also enter the <<span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s when a nearby party member triggers a Stellar Swirl reaction."
       }
     ],
     "constellations": [
       {
         "name": "1. In Mist-Like Waters",
-        "descHtml": "When Yumemizuki Mizuki is in the Dreamdrifter state, she will continuously apply the \"Twenty-Three Nights' Awaiting\" effect to nearby opponents for 3s every 3.5s. When an opponent is affected by Anemo DMG-triggered Swirl reactions while the aforementioned effect is active, the effect will be canceled, and this Swirl instance has its DMG against this opponent increased by 1,100% of Mizuki's Elemental Mastery. She also launches an additional attack on the same opponent, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span> equal to 1,000% of Yumemizuki Mizuki's Elemental Mastery."
+        "descHtml": "When Yumemizuki Mizuki is in the Dreamdrifter state, she will continuously apply the \"Twenty-Three Nights' Awaiting\" effect to nearby opponents for 3s every 3.5s. When an opponent has a Swirl or Stellar Swirl reaction triggered against them by Anemo DMG while the aforementioned effect is active, the effect will be canceled, and this Swirl or Stellar Swirl instance has its DMG against this opponent increased by 1,100% and 550% of Mizuki's Elemental Mastery respectively. She also launches an additional attack on the same opponent, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 1,000% of Yumemizuki Mizuki's Elemental Mastery.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: The aforementioned additional DMG is changed to <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 400% of Yumemizuki Mizuki's Elemental Mastery. This DMG is considered Stellar Swirl reaction DMG."
       },
       {
         "name": "2. Your Echo I Meet in Dreams",
@@ -7119,7 +7360,7 @@
       },
       {
         "name": "6. The Heart Lingers Long",
-        "descHtml": "While Yumemizuki Mizuki is in the Dreamdrifter state, Swirl DMG dealt by nearby party members can score CRIT Hits, with CRIT Rate fixed at 30%, and CRIT DMG fixed at 100%.<br>Every point of Elemental Mastery Yumemizuki Mizuki has in excess of 500 increases her CRIT Rate by 0.04% and her CRIT DMG by 0.16%. Yumemizuki Mizuki's CRIT Rate and CRIT DMG can be increased by up to 20% and 80% in this way, respectively."
+        "descHtml": "While Yumemizuki Mizuki is in the Dreamdrifter state, Swirl DMG dealt by nearby party members can score CRIT Hits, with CRIT Rate fixed at 30%, and CRIT DMG fixed at 100%. The CRIT Rate of any Stellar Swirl DMG dealt by these party members is also increased by 10%, while CRIT DMG is increased by 20%.<br>Every point of Elemental Mastery Yumemizuki Mizuki has in excess of 500 increases her CRIT Rate by 0.04% and her CRIT DMG by 0.16%. Yumemizuki Mizuki's CRIT Rate and CRIT DMG can be increased by up to 20% and 80% in this way, respectively."
       }
     ],
     "glossary": null

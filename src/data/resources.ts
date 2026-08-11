@@ -11,6 +11,8 @@ import type {
 } from './types';
 
 export const characters: CharacterResource[] = [
+  {"id": "alyosha", "rarity": 4, "imagePath": "/character/alyosha.webp"},
+  {"id": "odette", "rarity": 5, "imagePath": "/character/odette.webp"},
   {"id": "sandrone", "rarity": 5, "imagePath": "/character/sandrone.webp"},
   {"id": "prune", "rarity": 4, "imagePath": "/character/prune.webp"},
   {"id": "lohen", "rarity": 5, "imagePath": "/character/lohen.webp"},

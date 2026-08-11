@@ -13,14 +13,14 @@ import { cbs } from "./helpers";
 class YumemizukiMizuki extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
-      // E: Dreamdrifter — increases team Swirl DMG by 0.45% per EM (lv10) / 0.54% (lv13, C3+)
+      // E: Dreamdrifter — increases team Swirl DMG by 0.45% per 100 EM (lv10) / 0.54% (lv13, C3+)
       new ScalingBuff(
         cbs(this, "E", ["E"]),
         { receiver: "team", filter: { reactions: ["swirl"] } },
         [],
         "em",
         "reactionDmg%",
-        this.param("E", 2)
+        this.param("E", 2) / 10000
       ),
       // P2: EM +100 when teammates hit with Pyro/Hydro/Cryo/Electro
       new StatBuff(cbs(this, "P2", ["A4", "E"]), { receiver: "self" }, [

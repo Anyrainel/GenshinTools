@@ -199,6 +199,14 @@
       "90": {"baseAtk": 454, "secondaryStatValue": "221"}
     }
   },
+  "blade_of_atonement": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
+    }
+  },
   "bloodsoaked_ruins": {
     "rarity": 5,
     "type": "Polearm",
@@ -255,6 +263,14 @@
       "90": {"baseAtk": 454, "secondaryStatValue": "69.0%"}
     }
   },
+  "clash_of_kings": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
+    }
+  },
   "cloudforged": {
     "rarity": 4,
     "type": "Bow",
@@ -277,6 +293,14 @@
     "secondaryStat": "atk%",
     "levels": {
       "90": {"baseAtk": 401, "secondaryStatValue": "35.2%"}
+    }
+  },
+  "covenant_of_frost_and_snow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "51.7%"}
     }
   },
   "cranes_echoing_call": {
@@ -383,12 +407,28 @@
       "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
+  "echoes_of_the_heart": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
+    }
+  },
   "elegy_for_the_end": {
     "rarity": 5,
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
       "90": {"baseAtk": 608, "secondaryStatValue": "55.1%"}
+    }
+  },
+  "emberwell": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "emerald_orb": {
@@ -429,6 +469,14 @@
     "secondaryStat": "hp%",
     "levels": {
       "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
+    }
+  },
+  "exaiphanes_blade": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "eye_of_perception": {
@@ -583,6 +631,14 @@
       "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
+  "forged_by_the_golden_melody": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
+    }
+  },
   "fractured_halo": {
     "rarity": 5,
     "type": "Polearm",
@@ -605,6 +661,14 @@
     "secondaryStat": "atk%",
     "levels": {
       "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
+    }
+  },
+  "frostbreath": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "fruit_of_fulfillment": {
@@ -679,6 +743,14 @@
       "90": {"baseAtk": 401, "secondaryStatValue": "46.9%"}
     }
   },
+  "heretics_molten_blade": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
+    }
+  },
   "hunters_path": {
     "rarity": 5,
     "type": "Bow",
@@ -701,6 +773,14 @@
     "secondaryStat": "em",
     "levels": {
       "90": {"baseAtk": 510, "secondaryStatValue": "165"}
+    }
+  },
+  "jade_vista": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "jadefalls_splendor": {
@@ -1399,6 +1479,14 @@
       "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
+  "song_of_the_vigil": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {"baseAtk": 565, "secondaryStatValue": "110"}
+    }
+  },
   "splendor_of_tranquil_waters": {
     "rarity": 5,
     "type": "Sword",
@@ -1749,6 +1837,14 @@
     "secondaryStat": "def%",
     "levels": {
       "90": {"baseAtk": 510, "secondaryStatValue": "51.7%"}
+    }
+  },
+  "whitelake_frostfeather": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "windblume_ode": {

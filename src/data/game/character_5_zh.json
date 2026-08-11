@@ -2199,7 +2199,7 @@
       },
       {
         "name": "风物之诗咏",
-        "descHtml": "枫原万叶触发扩散反应后，枫原万叶的每点元素精通，会为队伍中所有角色提供0.04%对应元素伤害加成，持续8秒。通过这种方式获得的不同元素伤害加成可以共存。"
+        "descHtml": "枫原万叶触发扩散或星扩散反应后，枫原万叶的每点元素精通，会为队伍中所有角色提供0.04%对应元素伤害加成，持续8秒。通过这种方式获得的不同元素伤害加成可以共存。"
       },
       {
         "name": "松风霞立",
@@ -4692,6 +4692,126 @@
     ],
     "glossary": null
   },
+  "odette": {
+    "id": "10000150",
+    "name": "奥黛塔",
+    "skills": [
+      {
+        "name": "A. 雪鹄变奏",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方挥出闪耀夺目的斩击。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
+        "details": [
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "四段伤害", "template": "{param5:F1P}"},
+          {"label": "五段伤害", "template": "{param6:F1P}"},
+          {"label": "重击伤害", "template": "{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. 柔板·幻灵夜舞",
+        "descHtml": "呈现柔缓的舞步，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并召唤出自身的<span style=\"color: #FFD780FF;\">独舞倒影</span>。<br>若场上存在奥黛塔自己召唤的<span style=\"color: #FFD780FF;\">独舞倒影</span>，则会重新召唤，并重置其持续时间。<br><br><span style=\"color: #FFD780FF;\">独舞倒影</span><br>交替呈现<span style=\"color: #FFD780FF;\">拂羽</span>与<span style=\"color: #FFD780FF;\">旋翼</span>两种舞步，以优雅轻盈的舞姿间歇性攻击附近的敌人，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br>此外，施放元素战技<span style=\"color: #FFD780FF;\">柔板·幻灵夜舞</span>后的6秒内，奥黛塔的元素战技<span style=\"color: #FFD780FF;\">柔板·幻灵夜舞</span>将会被替换为特殊的元素战技<span style=\"color: #FFD780FF;\">柔板·破晓终奏</span>，以共舞对附近的敌人持续造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并在共舞结束时，造成一次视为星超导或星扩散反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。",
+        "details": [
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "破晓终奏持续伤害", "template": "{param2:F1P}"},
+          {"label": "破晓终奏星超导/星扩散伤害", "template": "{param3:P}/{param4:P}"},
+          {"label": "拂羽舞步伤害", "template": "{param5:F1P}"},
+          {"label": "拂羽舞步星超导/星扩散伤害", "template": "{param6:P}/{param7:P}"},
+          {"label": "旋翼舞步伤害", "template": "{param8:F1P}"},
+          {"label": "旋翼舞步星超导/星扩散伤害", "template": "{param9:P}/{param10:P}"},
+          {"label": "破晓终奏冷却时间", "template": "{param13:F1}秒"},
+          {"label": "独舞倒影持续时间", "template": "{param11:F1}秒"},
+          {"label": "技能冷却时间", "template": "{param12:F1}秒"}
+        ]
+      },
+      {
+        "name": "Q. 疾板·苍羽一梦",
+        "descHtml": "呈现迅疾的舞步，造成多次<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，召唤出自身的<span style=\"color: #FFD780FF;\">独舞倒影</span>，并获得<span style=\"color: #FFD780FF;\">雪鹄之梦</span>：提升奥黛塔造成的星烁反应伤害。<br>此外，施放元素爆发<span style=\"color: #FFD780FF;\">疾板·苍羽一梦</span>后的6秒内，奥黛塔的元素战技<span style=\"color: #FFD780FF;\">柔板·幻灵夜舞</span>将会被替换为特殊的元素战技<span style=\"color: #FFD780FF;\">柔板·破晓终奏</span>。<br><br>若场上存在奥黛塔自己召唤的独舞倒影，则将其召唤至身边，并重置其持续时间。",
+        "details": [
+          {"label": "斩击伤害", "template": "{param1:F1P}*3"},
+          {"label": "斩击最终段伤害", "template": "{param2:F1P}"},
+          {"label": "雪鹄之梦星烁反应伤害提升", "template": "{param3:F1P}"},
+          {"label": "雪鹄之梦持续时间", "template": "{param4:F1}秒"},
+          {"label": "独舞倒影持续时间", "template": "{param5:F1}秒"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "获选者的春祭",
+        "descHtml": "奥黛塔召唤<span style=\"color: #FFD780FF;\">独舞倒影</span>时，还会获得4层<span style=\"color: #FFD780FF;\">华彩</span>。"
+      },
+      {
+        "name": "赤忱者的悲歌",
+        "descHtml": "基于奥黛塔攻击力超过1000点的部分，每100点攻击力都将使奥黛塔造成的星烁反应伤害额外造成原本1.5%的伤害，至多通过这种方式额外造成原本30%的伤害。"
+      },
+      {
+        "name": "星耀祝礼·银晓之舞",
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时/队伍中的角色在附近触发星扩散反应后的8秒内，奥黛塔将分别进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>/<span style=\"color: #FFD780FF;\">辉映·星扩散</span>状态。<br>队伍中的角色触发超导/冰元素扩散反应时，将转为触发星超导/星扩散反应，且基于奥黛塔的攻击力，提升队伍中角色造成的上述反应的基础伤害：每100点攻击力都将提升0.7%上述反应的基础伤害，至多通过这种方式提升14%伤害。"
+      },
+      {
+        "name": "回响中的冬梦",
+        "descHtml": "在小地图上显示周围的<span style=\"color: #FFD780FF;\">至冬区域特产</span>的位置。<br>在闲暇时练习舞蹈，或许还会触发其他的效果…"
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. 「不曾起舞的清晨，她望向倒影」",
+        "descHtml": "施放特殊元素战技<span style=\"color: #FFD780FF;\">柔板·破晓终奏</span>后，在共舞结束时，奥黛塔将对附近的敌人造成一次额外的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，该伤害视为：<br>·<span style=\"color: #FFD780FF;\">辉映·星超导</span>或不处于辉映状态：相当于奥黛塔攻击力300%的星超导反应伤害；<br>·<span style=\"color: #FFD780FF;\">辉映·星扩散</span>：相当于奥黛塔攻击力450%的星扩散反应伤害。<br><br>此外，突破天赋「获选者的春祭」获得强化：召唤<span style=\"color: #FFD780FF;\">独舞倒影</span>时，奥黛塔将额外获得2层<span style=\"color: #FFD780FF;\">华彩</span>，且奥黛塔处于队伍后台时，清除<span style=\"color: #FFD780FF;\">华彩</span>的速度提升至每秒2层。"
+      },
+      {
+        "name": "2. 「她想，我要见证雪鹄未见之梦」",
+        "descHtml": "突破天赋「获选者的春祭」获得强化：每层<span style=\"color: #FFD780FF;\">华彩</span>还会使角色的攻击力提升7%。<br>此外，<span style=\"color: #FFD780FF;\">独舞倒影</span>在场时，若奥黛塔处于<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态，<span style=\"color: #FFD780FF;\">独舞倒影</span>附近敌人的对应元素抗性还会降低20%：<br>·<span style=\"color: #FFD780FF;\">辉映·星超导</span>：<span style=\"color: #99FFFFFF;\">冰元素</span>、<span style=\"color: #FFACFFFF;\">雷元素</span>；<br>·<span style=\"color: #FFD780FF;\">辉映·星扩散</span>：<span style=\"color: #99FFFFFF;\">冰元素</span>、<span style=\"color: #80FFD7FF;\">风元素</span>。"
+      },
+      {
+        "name": "3. 「我要追逐呼啸的风，向上独行」",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">柔板·幻灵夜舞</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "4. 「向上，坠往恍惚、燃烧的蓝空」",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">疾板·苍羽一梦</span>获得强化：奥黛塔获得<span style=\"color: #FFD780FF;\">雪鹄之梦</span>时，还会使队伍中附近的其他角色造成的星烁反应伤害提升，提升值相当于<span style=\"color: #FFD780FF;\">雪鹄之梦</span>效果的50%。<br><br>此外，队伍中的角色对敌人造成星烁反应伤害时，奥黛塔还会对敌人进行一次协同攻击，造成一次<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，每3.5秒至多触发一次，该伤害视为：<br>·<span style=\"color: #FFD780FF;\">辉映·星超导</span>或不处于辉映状态：相当于奥黛塔攻击力66%的星超导反应伤害；<br>·<span style=\"color: #FFD780FF;\">辉映·星扩散</span>：相当于奥黛塔攻击力99%的星扩散反应伤害。"
+      },
+      {
+        "name": "5. 「看呀，我已告别尘与土的苦痛」",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">疾板·苍羽一梦</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "6. 「伸出手，触及苍穹永恒的面容」",
+        "descHtml": "突破天赋「获选者的春祭」获得强化：奥黛塔赋予队伍中附近的所有角色<span style=\"color: #FFD780FF;\">华彩</span>时，自己的华彩不再会减少。<br>此外，处于<span style=\"color: #FFD780FF;\">华彩</span>影响下的角色，对敌人造成的星烁反应伤害<span style=\"color: #FFD780FF;\">擢升</span>25%，且奥黛塔对敌人造成的星烁反应伤害额外擢升20%。"
+      }
+    ],
+    "glossary": [
+      {
+        "name": "擢升",
+        "descHtml": "特殊的伤害提升效果，与其他的伤害提升效果分别独立计算。"
+      },
+      {
+        "name": "极星辉域",
+        "descHtml": "触发星超导反应时，附近的区域会短暂变化为<span style=\"color: #FFD780FF;\">极星辉域</span>；处于极星辉域中时，特定角色将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，使其不同技能分别获得对应的强化效果。"
+      },
+      {
+        "name": "独舞倒影",
+        "descHtml": "与奥黛塔一同起舞的心象倒影，可以通过施放元素战技或元素爆发召唤至场上。<br>会交替呈现<span style=\"color: #FFD780FF;\">拂羽</span>与<span style=\"color: #FFD780FF;\">旋翼</span>两种舞步，以优雅轻盈的舞姿间歇性攻击附近的敌人，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br>同时至多存在一个奥黛塔自己创造的<span style=\"color: #FFD780FF;\">独舞倒影</span>。<br><br>此外，附近存在奥黛塔自己召唤的<span style=\"color: #FFD780FF;\">独舞倒影</span>时，奥黛塔的元素战技<span style=\"color: #FFD780FF;\">柔板·幻灵夜舞</span>将会被替换为特殊的元素战技<span style=\"color: #FFD780FF;\">柔板·破晓终奏</span>。"
+      },
+      {
+        "name": "柔板·破晓终奏",
+        "descHtml": "奥黛塔的特殊元素战技，对附近的敌人持续造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，并在共舞结束时，造成一次视为星超导反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。共舞时，奥黛塔可以控制舞步的方向。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：共舞结束时，改为造成一次视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><br>此外，施放特殊元素战技<span style=\"color: #FFD780FF;\">柔板·破晓终奏</span>后，在<span style=\"color: #FFD780FF;\">独舞倒影</span>剩余持续时间内，若奥黛塔处于<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态，则<span style=\"color: #FFD780FF;\">独舞倒影</span>的两种舞步还会额外造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。"
+      },
+      {
+        "name": "华彩",
+        "descHtml": "解锁突破天赋「获选者的春祭」后，奥黛塔召唤<span style=\"color: #FFD780FF;\">独舞倒影</span>时将会获得的特殊效果。<br>每层<span style=\"color: #FFD780FF;\">华彩</span>都会使角色造成的星烁反应伤害提升15%，持续至<span style=\"color: #FFD780FF;\">独舞倒影</span>退场或重新召唤<span style=\"color: #FFD780FF;\">独舞倒影</span>。<br>当奥黛塔处于队伍后台时，奥黛塔每秒会清除1层<span style=\"color: #FFD780FF;\">华彩</span>，并使队伍中附近的其他角色获得对应层数的<span style=\"color: #FFD780FF;\">华彩</span>。"
+      },
+      {
+        "name": "辉映·星烁",
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>与<span style=\"color: #FFD780FF;\">辉映·星扩散</span>统称为<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态。<br>角色同时只能受到一种辉映状态影响，且优先被<span style=\"color: #FFD780FF;\">辉映·星超导</span>影响。"
+      }
+    ]
+  },
   "qiqi": {
     "id": "10000035",
     "name": "七七",
@@ -4746,7 +4866,7 @@
       },
       {
         "name": "玉签偶开",
-        "descHtml": "七七的普通攻击与重击命中敌人时，有50%的几率为敌人添加一枚度厄真符，持续6秒。该效果每30秒只能触发一次。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：该效果的触发几率提升至100%，且冷却时间降低至15秒。"
+        "descHtml": "七七的普通攻击与重击命中敌人时，有50%的几率为敌人添加一枚度厄真符，持续6秒。该效果每30秒只能触发一次。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：该效果的触发几率提升至100%，且冷却时间降低至15秒。"
       },
       {
         "name": "前尘旧忆",
@@ -4754,17 +4874,17 @@
       },
       {
         "name": "七宝奉真",
-        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">仙法·寒病鬼差</span>的冷却时间缩短至15秒。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：寒病鬼差持续期间，队伍中自己的角色造成的超导、星超导反应伤害提升50%。<br>此外，处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时，七七将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态。"
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">仙法·寒病鬼差</span>的冷却时间缩短至15秒。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：寒病鬼差持续期间，队伍中自己的角色造成的对应反应的伤害提高：<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：超导、星超导反应伤害提升50%。<br><span style=\"color: #FFD780FF;\">辉映·星扩散</span>：冰元素扩散、星扩散反应伤害提升50%。<br>此外，处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时/队伍中的角色在附近触发星扩散反应后的8秒内，七七将分别进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>/<span style=\"color: #FFD780FF;\">辉映·星扩散</span>状态。"
       }
     ],
     "constellations": [
       {
         "name": "1. 寒苦回向",
-        "descHtml": "寒病鬼差命中被度厄真符标记的敌人时，为七七恢复2点元素能量。<br> <span style=\"color: #FFD780FF;\">辉映·星超导</span>：寒病鬼差的攻击与协同攻击命中敌人时，还会为七七恢复6点元素能量，该效果每6秒至多触发一次。"
+        "descHtml": "寒病鬼差命中被度厄真符标记的敌人时，为七七恢复2点元素能量。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：寒病鬼差的攻击与协同攻击命中敌人时，还会为七七恢复6点元素能量，该效果每6秒至多触发一次。"
       },
       {
         "name": "2. 冰寒蚀骨",
-        "descHtml": "对受到<span style=\"color: #99FFFFFF;\">冰元素</span>影响的敌人，七七的普通攻击与重击造成的伤害提升15%。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：七七的攻击力提升50%。"
+        "descHtml": "对受到<span style=\"color: #99FFFFFF;\">冰元素</span>影响的敌人，七七的普通攻击与重击造成的伤害提升15%。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：七七的攻击力提升50%。"
       },
       {
         "name": "3. 升天宝诰",
@@ -4780,13 +4900,17 @@
       },
       {
         "name": "6. 起死回骸",
-        "descHtml": "施放<span style=\"color: #FFD780FF;\">仙法·救苦度厄</span>时，复苏附近队伍中所有倒下的角色，并将其生命值恢复至50%。<br>该效果每15分钟只能触发一次。<br>此外，施放<span style=\"color: #FFD780FF;\">仙法·救苦度厄</span>后，七七还会获得4层<span style=\"color: #FFD780FF;\">洞玄</span>；除七七外的队伍中自己的当前场上角色造成星超导反应伤害时，将消耗1层<span style=\"color: #FFD780FF;\">洞玄</span>，提升造成的伤害，提升值相当于七七攻击力的600%。<span style=\"color: #FFD780FF;\">洞玄</span>至多持续12秒，施放<span style=\"color: #FFD780FF;\">仙法·救苦度厄</span>时刷新层数。"
+        "descHtml": "施放<span style=\"color: #FFD780FF;\">仙法·救苦度厄</span>时，复苏附近队伍中所有倒下的角色，并将其生命值恢复至50%。<br>该效果每15分钟只能触发一次。<br>此外，施放<span style=\"color: #FFD780FF;\">仙法·救苦度厄</span>后，七七还会获得4层<span style=\"color: #FFD780FF;\">洞玄</span>；除七七外的队伍中自己的当前场上角色通过天赋与技能直接造成星超导或星扩散反应伤害时，将消耗1层<span style=\"color: #FFD780FF;\">洞玄</span>，提升造成的伤害，提升值相当于七七攻击力的600%。<span style=\"color: #FFD780FF;\">洞玄</span>至多持续12秒，施放<span style=\"color: #FFD780FF;\">仙法·救苦度厄</span>时刷新层数。"
       }
     ],
     "glossary": [
       {
         "name": "极星辉域",
         "descHtml": "触发星超导反应时，附近的区域会短暂变化为<span style=\"color: #FFD780FF;\">极星辉域</span>；处于极星辉域中时，特定角色将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，使其不同技能分别获得对应的强化效果。"
+      },
+      {
+        "name": "辉映·星烁",
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>与<span style=\"color: #FFD780FF;\">辉映·星扩散</span>统称为<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态。<br>角色同时只能受到一种辉映状态影响，且优先被<span style=\"color: #FFD780FF;\">辉映·星超导</span>影响。"
       }
     ]
   },
@@ -4895,7 +5019,7 @@
     "skills": [
       {
         "name": "A. 事象数式·自明演绎",
-        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以数式编织出操纵兵刃的丝线，进行至多三段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>召唤出全功能通用型自动机关<span style=\"color: #FFD780FF;\">「法洁欧」</span>，并使其切换至<span style=\"color: #FFD780FF;\">解算</span>模式：对前方的敌人进行扫射攻击，并周期性发射冷凝射线，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：冷凝射线转为造成视为星超导反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br>在<span style=\"color: #FFD780FF;\">解算</span>模式下，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>将会持续提升；发射冷凝射线时，还会使解算功率进一步提升。<br>解算功率达到100点上限时，法洁欧将切换至<span style=\"color: #FFD780FF;\">功率过载</span>模式，以更长的间隔对敌人进行射击，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，且无法切换至解算模式。<br>不处于<span style=\"color: #FFD780FF;\">解算</span>模式下时，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>将会缓慢降低；桑多涅处于队伍后台时，还会专注于维修法洁欧，使其解算功率降低速度加快至原本的300%。<br><span style=\"color: #FFD780FF;\">解算功率</span>降低至50点以下时，法洁欧将退出<span style=\"color: #FFD780FF;\">功率过载</span>模式。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>以数式编织出操纵兵刃的丝线，进行至多三段的连续挥砍。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>召唤出全功能通用型自动机关<span style=\"color: #FFD780FF;\">「法洁欧」</span>，并使其切换至<span style=\"color: #FFD780FF;\">解算</span>模式：对前方的敌人进行扫射攻击，并周期性发射冷凝射线，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：冷凝射线转为造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br>在<span style=\"color: #FFD780FF;\">解算</span>模式下，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>将会持续提升；发射冷凝射线时，还会使解算功率进一步提升。<br>解算功率达到100点上限时，法洁欧将切换至<span style=\"color: #FFD780FF;\">功率过载</span>模式，以更长的间隔对敌人进行射击，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，且无法切换至解算模式。<br>不处于<span style=\"color: #FFD780FF;\">解算</span>模式下时，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>将会缓慢降低；桑多涅处于队伍后台时，还会专注于维修法洁欧，使其解算功率降低速度加快至原本的300%。<br><span style=\"color: #FFD780FF;\">解算功率</span>降低至50点以下时，法洁欧将退出<span style=\"color: #FFD780FF;\">功率过载</span>模式。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
         "details": [
           {"label": "一段伤害", "template": "{param1:F1P}"},
           {"label": "二段伤害", "template": "{param2:F1P}"},
@@ -4903,6 +5027,7 @@
           {"label": "重击扫射伤害", "template": "{param4:F1P}"},
           {"label": "重击冷凝射线伤害", "template": "{param5:F1P}"},
           {"label": "重击冷凝射线星超导伤害", "template": "{param6:F1P}"},
+          {"label": "重击冷凝射线星扩散伤害", "template": "{param11:F1P}"},
           {"label": "功率过载时伤害", "template": "{param7:F1P}"},
           {"label": "下坠期间伤害", "template": "{param8:F1P}"},
           {"label": "低空/高空坠地冲击伤害", "template": "{param9:P}/{param10:P}"}
@@ -4910,20 +5035,22 @@
       },
       {
         "name": "E. 事象数式·游衍解析",
-        "descHtml": "秉持淑女完美的法度，搭乘<span style=\"color: #FFD780FF;\">茶会用战术突击悬浮机关</span>，并持续向前浮行6秒。期间，桑多涅可以控制浮行的方向，并且点按冲刺时，将会消耗10点体力，进入优雅的高速悬浮模式，每秒消耗15点体力，以更快的速度进行浮行。<br><br>开始浮行时，若附近存在敌人，桑多涅还会召唤出一台棱晶谐振炮，向没有冷静下来的敌人发射两枚棱晶弹，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：第二枚棱晶弹将转为造成视为星超导反应伤害的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br>搭乘茶会用战术突击悬浮机关时，桑多涅还会优雅地悄悄维修法洁欧，使其<span style=\"color: #FFD780FF;\">解算功率</span>快速降低。",
+        "descHtml": "秉持淑女完美的法度，搭乘<span style=\"color: #FFD780FF;\">茶会用战术突击悬浮机关</span>，并持续向前浮行6秒。期间，桑多涅可以控制浮行的方向，并且点按冲刺时，将会消耗10点体力，进入优雅的高速悬浮模式，每秒消耗15点体力，以更快的速度进行浮行。<br><br>开始浮行时，若附近存在敌人，桑多涅还会召唤出一台棱晶谐振炮，向没有冷静下来的敌人发射两枚棱晶弹，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：第二枚棱晶弹将转为造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br>搭乘茶会用战术突击悬浮机关时，桑多涅还会优雅地悄悄维修法洁欧，使其<span style=\"color: #FFD780FF;\">解算功率</span>快速降低。",
         "details": [
           {"label": "棱晶弹伤害", "template": "{param1:F1P}"},
           {"label": "棱晶弹星超导伤害", "template": "{param2:F1P}"},
+          {"label": "棱晶弹星扩散伤害", "template": "{param4:F1P}"},
           {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
       {
         "name": "Q. 事象数式·万理证毕",
-        "descHtml": "秉持淑女优雅的礼仪，召唤出大量棱晶谐振炮对前方进行广域轰炸，并在随后发射负温聚能光束轰击敌人，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：负温聚能光束将转为造成视为星超导反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。",
+        "descHtml": "秉持淑女优雅的礼仪，召唤出大量棱晶谐振炮对前方进行广域轰炸，并在随后发射负温聚能光束轰击敌人，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：负温聚能光束将转为造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。",
         "details": [
           {"label": "轰炸伤害", "template": "{param1:F1P}*3"},
           {"label": "聚能光束伤害", "template": "{param2:F1P}"},
           {"label": "聚能光束星超导伤害", "template": "{param3:F1P}"},
+          {"label": "聚能光束星扩散伤害", "template": "{param6:F1P}"},
           {"label": "冷却时间", "template": "{param4:F1}秒"},
           {"label": "元素能量", "template": "{param5:I}"}
         ]
@@ -4932,7 +5059,7 @@
     "passives": [
       {
         "name": "悠久的演算机关",
-        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>：施放元素战技<span style=\"color: #FFD780FF;\">事象数式·游衍解析</span>时，若法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>超过50点，则会在降低解算功率的同时，使向附近敌人发射的第二枚棱晶弹造成原本400%的伤害。<br>此外，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>每降低10点，都会获得一层持续60秒的<span style=\"color: #FFD780FF;\">改进战术</span>效果，该效果至多叠加10层。桑多涅处于<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态下施放元素爆发<span style=\"color: #FFD780FF;\">事象数式·万理证毕</span>时，将会清除全部的改进战术层数，使负温聚能光束造成原本100%+清除层数*10%的伤害。"
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星烁</span>：施放元素战技<span style=\"color: #FFD780FF;\">事象数式·游衍解析</span>时，若法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>超过50点，则会在降低解算功率的同时，使向附近敌人发射的第二枚棱晶弹造成原本400%的伤害。<br>此外，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>每降低10点，都会获得一层持续60秒的<span style=\"color: #FFD780FF;\">改进战术</span>效果，该效果至多叠加10层。桑多涅处于<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态下施放元素爆发<span style=\"color: #FFD780FF;\">事象数式·万理证毕</span>时，将会清除全部的改进战术层数，使负温聚能光束造成原本100%+清除层数*10%的伤害。"
       },
       {
         "name": "淑女的行事准则",
@@ -4940,7 +5067,7 @@
       },
       {
         "name": "星耀祝礼·唯理为光",
-        "descHtml": "队伍中的角色触发超导反应时，将转为触发星超导反应，且基于桑多涅的攻击力，提升队伍中角色造成的星超导反应的基础伤害：每100点攻击力都将提升0.7%星超导反应的基础伤害，至多通过这种方式提升14%伤害。<br>此外，处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时，桑多涅将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态。"
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时/队伍中的角色在附近触发星扩散反应后的8秒内，桑多涅将分别进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>/<span style=\"color: #FFD780FF;\">辉映·星扩散</span>状态。<br>队伍中的角色触发超导/冰元素扩散反应时，将转为触发星超导/星扩散反应，且基于桑多涅的攻击力，提升队伍中角色造成的上述反应的基础伤害：每100点攻击力都将提升0.7%上述反应的基础伤害，至多通过这种方式提升14%伤害。"
       },
       {
         "name": "茶会的序曲与长长的故事",
@@ -4950,11 +5077,11 @@
     "constellations": [
       {
         "name": "1. 鎏金未凋，夕暮已远",
-        "descHtml": "处于<span style=\"color: #FFD780FF;\">解算</span>模式下时，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>提升速度降低50%，且队伍中的所有角色造成的星超导反应伤害提升30%。"
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">解算</span>模式下时，法洁欧的<span style=\"color: #FFD780FF;\">解算功率</span>提升速度降低50%，且队伍中的所有角色造成的星烁反应伤害提升30%。"
       },
       {
         "name": "2. 回望镜中，时岁翩然",
-        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>：重击发射的冷凝射线的暴击伤害提升40%，且每次发射冷凝射线时，都会使本次<span style=\"color: #FFD780FF;\">解算</span>模式期间，发射的所有冷凝射线的暴击伤害进一步提升20%，该效果至多叠加3层。"
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星烁</span>：重击发射的冷凝射线的暴击伤害提升40%，且每次发射冷凝射线时，都会使本次<span style=\"color: #FFD780FF;\">解算</span>模式期间，发射的所有冷凝射线的暴击伤害进一步提升20%，该效果至多叠加3层。"
       },
       {
         "name": "3. 不叹日落，不羡月升",
@@ -4962,7 +5089,7 @@
       },
       {
         "name": "4. 世事皆数，昼来夜往",
-        "descHtml": "桑多涅的星超导反应伤害命中敌人时，还会额外召唤一台棱晶谐振炮进行协同攻击，对敌人造成一次相当于桑多涅攻击力125%的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，该伤害视为星超导反应造成的伤害。该效果每4秒至多触发一次。"
+        "descHtml": "桑多涅的星超导/星扩散反应伤害命中敌人时，还会额外召唤一台棱晶谐振炮进行协同攻击，对敌人造成一次相当于桑多涅攻击力125%/187.5%的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，该伤害视为对应星烁反应造成的伤害。该效果每4秒至多触发一次。"
       },
       {
         "name": "5. 万象皆灰，唯理明畅",
@@ -4970,7 +5097,7 @@
       },
       {
         "name": "6. 水仙梦醒，且望晨光",
-        "descHtml": "<span style=\"color: #FFD780FF;\">解算</span>模式下，法洁欧第三次发射冷凝射线时，将转为持续发射威力更强的<span style=\"color: #FFD780FF;\">集束型冷凝射线</span>，在原本后续发射的冷凝射线基础上，至多额外造成4段相当于桑多涅攻击力100%的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：<span style=\"color: #FFD780FF;\">集束型冷凝射线</span>转为至多额外造成4段相当于桑多涅攻击力80%的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，该伤害视为星超导反应造成的伤害。<br>此外，桑多涅造成的所有星超导反应伤害<span style=\"color: #FFD780FF;\">擢升</span>20%。"
+        "descHtml": "<span style=\"color: #FFD780FF;\">解算</span>模式下，法洁欧第三次发射冷凝射线时，将转为持续发射威力更强的<span style=\"color: #FFD780FF;\">集束型冷凝射线</span>，在原本后续发射的冷凝射线基础上，至多额外造成4段相当于桑多涅攻击力100%的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：<span style=\"color: #FFD780FF;\">集束型冷凝射线</span>转为至多额外造成4段视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>，该伤害相当于桑多涅攻击力的：<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：80%；<br><span style=\"color: #FFD780FF;\">辉映·星扩散</span>：120%。<br>此外，桑多涅造成的所有星烁反应伤害<span style=\"color: #FFD780FF;\">擢升</span>20%。"
       }
     ],
     "glossary": [
@@ -4980,7 +5107,7 @@
       },
       {
         "name": "解算",
-        "descHtml": "进行重击时，法洁欧将会切换至该模式。<br>处于该模式下时，法洁欧会对前方的敌人进行扫射攻击，并周期性发射冷凝射线，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：冷凝射线转为造成视为星超导反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。"
+        "descHtml": "进行重击时，法洁欧将会切换至该模式。<br>处于该模式下时，法洁欧会对前方的敌人进行扫射攻击，并周期性发射冷凝射线，造成<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：冷凝射线转为造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素范围伤害</span>。"
       },
       {
         "name": "解算功率",
@@ -4989,6 +5116,10 @@
       {
         "name": "极星辉域",
         "descHtml": "触发星超导反应时，附近的区域会短暂变化为<span style=\"color: #FFD780FF;\">极星辉域</span>；处于极星辉域中时，特定角色将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，使其不同技能分别获得对应的强化效果。"
+      },
+      {
+        "name": "辉映·星烁",
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>与<span style=\"color: #FFD780FF;\">辉映·星扩散</span>统称为<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态。<br>角色同时只能受到一种辉映状态影响，且优先被<span style=\"color: #FFD780FF;\">辉映·星超导</span>影响。"
       }
     ]
   },
@@ -5302,7 +5433,7 @@
     "passives": [
       {
         "name": "理外之理",
-        "descHtml": "队伍中附近的角色对敌人触发冻结、超导、星超导、冰元素扩散或冰元素结晶反应时，将在敌人附近创造一枚虚境裂隙。该效果每2.5秒至多触发一次，场上至多存在3枚丝柯克自己创造的虚境裂隙。<br><br>丝柯克可以通过以下方式，汲取附近一定范围内的虚境裂隙：<br>·在<span style=\"color: #FFD780FF;\">七相一闪</span>模式下进行的重击命中敌人时；<br>·施放七相一闪模式下的特殊元素爆发<span style=\"color: #FFD780FF;\">极恶技·尽</span>时；<br>·长按施放元素战技<span style=\"color: #FFD780FF;\">极恶技·闪</span>进行快速移动时。<br><br>每汲取一枚虚境裂隙，丝柯克将获得8点<span style=\"color: #FFD780FF;\">蛇之狡谋</span>。"
+        "descHtml": "队伍中附近的角色对敌人触发冻结、超导、星超导、冰元素扩散、星扩散或冰元素结晶反应时，将在敌人附近创造一枚虚境裂隙。该效果每2.5秒至多触发一次，场上至多存在3枚丝柯克自己创造的虚境裂隙。<br><br>丝柯克可以通过以下方式，汲取附近一定范围内的虚境裂隙：<br>·在<span style=\"color: #FFD780FF;\">七相一闪</span>模式下进行的重击命中敌人时；<br>·施放七相一闪模式下的特殊元素爆发<span style=\"color: #FFD780FF;\">极恶技·尽</span>时；<br>·长按施放元素战技<span style=\"color: #FFD780FF;\">极恶技·闪</span>进行快速移动时。<br><br>每汲取一枚虚境裂隙，丝柯克将获得8点<span style=\"color: #FFD780FF;\">蛇之狡谋</span>。"
       },
       {
         "name": "万流归寂",
@@ -5350,7 +5481,7 @@
       },
       {
         "name": "理外之理",
-        "descHtml": "队伍中附近的角色对敌人触发冻结、超导、冰元素扩散或冰元素结晶反应时，将在敌人附近创造一枚虚境裂隙。该效果每2.5秒至多触发一次，场上至多存在3枚丝柯克自己创造的虚境裂隙。<br><br>丝柯克可以通过以下方式，汲取附近一定范围内的虚境裂隙：<br>·在七相一闪模式下进行的重击命中敌人时；<br>·施放七相一闪模式下的特殊元素爆发<span style=\"color: #FFD780FF;\">极恶技·尽</span>时；<br>·长按施放元素战技<span style=\"color: #FFD780FF;\">极恶技·闪</span>进行快速移动时。<br><br>每汲取一枚虚境裂隙，丝柯克将获得8点蛇之狡谋。"
+        "descHtml": "队伍中附近的角色对敌人触发冻结、超导、星超导、冰元素扩散、星扩散或冰元素结晶反应时，将在敌人附近创造一枚虚境裂隙。该效果每2.5秒至多触发一次，场上至多存在3枚丝柯克自己创造的虚境裂隙。<br><br>丝柯克可以通过以下方式，汲取附近一定范围内的虚境裂隙：<br>·在七相一闪模式下进行的重击命中敌人时；<br>·施放七相一闪模式下的特殊元素爆发<span style=\"color: #FFD780FF;\">极恶技·尽</span>时；<br>·长按施放元素战技<span style=\"color: #FFD780FF;\">极恶技·闪</span>进行快速移动时。<br><br>每汲取一枚虚境裂隙，丝柯克将获得8点蛇之狡谋。"
       },
       {
         "name": "万流归寂",
@@ -5625,6 +5756,115 @@
       {
         "name": "强化效果",
         "descHtml": "每与一种元素进行过共鸣，旅行者便会获得对应的属性提升：<br><span style=\"color: #80FFD7FF;\">风元素</span>：暴击率提升10%；<br><span style=\"color: #FFE699FF;\">岩元素</span>：防御力提升20%；<br><span style=\"color: #FFACFFFF;\">雷元素</span>：元素充能效率提升20%；<br><span style=\"color: #99FF88FF;\">草元素</span>：元素精通提升60点；<br><span style=\"color: #80C0FFFF;\">水元素</span>：生命值提升20%；<br><span style=\"color: #FF9999FF;\">火元素</span>：攻击力提升20%；<br><span style=\"color: #99FFFFFF;\">冰元素</span>：暴击伤害提升20%。"
+      }
+    ]
+  },
+  "traveler_cryo": {
+    "id": "10000005-505",
+    "name": "旅行者",
+    "skills": [
+      {
+        "name": "A. 异邦寒芒",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多五段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，瞬间向前方挥出两剑。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
+        "details": [
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "四段伤害", "template": "{param4:F1P}"},
+          {"label": "五段伤害", "template": "{param5:F1P}"},
+          {"label": "重击伤害", "template": "{param6:F1P}+{param7:F1P}"},
+          {"label": "重击体力消耗", "template": "{param8:F1}点"},
+          {"label": "下坠期间伤害", "template": "{param9:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. 冰雾剑",
+        "descHtml": "挥动武器向前刺击，释放极寒冰雾，对前方造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，并在身旁凝结栗烈寒星。<br><br><span style=\"color: #FFD780FF;\">栗烈寒星</span><br>·将跟随队伍中自己的角色，并间歇性发射冰晶攻击附近的敌人，造成<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星超导</span>：栗烈寒星将不再间歇性发射冰晶，而是会在旅行者的普通攻击、重击或下落攻击命中敌人时，发射一枚冰晶，协同攻击敌人，每0.2秒最多触发一次。<br>·冰晶命中敌人时，将为旅行者积攒1层<span style=\"color: #FFD780FF;\">寒辉</span>，该效果至多积攒8层。<br>·不处于战斗状态下时，<span style=\"color: #FFD780FF;\">寒辉</span>将在30秒后清除。<br><br><i>和派蒙一起观察过雾凇的凝成。</i>",
+        "details": [
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "冰晶伤害", "template": "{param2:F1P}"},
+          {"label": "栗烈寒星持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param3:F1}秒"}
+        ]
+      },
+      {
+        "name": "Q. 聚冰成锋",
+        "descHtml": "使用冰元素之力凝聚投矛，向敌人掷出，造成多次<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br>施放时，旅行者会消耗所有<span style=\"color: #FFD780FF;\">寒辉</span>层数，提升本次元素爆发造成的伤害；若消耗了8层<span style=\"color: #FFD780FF;\">寒辉</span>，还会使投矛造成伤害的次数提升。<br><br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：本次元素爆发改为造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。<br><br><i>和派蒙一起感受过冰凌的锋利。</i>",
+        "details": [
+          {"label": "投矛单段伤害", "template": "{param1:F1P}"},
+          {"label": "寒辉伤害提升", "template": "{param2:F1P}"},
+          {"label": "星超导投矛单段伤害", "template": "{param8:F1P}"},
+          {"label": "星超导寒辉伤害提升", "template": "{param9:F1P}"},
+          {"label": "星扩散投矛单段伤害", "template": "{param10:F1P}"},
+          {"label": "星扩散寒辉伤害提升", "template": "{param11:F1P}"},
+          {"label": "攻击段数", "template": "{param3:I}"},
+          {"label": "满层寒辉额外攻击段数", "template": "{param4:I}"},
+          {"label": "冷却时间", "template": "{param6:F1}秒"},
+          {"label": "元素能量", "template": "{param7:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "自锐的凛冰",
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>：<span style=\"color: #FFD780FF;\">栗烈寒星</span>存在期间，旅行者的普通攻击、重击、下落攻击将转为造成无法被附魔覆盖的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，且造成的伤害提升，提升值相当于旅行者攻击力的80%。"
+      },
+      {
+        "name": "通明的冽冰",
+        "descHtml": "旅行者的元素精通提升，提升值相当于旅行者攻击力的8%。通过这种方式，至多使旅行者的元素精通提升160点。"
+      },
+      {
+        "name": "星耀祝礼·幻变冰镜",
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时/队伍中的角色在附近触发星扩散反应后的8秒内，旅行者将分别进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>/<span style=\"color: #FFD780FF;\">辉映·星扩散</span>状态。<br>队伍中的角色触发超导/冰元素扩散反应时，将转为触发星超导/星扩散反应，且基于旅行者的攻击力，提升队伍中角色造成的上述反应的基础伤害：每100点攻击力都将提升0.35%上述反应的基础伤害，至多通过这种方式提升7%伤害。"
+      },
+      {
+        "name": "异邦的层冰",
+        "descHtml": "从过往的旅途中，汲取全新的力量。每与一种元素进行过共鸣，便会获得额外的<span style=\"color: #FFD780FF;\">强化效果</span>。<br><br>此外，队伍中附近的角色造成星超导反应伤害或星扩散反应伤害时，旅行者将获得一层「凝冰之刃」，每2秒至多通过此方式获得1层「凝冰之刃」，至多叠加3层。拥有3层「凝冰之刃」时进行重击，会消耗所有的「凝冰之刃」，转为进行特殊的<span style=\"color: #FFD780FF;\">重击·冰凝</span>。<br><br><span style=\"color: #FFD780FF;\">重击·冰凝</span><br>·将造成伤害更高的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>，伤害提升相当于旅行者攻击力的140%，并使旅行者获得2层<span style=\"color: #FFD780FF;\">寒辉</span>。<br>·每15秒至多进行一次<span style=\"color: #FFD780FF;\">重击·冰凝</span>。此外，突破天赋「自锐的凛冰」的伤害加成效果对<span style=\"color: #FFD780FF;\">重击·冰凝</span>无效。<br><span style=\"color: #FFD780FF;\">辉映·星烁</span>：<span style=\"color: #FFD780FF;\">重击·冰凝</span>改为造成视为对应星烁反应伤害的<span style=\"color: #99FFFFFF;\">冰元素伤害</span>。"
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. 渐肃的凝冰",
+        "descHtml": "旅行者造成了星烁反应伤害时，将为自身恢复5点元素能量，此效果至多每0.5秒触发1次。"
+      },
+      {
+        "name": "2. 嗡鸣的陨冰",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">冰雾剑</span>发射的<span style=\"color: #FFD780FF;\">冰晶</span>命中敌人后，还会使当前场上角色的元素精通提升60点，持续5秒。<br>此外，若受到上述效果影响的角色触发了星烁反应，或造成了星烁反应伤害，则持续时间内，上述效果改为提升120点元素精通。"
+      },
+      {
+        "name": "3. 断金的锐冰",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">聚冰成锋</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "4. 不化的顽冰",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">冰雾剑</span>创造的<span style=\"color: #FFD780FF;\">栗烈寒星</span>存在时间延长25%。"
+      },
+      {
+        "name": "5. 深寒的雾冰",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">冰雾剑</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "6. 肃杀的熙冰",
+        "descHtml": "施放元素爆发<span style=\"color: #FFD780FF;\">聚冰成锋</span>时，每消耗1层<span style=\"color: #FFD780FF;\">寒辉</span>，队伍中其他角色造成的星烁反应伤害提升5%，至多通过这种方式提升40%，持续15秒。"
+      }
+    ],
+    "glossary": [
+      {
+        "name": "强化效果",
+        "descHtml": "每与一种元素进行过共鸣，旅行者便会获得对应的属性提升：<br><span style=\"color: #80FFD7FF;\">风元素</span>：暴击率提升10%；<br><span style=\"color: #FFE699FF;\">岩元素</span>：防御力提升20%；<br><span style=\"color: #FFACFFFF;\">雷元素</span>：元素充能效率提升20%；<br><span style=\"color: #99FF88FF;\">草元素</span>：元素精通提升60点；<br><span style=\"color: #80C0FFFF;\">水元素</span>：生命值提升20%；<br><span style=\"color: #FF9999FF;\">火元素</span>：攻击力提升20%；<br><span style=\"color: #99FFFFFF;\">冰元素</span>：暴击伤害提升20%。"
+      },
+      {
+        "name": "寒辉",
+        "descHtml": "旅行者凝结的<span style=\"color: #FFD780FF;\">栗烈寒星</span>发射冰晶命中敌人时，或解锁天赋<span style=\"color: #FFD780FF;\">异邦的层冰</span>后进行<span style=\"color: #FFD780FF;\">重击·冰凝</span>后，将会获得的特殊效果。该效果至多叠加8层。<br>施放元素爆发<span style=\"color: #FFD780FF;\">聚冰成锋</span>时，旅行者会消耗所有的<span style=\"color: #FFD780FF;\">寒辉</span>层数，提升本次元素爆发造成的伤害。若消耗层数为8层，则还会提升本次元素爆发造成伤害的段数。"
+      },
+      {
+        "name": "极星辉域",
+        "descHtml": "触发星超导反应时，附近的区域会短暂变化为<span style=\"color: #FFD780FF;\">极星辉域</span>；处于极星辉域中时，特定角色将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，使其不同技能分别获得对应的强化效果。"
+      },
+      {
+        "name": "辉映·星烁",
+        "descHtml": "<span style=\"color: #FFD780FF;\">辉映·星超导</span>与<span style=\"color: #FFD780FF;\">辉映·星扩散</span>统称为<span style=\"color: #FFD780FF;\">辉映·星烁</span>状态。<br>角色同时只能受到一种辉映状态影响，且优先被<span style=\"color: #FFD780FF;\">辉映·星超导</span>影响。"
       }
     ]
   },
@@ -6219,7 +6459,7 @@
       },
       {
         "name": "风帜的先引",
-        "descHtml": "队伍中附近的角色触发扩散反应时，法尔伽将获得一层<span style=\"color: #FFD780FF;\">「苍牙之誓」</span>，使法尔伽的普通攻击、重击、特殊重击<span style=\"color: #FFD780FF;\">苍噬</span>与施放的特殊元素战技<span style=\"color: #FFD780FF;\">四风将起</span>造成的伤害提升7.5%。该效果持续8秒，至多叠加4层，每名角色每1秒至多通过这种方式使法尔伽获得一层<span style=\"color: #FFD780FF;\">「苍牙之誓」</span>。"
+        "descHtml": "队伍中附近的角色触发扩散或星扩散反应时，法尔伽将获得一层<span style=\"color: #FFD780FF;\">「苍牙之誓」</span>，使法尔伽的普通攻击、重击、特殊重击<span style=\"color: #FFD780FF;\">苍噬</span>与施放的特殊元素战技<span style=\"color: #FFD780FF;\">四风将起</span>造成的伤害提升7.5%。该效果持续8秒，至多叠加4层，每名角色每1秒至多通过这种方式使法尔伽获得一层<span style=\"color: #FFD780FF;\">「苍牙之誓」</span>。"
       },
       {
         "name": "归风的凯歌",
@@ -6245,7 +6485,7 @@
       },
       {
         "name": "4. 「因为无人能夺去我们歌唱的自由」",
-        "descHtml": "法尔伽触发扩散反应时，依据参与反应的元素类型，使队伍中附近的所有角色分别获得20%<span style=\"color: #80FFD7FF;\">风元素伤害加成</span>与对应元素伤害加成，持续10秒。"
+        "descHtml": "法尔伽触发扩散或星扩散反应时，依据参与反应的元素类型，使队伍中附近的所有角色分别获得20%<span style=\"color: #80FFD7FF;\">风元素伤害加成</span>与对应元素伤害加成，持续10秒。"
       },
       {
         "name": "5. 「斟满杯中佳酿吧，暴君来了又去」",
@@ -6325,7 +6565,7 @@
       },
       {
         "name": "魔女的前夜礼·颂时风若",
-        "descHtml": "完成<span style=\"color: #FFD780FF;\">魔女的课业·风起之题</span>后，温迪将成为<span style=\"color: #FFD780FF;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780FF;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br><br><span style=\"color: #FFD780FF;\">魔导·秘仪</span><br>元素爆发<span style=\"color: #FFD780FF;\">风神之诗</span>创造的暴风之眼存在期间，附近的当前场上角色触发扩散反应后的4秒内，该角色造成的伤害提升50%，并使温迪自己的暴风之眼造成原本135%的伤害。"
+        "descHtml": "完成<span style=\"color: #FFD780FF;\">魔女的课业·风起之题</span>后，温迪将成为<span style=\"color: #FFD780FF;\">魔导</span>角色。队伍中编入至少2名魔导角色时，将获得<span style=\"color: #FFD780FF;\">魔导·秘仪</span>效果，使魔导角色获得强化。<br><br><span style=\"color: #FFD780FF;\">魔导·秘仪</span><br>元素爆发<span style=\"color: #FFD780FF;\">风神之诗</span>创造的暴风之眼存在期间，附近的当前场上角色触发扩散或星扩散反应后的4秒内，该角色造成的伤害提升50%，并使温迪自己的暴风之眼造成原本135%的伤害。"
       }
     ],
     "constellations": [
@@ -7060,12 +7300,13 @@
       },
       {
         "name": "E. 秋沙歌枕巡礼",
-        "descHtml": "编织出「美梦」的回忆，进入悬浮于地面之上的<span style=\"color: #FFD780FF;\">梦浮</span>状态，并对周围的敌人造成一次<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">梦浮</span><br>·处于梦浮状态下时，梦见月瑞希将持续向前浮行，并将周期性对附近的敌人造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>；<br>·期间，梦见月瑞希可以控制浮行的方向，并提升元素爆发<span style=\"color: #FFD780FF;\">安乐秘汤疗法</span>中的<span style=\"color: #FFD780FF;\">梦见风名物点心</span>的拾取距离；<br>·基于梦见月瑞希的元素精通，提升队伍中附近的角色触发的扩散反应造成的伤害；<br>·梦见月瑞希退场时，或是再次施放技能时，梦浮状态将会结束。<br><br><i>「宵宵夕月梦相逢，心曲缱绻绕意中。」</i>",
+        "descHtml": "编织出「美梦」的回忆，进入悬浮于地面之上的<span style=\"color: #FFD780FF;\">梦浮</span>状态，并对周围的敌人造成一次<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">梦浮</span><br>·处于梦浮状态下时，梦见月瑞希将持续向前浮行，并将周期性对附近的敌人造成<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>；<br>·期间，梦见月瑞希可以控制浮行的方向，并提升元素爆发<span style=\"color: #FFD780FF;\">安乐秘汤疗法</span>中的<span style=\"color: #FFD780FF;\">梦见风名物点心</span>的拾取距离；<br>·基于梦见月瑞希的元素精通，提升队伍中附近的角色触发的扩散反应与星扩散反应造成的伤害；<br>·梦见月瑞希退场时，或是再次施放技能时，梦浮状态将会结束。<br><br><i>「宵宵夕月梦相逢，心曲缱绻绕意中。」</i>",
         "details": [
           {"label": "技能伤害", "template": "{param4:F1P}"},
           {"label": "持续攻击伤害", "template": "{param1:F1P}"},
           {"label": "梦浮持续时间", "template": "{param5:F1}秒"},
-          {"label": "每点精通提升扩散伤害百分比", "template": "{param2:F2P}"},
+          {"label": "每100点精通提升扩散伤害百分比", "template": "{param2:F2P}"},
+          {"label": "每100点精通提升星扩散伤害百分比", "template": "{param6:F2P}"},
           {"label": "冷却时间", "template": "{param3:F1}秒"}
         ]
       },
@@ -7085,7 +7326,7 @@
     "passives": [
       {
         "name": "名月浮声",
-        "descHtml": "梦见月瑞希在梦浮状态下触发扩散反应时，梦浮状态的持续时间延长2.5秒。该效果每0.3秒至多触发1次，在一次梦浮状态期间至多触发2次。"
+        "descHtml": "梦见月瑞希在梦浮状态下触发扩散或星扩散反应时，梦浮状态的持续时间延长2.5秒。该效果每0.3秒至多触发1次，在一次梦浮状态期间至多触发2次。"
       },
       {
         "name": "昼想夜梦",
@@ -7097,13 +7338,13 @@
       },
       {
         "name": "廓然梦生",
-        "descHtml": "梦见月瑞希在梦浮状态下触发扩散反应后，本次梦浮期间，下一次对附近敌人周期性造成的<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>将会提升，提升值相当于梦见月瑞希元素精通的1000%，每2.5秒至多触发一次上述效果。<br>此外，处于梦浮状态下时，队伍中附近的角色的元素精通提升，提升值相当于梦见月瑞希自己的元素精通的10%。"
+        "descHtml": "梦见月瑞希在梦浮状态下触发扩散或星扩散反应后，本次梦浮期间，下一次对附近敌人周期性造成的<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>将会提升，提升值相当于梦见月瑞希元素精通的1000%，每2.5秒至多触发一次上述效果。<br><span style=\"color: #FFD780FF;\">辉映·星扩散</span>：梦见月瑞希对敌人造成上述提升后的<span style=\"color: #80FFD7FF;\">风元素范围伤害</span>时，还会基于梦见月瑞希元素精通的1000%，额外造成一次<span style=\"color: #80FFD7FF;\">风元素伤害</span>，该伤害视为星扩散反应造成的伤害。<br><br>此外，处于梦浮状态下时，队伍中附近的角色的元素精通提升，提升值相当于梦见月瑞希自己的元素精通的10%。<br>队伍中的角色在附近触发星扩散反应后的8秒内，梦见月瑞希将会进入<span style=\"color: #FFD780FF;\">辉映·星扩散</span>状态。"
       }
     ],
     "constellations": [
       {
         "name": "1. 宿雾若水遥",
-        "descHtml": "梦见月瑞希处于梦浮状态下时，每3.5秒将对附近的敌人施加持续3秒的「二十三夜待」效果。处于二十三夜待状态下的敌人受到风元素伤害而触发扩散反应时，将移除该效果，使此次扩散反应对该敌人造成的伤害提升，提升值相当于梦见月瑞希元素精通的1100%。并对该敌人额外进行一次攻击，造成相当于梦见月瑞希元素精通1000%的<span style=\"color: #80FFD7FF;\">风元素伤害</span>。"
+        "descHtml": "梦见月瑞希处于梦浮状态下时，每3.5秒将对附近的敌人施加持续3秒的「二十三夜待」效果。处于二十三夜待状态下的敌人受到风元素伤害而触发扩散或星扩散反应时，将移除该效果，使此次扩散/星扩散反应对该敌人造成的伤害提升，提升值分别相当于梦见月瑞希元素精通的1100%/550%，并对该敌人额外进行一次攻击，造成相当于梦见月瑞希元素精通1000%的<span style=\"color: #80FFD7FF;\">风元素伤害</span>。<br><span style=\"color: #FFD780FF;\">辉映·星扩散</span>：上述额外伤害转为梦见月瑞希元素精通的400%的<span style=\"color: #80FFD7FF;\">风元素伤害</span>，该伤害视为星扩散反应造成的伤害。"
       },
       {
         "name": "2. 缠忆君影梦相见",
@@ -7123,7 +7364,7 @@
       },
       {
         "name": "6. 慕念萦心间",
-        "descHtml": "梦见月瑞希处于梦浮状态下时，队伍中附近的角色触发的扩散反应造成的伤害能够造成暴击，暴击率固定为30%，暴击伤害固定为100%。<br>基于梦见月瑞希元素精通超过500的部分，每点元素精通都会使梦见月瑞希的暴击率提升0.04%、暴击伤害提升0.16%，至多通过这种方式使梦见月瑞希的暴击率提升20%、暴击伤害提升80%。"
+        "descHtml": "梦见月瑞希处于梦浮状态下时，队伍中附近的角色触发的扩散反应造成的伤害能够造成暴击，暴击率固定为30%，暴击伤害固定为100%，并使这些角色造成的星扩散反应伤害暴击率提升10%，暴击伤害提升20%。<br>基于梦见月瑞希元素精通超过500的部分，每点元素精通都会使梦见月瑞希的暴击率提升0.04%、暴击伤害提升0.16%，至多通过这种方式使梦见月瑞希的暴击率提升20%、暴击伤害提升80%。"
       }
     ],
     "glossary": null

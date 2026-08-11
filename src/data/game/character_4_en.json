@@ -84,6 +84,107 @@
     ],
     "glossary": null
   },
+  "alyosha": {
+    "id": "10000148",
+    "name": "Alyosha",
+    "skills": [
+      {
+        "name": "A. Skirmishing Spear",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 4 consecutive spear strikes and applies the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> to the opponent hit by the final strike.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to lunge forward, dealing damage to opponents in his path.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing AoE DMG upon impact.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}+{param4:F1P}"},
+          {"label": "4-Hit DMG", "template": "{param5:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param6:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param7:F1}"},
+          {"label": "Plunge DMG", "template": "{param8:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param9:F1P}/{param10:F1P}"}
+        ]
+      },
+      {
+        "name": "E. Thunderbolt Strike",
+        "descHtml": "Follows his hunter's instincts. Tap or hold to produce different effects as well as apply the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect to the hit opponents.<br><br><span style=\"color: #FFD780FF;\">Tapping</span><br>Fires at opponents in front of him, dealing <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Holding</span><br>Enters aiming mode, then targets opponents within a certain area in front of him. Alyosha's Interruption RES is enhanced when in this mode.<br>At the end of the button hold, he deals <span style=\"color: #FFACFFFF;\">Electro DMG</span> to the targeted opponents.<br><br><i>The reckless hunter once reached for the spear's edge, and it was only after they survived a lesson paid in blood that they came to understand the harsh truths of survival on the frozen plains.</i>",
+        "details": [
+          {"label": "Press DMG", "template": "{param1:F1P}"},
+          {"label": "Hold DMG", "template": "{param2:F1P}"},
+          {"label": "CD", "template": "{param3:F1}s"},
+          {"label": "Hunter's Mark Duration", "template": "{param4:F1}s"},
+          {"label": "Hunter's Precision ATK Bonus", "template": "{param5:F1P}"},
+          {"label": "Hunter's Precision Duration", "template": "{param6:F1}s"}
+        ]
+      },
+      {
+        "name": "Q. Hunter's Advance",
+        "descHtml": "Summons his trusted companion <span style=\"color: #FFD780FF;\">Tugarin</span> to fight alongside him on the field. This also turns an area in front of him into a <span style=\"color: #FFD780FF;\">Fulgurite Hunting Field</span> for a short time.<br><br><span style=\"color: #FFD780FF;\">Fulgurite Hunting Field</span><br>· Continuously taunts nearby opponents to incite them to attack.<br>· Every 2s, deals an instance of <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> to any opponent that enters the field.<br><br><span style=\"color: #FFD780FF;\">Tugarin</span><br>· If there are any opponents nearby, Tugarin will quickly move close to an opponent and maul them every 2s, dealing <span style=\"color: #FFD780FF;\">Electro DMG</span>.<br>· If an opponent affected by the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect is hit, the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> will also be activated.<br>· Where there are multiple opponents, Tugarin will attack those affected by the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect first.<br><br><i>Wait. Keep waiting until the impatience fades. That's when the red-bellied plover shall sweep across the birch grove and present itself before one's arrow.</i>",
+        "details": [
+          {"label": "Fulgurite Hunting Field DMG", "template": "{param1:F1P}"},
+          {"label": "Tugarin DMG", "template": "{param2:F1P}"},
+          {"label": "Duration", "template": "{param3:F1}s"},
+          {"label": "CD", "template": "{param4:F1}s"},
+          {"label": "Energy Cost", "template": "{param5:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Awakened by the Baying Hounds",
+        "descHtml": "When <span style=\"color: #FFD780FF;\">Tugarin</span> attacks, it will also restore HP to nearby active characters at 120% of Alyosha's ATK."
+      },
+      {
+        "name": "Suffer the Winter Wheat Will",
+        "descHtml": "Increases the DMG Alyosha deals with his Elemental Skill and Elemental Burst by 0.35% for every 1% of his Energy Recharge. Up to a 70% increase can be obtained in this way."
+      },
+      {
+        "name": "Into the Fray",
+        "descHtml": "Alyosha will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: The <span style=\"color: #FFD780FF;\">Hunter's Precision</span> effect obtained when the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> is activated will also increase Stellar-Conduct reaction DMG dealt by the character when on the field by 20%."
+      },
+      {
+        "name": "Treetop Watch",
+        "descHtml": "Displays the location of nearby <span style=\"color: #FFD780FF;\">resources unique to Snezhnaya</span> on the mini-map."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. Frostvale Thunderclap",
+        "descHtml": "Alyosha regenerates 15 Elemental Energy when nearby party members trigger an <span style=\"color: #FFACFFFF;\">Electro-related reaction</span> on an opponent. This effect can trigger once every 18s."
+      },
+      {
+        "name": "2. Howl From Afar",
+        "descHtml": "The duration of the Elemental Burst <span style=\"color: #FFD780FF;\">Hunter's Advance</span> is extended by 6s.<br>Additionally, each time <span style=\"color: #FFD780FF;\">Tugarin</span> attacks the opponent, he will also apply the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> to a target. This effect does not activate existing <span style=\"color: #FFD780FF;\">Hunter's Marks</span>."
+      },
+      {
+        "name": "3. Friendly Call",
+        "descHtml": "Increases the Level of the Elemental Skill <span style=\"color: #FFD780FF;\">Thunderbolt Strike</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. Harvest the Spoils",
+        "descHtml": "When <span style=\"color: #FFD780FF;\">Tugarin</span> attacks, he will also restore 60% of Alyosha's ATK as HP to the nearby party member with the lowest HP by percentage."
+      },
+      {
+        "name": "5. When the Nightbird Falls Silent",
+        "descHtml": "Increases the Level of the Elemental Burst <span style=\"color: #FFD780FF;\">Hunter's Advance</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. Standard Reclaimed",
+        "descHtml": "The <span style=\"color: #FFD780FF;\">Hunter's Precision</span> effect obtained from activating a <span style=\"color: #FFD780FF;\">Hunter's Mark</span> can now stack, max 2 stacks. When the stack count reaches 2, characters affected by <span style=\"color: #FFD780FF;\">Hunter's Precision</span> will also have their Elemental Mastery increased by 100 if they are on the field."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "Polestar Field",
+        "descHtml": "When Stellar-Conduct is triggered, the surrounding area will transform into a <span style=\"color: #FFD780FF;\">Polestar Field</span> for a short period of time, and when inside a Polestar Field, certain characters will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state, which grants various skill buffs."
+      },
+      {
+        "name": "Hunter's Mark",
+        "descHtml": "A special effect Alyosha can apply on the opponent.<br>When this effect is applied to an opponent who is already under the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect, it will activate <span style=\"color: #FFD780FF;\">Hunter's Mark</span> instead, which removes said mark and grants all nearby party members the <span style=\"color: #FFD780FF;\">Hunter's Precision</span> effect, which increases their ATK when they are on the field."
+      },
+      {
+        "name": "Tugarin",
+        "descHtml": "Alyosha's trusted hunting hound and companion, which can be summoned to the field using the Elemental Burst <span style=\"color: #FFD780FF;\">Hunter's Advance</span>.<br>Periodically moves close to an opponent to maul them, and activate any existing <span style=\"color: #FFD780FF;\">Hunter's Marks</span>."
+      }
+    ]
+  },
   "amber": {
     "id": "10000021",
     "name": "Amber",
@@ -988,7 +1089,7 @@
       },
       {
         "name": "Choice Treasures",
-        "descHtml": "Within 20s after using the Elemental Skill <span style=\"color: #FFD780FF;\">Icy Paws</span>, Diona will also fire off three <span style=\"color: #FFD780FF;\">Icy Paws</span> when party members trigger Superconduct or Stellar-Conduct reactions. <span style=\"color: #FFD780FF;\">Icy Paws</span> fired this way cannot generate Elemental Particles, nor will they generate a shield upon hitting opponents. This effect can occur once every 3.5s.<br>Additionally, when inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Diona will enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
+        "descHtml": "Within 20s after using the Elemental Skill <span style=\"color: #FFD780FF;\">Icy Paws</span>, Diona will also fire off three <span style=\"color: #FFD780FF;\">Icy Paws</span> when party members trigger Stellar-Conduct, Superconduct, Cryo Swirl, or Stellar Swirl reactions. <span style=\"color: #FFD780FF;\">Icy Paws</span> fired this way cannot generate Elemental Particles, nor will they generate a shield upon hitting opponents. This effect can occur once every 3.5s.<br>Additionally, Diona will also enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state when she is inside a <span style=\"color: #FFD780FF;\">Polestar Field</span>, or the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s after a nearby party member triggers a Stellar Swirl reaction."
       }
     ],
     "constellations": [
@@ -1014,7 +1115,7 @@
       },
       {
         "name": "6. Cat's Tail Closing Time",
-        "descHtml": "Characters within <span style=\"color: #FFD780FF;\">Signature Mix</span>'s radius gain the following effects based on their HP levels:<br>· The Incoming Healing Bonus is increased by 30% when HP is at, or lower than, 50%.<br>· Elemental Mastery is increased by 200 when HP is above 50%.<br><br>Additionally, Diona's Max HP is increased by 25%.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Characters within <span style=\"color: #FFD780FF;\">Signature Mix</span>'s radius deal 40% increased Superconduct and Stellar-Conduct Reaction DMG."
+        "descHtml": "Characters within <span style=\"color: #FFD780FF;\">Signature Mix</span>'s radius gain the following effects based on their HP levels:<br>· The Incoming Healing Bonus is increased by 30% when HP is at, or lower than, 50%.<br>· Elemental Mastery is increased by 200 when HP is above 50%.<br><br>Additionally, Diona's Max HP is increased by 25%. <br><span style=\"color: #FFD780FF;\">Radiance: Stellar Glimmer</span>: Characters within the Signature Mix field deal increased DMG for the following reactions: <br><span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span>: Superconduct, Stellar-Conduct reaction DMG increased by 40%.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: Cryo Swirl, Stellar Swirl reaction DMG increased by 40%."
       }
     ],
     "glossary": [
@@ -1661,7 +1762,7 @@
     "passives": [
       {
         "name": "Field Medic's Vision",
-        "descHtml": "When Ifa is in the Nightsoul's Blessing state, every 1 Nightsoul point out of the total in his entire party will grant him 1 <span style=\"color: #FFD780FF;\">Rescue Essentials</span> point. Rescue Essentials will increase the Swirl, Electro-Charged, and Lunar-Charged DMG dealt by nearby party members."
+        "descHtml": "When Ifa is in the Nightsoul's Blessing state, every 1 Nightsoul point out of the current total in his entire party will grant him 1 <span style=\"color: #FFD780FF;\">Rescue Essentials</span> point. Rescue Essentials will increase the Swirl, Stellar Swirl, Electro-Charged, and Lunar-Charged reaction DMG dealt by nearby party members."
       },
       {
         "name": "Mutual Aid Agreement",
@@ -1709,7 +1810,7 @@
       },
       {
         "name": "Rescue Essentials",
-        "descHtml": "Max 150 points. Each Rescue Essentials point Ifa has will increase the Swirl and Electro-Charged DMG dealt by nearby party members by 1.5%, and their Lunar-Charged DMG dealt by 0.2%. These points will be cleared when his Nightsoul's Blessing state ends."
+        "descHtml": "Max 150 points. Each Rescue Essentials point Ifa has will increase the Swirl and Electro-Charged DMG dealt by nearby party members by 1.5%, and Lunar-Charged DMG dealt by 0.2%, and Stellar Swirl reaction DMG dealt by 0.24%. These points will be cleared when his Nightsoul's Blessing state ends."
       },
       {
         "name": "Nightsoul's Blessing",
@@ -3099,7 +3200,7 @@
       },
       {
         "name": "E. Ring-A-Ding-Ding! Hexhunter Chime",
-        "descHtml": "Unleash the wind's might to defeat the evil witch and save Descartes! Prune strikes the Witchlure Bell with her Banehunter Oathhammer, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br>If Prune triggers Swirl on an opponent using this attack, <span style=\"color: #FFD780FF;\">Ring-A-Ding-Ding! Hexhunter Chime</span> will be changed to <span style=\"color: #FFD780FF;\">Clang Clang! Witch-tribution Comes!</span> for the next 6s.<br><br><span style=\"color: #FFD780FF;\">Clang Clang! Witch-tribution Comes!</span><br>Prune's hammer is now enshrouded by the element involved in the previous Swirl reaction, causing <span style=\"color: #FFD780FF;\">Banehunter Oathhammer</span> to undergo Elemental Conversion. When activated with a Press, Prune will leap up and kick the Banehunter Oathhammer forward, dealing Elemental DMG of the corresponding type to opponents in front of her.",
+        "descHtml": "Determined to take down the \"evil\" witch and save her beloved Descartes, Prune unleashes the power of the wind! She strikes at the Witchlure Bell using her Banehunter Oathhammer, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br>If Prune triggers a Swirl or Stellar Swirl reaction in the opponent with this attack, her <span style=\"color: #FFD780FF;\">Ring-A-Ding-Ding! Hexhunter Chime</span> is changed to <span style=\"color: #FFD780FF;\">Clang Clang! Witch-tribution Comes!</span> for the next 6s.<br><br><span style=\"color: #FFD780FF;\">Clang Clang! Witch-tribution Comes!</span><br>Ensconces the <span style=\"color: #FFD780FF;\">Banehunter Oathhammer</span> in the element involved in the earlier Swirl or Stellar Swirl reaction. After tapping to unleash, Prune will launch a midair kick at the Banehunter Oathhammer, dealing DMG to opponents in front of her of the corresponding elemental type.",
         "details": [
           {"label": "Ring-A-Ding-Ding! Hexhunter Chime DMG", "template": "{param1:F1P}"},
           {"label": "Clang Clang! Witch-tribution Comes! DMG", "template": "{param2:F1P}"},
@@ -3121,7 +3222,7 @@
     "passives": [
       {
         "name": "Verdict and Punishment",
-        "descHtml": "During the Elemental Burst <span style=\"color: #FFD780FF;\">The Bell Tolls! The Hunt Is On!</span>, after the Witchlure Bell in Hunter-Seeker mode deals DMG to an opponent, if this DMG triggers Swirl on an opponent, it will also summon a <span style=\"color: #FFD780FF;\">Banehunter Oathhammer</span> that will deal 150% of Prune's ATK as DMG to them, with the DMG Type matching the Elemental Conversion from the Swirl. This DMG is considered Elemental Burst DMG."
+        "descHtml": "During the Elemental Burst <span style=\"color: #FFD780FF;\">The Bell Tolls! The Hunt Is On!</span>, after the Witchlure Bell in Hunter-Seeker mode deals DMG to an opponent, if this DMG triggers Swirl or Stellar Swirl in an opponent, it will also summon a <span style=\"color: #FFD780FF;\">Banehunter Oathhammer</span> that will deal 150% of Prune's ATK as DMG to them, with the DMG Type matching the Elemental Conversion from the Swirl or Stellar Swirl. This DMG is considered Elemental Burst DMG."
       },
       {
         "name": "Tolling Synchronicity",
@@ -3133,7 +3234,7 @@
       },
       {
         "name": "Witch's Eve Rite: Witchseeker's Vow",
-        "descHtml": "After completing <span style=\"color: #FFD780FF;\">Witch's Homework: Of What Is Contested</span>, Prune becomes a <span style=\"color: #FFD780FF;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you gain the <span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br><br><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span><br>After a Hexerei character in the party affected by the Tolling Rally effect triggers an Elemental Reaction on an opponent, Prune's ATK is increased by 60% for 5s. If the Elemental Reaction triggered is a Swirl Reaction, the triggering character's ATK will additionally be increased by 30% for 5s."
+        "descHtml": "After completing <span style=\"color: #FFD780FF;\">Witch's Homework: Of What Is Contested</span>, Prune becomes a <span style=\"color: #FFD780FF;\">Hexerei</span> character. When the party includes at least 2 Hexerei characters, you gain the <span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span> effect, which enhances Hexerei characters.<br><br><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span><br>After a Hexerei character in the party affected by the Tolling Rally effect triggers an Elemental Reaction on an opponent, Prune's ATK is increased by 60% for 5s. If the Elemental Reaction triggered is a Swirl or Stellar Swirl reaction, the triggering character's ATK will additionally be increased by 30% for 5s."
       }
     ],
     "constellations": [
@@ -3165,7 +3266,7 @@
     "glossary": [
       {
         "name": "Banehunter Oathhammer",
-        "descHtml": "A witchhunter's trusty companion! Under the right conditions, the Banehunter Oathhammer undergoes Elemental Conversion, turning all its DMG into DMG of the corresponding Elemental Type.<br>Prune can summon the Banehunter Oathhammer that has undergone Elemental Conversion in the following ways:<br>· For a certain time after triggering a Swirl Reaction on an opponent with the Elemental Skill <span style=\"color: #FFD780FF;\">Ring-A-Ding-Ding! Hexhunter Chime</span>, Prune can unleash the special Elemental Skill <span style=\"color: #FFD780FF;\">Clang Clang! Witch-tribution Comes!</span>. When using this special Elemental Skill, the Banehunter Oathhammer will be converted to the other Elemental Type involved in the aforementioned Swirl Reaction.<br>· After the Ascension Talent \"Verdict and Punishment\" is unlocked, when the Witchlure Bell in Hunter-Seeker mode triggers Swirl on an opponent, it will summon a Banehunter Oathhammer that has undergone the corresponding Elemental Conversion to attack the opponent."
+        "descHtml": "A witchhunter's trusty companion! Under the right conditions, the Banehunter Oathhammer undergoes Elemental Conversion, turning all its DMG into DMG of the corresponding Elemental Type.<br>Prune can summon the Banehunter Oathhammer that has undergone Elemental Conversion in the following ways:<br>· For a certain time after triggering a Swirl or Stellar Swirl Reaction on an opponent with the Elemental Skill <span style=\"color: #FFD780FF;\">Ring-A-Ding-Ding! Hexhunter Chime</span>, Prune can unleash the special Elemental Skill <span style=\"color: #FFD780FF;\">Clang Clang! Witch-tribution Comes!</span>. When using this special Elemental Skill, the Banehunter Oathhammer will be converted to the other Elemental Type involved in the aforementioned Swirl or Stellar Swirl Reaction.<br>· After the Ascension Talent \"Verdict and Punishment\" is unlocked, when the Witchlure Bell in Hunter-Seeker mode triggers Swirl or Stellar Swirl on an opponent, it will summon a Banehunter Oathhammer that has undergone the corresponding Elemental Conversion to attack the opponent."
       }
     ]
   },
@@ -3393,7 +3494,7 @@
     "passives": [
       {
         "name": "Someone More Capable",
-        "descHtml": "When Sayu triggers a Swirl reaction while active, she heals all your characters and nearby allies for 300 HP. She will also heal an additional 1.2 HP for every point of Elemental Mastery she has.<br>This effect can be triggered once every 2s."
+        "descHtml": "When Sayu triggers a Swirl or Stellar Swirl reaction while active, she heals all your characters and nearby allies for 300 HP. She will also heal an additional 1.2 HP for every point of Elemental Mastery she has.<br>This effect can be triggered once every 2s."
       },
       {
         "name": "No Work Today!",
@@ -3419,7 +3520,7 @@
       },
       {
         "name": "4. Skiving: New and Improved",
-        "descHtml": "Sayu recovers 1.2 Energy when she triggers a Swirl reaction.<br>This effect occurs once every 2s."
+        "descHtml": "Sayu recovers 1.2 Energy when she triggers a Swirl or Stellar Swirl reaction while on-field.<br>This effect occurs once every 2s."
       },
       {
         "name": "5. Speed Comes First",
@@ -3556,7 +3657,7 @@
     "passives": [
       {
         "name": "Paradoxical Practice",
-        "descHtml": "When Shikanoin Heizou activates a Swirl reaction while on the field, he will gain 1 Declension stack for <span style=\"color: #FFD780FF;\">Heartstopper Strike</span>. This effect can be triggered once every 0.1s."
+        "descHtml": "When Shikanoin Heizou activates a Swirl or Stellar Swirl reaction while on the field, he will gain 1 Declension stack for <span style=\"color: #FFD780FF;\">Heartstopper Strike</span>. This effect can be triggered once every 0.1s."
       },
       {
         "name": "Penetrative Reasoning",
@@ -3636,7 +3737,7 @@
     "passives": [
       {
         "name": "Catalyst Conversion",
-        "descHtml": "When Sucrose triggers a Swirl reaction, all characters in the party with the matching element (excluding Sucrose) have their Elemental Mastery increased by 50 for 8s."
+        "descHtml": "When Sucrose triggers a Swirl or Stellar Swirl reaction, all characters in the party with the matching element (excluding Sucrose) have their Elemental Mastery increased by 50 for 8s."
       },
       {
         "name": "Mollis Favonius",
