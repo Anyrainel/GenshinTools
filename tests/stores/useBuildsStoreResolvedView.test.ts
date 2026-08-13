@@ -5,6 +5,7 @@ import { useHydrateBuildPreset } from "@/hooks/useHydrateBuildPreset";
 import { loadBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
   selectBuildsForCharacter,
+  selectEnabledBuildGroups,
   selectResolvedBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
@@ -35,6 +36,29 @@ function useBuildsForCharacter(characterId: string) {
 
 function useResolvedBuildGroups() {
   return useBuildsStore(selectResolvedBuildGroups);
+}
+
+const VALID_BUILD_PATCH = {
+  name: "Main DPS",
+  composition: "4pc" as const,
+  artifactSet: "crimson_witch_of_flames",
+  styles: ["on-field" as const],
+  roles: ["dps" as const],
+  sandsWeights: [{ stat: "hp%" as const, weight: 100 }],
+  gobletWeights: [{ stat: "pyro%" as const, weight: 100 }],
+  circletWeights: [{ stat: "cr" as const, weight: 100 }],
+  substats: [
+    { stat: "cr" as const, weight: 100 },
+    { stat: "cd" as const, weight: 100 },
+  ],
+};
+
+/** Create a build that passes validation, so only `visible` decides exposure. */
+function addValidBuild(characterId: string): string {
+  const state = useBuildsStore.getState();
+  const build = state.newBuild(characterId);
+  useBuildsStore.getState().setBuild(build.id, VALID_BUILD_PATCH, build);
+  return build.id;
 }
 
 beforeEach(() => {
@@ -193,5 +217,46 @@ describe("build store resolved groups", () => {
     expect(result.current.length).toBe(1);
     expect(result.current[0]!.characterId).toBe("hu_tao");
     expect(result.current[0]!.builds.length).toBe(1);
+  });
+});
+
+describe("build store enabled groups", () => {
+  it("exposes valid builds that are turned on", () => {
+    addValidBuild("hu_tao");
+
+    const groups = selectEnabledBuildGroups(useBuildsStore.getState());
+    expect(groups.length).toBe(1);
+    expect(groups[0]!.characterId).toBe("hu_tao");
+    expect(groups[0]!.builds.length).toBe(1);
+  });
+
+  it("hides a build that is turned off from every consumer", () => {
+    const buildId = addValidBuild("hu_tao");
+    const otherId = addValidBuild("xiangling");
+
+    act(() => {
+      const s = useBuildsStore.getState();
+      s.setBuild(buildId, { visible: false }, s.builds[buildId]);
+    });
+
+    const groups = selectEnabledBuildGroups(useBuildsStore.getState());
+    expect(groups.map((group) => group.characterId)).toEqual(["xiangling"]);
+    expect(groups[0]!.builds.map((build) => build.id)).toEqual([otherId]);
+
+    // The build page still sees it, so the user can turn it back on.
+    const resolved = selectResolvedBuildGroups(useBuildsStore.getState());
+    const huTao = resolved.find((group) => group.characterId === "hu_tao");
+    expect(huTao?.builds.map((build) => build.id)).toEqual([buildId]);
+  });
+
+  it("drops a character whose only build is turned off", () => {
+    const buildId = addValidBuild("hu_tao");
+
+    act(() => {
+      const s = useBuildsStore.getState();
+      s.setBuild(buildId, { visible: false }, s.builds[buildId]);
+    });
+
+    expect(selectEnabledBuildGroups(useBuildsStore.getState())).toEqual([]);
   });
 });

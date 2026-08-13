@@ -44,7 +44,7 @@ import {
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { usePUpgradeCacheStore } from "@/stores/usePUpgradeCacheStore";
@@ -136,8 +136,8 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
+  const buildGroups = useBuildsStore(selectEnabledBuildGroups);
+  const hasAnyBuilds = buildGroups.length > 0;
   const scoreConfig = useArtifactScoreStore((s) => s.config);
   const tierAssignments = useTierStore(selectActiveTierAssignments);
   const tierCustomization = useTierStore(selectActiveTierCustomization);

@@ -32,7 +32,7 @@ import type {
   TriageDecision,
 } from "@/lib/account-data/triage/types";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import {
@@ -57,7 +57,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
+  const buildGroups = useBuildsStore(selectEnabledBuildGroups);
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 
@@ -232,7 +232,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     sortDecisions,
   ]);
 
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
+  const hasAnyBuilds = buildGroups.length > 0;
 
   if (!accountData || !hasAnyBuilds) {
     return (

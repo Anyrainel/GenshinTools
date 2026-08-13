@@ -34,7 +34,7 @@ import {
   selectActiveTierCustomization,
 } from "@/stores/createTierStore";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
@@ -70,8 +70,8 @@ export function ScoreUpView({
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
+  const buildGroups = useBuildsStore(selectEnabledBuildGroups);
+  const hasAnyBuilds = buildGroups.length > 0;
   const tierAssignments = useTierStore(selectActiveTierAssignments);
   const tierCustomization = useTierStore(selectActiveTierCustomization);
   const scoreUpSettings = useScoreUpSettingsStore((s) =>

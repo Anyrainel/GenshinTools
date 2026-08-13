@@ -14,7 +14,7 @@ import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 
@@ -32,15 +32,12 @@ export function useArtifactScoreComputation(): void {
   const mergeScores = useAccountScoreCacheStore((s) => s.mergeScores);
   const scores = useActiveAccountScores();
   const scoreConfig = useArtifactScoreStore((s) => s.config);
-  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
+  const buildGroups = useBuildsStore(selectEnabledBuildGroups);
 
   const resolvedBuildsMap = useMemo(() => {
     const map: Record<string, Build[]> = {};
     for (const group of buildGroups) {
-      const visible = group.builds.filter((b) => b.visible);
-      if (visible.length > 0) {
-        map[group.characterId] = visible;
-      }
+      map[group.characterId] = group.builds;
     }
     return map;
   }, [buildGroups]);

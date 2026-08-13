@@ -135,6 +135,8 @@ Multiple agents may share the same workspace.
 - Preserving pending work is more important than perfect commit boundaries.
 - Do not use partial staging to isolate your changes in a file; pre-commit checks and concurrent agents make it unsafe.
 
+Commit proactively without being asked: once a self-contained change scope is complete and validated, stage the files you touched and commit. Leaving finished work pending makes it harder for concurrent agents to tell your changes from theirs. Pushing stays opt-in — `origin/master` auto-deploys production, so only push when asked.
+
 ## File Safety
 
 - Do not run destructive scripts directly on source files.

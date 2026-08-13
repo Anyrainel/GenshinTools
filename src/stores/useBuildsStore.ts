@@ -88,7 +88,10 @@ export interface BuildsState {
   // Derived runtime view: full preset/custom builds for UI consumers.
   resolvedBuildsByCharacterId: Record<string, Build[]>;
   resolvedBuildGroups: BuildGroup[];
-  validResolvedBuildGroups: BuildGroup[];
+
+  // Derived runtime view for every consumer outside the build configuration
+  // page: valid builds only, with disabled builds removed.
+  enabledResolvedBuildGroups: BuildGroup[];
 
   // Global UI State
   hasPromptedForPreset: boolean;
@@ -156,10 +159,12 @@ export function selectResolvedBuildGroups(state: BuildsState): BuildGroup[] {
   return state.resolvedBuildGroups;
 }
 
-export function selectValidResolvedBuildGroups(
-  state: BuildsState
-): BuildGroup[] {
-  return state.validResolvedBuildGroups;
+/**
+ * Build groups as seen by every module other than the build configuration
+ * page: invalid builds and builds the user turned off are both excluded.
+ */
+export function selectEnabledBuildGroups(state: BuildsState): BuildGroup[] {
+  return state.enabledResolvedBuildGroups;
 }
 
 function getBuildScoreDependencySignature(state: BuildsState): string {
@@ -219,13 +224,28 @@ function reuseBuildArrayIfUnchanged(
     : builds;
 }
 
+/**
+ * Drop builds the user turned off. A disabled build stays fully editable on
+ * the build configuration page, but must not reach scoring, filters,
+ * evaluation, triage, or resource recommendations.
+ */
+function filterEnabledBuildGroups(groups: BuildGroup[]): BuildGroup[] {
+  const enabled: BuildGroup[] = [];
+  for (const group of groups) {
+    const builds = group.builds.filter((build) => build.visible);
+    if (builds.length === 0) continue;
+    enabled.push({ ...group, builds });
+  }
+  return enabled;
+}
+
 function deriveResolvedBuildViews(
   state: BuildsState,
   preset: BuildPayloadV5 | null
 ): {
   resolvedBuildsByCharacterId: Record<string, Build[]>;
   resolvedBuildGroups: BuildGroup[];
-  validResolvedBuildGroups: BuildGroup[];
+  enabledResolvedBuildGroups: BuildGroup[];
 } {
   const resolvedBuildsByCharacterId: Record<string, Build[]> = {};
   const resolvedBuildGroups: BuildGroup[] = [];
@@ -268,7 +288,9 @@ function deriveResolvedBuildViews(
   return {
     resolvedBuildsByCharacterId,
     resolvedBuildGroups,
-    validResolvedBuildGroups: filterValidBuildGroups(resolvedBuildGroups),
+    enabledResolvedBuildGroups: filterEnabledBuildGroups(
+      filterValidBuildGroups(resolvedBuildGroups)
+    ),
   };
 }
 
@@ -317,7 +339,7 @@ function refreshDerivedBuildState(
   const resolved = deriveResolvedBuildViews(state, preset);
   state.resolvedBuildsByCharacterId = resolved.resolvedBuildsByCharacterId;
   state.resolvedBuildGroups = resolved.resolvedBuildGroups;
-  state.validResolvedBuildGroups = resolved.validResolvedBuildGroups;
+  state.enabledResolvedBuildGroups = resolved.enabledResolvedBuildGroups;
 }
 
 function getNextDisplayIndex(state: BuildsState, characterId: string): number {
@@ -346,7 +368,7 @@ export const useBuildsStore = create<BuildsState>()(
       presetDeletedBuildIds: [],
       resolvedBuildsByCharacterId: {},
       resolvedBuildGroups: [],
-      validResolvedBuildGroups: [],
+      enabledResolvedBuildGroups: [],
       hasPromptedForPreset: false,
       validationErrors: {},
       characterWeapons: {},
@@ -725,7 +747,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.presetDeletedBuildIds = [];
           state.resolvedBuildsByCharacterId = {};
           state.resolvedBuildGroups = [];
-          state.validResolvedBuildGroups = [];
+          state.enabledResolvedBuildGroups = [];
           state.validationErrors = {};
           state.characterWeapons = {};
           state.computeOptions = { ...DEFAULT_COMPUTE_OPTIONS };
@@ -832,8 +854,4 @@ export const useBuildsStore = create<BuildsState>()(
 
 export function getResolvedBuildGroupsSnapshot(): BuildGroup[] {
   return useBuildsStore.getState().resolvedBuildGroups;
-}
-
-export function getValidResolvedBuildGroupsSnapshot(): BuildGroup[] {
-  return useBuildsStore.getState().validResolvedBuildGroups;
 }

@@ -33,7 +33,7 @@ import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -258,7 +258,7 @@ function collectEntries(
 export function AutoTuneView() {
   const { t } = useLanguage();
   const characterStats = characterStatsResource.use();
-  const groups = useBuildsStore(selectValidResolvedBuildGroups);
+  const groups = useBuildsStore(selectEnabledBuildGroups);
   const setBuild = useBuildsStore((s) => s.setBuild);
   const allTeamComps = useTeamStore((s) => s.teamComps);
   const getTeamSetupConfigById = useTeamStore((s) => s.getTeamSetupConfigById);

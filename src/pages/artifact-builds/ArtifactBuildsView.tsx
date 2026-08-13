@@ -20,7 +20,7 @@ import { useAsyncCompute } from "@/hooks/useAsyncCompute";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { downloadElementAsImage } from "@/lib/downloadImage";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 
@@ -49,7 +49,7 @@ export const ArtifactBuildsView = forwardRef<
   const exportRef = useRef<HTMLDivElement>(null);
   const [showExport, setShowExport] = useState(false);
 
-  const characterBuilds = useBuildsStore(selectValidResolvedBuildGroups);
+  const characterBuilds = useBuildsStore(selectEnabledBuildGroups);
   const hasAnyBuilds = useBuildsStore((s) => s.hasBuildData());
 
   // Async compute with caching and cancellation

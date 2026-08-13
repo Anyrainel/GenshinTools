@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
 import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -57,8 +57,8 @@ export function EvaluationView({
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
-  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
-  const hasAnyBuilds = buildGroups.some((g) => g.builds.some((b) => b.visible));
+  const buildGroups = useBuildsStore(selectEnabledBuildGroups);
+  const hasAnyBuilds = buildGroups.length > 0;
   const scoreConfig = useArtifactScoreStore((s) => s.config);
 
   const [sortDir, setSortDir] = useState<SortDir>("desc");

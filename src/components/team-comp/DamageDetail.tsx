@@ -87,7 +87,7 @@ import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import {
-  selectValidResolvedBuildGroups,
+  selectEnabledBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
@@ -247,7 +247,7 @@ export function DamageDetail({
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
   const gameStatsReady = characterStats !== null && weaponStats !== null;
-  const buildGroups = useBuildsStore(selectValidResolvedBuildGroups);
+  const buildGroups = useBuildsStore(selectEnabledBuildGroups);
 
   const fullSetOptionalByChar = useMemo(() => {
     const map: Record<string, boolean> = {};
