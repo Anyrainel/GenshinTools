@@ -473,12 +473,20 @@ class Razor extends CharacterBase {
 }
 
 const dionaOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  label: { zh: "辉映状态", en: "Radiance State" },
   choices: [
     {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      value: "stellarConduct",
+      label: {
+        zh: "辉映·星超导 (极星辉域)",
+        en: "Radiance: Stellar-Conduct (Polestar Field)",
+      },
       when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "stellarSwirl",
+      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
+      when: (tm) => tm.hasReaction("stellarSwirl"),
     },
     { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,
@@ -486,12 +494,22 @@ const dionaOption = {
 
 @RegisterCharacter("diona", dionaOption)
 class Diona extends CharacterBase {
-  private readonly radianceOn =
-    resolveOption(dionaOption, this.option, this.teamMeta) === "on";
+  // P4: 辉映·星超导 inside a Polestar Field, or 辉映·星扩散 for 8s after a
+  // nearby party member triggers a Stellar Swirl.
+  private readonly rState = resolveOption(
+    dionaOption,
+    this.option,
+    this.teamMeta
+  );
 
+  // A4 fires on 星超导 / 超导 / 冰元素扩散 / 星扩散. Both swirl forms are needed:
+  // STELLAR_SUPERSEDES turns hasReaction("swirl") false once an enabler is
+  // present and no Pyro/Hydro/Electro swirl survives.
   private readonly hasScReaction =
     this.teamMeta.hasReaction("stellarConduct") ||
-    this.teamMeta.hasReaction("superconduct");
+    this.teamMeta.hasReaction("superconduct") ||
+    this.teamMeta.hasReaction("swirl") ||
+    this.teamMeta.hasReaction("stellarSwirl");
 
   readonly buffs = [
     // C2: Icy Paws DMG +15%
@@ -513,8 +531,9 @@ class Diona extends CharacterBase {
           ]),
         ]
       : []),
-    // C6 Radiance: party in Q field → Superconduct + SC reactionDmg +40%
-    ...(this.constellation >= 6 && this.radianceOn
+    // C6 辉映·星超导: party in Q field → Superconduct + Stellar-Conduct
+    // reactionDmg +40%
+    ...(this.constellation >= 6 && this.rState === "stellarConduct"
       ? [
           new StatBuff(
             cbs(this, "C6", ["Q"]),
@@ -526,11 +545,27 @@ class Diona extends CharacterBase {
           ),
         ]
       : []),
+    // C6 辉映·星扩散: Cryo Swirl + Stellar Swirl reactionDmg +40%. Narrow filter
+    // (stellarSwirl only) — ReactionType has no per-element swirl, so bare
+    // "swirl" would leak onto the Pyro/Hydro/Electro swirls that survive.
+    ...(this.constellation >= 6 && this.rState === "stellarSwirl"
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["Q"]),
+            { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
+            [{ key: "reactionDmg%", value: 0.4 }]
+          ),
+        ]
+      : []),
   ];
 
   protected override get comboDescriptor(): ComboTemplate {
-    if (!this.hasScReaction) return [];
-    return [{ id: "diona-a4-paws", count: 1 }];
+    const combo: ComboTemplate = [{ id: "diona-skill", count: 1 }];
+    // A4 window is 20s after E with a 3.5s ICD → 20 / 3.5 = 5 procs, and the 6s
+    // E press CD keeps that window at full uptime. Scale down for shorter
+    // rotations.
+    if (this.hasScReaction) combo.push({ id: "diona-a4-paws", count: 5 });
+    return combo;
   }
 
   protected readonly formulaMap = (() => {
@@ -540,6 +575,16 @@ class Diona extends CharacterBase {
       reaction: "none" as const,
     };
     return {
+      // E hold: 5 Icy Paws, param1 per paw
+      "diona-skill": {
+        label: { zh: "猫爪冻冻×5", en: "Icy Paws (Hold ×5)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), cryoSkill),
+            hits: 5,
+          },
+        ],
+      },
       "diona-a4-paws": {
         label: { zh: "A4协同猫爪×3", en: "A4 Coordinated Paws (×3)" },
         when: this.hasScReaction,

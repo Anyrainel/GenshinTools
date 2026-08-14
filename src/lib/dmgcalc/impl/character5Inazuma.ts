@@ -9,18 +9,48 @@ import { CrossScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-@RegisterCharacter("yumemizuki_mizuki")
+const mizukiOption = {
+  label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
+  choices: [
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+    {
+      value: "on",
+      label: { zh: "开启", en: "On" },
+      when: (tm) => tm.hasReaction("stellarSwirl"),
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("yumemizuki_mizuki", mizukiOption)
 class YumemizukiMizuki extends CharacterBase {
+  // P4: Mizuki enters 辉映·星扩散 for 8s after a nearby party member triggers a
+  // Stellar Swirl — she is a Stellar Swirl carrier, never a Stellar-Conduct one.
+  private readonly radianceOn =
+    resolveOption(mizukiOption, this.option, this.teamMeta) === "on";
+
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
-      // E: Dreamdrifter — increases team Swirl DMG by 0.45% per 100 EM (lv10) / 0.54% (lv13, C3+)
+      // E: Dreamdrifter — team Swirl DMG scales off Mizuki's EM. The talent row
+      // is "每100点精通提升扩散伤害百分比" (45% per 100 EM at Lv10), so the
+      // per-EM-point scale is param2 / 100, i.e. +450% Swirl DMG at 1000 EM.
       new ScalingBuff(
         cbs(this, "E", ["E"]),
         { receiver: "team", filter: { reactions: ["swirl"] } },
         [],
         "em",
         "reactionDmg%",
-        this.param("E", 2) / 10000
+        this.param("E", 2) / 100
+      ),
+      // E: the separate Stellar Swirl row (param6, 4.5% per 100 EM at Lv10 — one
+      // tenth of param2). Not Radiance-gated: E buffs whoever in the party
+      // triggers the reaction, regardless of Mizuki's own state.
+      new ScalingBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
+        [],
+        "em",
+        "reactionDmg%",
+        this.param("E", 6) / 100
       ),
       // P2: EM +100 when teammates hit with Pyro/Hydro/Cryo/Electro
       new StatBuff(cbs(this, "P2", ["A4", "E"]), { receiver: "self" }, [
@@ -38,7 +68,9 @@ class YumemizukiMizuki extends CharacterBase {
     ];
 
     // C1: 二十三夜待 mark — peak-damage model assumes mark always active;
-    // Swirl against marked enemy deals +1100% EM as additional flat DMG (U4)
+    // Swirl against marked enemy deals +1100% EM as additional flat DMG (U4).
+    // The text pairs 扩散/星扩散 with 分别 1100%/550%, so the two amounts get
+    // their own entries rather than a shared filter.
     if (this.constellation >= 1) {
       buffs.push(
         new ScalingBuff(
@@ -48,6 +80,14 @@ class YumemizukiMizuki extends CharacterBase {
           "em",
           "baseDmg",
           11.0
+        ),
+        new ScalingBuff(
+          cbs(this, "C1", ["passive"]),
+          { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
+          [],
+          "em",
+          "baseDmg",
+          5.5
         )
       );
     }
@@ -93,23 +133,34 @@ class YumemizukiMizuki extends CharacterBase {
             { key: "reactionCd", value: 1.0 },
           ]
         ),
-        // C6: EM above 500 → up to +20% CR / +80% CD on team Swirl
-        new ScalingBuff(
+        // C6: the party's Stellar Swirl CRIT is 提升 (additive), not the 固定为
+        // profile above, so it stays a separate entry
+        new StatBuff(
           cbs(this, "C6", ["E"]),
-          { receiver: "team", filter: { reactions: ["swirl"] } },
-          [],
-          "em",
-          "reactionCr",
-          0.0004,
-          0.2,
-          500
+          { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
+          [
+            { key: "reactionCr", value: 0.1 },
+            { key: "reactionCd", value: 0.2 },
+          ]
         ),
+        // C6: EM above 500 → Mizuki's OWN CRIT Rate/DMG up to +20%/+80%
+        // (「使梦见月瑞希的暴击率提升…」 — plain cr/cd, no reaction scope, which
+        // also reaches her own Stellar Swirl direct hits).
+        // The CRIT Rate half is pinned to its +20% cap instead of scaling: a
+        // ScalingBuff writing "cr" cannot be represented in the optimizer's
+        // constraint model (see tests instantiation "No scaling ER/CR buffs").
+        // The cap is reached at 1000 EM, which a C6 Mizuki — a pure EM support
+        // who also grants herself +100 EM from P2 — is built well past.
+        // Tracked as mizuki-c6-crit-rate-em-scale.
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+          { key: "cr", value: 0.2 },
+        ]),
         new ScalingBuff(
           cbs(this, "C6", ["E"]),
-          { receiver: "team", filter: { reactions: ["swirl"] } },
+          { receiver: "self" },
           [],
           "em",
-          "reactionCd",
+          "cd",
           0.0016,
           0.8,
           500
@@ -127,11 +178,29 @@ class YumemizukiMizuki extends CharacterBase {
       { id: "mizuki-burst-initial", count: 1 },
       { id: "mizuki-burst-drop", count: 6 },
       { id: "mizuki-skill-swirl", count: 6 },
+      // P4 Radiance proc is 1:1 with the enhanced periodic tick (see p4Periodic)
+      ...(this.radianceOn
+        ? [{ id: "mizuki-p4-stellar" as const, count: 4 }]
+        : []),
     ];
   }
 
   protected readonly formulaMap = (() => {
-    const canSwirl = this.teamMeta.hasReaction("swirl");
+    // U12 wide gate / narrow filter. On a fully converted Cryo-swirl team
+    // STELLAR_SUPERSEDES makes hasReaction("swirl") false, which would delete
+    // this entry outright — with it the periodic E damage, the P4 bespoke buff
+    // and the C1 extra hit.
+    const canSwirl =
+      this.teamMeta.hasReaction("swirl") ||
+      this.teamMeta.hasReaction("stellarSwirl");
+    // The Swirl proc part itself keeps the narrow gate. The engine models
+    // Stellar reactions as carrying no proc damage (core/teamReaction.ts emits
+    // rx-stellarSwirl as a StellarFormula whose calc() returns 0), and expects
+    // all Stellar DPS to come from explicit StellarDirectFormula kit entries,
+    // which Mizuki has below. Leaving this part live on a superseded team would
+    // collect the 扩散 buff values (E param2, C1 1100% EM, C6 fixed 30/100 CRIT)
+    // for a reaction the same team has converted into the 星扩散 bucket.
+    const swirlProc = this.teamMeta.hasReaction("swirl");
     const anemoBurst = {
       element: "Anemo" as const,
       ability: "burst" as const,
@@ -142,9 +211,17 @@ class YumemizukiMizuki extends CharacterBase {
       ability: "skill" as const,
       reaction: "none" as const,
     };
-    // P4: next periodic Dreamdrifter AoE tick +1000% EM — not the initial E cast
+    const anemoStellarSwirl = {
+      element: "Anemo" as const,
+      ability: "skill" as const,
+      reaction: "stellarSwirl" as const,
+    };
+    // P4: next periodic Dreamdrifter AoE tick +1000% EM — not the initial E cast.
+    // Budget: Dreamdrifter lasts 5s (Lv10) and P1 extends it by 2.5s up to twice,
+    // so the window is 10s; the enhancement fires 每2.5秒至多触发一次, giving
+    // 10s / 2.5s = 4 enhanced ticks out of the 6 periodic ticks in the combo.
     const p4Periodic = new ScalingBuff(
-      cbs(this, "P4", ["E"]),
+      { ...cbs(this, "P4", ["E"]), maxStacks: 4 },
       { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -180,7 +257,7 @@ class YumemizukiMizuki extends CharacterBase {
       },
       "mizuki-skill-swirl": {
         label: {
-          zh: "E伤害+扩散",
+          zh: swirlProc ? "E伤害+扩散" : "E伤害",
           en: "E",
         },
         when: canSwirl,
@@ -189,23 +266,50 @@ class YumemizukiMizuki extends CharacterBase {
             formula: new DirectFormula(this.param("E", 1), anemoSkill),
             bespokeBuffs: [p4Periodic],
           },
-          {
-            formula: new TransformFormula(1.0, {
-              element: "Anemo",
-              ability: "skill",
-              reaction: "swirl",
-            }),
-          },
-          // C1: extra 1000% EM Anemo hit on Swirl cancel
+          ...(swirlProc
+            ? [
+                {
+                  formula: new TransformFormula(1.0, {
+                    element: "Anemo" as const,
+                    ability: "skill" as const,
+                    reaction: "swirl" as const,
+                  }),
+                },
+              ]
+            : []),
+          // C1: extra 1000% EM Anemo hit on Swirl cancel. Under 辉映·星扩散 the
+          // extra damage is 转为 400% EM counted as Stellar Swirl reaction
+          // damage — a replacement, never an additive overlay.
           ...(this.constellation >= 1
             ? [
                 {
-                  formula: new DirectFormula(10.0, anemoSkill, "em"),
+                  formula: this.radianceOn
+                    ? new StellarDirectFormula(4.0, anemoStellarSwirl, "em")
+                    : new DirectFormula(10.0, anemoSkill, "em"),
                 },
               ]
             : []),
         ],
       },
+      // P4 辉映·星扩散: the enhanced periodic tick also deals an extra 1000% EM
+      // Anemo instance, 视为星扩散反应造成的伤害. 1:1 with the enhanced tick,
+      // so it inherits the same budget of 4.
+      ...(this.radianceOn
+        ? {
+            "mizuki-p4-stellar": {
+              label: { zh: "P4星扩散", en: "P4 Stellar Swirl" },
+              parts: [
+                {
+                  formula: new StellarDirectFormula(
+                    10.0,
+                    anemoStellarSwirl,
+                    "em"
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -1605,42 +1709,60 @@ class YaeMiko extends CharacterBase {
     this.teamMeta.hasReaction("stellarConduct") ||
     this.teamMeta.hasReaction("superconduct");
 
-  readonly buffs = (() => {
-    const buffs: StatBuff[] = [
-      // P2: Each point of EM → Sesshou Sakura DMG +0.15%
-      // Sakura fires even when Yae is off-field → receiver: "self" (not selfOnField)
-      new ScalingBuff(
-        cbs(this, "P2", ["A4"]),
-        { receiver: "self", filter: { abilities: ["skill"] } },
-        [],
-        "em",
-        "dmg%",
-        0.0015
-      ),
-    ];
+  // P2, C6 DEF ignore and the P4 enhancement all name 杀生樱的落雷 specifically,
+  // so they ride the Sakura formula parts as bespoke buffs rather than the
+  // "skill" ability tag, which the P1 and P4 procs also carry.
+  private readonly sakuraBuffs: StatBuff[] = [
+    // P2: Each point of EM → Sesshou Sakura DMG +0.15%
+    // Sakura fires even when Yae is off-field → receiver: "self" (not selfOnField)
+    new ScalingBuff(
+      cbs(this, "P2", ["A4"]),
+      { receiver: "self" },
+      [],
+      "em",
+      "dmg%",
+      0.0015
+    ),
+    // C6: Sesshou Sakura attacks ignore 60% of opponents' DEF
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+            { key: "defIgnore%" as const, value: 0.6 },
+          ]),
+        ]
+      : []),
+  ];
 
-    // P4: SC/superconduct proc → next Sakura hit +80% ATK (peak model when team has reaction)
-    if (this.hasScReaction) {
-      buffs.push(
+  // P4: a Superconduct / Stellar-Conduct proc enhances the NEXT Sakura bolt by
+  // 80% of ATK, 每2.5秒至多触发一次 — 7 of the 15 bolts in the rotation, the same
+  // figure yae_miko-p4-sc-proc uses for the very same trigger.
+  private readonly enhancedSakuraBuffs: StatBuff[] = this.hasScReaction
+    ? [
+        ...this.sakuraBuffs,
         new ScalingBuff(
           cbs(this, "P4", ["E"]),
-          { receiver: "self", filter: { abilities: ["skill"] } },
+          { receiver: "self" },
           [],
           "atk",
           "baseDmg",
           0.8
-        )
-      );
-    }
+        ),
+      ]
+    : this.sakuraBuffs;
+
+  readonly buffs = (() => {
+    const buffs: StatBuff[] = [];
 
     if (this.constellation >= 1 && this.hasScReaction) {
       // C1: Team Electro DMG +50% and Stellar-Conduct DMG +50% for 10s
       buffs.push(
-        new StatBuff(cbs(this, "C1", ["passive"]), { receiver: "team" }, [
-          { key: "electro%", value: 0.5 },
-        ]),
         new StatBuff(
-          cbs(this, "C1", ["passive"]),
+          cbs(this, "C1", ["superconduct", "stellarConduct"]),
+          { receiver: "team" },
+          [{ key: "electro%", value: 0.5 }]
+        ),
+        new StatBuff(
+          cbs(this, "C1", ["superconduct", "stellarConduct"]),
           { receiver: "team", filter: { reactions: ["stellarConduct"] } },
           [{ key: "reactionDmg%", value: 0.5 }]
         )
@@ -1648,12 +1770,15 @@ class YaeMiko extends CharacterBase {
     }
 
     if (this.constellation >= 2) {
-      // C2: Sakura present → Yae + active character EM +200 (peak level 4)
+      // C2: Sakura present → Yae + active character EM +200 (peak level 4).
+      // One clause, a set union of {Yae} and {active character}, so the two
+      // receivers must not overlap — RECEIVER_RULES.teamOnField is
+      // provider-blind and would double-count on Yae's own on-field parts.
       buffs.push(
         new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
           { key: "em", value: 200 },
         ]),
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "teamOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "otherOnField" }, [
           { key: "em", value: 200 },
         ])
       );
@@ -1664,21 +1789,21 @@ class YaeMiko extends CharacterBase {
       buffs.push(
         new StatBuff(cbs(this, "C4", ["E"]), { receiver: "team" }, [
           { key: "electro%", value: 0.2 },
-        ])
+        ]),
+        // C4: 此外，八重神子的元素爆发伤害提升100% — Yae-only, Burst-only, and
+        // not field-scoped (Tenko Thunderbolts can land after she swaps out)
+        new StatBuff(
+          cbs(this, "C4", ["E"]),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [{ key: "dmg%", value: 1.0 }]
+        )
       );
     }
     if (this.constellation >= 6) {
-      // C6: Sesshou Sakura attacks ignore 60% of opponents' DEF
-      // Sakura fires off-field → receiver: "self"
+      // C6: Stellar-Conduct CRIT DMG +200%
       buffs.push(
         new StatBuff(
-          cbs(this, "C6", ["E"]),
-          { receiver: "self", filter: { abilities: ["skill"] } },
-          [{ key: "defIgnore%", value: 0.6 }]
-        ),
-        // C6: Stellar-Conduct CRIT DMG +200%
-        new StatBuff(
-          cbs(this, "C6", ["E"]),
+          cbs(this, "C6", ["stellarConduct"]),
           { receiver: "self", filter: { reactions: ["stellarConduct"] } },
           [{ key: "reactionCd", value: 2.0 }]
         )
@@ -1687,10 +1812,12 @@ class YaeMiko extends CharacterBase {
     return buffs;
   })();
 
-  // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + ~4 E-cast procs + 1 burst
+  // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + ~4 E-cast procs + 1 burst.
+  // The 15 Sakura bolts live inside yae_miko-skill as hits (7 P4-enhanced + 8
+  // plain), so the enhancement budget stays scoped to the Sakura formula.
   protected override get comboDescriptor(): ComboTemplate {
     return [
-      { id: "yae_miko-skill", count: 15 },
+      { id: "yae_miko-skill", count: 1 },
       { id: "yae_miko-p1-proc", count: 4 },
       ...(this.radianceOn && this.hasScReaction
         ? [{ id: "yae_miko-p4-sc-proc" as const, count: 7 }]
@@ -1721,18 +1848,34 @@ class YaeMiko extends CharacterBase {
 
     return {
       "yae_miko-skill": {
-        label: {
-          zh: this.radianceOn ? "E(单次)·星超导" : "E(单次)",
-          en: this.radianceOn ? "E (×1, SC procs)" : "E (×1)",
-        },
-        parts: [
-          {
-            formula: new DirectFormula(sakuraMult, electroSkill),
-            offField: true,
-          },
-        ],
+        label: { zh: "杀生樱落雷×15", en: "Sakura Bolts ×15" },
+        parts: this.hasScReaction
+          ? [
+              {
+                formula: new DirectFormula(sakuraMult, electroSkill),
+                hits: 7,
+                bespokeBuffs: this.enhancedSakuraBuffs,
+                offField: true,
+              },
+              {
+                formula: new DirectFormula(sakuraMult, electroSkill),
+                hits: 8,
+                bespokeBuffs: this.sakuraBuffs,
+                offField: true,
+              },
+            ]
+          : [
+              {
+                formula: new DirectFormula(sakuraMult, electroSkill),
+                hits: 15,
+                bespokeBuffs: this.sakuraBuffs,
+                offField: true,
+              },
+            ],
       },
-      // P1: 3 Sakura nearby → extra lightning on E cast (not per Sakura tick)
+      // P1: 3 Sakura nearby → extra lightning on E cast (not per Sakura tick).
+      // The trigger is the E cast, which Yae can only perform while active, so
+      // this proc is on-field even though the Sakura bolts themselves are not.
       "yae_miko-p1-proc": {
         label: {
           zh: this.radianceOn ? "P1雷击·星超导" : "P1雷击",
@@ -1743,7 +1886,6 @@ class YaeMiko extends CharacterBase {
             formula: this.radianceOn
               ? new StellarDirectFormula(0.5, scSkill, "atk")
               : new DirectFormula(0.4, electroSkill, "atk"),
-            offField: true,
           },
         ],
       },

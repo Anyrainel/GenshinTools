@@ -1541,12 +1541,20 @@ class Keqing extends CharacterBase {
 }
 
 const qiqiOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
+  label: { zh: "辉映状态", en: "Radiance State" },
   choices: [
     {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
+      value: "stellarConduct",
+      label: {
+        zh: "辉映·星超导 (极星辉域)",
+        en: "Radiance: Stellar-Conduct (Polestar Field)",
+      },
       when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "stellarSwirl",
+      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
+      when: (tm) => tm.hasReaction("stellarSwirl"),
     },
     { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,
@@ -1554,37 +1562,50 @@ const qiqiOption = {
 
 @RegisterCharacter("qiqi", qiqiOption)
 class Qiqi extends CharacterBase {
-  private readonly radianceOn =
-    resolveOption(qiqiOption, this.option, this.teamMeta) === "on";
+  // P4: Qiqi enters 辉映·星超导 inside a Polestar Field, or 辉映·星扩散 for 8s
+  // after a nearby party member triggers a Stellar Swirl.
+  private readonly rState = resolveOption(
+    qiqiOption,
+    this.option,
+    this.teamMeta
+  );
+
+  private readonly radianceOn = this.rState !== "off";
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     if (this.constellation >= 2) {
+      // C2: Normal/Charged ATK DMG +15% vs Cryo-affected enemies.
+      // Both clauses use 提升 (no 变更为/改为), so the Radiance ATK bonus stacks
+      // on top of this instead of replacing it. Qiqi is Cryo, so the
+      // 受到冰元素影响的敌人 condition holds by construction (U12).
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["normal", "charge"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge"] },
+          },
+          [{ key: "dmg%", value: 0.15 }]
+        )
+      );
       if (this.radianceOn) {
-        // C2 Radiance: +50% ATK (replaces Cryo-affected NA/CA DMG bonus)
+        // C2 辉映·星烁: +50% ATK — additive with the base clause above
         buffs.push(
           new StatBuff(cbs(this, "C2", ["passive"]), { receiver: "self" }, [
             { key: "atk%", value: 0.5 },
           ])
         );
-      } else {
-        // C2: Normal/Charged ATK DMG +15% vs Cryo-affected enemies
-        buffs.push(
-          new StatBuff(
-            cbs(this, "C2", ["normal", "charge"]),
-            {
-              receiver: "selfOnField",
-              filter: { abilities: ["normal", "charge"] },
-            },
-            [{ key: "dmg%", value: 0.15 }]
-          )
-        );
       }
     }
 
-    if (this.radianceOn) {
-      // P4 Radiance: While Herald of Frost is active, team Superconduct + SC reactionDmg +50%
+    // P4 Radiance: While Herald of Frost is active, the team's damage from the
+    // reactions matching Qiqi's Radiance state is increased by 50%.
+    // 冰元素扩散 is not filterable per-element; a Stellar Swirl enabler already
+    // supersedes Cryo swirl into stellarSwirl, so the narrow filter loses nothing
+    // while keeping Pyro/Hydro/Electro swirls out (U5).
+    if (this.rState === "stellarConduct") {
       buffs.push(
         new StatBuff(
           cbs(this, "P4", ["E"]),
@@ -1595,27 +1616,33 @@ class Qiqi extends CharacterBase {
           [{ key: "reactionDmg%", value: 0.5 }]
         )
       );
+    } else if (this.rState === "stellarSwirl") {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["E"]),
+          { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
+          [{ key: "reactionDmg%", value: 0.5 }]
+        )
+      );
     }
 
-    // C6: Glimpse of Mystery — 4 stacks; active ally SC hits +600% Qiqi ATK flat baseDmg per stack
+    // C6: Glimpse of Mystery — one shared 4-stack pool held by Qiqi, consumed by
+    // whichever active ally (除七七外) deals Stellar-Conduct or Stellar Swirl DMG.
+    // No 单独计算 wording, so a single shared buff, not per-charId pools (U10).
     if (this.constellation >= 6) {
-      for (const cid of Object.keys(this.teamMeta.elements)) {
-        if (cid === "qiqi") continue;
-        buffs.push(
-          new ScalingBuff(
-            { ...cbs(this, "C6", ["Q"]), maxStacks: 4 },
-            {
-              receiver: "teamOnField",
-              charId: cid,
-              filter: { reactions: ["stellarConduct"] },
-            },
-            [],
-            "atk",
-            "baseDmg",
-            6.0
-          )
-        );
-      }
+      buffs.push(
+        new ScalingBuff(
+          { ...cbs(this, "C6", ["Q"]), maxStacks: 4 },
+          {
+            receiver: "otherOnField",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [],
+          "atk",
+          "baseDmg",
+          6.0
+        )
+      );
     }
 
     return buffs;
@@ -1643,7 +1670,7 @@ class Qiqi extends CharacterBase {
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
     return {
       "qiqi-skill-hit": {
-        label: { zh: "E初始+鬼差×9", en: "E Initial + Herald ×9" },
+        label: { zh: "E+鬼差+协同", en: "E + Herald + Coord." },
         parts: [
           {
             formula: new DirectFormula(this.param("E", 8), cryoSkill),
@@ -1653,18 +1680,27 @@ class Qiqi extends CharacterBase {
             hits: 9,
             offField: true,
           },
+          // Coordinated attack (param9, 43.2% @ Lv10): fires when the active
+          // character's attack hits, gated by a 2.2s ICD (param10) over the
+          // Herald's 15s duration (param6) → 15 / 2.2 ≈ 6 hits.
+          {
+            formula: new DirectFormula(this.param("E", 9), cryoSkill),
+            hits: 6,
+            offField: true,
+          },
         ],
       },
       "qiqi-burst": {
         label: {
-          zh: this.radianceOn ? "Q伤害·星超导" : "Q伤害",
-          en: this.radianceOn ? "Q DMG (SC)" : "Q DMG",
+          zh: this.rState === "stellarConduct" ? "Q伤害·星超导" : "Q伤害",
+          en: this.rState === "stellarConduct" ? "Q DMG (SC)" : "Q DMG",
         },
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 3), cryoBurst),
           },
-          ...(this.radianceOn
+          // Q's extra hit is 辉映·星超导 only — the clause names that state, not 星烁
+          ...(this.rState === "stellarConduct"
             ? [
                 {
                   formula: new StellarDirectFormula(
@@ -1679,8 +1715,12 @@ class Qiqi extends CharacterBase {
     };
   })();
 
-  // Rotation: E (healer, hits baked into E ×8)
+  // Rotation: E (Herald path + coordinated hits baked in) then Q — the Burst
+  // carries her largest hit under Radiance and refreshes C6 Glimpse of Mystery.
   protected override get comboDescriptor(): ComboTemplate {
-    return [{ id: "qiqi-skill-hit", count: 1 }];
+    return [
+      { id: "qiqi-skill-hit", count: 1 },
+      { id: "qiqi-burst", count: 1 },
+    ];
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-08-14T01:46:10.690Z",
+  "generatedAt": "2026-08-14T02:30:30.281Z",
   "teams": {
     "Xja6aBlWrSDS1gxT0j": {
       "teamName": "lohen / nicole / durin / xilonen",
@@ -59158,7 +59158,7 @@
           "minCr": 0.1
         }
       },
-      "damage": 1286126.3592,
+      "damage": 2346890.1994,
       "comboResult": {
         "lineDamages": [
           {
@@ -59174,16 +59174,16 @@
             "total": 214114.4718
           },
           {
-            "perHit": 31285.187,
-            "total": 62570.374
+            "perHit": 489072.3669,
+            "total": 978144.7338
           },
           {
-            "perHit": 4969.6003,
-            "total": 9939.2006
+            "perHit": 2839.3741,
+            "total": 5678.7482
           },
           {
-            "perHit": 140219.8555,
-            "total": 280439.7109
+            "perHit": 214944.8219,
+            "total": 429889.6438
           },
           {
             "perHit": 2842.7474,
@@ -59218,7 +59218,7 @@
             "total": 49702.9678
           }
         ],
-        "totalDamage": 1286126.3592
+        "totalDamage": 2346890.1994
       },
       "artifacts": {
         "tighnari": {
@@ -59279,9 +59279,9 @@
             "mainStat": "hp",
             "substats": {
               "er": 22.02,
-              "atk%": 4.96,
               "cr": 6.61,
-              "cd": 6.6
+              "cd": 6.6,
+              "atk%": 4.96
             }
           },
           "plume": {
@@ -59299,29 +59299,29 @@
             "mainStat": "atk%",
             "substats": {
               "er": 22.02,
-              "cd": 13.21,
-              "cr": 3.31,
-              "atk": 16.54
+              "cd": 6.6,
+              "cr": 6.61,
+              "em": 19.82
             }
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "electro%",
+            "mainStat": "atk%",
             "substats": {
               "er": 5.51,
-              "atk%": 14.87,
-              "cr": 9.92,
-              "cd": 6.6
+              "cr": 13.22,
+              "cd": 13.21,
+              "em": 19.82
             }
           },
           "circlet": {
             "setKey": "generated",
             "mainStat": "cr",
             "substats": {
-              "atk%": 19.82,
-              "cd": 13.21,
-              "atk": 16.54,
-              "em": 19.82
+              "cd": 33.02,
+              "atk%": 4.96,
+              "em": 19.82,
+              "atk": 16.54
             }
           }
         },
@@ -59442,10 +59442,10 @@
         "yae_miko": {
           "hp": 4780,
           "er": 0.7157,
-          "cr": 0.5754,
-          "cd": 0.4624,
-          "atk": 344,
-          "em": 20
+          "cr": 0.6415,
+          "cd": 0.6605,
+          "atk": 328,
+          "em": 59
         },
         "zhongli": {
           "hp": 4780,
@@ -59463,7 +59463,7 @@
         }
       },
       "display": {
-        "totalDamage": 1286126.3592,
+        "totalDamage": 2346890.1994,
         "partsByFormula": {
           "tighnari.tighnari-skill": [
             {
@@ -59500,23 +59500,24 @@
           ],
           "yae_miko.yae_miko-skill": [
             {
-              "damage": 31285.187,
-              "template": "direct"
+              "damage": 32604.8245,
+              "template": "direct",
+              "hits": 15
             }
           ],
           "yae_miko.yae_miko-p1-proc": [
             {
-              "damage": 4969.6003,
+              "damage": 2839.3741,
               "template": "direct"
             }
           ],
           "yae_miko.yae_miko-burst": [
             {
-              "damage": 28901.0426,
+              "damage": 44302.7804,
               "template": "direct"
             },
             {
-              "damage": 37106.2709,
+              "damage": 56880.6805,
               "template": "direct",
               "hits": 3
             }
@@ -59692,34 +59693,6 @@
             "source": {
               "type": "character",
               "id": "yae_miko",
-              "origin": "P2"
-            },
-            "entries": [
-              {
-                "key": "dmg%",
-                "value": 0.5097
-              }
-            ],
-            "providerCharId": "yae_miko"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "yae_miko",
-              "origin": "C2"
-            },
-            "entries": [
-              {
-                "key": "em",
-                "value": 200
-              }
-            ],
-            "providerCharId": "yae_miko"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "yae_miko",
               "origin": "C2"
             },
             "entries": [
@@ -59748,12 +59721,12 @@
             "source": {
               "type": "character",
               "id": "yae_miko",
-              "origin": "C6"
+              "origin": "C4"
             },
             "entries": [
               {
-                "key": "defIgnore%",
-                "value": 0.6
+                "key": "dmg%",
+                "value": 1
               }
             ],
             "providerCharId": "yae_miko"
@@ -59831,6 +59804,34 @@
               }
             ],
             "providerCharId": "fischl"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "yae_miko",
+              "origin": "P2"
+            },
+            "entries": [
+              {
+                "key": "dmg%",
+                "value": 0.5692
+              }
+            ],
+            "providerCharId": "yae_miko"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "yae_miko",
+              "origin": "C6"
+            },
+            "entries": [
+              {
+                "key": "defIgnore%",
+                "value": 0.6
+              }
+            ],
+            "providerCharId": "yae_miko"
           }
         ],
         "detailStats": {
@@ -59858,23 +59859,23 @@
           },
           "yae_miko": {
             "onField": {
-              "cr": 0.8174,
-              "cd": 1.6244,
+              "cr": 0.8835,
+              "cd": 1.8225,
               "er": 1.7157,
-              "em": 540,
+              "em": 379,
               "resReduction%": 0.2,
               "hp": 15889,
-              "atk": 2302,
+              "atk": 2458,
               "def": 609
             },
             "offField": {
-              "cr": 0.8174,
-              "cd": 1.6244,
+              "cr": 0.8835,
+              "cd": 1.8225,
               "er": 1.7157,
-              "em": 340,
+              "em": 379,
               "resReduction%": 0.2,
               "hp": 15889,
-              "atk": 2302,
+              "atk": 2458,
               "def": 609
             }
           },
@@ -59952,27 +59953,25 @@
           },
           "yae_miko": {
             "onField": {
-              "atk": 2302,
+              "atk": 2458,
               "hp": 15889,
               "def": 609,
-              "em": 540,
-              "cr": 0.8174,
-              "cd": 1.6244,
+              "em": 379,
+              "cr": 0.8835,
+              "cd": 1.8225,
               "er": 1.7157,
-              "dmg%": 2.4357,
-              "defIgnore%": 0.6,
+              "dmg%": 1.44,
               "resReduction%": 0.2
             },
             "offField": {
-              "atk": 2302,
+              "atk": 2458,
               "hp": 15889,
               "def": 609,
-              "em": 340,
-              "cr": 0.8174,
-              "cd": 1.6244,
+              "em": 379,
+              "cr": 0.8835,
+              "cd": 1.8225,
               "er": 1.7157,
-              "dmg%": 2.1357,
-              "defIgnore%": 0.6,
+              "dmg%": 1.44,
               "resReduction%": 0.2
             }
           },
@@ -60027,32 +60026,32 @@
         },
         "marginalGains": {
           "tighnari": {
-            "atk": 0.0024,
-            "atk%": 0.0062,
-            "em": 0.0038,
-            "cr": 0.0048,
-            "cd": 0.0064
+            "atk": 0.0013,
+            "atk%": 0.0034,
+            "em": 0.0021,
+            "cr": 0.0026,
+            "cd": 0.0035
           },
           "yae_miko": {
-            "atk": 0.002,
-            "atk%": 0.006,
-            "em": 0.0005,
-            "cr": 0.0063,
-            "cd": 0.0064
+            "atk": 0.0041,
+            "atk%": 0.0124,
+            "em": 0.0045,
+            "cr": 0.0139,
+            "cd": 0.0135
           },
           "zhongli": {
-            "hp": 0.0007,
-            "hp%": 0.0022,
-            "atk": 0.0007,
-            "atk%": 0.002,
-            "cr": 0.0037,
-            "cd": 0.003
+            "hp": 0.0004,
+            "hp%": 0.0012,
+            "atk": 0.0004,
+            "atk%": 0.0011,
+            "cr": 0.002,
+            "cd": 0.0017
           },
           "fischl": {
-            "atk": 0.0018,
-            "atk%": 0.0053,
-            "cr": 0.0062,
-            "cd": 0.0061
+            "atk": 0.001,
+            "atk%": 0.0029,
+            "cr": 0.0034,
+            "cd": 0.0033
           }
         },
         "levelUpGains": {}
