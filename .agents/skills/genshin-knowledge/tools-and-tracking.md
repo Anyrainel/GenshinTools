@@ -72,6 +72,7 @@ Each tracker file is a YAML list. Every item has these fields:
 
 | Category | Meaning | Examples |
 |---|---|---|
+| `bug` | Implementation contradicts the game text | Wrong value, wrong stat zone, wrong condition or scope |
 | `missing-formula` | A formula that should exist is absent | Missing approved formula, significant proc |
 | `approximation` | Current implementation approximates; could be more accurate | Hit count estimate, ramp average |
 | `engine-gap` | Requires an engine feature that doesn't exist yet | New stat key, per-hit tracking |

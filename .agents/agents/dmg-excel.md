@@ -109,7 +109,7 @@ For each character ID in the scope, **sequentially**:
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py show C <id>
 ```
-Read the output file `scripts/data/<id>.txt`. This contains game text (EN + ZH). The last line shows the implementation location (e.g., `IMPL: character5Inazuma.ts L616–L728`). Use the Read tool with the file path (`src/lib/team-comp/impl/<filename>`) and the line range to read the implementation code.
+Read the output file `scripts/data/<id>.txt`. This contains game text (EN + ZH). The last line shows the implementation location (e.g., `IMPL: character5Inazuma.ts L616–L728`). Use the Read tool with the file path (`src/lib/dmgcalc/impl/<filename>`) and the line range to read the implementation code.
 
 If no implementation exists, note "not implemented" and move on.
 

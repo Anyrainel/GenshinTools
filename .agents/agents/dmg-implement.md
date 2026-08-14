@@ -63,7 +63,7 @@ Process items one at a time. For each actionable item (or the ad-hoc task):
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py show <C|W|A> <entity>
 ```
-Read `scripts/data/<entity>.txt` to see game text and param templates. The last line shows the implementation location (e.g., `IMPL: character4Mondstadt.ts L713–L787`). Use the Read tool with the file path (`src/lib/team-comp/impl/<filename>`) and the line range to read the implementation code.
+Read `scripts/data/<entity>.txt` to see game text and param templates. The last line shows the implementation location (e.g., `IMPL: character4Mondstadt.ts L713–L787`). Use the Read tool with the file path (`src/lib/dmgcalc/impl/<filename>`) and the line range to read the implementation code.
 
 **c) Find talent param indices.** The `show` output displays template strings like `{param2:P} DEF` for each skill detail row. The number after `param` is the 1-based index to use with `this.param()`. To verify rendered values at a specific level:
 ```bash

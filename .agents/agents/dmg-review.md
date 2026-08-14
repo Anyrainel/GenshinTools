@@ -73,7 +73,7 @@ For each entity ID in the scope:
 ```bash
 uv run --project scripts/pyproject.toml scripts/impl_audit.py show <C|W|A> <id>
 ```
-Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and param templates. The last line shows the implementation location (e.g., `IMPL: character4Mondstadt.ts L713–L787`). Use the Read tool with the file path (`src/lib/team-comp/impl/<filename>`) and the line range to read the implementation code.
+Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and param templates. The last line shows the implementation location (e.g., `IMPL: character4Mondstadt.ts L713–L787`). Use the Read tool with the file path (`src/lib/dmgcalc/impl/<filename>`) and the line range to read the implementation code.
 
 **b) Skip if no implementation.** Note the entity in the final summary as "not implemented" and move on.
 

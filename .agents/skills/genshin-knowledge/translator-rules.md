@@ -54,7 +54,7 @@ Map every buff's game text to the correct receiver. Wrong receiver = **[BUG]**:
 
 **`BuffTarget.charId` — per-teammate buffs:** Use `charId` to target a specific character when:
 1. The buff varies based on each teammate's properties (e.g., granting different stats depending on each teammate's element or weapon type).
-2. The buff has `maxStacks` that are "counted independently" / "单独计算" per character — emit one buff per teammate with `charId`, each carrying its own `maxStacks` (see U8b).
+2. The buff has `maxStacks` that are "counted independently" / "单独计算" per character — emit one buff per teammate with `charId`, each carrying its own `maxStacks` (see U10).
 
 In both cases, loop over `this.teamMeta.elements` and emit one buff per teammate.
 
@@ -108,8 +108,10 @@ For every `key` in every `StatEntry`:
 - Reaction CRIT → `reactionCr` / `reactionCd` (never `cr` / `cd`)
 - Both require `filter: { reactions: [...] }`. Missing filter = **[BUG]** (runtime-enforced for CRIT keys).
 - Filter must be exact: **[BUG]** if it includes reactions not in the game text, omits reactions that are covered, or collapses two different bonus amounts into one entry.
-- **lunarBloom pitfall**: "绽放 (bloom)" does **not** cover 月绽放. LunarBloom's direct-damage portion is immune to bloom `reactionDmg%` — wrongly including `"lunarBloom"` amplifies Lunar Direct damage by 4–5×. Only add it when the text explicitly mentions 月绽放.
-- **superconduct pitfall**: `superconduct` in a `reactions` filter does **not** cover Stellar-Conduct direct damage. SC-tagged formulas and buffs need `reactions: ["stellarConduct"]`. **[BUG]** if a SC skill buff uses `superconduct` because the ability replaced 超导.
+- **Siblings never contain each other.** A base reaction in a `reactions` filter does not cover its Lunar or Stellar sibling, and vice versa: 绽放 ⊅ 月绽放, 超导 ⊅ 星超导, 扩散 ⊅ 星扩散. Add a sibling only when the game text names it. See [Part 4 of `elemental-reactions.md`](elemental-reactions.md) for the evidence and the umbrella-term table (星烁 covers both Stellar reactions; a clause naming 星超导 or 星扩散 alone does not).
+  - lunarBloom: wrongly including `"lunarBloom"` amplifies Lunar Direct damage by 4–5×, because LunarBloom's direct portion is immune to bloom `reactionDmg%`.
+  - superconduct / swirl: SC- and Stellar-Swirl-tagged formulas and buffs need `reactions: ["stellarConduct"]` / `["stellarSwirl"]`. **[BUG]** if a Stellar buff reuses `superconduct` or `swirl` because the ability replaced the base reaction.
+  - Note the deliberate asymmetry with U12: a `hasReaction()` **gate** must include the sibling (the base reaction is replaced at runtime), while a `reactions` **filter** must not (the bonus is text-scoped). A wide gate with a narrow filter on the same entity is correct.
 
 **3. Special keys:**
 - "擢升" → `elevated%`, not `dmg%`.
@@ -142,7 +144,17 @@ These are enemy debuffs — they benefit all party members equally. Scoping to `
 ### U7. `BuffSource` Display Fields
 
 - `origin` must be one of: `"A"`, `"E"`, `"Q"`, `"P1"`–`"P4"`, `"C0"`–`"C6"`, `"R1"`–`"R5"`. Multiple origins joined with `"/"` (e.g., `"P2/C2"`). No dashes or other separators.
-- `triggers` should use kebab-case strings consistent with existing usage (e.g., `"low-hp"`, `"elemental-reaction"`, `"burst"`, `"lunarBloom"`). Match `AbilityType` or `ReactionType` values when applicable. Always-active passives use `"A1"` / `"A4"`.
+- `triggers` should use kebab-case strings consistent with existing usage (e.g., `"low-hp"`, `"elemental-reaction"`, `"burst"`). Always-active passives use `"A1"` / `"A4"`.
+- For reaction conditions, label at the granularity the game text uses:
+
+  | Condition in game text | `triggers` label |
+  |---|---|
+  | any elemental reaction | `"elemental-reaction"` |
+  | any lunar reaction (月曜) | `"lunar-reaction"` |
+  | any stellar reaction (星烁) | `"stellar-reaction"` |
+  | one specific reaction named in text | the `ReactionType` value (`"lunarBloom"`, `"stellarConduct"`) |
+
+  **[BUG]** if an umbrella clause is labelled with a specific `ReactionType` (星烁 → `"stellarConduct"` implies SC-only) or flattened to `"elemental-reaction"` (loses the scoping).
 
 ### U8. Conditional Stat Modifiers Must Be Buffs
 
@@ -164,7 +176,7 @@ Only damage-affecting stats are modeled. When reviewing:
 
 The model targets **peak damage**, not average loop DPS. Verify each assumption is applied correctly:
 
-`cbs()` fields (`origin`, `triggers`) and other `BuffSource.triggers` are display-only — they don't gate runtime buff distribution, but must accurately reflect the activation condition. See U7b: conditional stat modifiers must still be buffs, not provider `stats`, even when modeled as always active.
+`cbs()` fields (`origin`, `triggers`) and other `BuffSource.triggers` are display-only — they don't gate runtime buff distribution, but must accurately reflect the activation condition. See U8: conditional stat modifiers must still be buffs, not provider `stats`, even when modeled as always active.
 
 | Assumption type | Expected handling | Flag if wrong |
 |---|---|---|
@@ -179,7 +191,7 @@ The model targets **peak damage**, not average loop DPS. Verify each assumption 
 | Shield condition | `teamMeta.hasShielder()` | [BUG] if always-on or always-off |
 | Heal condition | `teamMeta.hasHealer()` | [BUG] if always-on or always-off |
 | Reaction condition | `teamMeta.hasReaction(...)` — see note on lunar superseding below | [BUG] if unconditional |
-| Enemy element affection ("对处于X元素影响下的敌人") | Active if team has an X-element character (see U11) | [BUG] if assumed always-active |
+| Enemy element affection ("对处于X元素影响下的敌人") | Active if team has an X-element character (see U12) | [BUG] if assumed always-active |
 | Self element affection ("处于X元素附着下") | Always assumed active; add a code comment noting the assumption | [BUG] if gated unnecessarily |
 | Moonsign Nascent Gleam (初辉) | `teamMeta.countByFaction("Moonsign") >= 1` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
 | Moonsign Ascendant Gleam (满辉) | `teamMeta.countByFaction("Moonsign") >= 2` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
@@ -251,8 +263,18 @@ Buffs that ramp up or down over time (not instant) should be implemented as `Opt
 
 ### U12. Team Element & Reaction Conditions
 
-- **Reaction conditions**: use `teamMeta.hasReaction(reactionName)`. To determine which aura elements a given trigger element can react with, call `getReactionAuraElements(triggerElement)` from `src/lib/team-comp/helpers.ts` rather than re-deriving the table manually. **Lunar superseding:** when a lunar reaction is possible (requires a 5★ Moonsign teammate), `hasReaction()` for the base reaction returns **false** — e.g., `hasReaction("electroCharged")` is false when `hasReaction("lunarCharged")` is true (see `LUNAR_SUPERSEDES` in constants.ts). Any `hasReaction` gate for electroCharged, bloom, or crystallize (Hydro+Geo only) must also check the corresponding lunar variant (`lunarCharged`, `lunarBloom`, `lunarCrystallize`), or the buff will incorrectly deactivate on Moonsign teams. **[BUG]** if a reaction gate checks only the base reaction without the lunar variant.
-- **Stellar superseding:** when `hasReaction("stellarConduct")` (Sandrone in party), `hasReaction("superconduct")` returns **false** (see `STELLAR_SUPERSEDES` in constants.ts). Buffs gated on `superconduct` must also check `stellarConduct`, or deactivate incorrectly on SC teams. **[BUG]** if a reaction gate checks only `superconduct` without `stellarConduct`.
+- **Reaction conditions**: use `teamMeta.hasReaction(reactionName)`. To determine which aura elements a given trigger element can react with, call `getReactionAuraElements(triggerElement)` from `src/lib/dmgcalc/impl/helpers.ts` rather than re-deriving the table manually. **Lunar superseding:** when a lunar reaction is possible (requires a 5★ Moonsign teammate), `hasReaction()` for the base reaction returns **false** — e.g., `hasReaction("electroCharged")` is false when `hasReaction("lunarCharged")` is true (see `LUNAR_SUPERSEDES` in constants.ts). Any `hasReaction` gate for electroCharged, bloom, or crystallize (Hydro+Geo only) must also check the corresponding lunar variant (`lunarCharged`, `lunarBloom`, `lunarCrystallize`), or the buff will incorrectly deactivate on Moonsign teams. **[BUG]** if a reaction gate checks only the base reaction without the lunar variant.
+- **Stellar superseding:** when a Stellar reaction is possible — a `STELLAR_ENABLERS` member is in the party — the base reaction's `hasReaction()` returns **false** (see `STELLAR_SUPERSEDES` in constants.ts). This covers **both** mappings: `superconduct → stellarConduct`, and `swirl → stellarSwirl` for Cryo swirl only (`survivalElements: ["Pyro", "Hydro", "Electro"]` keeps those swirls alive). Enablers are per reaction — enabling one does not imply the other — so read `STELLAR_ENABLERS` rather than assuming a character list. **[BUG]** if a gate checks only `superconduct` without `stellarConduct`, or only `swirl` without `stellarSwirl`.
+- **Trigger subject — the `charId` argument.** `hasReaction(reaction, charId?)` asserts that **this** character participates in the reaction. Pass it when the game text makes the buff-holder the trigger subject; omit it when any party member can trigger:
+
+  | Game text | Call |
+  |---|---|
+  | 「触发…反应」/「装备者触发…」 with no other subject named | `hasReaction(r, this.charId)` |
+  | 「队伍中的角色触发」/「附近的队伍角色触发」 | `hasReaction(r)` |
+  | 「造成…反应伤害」(deals, not triggers) | `hasReaction(r)` |
+  | wearer triggers **or** deals reaction DMG | `hasReaction(r)` — the second clause widens it |
+
+  **[BUG]** if a 触发-worded weapon/artifact clause omits `charId` — it grants the buff to wielders who can never trigger it, e.g. a Pyro wielder on a Cryo/Electro team. Contrast `earth_shaker` (「队伍中的角色触发」), which correctly omits it. Note `OptionDef.when` predicates receive only `TeamMeta` and cannot scope to `charId`; use the team-wide form there and apply the `charId` gate inside `get buffs()`.
 - **Enemy element affection** ("对处于X元素影响下的敌人"): active if any team character applies element X. Check `Object.values(this.teamMeta.elements).includes("X")`.
 - **Element absorption** (buffs): when an absorbed element changes a **buff's** scope or value (e.g., Sucrose C6 "+20% DMG of the absorbed element"), iterate `Object.values(this.teamMeta.elements)` to find which absorbable elements are present and add one buff per match. Derive the absorbable set from game text — do not assume.
 - **Element absorption** (formulas): when absorption changes the **damage element** of a formula (e.g., Kazuha Q additional hits, Traveler Anemo Q), the absorbed element depends on in-game aura priority (Pyro > Hydro > Electro > Cryo) and enemy state — it cannot be determined from team composition alone. **[TRACK]** create a tracker item with category `engine-gap`. **[BUG]** if the implementation picks the first team element or any single element by default — this produces incorrect results when multiple absorbable elements are present.
@@ -260,6 +282,17 @@ Buffs that ramp up or down over time (not instant) should be implemented as `Opt
 - **Element-count threshold**: when a mechanic scales based on the number of qualifying teammates (e.g., "1/2/3 Hydro or Geo characters", "fewer than 2 converted samples"), use `teamMeta.countByElement` or a `Set` over `teamMeta.elements` values. Declare the result as a `private readonly` field before `readonly buffs`. **[BUG]** if hardcoded to max stacks without checking team composition, or tracked in a tracker item as an engine limitation.
 
 If a team-element condition cannot be modeled with any of the above approaches, consult the [When to Create a Tracker Item](#appendix-when-to-create-a-tracker-item) appendix.
+
+### U13. Radiance Conditions on Weapons & Artifacts
+
+Radiance (辉映) is a per-character state, not a reaction trigger — see [Part 3 of `elemental-reactions.md`](elemental-reactions.md) for the mechanic. A weapon or artifact **cannot read the wielder's Radiance state**: `hasReaction("stellarConduct" | "stellarSwirl")` proves the *team* can produce Stellar reactions, never that *this wielder* is in Radiance.
+
+**Decide by the verb.**
+
+- 「效果变更为」/「改为」 (the Radiance clause **replaces** the base effect) → give the entity its own two-choice `OptionDef`: `off` first so it is the default, `on` gated by `when: (tm) => tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl")`. Then branch: `if (radianceOn) { return [replacement]; } return [base];`. Reference: `weaponSwordOption` in `weapon4Sword.ts`.
+- 「提升」/「获得」 within a 触发星烁反应 window (the clause **adds** to the base effect) → no option needed; gate on `hasReaction(r, this.charId)` per U12. A false positive only over-grants.
+
+**[BUG]** if a 变更为/改为 clause is gated on `hasReaction(...)` alone — a wrong gate is two-sided there, granting an unearned branch *and* stripping the base one. **[BUG]** if a Radiance branch is applied additively on top of the base branch.
 
 ---
 
@@ -282,7 +315,7 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 
 **`LunarDirectFormula` talentMult convention**: Pass the **raw game%** directly. The class multiplies by `directCoeff` internally (`lunarCharged ×3`, `lunarCrystallize ×1.6`, `lunarBloom ×1`). **[BUG]** if the passed value is `gameText% / directCoeff` — this cancels the internal multiplication and produces damage 3× (or 1.6×) too low.
 
-**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Unlike Lunar (fixed per reaction subtype), Stellar `directCoeff` depends on Cryo/Electro attach count on the enemy (range **1.45–1.9**, default **1.6** via `CalcContext.stellarDirectCoeff`). **[BUG]** if talentMult is pre-divided by `directCoeff`.
+**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Unlike Lunar (fixed per reaction subtype), Stellar `directCoeff` is looked up in `STELLAR_DIRECT_COEFF_BY_HITS` by recorded Polestar Field attach hits (1–12), range **1.45–2.0**, default **1.64** (`STELLAR_ATTACH_HITS_DEFAULT = 5`). The same table serves both 星超导 and 星扩散. **[BUG]** if talentMult is pre-divided by `directCoeff`.
 
 **Stellar vs Lunar — two damage paths** (mirror lunar design):
 - **Reaction trigger** (`StellarFormula`): SC replaces Superconduct but deals **no proc damage** — only enables Polestar Field. `rx-stellarConduct` auto-formulas contribute 0 DPS.
@@ -303,13 +336,15 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 
 Do **not** use Superconduct's transformative coefficient (1.5) for `StellarDirectFormula` skill hits.
 
-### S1b. Radiance: Stellar-Conduct (Witch's Revelation, 6.7)
+### S1b. Radiance States on Characters
 
-Genshin 6.7 **Witch's Revelation** adds Stellar-Conduct compatibility to seven existing characters: **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou, Yumemizuki Mizuki**. Game text adds an **Additional Talent** (A4 slot) and enhanced constellation clauses keyed to **辉映·星超导 / Radiance: Stellar-Conduct**.
+Radiance (辉映) has two variants — **辉映·星超导** (Stellar-Conduct) and **辉映·星扩散** (Stellar Swirl) — collectively 辉映·星烁. See [Part 3 of `elemental-reactions.md`](elemental-reactions.md) for the mechanic; this rule covers only how to implement it on a character.
 
-**Who enters Radiance:** Six of the seven gain a **Radiance: Stellar-Conduct** state while inside a **Polestar Field** (极星辉域). **Yumemizuki Mizuki is the exception** — her 6.7 buffs are Swirl/EM-focused and do **not** add a Radiance state or Polestar entry. **Sandrone** (Nod-Krai) is not in the Witch's Revelation seven but is the Stellar-Conduct enabler: she converts party Superconduct into Stellar-Conduct and enters Radiance in a Polestar Field herself. Reference implementation: `character5NodKrai.ts`.
+Radiance arrived in 6.7 (**Witch's Revelation**), which added Stellar-Conduct clauses to six existing characters — **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou** — via an **Additional Talent** (A4 slot) and enhanced constellations. Yumemizuki Mizuki was buffed in the same patch but gained **no** Radiance state. 7.0 added the Stellar Swirl variant and native Snezhnaya carriers. Reference implementations: `character5Snezhnaya.ts` (both variants), `character5None.ts` (Cryo Traveler).
 
-**User option (Radiance characters):** Register with `@RegisterCharacter("id", radianceOption)`. Each entity supports **only one** `OptionDef` (see U11). When Radiance is added to a character that already had an `OptionMap` (e.g., Diona C6 HP states), the Radiance toggle **occupies that slot**; displaced modes may be hardcoded to a peak branch (always-on EM+200 ≈ HP>50%) with a tracker `approximation` item if needed.
+Characters who merely *enable* a Stellar reaction for the party are a different set from those who *enter* Radiance — see `STELLAR_ENABLERS` for the former.
+
+**User option (Radiance characters):** Register with `@RegisterCharacter("id", radianceOption)`. Each entity supports **only one** `OptionDef` (see U11 for the ramping-buff case). When Radiance is added to a character that already had an `OptionMap` (e.g., Diona C6 HP states), the Radiance toggle **occupies that slot**; displaced modes may be hardcoded to a peak branch (always-on EM+200 ≈ HP>50%) with a tracker `approximation` item if needed.
 
 Standard schema:
 
@@ -414,6 +449,22 @@ Conversely, values from passives (P1–P4) and constellations (C1–C6) are fixe
 - Note: C3/C5 talent level bonuses and teammate passive bonuses (Tartaglia P3 +1 A, Skirk P3 +1 E) are all handled automatically by `this.param()` via `CharacterBase._effectiveLevels`. Implementations should never manually check for these.
 - **[BUG]** if a `this.param()` call uses a conditional param index (e.g., `this.param("E", someCondition ? 2 : 1)`) unless the game mechanic genuinely selects a different param row (e.g., Yanfei C6 extra seal, Hu Tao low-HP burst tier). Constellation-gated talent levels are never a valid reason for conditional indices.
 
+### S5b. Param Index Drift, and the Plunge Convention
+
+Release data can insert **non-damage rows** into a talent that beta data did not have. The known case: **Charged Attack Stamina Cost** appears as a param between the NA chain and the plunge rows, shifting every plunge index by one. A beta-era index then reads a stamina value (25.0) as a **2500% ATK multiplier**, which type-checking cannot catch.
+
+- After any game-data refresh, re-verify every `this.param("A", n)` for characters implemented from beta data.
+- **Sanity bound**: an NA/CA/plunge multiplier is roughly 0.3–3.0. **[BUG]** if a resolved param falls outside ~0.05–10 — it is almost certainly a stamina, cooldown, duration, or energy row.
+- Verify with `impl_audit.py show C <id> --detail=A10` and match **rendered values against row labels**, never against the beta index used before.
+- The stamina row is not always present: `sandrone` resolves the plunge block at A8/9/10 while `odette` resolves the same three rows at A9/10/11. **Never copy plunge indices between characters.** This applies even though only one of the three rows is implemented — you still have to locate the whole block to know which index is the high-impact one.
+
+**A character gets exactly one plunge formula: the high-plunge coefficient**, under the id `{char}-plunge-high` (see `xiao-plunge-high`, `kazuha-plunge`, `diluc-plunge`).
+
+The 下落期间 (during fall) and 低空坠地冲击 (low impact) rows are **intentionally not modeled**. Plunge builds are evaluated on the high-plunge hit; the during-fall row only lands when an opponent happens to be in the fall path, and low impact is strictly dominated by high impact for any character worth plunging with. Modeling them adds rows nobody selects and inflates side-by-side comparisons.
+
+- **[BUG]** to add a during-fall or low-impact plunge formula (`{char}-plunge`, `{char}-plunge-low`, or any equivalent entry).
+- Keep the `-high` suffix in the id even though it is the only plunge entry — it names the coefficient, matching the existing implementations.
+
 ### S6. No Construction-Time Stats
 
 - **[BUG]** if `formulaMap` or a buff inside `readonly buffs = [...]` calls `this.stats.get(...)` at construction time. Stats are not resolved yet — stat-dependent values must go in a named buff class:
@@ -505,6 +556,7 @@ with `offField: true`:
 
 When the review agent encounters an issue it cannot resolve by applying the rules above, it creates a tracker item (status: `open`) in the appropriate `docs/dmg-tracker/*.yaml` file. Be precise about the category:
 
+- **`bug`**: the implementation contradicts the game text — wrong value, wrong zone, wrong condition, wrong scope
 - **`engine-gap`**: weak-spot damage, bond-of-life mechanics
 - **`needs-data`**: missing talent data, unknown hit counts, unverified timing
 - **`missing-formula`**: significant formula absent from `formulaMap` but too complex for inline fix during review
@@ -514,9 +566,9 @@ When the review agent encounters an issue it cannot resolve by applying the rule
 
 These can be resolved using existing rules — do NOT create tracker items for:
 
-- HP-state conditions → OptionMap (see U8)
-- Enemy element affection → U11 team element check
-- Element absorption (buffs only) → U11 per-element buff iteration
+- HP-state conditions → OptionMap (see U9)
+- Enemy element affection → U12 team element check
+- Element absorption (buffs only) → U12 per-element buff iteration
 - Debuff applied and consumed by the same character → model as self buff or formula part
-- Flat damage caps → `ScalingBuff` `cap` parameter (see S7)
-- Conditional buffs with no team dependency → see U8
+- Flat damage caps → `ScalingBuff` `cap` parameter (see S6)
+- Conditional buffs with no team dependency → see U9
