@@ -30,18 +30,22 @@
 - id: shinobu-e-ring
   entity: kuki_shinobu
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     Missing E Grass Ring of Sanctification direct damage formula. Ring deals Electro DMG
-    (E param4) every 1.5s for 12s off-field (~8 ticks), plus P2 EM->baseDmg bonus.
+    (E param4) off-field for the E duration, plus the P2 EM->baseDmg bonus.
   detail: >
-    Shinobu's primary role in meta is hyperbloom trigger, where she builds full EM.
-    E ring direct damage scales off ATK (E param4 ~25% per tick at Lv10). With 8
-    ticks, total is ~200% ATK, but on an EM build her ATK is very low. Even with
-    P2's 25% EM->baseDmg per tick (at 800 EM = 200 flat per tick, 1600 total), this
-    is negligible compared to 8 hyperbloom seeds at ~30k each (~240k total). The ring
-    direct damage contributes well under 5% of rotation DPS. Not worth implementing.
+    Reversal of the earlier wont-do (which argued the ring was under 5% of rotation
+    DPS on an EM hyperbloom build): the maintainer approved implementing it, since
+    P2 has no other valid target and was removed for lack of one. Added the
+    "shinobu-e-ring" formula — DirectFormula(param(E,4), Electro/skill/none, ATK
+    scaling), offField, with hits derived from the duration param:
+    floor((param(E,6) + 3 at C2) / 1s). The 1s tick interval is maintainer-provided
+    (the skill text quotes 1.5s) and is documented at the call site. P2 is
+    reattached as a bespokeBuff on that part only — ScalingBuff em -> baseDmg at
+    0.25, receiver "self" with an abilities:["skill"] filter — so it can no longer
+    reach shinobu-c4-thundergrass. Added to comboDescriptor with count 1.
 
 - id: kokomi-jellyfish-offfield-q
   entity: sangonomiya_kokomi
@@ -73,8 +77,8 @@
 
 - id: chiori-p1-coord-offfield
   entity: chiori
-  rule: S13
-  status: actionable
+  rule: S11
+  status: completed
   category: bug
   summary: >
     chiori-e-combo bundles the on-field upward sweep with 2 P1 coordinated attacks as
@@ -82,14 +86,14 @@
     so Chiori is off-field for those 2 hits. The part should be split so the sweep stays
     on-field and the 2 P1 coordinated hits are marked offField: true.
   detail: >
-    Split the on-field upward sweep from the two P1 coordinated attacks. The
-    coordinated attacks occur after the Tapestry swap and should be treated as
-    off-field damage so on-field-only buffs do not apply to them.
+    Split chiori-e-combo part 1 into two parts sharing the same E param5 ATK /
+    E param6 DEF multipliers: the upward sweep (1 hit, on-field) and the P1
+    Tapestry coordinated attacks (hits: 2, offField: true).
 
 - id: yoimiya-c6-separate-formula
   entity: yoimiya
   rule: S9
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     C6 extra Blazing Arrow (50% chance, 60% DMG) is modeled as a separate formulaMap
@@ -97,134 +101,137 @@
     on the existing yoimiya-normal formula. Per S9, constellations enhancing an existing
     attack should be modeled as buffs, not separate formula entries.
   detail: >
-    C6 enhances Yoimiya's existing Niwabi Fire-Dance Normal Attack sequence with
-    extra Blazing Arrow damage. It should be represented on that Normal Attack
-    path rather than as a separate default-disabled formula, so C6 damage is not
-    missed by normal rotations.
+    Deleted the yoimiya-c6-arrow formula entry and its count:0 comboDescriptor
+    line. C6 is now a StatBuff at C6+ with baseDmg% +0.3 (expected value
+    0.5 x 0.6), receiver selfOnField, filter abilities ["normal"], so it rides
+    the existing yoimiya-normal chain.
 
 - id: kirara-e-q-kit-damage
   entity: kirara
   rule: S7
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Kirara only models her C4 coordinated attack, but her kit has direct E/Q damage
     rows and P2 explicitly buffs Meow-teor Kick and Secret Art: Surprise Dispatch
     damage based on Max HP.
   detail: >
-    Add formulas for the relevant E and Q damage sources before applying P2: E
-    Tail-Flicking Flying Kick (param1), hold collision damage (param7), Flipclaw
-    Strike (param9), Q initial hit (param1), and Cat Grass Cardamom explosions
-    (param2). P2 should add dmg% scaling from Max HP, with 0.4% per 1000 HP for
-    E damage and 0.3% per 1000 HP for Q damage. C1 can add up to 4 extra Cat
-    Grass Cardamoms, but the exact default count should be chosen with the combo
-    model.
+    Added five Dendro DirectFormula entries: kirara-skill (E param1),
+    kirara-e-collision (E param7), kirara-e-flipclaw (E param9), kirara-burst
+    (Q param1) and kirara-cardamom (Q param2). P2 split into two hp -> dmg%
+    ScalingBuffs: the E half (0.4% per 1000 HP) is a self buff with filter
+    abilities ["skill"], while the Q half (0.3% per 1000 HP) is a bespokeBuff on
+    kirara-burst and kirara-cardamom only, so it never reaches kirara-c4-steed.
+    comboDescriptor now runs E press + Q initial + 3 Cardamoms (bonus minC 1
+    delta 4) + 5 C4 procs; the two hold-mode E formulas exist but are left out of
+    the default rotation since press and hold are mutually exclusive.
 
 - id: gorou-q-collapse-modeling
   entity: gorou
   rule: S7
-  status: actionable
+  status: completed
   category: bug
   summary: >
-    Gorou's Q formula models only one Crystal Collapse hit and the bespoke P2
-    DEF flat bonus is targeted as selfOnField, so it may not apply to the
-    off-field Crystal Collapse part.
+    Gorou's Q formula models only a single Crystal Collapse hit, but General's
+    Glory generates one every 1.5s for the field's whole duration.
   detail: >
-    General's Glory generates Crystal Collapse every 1.5s for its duration
-    (base duration param3), so the collapse part should represent the repeated
-    hits rather than a single hit. C2 can extend the duration by up to 3s after
-    crystallize or lunar-crystallize triggers. The P2 15.6% DEF bonus applies
-    to both Q initial damage and Crystal Collapse, including off-field collapse
-    hits, so its receiver/placement must cover the off-field part.
+    Crystal Collapse part now carries hits: floor(Q param3 / 1.5) = 6, extended
+    to floor((Q param3 + 3) / 1.5) = 8 when constellation >= 2 and the team can
+    trigger Crystallize (hasReaction("crystallize") || hasReaction("lunarCrystallize"),
+    per U12's lunar-superseding rule). The bespoke P2 DEF buff was left untouched
+    — bespokeBuffs bypass receiver resolution entirely (buildBespokeOverlay reads
+    only target.filter), so its receiver is inert and it already reaches the
+    offField collapse part.
 
 - id: sara-c2-crowfeather-damage
   entity: kujou_sara
   rule: S7
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Sara C2's weaker Crowfeather damage is not modeled; the E formula only
     includes the normal Tengu Juurai: Ambush hit.
   detail: >
-    At C2, using Tengu Stormcall leaves a Crowfeather at Sara's original position
-    that triggers a weaker Tengu Juurai: Ambush dealing 30% of the original E
-    Ambush damage. Add this to the E formula at C2, likely as an additional part
-    using E param1 * 0.3.
+    sara-skill gains a second part at constellation >= 2 with
+    this.param("E", 1) * 0.3 (Electro/skill/none), matching the "造成原本30%的伤害"
+    text and gcsim's 0.3 * skill[TalentLvlSkill]. Label switches to
+    "E伏伤害+乌羽" / "E Ambush + Crowfeather" at C2.
 
 - id: shinobu-p2-overbuffs-c4
   entity: kuki_shinobu
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Shinobu's P2 EM-to-baseDmg buff is scoped to all skill damage, so it buffs the
     C4 Thundergrass Mark even though P2 only increases Grass Ring of
     Sanctification damage.
   detail: >
-    The current global ScalingBuff uses filter abilities: ["skill"], while the
-    implemented skill formulas are C4 Thundergrass Mark and Hyperbloom. Since the
-    E ring direct damage is intentionally tracked as missing/wont-do, P2 should
-    not apply to C4. If the E ring formula is later added, attach the P2 scaling
-    only to that ring formula or otherwise narrow the scope.
+    Removed the skill-filtered P2 ScalingBuff. P2 only boosts Grass Ring damage,
+    and at the time the ring's direct-damage formula was not modelled, so the
+    buff had no valid target — its entire effect was landing on
+    shinobu-c4-thundergrass. P2 has since been reattached as a bespokeBuff on the
+    new shinobu-e-ring part (see shinobu-e-ring), which is the only formula it
+    may affect.
 
 - id: sayu-c6-daruma-scope
   entity: sayu
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Sayu C6's EM-to-baseDmg buff is scoped to all Burst damage, so it also buffs
     the Q initial hit even though C6 only enhances Muji-Muji Daruma damage.
   detail: >
-    C6 says the Muji-Muji Daruma created by Yoohoo Art: Mujina Flurry gains extra
-    attack damage from Sayu's EM, capped at 400% ATK. The current ScalingBuff
-    uses filter abilities: ["burst"], which also matches sayu-q-initial. Scope
-    the buff to the Daruma formula/part only.
+    Moved the C6 CrossScalingBuff out of the buffs array and onto the sayu-daruma
+    part as a bespokeBuff (still constellation >= 6, receiver "self",
+    min(em * 0.002, 4.0) * atk -> baseDmg). sayu-q-initial no longer picks it up.
 
 - id: thoma-q-initial-c2-count
   entity: thoma
   rule: S7
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Thoma's Q modeling omits the initial Crimson Ooyoroi skill hit and keeps
     Fiery Collapse at 15 hits even when C2 extends the duration by 3s.
   detail: >
-    Add Q initial Skill DMG (Q param1) to the burst formula or combo, then adjust
-    Fiery Collapse count for C2. Base Scorching Ooyoroi duration is param7 and
-    Fiery Collapse can trigger once every 1s; C2 increases the duration by 3s,
-    so the default collapse count should be 15 at C0-C1 and 18 at C2+ if the
-    combo assumes continuous Normal Attack triggers.
+    Added thoma-burst-initial (Q param1, Pyro/burst/none, on-field) and changed
+    the combo to `[{ thoma-burst-initial, 1 }, { thoma-burst-collapse, 15,
+    bonus: [{ minC: 2, delta: 3 }] }]`, so C2 rotations run 18 collapses.
+    Thoma's E damage (E param1) is still unmodelled — outside this item.
 
 - id: chiori-p2-construct-gate
   entity: chiori
   rule: U9
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Chiori's P2 Geo DMG Bonus is always active, but The Finishing Touch requires
     a nearby party member to create a Geo Construct, or C1 to trigger it through
     a non-Chiori Geo teammate.
   detail: >
-    The implementation already computes hasGeoConstruct/hasExtraPet for Tamoto
-    count, but the P2 StatBuff is unconditional. Gate the 20% Geo DMG Bonus on
-    Geo Construct creation at C0, and at C1 also allow the constellation path
-    when the team has another Geo character.
+    Hoisted the Geo-construct detection out of the formulaMap IIFE into private
+    readonly fields (GEO_CONSTRUCT_CHARS is now a module const) and gated the P2
+    +20% geo% StatBuff on `hasFinishingTouch` — a construct teammate at C0, or
+    additionally any other Geo teammate at C1+. The Tamoto count reuses the same
+    field, and the buff source now reads origin "P2" / "P2/C1" with trigger
+    "geo-construct" instead of an empty trigger list.
 
 - id: raiden-e-burst-buff-offfield
   entity: raiden_shogun
   rule: U1
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Raiden's E Burst DMG Bonus is emitted as teamOnField per character, so it
     does not apply to off-field Burst damage even though Eye of Stormy Judgment
     buffs each affected character's Elemental Burst damage.
   detail: >
-    Keep the per-character charId scaling by each teammate's burst energy cost,
-    but use a receiver that follows the character's Burst damage while off-field
-    as well as on-field. Off-field Burst formulas such as persistent deployables
-    should still receive the E param4 * energy-cost dmg% bonus.
+    Changed the per-teammate Eye of Stormy Judgment StatBuff receiver from
+    "teamOnField" to "team", keeping charId and filter abilities ["burst"] and
+    the E param4 * energy-cost scaling. Off-field Burst formulas (persistent
+    deployables) now receive the bonus.
 
 - id: kazuha-absorption-selection
   entity: kaedehara_kazuha
@@ -243,64 +250,293 @@
 
 - id: yae_miko-p1-e-cast-proc
   entity: yae_miko
-  rule: S7
+  rule: S11
   status: completed
   category: bug
   summary: >
-    P1 extra lightning (40% ATK / 50% SC ATK) is bundled into the per-tick
-    yae_miko-skill formula, but game text triggers it on E cast when 3 Sakura
-    are nearby — not on every Sesshou Sakura lightning strike.
+    P1 extra lightning was correctly split out into yae_miko-p1-proc, but the
+    new part carries offField: true. The proc fires when Yae casts E with 3
+    Sakura nearby, so she is on-field for it and the flag wrongly strips
+    on-field buffs (her own C2 teamOnField EM, teammates' teamOnField buffs).
   detail: >
-    Split P1 proc into yae_miko-p1-proc (Direct/StellarDirect 0.4/0.5 ATK,
-    offField) with combo count 4; removed from yae_miko-skill per-tick bundle.
-
-- id: yae_miko-p4-sc-proc-overcount
-  entity: yae_miko
-  rule: S7
-  status: completed
-  category: approximation
-  summary: >
-    P4 Radiance 200% ATK StellarDirect proc is included on every yae_miko-skill
-    tick (combo count 15) without the 2.5s ICD, inflating SC proc DPS.
-  detail: >
-    Split into yae_miko-p4-sc-proc (StellarDirect 2.0 ATK) with combo count 7
-    when radianceOn && hasScReaction; removed from per-tick yae_miko-skill.
-
+    Done. Removed offField: true from the yae_miko-p1-proc part - the proc fires on
+    the E cast, which Yae can only perform while active. The earlier split (separate
+    formula entry, combo count 4) is unchanged, and the genuinely off-field parts
+    (yae_miko-skill Sakura bolts, yae_miko-p4-sc-proc) keep their flag.
 - id: yae_miko-c2-em-buff
   entity: yae_miko
   rule: U1
   status: completed
   category: bug
   summary: >
-    C2 EM grant (60/90/120/200 by Sakura level) for Yae and the active
-    character is not implemented. Only the Sakura level multiplier in the E
-    formula reflects C2.
+    C2 EM grant is implemented as two buffs, receiver "self" +200 EM and
+    receiver "teamOnField" +200 EM. Both match Yae on her own on-field parts
+    (RECEIVER_RULES.teamOnField ignores the provider), so Yae's burst and any
+    non-offField part see +400 EM instead of +200.
   detail: >
-    Added C2 StatBuff +200 EM for self and teamOnField (peak Sakura level 4),
-    gated on ["E"] Sakura present trigger.
-
-- id: mizuki-c1-swirl-receiver
-  entity: yumemizuki_mizuki
-  rule: U1
+    Done. Second C2 buff receiver changed teamOnField -> otherOnField, so the
+    self + otherOnField decomposition no longer double-counts on Yae's own
+    non-offField parts. Yae keeps her +200 EM off-field via the "self" buff.
+- id: yae_miko-c4-burst-dmg
+  entity: yae_miko
+  rule: U5
   status: completed
   category: bug
   summary: >
-    C1 Twenty-Three Nights' Awaiting +1100% EM Swirl bonus uses receiver
-    "self", but the mark buff applies to Swirl against the marked enemy from
-    any nearby party member's Anemo damage.
+    C4's second clause "此外，八重神子的元素爆发伤害提升100%" (Yae's Elemental
+    Burst DMG +100%) has no buff. Only the 20% team Electro DMG clause is
+    implemented, so yae_miko-burst is undervalued by a factor of ~2 at C4+.
   detail: >
-    Changed C1 ScalingBuff receiver from "self" to "team" with filter
-    reactions ["swirl"].
-
-- id: mizuki-p4-periodic-scope
+    Done. Added a StatBuff at constellation >= 4: dmg% 1.0, receiver "self",
+    filter abilities ["burst"], cbs origin "C4". Separate from the existing C4 team
+    Electro DMG buff, which stays team-wide and unfiltered.
+- id: yae_miko-p4-enhanced-lightning-scope
+  entity: yae_miko
+  rule: U10
+  status: completed
+  category: bug
+  summary: >
+    P4's +80% ATK enhancement is a ScalingBuff with filter abilities ["skill"]
+    and no maxStacks, so it lands on all 15 yae_miko-skill ticks plus
+    yae_miko-p1-proc and yae_miko-p4-sc-proc. Game text enhances only "下一次
+    杀生樱的落雷", once per 2.5s.
+  detail: >
+    Done, with one structural deviation from the prescribed shape, forced by the
+    engine. bespokeMaxStacks() (core/statBuff.ts) takes maxStacks from the FIRST
+    bespoke buff carrying one and applies the resulting cutoff to the WHOLE bespoke
+    overlay of that part, and the unbuffed remainder is rebuilt from base stats with
+    no bespoke buffs at all. Putting the P4 buff (maxStacks 7) in the same
+    bespokeBuffs array as the always-on P2/C6 Sakura buffs would therefore have
+    capped P2 and C6 at 7 of 15 bolts too - a large silent loss on Yae's biggest
+    passive.
+    Implemented instead with the buffed-first / unbuffed-subsequent form that U10
+    lists as the alternate for this pattern, entirely inside the existing
+    yae_miko-skill entry (no new formula id): comboDescriptor count 1, part 0 =
+    hits 7 with bespokeBuffs [P2, C6, P4 +80% ATK], part 1 = hits 8 with
+    bespokeBuffs [P2, C6]. Total Sakura bolts stay 15 and the enhanced count stays
+    7, matching yae_miko-p4-sc-proc. Both parts keep offField: true. When the team
+    has no Superconduct/Stellar-Conduct source the entry collapses to a single
+    15-hit part with [P2, C6] and no P4 buff at all.
+    Scope is fixed as a side effect: the P4 enhancement no longer exists as an
+    abilities ["skill"] buff, so it cannot reach yae_miko-p1-proc or
+    yae_miko-p4-sc-proc.
+- id: yae_miko-sakura-scoped-buffs-leak
+  entity: yae_miko
+  rule: U5
+  status: completed
+  category: bug
+  summary: >
+    P2 (EM → Sakura DMG +0.15%/point) and C6 (Sakura attacks ignore 60% DEF)
+    are scoped with filter abilities ["skill"], but both clauses name the
+    Sesshou Sakura lightning specifically. Since P1/P4 procs are now separate
+    skill-tagged formulas, both buffs leak onto yae_miko-p1-proc.
+  detail: >
+    Done. P2 (EM -> Sakura DMG +0.15%/point) and C6 (Sakura attacks ignore 60% DEF)
+    moved out of the buffs array and onto the yae_miko-skill parts as bespokeBuffs,
+    sharing one instance array (sakuraBuffs) across both parts so the BuffLedger
+    dedupe by object identity keeps a single ledger row each. The
+    abilities ["skill"] filters are gone, so neither buff can reach
+    yae_miko-p1-proc or yae_miko-p4-sc-proc. Landed in the same pass as
+    yae_miko-p4-enhanced-lightning-scope; see that item for the part split those
+    three buffs now ride on.
+- id: yae_miko-c1-trigger-label
+  entity: yae_miko
+  rule: U7
+  status: completed
+  category: bug
+  summary: >
+    C1's two buffs use triggers ["passive"], but the clause fires on
+    "触发超导/星超导反应或造成星超导反应伤害". U7 requires labelling at the
+    granularity the text uses, i.e. ["superconduct", "stellarConduct"].
+  detail: >
+    Done. C1's two buffs now carry triggers ["superconduct", "stellarConduct"], and
+    C6's Stellar-Conduct CRIT DMG buff carries triggers ["stellarConduct"] (origin
+    unchanged at C6). The runtime gate (hasScReaction) is untouched. No
+    "stellar-reaction" label was used - neither clause is a stellar umbrella clause.
+- id: mizuki-radiance-option
   entity: yumemizuki_mizuki
-  rule: U8
+  rule: S1b
+  status: completed
+  category: bug
+  summary: >
+    Mizuki has no OptionDef and no Radiance handling at all, but her P4 states
+    "队伍中的角色在附近触发星扩散反应后的8秒内，梦见月瑞希将会进入辉映·星扩散状态".
+    She is a Radiance carrier (Stellar Swirl), not a Radiance-free 6.7 kit.
+  detail: >
+    Done. Registered @RegisterCharacter("yumemizuki_mizuki", mizukiOption) with the
+    S1b two-choice schema, label Radiance: Stellar Swirl, "off" first so it is the
+    default, "on" gated on tm.hasReaction("stellarSwirl") only. Exposed as
+    private readonly radianceOn. Her option slot was free, so nothing was displaced.
+    All nine sibling items landed in the same change.
+- id: mizuki-p4-stellar-hit
+  entity: yumemizuki_mizuki
+  rule: S1
+  status: completed
+  category: missing-formula
+  summary: >
+    P4's Radiance clause — the enhanced periodic Dreamdrifter hit also deals an
+    extra 1000%-EM Anemo instance "视为星扩散反应造成的伤害" — is not modelled.
+  detail: >
+    Done. Added formula entry "mizuki-p4-stellar" (label P4 Stellar Swirl), gated on
+    radianceOn, one part with
+    StellarDirectFormula(10.0, { Anemo, skill, stellarSwirl }, "em") and no offField
+    flag - the hit lands while she is drifting on-field. comboDescriptor count 4,
+    matching the maxStacks 4 settled in mizuki-p4-tick-budget.
+- id: mizuki-c1-stellar-branch
+  entity: yumemizuki_mizuki
+  rule: S1b
+  status: completed
+  category: bug
+  summary: >
+    C1's Radiance clause "上述额外伤害转为梦见月瑞希元素精通的400%的风元素伤害，
+    该伤害视为星扩散反应造成的伤害" replaces the 1000%-EM extra hit. The impl only
+    has the non-Radiance DirectFormula(10.0, anemoSkill, "em") branch.
+  detail: >
+    Done. The C1 extra-hit part inside mizuki-skill-swirl now branches: radianceOn
+    -> StellarDirectFormula(4.0, { Anemo, skill, stellarSwirl }, "em"), otherwise the
+    existing DirectFormula(10.0, anemoSkill, "em"). Replace, not overlay, and the
+    part's position and count are unchanged.
+- id: mizuki-e-stellar-swirl-buff
+  entity: yumemizuki_mizuki
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    E grants two separate team reaction-DMG bonuses — param2 for 扩散 and
+    param6 for 星扩散 ("每100点精通提升星扩散伤害百分比"). Only the Swirl buff
+    exists, so Stellar Swirl teams lose her signature E buff entirely.
+  detail: >
+    Done. Added a second E ScalingBuff: receiver "team", filter
+    reactions ["stellarSwirl"], em -> reactionDmg%, scale this.param("E", 6) / 100
+    (same per-EM-point convention as the base Swirl row). Not Radiance-gated.
+- id: mizuki-e-swirl-scale
+  entity: yumemizuki_mizuki
+  rule: S5
+  status: completed
+  category: bug
+  summary: >
+    The E Swirl buff uses this.param("E", 2) / 10000, which is 100x too small.
+    The talent row is labelled "每100点精通提升扩散伤害百分比" and param2 is a
+    P-format fraction (0.45 at Lv10 = 45% per 100 EM), so the per-EM-point
+    scale is param2 / 100.
+  detail: >
+    Done. E Swirl buff scale changed from this.param("E", 2) / 10000 to
+    this.param("E", 2) / 100 - the talent row is "per 100 EM", so +450% Swirl DMG at
+    1000 EM at Lv10 instead of +4.5%. Same convention applied to the new param6
+    Stellar Swirl buff.
+- id: mizuki-c1-stellar-swirl-bonus
+  entity: yumemizuki_mizuki
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    C1 boosts the marked reaction by 1100% EM for 扩散 and 550% EM for 星扩散
+    ("提升值分别相当于…1100%/550%"). Only the 1100% Swirl entry exists.
+  detail: >
+    Done. Added a second C1 ScalingBuff mirroring the Swirl one - receiver "team",
+    filter reactions ["stellarSwirl"], em -> baseDmg, scale 5.5. The 1100% Swirl
+    entry is unchanged; the two amounts stay in separate entries.
+- id: mizuki-c6-stellar-swirl-crit
+  entity: yumemizuki_mizuki
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    C6's clause "并使这些角色造成的星扩散反应伤害暴击率提升10%，暴击伤害提升20%"
+    is missing. Only the fixed 30%/100% Swirl CRIT entry is implemented.
+  detail: >
+    Done. Added a StatBuff at C6: receiver "team", filter
+    reactions ["stellarSwirl"], reactionCr 0.1 and reactionCd 0.2. Kept separate
+    from the fixed 30%/100% Swirl CRIT profile.
+- id: mizuki-c6-self-crit-misrouted
+  entity: yumemizuki_mizuki
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    C6's EM-above-500 clause buffs Mizuki's OWN CRIT Rate/DMG (up to +20%/+80%
+    at 1000 EM), but it is implemented as two team-wide ScalingBuffs writing
+    reactionCr/reactionCd with filter reactions ["swirl"] — wrong receiver,
+    wrong keys, and a scope the text never mentions.
+  detail: >
+    Done, with the CRIT Rate half approximated - see mizuki-c6-crit-rate-em-scale.
+    Both team-wide reactionCr/reactionCd ScalingBuffs with the invented
+    reactions ["swirl"] filter were removed. CRIT DMG is now
+    ScalingBuff(receiver "self", em -> "cd", 0.0016, cap 0.8, threshold 500), no
+    filter, which correctly reaches her own Stellar Swirl direct hits.
+    CRIT Rate could not be shipped in the same scaling form: a ScalingBuff with
+    outputKey "cr" is rejected by the "No scaling ER/CR buffs" guard in
+    tests/lib/team-comp/calc/instantiation.test.ts, because the optimizer
+    precomputes crFloor from empty artifact sheets and a scaling cr buff makes that
+    floor depend on the artifacts being searched. Shipped as a static
+    StatBuff(receiver "self", cr 0.2) - the clause's own cap, reached at 1000 EM -
+    with the assumption documented at the call site. The guard's allowlist was
+    deliberately not touched.
+- id: mizuki-swirl-gate-supersede
+  entity: yumemizuki_mizuki
+  rule: U12
+  status: completed
+  category: bug
+  summary: >
+    formulaMap gates her main damage entry on
+    canSwirl = teamMeta.hasReaction("swirl"). On a Cryo-swirl Stellar team the
+    base reaction is superseded (STELLAR_SUPERSEDES.swirl), so hasReaction
+    returns false and mizuki-skill-swirl — periodic E damage, the P4 bespoke
+    buff and the C1 extra hit — silently disappears.
+  detail: >
+    Done. The formulaMap gate is now
+    hasReaction("swirl") || hasReaction("stellarSwirl"), so the entry (periodic E
+    damage, the P4 bespoke buff, the C1 extra hit) survives on a fully superseded
+    Cryo-swirl team. The TransformFormula(1.0, { Anemo, skill, "swirl" }) part alone
+    stays on the narrow hasReaction("swirl") gate and is spread out of the parts
+    array when false; the label drops the swirl suffix in that case. The rationale
+    (rx-stellarSwirl carries no proc damage, all Stellar DPS comes from the explicit
+    StellarDirectFormula entries, and a live swirl part would collect base-Swirl
+    buff values for a converted reaction) is recorded in a code comment at the gate.
+- id: mizuki-p4-tick-budget
+  entity: yumemizuki_mizuki
+  rule: U10
   status: completed
   category: approximation
   summary: >
-    P4 +1000% EM baseDmg buff uses abilities ["skill"] and applies to all
-    skill hits, but game text limits it to the next periodic Dreamdrifter AoE
-    tick after a Swirl — not the initial E cast damage.
+    The P4 +1000% EM bespokeBuff sits on the mizuki-skill-swirl periodic part,
+    which has combo count 6, but the enhancement can only fire once every 2.5s
+    and requires a Swirl/Stellar Swirl trigger, so fewer than 6 ticks are
+    actually enhanced.
   detail: >
-    Moved P4 +1000% EM baseDmg to bespokeBuffs on mizuki-skill-swirl periodic
-    DirectFormula only; initial E cast (mizuki-skill-initial) excluded.
+    Done. maxStacks 4 on the P4 bespokeBuff attached to the mizuki-skill-swirl
+    periodic part (combo count 6), so 4 of 6 ticks are enhanced. The derivation -
+    5s Dreamdrifter at Lv10 + 2 x 2.5s from P1 = 10s window, 10s / 2.5s ICD = 4 - is
+    in a code comment. The same 4 is used as the combo count for
+    "mizuki-p4-stellar".
+- id: mizuki-c6-crit-rate-em-scale
+  entity: yumemizuki_mizuki
+  rule: U3
+  status: open
+  category: approximation
+  summary: >
+    C6's EM-above-500 clause raises Mizuki's own CRIT Rate by 0.04% per point
+    (cap +20%) and CRIT DMG by 0.16% per point (cap +80%). CRIT DMG is modelled
+    as a ScalingBuff, but the CRIT Rate half is pinned to its +20% cap because a
+    ScalingBuff with outputKey "cr" is not representable in the optimizer's
+    constraint model.
+  detail: >
+    Raised while implementing mizuki-c6-self-crit-misrouted. The optimizer
+    precomputes crFloor via getTeamStats with empty artifact sheets and then
+    checks crFloor + artifactCr >= minCr; a cr buff that scales with EM makes
+    that floor depend on the artifacts being searched, which the precomputed
+    model cannot express. tests/lib/team-comp/calc/instantiation.test.ts guards
+    this with a small curated allowlist (traveler_electro, rosaria, nahida,
+    nilou, sigewinne), and the allowlist was deliberately not extended here.
+    Current implementation: StatBuff(receiver "self", cr 0.2) - the clause's own
+    cap, which is reached at exactly 1000 EM. A C6 Mizuki is a pure EM support
+    (EM sands/goblet/circlet, plus +100 EM from her own P2), so 1000 EM is at or
+    below a realistic build; the approximation is exact at 1000+ EM and a small
+    overstatement on under-invested builds. The CRIT DMG half is unaffected and
+    still scales exactly.
+    To model this properly, the guard would have to accept the optimizer's
+    existing estimateScalingBonus path in
+    src/lib/team-comp/optimizer/constraintChecker.ts, which already handles
+    capped scaling cr buffs by using the cap as the estimate - precisely what
+    the allowlisted nahida P2 (EM -> cr, self) relies on. Re-decide the
+    allowlist policy before converting this back to a ScalingBuff.

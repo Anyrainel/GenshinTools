@@ -28,7 +28,7 @@
 - id: "arlecchino-normal-bol-repeat"
   entity: "arlecchino"
   rule: "U9"
-  status: actionable
+  status: wont-do
   category: "approximation"
   summary: >
     The default combo repeats arlecchino-normal three times, but that formula's Masque
@@ -41,10 +41,13 @@
     entries or another per-rotation hit-index mechanism so hits 8-21 use continued
     0.925^n decay instead of resetting after each 7-hit sequence.
 
+    RESOLVED wont-do: the implemented count was counted in game by the
+    maintainer and is authoritative.
+
 - id: "tartaglia-c4-riptide-count"
   entity: "tartaglia"
   rule: "S9"
-  status: actionable
+  status: wont-do
   category: "approximation"
   summary: >
     C4 Riptide count is still approximated incorrectly. The current comboDescriptor adds
@@ -58,3 +61,372 @@
     six base 1.5s procs. If modeling the ranged C4 branch, add a Riptide Flash formula
     from A param9 with hits: 3, Hydro/normal/none, then decide its combo count separately
     from the melee stance rotation.
+
+    RESOLVED wont-do: the implemented count was counted in game by the
+    maintainer and is authoritative.
+
+- id: odette-splendor-stack-transfer
+  entity: odette
+  rule: U9
+  status: wont-do
+  category: approximation
+  summary: >
+    Marvelous Splendor is modeled as full stacks (4, or 6 at C1) granted to the whole
+    team at once for both the P1 +15%/stack Stellar Glimmer reaction DMG buff and the
+    C2 +7%/stack ATK buff, but below C6 the stacks transfer off Odette to teammates
+    rather than existing on everyone simultaneously.
+  detail: >
+    Keeping the team-wide max. The stacks are never simultaneous at a single
+    instant, but they are simultaneous across a rotation, which is what the model
+    actually sums. The drain clause only fires while Odette is off-field
+    ("当奥黛塔处于队伍后台时，奥黛塔每秒会清除1层华彩"), so the two branches are
+    sequential and each is at max when its own damage lands: Odette summons the
+    Solo Dance Double, gains 4 stacks (6 at C1), and deals her own on-field hits
+    and the Coda-at-Dawn follow-up at full stacks; she then swaps out and over the
+    next ~4s (C0) or ~3s (C1, 2 stacks/s) the on-field teammate reaches the same
+    full count, which then persists until the Dance Double leaves
+    ("持续至独舞倒影退场"). Neither side is modeled above its own achievable peak,
+    so this is standard U9 peak-damage treatment, not a double-count.
+    The residual over-count is the teammate's damage during the 3-4s transfer
+    ramp, which is short against a 20s+ rotation. Splitting into self + "other"
+    buffs with reduced counts would understate both sides, and per U11 the
+    per-entity OptionDef slot is already taken by odetteOption (the 3-way Radiance
+    selector), so user-selectable tiers are not available. No constellation >= 6
+    gate: C6 only removes the drain, it does not change the peak either side can
+    reach.
+
+- id: vesna-pierce-blade-attribution
+  entity: vesna
+  rule: S1
+  status: open
+  category: approximation
+  summary: >
+    灵剑·刺 (E param2) is modeled as Vesna's own strike, so it stays a DirectFormula
+    under 辉映·星扩散 and is excluded from the P1 Unruffled baseDmg% bonus. If that row
+    is in fact the spirit blade's hit, the pierce is under-reported by up to 60% and
+    should become a StellarDirectFormula in Radiance.
+  detail: >
+    The talent table lists a paired 灵剑/星灵剑 row for 灵剑·落 (param4/param5) and
+    灵剑·舞 (param6/param7, param8/param9) but only a single row for 灵剑·刺, which is
+    the basis for treating it as Vesna's strike. Against that, the E description says
+    the special skill has Vesna and the blade strike together, and 灵剑·舞 has no
+    Vesna-only row at all, so the table is not consistent. The beta Q table is
+    entirely empty, so a missing 刺 stellar pair is plausible. Recheck after the
+    game-data refresh.
+
+    Triage 2026-08-13: stays open — the beta table cannot settle this, but the framing
+    can be sharpened for whoever revisits it. The paired rows are 灵剑/星灵剑, i.e. the
+    non-Radiance vs Radiance variant of one blade hit, not "Vesna + blade": at E L1 the
+    pairs are param4/param5 = 1.0/1.0, param6/param7 = 0.4/0.4, param8/param9 =
+    1.4/1.4 — identical numbers, the usual placeholder shape for one hit listed in two
+    states. That makes the bare rows (灵剑·刺伤害 param2 = 0.4, 灵剑·落伤害 param3 = 0.6)
+    read as Vesna's own portion, exactly parallel labels, which is what the current
+    implementation follows. So the two gaps are opposite, not one anomaly: 刺 has a
+    Vesna row and no blade pair, 舞 has blade pairs and no Vesna row. With the Q table
+    shipping 15 empty rows, an incomplete E table is equally plausible, and neither
+    reading can be confirmed without the finalized data. Keep the current literal-label
+    reading meanwhile — it is the defensible default, and the error is bounded: 刺 is
+    tier 1 of the escalating special skill, fired once per Spirit Blade state, and at
+    L1 it is 0.4 against 0.6+1.0 for 落 and 4x0.4+1.4 for 舞, so it is the smallest of
+    the three casts. Recheck alongside vesna-burst-talent-data at the next refresh.
+
+    Correction 2026-08-13: the "beta Q table is entirely empty" premise above no
+    longer holds — that was a scraper bug (see vesna-burst-talent-data), and the Q
+    row is now populated as a 灵剑/星灵剑 pair with identical values, the same shape
+    as 落 and 舞. So the E table is not demonstrably truncated after all, which
+    weakens the "a missing 刺 stellar pair is plausible" argument and leaves the
+    literal-label reading as the stronger default. Still open: only the finalized
+    game data can settle whether 灵剑·刺 has an unlisted stellar variant.
+
+    Evidence added 2026-08-13 (review pass 3): the identical-value pairing is the
+    7.0 convention for a plain↔星扩散 row pair, not a placeholder, so the earlier
+    triage's "identical numbers, the usual placeholder shape" reading was wrong on
+    that point. Across the 7.0 batch a 星扩散 row is exactly 1.5x its 星超导
+    sibling and exactly equal to the plain row: sandrone A at L10 gives beam
+    242.2% plain / 161.5% SC / 242.2% SSw, E gives 58.3 / 38.9 / 58.3, Q gives
+    595.4 / 397 / 595.4, and the constellation constants follow the same 1.5 ratio
+    (sandrone C4 125%/187.5%, C6 80%/120%; odette C1 300%/450%, C4 66%/99%; odette
+    E pairs 550/826, 49/73, 58/87). Vesna has no 星超导 variant at all, so her
+    pairs legitimately collapse to plain == SSw (E 180/180, 72/72, 252/252; Q
+    473.76/473.76). This does not decide the 刺 question either way, but it removes
+    the "placeholder" argument that was being used to suspect the E table, leaving
+    the literal-label reading as the default until finalized data lands.
+
+- id: vesna-unruffled-stack-ramp
+  entity: vesna
+  rule: U9
+  status: completed
+  category: approximation
+  summary: >
+    P1 Unruffled is applied at the full 6-stack value (+60% baseDmg%) to every
+    spirit-blade formula part, but the stacks are cleared by the very E cast that
+    starts the Spirit Blade state and are then earned by the same casts the buff
+    boosts, so at C0/C1 no blade hit except the last can reach 6 stacks.
+  detail: >
+    P1 text: "薇斯纳施放灵剑·刺、灵剑·落、灵剑·舞或元素爆发灵剑·爆后，获得1层「从容」…
+    施放元素战技灵剑·起或离场时，所有「从容」将被清除。每层「从容」都将使薇斯纳所有的
+    灵剑和星灵剑造成比原本高10%的伤害，至多造成原本160%的伤害。"
+
+    The stack is granted AFTER each cast, and the E cast that opens the state wipes
+    the counter, so within one Spirit Blade state the reachable stack count at the
+    moment each hit lands is: 灵剑·刺 0, 灵剑·落 1, 灵剑·舞 #1/#2/#3 2/3/4, Q 5
+    (C1 adds a 4th dance, pushing Q to 6). The implementation attaches
+    `unruffled()` — a flat `baseDmg%` +0.6 — as bespokeBuffs to every blade part
+    regardless. On the 灵剑·落 blade that is 1.6x instead of 1.1x, i.e. ~45% over
+    the achievable peak; the four 灵剑·舞 hits are over by ~33%/23%/14%.
+
+    This is not the U11 "action-dependent stacking, assume max" carve-out: max is
+    structurally unreachable for those hits, not merely inconvenient. It IS correct
+    at C2+, where "薇斯纳进入「灵剑武装」状态时，立刻获得满层的「从容」" grants 6
+    stacks on entry — the impl already notes this by switching the cbs origin to
+    "P1/C2".
+
+    Suggested fix: keep the flat +60% when `this.constellation >= 2`, and below C2
+    give each part its own stack count via the bespokeBuff value (落 blade 0.1;
+    dance hits 0.2/0.3/0.4 — note the current dance formula collapses all four
+    swings into one `hits: 4` part plus the finisher, so it would need either a
+    per-cast split or a single representative value; burst 0.5, or 0.6 at C1). The
+    C6 tread's Stellar blade is explicitly covered by P1 too and would follow the
+    same schedule.
+
+    Not flagged in passes 1-2; the comboDescriptor comment reasons correctly that
+    刺 + 落 + 3x舞 + Q lands on exactly 6 stacks by the END of the rotation, but the
+    buff is applied as if all six were present from the first blade hit.
+
+    Triage 2026-08-13 — actionable. The over-count is real and the correct
+    schedule is fully determined by the P1 text, so no gameplay research is
+    needed to fix it.
+
+    U9's peak-damage model means the highest value a hit can actually reach, and
+    U11's "action-dependent stacking, assume max" carve-out is conditioned on the
+    player being able to reach max by performing the required actions. Here the
+    required actions ARE the buffed casts, and the state's own opener wipes the
+    counter, so 6 stacks is structurally unreachable for every blade hit except
+    the last. That is a plain overstatement, not a modelling assumption, and on
+    灵剑·落 it is ~45% of the hit.
+
+    Expected behaviour below C2: each blade hit carries the stack count standing
+    when it lands — 灵剑·刺 +0%, 灵剑·落 +10%, the three 灵剑·舞 casts +20/+30/+40%,
+    Q 灵剑·爆 +50%; at C1 the extra dance is +50% and Q becomes +60%. This follows
+    「施放…后，获得1层」: the stack is granted after the cast, so a cast never buffs
+    itself. If in-game testing later shows the grant landing before the cast's own
+    damage, shift the whole schedule up by one stack rather than reverting to
+    flat. At C2+ the current flat +60% is correct and must stay —
+    「进入「灵剑武装」状态时，立刻获得满层的「从容」」.
+
+    The 灵剑·舞 formula is one entry consumed three times by the comboDescriptor,
+    so it cannot carry three different values as it stands: either split it per
+    cast or use +30%, which is both the middle cast and the exact mean of the
+    three. Splitting is preferable if it is cheap, since the dance is the largest
+    blade contributor. The C6 tread's Stellar blade takes the count standing at
+    the cast it accompanies. No OptionMap here: this is not a time ramp, so U11's
+    tier treatment does not apply, and vesna's single OptionDef slot is already
+    the Radiance selector.
+
+    Interaction with vesna-pierce-blade-attribution (still open): 灵剑·刺 lands at
+    0 stacks, so it takes no P1 bonus under either reading of that item's label
+    question. Fixing the ramp therefore detaches P1 from that dispute instead of
+    entangling the two.
+
+    Implemented 2026-08-13. `unruffled()` now takes a stack count and emits
+    `baseDmg%` = stacks/10, keeping the flat 6 stacks (+60%) whenever
+    constellation >= 2 (C2 grants max on entry, origin stays "P1/C2"). Per-part
+    counts below C2: 灵剑·落 blade 1 (+10%), Q 灵剑·爆 5 (+50%, 6 at C1), C6 tread 6
+    (unreachable below C2 since C6 implies C2). 灵剑·刺 keeps no P1 buff at all —
+    it lands at 0 stacks — so vesna-pierce-blade-attribution is untouched.
+    灵剑·舞 is one formula entry the combo consumes 3 times (4 at C1), so it takes
+    the mean of its per-cast counts (3, or 3.5 at C1) rather than being split into
+    separate entries: `baseDmg%` enters damage as (1 + value), so the sum across
+    casts is linear in the stack count and the mean is EXACT for the rotation
+    total — only the per-row display differs from a split. That avoids adding
+    3-4 near-duplicate formula rows to the UI for no numeric gain.
+
+    Plunge convention: this item touches spirit-blade formulas only and does not
+    depend on the three-formula plunge shape, so the concurrent collapse back to
+    high-plunge-only changes none of the values above. It does share
+    character5Snezhnaya.ts with that work — rebase on it before editing.
+
+- id: sandrone-c2-reactioncd-abilities-filter
+  entity: sandrone
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    Both C2 buffs use `reactionCd` together with `filter.abilities: ["charge"]`,
+    which KEY_CONSTRAINTS in statBuff.ts forbids for reaction-CRIT keys.
+    `validateStatBuff` throws on them; the existing instantiation test never
+    catches it because it builds solo teams, where Radiance resolves to "off" and
+    the C2 branch is never constructed.
+  detail: >
+    Reproduced by instantiating Sandrone at C2/C4/C6 on a team that can produce a
+    Stellar reaction (e.g. sandrone + fischl + kaedehara_kazuha + diona, which
+    gives hasReaction("stellarConduct") === true) and running the same
+    `validateStatBuff` sweep as tests/lib/team-comp/calc/instantiation.test.ts:
+      [character:sandrone/C2] reactionCd is not expected to have a abilities
+      filter. Ask for review for this case.  (x2, one per stacked entry)
+
+    The scoping itself is right and both dimensions are load-bearing. C2 reads
+    "辉映·星烁：重击发射的冷凝射线的暴击伤害提升40%，且每次发射冷凝射线时，都会使
+    本次解算模式期间，发射的所有冷凝射线的暴击伤害进一步提升20%，该效果至多叠加3层"
+    — it targets the condensed beams only, so `abilities: ["charge"]` is needed to
+    keep it off the CA sweep (also ability "charge"), and `reactions` is needed to
+    keep it off the non-Radiance beam. Dropping either dimension mis-scopes the
+    buff, and `cd` + abilities-only would leak onto the sweep.
+
+    Two plausible resolutions, both needing a decision rather than a mechanical
+    edit: (a) add "sandrone/C2" to CONSTRAINT_ALLOWLIST with
+    "reactionCd:forbidsDims-abilities", the same escape hatch mavuika/C2 already
+    uses, or (b) relax the constraint so reactionCr/reactionCd may carry an
+    abilities filter when a reactions filter is also present. Either way the
+    instantiation test should be extended to instantiate option-bearing characters
+    on a team where each option branch is reachable, since today no test covers any
+    Radiance-on buff set.
+
+    Numerically nothing is wrong today: validateStatBuff is not called in
+    production and `cd`/`reactionCd` are summed by computeCritMult, so the
+    displayed damage is already correct. This is a latent rule/test-coverage
+    breach, not a damage error.
+
+    Triage 2026-08-13 — actionable, resolution (a), with a correction to how it
+    has to be wired.
+
+    Take the allowlist route, not the constraint relaxation. Option (b) as
+    written is a no-op: reactionCr/reactionCd already carry
+    `requiresReactionsFilter: true`, and that branch has no escape hatch, so a
+    reactions filter is present on every entry that ever reaches the forbidsDims
+    check. "Permit an abilities filter when a reactions filter is also present"
+    therefore permits it always — it deletes the abilities restriction on both
+    reaction-CRIT keys rather than relaxing it. That restriction is worth
+    keeping: it guards against the much more common error of ability-scoping a
+    reaction-CRIT bonus that the game text does not scope that way. Sandrone C2
+    is a genuine exception rather than a new general rule — a StellarDirect beam
+    sharing ability "charge" with the ordinary CA sweep is a Radiance-era shape
+    only a handful of kits will ever have, and until more appear the per-entity
+    escape hatch is the honest expression of "this one is deliberate".
+
+    Correction to option (a) as filed: the allowlist does not reach this
+    constraint yet. `isAllowlisted` is consulted only by the `requiresReceiver`
+    branch of `validateStatBuff`; the `forbidsDims` loop throws unconditionally,
+    its only exemption being the hardcoded swirl/elements carve-out. So the
+    expected outcome is that `validateStatBuff` accepts sandrone C2's two
+    `reactionCd` entries with `filter.abilities: ["charge"]` intact while still
+    rejecting every other reaction-CRIT key that carries an abilities filter,
+    which means the forbidsDims check has to honour the same per-entity
+    allowlist the receiver check already honours. Sandrone's buffs themselves do
+    not change — both filter dimensions are load-bearing and stay.
+
+    Test gap: keep it inside this item; do not open a second one. The tracker's
+    five categories describe damage-implementation defects and none of them fits
+    missing test coverage, and the gap is not sandrone-specific — it is every
+    option-bearing character in every region file, so it has no honest `entity`.
+    More decisively, splitting it allows the allowlist entry to land alone,
+    which is the one bad outcome available here: it would silence the only
+    current symptom while leaving the next Radiance-gated violation exactly as
+    invisible as this one was. So this item is not complete until the
+    instantiation sweep in tests/lib/team-comp/calc/instantiation.test.ts
+    exercises every reachable branch of an option-bearing character's buff set
+    instead of only the solo-team default. The reviewer's repro team
+    (sandrone + fischl + kaedehara_kazuha + diona) is a working starting point
+    for the Radiance-on branch.
+
+    Implemented 2026-08-13, both halves.
+
+    Engine: the `forbidsDims` loop in validateStatBuff now consults the same
+    per-entity `isAllowlisted` hook the `requiresReceiver` branch already used
+    (`if (isAllowlisted(source, key, `forbidsDims-${dim}`)) continue;`), and
+    CONSTRAINT_ALLOWLIST gained "sandrone/C2" →
+    "reactionCd:forbidsDims-abilities" with the load-bearing-filters rationale
+    as a comment. Sandrone's two C2 buffs are unchanged — both filter
+    dimensions stay. Every other reaction-CRIT key carrying an abilities filter
+    is still rejected; verified by temporarily breaking the allowlist lookup,
+    which made the new sweep fail on sandrone at C2 and C6 in both Radiance
+    branches, then restoring it.
+
+    Test: a new "Option branches on enabling teams" block inside
+    "Buff static validation" puts every option-bearing character on a team where
+    each of its own branches is actually enabled, then runs the same
+    validateAllBuffs sweep at C2 and C6. It searches a documented
+    CANDIDATE_ROSTERS list (solo, stellar-conduct, stellar-swirl, frozen, two
+    lunar rosters, two teammate-constellation rosters) crossed with teammate
+    constellation 6 and 0, so both ">= N" and "< N" predicates are satisfiable;
+    the search runs inside the test body because TeamMeta needs the character
+    stats resource that beforeAll preloads. A companion test asserts that no
+    option branch is left unreachable, so the coverage cannot silently decay
+    again as new predicate shapes appear.
+
+    Newly surfaced by that sweep, NOT triaged, recorded in a PENDING_TRIAGE map
+    in the test rather than dissolved into CONSTRAINT_ALLOWLIST (anything not
+    listed still fails): cyno/C2 reactionDmg% + abilities, wriothesley/C1
+    reactionDmg% + abilities (x2) and wriothesley/C6 reactionCr + reactionCd +
+    abilities. All are the same Radiance-era shape as sandrone C2 — game text
+    that scopes a reaction bonus to specific attacks — but they live in other
+    regions' files and need their own triage.
+
+- id: alyosha-c6-precision-stellar-rider
+  entity: alyosha
+  rule: U9
+  status: completed
+  category: approximation
+  summary: >
+    C6 lets 猎者之准 stack to 2 and the implementation doubles its ATK% accordingly
+    (`precisionAtk = this.param("E", 5) * (isC6 ? 2 : 1)`), but the P3 Radiance
+    rider that P3 attaches to the same 猎者之准 effect (+20% Stellar-Conduct
+    reaction DMG) stays at 20% at C6.
+  detail: >
+    P3: "辉映·星超导：激活弋猎印记时获得的猎者之准效果还会使角色处于场上时造成的
+    星超导反应伤害提升20%。" — P3 does not create a separate buff, it adds a
+    property to 猎者之准 itself.
+    C6: "激活弋猎印记时获得的猎者之准效果可以叠加。该效果至多叠加2层，叠加至2层时，
+    还会使处于该效果影响下的当前场上角色的元素精通提升100点。" — the stacking is on
+    猎者之准 as a whole.
+
+    The implementation treats the stack as doubling one property of the effect
+    (ATK%) but not the other (the P3 SC rider), which is internally inconsistent
+    whichever reading is correct. Either both scale with the stack count (rider
+    becomes 40% at C6) or neither does, and C6's explicit "叠加至2层时" clause only
+    names the EM bonus, which is the argument for the current conservative reading.
+
+    Impact is bounded: C6-only, Radiance-only, and the rider is a `reactionDmg%`
+    entry on teamOnField, so the swing is 20 percentage points of Stellar-Conduct
+    reaction DMG for the active character. Confirm against the live game (or a
+    C6 Alyosha datamine of the 猎者之准 buff stack) before changing.
+
+    Triage 2026-08-13 — actionable: both properties scale with the stack, so the
+    rider is 40% at C6.
+
+    C6 stacks the effect, not one of its properties: 「猎者之准效果可以叠加。该效果
+    至多叠加2层」. 猎者之准 is a single named buff and P3 does not create a parallel
+    one — it adds a property to that same buff (「获得的猎者之准效果还会使…」). Two
+    instances of one named effect grant two instances of everything that effect
+    carries; that is the ordinary reading for a stacking named buff, and the
+    implementation already applies it to the ATK% half. The rider is a property
+    of the same object, not a separate effect riding alongside it.
+
+    C6's 「叠加至2层时，还会使…元素精通提升100点」 is evidence for that reading
+    rather than against it. A bonus that is not per-stack has to be written as an
+    explicit threshold clause, which is precisely what that sentence is; the ATK%
+    and the P3 rider need no such clause because per-stack scaling is the
+    default. The conservative reading would have to explain why one property of
+    the effect stacks silently while the other, added by the same grant, does
+    not — and it cannot, which is the inconsistency the item identified.
+
+    Expected outcome: the Stellar-Conduct `reactionDmg%` rider attached to
+    猎者之准 is driven by the same stack count as precisionAtk, so it reads 20% at
+    C0-C5 and 40% at C6, and one stack count governs the whole effect. The key,
+    the teamOnField receiver, the stellarConduct reactions filter and the
+    Radiance gating are all unchanged.
+
+    Risk is bounded and worth re-checking once: C6-only, Radiance-only, a 20pp
+    swing on the active character's Stellar-Conduct reaction DMG. If a live-game
+    or datamined view of the 猎者之准 stack shows the rider pinned at 20%, restore
+    the flat value — do not resolve the inconsistency by un-stacking the ATK%,
+    which the C6 text states plainly.
+
+    Implemented 2026-08-13. character4Snezhnaya.ts now derives one
+    `precisionStacks = isC6 ? 2 : 1` for the whole 猎者之准 effect and both
+    properties read it: `precisionAtk = this.param("E", 5) * precisionStacks`
+    (unchanged behaviour) and the P3 Stellar-Conduct rider
+    `reactionDmg% = 0.2 * precisionStacks` → 20% at C0-C5, 40% at C6. Key,
+    teamOnField receiver, stellarConduct filter and the radianceOn gate are all
+    unchanged; the buff origin now displays as "P3/C6" at C6, matching how the
+    ATK% half already switches to "E/C6".

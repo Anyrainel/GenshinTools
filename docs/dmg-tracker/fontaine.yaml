@@ -45,172 +45,173 @@
 - id: "clorinde-impale-ability"
   entity: "clorinde"
   rule: "S4"
-  status: actionable
+  status: completed
   category: "bug"
   summary: >
     Impale the Night damage is tagged as Elemental Skill DMG, but the talent text says damage
     dealt during Hunter's Vigil is considered Normal Attack DMG. This makes normal-attack buffs
     miss the lunge and skill-only buffs apply when they should not.
   detail: >
-    Impale the Night damage during Hunter's Vigil should be treated as Normal
-    Attack DMG, not Elemental Skill DMG, so Normal Attack buffs apply and
-    skill-only buffs do not.
+    Retagged the three Impale the Night hits (E param7) in clorinde-normal from
+    normalSkillTag to normalBaseTag (Electro/normal/none), so P1/C2's
+    ["normal", "burst"] ScalingBuff now reaches the lunge and skill-only buffs
+    no longer do. The Arkhe Surging Blade formula keeps normalSkillTag — it is
+    genuinely Skill DMG. Added a code comment citing 「上述方式造成的伤害视为
+    普通攻击造成的伤害」.
 
 - id: "emilie-c6-charged-formula"
   entity: "emilie"
   rule: "S7"
-  status: actionable
+  status: completed
   category: "missing-formula"
   summary: >
     C6 converts both Normal and Charged Attack DMG to Dendro and adds ATK-scaling base damage,
     but only the Normal Attack sequence has a C6 formula. The charged attack variant is missing.
   detail: >
-    Add a C6 charged attack formula using A param5 with Dendro/charge/none and the existing
-    C6 baseDmg buff.
+    Added formulaMap entry "emilie-c6-charge" (minC 6): DirectFormula on
+    this.param("A", 5) with Dendro/charge/none, picking up the existing C6
+    ScalingBuff (+300% ATK baseDmg, filter ["normal", "charge"]). Registered in
+    comboDescriptor with count 0 because Abiding Fragrance caps at 4 Scents
+    shared with emilie-c6-normal, so the CA entry is an alternative rather than
+    extra rotation damage.
 
 - id: "emilie-c6-source-triggers"
   entity: "emilie"
   rule: "U7"
-  status: actionable
+  status: completed
   category: "bug"
   summary: >
     The C6 buff source lists only Elemental Skill as a trigger, but Abiding Fragrance is granted
     after using either Fragrance Extraction or Aromatic Explication. The source display should
     include both E and Q.
   detail: >
-    Abiding Fragrance is granted after either Fragrance Extraction or Aromatic
-    Explication, so the C6 source display should show both E and Q as valid
-    triggers.
+    Changed the C6 ScalingBuff source from cbs(this, "C6", ["E"]) to
+    cbs(this, "C6", ["E", "Q"]) so the display reflects the full trigger set
+    (「施放撷萃调香或香氛演绎时」). Display-only change; no damage impact.
 
 - id: "furina-q-healing-bonus"
   entity: "furina"
   rule: "U8b"
-  status: actionable
+  status: wont-do
   category: "bug"
   summary: >
     Let the People Rejoice grants both DMG Bonus and Incoming Healing Bonus from Fanfare, but
     the implementation only emits the DMG Bonus. Healing Bonus is a modeled stat and should be
     included with the same Fanfare scaling.
   detail: >
-    Healing Bonus is a modeled stat. Let the People Rejoice should grant the
-    Incoming Healing Bonus alongside the existing Fanfare DMG Bonus using the
-    same Fanfare scaling.
+    Rejected 2026-08-13: the claim conflates two different stats. Q param6 is
+    「气氛值转化受治疗加成比例」 — Incoming Healing Bonus (受治疗加成), the
+    amount of healing a character receives. The engine's heal% key is Healing
+    Bonus (治疗加成), the outgoing stat: src/data/i18n-app.ts L53 labels it
+    "Healing Bonus"/"治疗加成", it is the circlet main stat in
+    src/data/constants.ts L94, and every existing user models outgoing healing
+    (Kuki P1, Kaveh C1, Kokomi P4, Ocean-Hued Clam). There is no StatKey for
+    Incoming Healing Bonus in src/data/enums.ts.
+
+    Emitting heal% for Furina's Q would therefore not be a missing buff, it
+    would be a new bug: heal% feeds Kokomi P2's CrossScalingBuff
+    (heal% × 0.15 × HP → baseDmg, character5Inazuma.ts L1043-1070) and
+    Everlasting Moonglow's heal% → baseDmg conversion, so a team-wide heal%
+    grant from Furina would inflate teammate damage from a stat she does not
+    give. Incoming Healing Bonus has no damage path and is correctly skipped
+    per U8b's "skip silently: utility and defense buffs".
 
 - id: "furina-c6-charged-formula"
   entity: "furina"
   rule: "S7"
-  status: actionable
+  status: completed
   category: "missing-formula"
   summary: >
     C6 Center of Attention converts Normal, Charged, and Plunging Attacks to Hydro and adds
     Max HP-scaling base damage, but the charged attack variant has no formula.
   detail: >
-    Add a C6 charged attack formula using A param5 with Hydro/charge/none and the existing C6
-    baseDmg buffs.
+    Added formulaMap entry "furina-c6-charge" (minC 6): DirectFormula on
+    this.param("A", 5) with Hydro/charge/none, picking up both existing C6
+    ScalingBuffs (+18% and +25% Max HP baseDmg, filter
+    ["normal", "charge", "plunge"]). Registered in comboDescriptor with count 0
+    like furina-c6-plunge, since Center of Attention caps at 6 triggers shared
+    with furina-c6-normal. furina-c6-plunge left untouched (single high-plunge
+    param is the current convention).
 
 - id: "navia-crystalshot-buff-scope"
   entity: "navia"
   rule: "U5"
-  status: actionable
+  status: completed
   category: "bug"
   summary: >
     Crystalshot-only buffs are scoped to all Elemental Skill damage, so C2 CR, C6 CRIT DMG,
     and the shrapnel/all-shots-hit modifiers also buff Navia's Surging Blade proc. Those bonuses
     should apply only to Ceremonial Crystalshot itself.
   detail: >
-    C2 CR, C6 CRIT DMG, and shrapnel/all-shots-hit modifiers should apply only
-    to Ceremonial Crystalshot damage, not to separate Skill damage such as
-    Surging Blade.
+    Moved the four Crystalshot-only modifiers (C2 cr +0.36, C6 cd +1.35, E
+    intrinsic baseDmg% +1.0 and dmg% +0.45) out of the class-level buffs array
+    into a new private crystalshotBuffs field, attached as bespokeBuffs on the
+    navia-crystalshot part. They no longer leak into navia-surging-blade or the
+    new C2 support-fire entry. P1/P2/C4 remain regular buffs.
 
 - id: "navia-c2-support-shot"
   entity: "navia"
   rule: "S9"
-  status: actionable
+  status: completed
   category: "missing-formula"
   summary: >
     C2 adds one Cannon Fire Support shot when Ceremonial Crystalshot hits, and that damage is
     considered Elemental Burst DMG. The current combo only models support fire from Navia's burst,
     not the extra C2 proc triggered by each skill use.
   detail: >
-    Add a C2-gated support-fire formula or part using Q param2 as Geo/burst/none. The rotation
-    uses two Ceremonial Crystalshots, so the combo count should be 2 at C2+.
+    Added formulaMap entry "navia-c2-support" (minC 2): DirectFormula on
+    this.param("Q", 2) with Geo/burst/none, one shot per Crystalshot cast.
+    comboDescriptor registers it as count 0 with bonus [{ minC: 2, delta: 2 }],
+    matching the two Crystalshots in the modeled rotation. navia-burst's
+    existing 4 Q param2 ticks were left unchanged.
 
-- id: "wriothesley-p1-low-hp-option"
+- id: "wriothesley-c1-radiance-cross-buff-scope"
   entity: "wriothesley"
-  rule: "U9"
-  status: actionable
-  category: "bug"
+  rule: "U5"
+  status: wont-do
+  category: "approximation"
   summary: >
-    C0 Gracious Rebuke is always modeled as active, but the passive requires Wriothesley's HP
-    to be below 60%. HP-state conditions should be represented by an option instead of being
-    assumed always on.
+    The C1 Radiance cross-buff (Luster boosts the next enhanced NA5 by 50%, NA5
+    boosts Luster by 50%) is modeled with both legs permanently active, since the
+    peak rotation alternates the two hits inside the 5s windows.
   detail: >
-    Gracious Rebuke depends on Wriothesley's HP being below 60%. Represent the
-    low-HP state explicitly instead of assuming the enhanced Rebuke is always
-    active.
-
-- id: "wriothesley-c4-off-field-receiver"
-  entity: "wriothesley"
-  rule: "U1"
-  status: actionable
-  category: "bug"
-  summary: >
-    The C4 off-field overflow branch grants ATK SPD to all party members, but it is modeled as
-    otherOnField. This only buffs the active teammate and misses the full team scope described
-    by the constellation.
-  detail: >
-    The off-field overflow branch grants ATK SPD to all party members, so it
-    should reach the whole party rather than only the active non-Wriothesley
-    teammate.
-
-- id: "wriothesley-c2-non-radiance-na-ca"
-  entity: "wriothesley"
-  rule: "U4"
-  status: completed
-  category: "bug"
-  summary: >
-    C2 at five Prosecution Edict stacks outside Radiance should boost Normal
-    Attacks to 125% and Charged Attacks to 130% of original DMG, but the
-    non-Radiance formula path has no baseDmg% buff or multiplier for this branch.
-  detail: >
-    Added non-Radiance C2 StatBuffs at peak stacks: normal baseDmg% +0.25,
-    charge baseDmg% +0.30 when constellation >= 2 and radianceOn is false.
-
-- id: "wriothesley-c6-radiance-icicle-mult"
-  entity: "wriothesley"
-  rule: "U0b"
-  status: completed
-  category: "needs-data"
-  summary: >
-    C6 Radiance extra icicles use talentMult ×0.6 (following EN "60% of original
-    DMG") but bundled ZH text says 原本20%. Resolve locale before fixing.
-  detail: >
-    Changed C6 Radiance StellarDirectFormula icicle multiplier from ×0.6 to ×0.2
-    per ZH (原本20%) for enhanced NA5 and Luster: Vaulting Fist icicles.
+    Each leg is now a bespokeBuff on exactly the hit the text names, so the
+    scoping itself is exact; only the uptime is assumed. Modeling the alternation
+    would need per-hit ordering the combo model does not carry.
 
 - id: "lyney-e-hat-explosion"
   entity: "lyney"
   rule: "S7"
-  status: actionable
+  status: completed
   category: "missing-formula"
   summary: >
     Bewildering Lights should detonate Lyney's Grin-Malkin Hat if one is present, dealing damage
     equal to Pyrotechnic Strike and counting as Charged Attack DMG. The E formula only includes
     the skill hit plus Prop Surplus scaling.
   detail: >
-    Add a Charged Attack Pyro part to lyney-skill-max using A param15 when a hat is expected to
-    be present before E.
+    Added a second part to lyney-skill-max: DirectFormula on
+    this.param("A", 15) (Pyrotechnic Strike) tagged Pyro/charge/none, per
+    「通过这种方式引爆怪笑猫猫帽造成的伤害视为重击伤害」. Deliberately no P1
+    bespoke baseDmg buff — P1 only enhances a Hat summoned by a Prop Arrow that
+    consumed HP. lyney-strike stays at count 3, since the detonation replaces
+    the Q-summoned Hat's own end-of-life Strike. Label updated to
+    "E(满层)+引爆猫帽" / "E (Max) + Hat Blast".
 
 - id: "lyney-c2-cd-ramp"
   entity: "lyney"
   rule: "U11"
-  status: actionable
-  category: "bug"
+  status: completed
+  category: "approximation"
   summary: >
-    C2 Crisp Focus is hardcoded at the maximum 60% CRIT DMG, but it ramps by one stack every
-    2 seconds while Lyney remains on-field. Time-ramping buffs should use selectable tiers
-    instead of always assuming the final value.
+    C2 Crisp Focus is hardcoded at 3 stacks (+60% CRIT DMG) with no note that stacks accrue one
+    per 2s of on-field time. Only the opening ~6s of each on-field window is over-credited —
+    roughly the first of the three aimed shots in the modeled rotation — after which the buff
+    plateaus at max for the rest of the window.
   detail: >
-    Crisp Focus ramps one stack every 2 seconds while Lyney remains on-field.
-    Expose the stack tier rather than hardcoding the final 60% CRIT DMG value
-    for all evaluations.
+    Documented the assumption in a code comment above the C2 StatBuff: Crisp
+    Focus accrues 1 stack per 2s on-field and releases on swap-out, so only the
+    opening ~6s of each on-field window (roughly the first of the three aimed
+    shots) is over-credited, after which it plateaus at max for the rest of
+    Lyney's ~15-20s window. Modeled at max; ramp-up not tracked, following the
+    Wanderer C6 precedent. No OptionMap added — the accuracy gain does not
+    justify spending Lyney's single OptionDef slot.

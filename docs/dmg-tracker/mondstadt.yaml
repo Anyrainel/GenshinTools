@@ -223,9 +223,10 @@
     forced-averaging when a more important OptionMap exists). When radianceOff,
     always-on EM+200 matches the peak HP>50% branch for damage calc; Diona is a
     healer/shielder so teammates in her Q field are typically above 50% HP. The
-    heal% branch (HP≤50%) is secondary for offensive modeling. When radianceOn,
-    C6 Radiance replaces both HP branches with +40% SC/Superconduct reactionDmg
-    inside the field per game text.
+    heal% branch (HP≤50%) is secondary for offensive modeling. The C6 Radiance
+    clause is worded 「…伤害提高」 (adds), not 「变更为」, so it stacks on top of
+    the HP-state effects — EM+200 correctly stays active when radianceOn, and
+    must not be moved into an else-branch.
 
 - id: diona-c6-radiance-field-gate
   entity: diona
@@ -242,3 +243,139 @@
     presence requires runtime field tracking beyond current buff pipeline; the
     unconditional radianceOn gate is acceptable when comboDescriptor models Q
     cast and field duration.
+
+- id: diona-stellar-swirl-state-missing
+  entity: diona
+  rule: S1b
+  status: completed
+  category: bug
+  summary: >
+    Diona has both Radiance variants (P4: 辉映·星超导 in a Polestar Field,
+    辉映·星扩散 for 8s after a nearby party member triggers Stellar Swirl), but
+    only Stellar-Conduct is implemented. dionaOption offers a single "on" choice
+    gated on hasReaction("stellarConduct"), and C6's second Radiance clause
+    (「辉映·星扩散：冰元素扩散、星扩散反应伤害提升40%」) has no buff at all, so
+    Diona provides no C6 reaction bonus on a Stellar-Swirl team.
+  detail: >
+    Confirmed against game text. P4: 「此外，处于极星辉域中时/队伍中的角色在附近
+    触发星扩散反应后的8秒内，迪奥娜将分别进入辉映·星超导/辉映·星扩散状态」; C6:
+    「辉映·星超导：超导、星超导反应伤害提升40%；辉映·星扩散：冰元素扩散、星扩散
+    反应伤害提升40%」. On a Vesna team (stellarSwirl enabler only, not a
+    stellarConduct enabler per STELLAR_ENABLERS) the Radiance toggle cannot even
+    be enabled today, so the whole constellation contributes nothing. Follow the
+    three-choice pattern of sandroneOption in character5Snezhnaya.ts L504–522:
+    values "stellarConduct" (when hasReaction("stellarConduct")), "stellarSwirl"
+    (when hasReaction("stellarSwirl")), "off"; keep radianceOn = rState !== "off"
+    and branch the C6 buff on rState. The swirl branch buff mirrors the existing
+    one: reactionDmg% 0.4, receiver "team", cbs(this, "C6", ["Q"]), filter
+    reactions ["stellarSwirl"] ONLY. Triage decision on the filter (settled the
+    same way for qiqi-radiance-swirl-state, keep the two consistent): the text
+    names 冰元素扩散, but ReactionType has no per-element swirl, so adding bare
+    "swirl" would leak +40% onto the Pyro/Hydro/Electro swirls that
+    STELLAR_SUPERSEDES.survivalElements keeps alive on a mixed team, while
+    omitting it costs nothing on a Cryo-only Stellar team (there every swirl is
+    already superseded into stellarSwirl) and costs little on a mixed team
+    (under the peak model the Anemo unit is in Radiance, so its Cryo swirls are
+    Stellar). Narrow filter, wide gate — U12/Part 4.
+    Land together with diona-a4-paws-swirl-gate: adding the option without the
+    A4 gate fix leaves Diona at zero damage on the very teams the option unlocks.
+
+    DONE: Reworked dionaOption into the three-choice sandroneOption shape
+    (label 辉映状态 / "Radiance State"; values "stellarConduct" gated on
+    hasReaction("stellarConduct"), "stellarSwirl" gated on
+    hasReaction("stellarSwirl"), "off") and replaced radianceOn with rState.
+    Split the C6 reactionDmg% 0.4 buff into two branches on rState:
+    "stellarConduct" → filter reactions ["stellarConduct", "superconduct"],
+    "stellarSwirl" → filter reactions ["stellarSwirl"] only (narrow filter as
+    decided). The always-on C6 EM+200 teamOnField buff was left untouched — the
+    Radiance clause is 「伤害提高」 (additive), not 「变更为」.
+
+- id: diona-a4-paws-swirl-gate
+  entity: diona
+  rule: U12
+  status: completed
+  category: bug
+  summary: >
+    A4 coordinated Icy Paws fire on 星超导、超导、冰元素扩散、星扩散 reactions,
+    but hasScReaction only checks stellarConduct/superconduct. On a Cryo-swirl or
+    Stellar-Swirl team (e.g. Diona + Kazuha, no Electro) the diona-a4-paws
+    formula is disabled and comboDescriptor returns [], so Diona contributes zero
+    damage.
+  detail: >
+    Highest-severity item on Diona: an empty comboDescriptor means the character
+    reports zero damage, which reads as a broken tool rather than an
+    approximation. Game text confirms all four triggers:
+    「队伍中的角色触发星超导、超导、冰元素扩散、星扩散反应时，迪奥娜还会协同发射
+    3枚冻冻猫猫爪」. character4Mondstadt.ts L492–494: add
+    || this.teamMeta.hasReaction("swirl") || this.teamMeta.hasReaction("stellarSwirl")
+    to hasScReaction. Diona is Cryo, so any Anemo teammate makes Cryo swirl
+    available; hasReaction("swirl") is element-agnostic but cannot be false when
+    Cryo swirl is possible. Both swirl forms are needed because STELLAR_SUPERSEDES
+    turns hasReaction("swirl") false once an enabler is present and no
+    Pyro/Hydro/Electro survives on the team. This is a gate, so it must be wide —
+    the narrow-filter rule (Part 4) applies to the C6 reactions filter, not here.
+    Land together with diona-stellar-swirl-state-missing.
+
+    DONE: hasScReaction now also ORs hasReaction("swirl") and
+    hasReaction("stellarSwirl"), with a code comment explaining why both swirl
+    forms are needed (STELLAR_SUPERSEDES). comboDescriptor additionally can no
+    longer be empty — the new diona-skill E cast is always included, so the
+    zero-damage failure mode is gone even on teams with no qualifying reaction.
+
+- id: diona-a4-paws-proc-count
+  entity: diona
+  rule: S1b
+  status: completed
+  category: approximation
+  summary: >
+    diona-a4-paws is modeled at comboDescriptor count 1, but the A4 proc runs for
+    20s after Icy Paws with a 3.5s ICD, so up to ~5 procs (3 paws each) fit in one
+    rotation. The single proc likely undercounts Diona's only damage formula.
+  detail: >
+    Rotation-length decision made: set the diona-a4-paws comboDescriptor count to
+    5, keeping the per-proc 3-paw structure (so 15 paws per rotation). Basis:
+    「施放元素战技猫爪冻冻后的20秒内…该效果每3.5秒至多触发一次」 → 20s ÷ 3.5s = 5
+    procs, and E press CD (6s) gives the 20s window full uptime. The binding
+    constraint is the team's reaction rate, and on the Superconduct /
+    Stellar-Conduct / Cryo-swirl teams this passive targets, a qualifying
+    reaction inside each 3.5s window is the normal case, so the ICD-limited
+    figure is the right peak-model estimate. Document the 20s ÷ 3.5s derivation
+    in a code comment and note that shorter rotations should scale it down.
+    Diona is a support, so this is her damage floor, not a DPS claim.
+
+    DONE: diona-a4-paws comboDescriptor count raised from 1 to 5, per-proc
+    3-paw structure unchanged (15 paws per rotation). Code comment at the
+    comboDescriptor records the 20s ÷ 3.5s derivation, the 6s E press CD giving
+    full window uptime, and the note to scale down for shorter rotations.
+
+- id: diona-missing-skill-formula
+  entity: diona
+  rule: S7
+  status: completed
+  category: missing-formula
+  summary: >
+    Diona's own Icy Paws cast has no formula — only the A4 coordinated paws are
+    modeled. C2 explicitly buffs Icy Paws DMG by 15%, which per S7 signals the
+    skill damage is meant to be modeled, and that buff currently has only the A4
+    formula to apply to.
+  detail: >
+    Scope this item to the E cast only. E deals param1 (Icy Paw DMG) per paw:
+    press fires 2 paws, hold fires 5
+    (「点按快速发射二枚…长按迅速后撤，并发射五枚」). Peak model → one
+    "diona-skill" DirectFormula(this.param("E", 1), Cryo/skill/none) with
+    hits: 5 (hold), on-field (no offField), comboDescriptor count 1. Note the S7
+    kit signal is weaker than the summary implies — C2's +15% Icy Paws buff does
+    already have the A4 coordinated paws to land on — but the E cast is a real
+    per-rotation damage source (Diona must cast E anyway to open the A4 window)
+    and it is the largest unmodeled piece of her own kit, so it is worth the
+    single formula.
+    Q is deliberately NOT in scope: the 最烈特调 initial hit (Q param1) plus the
+    Drunken Mist field DoT (Q param2) would need a verified field tick rate,
+    which game text does not give, so it belongs in its own needs-data item if
+    the maintainer wants Diona's full damage profile. Do not add plunge or NA
+    entries — nothing in the kit targets them.
+
+    DONE: Added "diona-skill" (label 猫爪冻冻×5 / "Icy Paws (Hold ×5)") —
+    DirectFormula(this.param("E", 1), Cryo/skill/none) with hits: 5, on-field,
+    comboDescriptor count 1 and unconditional. Q, plunge and NA left out of
+    scope as instructed.

@@ -394,3 +394,125 @@
     Added weapon data to weapon_en.json, weapon_zh.json, and weapon_stats.json,
     registering the weapon as a 5★ Claymore.
 
+- id: frostbreath-reaction-set-approximation
+  entity: frostbreath
+  rule: U12
+  status: wont-do
+  category: approximation
+  summary: >
+    The "Cryo- or Hydro-related reaction" gate accepts Swirl and Crystallize
+    whenever the wielder participates in any swirl or crystallize and the team
+    merely holds Cryo or Hydro, because the engine cannot attribute which element
+    a given wielder actually swirled or crystallized.
+  detail: >
+    Standing record of an accepted approximation — do not re-file.
+
+    The Hyperbloom/Burgeon half of this item is DONE and verified: they are gone
+    from the accepted set in src/lib/dmgcalc/impl/weapon4Polearm.ts class
+    Frostbreath, and the relatedness reasoning is recorded in a code comment.
+    The current set (melt, vaporize, frozen, superconduct, stellarConduct,
+    stellarSwirl, electroCharged, lunarCharged, bloom, lunarBloom,
+    lunarCrystallize, plus swirl/crystallize gated on team Cryo-or-Hydro) matches
+    the triage-prescribed set exactly.
+
+    The Swirl/Crystallize team-element-presence approximation is DELIBERATELY
+    KEPT — it is the closest expressible model without per-reaction-instance
+    element attribution, and the over-trigger case stays documented here and in
+    the class comment. Status is wont-do rather than completed so the
+    approximation keeps a permanent record per U11/U12.
+
+    Original triage record follows.
+
+    Swirl/Crystallize are element-agnostic in the reaction model, so the
+    implementation pairs hasReaction("swirl"/"crystallize", charId) with a team
+    "has Cryo or Hydro" check. This over-triggers when the wielder is not the one
+    swirling/crystallizing the Cryo or Hydro aura — e.g. a Pyro wielder on an
+    Anemo + Cryo team passes both checks even though the wielder's own swirl
+    involvement is Pyro. Strict modelling would need per-reaction element
+    attribution (which element the wielder actually swirled or crystallized),
+    which the engine does not track. Separately, hyperbloom and burgeon are
+    included in the accepted set; both are Dendro-Core reactions triggered by
+    Electro/Pyro rather than by Hydro, so whether the game counts them as
+    "Hydro-related" needs in-game verification. Bloom and Lunar-Bloom are already
+    listed separately, so dropping hyperbloom/burgeon would only change behaviour
+    for an Electro-or-Pyro wielder on a Hydro + Dendro team. Shatter is also
+    absent from the list, but it is unreachable without Cryo + Electro, which
+    superconduct/stellarConduct already cover.
+
+    Triage resolution — two separable concerns, one decidable and one accepted.
+
+    (1) DECIDABLE, do this: drop "hyperbloom" and "burgeon" from the accepted set.
+    No in-game testing needed; the game's own reaction-relatedness convention is
+    settled by other entities' explicit enumerations. Burgeon is classified as a
+    PYRO-related reaction (Crimson Witch of Flames 4pc boosts 超载/燃烧/烈绽放;
+    Quartz reads "触发超载、融化、燃烧、蒸发、烈绽放或火元素扩散反应后"), and
+    Hyperbloom is classified as ELECTRO-related (Thundering Fury 4pc boosts
+    超载/感电/超导/超绽放; Dark Iron Sword reads "触发超载、超导、星超导、感电、
+    原激化、超激化、超绽放、月感电或雷元素扩散反应后"). Relatedness follows the
+    reaction's own participating elements, so a Dendro-Core reaction triggered by
+    Electro or Pyro is not Hydro-related even though the core originated from a
+    Bloom. Note that Dark Iron Sword and Quartz are the exact same
+    "触发X元素相关反应后的12/15秒内，攻击力提高…" shape as Frostbreath, which makes
+    them the closest available templates for what its unstated list contains.
+    The set should therefore be, Cryo side: melt, frozen, superconduct,
+    stellarConduct, cryo swirl, stellarSwirl, cryo crystallize (+ shatter, already
+    unreachable); Hydro side: vaporize, frozen, electroCharged, lunarCharged, bloom,
+    lunarBloom, hydro swirl, hydro/lunar crystallize.
+
+    (2) ACCEPTED, leave as-is and keep documented here: the Swirl/Crystallize
+    over-trigger. Those two are element-agnostic in the reaction model, and the
+    engine does not attribute which element a given wielder actually swirled or
+    crystallized, so pairing hasReaction("swirl"/"crystallize", charId) with a team
+    "has Cryo or Hydro" check is the closest expressible approximation. It
+    over-triggers only for a wielder whose own swirl/crystallize involvement is a
+    third element on a team that separately holds Cryo or Hydro. Strict modelling
+    would need per-reaction-instance element attribution, which is a genuine engine
+    gap and out of scope; note the element-specific swirl entries in Dark Iron
+    Sword and Quartz confirm element-scoped swirl does belong in the set, so the
+    approximation errs in scope rather than in kind.
+
+- id: weapon-sword-catalyst-radiance-trigger-label
+  entity: weapon_sword
+  rule: U7
+  status: completed
+  category: bug
+  summary: >
+    The Radiance branches of weapon_sword and weapon_catalyst are labelled with
+    the trigger "stellar-reaction", but their activation condition is the
+    wielder being in the Radiance (辉映) state, not triggering a Stellar Glimmer
+    reaction. Radiance is a per-character state entered inside a Polestar Field;
+    the two conditions are distinct and the displayed condition is wrong.
+  detail: >
+    weapon4Sword.ts WeaponSword: the Radiance branch uses
+    wbs(this, ["E", "on-hit", "stellar-reaction"]) on both StatBuffs; the real
+    activation is still "after E, on each attack hit" (the base branch's
+    ["E", "on-hit"]) with the payload swapped by the Radiance option.
+    weapon4Catalyst.ts WeaponCatalyst: the Radiance branch uses
+    wbs(this, ["stellar-reaction"]) on both StatBuffs while the base branch is
+    unconditional (bare wbs(this)); the clause is party-composition based and has
+    no reaction trigger at all.
+
+    Both Radiance states are already conveyed to the user by the weapons' own
+    "辉映状态 / Radiance State" OptionDef, so the trigger string is redundant as
+    well as inaccurate.
+
+    Two plausible fixes, needs a decision:
+    (a) Drop "stellar-reaction" from both Radiance branches — matches the
+        established character convention, where Radiance-gated buffs keep their
+        ability/origin triggers and never carry a reaction trigger (alyosha P3
+        cbs(this,"P3",["E"]), diona C6 cbs(this,"C6",["Q"]),
+        character5Liyue/character5Sumeru likewise). weapon_sword would become
+        ["E", "on-hit"]; weapon_catalyst would become bare wbs(this).
+    (b) Introduce a new "radiance" trigger string for the state. More
+        informative, but a brand-new label with no precedent in the codebase.
+
+    Display-only: no stat values, filters, receivers or noStackIds are affected.
+
+    RESOLVED: dropped the label rather than inventing a "radiance" string,
+    matching the character-side convention — Radiance-gated character buffs
+    (e.g. Sandrone, Odette) carry the real activation trigger and convey the
+    Radiance state through the OptionDef, never through a trigger label.
+    weapon_sword's Radiance branch now uses ["E", "on-hit"]; weapon_catalyst's
+    is a pure party-composition buff and carries no trigger. The four genuine
+    触发星烁反应 clauses (blade_of_atonement, emberwell, echoes_of_the_heart,
+    song_of_the_vigil) keep "stellar-reaction".

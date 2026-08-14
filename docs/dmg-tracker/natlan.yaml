@@ -35,7 +35,7 @@
 - id: ororon-q-soundwave-hits
   entity: ororon
   rule: S8
-  status: open
+  status: wont-do
   category: needs-data
   summary: >
     Q Supersonic Oculus soundwave modeled as 1 hit over 9s duration. Likely
@@ -51,6 +51,9 @@
     frame data to confirm exact hit count at C0 and C4. If 6 is correct for C0,
     the current combo is fine. C4 adjustment would require a constellation-gated
     combo count bonus.
+
+    RESOLVED wont-do: the implemented hit count was counted in game by the
+    maintainer, so it is not an unverified estimate. No frame data needed.
 
 - id: ifa-missing-e-tonicshot
   entity: ifa
@@ -101,21 +104,44 @@
 - id: kinich-c1-cd-filter-too-broad
   entity: kinich
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C1 Scalespiker Cannon CD +100% is now scoped away from Loop Shot, but it
     is still attached to the C6 bounce part. C6 only says P2 and C2 Cannon
     buffs carry to the bounce, not the C1 Crit DMG buff.
   detail: >
+    DONE 2026-08-13. Split "kinich-cannon" into "kinich-cannon-first" (count 1)
+    and "kinich-cannon" (count 3) in character5Natlan.ts, because a bespoke
+    overlay is all-or-nothing per part and C1 must apply to every cannon while
+    P2/C2 apply only to the first. C1 (cd +100%) is now a bespokeBuff with no
+    maxStacks on the cannon part of BOTH entries and is absent from the C6
+    bounce parts. This also fixes the inverse defect: at C2+ every cannon now
+    keeps the C1 CRIT DMG instead of only the one that won the shared
+    maxStacks:1 budget. C2 (+100% dmg%) and P2 now live on the first-cannon
+    entry only, with no maxStacks needed since the count split encodes the
+    budget.
+    (Original guidance below.)
     Loop Shot is fixed, but `cannonBespoke` is reused for both the main
     Scalespiker Cannon part and the C6 bounce. Keep C1 on the Cannon hit only;
     the C6 bounce should inherit P2/C2 effects per C6 text, but not C1.
+    VERIFIED 2026-08-13: still present. C6 ZH names only 「焰灵的契约」(P2) and
+    「星虎之掌」(C2) as effects the bounce inherits; C1 「迴猎贯鳞炮的暴击伤害
+    提升100%」 is not listed, yet `cannonBespoke` (which holds the C1 cd buff) is
+    spread into the bounce part's `bespokeBuffs` at character5Natlan.ts L1474.
+    Larger inverse defect found in the same code: bespoke `maxStacks` is a
+    per-part, all-or-nothing overlay cutoff (formulaEval.ts L195-L200,
+    teamBuild.ts L393-L405), and `bespokeMaxStacks()` returns the first
+    maxStacks found in the array. Because C1 shares `cannonBespoke` with the
+    `maxStacks: 1` C2 buff, at C2+ only 1 of the 4 combo Cannons gets any
+    bespoke overlay — Cannons 2-4 silently lose the C1 +100% CRIT DMG they
+    should always have. Fix both together: C1 needs its own bespoke entry (no
+    maxStacks) on the Cannon part only.
 
 - id: chasca-p1-charge-filter-too-broad
   entity: chasca
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P1 Spirit of the Radiant Shadow is implemented as a global Charged Attack
@@ -125,26 +151,52 @@
     Spirit of the Radiant Shadow should apply only to Shining Shadowhunt Shell
     damage. Unconverted Shadowhunt Shells should not receive the P1 Charged
     Attack DMG bonus.
+    VERIFIED 2026-08-13: still present. P1 ZH is 「使焕光追影弹造成的伤害提升
+    15%/35%/65%」 — Shining shells only. The buff at character5Natlan.ts
+    L802-L806 is `dmg%` with `filter: { abilities: ["charge"] }`, so it also
+    hits the `normalCount` unconverted Anemo shell parts of
+    "chasca-shining-volley" (2 shells at 3 eligible elements, C0) and the C2/C4
+    400% ATK AoE procs, which are 「视为重击伤害」 but are not Shining shells.
+    It does NOT reach "chasca-p2-burning": that part is `offField: true` and the
+    buff is `selfOnField`, so the off-field stat sheet drops it.
+    DONE 2026-08-13. Removed the Skill-wide P1 StatBuff from Chasca's `buffs`
+    array (which is now empty) and re-attached it as a bespokeBuff on the
+    Shining Shadowhunt Shell parts of "chasca-shining-volley" only. The
+    unconverted Anemo shells and the C2/C4 400% ATK procs no longer receive it.
 
 - id: chasca-c6-cd-filter-too-broad
   entity: chasca
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
-    C6 Fatal Rounds is implemented as a global Charged Attack Crit DMG buff, so
-    it also boosts the P2 Burning Shadowhunt Shot. Game text limits the +120%
+    C6 Fatal Rounds is implemented as a Charged-Attack-wide Crit DMG buff, so it
+    also boosts the C2 and C4 400% ATK AoE procs. Game text limits the +120%
     Crit DMG to the next Multitarget Fire instance's Shadowhunt and Shining
     Shadowhunt Shells.
   detail: >
-    Fatal Rounds should apply only to the next Multitarget Fire instance's
-    Shadowhunt and Shining Shadowhunt Shells, not to P2 Burning Shadowhunt Shot
-    or unrelated Charged Attack damage.
+    Fatal Rounds should apply only to Multitarget Fire's Shadowhunt and Shining
+    Shadowhunt Shells. Both shell types are covered by C6 text, so the volley
+    shell parts are correct; the leak is to the C2 proc part inside
+    "chasca-shining-volley" and the C4 proc parts inside "chasca-burst" — both
+    are 「视为重击伤害」 400% ATK AoE instances, not shells, and the C4 ones
+    fire during Q rather than Multitarget Fire.
+    REVISED 2026-08-13 (was: "also boosts the P2 Burning Shadowhunt Shot").
+    That original claim does not hold: "chasca-p2-burning" is `offField: true`
+    and the C6 buff is `selfOnField` (character5Natlan.ts L810-L814), so
+    off-field stat resolution (fieldState.ts `fieldReq` + teamBuffLedger.ts
+    L224) drops the buff for that part in any multi-character team. The
+    remaining C2/C4 leak is real but much smaller than the item first claimed.
+    DONE 2026-08-13. Removed the Charged-Attack-wide C6 StatBuff from Chasca's
+    `buffs` array and re-attached it as a bespokeBuff on both shell part groups
+    of "chasca-shining-volley" (unconverted Anemo shells and Shining shells),
+    per C6 text covering both shell types. The C2 proc parts there and the C4
+    proc parts in "chasca-burst" no longer receive it.
 
 - id: citlali-p2-skill-filter-too-broad
   entity: citlali
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P2 EM-to-baseDmg ScalingBuff is filtered to all Skill damage, so it also
@@ -153,11 +205,25 @@
   detail: >
     Citlali P2's 90% EM base damage bonus applies to Itzpapa's Frostfall Storm
     damage only. It should not boost Citlali's initial Elemental Skill hit.
+    VERIFIED 2026-08-13: still present. P2 ZH is 「元素战技霜昼黑星中，伊兹帕帕
+    的霜陨风暴造成的伤害提升，提升值相当于…元素精通的90%」 — Frostfall Storm
+    only, not the 黑曜星魔 initial hit (E param1). The ScalingBuff at
+    character5Natlan.ts L354-L361 uses `filter: { abilities: ["skill"] }`, and
+    part[0] of "citlali-e-total" is the initial hit with `ability: "skill"`, so
+    it receives the +90% EM baseDmg. The fix pattern already exists in the same
+    class: the Q half of P2 is a `bespokeBuffs` entry on the Ice Storm part so
+    the Skull is excluded (L470-L479), and the C4 skull is tagged
+    `ability: "special"` for the same reason. Move the 90% EM buff to a
+    bespokeBuff on the Frostfall Storm part.
+    DONE 2026-08-13. The Skill-wide `receiver: "self"` ScalingBuff was removed
+    from Citlali's `buffs` array and re-attached as a bespokeBuff on the
+    Frostfall Storm tick part of "citlali-e-total", mirroring the existing Q Ice
+    Storm treatment. Part[0] (the initial 黑曜星魔 hit) no longer receives it.
 
 - id: mavuika-flat-atk-bonus-zone
   entity: mavuika
   rule: U4
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Q Fighting Spirit bonuses and C2 Flamestrider bonuses are merged into
@@ -167,26 +233,62 @@
     Fighting Spirit and C2 Flamestrider bonuses are flat ATK-based damage
     increases. They should behave as additive base damage bonuses rather than
     being folded into the talent multiplier zone.
+    VERIFIED 2026-08-13: still present. C2 ZH is 「造成的伤害提升，提升值相当于
+    玛薇卡攻击力的60%/90%/120%」 and the Q rows are "{paramN:F1P} ATK per
+    Fighting Spirit" — both are U4's 「提升值相当于X%某属性」 row, i.e.
+    `ScalingBuff("atk", "baseDmg", …)`. character5Natlan.ts L576-L585 folds
+    `fsBurst`/`fsNormal`/`fsCharge` and `c2Burst`/`c2Normal`/`c2Charge` into
+    each DirectFormula's talentMultiplier, and damageFormula.ts `getBaseDmg`
+    computes `talentDmg × (1 + baseDmg%) + flatBaseDmg`, so any external
+    baseDmg% ("造成原本X%的伤害") incorrectly scales these flat ATK bonuses.
+    The in-code justification comment ("merged … so they use final ATK, not
+    preStats ATK") is not valid: `baseDmg` is in FINAL_STAT_KEYS
+    (constants.ts L15), so an atk→baseDmg ScalingBuff is a deferred final buff
+    (dynamicBuffEval.ts `isDeferredFinalBuff`) and is evaluated against
+    post-dynamic midStats ATK — the same path Kinich P2 already uses.
+    DONE 2026-08-13. All six merged terms were removed from the formulaMap
+    talent multipliers and re-expressed as `ScalingBuff("atk", "baseDmg", …)`
+    entries on `receiver: "selfOnField"` with ability filters:
+    Q Fighting Spirit → burst/normal/charge at 200 × param(Q,3/4/5), and C2
+    Flamestrider → normal 0.6 / charge 0.9 / burst 1.2. External `baseDmg%`
+    effects no longer scale these flat ATK bonuses, and the stale "must use
+    final ATK" justification comments were removed.
 
 - id: mavuika-c2-def-shred-receiver
   entity: mavuika
   rule: U6
-  status: open
+  status: wont-do
   category: approximation
   summary: >
-    C2 Ring-form DEF reduction is modeled with receiver:"selfOffField" plus
+    C2 Ring-form DEF reduction was modeled with receiver:"selfOffField" plus
     receiver:"other" to avoid buffing on-field Flamestrider damage. U6 expects
-    DEF reduction to be receiver:"team"; the form split needs a cleaner model.
+    DEF reduction to be receiver:"team"; the form split needed a cleaner model.
   detail: >
-    Keep open. C2 Ring-form DEF reduction is an enemy debuff and U6 would
-    normally make it team-wide, but applying it broadly also risks buffing the
-    mutually exclusive on-field Flamestrider mode. The correct current-engine
-    representation needs a form-specific decision before changing the receiver.
+    Closed as wont-do by maintainer decision: the item proposed an OptionMap
+    redesign to pick the Armament form, but the bespokeBuffs route was taken
+    instead, so the item's prescription was not followed and Mavuika's single
+    option slot stays free. Below C6 the DEF shred is now a bespokeBuff on the
+    "mavuika-ring" part (receiver "team", which bespoke merging ignores — only
+    the filter is consulted, so U6's receiver constraint does not bind). The
+    selfOffField + other split is gone, as is the mavuika/C2 entry in
+    CONSTRAINT_ALLOWLIST. From C6 the Flamestrider also summons a Scorching Ring
+    with the same -20%, so every form shreds and the buff stays a genuine
+    team-wide StatBuff there. Known consequence: below C6 teammates no longer
+    receive the Ring-form shred, since bespoke buffs only reach the part they
+    are attached to.
+
+    RESOLVED wont-do: the split is intentional, not a U6 violation. Mavuika
+    shreds DEF only while carrying the Ring, so "selfOffField" + "other"
+    reaches her own off-field Ring damage and every teammate while excluding
+    her on-field Flamestrider hits, which carry no Ring below C6. Registered in
+    CONSTRAINT_ALLOWLIST as a deliberate exception. A bespokeBuff route was
+    tried and reverted: bespoke buffs reach only the part they attach to, so it
+    silently dropped the shred for teammates below C6.
 
 - id: kinich-p2-base-dmg-filter-too-broad
   entity: kinich
   rule: U5
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P2 Hunter's Experience is implemented as an uncapped Skill-wide ScalingBuff,
@@ -196,27 +298,56 @@
     Hunter's Experience consumes up to two stacks on a Scalespiker Cannon shot.
     It should not buff Loop Shot or every Cannon indiscriminately, and the stack
     cap should be respected on the Cannon damage it actually affects.
+    VERIFIED 2026-08-13: still present, and it is the largest of the Kinich
+    items. P2 ZH is 「基尼奇在施放悬猎·游骋高狩的迴猎贯鳞炮时，将消耗所有的
+    「猎人心得」…每层使本次迴猎贯鳞炮造成的伤害…提高」 — one Cannon shot, up to
+    2 stacks. The ScalingBuff at character5Natlan.ts L1369-L1376 is
+    `receiver: "selfOnField"`, `filter: { abilities: ["skill"] }`, scale 6.4,
+    no maxStacks. Loop Shot damage is 「视为元素战技伤害」 so "kinich-loop" is
+    correctly tagged `ability: "skill"` and therefore also collects +640% ATK of
+    flat baseDmg on both of its hits. It further applies to all 4 Cannons (and
+    all 4 C6 bounces) in the combo, which would need 8 Nightsoul Bursts of stack
+    regeneration. Correct model: bespokeBuff on the Cannon part (plus the C6
+    bounce part, which C6 text does let inherit P2), budgeted per rotation.
+    DONE 2026-08-13. The Skill-wide `receiver: "selfOnField"` ScalingBuff was
+    removed from Kinich's `buffs` array. P2 is now a bespokeBuff (ScalingBuff
+    atk→baseDmg, scale 6.4 = 2 stacks) on the new "kinich-cannon-first" entry:
+    on its cannon part and, at C6, on its bounce part. Loop Shot and the other
+    three cannons in the rotation no longer receive it. The rotation budget is
+    encoded by the combo count split (1 enhanced cannon + 3 plain).
 
 - id: kinich-c2-c6-bounce-stack-limit
   entity: kinich
   rule: U10
-  status: actionable
+  status: wont-do
   category: bug
   summary: >
-    C2 first-Cannon +100% DMG uses one maxStacks:1 bespoke buff shared by the
-    Cannon and C6 bounce parts. At C6, the bounce should also receive the C2
-    buff when the Cannon does, so both parts of the first Cannon sequence need
-    the bonus.
+    Claimed that the shared maxStacks:1 C2 bespoke buff lets the Cannon part
+    consume the C6 bounce part's intended bonus. The engine budgets bespoke
+    maxStacks per formula part, so both parts already get it.
   detail: >
-    The first Cannon C2 bonus and its C6 bounce inheritance should be evaluated
-    together. The main Cannon and C6 bounce should both receive the first-Cannon
-    bonus when applicable, without a shared maxStacks pool causing one part to
-    consume the other part's intended bonus.
+    WRONG — closed 2026-08-13 after re-reading the engine. Bespoke `maxStacks`
+    is not a shared pool: it is resolved per part from that part's own
+    `bespokeBuffs` array. See formulaEval.ts L195-L197
+    (`bespokeMax = bespokeMaxStacks(part.bespokeBuffs)`;
+    `bespokeCutoff = bespokeMax < h ? bespokeMax : h`), the compiler mirror in
+    formulaCompiler.ts L580-L587 where `totalHits = h * comboCount`, and
+    teamBuild.ts L393-L405 (`buffedHits = min(part.bespokeInfo.maxStacks,
+    part.hits * line.count)` computed independently per part). Passing the same
+    StatBuff instance into two parts' arrays gives each part its own budget —
+    the combo-wide allocator in stackRank.ts only handles ledger buffs with
+    `source.maxStacks`, not bespoke overlays. With the current combo
+    ("kinich-cannon" count 4), the Cannon part gets the C2 +100% on 1 of 4 and
+    the C6 bounce part gets it on 1 of 4, which is exactly the C6 reading:
+    the first Cannon and its bounce. No change needed.
+    Note: a real defect does live in this same array, but it is the C1 crit DMG
+    buff being dragged under the C2 cutoff — tracked in
+    kinich-c1-cd-filter-too-broad, not here.
 
 - id: xilonen-converted-samples-distinct-elements
   entity: xilonen
   rule: U12
-  status: actionable
+  status: completed
   category: bug
   summary: >
     Xilonen counts distinct PHEC elements to decide how many Source Samples are
@@ -227,3 +358,53 @@
     Converted Source Samples should count qualifying Pyro/Hydro/Cryo/Electro
     party members, not only distinct elements. Duplicate-element teammates can
     still convert enough samples to activate the matching RES shred.
+    VERIFIED 2026-08-13: still present. E ZH is 「队伍中每存在一名火元素、水元素、
+    冰元素或雷元素角色，一枚岩元素采样便将转变为对应的元素类型」 — per member,
+    capped by the 3 samplers. `convertedSamples` at character5Natlan.ts
+    L989-L996 builds a Set of element strings and returns `converted.size`, so a
+    double-Pyro team reports 1 converted sample instead of 2. Consequences on
+    such teams: the `< 2` branch wrongly grants P1's +30% Normal/Plunge DMG
+    (game text gives that only below 2 converted samples) and models the Geo
+    shred as `selfOnField` at C0-C1 instead of the team-wide shred the remaining
+    Geo sample provides. Note `teamPHEC` (the distinct set used for which
+    elements get shred) is separately correct — 「同元素类型「源音采样」的效果
+    不能叠加」 — so only the count needs to change, not the shred element list.
+    The same per-member vs distinct-element distinction is a live risk in
+    Chasca's `eligibleElements`/`shiningCount` (shell conversion is also worded
+    per member, while her P1 stack count is genuinely per distinct element).
+    DONE 2026-08-13. `convertedSamples` now counts qualifying party MEMBERS,
+    capped at the 3 Samplers, instead of returning `Set.size` over distinct
+    elements. `teamPHEC` was left as a distinct set (correct — same-element
+    samples don't stack) and the surrounding "N PHEC" comments were reworded to
+    "N converted". The Chasca risk noted above was checked and confirmed real;
+    filed as chasca-shell-count-per-member.
+
+- id: chasca-shell-count-per-member
+  entity: chasca
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    Chasca converts shells based on the number of distinct eligible elements in
+    the team, but game text converts per qualifying party member. A double-Pyro
+    team loads fewer Shining Shadowhunt Shells and fewer Radiant Soulseeker
+    Shells than it should.
+  detail: >
+    Found 2026-08-13 while fixing xilonen-converted-samples-distinct-elements.
+    E ZH: 「队伍中每存在一名火元素、水元素、冰元素或雷元素角色，一枚「追影弹」便会
+    随机转化为对应元素类型之一的「焕光追影弹」」 — per MEMBER, and only shells
+    4/5/6 convert, so the base cap is 3. Q ZH: 「队伍中每存在一名火元素…角色，
+    两枚索魂弹便将随机转化」 — 2 shells per MEMBER, cap 6.
+    character5Natlan.ts derives both counts from `eligibleTypes`, which is the
+    size of the distinct-element Set `eligibleElements`:
+    `shiningCount = eligibleTypes + (C1 ? 2 : 1)` and
+    `qRadiantCount = eligibleTypes * 2`. On a Chasca + 2×Pyro + Hydro team the
+    member count is 3 but `eligibleTypes` is 2, so one E shell and two Q shells
+    stay unconverted Anemo.
+    NOT a bug in the same file: `p1Stacks` is genuinely per distinct element
+    (P1 ZH 「依据符合条件的不同元素的数量」), and `eligibleElements` remains the
+    right list for spreading converted-shell damage across elements — only the
+    counts are wrong. Fix needs a separate member-count field (base conversions
+    capped at 3 for E and 6 for Q) while keeping `eligibleElements` distinct,
+    plus a decision on how to distribute duplicate-element conversions across
+    the shell parts.

@@ -270,3 +270,138 @@
     Documented the Phase Shift Radiance economy and best-estimate caveat in a code
     comment. Each Steed's 2nd hit is a Lunar-Crystallize instance, so the count
     also drives that reaction's frequency. type-check passes.
+
+- id: qiqi-radiance-swirl-state
+  entity: qiqi
+  rule: S1b
+  status: completed
+  category: bug
+  summary: >
+    Qiqi's OptionDef offers only 辉映·星超导, but P4 says she enters 辉映·星超导 inside a
+    Polestar Field OR 辉映·星扩散 for 8s after a nearby party member triggers a Stellar
+    Swirl. On a Stellar-Swirl-only team (Vesna enabler) the "on" choice is unreachable,
+    so every 星烁 clause (P2, P4, C2) silently disappears, and P4's
+    「辉映·星扩散：冰元素扩散、星扩散反应伤害提升50%」 branch is not implemented at all.
+  detail: >
+    Implemented. qiqiOption reworked to the three-choice sandroneOption shape: label
+    辉映状态 / "Radiance State" with stellarConduct (when hasReaction("stellarConduct")),
+    stellarSwirl (when hasReaction("stellarSwirl")), and off. Class now holds
+    `rState` plus `radianceOn = rState !== "off"`. P4 split into two branches:
+    stellarConduct → reactions ["stellarConduct", "superconduct"], stellarSwirl →
+    reactions ["stellarSwirl"] only (bare "swirl" deliberately omitted, per the
+    settled decision shared with diona-stellar-swirl-state-missing; noted in a code
+    comment). Q's StellarDirectFormula part and the "·星超导" / "(SC)" label suffix
+    stay gated on rState === "stellarConduct"; C2's 星烁 clause applies in both states.
+    Landed together with qiqi-c2-radiance-replaces-base, qiqi-c6-stack-budget and
+    qiqi-c6-missing-stellar-swirl.
+
+- id: qiqi-c2-radiance-replaces-base
+  entity: qiqi
+  rule: S1b
+  status: completed
+  category: bug
+  summary: >
+    C2 is implemented as an either/or — the Radiance branch (ATK +50%) removes the base
+    branch (NA/CA DMG +15% vs Cryo-affected enemies). The ZH text
+    「…普通攻击与重击造成的伤害提升15%。辉映·星烁：七七的攻击力提升50%」 uses 提升 with no
+    变更为/改为, so the two clauses stack and both should be active under Radiance.
+  detail: >
+    Implemented as a stack, per the U13 verb test (plain 提升 in both clauses, no
+    变更为/改为; sibling replacement kits say 改为/转变为/转为 explicitly). The
+    if (radianceOn) … else … was replaced: the base NA/CA dmg% +15% StatBuff
+    (selfOnField, abilities ["normal","charge"]) now emits unconditionally at C2+,
+    and the 辉映·星烁 atk% +50% self buff is pushed additionally when radianceOn.
+    The "(replaces Cryo-affected NA/CA DMG bonus)" comment was dropped and replaced
+    with a note that the 受到冰元素影响的敌人 condition holds by construction (U12).
+
+- id: qiqi-c6-stack-budget
+  entity: qiqi
+  rule: U10
+  status: completed
+  category: bug
+  summary: >
+    C6 Glimpse of Mystery is a single 4-stack pool held by Qiqi and consumed by whichever
+    active ally deals the Stellar reaction DMG, but the implementation loops over
+    teammates and emits one ScalingBuff per charId, each with maxStacks 4 — giving up to
+    12 stacks on a 4-character team.
+  detail: >
+    Implemented. The per-charId loop (and its `if (cid === "qiqi") continue`) was
+    replaced with a single ScalingBuff: receiver "otherOnField", maxStacks 4,
+    atk → baseDmg scale 6.0, so the 4-stack pool is now shared across the team
+    instead of granting each teammate their own 4 (up to 12 on a 4-man team).
+    Landed in the same pass as qiqi-c6-missing-stellar-swirl.
+
+- id: qiqi-c6-missing-stellar-swirl
+  entity: qiqi
+  rule: U5
+  status: completed
+  category: bug
+  summary: >
+    C6 Glimpse of Mystery names both reactions —
+    「直接造成星超导或星扩散反应伤害时」 — but the buff filter is
+    reactions ["stellarConduct"] only, so an ally's Stellar Swirl damage never consumes a
+    stack or receives the 600%-of-Qiqi-ATK flat bonus.
+  detail: >
+    Implemented. The C6 buff filter is now reactions ["stellarConduct",
+    "stellarSwirl"], matching 「通过天赋与技能直接造成星超导或星扩散反应伤害时」. No
+    abilities filter added and no Radiance gate — C6 keys off the ally dealing the
+    damage, not Qiqi's own state. Landed in the same pass as qiqi-c6-stack-budget.
+
+- id: qiqi-e-coordinated-attack
+  entity: qiqi
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    E's 寒病鬼差协同攻击伤害 row (param9, 43.2% at Lv10, param10 ICD 2.2s) has no formula
+    part anywhere in formulaMap. The Herald of Frost coordinated attack fires whenever the
+    active character's attack hits, and C1's Radiance clause explicitly keys off it.
+  detail: >
+    Implemented as a third part on "qiqi-skill-hit":
+    DirectFormula(this.param("E", 9), Cryo/skill/none) with hits: 6 and
+    offField: true. The 15s ÷ 2.2s ICD derivation is documented in a code comment.
+    Distinct from part 2 (param5 路径伤害, ×9), which is unchanged. Formula label
+    updated to "E+鬼差+协同" / "E + Herald + Coord." to cover the added row.
+
+- id: qiqi-burst-missing-from-rotation
+  entity: qiqi
+  rule: S7
+  status: completed
+  category: bug
+  summary: >
+    comboDescriptor contains only "qiqi-skill-hit", so "qiqi-burst" — including the
+    Radiance 535.2% StellarDirect hit added in 6.7 — never contributes to rotation damage,
+    even though C6 keys Glimpse of Mystery to casting the Burst.
+  detail: >
+    Implemented. comboDescriptor is now
+    [{ id: "qiqi-skill-hit", count: 1 }, { id: "qiqi-burst", count: 1 }], with the
+    rotation comment updated to note that the Burst carries her largest hit under
+    Radiance and refreshes the C6 Glimpse of Mystery stacks. The pre-6.7 ER
+    concern is eased by C1's Radiance energy restore.
+
+- id: beidou-normal-charged-formulas
+  entity: beidou
+  rule: S7
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Beidou has no Normal or Charged Attack formula, so the P2 buff
+    (NA/CA DMG +15%, ATK SPD +15%) applies to nothing, and the Q Thunderbeast's Targe
+    lightning — which is triggered by NA/CA hits — has no on-field attack behind it.
+  detail: >
+    Declined. The off-field Q sub-DPS model is the right one for Beidou and the missing
+    formulas would be dead rows. Three reasons:
+    (1) The Q lightning argument does not hold — 雷兽之盾 discharges on the ACTIVE
+    character's Normal/Charged hits, not Beidou's, which is precisely why she is played
+    off-field; her own NA/CA are not a prerequisite for any modelled damage.
+    (2) Her NA/CA are Physical (claymore, no infusion anywhere in the kit), so the
+    formulas would sit outside every Electro buff she and her teams are built around,
+    and would stay at comboDescriptor count 0 — rows nobody selects that only widen
+    side-by-side comparisons.
+    (3) The dead P2 buff is harmless, unlike the shinobu-e-ring case that justified a
+    similar reversal: P2 carries filter abilities ["normal","charge"], and with no
+    NA/CA formula it lands on nothing rather than leaking onto E/Q. Consistent with the
+    existing beidou-c4-proc wont-do, which declines the other NA-dependent clause.
+    Reopen if on-field Physical Beidou is ever a modelling target; the params are
+    NA chain param1–param5, CA cyclic param6, CA final param7 (param8 is the stamina
+    row — S5b). Plunge entries stay out regardless.

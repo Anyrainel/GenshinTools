@@ -37,3 +37,70 @@
     effectively. So implementing any lower approximation is likely bad for Skirk. For
     other characters, it is not necessary to optimize for correctness as user can tune
     the partial buff applications manually.
+
+- id: thundering-fury-stellar-conduct
+  entity: thundering_fury
+  rule: U3
+  status: completed
+  category: bug
+  summary: >
+    4pc is missing the Stellar-Conduct clause. The 7.0 text reads
+    "月感电、星超导反应造成的伤害提升20%", but the implementation's 20% buff filters on
+    reactions ["aggravate", "lunarCharged"] only, so Stellar-Conduct dealers wearing
+    Thundering Fury lose a +20% reactionDmg% bonus the game grants.
+  detail: >
+    Added "stellarConduct" to the second StatBuff's reactions filter in
+    ThunderingFury4pc (src/lib/dmgcalc/impl/artifact4pc.ts), which now reads
+    ["aggravate", "lunarCharged", "stellarConduct"] at the same +20% reactionDmg%
+    value. The 40% clause was left untouched, and the class comment was updated to
+    name the Stellar-Conduct clause. Fixes the U12 stellar-supersede gap where an
+    Electro dealer on a Sandrone team received nothing from either reaction clause,
+    since hasReaction("superconduct") is false there. type-check PASS; dmgcalc and
+    team-comp suites pass.
+
+- id: heart-of-furnace-trigger-label
+  entity: heart_of_the_furnace
+  rule: U7
+  status: completed
+  category: bug
+  summary: >
+    4pc buffs are labelled triggers: ["on-reaction"], but the game text scopes them to
+    星烁 (Stellar Glimmer), an umbrella reaction term. U7 requires "stellar-reaction"
+    for an umbrella stellar clause; the generic label flattens the scoping, so the
+    displayed condition reads as "any reaction". The self ATK +12% buff carries no
+    reactions filter at all, so the trigger label is its only scope carrier.
+  detail: >
+    Both StatBuffs in HeartOfTheFurnace4pc (src/lib/dmgcalc/impl/artifact4pc.ts
+    ~L1530-L1551). "stellar-reaction" already exists in the codebase (weapon4Sword.ts,
+    weapon4Catalyst.ts, weapon4Claymore.ts, weapon4Polearm.ts), and the same file
+    already uses the umbrella label "lunar-reaction" for the Gleaming Moon set
+    (~L1158/L1176), so this is a straight label swap with existing precedent.
+    Display-only; no damage change.
+
+    RESOLVED: both 4pc buffs relabelled ["on-reaction"] -> ["stellar-reaction"],
+    the umbrella label matching 星烁. Same convention applied to the weapons the
+    same day; the self ATK buff carries no reactions filter, so the trigger label
+    is its only scope carrier.
+
+- id: scarlet-proof-trigger-label
+  entity: scarlet_proof
+  rule: U7
+  status: completed
+  category: bug
+  summary: >
+    4pc buffs are labelled triggers: ["on-reaction"], but the game text names one
+    specific reaction ("装备者触发星扩散反应后"). U7's trigger-label table maps a
+    specific named reaction to its ReactionType value, i.e. "stellarSwirl". The
+    CRIT Rate +16% buff has no reactions filter, so the generic label is the only
+    place its 星扩散-only scoping could be shown, and it currently reads as "any
+    reaction".
+  detail: >
+    Both StatBuffs in ScarletProof4pc (src/lib/dmgcalc/impl/artifact4pc.ts
+    ~L1569-L1586). Precedent in the same file: DisenchantmentInDeepShadow4pc's
+    unfiltered CRIT Rate buff uses triggers ["vs-superconduct", "vs-stellarConduct"]
+    rather than "on-reaction". Display-only; no damage change. The reactions filter
+    on the +40% reactionDmg% clause is already correct (星扩散 only, no sibling).
+
+    RESOLVED: both 4pc buffs relabelled ["on-reaction"] -> ["stellarSwirl"], the
+    specific label matching 星扩散 (not the 星烁 umbrella). The CRIT Rate buff
+    carries no reactions filter, so the label is its only scope carrier.

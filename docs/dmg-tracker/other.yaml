@@ -80,7 +80,7 @@
 - id: skirk-c6-sever-stack-consumption
   entity: skirk
   rule: S8
-  status: actionable
+  status: completed
   category: bug
   summary: >
     C6 Havoc: Sever coordinated attacks overcount the shared stack pool. The
@@ -94,6 +94,18 @@
     Havoc: Sever at 3 stacks total. Model a single shared consumption path or
     otherwise gate the default combo so the same stacks are not spent by both
     branches.
+    VERIFIED + DONE 2026-08-13. C6 ZH confirms one stack per absorbed Void Rift
+    (max 3, matching C1's one crystal blade per rift) and three consumers that
+    all draw from the same pool. Old combo spent 3 stacks on
+    skirk-c6-burst-coord plus 8 more on skirk-c6-normal-coord (count 4 × 6
+    hits ÷ 3 hits per stack) = 11 stacks against a 3-stack pool, while
+    skirk-c1-blade budgeted only `riftCount` rifts for the whole rotation.
+    Fix in character5None.ts: both C6 branches now model spending the WHOLE
+    pool (burst branch `riftCount` hits at 750% ATK; NA branch `riftCount * 3`
+    hits at 180% ATK) and only the burst branch is in the default combo, since
+    it is worth more per stack and the rotation absorbs its rifts with the
+    Charged Attack immediately before Havoc: Ruin. The NA branch stays
+    selectable for players who spend the pool that way.
 
 - id: traveler-anemo-absorption-selection
   entity: traveler_anemo
@@ -114,7 +126,7 @@
 - id: traveler-anemo-blade-winds-team-elements
   entity: traveler_anemo
   rule: U12
-  status: actionable
+  status: completed
   category: bug
   summary: >
     P3 Whirlwind always includes all four Blade Wind elements. Game text grants
@@ -125,6 +137,16 @@
     Blade Wind parts. Build the extra parts from the qualifying team elements
     instead, and keep the trigger requirement that at least 2 stacks are needed
     before the special Charged Attack can occur.
+    VERIFIED + DONE 2026-08-13. P3 ZH confirms 「队伍中附近的角色元素类型为火元素、
+    水元素、冰元素或雷元素的攻击命中敌人时，旅行者将获得1层对应元素类型的「晨风之刃」，
+    每种元素类型的「晨风之刃」至多叠加1层」 and 「拥有至少2层…时进行重击」 — one stack
+    per distinct PHEC element present, minimum 2 to trigger. In
+    character5None.ts the four hardcoded Blade Wind parts were replaced with
+    parts mapped over `bladeElements` (the PHEC elements actually in the team,
+    reusing the set already built for the Q absorption variants), and the entry
+    now carries `when: bladeElements.length >= 2` so the special Charged Attack
+    disappears entirely on teams that cannot reach 2 stacks. The label shows the
+    stack count.
 
 - id: traveler-electro-amulet-pickup-limitation
   entity: traveler_electro
