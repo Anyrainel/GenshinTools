@@ -26,6 +26,7 @@ from models import (
     WeaponOutput,
     WeaponSource,
 )
+from region_overrides import REGION_OVERRIDES
 
 RARITY_4_ARTIFACTS = [
     "Instructor",
@@ -190,6 +191,15 @@ def enrich_character_data_with_fandom(
             weapon = existing.get("weaponType", "")
             region = existing.get("region", "None")
             release_date = existing.get("releaseDate")
+
+            # Freshly released characters are in neither Fandom (which lags a
+            # patch behind) nor existing data, so region would land as "None"
+            # and downstream consumers would file their implementation under
+            # character{rarity}None.ts. Fall back to the manual pin instead.
+            # Existing data still wins, so a stale override can't overwrite a
+            # region Fandom has since confirmed.
+            if region == "None" and char_id in REGION_OVERRIDES:
+                region = REGION_OVERRIDES[char_id]
 
             if not weapon:
                 tqdm.write(f"Character {char.name} not in Fandom or existing data.")

@@ -2,6 +2,7 @@
 # requires-python = ">=3.10"
 # ///
 import argparse
+import difflib
 import json
 import re
 import sys
@@ -263,6 +264,320 @@ def load_required_formulas() -> dict[str, str]:
     return formulas
 
 
+# Data-quality guards
+#
+# Beta data arrives before the game ships it, and it arrives incomplete or
+# mis-parsed often enough that "the entry exists" is not the same as "the entry
+# is implementable". These checks turn the two failure modes we have actually
+# been bitten by into deterministic signals instead of tribal knowledge.
+
+_WEAPON_TEXT_CACHE: dict[str, dict[str, Any]] = {}
+
+# A refinement cell is supposed to hold a bare value like "16%", "3" or "4.5".
+# A trailing period is tolerated: the scraper's number pattern swallows the one
+# that ends the sentence, which is cosmetic rather than a misalignment.
+_PLAIN_VALUE_RE = re.compile(r"(\d+(?:\.\d+)?)%?\.?")
+
+# What the scraper writes into a column for a refinement whose text lacks the
+# clause that column came from. No real weapon ships a zero refinement value, so
+# a zero next to non-zero rows always means "this row was padded".
+_PADDED_CELLS = frozenset({"0", "0%"})
+
+
+def get_weapon_texts(lang: str) -> dict[str, Any]:
+    """Merged weapon text entries for one language (released first, beta as fallback)."""
+    cached = _WEAPON_TEXT_CACHE.get(lang)
+    if cached is not None:
+        return cached
+
+    merged: dict[str, Any] = {}
+    released = GAME_DIR / f"weapon_{lang}.json"
+    if released.exists():
+        for k, v in json.loads(released.read_text("utf-8")).items():
+            merged.setdefault(k, v)
+    beta = GAME_DIR / f"weapon_beta_{lang}.json.gz"
+    if beta.exists():
+        for k, v in _load_game_json(beta).items():
+            merged.setdefault(k, v)
+
+    _WEAPON_TEXT_CACHE[lang] = merged
+    return merged
+
+
+def char_talent_warnings(char_id: str) -> list[str]:
+    """Report talent tables that carry levels but no parameters.
+
+    A talent whose every level row is empty means the scrape landed the level
+    grid without the values behind it. Any formula wired to those indices reads
+    nothing and silently resolves to 0 damage, so the entity is not
+    implementable yet no matter how complete its skill text looks.
+    """
+    talent = get_char_stats().get(char_id, {}).get("talent") or {}
+    if not talent:
+        return []
+    empty = [
+        key
+        for key, levels in sorted(talent.items())
+        if not levels or all(not row for row in levels)
+    ]
+    if not empty:
+        return []
+    return [f"NO TALENT DATA ({', '.join(empty)})"]
+
+
+_PARAM_REF_RE = re.compile(r"\{param(\d+):")
+_TALENT_SLOT_LABELS = ("A", "E", "Q")
+
+
+def detail_row_label(row: Any) -> str:
+    """Label of a detail row, in either the dict or legacy [label, tpl] shape."""
+    if isinstance(row, dict):
+        return row.get("label", "")
+    return row[0] if row and len(row) >= 1 else ""
+
+
+def detail_row_template(row: Any) -> str:
+    """Template of a detail row, in either the dict or legacy [label, tpl] shape."""
+    if isinstance(row, dict):
+        return row.get("template", "")
+    return row[1] if row and len(row) >= 2 else ""
+
+
+def aligned_detail_template(en_row: Any, zh_row: Any) -> str:
+    """The detail template that can actually address the talent array.
+
+    Params are numbered per language and the array is scraped from ZH, so an EN
+    row whose placeholders were dropped (see `char_detail_warnings`) carries
+    only literal level-1 text and can never render the real values. Fall back
+    to the ZH row in that case — it is the one the numbers came from.
+
+    Retires per row as soon as EN ships the placeholders again: an EN template
+    that addresses any param is always returned unchanged.
+    """
+    en_tpl = detail_row_template(en_row)
+    zh_tpl = detail_row_template(zh_row) if zh_row else ""
+    # No EN row at all (the two languages ship a different number of rows —
+    # see `align_bilingual`); nothing to prefer it over.
+    if not en_tpl:
+        return zh_tpl
+    if _PARAM_REF_RE.search(en_tpl) or not _PARAM_REF_RE.search(zh_tpl):
+        return en_tpl
+    return zh_tpl
+
+
+_NUM_TOKEN_RE = re.compile(r"\d+(?:\.\d+)?")
+_PARAM_SLOT_RE = re.compile(r"\{param\d+:[^}]*\}")
+
+
+def _row_fingerprint(row: Any) -> tuple[str, ...]:
+    """The numbers a kit row carries — the only part of it that survives translation.
+
+    Param slots collapse to a sentinel because their index is numbered per
+    language, and markup is stripped so the digits inside a colour span are not
+    mistaken for values.
+    """
+    if row is None:
+        return ()
+    if isinstance(row, dict) and "descHtml" in row:
+        text = strip_html(row["descHtml"])
+    else:
+        text = _PARAM_SLOT_RE.sub("\x00#", detail_row_template(row))
+    return tuple(_NUM_TOKEN_RE.findall(text))
+
+
+def align_bilingual(en_rows: list[Any], zh_rows: list[Any]) -> list[tuple[Any, Any]]:
+    """Pair EN rows with their ZH counterparts, tolerating a row one side lacks.
+
+    Pairing by index is right whenever both languages ship the same number of
+    rows, which is every character but the few where one language carries an
+    extra entry the other never got — raiden_shogun's ZH-only "暂缺" passive,
+    vesna's ZH-only glossary term. One extra entry shifts every row after it,
+    so index pairing would print EN text under an unrelated ZH name and drop
+    the tail of the longer list entirely. When the counts disagree, align on
+    the numbers each row carries instead and leave the surplus rows unpaired.
+
+    Retires per character as soon as both languages ship the same rows: equal
+    counts take the plain-zip path and never reach the alignment.
+    """
+    if len(en_rows) == len(zh_rows):
+        return list(zip(en_rows, zh_rows, strict=True))
+
+    en_keys = [_row_fingerprint(r) for r in en_rows]
+    zh_keys = [_row_fingerprint(r) for r in zh_rows]
+    pairs: list[tuple[Any, Any]] = []
+    matcher = difflib.SequenceMatcher(a=en_keys, b=zh_keys, autojunk=False)
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag in ("equal", "replace"):
+            # A `replace` block is rows that sit between the same anchors but
+            # whose numbers differ; pair them positionally and let the surplus
+            # fall through unpaired.
+            span = min(i2 - i1, j2 - j1)
+            pairs.extend(zip(en_rows[i1 : i1 + span], zh_rows[j1 : j1 + span], strict=True))
+            pairs.extend((row, None) for row in en_rows[i1 + span : i2])
+            pairs.extend((None, row) for row in zh_rows[j1 + span : j2])
+        elif tag == "delete":
+            pairs.extend((row, None) for row in en_rows[i1:i2])
+        else:  # insert
+            pairs.extend((None, row) for row in zh_rows[j1:j2])
+    return pairs
+
+
+def _detail_params(skill: dict[str, Any]) -> set[int]:
+    """The 1-based param indices a skill's detail templates address."""
+    indices: set[int] = set()
+    for row in skill.get("details") or []:
+        indices.update(int(m) for m in _PARAM_REF_RE.findall(detail_row_template(row)))
+    return indices
+
+
+def char_detail_warnings(char_id: str) -> list[str]:
+    """Report skills whose EN and ZH detail rows address different params.
+
+    Talent numbers are scraped from ZH, which is the source of truth during
+    beta (translator rule U0b). The {paramN} indices inside a detail template
+    are numbered from the values that vary across levels in that language's
+    own strings, so a details list only lines up with a talent array derived
+    from the same language. When beta EN disagrees on how many values vary —
+    usually because it still ships a placeholder where ZH already has the real
+    ramp — the scraper drops EN's placeholders and leaves literal level-1 text
+    rather than let them address the wrong slots. That row then stops tracking
+    talent level, so read the value from the ZH row.
+    """
+    en_kit, zh_kit = load_char_kits(char_id)
+    en_skills = en_kit.get("skills") or []
+    zh_skills = zh_kit.get("skills") or []
+    if not en_skills or not zh_skills:
+        return []
+
+    warnings: list[str] = []
+    for i, slot in enumerate(_TALENT_SLOT_LABELS):
+        if i >= len(en_skills) or i >= len(zh_skills):
+            break
+        en_params = _detail_params(en_skills[i])
+        zh_params = _detail_params(zh_skills[i])
+        if en_params == zh_params:
+            continue
+        lang, params = ("EN", zh_params) if not en_params else ("ZH", en_params)
+        if not en_params or not zh_params:
+            warnings.append(
+                f"{slot} detail rows carry no params in {lang} but "
+                f"{len(params)} in the other language — the {lang} rows render "
+                "literal level-1 text and do not track talent level"
+            )
+        else:
+            warnings.append(
+                f"{slot} detail rows address different params in EN "
+                f"({sorted(en_params)}) and ZH ({sorted(zh_params)})"
+            )
+    return warnings
+
+
+def _refinement_columns(entry: dict[str, Any]) -> int:
+    """How many per-refinement values a weapon entry carries."""
+    refinements: list[list[str]] = entry.get("refinements") or []
+    return len(refinements[0]) if refinements and refinements[0] else 0
+
+
+def _numeric_column(column: list[str]) -> list[float] | None:
+    values: list[float] = []
+    for cell in column:
+        m = _PLAIN_VALUE_RE.fullmatch(cell)
+        if not m:
+            return None
+        values.append(float(m.group(1)))
+    return values
+
+
+def weapon_refinement_warnings(weapon_id: str) -> list[str]:
+    """Report weapon effect text that the refinement templatizer mangled.
+
+    The templatizer turns R1-R5 into one template plus a value per refinement.
+    When the five source strings differ in clause structure — not just in
+    values — the values can be lined up against the wrong slots, and the damage
+    shows up in the output data rather than in an error:
+
+    * a template that is nothing but ``{0}`` means no shared skeleton was found
+      and each refinement swallowed the whole sentence;
+    * a refinement cell holding prose instead of a bare value means the same;
+    * a zero cell beside non-zero ones means the refinement rows disagreed on
+      how many parameters they carry, and the scraper padded the clause that
+      row's text does not have. The zero is the scraper's reading of "this
+      refinement grants nothing here", which is usually right and occasionally
+      hides a parse failure — either way the game text is what settles it;
+    * a column that reverses direction is impossible in real data — a genuine
+      refinement stat ramps one way (a buff up, a cooldown down), it never
+      climbs and then falls;
+    * a column that is flat across R2-R5 with R1 alone out of line is the
+      fingerprint of an R1 string with one clause fewer than the rest, parsed
+      without that padding: R1's value gets read from a different slot than
+      everyone else's. Real ramps never freeze for four refinements after a
+      single jump.
+
+    A cross-language check covers the failure the per-language ones cannot see:
+    an effect text whose five refinement strings are *identical* parses to a
+    template with the numbers baked in and no refinement columns at all, which
+    looks locally healthy. It is only wrong next to the other language, where
+    the same effect does vary.
+    """
+    warnings: list[str] = []
+    entries = {lang: get_weapon_texts(lang).get(weapon_id) for lang in ("en", "zh")}
+
+    # Both languages describe one effect, so they must resolve to the same
+    # number of per-refinement values. Retires as soon as they agree — which
+    # they already do for every weapon but exaiphanes_blade.
+    if entries["en"] and entries["zh"]:
+        cols = {lang: _refinement_columns(entry) for lang, entry in entries.items() if entry}
+        if cols["en"] != cols["zh"]:
+            thin = "en" if cols["en"] < cols["zh"] else "zh"
+            warnings.append(
+                f"EN and ZH disagree on refinement value count "
+                f"(EN {cols['en']}, ZH {cols['zh']}) — [{thin}] lost at least one value "
+                f"into its template and no longer varies by refinement; "
+                f"take the numbers from the other language"
+            )
+
+    for lang in ("en", "zh"):
+        entry = entries[lang]
+        if not entry:
+            continue
+        tpl = str(entry.get("descHtmlTpl", ""))
+        refinements: list[list[str]] = entry.get("refinements") or []
+        if not refinements or not refinements[0]:
+            continue
+
+        if tpl.strip() == "{0}":
+            warnings.append(f"[{lang}] effect template collapsed to a lone {{0}}")
+
+        for col_idx in range(len(refinements[0])):
+            column = [row[col_idx] if col_idx < len(row) else "" for row in refinements]
+            shown = "/".join(column)
+            if any(not _PLAIN_VALUE_RE.fullmatch(cell) for cell in column):
+                warnings.append(f"[{lang}] column {col_idx} holds text, not values: {shown[:60]}…")
+                continue
+
+            padded = [i for i, cell in enumerate(column) if cell in _PADDED_CELLS]
+            if padded and len(padded) < len(column):
+                short = "/".join(f"R{i + 1}" for i in padded)
+                warnings.append(
+                    f"[{lang}] {short} carries one clause fewer than the other refinements;"
+                    f" column {col_idx} padded with {column[padded[0]]}"
+                    f" — read the effect text, do not take these numbers on trust: {shown}"
+                )
+                continue
+
+            values = _numeric_column(column)
+            if values is None or len(values) < 3:
+                continue
+            steps = [b - a for a, b in zip(values, values[1:], strict=False)]
+            if any(s > 0 for s in steps) and any(s < 0 for s in steps):
+                warnings.append(f"[{lang}] column {col_idx} reverses direction: {shown}")
+            elif len(set(values[1:])) == 1 and values[0] != values[1]:
+                warnings.append(
+                    f"[{lang}] column {col_idx} is flat after R1 (misaligned R1?): {shown}"
+                )
+    return warnings
+
+
 def expected_filename(meta: EntityMeta, mode: Mode) -> str:
     if mode == "C":
         rarity = meta.get("rarity", 0)
@@ -384,18 +699,19 @@ def cmd_detail(char_id: str, detail_spec: str) -> None:
     en_skills = en_kit.get("skills", [])
     zh_skills = zh_kit.get("skills", [])
 
-    if skill_idx >= len(en_skills):
+    # The skill slot is positional (0=A, 1=E, 2=Q), so each language is indexed
+    # on its own; a language that is missing the slot simply contributes nothing.
+    en_s = en_skills[skill_idx] if skill_idx < len(en_skills) else None
+    zh_s = zh_skills[skill_idx] if skill_idx < len(zh_skills) else None
+    if en_s is None and zh_s is None:
         print(f"Skill '{skill_code}' not found for '{char_id}'.", file=sys.stderr)
         sys.exit(1)
 
-    en_s = en_skills[skill_idx]
-    zh_s = zh_skills[skill_idx] if skill_idx < len(zh_skills) else None
-    name_en = en_s.get("name", "")
+    name_en = en_s.get("name", "") if en_s else ""
     name_zh = zh_s["name"] if zh_s else ""
     print(f"[{skill_code}] {name_en}  |  {name_zh}  —  Lv{level}")
 
-    # New template format: [label, template]
-    en_details = en_s.get("details") or []
+    en_details = (en_s.get("details") or []) if en_s else []
     zh_details = (zh_s.get("details") or []) if zh_s else []
 
     # Load talent params for rendering
@@ -403,25 +719,19 @@ def cmd_detail(char_id: str, detail_spec: str) -> None:
     talent_data = char_stats.get(char_id, {}).get("talent", {}).get(skill_code, [])
     level_params = talent_data[level - 1] if level - 1 < len(talent_data) else []
 
-    def _row_label(r):
-        if isinstance(r, dict):
-            return r.get("label", "")
-        return r[0] if r and len(r) >= 1 else ""
-
-    def _row_template(r):
-        if isinstance(r, dict):
-            return r.get("template", "")
-        return r[1] if r and len(r) >= 2 else ""
-
-    for j, row in enumerate(en_details):
-        if not row:
+    for row, zh_row in align_bilingual(en_details, zh_details):
+        if not row and not zh_row:
             continue
-        en_name = _row_label(row)
-        template = _row_template(row)
-        zh_row = zh_details[j] if j < len(zh_details) else None
-        zh_name = _row_label(zh_row) if zh_row else ""
-        rendered = render_template(template, level_params)
+        en_name = detail_row_label(row) if row else ""
+        zh_name = detail_row_label(zh_row) if zh_row else ""
+        rendered = render_template(aligned_detail_template(row, zh_row), level_params)
         print(f"  {en_name} ({zh_name}): {rendered}")
+
+
+# Stands in for the name of a row the other language never shipped, so an
+# unpaired row reads as a known gap instead of a blank field.
+_NO_EN = "(no EN)"
+_NO_ZH = "(no ZH)"
 
 
 def print_char_kit(
@@ -431,103 +741,120 @@ def print_char_kit(
     zh_skills = zh_kit.get("skills", [])
     tags = ["A", "E", "Q"]
 
-    for i in range(len(en_skills)):
-        en_s = en_skills[i]
+    # Skill slots are positional (A/E/Q), so they pair by index; the max() only
+    # keeps a slot one language is missing from dropping the other's text.
+    for i in range(max(len(en_skills), len(zh_skills))):
+        en_s = en_skills[i] if i < len(en_skills) else None
         zh_s = zh_skills[i] if i < len(zh_skills) else None
         tag = tags[i] if i < len(tags) else f"S{i}"
 
-        name_en = en_s.get("name", "")
-        name_zh = zh_s["name"] if zh_s else ""
+        name_en = en_s.get("name", "") if en_s else _NO_EN
+        name_zh = zh_s["name"] if zh_s else _NO_ZH
         if zh_only:
-            print(f"\n[{tag}] {name_zh}")
+            print(f"\n[{tag}] {name_zh if zh_s else name_en}")
         else:
             print(f"\n[{tag}] {name_en}  |  {name_zh}")
-        if not zh_only:
+        if not zh_only and en_s:
             print(f"  EN: {strip_html(en_s.get('descHtml', ''))}")
         if zh_s:
             print(f"  ZH: {strip_html(zh_s.get('descHtml', ''))}")
+        elif zh_only and en_s:
+            # Nothing in ZH to print — EN text beats an empty entry.
+            print(f"  EN: {strip_html(en_s.get('descHtml', ''))}")
 
-        en_details = en_s.get("details") or []
+        en_details = (en_s.get("details") or []) if en_s else []
         zh_details = (zh_s.get("details") or []) if zh_s else []
 
-        def _row_label(r):
-            if isinstance(r, dict):
-                return r.get("label", "")
-            return r[0] if r and len(r) >= 1 else ""
-
-        def _row_template(r):
-            if isinstance(r, dict):
-                return r.get("template", "")
-            return r[1] if r and len(r) >= 2 else ""
-
-        for j, row in enumerate(en_details):
-            if not row:
+        for row, zh_row in align_bilingual(en_details, zh_details):
+            if not row and not zh_row:
                 continue
-            template = _row_template(row)
-            zh_row = zh_details[j] if j < len(zh_details) else None
-            zh_name = _row_label(zh_row) if zh_row else ""
+            zh_name = detail_row_label(zh_row) if zh_row else ""
             if zh_only:
-                print(f"  {zh_name}: {template}")
+                label = zh_name or detail_row_label(row)
+                template = detail_row_template(zh_row) if zh_row else detail_row_template(row)
+                print(f"  {label}: {template}")
             else:
-                en_name = _row_label(row)
+                en_name = detail_row_label(row) if row else ""
+                template = aligned_detail_template(row, zh_row)
                 print(f"  {en_name} ({zh_name}): {template}")
 
+    # Passives carry no positional meaning, and one language shipping a
+    # placeholder entry the other lacks (raiden_shogun's ZH "暂缺") shifts every
+    # row after it — hence the alignment rather than a bare index pairing.
     en_passives = en_kit.get("passives", [])
     zh_passives = zh_kit.get("passives", [])
-    for i in range(len(en_passives)):
-        en_p = en_passives[i]
-        zh_p = zh_passives[i] if i < len(zh_passives) else None
+    for i, (en_p, zh_p) in enumerate(align_bilingual(en_passives, zh_passives)):
         zh_desc = strip_html(zh_p.get("descHtml", "")) if zh_p else ""
+        en_desc = strip_html(en_p.get("descHtml", "")) if en_p else ""
         if any(kw in zh_desc for kw in _SKIP_PASSIVE_KEYWORDS):
             print(f"\n[P{i + 1}] (non-combat)")
             continue
         if zh_only:
-            print(f"\n[P{i + 1}] {zh_p['name'] if zh_p else ''}")
+            print(f"\n[P{i + 1}] {zh_p['name'] if zh_p else en_p.get('name', '')}")
         else:
-            print(f"\n[P{i + 1}] {en_p.get('name', '')}  |  {zh_p['name'] if zh_p else ''}")
-            print(f"  EN: {strip_html(en_p.get('descHtml', ''))}")
+            en_name = en_p.get("name", "") if en_p else _NO_EN
+            print(f"\n[P{i + 1}] {en_name}  |  {zh_p['name'] if zh_p else _NO_ZH}")
+            if en_p:
+                print(f"  EN: {en_desc}")
         if zh_p:
             print(f"  ZH: {zh_desc}")
+        elif zh_only and en_p:
+            print(f"  EN: {en_desc}")
 
+    # Constellations are positional (C1..C6), so they pair by index.
     en_cons = en_kit.get("constellations", [])
     zh_cons = zh_kit.get("constellations", [])
-    for i in range(len(en_cons)):
-        en_c = en_cons[i]
+    for i in range(max(len(en_cons), len(zh_cons))):
+        en_c = en_cons[i] if i < len(en_cons) else None
         zh_c = zh_cons[i] if i < len(zh_cons) else None
+        en_desc = strip_html(en_c.get("descHtml", "")) if en_c else ""
         if zh_only:
-            print(f"\n[C{i + 1}] {zh_c['name'] if zh_c else ''}")
+            fallback_name = en_c.get("name", "") if en_c else ""
+            print(f"\n[C{i + 1}] {zh_c['name'] if zh_c else fallback_name}")
         else:
-            print(f"\n[C{i + 1}] {en_c.get('name', '')}  |  {zh_c['name'] if zh_c else ''}")
-            print(f"  EN: {strip_html(en_c.get('descHtml', ''))}")
+            en_name = en_c.get("name", "") if en_c else _NO_EN
+            print(f"\n[C{i + 1}] {en_name}  |  {zh_c['name'] if zh_c else _NO_ZH}")
+            if en_c:
+                print(f"  EN: {en_desc}")
         if zh_c:
             print(f"  ZH: {strip_html(zh_c.get('descHtml', ''))}")
+        elif zh_only and en_c:
+            print(f"  EN: {en_desc}")
 
-    en_glossary = en_kit.get("glossary", [])
-    zh_glossary = zh_kit.get("glossary", [])
-    if en_glossary:
+    # Glossary terms are unordered, and a term can exist in one language only
+    # (vesna's ZH-only 灵剑武装), so they align rather than pair by index.
+    en_glossary = en_kit.get("glossary", []) or []
+    zh_glossary = zh_kit.get("glossary", []) or []
+    if en_glossary or zh_glossary:
+        # Several EN terms can share one description; they collapse to a single
+        # entry listing every name.
         groups: dict[str, list[str]] = {}
         order: list[str] = []
-        zh_by_desc: dict[str, Any] = {}
-        for i, entry in enumerate(en_glossary):
-            desc = entry.get("descHtml", "")
-            if desc not in groups:
-                groups[desc] = []
-                order.append(desc)
-                zh_by_desc[desc] = zh_glossary[i] if i < len(zh_glossary) else None
-            groups[desc].append(entry.get("name", ""))
+        zh_by_key: dict[str, Any] = {}
+        for en_entry, zh_entry in align_bilingual(en_glossary, zh_glossary):
+            # ZH-only terms get a key of their own so they keep their own row.
+            key = en_entry.get("descHtml", "") if en_entry else f"\x00zh{len(order)}"
+            if key not in groups:
+                groups[key] = []
+                order.append(key)
+                zh_by_key[key] = zh_entry
+            if en_entry:
+                groups[key].append(en_entry.get("name", ""))
 
-        for desc in order:
-            zh_entry = zh_by_desc.get(desc)
+        for key in order:
+            zh_entry = zh_by_key.get(key)
+            names_en = " / ".join(groups[key]) if groups[key] else _NO_EN
+            names_zh = zh_entry["name"] if zh_entry else _NO_ZH
             if zh_only:
-                names_zh = zh_entry["name"] if zh_entry else ""
-                print(f"\n[G] {names_zh}")
+                print(f"\n[G] {names_zh if zh_entry else names_en}")
             else:
-                names_en = " / ".join(groups[desc])
-                names_zh = zh_entry["name"] if zh_entry else ""
                 print(f"\n[G] {names_en}  |  {names_zh}")
-                print(f"  EN: {strip_html(desc)}")
+                if groups[key]:
+                    print(f"  EN: {strip_html(key)}")
             if zh_entry:
                 print(f"  ZH: {strip_html(zh_entry.get('descHtml', ''))}")
+            elif zh_only and groups[key]:
+                print(f"  EN: {strip_html(key)}")
 
 
 def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
@@ -554,6 +881,14 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
             print(f"  [CHAR] {entity_id}  |  {name_en}  |  {name_zh}")
         print(f"  {meta.get('rarity')}★ {meta.get('element')} - {meta.get('region')}")
 
+        for warning in char_talent_warnings(entity_id):
+            print(f"  [!] NOT READY — {warning}")
+            print("      Talent levels exist but carry no parameters, so any formula")
+            print("      wired to them resolves to 0. Wait for the data before implementing.")
+
+        for warning in char_detail_warnings(entity_id):
+            print(f"  [!] SUSPECT DATA — {warning}")
+
         req_formulas = load_required_formulas()
         if entity_id in req_formulas:
             print("  [RUNBOOK] Required Formulas: (【...】express the precondition.)")
@@ -575,19 +910,11 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
         print("═" * 80)
 
         # Read weapon effect from per-language game JSONs (new format: descHtmlTpl + refinements)
-        game_dir = DATA / "game"
         effect_texts: dict[str, str] = {}
         for lang in ("en", "zh"):
             if zh_only and lang == "en":
                 continue
-            game_weapons: dict[str, Any] = {}
-            for suffix in (lang, f"beta_{lang}"):
-                wp = game_dir / f"weapon_{suffix}.json"
-                if wp.exists():
-                    data = json.loads(wp.read_text("utf-8"))
-                    for k, v in data.items():
-                        game_weapons.setdefault(k, v)
-            entry = game_weapons.get(entity_id, {})
+            entry = get_weapon_texts(lang).get(entity_id, {})
             tpl = entry.get("descHtmlTpl", "")
             refinements: list[list[str]] = entry.get("refinements", [])
             if tpl and refinements:
@@ -609,6 +936,12 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
         if not zh_only:
             print(f"  EN: {strip_html(effect_texts.get('en', ''))}")
         print(f"  ZH: {strip_html(effect_texts.get('zh', ''))}")
+
+        refinement_warnings = weapon_refinement_warnings(entity_id)
+        if refinement_warnings:
+            print("[!] SUSPECT REFINEMENT DATA — verify values against the game before use:")
+            for warning in refinement_warnings:
+                print(f"  - {warning}")
 
     elif mode == "A":
         if meta.get("isHalfSet"):
@@ -767,15 +1100,40 @@ def _format_missing(mode: Mode, eid: str, meta: EntityMeta, i18n: dict[str, Any]
     return eid
 
 
+def _data_quality_report(mode: Mode, resources: dict[str, EntityMeta]) -> list[str]:
+    """Data-quality findings for every entity of a mode, released and beta alike."""
+    if mode not in ("C", "W"):
+        return []
+
+    eids = sorted(set(resources) | _load_beta_ids(mode))
+    lines: list[str] = []
+    for eid in eids:
+        if mode == "C":
+            for warning in char_talent_warnings(eid):
+                lines.append(f"{eid}: NOT READY — {warning}")
+            for warning in char_detail_warnings(eid):
+                lines.append(f"{eid}: SUSPECT DATA — {warning}")
+        else:
+            for warning in weapon_refinement_warnings(eid):
+                lines.append(f"{eid}: SUSPECT DATA — {warning}")
+    return lines
+
+
 def cmd_check(modes_to_test: list[Mode]) -> None:
     for mode in modes_to_test:
         mode_name = {"C": "Character", "W": "Weapon", "A": "Artifact"}[mode]
         print(f"=== [{mode}] {mode_name} Check ===")
         misplaced, missing, resources = fetch_check_results(mode)
         i18n = load_i18n_names(mode)
+        data_issues = _data_quality_report(mode, resources)
+
+        if data_issues:
+            print(f"[!] Data quality ({len(data_issues)}):")
+            for line in data_issues:
+                print(f"  - {line}")
 
         if not misplaced and not missing:
-            print("[OK]")
+            print("[OK]" if not data_issues else "[OK] implementations")
             continue
 
         if misplaced:
@@ -956,6 +1314,8 @@ def cmd_beta(mode_filter: Mode | None = None) -> None:
     modes: list[Mode] = ["C", "W", "A"] if mode_filter is None else [mode_filter]
 
     any_found = False
+    any_blocked = False
+    any_suspect = False
     for mode in modes:
         beta_ids = _load_beta_ids(mode)
         if not beta_ids:
@@ -1002,11 +1362,35 @@ def cmd_beta(mode_filter: Mode | None = None) -> None:
             else:
                 impl_status = "NO IMPL"
 
-            print(f"  {eid:<35s} | {name_en:<20s} | {name_zh:<10s} | {spec:<30s} | {impl_status}")
+            blockers = char_talent_warnings(eid) if mode == "C" else []
+            if mode == "C":
+                suspect = char_detail_warnings(eid)
+            elif mode == "W":
+                suspect = weapon_refinement_warnings(eid)
+            else:
+                suspect = []
+            any_blocked = any_blocked or bool(blockers)
+            any_suspect = any_suspect or bool(suspect)
+
+            status = impl_status
+            if blockers:
+                status = f"{impl_status} | NOT READY: {'; '.join(blockers)}"
+            elif suspect:
+                status = f"{impl_status} | SUSPECT DATA"
+
+            print(f"  {eid:<35s} | {name_en:<20s} | {name_zh:<10s} | {spec:<30s} | {status}")
+            for warning in suspect:
+                print(f"{'':<35s}   └─ {warning}")
         print()
 
     if not any_found:
         print("No beta-unique entities found.")
+        return
+
+    if any_blocked:
+        print("NOT READY = game data is incomplete; do not implement yet.")
+    if any_suspect:
+        print("SUSPECT DATA = values look mis-parsed; verify against the game before use.")
 
 
 def cmd_view(path_arg: str) -> None:
@@ -1082,7 +1466,8 @@ Commands:
   showzh <C|W|A> <id>  Like show, but Chinese-only (no English text). Saves tokens.
                         Dumps output to scripts/data/<id>.txt
   list <C|W|A>        List all registered IDs grouped by categories.
-  check [C|W|A]       Find missing and misplaced implementations.
+  check [C|W|A]       Find missing and misplaced implementations, plus any
+                        data-quality findings (see markers below).
                         If no mode is provided, checks all modes.
   beta [C|W|A]        List characters/weapons/artifacts that are unreleased
                         (not in resources.ts) with metadata and implementation
@@ -1094,6 +1479,20 @@ Commands:
                         ``src/data/game/character_beta_en.json.gz``) to stdout.
   excel C <id>        Print Excel VBA damage logic for a character (to stdout).
   excel C --list      List all Excel characters with matched project IDs.
+
+Data-quality markers (emitted by check, beta, and show):
+  NOT READY           The game data itself is incomplete — e.g. a talent table
+                        with levels but no parameters. Formulas wired to it
+                        resolve to 0. Do not implement until the data lands.
+  SUSPECT DATA        The values parsed out of an effect text look mis-aligned —
+                        e.g. a refinement column that reverses direction or
+                        freezes after R1 — or the refinement rows disagreed on
+                        how many parameters they carry and a zero was padded in.
+                        For characters, EN and ZH talent detail rows disagreed
+                        on how many values vary across levels; the numbers come
+                        from ZH, so the EN rows fall back to literal level-1
+                        text and stop tracking talent level.
+                        Verify against the game before use.
 """
 
 

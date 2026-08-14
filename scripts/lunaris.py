@@ -23,6 +23,7 @@ Output files (under src/data/game/):
 """
 
 import argparse
+import difflib
 import re
 import sys
 from pathlib import Path
@@ -144,12 +145,10 @@ SKIP_DERIVED_IDS: set[str] = {"traveler"}
 # assign regions to beta characters whose associationType isn't set yet.
 
 # Fallback region used when associationType is missing or unrecognized. Must
-# be a valid Region value (src/data/types.ts). "Nod-Krai" mirrors where most
+# be a valid Region value (src/data/types.ts). "Snezhnaya" mirrors where most
 # current-version beta characters land; edit REGION_OVERRIDES to correct
 # exceptions like Mondstadt-affiliated beta characters.
-# TODO: update to "Snezhnaya" after the 7.0 game version (main storyline
-# moves on and new beta characters will default to that region instead).
-DEFAULT_UNKNOWN_REGION = "Nod-Krai"
+DEFAULT_UNKNOWN_REGION = "Snezhnaya"
 
 ASSOCIATION_REGION_MAP: dict[str, str] = {
     "ASSOC_TYPE_MONDSTADT": "Mondstadt",
@@ -474,7 +473,7 @@ def _is_constant_across_levels(multipliers_values: list[str], num_index: int) ->
 
 def _multipliers_to_talent_and_details(
     multipliers: dict[str, list[str]],
-) -> tuple[list[list[float]], list[dict[str, str]]]:
+) -> tuple[list[list[float]], list[dict[str, str]], list[int]]:
     """Convert lunaris multipliers to both talent array and templated details.
 
     Only values that vary across talent levels become params. Constant values
@@ -483,9 +482,12 @@ def _multipliers_to_talent_and_details(
     Returns:
       talent: [[param1_lv1, param2_lv1, ...], ...] (15 levels)
       details: [{"label": ..., "template": ...}, ...] matching official format
+      param_counts: per-label number of params, in label order. This is what
+        decides the {paramN} numbering, so two languages whose counts agree
+        label-for-label produce interchangeable param indices.
     """
     if not multipliers:
-        return [], []
+        return [], [], []
 
     labels = list(multipliers.keys())
     n_levels = max(len(vals) for vals in multipliers.values()) if multipliers else 0
@@ -496,16 +498,20 @@ def _multipliers_to_talent_and_details(
     param_positions: list[tuple[int, int]] = []  # (label_idx, num_index_in_row)
     param_idx = 1  # 1-based
 
+    param_counts: list[int] = []
+
     for label_idx, label in enumerate(labels):
         vals = multipliers[label]
         if not vals:
             details.append({"label": label, "template": ""})
+            param_counts.append(0)
             continue
 
         # Find all numbers in the first level's string
         nums = list(_NUMBER_RE.finditer(vals[0]))
         template_parts = []
         last_end = 0
+        label_params = 0
 
         for num_i, m in enumerate(nums):
             template_parts.append(vals[0][last_end : m.start()])
@@ -521,11 +527,13 @@ def _multipliers_to_talent_and_details(
                 template_parts.append(f"{{param{param_idx}:{fmt}}}")
                 param_positions.append((label_idx, num_i))
                 param_idx += 1
+                label_params += 1
 
             last_end = m.end()
 
         template_parts.append(vals[0][last_end:])
         details.append({"label": label, "template": "".join(template_parts)})
+        param_counts.append(label_params)
 
     total_params = param_idx - 1
 
@@ -542,7 +550,20 @@ def _multipliers_to_talent_and_details(
                     row[p_i] = round(extracted[num_i][0], 6)
         talent.append(row)
 
-    return talent, details
+    return talent, details, param_counts
+
+
+def _literal_details(multipliers: dict[str, list[str]]) -> list[dict[str, str]]:
+    """Detail rows that render their own text verbatim, with no {paramN} slots.
+
+    Used for the language that did NOT supply the talent array when the two
+    languages disagree on how many params they carry: its placeholders would
+    index into slots that mean something else. Showing the level-1 text is a
+    known-stale template; showing misnumbered placeholders is a wrong one.
+    """
+    return [
+        {"label": label, "template": vals[0] if vals else ""} for label, vals in multipliers.items()
+    ]
 
 
 def _build_glossary(hyperlinks: list[dict]) -> list[dict] | None:
@@ -612,13 +633,47 @@ def scrape_character(
     zh_skills: list[dict] = []
 
     for key, prefix, tk in zip(skill_keys, skill_prefixes, talent_keys, strict=False):
-        # Build talent array and EN templates from EN multipliers
         en_s = en_skills_raw.get(key)
+        zh_s = zh_skills_raw.get(key)
+        en_mult = en_s.get("multipliers", {}) if en_s else {}
+        zh_mult = zh_s.get("multipliers", {}) if zh_s else {}
+
+        en_talent, en_details, en_counts = _multipliers_to_talent_and_details(en_mult)
+        zh_talent, zh_details, zh_counts = _multipliers_to_talent_and_details(zh_mult)
+
+        # Talent numbers come from ZH: it is the beta source of truth
+        # (translator rule U0b). Beta EN strings routinely ship placeholders —
+        # vesna's burst was a literal "6000%/0%" at every one of the 15 levels,
+        # which yields zero params because nothing varies — while the ZH row
+        # already carried the real 263.2%→625.1% ramp. Fall back to EN only
+        # when ZH has no params to give.
+        talent_from_zh = any(zh_counts)
+        talent_arr = zh_talent if talent_from_zh else en_talent
+        if talent_arr:
+            talent_data[tk] = talent_arr
+
+        # {paramN} indices are numbered by the varying numbers of each
+        # language's own strings, so a details list only lines up with a talent
+        # array derived from the same language. The language that did supply
+        # the array keeps its templates; the other keeps its templates only
+        # while its per-label param counts agree — otherwise its placeholders
+        # would read the wrong slots and render confidently wrong numbers.
+        # Literal level-1 text is stale but never wrong, and a reader can
+        # recover the real value from the other language.
+        if en_counts != zh_counts:
+            if talent_from_zh:
+                en_details = _literal_details(en_mult)
+            else:
+                zh_details = _literal_details(zh_mult)
+            # Retires when both languages carry the same per-label param counts.
+            stale = "EN" if talent_from_zh else "ZH"
+            print(
+                f"      [!] {tk}: EN/ZH param counts differ "
+                f"({en_counts} vs {zh_counts}) — {stale} details fall back to "
+                f"literal level-1 text and stop tracking talent level"
+            )
+
         if en_s:
-            en_mult = en_s.get("multipliers", {})
-            talent_arr, en_details = _multipliers_to_talent_and_details(en_mult)
-            if talent_arr:
-                talent_data[tk] = talent_arr
             en_skills.append(
                 {
                     "name": f"{prefix}{en_s.get('name', '')}",
@@ -626,11 +681,7 @@ def scrape_character(
                     "details": en_details,
                 }
             )
-        # Build ZH templates from ZH multipliers
-        zh_s = zh_skills_raw.get(key)
         if zh_s:
-            zh_mult = zh_s.get("multipliers", {})
-            _, zh_details = _multipliers_to_talent_and_details(zh_mult)
             zh_skills.append(
                 {
                     "name": f"{prefix}{zh_s.get('name', '')}",
@@ -717,6 +768,72 @@ def scrape_character(
 # Weapon parsing
 
 
+# Tags are alternated with numbers so that digits living inside markup — the
+# "99" of `color: #99FFFFFF` — are never mistaken for a refinement value.
+_DESC_TOKEN_RE = re.compile(r"<[^>]*>|\d+\.?\d*%?")
+_DESC_TAG_RE = re.compile(r"<[^>]*>")
+# Sentinel used as the alignment key for every number token. It contains a NUL
+# byte so it can never collide with a real text chunk.
+_ALIGN_NUM_KEY = "\x00#"
+
+
+def _split_desc_tokens(desc: str) -> list[str]:
+    """Split a description into alternating [text, number, text, ..., text].
+
+    Text chunks sit at even indices, numeric values at odd indices. Numbers
+    inside HTML tags stay part of the surrounding text chunk.
+    """
+    parts: list[str] = []
+    last = 0
+    for m in _DESC_TOKEN_RE.finditer(desc):
+        if m.group(0).startswith("<"):
+            continue
+        parts.append(desc[last : m.start()])
+        parts.append(m.group(0))
+        last = m.end()
+    parts.append(desc[last:])
+    return parts
+
+
+def _desc_align_keys(parts: list[str]) -> list[str]:
+    """Comparison keys for `_split_desc_tokens` output.
+
+    Numbers collapse to a sentinel (they are what we are trying to align), and
+    text chunks drop their markup because the game wraps different numbers in
+    color spans at different refinement levels.
+    """
+    return [
+        _ALIGN_NUM_KEY if i % 2 else re.sub(r"\s+", " ", _DESC_TAG_RE.sub("", p))
+        for i, p in enumerate(parts)
+    ]
+
+
+def _align_number_slots(ref_keys: list[str], other_keys: list[str]) -> dict[int, int]:
+    """Map the template refinement's number positions onto another refinement's.
+
+    Aligning by raw ordinal breaks whenever a refinement string has a different
+    clause structure (e.g. Exaiphanes Blade's R1 has no CRIT DMG sentence, so
+    its first number is ATK% while R2-R5's first number is CRIT DMG%). Matching
+    the *text around* each number instead is stable against those extra clauses,
+    and degenerates to plain ordinal alignment when all five strings share one
+    structure — which is the case for every other weapon.
+
+    Slots the other refinement does not have are simply absent from the result.
+    """
+    matcher = difflib.SequenceMatcher(a=ref_keys, b=other_keys, autojunk=False)
+    mapping: dict[int, int] = {}
+    for i, j, size in matcher.get_matching_blocks():
+        for k in range(size):
+            if (i + k) % 2:  # odd index == number token
+                mapping[i + k] = j + k
+    return mapping
+
+
+def _zero_like(values: list[str]) -> str:
+    """A zero formatted like the refinement values it will sit beside."""
+    return "0%" if values and all(v.endswith("%") for v in values) else "0"
+
+
 def _templatize_weapon_desc(all_descs: dict[str, str]) -> tuple[str, list[list[str]]]:
     if not all_descs or len(all_descs) < 2:
         r1 = next(iter(all_descs.values()), "")
@@ -726,40 +843,61 @@ def _templatize_weapon_desc(all_descs: dict[str, str]) -> tuple[str, list[list[s
     if len(descs) < 2:
         return descs[0] if descs else "", []
 
-    num_pattern = re.compile(r"\d+\.?\d*%?")
-    r_nums = [num_pattern.findall(d) for d in descs]
+    parts = [_split_desc_tokens(d) for d in descs]
+    # Refinement strings do not always carry the same clauses: a weapon whose
+    # low refinements genuinely grant one effect fewer ships an R1 string with
+    # one number fewer than R2-R5. Templating off R1 would drop that clause from
+    # every refinement's rendering, so the template comes from the refinement
+    # with the fullest clause set instead. Ties keep R1, which is every other
+    # weapon. `parts` alternates text/number, so the longest list is also the
+    # one with the most numbers.
+    ref_idx = max(range(len(parts)), key=lambda i: len(parts[i]))
+    ref_parts = parts[ref_idx]
+    ref_slots = list(range(1, len(ref_parts), 2))
+    if not ref_slots:
+        return descs[ref_idx], []
 
-    if not r_nums[0]:
-        return descs[0], []
+    keys = [_desc_align_keys(p) for p in parts]
+    aligned = [
+        {slot: slot for slot in ref_slots}
+        if i == ref_idx
+        else _align_number_slots(keys[ref_idx], keys[i])
+        for i in range(len(parts))
+    ]
 
-    min_len = min(len(nums) for nums in r_nums)
-    changing_indices: list[int] = []
-    for i in range(min_len):
-        values = {nums[i] for nums in r_nums if i < len(nums)}
-        if len(values) > 1:
-            changing_indices.append(i)
+    changing_slots: list[int] = []
+    pads: dict[int, str] = {}
+    for slot in ref_slots:
+        present = [
+            desc_parts[amap[slot]]
+            for desc_parts, amap in zip(parts, aligned, strict=True)
+            if slot in amap
+        ]
+        if not present:
+            continue
+        missing = len(present) < len(descs)
+        if not missing and len(set(present)) == 1:
+            continue  # same value everywhere — literal text, not a placeholder
+        changing_slots.append(slot)
+        if missing:
+            # The clause does not exist at this refinement, so the effect it
+            # would grant is genuinely zero. Padding keeps every refinement row
+            # the same width and keeps the clause in the template.
+            pads[slot] = _zero_like(present)
 
-    if not changing_indices:
-        return descs[0], []
+    if not changing_slots:
+        return descs[ref_idx], []
 
-    refinements: list[list[str]] = []
-    for nums in r_nums:
-        row = [nums[i] if i < len(nums) else "" for i in changing_indices]
-        refinements.append(row)
+    refinements = [
+        [desc_parts[amap[slot]] if slot in amap else pads[slot] for slot in changing_slots]
+        for desc_parts, amap in zip(parts, aligned, strict=True)
+    ]
 
-    template = descs[0]
-    r1_nums = r_nums[0]
-    placeholder_idx = 0
-    for idx in changing_indices:
-        if idx < len(r1_nums):
-            value = r1_nums[idx]
-            escaped = re.escape(value)
-            new_template = re.sub(escaped, f"{{{placeholder_idx}}}", template, count=1)
-            if new_template != template:
-                template = new_template
-                placeholder_idx += 1
+    template_parts = list(ref_parts)
+    for placeholder_idx, slot in enumerate(changing_slots):
+        template_parts[slot] = f"{{{placeholder_idx}}}"
 
-    return template, refinements
+    return "".join(template_parts), refinements
 
 
 def scrape_weapon(
@@ -817,6 +955,20 @@ def scrape_weapon(
 
     en_desc_tpl, en_refs = _templatize_weapon_desc(en_formatted)
     zh_desc_tpl, zh_refs = _templatize_weapon_desc(zh_formatted)
+
+    # Both languages describe one effect, so they must resolve to the same
+    # number of per-refinement values. A language whose five refinement strings
+    # are identical (a placeholder that has not been filled in yet) yields none
+    # at all and bakes its numbers into the template, which only shows up next
+    # to the other language. Retires when the two counts agree.
+    en_cols = len(en_refs[0]) if en_refs else 0
+    zh_cols = len(zh_refs[0]) if zh_refs else 0
+    if en_cols != zh_cols:
+        print(
+            f"      [!] EN/ZH refinement value counts differ "
+            f"(EN {en_cols}, ZH {zh_cols}) — the shorter side lost values into "
+            f"its template; verify against the game text"
+        )
 
     en_out = {
         "id": weapon_id_num,

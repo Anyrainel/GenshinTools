@@ -9,10 +9,11 @@ probabilistic per-event particle distribution (source, particles, chance, cd)
 
 Writes: src/data/ercalc/particles.lunaris.json
 
-This file is a side-by-side reference only — not consumed in production.
-The production particle data is produced by scripts/scrape_particles.py
-from Fandom wiki and tagged `source: "fandom"`. This Lunaris file exists for
-manual drift review and for sourcing unreleased characters.
+Production particle data is produced by scripts/scrape_particles.py from the
+Fandom wiki and tagged `source: "fandom"`. This Lunaris file is mainly a
+side-by-side reference for manual drift review, but scrape_particles.py also
+reads it as a fallback for characters Fandom has not covered yet (typically the
+current patch's new releases), emitting them with `source: "lunaris"`.
 
 Output schema per character:
   {
@@ -54,6 +55,7 @@ OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.lunaris.json"
 
 TRAVELER_ELEMENT_MAP = {
     "Anemo": "traveler_anemo",
+    "Cryo": "traveler_cryo",
     "Dendro": "traveler_dendro",
     "Electro": "traveler_electro",
     "Geo": "traveler_geo",

@@ -63,7 +63,7 @@ def main():
         for skill in skills:
             name = skill.get("name", "")
             for detail in skill.get("details", []):
-                label = detail[0]
+                label = detail["label"]
                 if label == "元素能量":  # Skip burst cost
                     continue
                 if has_energy_recovery(label):
@@ -72,7 +72,7 @@ def main():
                         skill_key = "E"
                     elif name.startswith("Q.") or (len(skills) > 2 and skill is skills[2]):
                         skill_key = "Q"
-                    sources.append(f"[{skill_key}] detail: {label} = {detail[1]}")
+                    sources.append(f"[{skill_key}] detail: {label} = {detail['template']}")
 
         # Check passives
         for i, p in enumerate(char_data.get("passives", [])):

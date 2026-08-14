@@ -8,7 +8,8 @@ Output: src/data/ercalc/particles.fandom.json  (per-source; v2 schema; source="f
 Source files and the merge pipeline:
   - particles.fandom.json  — this script's output
   - particles.gcsim.json   — from gcsim-particle-extract agents
-  - particles.lunaris.json — from scrape_particles_lunaris.py (raw-event reference)
+  - particles.lunaris.json — from scrape_particles_lunaris.py (raw-event reference,
+                             and this script's fallback for characters Fandom lacks)
   - particles.json         — production, built by merge_particles_sources.py
 
 The merge script picks gcsim > fandom per-character after human review.
@@ -91,6 +92,8 @@ PERIODIC_GENERATORS: set[str] = {
     "traveler_pyro",
     "lauma",
     "zibai",
+    "vesna",
+    "vodyanitsa",
 }
 
 # Default proc count per deployment (UI auto-placement hint). ~15-20s rotation.
@@ -125,6 +128,10 @@ EXPECTED_PERIODIC_PROCS: dict[str, int] = {
     "traveler_pyro": 3,
     "lauma": 3,
     "zibai": 4,
+    # Spirit Blade state lasts 15s; particle ICD 2.5s → floor(15 / 2.5) = 6
+    "vesna": 6,
+    # Microphone coordinated attack every 3s over a 16s skill → floor(15 / 3) = 5
+    "vodyanitsa": 5,
 }
 
 # Total particles per E use for multi-hit instant characters. Overrides the
@@ -163,6 +170,7 @@ NAME_TO_ID = {
 # Traveler variants use separate IDs.
 TRAVELER_ELEMENT_MAP = {
     "Anemo": "traveler_anemo",
+    "Cryo": "traveler_cryo",
     "Dendro": "traveler_dendro",
     "Electro": "traveler_electro",
     "Geo": "traveler_geo",
@@ -431,6 +439,96 @@ def to_particles(avg: float | int | None):
     return [[floor, 1.0], [1, frac]]
 
 
+def lunaris_events_to_particles(events: list[dict]):
+    """Convert one Lunaris source-group into the v2 Particles form.
+
+    Lunaris packs two different shapes under a single `source` tag:
+
+    - *Independent rolls* — a guaranteed amount plus bonus rolls. Recognised by
+      a chance of 1.0 being present, or by chances summing above 1.
+      Bennett `Ball1` = 2@100% + 1@25%  →  [[2, 1.0], [1, 0.25]]
+    - *One exclusive distribution* — mutually exclusive outcomes whose chances
+      sum to ~1 across different counts.
+      Nefer = 3@66% + 2@33%  →  min 2, max 3, expected 2.67  →  [[2, 1.0], [1, 0.6667]]
+
+    Both collapse onto `Particles`, whose min/max/expected are read off the
+    rolls (min = Σ count where chance == 1, max = Σ count, expected = Σ c×p).
+    """
+    if not events:
+        return None
+    counts = [int(e["particles"]) for e in events]
+    chances = [float(e["chance"]) for e in events]
+
+    exclusive = (
+        len(events) > 1 and all(c < 1.0 for c in chances) and abs(sum(chances) - 1.0) <= 0.05
+    )
+    if exclusive:
+        # Lunaris rounds each branch to whole percent (66% / 33%), so renormalise
+        # before taking the expectation — otherwise 2/3 reads back as 0.64.
+        total_chance = sum(chances)
+        chances = [c / total_chance for c in chances]
+        lo, hi = min(counts), max(counts)
+        expected = sum(n * c for n, c in zip(counts, chances, strict=True))
+        if hi == lo:
+            return to_particles(lo)
+        rolls: list[list[float]] = []
+        if lo > 0:
+            rolls.append([lo, 1.0])
+        spread = hi - lo
+        rolls.append([spread, round(max(expected - lo, 0.0) / spread, 4)])
+        return rolls
+
+    if all(c >= 1.0 for c in chances):
+        total = sum(counts)
+        return total if total > 0 else None
+    return [[n, c] for n, c in zip(counts, chances, strict=True) if n > 0]
+
+
+def _lunaris_note(source: str, cd: str) -> str:
+    where = f"{source}, {cd} ICD" if cd else source
+    return f"from particles.lunaris.json ({where})"
+
+
+def from_lunaris_events(char_id: str, events: list[dict]) -> dict:
+    """Build the action fields of a v2 entry from raw Lunaris energy events.
+
+    Events are grouped by their `source` tag: entries sharing a tag are rolls on
+    one emission, while distinct tags are separate emissions (skill variants).
+    The first group becomes the character's emission — `periodic.E` for known
+    periodic generators, plain `E` otherwise, mirroring the character_stats
+    fallback's classification. Further groups can't be assigned to a specific
+    action without kit review, so they are recorded in `_unmodeled`.
+    """
+    groups: dict[str, list[dict]] = {}
+    for e in events:
+        groups.setdefault(str(e.get("source", "")), []).append(e)
+
+    fields: dict = {}
+    for idx, (source, group) in enumerate(groups.items()):
+        particles = lunaris_events_to_particles(group)
+        if particles is None:
+            continue
+        cd = str(group[0].get("cd", ""))
+        if idx == 0:
+            if char_id in PERIODIC_GENERATORS:
+                fields["periodic"] = {
+                    "E": {
+                        "procs": EXPECTED_PERIODIC_PROCS.get(char_id, 3),
+                        "particles": particles,
+                        "notes": _lunaris_note(source, cd),
+                    }
+                }
+            else:
+                fields["E"] = {"particles": particles, "notes": _lunaris_note(source, cd)}
+        else:
+            fields.setdefault("_unmodeled", []).append(
+                f"Lunaris reports a second emission source `{source}`"
+                f" ({json.dumps(particles)}, {cd} ICD) — needs kit review to assign"
+                " to holdE/specialE"
+            )
+    return fields
+
+
 def _action_entry(particles, notes: str | None) -> dict | None:
     if particles is None:
         return None
@@ -546,7 +644,13 @@ def main():
 
     output = build_output(characters)
 
-    # Fallback: supplement missing characters from character_stats.json
+    # Fallback: supplement missing characters from character_stats.json, then
+    # from the Lunaris datamine dump for anyone character_stats has no energy for.
+    lunaris_path = ROOT / "src" / "data" / "ercalc" / "particles.lunaris.json"
+    lunaris: dict = {}
+    if lunaris_path.exists():
+        lunaris = json.loads(lunaris_path.read_text(encoding="utf-8"))
+
     char_stats_path = ROOT / "src" / "data" / "game" / "character_stats.json"
     beta_stats_path = ROOT / "src" / "data" / "game" / "character_beta_stats.json.gz"
     all_stats = {}
@@ -575,13 +679,15 @@ def main():
         if missing:
             print(f"  Characters in charInfo but not in scraped data: {sorted(missing)}")
             # Fill from character_stats.json energy data (lunaris-derived,
-            # integer-only since character_stats drops the chance field).
-            # Run scripts/scrape_particles_lunaris.py for the full probabilistic
-            # reference at src/data/ercalc/particles.lunaris.json.
+            # integer-only since character_stats drops the chance field), then
+            # from particles.lunaris.json — which keeps the chance field and is
+            # the only source that covers characters too new for both Fandom and
+            # character_stats. Run scripts/scrape_particles_lunaris.py to refresh it.
             for cid in sorted(missing):
                 stats_entry = all_stats.get(cid, {})
                 energy_data = stats_entry.get("energy")
-                element = stats_entry.get("element")
+                lunaris_entry = lunaris.get(cid) or {}
+                element = stats_entry.get("element") or lunaris_entry.get("element")
                 entry: dict = {"element": element, "source": "lunaris"}
                 if energy_data:
                     total = sum(int(e.get("particles", 0)) for e in energy_data)
@@ -602,8 +708,22 @@ def main():
                             "notes": "from character_stats.json (integer)",
                         }
                     print(f"    → {cid}: filled from character_stats.json (total={total})")
+                elif lunaris_entry.get("events"):
+                    # character_stats.json has no `energy` for this character
+                    # (typical for just-released / beta ids). The Lunaris dump
+                    # keeps the full per-event distribution, so use it directly.
+                    entry.update(from_lunaris_events(cid, lunaris_entry["events"]))
+                    print(f"    → {cid}: filled from particles.lunaris.json")
                 else:
-                    print(f"    → {cid}: no particle data, defaulting to empty")
+                    # Nothing anywhere. Emit a stub so charInfo stays fully
+                    # covered, but say so instead of implying a datamine source.
+                    entry["source"] = "manual"
+                    entry["_unmodeled"] = [
+                        "No particle data in Fandom, character_stats.json or"
+                        " particles.lunaris.json — emission unknown, counts as 0"
+                        " particles until a source publishes it"
+                    ]
+                    print(f"    → {cid}: no particle data, emitting stub")
                 output[cid] = entry
 
         extra = scraped_ids - known_ids
