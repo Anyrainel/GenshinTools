@@ -6,6 +6,7 @@ export const i18nGameData = {
     "alyosha": { "en": "Alyosha", "zh": "阿罗夏" },
     "odette": { "en": "Odette", "zh": "奥黛塔" },
     "sandrone": { "en": "Sandrone", "zh": "桑多涅" },
+    "traveler_cryo": { "en": "Traveler (Cryo)", "zh": "旅行者（冰）" },
     "prune": { "en": "Prune", "zh": "布伦妮" },
     "lohen": { "en": "Lohen", "zh": "洛恩" },
     "nicole": { "en": "Nicole", "zh": "尼可" },
@@ -143,6 +144,8 @@ export const i18nGameData = {
     "qiqi": { "en": "Qiqi", "zh": "七七" }
   },
   "artifacts": {
+    "heart_of_the_furnace": { "en": "Heart of the Furnace", "zh": "炉火融炼之心" },
+    "scarlet_proof": { "en": "Scarlet Proof", "zh": "血红之证" },
     "disenchantment_in_deep_shadow": { "en": "Disenchantment in Deep Shadow", "zh": "影中沉凝的幻灭" },
     "celestial_gift": { "en": "Celestial Gift", "zh": "天之美赐" },
     "a_day_carved_from_rising_winds": { "en": "A Day Carved From Rising Winds", "zh": "风起之日" },
@@ -198,6 +201,18 @@ export const i18nGameData = {
     "blizzard_strayer": { "en": "Blizzard Strayer", "zh": "冰风迷途的勇士" }
   },
   "weapons": {
+    "exaiphanes_blade": { "en": "Exaiphanes Blade", "zh": "星锋剑" },
+    "whitelake_frostfeather": { "en": "Whitelake Frostfeather", "zh": "白湖冬羽" },
+    "blade_of_atonement": { "en": "Blade of Atonement", "zh": "救赎之斩" },
+    "clash_of_kings": { "en": "Clash of Kings", "zh": "群王局戏" },
+    "covenant_of_frost_and_snow": { "en": "Covenant of Frost and Snow", "zh": "霜雪誓约" },
+    "echoes_of_the_heart": { "en": "Echoes of the Heart", "zh": "寸心余响" },
+    "emberwell": { "en": "Emberwell", "zh": "引火之源" },
+    "forged_by_the_golden_melody": { "en": "Forged by the Golden Melody", "zh": "金律铸影" },
+    "frostbreath": { "en": "Frostbreath", "zh": "寒息" },
+    "heretics_molten_blade": { "en": "Heretic's Molten Blade", "zh": "熔猎异端之刃" },
+    "jade_vista": { "en": "Jade Vista", "zh": "悬黎千钧" },
+    "song_of_the_vigil": { "en": "Song of the Vigil", "zh": "戍望谣歌" },
     "a_teaspoon_of_transcendence": { "en": "A Teaspoon of Transcendence", "zh": "超越之匙" },
     "disaster_and_remorse": { "en": "Disaster and Remorse", "zh": "灾悔" },
     "angelos_heptades": { "en": "Angelos' Heptades", "zh": "尘光七谕" },

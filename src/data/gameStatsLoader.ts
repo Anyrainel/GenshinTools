@@ -132,18 +132,17 @@ export function getWeaponStatsAt90(
 // ─── Display meta (merge stats + resource; use stats when present, resource.rarity as fallback) ───
 
 /**
- * Fallback metadata for unreleased characters not yet in character_stats.json.
- * Provides element/weaponType/region so they can appear in tier lists and filters.
- * Remove entries once the character's stats are added to the game data.
+ * Fallback metadata for characters listed in resources.ts whose stats aren't
+ * loaded yet — either the offline stats pipeline hasn't caught up with the
+ * release, or beta is disabled so beta stats never load. Provides
+ * element/weaponType/region so they can appear in tier lists and filters.
+ * Add an entry when a character ships ahead of its stats; remove it once the
+ * stats land in character_stats.json (real stats always take precedence).
  */
 const UNRELEASED_OVERRIDES: Record<
   string,
   Partial<Pick<CharacterStats, "element" | "weaponType" | "region">>
-> = {
-  linnea: { element: "Geo" },
-  // Remove once sandrone ships in character_stats.json (6.6+).
-  sandrone: { element: "Cryo", weaponType: "Claymore" },
-};
+> = {};
 
 export type CharacterDisplayMeta = {
   element: Element | undefined;

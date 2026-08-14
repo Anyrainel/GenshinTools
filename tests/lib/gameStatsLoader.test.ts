@@ -140,15 +140,6 @@ describe("getCharacterDisplayMeta", () => {
     expect(meta.releaseDate).toBeUndefined();
   });
 
-  it("uses unreleased overrides when stats are missing", () => {
-    const meta = getCharacterDisplayMeta(
-      { id: "sandrone", rarity: 5 as const, imagePath: "" },
-      undefined
-    );
-    expect(meta.element).toBe("Cryo");
-    expect(meta.weaponType).toBe("Claymore");
-  });
-
   it("prefers stats.rarity over resource.rarity when both present", () => {
     const stats: CharacterStats = {
       rarity: 4,
