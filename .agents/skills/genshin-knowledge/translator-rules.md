@@ -340,7 +340,9 @@ Do **not** use Superconduct's transformative coefficient (1.5) for `StellarDirec
 
 Radiance (辉映) has two variants — **辉映·星超导** (Stellar-Conduct) and **辉映·星扩散** (Stellar Swirl) — collectively 辉映·星烁. See [Part 3 of `elemental-reactions.md`](elemental-reactions.md) for the mechanic; this rule covers only how to implement it on a character.
 
-Radiance arrived in 6.7 (**Witch's Revelation**), which added Stellar-Conduct clauses to six existing characters — **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou** — via an **Additional Talent** (A4 slot) and enhanced constellations. Yumemizuki Mizuki was buffed in the same patch but gained **no** Radiance state. 7.0 added the Stellar Swirl variant and native Snezhnaya carriers. Reference implementations: `character5Snezhnaya.ts` (both variants), `character5None.ts` (Cryo Traveler).
+Radiance arrived in 6.7 (**Witch's Revelation**), which added Stellar-Conduct clauses to six existing characters — **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou** — via an **Additional Talent** (A4 slot) and enhanced constellations. 7.0 added the Stellar Swirl variant and native Snezhnaya carriers. Reference implementations: `character5Snezhnaya.ts` (both variants), `character5None.ts` (Cryo Traveler).
+
+**Do not assume a character carries only one variant.** Several 6.7 kits enter *either* state depending on the team: Diona's and Qiqi's P4 grant 辉映·星超导 inside a Polestar Field **or** 辉映·星扩散 for 8s after a nearby ally triggers a Stellar Swirl. Their options must offer both, gated on the matching `hasReaction`, or the whole Radiance branch becomes unreachable on a Swirl-only team (Vesna enables `stellarSwirl` only). **Yumemizuki Mizuki is a Stellar Swirl carrier** — her P4 and C1 carry 辉映·星扩散 clauses, entered via a party Swirl trigger rather than the Polestar Field wording.
 
 Characters who merely *enable* a Stellar reaction for the party are a different set from those who *enter* Radiance — see `STELLAR_ENABLERS` for the former.
 
@@ -384,7 +386,7 @@ private readonly radianceOn =
 
 **Locale (U0b):** 6.7 Radiance strings live in main `character_*_*.json`, not only beta audit data. EN/ZH conflicts on Radiance clauses (e.g., Wriothesley C6 icicle 60% EN vs 20% ZH) follow **U0b — favor ZH**.
 
-**Non-Radiance 6.7 kits:** Mizuki-style unconditional buffs need no Radiance option, but receiver and reaction-filter rules still apply (e.g., party-triggered Swirl bonuses → `receiver: "team"` + swirl filter, not `self`).
+**Unconditional 6.7 buffs:** a clause with no 辉映 wording needs no Radiance option, but receiver and reaction-filter rules still apply (e.g., party-triggered Swirl bonuses → `receiver: "team"` + swirl filter, not `self`).
 
 ### S2. `scalingKey` & `extraTerm`
 
