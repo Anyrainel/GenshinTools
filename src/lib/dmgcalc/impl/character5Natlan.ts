@@ -349,16 +349,10 @@ class Citlali extends CharacterBase {
           ),
         ]
       : []),
-    // P2: EM → baseDmg for Frostfall Storm (skill, 90% EM)
-    // Itzpapa deals damage even when Citlali is off-field → receiver "self"
-    new ScalingBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      [],
-      "em",
-      "baseDmg",
-      0.9
-    ),
+    // P2: EM → baseDmg for Frostfall Storm only (90% EM). Applied as a
+    // bespokeBuff on the storm tick part, not as a global skill buff, because
+    // Citlali's initial E hit should NOT receive this bonus.
+    // (see formulaMap "citlali-e-total" Frostfall Storm part)
     // P2: EM → baseDmg for Q Ice Storm only (1200% EM)
     // Applied as bespokeBuff on Ice Storm part, not as a global burst buff,
     // because the Q Skull should NOT receive this bonus.
@@ -443,6 +437,18 @@ class Citlali extends CharacterBase {
             formula: new DirectFormula(this.param("E", 5), skillTag),
             hits: eHits,
             offField: true,
+            // P2: Frostfall Storm only — +90% EM as baseDmg (the initial E hit
+            // does NOT get this)
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["E"]),
+                { receiver: "self", filter: { abilities: ["skill"] } },
+                [],
+                "em",
+                "baseDmg",
+                0.9
+              ),
+            ],
           },
           // C4: Obsidian Spiritvessel Skull (1800% EM, once per 8s)
           // "该伤害不被视为元素爆发伤害" — not burst DMG; use "special" to exclude from P2 skill buff
@@ -498,7 +504,12 @@ class Citlali extends CharacterBase {
 
 @RegisterCharacter("mavuika")
 class Mavuika extends CharacterBase {
+  // Assume the Burst is cast at the 200 Fighting Spirit cap.
+  private static readonly FIGHTING_SPIRIT = 200;
+
   readonly buffs = (() => {
+    const fsScale = (paramIndex: number) =>
+      Mavuika.FIGHTING_SPIRIT * this.param("Q", paramIndex);
     const buffs: StatBuff[] = [
       // P1: After nearby party member triggers Nightsoul Burst, Mavuika's ATK +30%
       new StatBuff(cbs(this, "P1", ["Nightsoul Burst"]), { receiver: "self" }, [
@@ -512,8 +523,33 @@ class Mavuika extends CharacterBase {
           value: this.constellation >= 4 ? 0.5 : 0.4,
         },
       ]),
-      // Q: FS bonus to Sunfell/Normal/Charged are merged into formulaMap
-      // multipliers (not ScalingBuff) so they use final ATK, not preStats ATK.
+      // Q: Fighting Spirit raises Sunfell Slice / Flamestrider Normal / Charged
+      // DMG by "{paramN} ATK per Fighting Spirit" — a flat ATK-based increase,
+      // so it belongs in the baseDmg zone, not the talent multiplier.
+      new ScalingBuff(
+        cbs(this, "Q", ["fighting-spirit"]),
+        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+        [],
+        "atk",
+        "baseDmg",
+        fsScale(3)
+      ),
+      new ScalingBuff(
+        cbs(this, "Q", ["fighting-spirit"]),
+        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+        [],
+        "atk",
+        "baseDmg",
+        fsScale(4)
+      ),
+      new ScalingBuff(
+        cbs(this, "Q", ["fighting-spirit"]),
+        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+        [],
+        "atk",
+        "baseDmg",
+        fsScale(5)
+      ),
     ];
 
     // C1: Mavuika's ATK +40% after gaining Fighting Spirit
@@ -536,31 +572,40 @@ class Mavuika extends CharacterBase {
           { key: "baseAtk", value: 200 },
         ])
       );
-      // C2 Ring form: nearby enemy DEF -20% (Ring form only).
-      // C6 adds Scorching Ring DEF -20% (Flamestrider form only).
-      // At C6, both forms have 20% shred — model as team-wide.
-      // Below C6, only Ring form applies: use selfOffField + other to exclude
-      // Mavuika's own on-field Flamestrider damage from the shred.
-      if (this.constellation >= 6) {
+      // C2 Ring form: nearby enemy DEF -20%. Split into "selfOffField" + "other"
+      // rather than "team" so it reaches Mavuika's own off-field Ring damage and
+      // every teammate, while excluding her on-field Flamestrider hits — in
+      // Flamestrider form she carries no Ring, so those must not be shredded.
+      // This is a deliberate U6 exception, registered in CONSTRAINT_ALLOWLIST.
+      // From C6 the Flamestrider gains a Scorching Ring, so every form shreds.
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: this.constellation >= 6 ? "self" : "selfOffField" },
+          [{ key: "defReduction%", value: 0.2 }]
+        ),
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "other" }, [
+          { key: "defReduction%", value: 0.2 },
+        ])
+      );
+      // C2 Flamestrider form: Normal / Charged / Sunfell Slice deal 60%/90%/120%
+      // of ATK as increased DMG — "提升值相当于…攻击力的X%", so baseDmg zone.
+      for (const [ability, scale] of [
+        ["normal", 0.6],
+        ["charge", 0.9],
+        ["burst", 1.2],
+      ] as const) {
         buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
-            { key: "defReduction%", value: 0.2 },
-          ])
-        );
-      } else {
-        buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOffField" }, [
-            { key: "defReduction%", value: 0.2 },
-          ])
-        );
-        buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "other" }, [
-            { key: "defReduction%", value: 0.2 },
-          ])
+          new ScalingBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: [ability] } },
+            [],
+            "atk",
+            "baseDmg",
+            scale
+          )
         );
       }
-      // C2 FS bonus to Normal/Charged/Sunfell merged into formulaMap multipliers
-      // (same reason as FS bonus above — must use final ATK, not preStats ATK)
     }
 
     // C6 Scorching Ring DEF -20% is merged into C2 block above (team-wide at C6)
@@ -569,20 +614,11 @@ class Mavuika extends CharacterBase {
   })();
 
   // Q Sunfell Slice: Lv10 800.6%, Lv13 (C3+) 945.2%
-  // FS and C2 ATK bonuses are merged into formula multipliers so they scale
-  // with final ATK (postStats) rather than preStats ATK.
+  // The Fighting Spirit and C2 ATK bonuses are flat baseDmg-zone ScalingBuffs
+  // (see `buffs`), so talent multipliers below stay pure.
   protected readonly formulaMap = (() => {
-    // FS bonus per ability: 200 × param × ATK (merged into talent multiplier)
-    const fsBurst = 200 * this.param("Q", 3);
-    const fsNormal = 200 * this.param("Q", 4);
-    const fsCharge = 200 * this.param("Q", 5);
-    // C2: additional ATK% bonus for Flamestrider attacks
-    const c2Burst = this.constellation >= 2 ? 1.2 : 0;
-    const c2Normal = this.constellation >= 2 ? 0.6 : 0;
-    const c2Charge = this.constellation >= 2 ? 0.9 : 0;
-
     // CA: Cyclic (Lv10 195.5%, Lv13 236.9%) + Final (Lv10 272%, Lv13 329.6%)
-    const caCyclicMult = this.param("E", 10) + fsCharge + c2Charge;
+    const caCyclicMult = this.param("E", 10);
     const sprintMult = this.param("E", 9);
 
     return {
@@ -590,7 +626,7 @@ class Mavuika extends CharacterBase {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(this.param("Q", 1) + fsBurst + c2Burst, {
+            formula: new DirectFormula(this.param("Q", 1), {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
@@ -602,14 +638,11 @@ class Mavuika extends CharacterBase {
         label: { zh: "Q后 AZS", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
-            formula: new DirectFormula(
-              this.param("E", 4) + fsNormal + c2Normal,
-              {
-                element: "Pyro",
-                ability: "normal",
-                reaction: "none",
-              }
-            ),
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
           },
           {
             formula: new DirectFormula(caCyclicMult, {
@@ -647,14 +680,11 @@ class Mavuika extends CharacterBase {
             hits: 3,
           },
           {
-            formula: new DirectFormula(
-              this.param("E", 11) + fsCharge + c2Charge,
-              {
-                element: "Pyro",
-                ability: "charge",
-                reaction: "none",
-              }
-            ),
+            formula: new DirectFormula(this.param("E", 11), {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
           },
         ],
       },
@@ -663,34 +693,39 @@ class Mavuika extends CharacterBase {
         label: { zh: "驰轮车普攻5段", en: "Flamestrider NA x5" },
         parts: [
           {
-            formula: new DirectFormula(
-              this.param("E", 4) + fsNormal + c2Normal,
-              { element: "Pyro", ability: "normal", reaction: "none" }
-            ),
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
           },
           {
-            formula: new DirectFormula(
-              this.param("E", 5) + fsNormal + c2Normal,
-              { element: "Pyro", ability: "normal", reaction: "none" }
-            ),
+            formula: new DirectFormula(this.param("E", 5), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
           },
           {
-            formula: new DirectFormula(
-              this.param("E", 6) + fsNormal + c2Normal,
-              { element: "Pyro", ability: "normal", reaction: "none" }
-            ),
+            formula: new DirectFormula(this.param("E", 6), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
           },
           {
-            formula: new DirectFormula(
-              this.param("E", 7) + fsNormal + c2Normal,
-              { element: "Pyro", ability: "normal", reaction: "none" }
-            ),
+            formula: new DirectFormula(this.param("E", 7), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
           },
           {
-            formula: new DirectFormula(
-              this.param("E", 8) + fsNormal + c2Normal,
-              { element: "Pyro", ability: "normal", reaction: "none" }
-            ),
+            formula: new DirectFormula(this.param("E", 8), {
+              element: "Pyro",
+              ability: "normal",
+              reaction: "none",
+            }),
           },
         ],
       },
@@ -796,25 +831,12 @@ class Chasca extends CharacterBase {
     this.eligibleTypes + (this.constellation >= 2 ? 1 : 0),
     3
   );
-  readonly buffs = [
-    // P1: Per eligible element type (+ C2 bonus), Shining Shell DMG bonus (non-linear)
-    // 1 stack → +15%, 2 → +35%, 3 → +65%
-    new StatBuff(
-      cbs(this, "P1", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      [{ key: "dmg%", value: [0, 0.15, 0.35, 0.65][this.p1Stacks] }]
-    ),
-    // C6: After Spiritbinding Conversion, Shining Shell CD +120%
-    ...(this.constellation >= 6
-      ? [
-          new StatBuff(
-            cbs(this, "C6", ["E"]),
-            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-            [{ key: "cd", value: 1.2 }]
-          ),
-        ]
-      : []),
-  ];
+  // P1 (Spirit of the Radiant Shadow) and C6 (Fatal Rounds) are both scoped to
+  // specific shell parts via bespokeBuffs in formulaMap. A plain charge-ability
+  // filter would leak them onto the unconverted Anemo shells (P1) and onto the
+  // C2/C4 400% ATK AoE procs, which are "considered Charged Attack DMG" but are
+  // not Shadowhunt/Shining Shadowhunt Shells.
+  readonly buffs: StatBuff[] = [];
 
   protected readonly formulaMap = (() => {
     const shellMult = this.param("E", 3);
@@ -859,8 +881,29 @@ class Chasca extends CharacterBase {
     const elems = this.eligibleElements;
     const nElems = elems.length;
 
+    // P1: Spirit of the Radiant Shadow — boosts Shining Shadowhunt Shell DMG only
+    // (1 stack → +15%, 2 → +35%, 3 → +65%). Unconverted shells do not get it.
+    const p1Shining = new StatBuff(
+      cbs(this, "P1", ["E"]),
+      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+      [{ key: "dmg%" as const, value: [0, 0.15, 0.35, 0.65][this.p1Stacks] }]
+    );
+    // C6 Fatal Rounds: +120% CRIT DMG on that Multitarget Fire's Shadowhunt
+    // Shells AND Shining Shadowhunt Shells — but not the C2/C4 AoE procs.
+    const c6Shells: StatBuff[] =
+      this.constellation >= 6
+        ? [
+            new StatBuff(
+              cbs(this, "C6", ["E"]),
+              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+              [{ key: "cd" as const, value: 1.2 }]
+            ),
+          ]
+        : [];
+
     // E: distribute shiningCount shells across eligible elements
-    const shiningParts: { formula: DirectFormula }[] = [];
+    const shiningParts: { formula: DirectFormula; bespokeBuffs: StatBuff[] }[] =
+      [];
     if (nElems > 0) {
       const perElem = Math.floor(shiningCount / nElems);
       let remainder = shiningCount % nElems;
@@ -870,6 +913,7 @@ class Chasca extends CharacterBase {
         for (let i = 0; i < count; i++) {
           shiningParts.push({
             formula: new DirectFormula(shiningMult, chargeTagFor(el)),
+            bespokeBuffs: [p1Shining, ...c6Shells],
           });
         }
       }
@@ -891,7 +935,9 @@ class Chasca extends CharacterBase {
       }
     }
 
-    // C2/C4 AoE procs: also spread across eligible elements (one per element)
+    // C2/C4 AoE procs: also spread across eligible elements (one per element).
+    // These are "considered Charged Attack DMG" but are not shells, so they get
+    // neither the P1 Shining bonus nor the C6 Fatal Rounds CRIT DMG.
     const c2Parts: { formula: DirectFormula }[] =
       this.constellation >= 2
         ? elems.map((el) => ({
@@ -925,11 +971,12 @@ class Chasca extends CharacterBase {
           en: "E 6-Shell Volley",
         },
         parts: [
-          // Unconverted shells: Anemo
+          // Unconverted shells: Anemo. C6 covers these too; P1 does not.
           ...Array(normalCount)
             .fill(0)
             .map(() => ({
               formula: new DirectFormula(shellMult, anemoChargeTag),
+              bespokeBuffs: c6Shells,
             })),
           // Shining (converted) shells: spread across eligible elements
           ...shiningParts,
@@ -984,18 +1031,20 @@ class Chasca extends CharacterBase {
 
 @RegisterCharacter("xilonen")
 class Xilonen extends CharacterBase {
-  // Count distinct Pyro/Hydro/Cryo/Electro elements among teammates.
-  // Each qualifying element type converts one Geo Source Sample; same-element types do not stack.
+  // "队伍中每存在一名火元素、水元素、冰元素或雷元素角色，一枚岩元素采样便将
+  // 转变为对应的元素类型" — one Geo Source Sample converts per qualifying party
+  // MEMBER (not per distinct element), capped by the 3 Samplers she carries.
   private readonly convertedSamples = (() => {
-    const converted = new Set<string>();
+    let count = 0;
     for (const el of Object.values(this.teamMeta.elements)) {
       if (el != null && ["Pyro", "Hydro", "Cryo", "Electro"].includes(el))
-        converted.add(el);
+        count++;
     }
-    return converted.size;
+    return Math.min(count, 3);
   })();
 
-  // Which PHEC elements are present in the team
+  // Which PHEC elements are present in the team. Distinct on purpose: samples of
+  // the same Elemental Type don't stack, so duplicates shred the same element.
   private readonly teamPHEC = (() => {
     const present = new Set<string>();
     for (const el of Object.values(this.teamMeta.elements)) {
@@ -1017,7 +1066,7 @@ class Xilonen extends CharacterBase {
     );
 
     if (this.convertedSamples >= 2) {
-      // ≥2 PHEC elements: RES shred for each PHEC element present in the team
+      // ≥2 converted samples: RES shred for each PHEC element present in the team
       if (this.teamPHEC.size > 0) {
         buffs.push(
           new StatBuff(
@@ -1036,7 +1085,7 @@ class Xilonen extends CharacterBase {
       }
       // Geo RES shred: depends on converted count and constellation
       if (this.convertedSamples === 2) {
-        // Exactly 2 PHEC: 1 sample remains Geo → Geo RES shred is team-wide
+        // Exactly 2 converted: 1 sample remains Geo → Geo RES shred is team-wide
         buffs.push(
           new StatBuff(
             cbs(this, "E", ["E"]),
@@ -1045,7 +1094,7 @@ class Xilonen extends CharacterBase {
           )
         );
       } else if (this.constellation >= 2) {
-        // 3 PHEC + C2: Geo RES becomes team-wide
+        // All 3 samples converted + C2: Geo RES becomes team-wide
         buffs.push(
           new StatBuff(
             cbs(this, "C2", ["E"]),
@@ -1055,8 +1104,9 @@ class Xilonen extends CharacterBase {
         );
       }
     } else {
-      // 3 PHEC + below C2: all 3 Source Samples are converted, no Geo sample remains from E.
-      // C2 makes Geo sample always active
+      // Fewer than 2 converted samples: P1 cannot regenerate Nightsoul points,
+      // so she never reaches the 15s three-sample activation and the Geo shred
+      // only lasts while she is on-field. C2 makes it always active.
       if (this.constellation >= 2) {
         buffs.push(
           new StatBuff(
@@ -1364,18 +1414,11 @@ class Mualani extends CharacterBase {
 class Kinich extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P2: After Nightsoul Burst, Hunter's Experience ×2 → +640% ATK as baseDmg to Scalespiker
-      // We model the ATK scaling as a ScalingBuff applied to self Skill
-      new ScalingBuff(
-        cbs(this, "P2", ["Nightsoul Burst"]),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        [],
-        "atk",
-        "baseDmg",
-        6.4 // 320% × 2 stacks = 640% of ATK
-      ),
-      // C1: Scalespiker Cannon CD +100% — only on the cannon, NOT Loop Shot.
-      // Implemented as a bespokeBuff on kinich-cannon parts (see formulaMap).
+      // P2 (Hunter's Experience) is consumed by a single Scalespiker Cannon shot,
+      // so it is a bespokeBuff on the first-cannon formula, NOT a Skill-wide buff
+      // (which would also hit Loop Shot and every later Cannon). See formulaMap.
+      // C1: Scalespiker Cannon CRIT DMG +100% — only on the cannon, NOT Loop Shot.
+      // Implemented as a bespokeBuff on the cannon parts (see formulaMap).
       // C2: Dendro RES -30% on E hit
       ...(this.constellation >= 2
         ? [
@@ -1408,78 +1451,87 @@ class Kinich extends CharacterBase {
   // Scalespiker Cannon: Lv10 1237.4%, Lv13 (C3+) 1460.8%
   // Q initial: Lv10 241.2%, Lv13 (C5+) 284.8% + Dragon Breath 217.3%/256.6% ×5
   // C6: bounce fires once per Scalespiker Cannon hit (not per active-character attack cadence);
-  //     700% ATK Dendro Skill DMG — inherits P2 baseDmg and C2 dmg% buffs automatically
-  //     because those buffs are scoped to ability:"skill" which the bounce also uses.
+  //     700% ATK Dendro Skill DMG. C6 text only lets the bounce inherit the P2
+  //     ("Flame Spirit Pact") and C2 ("Tiger Beetle's Palm") cannon enhancements —
+  //     the C1 CRIT DMG bonus is not listed, so it stays on the cannon hit only.
+  // The cannon is split into two entries because a bespoke overlay is all-or-nothing
+  // per part: C1 applies to every cannon, while P2/C2 only apply to the first one.
   protected readonly formulaMap = (() => {
+    const dendroSkill = {
+      element: "Dendro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const skillFilter = {
+      receiver: "selfOnField" as const,
+      filter: { abilities: ["skill" as const] },
+    };
+    // C1: Scalespiker Cannon CRIT DMG +100% — cannon hit only (not Loop Shot,
+    // not the C6 bounce).
+    const c1Cannon: StatBuff[] =
+      this.constellation >= 1
+        ? [
+            new StatBuff(cbs(this, "C1", ["E"]), skillFilter, [
+              { key: "cd" as const, value: 1.0 },
+            ]),
+          ]
+        : [];
+    // P2: one Cannon shot consumes all Hunter's Experience stacks (2 max) for
+    // +640% ATK as flat base DMG. C6 lets that shot's bounce inherit it.
+    const p2Cannon = new ScalingBuff(
+      cbs(this, "P2", ["Nightsoul Burst"]),
+      skillFilter,
+      [],
+      "atk",
+      "baseDmg",
+      6.4 // 320% × 2 stacks = 640% of ATK
+    );
+    // C2: first Scalespiker Cannon after entering Nightsoul's Blessing +100% DMG.
+    const c2Cannon: StatBuff[] =
+      this.constellation >= 2
+        ? [
+            new StatBuff(cbs(this, "C2", ["E"]), skillFilter, [
+              { key: "dmg%" as const, value: 1.0 },
+            ]),
+          ]
+        : [];
+    const cannonPart = (bespokeBuffs: StatBuff[]) => ({
+      formula: new DirectFormula(this.param("E", 2), dendroSkill),
+      bespokeBuffs,
+    });
+    const bouncePart = (bespokeBuffs: StatBuff[]) => ({
+      formula: new DirectFormula(7.0, dendroSkill),
+      bespokeBuffs,
+    });
     return {
       // Loop Shot: 2 hits per loop (param1 ×2), Dendro Skill DMG
       "kinich-loop": {
         label: { zh: "E环绕射击", en: "E Loop Shot" },
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 1), {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(this.param("E", 1), dendroSkill),
             hits: 2,
           },
         ],
       },
-      "kinich-cannon": (() => {
-        // Bespoke buffs that should apply to the cannon shots (and C6 bounce) only,
-        // NOT to Loop Shot (which also has ability:"skill").
-        const cannonBespoke: StatBuff[] = [];
-        if (this.constellation >= 1) {
-          cannonBespoke.push(
-            new StatBuff(
-              cbs(this, "C1", ["E"]),
-              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-              [{ key: "cd" as const, value: 1.0 }]
-            )
-          );
-        }
-        // C2: First Scalespiker Cannon after Nightsoul Burst gets +100% DMG.
-        // maxStacks:1 → only the first cannon hit gets it (combo allocator).
-        const c2FirstCannon =
-          this.constellation >= 2
-            ? new StatBuff(
-                { ...cbs(this, "C2", ["E"]), maxStacks: 1 },
-                { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-                [{ key: "dmg%" as const, value: 1.0 }]
-              )
-            : null;
-        return {
-          label: { zh: "E炮击", en: "E Cannon" },
-          parts: [
-            {
-              formula: new DirectFormula(this.param("E", 2), {
-                element: "Dendro",
-                ability: "skill",
-                reaction: "none",
-              }),
-              bespokeBuffs: c2FirstCannon
-                ? [...cannonBespoke, c2FirstCannon]
-                : cannonBespoke,
-            },
-            // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
-            ...(this.constellation >= 6
-              ? [
-                  {
-                    formula: new DirectFormula(7.0, {
-                      element: "Dendro",
-                      ability: "skill",
-                      reaction: "none",
-                    }),
-                    bespokeBuffs: c2FirstCannon
-                      ? [...cannonBespoke, c2FirstCannon]
-                      : cannonBespoke,
-                  },
-                ]
-              : []),
-          ],
-        };
-      })(),
+      // Enhanced cannon: consumes both Hunter's Experience stacks and (C2+) gets
+      // the first-cannon DMG bonus; both carry over to the C6 bounce.
+      "kinich-cannon-first": {
+        label: { zh: "E炮击(首发)", en: "E Cannon (1st)" },
+        parts: [
+          cannonPart([...c1Cannon, p2Cannon, ...c2Cannon]),
+          ...(this.constellation >= 6
+            ? [bouncePart([p2Cannon, ...c2Cannon])]
+            : []),
+        ],
+      },
+      "kinich-cannon": {
+        label: { zh: "E炮击", en: "E Cannon" },
+        parts: [
+          cannonPart(c1Cannon),
+          ...(this.constellation >= 6 ? [bouncePart([])] : []),
+        ],
+      },
       "kinich-burst": {
         label: { zh: "Q+5龙息", en: "Q + 5 Breaths" },
         parts: [
@@ -1506,10 +1558,11 @@ class Kinich extends CharacterBase {
   })();
 
   // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
-  // C2: first cannon gets +100% DMG via bespokeBuff with maxStacks: 1
+  // One of the four cannons is the enhanced shot (P2 stacks + C2 first-cannon bonus).
   protected override get comboDescriptor(): ComboTemplate {
     return [
-      { id: "kinich-cannon", count: 4 },
+      { id: "kinich-cannon-first", count: 1 },
+      { id: "kinich-cannon", count: 3 },
       { id: "kinich-burst", count: 1 },
     ];
   }

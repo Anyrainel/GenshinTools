@@ -161,7 +161,8 @@ class HuskOfOpulentDreams4pc extends ArtifactSetBase {
 @RegisterArtifactSet("thundering_fury")
 class ThunderingFury4pc extends ArtifactSetBase {
   // 2pc: Electro DMG +15% (via halfSetId)
-  // 4pc: Overloaded/EC/Superconduct/Hyperbloom +40%, Aggravate/Lunar-Charged +20%
+  // 4pc: Overloaded/EC/Superconduct/Hyperbloom +40%,
+  // Aggravate/Lunar-Charged/Stellar-Conduct +20%
   readonly halfSetId = "electro%-15";
   readonly stats: StatEntry[] = [];
   readonly buffs = [
@@ -192,7 +193,9 @@ class ThunderingFury4pc extends ArtifactSetBase {
       },
       {
         receiver: "self",
-        filter: { reactions: ["aggravate", "lunarCharged"] },
+        filter: {
+          reactions: ["aggravate", "lunarCharged", "stellarConduct"],
+        },
       },
       [{ key: "reactionDmg%", value: 0.2 }]
     ),
@@ -1487,10 +1490,9 @@ class GlacierAndSnowfield4pc extends ArtifactSetBase {
         id: this.artifactSetId,
         triggers: ["on-reaction"],
       },
-      {
-        receiver: "self",
-        filter: { reactions: ["stellarConduct", "superconduct"] },
-      },
+      // 超导 only — the 7.0 text never mentions 星超导, and sets that do cover it
+      // (Disenchantment in Deep Shadow, Thundering Fury) enumerate it separately.
+      { receiver: "self", filter: { reactions: ["superconduct"] } },
       [{ key: "reactionDmg%", value: 1.0 }]
     ),
     new StatBuff(
@@ -1508,4 +1510,80 @@ class GlacierAndSnowfield4pc extends ArtifactSetBase {
       [{ key: "cryo%", value: 0.3 }]
     ),
   ];
+}
+
+@RegisterArtifactSet("heart_of_the_furnace")
+class HeartOfTheFurnace4pc extends ArtifactSetBase {
+  // 2pc: ATK +18% (via halfSetId)
+  // 4pc: For 12s after the wearer triggers a Stellar Glimmer reaction (星烁 —
+  //      the collective term for Stellar-Conduct and Stellar Swirl) or deals
+  //      Stellar Glimmer reaction DMG: wearer ATK +12%, and all nearby party
+  //      members' Stellar Glimmer reaction DMG +50%.
+  //      Triggers off-field too, so the ATK buff stays on `self`.
+  //      "同名圣遗物套装产生的伤害加成效果无法叠加" → noStackId on the team DMG buff.
+  readonly halfSetId = "atk%-18";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] =
+    this.teamMeta.hasReaction("stellarConduct") ||
+    this.teamMeta.hasReaction("stellarSwirl")
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["stellar-reaction"],
+            },
+            { receiver: "self" },
+            [{ key: "atk%", value: 0.12 }]
+          ),
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["stellar-reaction"],
+              noStackId: this.artifactSetId,
+            },
+            {
+              receiver: "team",
+              filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+            },
+            [{ key: "reactionDmg%", value: 0.5 }]
+          ),
+        ]
+      : [];
+}
+
+@RegisterArtifactSet("scarlet_proof")
+class ScarletProof4pc extends ArtifactSetBase {
+  // 2pc: ATK +18% (via halfSetId)
+  // 4pc: For 10s after the wearer triggers a Stellar Swirl reaction:
+  //      CRIT Rate +16% and Stellar Swirl reaction DMG +40% (wearer only).
+  // Stellar Swirl is Sandrone's conversion of Cryo Swirl, so it inherits Swirl's
+  // trigger side: Anemo leaves no aura, so only an Anemo wearer can trigger it.
+  readonly halfSetId = "atk%-18";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] =
+    this.teamMeta.hasReaction("stellarSwirl") &&
+    this.teamMeta.elements[this.charId] === "Anemo"
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["stellarSwirl"],
+            },
+            { receiver: "self" },
+            [{ key: "cr", value: 0.16 }]
+          ),
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["stellarSwirl"],
+            },
+            { receiver: "self", filter: { reactions: ["stellarSwirl"] } },
+            [{ key: "reactionDmg%", value: 0.4 }]
+          ),
+        ]
+      : [];
 }

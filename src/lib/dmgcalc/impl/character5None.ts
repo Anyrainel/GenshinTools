@@ -2,7 +2,8 @@ import type { Element } from "@/data/enums";
 import { i18nBetaData } from "@/data/i18n-beta";
 import { i18nGameData } from "@/data/i18n-game";
 
-import { DirectFormula } from "../core/damageFormula";
+import { resolveComboDescriptor } from "../core/combo";
+import { DirectFormula, StellarDirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
@@ -10,10 +11,11 @@ import type { TeamMeta } from "../core/teamMeta";
 import type {
   BuffTarget,
   ComboTemplate,
+  ComboTemplateEntry,
   FormulaEntry,
   OptionDef,
 } from "../types";
-import { cbs, travelerP3Buff } from "./helpers";
+import { cbs, TRAVELER_RESONANCE_ENTRIES, travelerP3Buff } from "./helpers";
 
 // Eligible elements for P1 虚境裂隙: Frozen(Hydro), Superconduct(Electro),
 // Cryo Swirl(Anemo), Cryo Crystallize(Geo), plus other Cryo teammates
@@ -252,7 +254,13 @@ class Skirk extends CharacterBase {
           },
         ],
       },
-      // C6 极恶技·斩: burst coordinated (750% ATK per stack)
+      // C6 极恶技·斩: one Havoc: Sever stack per Void Rift absorbed (max 3), and
+      // the two branches below draw from that same pool — a stack spent on the
+      // Normal Attack branch is not available to the Burst branch. The rotation
+      // absorbs `riftCount` rifts (the same budget C1's crystal blades use), so
+      // each branch below models spending the WHOLE pool; only one of them can
+      // be in the default combo.
+      // Burst branch: Havoc: Ruin consumes all stacks, 750% ATK each.
       "skirk-c6-burst-coord": {
         label: {
           zh: `Q协同×${riftCount || 1}`,
@@ -267,18 +275,21 @@ class Skirk extends CharacterBase {
           },
         ],
       },
-      // C6: N3/N5 trigger → 3 coordinated attacks each, max 2 triggers per combo
+      // Normal Attack branch: N3/N5 hits each consume 1 stack for 3 coordinated
+      // attacks at 180% ATK. Worth less per stack than the Burst branch, so it is
+      // left out of the default rotation (the rotation absorbs its rifts with the
+      // Charged Attack right before Havoc: Ruin).
       "skirk-c6-normal-coord": {
         label: {
-          zh: `普攻协同×${Math.min(riftCount || 1, 2) * 3}`,
-          en: `NA Coord ×${Math.min(riftCount || 1, 2) * 3}`,
+          zh: `普攻协同×${(riftCount || 1) * 3}`,
+          en: `NA Coord ×${(riftCount || 1) * 3}`,
         },
         minC: 6,
         when: riftCount > 0,
         parts: [
           {
             formula: new DirectFormula(1.8, cryoNormal),
-            hits: Math.min(riftCount || 1, 2) * 3,
+            hits: (riftCount || 1) * 3,
           },
         ],
       },
@@ -293,8 +304,9 @@ class Skirk extends CharacterBase {
       { id: "skirk-e-charge", count: 3 },
       { id: "skirk-burst", count: 1 },
       { id: "skirk-c1-blade", count: 1 },
+      // The Havoc: Sever pool is spent entirely on the Burst branch; the Normal
+      // Attack branch would consume the same stacks, so it is not in the combo.
       { id: "skirk-c6-burst-coord", count: 1 },
-      { id: "skirk-c6-normal-coord", count: 4 },
     ];
   }
 }
@@ -403,6 +415,13 @@ class TravelerAnemo extends CharacterBase {
       reaction: "none" as const,
     };
 
+    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+    const teamEls = new Set(Object.values(this.teamMeta.elements));
+    // P3 grants 1 Blade of the Dawn Breeze stack per Elemental Type among nearby
+    // party members (Pyro/Hydro/Cryo/Electro, 1 stack each), so only elements
+    // actually present in the team can be consumed into a Blade Wind.
+    const bladeElements = absorbElements.filter((el) => teamEls.has(el));
+
     const formulas: Record<string, FormulaEntry> = {
       "traveler-anemo-skill-press": {
         label: { zh: "E点按", en: "E Press" },
@@ -428,11 +447,15 @@ class TravelerAnemo extends CharacterBase {
           },
         ],
       },
-      // P3 special CA: Whirlwind (风旋) — consumes all Blade of the Dawn Breeze
-      // stacks. Two Anemo CA hits each +60% ATK, plus 1 Blade Wind per element
-      // (Pyro/Hydro/Cryo/Electro) at 50% ATK, each counted as CA DMG.
+      // P3 special CA: Whirlwind (风旋) — requires at least 2 Blade of the Dawn
+      // Breeze stacks, then consumes them all. Two Anemo CA hits each +60% ATK,
+      // plus one 50% ATK Blade Wind per consumed stack (counted as CA DMG).
       "traveler-anemo-blade-ca": {
-        label: { zh: "晨风之刃4层重击", en: "Dawn Breeze Blade CA" },
+        label: {
+          zh: `晨风之刃${bladeElements.length}层重击`,
+          en: `Dawn Breeze Blade CA (${bladeElements.length})`,
+        },
+        when: bladeElements.length >= 2,
         parts: [
           {
             formula: new DirectFormula(this.param("A", 6) + 0.6, {
@@ -448,40 +471,17 @@ class TravelerAnemo extends CharacterBase {
               reaction: "none",
             }),
           },
-          {
+          ...bladeElements.map((el) => ({
             formula: new DirectFormula(0.5, {
-              element: "Pyro",
-              ability: "charge",
-              reaction: "none",
+              element: el,
+              ability: "charge" as const,
+              reaction: "none" as const,
             }),
-          },
-          {
-            formula: new DirectFormula(0.5, {
-              element: "Hydro",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(0.5, {
-              element: "Cryo",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(0.5, {
-              element: "Electro",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
+          })),
         ],
       },
     };
     // Add absorbed-element variant formulas (S10 pattern)
-    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
-    const teamEls = new Set(Object.values(this.teamMeta.elements));
     for (const el of absorbElements) {
       if (!teamEls.has(el)) continue;
       formulas[`traveler-anemo-burst-${el.toLowerCase()}`] = {
@@ -1112,6 +1112,386 @@ class TravelerPyro extends CharacterBase {
   }
 }
 
+// Traveler (Cryo)
+// P4 cross-resonance: Cryo resonance -> self +20% CRIT DMG (all 7 elements)
+// P3 makes the Traveler a Stellar-Conduct / Stellar Swirl enabler (see TeamMeta)
+// and enters Radiance: Stellar-Conduct (Polestar Field) or Radiance: Stellar Swirl.
+const travelerCryoOption = {
+  label: { zh: "辉映状态", en: "Radiance State" },
+  choices: [
+    {
+      value: "stellarConduct",
+      label: {
+        zh: "辉映·星超导 (极星辉域)",
+        en: "Radiance: Stellar-Conduct (Polestar Field)",
+      },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "stellarSwirl",
+      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
+      when: (tm) => tm.hasReaction("stellarSwirl"),
+    },
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("traveler_cryo", travelerCryoOption)
+class TravelerCryo extends CharacterBase {
+  private readonly rState = resolveOption(
+    travelerCryoOption,
+    this.option,
+    this.teamMeta
+  );
+
+  // P1 only converts/boosts NA/CA/Plunge inside Radiance: Stellar-Conduct.
+  private readonly scRadiance = this.rState === "stellarConduct";
+
+  // P4 grants 凝冰之刃 (the stacks that turn a Charged Attack into 重击·冰凝)
+  // only when a nearby party member deals Stellar-Conduct or Stellar Swirl DMG.
+  // P3 converts the party's Superconduct/Cryo Swirl into those stellar variants,
+  // so any Electro or Anemo teammate satisfies this — deliberately wider than
+  // the Radiance option (Polestar Field, or 8s after a Stellar Swirl), which
+  // gates the Traveler's own state rather than the party's reactions.
+  private readonly hasStellarGlimmer =
+    this.teamMeta.hasReaction("stellarConduct") ||
+    this.teamMeta.hasReaction("stellarSwirl");
+
+  // Ice crystal count per rotation — see the note on comboDescriptor for the
+  // two firing models. Declared here so the Frostglow derivation below and the
+  // rotation entry read the same source.
+  private readonly crystalCombo: ComboTemplateEntry = this.scRadiance
+    ? { id: "traveler-cryo-crystal", count: 15 }
+    : {
+        id: "traveler-cryo-crystal",
+        count: 6,
+        bonus: [{ minC: 4, delta: 1 }],
+      };
+
+  // Frostglow (max 8) accrues 1 per ice crystal hit, plus 2 from 重击·冰凝 when
+  // the team can produce it. Derived rather than assumed, so the Burst's stack
+  // count — and with it the param4 "at max stacks" strike bonus — follows the
+  // crystal count instead of a separate hardcode.
+  private readonly frostglowStacks = Math.min(
+    8,
+    resolveComboDescriptor([this.crystalCombo], this.constellation)[
+      this.crystalCombo.id
+    ] + (this.hasStellarGlimmer ? 2 : 0)
+  );
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P4 cross-resonance: all elements the Traveler has resonated with.
+      // Unlike the other variants this sits on P4 (异邦的层冰), not P3.
+      new StatBuff(
+        cbs(this, "P4", ["passive"]),
+        { receiver: "self" },
+        TRAVELER_RESONANCE_ENTRIES
+      ),
+      // P2 通明的冽冰: EM +8% of ATK, capped at +160 EM
+      new ScalingBuff(
+        cbs(this, "P2", ["passive"]),
+        { receiver: "self" },
+        [],
+        "atk",
+        "em",
+        0.08,
+        160
+      ),
+      // P3 星耀祝礼: +0.35% Stellar-Conduct/Stellar Swirl base DMG per 100 ATK,
+      // cap +7%. Applies to the whole party's stellar reactions.
+      new ScalingBuff(
+        cbs(this, "P3", ["passive"]),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [],
+        "atk",
+        "reactionBaseDmg%",
+        0.000035,
+        0.07
+      ),
+    ];
+
+    // P1 自锐的凛冰: inside Radiance: Stellar-Conduct, NA/CA/Plunge DMG is
+    // increased by 80% of ATK. The Charged Attack half is attached per formula
+    // (bespoke) because P4 excludes Charged Attack: Freezing Ice from it.
+    if (this.scRadiance) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P1", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "plunge"] },
+          },
+          [],
+          "atk",
+          "baseDmg",
+          0.8
+        )
+      );
+    }
+
+    // C2 嗡鸣的陨冰: ice crystal hits grant the active character +60 EM, raised
+    // to +120 while that character can trigger/deal Stellar Glimmer DMG.
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "teamOnField" }, [
+          { key: "em", value: this.hasStellarGlimmer ? 120 : 60 },
+        ])
+      );
+    }
+
+    // C6 肃杀的熙冰: each Frostglow stack consumed by Q gives other party
+    // members +5% Stellar Glimmer reaction DMG, capped at +40%.
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["Q"]),
+          {
+            receiver: "other",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value: Math.min(this.frostglowStacks * 0.05, 0.4),
+            },
+          ]
+        )
+      );
+    }
+
+    return buffs;
+  })();
+
+  // A: 5-hit NA chain, 2-strike CA (param6+param7), plunge param9/10/11
+  // E 冰雾剑: param1 skill hit, param2 Frostpierce Star ice crystal
+  // Q 聚冰成锋: param1 per strike + param2 per Frostglow stack, param3 strikes
+  //   (+param4 at 8 stacks); param8/9 are the Stellar-Conduct values and
+  //   param10/11 the Stellar Swirl values.
+  protected readonly formulaMap = (() => {
+    // Sword user: NA/CA/Plunge are Physical unless P1's uncoverable Cryo
+    // infusion is active (Radiance: Stellar-Conduct only).
+    const naElement = this.scRadiance
+      ? ("Cryo" as const)
+      : ("Physical" as const);
+    const infusedNormal = {
+      element: naElement,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const infusedCharge = {
+      element: naElement,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const infusedPlunge = {
+      element: naElement,
+      ability: "plunge" as const,
+      reaction: "none" as const,
+    };
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+
+    const radianceSuffix =
+      this.rState === "stellarSwirl"
+        ? { zh: "·星扩散", en: " (SSw)" }
+        : this.scRadiance
+          ? { zh: "·星超导", en: " (SC)" }
+          : { zh: "", en: "" };
+
+    // P1's +80% ATK for the ordinary Charged Attack only (P4 excludes 冰凝).
+    const p1ChargeBuff = this.scRadiance
+      ? [
+          new ScalingBuff(
+            cbs(this, "P1", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+            [],
+            "atk",
+            "baseDmg",
+            0.8
+          ),
+        ]
+      : undefined;
+
+    // P4 重击·冰凝: always Cryo, +140% ATK, and reclassified as Stellar Glimmer
+    // reaction DMG while a Radiance state is active.
+    const freezingIceBonus = [
+      new ScalingBuff(
+        cbs(this, "P4", ["charge"]),
+        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+        [],
+        "atk",
+        "baseDmg",
+        1.4
+      ),
+    ];
+    const freezingIceFormula = (mult: number) =>
+      this.rState === "stellarSwirl"
+        ? new StellarDirectFormula(mult, {
+            element: "Cryo",
+            ability: "charge",
+            reaction: "stellarSwirl",
+          })
+        : this.scRadiance
+          ? new StellarDirectFormula(mult, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "stellarConduct",
+            })
+          : new DirectFormula(mult, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "none",
+            });
+
+    // Q strikes: param3 base, plus param4 only when the full 8 Frostglow stacks
+    // are consumed ("满层寒辉额外攻击段数").
+    const burstStrikes =
+      this.param("Q", 3) + (this.frostglowStacks >= 8 ? this.param("Q", 4) : 0);
+    const burstMult =
+      this.rState === "stellarSwirl"
+        ? this.param("Q", 10) + this.frostglowStacks * this.param("Q", 11)
+        : this.scRadiance
+          ? this.param("Q", 8) + this.frostglowStacks * this.param("Q", 9)
+          : this.param("Q", 1) + this.frostglowStacks * this.param("Q", 2);
+    const burstFormula =
+      this.rState === "stellarSwirl"
+        ? new StellarDirectFormula(burstMult, {
+            element: "Cryo",
+            ability: "burst",
+            reaction: "stellarSwirl",
+          })
+        : this.scRadiance
+          ? new StellarDirectFormula(burstMult, {
+              element: "Cryo",
+              ability: "burst",
+              reaction: "stellarConduct",
+            })
+          : new DirectFormula(burstMult, {
+              element: "Cryo",
+              ability: "burst",
+              reaction: "none",
+            });
+
+    return {
+      "traveler-cryo-normal": {
+        label: { zh: "普攻×5", en: "NA (×5)" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), infusedNormal) },
+          { formula: new DirectFormula(this.param("A", 2), infusedNormal) },
+          { formula: new DirectFormula(this.param("A", 3), infusedNormal) },
+          { formula: new DirectFormula(this.param("A", 4), infusedNormal) },
+          { formula: new DirectFormula(this.param("A", 5), infusedNormal) },
+        ],
+      },
+      "traveler-cryo-charge": {
+        label: { zh: "重击", en: "CA" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6), infusedCharge),
+            ...(p1ChargeBuff ? { bespokeBuffs: p1ChargeBuff } : {}),
+          },
+          {
+            formula: new DirectFormula(this.param("A", 7), infusedCharge),
+            ...(p1ChargeBuff ? { bespokeBuffs: p1ChargeBuff } : {}),
+          },
+        ],
+      },
+      "traveler-cryo-charge-freezing": {
+        label: {
+          zh: `重击·冰凝${radianceSuffix.zh}`,
+          en: `Freezing Ice CA${radianceSuffix.en}`,
+        },
+        // P4: needs 3 凝冰之刃, which only accrue off party Stellar-Conduct /
+        // Stellar Swirl DMG — unavailable to a team that can land neither.
+        when: this.hasStellarGlimmer,
+        parts: [
+          {
+            formula: freezingIceFormula(this.param("A", 6)),
+            bespokeBuffs: freezingIceBonus,
+          },
+          {
+            formula: freezingIceFormula(this.param("A", 7)),
+            bespokeBuffs: freezingIceBonus,
+          },
+        ],
+      },
+      // param9 = during-fall, param10/param11 = low/high impact. Only the
+      // high-impact row is modeled — the during-fall and low-impact rows are
+      // intentionally left out.
+      "traveler-cryo-plunge-high": {
+        label: { zh: "下落·高", en: "Plunge High" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 11), infusedPlunge) },
+        ],
+      },
+      "traveler-cryo-skill": {
+        label: { zh: "E伤害", en: "E" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), cryoSkill) }],
+      },
+      // Frostpierce Star: fires on its own timer normally (off-field), but
+      // under Radiance: Stellar-Conduct it only fires as a coordinated attack
+      // when the Traveler's own NA/CA/Plunge connects — i.e. on-field.
+      "traveler-cryo-crystal": {
+        label: { zh: "E冰晶伤害", en: "E Ice Crystal" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 2), cryoSkill),
+            offField: !this.scRadiance,
+          },
+        ],
+      },
+      "traveler-cryo-burst": {
+        label: {
+          zh: `Q投矛${radianceSuffix.zh}`,
+          en: `Q Javelin${radianceSuffix.en}`,
+        },
+        parts: [{ formula: burstFormula, hits: burstStrikes }],
+      },
+    };
+  })();
+
+  // Rotation: E > NA chains (feeding ice crystals) > 重击·冰凝 (only when the
+  // team can produce Stellar Glimmer DMG) > Q on the Frostglow accrued above.
+  protected override get comboDescriptor(): ComboTemplate {
+    // The ice crystal count depends on the Radiance state, which a
+    // ConstellationDelta cannot express — combo deltas resolve against
+    // constellation only. Both modes are modelled by branching the descriptor
+    // on the already-resolved option, so each selection reports its own count.
+    //
+    // Radiance: Stellar-Conduct replaces the timer with a coordinated attack on
+    // every NA/CA/Plunge hit (once per 0.2s). The Traveler's sword cadence is
+    // well above that ICD, so effectively every on-field attack hit inside the
+    // star's lifetime fires a crystal: 3 Normal chains x 5 hits = 15. The two
+    // 重击·冰凝 strikes land inside one 0.2s window, so they add at most one
+    // more and are left out. C4's longer star does not raise this — the count
+    // is bound by attack hits, not by star duration.
+    //
+    // Otherwise (no Radiance, and Radiance: Stellar Swirl, where the game text
+    // leaves the timer untouched) the star fires on its own timer once every
+    // 2s. That interval is community data (Icy Veins / Prydwen), not a talent
+    // param — E ships only 4 params (skill DMG, crystal DMG, 15s CD, 12s star
+    // duration). One star per rotation (15s CD vs 12s duration): 12s / 2s = 6,
+    // and C4's +25% duration gives 15s / 2s = 7.5 → +1.
+    const combo: ComboTemplate = [
+      { id: "traveler-cryo-skill", count: 1 },
+      { id: "traveler-cryo-normal", count: 3 },
+      this.crystalCombo,
+    ];
+    if (this.hasStellarGlimmer) {
+      combo.push({ id: "traveler-cryo-charge-freezing", count: 1 });
+    }
+    combo.push({ id: "traveler-cryo-burst", count: 1 });
+    return combo;
+  }
+}
+
 // Nicole — 5★ Pyro Catalyst (Hexerei)
 // Key assumptions:
 // - Kenosis is treated as upgraded to Theosis by default; OptionMap can
@@ -1252,14 +1632,9 @@ class Nicole extends CharacterBase {
           { formula: new DirectFormula(this.param("A", 3), pyroNormal) },
         ],
       },
-      "nicole-plunge": {
-        label: { zh: "下落期间", en: "Plunge" },
-        parts: [{ formula: new DirectFormula(this.param("A", 6), pyroPlunge) }],
-      },
-      "nicole-plunge-low": {
-        label: { zh: "下落攻击(低空)", en: "Plunge (Low)" },
-        parts: [{ formula: new DirectFormula(this.param("A", 7), pyroPlunge) }],
-      },
+      // param6 = during-fall, param7/param8 = low/high impact. Only the
+      // high-impact row is modeled — the during-fall and low-impact rows are
+      // intentionally left out.
       "nicole-plunge-high": {
         label: { zh: "下落攻击(高空)", en: "Plunge (High)" },
         parts: [{ formula: new DirectFormula(this.param("A", 8), pyroPlunge) }],

@@ -186,11 +186,26 @@ export const STELLAR_SUPERSEDES: Partial<
   },
 };
 
-/** Cryo/Electro attach-count multiplier for StellarDirectFormula (skill direct SC hits). */
+/**
+ * Party members whose passive converts a base reaction into a Stellar reaction.
+ * Sandrone/Odette/Traveler (Cryo) P3 convert both 超导→星超导 and 冰元素扩散→星扩散;
+ * Vesna P3 only converts 冰元素扩散→星扩散, so she does not unlock Stellar-Conduct.
+ */
+export const STELLAR_ENABLERS: Record<StellarReactionType, string[]> = {
+  stellarConduct: ["sandrone", "odette", "traveler_cryo"],
+  stellarSwirl: ["sandrone", "odette", "traveler_cryo", "vesna"],
+};
+
 /**
  * Datamine Base Stellar-Conduct DMG coefficient by recorded hit count (index = hits).
  * Source: kuroo / meowtews via 6.7 live data; Honey Impact / Gachabase tutorials.
  * Index 0 = no buff; 1–10 = pre-launch cap; 11–12 = 6.7 launch stack extension.
+ *
+ * Applied to every StellarDirectFormula, including 星扩散 (Odette/Vesna). The table
+ * was datamined from 星超导 only — 7.0 has published no separate 星扩散 table, and the
+ * two reactions share one base-DMG framework in game text (Sandrone/Odette/Vesna P3
+ * buff "上述反应的基础伤害" for both). Split this into a per-reaction table if 星扩散
+ * numbers turn out to ramp differently.
  */
 export const STELLAR_DIRECT_COEFF_BY_HITS: readonly number[] = [
   1.0, 1.45, 1.5, 1.54, 1.6, 1.64, 1.7, 1.75, 1.79, 1.85, 1.89, 1.95, 2.0,

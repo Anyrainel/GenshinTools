@@ -2763,6 +2763,86 @@
     ]
   },
   {
+    "setId": "heart_of_the_furnace",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
     "setId": "husk_of_opulent_dreams",
     "configurations": [
       {
@@ -4537,6 +4617,86 @@
   },
   {
     "setId": "resolution_of_sojourner",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "scarlet_proof",
     "configurations": [
       {
         "flowerPlume": {

@@ -946,7 +946,7 @@ describe("createCharacter / createWeapon", () => {
     ).toBe(true);
   });
 
-  it("keeps Glacier and Snowfield Superconduct bonus available to Stellar-Conduct", () => {
+  it("scopes Glacier and Snowfield Superconduct bonus to Superconduct only", () => {
     const artifact = createArtifactSet(
       "glacier_and_snowfield",
       "kamisato_ayaka",
@@ -958,10 +958,8 @@ describe("createCharacter / createWeapon", () => {
       )
     );
 
-    expect(scBuff?.target.filter?.reactions).toEqual([
-      "stellarConduct",
-      "superconduct",
-    ]);
+    // Set text says 超导 only; sets that cover 星超导 enumerate it separately.
+    expect(scBuff?.target.filter?.reactions).toEqual(["superconduct"]);
   });
 
   it("handles Disenchantment in Deep Shadow superconduct and stellarConduct buffs", () => {

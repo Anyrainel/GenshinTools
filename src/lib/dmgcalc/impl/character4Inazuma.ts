@@ -8,6 +8,18 @@ import { cbs } from "./helpers";
 @RegisterCharacter("kirara")
 class Kirara extends CharacterBase {
   readonly buffs = [
+    // P2: every 1000 Max HP → Meow-teor Kick (E) DMG +0.4%
+    // The Q half (+0.3% per 1000 HP) is a bespoke buff on the Q formulas instead,
+    // because C4's coordinated attack is only "considered Burst DMG" — it is not
+    // Secret Art: Surprise Dispatch's own damage and must not receive the bonus.
+    new ScalingBuff(
+      cbs(this, "P2", ["A4"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [],
+      "hp",
+      "dmg%",
+      0.004 / 1000
+    ),
     // C6: After E/Q, team All Elemental DMG +12% (excludes Physical)
     ...(this.constellation >= 6
       ? [
@@ -33,28 +45,90 @@ class Kirara extends CharacterBase {
       : []),
   ];
 
-  // Rotation: E > swap > on-field NA triggers C4 every 3.8s (~5 procs per rotation)
+  // Rotation: E press > Q > swap > on-field NA triggers C4 every 3.8s (~5 procs)
   protected override get comboDescriptor(): ComboTemplate {
-    return [{ id: "kirara-c4-steed", count: 5 }];
+    return [
+      { id: "kirara-skill", count: 1 },
+      { id: "kirara-burst", count: 1 },
+      // C1: +1 Cardamom per 8000 Max HP, max 4 extra (reached on an HP build)
+      { id: "kirara-cardamom", count: 3, bonus: [{ minC: 1, delta: 4 }] },
+      { id: "kirara-c4-steed", count: 5 },
+    ];
   }
 
-  protected readonly formulaMap = {
-    // C4: Steed of Skanda — 200% ATK as Dendro DMG (considered Burst DMG)
-    "kirara-c4-steed": {
-      label: { zh: "驰骋", en: "Steed of Skanda" },
-      minC: 4,
-      parts: [
-        {
-          formula: new DirectFormula(2.0, {
-            element: "Dendro",
-            ability: "burst",
-            reaction: "none",
-          }),
-          offField: true,
-        },
-      ],
-    },
-  };
+  protected readonly formulaMap = (() => {
+    const dendroSkill = {
+      element: "Dendro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const dendroBurst = {
+      element: "Dendro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    // P2: every 1000 Max HP → Secret Art: Surprise Dispatch DMG +0.3%
+    const p2Burst = new ScalingBuff(
+      cbs(this, "P2", ["A4"]),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [],
+      "hp",
+      "dmg%",
+      0.003 / 1000
+    );
+    return {
+      "kirara-skill": {
+        label: { zh: "E甩尾飞踢", en: "E Flying Kick" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 1), dendroSkill) },
+        ],
+      },
+      // E hold: Urgent Neko Parcel collision, once per 0.5s per opponent
+      "kirara-e-collision": {
+        label: { zh: "E猫箱冲撞", en: "E Neko Parcel Hit" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 7), dendroSkill) },
+        ],
+      },
+      // E hold end / recast: Flipclaw Strike
+      "kirara-e-flipclaw": {
+        label: { zh: "E翻正爪击", en: "E Flipclaw Strike" },
+        parts: [
+          { formula: new DirectFormula(this.param("E", 9), dendroSkill) },
+        ],
+      },
+      "kirara-burst": {
+        label: { zh: "Q初击", en: "Q Initial" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), dendroBurst),
+            bespokeBuffs: [p2Burst],
+          },
+        ],
+      },
+      // Cat Grass Cardamoms: 3 base, explode on contact or after a delay
+      "kirara-cardamom": {
+        label: { zh: "Q猫草豆蔻", en: "Q Cat Grass Cardamom" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), dendroBurst),
+            bespokeBuffs: [p2Burst],
+          },
+        ],
+      },
+      // C4: Steed of Skanda — 200% ATK as Dendro DMG (considered Burst DMG)
+      "kirara-c4-steed": {
+        label: { zh: "驰骋", en: "Steed of Skanda" },
+        minC: 4,
+        parts: [
+          {
+            formula: new DirectFormula(2.0, dendroBurst),
+            offField: true,
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("shikanoin_heizou")
@@ -154,16 +228,9 @@ class KukiShinobu extends CharacterBase {
           ]),
         ]
       : []),
-    // P2: E ring DMG boosted by EM×25% (as flat baseDmg per hit)
-    // Ring fires off-field → receiver: "self"; only E ring → filter skill
-    new ScalingBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      [],
-      "em",
-      "baseDmg",
-      0.25
-    ),
+    // P2 (EM×25% as flat baseDmg) only boosts Grass Ring of Sanctification damage,
+    // so it lives as a bespokeBuff on the shinobu-e-ring part. A skill-filtered buff
+    // here would also land on the C4 Thundergrass Mark, which P2 does not affect.
     // C6: Self EM +150 when HP < 25% (S6: conditional on OptionMap)
     // Works off-field → receiver: "self"
     ...(this.constellation >= 6 && this.hpState === "critical"
@@ -178,6 +245,7 @@ class KukiShinobu extends CharacterBase {
   // Rotation: E (off-field ring) > Q > swap; hyperbloom ~8 seeds per rotation, C4 ~4 procs
   protected override get comboDescriptor(): ComboTemplate {
     return [
+      { id: "shinobu-e-ring", count: 1 },
       { id: "shinobu-burst", count: 1 },
       { id: "shinobu-hyperbloom", count: 8 },
       { id: "shinobu-c4-thundergrass", count: 4 },
@@ -189,7 +257,44 @@ class KukiShinobu extends CharacterBase {
   protected readonly formulaMap = (() => {
     const qHits = this.hpState === "high" ? 7 : 12;
     const canHyperbloom = this.teamMeta.hasReaction("hyperbloom");
+    // Grass Ring lasts E param6 (12s), +3s at C2. Maintainer-provided: the ring
+    // ticks roughly once per second in practice, so derive the tick count from
+    // the duration param rather than the 1.5s figure quoted in the skill text.
+    const ringTickInterval = 1;
+    const ringDuration = this.param("E", 6) + (this.constellation >= 2 ? 3 : 0);
+    const ringTicks = Math.floor(ringDuration / ringTickInterval);
     return {
+      // E: Grass Ring of Sanctification — E param4 ATK per tick, follows the
+      // active character while Shinobu is off-field.
+      "shinobu-e-ring": {
+        label: { zh: `草轮×${ringTicks}`, en: `Grass Ring (×${ringTicks})` },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 4), {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+            hits: ringTicks,
+            offField: true,
+            // P2: Grass Ring DMG +25% of Shinobu's EM. Scoped here so it cannot
+            // reach shinobu-c4-thundergrass or any other formula.
+            bespokeBuffs: [
+              new ScalingBuff(
+                cbs(this, "P2", ["E"]),
+                {
+                  receiver: "self" as const,
+                  filter: { abilities: ["skill" as const] },
+                },
+                [],
+                "em",
+                "baseDmg",
+                0.25
+              ),
+            ],
+          },
+        ],
+      },
       "shinobu-burst": {
         label: { zh: `Q×${qHits}`, en: `Q (×${qHits})` },
         parts: [
@@ -243,29 +348,9 @@ class KukiShinobu extends CharacterBase {
 
 @RegisterCharacter("sayu")
 class Sayu extends CharacterBase {
-  readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
-
-    // C6: EM → extra flat Daruma ATK-scaled damage
-    // Per EM point: +0.2% ATK bonus damage on Daruma, capped at 400% ATK total extra
-    // output = min(em × 0.002, 4.0) × atk → baseDmg
-    if (this.constellation >= 6) {
-      buffs.push(
-        new CrossScalingBuff(
-          cbs(this, "C6", ["Q"]),
-          { receiver: "self", filter: { abilities: ["burst"] } },
-          [],
-          "em",
-          0.002,
-          4.0,
-          "atk",
-          "baseDmg"
-        )
-      );
-    }
-
-    return buffs;
-  })();
+  // C6 is scoped to the Muji-Muji Daruma only, so it lives in bespokeBuffs on the
+  // sayu-daruma part rather than here (a burst-filtered buff would also hit Q initial).
+  readonly buffs = [];
 
   // Rotation: E (hold roll + kick) > Q > Daruma ~7 ticks (healer/swirl support)
   protected override get comboDescriptor(): ComboTemplate {
@@ -304,6 +389,24 @@ class Sayu extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(this.param("Q", 4), anemoBurst),
+            // C6: EM → extra flat Daruma ATK-scaled damage.
+            // Per EM point: +0.2% ATK on Daruma attacks only, capped at 400% ATK.
+            // output = min(em × 0.002, 4.0) × atk → baseDmg
+            bespokeBuffs:
+              this.constellation >= 6
+                ? [
+                    new CrossScalingBuff(
+                      cbs(this, "C6", ["Q"]),
+                      { receiver: "self", filter: { abilities: ["burst"] } },
+                      [],
+                      "em",
+                      0.002,
+                      4.0,
+                      "atk",
+                      "baseDmg"
+                    ),
+                  ]
+                : [],
             offField: true,
           },
         ],
@@ -333,11 +436,27 @@ class Thoma extends CharacterBase {
 
   // Rotation: E > Q > swap; Fiery Collapse every 1s over 15s (C2: 18s)
   protected override get comboDescriptor(): ComboTemplate {
-    return [{ id: "thoma-burst-collapse", count: 15 }];
+    return [
+      { id: "thoma-burst-initial", count: 1 },
+      { id: "thoma-burst-collapse", count: 15, bonus: [{ minC: 2, delta: 3 }] },
+    ];
   }
 
-  // Q Fiery Collapse: Q param2 ATK + 2.2% HP (P2)
   protected readonly formulaMap = {
+    // Q initial slash: Q param1
+    "thoma-burst-initial": {
+      label: { zh: "Q初击", en: "Q Initial" },
+      parts: [
+        {
+          formula: new DirectFormula(this.param("Q", 1), {
+            element: "Pyro",
+            ability: "burst",
+            reaction: "none",
+          }),
+        },
+      ],
+    },
+    // Q Fiery Collapse: Q param2 ATK + 2.2% HP (P2)
     "thoma-burst-collapse": {
       label: { zh: "Q崩破", en: "Q Collapse" },
       parts: [
@@ -407,6 +526,15 @@ class Gorou extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
+    // General's Glory lasts Q param3 (9s at Lv13) and spawns 1 Crystal Collapse
+    // every 1.5s → 6. C2 extends it by up to 3s on a Crystallize-capable team → 8.
+    const canCrystallize =
+      this.teamMeta.hasReaction("crystallize") ||
+      this.teamMeta.hasReaction("lunarCrystallize");
+    const collapseHits =
+      this.constellation >= 2 && canCrystallize
+        ? Math.floor((this.param("Q", 3) + 3) / 1.5)
+        : Math.floor(this.param("Q", 3) / 1.5);
     const qTag = {
       element: "Geo" as const,
       ability: "burst" as const,
@@ -460,6 +588,7 @@ class Gorou extends CharacterBase {
           },
           {
             formula: new DirectFormula(this.param("Q", 2), qTag, "def"),
+            hits: collapseHits,
             bespokeBuffs: [
               new ScalingBuff(
                 cbs(this, "P2", ["Q"]),
@@ -515,7 +644,10 @@ class KujouSara extends CharacterBase {
     const clusterCount = this.constellation >= 4 ? 6 : 4;
     return {
       "sara-skill": {
-        label: { zh: "E伏伤害", en: "E Ambush" },
+        label: {
+          zh: this.constellation >= 2 ? "E伏伤害+乌羽" : "E伏伤害",
+          en: this.constellation >= 2 ? "E Ambush + Crowfeather" : "E Ambush",
+        },
         parts: [
           {
             formula: new DirectFormula(this.param("E", 1), {
@@ -524,6 +656,19 @@ class KujouSara extends CharacterBase {
               reaction: "none",
             }),
           },
+          // C2: a Crowfeather left at Sara's original position triggers a weaker
+          // Tengu Juurai: Ambush dealing 30% of the original DMG
+          ...(this.constellation >= 2
+            ? [
+                {
+                  formula: new DirectFormula(this.param("E", 1) * 0.3, {
+                    element: "Electro" as const,
+                    ability: "skill" as const,
+                    reaction: "none" as const,
+                  }),
+                },
+              ]
+            : []),
         ],
       },
       "sara-burst": {

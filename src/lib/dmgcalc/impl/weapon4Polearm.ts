@@ -396,15 +396,57 @@ class TheCatch extends WeaponBase {
   ];
 }
 
+@RegisterWeapon("frostbreath")
+class Frostbreath extends WeaponBase {
+  // ATK% for 15s after the wielder triggers a Cryo- or Hydro-related reaction
+  // (16s CD). Energy restore for teammates is out of scope.
+  // Swirl/Crystallize are element-agnostic in the reaction model, so they are
+  // additionally gated on the team actually holding Cryo or Hydro. This
+  // over-triggers when the wielder's own swirl/crystallize involvement is a
+  // third element on a team that separately holds Cryo or Hydro; strict
+  // modelling needs per-instance element attribution the engine lacks.
+  // Hyperbloom/Burgeon are excluded: relatedness follows the reaction's own
+  // participating elements, so the game classifies Burgeon as Pyro-related and
+  // Hyperbloom as Electro-related (cf. Quartz and Dark Iron Sword).
+  get buffs() {
+    const cid = this.charId;
+    const teamEls = Object.values(this.teamMeta.elements);
+    const hasCryoOrHydro =
+      teamEls.includes("Cryo") || teamEls.includes("Hydro");
+    const canTrigger =
+      this.teamMeta.hasReaction("melt", cid) ||
+      this.teamMeta.hasReaction("vaporize", cid) ||
+      this.teamMeta.hasReaction("frozen", cid) ||
+      this.teamMeta.hasReaction("superconduct", cid) ||
+      this.teamMeta.hasReaction("stellarConduct", cid) ||
+      this.teamMeta.hasReaction("stellarSwirl", cid) ||
+      this.teamMeta.hasReaction("electroCharged", cid) ||
+      this.teamMeta.hasReaction("lunarCharged", cid) ||
+      this.teamMeta.hasReaction("bloom", cid) ||
+      this.teamMeta.hasReaction("lunarBloom", cid) ||
+      this.teamMeta.hasReaction("lunarCrystallize", cid) ||
+      ((this.teamMeta.hasReaction("swirl", cid) ||
+        this.teamMeta.hasReaction("crystallize", cid)) &&
+        hasCryoOrHydro);
+
+    if (!canTrigger) return [];
+    return [
+      new StatBuff(wbs(this, ["cryo-hydro-reaction"]), { receiver: "self" }, [
+        { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
+      ]),
+    ];
+  }
+}
+
 @RegisterWeapon("song_of_the_vigil")
 class SongOfTheVigil extends WeaponBase {
   get buffs() {
     if (
-      this.teamMeta.hasReaction("stellarConduct") ||
-      this.teamMeta.hasReaction("stellarSwirl")
+      this.teamMeta.hasReaction("stellarConduct", this.charId) ||
+      this.teamMeta.hasReaction("stellarSwirl", this.charId)
     ) {
       return [
-        new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+        new StatBuff(wbs(this, ["stellar-reaction"]), { receiver: "self" }, [
           {
             key: "atk%",
             value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),

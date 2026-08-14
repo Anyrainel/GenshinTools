@@ -8,7 +8,7 @@ import { StatBuff } from "../core/statBuff";
 @RegisterArtifactHalfSet("cryo%-15")
 class CryoDmg2pc extends ArtifactHalfSetBase {
   // Cryo DMG +15%
-  // Sets: Blizzard Strayer, Finale of the Deep Galleries
+  // Sets: Blizzard Strayer, Finale of the Deep Galleries, Glacier and Snowfield
   readonly stats: StatEntry[] = [{ key: "cryo%", value: 0.15 }];
   readonly buffs = [];
 }
@@ -81,7 +81,8 @@ class Atk2pc extends ArtifactHalfSetBase {
   // ATK +18%
   // Sets: Gladiator's Finale, Shimenawa's Reminiscence, Vermillion Hereafter,
   //        Echoes of an Offering, Nighttime Whispers, Fragment of Harmonic Whimsy,
-  //        Unfinished Reverie, A Day Carved From Rising Winds
+  //        Unfinished Reverie, A Day Carved From Rising Winds,
+  //        Disenchantment in Deep Shadow, Heart of the Furnace, Scarlet Proof
   readonly stats: StatEntry[] = [{ key: "atk%", value: 0.18 }];
   readonly buffs = [];
 }

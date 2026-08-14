@@ -27,12 +27,23 @@ const fakeCharacterStats = {
       "90": { baseHp: "9000", baseAtk: "800", baseDef: "600" },
     },
   },
+  sucrose: {
+    rarity: 4,
+    element: "Anemo",
+    weaponType: "Catalyst",
+    region: "Mondstadt",
+    releaseDate: "2020-09-28",
+    levels: {
+      "90": { baseHp: "9200", baseAtk: "780", baseDef: "620" },
+    },
+  },
 };
 
 vi.mock("@/data/gameResources", () => ({
   allCharacters: [
     { id: "sandrone", rarity: 5, imagePath: "/character/sandrone.webp" },
     { id: "fischl", rarity: 4, imagePath: "/character/fischl.webp" },
+    { id: "sucrose", rarity: 4, imagePath: "/character/sucrose.webp" },
   ],
   allWeapons: [],
   allArtifacts: [],
@@ -44,6 +55,7 @@ vi.mock("@/data/gameResources", () => ({
   charactersById: {
     sandrone: { id: "sandrone", rarity: 5 },
     fischl: { id: "fischl", rarity: 4 },
+    sucrose: { id: "sucrose", rarity: 4 },
   },
   artifactsById: {},
   weaponsById: {},
@@ -112,11 +124,15 @@ beforeAll(async () => {
   ));
   ({ createCharacter } = await import("@/lib/dmgcalc/core/registry"));
   ({ TeamMeta } = await import("@/lib/dmgcalc/core/teamMeta"));
-  await import("@/lib/dmgcalc/impl/character5NodKrai");
+  await import("@/lib/dmgcalc/impl/character5Snezhnaya");
 });
 
-function createC6Sandrone(radiance: "on" | "off") {
-  const teamMeta = new TeamMeta(["sandrone", "fischl"], { sandrone: 6 });
+function createC6Sandrone(
+  radiance: "stellarConduct" | "stellarSwirl" | "off",
+  // Electro teammate enables Stellar-Conduct, Anemo teammate enables Stellar Swirl
+  teammate = radiance === "stellarSwirl" ? "sucrose" : "fischl"
+) {
+  const teamMeta = new TeamMeta(["sandrone", teammate], { sandrone: 6 });
   return createCharacter("sandrone", 90, 6, teamMeta, {
     sandrone: radiance,
   });
@@ -131,7 +147,7 @@ describe("Sandrone C6 Cluster Beam", () => {
     expect(sandrone.formulaIds["sandrone-c6-cluster"]?.en).toBe(
       "C6 Cluster Beam"
     );
-    expect(sandrone.combo["sandrone-c6-cluster"]).toBe(1);
+    expect(sandrone.combo["sandrone-c6-cluster"]).toBe(3);
     expect(entry?.minC).toBe(6);
     expect(part?.hits).toBe(4);
     expect(part?.formula).toBeInstanceOf(DirectFormula);
@@ -145,14 +161,14 @@ describe("Sandrone C6 Cluster Beam", () => {
   });
 
   it("keeps the Radiance path as 4-hit Stellar-Conduct charged damage", () => {
-    const sandrone = createC6Sandrone("on");
+    const sandrone = createC6Sandrone("stellarConduct");
     const entry = sandrone.getFormulaEntry("sandrone-c6-cluster");
     const part = entry?.parts[0];
 
     expect(sandrone.formulaIds["sandrone-c6-cluster"]?.en).toBe(
       "C6 Cluster Beam"
     );
-    expect(sandrone.combo["sandrone-c6-cluster"]).toBe(1);
+    expect(sandrone.combo["sandrone-c6-cluster"]).toBe(3);
     expect(entry?.minC).toBe(6);
     expect(part?.hits).toBe(4);
     expect(part?.formula).toBeInstanceOf(StellarDirectFormula);
@@ -162,6 +178,21 @@ describe("Sandrone C6 Cluster Beam", () => {
       element: "Cryo",
       ability: "charge",
       reaction: "stellarConduct",
+    });
+  });
+
+  it("uses the higher 120% multiplier under Radiance: Stellar Swirl", () => {
+    const sandrone = createC6Sandrone("stellarSwirl");
+    const part = sandrone.getFormulaEntry("sandrone-c6-cluster")?.parts[0];
+
+    expect(part?.hits).toBe(4);
+    expect(part?.formula).toBeInstanceOf(StellarDirectFormula);
+    expect(part?.formula.talentMultiplier).toBe(1.2);
+    expect(part?.formula.scalingKey).toBe("atk");
+    expect(part?.formula.tag).toEqual({
+      element: "Cryo",
+      ability: "charge",
+      reaction: "stellarSwirl",
     });
   });
 });

@@ -19,6 +19,7 @@ import {
   createCharacter,
   createWeapon,
   getOptionDef,
+  isChoiceEnabled,
 } from "@/lib/dmgcalc/core/registry";
 import {
   CrossScalingBuff,
@@ -697,6 +698,121 @@ describe("Entity Instantiation", () => {
             "No character stats for"
           );
         }
+      });
+    });
+
+    // The solo sweep above only ever builds the DEFAULT option branch: a choice
+    // gated by `when` (Radiance, lunar reactions, teammate constellations…) is
+    // disabled on a one-character team, so resolveOption falls back and the
+    // gated branch is never constructed. Sandrone C2's reactionCd/abilities
+    // violation survived for exactly that reason. This block puts every
+    // option-bearing character on a team where each of its branches is
+    // reachable, so all of them get validated.
+    describe("Option branches on enabling teams", () => {
+      // Teammates only — the character under test is prepended. Each roster
+      // exists to satisfy one family of `when` predicates; extend the list when
+      // a new predicate shape appears (the coverage test below will say so).
+      const CANDIDATE_ROSTERS: [label: string, teammates: string[]][] = [
+        ["solo", []],
+        // Cryo + Electro + a STELLAR_ENABLERS member → stellarConduct
+        ["stellar-conduct", ["sandrone", "fischl", "diona"]],
+        // Cryo + Anemo + a STELLAR_ENABLERS member → stellarSwirl
+        ["stellar-swirl", ["sandrone", "kaedehara_kazuha", "diona"]],
+        // Cryo + Hydro → frozen
+        ["frozen", ["diona", "furina", "kaedehara_kazuha"]],
+        // 5★ Moonsign + Hydro + Electro/Dendro → lunarCharged / lunarBloom
+        ["lunar-charged-bloom", ["lauma", "furina", "flins"]],
+        // 5★ Moonsign + Hydro + Geo → lunarCrystallize
+        ["lunar-crystallize", ["lauma", "furina", "zhongli"]],
+        // Teammate-constellation predicates
+        ["named-cons-a", ["citlali", "furina", "shenhe"]],
+        ["named-cons-b", ["durin", "nefer", "hu_tao"]],
+      ];
+      // Teammate constellation levels: 6 satisfies ">= N" predicates, 0
+      // satisfies the "< N" ones (e.g. the no-Citlali-C1 branch).
+      const CONS_VARIANTS = [6, 0] as const;
+
+      function teamFor(charId: string, teammates: string[], cons: number) {
+        const characters = [
+          charId,
+          ...teammates.filter((t) => t !== charId),
+        ].slice(0, 4);
+        const constellations: Record<string, number> = {};
+        for (const id of characters) constellations[id] = cons;
+        return new TeamMeta(characters, constellations);
+      }
+
+      /**
+       * The character stats resource is only loaded in beforeAll, and TeamMeta
+       * reads elements from it, so the search has to run inside a test body
+       * rather than at collection time.
+       */
+      function findEnablingTeam(
+        charId: string,
+        value: string
+      ): TeamMeta | null {
+        const choice = getOptionDef(charId)?.choices.find(
+          (c) => c.value === value
+        );
+        if (!choice) return null;
+        for (const [, teammates] of CANDIDATE_ROSTERS) {
+          for (const cons of CONS_VARIANTS) {
+            const team = teamFor(charId, teammates, cons);
+            if (isChoiceEnabled(choice, team)) return team;
+          }
+        }
+        return null;
+      }
+
+      // Violations this sweep surfaced the first time it ran, on Radiance
+      // branches that were never constructed before. Each is the same shape as
+      // the allowlisted Sandrone C2 case — a 6.7/7.0 kit that ability-scopes a
+      // reaction key because the game text scopes it to specific attacks — but
+      // none has been triaged yet, so they are recorded here instead of being
+      // dissolved into CONSTRAINT_ALLOWLIST. Anything NOT listed still fails.
+      // Remove an entry once its character is triaged and fixed/allowlisted.
+      // Currently empty: cyno and wriothesley were both triaged and fixed, so
+      // the sweep is live for every option-bearing character.
+      const PENDING_TRIAGE: Record<string, Set<string>> = {};
+
+      const optionChoiceCases = Object.keys(charactersById).flatMap(
+        (charId) => {
+          const opt = getOptionDef(charId);
+          if (!opt) return [];
+          return opt.choices.map((c) => [charId, c.value] as [string, string]);
+        }
+      );
+
+      it("every option branch is reachable on some candidate team", () => {
+        // A branch listed here is never validated by the sweep below. Add a
+        // roster to CANDIDATE_ROSTERS that satisfies its `when` predicate.
+        const unreachable = optionChoiceCases
+          .filter(([charId, value]) => !findEnablingTeam(charId, value))
+          .map(([charId, value]) => `${charId} option=${value}`);
+        expect(unreachable).toEqual([]);
+      });
+
+      describe.each([2, 6] as const)("C%i", (constellation) => {
+        it.each(optionChoiceCases)("%s option=%s", (charId, optionValue) => {
+          const team = findEnablingTeam(charId, optionValue);
+          // Reported by the reachability test above; nothing to validate here.
+          if (!team) return;
+          try {
+            const char = createCharacter(charId, 100, constellation, team, {
+              [charId]: optionValue,
+            });
+            const pending = PENDING_TRIAGE[charId];
+            expect(
+              validateAllBuffs(char.buffs).filter((e) => !pending?.has(e))
+            ).toEqual([]);
+          } catch (e) {
+            rethrowIfUnexpected(
+              e,
+              "No character registered",
+              "No character stats for"
+            );
+          }
+        });
       });
     });
 

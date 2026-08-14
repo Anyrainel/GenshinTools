@@ -184,7 +184,7 @@ class Emilie extends CharacterBase {
       ...(this.constellation >= 6
         ? [
             new ScalingBuff(
-              cbs(this, "C6", ["E"]),
+              cbs(this, "C6", ["E", "Q"]),
               {
                 receiver: "selfOnField",
                 filter: { abilities: ["normal", "charge"] },
@@ -311,6 +311,23 @@ class Emilie extends CharacterBase {
         minC: 6,
         parts: normalParts,
       },
+      // C6 also converts Charged Attacks (A param5) to Dendro and applies the
+      // same +300% ATK baseDmg. Abiding Fragrance caps at 4 Scents and every
+      // NA or CA consumes one, so this is an alternative to the 4-hit Normal
+      // entry rather than extra rotation damage → combo count 0.
+      "emilie-c6-charge": {
+        label: { zh: "重击", en: "Charged" },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 5), {
+              element: "Dendro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
@@ -323,6 +340,7 @@ class Emilie extends CharacterBase {
       { id: "emilie-spiritbreath", count: 1 },
       { id: "emilie-burst-9hit", count: 1 },
       { id: "emilie-c6-normal", count: 1 },
+      { id: "emilie-c6-charge", count: 0 },
     ];
   }
 }
@@ -544,7 +562,9 @@ class Clorinde extends CharacterBase {
             hits: 3,
           },
           {
-            formula: new DirectFormula(this.param("E", 7), normalSkillTag),
+            // Impale the Night (E param7): "上述方式造成的伤害视为普通攻击造成的
+            // 伤害" — the lunge is Normal Attack DMG, not Skill DMG.
+            formula: new DirectFormula(this.param("E", 7), normalBaseTag),
             hits: 3,
           },
           ...(this.constellation >= 1
@@ -619,16 +639,6 @@ class Navia extends CharacterBase {
         { key: "atk%", value: Math.min(nonGeoCount, 2) * 0.2 },
       ])
     );
-    // C2: 3 shrapnel → E CR +36%
-    if (this.constellation >= 2) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C2", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-          [{ key: "cr", value: 0.36 }]
-        )
-      );
-    }
     // C4: Q hit → enemy Geo RES -20%
     if (this.constellation >= 4) {
       buffs.push(
@@ -639,7 +649,38 @@ class Navia extends CharacterBase {
         )
       );
     }
-    // C6: 3 extra shrapnel → E CD +135% (45% × 3)
+    return buffs;
+  })();
+
+  // Modifiers scoped to a single Ceremonial Crystalshot instance
+  // (「使本次典仪式晶火…」). They must not leak into other Skill DMG such as the
+  // Arkhe Surging Blade, so they are attached to the navia-crystalshot part
+  // rather than to all abilities: ["skill"].
+  private readonly crystalshotBuffs = (() => {
+    const buffs: StatBuff[] = [
+      // E intrinsic modifiers (peak model: 6 shrapnel consumed, all 11 shots hit)
+      // "11枚玫瑰晶弹全命中时，造成原本200%的伤害" → baseDmg% +1.0 (baseDmg% zone, not talent zone)
+      // "超过3枚弹片每枚额外提升15%" (×3) → dmg% +0.45 (dmg% zone, separate from baseDmg% zone)
+      new StatBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+        [
+          { key: "baseDmg%", value: 1.0 },
+          { key: "dmg%", value: 0.45 },
+        ]
+      ),
+    ];
+    // C2: 3 shrapnel → this Crystalshot's CR +36%
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          [{ key: "cr", value: 0.36 }]
+        )
+      );
+    }
+    // C6: 3 extra shrapnel → this Crystalshot's CD +135% (45% × 3)
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
@@ -649,19 +690,6 @@ class Navia extends CharacterBase {
         )
       );
     }
-    // E intrinsic modifiers (peak model: 6 shrapnel consumed, all 11 shots hit)
-    // "11枚玫瑰晶弹全命中时，造成原本200%的伤害" → baseDmg% +1.0 (baseDmg% zone, not talent zone)
-    // "超过3枚弹片每枚额外提升15%" (×3) → dmg% +0.45 (dmg% zone, separate from baseDmg% zone)
-    buffs.push(
-      new StatBuff(
-        cbs(this, "E", ["E"]),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        [
-          { key: "baseDmg%", value: 1.0 },
-          { key: "dmg%", value: 0.45 },
-        ]
-      )
-    );
     return buffs;
   })();
 
@@ -683,6 +711,7 @@ class Navia extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
+            bespokeBuffs: this.crystalshotBuffs,
           },
         ],
       },
@@ -696,6 +725,20 @@ class Navia extends CharacterBase {
             formula: new DirectFormula(this.param("Q", 2), burstTag),
             hits: 4,
             offField: true,
+          },
+        ],
+      },
+      // C2: each Ceremonial Crystalshot hit calls down one extra Cannon Fire
+      // Support shot (Q param2), "至多降下一次" per Crystalshot cast, and
+      // 「通过这种方式触发的支援炮击的伤害视为元素爆发伤害」. Independent of
+      // whether the Burst is active, so it is a separate entry rather than a
+      // higher hits count on navia-burst.
+      "navia-c2-support": {
+        label: { zh: "C2支援炮击", en: "C2 Cannon Fire Support" },
+        minC: 2,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), burstTag),
           },
         ],
       },
@@ -723,6 +766,7 @@ class Navia extends CharacterBase {
     return [
       { id: "navia-burst", count: 1 },
       { id: "navia-crystalshot", count: 2 },
+      { id: "navia-c2-support", count: 0, bonus: [{ minC: 2, delta: 2 }] },
       { id: "navia-surging-blade", count: 2 },
     ];
   }
@@ -923,6 +967,26 @@ class Furina extends CharacterBase {
           },
         ],
       },
+      // C6 also converts Charged Attacks (A param5) to Hydro and applies the
+      // same +18% / +25% Max HP baseDmg. Center of Attention caps at 6
+      // triggers shared with the Normal entry, so this is an alternative
+      // rather than extra rotation damage → combo count 0.
+      "furina-c6-charge": {
+        label: {
+          zh: "重击",
+          en: "Charged",
+        },
+        minC: 6,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 5), {
+              element: "Hydro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "furina-c6-plunge": {
         label: {
           zh: "下落攻击",
@@ -949,6 +1013,7 @@ class Furina extends CharacterBase {
       { id: "furina-salon-total", count: 1 },
       { id: "furina-burst", count: 1 },
       { id: "furina-c6-normal", count: 1 },
+      { id: "furina-c6-charge", count: 0 },
       { id: "furina-c6-plunge", count: 0 },
     ];
   }
@@ -1167,33 +1232,9 @@ class Wriothesley extends CharacterBase {
           [{ key: "reactionDmg%", value: 0.3 }]
         )
       );
-      // C1: Luster ↔ NA5 cross-buff (+50% SC DMG each, peak: both active)
-      if (this.constellation >= 1) {
-        buffs.push(
-          new StatBuff(
-            cbs(this, "C1", ["normal"]),
-            {
-              receiver: "selfOnField",
-              filter: {
-                abilities: ["normal"],
-                reactions: ["stellarConduct"],
-              },
-            },
-            [{ key: "reactionDmg%", value: 0.5 }]
-          ),
-          new StatBuff(
-            cbs(this, "C1", ["charge"]),
-            {
-              receiver: "selfOnField",
-              filter: {
-                abilities: ["charge"],
-                reactions: ["stellarConduct"],
-              },
-            },
-            [{ key: "reactionDmg%", value: 0.5 }]
-          )
-        );
-      }
+      // C1's Luster ↔ NA5 cross-buff is not here: each half targets one single
+      // hit, so both live as bespokeBuffs on their formula part (see formulaMap).
+
       // C4: self ATK SPD +20%, nearby allies ATK SPD +10%
       if (this.constellation >= 4) {
         buffs.push(
@@ -1207,35 +1248,48 @@ class Wriothesley extends CharacterBase {
           ])
         );
       }
-      // C6: enhanced NA5 + Luster SC hits +10% CR, +80% CD
+      // C6: 「被寒烈的惩裁强化的斥逐拳与天辉·凌跃拳」 +10% CR, +80% CD. The
+      // Repelling Fist clause covers the whole enhanced NA chain, not just the
+      // 3rd/5th strikes that P4 converts to Stellar-Conduct, so this is a plain
+      // cr/cd buff scoped by ability — StellarDirect hits read cr/cd on top of
+      // reactionCr/reactionCd, so the converted strikes are covered too.
       if (this.constellation >= 6) {
         buffs.push(
           new StatBuff(
             cbs(this, "C6", ["normal", "charge"]),
             {
               receiver: "selfOnField",
-              filter: {
-                abilities: ["normal", "charge"],
-                reactions: ["stellarConduct"],
-              },
+              filter: { abilities: ["normal", "charge"] },
             },
             [
-              { key: "reactionCr", value: 0.1 },
-              { key: "reactionCd", value: 0.8 },
+              { key: "cr", value: 0.1 },
+              { key: "cd", value: 0.8 },
             ]
           )
         );
       }
     } else {
       // P1/C1: Gracious Rebuke → CA DMG Bonus (50% or 200%)
+      // C0 requires HP < 60%; peak model assumes it, since Chilling Penalty
+      // drains HP on every enhanced Repelling Fist hit (up to once per 0.1s)
+      // and the modeled E 5[N3C] rotation reaches the threshold early.
+      // C1 rewrites the condition to "HP < 60% OR during Chilling Penalty",
+      // so the C1+ branch is unconditional within the E window.
       buffs.push(
         new StatBuff(
-          cbs(this, "P1/C1", ["charge"]),
+          cbs(
+            this,
+            "P1/C1",
+            this.constellation >= 1 ? ["low-hp", "E"] : ["low-hp"]
+          ),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "dmg%", value: this.constellation >= 1 ? 2.0 : 0.5 }]
         )
       );
-      // C4: Heal overflow → on-field ATK SPD +20%, off-field → active character ATK SPD +10%
+      // C4: Heal overflow → on-field ATK SPD +20%, off-field → all party
+      // members ATK SPD +10%. Modeled on "other" (not "team") because the two
+      // boosts 「无法叠加」 and Wriothesley already takes the self +20% branch —
+      // matching the Radiance branch of the same constellation.
       if (this.constellation >= 4) {
         buffs.push(
           new StatBuff(
@@ -1245,7 +1299,7 @@ class Wriothesley extends CharacterBase {
           ),
           new StatBuff(
             cbs(this, "C4", ["heal-overflow"]),
-            { receiver: "otherOnField" },
+            { receiver: "other" },
             [{ key: "atkSpd%", value: 0.1 }]
           )
         );
@@ -1328,12 +1382,33 @@ class Wriothesley extends CharacterBase {
     const cHits = this.constellation >= 6 ? 2 : 1;
 
     if (this.radianceOn) {
+      // C1 Radiance cross-buff: a Luster hit boosts the next enhanced NA5 by
+      // 50%, and an NA5 hit boosts Luster by 50%. Peak model assumes both legs
+      // are live. Each leg names exactly one hit, so they are bespokeBuffs on
+      // that hit's part — an ability-scoped buff would also catch the NA3
+      // strike and the C6 icicles, which the text does not cover. Stellar
+      // Direct has no dmg% zone, so 「造成的伤害提升」 lands in reactionDmg%,
+      // the reaction formula's counterpart of the DMG-bonus zone (bespoke
+      // receivers are inert; the filter still scopes the overlay).
+      const c1CrossBuff = (trigger: string) =>
+        new StatBuff(
+          cbs(this, "C1", [trigger]),
+          {
+            receiver: "selfOnField",
+            filter: { reactions: ["stellarConduct"] },
+          },
+          [{ key: "reactionDmg%", value: 0.5 }]
+        );
       const na5Parts: FormulaPart[] = [
         {
           formula: new StellarDirectFormula(
             this.param("A", 6) * this.scNa5Mult,
             scNormalTag
           ),
+          // Triggered by a preceding Luster: Vaulting Fist hit
+          ...(this.constellation >= 1
+            ? { bespokeBuffs: [c1CrossBuff("charge")] }
+            : {}),
         },
       ];
       const lusterParts: FormulaPart[] = [
@@ -1342,6 +1417,10 @@ class Wriothesley extends CharacterBase {
             this.param("A", 7) * this.lusterMult,
             scChargeTag
           ),
+          // Triggered by a preceding enhanced NA5 hit
+          ...(this.constellation >= 1
+            ? { bespokeBuffs: [c1CrossBuff("normal")] }
+            : {}),
         },
       ];
       if (this.constellation >= 6) {
@@ -1480,6 +1559,10 @@ class Lyney extends CharacterBase {
       ])
     );
     // C2: Self CD +60% (3 stacks × 20%)
+    // Crisp Focus accrues 1 stack per 2s on-field and is released on swap-out,
+    // so only the opening ~6s of each on-field window (roughly the first of the
+    // three aimed shots) is over-credited; it plateaus at max for the rest of
+    // Lyney's ~15-20s window. Modeled at max; ramp-up not tracked.
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(cbs(this, "C2", []), { receiver: "selfOnField" }, [
@@ -1540,7 +1623,10 @@ class Lyney extends CharacterBase {
         ],
       },
       "lyney-skill-max": {
-        label: { zh: "E(满层)", en: "E (Max Stacks)" },
+        label: {
+          zh: "E(满层)+引爆猫帽",
+          en: "E (Max) + Hat Blast",
+        },
         parts: [
           {
             // E has no constellation level boost (C3=Normal, C5=Q)
@@ -1552,6 +1638,19 @@ class Lyney extends CharacterBase {
                 reaction: "none",
               }
             ),
+          },
+          {
+            // E detonates a Grin-Malkin Hat on field for damage equal to a
+            // Pyrotechnic Strike (A param15), 「视为重击伤害」. The rotation's Q
+            // summons a Hat immediately before E, and this detonation replaces
+            // that Hat's own end-of-life Strike (so lyney-strike stays at 3).
+            // No P1 baseDmg: P1 only enhances Hats summoned by a Prop Arrow
+            // that consumed HP.
+            formula: new DirectFormula(strikeMult, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
           },
         ],
       },

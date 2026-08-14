@@ -210,14 +210,49 @@ class YumemizukiMizuki extends CharacterBase {
   })();
 }
 
+// Teammates able to create a Geo Construct, which triggers Chiori's P2 and the
+// extra Tamoto. Tamoto itself is not a Geo Construct.
+const GEO_CONSTRUCT_CHARS = [
+  "arataki_itto",
+  "albedo",
+  "zhongli",
+  "kachina",
+  "ningguang",
+  "traveler_geo",
+  "columbina",
+];
+
 @RegisterCharacter("chiori")
 class Chiori extends CharacterBase {
+  private readonly teammates = this.teamMeta.characters.filter(
+    (id) => id !== this.charId
+  );
+  private readonly hasGeoConstruct = this.teammates.some((id) =>
+    GEO_CONSTRUCT_CHARS.includes(id)
+  );
+  // P2 fires when a nearby party member creates a Geo Construct; C1 adds an
+  // alternate trigger whenever any other Geo character is in the party.
+  // The same condition also decides whether a second Tamoto is summoned.
+  private readonly hasFinishingTouch =
+    this.constellation >= 1
+      ? this.hasGeoConstruct ||
+        this.teammates.some((id) => this.teamMeta.elements[id] === "Geo")
+      : this.hasGeoConstruct;
+
   readonly buffs = [
     // P2: When team creates Geo construct → Chiori Geo DMG +20%
     // No on-field restriction; Tamoto attacks off-field → receiver: "self"
-    new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
-      { key: "geo%", value: 0.2 },
-    ]),
+    ...(this.hasFinishingTouch
+      ? [
+          new StatBuff(
+            cbs(this, this.constellation >= 1 ? "P2/C1" : "P2", [
+              "geo-construct",
+            ]),
+            { receiver: "self" },
+            [{ key: "geo%", value: 0.2 }]
+          ),
+        ]
+      : []),
     // C6: Normal ATK baseDmg +235% DEF (additive, not formula dual-scaling)
     new ScalingBuff(
       cbs(this, "C6", ["E"]),
@@ -259,27 +294,7 @@ class Chiori extends CharacterBase {
     };
 
     // Pet count: base 1 + 1 extra if teammate has geo construct (C0) or geo element (C1+)
-    const geoConstructChars = [
-      "arataki_itto",
-      "albedo",
-      "zhongli",
-      "kachina",
-      "ningguang",
-      "traveler_geo",
-      "columbina",
-    ];
-    const teammates = this.teamMeta.characters.filter(
-      (id) => id !== this.charId
-    );
-    const hasGeoConstruct = teammates.some((id) =>
-      geoConstructChars.includes(id)
-    );
-    const hasExtraPet =
-      this.constellation >= 1
-        ? hasGeoConstruct ||
-          teammates.some((id) => this.teamMeta.elements[id] === "Geo")
-        : hasGeoConstruct;
-    const numPets = 1 + (hasExtraPet ? 1 : 0);
+    const numPets = 1 + (this.hasFinishingTouch ? 1 : 0);
 
     return {
       // E sweep + P1 coordinated (sweep mult) + Tamoto hits + C4 Kinu (170% Tamoto)
@@ -290,12 +305,21 @@ class Chiori extends CharacterBase {
         },
         parts: [
           {
-            // Upward Sweep / P1 coordinated: E param5 ATK + E param6 DEF
+            // Upward Sweep: E param5 ATK + E param6 DEF — cast on-field
             formula: new DirectFormula(this.param("E", 5), geoSkill, "atk", {
               key: "def",
               multiplier: this.param("E", 6),
             }),
-            hits: 3, // 1 sweep + 2 P1 coordinated
+          },
+          {
+            // P1 Tapestry coordinated attacks: same multiplier as the sweep, but
+            // Tapestry swaps Chiori out, so these 2 land while she is off-field.
+            formula: new DirectFormula(this.param("E", 5), geoSkill, "atk", {
+              key: "def",
+              multiplier: this.param("E", 6),
+            }),
+            hits: 2,
+            offField: true,
           },
           {
             formula: new DirectFormula(tAtk, geoSkill, "atk", {
@@ -448,12 +472,14 @@ class RaidenShogun extends CharacterBase {
       // E: Team Burst DMG bonus based on energy cost (0.3% per energy at all levels)
       // Each character's own burst energy cost determines the bonus.
       // e.g. 90 energy → 0.3% × 90 = 27%, 60 energy → 18%
+      // The Eye is granted to all nearby party members with no field condition, so
+      // off-field Burst damage (persistent deployables) is buffed too → "team".
       ...this.teamMeta.characters.map(
         (charId) =>
           new StatBuff(
             cbs(this, "E", ["E"]),
             {
-              receiver: "teamOnField",
+              receiver: "team",
               charId,
               filter: { abilities: ["burst"] },
             },
@@ -1468,6 +1494,20 @@ class Yoimiya extends CharacterBase {
       );
     }
 
+    if (this.constellation >= 6) {
+      // C6: during Niwabi Fire-Dance each Normal Attack has a 50% chance to fire an
+      // extra Blazing Arrow dealing 60% of the original DMG (counted as Normal ATK).
+      // Same trigger as the existing NA chain → expected value 0.5 × 0.6 = +30%
+      // in the 倍率乘区 (U4 "造成原本X%的伤害").
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+          [{ key: "baseDmg%", value: 0.3 }]
+        )
+      );
+    }
+
     return buffs;
   })();
 
@@ -1475,7 +1515,6 @@ class Yoimiya extends CharacterBase {
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "yoimiya-normal", count: 3 },
-      { id: "yoimiya-c6-arrow", count: 0 },
       ...(this.castQ === "yes"
         ? [{ id: "yoimiya-burst" as const, count: 1 }]
         : []),
@@ -1516,22 +1555,7 @@ class Yoimiya extends CharacterBase {
       },
     };
 
-    if (this.constellation >= 6) {
-      // C6: 50% chance of firing an extra blazing arrow dealing 60% of original DMG per hit
-      formulas["yoimiya-c6-arrow"] = {
-        label: {
-          zh: "额外炽焰箭（5段）",
-          en: "Blazing Arr (5-hit)",
-        },
-        parts: [
-          { formula: new DirectFormula(m(n1) * 0.6, pyroNormal), hits: 2 },
-          { formula: new DirectFormula(m(n2) * 0.6, pyroNormal) },
-          { formula: new DirectFormula(m(n3) * 0.6, pyroNormal) },
-          { formula: new DirectFormula(m(n4) * 0.6, pyroNormal), hits: 2 },
-          { formula: new DirectFormula(m(n5) * 0.6, pyroNormal) },
-        ],
-      };
-    }
+    // C6's extra Blazing Arrow is a baseDmg% buff on yoimiya-normal, not a formula.
 
     // Q: Initial hit (Q param1) + Aurous Blaze explosions (Q param2, ~5 procs off-field)
     if (this.castQ === "yes") {

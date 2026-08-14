@@ -474,3 +474,78 @@ class CovenantOfFrostAndSnow extends WeaponBase {
     ]),
   ];
 }
+
+@RegisterWeapon("jade_vista")
+class JadeVista extends WeaponBase {
+  // Per teammate other than the wielder: same element → EM, different element
+  // → ATK%. Max 3 stacks total, with same-element stacks applied first.
+  get buffs() {
+    const wielderElement = this.teamMeta.elements[this.charId];
+    let sameCount = 0;
+    let diffCount = 0;
+    for (const id of this.teamMeta.characters) {
+      if (id === this.charId) continue;
+      if (this.teamMeta.elements[id] === wielderElement) sameCount++;
+      else diffCount++;
+    }
+    const sameStacks = Math.min(sameCount, 3);
+    const diffStacks = Math.min(diffCount, 3 - sameStacks);
+
+    const stats: Array<{ key: StatKey; value: number }> = [];
+    if (sameStacks > 0) {
+      stats.push({
+        key: "em",
+        value: sameStacks * r(this.refinement, [64, 80, 96, 112, 128]),
+      });
+    }
+    if (diffStacks > 0) {
+      stats.push({
+        key: "atk%",
+        value: diffStacks * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+      });
+    }
+    if (stats.length === 0) return [];
+    return [new StatBuff(wbs(this), { receiver: "self" }, stats)];
+  }
+}
+
+const weaponBowOption = {
+  label: { zh: "全队增益覆盖率", en: "Party Buff Uptime" },
+  choices: [
+    { value: "1", label: { zh: "100%（无缝续接）", en: "100% (kept up)" } },
+    { value: "0.75", label: { zh: "75%", en: "75%" } },
+    { value: "0.5", label: { zh: "50%", en: "50%" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("weapon_bow", weaponBowOption)
+class WeaponBow extends WeaponBase {
+  private readonly o = resolveOption(weaponBowOption, this.option);
+
+  // BETA. Unconditional ER%. E/Q hits each grant 1 point (once per 0.03s); at 3
+  // points the whole party gains a Stellar-Conduct / Stellar Swirl reaction DMG
+  // bonus for 12s, during which no further points can be gathered. Uptime
+  // therefore depends on how fast 3 more E/Q hits land after each window, so
+  // the party buff is amortized over a user-selected uptime. Triggers off-field.
+  get buffs() {
+    const uptime = Number(this.o);
+    return [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        { key: "er", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
+      ]),
+      new StatBuff(
+        wbs(this, ["E", "Q"], "weapon-bow-stellar-dmg"),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [
+          {
+            key: "reactionDmg%",
+            value: uptime * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+          },
+        ]
+      ),
+    ];
+  }
+}

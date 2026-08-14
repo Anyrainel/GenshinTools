@@ -1,5 +1,4 @@
 import type { Element } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
 import type { StatEntry } from "@/data/types";
 import type { CharacterBase } from "../core/implModel";
 import { StatBuff } from "../core/statBuff";
@@ -40,9 +39,8 @@ export function cbs(
 // ─── Traveler Cross-Resonance (glossary passive "buffs") ───
 /**
  * Every Traveler variant gains these stat bonuses on self for each element
- * they have resonated with. The six released elements are always active;
- * Cryo is gated on `traveler_cryo` existing in the character data — remove
- * the guard once the unit ships.
+ * they have resonated with. All seven released elements are active; add a new
+ * entry here whenever another Traveler element ships.
  */
 export const TRAVELER_RESONANCE_ENTRIES: StatEntry[] = [
   { key: "cr", value: 0.1 }, // Anemo
@@ -51,9 +49,7 @@ export const TRAVELER_RESONANCE_ENTRIES: StatEntry[] = [
   { key: "em", value: 60 }, // Dendro
   { key: "hp%", value: 0.2 }, // Hydro
   { key: "atk%", value: 0.2 }, // Pyro
-  ...(charactersById.traveler_cryo != null
-    ? [{ key: "cd" as const, value: 0.2 }] // Cryo
-    : []),
+  { key: "cd", value: 0.2 }, // Cryo
 ];
 
 export function travelerP3Buff(self: CharacterBase): StatBuff {

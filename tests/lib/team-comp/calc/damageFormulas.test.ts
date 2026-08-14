@@ -21,6 +21,7 @@ import {
   nearestStellarAttachHitsForCoeff,
   resolveStellarAttachHits,
   resolveStellarDirectCoeff,
+  teamHasStellarEnabler,
 } from "@/lib/dmgcalc/utils";
 
 const CTX: CalcContext = {
@@ -346,6 +347,19 @@ describe("StellarDirectFormula", () => {
         stellarDirectCoeff: 1.9,
       })
     ).toBe(3);
+  });
+
+  it("teamHasStellarEnabler covers Stellar Swirl enablers, not just Sandrone", () => {
+    expect(teamHasStellarEnabler(["sandrone", null, null, null])).toBe(true);
+    expect(teamHasStellarEnabler(["odette", "venti", null, null])).toBe(true);
+    expect(teamHasStellarEnabler(["vesna", "ganyu", null, null])).toBe(true);
+    expect(teamHasStellarEnabler(["traveler_cryo", null, null, null])).toBe(
+      true
+    );
+    expect(
+      teamHasStellarEnabler(["ganyu", "venti", "bennett", "xingqiu"])
+    ).toBe(false);
+    expect(teamHasStellarEnabler([])).toBe(false);
   });
 
   it("nearestStellarAttachHitsForCoeff maps 1.6 to hit 4", () => {

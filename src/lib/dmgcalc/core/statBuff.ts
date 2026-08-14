@@ -109,13 +109,19 @@ const KEY_CONSTRAINTS: Partial<Record<StatKey, KeyConstraint>> = {
 /**
  * Per-key allowlist for constraint violations that are intentional.
  * Key: `${charOrWeaponId}/${origin}`, Value: set of constraint descriptions to skip.
- *
- * Example: Mavuika C2 uses defReduction% with selfOffField/other receivers
- * (below C6) to model Ring-form-only DEF shred without affecting her own
- * on-field Flamestrider damage.
  */
 const CONSTRAINT_ALLOWLIST: Record<string, Set<string>> = {
+  // Mavuika C2 shreds enemy DEF only while she carries the Ring, so the buff is
+  // split "selfOffField" + "other" instead of "team" — a team receiver would also
+  // boost her on-field Flamestrider damage, which carries no Ring below C6.
   "mavuika/C2": new Set(["defReduction%:requiresReceiver"]),
+  // Sandrone C2 scopes a reaction-CRIT bonus to the Radiance condensed beams
+  // only ("重击发射的冷凝射线的暴击伤害提升40%"). Both filter dimensions are
+  // load-bearing: the beams are StellarDirect hits that share ability "charge"
+  // with the ordinary CA sweep, so the reactions filter alone would leak the
+  // bonus onto the sweep. The general ban on ability-scoping reaction-CRIT
+  // keys stays — this kit shape is the exception, not a new rule.
+  "sandrone/C2": new Set(["reactionCd:forbidsDims-abilities"]),
 };
 
 function isAllowlisted(
@@ -231,6 +237,7 @@ export function validateStatBuff(
         // Swirl reactions may use elements filter to differentiate (e.g. Hydro Swirl vs Pyro Swirl)
         if (dim === "elements" && filter?.reactions?.includes("swirl" as never))
           continue;
+        if (isAllowlisted(source, key, `forbidsDims-${dim}`)) continue;
         if (filter?.[dim]) {
           throw new Error(
             `${label} ${key} is not expected to have a ${dim} filter. Ask for review for this case.`

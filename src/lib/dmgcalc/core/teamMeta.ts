@@ -5,6 +5,7 @@ import type {
   Rarity,
   ReactionType,
   Region,
+  StellarReactionType,
   WeaponType,
 } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
@@ -16,6 +17,7 @@ import {
   LUNAR_SUPERSEDES,
   REACTION_AURA_TRIGGER,
   REACTION_ELEMENT_REQUIREMENTS,
+  STELLAR_ENABLERS,
   STELLAR_SUPERSEDES,
 } from "../constants";
 
@@ -157,13 +159,10 @@ export class TeamMeta {
 
     if (!hasElements || !charParticipates) return false;
 
-    // Sandrone P3/Odette P3: Stellar-Conduct/Stellar-Swirl requires them in the party.
+    // Sandrone/Odette/Vesna P3: Stellar reactions require an enabler in the party.
     if (req.requiresStellarConductEnabler) {
-      if (
-        !this.characters.includes("sandrone") &&
-        !this.characters.includes("odette")
-      )
-        return false;
+      const enablers = STELLAR_ENABLERS[reaction as StellarReactionType];
+      if (!enablers?.some((id) => this.characters.includes(id))) return false;
     }
 
     if (req.requiresMoonsign5StarParticipant) {

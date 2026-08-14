@@ -426,16 +426,91 @@ class BladeOfAtonement extends WeaponBase {
       ]),
     ];
     if (
-      this.teamMeta.hasReaction("stellarConduct") ||
-      this.teamMeta.hasReaction("stellarSwirl")
+      this.teamMeta.hasReaction("stellarConduct", this.charId) ||
+      this.teamMeta.hasReaction("stellarSwirl", this.charId)
     ) {
       buffs.push(
-        new StatBuff(wbs(this, ["elemental-reaction"]), { receiver: "self" }, [
+        new StatBuff(wbs(this, ["stellar-reaction"]), { receiver: "self" }, [
           {
             key: "atk%",
             value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
           },
         ])
+      );
+    }
+    return buffs;
+  }
+}
+
+const goldenMelodyOption = {
+  label: { zh: "谐律乐章", en: "Harmonic Movement" },
+  choices: [
+    { value: "average", label: { zh: "期望平均", en: "Average" } },
+    { value: "atk", label: { zh: "攻击力", en: "ATK" } },
+    { value: "em", label: { zh: "元素精通", en: "Elemental Mastery" } },
+    {
+      value: "stellar",
+      label: { zh: "星烁反应伤害", en: "Stellar Reaction DMG" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("forged_by_the_golden_melody", goldenMelodyOption)
+class ForgedByTheGoldenMelody extends WeaponBase {
+  private readonly o = resolveOption(goldenMelodyOption, this.option);
+
+  // Movements cycle ATK% → EM → Stellar reaction DMG% every 10s, so exactly
+  // one is active at a time; "average" spreads each over the 1/3 uptime.
+  // Triggering a Stellar reaction adds a 12s "Contrapuntal" copy of whichever
+  // movement was playing, stacking with it — modeled as doubling the selected
+  // movement when the team can trigger Stellar-Conduct/Stellar Swirl (the
+  // 12s trigger CD vs 10s cycle means the copied movement drifts in practice).
+  // Works off-field, so receiver is "self".
+  get buffs() {
+    const contrapuntal =
+      this.teamMeta.hasReaction("stellarConduct", this.charId) ||
+      this.teamMeta.hasReaction("stellarSwirl", this.charId)
+        ? 2
+        : 1;
+    const share = this.o === "average" ? 1 / 3 : 1;
+    const scale = contrapuntal * share;
+
+    const buffs: StatBuff[] = [];
+    if (this.o === "average" || this.o === "atk") {
+      buffs.push(
+        new StatBuff(wbs(this, ["harmonic-movement"]), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value: scale * r(this.refinement, [0.18, 0.225, 0.27, 0.315, 0.36]),
+          },
+        ])
+      );
+    }
+    if (this.o === "average" || this.o === "em") {
+      buffs.push(
+        new StatBuff(wbs(this, ["harmonic-movement"]), { receiver: "self" }, [
+          {
+            key: "em",
+            value: scale * r(this.refinement, [120, 150, 180, 210, 240]),
+          },
+        ])
+      );
+    }
+    if (this.o === "average" || this.o === "stellar") {
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["harmonic-movement"]),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value: scale * r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
+            },
+          ]
+        )
       );
     }
     return buffs;

@@ -1,6 +1,7 @@
 import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
+import type { OptionDef } from "../types";
 import { r, royalSeriesOption, wbs } from "./helpers";
 
 @RegisterWeapon("moonweavers_dawn")
@@ -442,12 +443,12 @@ class Emberwell extends WeaponBase {
       ]),
     ];
     if (
-      this.teamMeta.hasReaction("stellarConduct") ||
-      this.teamMeta.hasReaction("stellarSwirl")
+      this.teamMeta.hasReaction("stellarConduct", this.charId) ||
+      this.teamMeta.hasReaction("stellarSwirl", this.charId)
     ) {
       buffs.push(
         new StatBuff(
-          wbs(this, ["elemental-reaction"]),
+          wbs(this, ["stellar-reaction"]),
           {
             receiver: "self",
             filter: { reactions: ["stellarConduct", "stellarSwirl"] },
@@ -462,5 +463,107 @@ class Emberwell extends WeaponBase {
       );
     }
     return buffs;
+  }
+}
+
+const hereticsMoltenBladeOption = {
+  label: { zh: "移动距离", en: "Distance Traveled" },
+  choices: [
+    {
+      value: "max",
+      label: { zh: "持续移动（最高）", en: "Constant movement (max)" },
+    },
+    { value: "average", label: { zh: "期望平均", en: "Average" } },
+    {
+      value: "min",
+      label: { zh: "原地不动（最低）", en: "Stationary (min)" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("heretics_molten_blade", hereticsMoltenBladeOption)
+class HereticsMoltenBlade extends WeaponBase {
+  private readonly o = resolveOption(hereticsMoltenBladeOption, this.option);
+
+  // "Gleam of First Light" after E (14s, 14s CD): each second grants an ATK
+  // bonus between the min and max values based on the distance moved in the
+  // previous second. Removed on swap-out → selfOnField.
+  get buffs() {
+    const min = r(this.refinement, [0.18, 0.225, 0.27, 0.315, 0.36]);
+    const max = r(this.refinement, [0.36, 0.45, 0.54, 0.63, 0.72]);
+    const value =
+      this.o === "max" ? max : this.o === "min" ? min : (min + max) / 2;
+    return [
+      new StatBuff(wbs(this, ["E"]), { receiver: "selfOnField" }, [
+        { key: "atk%", value },
+      ]),
+    ];
+  }
+}
+
+// Radiance (辉映·星超导 / 辉映·星扩散) is a character-side state that weapons
+// cannot read, and it REPLACES the base bonus instead of adding to it, so it
+// must be an explicit user toggle: the base branch is what every wielder gets,
+// and the Radiance branch is opt-in. The "on" choice is only offered when the
+// team can produce a Stellar reaction at all.
+const weaponSwordOption = {
+  label: { zh: "辉映状态", en: "Radiance State" },
+  choices: [
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+    {
+      value: "on",
+      label: { zh: "开启", en: "On" },
+      when: (tm) =>
+        tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl"),
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("weapon_sword", weaponSwordOption)
+class WeaponSword extends WeaponBase {
+  private readonly radianceOn =
+    resolveOption(weaponSwordOption, this.option, this.teamMeta) === "on";
+
+  // BETA. In the 12s after E, every attack hit grants ATK% + EM for 6s, once
+  // per second, max 3 stacks. Stacks also build off-field, so max stacks are
+  // easy to maintain over the window — hardcoded at 3 per U8.
+  //
+  // Under Radiance the stack changes to a larger ATK% plus Stellar reaction
+  // DMG% (a replacement, not an addition), selected by the option above.
+  get buffs() {
+    const stacks = 3;
+    if (this.radianceOn) {
+      return [
+        new StatBuff(wbs(this, ["E", "on-hit"]), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value:
+              stacks * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+          },
+        ]),
+        new StatBuff(
+          wbs(this, ["E", "on-hit"]),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+            },
+          ]
+        ),
+      ];
+    }
+    return [
+      new StatBuff(wbs(this, ["E", "on-hit"]), { receiver: "self" }, [
+        {
+          key: "atk%",
+          value: stacks * r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]),
+        },
+        { key: "em", value: stacks * r(this.refinement, [20, 25, 30, 35, 40]) },
+      ]),
+    ];
   }
 }

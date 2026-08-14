@@ -99,30 +99,21 @@ describe("Nicole A attack formulas", () => {
     }
   });
 
-  it("adds Nicole's Pyro plunge formulas", () => {
+  it("adds Nicole's Pyro high-plunge formula", () => {
     const { char } = nicoleWithTeam(["amber"]);
     const entries = getEntries(char);
 
     expect(
-      entries["nicole-plunge"].parts[0].formula.talentMultiplier
-    ).toBeCloseTo(1.123, 3);
-    expect(
-      entries["nicole-plunge-low"].parts[0].formula.talentMultiplier
-    ).toBeCloseTo(2.246, 3);
-    expect(
       entries["nicole-plunge-high"].parts[0].formula.talentMultiplier
     ).toBeCloseTo(2.806, 3);
-    for (const id of [
-      "nicole-plunge",
-      "nicole-plunge-low",
-      "nicole-plunge-high",
-    ]) {
-      expect(entries[id].parts[0].formula.tag).toEqual({
-        element: "Pyro",
-        ability: "plunge",
-        reaction: "none",
-      });
-    }
+    expect(entries["nicole-plunge-high"].parts[0].formula.tag).toEqual({
+      element: "Pyro",
+      ability: "plunge",
+      reaction: "none",
+    });
+    // Only the high-impact row is modeled.
+    expect(entries["nicole-plunge"]).toBeUndefined();
+    expect(entries["nicole-plunge-low"]).toBeUndefined();
   });
 });
 

@@ -1,4 +1,5 @@
 import { elements } from "@/data/enums";
+import { charactersById } from "@/data/gameResources";
 import type { StatEntry } from "@/data/types";
 import { ZERO_ENERGY_CHARS } from "../constants";
 import { WeaponBase } from "../core/implModel";
@@ -417,7 +418,7 @@ class WhitelakeFrostfeather extends WeaponBase {
     const buffs: StatBuff[] = [];
     if (stacks > 0) {
       buffs.push(
-        new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
+        new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
           {
             key: "atk%",
             value: stacks * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
@@ -428,7 +429,7 @@ class WhitelakeFrostfeather extends WeaponBase {
     if (stacks === 3) {
       buffs.push(
         new StatBuff(
-          wbs(this),
+          wbs(this, ["E"]),
           {
             receiver: "self",
             filter: { reactions: ["stellarConduct", "stellarSwirl"] },
@@ -436,7 +437,7 @@ class WhitelakeFrostfeather extends WeaponBase {
           [
             {
               key: "reactionCd",
-              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+              value: r(this.refinement, [0.5, 0.65, 0.8, 0.95, 1.1]),
             },
           ]
         )
@@ -445,6 +446,15 @@ class WhitelakeFrostfeather extends WeaponBase {
     return buffs;
   }
 }
+
+/**
+ * Number of Elements the Traveler has resonated with, derived from the Traveler
+ * variants present in the character data (currently Anemo/Geo/Electro/Dendro/
+ * Hydro/Pyro/Cryo = 7). Grows on its own with each new Traveler element.
+ */
+const TRAVELER_RESONATED_ELEMENTS = Object.keys(charactersById).filter((id) =>
+  id.startsWith("traveler_")
+).length;
 
 @RegisterWeapon("exaiphanes_blade")
 class ExaiphanesBlade extends WeaponBase {
@@ -458,6 +468,25 @@ class ExaiphanesBlade extends WeaponBase {
       },
     ];
 
-    return [new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, stats)];
+    const buffs = [
+      new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, stats),
+    ];
+
+    // R2+: "CRIT DMG increases by 6% for every Element they have resonated
+    // with." R1's game text genuinely has one clause fewer than R2-R5 (no CRIT
+    // DMG sentence), which misaligns the released JSON's positional refinement
+    // extraction — hence its impossible 16%/6%/6%/6%/6% first column. Values
+    // here follow EN, whose R1-R5 strings survived intact. impl_audit flags the
+    // released rows as SUSPECT DATA; treat that warning as expected, not as a
+    // signal to re-derive these numbers from weapon_zh.json.
+    if (this.refinement >= 2) {
+      buffs.push(
+        new StatBuff(wbs(this), { receiver: "self" }, [
+          { key: "cd", value: 0.06 * TRAVELER_RESONATED_ELEMENTS },
+        ])
+      );
+    }
+
+    return buffs;
   }
 }

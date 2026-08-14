@@ -790,10 +790,12 @@ class Cyno extends CharacterBase {
           [{ key: "atkSpd%", value: 0.2 }]
         )
       );
-      // C1 Radiance: Together We Rise +200 EM (persists on swap during Pathclearer)
+      // C1 Radiance: Together We Rise +200 EM. Exactly one character holds the
+      // effect at a time — Cyno while he is active, then the character he swaps
+      // to — so it tracks the on-field slot, not the whole party.
       if (this.radianceOn) {
         buffs.push(
-          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "teamOnField" }, [
             { key: "em", value: 200 },
           ])
         );
@@ -803,21 +805,23 @@ class Cyno extends CharacterBase {
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["normal"]), { receiver: "selfOnField" }, [
           { key: "electro%", value: 0.5 },
         ])
       );
-      // C2 Radiance: Together We Rise allies NA/CA → SC DMG +16% × 5 stacks
+      // C2 Radiance: a Together We Rise holder's NA/CA hit grants a stack of
+      // 「该角色造成的星超导反应伤害提升16%」, max 5 → +80%. NA/CA is the trigger
+      // for the stack, not the scope of the bonus: once stacked, every
+      // Stellar-Conduct hit that character deals is boosted (same shape as the
+      // base clause above, where an NA hit grants an all-damage Electro bonus).
+      // Together We Rise follows the active slot, hence teamOnField.
       if (this.radianceOn) {
         buffs.push(
           new StatBuff(
-            cbs(this, "C2", ["Q"]),
+            cbs(this, "C2", ["normal", "charge"]),
             {
-              receiver: "team",
-              filter: {
-                abilities: ["normal", "charge"],
-                reactions: ["stellarConduct"],
-              },
+              receiver: "teamOnField",
+              filter: { reactions: ["stellarConduct"] },
             },
             [{ key: "reactionDmg%", value: 0.8 }]
           )

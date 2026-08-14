@@ -1,4 +1,5 @@
 import type { ElementalOrPhysical } from "@/data/enums";
+import type { StatEntry } from "@/data/types";
 import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
@@ -449,12 +450,12 @@ class EchoesOfTheHeart extends WeaponBase {
       ]),
     ];
     if (
-      this.teamMeta.hasReaction("stellarConduct") ||
-      this.teamMeta.hasReaction("stellarSwirl")
+      this.teamMeta.hasReaction("stellarConduct", this.charId) ||
+      this.teamMeta.hasReaction("stellarSwirl", this.charId)
     ) {
       buffs.push(
         new StatBuff(
-          wbs(this, ["elemental-reaction"]),
+          wbs(this, ["stellar-reaction"]),
           {
             receiver: "self",
             filter: { reactions: ["stellarConduct", "stellarSwirl"] },
@@ -469,5 +470,102 @@ class EchoesOfTheHeart extends WeaponBase {
       );
     }
     return buffs;
+  }
+}
+
+@RegisterWeapon("clash_of_kings")
+class ClashOfKings extends WeaponBase {
+  // "Laws of the Board" after E: ATK% + EM for 6s, once every 12s. Charged
+  // Attack hits only extend the duration (no stat change), so they're ignored.
+  readonly buffs = [
+    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+      { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
+      { key: "em", value: r(this.refinement, [100, 125, 150, 175, 200]) },
+    ]),
+  ];
+}
+
+// Radiance (辉映·星超导 / 辉映·星扩散) is a character-side state that weapons
+// cannot read, and it REPLACES the base bonus instead of adding to it, so it
+// must be an explicit user toggle: the base branch is what every wielder gets,
+// and the Radiance branch is opt-in. The "on" choice is only offered when the
+// team can produce a Stellar reaction at all. Mirrors weapon_sword.
+const weaponCatalystOption = {
+  label: { zh: "辉映状态", en: "Radiance State" },
+  choices: [
+    { value: "off", label: { zh: "关闭", en: "Off" } },
+    {
+      value: "on",
+      label: { zh: "开启", en: "On" },
+      when: (tm) =>
+        tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl"),
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterWeapon("weapon_catalyst", weaponCatalystOption)
+class WeaponCatalyst extends WeaponBase {
+  private readonly radianceOn =
+    resolveOption(weaponCatalystOption, this.option, this.teamMeta) === "on";
+
+  // BETA. Party-composition scaling: each Cryo party member grants EM, each
+  // Electro party member grants ATK%. The wielder counts toward their own
+  // element. Both clauses are unconditional, so no trigger label.
+  //
+  // Under Radiance this is replaced: every Cryo or Electro member instead
+  // grants EM plus Stellar reaction DMG%, for at most 4 counted characters.
+  //
+  // ZH/EN differ on the Radiance EM at R4 (35 vs 30) — ZH wins per beta rules.
+  get buffs() {
+    let cryo = 0;
+    let electro = 0;
+    for (const id of this.teamMeta.characters) {
+      const el = this.teamMeta.elements[id];
+      if (el === "Cryo") cryo++;
+      else if (el === "Electro") electro++;
+    }
+
+    if (this.radianceOn) {
+      const counted = Math.min(cryo + electro, 4);
+      if (counted === 0) return [];
+      return [
+        new StatBuff(wbs(this), { receiver: "self" }, [
+          {
+            key: "em",
+            value: counted * r(this.refinement, [20, 25, 30, 35, 40]),
+          },
+        ]),
+        new StatBuff(
+          wbs(this),
+          {
+            receiver: "self",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value:
+                counted * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+            },
+          ]
+        ),
+      ];
+    }
+
+    const stats: StatEntry[] = [];
+    if (cryo > 0) {
+      stats.push({
+        key: "em",
+        value: cryo * r(this.refinement, [24, 30, 36, 42, 48]),
+      });
+    }
+    if (electro > 0) {
+      stats.push({
+        key: "atk%",
+        value: electro * r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]),
+      });
+    }
+    if (stats.length === 0) return [];
+    return [new StatBuff(wbs(this), { receiver: "self" }, stats)];
   }
 }
