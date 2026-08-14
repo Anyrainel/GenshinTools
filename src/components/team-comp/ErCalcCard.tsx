@@ -39,16 +39,23 @@ import type {
   ActionType,
   CalcMode,
   ERCalculationSegment,
+  EROptions,
   ERResult,
+  ERSequenceOptions,
   ERTimeline,
   ParticleMode,
   PeriodicProc,
+  TeamMember,
   TeamSlot,
   TimelineAction,
 } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
-import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
+import type {
+  TeamComp,
+  TeamEnergyConfig,
+  TeamSetupConfig,
+} from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -57,10 +64,37 @@ import { ErResultsPanel } from "./ErResultsPanel";
 import { TimelineStrip } from "./TimelineStrip";
 
 const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
+const DEFAULT_CALC_MODE: CalcMode = "full-energy-repeat";
+const DEFAULT_PARTICLE_MODE: ParticleMode = "expected";
+const DEFAULT_EASY_CASTS = {
+  skillCount: 1,
+  burstCount: 1,
+  normalAttackCount: 0,
+};
 
 type TimelineListUpdate =
   | ERTimeline[]
   | ((currentTimelines: ERTimeline[]) => ERTimeline[]);
+
+/** Optimizer objective per the shared ER-optimizer contract. */
+interface EROptimizerObjective {
+  priorityCharId?: string;
+  caps?: Record<string, number>;
+}
+
+/** `optimizeWaitBlocks` accepts an optional 4th argument that lets the caller
+ *  score candidates with the same model the results panel renders. Bound
+ *  through an explicit signature so this file compiles both before and after
+ *  the optimizer declares the parameter; drop the cast once it has. */
+const optimizeWaitBlocksScored = optimizeWaitBlocks as (
+  team: TeamMember[],
+  timeline: ERTimeline,
+  options?: EROptions,
+  scoring?: {
+    scoreFn?: (timeline: ERTimeline) => ERResult[];
+    objective?: EROptimizerObjective;
+  }
+) => ReturnType<typeof optimizeWaitBlocks>;
 
 function resolveEnergyTimelines(
   timelines: ERTimeline[] | undefined
@@ -108,8 +142,15 @@ function hasFavoniusDefaultsDiff(
 function resolveCharCtx(
   charId: string,
   setupConfig: TeamSetupConfig,
-  accountData: AccountData | null
-): { constellation: number; talentLevels: [number, number, number] } {
+  accountData: AccountData | null,
+  weaponId: string | undefined
+): {
+  constellation: number;
+  talentLevels: [number, number, number];
+  /** 0-4 for R1-R5, matching TeamSlot.refinement. Store and account data both
+   *  use 1-5, so this is offset by one. */
+  refinement: number;
+} {
   const acctChar = accountData?.characters.find((c) => c.key === charId);
   const defaultConst = acctChar ? acctChar.constellation : 0;
   const constellation =
@@ -158,7 +199,26 @@ function resolveCharCtx(
     base[1] + bonusFor("E"),
     base[2] + bonusFor("Q"),
   ];
-  return { constellation, talentLevels };
+  // Refinement: authored override wins, else the best refinement of this
+  // weapon anywhere in the account, else R1. Same precedence TeamRosterCard
+  // uses. Converted from the stored 1-5 to the 0-4 index the energy tables
+  // are keyed by.
+  let refine1to5 = 1;
+  if (weaponId && accountData) {
+    const owned: number[] = [];
+    for (const c of accountData.characters) {
+      if (c.weapon?.key === weaponId) owned.push(c.weapon.refinement);
+    }
+    for (const w of accountData.extraWeapons) {
+      if (w.key === weaponId) owned.push(w.refinement);
+    }
+    if (owned.length > 0) refine1to5 = Math.max(...owned);
+  }
+  const authored = setupConfig.charConfigs?.[charId]?.refinement;
+  if (authored !== undefined) refine1to5 = Number(authored);
+  const refinement = Math.min(4, Math.max(0, refine1to5 - 1));
+
+  return { constellation, talentLevels, refinement };
 }
 
 interface BoundaryParticleBridge {
@@ -244,10 +304,11 @@ function teamToSlots(
       const burstCost = info?.energy ?? 60;
       const specialBurstCost = info?.specialBurstCost;
       const weaponId = weapons[i] ?? undefined;
-      const { constellation, talentLevels } = resolveCharCtx(
+      const { constellation, talentLevels, refinement } = resolveCharCtx(
         charId,
         setupConfig,
-        accountData
+        accountData,
+        weaponId
       );
       // healAction: only set if this character actually heals at the current
       // constellation. Default action is Q when data hasn't specified one.
@@ -263,6 +324,7 @@ function teamToSlots(
         specialBurstCost,
         constellation,
         weaponId,
+        refinement,
         artifactSet:
           artifacts[i]?.type === "4pc" && artifacts[i]?.setId === "scholar"
             ? null
@@ -323,25 +385,46 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
     [setupConfig.energy?.timelines]
   );
 
-  const setTimelines = useCallback(
-    (timelineUpdate: TimelineListUpdate) => {
+  const updateEnergyConfig = useCallback(
+    (updater: (energy: TeamEnergyConfig) => TeamEnergyConfig) => {
       updateTeamSetupConfig(teamComp.id, (config) => ({
         ...config,
-        energy: {
-          ...(config.energy ?? {}),
-          timelines:
-            typeof timelineUpdate === "function"
-              ? timelineUpdate(resolveEnergyTimelines(config.energy?.timelines))
-              : timelineUpdate,
-        },
+        energy: updater(config.energy ?? {}),
       }));
     },
     [teamComp.id, updateTeamSetupConfig]
   );
 
-  const [startEmpty, setStartEmpty] = useState(false);
-  const [repeatLast, setRepeatLast] = useState(true);
-  const [particleMode, setParticleMode] = useState<ParticleMode>("expected");
+  const setTimelines = useCallback(
+    (timelineUpdate: TimelineListUpdate) => {
+      updateEnergyConfig((energy) => ({
+        ...energy,
+        timelines:
+          typeof timelineUpdate === "function"
+            ? timelineUpdate(resolveEnergyTimelines(energy.timelines))
+            : timelineUpdate,
+      }));
+    },
+    [updateEnergyConfig]
+  );
+
+  // The scenario is part of the answer, not a view preference: it persists
+  // with the timelines so a reload — or an export — reproduces the number.
+  const calcMode = setupConfig.energy?.mode ?? DEFAULT_CALC_MODE;
+  const particleMode =
+    setupConfig.energy?.particleMode ?? DEFAULT_PARTICLE_MODE;
+  const startFull = calcMode === "full-energy-repeat";
+  const isRepeating = calcMode !== "zero-energy-start";
+
+  const setCalcMode = useCallback(
+    (mode: CalcMode) => updateEnergyConfig((energy) => ({ ...energy, mode })),
+    [updateEnergyConfig]
+  );
+  const setParticleMode = useCallback(
+    (mode: ParticleMode) =>
+      updateEnergyConfig((energy) => ({ ...energy, particleMode: mode })),
+    [updateEnergyConfig]
+  );
 
   // Easy mode synthesizer states
   const [isEasyMode, setIsEasyMode] = useState(false);
@@ -356,20 +439,30 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
   >([]);
   const [easyDriver, setEasyDriver] = useState<string>("");
 
+  // Keyed on roster identity, not on `erTeam`'s array identity — the latter is
+  // a fresh useMemo on every setupConfig write, so compiling a rotation used to
+  // wipe the form that produced it. Reconcile instead of replace: keep what the
+  // user typed for characters still on the team, seed only new ones.
+  const easyRosterKey = useMemo(
+    () => erTeam.map((s) => s.charId).join("|"),
+    [erTeam]
+  );
+
   useEffect(() => {
-    if (erTeam.length > 0) {
-      const initialCasts: typeof easyCasts = {};
-      for (const m of erTeam) {
-        initialCasts[m.charId] = {
-          skillCount: 1,
-          burstCount: 1,
-          normalAttackCount: 0,
-        };
-      }
-      setEasyCasts(initialCasts);
-      setEasyDriver(erTeam[0]?.charId ?? "");
-    }
-  }, [erTeam]);
+    const rosterIds = easyRosterKey ? easyRosterKey.split("|") : [];
+    const onTeam = new Set(rosterIds);
+    setEasyCasts((prev) =>
+      Object.fromEntries(
+        rosterIds.map((charId) => [charId, prev[charId] ?? DEFAULT_EASY_CASTS])
+      )
+    );
+    setEasyFunnels((prev) =>
+      prev.filter(
+        (f) => onTeam.has(f.sourceCharId) && onTeam.has(f.targetCharId)
+      )
+    );
+    setEasyDriver((prev) => (onTeam.has(prev) ? prev : (rosterIds[0] ?? "")));
+  }, [easyRosterKey]);
 
   const handleCompileRotation = useCallback(() => {
     if (erTeam.length === 0) return;
@@ -399,63 +492,47 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
     toast.success(t.ui("erCalc.rotationCompiled"));
   }, [erTeam, easyCasts, easyFunnels, easyDriver, timelines, setTimelines, t]);
 
-  const calcMode: CalcMode = startEmpty
-    ? repeatLast
-      ? "zero-energy-repeat"
-      : "zero-energy-start"
-    : "full-energy-repeat";
-
   const mainERT = timelines[timelines.length - 1] ?? EMPTY_ERT;
-  const startupERTs = timelines.slice(0, -1);
+  const startupERTs = useMemo(() => timelines.slice(0, -1), [timelines]);
 
-  // Concatenate multiple startup ERTimelines into one ERTimeline
-  const concatErTimelines = useCallback((ts: ERTimeline[]): ERTimeline => {
-    const actions: TimelineAction[] = [];
-    const periodic: PeriodicProc[] = [];
-    let offset = 0;
-    for (const t of ts) {
-      for (const a of t.actions) actions.push({ ...a });
-      for (const p of t.periodic) {
-        periodic.push({ ...p, targetIndex: p.targetIndex + offset });
+  /** Startup timelines followed by the loop, exactly as the results panel
+   *  sees them. Shared with the optimizer so it scores the number on screen. */
+  const buildSegments = useCallback(
+    (loopTimeline: ERTimeline): ERCalculationSegment[] => {
+      const segments: ERCalculationSegment[] = startupERTs.map(
+        (timeline, index) => ({
+          timeline,
+          source: { kind: "startup" as const, timelineNumber: index + 1 },
+        })
+      );
+      segments.push({
+        timeline: loopTimeline,
+        source: { kind: "loop" as const, iteration: "first" as const },
+      });
+      if (isRepeating) {
+        segments.push({
+          timeline: loopTimeline,
+          source: { kind: "loop" as const, iteration: "subsequent" as const },
+        });
       }
-      offset += t.actions.length;
-    }
-    return { actions, periodic };
-  }, []);
+      return segments;
+    },
+    [startupERTs, isRepeating]
+  );
+
+  const sequenceOptions = useMemo<ERSequenceOptions>(
+    () => ({ particleMode, startFull, isRepeating }),
+    [particleMode, startFull, isRepeating]
+  );
 
   const results = useMemo<ERResult[]>(() => {
     if (erTeam.length === 0 || mainERT.actions.length === 0) return [];
-    const teamMembers = erTeam.map(toTeamMember);
-    const segments: ERCalculationSegment[] = [
-      ...startupERTs.map((timeline, index) => ({
-        timeline,
-        source: {
-          kind: "startup" as const,
-          timelineNumber: index + 1,
-        },
-      })),
-      {
-        timeline: mainERT,
-        source: { kind: "loop" as const, iteration: "first" as const },
-      },
-    ];
-
-    if (repeatLast) {
-      segments.push({
-        timeline: mainERT,
-        source: {
-          kind: "loop" as const,
-          iteration: "subsequent" as const,
-        },
-      });
-    }
-
-    return calculateTeamERSequence(teamMembers, segments, {
-      particleMode,
-      startFull: !startEmpty,
-      isRepeating: repeatLast,
-    });
-  }, [erTeam, mainERT, startupERTs, repeatLast, startEmpty, particleMode]);
+    return calculateTeamERSequence(
+      erTeam.map(toTeamMember),
+      buildSegments(mainERT),
+      sequenceOptions
+    );
+  }, [erTeam, mainERT, buildSegments, sequenceOptions]);
 
   const updateTimeline = useCallback(
     (tlIndex: number, updater: (ert: ERTimeline) => ERTimeline) => {
@@ -737,46 +814,44 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
     );
   }, [erTeam, timelines, setTimelines]);
 
+  /** Slot 1 of the team comp is the carry by convention. Only meaningful to
+   *  the optimizer when that character is actually in the energy sim. */
+  const priorityCharId = useMemo(() => {
+    const carry = characters[0];
+    return carry && erTeam.some((s) => s.charId === carry) ? carry : undefined;
+  }, [characters, erTeam]);
+
   // Greedy optimizer: insert wait blocks (+ swap E↔Q) on the loop timeline
-  // to minimize the maximum team ER requirement. Operates on the loop only;
-  // startup timelines are untouched.
+  // to minimize the team ER requirement. Operates on the loop only; startup
+  // timelines are held fixed but still scored, so a candidate is judged on
+  // the whole rotation the panel displays.
   const handleOptimizeWaits = useCallback(() => {
     if (erTeam.length === 0 || mainERT.actions.length === 0) return;
     const teamMembers = erTeam.map(toTeamMember);
-    const startup =
-      startupERTs.length > 0 ? concatErTimelines(startupERTs) : undefined;
-    const opts = {
-      calcMode,
-      particleMode,
-      timeline2: startup && startup.actions.length > 0 ? mainERT : undefined,
-    };
-    const baseTimeline =
-      startup && startup.actions.length > 0 ? startup : mainERT;
-    const result = optimizeWaitBlocks(teamMembers, baseTimeline, opts);
-    // Only write back to the loop. Optimizer returns the timeline it mutated,
-    // which is `startup` when present — but the optimization edits propagate
-    // to the loop via the simulated repeat; we re-run it on the loop only
-    // when there's no startup, otherwise we keep startup edits via the result.
-    if (!startup || startup.actions.length === 0) {
-      setTimelines([...timelines.slice(0, -1), result.timeline]);
-    } else {
-      // With startup: optimizer edited the startup; the loop is unchanged.
-      // For now apply the same optimizer to the loop as a separate pass to
-      // surface in-loop wait insertions, which are more impactful for repeats.
-      const loopResult = optimizeWaitBlocks(teamMembers, mainERT, {
-        calcMode: "full-energy-repeat",
-        particleMode,
-      });
-      setTimelines([...timelines.slice(0, -1), loopResult.timeline]);
-    }
+    const result = optimizeWaitBlocksScored(
+      teamMembers,
+      mainERT,
+      { calcMode, particleMode },
+      {
+        scoreFn: (candidate) =>
+          calculateTeamERSequence(
+            teamMembers,
+            buildSegments(candidate),
+            sequenceOptions
+          ),
+        objective: priorityCharId ? { priorityCharId } : undefined,
+      }
+    );
+    setTimelines([...timelines.slice(0, -1), result.timeline]);
   }, [
     erTeam,
     timelines,
     mainERT,
-    startupERTs,
     calcMode,
     particleMode,
-    concatErTimelines,
+    buildSegments,
+    sequenceOptions,
+    priorityCharId,
     setTimelines,
   ]);
 
@@ -817,8 +892,18 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                 </span>
                 <ToggleGroup
                   type="single"
-                  value={startEmpty ? "empty" : "full"}
-                  onValueChange={(v) => v && setStartEmpty(v === "empty")}
+                  value={startFull ? "full" : "empty"}
+                  onValueChange={(v) => {
+                    if (!v) return;
+                    // Starting full only ever asks the sustain question — the
+                    // full + run-once pairing hands everyone a charged burst
+                    // bar and answers 100% for the whole team.
+                    if (v === "full") setCalcMode("full-energy-repeat");
+                    else
+                      setCalcMode(
+                        isRepeating ? "zero-energy-repeat" : "zero-energy-start"
+                      );
+                  }}
                   variant="outline"
                   size="sm"
                 >
@@ -850,12 +935,6 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   variant="outline"
                   size="sm"
                 >
-                  <ToggleGroupItem
-                    value="min"
-                    className="text-xs md:text-sm h-7"
-                  >
-                    {t.ui("erCalc.minEst")}
-                  </ToggleGroupItem>
                   <ToggleGroupItem
                     value="expected"
                     className="text-xs md:text-sm h-7"
@@ -936,11 +1015,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {erTeam.map((member) => {
-                      const casts = easyCasts[member.charId] || {
-                        skillCount: 1,
-                        burstCount: 1,
-                        normalAttackCount: 0,
-                      };
+                      const casts =
+                        easyCasts[member.charId] ?? DEFAULT_EASY_CASTS;
                       const isDriver = easyDriver === member.charId;
 
                       const updateCast = (
@@ -953,11 +1029,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                         setEasyCasts((prev) => ({
                           ...prev,
                           [member.charId]: {
-                            ...(prev[member.charId] || {
-                              skillCount: 1,
-                              burstCount: 1,
-                              normalAttackCount: 0,
-                            }),
+                            ...(prev[member.charId] ?? DEFAULT_EASY_CASTS),
                             [field]: val,
                           },
                         }));
@@ -969,8 +1041,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                           className="p-3 bg-card border border-border rounded-lg space-y-3 shadow-sm"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold text-foreground capitalize">
-                              {member.charId.replace("_", " ")}
+                            <span className="text-sm font-semibold text-foreground">
+                              {t.character(member.charId)}
                             </span>
                             <label className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground">
                               <input
@@ -1062,14 +1134,14 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                           key={fIdx}
                           className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/40 border border-border rounded-lg text-xs"
                         >
-                          <span className="font-medium text-foreground capitalize">
-                            {funnel.sourceCharId.replace("_", " ")}
+                          <span className="font-medium text-foreground">
+                            {t.character(funnel.sourceCharId)}
                           </span>
                           <span className="text-muted-foreground">
                             E &rarr;
                           </span>
-                          <span className="font-medium text-foreground capitalize">
-                            {funnel.targetCharId.replace("_", " ")}
+                          <span className="font-medium text-foreground">
+                            {t.character(funnel.targetCharId)}
                           </span>
                           <button
                             type="button"
@@ -1097,12 +1169,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                         className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
                       >
                         {erTeam.map((m) => (
-                          <option
-                            key={m.charId}
-                            value={m.charId}
-                            className="capitalize"
-                          >
-                            {m.charId.replace("_", " ")}
+                          <option key={m.charId} value={m.charId}>
+                            {t.character(m.charId)}
                           </option>
                         ))}
                       </select>
@@ -1121,12 +1189,8 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                         className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
                       >
                         {erTeam.map((m) => (
-                          <option
-                            key={m.charId}
-                            value={m.charId}
-                            className="capitalize"
-                          >
-                            {m.charId.replace("_", " ")}
+                          <option key={m.charId} value={m.charId}>
+                            {t.character(m.charId)}
                           </option>
                         ))}
                       </select>
@@ -1189,13 +1253,23 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                     </span>
                     <ToggleGroup
                       type="single"
-                      value={repeatLast ? "repeat" : "once"}
-                      onValueChange={(v) => v && setRepeatLast(v === "repeat")}
+                      value={isRepeating ? "repeat" : "once"}
+                      onValueChange={(v) => {
+                        if (!v) return;
+                        if (v === "repeat")
+                          setCalcMode(
+                            startFull
+                              ? "full-energy-repeat"
+                              : "zero-energy-repeat"
+                          );
+                        else setCalcMode("zero-energy-start");
+                      }}
                       variant="outline"
                       size="sm"
                     >
                       <ToggleGroupItem
                         value="once"
+                        disabled={startFull}
                         className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                       >
                         {t.ui("erCalc.loopOnce")}

@@ -895,7 +895,8 @@
     "element": "Cryo",
     "source": "manual",
     "_unmodeled": [
-      "No particle data in Fandom, character_stats.json or particles.lunaris.json — emission unknown, counts as 0 particles until a source publishes it"
+      "No particle data in particles.gcsim.json, particles.lunaris.json, particles.fandom.json or character_stats.json (re-checked; all four still have no entry) — emission unknown, counts as 0 particles until a source publishes it",
+      "Expected shape once sourced: Ice Fog Piercer summons a Frostpierce Star that periodically fires ice crystals, so this should become a periodic.E generator (like traveler_pyro), not a cast-time E. Particle counts vary per element across the travelers (1 to 3+1@0.33), so they cannot be extrapolated from the other six"
     ]
   },
   "traveler_dendro": {

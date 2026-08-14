@@ -37,8 +37,10 @@
       "amount": 2,
       "target": "self",
       "minC": 1,
+      "procs": 6,
       "conditionEn": "hit enemy marked by Q",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "Herald of Frost 15s duration / 2.2s coordinated attack CD = 6 ticks (Q talisman also lasts 15s)"
     }
   ],
   "xingqiu": [
@@ -59,7 +61,9 @@
       "amount": 3,
       "target": "self",
       "minC": 2,
-      "cooldown": 0.8
+      "procs": 6,
+      "cooldown": 0.8,
+      "note": "Adeptal Legacy 5s duration / 0.8s interval = 6 ticks"
     }
   ]
 }

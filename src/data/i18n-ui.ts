@@ -1459,10 +1459,10 @@ export const i18nUiData = {
       en: "Rolls Count",
       zh: "词条数",
     },
-    stellarAttachHits: { en: "Polestar hits", zh: "极星附着" },
+    stellarAttachHits: { en: "Stellar hits", zh: "星烁附着" },
     stellarAttachHitsTip: {
-      en: "Cryo+Electro hits recorded in Polestar Field each 3s (1–12). Coeff from datamine table (1.45× at 1 hit → 2.0× at 12).",
-      zh: "极星力场每 3 秒记录的冰/雷附着次数（1–12）。系数取自解包表（1 次 1.45×，12 次 2.0×）。",
+      en: "Attach hits recorded each 3s (1–12), scaling Stellar-Conduct and Stellar Swirl base DMG. Coeff from the datamined Stellar-Conduct table (1.45× at 1 hit → 2.0× at 12).",
+      zh: "每 3 秒记录的附着次数（1–12），影响星超导与星扩散的反应基础伤害。系数取自星超导解包表（1 次 1.45×，12 次 2.0×）。",
     },
     emptyOptMsg: {
       en: "Press Run Optimization to find the best artifact loadout.",
@@ -1855,7 +1855,6 @@ export const i18nUiData = {
     tabFrozen: { en: "Frozen Teams", zh: "冻结管理" },
     tabInvestment: { en: "Investment", zh: "补金分析" },
     tabWeaponChoice: { en: "Weapon & Artifact Choice", zh: "武器圣遗物选择" },
-    tabRedesignedEr: { en: "Redesigned ER", zh: "充能计算 (新)" },
     weaponChoiceDesc: {
       en: "Select a team to compare weapons and artifact sets",
       zh: "选择队伍来比较武器与圣遗物套装",
@@ -3158,7 +3157,6 @@ export const i18nUiData = {
     zeroEnergy: { en: "Empty", zh: "零能量" },
     fullEnergy: { en: "Full", zh: "满能量" },
     particleEst: { en: "Particle est.", zh: "产球估算" },
-    minEst: { en: "Min", zh: "最低" },
     avgEst: { en: "Avg", zh: "期望" },
     maxEst: { en: "Max", zh: "最高" },
     optimizeWaits: { en: "Auto Optimize ER", zh: "自动优化充能" },
@@ -3226,6 +3224,14 @@ export const i18nUiData = {
     perProcSuffix: { en: "/proc", zh: "/次" },
     clearParticle: { en: "clear", zh: "中性粒子" },
     reactionTrigger: { en: "Triggers reaction", zh: "触发反应" },
+    electroResonance: {
+      en: "Electro Resonance reaction",
+      zh: "触发雷元素相关反应",
+    },
+    electroResonanceHint: {
+      en: "High Voltage: 1 Electro particle, 5s cooldown",
+      zh: "高压电场：生成1个雷元素微粒，冷却5秒",
+    },
     reactionIf: { en: "if", zh: "条件：" },
     perProcLabel: { en: "Per proc", zh: "每次微粒" },
     particleSuffix: { en: "P", zh: "球" },
@@ -3269,106 +3275,5 @@ export const i18nUiData = {
       en: 'Applied to "{0}" min ER',
       zh: "已应用到「{0}」的最低充能",
     },
-  },
-  redesignedEr: {
-    title: {
-      en: "Continuous-Time ER Calculator",
-      zh: "连续时间充能计算器",
-    },
-    description: {
-      en: "This module implements a continuous-time ER calculation model. It models timing axis lengths, action durations, particle flight delays, and periodic recoveries using a mathematical derivation scheme.",
-      zh: "本模块使用连续时间模型计算充能需求，通过数学推导处理轴长、动作时长、元素微粒飞行延迟和周期性回能。",
-    },
-    metadataInput: { en: "Metadata Input", zh: "元数据输入" },
-    loadExample: { en: "Load Example", zh: "加载示例" },
-    metadataPlaceholder: {
-      en: "Paste metadata here...",
-      zh: "在此粘贴元数据……",
-    },
-    runCalculation: { en: "Run Calculation", zh: "运行计算" },
-    noCalculationExecuted: {
-      en: "No Calculation Executed",
-      zh: "尚未执行计算",
-    },
-    noCalculationDescription: {
-      en: 'Paste your configuration metadata in the input area and click "Run Calculation" to inspect the timings, recoveries, and ER results.',
-      zh: "在输入区粘贴配置元数据，然后点击“运行计算”查看时序、回能和充能结果。",
-    },
-    noCharactersParsed: {
-      en: "No characters parsed from team config (N). Please check the format.",
-      zh: "未能从队伍配置（N）中解析出角色，请检查格式。",
-    },
-    timelineBounds: {
-      en: "1. Timeline Bounds",
-      zh: "1. 时序解析",
-    },
-    axisDescription: {
-      en: "Startup axis (T₁ = {0}s), loop axis (T₂ = {1}s)",
-      zh: "启动轴（T₁ = {0}s），循环轴（T₂ = {1}s）",
-    },
-    actions: { en: "Actions", zh: "动作数" },
-    entryTime: { en: "Entry (t_in)", zh: "进场时刻（t_in）" },
-    exitTime: { en: "Exit (t_out)", zh: "退场时刻（t_out）" },
-    fieldTime: { en: "Field time", zh: "前台时间" },
-    offFieldTime: { en: "Off-field time", zh: "后台时间" },
-    particleOutput: {
-      en: "2. Group A: Elemental Particles",
-      zh: "2. 计算组 A：元素微粒",
-    },
-    particleDescription: {
-      en: "Calculated energy from character element matching and field-state multipliers",
-      zh: "根据角色元素匹配和前后台状态倍率计算所得的能量",
-    },
-    particleParams: { en: "Particle parameters", zh: "产球参数" },
-    effectiveParticles: {
-      en: "Effective particles (E)",
-      zh: "有效微粒（E）",
-    },
-    qSameFront: {
-      en: "Q: same element, on-field",
-      zh: "Q：同元素前台",
-    },
-    qSameBack: {
-      en: "Q: same element, off-field",
-      zh: "Q：同元素后台",
-    },
-    qDifferentBack: {
-      en: "Q: different element, off-field",
-      zh: "Q：异元素后台",
-    },
-    flatRecoveries: {
-      en: "3. Group B: Periodic and Normal Attack Recoveries",
-      zh: "3. 计算组 B：周期性与普攻回复",
-    },
-    flatRecoveryDescription: {
-      en: "Fixed flat energy from weapons, constellations, and normal attack bonuses",
-      zh: "来自武器、命座和普通攻击额外效果的固定能量",
-    },
-    recoveryItem: { en: "Recovery details", zh: "回复项" },
-    average: { en: "Average", zh: "均值" },
-    minimum: { en: "Minimum", zh: "最低" },
-    maximum: { en: "Maximum", zh: "最高" },
-    erResults: {
-      en: "4. Energy Recharge Results",
-      zh: "4. 充能效率计算结果",
-    },
-    erResultsDescription: {
-      en: "Minimum ER requirement. Parentheses show the minimum and maximum; the recommendation is rounded up to the nearest 5%.",
-      zh: "最低充能需求。括号内为最低值和最高值；推荐值向上取整至 5%。",
-    },
-    demandValue: { en: "Demand value", zh: "需求数值" },
-    erRange: { en: "ER (average, min, max)", zh: "充能（均值、最低、最高）" },
-    recommendedEr: { en: "Recommended ER", zh: "推荐充能" },
-    overflow: { en: "Overflow", zh: "溢出" },
-    probabilityMatrix: {
-      en: "5. Probability Combinations Matrix",
-      zh: "5. 全概率组合矩阵",
-    },
-    probabilityMatrixDescription: {
-      en: "ER requirements for each concrete combination of random particle-generator outputs",
-      zh: "每种具体随机产球结果组合下的充能需求",
-    },
-    combinations: { en: "Combinations", zh: "组合状态" },
-    probability: { en: "Probability", zh: "概率" },
   },
 };

@@ -1,4 +1,13 @@
-import { ArrowDown, ArrowRight, Plus, Skull, Trash2, Zap } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowRight,
+  Info,
+  Plus,
+  Skull,
+  Trash2,
+  Zap,
+} from "lucide-react";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import {
@@ -19,8 +28,10 @@ import {
   BURST_ACTIONS,
   CHIP_H,
   DIRECT_PARTICLE_ACTIONS,
+  ELECTRO_RESONANCE_MEMBERS,
   PATTERN_ACTIONS,
   particles,
+  RESONANCE_PARTY_SIZE,
 } from "@/lib/ercalc/constants";
 import {
   getActionParticles,
@@ -33,12 +44,14 @@ import {
   type NodeEnergyEvent,
   toTeamMember,
 } from "@/lib/ercalc/erCalculator";
+import { analyzeRotation } from "@/lib/ercalc/rotationHints";
 import type {
   ActionType,
   EnergyParticleElement,
   ERTimeline,
   ParticleMode,
   PeriodicProc,
+  RotationHint,
   TeamSlot,
   TimelineAction,
 } from "@/lib/ercalc/types";
@@ -89,7 +102,7 @@ export function TimelineStrip({
   onUpdatePeriodic,
   onClear,
 }: TimelineStripProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [procDrag, setProcDrag] = useState<{
     procIndex: number;
@@ -241,6 +254,18 @@ export function TimelineStrip({
 
   const getLabel = useCallback((action: string) => t.erAction(action), [t]);
 
+  // Electro Resonance (High Voltage) only exists in a full party with 2+
+  // Electro members. When it does, every node can be marked as the attack that
+  // triggered the Electro-related reaction — independent of whether anyone
+  // holds a reaction-trigger weapon.
+  const electroResonanceActive = useMemo(
+    () =>
+      team.length === RESONANCE_PARTY_SIZE &&
+      team.filter((s) => s.element === "Electro").length >=
+        ELECTRO_RESONANCE_MEMBERS,
+    [team]
+  );
+
   // Compute the particle count emitted BY the action at index i (for arrow display)
   const actionParticleCount = useCallback(
     (i: number) => {
@@ -335,6 +360,28 @@ export function TimelineStrip({
         </div>
       </PopoverContent>
     </Popover>
+  );
+
+  // Rotation linter. `analyzeRotation` already detects burst-before-skill,
+  // under-placed periodic procs, procs with no deploying E, 3+ consecutive
+  // bursts, and all-procs-at-the-end — it just had no caller until now.
+  const hints = useMemo(
+    () =>
+      analyzeRotation(
+        ert,
+        team.map((s) => s.charId)
+      ),
+    [ert, team]
+  );
+
+  const renderHint = useCallback(
+    (hint: RotationHint) => {
+      const msg = language === "zh" ? hint.messageZh : hint.messageEn;
+      return hint.charId
+        ? msg.replace("{char}", t.character(hint.charId))
+        : msg;
+    },
+    [language, t]
   );
 
   return (
@@ -513,6 +560,10 @@ export function TimelineStrip({
                           onToggleReaction={(v) =>
                             onUpdateAction(i, { ...act, reactionProc: v })
                           }
+                          resonanceEligible={electroResonanceActive}
+                          onToggleResonance={(v) =>
+                            onUpdateAction(i, { ...act, resonanceProc: v })
+                          }
                           onAddProc={(sourceChar, trigger) =>
                             handleAddProc(sourceChar, i, trigger)
                           }
@@ -536,6 +587,24 @@ export function TimelineStrip({
           )}
         </div>
       </div>
+
+      {hints.length > 0 && (
+        <ul className="px-3 pb-2 pt-1 space-y-1 border-t border-border/40">
+          {hints.map((hint) => (
+            <li
+              key={`${hint.type}-${hint.actionIndex ?? "x"}-${hint.messageEn}`}
+              className="flex items-start gap-1.5 text-xs text-muted-foreground"
+            >
+              {hint.type === "warning" ? (
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-px text-amber-400/80" />
+              ) : (
+                <Info className="w-3.5 h-3.5 shrink-0 mt-px" />
+              )}
+              <span>{renderHint(hint)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
@@ -638,6 +707,8 @@ function MainChip({
   onRemove,
   onToggleFavonius,
   onToggleReaction,
+  resonanceEligible,
+  onToggleResonance,
   onAddProc,
 }: {
   act: TimelineAction;
@@ -659,6 +730,8 @@ function MainChip({
   onRemove: () => void;
   onToggleFavonius: (v: boolean) => void;
   onToggleReaction: (v: boolean) => void;
+  resonanceEligible: boolean;
+  onToggleResonance: (v: boolean) => void;
   onAddProc: (sourceChar: string, trigger: "E" | "Q") => void;
 }) {
   const { t, language } = useLanguage();
@@ -750,6 +823,9 @@ function MainChip({
           )}
           {act.favoniusProc && (
             <Zap className="w-3 h-3 text-sky-400 absolute -top-1 -right-1" />
+          )}
+          {act.resonanceProc && (
+            <Zap className="w-3 h-3 text-violet-400 absolute -top-1 -left-1" />
           )}
         </div>
       </PopoverTrigger>
@@ -918,6 +994,33 @@ function MainChip({
                     {t.ui("erCalc.reactionIf")} {reactionConditionLabel}
                   </div>
                 )}
+              </div>
+            </label>
+          </div>
+        )}
+
+        {/* Electro Resonance trigger — offered whenever the party qualifies,
+            with no weapon requirement. Engine enforces the 5s ICD. */}
+        {resonanceEligible && (
+          <div className="border-t border-border/30 pt-2">
+            <label className="flex items-start gap-2 cursor-pointer text-xs">
+              <input
+                type="checkbox"
+                checked={!!act.resonanceProc}
+                onChange={(e) => onToggleResonance(e.target.checked)}
+                className="rounded border-border mt-0.5"
+              />
+              <Zap className="w-3.5 h-3.5 text-violet-400 mt-0.5 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span>{t.ui("erCalc.electroResonance")}</span>
+                  <span className="font-medium tabular-nums text-violet-400 shrink-0">
+                    +1 {t.ui("erCalc.particleSuffix")}
+                  </span>
+                </div>
+                <div className="text-[10px] text-foreground/60 mt-0.5">
+                  {t.ui("erCalc.electroResonanceHint")}
+                </div>
               </div>
             </label>
           </div>

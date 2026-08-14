@@ -59,6 +59,36 @@ export function stripTeamStoreResultCaches<
   };
 }
 
+const CALC_MODES: readonly string[] = [
+  "zero-energy-start",
+  "full-energy-repeat",
+  "zero-energy-repeat",
+];
+const PARTICLE_MODES: readonly string[] = ["expected", "max"];
+
+/** v19: sanitize the newly persisted `energy.mode` / `energy.particleMode`.
+ *  Values only ever exist here from a dev build, so the job is to keep the
+ *  enums honest: fold the removed `"min"` particle mode into `"expected"` and
+ *  drop anything else unrecognized back to the default. */
+function normalizeLegacyEnergyScenario(config: TeamSetupConfig): void {
+  const energy = config?.energy as
+    | (Record<string, unknown> & { mode?: unknown; particleMode?: unknown })
+    | undefined;
+  if (!energy || typeof energy !== "object") return;
+
+  if (energy.mode !== undefined && !CALC_MODES.includes(String(energy.mode))) {
+    delete energy.mode;
+  }
+  if (energy.particleMode === "min") {
+    energy.particleMode = "expected";
+  } else if (
+    energy.particleMode !== undefined &&
+    !PARTICLE_MODES.includes(String(energy.particleMode))
+  ) {
+    delete energy.particleMode;
+  }
+}
+
 /**
  * Migrate persisted TeamState from an older version to the current format.
  * Exported for testability — called by zustand persist's `migrate` option.
@@ -524,6 +554,25 @@ export function migrateTeamStore(
   if (version < 18 || !Number.isFinite(state.updatedAt)) {
     state.updatedAt = Date.now();
   }
+
+  if (version < 19) {
+    // Before v19 the ER calculator's scenario was component-local React state
+    // in ErCalcCard, so only the timelines were persisted:
+    //   TeamEnergyConfig = { timelines?: ERTimeline[] }
+    // `startEmpty` / `repeatLast` / `particleMode` reset on every reload.
+    //
+    // v19 persists the scenario alongside the timelines as `energy.mode`
+    // (the documented three-way CalcMode) and `energy.particleMode`. Absent
+    // fields keep reading as the old defaults — "full-energy-repeat" and
+    // "expected" — so nothing needs backfilling. The only transform is for
+    // dev builds that persisted the since-removed `particleMode: "min"`,
+    // which folds into "expected"; anything unrecognized is dropped so the
+    // enums stay the live contract.
+    for (const config of Object.values(state.configsByTeamId ?? {})) {
+      normalizeLegacyEnergyScenario(config);
+    }
+  }
+
   state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});
 
   delete state.teams;

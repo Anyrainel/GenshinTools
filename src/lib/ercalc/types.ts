@@ -93,8 +93,17 @@ export interface TimelineAction {
   /** Whether this E/Q triggers an elemental reaction, gating reaction-triggered
    *  weapons (Bloodsoaked Ruins, Lumidouce Elegy, Nocturne's Curtain Call,
    *  Flame-Forged Insight). Default false; user-togglable in the node popover
-   *  and UI-autotoggled when the wearer holds a reaction-trigger weapon. */
+   *  and UI-autotoggled when the wearer holds a reaction-trigger weapon.
+   *  WEAPONS ONLY — Electro Resonance has its own flag (`resonanceProc`),
+   *  because the reaction toggle is only offered to reaction-weapon wearers
+   *  and would otherwise make resonance unreachable for everyone else. */
   reactionProc?: boolean;
+  /** Whether this action triggers an Electro-related reaction for Elemental
+   *  Resonance purposes (High Voltage: a full party with 2+ Electro members
+   *  generates 1 Electro particle when a party member's attack triggers an
+   *  Electro-related reaction, 5s ICD). Default false; user-togglable in the
+   *  node popover whenever the party qualifies. */
+  resonanceProc?: boolean;
   /** Energy to grant at this node, keyed by recipient charId (team slot id).
    *  Only read when `action === "grantEnergy"`. Two independent components:
    *    - `flat`    — fixed energy, NOT scaled by ER%.
@@ -191,7 +200,7 @@ export interface ParticleEntry {
 // ─── Calc options ───
 
 /** Particle RNG treatment. */
-export type ParticleMode = "min" | "expected" | "max";
+export type ParticleMode = "expected" | "max";
 
 /**
  * Calculation mode.
@@ -360,105 +369,29 @@ export interface SelfEnergyEntry {
   amount?: number;
   percentRefund?: number;
   target: string;
+  /** Restricts a party/partyOthers grant to recipients of this element.
+   *  Xilonen C2 restores 25 Energy to Electro party members only; without the
+   *  filter it paid every teammate AND Geo Xilonen herself. */
+  targetElement?: string;
   minC: number;
   procs?: number;
+  /** Minimum seconds between two *triggers* of this entry, on the timeline's
+   *  ordinal clock. `procs` and `cooldown` describe one effect together: N
+   *  ticks spaced `cooldown` apart. The gate therefore decides whether a new
+   *  proc-train may START — the ticks of a train already in flight are not
+   *  re-gated, or a verified `procs` count would silently pay out less than
+   *  its total. */
+  cooldown?: number;
+  /** "Restore X Energy for every 100% Energy Recharge <the giver> has."
+   *  Resolved at `ASSUMED_BATTERY_ER`; `max` caps each individual cast. */
   erScale?: { per100: number; max?: number };
+  /** "Each 1% Energy Recharge above 100% that <the giver> has grants N% greater
+   *  Energy restoration" (Raiden A4). A MULTIPLIER on the resolved amount,
+   *  distinct from `erScale`, which *is* the amount. Also resolved at
+   *  `ASSUMED_BATTERY_ER`. */
+  erMultiplier?: { perPercentOver100: number };
   param?: { source: string; index: number; multiplier: number };
   [key: string]: unknown;
 }
 
 export type SelfEnergyMap = Record<string, SelfEnergyEntry[]>;
-
-// ─── Redesigned ER calculation types ───
-
-export interface ProbProbability {
-  value: number;
-  prob: number;
-}
-
-export type RedesignedParticles = number | ProbProbability[];
-
-export interface RedesignedBurstRequirement {
-  type: "regular" | "special";
-  raw: string;
-  regularCost?: number;
-  specialFixedCount?: number;
-  specialFixedCost?: number;
-  specialInterval?: number;
-  specialAdditionalCost?: number;
-}
-
-export interface RedesignedCharTiming {
-  name: string;
-  element: string;
-  actionCount: number;
-  tIn: number;
-  tOut: number;
-}
-
-export interface RedesignedParticleConfig {
-  delta: number;
-  tProd: number;
-  e0: RedesignedParticles;
-}
-
-export interface RedesignedRecoveryTuple {
-  a: number;
-  b: number;
-  lambda: number;
-  k: number;
-}
-
-export interface RedesignedRecoveryConfig {
-  S: number;
-  n: number;
-  dIn: number;
-  V: number;
-  P: number;
-  tuples: RedesignedRecoveryTuple[];
-}
-
-export interface RedesignedInput {
-  raw: string;
-  charOrders: string[]; // names of characters in order
-  burstRequirements: Record<string, RedesignedBurstRequirement>;
-  axisLengths: number[]; // [T1, T2]
-  actionSequence: string;
-  customTiming?: RedesignedCharTiming[];
-  actionCosts: { Q: number; E: number; A: number };
-  elements: Record<string, string>;
-  particles: Record<string, RedesignedParticleConfig>;
-  recoveries: Record<string, RedesignedRecoveryConfig>;
-}
-
-export interface RedesignedResultItem {
-  name: string;
-  element: string;
-  burstType: "regular" | "special";
-  demandLabels: string[];
-  demands: number[]; // values of D_min, D_avg, D_peak, etc.
-  qValues: {
-    expected: number;
-    options: Array<{ val: number; prob: number }>;
-  };
-  rValues: {
-    avg: number;
-    min: number;
-    max: number;
-  };
-  erNeeded: {
-    // mapped by demand label, e.g. "D=60" -> { avg: number, min: number, max: number }
-    [demandLabel: string]: {
-      avg: number;
-      min: number;
-      max: number;
-      recommended: number;
-    };
-  };
-}
-
-export interface RedesignedSuperTableCol {
-  header: string;
-  prob: number;
-  cells: Record<string, string>; // name -> "avg(min,max)"
-}

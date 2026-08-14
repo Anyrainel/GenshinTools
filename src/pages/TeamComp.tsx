@@ -27,23 +27,16 @@ import { DamageView } from "./team-comp/DamageView";
 import type { FrozenViewHandle } from "./team-comp/FrozenView";
 import { FrozenView } from "./team-comp/FrozenView";
 import { InvestmentView } from "./team-comp/InvestmentView";
-import { RedesignedErView } from "./team-comp/RedesignedErView";
 import { WeaponChoiceView } from "./team-comp/WeaponChoiceView";
 
-type TeamCompTab =
-  | "damage"
-  | "frozen"
-  | "investment"
-  | "weapon"
-  | "redesigned-er";
+type TeamCompTab = "damage" | "frozen" | "investment" | "weapon";
 
 function isValidTab(tab: string | null): tab is TeamCompTab {
   return (
     tab === "damage" ||
     tab === "frozen" ||
     tab === "investment" ||
-    tab === "weapon" ||
-    tab === "redesigned-er"
+    tab === "weapon"
   );
 }
 
@@ -238,14 +231,6 @@ export default function TeamCompPage() {
       >
         {teamControls}
         <WeaponChoiceView importRef={importRef} />
-      </PageLayout>
-    );
-  }
-
-  if (activeTab === "redesigned-er") {
-    return (
-      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
-        <RedesignedErView />
       </PageLayout>
     );
   }

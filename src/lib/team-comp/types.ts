@@ -7,7 +7,7 @@ import type {
 } from "@/data/enums";
 import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
-import type { ERTimeline } from "@/lib/ercalc/types";
+import type { CalcMode, ERTimeline, ParticleMode } from "@/lib/ercalc/types";
 import type { StatSheet } from "../dmgcalc/core/statSheet";
 import type { TeamBuild } from "../dmgcalc/core/teamBuild";
 import type {
@@ -226,6 +226,11 @@ export interface TeamDamageConfig {
 
 export interface TeamEnergyConfig {
   timelines?: ERTimeline[];
+  /** Which of the three documented scenarios the displayed ER answers.
+   *  Absent means the historical default, "full-energy-repeat". */
+  mode?: CalcMode;
+  /** How fractional particle data is resolved. Absent means "expected". */
+  particleMode?: ParticleMode;
 }
 
 export type TeamInvestmentConfig = AnalyzerConfig;

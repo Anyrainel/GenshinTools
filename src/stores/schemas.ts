@@ -289,6 +289,15 @@ const TeamSetupConfigSchema = z
     energy: z
       .object({
         timelines: z.array(z.unknown()).optional(),
+        mode: z
+          .enum([
+            "zero-energy-start",
+            "full-energy-repeat",
+            "zero-energy-repeat",
+          ])
+          .optional()
+          .catch(undefined),
+        particleMode: z.enum(["expected", "max"]).optional().catch(undefined),
       })
       .loose()
       .optional(),

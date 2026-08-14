@@ -3,11 +3,15 @@ import { getTalentParam } from "@/data/gameStatsLoader";
 import { getArtifactEnergyImpl } from "@/lib/ercalc/artifactEnergy";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import {
+  ASSUMED_BATTERY_ER,
   allSelfEnergy,
   BURST_ACTIONS,
   CLEAR_PARTICLE,
   DIFF_ELEMENT_PARTICLE,
   DIRECT_PARTICLE_ACTIONS,
+  ELECTRO_RESONANCE_ICD,
+  ELECTRO_RESONANCE_MEMBERS,
+  ELECTRO_RESONANCE_PARTICLES,
   NA_PITY,
   NA_PITY_DEFAULT,
   OFF_FIELD_MULTIPLIER,
@@ -15,6 +19,7 @@ import {
   PARAM_DEFAULTS,
   PATTERN_ACTIONS,
   particles as particlesData,
+  RESONANCE_PARTY_SIZE,
   SAME_ELEMENT_PARTICLE,
 } from "./constants";
 import type {
@@ -203,6 +208,21 @@ export function getBurstCostForAction(
   return member.burstCost;
 }
 
+/**
+ * Seconds an action occupies on the timeline's ordinal clock.
+ *
+ * This is a *feasibility* clock, not a simulation clock: it exists so that
+ * cooldown-gated effects (weapon energy, self-energy entries, Electro
+ * Resonance's 5s ICD, Favonius alignment in the optimizer) can be spaced
+ * plausibly. One definition, so the engine and the optimizer cannot drift.
+ */
+export function actionDuration(action: ActionType): number {
+  if (action === "Q" || action === "specialQ") return 1.5;
+  if (action === "E" || action === "holdE" || action === "specialE") return 1.0;
+  if (action === "wait") return 1.0;
+  return 0.5;
+}
+
 function hasAnyBurstCost(member: TeamMember): boolean {
   return member.burstCost > 0 || (member.specialBurstCost ?? 0) > 0;
 }
@@ -270,26 +290,49 @@ function resolveEntryPerProcFlat(
   action: ActionType
 ): { amountPerProc: number; isErScaling: boolean; erScaleMax?: number } | null {
   if (entry.erScale) {
+    // "Restore X Energy for every 100% Energy Recharge <the giver> has."
+    // Resolved to a constant at the assumed battery ER rather than solved
+    // against the recipient's ER. Capping here also makes the cap PER CAST,
+    // which is what the kits say ("per Troubleshooter Cannon, a maximum of
+    // 15 Energy can be restored this way") — summing procs into one bucket
+    // and capping the total understated repeat rotations.
+    const per100 = entry.erScale.per100 ?? 0;
+    const raw = (per100 * ASSUMED_BATTERY_ER) / 100;
     return {
-      amountPerProc: entry.erScale.per100 ?? 0,
+      amountPerProc:
+        entry.erScale.max !== undefined
+          ? Math.min(entry.erScale.max, raw)
+          : raw,
+      // Display tag only — the solver treats this as a constant.
       isErScaling: true,
-      erScaleMax: entry.erScale.max,
     };
   }
+  // "Each 1% ER above 100% grants N% greater Energy restoration" (Raiden A4).
+  // Multiplies whatever the entry would otherwise pay, at the assumed ER.
+  const erBoost = entry.erMultiplier
+    ? 1 + entry.erMultiplier.perPercentOver100 * (ASSUMED_BATTERY_ER - 100)
+    : 1;
+
   if (entry.param) {
     const p = resolveParamAmount(source.id, entry.param, source.talentLevels);
     if (p == null) return null;
-    return { amountPerProc: p, isErScaling: false };
+    return {
+      amountPerProc: p * erBoost,
+      isErScaling: entry.erMultiplier != null,
+    };
   }
   if (entry.percentRefund != null) {
     const burstCost = getBurstCostForAction(source, action);
     return {
-      amountPerProc: (burstCost * entry.percentRefund) / 100,
-      isErScaling: false,
+      amountPerProc: ((burstCost * entry.percentRefund) / 100) * erBoost,
+      isErScaling: entry.erMultiplier != null,
     };
   }
   if (entry.amount != null) {
-    return { amountPerProc: entry.amount, isErScaling: false };
+    return {
+      amountPerProc: entry.amount * erBoost,
+      isErScaling: entry.erMultiplier != null,
+    };
   }
   return null;
 }
@@ -298,12 +341,17 @@ function resolveRecipients(
   target: string,
   team: TeamMember[],
   sourceId: string,
-  onFieldId: string
+  onFieldId: string,
+  targetElement?: string
 ): TeamMember[] {
-  if (target === "self") return team.filter((m) => m.id === sourceId);
-  if (target === "party") return [...team];
-  if (target === "partyOthers") return team.filter((m) => m.id !== sourceId);
-  if (target === "active") return team.filter((m) => m.id === onFieldId);
+  const byElement = targetElement
+    ? team.filter((m) => m.element === targetElement)
+    : team;
+  if (target === "self") return byElement.filter((m) => m.id === sourceId);
+  if (target === "party") return [...byElement];
+  if (target === "partyOthers")
+    return byElement.filter((m) => m.id !== sourceId);
+  if (target === "active") return byElement.filter((m) => m.id === onFieldId);
   return [];
 }
 
@@ -313,14 +361,14 @@ function erScalingContribution(
   ER: number,
   erScalingSources: Record<string, { per100: number; max?: number }>
 ): number {
+  // These terms were already resolved to concrete energy at ASSUMED_BATTERY_ER
+  // (and capped per cast) when they were emitted, because they scale with the
+  // GIVER's ER, not the recipient's. They are constants in this solve — the
+  // `ER` argument is deliberately unused.
+  void ER;
   let contrib = 0;
   for (const s of Object.values(erScalingSources)) {
-    const val = (s.per100 * (ER - 100)) / 100;
-    if (s.max !== undefined) {
-      contrib += Math.min(s.max, Math.max(0, val));
-    } else {
-      contrib += Math.max(0, val);
-    }
+    contrib += Math.max(0, s.per100);
   }
   return contrib;
 }
@@ -379,9 +427,70 @@ function getAbsorber(
   isRepeating: boolean,
   repeatStartIndex = 0
 ): string {
-  if (i + 1 < actions.length) return actions[i + 1].char;
-  if (isRepeating) return actions[repeatStartIndex]?.char ?? actions[0].char;
+  // `enemyOrb` and `grantEnergy` are pseudo-nodes: nobody swaps in to perform
+  // them, and their `char` is only a positioning anchor (the UI pins it to
+  // team slot 1). They must not capture the previous action's particles, so
+  // scan past them to the next real on-field action.
+  for (let j = i + 1; j < actions.length; j++) {
+    if (!isPseudoNode(actions[j])) return actions[j].char;
+  }
+  if (isRepeating) {
+    for (let j = repeatStartIndex; j <= i; j++) {
+      if (!isPseudoNode(actions[j])) return actions[j].char;
+    }
+  }
+  // One-shot tail, or an all-pseudo wrap: the emitter catches its own particles.
   return actions[i].char;
+}
+
+function wrappedIndexOf(i: number, rotationLength: number): number {
+  return rotationLength > 0 ? i % rotationLength : i;
+}
+
+/**
+ * Pay out every tick still queued for `s` and clear the queue.
+ *
+ * Called when a burst window closes so that a multi-proc effect always
+ * delivers `amount x procs` in total, regardless of how many attack nodes the
+ * user happened to author after its trigger.
+ */
+function flushPendingProcs(
+  s: CharSimState,
+  payeeId: string,
+  sourceIndex: number
+): void {
+  for (const p of s.pendingProcs) {
+    if (p.remaining <= 0) continue;
+    const total = p.amount * p.remaining;
+    if (p.isErScaling) {
+      s.erScalingAccum += total;
+      const key = `${p.sourceChar}:${p.sourceLabel}`;
+      if (!s.erScalingSources[key]) {
+        s.erScalingSources[key] = { per100: 0, max: p.erScaleMax };
+      }
+      s.erScalingSources[key].per100 += total;
+    } else {
+      s.flatAccum += total;
+    }
+    s.currentEvents.push({
+      sourceIndex,
+      sourceChar: p.sourceChar,
+      sourceAction: p.sourceAction,
+      absorberChar: payeeId,
+      particleCount: 0,
+      particleElement: "",
+      energyAt100: total,
+      onField: true,
+      type: p.isErScaling ? "scalable" : "flat",
+      erScaleMax: p.isErScaling ? p.erScaleMax : undefined,
+    });
+  }
+  s.pendingProcs = [];
+}
+
+/** Timeline entries that deliver energy but do not put anyone on field. */
+function isPseudoNode(act: TimelineAction | undefined): boolean {
+  return act?.action === "enemyOrb" || act?.action === "grantEnergy";
 }
 
 // ─── Simulation state ───
@@ -392,6 +501,10 @@ function getAbsorber(
  *  the trigger node. */
 interface PendingProc {
   remaining: number;
+  /** Entry targeted the ACTIVE character. The recipient must be resolved when
+   *  the tick lands, not when the trigger fired — a battery casts and swaps
+   *  out, so later ticks belong to whoever is on field then. */
+  targetActive?: boolean;
   amount: number;
   isErScaling: boolean;
   erScaleMax?: number;
@@ -407,12 +520,25 @@ interface CharSimState {
   erScalingSources: Record<string, { per100: number; max?: number }>;
   weaponLastFireTime: number;
   /** Current NA on-hit pity probability (0–1). Increments each miss, resets on proc or swap-in. */
-  naPityProb: number;
-  /** Probability that no pity proc has fired yet this cycle (expected mode only). */
-  naSurvivalProb: number;
+  /** Distribution over the NA on-hit pity counter: `naPityDist[k]` is the
+   *  probability that exactly k consecutive non-proc hits have accumulated.
+   *  A single scalar cannot express this — tracking only the first proc's
+   *  survival probability computes P(at least one proc), not E[procs], which
+   *  saturates at ~1 energy per pity cycle. Resets to [1] on swap-in. */
+  naPityDist: number[];
   hitCounts: { NA: number; CA: number; PA: number };
   /** Deferred procs for this recipient; drained on NA/CA/PA actions. */
   pendingProcs: PendingProc[];
+  /** How many times each per-hit ("A"-anchored) energy source has already
+   *  fired for this recipient in the current burst window, keyed by
+   *  `sourceChar:sourceLabel`. Caps effects like Wanderer P1 at their stated
+   *  proc count instead of firing on every attack node forever. */
+  perHitProcCounts: Record<string, number>;
+  /** Clock time at which each self-energy source last paid THIS recipient,
+   *  keyed by `sourceChar:sourceLabel`. Gates the start of a new proc-train
+   *  against the entry's `cooldown`. Deliberately NOT cleared at a burst
+   *  window — a cooldown spans windows. */
+  selfEnergyLastFire: Record<string, number>;
   maxER: number;
   maxERParticle: number;
   maxERFlat: number;
@@ -426,17 +552,18 @@ interface CharSimState {
   qWindows: QWindow[];
 }
 
-function freshState(pityBase: number): CharSimState {
+function freshState(): CharSimState {
   return {
     particleAccum: 0,
     flatAccum: 0,
     erScalingAccum: 0,
     erScalingSources: {},
     weaponLastFireTime: -999,
-    naPityProb: pityBase,
-    naSurvivalProb: 1.0,
+    naPityDist: [1],
     hitCounts: { NA: 0, CA: 0, PA: 0 },
     pendingProcs: [],
+    perHitProcCounts: {},
+    selfEnergyLastFire: {},
     maxER: 0,
     maxERParticle: 0,
     maxERFlat: 0,
@@ -468,29 +595,30 @@ function advanceNAPity(
   mode: ParticleMode
 ): number {
   if (mode === "max") {
-    s.naPityProb = cfg.base;
-    s.naSurvivalProb = 1.0;
+    s.naPityDist = [1];
     return 1.0;
   }
-  if (mode === "min") {
-    if (s.naPityProb >= 1.0) {
-      s.naPityProb = cfg.base;
-      return 1.0;
-    }
-    s.naPityProb = Math.min(1.0, s.naPityProb + cfg.increment);
-    return 0;
+  // Expected: one step of the renewal process. Mass at pity index k procs with
+  // probability p_k and returns to index 0; the rest advances to k+1. Summing
+  // the procced mass over hits gives E[procs], and because mass returns to 0
+  // rather than being consumed, a long attack chain keeps earning energy.
+  const dist = s.naPityDist;
+  const next: number[] = [];
+  let energy = 0;
+  let reset = 0;
+  for (let k = 0; k < dist.length; k++) {
+    const mass = dist[k];
+    if (mass <= 0) continue;
+    const p = Math.min(1, cfg.base + k * cfg.increment);
+    const procced = mass * p;
+    energy += procced;
+    reset += procced;
+    const survived = mass - procced;
+    if (survived > 0) next[k + 1] = (next[k + 1] ?? 0) + survived;
   }
-  // expected: contribute survivalProb × currentProb, then advance
-  if (s.naPityProb >= 1.0) {
-    // Guaranteed proc — consume remaining survival and restart the cycle.
-    const energy = s.naSurvivalProb;
-    s.naPityProb = cfg.base;
-    s.naSurvivalProb = 1.0;
-    return energy;
-  }
-  const energy = s.naSurvivalProb * s.naPityProb;
-  s.naSurvivalProb *= 1 - s.naPityProb;
-  s.naPityProb = Math.min(1.0, s.naPityProb + cfg.increment);
+  next[0] = (next[0] ?? 0) + reset;
+  for (let k = 0; k < next.length; k++) next[k] ??= 0;
+  s.naPityDist = next;
   return energy;
 }
 
@@ -588,6 +716,13 @@ function distributeParticles(
  */
 interface FlatEventDescriptor {
   recipientId: string;
+  /** The weapon's wearer, for cooldown bookkeeping. Distinct from both
+   *  `recipientId` (Frostbreath pays teammates) and `sourceChar`
+   *  (partyPlunge is triggered by whoever plunged), so neither of those can
+   *  stand in for it. */
+  wearerId?: string;
+  /** True when the source entry used `target: "active"`. */
+  targetActive?: boolean;
   sourceChar: string;
   sourceAction: ActionType | "grantEnergy";
   sourceLabel: string;
@@ -605,7 +740,16 @@ interface FlatEventDescriptor {
 
 function collectFlatEventsAt(
   act: TimelineAction,
-  team: TeamMember[]
+  team: TeamMember[],
+  /** Simulation state, when running a rotation. Omitted by the UI's
+   *  single-node preview, which has no rotation context and therefore does not
+   *  enforce per-rotation hit caps. */
+  state?: Map<string, CharSimState>,
+  /** Per-wearer artifact scratch, for sets that track their own cooldown. */
+  artifactScratch?: Map<string, Record<string, unknown>>,
+  /** Ordinal clock at this node. Omitted by the UI preview, which has no
+   *  rotation context and therefore enforces no cooldowns. */
+  currentTime?: number
 ): FlatEventDescriptor[] {
   const out: FlatEventDescriptor[] = [];
   const onFieldId = act.char;
@@ -645,12 +789,21 @@ function collectFlatEventsAt(
   const source = team.find((m) => m.id === onFieldId);
   if (!source) return out;
 
-  // 2) Self-energy / party-energy entries that fire when the source performs this action.
-  //    Only the first proc is emitted at this node; the remaining (procs-1)
-  //    are enqueued as pending procs and drain on subsequent NA/CA/PA actions.
-  //    This matches how "over-burst" effects actually work in-game (Raiden Q
-  //    ticks per attack, Charlotte Q ticks per drone hit, Shinobu Q ticks per
-  //    ring-tick, etc.) rather than lumping all ticks at the trigger moment.
+  // 2) Self-energy / party-energy entries that fire when the source performs
+  //    this action. `procs` means two different things depending on the anchor:
+  //
+  //    - Anchor "A" (wildcard attack): a PER-HIT effect, and `procs` is the cap
+  //      on how many hits may trigger it (Wanderer P1's 0.8/attack, Ororon P2).
+  //      It fires once at this node and enqueues nothing — enqueuing here would
+  //      stack a fresh queue entry at every attack node while the drain pays one
+  //      tick out of every live entry, compounding as amount x N(N+1)/2.
+  //
+  //    - Anchor E/Q: ONE trigger that ticks `procs` times over the attacks that
+  //      follow (Raiden Q ticks per attack, Shinobu Q per ring-tick). Only the
+  //      first proc is emitted here; the rest drain on subsequent NA/CA/PA.
+  //
+  //    `cooldown` gates the TRIGGER against the ordinal clock, per
+  //    (source, entry, recipient) — see the per-recipient loop below.
   const entries = allSelfEnergy[source.id] ?? [];
   for (const entry of entries) {
     if ((source.constellation ?? 0) < entry.minC) continue;
@@ -658,22 +811,53 @@ function collectFlatEventsAt(
     const resolved = resolveEntryPerProcFlat(entry, source, act.action);
     if (!resolved || resolved.amountPerProc === 0) continue;
     const entryProcs = entry.procs ?? 1;
+    const isPerHit = entry.action === "A";
+    const key = `${source.id}:${entry.source ?? "passive"}`;
     const recipients = resolveRecipients(
       entry.target,
       team,
       source.id,
-      onFieldId
+      onFieldId,
+      entry.targetElement as string | undefined
     );
     for (const r of recipients) {
+      const rs = state?.get(r.id);
+      if (state && !rs) continue;
+      // `cooldown` gates whether a NEW proc-train may start. For an E/Q anchor
+      // the trigger is the cast itself. For an "A" anchor the train is the run
+      // of hits up to `procs`, whose cap already encodes the effect's
+      // duration/ICD arithmetic — re-gating every hit would double-suppress
+      // and pay less than the verified total, so only the first hit of a train
+      // is checked.
+      const midTrain =
+        isPerHit && rs != null && (rs.perHitProcCounts[key] ?? 0) > 0;
+      if (
+        rs &&
+        currentTime != null &&
+        entry.cooldown != null &&
+        !midTrain &&
+        currentTime - (rs.selfEnergyLastFire[key] ?? Number.NEGATIVE_INFINITY) <
+          entry.cooldown
+      ) {
+        continue;
+      }
+      if (isPerHit && rs) {
+        // Enforce the per-rotation hit cap on the recipient's own counter.
+        const fired = rs.perHitProcCounts[key] ?? 0;
+        if (fired >= entryProcs) continue;
+        rs.perHitProcCounts[key] = fired + 1;
+      }
+      if (rs && currentTime != null) rs.selfEnergyLastFire[key] = currentTime;
       out.push({
         recipientId: r.id,
+        targetActive: entry.target === "active",
         sourceChar: source.id,
         sourceAction: act.action,
         sourceLabel: entry.source ?? "passive",
         amount: resolved.amountPerProc,
         isErScaling: resolved.isErScaling,
         erScaleMax: resolved.erScaleMax,
-        procs: entryProcs > 1 ? entryProcs : undefined,
+        procs: !isPerHit && entryProcs > 1 ? entryProcs : undefined,
         conditionEn: entry.conditionEn as string | undefined,
         conditionZh: entry.conditionZh as string | undefined,
       });
@@ -708,14 +892,23 @@ function collectFlatEventsAt(
       healFires ||
       reactionFires;
     if (fires) {
-      out.push({
-        recipientId: source.id,
-        sourceChar: source.id,
-        sourceAction: act.action,
-        sourceLabel: source.weaponId ?? "weapon",
-        amount: we.energy.totalEnergy[source.refinement ?? 0],
-        isErScaling: false,
-      });
+      // Most energy weapons pay their wearer; Frostbreath pays the wearer's
+      // teammates instead.
+      const recipients =
+        we.energy.target === "partyOthers"
+          ? team.filter((m) => m.id !== source.id)
+          : [source];
+      for (const r of recipients) {
+        out.push({
+          recipientId: r.id,
+          wearerId: source.id,
+          sourceChar: source.id,
+          sourceAction: act.action,
+          sourceLabel: source.weaponId ?? "weapon",
+          amount: we.energy.totalEnergy[source.refinement ?? 0],
+          isErScaling: false,
+        });
+      }
     }
   }
 
@@ -728,6 +921,7 @@ function collectFlatEventsAt(
       if (twe.energy.trigger !== "partyPlunge") continue;
       out.push({
         recipientId: tm.id,
+        wearerId: tm.id,
         sourceChar: act.char,
         sourceAction: act.action,
         sourceLabel: tm.weaponId ?? "weapon",
@@ -744,7 +938,15 @@ function collectFlatEventsAt(
       ? getArtifactEnergyImpl(source.artifactSet.setId)
       : undefined;
   if (impl?.onAction) {
-    for (const ev of impl.onAction({ act, wearer: source, team })) {
+    const scratch = artifactScratch
+      ? (artifactScratch.get(source.id) ??
+        (() => {
+          const fresh: Record<string, unknown> = {};
+          artifactScratch.set(source.id, fresh);
+          return fresh;
+        })())
+      : {};
+    for (const ev of impl.onAction({ act, wearer: source, team, scratch })) {
       out.push({
         recipientId: ev.recipientId,
         sourceChar: ev.sourceChar,
@@ -765,7 +967,8 @@ function emitFlatEventsAt(
   team: TeamMember[],
   state: Map<string, CharSimState>,
   rotationLength: number,
-  currentTime: number
+  currentTime: number,
+  artifactScratch?: Map<string, Record<string, unknown>>
 ): void {
   const wrappedIndex = rotationLength > 0 ? i % rotationLength : i;
   const onFieldId = act.char;
@@ -781,25 +984,31 @@ function emitFlatEventsAt(
       for (const p of rs.pendingProcs) {
         if (p.remaining <= 0) continue;
         p.remaining -= 1;
+        // An "active"-targeted tick belongs to whoever is on field when it
+        // lands, not to the character who triggered it. Dori casts her lamp
+        // and swaps out; the ticks fund the carry, not Dori.
+        const payeeId = p.targetActive ? onFieldId : m.id;
+        const ps = p.targetActive ? state.get(payeeId) : rs;
+        if (!ps) continue;
         if (p.isErScaling) {
-          rs.erScalingAccum += p.amount;
+          ps.erScalingAccum += p.amount;
           const key = `${p.sourceChar}:${p.sourceLabel}`;
-          if (!rs.erScalingSources[key]) {
-            rs.erScalingSources[key] = { per100: 0, max: p.erScaleMax };
+          if (!ps.erScalingSources[key]) {
+            ps.erScalingSources[key] = { per100: 0, max: p.erScaleMax };
           }
-          rs.erScalingSources[key].per100 += p.amount;
+          ps.erScalingSources[key].per100 += p.amount;
         } else {
-          rs.flatAccum += p.amount;
+          ps.flatAccum += p.amount;
         }
-        rs.currentEvents.push({
+        ps.currentEvents.push({
           sourceIndex: wrappedIndex,
           sourceChar: p.sourceChar,
           sourceAction: p.sourceAction,
-          absorberChar: m.id,
+          absorberChar: payeeId,
           particleCount: 0,
           particleElement: "",
           energyAt100: p.amount,
-          onField: m.id === onFieldId,
+          onField: payeeId === onFieldId,
           type: p.isErScaling ? "scalable" : "flat",
           erScaleMax: p.isErScaling ? p.erScaleMax : undefined,
         });
@@ -808,7 +1017,13 @@ function emitFlatEventsAt(
     }
   }
 
-  const events = collectFlatEventsAt(act, team);
+  const events = collectFlatEventsAt(
+    act,
+    team,
+    state,
+    artifactScratch,
+    currentTime
+  );
   for (const ev of events) {
     const rs = state.get(ev.recipientId);
     if (!rs) continue;
@@ -820,13 +1035,24 @@ function emitFlatEventsAt(
       we.energy.effect === "flatEnergy" &&
       we.energy.cooldown !== undefined
     ) {
-      const sState = state.get(ev.sourceChar);
-      if (sState) {
-        if (currentTime - sState.weaponLastFireTime < we.energy.cooldown) {
+      // The cooldown belongs to the weapon's WEARER — not to whoever
+      // performed the triggering action (partyPlunge fires on any teammate's
+      // plunge) and not to the recipient (Frostbreath pays teammates).
+      const wearerState = state.get(ev.wearerId ?? ev.recipientId);
+      if (wearerState) {
+        // A single trigger can emit one event per recipient (Frostbreath pays
+        // every teammate). Those siblings share this instant, so only a
+        // *later* node is subject to the cooldown.
+        const alreadyFiredThisInstant =
+          wearerState.weaponLastFireTime === currentTime;
+        if (
+          !alreadyFiredThisInstant &&
+          currentTime - wearerState.weaponLastFireTime < we.energy.cooldown
+        ) {
           // Trigger is on cooldown! Skip this event.
           continue;
         }
-        sState.weaponLastFireTime = currentTime;
+        wearerState.weaponLastFireTime = currentTime;
       }
     }
 
@@ -857,6 +1083,7 @@ function emitFlatEventsAt(
     if (ev.procs && ev.procs > 1) {
       rs.pendingProcs.push({
         remaining: ev.procs - 1,
+        targetActive: ev.targetActive,
         amount: ev.amount,
         isErScaling: ev.isErScaling,
         erScaleMax: ev.erScaleMax,
@@ -891,24 +1118,16 @@ function simulateSequence(
   const particleMode = options?.particleMode ?? "expected";
   const teamById = new Map(team.map((m) => [m.id, m]));
 
-  const qWindowCount = new Map<string, number>();
-  const firstQSeen = new Set<string>();
-  for (const act of actions) {
-    if (!BURST_ACTIONS.has(act.action) || !teamById.has(act.char)) continue;
-    if (skipFirstQ && !firstQSeen.has(act.char)) {
-      firstQSeen.add(act.char);
-      continue;
-    }
-    qWindowCount.set(act.char, (qWindowCount.get(act.char) ?? 0) + 1);
-  }
-
+  // Elemental Resonance requires a FULL party — a 3-man team with two Electro
+  // members gets nothing in game, and the engine used to pay it anyway.
   const hasElectroResonance =
-    team.filter((m) => m.element === "Electro").length >= 2;
+    partySize === RESONANCE_PARTY_SIZE &&
+    team.filter((m) => m.element === "Electro").length >=
+      ELECTRO_RESONANCE_MEMBERS;
 
   const state = new Map<string, CharSimState>();
   for (const m of team) {
-    const pityConfig = resolveNAPityConfig(m);
-    state.set(m.id, freshState(pityConfig.base));
+    state.set(m.id, freshState());
   }
   if (sequenceOptions?.startFull) {
     for (const m of team) {
@@ -932,20 +1151,23 @@ function simulateSequence(
   const repeatStartIndex = sequenceOptions?.repeatStartIndex ?? 0;
   let prevActChar: string | undefined;
   let currentTime = 0;
+  /** Team-wide: High Voltage's ICD is shared, not per character. */
+  let lastResonanceTime = Number.NEGATIVE_INFINITY;
 
   for (let i = 0; i < actions.length; i++) {
     const act = actions[i];
     if (!teamById.has(act.char)) continue;
 
     // ── 0. Swap-in detection — reset incoming character's pity state ──
-    if (act.char !== prevActChar) {
-      const incoming = state.get(act.char)!;
-      const incomingMember = teamById.get(act.char)!;
-      const cfg = resolveNAPityConfig(incomingMember);
-      incoming.naPityProb = cfg.base;
-      incoming.naSurvivalProb = 1.0;
+    // Pseudo-nodes do not put anyone on field, so they neither trigger a swap
+    // nor change who is considered on field for the nodes that follow.
+    if (!isPseudoNode(act)) {
+      if (act.char !== prevActChar) {
+        const incoming = state.get(act.char)!;
+        incoming.naPityDist = [1];
+      }
+      prevActChar = act.char;
     }
-    prevActChar = act.char;
 
     // ── 1. Periodic procs attached to this action (absorbed by on-field char = act.char) ──
     const incoming = procsByIndex.get(i);
@@ -1094,9 +1316,21 @@ function simulateSequence(
       }
     }
 
-    // Electro resonance: ≥2 Electro team members → 1 Electro particle on reaction procs.
-    // ICD (5 s) is user-controlled via placement of reactionProc nodes.
-    if (hasElectroResonance && act.reactionProc) {
+    // Electro Resonance (High Voltage): a full party with 2+ Electro members
+    // generates 1 Electro particle when a party member's attack triggers an
+    // Electro-related reaction, with a 5s ICD.
+    //
+    // Gated on its own `resonanceProc` flag, NOT on `reactionProc`:
+    // `reactionProc` is a weapon flag the UI only offers to wearers of a
+    // reaction-trigger weapon, so resonance used to be unreachable for a
+    // Raiden/Fischl pair holding anything else, while a Lumidouce Elegy
+    // wielder collected a free ICD-less particle at every skill node.
+    if (
+      hasElectroResonance &&
+      act.resonanceProc &&
+      currentTime - lastResonanceTime >= ELECTRO_RESONANCE_ICD
+    ) {
+      lastResonanceTime = currentTime;
       const absorber = getAbsorber(actions, i, isRepeating, repeatStartIndex);
       distributeParticles(
         team,
@@ -1104,7 +1338,7 @@ function simulateSequence(
         act.char,
         "electroResonance",
         i,
-        1,
+        ELECTRO_RESONANCE_PARTICLES,
         "Electro",
         absorber,
         offFieldMult,
@@ -1113,66 +1347,63 @@ function simulateSequence(
       );
     }
 
-    // ── 3. Per-action flat / erScaling events (self + party + weapon + artifact + grantEnergy) ──
-    emitFlatEventsAt(act, i, team, state, rotationLength, currentTime);
-
-    // ── 4. Burst checkpoint ──
+    // ── 3. Burst checkpoint ──
+    // Closes BEFORE this node's flat energy is emitted. Burst-triggered
+    // refunds (Tartaglia Q, Jean A4, Venti A4, Amenoma, Prototype Amber, …)
+    // are post-cast effects in game, so they must fund the NEXT burst rather
+    // than the one that produced them. Particles are distributed in steps 1-2
+    // above and still count toward the window this Q closes — you catch the
+    // particle, then you burst.
     if (BURST_ACTIONS.has(act.action)) {
       const member = teamById.get(act.char)!;
 
-      if (skipFirstQ && !s.firstQSkipped) {
-        s.firstQSkipped = true;
-        s.particleAccum = 0;
-        s.flatAccum = 0;
-        s.erScalingAccum = 0;
-        s.erScalingSources = {};
-        s.currentEvents = [];
+      // Deliver any ticks still queued for this character before the window
+      // closes. Without this, a multi-proc effect pays out only as many ticks
+      // as there happen to be attack nodes after its trigger — a swap-only
+      // support rotation delivered 2 of The Exile 4pc's 6 energy — and the
+      // leftovers survive into the next loop iteration and double-deliver
+      // there. Flushing makes the total invariant to rotation shape.
+      flushPendingProcs(s, act.char, wrappedIndexOf(i, rotationLength));
 
-        let duration = 0.5;
-        if (act.action === "Q" || act.action === "specialQ") duration = 1.5;
-        else if (
-          act.action === "E" ||
-          act.action === "holdE" ||
-          act.action === "specialE"
-        )
-          duration = 1.0;
-        else if (act.action === "wait") duration = 1.0;
-        currentTime += duration;
-        continue;
-      }
+      // In full-energy-repeat the first Q is free (the party starts charged),
+      // so it opens a window instead of closing one.
+      const isSkippedFirstQ = skipFirstQ && !s.firstQSkipped;
+      if (isSkippedFirstQ) s.firstQSkipped = true;
 
-      const burstCost = getBurstCostForAction(member, act.action);
-      if (burstCost > 0) {
-        const erForQ = solveER(
-          burstCost,
-          s.particleAccum,
-          s.flatAccum,
-          s.erScalingSources
-        );
+      if (!isSkippedFirstQ) {
+        const burstCost = getBurstCostForAction(member, act.action);
+        if (burstCost > 0) {
+          const erForQ = solveER(
+            burstCost,
+            s.particleAccum,
+            s.flatAccum,
+            s.erScalingSources
+          );
 
-        const wrappedQIdx = rotationLength > 0 ? i % rotationLength : i;
-        s.qWindows.push({
-          qIndex: wrappedQIdx,
-          qAction: act.action as "Q" | "specialQ",
-          burstCost,
-          erNeeded: erForQ,
-          particleEnergy: s.particleAccum,
-          scalableEnergy: s.erScalingAccum,
-          flatEnergy: s.flatAccum,
-          events: [...s.currentEvents],
-          source: qWindowSources?.get(i),
-          isBinding: false, // set after the loop
-        });
+          const wrappedQIdx = rotationLength > 0 ? i % rotationLength : i;
+          s.qWindows.push({
+            qIndex: wrappedQIdx,
+            qAction: act.action as "Q" | "specialQ",
+            burstCost,
+            erNeeded: erForQ,
+            particleEnergy: s.particleAccum,
+            scalableEnergy: s.erScalingAccum,
+            flatEnergy: s.flatAccum,
+            events: [...s.currentEvents],
+            source: qWindowSources?.get(i),
+            isBinding: false, // set after the loop
+          });
 
-        if (erForQ > s.maxER) {
-          s.maxER = erForQ;
-          s.maxERParticle = s.particleAccum;
-          s.maxERFlat = s.flatAccum;
-          s.maxERErScaling = s.erScalingAccum;
-          s.maxERQIndex = wrappedQIdx;
-          s.maxEREvents = [...s.currentEvents];
+          if (erForQ > s.maxER) {
+            s.maxER = erForQ;
+            s.maxERParticle = s.particleAccum;
+            s.maxERFlat = s.flatAccum;
+            s.maxERErScaling = s.erScalingAccum;
+            s.maxERQIndex = wrappedQIdx;
+            s.maxEREvents = [...s.currentEvents];
+          }
+          s.qEvaluated++;
         }
-        s.qEvaluated++;
       }
 
       s.particleAccum = 0;
@@ -1180,18 +1411,21 @@ function simulateSequence(
       s.erScalingAccum = 0;
       s.erScalingSources = {};
       s.currentEvents = [];
+      s.perHitProcCounts = {};
     }
 
-    let duration = 0.5;
-    if (act.action === "Q" || act.action === "specialQ") duration = 1.5;
-    else if (
-      act.action === "E" ||
-      act.action === "holdE" ||
-      act.action === "specialE"
-    )
-      duration = 1.0;
-    else if (act.action === "wait") duration = 1.0;
-    currentTime += duration;
+    // ── 4. Per-action flat / erScaling events (self + party + weapon + artifact + grantEnergy) ──
+    emitFlatEventsAt(
+      act,
+      i,
+      team,
+      state,
+      rotationLength,
+      currentTime,
+      artifactScratch
+    );
+
+    currentTime += actionDuration(act.action);
   }
 
   return team.map((member) => {

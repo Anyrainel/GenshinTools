@@ -28,6 +28,7 @@
       "action": "Q",
       "target": "active",
       "minC": 0,
+      "procs": 6,
       "conditionEn": "per tick during Q, 2s interval",
       "conditionZh": "Q持续期间每2秒恢复",
       "param": {
@@ -35,7 +36,7 @@
         "index": 4,
         "multiplier": 1
       },
-      "note": "per tick, 2s interval, ~6 ticks over 12s duration"
+      "note": "Jinni duration 12s (Q talent param5) / 2s tick interval = 6 ticks; talent text says only \"continuously regenerate Energy\", the 2s interval is the entry's pre-existing recorded value"
     },
     {
       "source": "P2",

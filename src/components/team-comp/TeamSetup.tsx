@@ -11,12 +11,12 @@ import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
 import { isElement } from "@/lib/typeValidation";
 import { getElementColor } from "../shared/colors";
 
-/** Get all character IDs that have particle data or charInfo */
+/** Get all character IDs that have particle data.
+ *  Restricted to `particles` on purpose: a character without particle data has
+ *  no known element, and `inferElement` would silently guess Anemo — which
+ *  drives the 3.0x same-element vs 1.0x different-element energy rate. */
 function getAvailableCharacters(): string[] {
-  const ids = new Set<string>();
-  for (const id of Object.keys(charInfo)) ids.add(id);
-  for (const id of Object.keys(particles)) ids.add(id);
-  return Array.from(ids).sort();
+  return Object.keys(particles).sort();
 }
 
 function inferElement(charId: string): Element {

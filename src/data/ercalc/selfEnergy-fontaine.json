@@ -19,9 +19,11 @@
       "amount": 6,
       "target": "self",
       "minC": 1,
+      "procs": 2,
       "cooldown": 10,
       "conditionEn": "on Overloaded by on-field character (not Chevreuse), requires P1",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "\"once every 10s\": 20s rotation / 10s interval = 2 triggers"
     }
   ],
   "escoffier": [
@@ -55,7 +57,9 @@
       "amount": 4,
       "target": "self",
       "minC": 4,
-      "cooldown": 5
+      "procs": 4,
+      "cooldown": 5,
+      "note": "Salon Solitaire lasts 30s, restore \"once every 5s\": 20s rotation / 5s interval = 4 triggers"
     }
   ],
   "lyney": [

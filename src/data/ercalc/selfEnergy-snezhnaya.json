@@ -19,9 +19,11 @@
       "amount": 15,
       "target": "self",
       "minC": 4,
+      "procs": 2,
       "cooldown": 10,
       "conditionEn": "on successful blood debt directive recollection",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "C4 text: 15 Energy, 'can occur once every 10s'. Arlecchino absorbs Blood-Debt Directives with every Charged Attack (and with Q), so the 10s ICD is the binding limit: ~20s rotation / 10s ICD = 2 procs."
     }
   ],
   "tartaglia": [

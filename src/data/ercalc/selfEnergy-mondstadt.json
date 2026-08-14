@@ -5,7 +5,9 @@
       "action": "E",
       "amount": 1.2,
       "target": "self",
-      "minC": 1
+      "minC": 1,
+      "procs": 6,
+      "note": "Transient Blossoms generate at most once every 2s while Solar Isotoma is up, but only when an opponent inside the field takes damage. The 2s interval alone would allow 10 per rotation; held to 6 because continuous in-field damage is not guaranteed and overcounting energy makes the tool claim a build works when it does not."
     }
   ],
   "barbara": [
@@ -15,7 +17,9 @@
       "amount": 1,
       "target": "self",
       "minC": 1,
-      "cooldown": 10
+      "cooldown": 10,
+      "procs": 2,
+      "note": "1 Energy every 10s (always active); ~20s rotation / 10s interval = 2 ticks"
     },
     {
       "source": "C4",
@@ -33,8 +37,10 @@
       "amount": 2.5,
       "target": "self",
       "minC": 1,
+      "procs": 4,
       "conditionEn": "during Q, per 祝颂 stack gained",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "Q text caps Benison at 4 stacks per Favonian Favor duration, so 4 x 2.5 Energy is the explicit per-Q maximum"
     }
   ],
   "diona": [
@@ -96,8 +102,10 @@
       "target": "partyOthers",
       "minC": 6,
       "cooldown": 3,
+      "procs": 5,
       "conditionEn": "during Q",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "15s Sparks 'n' Splash duration / 3s interval = 5 ticks"
     }
   ],
   "lisa": [
@@ -174,15 +182,6 @@
       "target": "self",
       "minC": 0,
       "conditionEn": "on Q effect end",
-      "conditionZh": ""
-    },
-    {
-      "source": "P2",
-      "action": "Q",
-      "amount": 15,
-      "target": "party",
-      "minC": 0,
-      "conditionEn": "on Q effect end, only for characters matching absorbed element",
       "conditionZh": ""
     }
   ]

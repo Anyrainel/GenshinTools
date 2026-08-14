@@ -69,8 +69,11 @@
         "index": 17,
         "multiplier": 1
       },
-      "conditionEn": "per hit during Q musou isshin, max 5 procs",
-      "conditionZh": "Q梦想一心状态下每次命中恢复，至多5次"
+      "erMultiplier": {
+        "perPercentOver100": 0.006
+      },
+      "conditionEn": "per hit during Q musou isshin, max 5 procs; P1 Wishes Unnumbered grants 0.6% greater restoration per 1% ER above 100% that Raiden has",
+      "conditionZh": "Q梦想一心状态下每次命中恢复，至多5次；固有天赋「万千的愿望」使雷电将军超过100%的充能效率每1%让梦想一心的回能提高0.6%"
     }
   ],
   "sangonomiya_kokomi": [

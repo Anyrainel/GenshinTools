@@ -75,12 +75,42 @@ export const particles: Record<string, ParticleEntry> = z
   .record(z.string(), ParticleEntrySchema)
   .parse(particlesData) as Record<string, ParticleEntry>;
 
+// ─── Battery ER assumption ───
+
+/**
+ * ER% assumed for a character whose kit scales the energy it GIVES by its own
+ * Energy Recharge (Kujou Sara A4, Dori A4, Raiden A4).
+ *
+ * The calculator deliberately never reads a real ER stat — it produces the
+ * requirement that feeds the damage optimizer (see docs/er-calc-design.md §3.1).
+ * Solving such a gift against the *recipient's* candidate ER is simply wrong
+ * (Sara's gift is scaled by Sara's stat, not the carry's), and solving it
+ * against the giver's own requirement creates a fixed point. So we assume the
+ * giver is built for ER and resolve these terms to a constant.
+ */
+export const ASSUMED_BATTERY_ER = 250;
+
 // ─── Energy multipliers ───
 
 export const SAME_ELEMENT_PARTICLE = 3.0;
 export const DIFF_ELEMENT_PARTICLE = 1.0;
 export const CLEAR_PARTICLE = 2.0;
 export const ORB_MULTIPLIER = 3.0;
+
+// ─── Elemental Resonance ───
+
+/** Party size required for any Elemental Resonance to be active. */
+export const RESONANCE_PARTY_SIZE = 4;
+
+/** Electro members required for High Voltage (Electro Resonance). */
+export const ELECTRO_RESONANCE_MEMBERS = 2;
+
+/** Particles High Voltage generates per trigger, and its internal cooldown in
+ *  seconds: "When Electro-Charged, Superconduct, Overloaded, Quicken,
+ *  Aggravate, Hyperbloom or an Electro-infused Swirl is triggered, 1 Electro
+ *  particle is generated. CD: 5s." */
+export const ELECTRO_RESONANCE_PARTICLES = 1;
+export const ELECTRO_RESONANCE_ICD = 5;
 
 /**
  * Off-field characters receive reduced energy from particles.
@@ -127,7 +157,7 @@ export const PERIODIC_Q_TRIGGERS = new Set<ActionType>(["Q", "specialQ"]);
  * Expected hits per proc (ercalc uses survival-probability tracking for "expected" mode):
  *   sword    base=0.10 dp=0.05  → ~4.52 hits  (~0.22 energy/hit)
  *   claymore base=0.00 dp=0.10  → ~4.66 hits  (~0.21 energy/hit)
- *   polearm  base=0.00 dp=0.04  → ~7.04 hits  (~0.14 energy/hit)
+ *   polearm  base=0.00 dp=0.04  → ~6.95 hits  (~0.14 energy/hit)
  *   bow      base=0.00 dp=0.05  → ~6.29 hits  (~0.16 energy/hit)
  *   catalyst base=0.00 dp=0.10  → ~4.66 hits  (~0.21 energy/hit)
  */

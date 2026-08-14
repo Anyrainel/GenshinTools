@@ -1,0 +1,325 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ER goldens — solved requirements for canonical teams > dori-battery / full-start-repeat / expected 1`] = `
+{
+  "bennett": 203.5,
+  "dori": 328.3,
+  "fischl": 100,
+  "xiangling": 470.6,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > dori-battery / full-start-repeat / max 1`] = `
+{
+  "bennett": 142,
+  "dori": 257.9,
+  "fischl": 100,
+  "xiangling": 400,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > dori-battery / zero-start-once / expected 1`] = `
+{
+  "bennett": 320.9,
+  "dori": 673.7,
+  "fischl": 100,
+  "xiangling": 1261,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > dori-battery / zero-start-once / max 1`] = `
+{
+  "bennett": 267.9,
+  "dori": 562.5,
+  "fischl": 100,
+  "xiangling": 1081.1,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > dori-battery / zero-start-repeat / expected 1`] = `
+{
+  "bennett": 320.9,
+  "dori": 673.7,
+  "fischl": 100,
+  "xiangling": 1261,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > dori-battery / zero-start-repeat / max 1`] = `
+{
+  "bennett": 267.9,
+  "dori": 562.5,
+  "fischl": 100,
+  "xiangling": 1081.1,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > freeze-mona-ganyu / full-start-repeat / expected 1`] = `
+{
+  "diona": 473.8,
+  "ganyu": 271.7,
+  "kaeya": 319.1,
+  "mona": 374.5,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > freeze-mona-ganyu / full-start-repeat / max 1`] = `
+{
+  "diona": 430.1,
+  "ganyu": 230.8,
+  "kaeya": 285.7,
+  "mona": 322.6,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > freeze-mona-ganyu / zero-start-once / expected 1`] = `
+{
+  "diona": 826.1,
+  "ganyu": 276.7,
+  "kaeya": 517.1,
+  "mona": 440.5,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > freeze-mona-ganyu / zero-start-once / max 1`] = `
+{
+  "diona": 701.8,
+  "ganyu": 256.4,
+  "kaeya": 434.8,
+  "mona": 370.4,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > freeze-mona-ganyu / zero-start-repeat / expected 1`] = `
+{
+  "diona": 826.1,
+  "ganyu": 276.7,
+  "kaeya": 517.1,
+  "mona": 440.5,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > freeze-mona-ganyu / zero-start-repeat / max 1`] = `
+{
+  "diona": 701.8,
+  "ganyu": 256.4,
+  "kaeya": 434.8,
+  "mona": 370.4,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > furina-neuvillette / full-start-repeat / expected 1`] = `
+{
+  "bennett": 306.9,
+  "furina": 155.6,
+  "neuvillette": 150.6,
+  "xingqiu": 162.1,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > furina-neuvillette / full-start-repeat / max 1`] = `
+{
+  "bennett": 275.2,
+  "furina": 153.8,
+  "neuvillette": 138.5,
+  "xingqiu": 160.6,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > furina-neuvillette / zero-start-once / expected 1`] = `
+{
+  "bennett": 390.9,
+  "furina": 285.7,
+  "neuvillette": 163.7,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > furina-neuvillette / zero-start-once / max 1`] = `
+{
+  "bennett": 340.9,
+  "furina": 285.7,
+  "neuvillette": 162,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > furina-neuvillette / zero-start-repeat / expected 1`] = `
+{
+  "bennett": 390.9,
+  "furina": 285.7,
+  "neuvillette": 163.7,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > furina-neuvillette / zero-start-repeat / max 1`] = `
+{
+  "bennett": 340.9,
+  "furina": 285.7,
+  "neuvillette": 162,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > national / full-start-repeat / expected 1`] = `
+{
+  "bennett": 242.4,
+  "chongyun": 171.7,
+  "xiangling": 383.7,
+  "xingqiu": 221.3,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > national / full-start-repeat / max 1`] = `
+{
+  "bennett": 222.2,
+  "chongyun": 132.7,
+  "xiangling": 360.4,
+  "xingqiu": 218.6,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > national / zero-start-once / expected 1`] = `
+{
+  "bennett": 292,
+  "chongyun": 180.6,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > national / zero-start-once / max 1`] = `
+{
+  "bennett": 263.2,
+  "chongyun": 177,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > national / zero-start-repeat / expected 1`] = `
+{
+  "bennett": 292,
+  "chongyun": 180.6,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > national / zero-start-repeat / max 1`] = `
+{
+  "bennett": 263.2,
+  "chongyun": 177,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > raiden-national / full-start-repeat / expected 1`] = `
+{
+  "bennett": 150.1,
+  "raiden_shogun": 335.7,
+  "xiangling": 277.8,
+  "xingqiu": 158.2,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > raiden-national / full-start-repeat / max 1`] = `
+{
+  "bennett": 128.5,
+  "raiden_shogun": 196.7,
+  "xiangling": 240.4,
+  "xingqiu": 148.8,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > raiden-national / zero-start-once / expected 1`] = `
+{
+  "bennett": 292,
+  "raiden_shogun": 772.5,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > raiden-national / zero-start-once / max 1`] = `
+{
+  "bennett": 263.2,
+  "raiden_shogun": 661.8,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > raiden-national / zero-start-repeat / expected 1`] = `
+{
+  "bennett": 292,
+  "raiden_shogun": 772.5,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > raiden-national / zero-start-repeat / max 1`] = `
+{
+  "bennett": 263.2,
+  "raiden_shogun": 661.8,
+  "xiangling": 888.9,
+  "xingqiu": 266.7,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > sara-raiden / full-start-repeat / expected 1`] = `
+{
+  "bennett": 189.5,
+  "kujou_sara": 281,
+  "raiden_shogun": 330.3,
+  "xiangling": 331.8,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > sara-raiden / full-start-repeat / max 1`] = `
+{
+  "bennett": 153.9,
+  "kujou_sara": 214.7,
+  "raiden_shogun": 190.2,
+  "xiangling": 277.3,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > sara-raiden / zero-start-once / expected 1`] = `
+{
+  "bennett": 888.9,
+  "kujou_sara": 594.6,
+  "raiden_shogun": 787.3,
+  "xiangling": 1134.8,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > sara-raiden / zero-start-once / max 1`] = `
+{
+  "bennett": 666.7,
+  "kujou_sara": 574.6,
+  "raiden_shogun": 669.2,
+  "xiangling": 952.4,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > sara-raiden / zero-start-repeat / expected 1`] = `
+{
+  "bennett": 888.9,
+  "kujou_sara": 594.6,
+  "raiden_shogun": 787.3,
+  "xiangling": 1134.8,
+}
+`;
+
+exports[`ER goldens — solved requirements for canonical teams > sara-raiden / zero-start-repeat / max 1`] = `
+{
+  "bennett": 666.7,
+  "kujou_sara": 574.6,
+  "raiden_shogun": 669.2,
+  "xiangling": 952.4,
+}
+`;

@@ -74,8 +74,10 @@
       "amount": 4,
       "target": "self",
       "minC": 4,
+      "procs": 2,
       "conditionEn": "Q cat helper triggers elemental conversion",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "Q deploys 2 Purrsonal Coordinated Assistance Robots; each robot can undergo at most one Elemental Conversion per deployment = 2 procs. The Electro variant of P1 (3rd robot) and C2 are not counted."
     }
   ],
   "lauma": [
@@ -85,7 +87,9 @@
       "amount": 4,
       "target": "self",
       "minC": 4,
-      "cooldown": 5
+      "procs": 3,
+      "cooldown": 5,
+      "note": "Frostgrove Sanctuary duration 15s / 5s trigger interval = 3 ticks per E cast."
     }
   ]
 }

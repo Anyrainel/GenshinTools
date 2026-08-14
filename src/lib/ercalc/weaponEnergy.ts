@@ -27,6 +27,9 @@ export type WeaponEnergyEffect =
         | "heal" // Wearer is a healer (approximated: fires at wearer's Q)
         | "reaction" // Wearer participates in a reaction (fires at wearer's Q)
         | "partyPlunge"; // Per plunge (NA/CA/PA gated to plunge) by any team member
+      /** Who receives the energy. Defaults to the wearer. Frostbreath restores
+       *  energy to the wearer's teammates instead. */
+      target?: "self" | "partyOthers";
       /** Cooldown in seconds (optional) */
       cooldown?: number;
       /** For `trigger: "reaction"` weapons — which reaction the wearer must
@@ -167,24 +170,27 @@ const otherWeapons: WeaponEnergyEntry[] = [
       trigger: "burst",
     },
   },
-  // Dialogues of the Desert Sages: 8/9/10/11/12 energy when healed, 10s CD
+  // Dialogues of the Desert Sages: 8/10/12/14/16 energy when the wielder
+  // performs healing, 10s CD
   {
     id: "dialogues_of_the_desert_sages",
     type: "Polearm",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [8, 9, 10, 11, 12],
+      totalEnergy: [8, 10, 12, 14, 16],
       trigger: "heal",
       cooldown: 10,
     },
   },
-  // Rightful Reward: 8/9/10/11/12 energy when healed, 10s CD
+  // Rightful Reward: 8/10/12/14/16 energy when the wielder *is healed*, 10s CD.
+  // Anchored to `heal` (the wielder's own heal action) as an approximation —
+  // a non-healer wielder healed by a teammate is not modeled.
   {
     id: "rightful_reward",
     type: "Polearm",
     energy: {
       effect: "flatEnergy",
-      totalEnergy: [8, 9, 10, 11, 12],
+      totalEnergy: [8, 10, 12, 14, 16],
       trigger: "heal",
       cooldown: 10,
     },
@@ -262,17 +268,66 @@ const otherWeapons: WeaponEnergyEntry[] = [
       trigger: "burst",
     },
   },
-  // Seven Edicts of Dust and Light: 14/15/16/17/18 energy when wearer creates
-  // a shield. 14s CD. Most shielders generate shields from their skill (Zhongli
-  // hold-E, Baizhu E, Layla E, etc.), so we anchor to skill.
+  // Angelos' Heptades: 14/15/16/17/18 energy when wearer creates a shield.
+  // 14s CD. Most shielders generate shields from their skill (Zhongli hold-E,
+  // Baizhu E, Layla E, etc.), so we anchor to skill.
   {
-    id: "seven_edicts_of_dust_and_light",
+    id: "angelos_heptades",
     type: "Catalyst",
     energy: {
       effect: "flatEnergy",
       totalEnergy: [14, 15, 16, 17, 18],
       trigger: "skill",
       cooldown: 14,
+    },
+  },
+  // Song of the Vigil: 4/5/6/7/8 energy on triggering an Elemental Reaction,
+  // 9s CD, works off-field.
+  {
+    id: "song_of_the_vigil",
+    type: "Sword",
+    energy: {
+      effect: "flatEnergy",
+      totalEnergy: [4, 5, 6, 7, 8],
+      trigger: "reaction",
+      cooldown: 9,
+      reactionCondition: {
+        en: "Any Elemental Reaction",
+        zh: "任意元素反应",
+      },
+    },
+  },
+  // Whitelake Frostfeather: 4/4.5/5/5.5/6 energy on triggering a Stellar
+  // Glimmer reaction at 3 stacks of Lake-Hued Lament, 3.5s CD.
+  {
+    id: "whitelake_frostfeather",
+    type: "Catalyst",
+    energy: {
+      effect: "flatEnergy",
+      totalEnergy: [4, 4.5, 5, 5.5, 6],
+      trigger: "reaction",
+      cooldown: 3.5,
+      reactionCondition: {
+        en: "Stellar Glimmer (requires 3 Lake-Hued Lament stacks)",
+        zh: "星烁反应（需3层湖光挽歌）",
+      },
+    },
+  },
+  // Frostbreath: 6/7.5/9/10.5/12 energy to the wearer's TEAMMATES on a Cryo or
+  // Hydro related reaction, 16s CD.
+  {
+    id: "frostbreath",
+    type: "Claymore",
+    energy: {
+      effect: "flatEnergy",
+      totalEnergy: [6, 7.5, 9, 10.5, 12],
+      trigger: "reaction",
+      target: "partyOthers",
+      cooldown: 16,
+      reactionCondition: {
+        en: "Cryo or Hydro-related reaction",
+        zh: "冰元素或水元素相关反应",
+      },
     },
   },
 ];

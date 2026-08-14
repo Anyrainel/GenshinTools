@@ -50,9 +50,11 @@
       "amount": 1,
       "target": "active",
       "minC": 0,
+      "procs": 24,
       "cooldown": 0.5,
       "conditionEn": "per lightning strike during Q;",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "Bellowing Thunder's Lightning Shroud lasts 12s (Q param4, constant across talent levels) and \"One instance of Falling Thunder can be generated every 0.5s\": 12s / 0.5s = 24 strikes max. Anchor \"A\" makes this a per-hit cap, so the realistic total is bounded by the authored on-field attack nodes."
     },
     {
       "source": "C6",
@@ -60,8 +62,10 @@
       "amount": 1,
       "target": "active",
       "minC": 6,
+      "procs": 8,
       "conditionEn": "every 3rd lightning strike during Q",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "C6 enhances the strike after every 2 Falling Thunders, i.e. every 3rd strike: 24 strikes per 12s Shroud / 3 = 8 bonus procs."
     }
   ],
   "traveler_geo": [
@@ -81,8 +85,10 @@
       "amount": 2,
       "target": "self",
       "minC": 1,
+      "procs": 4,
       "conditionEn": "per dewdrop pickup; requires P1",
-      "conditionZh": ""
+      "conditionZh": "",
+      "note": "P1 Spotless Waters: \"1 Droplet can be created this way every second, and each use of Aquacrest Saber can create 4 Droplets at most\" — explicit cap of 4 per Hold cast (Hold lasts up to 6s, so 4 x 1s ticks fit)."
     }
   ],
   "traveler_pyro": [

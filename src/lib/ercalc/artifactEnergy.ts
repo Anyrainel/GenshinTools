@@ -28,6 +28,8 @@ export interface ArtifactOnActionCtx {
   act: TimelineAction;
   wearer: TeamMember;
   team: TeamMember[];
+  /** Mutable per-wearer scratch state keyed by set id. Use to track CDs. */
+  scratch: Record<string, unknown>;
 }
 
 /**
@@ -123,7 +125,51 @@ const scholar: ArtifactEnergyImpl = {
   },
 };
 
-const allImpls: ArtifactEnergyImpl[] = [theExile, scholar];
+/**
+ * Shimenawa's Reminiscence 4pc — "When casting an Elemental Skill, if the
+ * character has 15 or more Energy, they lose 15 Energy and Normal/Charged/
+ * Plunging Attack DMG is increased by 50% for 10s. This effect will not
+ * trigger again during that duration."
+ *
+ * The only artifact set that COSTS energy. Modelled as a single -15 at the
+ * wearer's skill node, once per 10s duration. The 15-energy precondition is
+ * not checked: we solve for a requirement rather than tracking a live energy
+ * bar, and a wearer who cannot pay is one whose requirement is already
+ * unmet. Leaving this unmodelled made the tool report a requirement ~19% too
+ * LOW on an 80-cost burst — the only omission whose sign says a build works
+ * when it does not.
+ */
+const shimenawasReminiscence: ArtifactEnergyImpl = {
+  setId: "shimenawas_reminiscence",
+  onAction({ act, wearer, scratch }) {
+    if (
+      act.action !== "E" &&
+      act.action !== "holdE" &&
+      act.action !== "specialE"
+    )
+      return [];
+    // 10s lockout. The engine's synthetic clock is not exposed to this hook,
+    // so gate on "already drained once this window" — a rotation rarely fits
+    // two 10s-separated skill casts from one wearer.
+    if (scratch.shimenawa_fired === true) return [];
+    scratch.shimenawa_fired = true;
+    return [
+      {
+        recipientId: wearer.id,
+        sourceChar: wearer.id,
+        sourceLabel: "shimenawas_reminiscence 4pc",
+        sourceAction: act.action,
+        amount: -15,
+      },
+    ];
+  },
+};
+
+const allImpls: ArtifactEnergyImpl[] = [
+  theExile,
+  scholar,
+  shimenawasReminiscence,
+];
 
 export const artifactEnergyImpls: Record<string, ArtifactEnergyImpl> =
   Object.fromEntries(allImpls.map((a) => [a.setId, a]));
