@@ -1,4 +1,29 @@
 {
+  "traveler_cryo": [
+    {
+      "source": "C1",
+      "action": "Q",
+      "amount": 5,
+      "target": "self",
+      "minC": 1,
+      "procs": 2,
+      "cooldown": 0.5,
+      "conditionEn": "burst deals Stellar Glimmer reaction damage (requires Illumined Stellar Glimmer state)",
+      "conditionZh": "处于辉映·星烁状态时，元素爆发造成星烁反应伤害",
+      "note": "Burst spear deals 3 hits (5 at 8 Frost Radiance stacks); with the 0.5s ICD roughly 2 procs land per cast."
+    },
+    {
+      "source": "C1",
+      "action": "CA",
+      "amount": 5,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 15,
+      "conditionEn": "Charged Attack: Frost Coalescence (needs P4 + 3 Frostbound Blade stacks, once per 15s)",
+      "conditionZh": "重击·冰凝（需突破天赋「异邦的层冰」与3层「凝冰之刃」，每15秒一次）",
+      "note": "Per-hit procs from normal attacks triggering stellarConduct/stellarSwirl are intentionally not encoded: the engine has no reaction ICD, so an 'A' entry would fire 5 energy on every attack node and massively overstate."
+    }
+  ],
   "traveler_dendro": [
     {
       "source": "C1",

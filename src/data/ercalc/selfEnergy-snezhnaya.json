@@ -1,4 +1,17 @@
 {
+  "alyosha": [
+    {
+      "source": "C1",
+      "action": "E",
+      "amount": 15,
+      "target": "self",
+      "minC": 1,
+      "cooldown": 18,
+      "conditionEn": "nearby party member triggers an Electro-related reaction",
+      "conditionZh": "队伍中附近的角色触发雷元素相关反应",
+      "note": "Party-wide reaction trigger with no Alyosha-side action; bound to E because Alyosha casts E (15s CD) at least once per rotation, and the 18s ICD allows roughly one proc per rotation."
+    }
+  ],
   "arlecchino": [
     {
       "source": "C4",

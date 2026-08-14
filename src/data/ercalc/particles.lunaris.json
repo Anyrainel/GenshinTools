@@ -40,6 +40,11 @@
     "rarity": 5,
     "events": []
   },
+  "traveler_cryo": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": []
+  },
   "traveler_dendro": {
     "element": "Dendro",
     "rarity": 5,
@@ -944,6 +949,12 @@
     "events": [
       {
         "source": "ElementalArt_DropBall",
+        "particles": 3,
+        "chance": 1.0,
+        "cd": "0.5s"
+      },
+      {
+        "source": "ElementalArt_DropBall",
         "particles": 1,
         "chance": 0.33,
         "cd": "0.5s"
@@ -951,12 +962,6 @@
       {
         "source": "ElementalArt_DropBall",
         "particles": 1,
-        "chance": 1.0,
-        "cd": "0.5s"
-      },
-      {
-        "source": "ElementalArt_DropBall",
-        "particles": 3,
         "chance": 1.0,
         "cd": "0.5s"
       }
@@ -1786,6 +1791,54 @@
         "particles": 1,
         "chance": 1.0,
         "cd": "2.5s"
+      }
+    ]
+  },
+  "vodyanitsa": {
+    "element": "Hydro",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "ElementalArt_DropBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "0.2s"
+      }
+    ]
+  },
+  "vesna": {
+    "element": "Anemo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "DropElemBall",
+        "particles": 1,
+        "chance": 1.0,
+        "cd": "2.5s"
+      }
+    ]
+  },
+  "alyosha": {
+    "element": "Electro",
+    "rarity": 4,
+    "events": [
+      {
+        "source": "Ball",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "0.5s"
+      }
+    ]
+  },
+  "odette": {
+    "element": "Cryo",
+    "rarity": 5,
+    "events": [
+      {
+        "source": "GenerateBall",
+        "particles": 5,
+        "chance": 1.0,
+        "cd": "12s"
       }
     ]
   }

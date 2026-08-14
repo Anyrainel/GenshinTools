@@ -35,6 +35,14 @@
       "particles": 5
     }
   },
+  "alyosha": {
+    "element": "Electro",
+    "source": "lunaris",
+    "E": {
+      "particles": 5,
+      "notes": "from particles.lunaris.json (Ball, 0.5s ICD)"
+    }
+  },
   "amber": {
     "element": "Pyro",
     "source": "gcsim",
@@ -583,7 +591,11 @@
   },
   "lohen": {
     "element": "Cryo",
-    "source": "lunaris"
+    "source": "fandom",
+    "E": {
+      "particles": 1,
+      "notes": "On Masterstroke Attack Hit; 2s CD"
+    }
   },
   "lynette": {
     "element": "Anemo",
@@ -668,7 +680,10 @@
   },
   "nicole": {
     "element": "Pyro",
-    "source": "lunaris"
+    "source": "fandom",
+    "E": {
+      "particles": 5
+    }
   },
   "nilou": {
     "element": "Hydro",
@@ -692,6 +707,14 @@
     "element": "Geo",
     "source": "gcsim"
   },
+  "odette": {
+    "element": "Cryo",
+    "source": "lunaris",
+    "E": {
+      "particles": 5,
+      "notes": "from particles.lunaris.json (GenerateBall, 12s ICD)"
+    }
+  },
   "ororon": {
     "element": "Electro",
     "source": "gcsim",
@@ -701,7 +724,10 @@
   },
   "prune": {
     "element": "Anemo",
-    "source": "lunaris"
+    "source": "fandom",
+    "E": {
+      "particles": 5
+    }
   },
   "qiqi": {
     "element": "Cryo",
@@ -736,6 +762,14 @@
     "source": "gcsim",
     "E": {
       "particles": 3
+    }
+  },
+  "sandrone": {
+    "element": "Cryo",
+    "source": "fandom",
+    "E": {
+      "particles": 1,
+      "notes": "On Prism Shot or Charged Attack Condensed Beam; 2.5s CD"
     }
   },
   "sangonomiya_kokomi": {
@@ -857,6 +891,13 @@
       "notes": "On Storm"
     }
   },
+  "traveler_cryo": {
+    "element": "Cryo",
+    "source": "manual",
+    "_unmodeled": [
+      "No particle data in Fandom, character_stats.json or particles.lunaris.json — emission unknown, counts as 0 particles until a source publishes it"
+    ]
+  },
   "traveler_dendro": {
     "element": "Dendro",
     "source": "fandom",
@@ -926,6 +967,28 @@
     },
     "holdE": {
       "particles": 4
+    }
+  },
+  "vesna": {
+    "element": "Anemo",
+    "source": "lunaris",
+    "periodic": {
+      "E": {
+        "procs": 6,
+        "particles": 1,
+        "notes": "from particles.lunaris.json (DropElemBall, 2.5s ICD)"
+      }
+    }
+  },
+  "vodyanitsa": {
+    "element": "Hydro",
+    "source": "lunaris",
+    "periodic": {
+      "E": {
+        "procs": 5,
+        "particles": 1,
+        "notes": "from particles.lunaris.json (ElementalArt_DropBall, 0.2s ICD)"
+      }
     }
   },
   "wanderer": {

@@ -4,6 +4,7 @@ import type { CharacterInfo } from "./types";
 
 export const charInfo: Record<string, CharacterInfo> = {
   aino: { energy: 50, c3Talent: "Q", c5Talent: "E", faction: "Moonsign" },
+  alyosha: { energy: 70, healerC: 0, supStat: ["atk%"], c3Talent: "E", c5Talent: "Q" },
   amber: { energy: 40, c3Talent: "Q", c5Talent: "E" },
   barbara: { energy: 80, healerC: 0, healAction: "E", supStat: ["hp%"], c3Talent: "Q", c5Talent: "E" },
   beidou: { energy: 80, shielderC: 1, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
@@ -110,6 +111,7 @@ export const charInfo: Record<string, CharacterInfo> = {
   neuvillette: { energy: 70, c3Talent: "A", c5Talent: "Q" },
   nicole: { energy: 60, shielderC: 0, supStat: ["atk%"], c3Talent: "E", c5Talent: "Q", faction: "Hexerei" },
   nilou: { energy: 70, c3Talent: "Q", c5Talent: "E" },
+  odette: { energy: 60, c3Talent: "E", c5Talent: "Q" },
   qiqi: { energy: 80, healerC: 0, healAction: "E", supStat: ["atk%"], c3Talent: "Q", c5Talent: "E" },
   raiden_shogun: { energy: 90, c3Talent: "Q", c5Talent: "E" },
   sandrone: { energy: 60, c3Talent: "A", c5Talent: "Q" },
@@ -120,6 +122,7 @@ export const charInfo: Record<string, CharacterInfo> = {
   tartaglia: { energy: 60, c3Talent: "E", c5Talent: "Q" },
   tighnari: { energy: 40, c3Talent: "Q", c5Talent: "E" },
   traveler_anemo: { energy: 60, c3Talent: "Q", c5Talent: "E" },
+  traveler_cryo: { energy: 60, c3Talent: "Q", c5Talent: "E" },
   traveler_dendro: { energy: 80, c3Talent: "E", c5Talent: "Q" },
   traveler_electro: { energy: 80, c3Talent: "Q", c5Talent: "E" },
   traveler_geo: { energy: 60, c3Talent: "Q", c5Talent: "E" },
@@ -139,6 +142,6 @@ export const charInfo: Record<string, CharacterInfo> = {
   yumemizuki_mizuki: { energy: 60, healerC: 0, supStat: ["em"], c3Talent: "E", c5Talent: "Q" },
   zhongli: { energy: 40, healerC: 6, shielderC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
   zibai: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Moonsign" },
-  alyosha: { energy: 70, healerC: 0, supStat: ["atk%"], c3Talent: "E", c5Talent: "Q" },
-  odette: { energy: 60, c3Talent: "E", c5Talent: "Q" },
+  vodyanitsa: { energy: 60, healerC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
+  vesna: { energy: 60, c3Talent: "E", c5Talent: "Q" },
 };
