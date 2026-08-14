@@ -32,6 +32,7 @@ import type { ArtifactSetConfig } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DEFAULT_CALC_CONTEXT } from "@/lib/dmgcalc/constants";
 import type { CalcContext } from "@/lib/dmgcalc/types";
+import { teamHasStellarEnabler } from "@/lib/dmgcalc/utils";
 import type { WeaponChoiceProgress } from "@/lib/team-comp/analyzer/weaponChoice";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type {
@@ -724,7 +725,7 @@ export function WeaponChoiceResultCard({
 }: WeaponChoiceResultCardProps) {
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const ctx = setupConfig.damage?.calcContext ?? {};
-  const hasSandrone = characters.includes("sandrone");
+  const hasStellar = teamHasStellarEnabler(characters);
 
   const patchCtx = useCallback(
     (patch: Partial<CalcContext>) => {
@@ -824,7 +825,7 @@ export function WeaponChoiceResultCard({
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
-          {hasSandrone && (
+          {hasStellar && (
             <StellarDirectCoeffInput
               stellarAttachHits={ctx.stellarAttachHits}
               stellarDirectCoeff={ctx.stellarDirectCoeff}

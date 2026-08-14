@@ -168,7 +168,7 @@ export function RollQualityInputs({
   );
 }
 
-// ─── Stellar-Conduct Polestar attach hits ───
+// ─── Stellar (星超导/星扩散) attach hits ───
 
 type StellarAttachHitsInputProps = {
   stellarAttachHits?: number;

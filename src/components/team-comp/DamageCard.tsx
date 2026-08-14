@@ -59,6 +59,7 @@ import type {
   DisplayPart,
   DisplayResult,
 } from "@/lib/dmgcalc/types";
+import { teamHasStellarEnabler } from "@/lib/dmgcalc/utils";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
@@ -1690,7 +1691,7 @@ export function DamageCard({
   };
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
-  const hasSandrone = characters.includes("sandrone");
+  const hasStellar = teamHasStellarEnabler(characters);
 
   // DPS calculator state (per-session)
   const [dpsSeconds, setDpsSeconds] = useSessionState("dpsSeconds", "");
@@ -1816,7 +1817,7 @@ export function DamageCard({
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
-            {hasSandrone && <StellarDirectCoeffFields {...ctxProps} />}
+            {hasStellar && <StellarDirectCoeffFields {...ctxProps} />}
           </div>
           {currentDisplayResult && teamBuild ? (
             formulaMode === "single" && resolvedFormula ? (
@@ -1905,7 +1906,7 @@ export function DamageCard({
 
             <div className={CONTROLS_CLS}>
               <EnemyFields {...ctxProps} />
-              {hasSandrone && <StellarDirectCoeffFields {...ctxProps} />}
+              {hasStellar && <StellarDirectCoeffFields {...ctxProps} />}
               <div className="flex items-center gap-0.5 md:gap-1">
                 <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
                 <Select
@@ -2288,7 +2289,7 @@ export function DamageCard({
           />
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
-            {hasSandrone && <StellarDirectCoeffFields {...ctxProps} />}
+            {hasStellar && <StellarDirectCoeffFields {...ctxProps} />}
             <RollQualityFields {...ctxProps} />
             <ActionButton
               onClick={handleGenerate}
