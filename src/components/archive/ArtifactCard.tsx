@@ -1,7 +1,9 @@
 import { ChevronDown } from "lucide-react";
 import { memo, useEffect, useRef, useState } from "react";
+import { BetaBadge } from "@/components/shared/BetaBadge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots } from "@/data/enums";
+import { betaArtifactIds } from "@/data/gameResources";
 import type { ArtifactSetResource } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 
@@ -72,6 +74,9 @@ export const ArtifactCard = memo(
             >
               <h3 className="font-semibold text-lg leading-tight text-center">
                 {name}
+                {betaArtifactIds.has(artifact.id) && (
+                  <BetaBadge className="ml-1.5 text-[10px] px-1.5 py-0.5" />
+                )}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
                 <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded text-xs leading-none align-middle mr-1.5">

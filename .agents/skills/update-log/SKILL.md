@@ -89,12 +89,14 @@ Write for a Genshin player using the app, not for an engineer reading git histor
 - Performance work with no user-visible effect, and pure internal cleanup
 - Anything a player could never observe in the app
 - Technically-visible but inconsequential corrections most players won't notice or feel — e.g. a single character's region/metadata tag fix, a tooltip wording tweak, a one-off label typo. The bar is "would a player actually feel this?", not "is it visible somewhere?". When unsure, leave it out.
+- Beta → official promotion as a mechanism. Never say an entity "moved from beta to official" or "left beta" — that's an internal data-pipeline detail. If a character/weapon/artifact set is genuinely new to official (its damage formulas, roster entry, etc. didn't exist in official before), describe it as newly added, full stop. If it already had official support and this batch only fixed bugs or corrected metadata, that belongs under fixes (or is excluded per the rule above) — don't credit it as a new addition just because it also happens to be present in official now. Verify what actually changed in official (`resources.ts`, `i18n-game.ts`, the relevant `dmgcalc/impl/*.ts`) before claiming something is new — a character can have long had official formulas that were simply misfiled or buggy.
 
 **Tone:**
 - Plain, friendly, product copy — not engineering notes. No "refactored", "migrated", "implemented", "param", commit hashes, file names, or internal class names.
 - Lead with the player benefit. Describe what they can now do or what now works, not how it was built.
 - For internal/technical changes (cookie & credential handling, data-fetching, sync, storage), describe the **outcome**, not the mechanism — e.g. "updated the HoYoLAB / 米游社 import logic so it keeps fetching your data reliably", not "now uses separate cookie fields". Don't enumerate implementation specifics players can't act on (which fields changed, which API version). Staying high-level also keeps you accurate: don't assert mechanism details inferred from a diff, since you may misread what actually changed (e.g. claiming a field structure is "new" when it merely changed).
 - **Merge related commits** into one bullet (e.g. several Nicole commits → one "Added support for Nicole"). A bullet maps to a player-facing change, not to a commit.
+- **Keep fix bullets short: 1–2 sentences each, and hide implementation details** (internal formula names, mechanic jargon, "root cause" explanations). State the symptom the player saw and that it's fixed, not how the bug worked. If a commit fixed several distinct things, split into separate short bullets rather than cramming them into one dense sentence with semicolons.
 - Match the density and phrasing of existing entries in the files — read the latest few before drafting.
 - Sort each section by importance: biggest/most exciting changes first.
 

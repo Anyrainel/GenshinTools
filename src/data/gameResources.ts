@@ -35,6 +35,24 @@ export const allWeapons = betaEnabled()
     ]
   : weapons;
 
+// IDs present only in the beta data, not yet in the official release — used to
+// render a "BETA" indicator so beta-only content stays distinguishable even
+// with beta enabled.
+export const betaCharacterIds: ReadonlySet<string> = Object.freeze(
+  new Set(
+    betaCharacters
+      .filter((b) => !characters.some((c) => c.id === b.id))
+      .map((b) => b.id)
+  )
+);
+export const betaWeaponIds: ReadonlySet<string> = Object.freeze(
+  new Set(
+    betaWeapons
+      .filter((b) => !weapons.some((w) => w.id === b.id))
+      .map((b) => b.id)
+  )
+);
+
 // Beta artifact IDs that should render LAST within their rarity bucket, after
 // official sets — used for scrapped/never-released sets (e.g. Glacier and
 // Snowfield) so they don't push genuine upcoming sets down in the archive.
@@ -56,6 +74,13 @@ export const allArtifacts = betaEnabled()
       ),
     ]
   : artifacts;
+export const betaArtifactIds: ReadonlySet<string> = Object.freeze(
+  new Set(
+    betaArtifacts
+      .filter((b) => !artifacts.some((a) => a.id === b.id))
+      .map((b) => b.id)
+  )
+);
 
 /** Hand-picked half-set IDs shown first, then remaining IDs sorted alphabetically. */
 const pinnedHalfSetIds: string[] = [

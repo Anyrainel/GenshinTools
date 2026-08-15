@@ -1,11 +1,12 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { weaponsById } from "@/data/gameResources";
+import { betaWeaponIds, weaponsById } from "@/data/gameResources";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { BetaBadge } from "./BetaBadge";
 import { getRarityColor } from "./colors";
 
 interface WeaponTooltipProps {
@@ -48,10 +49,8 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
             <span className="mx-2 text-yellow-400 text-base align-middle">
               {"★".repeat(meta.rarity)}
             </span>
-            {weapon.imagePath.startsWith("/beta/") && (
-              <span className="ml-1 text-[10px] font-semibold bg-amber-600/50 text-white px-1.5 py-0.5 rounded align-middle leading-none">
-                BETA
-              </span>
+            {betaWeaponIds.has(weapon.id) && (
+              <BetaBadge className="ml-1 text-[10px] px-1.5 py-0.5" />
             )}
           </h3>
 

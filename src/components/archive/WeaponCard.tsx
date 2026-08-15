@@ -1,5 +1,6 @@
 import { Bookmark } from "lucide-react";
 import { memo, useMemo, useState } from "react";
+import { BetaBadge } from "@/components/shared/BetaBadge";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import {
@@ -14,6 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { betaWeaponIds } from "@/data/gameResources";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
@@ -59,8 +61,11 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
         className="shrink-0"
       />
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium line-clamp-2 leading-tight">
-          {t.weapon(weapon.id)}
+        <div className="flex items-center gap-1.5">
+          <div className="text-sm font-medium line-clamp-2 leading-tight">
+            {t.weapon(weapon.id)}
+          </div>
+          {betaWeaponIds.has(weapon.id) && <BetaBadge />}
         </div>
         {meta.secondaryStat != null && (
           <div className="text-xs text-muted-foreground mt-0.5">
@@ -170,7 +175,12 @@ function WeaponDetailDrawer({
               className="shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold leading-tight">{name}</h3>
+              <h3 className="text-lg font-bold leading-tight">
+                {name}
+                {betaWeaponIds.has(weapon.id) && (
+                  <BetaBadge className="ml-1.5 text-[10px] px-1.5 py-0.5" />
+                )}
+              </h3>
               <span
                 className={cn(
                   "text-sm mt-0.5",

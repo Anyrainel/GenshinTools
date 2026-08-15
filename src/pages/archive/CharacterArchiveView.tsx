@@ -5,6 +5,7 @@ import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
+import { BetaBadge } from "@/components/shared/BetaBadge";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import type { Element, Rarity, WeaponType } from "@/data/enums";
 import { elements, weaponTypes } from "@/data/enums";
 import {
   allCharacters,
+  betaCharacterIds,
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/gameResources";
@@ -71,8 +73,9 @@ const CharacterListItem = memo(
           size="sm"
           className="shrink-0"
         />
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex items-center gap-1.5">
           <div className="text-sm font-medium truncate">{name}</div>
+          {betaCharacterIds.has(character.id) && <BetaBadge />}
         </div>
       </button>
     );
@@ -157,8 +160,11 @@ function CharacterGrid({
             )}
           >
             <ItemIcon characterId={c.id} rarity={meta.rarity} size="sm" />
-            <span className="text-xs text-foreground text-center line-clamp-1 w-full">
-              {t.character(c.id)}
+            <span className="flex items-center justify-center gap-1 w-full">
+              <span className="text-xs text-foreground text-center line-clamp-1 min-w-0">
+                {t.character(c.id)}
+              </span>
+              {betaCharacterIds.has(c.id) && <BetaBadge />}
             </span>
           </button>
         );

@@ -2,13 +2,14 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BaseStat } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
+import { betaCharacterIds, charactersById } from "@/data/gameResources";
 import {
   type CharacterLevelTier,
   characterStatsResource,
   getCharacterDisplayMeta,
 } from "@/data/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { BetaBadge } from "./BetaBadge";
 import { getRarityColor } from "./colors";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;
@@ -73,10 +74,8 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
             <span className="mx-2 text-yellow-400 text-sm">
               {"★".repeat(meta.rarity)}
             </span>
-            {character.imagePath.startsWith("/beta/") && (
-              <span className="ml-1 text-[10px] font-semibold bg-amber-600/50 text-white px-1.5 py-0.5 rounded align-middle leading-none">
-                BETA
-              </span>
+            {betaCharacterIds.has(character.id) && (
+              <BetaBadge className="ml-1 text-[10px] px-1.5 py-0.5" />
             )}
           </h3>
           <div className="flex items-center gap-2 text-xs text-white/90 font-medium flex-wrap">
