@@ -1,7 +1,33 @@
 {
   "teams": [
     {
-      "id": "Xja6aBlWrSDS1gxT0j",
+      "id": "YU06qLrWu1q46mwZ0O",
+      "name": "",
+      "characters": ["sandrone", "odette", "yae_miko", "sucrose"],
+      "weapons": [
+        "a_teaspoon_of_transcendence",
+        "whitelake_frostfeather",
+        "kaguras_verity",
+        "sacrificial_fragments"
+      ],
+      "artifacts": [
+        {
+          "setId": "disenchantment_in_deep_shadow"
+        },
+        {
+          "setId": "heart_of_the_furnace"
+        },
+        {
+          "setId": "disenchantment_in_deep_shadow"
+        },
+        {
+          "setId": "viridescent_venerer"
+        }
+      ],
+      "reactions": ["stellarConduct"]
+    },
+    {
+      "id": "Xjy6aBl0rSDS1gxT0j",
       "name": "",
       "characters": ["lohen", "nicole", "durin", "xilonen"],
       "weapons": [
@@ -27,7 +53,7 @@
       "reactions": ["melt"]
     },
     {
-      "id": "Xja6ZFZ0DJam0X8h0r",
+      "id": "Xjy6ZFZ0DJam0X8h0r",
       "name": "",
       "characters": ["lohen", "escoffier", "furina", "mona"],
       "weapons": [
@@ -53,7 +79,7 @@
       "reactions": ["frozen"]
     },
     {
-      "id": "Wzq6aBlWrXnS33XhWD",
+      "id": "Wzm6aBl0rXnS33XhWD",
       "name": "",
       "characters": ["varka", "nicole", "prune", "durin"],
       "weapons": [
@@ -79,7 +105,33 @@
       "reactions": ["swirl"]
     },
     {
-      "id": "Wzq6aBlWrSDS1eia0O",
+      "id": "Wzm6aBl0rXnS33XhWD",
+      "name": "",
+      "characters": ["varka", "nicole", "prune", "durin"],
+      "weapons": [
+        "gest_of_the_mighty_wolf",
+        "angelos_heptades",
+        "skyward_atlas",
+        "athame_artis"
+      ],
+      "artifacts": [
+        {
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "viridescent_venerer"
+        },
+        {
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["swirl"]
+    },
+    {
+      "id": "Wzm6aBl0rSDS1eia0O",
       "name": "",
       "characters": ["varka", "nicole", "durin", "venti"],
       "weapons": [
@@ -105,7 +157,33 @@
       "reactions": ["swirl"]
     },
     {
-      "id": "WTi6C9l05WbK6K1k0p",
+      "id": "Wzm6aBl0rSDS1eia0O",
+      "name": "",
+      "characters": ["varka", "nicole", "durin", "venti"],
+      "weapons": [
+        "gest_of_the_mighty_wolf",
+        "angelos_heptades",
+        "athame_artis",
+        "elegy_for_the_end"
+      ],
+      "artifacts": [
+        {
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "noblesse_oblige"
+        },
+        {
+          "setId": "viridescent_venerer"
+        }
+      ],
+      "reactions": ["swirl"]
+    },
+    {
+      "id": "WTe6C9kW5WbK6K1jWp",
       "name": "",
       "characters": ["zibai", "linnea", "illuga", "columbina"],
       "weapons": [
@@ -131,7 +209,7 @@
       "reactions": ["lunarCrystallize"]
     },
     {
-      "id": "SDS6aBlWr95O1ewZ0O",
+      "id": "SDS6aBl0r95O1ewZ0O",
       "name": "",
       "characters": ["durin", "nicole", "mona", "sucrose"],
       "weapons": [
@@ -157,7 +235,7 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "RzO6C1k0oRD449r3WC",
+      "id": "RzO6C1jWoRD449r3WC",
       "name": "",
       "characters": ["nefer", "columbina", "lauma", "nilou"],
       "weapons": [
@@ -183,7 +261,7 @@
       "reactions": ["lunarBloom"]
     },
     {
-      "id": "RjC6C1k0oQya6Owh0O",
+      "id": "RjC6C1jWoQya6Owh0O",
       "name": "",
       "characters": ["flins", "columbina", "ineffa", "sucrose"],
       "weapons": [
@@ -287,7 +365,33 @@
       "reactions": ["electroCharged"]
     },
     {
-      "id": "PSK5yBlWrSDS1gZLWg",
+      "id": "PSK5yBl0rSDS1gZLWg",
+      "name": "",
+      "characters": ["varesa", "nicole", "durin", "chevreuse"],
+      "weapons": [
+        "vivid_notions",
+        "angelos_heptades",
+        "athame_artis",
+        "dialogues_of_the_desert_sages"
+      ],
+      "artifacts": [
+        {
+          "setId": "long_nights_oath"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "noblesse_oblige"
+        },
+        {
+          "setId": "song_of_days_past"
+        }
+      ],
+      "reactions": ["overloaded"]
+    },
+    {
+      "id": "PSK5yBl0rSDS1gZLWg",
       "name": "",
       "characters": ["varesa", "nicole", "durin", "chevreuse"],
       "weapons": [
@@ -364,7 +468,59 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "OC45qBlWrOS85gxT0C",
+      "id": "PCC6yLrWuFte0XMYWD",
+      "name": "",
+      "characters": ["yumemizuki_mizuki", "odette", "faruzan", "diona"],
+      "weapons": [
+        "sunny_morning_sleepin",
+        "whitelake_frostfeather",
+        "aqua_simulacra",
+        "sacrificial_bow"
+      ],
+      "artifacts": [
+        {
+          "setId": "scarlet_proof"
+        },
+        {
+          "setId": "heart_of_the_furnace"
+        },
+        {
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["stellarSwirl"]
+    },
+    {
+      "id": "OC45qBl0rOS85gxT0C",
+      "name": "",
+      "characters": ["mavuika", "nicole", "citlali", "xilonen"],
+      "weapons": [
+        "a_thousand_blazing_suns",
+        "angelos_heptades",
+        "starcallers_watch",
+        "peak_patrol_song"
+      ],
+      "artifacts": [
+        {
+          "setId": "obsidian_codex"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["melt"]
+    },
+    {
+      "id": "OC45qBl0rOS85gxT0C",
       "name": "",
       "characters": ["mavuika", "nicole", "citlali", "xilonen"],
       "weapons": [
@@ -442,7 +598,33 @@
       "reactions": ["melt"]
     },
     {
-      "id": "Ny05qBlWrSDS6X8h0D",
+      "id": "Ny05qBl0rSDS6X8h0D",
+      "name": "",
+      "characters": ["chasca", "nicole", "durin", "mona"],
+      "weapons": [
+        "astral_vultures_crimson_plumage",
+        "angelos_heptades",
+        "athame_artis",
+        "thrilling_tales_of_dragon_slayers"
+      ],
+      "artifacts": [
+        {
+          "setId": "obsidian_codex"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["vaporize"]
+    },
+    {
+      "id": "Ny05qBl0rSDS6X8h0D",
       "name": "",
       "characters": ["chasca", "nicole", "durin", "mona"],
       "weapons": [
@@ -520,7 +702,33 @@
       "reactions": ["melt", "vaporize"]
     },
     {
-      "id": "Mh45qBlWrSDS1gpO0i",
+      "id": "Mh45qBl0rSDS1gpO0i",
+      "name": "",
+      "characters": ["kinich", "nicole", "durin", "emilie"],
+      "weapons": [
+        "fang_of_the_mountain_king",
+        "angelos_heptades",
+        "athame_artis",
+        "lumidouce_elegy"
+      ],
+      "artifacts": [
+        {
+          "setId": "obsidian_codex"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "noblesse_oblige"
+        },
+        {
+          "setId": "unfinished_reverie"
+        }
+      ],
+      "reactions": ["burning"]
+    },
+    {
+      "id": "Mh45qBl0rSDS1gpO0i",
       "name": "",
       "characters": ["kinich", "nicole", "durin", "emilie"],
       "weapons": [
@@ -572,7 +780,7 @@
       "reactions": ["melt", "vaporize"]
     },
     {
-      "id": "Lgu5S1k0pQya6IxT0j",
+      "id": "Lgu5S1jWpQya6IxT0j",
       "name": "",
       "characters": ["clorinde", "columbina", "ineffa", "xilonen"],
       "weapons": [
@@ -676,7 +884,32 @@
       "reactions": ["aggravate"]
     },
     {
-      "id": "LQm5SBlWrXnS33XhWD",
+      "id": "LQm5SBl0rXnS33XhWD",
+      "name": "",
+      "characters": ["arlecchino", "nicole", "prune", "durin"],
+      "weapons": [
+        "crimson_moons_semblance",
+        "angelos_heptades",
+        "skyward_atlas",
+        "athame_artis"
+      ],
+      "artifacts": [
+        {
+          "setId": "fragment_of_harmonic_whimsy"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "viridescent_venerer"
+        },
+        {
+          "setId": "noblesse_oblige"
+        }
+      ]
+    },
+    {
+      "id": "LQm5SBl0rXnS33XhWD",
       "name": "",
       "characters": ["arlecchino", "nicole", "prune", "durin"],
       "weapons": [
@@ -855,7 +1088,7 @@
       ]
     },
     {
-      "id": "KAS5C1k0oNRe5gTIW4",
+      "id": "KAS5C1jWoNRe5gTIW4",
       "name": "",
       "characters": ["navia", "columbina", "xilonen", "furina"],
       "weapons": [
@@ -1322,7 +1555,7 @@
       ]
     },
     {
-      "id": "C8O2y1k0pNRe5gSc04",
+      "id": "C8O2y1jWpNRe5gSc04",
       "name": "",
       "characters": ["raiden_shogun", "columbina", "xilonen", "furina"],
       "weapons": [
@@ -1637,7 +1870,7 @@
       "reactions": ["aggravate"]
     },
     {
-      "id": "3446aBlWrKQi1fAa04",
+      "id": "3446aBl0rKQi1fAa04",
       "name": "",
       "characters": ["klee", "nicole", "chevreuse", "fischl"],
       "weapons": [
@@ -1714,7 +1947,7 @@
       ]
     },
     {
-      "id": "Bzq6YZLWg9Te6eoB0D",
+      "id": "Bzm6YZLWg9Ta6eoB0D",
       "name": "",
       "characters": ["razor", "chevreuse", "fischl", "bennett"],
       "weapons": [
@@ -1740,7 +1973,7 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "5je6aBlWrSDS1f-a04",
+      "id": "5ja6aBl0rSDS1f-a04",
       "name": "",
       "characters": ["venti", "nicole", "durin", "faruzan"],
       "weapons": [
@@ -1764,6 +1997,58 @@
         }
       ],
       "reactions": ["swirl"]
+    },
+    {
+      "id": "5ja6aBl0rSDS1f-a04",
+      "name": "",
+      "characters": ["venti", "nicole", "durin", "faruzan"],
+      "weapons": [
+        "the_daybreak_chronicles",
+        "angelos_heptades",
+        "athame_artis",
+        "elegy_for_the_end"
+      ],
+      "artifacts": [
+        {
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "setId": "celestial_gift"
+        },
+        {
+          "setId": "noblesse_oblige"
+        },
+        {
+          "setId": "tenacity_of_the_millelith"
+        }
+      ],
+      "reactions": ["swirl"]
+    },
+    {
+      "id": "YEm6qLrWuYrK1gxT0C",
+      "name": "",
+      "characters": ["traveler_cryo", "odette", "alyosha", "xilonen"],
+      "weapons": [
+        "exaiphanes_blade",
+        "whitelake_frostfeather",
+        "favonius_lance",
+        "peak_patrol_song"
+      ],
+      "artifacts": [
+        {
+          "setId": "disenchantment_in_deep_shadow"
+        },
+        {
+          "setId": "heart_of_the_furnace"
+        },
+        {
+          "setId": "noblesse_oblige"
+        },
+        {
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["stellarConduct"]
     }
   ],
   "author": "GGArtifact",

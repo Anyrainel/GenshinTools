@@ -110,7 +110,7 @@
     },
     "wriothesley": {
       "tier": "C",
-      "position": 13
+      "position": 1
     },
     "shenhe": {
       "tier": "A",
@@ -266,7 +266,7 @@
     },
     "varka": {
       "tier": "S",
-      "position": 11
+      "position": 10
     },
     "linnea": {
       "tier": "S",
@@ -283,10 +283,6 @@
     "hu_tao": {
       "tier": "C",
       "position": 15
-    },
-    "eula": {
-      "tier": "C",
-      "position": 16
     },
     "mika": {
       "tier": "D",
@@ -322,7 +318,7 @@
     },
     "lohen": {
       "tier": "C",
-      "position": 12
+      "position": 0
     },
     "prune": {
       "tier": "D",
@@ -330,25 +326,33 @@
     },
     "sandrone": {
       "tier": "S",
-      "position": 12
+      "position": 11
     },
     "qiqi": {
       "tier": "D",
       "position": 2
+    },
+    "odette": {
+      "tier": "S",
+      "position": 12
     }
   },
   "tierCustomization": {
     "S": {
-      "displayName": "S: 版本主C"
+      "displayName": "S: 版本主C",
+      "hidden": false
     },
     "A": {
-      "displayName": "A: 富养队友"
+      "displayName": "A: 富养队友",
+      "hidden": false
     },
     "B": {
-      "displayName": "B: 穷养队友"
+      "displayName": "B: 穷养队友",
+      "hidden": false
     },
     "C": {
-      "displayName": "C: 备选主副C"
+      "displayName": "C: 备选主副C",
+      "hidden": false
     },
     "D": {
       "displayName": "D: 工具人/凑数",

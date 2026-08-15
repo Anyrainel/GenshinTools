@@ -1486,6 +1486,16 @@
             "has4pcBuild": true
           },
           {
+            "characterId": "traveler_cryo",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "wriothesley",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
             "characterId": "yae_miko",
             "hasPerfectMerge": true,
             "has4pcBuild": true
@@ -2839,6 +2849,84 @@
             "has4pcBuild": false
           }
         ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "odette",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yae_miko",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
       }
     ]
   },
@@ -4091,7 +4179,9 @@
         "circlet": {
           "mainStats": [
             "cr",
-            "cd"
+            "cd",
+            "atk%",
+            "heal%"
           ],
           "substats": [
             "er",
@@ -4105,6 +4195,11 @@
           "minStatCount": 3
         },
         "servedCharacters": [
+          {
+            "characterId": "alyosha",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
           {
             "characterId": "kamisato_ayaka",
             "hasPerfectMerge": true,
@@ -4770,6 +4865,86 @@
             "characterId": "xianyun",
             "hasPerfectMerge": true,
             "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd",
+            "em",
+            "er"
+          ],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "yumemizuki_mizuki",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
           }
         ]
       }

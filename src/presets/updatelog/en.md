@@ -2,6 +2,23 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-08-15
+
+### features
+- Added the new 7.0 character Cryo Traveler, with full damage formulas
+- Added the new 7.0 weapons and the "Heart of the Furnace" and "Scarlet Proof" artifact sets
+- Added a compact artifact set filter on the Resources page
+- Archive listings now show a "BETA" tag on characters, weapons, and artifact sets not yet available in the official game, so beta content stays easy to tell apart
+- Updated GGArtifact build, team, and tier list presets
+
+### fixes
+- Fixed several accuracy issues in the Energy Recharge calculator, so Energy Recharge requirements and particle counts come out correct for more team setups
+- Removed the older, duplicate Energy Recharge calculator now that the main one is accurate
+- Fixed Radiance: Stellar Swirl for Diona, Qiqi, and Yumemizuki Mizuki, which was missing or dealt no damage on some teams
+- The Stellar coefficient controls now show up for any Stellar-enabling teammate, not just Sandrone
+- Fixed roughly 30 other damage formula issues across Fontaine, Inazuma, Natlan, and other regions, including Kinich, Kirara, and Raiden Shogun
+- Fixed disabled artifact builds still showing up in resource tips, evaluation, and score-up recommendations
+
 ## 2026-07-15
 
 ### features
