@@ -295,7 +295,7 @@
     "rarity": 4,
     "element": "Electro",
     "weaponType": "Polearm",
-    "region": "Snezhnaya",
+    "region": "None",
     "releaseDate": "2026-08-11",
     "levels": {
       "70": {"baseHp": "9773", "baseAtk": "217", "baseDef": "574", "em": "0", "er": "20.0%"},
@@ -6880,7 +6880,7 @@
     "rarity": 5,
     "element": "Cryo",
     "weaponType": "Sword",
-    "region": "Snezhnaya",
+    "region": "None",
     "releaseDate": "2026-08-11",
     "levels": {
       "70": {"baseHp": "10547", "baseAtk": "272", "baseDef": "639", "em": "0", "cd": "28.8%"},
@@ -7389,7 +7389,7 @@
     "rarity": 5,
     "element": "Cryo",
     "weaponType": "Claymore",
-    "region": "Snezhnaya",
+    "region": "None",
     "releaseDate": "2026-06-30",
     "levels": {
       "70": {"baseHp": "10746", "baseAtk": "278", "baseDef": "611", "em": "0", "cr": "14.4%"},
