@@ -21,6 +21,13 @@ function ThrowChunkError(): never {
   );
 }
 
+function ThrowDomMutationError(): never {
+  throw new DOMException(
+    "Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node.",
+    "NotFoundError"
+  );
+}
+
 // Suppress React's noisy error boundary console output during tests
 beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -168,6 +175,28 @@ describe("ErrorBoundary", () => {
     expect(
       screen.getByRole("button", { name: /^Reload$/i })
     ).toBeInTheDocument();
+  });
+
+  it("explains DOM mutation errors and prioritizes refresh over clearing data", () => {
+    render(
+      <ErrorBoundary
+        onClearData={() => {}}
+        clearLabel="Clear Team Data"
+        refreshLabel="Refresh Page"
+        domMutationMsg="Disable page translation, then refresh. Your data is safe."
+      >
+        <ThrowDomMutationError />
+      </ErrorBoundary>
+    );
+
+    expect(
+      screen.getByText(
+        "Disable page translation, then refresh. Your data is safe."
+      )
+    ).toBeInTheDocument();
+    const buttons = screen.getAllByRole("button");
+    expect(buttons[0]).toHaveTextContent("Refresh Page");
+    expect(buttons[1]).toHaveTextContent("Clear Team Data");
   });
 
   it("performs cache-busting recovery steps when reload is clicked", async () => {

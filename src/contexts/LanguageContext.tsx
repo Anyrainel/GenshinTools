@@ -3,6 +3,7 @@ import {
   type ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -100,6 +101,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       return "en";
     }
   });
+
+  useEffect(() => {
+    document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+  }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);

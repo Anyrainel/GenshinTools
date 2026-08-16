@@ -105,58 +105,6 @@
       "reactions": ["swirl"]
     },
     {
-      "id": "Wzm6aBl0rXnS33XhWD",
-      "name": "",
-      "characters": ["varka", "nicole", "prune", "durin"],
-      "weapons": [
-        "gest_of_the_mighty_wolf",
-        "angelos_heptades",
-        "skyward_atlas",
-        "athame_artis"
-      ],
-      "artifacts": [
-        {
-          "setId": "a_day_carved_from_rising_winds"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "viridescent_venerer"
-        },
-        {
-          "setId": "noblesse_oblige"
-        }
-      ],
-      "reactions": ["swirl"]
-    },
-    {
-      "id": "Wzm6aBl0rSDS1eia0O",
-      "name": "",
-      "characters": ["varka", "nicole", "durin", "venti"],
-      "weapons": [
-        "gest_of_the_mighty_wolf",
-        "angelos_heptades",
-        "athame_artis",
-        "elegy_for_the_end"
-      ],
-      "artifacts": [
-        {
-          "setId": "a_day_carved_from_rising_winds"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "noblesse_oblige"
-        },
-        {
-          "setId": "viridescent_venerer"
-        }
-      ],
-      "reactions": ["swirl"]
-    },
-    {
       "id": "Wzm6aBl0rSDS1eia0O",
       "name": "",
       "characters": ["varka", "nicole", "durin", "venti"],
@@ -391,32 +339,6 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "PSK5yBl0rSDS1gZLWg",
-      "name": "",
-      "characters": ["varesa", "nicole", "durin", "chevreuse"],
-      "weapons": [
-        "vivid_notions",
-        "angelos_heptades",
-        "athame_artis",
-        "dialogues_of_the_desert_sages"
-      ],
-      "artifacts": [
-        {
-          "setId": "long_nights_oath"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "noblesse_oblige"
-        },
-        {
-          "setId": "song_of_days_past"
-        }
-      ],
-      "reactions": ["overloaded"]
-    },
-    {
       "id": "PSK5xCCWjKgdZ2Sc04",
       "name": "",
       "characters": ["varesa", "iansan", "xianyun", "furina"],
@@ -492,32 +414,6 @@
         }
       ],
       "reactions": ["stellarSwirl"]
-    },
-    {
-      "id": "OC45qBl0rOS85gxT0C",
-      "name": "",
-      "characters": ["mavuika", "nicole", "citlali", "xilonen"],
-      "weapons": [
-        "a_thousand_blazing_suns",
-        "angelos_heptades",
-        "starcallers_watch",
-        "peak_patrol_song"
-      ],
-      "artifacts": [
-        {
-          "setId": "obsidian_codex"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "scroll_of_the_hero_of_cinder_city"
-        },
-        {
-          "setId": "instructor"
-        }
-      ],
-      "reactions": ["melt"]
     },
     {
       "id": "OC45qBl0rOS85gxT0C",
@@ -624,32 +520,6 @@
       "reactions": ["vaporize"]
     },
     {
-      "id": "Ny05qBl0rSDS6X8h0D",
-      "name": "",
-      "characters": ["chasca", "nicole", "durin", "mona"],
-      "weapons": [
-        "astral_vultures_crimson_plumage",
-        "angelos_heptades",
-        "athame_artis",
-        "thrilling_tales_of_dragon_slayers"
-      ],
-      "artifacts": [
-        {
-          "setId": "obsidian_codex"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "a_day_carved_from_rising_winds"
-        },
-        {
-          "setId": "noblesse_oblige"
-        }
-      ],
-      "reactions": ["vaporize"]
-    },
-    {
       "id": "Ny05p3X0jNRe1WoB0D",
       "name": "",
       "characters": ["chasca", "citlali", "xilonen", "bennett"],
@@ -700,32 +570,6 @@
         }
       ],
       "reactions": ["melt", "vaporize"]
-    },
-    {
-      "id": "Mh45qBl0rSDS1gpO0i",
-      "name": "",
-      "characters": ["kinich", "nicole", "durin", "emilie"],
-      "weapons": [
-        "fang_of_the_mountain_king",
-        "angelos_heptades",
-        "athame_artis",
-        "lumidouce_elegy"
-      ],
-      "artifacts": [
-        {
-          "setId": "obsidian_codex"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "noblesse_oblige"
-        },
-        {
-          "setId": "unfinished_reverie"
-        }
-      ],
-      "reactions": ["burning"]
     },
     {
       "id": "Mh45qBl0rSDS1gpO0i",
@@ -882,31 +726,6 @@
         }
       ],
       "reactions": ["aggravate"]
-    },
-    {
-      "id": "LQm5SBl0rXnS33XhWD",
-      "name": "",
-      "characters": ["arlecchino", "nicole", "prune", "durin"],
-      "weapons": [
-        "crimson_moons_semblance",
-        "angelos_heptades",
-        "skyward_atlas",
-        "athame_artis"
-      ],
-      "artifacts": [
-        {
-          "setId": "fragment_of_harmonic_whimsy"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "viridescent_venerer"
-        },
-        {
-          "setId": "noblesse_oblige"
-        }
-      ]
     },
     {
       "id": "LQm5SBl0rXnS33XhWD",
@@ -1971,32 +1790,6 @@
         }
       ],
       "reactions": ["overloaded"]
-    },
-    {
-      "id": "5ja6aBl0rSDS1f-a04",
-      "name": "",
-      "characters": ["venti", "nicole", "durin", "faruzan"],
-      "weapons": [
-        "the_daybreak_chronicles",
-        "angelos_heptades",
-        "athame_artis",
-        "elegy_for_the_end"
-      ],
-      "artifacts": [
-        {
-          "setId": "a_day_carved_from_rising_winds"
-        },
-        {
-          "setId": "celestial_gift"
-        },
-        {
-          "setId": "noblesse_oblige"
-        },
-        {
-          "setId": "tenacity_of_the_millelith"
-        }
-      ],
-      "reactions": ["swirl"]
     },
     {
       "id": "5ja6aBl0rSDS1f-a04",

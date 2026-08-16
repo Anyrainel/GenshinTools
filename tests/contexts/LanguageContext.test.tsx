@@ -24,6 +24,7 @@ Object.defineProperty(window, "localStorage", { value: localStorageMock });
 beforeEach(() => {
   localStorageMock.clear();
   vi.clearAllMocks();
+  document.documentElement.lang = "en";
 });
 
 describe("LanguageContext", () => {
@@ -97,6 +98,20 @@ describe("LanguageContext", () => {
         "app_language",
         "zh"
       );
+    });
+
+    it("keeps the document language synchronized with the selected language", () => {
+      const { result } = renderHook(() => useLanguage(), {
+        wrapper: LanguageProvider,
+      });
+
+      expect(document.documentElement.lang).toBe("en");
+
+      act(() => {
+        result.current.setLanguage("zh");
+      });
+
+      expect(document.documentElement.lang).toBe("zh-CN");
     });
   });
 

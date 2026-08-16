@@ -21,6 +21,10 @@ export const i18nUiData = {
       en: "This usually means the app was updated. A cache-busting reload should fix it.",
       zh: "这通常意味着应用已更新。点击下方按钮刷新缓存即可修复。",
     },
+    domMutationMsg: {
+      en: "A browser translator or text-changing extension may have modified the page. Disable translation or the extension for this site, then refresh. You do not need to clear your data.",
+      zh: "浏览器翻译或改写页面文字的扩展可能更改了界面结构。请先关闭此网站的翻译功能或相关扩展，然后刷新页面；无需清除数据。",
+    },
     reload: { en: "Reload", zh: "重新加载" },
     cancel: { en: "Cancel", zh: "取消" },
     reset: { en: "Reset", zh: "重置" },

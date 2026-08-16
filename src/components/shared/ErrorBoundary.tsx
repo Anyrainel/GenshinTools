@@ -17,6 +17,14 @@ function isChunkLoadError(error?: Error): boolean {
   );
 }
 
+function isDomMutationError(error?: Error): boolean {
+  if (error?.name !== "NotFoundError") return false;
+  return (
+    error.message.includes("removeChild") ||
+    error.message.includes("insertBefore")
+  );
+}
+
 function extractModuleUrl(message: string): string | null {
   const match = message.match(/https?:\/\/\S+|\/assets\/\S+/);
   return match?.[0] ?? null;
@@ -124,6 +132,7 @@ interface Props {
   errorTitle?: string;
   errorDefaultMsg?: string;
   chunkErrorMsg?: string;
+  domMutationMsg?: string;
   isSection?: boolean;
 }
 
@@ -219,6 +228,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       const { isSection } = this.props;
       const isChunkError = isChunkLoadError(this.state.error);
+      const isDomMutation = isDomMutationError(this.state.error);
 
       return (
         <div
@@ -263,6 +273,12 @@ export class ErrorBoundary extends React.Component<Props, State> {
                     "This usually means the app was updated. A cache-busting reload should fix it."}
                 </p>
               )}
+              {isDomMutation && (
+                <p className="text-muted-foreground text-sm">
+                  {this.props.domMutationMsg ||
+                    "A browser translator or text-changing extension may have modified the page. Disable it for this site, then refresh. You do not need to clear your data."}
+                </p>
+              )}
               {isChunkError && this.state.debugMessage && (
                 <div
                   className={cn(
@@ -288,6 +304,17 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   {this.props.reloadLabel || "Reload"}
                 </Button>
               )}
+              {isDomMutation && (
+                <Button
+                  onClick={this.handleRefresh}
+                  variant="secondary"
+                  size={isSection ? "sm" : "default"}
+                  className="w-full gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  {this.props.refreshLabel || "Refresh Page"}
+                </Button>
+              )}
               {this.props.onClearData && (
                 <Button
                   onClick={this.handleClear}
@@ -299,7 +326,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   {this.props.clearLabel || "Clear Page Data"}
                 </Button>
               )}
-              {!isChunkError && (
+              {!isChunkError && !isDomMutation && (
                 <Button
                   onClick={this.handleRefresh}
                   variant="secondary"
@@ -355,6 +382,7 @@ export function PageErrorBoundary({
           : "An unexpected error occurred."
       }
       chunkErrorMsg={t.ui("common.appUpdatedMsg") || undefined}
+      domMutationMsg={t.ui("common.domMutationMsg") || undefined}
     >
       {children}
     </ErrorBoundary>
@@ -383,6 +411,7 @@ export function SectionErrorBoundary({
           : "An unexpected error occurred."
       }
       chunkErrorMsg={t.ui("common.appUpdatedMsg") || undefined}
+      domMutationMsg={t.ui("common.domMutationMsg") || undefined}
       isSection
     >
       {children}
