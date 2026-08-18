@@ -105,7 +105,7 @@ function AchievementSeriesCard({
               <div
                 key={achievement.id}
                 className={cn(
-                  "flex min-w-0 items-center gap-2 px-3 py-3 transition-colors sm:px-4",
+                  "flex min-w-0 flex-col items-stretch gap-2 px-3 py-3 transition-colors sm:flex-row sm:items-center sm:px-4",
                   finished ? "bg-primary/10" : "bg-card"
                 )}
               >
@@ -128,7 +128,7 @@ function AchievementSeriesCard({
                   </p>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+                <div className="flex shrink-0 items-center justify-end gap-1 sm:gap-2">
                   <Button variant="ghost" size="icon" asChild>
                     <a
                       href={videoSearchUrl("youtube", achievement.name)}
@@ -193,6 +193,58 @@ function AchievementSeriesCard({
         </div>
       </div>
     </Card>
+  );
+}
+
+function AchievementFilterToolbar({
+  searchQuery,
+  onSearchChange,
+  statusFilter,
+  onStatusFilterChange,
+  versionFilter,
+  onVersionFilterChange,
+}: {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  statusFilter: ReadonlySet<AchievementStatus>;
+  onStatusFilterChange: (values: Set<AchievementStatus>) => void;
+  versionFilter: ReadonlySet<number>;
+  onVersionFilterChange: (values: Set<number>) => void;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <ArchiveToolbar
+      searchQuery={searchQuery}
+      onSearchChange={onSearchChange}
+      searchPlaceholder={t.ui("archive.achievementSearchPlaceholder")}
+    >
+      <FilterChipGroup
+        options={STATUS_OPTIONS}
+        selectedValues={statusFilter}
+        onSelectedValuesChange={onStatusFilterChange}
+        getKey={(status) => status}
+        getLabel={(status) =>
+          t.ui(
+            status === "unfinished"
+              ? "archive.achievementUnfinished"
+              : "archive.achievementFinished"
+          )
+        }
+        emptyMeansAll={false}
+        className="contents"
+      />
+      <div className="mx-1 hidden h-5 w-px bg-border sm:block" />
+      <FilterChipGroup
+        options={VERSION_OPTIONS}
+        selectedValues={versionFilter}
+        onSelectedValuesChange={onVersionFilterChange}
+        getKey={(version) => String(version)}
+        getLabel={(version) => `${version}.x`}
+        emptyMeansAll={false}
+        className="contents"
+      />
+    </ArchiveToolbar>
   );
 }
 
@@ -300,42 +352,20 @@ export function AchievementArchiveView() {
       onSelect={setSelectedCategoryId}
     />
   );
+  const achievementToolbar = (
+    <AchievementFilterToolbar
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      statusFilter={statusFilter}
+      onStatusFilterChange={setStatusFilter}
+      versionFilter={versionFilter}
+      onVersionFilterChange={setVersionFilter}
+    />
+  );
 
   return (
     <SidebarDetailLayout
-      header={
-        <ArchiveToolbar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          searchPlaceholder={t.ui("archive.achievementSearchPlaceholder")}
-        >
-          <FilterChipGroup
-            options={STATUS_OPTIONS}
-            selectedValues={statusFilter}
-            onSelectedValuesChange={setStatusFilter}
-            getKey={(status) => status}
-            getLabel={(status) =>
-              t.ui(
-                status === "unfinished"
-                  ? "archive.achievementUnfinished"
-                  : "archive.achievementFinished"
-              )
-            }
-            emptyMeansAll={false}
-            className="contents"
-          />
-          <div className="mx-1 hidden h-5 w-px bg-border sm:block" />
-          <FilterChipGroup
-            options={VERSION_OPTIONS}
-            selectedValues={versionFilter}
-            onSelectedValuesChange={setVersionFilter}
-            getKey={(version) => String(version)}
-            getLabel={(version) => `${version}.x`}
-            emptyMeansAll={false}
-            className="contents"
-          />
-        </ArchiveToolbar>
-      }
+      header={achievementToolbar}
       sidebar={categoryList}
       mobileGrid={categoryList}
       hasSelection={selectedCategoryId !== null}
@@ -345,6 +375,7 @@ export function AchievementArchiveView() {
     >
       {selectedCategory ? (
         <div className="space-y-3 pb-4">
+          {!isDesktop && <div className="pb-1">{achievementToolbar}</div>}
           <div className="flex items-baseline justify-between px-1">
             <h2 className="text-lg font-semibold">{selectedCategory.name}</h2>
             <span className="text-xs text-muted-foreground">
