@@ -458,6 +458,18 @@ export interface Achievement {
   previousId?: number;
 }
 
+/** Compact on-disk achievement shape before localized templates are expanded. */
+export interface AchievementReference extends Omit<Achievement, "description"> {
+  /** Plain text, or [template index, ...positional values]. */
+  description: string | [number, ...number[]];
+}
+
+export interface AchievementReferenceData {
+  categories: AchievementCategory[];
+  achievements: AchievementReference[];
+  descriptionTemplates: string[];
+}
+
 export interface AchievementData {
   categories: AchievementCategory[];
   achievements: Achievement[];

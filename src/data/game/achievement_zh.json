@@ -2106,7 +2106,10 @@
     },
     {
       "categoryId": 0,
-      "description": "使用斯露莎投掷「苦离果」，融化{param0}个甘露凝结的晶石。",
+      "description": [
+        0,
+        15
+      ],
       "id": 81338,
       "name": "要用原力，斯露莎",
       "order": 1325,
@@ -11992,7 +11995,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        1,
+        4
+      ],
       "id": 80228,
       "name": "大漠引路人·其二",
       "order": 208,
@@ -12000,7 +12006,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        1,
+        8
+      ],
       "id": 80229,
       "name": "大漠引路人·其二",
       "order": 209,
@@ -12009,7 +12018,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        1,
+        16
+      ],
       "id": 80230,
       "name": "大漠引路人·其二",
       "order": 210,
@@ -12018,7 +12030,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地开启{param0}个宝箱。",
+      "description": [
+        2,
+        50
+      ],
       "id": 80231,
       "name": "流沙的寻宝者·其二",
       "order": 211,
@@ -12026,7 +12041,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地开启{param0}个宝箱。",
+      "description": [
+        2,
+        100
+      ],
       "id": 80232,
       "name": "流沙的寻宝者·其二",
       "order": 212,
@@ -12035,7 +12053,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地开启{param0}个宝箱。",
+      "description": [
+        2,
+        200
+      ],
       "id": 80233,
       "name": "流沙的寻宝者·其二",
       "order": 213,
@@ -12044,7 +12065,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地完成{param0}个大世界机关限时挑战。",
+      "description": [
+        3,
+        7
+      ],
       "id": 80234,
       "name": "流沙的冒险家·其二",
       "order": 214,
@@ -12052,7 +12076,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地完成{param0}个大世界机关限时挑战。",
+      "description": [
+        3,
+        14
+      ],
       "id": 80235,
       "name": "流沙的冒险家·其二",
       "order": 215,
@@ -12061,7 +12088,10 @@
     },
     {
       "categoryId": 38,
-      "description": "在千壑沙地完成{param0}个大世界机关限时挑战。",
+      "description": [
+        3,
+        28
+      ],
       "id": 80236,
       "name": "流沙的冒险家·其二",
       "order": 216,
@@ -12094,7 +12124,10 @@
     },
     {
       "categoryId": 37,
-      "description": "累计获得{param0}幸运牌币。",
+      "description": [
+        4,
+        10000
+      ],
       "id": 80218,
       "name": "高倍率牌手传说",
       "order": 196,
@@ -12102,7 +12135,10 @@
     },
     {
       "categoryId": 37,
-      "description": "累计获得{param0}幸运牌币。",
+      "description": [
+        4,
+        70000
+      ],
       "id": 80219,
       "name": "高倍率牌手传说",
       "order": 197,
@@ -12111,7 +12147,10 @@
     },
     {
       "categoryId": 37,
-      "description": "累计获得{param0}幸运牌币。",
+      "description": [
+        4,
+        150000
+      ],
       "id": 80220,
       "name": "高倍率牌手传说",
       "order": 198,
@@ -12120,7 +12159,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，我方一共造成{param0}次元素反应。",
+      "description": [
+        5,
+        30
+      ],
       "id": 80197,
       "name": "色彩缤纷的答复",
       "order": 199,
@@ -12128,7 +12170,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，我方一共造成{param0}次元素反应。",
+      "description": [
+        5,
+        150
+      ],
       "id": 80198,
       "name": "色彩缤纷的答复",
       "order": 200,
@@ -12137,7 +12182,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，我方一共造成{param0}次元素反应。",
+      "description": [
+        5,
+        300
+      ],
       "id": 80199,
       "name": "色彩缤纷的答复",
       "order": 201,
@@ -12146,7 +12194,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计造成{param0}次8点以上的单次行动伤害。",
+      "description": [
+        6,
+        1
+      ],
       "id": 80221,
       "name": "微缩型骰子壶",
       "order": 202,
@@ -12154,7 +12205,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计造成{param0}次8点以上的单次行动伤害。",
+      "description": [
+        6,
+        5
+      ],
       "id": 80222,
       "name": "微缩型骰子壶",
       "order": 203,
@@ -12163,7 +12217,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计造成{param0}次8点以上的单次行动伤害。",
+      "description": [
+        6,
+        10
+      ],
       "id": 80223,
       "name": "微缩型骰子壶",
       "order": 204,
@@ -12172,7 +12229,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计打出{param0}张行动牌。",
+      "description": [
+        7,
+        60
+      ],
       "id": 80203,
       "name": "胜利的拼图已在手中",
       "order": 205,
@@ -12180,7 +12240,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计打出{param0}张行动牌。",
+      "description": [
+        7,
+        300
+      ],
       "id": 80204,
       "name": "胜利的拼图已在手中",
       "order": 206,
@@ -12189,7 +12252,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计打出{param0}张行动牌。",
+      "description": [
+        7,
+        600
+      ],
       "id": 80205,
       "name": "胜利的拼图已在手中",
       "order": 207,
@@ -12198,7 +12264,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计召唤{param0}次召唤物。",
+      "description": [
+        8,
+        20
+      ],
       "id": 80206,
       "name": "「那么，来吧，搭档…」",
       "order": 208,
@@ -12206,7 +12275,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计召唤{param0}次召唤物。",
+      "description": [
+        8,
+        100
+      ],
       "id": 80207,
       "name": "「那么，来吧，搭档…」",
       "order": 209,
@@ -12215,7 +12287,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，累计召唤{param0}次召唤物。",
+      "description": [
+        8,
+        200
+      ],
       "id": 80208,
       "name": "「那么，来吧，搭档…」",
       "order": 210,
@@ -12224,7 +12299,10 @@
     },
     {
       "categoryId": 37,
-      "description": "使用过3次以上元素爆发并获得胜利的对局数目达到{param0}场。",
+      "description": [
+        9,
+        1
+      ],
       "id": 80209,
       "name": "进攻，进攻，再进攻！",
       "order": 211,
@@ -12232,7 +12310,10 @@
     },
     {
       "categoryId": 37,
-      "description": "使用过3次以上元素爆发并获得胜利的对局数目达到{param0}场。",
+      "description": [
+        9,
+        5
+      ],
       "id": 80210,
       "name": "进攻，进攻，再进攻！",
       "order": 212,
@@ -12241,7 +12322,10 @@
     },
     {
       "categoryId": 37,
-      "description": "使用过3次以上元素爆发并获得胜利的对局数目达到{param0}场。",
+      "description": [
+        9,
+        10
+      ],
       "id": 80211,
       "name": "进攻，进攻，再进攻！",
       "order": 213,
@@ -12250,7 +12334,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，使用护盾或治疗效果累计为自身抵挡伤害或恢复生命{param0}点。",
+      "description": [
+        10,
+        30
+      ],
       "id": 80212,
       "name": "已如风中残烛？",
       "order": 214,
@@ -12258,7 +12345,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，单次行动击败2名或2名以上对手角色牌的次数累计达到{param0}次。",
+      "description": [
+        11,
+        1
+      ],
       "id": 80215,
       "name": "一撕两半混沌球",
       "order": 214,
@@ -12266,7 +12356,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，使用护盾或治疗效果累计为自身抵挡伤害或恢复生命{param0}点。",
+      "description": [
+        10,
+        150
+      ],
       "id": 80213,
       "name": "已如风中残烛？",
       "order": 215,
@@ -12275,7 +12368,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，单次行动击败2名或2名以上对手角色牌的次数累计达到{param0}次。",
+      "description": [
+        11,
+        5
+      ],
       "id": 80216,
       "name": "一撕两半混沌球",
       "order": 215,
@@ -12284,7 +12380,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，使用护盾或治疗效果累计为自身抵挡伤害或恢复生命{param0}点。",
+      "description": [
+        10,
+        300
+      ],
       "id": 80214,
       "name": "已如风中残烛？",
       "order": 216,
@@ -12293,7 +12392,10 @@
     },
     {
       "categoryId": 37,
-      "description": "在获胜的牌局中，单次行动击败2名或2名以上对手角色牌的次数累计达到{param0}次。",
+      "description": [
+        11,
+        10
+      ],
       "id": 80217,
       "name": "一撕两半混沌球",
       "order": 216,
@@ -12326,7 +12428,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        12,
+        4
+      ],
       "id": 80240,
       "name": "碛原引路人",
       "order": 221,
@@ -12334,7 +12439,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        12,
+        8
+      ],
       "id": 80241,
       "name": "碛原引路人",
       "order": 222,
@@ -12343,7 +12451,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        12,
+        16
+      ],
       "id": 80242,
       "name": "碛原引路人",
       "order": 223,
@@ -12352,7 +12463,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿开启{param0}个宝箱。",
+      "description": [
+        13,
+        40
+      ],
       "id": 80243,
       "name": "荒场的寻宝者",
       "order": 224,
@@ -12360,7 +12474,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿开启{param0}个宝箱。",
+      "description": [
+        13,
+        80
+      ],
       "id": 80244,
       "name": "荒场的寻宝者",
       "order": 225,
@@ -12369,7 +12486,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿开启{param0}个宝箱。",
+      "description": [
+        13,
+        160
+      ],
       "id": 80245,
       "name": "荒场的寻宝者",
       "order": 226,
@@ -12378,7 +12498,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿完成{param0}个大世界限时挑战。",
+      "description": [
+        14,
+        4
+      ],
       "id": 80246,
       "name": "荒场的冒险家",
       "order": 227,
@@ -12386,7 +12509,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿完成{param0}个大世界限时挑战。",
+      "description": [
+        14,
+        8
+      ],
       "id": 80247,
       "name": "荒场的冒险家",
       "order": 228,
@@ -12395,7 +12521,10 @@
     },
     {
       "categoryId": 41,
-      "description": "在荒石苍漠、浮罗囿完成{param0}个大世界限时挑战。",
+      "description": [
+        14,
+        16
+      ],
       "id": 80248,
       "name": "荒场的冒险家",
       "order": 229,
@@ -12460,7 +12589,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        15,
+        6
+      ],
       "id": 80257,
       "name": "汐海引路人·其一",
       "order": 237,
@@ -12468,7 +12600,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        15,
+        12
+      ],
       "id": 80258,
       "name": "汐海引路人·其一",
       "order": 238,
@@ -12477,7 +12612,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        15,
+        24
+      ],
       "id": 80259,
       "name": "汐海引路人·其一",
       "order": 239,
@@ -12486,7 +12624,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区开启{param0}个宝箱。",
+      "description": [
+        16,
+        60
+      ],
       "id": 80260,
       "name": "沧浪的寻宝者·其一",
       "order": 240,
@@ -12494,7 +12635,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区开启{param0}个宝箱。",
+      "description": [
+        16,
+        120
+      ],
       "id": 80261,
       "name": "沧浪的寻宝者·其一",
       "order": 241,
@@ -12503,7 +12647,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区开启{param0}个宝箱。",
+      "description": [
+        16,
+        240
+      ],
       "id": 80262,
       "name": "沧浪的寻宝者·其一",
       "order": 242,
@@ -12512,7 +12659,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区完成{param0}个大世界限时挑战。",
+      "description": [
+        17,
+        3
+      ],
       "id": 80263,
       "name": "沧浪的冒险家·其一",
       "order": 243,
@@ -12520,7 +12670,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区完成{param0}个大世界限时挑战。",
+      "description": [
+        17,
+        6
+      ],
       "id": 80264,
       "name": "沧浪的冒险家·其一",
       "order": 244,
@@ -12529,7 +12682,10 @@
     },
     {
       "categoryId": 42,
-      "description": "在枫丹廷区、白露区、苍晶区完成{param0}个大世界限时挑战。",
+      "description": [
+        17,
+        12
+      ],
       "id": 80265,
       "name": "沧浪的冒险家·其一",
       "order": 245,
@@ -12578,7 +12734,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        18,
+        3
+      ],
       "id": 80275,
       "name": "汐海引路人·其二",
       "order": 251,
@@ -12586,7 +12745,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        18,
+        6
+      ],
       "id": 80276,
       "name": "汐海引路人·其二",
       "order": 252,
@@ -12595,7 +12757,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        18,
+        9
+      ],
       "id": 80277,
       "name": "汐海引路人·其二",
       "order": 253,
@@ -12604,7 +12769,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区开启{param0}个宝箱。",
+      "description": [
+        19,
+        60
+      ],
       "id": 80278,
       "name": "沧浪的寻宝者·其二",
       "order": 254,
@@ -12612,7 +12780,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区开启{param0}个宝箱。",
+      "description": [
+        19,
+        120
+      ],
       "id": 80279,
       "name": "沧浪的寻宝者·其二",
       "order": 255,
@@ -12621,7 +12792,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区开启{param0}个宝箱。",
+      "description": [
+        19,
+        200
+      ],
       "id": 80280,
       "name": "沧浪的寻宝者·其二",
       "order": 256,
@@ -12630,7 +12804,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区完成{param0}个大世界限时挑战。",
+      "description": [
+        20,
+        3
+      ],
       "id": 80281,
       "name": "沧浪的冒险家·其二",
       "order": 257,
@@ -12638,7 +12815,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区完成{param0}个大世界限时挑战。",
+      "description": [
+        20,
+        6
+      ],
       "id": 80282,
       "name": "沧浪的冒险家·其二",
       "order": 258,
@@ -12647,7 +12827,10 @@
     },
     {
       "categoryId": 45,
-      "description": "在黎翡区、枫丹动能工程科学研究院区完成{param0}个大世界限时挑战。",
+      "description": [
+        20,
+        12
+      ],
       "id": 80283,
       "name": "沧浪的冒险家·其二",
       "order": 259,
@@ -12696,7 +12879,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        21,
+        3
+      ],
       "id": 80289,
       "name": "汐海引路人·其三",
       "order": 265,
@@ -12704,7 +12890,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        21,
+        6
+      ],
       "id": 80290,
       "name": "汐海引路人·其三",
       "order": 266,
@@ -12713,7 +12902,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        21,
+        9
+      ],
       "id": 80291,
       "name": "汐海引路人·其三",
       "order": 267,
@@ -12722,7 +12914,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区开启{param0}个宝箱。",
+      "description": [
+        22,
+        40
+      ],
       "id": 80292,
       "name": "沧浪的寻宝者·其三",
       "order": 268,
@@ -12730,7 +12925,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区开启{param0}个宝箱。",
+      "description": [
+        22,
+        80
+      ],
       "id": 80293,
       "name": "沧浪的寻宝者·其三",
       "order": 269,
@@ -12739,7 +12937,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区开启{param0}个宝箱。",
+      "description": [
+        22,
+        160
+      ],
       "id": 80294,
       "name": "沧浪的寻宝者·其三",
       "order": 270,
@@ -12748,7 +12949,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区完成{param0}个大世界限时挑战。",
+      "description": [
+        23,
+        3
+      ],
       "id": 80295,
       "name": "沧浪的冒险家·其三",
       "order": 271,
@@ -12756,7 +12960,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区完成{param0}个大世界限时挑战。",
+      "description": [
+        23,
+        6
+      ],
       "id": 80296,
       "name": "沧浪的冒险家·其三",
       "order": 272,
@@ -12765,7 +12972,10 @@
     },
     {
       "categoryId": 46,
-      "description": "在莫尔泰区、伊黎耶林区完成{param0}个大世界限时挑战。",
+      "description": [
+        23,
+        9
+      ],
       "id": 80297,
       "name": "沧浪的冒险家·其三",
       "order": 273,
@@ -12806,7 +13016,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        24,
+        4
+      ],
       "id": 80302,
       "name": "瑶庭引路人",
       "order": 278,
@@ -12814,7 +13027,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        24,
+        8
+      ],
       "id": 80303,
       "name": "瑶庭引路人",
       "order": 279,
@@ -12823,7 +13039,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        24,
+        16
+      ],
       "id": 80304,
       "name": "瑶庭引路人",
       "order": 280,
@@ -12832,7 +13051,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷开启{param0}个宝箱。",
+      "description": [
+        25,
+        60
+      ],
       "id": 80305,
       "name": "翠陵的寻宝者",
       "order": 281,
@@ -12840,7 +13062,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷开启{param0}个宝箱。",
+      "description": [
+        25,
+        120
+      ],
       "id": 80306,
       "name": "翠陵的寻宝者",
       "order": 282,
@@ -12849,7 +13074,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷开启{param0}个宝箱。",
+      "description": [
+        25,
+        240
+      ],
       "id": 80307,
       "name": "翠陵的寻宝者",
       "order": 283,
@@ -12858,7 +13086,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷完成{param0}个大世界限时挑战。",
+      "description": [
+        26,
+        12
+      ],
       "id": 80308,
       "name": "翠陵的冒险家",
       "order": 284,
@@ -12866,7 +13097,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷完成{param0}个大世界限时挑战。",
+      "description": [
+        26,
+        24
+      ],
       "id": 80309,
       "name": "翠陵的冒险家",
       "order": 285,
@@ -12875,7 +13109,10 @@
     },
     {
       "categoryId": 47,
-      "description": "在沉玉谷完成{param0}个大世界限时挑战。",
+      "description": [
+        26,
+        48
+      ],
       "id": 80310,
       "name": "翠陵的冒险家",
       "order": 286,
@@ -12932,7 +13169,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        27,
+        6
+      ],
       "id": 80317,
       "name": "金宫引路人",
       "order": 293,
@@ -12940,7 +13180,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海开启{param0}个宝箱。",
+      "description": [
+        28,
+        30
+      ],
       "id": 80320,
       "name": "古海的寻宝者",
       "order": 296,
@@ -12948,7 +13191,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海开启{param0}个宝箱。",
+      "description": [
+        28,
+        60
+      ],
       "id": 80321,
       "name": "古海的寻宝者",
       "order": 297,
@@ -12957,7 +13203,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海开启{param0}个宝箱。",
+      "description": [
+        28,
+        120
+      ],
       "id": 80322,
       "name": "古海的寻宝者",
       "order": 298,
@@ -12966,7 +13215,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海完成{param0}个大世界限时挑战。",
+      "description": [
+        29,
+        6
+      ],
       "id": 80323,
       "name": "古海的冒险家",
       "order": 299,
@@ -12974,7 +13226,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海完成{param0}个大世界限时挑战。",
+      "description": [
+        29,
+        12
+      ],
       "id": 80324,
       "name": "古海的冒险家",
       "order": 300,
@@ -12983,7 +13238,10 @@
     },
     {
       "categoryId": 48,
-      "description": "在诺思托伊区、旧日之海完成{param0}个大世界限时挑战。",
+      "description": [
+        29,
+        24
+      ],
       "id": 80325,
       "name": "古海的冒险家",
       "order": 301,
@@ -13092,7 +13350,10 @@
     },
     {
       "categoryId": 52,
-      "description": "完成{param0}名角色的绘想游迹挑战。",
+      "description": [
+        30,
+        1
+      ],
       "id": 82213,
       "name": "画中之梦",
       "order": 2213,
@@ -13100,7 +13361,10 @@
     },
     {
       "categoryId": 52,
-      "description": "完成{param0}名角色的绘想游迹挑战。",
+      "description": [
+        30,
+        3
+      ],
       "id": 82214,
       "name": "画中之梦",
       "order": 2214,
@@ -13109,7 +13373,10 @@
     },
     {
       "categoryId": 52,
-      "description": "完成{param0}名角色的绘想游迹挑战。",
+      "description": [
+        30,
+        5
+      ],
       "id": 82215,
       "name": "画中之梦",
       "order": 2215,
@@ -13200,7 +13467,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        31,
+        8
+      ],
       "id": 80333,
       "name": "幻写引路人·其一",
       "order": 310,
@@ -13208,7 +13478,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        31,
+        16
+      ],
       "id": 80334,
       "name": "幻写引路人·其一",
       "order": 311,
@@ -13217,7 +13490,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        31,
+        32
+      ],
       "id": 80335,
       "name": "幻写引路人·其一",
       "order": 312,
@@ -13226,7 +13502,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地开启{param0}个宝箱。",
+      "description": [
+        32,
+        80
+      ],
       "id": 80336,
       "name": "燔炎的寻宝者·其一",
       "order": 313,
@@ -13234,7 +13513,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地开启{param0}个宝箱。",
+      "description": [
+        32,
+        160
+      ],
       "id": 80337,
       "name": "燔炎的寻宝者·其一",
       "order": 314,
@@ -13243,7 +13525,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地开启{param0}个宝箱。",
+      "description": [
+        32,
+        320
+      ],
       "id": 80338,
       "name": "燔炎的寻宝者·其一",
       "order": 315,
@@ -13252,7 +13537,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地完成{param0}个大世界限时挑战。",
+      "description": [
+        33,
+        3
+      ],
       "id": 80339,
       "name": "燔炎的冒险家·其一",
       "order": 316,
@@ -13260,7 +13548,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地完成{param0}个大世界限时挑战。",
+      "description": [
+        33,
+        6
+      ],
       "id": 80347,
       "name": "燔炎的冒险家·其一",
       "order": 317,
@@ -13269,7 +13560,10 @@
     },
     {
       "categoryId": 51,
-      "description": "在万火之瓯、坚岩隘谷、踞石山、涌流地完成{param0}个大世界限时挑战。",
+      "description": [
+        33,
+        12
+      ],
       "id": 80348,
       "name": "燔炎的冒险家·其一",
       "order": 318,
@@ -13334,7 +13628,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        34,
+        3
+      ],
       "id": 80353,
       "name": "幻写引路人·其二",
       "order": 327,
@@ -13342,7 +13639,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        34,
+        6
+      ],
       "id": 80354,
       "name": "幻写引路人·其二",
       "order": 328,
@@ -13351,7 +13651,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        34,
+        10
+      ],
       "id": 80355,
       "name": "幻写引路人·其二",
       "order": 329,
@@ -13360,7 +13663,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔开启{param0}个宝箱。",
+      "description": [
+        35,
+        40
+      ],
       "id": 80356,
       "name": "燔炎的寻宝者·其二",
       "order": 330,
@@ -13368,7 +13674,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔开启{param0}个宝箱。",
+      "description": [
+        35,
+        80
+      ],
       "id": 80357,
       "name": "燔炎的寻宝者·其二",
       "order": 331,
@@ -13377,7 +13686,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔开启{param0}个宝箱。",
+      "description": [
+        35,
+        160
+      ],
       "id": 80358,
       "name": "燔炎的寻宝者·其二",
       "order": 332,
@@ -13386,7 +13698,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔完成{param0}个大世界限时挑战。",
+      "description": [
+        36,
+        3
+      ],
       "id": 80359,
       "name": "燔炎的冒险家·其二",
       "order": 333,
@@ -13394,7 +13709,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔完成{param0}个大世界限时挑战。",
+      "description": [
+        36,
+        6
+      ],
       "id": 80360,
       "name": "燔炎的冒险家·其二",
       "order": 334,
@@ -13403,7 +13721,10 @@
     },
     {
       "categoryId": 55,
-      "description": "在镜璧山、翘枝崖、奥奇卡纳塔完成{param0}个大世界限时挑战。",
+      "description": [
+        36,
+        10
+      ],
       "id": 80361,
       "name": "燔炎的冒险家·其二",
       "order": 335,
@@ -13990,7 +14311,10 @@
     },
     {
       "categoryId": 58,
-      "description": "在「千音藏品」中兑换{param0}个谱面主题。",
+      "description": [
+        37,
+        1
+      ],
       "id": 80373,
       "name": "二十五个钱币…",
       "order": 1544,
@@ -13998,7 +14322,10 @@
     },
     {
       "categoryId": 58,
-      "description": "在「千音藏品」中兑换{param0}个谱面主题。",
+      "description": [
+        37,
+        3
+      ],
       "id": 80374,
       "name": "二十五个钱币…",
       "order": 1545,
@@ -14007,7 +14334,10 @@
     },
     {
       "categoryId": 58,
-      "description": "在「千音藏品」中兑换{param0}个谱面主题。",
+      "description": [
+        37,
+        5
+      ],
       "id": 80375,
       "name": "二十五个钱币…",
       "order": 1546,
@@ -14016,7 +14346,10 @@
     },
     {
       "categoryId": 58,
-      "description": "在官方曲谱的演奏挑战中，获得{param0}次不同曲谱的「高遏行云」评价。",
+      "description": [
+        38,
+        5
+      ],
       "id": 80376,
       "name": "旋律行进的方向",
       "order": 1547,
@@ -14024,7 +14357,10 @@
     },
     {
       "categoryId": 58,
-      "description": "在官方曲谱的演奏挑战中，获得{param0}次不同曲谱的「高遏行云」评价。",
+      "description": [
+        38,
+        15
+      ],
       "id": 80377,
       "name": "旋律行进的方向",
       "order": 1548,
@@ -14033,7 +14369,10 @@
     },
     {
       "categoryId": 58,
-      "description": "在官方曲谱的演奏挑战中，获得{param0}次不同曲谱的「高遏行云」评价。",
+      "description": [
+        38,
+        30
+      ],
       "id": 80378,
       "name": "旋律行进的方向",
       "order": 1549,
@@ -14042,7 +14381,10 @@
     },
     {
       "categoryId": 58,
-      "description": "演奏其他玩家创作的曲谱时，获得{param0}次不同曲谱的「高遏行云」评价。",
+      "description": [
+        39,
+        5
+      ],
       "id": 80379,
       "name": "轮唱的艺术",
       "order": 1550,
@@ -14050,7 +14392,10 @@
     },
     {
       "categoryId": 58,
-      "description": "演奏其他玩家创作的曲谱时，获得{param0}次不同曲谱的「高遏行云」评价。",
+      "description": [
+        39,
+        10
+      ],
       "id": 80380,
       "name": "轮唱的艺术",
       "order": 1551,
@@ -14059,7 +14404,10 @@
     },
     {
       "categoryId": 58,
-      "description": "演奏其他玩家创作的曲谱时，获得{param0}次不同曲谱的「高遏行云」评价。",
+      "description": [
+        39,
+        20
+      ],
       "id": 80381,
       "name": "轮唱的艺术",
       "order": 1552,
@@ -14108,7 +14456,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野追随{param0}个挑逗幻写灵，并完成涂鸦。",
+      "description": [
+        40,
+        3
+      ],
       "id": 80387,
       "name": "为你，我们来欢饮一杯",
       "order": 350,
@@ -14116,7 +14467,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野追随{param0}个挑逗幻写灵，并完成涂鸦。",
+      "description": [
+        40,
+        6
+      ],
       "id": 80388,
       "name": "为你，我们来欢饮一杯",
       "order": 351,
@@ -14125,7 +14479,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野追随{param0}个挑逗幻写灵，并完成涂鸦。",
+      "description": [
+        40,
+        9
+      ],
       "id": 80389,
       "name": "为你，我们来欢饮一杯",
       "order": 352,
@@ -14134,7 +14491,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野开启{param0}个宝箱。",
+      "description": [
+        41,
+        40
+      ],
       "id": 80390,
       "name": "沃灰的寻宝者",
       "order": 353,
@@ -14142,7 +14502,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野开启{param0}个宝箱。",
+      "description": [
+        41,
+        80
+      ],
       "id": 80391,
       "name": "沃灰的寻宝者",
       "order": 354,
@@ -14151,7 +14514,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野开启{param0}个宝箱。",
+      "description": [
+        41,
+        160
+      ],
       "id": 80392,
       "name": "沃灰的寻宝者",
       "order": 355,
@@ -14160,7 +14526,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野完成{param0}个大世界限时挑战。",
+      "description": [
+        42,
+        3
+      ],
       "id": 80393,
       "name": "沃灰的冒险家",
       "order": 356,
@@ -14168,7 +14537,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野完成{param0}个大世界限时挑战。",
+      "description": [
+        42,
+        6
+      ],
       "id": 80394,
       "name": "沃灰的冒险家",
       "order": 357,
@@ -14177,7 +14549,10 @@
     },
     {
       "categoryId": 60,
-      "description": "在远古圣山、安饶之野完成{param0}个大世界限时挑战。",
+      "description": [
+        42,
+        9
+      ],
       "id": 80395,
       "name": "沃灰的冒险家",
       "order": 358,
@@ -14218,7 +14593,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村追随{param0}个幻写灵，并完成涂鸦。",
+      "description": [
+        43,
+        6
+      ],
       "id": 80433,
       "name": "幻写引路人·其三",
       "order": 396,
@@ -14226,7 +14604,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村开启{param0}个宝箱。",
+      "description": [
+        44,
+        30
+      ],
       "id": 80434,
       "name": "沧屿的寻宝者",
       "order": 397,
@@ -14234,7 +14615,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村开启{param0}个宝箱。",
+      "description": [
+        44,
+        60
+      ],
       "id": 80435,
       "name": "沧屿的寻宝者",
       "order": 398,
@@ -14243,7 +14627,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村开启{param0}个宝箱。",
+      "description": [
+        44,
+        120
+      ],
       "id": 80436,
       "name": "沧屿的寻宝者",
       "order": 399,
@@ -14252,7 +14639,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村完成{param0}个大世界限时挑战。",
+      "description": [
+        45,
+        6
+      ],
       "id": 80437,
       "name": "沧屿的冒险家",
       "order": 400,
@@ -14260,7 +14650,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村完成{param0}个大世界限时挑战。",
+      "description": [
+        45,
+        12
+      ],
       "id": 80438,
       "name": "沧屿的冒险家",
       "order": 401,
@@ -14269,7 +14662,10 @@
     },
     {
       "categoryId": 62,
-      "description": "在悠悠度假村完成{param0}个大世界限时挑战。",
+      "description": [
+        45,
+        24
+      ],
       "id": 80439,
       "name": "沧屿的冒险家",
       "order": 402,
@@ -14294,7 +14690,10 @@
     },
     {
       "categoryId": 63,
-      "description": "在伦波岛、希汐岛、帕哈岛开启{param0}个宝箱。",
+      "description": [
+        46,
+        60
+      ],
       "id": 80442,
       "name": "月尘的寻宝者·其一",
       "order": 405,
@@ -14302,7 +14701,10 @@
     },
     {
       "categoryId": 63,
-      "description": "在伦波岛、希汐岛、帕哈岛开启{param0}个宝箱。",
+      "description": [
+        46,
+        120
+      ],
       "id": 80443,
       "name": "月尘的寻宝者·其一",
       "order": 406,
@@ -14311,7 +14713,10 @@
     },
     {
       "categoryId": 63,
-      "description": "在伦波岛、希汐岛、帕哈岛开启{param0}个宝箱。",
+      "description": [
+        46,
+        240
+      ],
       "id": 80444,
       "name": "月尘的寻宝者·其一",
       "order": 407,
@@ -14320,7 +14725,10 @@
     },
     {
       "categoryId": 63,
-      "description": "在伦波岛、希汐岛、帕哈岛完成{param0}个大世界限时挑战。",
+      "description": [
+        47,
+        3
+      ],
       "id": 80445,
       "name": "月尘的冒险家·其一",
       "order": 408,
@@ -14328,7 +14736,10 @@
     },
     {
       "categoryId": 63,
-      "description": "在伦波岛、希汐岛、帕哈岛完成{param0}个大世界限时挑战。",
+      "description": [
+        47,
+        6
+      ],
       "id": 80446,
       "name": "月尘的冒险家·其一",
       "order": 409,
@@ -14337,7 +14748,10 @@
     },
     {
       "categoryId": 63,
-      "description": "在伦波岛、希汐岛、帕哈岛完成{param0}个大世界限时挑战。",
+      "description": [
+        47,
+        10
+      ],
       "id": 80447,
       "name": "月尘的冒险家·其一",
       "order": 410,
@@ -14426,7 +14840,10 @@
     },
     {
       "categoryId": 66,
-      "description": "在虚海望、逐浪野、烟硌山峰开启{param0}个宝箱。",
+      "description": [
+        48,
+        45
+      ],
       "id": 80462,
       "name": "月尘的寻宝者·其二",
       "order": 423,
@@ -14434,7 +14851,10 @@
     },
     {
       "categoryId": 66,
-      "description": "在虚海望、逐浪野、烟硌山峰开启{param0}个宝箱。",
+      "description": [
+        48,
+        90
+      ],
       "id": 80463,
       "name": "月尘的寻宝者·其二",
       "order": 424,
@@ -14443,7 +14863,10 @@
     },
     {
       "categoryId": 66,
-      "description": "在虚海望、逐浪野、烟硌山峰开启{param0}个宝箱。",
+      "description": [
+        48,
+        180
+      ],
       "id": 80464,
       "name": "月尘的寻宝者·其二",
       "order": 425,
@@ -14452,7 +14875,10 @@
     },
     {
       "categoryId": 66,
-      "description": "在虚海望、逐浪野、烟硌山峰完成{param0}个大世界限时挑战。",
+      "description": [
+        49,
+        5
+      ],
       "id": 80465,
       "name": "月尘的冒险家·其二",
       "order": 426,
@@ -14556,7 +14982,10 @@
     },
     {
       "categoryId": 67,
-      "description": "在风息山、空之神殿开启{param0}个宝箱。",
+      "description": [
+        50,
+        45
+      ],
       "id": 80475,
       "name": "隙间的寻宝者",
       "order": 439,
@@ -14564,7 +14993,10 @@
     },
     {
       "categoryId": 67,
-      "description": "在风息山、空之神殿开启{param0}个宝箱。",
+      "description": [
+        50,
+        90
+      ],
       "id": 80476,
       "name": "隙间的寻宝者",
       "order": 440,
@@ -14573,7 +15005,10 @@
     },
     {
       "categoryId": 67,
-      "description": "在风息山、空之神殿开启{param0}个宝箱。",
+      "description": [
+        50,
+        180
+      ],
       "id": 80477,
       "name": "隙间的寻宝者",
       "order": 441,
@@ -14582,7 +15017,10 @@
     },
     {
       "categoryId": 67,
-      "description": "在风息山、空之神殿完成{param0}个大世界限时挑战。",
+      "description": [
+        51,
+        7
+      ],
       "id": 80487,
       "name": "隙间的冒险家",
       "order": 442,
@@ -14590,7 +15028,10 @@
     },
     {
       "categoryId": 67,
-      "description": "在风息山、空之神殿完成{param0}个大世界限时挑战。",
+      "description": [
+        51,
+        14
+      ],
       "id": 80488,
       "name": "隙间的冒险家",
       "order": 443,
@@ -14599,7 +15040,10 @@
     },
     {
       "categoryId": 67,
-      "description": "在风息山、空之神殿完成{param0}个大世界限时挑战。",
+      "description": [
+        51,
+        28
+      ],
       "id": 80489,
       "name": "隙间的冒险家",
       "order": 444,
@@ -14648,7 +15092,10 @@
     },
     {
       "categoryId": 68,
-      "description": "在杜南纳深坑、霜月开启{param0}个宝箱。",
+      "description": [
+        52,
+        45
+      ],
       "id": 80490,
       "name": "月雾的寻宝者",
       "order": 450,
@@ -14656,7 +15103,10 @@
     },
     {
       "categoryId": 68,
-      "description": "在杜南纳深坑、霜月开启{param0}个宝箱。",
+      "description": [
+        52,
+        90
+      ],
       "id": 80491,
       "name": "月雾的寻宝者",
       "order": 451,
@@ -14665,7 +15115,10 @@
     },
     {
       "categoryId": 68,
-      "description": "在杜南纳深坑、霜月开启{param0}个宝箱。",
+      "description": [
+        52,
+        180
+      ],
       "id": 80492,
       "name": "月雾的寻宝者",
       "order": 452,
@@ -14674,7 +15127,10 @@
     },
     {
       "categoryId": 68,
-      "description": "在杜南纳深坑、霜月完成{param0}个大世界限时挑战。",
+      "description": [
+        53,
+        4
+      ],
       "id": 80493,
       "name": "月雾的冒险家",
       "order": 453,
@@ -14794,7 +15250,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        54,
+        3
+      ],
       "id": 80509,
       "name": "霜原引路人·其一",
       "order": 468,
@@ -14802,7 +15261,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        54,
+        5
+      ],
       "id": 80510,
       "name": "霜原引路人·其一",
       "order": 469,
@@ -14811,7 +15273,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰追随{param0}个仙灵，并点亮仙灵之庭。",
+      "description": [
+        54,
+        10
+      ],
       "id": 80511,
       "name": "霜原引路人·其一",
       "order": 470,
@@ -14820,7 +15285,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰开启{param0}个宝箱。",
+      "description": [
+        55,
+        65
+      ],
       "id": 80512,
       "name": "寒冬的寻宝者·其一",
       "order": 471,
@@ -14828,7 +15296,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰开启{param0}个宝箱。",
+      "description": [
+        55,
+        130
+      ],
       "id": 80513,
       "name": "寒冬的寻宝者·其一",
       "order": 472,
@@ -14837,7 +15308,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰开启{param0}个宝箱。",
+      "description": [
+        55,
+        260
+      ],
       "id": 80514,
       "name": "寒冬的寻宝者·其一",
       "order": 473,
@@ -14846,7 +15320,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰完成{param0}个大世界限时挑战。",
+      "description": [
+        56,
+        6
+      ],
       "id": 80515,
       "name": "寒冬的冒险家·其一",
       "order": 474,
@@ -14854,7 +15331,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰完成{param0}个大世界限时挑战。",
+      "description": [
+        56,
+        12
+      ],
       "id": 80516,
       "name": "寒冬的冒险家·其一",
       "order": 475,
@@ -14863,7 +15343,10 @@
     },
     {
       "categoryId": 69,
-      "description": "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰完成{param0}个大世界限时挑战。",
+      "description": [
+        56,
+        24
+      ],
       "id": 80517,
       "name": "寒冬的冒险家·其一",
       "order": 476,
@@ -14952,7 +15435,10 @@
     },
     {
       "categoryId": 70,
-      "description": "获得{param0}枚攻炼武勋。",
+      "description": [
+        57,
+        9
+      ],
       "id": 86066,
       "name": "绝境的击坠王",
       "order": 9063,
@@ -15010,7 +15496,10 @@
     },
     {
       "categoryId": 70,
-      "description": "在滑铲状态下累计击败{param0}名敌人。",
+      "description": [
+        58,
+        20
+      ],
       "id": 86074,
       "name": "滑铲瞄准根本就是天方夜谭",
       "order": 9071,
@@ -15415,5 +15904,66 @@
       "name": "浮涌的阴影之地",
       "order": 73
     }
+  ],
+  "descriptionTemplates": [
+    "使用斯露莎投掷「苦离果」，融化{0}个甘露凝结的晶石。",
+    "在千壑沙地追随{0}个仙灵，并点亮仙灵之庭。",
+    "在千壑沙地开启{0}个宝箱。",
+    "在千壑沙地完成{0}个大世界机关限时挑战。",
+    "累计获得{0}幸运牌币。",
+    "在获胜的牌局中，我方一共造成{0}次元素反应。",
+    "在获胜的牌局中，累计造成{0}次8点以上的单次行动伤害。",
+    "在获胜的牌局中，累计打出{0}张行动牌。",
+    "在获胜的牌局中，累计召唤{0}次召唤物。",
+    "使用过3次以上元素爆发并获得胜利的对局数目达到{0}场。",
+    "在获胜的牌局中，使用护盾或治疗效果累计为自身抵挡伤害或恢复生命{0}点。",
+    "在获胜的牌局中，单次行动击败2名或2名以上对手角色牌的次数累计达到{0}次。",
+    "在荒石苍漠、浮罗囿追随{0}个仙灵，并点亮仙灵之庭。",
+    "在荒石苍漠、浮罗囿开启{0}个宝箱。",
+    "在荒石苍漠、浮罗囿完成{0}个大世界限时挑战。",
+    "在枫丹廷区、白露区、苍晶区追随{0}个仙灵，并点亮仙灵之庭。",
+    "在枫丹廷区、白露区、苍晶区开启{0}个宝箱。",
+    "在枫丹廷区、白露区、苍晶区完成{0}个大世界限时挑战。",
+    "在黎翡区、枫丹动能工程科学研究院区追随{0}个仙灵，并点亮仙灵之庭。",
+    "在黎翡区、枫丹动能工程科学研究院区开启{0}个宝箱。",
+    "在黎翡区、枫丹动能工程科学研究院区完成{0}个大世界限时挑战。",
+    "在莫尔泰区、伊黎耶林区追随{0}个仙灵，并点亮仙灵之庭。",
+    "在莫尔泰区、伊黎耶林区开启{0}个宝箱。",
+    "在莫尔泰区、伊黎耶林区完成{0}个大世界限时挑战。",
+    "在沉玉谷追随{0}个仙灵，并点亮仙灵之庭。",
+    "在沉玉谷开启{0}个宝箱。",
+    "在沉玉谷完成{0}个大世界限时挑战。",
+    "在诺思托伊区、旧日之海追随{0}个仙灵，并点亮仙灵之庭。",
+    "在诺思托伊区、旧日之海开启{0}个宝箱。",
+    "在诺思托伊区、旧日之海完成{0}个大世界限时挑战。",
+    "完成{0}名角色的绘想游迹挑战。",
+    "在万火之瓯、坚岩隘谷、踞石山、涌流地追随{0}个幻写灵，并完成涂鸦。",
+    "在万火之瓯、坚岩隘谷、踞石山、涌流地开启{0}个宝箱。",
+    "在万火之瓯、坚岩隘谷、踞石山、涌流地完成{0}个大世界限时挑战。",
+    "在镜璧山、翘枝崖、奥奇卡纳塔追随{0}个幻写灵，并完成涂鸦。",
+    "在镜璧山、翘枝崖、奥奇卡纳塔开启{0}个宝箱。",
+    "在镜璧山、翘枝崖、奥奇卡纳塔完成{0}个大世界限时挑战。",
+    "在「千音藏品」中兑换{0}个谱面主题。",
+    "在官方曲谱的演奏挑战中，获得{0}次不同曲谱的「高遏行云」评价。",
+    "演奏其他玩家创作的曲谱时，获得{0}次不同曲谱的「高遏行云」评价。",
+    "在远古圣山、安饶之野追随{0}个挑逗幻写灵，并完成涂鸦。",
+    "在远古圣山、安饶之野开启{0}个宝箱。",
+    "在远古圣山、安饶之野完成{0}个大世界限时挑战。",
+    "在悠悠度假村追随{0}个幻写灵，并完成涂鸦。",
+    "在悠悠度假村开启{0}个宝箱。",
+    "在悠悠度假村完成{0}个大世界限时挑战。",
+    "在伦波岛、希汐岛、帕哈岛开启{0}个宝箱。",
+    "在伦波岛、希汐岛、帕哈岛完成{0}个大世界限时挑战。",
+    "在虚海望、逐浪野、烟硌山峰开启{0}个宝箱。",
+    "在虚海望、逐浪野、烟硌山峰完成{0}个大世界限时挑战。",
+    "在风息山、空之神殿开启{0}个宝箱。",
+    "在风息山、空之神殿完成{0}个大世界限时挑战。",
+    "在杜南纳深坑、霜月开启{0}个宝箱。",
+    "在杜南纳深坑、霜月完成{0}个大世界限时挑战。",
+    "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰追随{0}个仙灵，并点亮仙灵之庭。",
+    "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰开启{0}个宝箱。",
+    "在永凝冻土、古兽冰原、焰羽谷、白桦雪葬地、霜殛寒峰完成{0}个大世界限时挑战。",
+    "获得{0}枚攻炼武勋。",
+    "在滑铲状态下累计击败{0}名敌人。"
   ]
 }

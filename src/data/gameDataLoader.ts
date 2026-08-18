@@ -24,6 +24,7 @@
  */
 
 import { betaEnabled } from "@/data/betaState";
+import { expandAchievementReferenceData } from "./achievementData";
 import type { ElementalOrPhysical } from "./enums";
 import { ELEMENT_KEYS } from "./enums";
 import {
@@ -34,6 +35,7 @@ import {
 import { LEYLINE_BOSS_IMAGE_ENEMY_ID } from "./resources_manual";
 import type {
   AchievementData,
+  AchievementReferenceData,
   ArtifactGameData,
   BossDescription,
   BossInfo,
@@ -120,15 +122,16 @@ export const characterKitsResource: LangResource<CharacterKitBundle> =
 // Achievements — achievement_{en,zh}.json
 // ═══════════════════════════════════════════════════════════════════════════
 
-const achievementModules = import.meta.glob<{ default: AchievementData }>(
-  "./game/achievement_{en,zh}.json",
-  { eager: false }
-);
+const achievementModules = import.meta.glob<{
+  default: AchievementReferenceData;
+}>("./game/achievement_{en,zh}.json", { eager: false });
 
 /** Route-lazy, per-language achievement metadata cached for the app lifetime. */
 export const achievementTextResource: LangResource<AchievementData> =
-  makeLangResource((lang) =>
-    loadFromGlob(achievementModules, `./game/achievement_${lang}.json`)
+  makeLangResource(async (lang) =>
+    expandAchievementReferenceData(
+      await loadFromGlob(achievementModules, `./game/achievement_${lang}.json`)
+    )
   );
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -2106,7 +2106,10 @@
     },
     {
       "categoryId": 0,
-      "description": "Launch Nirodha Fruits with Sorush's help to melt {param0} crystals condensed from Amrita.",
+      "description": [
+        0,
+        15
+      ],
       "id": 81338,
       "name": "Use the Force, Sorush",
       "order": 1325,
@@ -11992,7 +11995,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Follow {param0} Seelie in the Desert of Hadramaveth to their Seelie Courts.",
+      "description": [
+        1,
+        4
+      ],
       "id": 80228,
       "name": "The Desert Will Guide You Home (II)",
       "order": 208,
@@ -12000,7 +12006,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Follow {param0} Seelie in the Desert of Hadramaveth to their Seelie Courts.",
+      "description": [
+        1,
+        8
+      ],
       "id": 80229,
       "name": "The Desert Will Guide You Home (II)",
       "order": 209,
@@ -12009,7 +12018,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Follow {param0} Seelie in the Desert of Hadramaveth to their Seelie Courts.",
+      "description": [
+        1,
+        16
+      ],
       "id": 80230,
       "name": "The Desert Will Guide You Home (II)",
       "order": 210,
@@ -12018,7 +12030,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Open {param0} treasure chests in the Desert of Hadramaveth.",
+      "description": [
+        2,
+        50
+      ],
       "id": 80231,
       "name": "Quicksand Treasure Hunter (II)",
       "order": 211,
@@ -12026,7 +12041,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Open {param0} treasure chests in the Desert of Hadramaveth.",
+      "description": [
+        2,
+        100
+      ],
       "id": 80232,
       "name": "Quicksand Treasure Hunter (II)",
       "order": 212,
@@ -12035,7 +12053,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Open {param0} treasure chests in the Desert of Hadramaveth.",
+      "description": [
+        2,
+        200
+      ],
       "id": 80233,
       "name": "Quicksand Treasure Hunter (II)",
       "order": 213,
@@ -12044,7 +12065,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Desert of Hadramaveth.",
+      "description": [
+        3,
+        7
+      ],
       "id": 80234,
       "name": "Quicksand Adventurer (II)",
       "order": 214,
@@ -12052,7 +12076,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Desert of Hadramaveth.",
+      "description": [
+        3,
+        14
+      ],
       "id": 80235,
       "name": "Quicksand Adventurer (II)",
       "order": 215,
@@ -12061,7 +12088,10 @@
     },
     {
       "categoryId": 38,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Desert of Hadramaveth.",
+      "description": [
+        3,
+        28
+      ],
       "id": 80236,
       "name": "Quicksand Adventurer (II)",
       "order": 216,
@@ -12094,7 +12124,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Obtain {param0} Lucky Coins in total.",
+      "description": [
+        4,
+        10000
+      ],
       "id": 80218,
       "name": "Legendary High Roller",
       "order": 196,
@@ -12102,7 +12135,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Obtain {param0} Lucky Coins in total.",
+      "description": [
+        4,
+        70000
+      ],
       "id": 80219,
       "name": "Legendary High Roller",
       "order": 197,
@@ -12111,7 +12147,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Obtain {param0} Lucky Coins in total.",
+      "description": [
+        4,
+        150000
+      ],
       "id": 80220,
       "name": "Legendary High Roller",
       "order": 198,
@@ -12120,7 +12159,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Cause a total of {param0} Elemental Reactions in victorious matches.",
+      "description": [
+        5,
+        30
+      ],
       "id": 80197,
       "name": "A Riotous Response",
       "order": 199,
@@ -12128,7 +12170,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Cause a total of {param0} Elemental Reactions in victorious matches.",
+      "description": [
+        5,
+        150
+      ],
       "id": 80198,
       "name": "A Riotous Response",
       "order": 200,
@@ -12137,7 +12182,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Cause a total of {param0} Elemental Reactions in victorious matches.",
+      "description": [
+        5,
+        300
+      ],
       "id": 80199,
       "name": "A Riotous Response",
       "order": 201,
@@ -12146,7 +12194,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Deal 8 or more points of damage in one single action a total of {param0} time(s) in victorious games.",
+      "description": [
+        6,
+        1
+      ],
       "id": 80221,
       "name": "Miniaturized Dice-Shaker",
       "order": 202,
@@ -12154,7 +12205,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Deal 8 or more points of damage in one single action a total of {param0} time(s) in victorious games.",
+      "description": [
+        6,
+        5
+      ],
       "id": 80222,
       "name": "Miniaturized Dice-Shaker",
       "order": 203,
@@ -12163,7 +12217,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Deal 8 or more points of damage in one single action a total of {param0} time(s) in victorious games.",
+      "description": [
+        6,
+        10
+      ],
       "id": 80223,
       "name": "Miniaturized Dice-Shaker",
       "order": 204,
@@ -12172,7 +12229,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Play a total of {param0} Action Cards in victorious matches.",
+      "description": [
+        7,
+        60
+      ],
       "id": 80203,
       "name": "Victory at Hand",
       "order": 205,
@@ -12180,7 +12240,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Play a total of {param0} Action Cards in victorious matches.",
+      "description": [
+        7,
+        300
+      ],
       "id": 80204,
       "name": "Victory at Hand",
       "order": 206,
@@ -12189,7 +12252,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Play a total of {param0} Action Cards in victorious matches.",
+      "description": [
+        7,
+        600
+      ],
       "id": 80205,
       "name": "Victory at Hand",
       "order": 207,
@@ -12198,7 +12264,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Play a total of {param0} Summons in victorious matches.",
+      "description": [
+        8,
+        20
+      ],
       "id": 80206,
       "name": "\"Well, Let's See It, Partner...\"",
       "order": 208,
@@ -12206,7 +12275,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Play a total of {param0} Summons in victorious matches.",
+      "description": [
+        8,
+        100
+      ],
       "id": 80207,
       "name": "\"Well, Let's See It, Partner...\"",
       "order": 209,
@@ -12215,7 +12287,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Play a total of {param0} Summons in victorious matches.",
+      "description": [
+        8,
+        200
+      ],
       "id": 80208,
       "name": "\"Well, Let's See It, Partner...\"",
       "order": 210,
@@ -12224,7 +12299,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Use 3 or more Elemental Bursts and achieve victory in a total of {param0} match(es).",
+      "description": [
+        9,
+        1
+      ],
       "id": 80209,
       "name": "Attack! Attack! Attack!",
       "order": 211,
@@ -12232,7 +12310,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Use 3 or more Elemental Bursts and achieve victory in a total of {param0} match(es).",
+      "description": [
+        9,
+        5
+      ],
       "id": 80210,
       "name": "Attack! Attack! Attack!",
       "order": 212,
@@ -12241,7 +12322,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Use 3 or more Elemental Bursts and achieve victory in a total of {param0} match(es).",
+      "description": [
+        9,
+        10
+      ],
       "id": 80211,
       "name": "Attack! Attack! Attack!",
       "order": 213,
@@ -12250,7 +12334,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Withstand a total of {param0} damage using shields or healing in victorious matches.",
+      "description": [
+        10,
+        30
+      ],
       "id": 80212,
       "name": "A Candle in the Wind?",
       "order": 214,
@@ -12258,7 +12345,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Defeat 2 or more Character Cards from the opponent's deck in one single action a total of {param0} time(s) in victorious games.",
+      "description": [
+        11,
+        1
+      ],
       "id": 80215,
       "name": "Chaos Divided",
       "order": 214,
@@ -12266,7 +12356,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Withstand a total of {param0} damage using shields or healing in victorious matches.",
+      "description": [
+        10,
+        150
+      ],
       "id": 80213,
       "name": "A Candle in the Wind?",
       "order": 215,
@@ -12275,7 +12368,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Defeat 2 or more Character Cards from the opponent's deck in one single action a total of {param0} time(s) in victorious games.",
+      "description": [
+        11,
+        5
+      ],
       "id": 80216,
       "name": "Chaos Divided",
       "order": 215,
@@ -12284,7 +12380,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Withstand a total of {param0} damage using shields or healing in victorious matches.",
+      "description": [
+        10,
+        300
+      ],
       "id": 80214,
       "name": "A Candle in the Wind?",
       "order": 216,
@@ -12293,7 +12392,10 @@
     },
     {
       "categoryId": 37,
-      "description": "Defeat 2 or more Character Cards from the opponent's deck in one single action a total of {param0} time(s) in victorious games.",
+      "description": [
+        11,
+        10
+      ],
       "id": 80217,
       "name": "Chaos Divided",
       "order": 216,
@@ -12326,7 +12428,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Follow {param0} Seelie in Gavireh Lajavard and Realm of Farakhkert to their Seelie Courts.",
+      "description": [
+        12,
+        4
+      ],
       "id": 80240,
       "name": "Dune Guide",
       "order": 221,
@@ -12334,7 +12439,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Follow {param0} Seelie in Gavireh Lajavard and Realm of Farakhkert to their Seelie Courts.",
+      "description": [
+        12,
+        8
+      ],
       "id": 80241,
       "name": "Dune Guide",
       "order": 222,
@@ -12343,7 +12451,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Follow {param0} Seelie in Gavireh Lajavard and Realm of Farakhkert to their Seelie Courts.",
+      "description": [
+        12,
+        16
+      ],
       "id": 80242,
       "name": "Dune Guide",
       "order": 223,
@@ -12352,7 +12463,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Open a total of {param0} treasure chests in Gavireh Lajavard and Realm of Farakhkert.",
+      "description": [
+        13,
+        40
+      ],
       "id": 80243,
       "name": "Badlands Treasure Hunter",
       "order": 224,
@@ -12360,7 +12474,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Open a total of {param0} treasure chests in Gavireh Lajavard and Realm of Farakhkert.",
+      "description": [
+        13,
+        80
+      ],
       "id": 80244,
       "name": "Badlands Treasure Hunter",
       "order": 225,
@@ -12369,7 +12486,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Open a total of {param0} treasure chests in Gavireh Lajavard and Realm of Farakhkert.",
+      "description": [
+        13,
+        160
+      ],
       "id": 80245,
       "name": "Badlands Treasure Hunter",
       "order": 226,
@@ -12378,7 +12498,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Complete a total of {param0} Open World Time Trial Challenges in Gavireh Lajavard and Realm of Farakhkert.",
+      "description": [
+        14,
+        4
+      ],
       "id": 80246,
       "name": "Badlands Adventurer",
       "order": 227,
@@ -12386,7 +12509,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Complete a total of {param0} Open World Time Trial Challenges in Gavireh Lajavard and Realm of Farakhkert.",
+      "description": [
+        14,
+        8
+      ],
       "id": 80247,
       "name": "Badlands Adventurer",
       "order": 228,
@@ -12395,7 +12521,10 @@
     },
     {
       "categoryId": 41,
-      "description": "Complete a total of {param0} Open World Time Trial Challenges in Gavireh Lajavard and Realm of Farakhkert.",
+      "description": [
+        14,
+        16
+      ],
       "id": 80248,
       "name": "Badlands Adventurer",
       "order": 229,
@@ -12460,7 +12589,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Follow {param0} Seelie in the Court of Fontaine Region, Belleau Region, and Beryl Region to their Seelie Courts.",
+      "description": [
+        15,
+        6
+      ],
       "id": 80257,
       "name": "Tides Will Guide You Home (I)",
       "order": 237,
@@ -12468,7 +12600,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Follow {param0} Seelie in the Court of Fontaine Region, Belleau Region, and Beryl Region to their Seelie Courts.",
+      "description": [
+        15,
+        12
+      ],
       "id": 80258,
       "name": "Tides Will Guide You Home (I)",
       "order": 238,
@@ -12477,7 +12612,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Follow {param0} Seelie in the Court of Fontaine Region, Belleau Region, and Beryl Region to their Seelie Courts.",
+      "description": [
+        15,
+        24
+      ],
       "id": 80259,
       "name": "Tides Will Guide You Home (I)",
       "order": 239,
@@ -12486,7 +12624,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Open {param0} chests in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+      "description": [
+        16,
+        60
+      ],
       "id": 80260,
       "name": "Waveriding Treasure Hunter (I)",
       "order": 240,
@@ -12494,7 +12635,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Open {param0} chests in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+      "description": [
+        16,
+        120
+      ],
       "id": 80261,
       "name": "Waveriding Treasure Hunter (I)",
       "order": 241,
@@ -12503,7 +12647,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Open {param0} chests in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+      "description": [
+        16,
+        240
+      ],
       "id": 80262,
       "name": "Waveriding Treasure Hunter (I)",
       "order": 242,
@@ -12512,7 +12659,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+      "description": [
+        17,
+        3
+      ],
       "id": 80263,
       "name": "Waveriding Adventurer (I)",
       "order": 243,
@@ -12520,7 +12670,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+      "description": [
+        17,
+        6
+      ],
       "id": 80264,
       "name": "Waveriding Adventurer (I)",
       "order": 244,
@@ -12529,7 +12682,10 @@
     },
     {
       "categoryId": 42,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+      "description": [
+        17,
+        12
+      ],
       "id": 80265,
       "name": "Waveriding Adventurer (I)",
       "order": 245,
@@ -12578,7 +12734,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Follow {param0} Seelie in Liffey Region and Fontaine Research Institute of Kinetic Energy Engineering Region to their Seelie Courts.",
+      "description": [
+        18,
+        3
+      ],
       "id": 80275,
       "name": "Tidal Guide (II)",
       "order": 251,
@@ -12586,7 +12745,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Follow {param0} Seelie in Liffey Region and Fontaine Research Institute of Kinetic Energy Engineering Region to their Seelie Courts.",
+      "description": [
+        18,
+        6
+      ],
       "id": 80276,
       "name": "Tidal Guide (II)",
       "order": 252,
@@ -12595,7 +12757,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Follow {param0} Seelie in Liffey Region and Fontaine Research Institute of Kinetic Energy Engineering Region to their Seelie Courts.",
+      "description": [
+        18,
+        9
+      ],
       "id": 80277,
       "name": "Tidal Guide (II)",
       "order": 253,
@@ -12604,7 +12769,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Open {param0} treasure chests in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+      "description": [
+        19,
+        60
+      ],
       "id": 80278,
       "name": "Waveriding Treasure Hunter (II)",
       "order": 254,
@@ -12612,7 +12780,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Open {param0} treasure chests in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+      "description": [
+        19,
+        120
+      ],
       "id": 80279,
       "name": "Waveriding Treasure Hunter (II)",
       "order": 255,
@@ -12621,7 +12792,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Open {param0} treasure chests in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+      "description": [
+        19,
+        200
+      ],
       "id": 80280,
       "name": "Waveriding Treasure Hunter (II)",
       "order": 256,
@@ -12630,7 +12804,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+      "description": [
+        20,
+        3
+      ],
       "id": 80281,
       "name": "Waveriding Adventurer (II)",
       "order": 257,
@@ -12638,7 +12815,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+      "description": [
+        20,
+        6
+      ],
       "id": 80282,
       "name": "Waveriding Adventurer (II)",
       "order": 258,
@@ -12647,7 +12827,10 @@
     },
     {
       "categoryId": 45,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+      "description": [
+        20,
+        12
+      ],
       "id": 80283,
       "name": "Waveriding Adventurer (II)",
       "order": 259,
@@ -12696,7 +12879,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Follow {param0} Seelie to their Seelie Courts in the Morte Region and Erinnyes Forest.",
+      "description": [
+        21,
+        3
+      ],
       "id": 80289,
       "name": "Tidal Guide (III)",
       "order": 265,
@@ -12704,7 +12890,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Follow {param0} Seelie to their Seelie Courts in the Morte Region and Erinnyes Forest.",
+      "description": [
+        21,
+        6
+      ],
       "id": 80290,
       "name": "Tidal Guide (III)",
       "order": 266,
@@ -12713,7 +12902,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Follow {param0} Seelie to their Seelie Courts in the Morte Region and Erinnyes Forest.",
+      "description": [
+        21,
+        9
+      ],
       "id": 80291,
       "name": "Tidal Guide (III)",
       "order": 267,
@@ -12722,7 +12914,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Open {param0} treasure chests in the Morte Region and Erinnyes Forest.",
+      "description": [
+        22,
+        40
+      ],
       "id": 80292,
       "name": "Waveriding Treasure Hunter (III)",
       "order": 268,
@@ -12730,7 +12925,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Open {param0} treasure chests in the Morte Region and Erinnyes Forest.",
+      "description": [
+        22,
+        80
+      ],
       "id": 80293,
       "name": "Waveriding Treasure Hunter (III)",
       "order": 269,
@@ -12739,7 +12937,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Open {param0} treasure chests in the Morte Region and Erinnyes Forest.",
+      "description": [
+        22,
+        160
+      ],
       "id": 80294,
       "name": "Waveriding Treasure Hunter (III)",
       "order": 270,
@@ -12748,7 +12949,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Complete a total of {param0} Open World Time Trial Challenges in the Morte Region and Erinnyes Forest.",
+      "description": [
+        23,
+        3
+      ],
       "id": 80295,
       "name": "Waveriding Adventurer (III)",
       "order": 271,
@@ -12756,7 +12960,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Complete a total of {param0} Open World Time Trial Challenges in the Morte Region and Erinnyes Forest.",
+      "description": [
+        23,
+        6
+      ],
       "id": 80296,
       "name": "Waveriding Adventurer (III)",
       "order": 272,
@@ -12765,7 +12972,10 @@
     },
     {
       "categoryId": 46,
-      "description": "Complete a total of {param0} Open World Time Trial Challenges in the Morte Region and Erinnyes Forest.",
+      "description": [
+        23,
+        9
+      ],
       "id": 80297,
       "name": "Waveriding Adventurer (III)",
       "order": 273,
@@ -12806,7 +13016,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Follow {param0} Seelie in Chenyu Vale to their Seelie Courts.",
+      "description": [
+        24,
+        4
+      ],
       "id": 80302,
       "name": "Jadehall Guide",
       "order": 278,
@@ -12814,7 +13027,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Follow {param0} Seelie in Chenyu Vale to their Seelie Courts.",
+      "description": [
+        24,
+        8
+      ],
       "id": 80303,
       "name": "Jadehall Guide",
       "order": 279,
@@ -12823,7 +13039,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Follow {param0} Seelie in Chenyu Vale to their Seelie Courts.",
+      "description": [
+        24,
+        16
+      ],
       "id": 80304,
       "name": "Jadehall Guide",
       "order": 280,
@@ -12832,7 +13051,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Open {param0} chests in Chenyu Vale.",
+      "description": [
+        25,
+        60
+      ],
       "id": 80305,
       "name": "Jademound Treasure Hunter",
       "order": 281,
@@ -12840,7 +13062,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Open {param0} chests in Chenyu Vale.",
+      "description": [
+        25,
+        120
+      ],
       "id": 80306,
       "name": "Jademound Treasure Hunter",
       "order": 282,
@@ -12849,7 +13074,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Open {param0} chests in Chenyu Vale.",
+      "description": [
+        25,
+        240
+      ],
       "id": 80307,
       "name": "Jademound Treasure Hunter",
       "order": 283,
@@ -12858,7 +13086,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Chenyu Vale.",
+      "description": [
+        26,
+        12
+      ],
       "id": 80308,
       "name": "Jademound Adventurer",
       "order": 284,
@@ -12866,7 +13097,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Chenyu Vale.",
+      "description": [
+        26,
+        24
+      ],
       "id": 80309,
       "name": "Jademound Adventurer",
       "order": 285,
@@ -12875,7 +13109,10 @@
     },
     {
       "categoryId": 47,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Chenyu Vale.",
+      "description": [
+        26,
+        48
+      ],
       "id": 80310,
       "name": "Jademound Adventurer",
       "order": 286,
@@ -12932,7 +13169,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Follow {param0} Seelie in the Nostoi Region and Sea of Bygone Eras to their Seelie Courts.",
+      "description": [
+        27,
+        6
+      ],
       "id": 80317,
       "name": "Domus Aurea Guide",
       "order": 293,
@@ -12940,7 +13180,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Open {param0} chests in the Nostoi Region and the Sea of Bygone Eras.",
+      "description": [
+        28,
+        30
+      ],
       "id": 80320,
       "name": "Ancient Sea Treasure Hunter",
       "order": 296,
@@ -12948,7 +13191,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Open {param0} chests in the Nostoi Region and the Sea of Bygone Eras.",
+      "description": [
+        28,
+        60
+      ],
       "id": 80321,
       "name": "Ancient Sea Treasure Hunter",
       "order": 297,
@@ -12957,7 +13203,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Open {param0} chests in the Nostoi Region and the Sea of Bygone Eras.",
+      "description": [
+        28,
+        120
+      ],
       "id": 80322,
       "name": "Ancient Sea Treasure Hunter",
       "order": 298,
@@ -12966,7 +13215,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in the Nostoi Region and Sea of Bygone Eras.",
+      "description": [
+        29,
+        6
+      ],
       "id": 80323,
       "name": "Ancient Sea Adventurer",
       "order": 299,
@@ -12974,7 +13226,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in the Nostoi Region and Sea of Bygone Eras.",
+      "description": [
+        29,
+        12
+      ],
       "id": 80324,
       "name": "Ancient Sea Adventurer",
       "order": 300,
@@ -12983,7 +13238,10 @@
     },
     {
       "categoryId": 48,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in the Nostoi Region and Sea of Bygone Eras.",
+      "description": [
+        29,
+        24
+      ],
       "id": 80325,
       "name": "Ancient Sea Adventurer",
       "order": 301,
@@ -13092,7 +13350,10 @@
     },
     {
       "categoryId": 52,
-      "description": "Complete the Envisaged Echoes challenge(s) for {param0} character(s)",
+      "description": [
+        30,
+        1
+      ],
       "id": 82213,
       "name": "Dream Through The Canvas",
       "order": 2213,
@@ -13100,7 +13361,10 @@
     },
     {
       "categoryId": 52,
-      "description": "Complete the Envisaged Echoes challenge(s) for {param0} character(s)",
+      "description": [
+        30,
+        3
+      ],
       "id": 82214,
       "name": "Dream Through The Canvas",
       "order": 2214,
@@ -13109,7 +13373,10 @@
     },
     {
       "categoryId": 52,
-      "description": "Complete the Envisaged Echoes challenge(s) for {param0} character(s)",
+      "description": [
+        30,
+        5
+      ],
       "id": 82215,
       "name": "Dream Through The Canvas",
       "order": 2215,
@@ -13200,7 +13467,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Follow {param0} Monetoo and complete the graffiti in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        31,
+        8
+      ],
       "id": 80333,
       "name": "Monetoo Will Guide You Home (I)",
       "order": 310,
@@ -13208,7 +13478,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Follow {param0} Monetoo and complete the graffiti in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        31,
+        16
+      ],
       "id": 80334,
       "name": "Monetoo Will Guide You Home (I)",
       "order": 311,
@@ -13217,7 +13490,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Follow {param0} Monetoo and complete the graffiti in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        31,
+        32
+      ],
       "id": 80335,
       "name": "Monetoo Will Guide You Home (I)",
       "order": 312,
@@ -13226,7 +13502,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Open {param0} chests in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        32,
+        80
+      ],
       "id": 80336,
       "name": "Ignited Treasure Hunter (I)",
       "order": 313,
@@ -13234,7 +13513,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Open {param0} chests in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        32,
+        160
+      ],
       "id": 80337,
       "name": "Ignited Treasure Hunter (I)",
       "order": 314,
@@ -13243,7 +13525,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Open {param0} chests in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        32,
+        320
+      ],
       "id": 80338,
       "name": "Ignited Treasure Hunter (I)",
       "order": 315,
@@ -13252,7 +13537,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        33,
+        3
+      ],
       "id": 80339,
       "name": "Ignited Adventurer (I)",
       "order": 316,
@@ -13260,7 +13548,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        33,
+        6
+      ],
       "id": 80347,
       "name": "Ignited Adventurer (I)",
       "order": 317,
@@ -13269,7 +13560,10 @@
     },
     {
       "categoryId": 51,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+      "description": [
+        33,
+        12
+      ],
       "id": 80348,
       "name": "Ignited Adventurer (I)",
       "order": 318,
@@ -13334,7 +13628,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Follow {param0} Monetoo and complete the graffiti in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        34,
+        3
+      ],
       "id": 80353,
       "name": "Monetoo Will Guide You Home (II)",
       "order": 327,
@@ -13342,7 +13639,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Follow {param0} Monetoo and complete the graffiti in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        34,
+        6
+      ],
       "id": 80354,
       "name": "Monetoo Will Guide You Home (II)",
       "order": 328,
@@ -13351,7 +13651,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Follow {param0} Monetoo and complete the graffiti in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        34,
+        10
+      ],
       "id": 80355,
       "name": "Monetoo Will Guide You Home (II)",
       "order": 329,
@@ -13360,7 +13663,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Open {param0} chests in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        35,
+        40
+      ],
       "id": 80356,
       "name": "Ignited Treasure Hunter (II)",
       "order": 330,
@@ -13368,7 +13674,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Open {param0} chests in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        35,
+        80
+      ],
       "id": 80357,
       "name": "Ignited Treasure Hunter (II)",
       "order": 331,
@@ -13377,7 +13686,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Open {param0} chests in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        35,
+        160
+      ],
       "id": 80358,
       "name": "Ignited Treasure Hunter (II)",
       "order": 332,
@@ -13386,7 +13698,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Complete {param0} Open World Time Trial Challenges in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        36,
+        3
+      ],
       "id": 80359,
       "name": "Ignited Adventurer (II)",
       "order": 333,
@@ -13394,7 +13709,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Complete {param0} Open World Time Trial Challenges in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        36,
+        6
+      ],
       "id": 80360,
       "name": "Ignited Adventurer (II)",
       "order": 334,
@@ -13403,7 +13721,10 @@
     },
     {
       "categoryId": 55,
-      "description": "Complete {param0} Open World Time Trial Challenges in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+      "description": [
+        36,
+        10
+      ],
       "id": 80361,
       "name": "Ignited Adventurer (II)",
       "order": 335,
@@ -13990,7 +14311,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Redeem {param0} score themes in the \"Treasure of Myriad Melodies.\"",
+      "description": [
+        37,
+        1
+      ],
       "id": 80373,
       "name": "Twenty-Five Groschen...",
       "order": 1544,
@@ -13998,7 +14322,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Redeem {param0} score themes in the \"Treasure of Myriad Melodies.\"",
+      "description": [
+        37,
+        3
+      ],
       "id": 80374,
       "name": "Twenty-Five Groschen...",
       "order": 1545,
@@ -14007,7 +14334,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Redeem {param0} score themes in the \"Treasure of Myriad Melodies.\"",
+      "description": [
+        37,
+        5
+      ],
       "id": 80375,
       "name": "Twenty-Five Groschen...",
       "order": 1546,
@@ -14016,7 +14346,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Reach a performance rating of Discantus for {param0} different official music scores.",
+      "description": [
+        38,
+        5
+      ],
       "id": 80376,
       "name": "The Melody's Trajectory",
       "order": 1547,
@@ -14024,7 +14357,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Reach a performance rating of Discantus for {param0} different official music scores.",
+      "description": [
+        38,
+        15
+      ],
       "id": 80377,
       "name": "The Melody's Trajectory",
       "order": 1548,
@@ -14033,7 +14369,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Reach a performance rating of Discantus for {param0} different official music scores.",
+      "description": [
+        38,
+        30
+      ],
       "id": 80378,
       "name": "The Melody's Trajectory",
       "order": 1549,
@@ -14042,7 +14381,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Reach a performance rating of Discantus for {param0} different music scores by other players.",
+      "description": [
+        39,
+        5
+      ],
       "id": 80379,
       "name": "The Art of the Canon",
       "order": 1550,
@@ -14050,7 +14392,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Reach a performance rating of Discantus for {param0} different music scores by other players.",
+      "description": [
+        39,
+        10
+      ],
       "id": 80380,
       "name": "The Art of the Canon",
       "order": 1551,
@@ -14059,7 +14404,10 @@
     },
     {
       "categoryId": 58,
-      "description": "Reach a performance rating of Discantus for {param0} different music scores by other players.",
+      "description": [
+        39,
+        20
+      ],
       "id": 80381,
       "name": "The Art of the Canon",
       "order": 1552,
@@ -14108,7 +14456,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Follow {param0} Matador Monetoo and complete the graffiti in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        40,
+        3
+      ],
       "id": 80387,
       "name": "Votre Toast, Je Peux Vous Le Rendre",
       "order": 350,
@@ -14116,7 +14467,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Follow {param0} Matador Monetoo and complete the graffiti in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        40,
+        6
+      ],
       "id": 80388,
       "name": "Votre Toast, Je Peux Vous Le Rendre",
       "order": 351,
@@ -14125,7 +14479,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Follow {param0} Matador Monetoo and complete the graffiti in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        40,
+        9
+      ],
       "id": 80389,
       "name": "Votre Toast, Je Peux Vous Le Rendre",
       "order": 352,
@@ -14134,7 +14491,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Open {param0} chests in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        41,
+        40
+      ],
       "id": 80390,
       "name": "Fertile Ash Treasure Hunter",
       "order": 353,
@@ -14142,7 +14502,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Open {param0} chests in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        41,
+        80
+      ],
       "id": 80391,
       "name": "Fertile Ash Treasure Hunter",
       "order": 354,
@@ -14151,7 +14514,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Open {param0} chests in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        41,
+        160
+      ],
       "id": 80392,
       "name": "Fertile Ash Treasure Hunter",
       "order": 355,
@@ -14160,7 +14526,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        42,
+        3
+      ],
       "id": 80393,
       "name": "Fertile Ash Adventurer",
       "order": 356,
@@ -14168,7 +14537,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        42,
+        6
+      ],
       "id": 80394,
       "name": "Fertile Ash Adventurer",
       "order": 357,
@@ -14177,7 +14549,10 @@
     },
     {
       "categoryId": 60,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Ancient Sacred Mountain and Atocpan.",
+      "description": [
+        42,
+        9
+      ],
       "id": 80395,
       "name": "Fertile Ash Adventurer",
       "order": 358,
@@ -14218,7 +14593,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Follow {param0} Monetoo and complete the graffiti in the Easybreeze Holiday Resort.",
+      "description": [
+        43,
+        6
+      ],
       "id": 80433,
       "name": "Monetoo Will Guide You Home (III)",
       "order": 396,
@@ -14226,7 +14604,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Open {param0} chests in Easybreeze Holiday Resort.",
+      "description": [
+        44,
+        30
+      ],
       "id": 80434,
       "name": "Azure Isle Treasure Hunter",
       "order": 397,
@@ -14234,7 +14615,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Open {param0} chests in Easybreeze Holiday Resort.",
+      "description": [
+        44,
+        60
+      ],
       "id": 80435,
       "name": "Azure Isle Treasure Hunter",
       "order": 398,
@@ -14243,7 +14627,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Open {param0} chests in Easybreeze Holiday Resort.",
+      "description": [
+        44,
+        120
+      ],
       "id": 80436,
       "name": "Azure Isle Treasure Hunter",
       "order": 399,
@@ -14252,7 +14639,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Easybreeze Holiday Resort.",
+      "description": [
+        45,
+        6
+      ],
       "id": 80437,
       "name": "Azure Isle Adventurer",
       "order": 400,
@@ -14260,7 +14650,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Easybreeze Holiday Resort.",
+      "description": [
+        45,
+        12
+      ],
       "id": 80438,
       "name": "Azure Isle Adventurer",
       "order": 401,
@@ -14269,7 +14662,10 @@
     },
     {
       "categoryId": 62,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Easybreeze Holiday Resort.",
+      "description": [
+        45,
+        24
+      ],
       "id": 80439,
       "name": "Azure Isle Adventurer",
       "order": 402,
@@ -14294,7 +14690,10 @@
     },
     {
       "categoryId": 63,
-      "description": "Open {param0} chests on Lempo Isle, Hiisi Island, and Paha Isle.",
+      "description": [
+        46,
+        60
+      ],
       "id": 80442,
       "name": "Moondust Treasure Hunter (I)",
       "order": 405,
@@ -14302,7 +14701,10 @@
     },
     {
       "categoryId": 63,
-      "description": "Open {param0} chests on Lempo Isle, Hiisi Island, and Paha Isle.",
+      "description": [
+        46,
+        120
+      ],
       "id": 80443,
       "name": "Moondust Treasure Hunter (I)",
       "order": 406,
@@ -14311,7 +14713,10 @@
     },
     {
       "categoryId": 63,
-      "description": "Open {param0} chests on Lempo Isle, Hiisi Island, and Paha Isle.",
+      "description": [
+        46,
+        240
+      ],
       "id": 80444,
       "name": "Moondust Treasure Hunter (I)",
       "order": 407,
@@ -14320,7 +14725,10 @@
     },
     {
       "categoryId": 63,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges on Lempo Isle, Hiisi Island, and Paha Isle.",
+      "description": [
+        47,
+        3
+      ],
       "id": 80445,
       "name": "Moondust Adventurer (I)",
       "order": 408,
@@ -14328,7 +14736,10 @@
     },
     {
       "categoryId": 63,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges on Lempo Isle, Hiisi Island, and Paha Isle.",
+      "description": [
+        47,
+        6
+      ],
       "id": 80446,
       "name": "Moondust Adventurer (I)",
       "order": 409,
@@ -14337,7 +14748,10 @@
     },
     {
       "categoryId": 63,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges on Lempo Isle, Hiisi Island, and Paha Isle.",
+      "description": [
+        47,
+        10
+      ],
       "id": 80447,
       "name": "Moondust Adventurer (I)",
       "order": 410,
@@ -14426,7 +14840,10 @@
     },
     {
       "categoryId": 66,
-      "description": "Open {param0} chests in Voidsea Outlook, Wavechaser Plain, and Ashveil Peak.",
+      "description": [
+        48,
+        45
+      ],
       "id": 80462,
       "name": "Moondust Treasure Hunter (II)",
       "order": 423,
@@ -14434,7 +14851,10 @@
     },
     {
       "categoryId": 66,
-      "description": "Open {param0} chests in Voidsea Outlook, Wavechaser Plain, and Ashveil Peak.",
+      "description": [
+        48,
+        90
+      ],
       "id": 80463,
       "name": "Moondust Treasure Hunter (II)",
       "order": 424,
@@ -14443,7 +14863,10 @@
     },
     {
       "categoryId": 66,
-      "description": "Open {param0} chests in Voidsea Outlook, Wavechaser Plain, and Ashveil Peak.",
+      "description": [
+        48,
+        180
+      ],
       "id": 80464,
       "name": "Moondust Treasure Hunter (II)",
       "order": 425,
@@ -14452,7 +14875,10 @@
     },
     {
       "categoryId": 66,
-      "description": "Complete {param0} Open World mechanism-activated Time Trial Challenges in Voidsea Outlook, Wavechaser Plain, and Ashveil Peak.",
+      "description": [
+        49,
+        5
+      ],
       "id": 80465,
       "name": "Moondust Adventurer (II)",
       "order": 426,
@@ -14556,7 +14982,10 @@
     },
     {
       "categoryId": 67,
-      "description": "Open {param0} chests at Windrest Peak and the Temple of Space.",
+      "description": [
+        50,
+        45
+      ],
       "id": 80475,
       "name": "Treasure Hunter of the Interstice",
       "order": 439,
@@ -14564,7 +14993,10 @@
     },
     {
       "categoryId": 67,
-      "description": "Open {param0} chests at Windrest Peak and the Temple of Space.",
+      "description": [
+        50,
+        90
+      ],
       "id": 80476,
       "name": "Treasure Hunter of the Interstice",
       "order": 440,
@@ -14573,7 +15005,10 @@
     },
     {
       "categoryId": 67,
-      "description": "Open {param0} chests at Windrest Peak and the Temple of Space.",
+      "description": [
+        50,
+        180
+      ],
       "id": 80477,
       "name": "Treasure Hunter of the Interstice",
       "order": 441,
@@ -14582,7 +15017,10 @@
     },
     {
       "categoryId": 67,
-      "description": "Complete {param0} Open World Time Trial Challenges at Windrest Peak and the Temple of Space.",
+      "description": [
+        51,
+        7
+      ],
       "id": 80487,
       "name": "Adventurer of the Interstice",
       "order": 442,
@@ -14590,7 +15028,10 @@
     },
     {
       "categoryId": 67,
-      "description": "Complete {param0} Open World Time Trial Challenges at Windrest Peak and the Temple of Space.",
+      "description": [
+        51,
+        14
+      ],
       "id": 80488,
       "name": "Adventurer of the Interstice",
       "order": 443,
@@ -14599,7 +15040,10 @@
     },
     {
       "categoryId": 67,
-      "description": "Complete {param0} Open World Time Trial Challenges at Windrest Peak and the Temple of Space.",
+      "description": [
+        51,
+        28
+      ],
       "id": 80489,
       "name": "Adventurer of the Interstice",
       "order": 444,
@@ -14648,7 +15092,10 @@
     },
     {
       "categoryId": 68,
-      "description": "Open {param0} chests in the Dunanna Pit and the Frost Moon",
+      "description": [
+        52,
+        45
+      ],
       "id": 80490,
       "name": "Moonmist Treasure Hunter",
       "order": 450,
@@ -14656,7 +15103,10 @@
     },
     {
       "categoryId": 68,
-      "description": "Open {param0} chests in the Dunanna Pit and the Frost Moon",
+      "description": [
+        52,
+        90
+      ],
       "id": 80491,
       "name": "Moonmist Treasure Hunter",
       "order": 451,
@@ -14665,7 +15115,10 @@
     },
     {
       "categoryId": 68,
-      "description": "Open {param0} chests in the Dunanna Pit and the Frost Moon",
+      "description": [
+        52,
+        180
+      ],
       "id": 80492,
       "name": "Moonmist Treasure Hunter",
       "order": 452,
@@ -14674,7 +15127,10 @@
     },
     {
       "categoryId": 68,
-      "description": "Complete {param0} Open World Time Trial Challenges in the Dunanna Pit and the Frost Moon.",
+      "description": [
+        53,
+        4
+      ],
       "id": 80493,
       "name": "Moonmist Adventurer",
       "order": 453,
@@ -14794,7 +15250,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Follow {param0} Seelies in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak to their Seelie Courts.",
+      "description": [
+        54,
+        3
+      ],
       "id": 80509,
       "name": "The Tundra Will Guide You Home (I)",
       "order": 468,
@@ -14802,7 +15261,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Follow {param0} Seelies in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak to their Seelie Courts.",
+      "description": [
+        54,
+        5
+      ],
       "id": 80510,
       "name": "The Tundra Will Guide You Home (I)",
       "order": 469,
@@ -14811,7 +15273,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Follow {param0} Seelies in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak to their Seelie Courts.",
+      "description": [
+        54,
+        10
+      ],
       "id": 80511,
       "name": "The Tundra Will Guide You Home (I)",
       "order": 470,
@@ -14820,7 +15285,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Open {param0} chests in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+      "description": [
+        55,
+        65
+      ],
       "id": 80512,
       "name": "Glacial Treasure Hunter (I)",
       "order": 471,
@@ -14828,7 +15296,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Open {param0} chests in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+      "description": [
+        55,
+        130
+      ],
       "id": 80513,
       "name": "Glacial Treasure Hunter (I)",
       "order": 472,
@@ -14837,7 +15308,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Open {param0} chests in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+      "description": [
+        55,
+        260
+      ],
       "id": 80514,
       "name": "Glacial Treasure Hunter (I)",
       "order": 473,
@@ -14846,7 +15320,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Complete {param0} Open World Time Trial Challenges in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+      "description": [
+        56,
+        6
+      ],
       "id": 80515,
       "name": "Chillwinter Adventurer (I)",
       "order": 474,
@@ -14854,7 +15331,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Complete {param0} Open World Time Trial Challenges in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+      "description": [
+        56,
+        12
+      ],
       "id": 80516,
       "name": "Chillwinter Adventurer (I)",
       "order": 475,
@@ -14863,7 +15343,10 @@
     },
     {
       "categoryId": 69,
-      "description": "Complete {param0} Open World Time Trial Challenges in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+      "description": [
+        56,
+        24
+      ],
       "id": 80517,
       "name": "Chillwinter Adventurer (I)",
       "order": 476,
@@ -14952,7 +15435,10 @@
     },
     {
       "categoryId": 70,
-      "description": "Obtain {param0} Edge of Survival Medal(s).",
+      "description": [
+        57,
+        9
+      ],
       "id": 86066,
       "name": "Ace of Survival",
       "order": 9063,
@@ -15010,7 +15496,10 @@
     },
     {
       "categoryId": 70,
-      "description": "Defeat a total of {param0} enemies while sliding.",
+      "description": [
+        58,
+        20
+      ],
       "id": 86074,
       "name": "Aiming While Sliding is Pure Fantasy",
       "order": 9071,
@@ -15415,5 +15904,66 @@
       "name": "Land of Surging Shadows",
       "order": 73
     }
+  ],
+  "descriptionTemplates": [
+    "Launch Nirodha Fruits with Sorush's help to melt {0} crystals condensed from Amrita.",
+    "Follow {0} Seelie in the Desert of Hadramaveth to their Seelie Courts.",
+    "Open {0} treasure chests in the Desert of Hadramaveth.",
+    "Complete {0} Open World Time Trial Challenges in the Desert of Hadramaveth.",
+    "Obtain {0} Lucky Coins in total.",
+    "Cause a total of {0} Elemental Reactions in victorious matches.",
+    "Deal 8 or more points of damage in one single action a total of {0} time(s) in victorious games.",
+    "Play a total of {0} Action Cards in victorious matches.",
+    "Play a total of {0} Summons in victorious matches.",
+    "Use 3 or more Elemental Bursts and achieve victory in a total of {0} match(es).",
+    "Withstand a total of {0} damage using shields or healing in victorious matches.",
+    "Defeat 2 or more Character Cards from the opponent's deck in one single action a total of {0} time(s) in victorious games.",
+    "Follow {0} Seelie in Gavireh Lajavard and Realm of Farakhkert to their Seelie Courts.",
+    "Open a total of {0} treasure chests in Gavireh Lajavard and Realm of Farakhkert.",
+    "Complete a total of {0} Open World Time Trial Challenges in Gavireh Lajavard and Realm of Farakhkert.",
+    "Follow {0} Seelie in the Court of Fontaine Region, Belleau Region, and Beryl Region to their Seelie Courts.",
+    "Open {0} chests in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+    "Complete {0} Open World Time Trial Challenges in the Court of Fontaine Region, Belleau Region, and Beryl Region.",
+    "Follow {0} Seelie in Liffey Region and Fontaine Research Institute of Kinetic Energy Engineering Region to their Seelie Courts.",
+    "Open {0} treasure chests in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+    "Complete {0} Open World Time Trial Challenges in the Liffey Region and the Fontaine Research Institute of Kinetic Energy Engineering Region.",
+    "Follow {0} Seelie to their Seelie Courts in the Morte Region and Erinnyes Forest.",
+    "Open {0} treasure chests in the Morte Region and Erinnyes Forest.",
+    "Complete a total of {0} Open World Time Trial Challenges in the Morte Region and Erinnyes Forest.",
+    "Follow {0} Seelie in Chenyu Vale to their Seelie Courts.",
+    "Open {0} chests in Chenyu Vale.",
+    "Complete {0} Open World mechanism-activated Time Trial Challenges in Chenyu Vale.",
+    "Follow {0} Seelie in the Nostoi Region and Sea of Bygone Eras to their Seelie Courts.",
+    "Open {0} chests in the Nostoi Region and the Sea of Bygone Eras.",
+    "Complete {0} Open World mechanism-activated Time Trial Challenges in the Nostoi Region and Sea of Bygone Eras.",
+    "Complete the Envisaged Echoes challenge(s) for {0} character(s)",
+    "Follow {0} Monetoo and complete the graffiti in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+    "Open {0} chests in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+    "Complete {0} Open World Time Trial Challenges in the Basin of Unnumbered Flames, Tequemecan Valley, Coatepec Mountain, and Toyac Springs.",
+    "Follow {0} Monetoo and complete the graffiti in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+    "Open {0} chests in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+    "Complete {0} Open World Time Trial Challenges in Tezcatepetonco Range, Quahuacan Cliff, and Ochkanatlan.",
+    "Redeem {0} score themes in the \"Treasure of Myriad Melodies.\"",
+    "Reach a performance rating of Discantus for {0} different official music scores.",
+    "Reach a performance rating of Discantus for {0} different music scores by other players.",
+    "Follow {0} Matador Monetoo and complete the graffiti in Ancient Sacred Mountain and Atocpan.",
+    "Open {0} chests in Ancient Sacred Mountain and Atocpan.",
+    "Complete {0} Open World mechanism-activated Time Trial Challenges in Ancient Sacred Mountain and Atocpan.",
+    "Follow {0} Monetoo and complete the graffiti in the Easybreeze Holiday Resort.",
+    "Open {0} chests in Easybreeze Holiday Resort.",
+    "Complete {0} Open World mechanism-activated Time Trial Challenges in Easybreeze Holiday Resort.",
+    "Open {0} chests on Lempo Isle, Hiisi Island, and Paha Isle.",
+    "Complete {0} Open World mechanism-activated Time Trial Challenges on Lempo Isle, Hiisi Island, and Paha Isle.",
+    "Open {0} chests in Voidsea Outlook, Wavechaser Plain, and Ashveil Peak.",
+    "Complete {0} Open World mechanism-activated Time Trial Challenges in Voidsea Outlook, Wavechaser Plain, and Ashveil Peak.",
+    "Open {0} chests at Windrest Peak and the Temple of Space.",
+    "Complete {0} Open World Time Trial Challenges at Windrest Peak and the Temple of Space.",
+    "Open {0} chests in the Dunanna Pit and the Frost Moon",
+    "Complete {0} Open World Time Trial Challenges in the Dunanna Pit and the Frost Moon.",
+    "Follow {0} Seelies in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak to their Seelie Courts.",
+    "Open {0} chests in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+    "Complete {0} Open World Time Trial Challenges in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+    "Obtain {0} Edge of Survival Medal(s).",
+    "Defeat a total of {0} enemies while sliding."
   ]
 }
