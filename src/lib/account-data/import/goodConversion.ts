@@ -69,6 +69,8 @@ export interface GOODData {
   characters?: IGOODCharacter[];
   weapons?: IGOODWeapon[];
   artifacts?: IGOODArtifact[];
+  /** GenshinTools extension: dense list of earned in-game achievement IDs. */
+  achievements?: number[];
   // materials are ignored
 }
 
@@ -90,6 +92,8 @@ export interface ConversionResult {
   warnings: ConversionWarning[];
   /** Which sections had non-empty data in the GOOD import. */
   presentSections: PresentSections;
+  /** Undefined when the GOOD file omitted achievements; an empty array is a replacement. */
+  earnedAchievementIds?: number[];
 }
 
 // --- Conversion Logic ---
@@ -269,6 +273,13 @@ export const convertGOODToAccountData = (
   const charactersMap = new Map<string, CharacterData>();
   const extraWeapons: WeaponData[] = [];
   const extraArtifacts: ArtifactData[] = [];
+  const earnedAchievementIds = Array.isArray(data.achievements)
+    ? [
+        ...new Set(
+          data.achievements.filter((id) => Number.isInteger(id) && id >= 0)
+        ),
+      ].sort((a, b) => a - b)
+    : undefined;
 
   // Track unique warning keys to avoid duplicates
   const seenCharacterKeys = new Set<string>();
@@ -440,5 +451,6 @@ export const convertGOODToAccountData = (
       weapons: hasWeapons,
       artifacts: hasArtifacts,
     },
+    earnedAchievementIds,
   };
 };

@@ -294,11 +294,13 @@ export default function AccountDataPage() {
           name: routing.name,
           setAsActive: routing.activeId,
           artifactIdMap: partialMergeMap,
+          earnedAchievementIds: result.earnedAchievementIds,
         });
         showImportSuccess();
       } else {
         // Dialog path — store raw GOOD for re-conversion at resolution time
         const pending = routing.pendingImport;
+        pending.earnedAchievementIds = result.earnedAchievementIds;
         if (isPartial) {
           pending.rawGOOD = data;
           pending.presentSections = presentSections;
@@ -479,6 +481,7 @@ export default function AccountDataPage() {
       setAsActive: result.activeId,
       promoteToId: result.promoteToId,
       artifactIdMap: resolveArtifactIdMap,
+      earnedAchievementIds: effectivePending.earnedAchievementIds,
     });
 
     showImportSuccess();

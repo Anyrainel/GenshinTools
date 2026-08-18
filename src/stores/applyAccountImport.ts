@@ -1,6 +1,7 @@
 import type { AccountData } from "@/data/types";
 import type { AccountProfileId } from "@/lib/account-data/types";
 import { useAccountStore } from "./useAccountStore";
+import { useAchievementStore } from "./useAchievementStore";
 import {
   collectAllArtifactIds,
   remapFreezeStoreForImport,
@@ -50,6 +51,8 @@ export function applyAccountImport(opts: {
   promoteToId?: AccountProfileId;
   /** Old→new artifact ID mapping for freeze-store remapping. */
   artifactIdMap?: Map<string, string>;
+  /** Present only when the import contains an achievement section. Replaces local status. */
+  earnedAchievementIds?: readonly number[];
 }): ApplyAccountImportResult {
   const lastUpdate = opts.lastUpdate ?? Date.now();
   useScoreUpCacheStore.getState().clear();
@@ -61,6 +64,11 @@ export function applyAccountImport(opts: {
     lastUpdate,
     ...(opts.name ? { name: opts.name } : {}),
   });
+  if (opts.earnedAchievementIds !== undefined) {
+    useAchievementStore
+      .getState()
+      .replaceEarnedIds(opts.accountId, opts.earnedAchievementIds);
+  }
   if (opts.promoteToId !== undefined) {
     promoteProfileScopedStores(opts.accountId, opts.promoteToId);
     store.promoteToUid(opts.accountId, opts.promoteToId);

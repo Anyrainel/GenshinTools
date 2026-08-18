@@ -144,6 +144,21 @@ export const PersistedAccountStoreSchema = z.object({
   activeAccountId: z.number().nullable().catch(null),
 });
 
+// Achievement completion is intentionally persisted in its own local-only
+// store. Keeping it out of AccountData ensures cloud account shards never
+// upload or restore this comparatively large collection.
+export const PersistedAchievementStoreSchema = z.object({
+  earnedIdsByProfileId: z
+    .record(
+      z.string(),
+      z
+        .array(z.number().int().nonnegative())
+        .catch([])
+        .transform((ids) => [...new Set(ids)].sort((a, b) => a - b))
+    )
+    .catch({}),
+});
+
 export const PersistedAccountScoreCacheStoreSchema = z.object({
   scoresByProfileId: z
     .record(z.string(), z.record(z.string(), z.unknown().nullable()))

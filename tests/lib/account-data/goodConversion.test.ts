@@ -276,6 +276,35 @@ describe("convertGOODToAccountData", () => {
   });
 
   describe("presentSections", () => {
+    it("normalizes the optional dense achievement extension", () => {
+      const result = convertGOODToAccountData({
+        format: "GOOD",
+        version: 3,
+        source: "GOODCapture",
+        achievements: [82001, 81001, 82001, -1, 1.5],
+      });
+
+      expect(result.earnedAchievementIds).toEqual([81001, 82001]);
+    });
+
+    it("distinguishes an omitted achievement section from an empty replacement", () => {
+      expect(
+        convertGOODToAccountData({
+          format: "GOOD",
+          version: 3,
+          source: "Test",
+        }).earnedAchievementIds
+      ).toBeUndefined();
+      expect(
+        convertGOODToAccountData({
+          format: "GOOD",
+          version: 3,
+          source: "Test",
+          achievements: [],
+        }).earnedAchievementIds
+      ).toEqual([]);
+    });
+
     it("reports all sections present for full GOOD data", () => {
       const result = convertGOODToAccountData(goodSample as GOODData);
       expect(result.presentSections).toEqual({

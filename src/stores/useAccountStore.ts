@@ -7,6 +7,7 @@ import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
 import { migrateAccountStore } from "./migration/account";
 import { PersistedAccountStoreSchema } from "./schemas";
 import { useAccountScoreCacheStore } from "./useAccountScoreCacheStore";
+import { useAchievementStore } from "./useAchievementStore";
 
 interface AccountStore {
   accounts: Record<AccountProfileId, AccountState>;
@@ -67,6 +68,7 @@ export const useAccountStore = create<AccountStore>()(
           useAccountScoreCacheStore
             .getState()
             .renameProfileCache(currentId, newId);
+          useAchievementStore.getState().renameProfile(currentId, newId);
 
           return {
             accounts: newAccounts,
@@ -82,6 +84,7 @@ export const useAccountStore = create<AccountStore>()(
           const newAccounts = { ...state.accounts };
           delete newAccounts[id];
           useAccountScoreCacheStore.getState().deleteProfileCache(id);
+          useAchievementStore.getState().deleteProfile(id);
 
           let newActive = state.activeAccountId;
           if (newActive === id) {
@@ -94,6 +97,7 @@ export const useAccountStore = create<AccountStore>()(
 
       clearAccounts: () => {
         useAccountScoreCacheStore.getState().clearAllScores();
+        useAchievementStore.getState().clearAll();
         set({ accounts: {}, activeAccountId: null });
       },
     }),

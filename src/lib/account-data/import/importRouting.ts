@@ -26,6 +26,8 @@ export type PendingImport = {
   /** For partial GOOD imports via dialog — re-convert + merge at resolution time. */
   rawGOOD?: GOODData;
   presentSections?: PresentSections;
+  /** Local-only achievement completion imported by replacement when present. */
+  earnedAchievementIds?: number[];
 };
 
 /** Write data directly to the store, then set it active. */

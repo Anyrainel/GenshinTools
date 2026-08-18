@@ -33,6 +33,7 @@ import {
 } from "./gameDataUtil";
 import { LEYLINE_BOSS_IMAGE_ENEMY_ID } from "./resources_manual";
 import type {
+  AchievementData,
   ArtifactGameData,
   BossDescription,
   BossInfo,
@@ -113,6 +114,21 @@ export const characterKitsResource: LangResource<CharacterKitBundle> =
         ),
       betaEnabled
     )()
+  );
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Achievements — achievement_{en,zh}.json
+// ═══════════════════════════════════════════════════════════════════════════
+
+const achievementModules = import.meta.glob<{ default: AchievementData }>(
+  "./game/achievement_{en,zh}.json",
+  { eager: false }
+);
+
+/** Route-lazy, per-language achievement metadata cached for the app lifetime. */
+export const achievementTextResource: LangResource<AchievementData> =
+  makeLangResource((lang) =>
+    loadFromGlob(achievementModules, `./game/achievement_${lang}.json`)
   );
 
 // ═══════════════════════════════════════════════════════════════════════════

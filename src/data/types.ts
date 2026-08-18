@@ -435,3 +435,30 @@ export interface LangResource<T> {
   use(lang: Language): T | null;
   peek(lang: Language): T | null;
 }
+
+/** Localized metadata for one in-game achievement category. */
+export interface AchievementCategory {
+  id: number;
+  name: string;
+  /** In-game category order from the datamine. */
+  order: number;
+}
+
+/** Localized metadata for one in-game achievement. */
+export interface Achievement {
+  id: number;
+  name: string;
+  description: string;
+  categoryId: number;
+  /** In-game achievement order from the datamine. */
+  order: number;
+  /** First game version containing the achievement, when verifiable. */
+  version?: string;
+  /** Immediately preceding achievement in a multi-step series. */
+  previousId?: number;
+}
+
+export interface AchievementData {
+  categories: AchievementCategory[];
+  achievements: Achievement[];
+}

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   applyCloudRestorePlan,
   buildCloudRestorePlan,
+  buildLocalBackupPartitions,
 } from "@/cloud/storeAdapters";
 import type {
   CloudConflictPolicy,
@@ -12,6 +13,7 @@ import type {
 import type { ArtifactData, Build } from "@/data/types";
 import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useAchievementStore } from "@/stores/useAchievementStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
@@ -72,6 +74,34 @@ describe("cloud store adapters", () => {
     expect(plan.accounts).toBeUndefined();
     expect(plan.teams).toBeUndefined();
     expect(plan.characterTierLists).toBeUndefined();
+  });
+
+  it("never includes local achievement completion in cloud partitions", () => {
+    useAchievementStore.getState().replaceEarnedIds(0, [81001, 82001]);
+
+    const serialized = JSON.stringify(buildLocalBackupPartitions());
+
+    expect(serialized).not.toContain("achievement");
+    expect(serialized).not.toContain("81001");
+    expect(serialized).not.toContain("82001");
+  });
+
+  it("does not replace local achievement completion during cloud restore", () => {
+    useAchievementStore.getState().replaceEarnedIds(0, [81001, 82001]);
+
+    applyCloudRestorePlan(
+      buildCloudRestorePlan([
+        partition("profile.game", "0", {
+          accountProfileId: 0,
+          characters: [],
+          weapons: [],
+        }),
+      ])
+    );
+
+    expect(useAchievementStore.getState().earnedIdsByProfileId[0]).toEqual([
+      81001, 82001,
+    ]);
   });
 
   it("applies restore sections through store APIs and refreshes derived state", () => {

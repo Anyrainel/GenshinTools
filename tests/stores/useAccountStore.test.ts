@@ -10,6 +10,7 @@ import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useAchievementStore } from "@/stores/useAchievementStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import {
   getActiveResourceRecSettings,
@@ -166,6 +167,25 @@ describe("useAccountStore", () => {
   });
 
   describe("applyAccountImport", () => {
+    it("replaces achievements only when the import section is present", () => {
+      const data = createSampleAccountData();
+      useAchievementStore.getState().replaceEarnedIds(0, [101]);
+
+      applyAccountImport({ accountId: 0, data });
+      expect(useAchievementStore.getState().earnedIdsByProfileId[0]).toEqual([
+        101,
+      ]);
+
+      applyAccountImport({
+        accountId: 0,
+        data,
+        earnedAchievementIds: [],
+      });
+      expect(useAchievementStore.getState().earnedIdsByProfileId[0]).toEqual(
+        []
+      );
+    });
+
     it("stamps imports with the current time", () => {
       const now = new Date("2026-04-28T12:00:00Z");
       vi.useFakeTimers();
