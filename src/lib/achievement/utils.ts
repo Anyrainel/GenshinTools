@@ -1,4 +1,17 @@
+import type { Language } from "@/data/enums";
 import type { Achievement } from "@/data/types";
+
+export function buildAchievementVideoSearchUrl(
+  site: "youtube" | "bilibili",
+  achievementName: string,
+  language: Language
+): string {
+  const gameName = language === "zh" ? "原神" : "Genshin Impact";
+  const query = encodeURIComponent(`${achievementName} ${gameName}`);
+  return site === "youtube"
+    ? `https://www.youtube.com/results?search_query=${query}`
+    : `https://search.bilibili.com/all?keyword=${query}`;
+}
 
 export function groupAchievementSeries(
   achievements: readonly Achievement[]

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Achievement } from "@/data/types";
 import {
   achievementSeriesMatchesFilters,
+  buildAchievementVideoSearchUrl,
   groupAchievementSeries,
 } from "@/lib/achievement/utils";
 
@@ -21,6 +22,17 @@ function achievement(
     ...(previousId === undefined ? {} : { previousId }),
   };
 }
+
+describe("buildAchievementVideoSearchUrl", () => {
+  it("adds the localized game name to each site's search query", () => {
+    expect(buildAchievementVideoSearchUrl("youtube", "Explorer", "en")).toBe(
+      "https://www.youtube.com/results?search_query=Explorer%20Genshin%20Impact"
+    );
+    expect(buildAchievementVideoSearchUrl("bilibili", "探索者", "zh")).toBe(
+      "https://search.bilibili.com/all?keyword=%E6%8E%A2%E7%B4%A2%E8%80%85%20%E5%8E%9F%E7%A5%9E"
+    );
+  });
+});
 
 describe("groupAchievementSeries", () => {
   it("groups predecessor chains and preserves achievement order", () => {
