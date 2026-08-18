@@ -1293,6 +1293,43 @@ export const i18nUiData = {
     weapons: { en: "Weapon Archive", zh: "武器图鉴" },
     artifacts: { en: "Artifact Archive", zh: "圣遗物图鉴" },
     bosses: { en: "Stygian Onslaught", zh: "幽境危战图鉴" },
+    achievements: { en: "Achievements", zh: "成就图鉴" },
+    achievementCategories: { en: "Achievement categories", zh: "成就分类" },
+    achievementSeries: { en: "series", zh: "组" },
+    achievementUnfinished: { en: "Unfinished", zh: "未完成" },
+    achievementFinished: { en: "Finished", zh: "已完成" },
+    achievementSearchPlaceholder: {
+      en: "Search achievement names and descriptions...",
+      zh: "搜索成就名称和描述...",
+    },
+    loadingAchievements: {
+      en: "Loading achievements...",
+      zh: "正在加载成就...",
+    },
+    noAchievementResults: {
+      en: "No achievements match these filters",
+      zh: "没有成就符合当前筛选条件",
+    },
+    achievementNeedsAccount: {
+      en: "Select or create an account profile to track achievement progress.",
+      zh: "请选择或创建账号档案后再记录成就进度。",
+    },
+    markAchievementFinished: {
+      en: "Mark {0} as finished",
+      zh: "将{0}标记为已完成",
+    },
+    markAchievementUnfinished: {
+      en: "Mark {0} as unfinished",
+      zh: "将{0}标记为未完成",
+    },
+    searchYouTube: {
+      en: "Search YouTube for {0}",
+      zh: "在 YouTube 搜索{0}",
+    },
+    searchBilibili: {
+      en: "Search Bilibili for {0}",
+      zh: "在哔哩哔哩搜索{0}",
+    },
     viewCharacter: { en: "View in Archive", zh: "查看图鉴" },
     bossSelectPrompt: {
       en: "Select a boss to view details",

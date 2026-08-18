@@ -18,6 +18,7 @@ import {
   Sword,
   Swords,
   TrendingUp,
+  Trophy,
   Users,
 } from "lucide-react";
 import type { useLanguage } from "@/contexts/LanguageContext";
@@ -205,6 +206,12 @@ export const getNavigationConfig = (
         href: "/archive/bosses",
         value: "bosses",
         icon: Skull,
+      },
+      {
+        label: t.ui("archive.achievements"),
+        href: "/archive/achievements",
+        value: "achievements",
+        icon: Trophy,
       },
     ],
   },
