@@ -378,8 +378,8 @@ export function AccountManagerDialog({
 
           {!isImportMode && onOpenImportControl && (
             <Button
-              variant="outline"
-              className="mt-2 w-full gap-2 border-dashed h-12"
+              variant="soft"
+              className="mt-2 h-12 w-full gap-2"
               onClick={() => {
                 onClose();
                 onOpenImportControl();

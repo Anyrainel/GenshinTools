@@ -248,18 +248,20 @@ export function TierListManagerDialog({
             );
           })}
 
-          {/* Create new tier list card */}
-          <div
-            className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3 cursor-pointer transition-colors hover:bg-muted/50 hover:border-primary/50 mt-2"
+          {/* Create new tier list action */}
+          <Button
+            type="button"
+            variant="soft"
+            className="mt-2 h-auto w-full justify-start gap-3 rounded-lg p-3"
             onClick={handleCreate}
           >
-            <div className="p-1.5 rounded-full shrink-0 border border-current text-muted-foreground">
+            <span className="shrink-0 rounded-full border border-primary/50 p-1.5 text-primary">
               <Plus className="w-5 h-5" />
-            </div>
+            </span>
             <span className="font-medium text-foreground">
               {t.ui("tierList.createNew")}
             </span>
-          </div>
+          </Button>
         </div>
       </ResponsiveDialogContent>
       <AlertDialog
