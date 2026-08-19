@@ -1,4 +1,4 @@
-import { Check, Medal, Trophy } from "lucide-react";
+import { BookMarked, Check, Trophy } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
@@ -60,11 +60,9 @@ function CategoryList({
             )}
           >
             <span className="flex items-center gap-2.5">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <Medal className="size-4" />
-              </span>
+              <BookMarked className="mx-1.5 size-5 shrink-0 text-primary" />
               <span className="min-w-0">
-                <span className="block text-sm font-medium">
+                <span className="block text-sm font-medium lg:text-base">
                   {category.name}
                 </span>
                 <span className="text-xs text-foreground/80">
@@ -109,9 +107,9 @@ function AchievementSeriesCard({
               )}
             >
               <div className="relative z-10 flex w-12 shrink-0 items-center justify-center sm:w-14">
-                <Trophy className="h-5 w-5 text-primary" />
+                <Trophy className="h-5 w-5 -translate-x-1 text-primary" />
               </div>
-              <div className="relative z-10 flex min-w-0 flex-1 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center">
+              <div className="relative z-10 flex min-w-0 flex-1 flex-col items-stretch gap-1.5 lg:flex-row lg:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
@@ -184,6 +182,20 @@ function AchievementSeriesCard({
                       className="max-h-5 max-w-full object-contain opacity-80 transition-opacity group-hover:opacity-100"
                     />
                   </a>
+                  <span
+                    aria-hidden="true"
+                    className="mx-1 h-6 w-px shrink-0 bg-foreground/20 sm:mx-2"
+                  />
+                  <div className="flex h-10 shrink-0 items-center gap-1">
+                    <span className="text-sm font-medium tabular-nums text-foreground/90">
+                      {achievement.reward}
+                    </span>
+                    <img
+                      src={getAssetUrl("assets/primogem.webp")}
+                      alt={t.ui("archive.primogems")}
+                      className="size-5 object-contain"
+                    />
+                  </div>
                   <button
                     type="button"
                     aria-pressed={finished}
@@ -200,13 +212,13 @@ function AchievementSeriesCard({
                   >
                     <span
                       className={cn(
-                        "flex size-7 items-center justify-center rounded-md border transition-colors",
+                        "flex size-6 items-center justify-center rounded-md border transition-colors",
                         finished
                           ? "border-primary bg-primary text-primary-foreground group-hover:bg-primary/80"
                           : "border-foreground/70 text-foreground group-hover:border-primary group-hover:bg-primary/10 group-hover:text-primary"
                       )}
                     >
-                      {finished && <Check className="size-4" />}
+                      {finished && <Check className="size-3.5" />}
                     </span>
                   </button>
                 </div>
@@ -236,22 +248,24 @@ function CategoryProgressBanner({
 
   return (
     <div className="sticky top-0 z-20 pb-2">
-      <div className="flex items-center gap-3 rounded-lg border-2 border-primary bg-[color-mix(in_hsl,hsl(var(--card))_85%,hsl(var(--primary))_15%)] px-3 py-2 shadow-sm">
-        <h2 className="min-w-0 max-w-[14rem] text-base font-semibold leading-tight sm:text-lg">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border-2 border-primary bg-[color-mix(in_hsl,hsl(var(--card))_75%,hsl(var(--primary))_25%)] px-3 py-2 shadow-sm">
+        <h2 className="shrink-0 whitespace-nowrap text-base font-semibold leading-tight sm:text-lg">
           {category.name}
         </h2>
-        <div className="min-w-20 flex-1">
-          <Progress
-            value={percentage}
-            aria-label={`${category.name}: ${finished} / ${total}`}
-            className="mt-1.5 h-2"
-          />
-          <div className="mt-1 text-center text-xs text-foreground/70">
-            {finished} / {total}
+        <div className="flex min-w-0 basis-72 flex-1 items-start gap-3">
+          <div className="min-w-40 flex-1">
+            <Progress
+              value={percentage}
+              aria-label={`${category.name}: ${finished} / ${total}`}
+              className="mt-1.5 h-2"
+            />
+            <div className="mt-1 text-center text-xs text-foreground/70">
+              {finished} / {total}
+            </div>
           </div>
-        </div>
-        <div className="w-14 shrink-0 text-right text-base font-semibold tabular-nums text-foreground sm:text-lg">
-          {percentage}%
+          <div className="w-14 shrink-0 text-right text-base font-semibold tabular-nums text-foreground sm:text-lg">
+            {percentage}%
+          </div>
         </div>
       </div>
     </div>

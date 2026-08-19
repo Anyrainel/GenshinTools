@@ -13,6 +13,7 @@ describe("expandAchievementReferenceData", () => {
           description: [0, 8, 10],
           categoryId: 1,
           order: 1,
+          reward: 5,
         },
       ],
     });
@@ -20,6 +21,7 @@ describe("expandAchievementReferenceData", () => {
     expect(result.achievements[0]?.description).toBe(
       "Follow 8 Seelie and open 10 chests."
     );
+    expect(result.achievements[0]?.reward).toBe(5);
   });
 
   it("fails loudly for corrupt template references or missing values", () => {
@@ -32,6 +34,7 @@ describe("expandAchievementReferenceData", () => {
           description: [0] as [number],
           categoryId: 1,
           order: 1,
+          reward: 5,
         },
       ],
     };

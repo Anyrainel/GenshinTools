@@ -19,6 +19,7 @@ function achievement(
     description: `Description ${id}`,
     categoryId: 1,
     order,
+    reward: 5,
     version,
     ...(previousId === undefined ? {} : { previousId }),
   };

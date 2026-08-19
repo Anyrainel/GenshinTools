@@ -454,6 +454,8 @@ export interface Achievement {
   order: number;
   /** First game version containing the achievement, when verifiable. */
   version?: string;
+  /** Primogems awarded for completing the achievement. */
+  reward: number;
   /** Immediately preceding achievement in a multi-step series. */
   previousId?: number;
 }
