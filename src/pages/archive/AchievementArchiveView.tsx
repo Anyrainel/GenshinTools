@@ -1,11 +1,10 @@
-import { Check, Circle, Medal, Trophy } from "lucide-react";
+import { Check, Medal, Trophy } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { achievementTextResource } from "@/data/gameDataLoader";
@@ -16,7 +15,7 @@ import {
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
 } from "@/lib/achievement/utils";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useAchievementStore } from "@/stores/useAchievementStore";
 
@@ -25,33 +24,6 @@ type AchievementStatus = "unfinished" | "finished";
 const STATUS_OPTIONS: AchievementStatus[] = ["unfinished", "finished"];
 const VERSION_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
 const EMPTY_EARNED_IDS: number[] = [];
-
-function YouTubeLogo() {
-  return (
-    <svg viewBox="0 0 28 20" aria-hidden="true">
-      <path
-        fill="#FF0000"
-        d="M27.4 3.1A3.5 3.5 0 0 0 25 0.6C22.8 0 14 0 14 0S5.2 0 3 0.6A3.5 3.5 0 0 0 0.6 3.1 36.4 36.4 0 0 0 0 10a36.4 36.4 0 0 0 0.6 6.9A3.5 3.5 0 0 0 3 19.4c2.2 0.6 11 0.6 11 0.6s8.8 0 11-0.6a3.5 3.5 0 0 0 2.4-2.5A36.4 36.4 0 0 0 28 10a36.4 36.4 0 0 0-0.6-6.9Z"
-      />
-      <path fill="#FFFFFF" d="M11.2 14.3V5.7L18.7 10l-7.5 4.3Z" />
-    </svg>
-  );
-}
-
-function BilibiliLogo() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="#00AEEC"
-        d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773z"
-      />
-      <path
-        fill="#FFFFFF"
-        d="M8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373Z"
-      />
-    </svg>
-  );
-}
 
 function CategoryList({
   categories,
@@ -134,7 +106,7 @@ function AchievementSeriesCard({
               <div
                 key={achievement.id}
                 className={cn(
-                  "flex min-w-0 flex-col items-stretch gap-2 px-3 py-3 transition-colors sm:flex-row sm:items-center sm:px-4",
+                  "flex min-w-0 flex-col items-stretch gap-1.5 px-3 py-2 transition-colors sm:flex-row sm:items-center sm:px-4",
                   finished ? "bg-primary/10" : "bg-card"
                 )}
               >
@@ -167,70 +139,51 @@ function AchievementSeriesCard({
                   </p>
                 </div>
 
-                <div className="flex shrink-0 items-end justify-end gap-1.5 sm:gap-2">
-                  <Button
-                    variant="ghost"
-                    className="h-auto min-h-12 w-12 flex-col gap-1 px-1 py-1.5"
-                    asChild
+                <div className="flex shrink-0 items-center justify-end gap-1 sm:gap-2">
+                  <a
+                    href={buildAchievementVideoSearchUrl(
+                      "youtube",
+                      achievement.name,
+                      language
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t.format(
+                      "archive.searchYouTube",
+                      achievement.name
+                    )}
+                    title={t.format("archive.searchYouTube", achievement.name)}
+                    className="group flex h-10 w-[4.5rem] items-center justify-center rounded-md px-1 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    <a
-                      href={buildAchievementVideoSearchUrl(
-                        "youtube",
-                        achievement.name,
-                        language
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={t.format(
-                        "archive.searchYouTube",
-                        achievement.name
-                      )}
-                      title={t.format(
-                        "archive.searchYouTube",
-                        achievement.name
-                      )}
-                    >
-                      <span className="h-4 w-[1.4rem]">
-                        <YouTubeLogo />
-                      </span>
-                      <span className="text-[9px] leading-none text-muted-foreground">
-                        YouTube
-                      </span>
-                    </a>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="h-auto min-h-12 w-12 flex-col gap-1 px-1 py-1.5"
-                    asChild
+                    <img
+                      src={getAssetUrl("assets/brands/youtube.webp")}
+                      alt=""
+                      className="max-h-5 max-w-full object-contain opacity-80 transition-opacity group-hover:opacity-100"
+                    />
+                  </a>
+                  <a
+                    href={buildAchievementVideoSearchUrl(
+                      "bilibili",
+                      achievement.name,
+                      language
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t.format(
+                      "archive.searchBilibili",
+                      achievement.name
+                    )}
+                    title={t.format("archive.searchBilibili", achievement.name)}
+                    className="group flex h-10 w-[4.5rem] items-center justify-center rounded-md px-1 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    <a
-                      href={buildAchievementVideoSearchUrl(
-                        "bilibili",
-                        achievement.name,
-                        language
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={t.format(
-                        "archive.searchBilibili",
-                        achievement.name
-                      )}
-                      title={t.format(
-                        "archive.searchBilibili",
-                        achievement.name
-                      )}
-                    >
-                      <span className="size-4">
-                        <BilibiliLogo />
-                      </span>
-                      <span className="text-[9px] leading-none text-muted-foreground">
-                        Bilibili
-                      </span>
-                    </a>
-                  </Button>
-                  <Button
-                    variant={finished ? "default" : "outline"}
-                    size="icon"
+                    <img
+                      src={getAssetUrl("assets/brands/bilibili.webp")}
+                      alt=""
+                      className="max-h-5 max-w-full object-contain opacity-80 transition-opacity group-hover:opacity-100"
+                    />
+                  </a>
+                  <button
+                    type="button"
                     aria-pressed={finished}
                     aria-label={t.format(
                       finished
@@ -241,9 +194,19 @@ function AchievementSeriesCard({
                     onClick={() =>
                       onStatusChange(seriesIds, achievement.id, !finished)
                     }
+                    className="group flex size-10 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    {finished ? <Check /> : <Circle />}
-                  </Button>
+                    <span
+                      className={cn(
+                        "flex size-8 items-center justify-center rounded-full border transition-colors",
+                        finished
+                          ? "border-primary bg-primary text-primary-foreground group-hover:bg-primary/80"
+                          : "border-foreground/70 text-foreground group-hover:border-primary group-hover:bg-primary/10 group-hover:text-primary"
+                      )}
+                    >
+                      {finished && <Check className="size-4" />}
+                    </span>
+                  </button>
                 </div>
               </div>
             );
