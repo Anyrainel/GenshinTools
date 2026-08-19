@@ -108,7 +108,7 @@ function AchievementSeriesCard({
                 finished ? "bg-primary/20" : "bg-card/40"
               )}
             >
-              <div className="flex w-10 shrink-0 items-center justify-center sm:w-12">
+              <div className="flex w-12 shrink-0 items-center justify-center sm:w-14">
                 <Trophy className="h-5 w-5 text-primary" />
               </div>
               <div className="flex min-w-0 flex-1 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center">
@@ -200,7 +200,7 @@ function AchievementSeriesCard({
                   >
                     <span
                       className={cn(
-                        "flex size-8 items-center justify-center rounded-md border transition-colors",
+                        "flex size-7 items-center justify-center rounded-md border transition-colors",
                         finished
                           ? "border-primary bg-primary text-primary-foreground group-hover:bg-primary/80"
                           : "border-foreground/70 text-foreground group-hover:border-primary group-hover:bg-primary/10 group-hover:text-primary"
@@ -236,7 +236,7 @@ function CategoryProgressBanner({
 
   return (
     <div className="sticky top-0 z-20 pb-2">
-      <div className="flex items-center gap-3 rounded-lg border border-primary/50 bg-card px-3 py-2 shadow-sm">
+      <div className="flex items-center gap-3 rounded-lg border-2 border-primary bg-[color-mix(in_hsl,hsl(var(--card))_85%,hsl(var(--primary))_15%)] px-3 py-2 shadow-sm">
         <h2 className="min-w-0 max-w-[14rem] text-base font-semibold leading-tight sm:text-lg">
           {category.name}
         </h2>
@@ -324,6 +324,19 @@ export function AchievementArchiveView() {
     (state) => state.setSeriesAchievementStatus
   );
   const earnedIds = useMemo(() => new Set(earnedIdList), [earnedIdList]);
+  const [filterSnapshot, setFilterSnapshot] = useState<{
+    profileId: number | null;
+    earnedIds: number[];
+  }>(() => ({ profileId: activeAccountId, earnedIds: [...earnedIdList] }));
+  const filterEarnedIds = useMemo(
+    () =>
+      new Set(
+        filterSnapshot.profileId === activeAccountId
+          ? filterSnapshot.earnedIds
+          : earnedIdList
+      ),
+    [activeAccountId, earnedIdList, filterSnapshot]
+  );
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null
   );
@@ -333,6 +346,41 @@ export function AchievementArchiveView() {
   );
   const [versionFilter, setVersionFilter] = useState<Set<number>>(
     () => new Set()
+  );
+
+  const refreshFilterSnapshot = useCallback(() => {
+    setFilterSnapshot({
+      profileId: activeAccountId,
+      earnedIds: [...earnedIdList],
+    });
+  }, [activeAccountId, earnedIdList]);
+
+  useEffect(() => {
+    if (filterSnapshot.profileId !== activeAccountId) {
+      refreshFilterSnapshot();
+    }
+  }, [activeAccountId, filterSnapshot.profileId, refreshFilterSnapshot]);
+
+  const handleCategorySelect = useCallback(
+    (categoryId: number) => {
+      refreshFilterSnapshot();
+      setSelectedCategoryId(categoryId);
+    },
+    [refreshFilterSnapshot]
+  );
+  const handleStatusFilterChange = useCallback(
+    (values: Set<AchievementStatus>) => {
+      refreshFilterSnapshot();
+      setStatusFilter(values);
+    },
+    [refreshFilterSnapshot]
+  );
+  const handleVersionFilterChange = useCallback(
+    (values: Set<number>) => {
+      refreshFilterSnapshot();
+      setVersionFilter(values);
+    },
+    [refreshFilterSnapshot]
   );
 
   const categories = useMemo(
@@ -358,10 +406,10 @@ export function AchievementArchiveView() {
         achievementCategoryMatchesStatusFilter(
           achievementsByCategory.get(category.id) ?? [],
           statusFilter,
-          earnedIds
+          filterEarnedIds
         )
       ),
-    [achievementsByCategory, categories, earnedIds, statusFilter]
+    [achievementsByCategory, categories, filterEarnedIds, statusFilter]
   );
 
   useEffect(() => {
@@ -390,12 +438,12 @@ export function AchievementArchiveView() {
         searchQuery,
         statusFilter,
         versionFilter,
-        earnedIds
+        filterEarnedIds
       )
     );
   }, [
     achievementsByCategory,
-    earnedIds,
+    filterEarnedIds,
     searchQuery,
     selectedCategoryId,
     statusFilter,
@@ -432,7 +480,7 @@ export function AchievementArchiveView() {
       achievementsByCategory={achievementsByCategory}
       earnedIds={earnedIds}
       selectedCategoryId={selectedCategoryId}
-      onSelect={setSelectedCategoryId}
+      onSelect={handleCategorySelect}
     />
   );
   const achievementToolbar = (
@@ -440,9 +488,9 @@ export function AchievementArchiveView() {
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
       statusFilter={statusFilter}
-      onStatusFilterChange={setStatusFilter}
+      onStatusFilterChange={handleStatusFilterChange}
       versionFilter={versionFilter}
-      onVersionFilterChange={setVersionFilter}
+      onVersionFilterChange={handleVersionFilterChange}
     />
   );
 
