@@ -44,6 +44,15 @@ export function groupAchievementSeries(
   );
 }
 
+export function achievementCategoryMatchesStatusFilter(
+  achievements: readonly Achievement[],
+  statuses: ReadonlySet<"unfinished" | "finished">,
+  earnedIds: ReadonlySet<number>
+): boolean {
+  if (statuses.size !== 1 || !statuses.has("unfinished")) return true;
+  return achievements.some((achievement) => !earnedIds.has(achievement.id));
+}
+
 export function achievementSeriesMatchesFilters(
   series: readonly Achievement[],
   query: string,

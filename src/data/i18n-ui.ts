@@ -1295,7 +1295,6 @@ export const i18nUiData = {
     bosses: { en: "Stygian Onslaught", zh: "幽境危战图鉴" },
     achievements: { en: "Achievements", zh: "成就图鉴" },
     achievementCategories: { en: "Achievement categories", zh: "成就分类" },
-    achievementSeries: { en: "series", zh: "组" },
     achievementUnfinished: { en: "Unfinished", zh: "未完成" },
     achievementFinished: { en: "Finished", zh: "已完成" },
     achievementSearchPlaceholder: {

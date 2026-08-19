@@ -6,11 +6,13 @@ import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { achievementTextResource } from "@/data/gameDataLoader";
 import type { Achievement, AchievementCategory } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
+  achievementCategoryMatchesStatusFilter,
   achievementSeriesMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
@@ -217,6 +219,45 @@ function AchievementSeriesCard({
   );
 }
 
+function CategoryProgressBanner({
+  category,
+  achievements,
+  earnedIds,
+}: {
+  category: AchievementCategory;
+  achievements: readonly Achievement[];
+  earnedIds: ReadonlySet<number>;
+}) {
+  const finished = achievements.filter((achievement) =>
+    earnedIds.has(achievement.id)
+  ).length;
+  const total = achievements.length;
+  const percentage = total === 0 ? 0 : Math.round((finished / total) * 100);
+
+  return (
+    <div className="sticky top-0 z-20 pb-2">
+      <div className="flex items-center gap-3 rounded-lg border border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-sm">
+        <h2 className="min-w-0 max-w-[14rem] text-base font-semibold leading-tight sm:text-lg">
+          {category.name}
+        </h2>
+        <div className="min-w-20 flex-1">
+          <Progress
+            value={percentage}
+            aria-label={`${category.name}: ${finished} / ${total}`}
+            className="h-2"
+          />
+          <div className="mt-1 text-xs text-muted-foreground">
+            {finished} / {total}
+          </div>
+        </div>
+        <div className="w-12 shrink-0 text-right text-sm font-semibold tabular-nums text-foreground">
+          {percentage}%
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AchievementFilterToolbar({
   searchQuery,
   onSearchChange,
@@ -311,12 +352,30 @@ export function AchievementArchiveView() {
     return byCategory;
   }, [achievementData]);
 
+  const visibleCategories = useMemo(
+    () =>
+      categories.filter((category) =>
+        achievementCategoryMatchesStatusFilter(
+          achievementsByCategory.get(category.id) ?? [],
+          statusFilter,
+          earnedIds
+        )
+      ),
+    [achievementsByCategory, categories, earnedIds, statusFilter]
+  );
+
   useEffect(() => {
-    if (!isDesktop || categories.length === 0) return;
-    if (!categories.some((category) => category.id === selectedCategoryId)) {
-      setSelectedCategoryId(categories[0].id);
+    if (!isDesktop) return;
+    if (visibleCategories.length === 0) {
+      if (selectedCategoryId !== null) setSelectedCategoryId(null);
+      return;
     }
-  }, [categories, isDesktop, selectedCategoryId]);
+    if (
+      !visibleCategories.some((category) => category.id === selectedCategoryId)
+    ) {
+      setSelectedCategoryId(visibleCategories[0].id);
+    }
+  }, [isDesktop, selectedCategoryId, visibleCategories]);
 
   const selectedCategory = categories.find(
     (category) => category.id === selectedCategoryId
@@ -369,7 +428,7 @@ export function AchievementArchiveView() {
 
   const categoryList = (
     <CategoryList
-      categories={categories}
+      categories={visibleCategories}
       achievementsByCategory={achievementsByCategory}
       earnedIds={earnedIds}
       selectedCategoryId={selectedCategoryId}
@@ -398,14 +457,13 @@ export function AchievementArchiveView() {
       sidebarWidth="w-1/3 max-w-[18rem]"
     >
       {selectedCategory ? (
-        <div className="space-y-3 pb-4">
+        <div className="pb-4">
           {!isDesktop && <div className="pb-1">{achievementToolbar}</div>}
-          <div className="flex items-baseline justify-between px-1">
-            <h2 className="text-lg font-semibold">{selectedCategory.name}</h2>
-            <span className="text-xs text-muted-foreground">
-              {visibleSeries.length} {t.ui("archive.achievementSeries")}
-            </span>
-          </div>
+          <CategoryProgressBanner
+            category={selectedCategory}
+            achievements={achievementsByCategory.get(selectedCategory.id) ?? []}
+            earnedIds={earnedIds}
+          />
           {visibleSeries.length === 0 ? (
             <div className="py-12 text-center text-sm text-muted-foreground">
               {t.ui("archive.noAchievementResults")}

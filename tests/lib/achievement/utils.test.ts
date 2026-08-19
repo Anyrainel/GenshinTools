@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Achievement } from "@/data/types";
 import {
+  achievementCategoryMatchesStatusFilter,
   achievementSeriesMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
@@ -50,6 +51,42 @@ describe("groupAchievementSeries", () => {
     expect(
       groupAchievementSeries([achievement(1, 1, 2), achievement(2, 2, 1)])
     ).toHaveLength(2);
+  });
+});
+
+describe("achievementCategoryMatchesStatusFilter", () => {
+  const achievements = [achievement(1, 1), achievement(2, 2)];
+
+  it("hides fully completed categories only in unfinished-only mode", () => {
+    const allEarned = new Set([1, 2]);
+
+    expect(
+      achievementCategoryMatchesStatusFilter(
+        achievements,
+        new Set(["unfinished"]),
+        allEarned
+      )
+    ).toBe(false);
+    expect(
+      achievementCategoryMatchesStatusFilter(
+        achievements,
+        new Set(["unfinished", "finished"]),
+        allEarned
+      )
+    ).toBe(true);
+    expect(
+      achievementCategoryMatchesStatusFilter(achievements, new Set(), allEarned)
+    ).toBe(true);
+  });
+
+  it("keeps categories that still contain an unfinished achievement", () => {
+    expect(
+      achievementCategoryMatchesStatusFilter(
+        achievements,
+        new Set(["unfinished"]),
+        new Set([1])
+      )
+    ).toBe(true);
   });
 });
 
