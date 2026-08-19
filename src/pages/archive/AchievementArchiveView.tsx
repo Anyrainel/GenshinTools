@@ -194,11 +194,11 @@ function AchievementSeriesCard({
                     onClick={() =>
                       onStatusChange(seriesIds, achievement.id, !finished)
                     }
-                    className="group flex size-10 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    className="group flex size-10 items-center justify-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <span
                       className={cn(
-                        "flex size-8 items-center justify-center rounded-full border transition-colors",
+                        "flex size-8 items-center justify-center rounded-md border transition-colors",
                         finished
                           ? "border-primary bg-primary text-primary-foreground group-hover:bg-primary/80"
                           : "border-foreground/70 text-foreground group-hover:border-primary group-hover:bg-primary/10 group-hover:text-primary"
