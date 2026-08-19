@@ -97,21 +97,21 @@ function AchievementSeriesCard({
 
   return (
     <Card className="overflow-hidden border-border/70 bg-card/60">
-      <div className="flex min-w-0">
-        <div className="flex w-12 shrink-0 items-center justify-center border-r border-border bg-muted/30 sm:w-14">
-          <Trophy className="h-5 w-5 text-primary" />
-        </div>
-        <div className="min-w-0 flex-1 divide-y divide-border">
-          {series.map((achievement) => {
-            const finished = earnedIds.has(achievement.id);
-            return (
-              <div
-                key={achievement.id}
-                className={cn(
-                  "flex min-w-0 flex-col items-stretch gap-1.5 px-3 py-2 transition-colors sm:flex-row sm:items-center sm:px-4",
-                  finished ? "bg-primary/20" : "bg-card/40"
-                )}
-              >
+      <div className="min-w-0 divide-y divide-border">
+        {series.map((achievement) => {
+          const finished = earnedIds.has(achievement.id);
+          return (
+            <div
+              key={achievement.id}
+              className={cn(
+                "flex min-w-0 items-stretch px-2 py-2 transition-colors sm:px-3",
+                finished ? "bg-primary/20" : "bg-card/40"
+              )}
+            >
+              <div className="flex w-10 shrink-0 items-center justify-center sm:w-12">
+                <Trophy className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
@@ -211,9 +211,9 @@ function AchievementSeriesCard({
                   </button>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </Card>
   );
@@ -236,7 +236,7 @@ function CategoryProgressBanner({
 
   return (
     <div className="sticky top-0 z-20 pb-2">
-      <div className="flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 shadow-sm backdrop-blur-sm">
+      <div className="flex items-center gap-3 rounded-lg border border-primary/50 bg-card px-3 py-2 shadow-sm">
         <h2 className="min-w-0 max-w-[14rem] text-base font-semibold leading-tight sm:text-lg">
           {category.name}
         </h2>
@@ -250,7 +250,7 @@ function CategoryProgressBanner({
             {finished} / {total}
           </div>
         </div>
-        <div className="w-14 shrink-0 text-right text-base font-semibold tabular-nums text-primary sm:text-lg">
+        <div className="w-14 shrink-0 text-right text-base font-semibold tabular-nums text-foreground sm:text-lg">
           {percentage}%
         </div>
       </div>
