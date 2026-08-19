@@ -104,14 +104,14 @@ function AchievementSeriesCard({
             <div
               key={achievement.id}
               className={cn(
-                "flex min-w-0 items-stretch px-2 py-2 transition-colors sm:px-3",
-                finished ? "bg-primary/20" : "bg-card/40"
+                "relative flex min-w-0 items-stretch overflow-hidden bg-card/40 px-2 py-2 before:absolute before:inset-0 before:origin-left before:bg-primary/20 before:transition-transform before:duration-1000 sm:px-3",
+                finished ? "before:scale-x-100" : "before:scale-x-0"
               )}
             >
-              <div className="flex w-12 shrink-0 items-center justify-center sm:w-14">
+              <div className="relative z-10 flex w-12 shrink-0 items-center justify-center sm:w-14">
                 <Trophy className="h-5 w-5 text-primary" />
               </div>
-              <div className="flex min-w-0 flex-1 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center">
+              <div className="relative z-10 flex min-w-0 flex-1 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
