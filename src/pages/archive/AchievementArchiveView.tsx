@@ -67,7 +67,7 @@ function CategoryList({
                 <span className="block text-sm font-medium">
                   {category.name}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-foreground/80">
                   {finished} / {achievements.length}
                 </span>
               </span>
@@ -96,7 +96,7 @@ function AchievementSeriesCard({
   const seriesIds = useMemo(() => series.map((item) => item.id), [series]);
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden border-border/70 bg-card/60">
       <div className="flex min-w-0">
         <div className="flex w-12 shrink-0 items-center justify-center border-r border-border bg-muted/30 sm:w-14">
           <Trophy className="h-5 w-5 text-primary" />
@@ -109,7 +109,7 @@ function AchievementSeriesCard({
                 key={achievement.id}
                 className={cn(
                   "flex min-w-0 flex-col items-stretch gap-1.5 px-3 py-2 transition-colors sm:flex-row sm:items-center sm:px-4",
-                  finished ? "bg-primary/10" : "bg-card"
+                  finished ? "bg-primary/20" : "bg-card/40"
                 )}
               >
                 <div className="min-w-0 flex-1">
@@ -117,7 +117,7 @@ function AchievementSeriesCard({
                     <span
                       className={cn(
                         "font-medium leading-tight",
-                        finished ? "text-foreground" : "text-foreground/60"
+                        finished ? "text-foreground" : "text-foreground/80"
                       )}
                     >
                       {achievement.name}
@@ -134,7 +134,7 @@ function AchievementSeriesCard({
                   <p
                     className={cn(
                       "mt-1 text-sm",
-                      finished ? "text-muted-foreground" : "text-foreground/40"
+                      finished ? "text-foreground/80" : "text-foreground/70"
                     )}
                   >
                     {achievement.description}
@@ -236,7 +236,7 @@ function CategoryProgressBanner({
 
   return (
     <div className="sticky top-0 z-20 pb-2">
-      <div className="flex items-center gap-3 rounded-lg border border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-sm">
+      <div className="flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 shadow-sm backdrop-blur-sm">
         <h2 className="min-w-0 max-w-[14rem] text-base font-semibold leading-tight sm:text-lg">
           {category.name}
         </h2>
@@ -244,13 +244,13 @@ function CategoryProgressBanner({
           <Progress
             value={percentage}
             aria-label={`${category.name}: ${finished} / ${total}`}
-            className="h-2"
+            className="mt-1.5 h-2"
           />
-          <div className="mt-1 text-xs text-muted-foreground">
+          <div className="mt-1 text-center text-xs text-foreground/70">
             {finished} / {total}
           </div>
         </div>
-        <div className="w-12 shrink-0 text-right text-sm font-semibold tabular-nums text-foreground">
+        <div className="w-14 shrink-0 text-right text-base font-semibold tabular-nums text-primary sm:text-lg">
           {percentage}%
         </div>
       </div>
