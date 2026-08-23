@@ -8,6 +8,7 @@ import type {
   IGOODSubstat,
   IGOODWeapon,
 } from "./goodConversion";
+import { DEFAULT_MULTI_ELEMENT_CHARACTER_ELEMENT } from "./multiElementCharacters";
 
 // --- Precise substat decoding from appendPropIdList ---
 
@@ -132,6 +133,14 @@ async function ensureReverseMaps(): Promise<void> {
       const depotId = Number.parseInt(id.split("-")[1], 10);
       charIdToKey[`10000007-${depotId + 200}`] = key;
     }
+  }
+
+  // Some import payloads omit skillDepotId. Preserve as much identity as the
+  // remaining avatar ID allows by using the current default variant.
+  const defaultSuffix = `_${DEFAULT_MULTI_ELEMENT_CHARACTER_ELEMENT.toLowerCase()}`;
+  for (const [id, key] of Object.entries({ ...charIdToKey })) {
+    if (!key.endsWith(defaultSuffix) || !id.includes("-")) continue;
+    charIdToKey[id.split("-")[0]] = key;
   }
 
   weaponIdToKey = buildReverseMap(weaponMod.default as Record<string, IdEntry>);

@@ -130,7 +130,7 @@ describe("convertGOODToAccountData", () => {
       expect(result.data.characters[0].level).toBe(1);
     });
 
-    it("handles Traveler special case", () => {
+    it("defaults a bare Traveler key to Cryo", () => {
       const travelerData: GOODData = {
         format: "GOOD",
         version: 1,
@@ -140,7 +140,8 @@ describe("convertGOODToAccountData", () => {
         ],
       };
       const result = convertGOODToAccountData(travelerData);
-      expect(result.data.characters.length).toBeGreaterThanOrEqual(0);
+      expect(result.data.characters).toHaveLength(1);
+      expect(result.data.characters[0].key).toBe("traveler_cryo");
     });
 
     it("handles bare Manekin key (third-party GOOD import)", () => {
@@ -153,9 +154,9 @@ describe("convertGOODToAccountData", () => {
         ],
       };
       const result = convertGOODToAccountData(data);
-      // Should default to Pyro variant
+      // Bare multi-element keys follow the current released default variant.
       expect(result.data.characters).toHaveLength(1);
-      expect(result.data.characters[0].key).toBe("manekin_pyro");
+      expect(result.data.characters[0].key).toBe("manekin_cryo");
     });
 
     it("handles bare Manekina key (third-party GOOD import)", () => {
@@ -169,7 +170,47 @@ describe("convertGOODToAccountData", () => {
       };
       const result = convertGOODToAccountData(data);
       expect(result.data.characters).toHaveLength(1);
-      expect(result.data.characters[0].key).toBe("manekina_pyro");
+      expect(result.data.characters[0].key).toBe("manekina_cryo");
+    });
+
+    it("recognizes Cryo variants from the GOOD element field", () => {
+      const data: GOODData = {
+        format: "GOOD",
+        version: 3,
+        source: "Test",
+        characters: [
+          {
+            key: "Traveler",
+            element: "Cryo",
+            level: 90,
+            constellation: 6,
+            ascension: 6,
+          },
+          {
+            key: "Manekin",
+            element: "cryo",
+            level: 90,
+            constellation: 0,
+            ascension: 6,
+          },
+          {
+            key: "Manekina",
+            element: "CRYO",
+            level: 90,
+            constellation: 0,
+            ascension: 6,
+          },
+        ],
+      };
+
+      const result = convertGOODToAccountData(data);
+
+      expect(result.warnings).toEqual([]);
+      expect(result.data.characters.map((character) => character.key)).toEqual([
+        "traveler_cryo",
+        "manekin_cryo",
+        "manekina_cryo",
+      ]);
     });
 
     it("handles element-specific Manekin key from Enka conversion", () => {

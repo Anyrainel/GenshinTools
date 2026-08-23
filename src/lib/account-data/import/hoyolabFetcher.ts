@@ -12,6 +12,11 @@ import type {
   IGOODSubstat,
   IGOODWeapon,
 } from "./goodConversion";
+import {
+  MULTI_ELEMENT_CHARACTER_NAMES,
+  normalizeElementName,
+  resolveMultiElementCharacterKey,
+} from "./multiElementCharacters";
 
 // HoYoLAB / 米游社 Battle Chronicle import.
 //
@@ -163,16 +168,6 @@ const SLOT_BY_POS: Record<number, string> = {
   5: "circlet",
 };
 
-const MULTI_ELEMENT_CHARACTER_NAMES = new Set([
-  "Traveler",
-  "Manekin",
-  "Manekina",
-]);
-
-function normalizeElementName(element: string): string {
-  return element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
-}
-
 function resolveHoyolabCharacterKey(
   name: string,
   element: string | undefined
@@ -180,13 +175,7 @@ function resolveHoyolabCharacterKey(
   const directKey = charNameMap.get(normalize(name));
   if (directKey) return directKey;
 
-  if (!element || !MULTI_ELEMENT_CHARACTER_NAMES.has(name)) {
-    return undefined;
-  }
-
-  return charNameMap.get(
-    normalize(`${name} (${normalizeElementName(element)})`)
-  );
+  return resolveMultiElementCharacterKey(name, element);
 }
 
 // Low-level fetch through the signed proxy

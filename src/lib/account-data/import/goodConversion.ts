@@ -1,6 +1,5 @@
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import { artifactsById } from "@/data/gameResources";
-import { i18nGameData } from "@/data/i18n-game";
 import type {
   AccountData,
   ArtifactData,
@@ -16,6 +15,7 @@ import {
   weaponNameMap as weaponMap,
 } from "./entityMaps";
 import { ensureLocatedCharacter } from "./locationCharacters";
+import { resolveMultiElementCharacterKey } from "./multiElementCharacters";
 
 // --- Types from GOOD v3 (Genshin Open Object Description) ---
 
@@ -216,47 +216,17 @@ export function convertSingleArtifact(
   return result;
 }
 
-// Multi-element characters: bare key -> default element fallback
-const MULTI_ELEMENT_DEFAULTS: Record<string, string> = {
-  Traveler: "Pyro",
-  Manekin: "Pyro",
-  Manekina: "Pyro",
-};
-
-// Build a lookup from character entries to find which elements exist per base name
-// e.g. charElementLookup["traveler"] = Set{"anemo","geo","electro",...}
-const charElementLookup = new Map<string, Set<string>>();
-for (const data of Object.values(i18nGameData.characters)) {
-  // Match names like "Traveler (Pyro)", "Manekin (Electro)", etc.
-  const match = data.en.match(/^(Traveler|Manekin|Manekina)\s*\((\w+)\)$/);
-  if (match) {
-    const baseName = match[1];
-    const element = match[2].toLowerCase();
-    if (!charElementLookup.has(baseName)) {
-      charElementLookup.set(baseName, new Set());
-    }
-    charElementLookup.get(baseName)!.add(element);
-  }
-}
-
 /**
  * Resolve a bare multi-element character key (e.g. "Traveler", "Manekin")
- * to a suffixed key using the element field if available.
- * Falls back to a default element if element is missing or invalid.
+ * to its internal variant key using the element field if available.
  */
-const resolveMultiElementKey = (key: string, element?: string): string => {
-  const defaultElement = MULTI_ELEMENT_DEFAULTS[key];
-  if (!defaultElement) return key; // Not a multi-element character
-
-  if (element) {
-    // Validate that this element variant exists
-    const validElements = charElementLookup.get(key);
-    if (validElements?.has(element.toLowerCase())) {
-      return `${key} (${element.charAt(0).toUpperCase() + element.slice(1).toLowerCase()})`;
-    }
-  }
-
-  return `${key} (${defaultElement})`;
+const resolveCharacterKey = (
+  key: string,
+  element?: string
+): string | undefined => {
+  return (
+    charMap.get(normalize(key)) ?? resolveMultiElementCharacterKey(key, element)
+  );
 };
 
 /**
@@ -316,14 +286,11 @@ export const convertGOODToAccountData = (
   if (hasCharacters) {
     for (const char of data.characters!) {
       // Store element info for location resolution in weapons/artifacts
-      if (char.element && char.key in MULTI_ELEMENT_DEFAULTS) {
+      if (char.element && resolveMultiElementCharacterKey(char.key)) {
         charElementMap.set(char.key, char.element);
       }
 
-      const key = resolveMultiElementKey(char.key, char.element);
-      const normalizedKey = normalize(key);
-
-      const internalId = charMap.get(normalizedKey);
+      const internalId = resolveCharacterKey(char.key, char.element);
       if (internalId) {
         charactersMap.set(internalId, {
           key: internalId,
@@ -335,7 +302,7 @@ export const convertGOODToAccountData = (
       } else if (!seenCharacterKeys.has(char.key)) {
         // Only add warning if not already seen (deduplicate)
         seenCharacterKeys.add(char.key);
-        console.warn(`Character not found: ${key}`);
+        console.warn(`Character not found: ${char.key}`);
         warnings.push({ type: "character", key: char.key });
       }
     }
@@ -357,11 +324,10 @@ export const convertGOODToAccountData = (
 
         let assigned = false;
         if (wp.location) {
-          const charKey = resolveMultiElementKey(
+          const locationId = resolveCharacterKey(
             wp.location,
             charElementMap.get(wp.location)
           );
-          const locationId = charMap.get(normalize(charKey));
 
           if (locationId) {
             const char = ensureLocatedCharacter(charactersMap, locationId);
@@ -412,11 +378,10 @@ export const convertGOODToAccountData = (
         if (artifactData) {
           let assigned = false;
           if (art.location) {
-            const charKey = resolveMultiElementKey(
+            const locationId = resolveCharacterKey(
               art.location,
               charElementMap.get(art.location)
             );
-            const locationId = charMap.get(normalize(charKey));
 
             if (locationId) {
               const char = ensureLocatedCharacter(charactersMap, locationId);

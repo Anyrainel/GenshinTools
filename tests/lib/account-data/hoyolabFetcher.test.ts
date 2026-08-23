@@ -70,6 +70,40 @@ describe("hoyolabFetcher", () => {
     ]);
   });
 
+  it("recognizes Cryo multi-element characters", () => {
+    const result = convertHoyolabToGOOD({
+      uid: "800000000",
+      region: "os",
+      server: "os_asia",
+      characters: [
+        makeDetail("Traveler", "Cryo", 10000005),
+        makeDetail("Manekin", "Cryo", 10000117),
+        makeDetail("Manekina", "Cryo", 10000118),
+      ],
+    });
+
+    expect(result.warnings).toEqual([]);
+    expect(result.data.characters?.map((character) => character.key)).toEqual([
+      "traveler_cryo",
+      "manekin_cryo",
+      "manekina_cryo",
+    ]);
+  });
+
+  it("defaults multi-element characters without element data to Cryo", () => {
+    const result = convertHoyolabToGOOD({
+      uid: "800000000",
+      region: "os",
+      server: "os_asia",
+      characters: [makeDetail("Traveler", "", 10000005)],
+    });
+
+    expect(result.warnings).toEqual([]);
+    expect(result.data.characters?.[0]).toMatchObject({
+      key: "traveler_cryo",
+    });
+  });
+
   it("preserves character/list element as a detail fallback", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")

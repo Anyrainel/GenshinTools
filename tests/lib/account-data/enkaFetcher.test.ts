@@ -228,6 +228,70 @@ describe("enka", () => {
     });
 
     describe("multi-element character resolution", () => {
+      it.each([
+        [10000005, 505, "traveler_cryo"],
+        [10000007, 705, "traveler_cryo"],
+        [10000117, 11705, "manekin_cryo"],
+        [10000118, 11805, "manekina_cryo"],
+      ] as const)("resolves Cryo avatar %s with depot %s", async (avatarId, skillDepotId, expectedKey) => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId,
+              skillDepotId,
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters?.[0]?.key).toBe(expectedKey);
+      });
+
+      it.each([
+        ["10000005-505", "traveler_cryo"],
+        ["10000007-705", "traveler_cryo"],
+        ["10000117-11705", "manekin_cryo"],
+        ["10000118-11805", "manekina_cryo"],
+      ] as const)("resolves compound Cryo avatar ID %s", async (avatarId, expectedKey) => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId,
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters?.[0]?.key).toBe(expectedKey);
+      });
+
+      it.each([
+        [10000005, "traveler_cryo"],
+        [10000007, "traveler_cryo"],
+        [10000117, "manekin_cryo"],
+        [10000118, "manekina_cryo"],
+      ] as const)("defaults bare multi-element avatar ID %s to Cryo", async (avatarId, expectedKey) => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId,
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters?.[0]?.key).toBe(expectedKey);
+      });
+
       it("resolves Traveler element via skillDepotId", async () => {
         const enkaData = createMinimalEnkaResponse({
           avatarInfoList: [
