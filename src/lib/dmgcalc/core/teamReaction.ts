@@ -84,10 +84,11 @@ const TRANSFORMATIVE_REACTIONS: ReactionType[] = [
   "burning",
 ];
 
-/** Multi-contributor lunar reactions (per DmgResearch.md §3.5). */
+/** Multi-contributor reactions whose damage aggregates team participants. */
 export const MULTI_CONTRIBUTOR_REACTIONS: ReadonlySet<ReactionType> = new Set([
   "lunarCharged",
   "lunarCrystallize",
+  "stellarSwirl",
 ]);
 
 /** Rank weights: [Rank1, Rank2, Rank3, Rank4]. */
@@ -139,6 +140,9 @@ export class TeamReaction implements IFormulaProvider {
 
   /** Eligible trigger characters per base reaction ID (e.g. "rx-overloaded"). */
   private readonly baseEligible: Record<string, string[]> = {};
+
+  /** All contributors for reactions whose trigger subset is narrower. */
+  private readonly baseContributors: Record<string, string[]> = {};
 
   /** Map per-triggerer formula ID → base reaction ID. */
   private readonly baseIdFor: Record<string, string> = {};
@@ -231,14 +235,45 @@ export class TeamReaction implements IFormulaProvider {
         en: reaction,
         zh: reaction,
       };
-      const formula = new StellarFormula(0, {
-        element,
-        ability: "special",
-        reaction,
-      });
-      const eligible = this.findEligibleChars(reaction, teamElementChars);
+      const parts =
+        reaction === "stellarSwirl"
+          ? [
+              {
+                formula: new StellarFormula(0.75, {
+                  element: "Anemo",
+                  ability: "special",
+                  reaction,
+                }),
+              },
+              {
+                // Peak optimizer assumption: two or more SSw triggers upgrade
+                // the Vortex to level 2 (3.0 coefficient; level 1 is 2.0).
+                formula: new StellarFormula(3.0, {
+                  element: "Cryo",
+                  ability: "special",
+                  reaction,
+                }),
+              },
+            ]
+          : [
+              {
+                formula: new StellarFormula(0, {
+                  element,
+                  ability: "special",
+                  reaction,
+                }),
+              },
+            ];
+      const contributors = this.findEligibleChars(reaction, teamElementChars);
+      const eligible =
+        reaction === "stellarSwirl"
+          ? (teamElementChars.get("Anemo") ?? [])
+          : contributors;
+      if (reaction === "stellarSwirl") {
+        this.baseContributors[baseId] = contributors;
+      }
 
-      this.registerPerTriggerer(baseId, label, [{ formula }], eligible);
+      this.registerPerTriggerer(baseId, label, parts, eligible);
     }
 
     // Generate lunar reaction formulas (per-triggerer, multi-contributor)
@@ -337,6 +372,18 @@ export class TeamReaction implements IFormulaProvider {
       // Get the base formula from any per-triggerer entry
       const sampleEntry = this.formulas[`${baseId}-${eligible[0]}`];
       if (!sampleEntry) continue;
+
+      if (baseReaction === "stellarSwirl") {
+        this.finalizeStellarSwirlEntries(
+          baseId,
+          eligible,
+          sampleEntry,
+          teamStats,
+          charLevels,
+          ctx
+        );
+        continue;
+      }
       const baseFormula = sampleEntry.parts[0].formula;
 
       // Compute rank weights
@@ -413,6 +460,93 @@ export class TeamReaction implements IFormulaProvider {
           isMultiContributor: true,
         };
       }
+    }
+  }
+
+  private finalizeStellarSwirlEntries(
+    baseId: string,
+    eligible: string[],
+    sampleEntry: FormulaEntry,
+    teamStats: Record<string, StatSheet>,
+    charLevels: Record<string, number>,
+    ctx: CalcContext
+  ): void {
+    const initial = sampleEntry.parts[0]?.formula;
+    const vortex = sampleEntry.parts[1]?.formula;
+    if (!initial || !vortex) return;
+
+    const ranked = (formula: FormulaPart["formula"], ids: string[]) =>
+      [...ids].sort(
+        (a, b) =>
+          formula.calc(teamStats[b]!, charLevels[b] ?? 90, ctx) -
+          formula.calc(teamStats[a]!, charLevels[a] ?? 90, ctx)
+      );
+    const contributors = this.baseContributors[baseId] ?? eligible;
+    const anemoIds = contributors.filter(
+      (id) => this.teamMeta.elements[id] === "Anemo"
+    );
+    const cryoIds = contributors.filter(
+      (id) => this.teamMeta.elements[id] === "Cryo"
+    );
+
+    const vortexWeights = new Map<string, number>();
+    const cryoPrimary = ranked(vortex, cryoIds)[0];
+    const anemoPrimary = ranked(vortex, anemoIds)[0];
+    if (cryoPrimary) vortexWeights.set(cryoPrimary, 0.6);
+    if (anemoPrimary) vortexWeights.set(anemoPrimary, 0.3);
+    const vortexRest = ranked(
+      vortex,
+      contributors.filter((id) => id !== cryoPrimary && id !== anemoPrimary)
+    );
+    [0.05, 0.05].forEach((weight, index) => {
+      const id = vortexRest[index];
+      if (id) vortexWeights.set(id, weight);
+    });
+    // Keep the Vortex weights available through the existing catalog API.
+    this.rankWeights[baseId] = vortexWeights;
+
+    for (const onFieldId of eligible) {
+      const initialWeights = new Map<string, number>([[onFieldId, 0.6]]);
+      const initialRest = ranked(
+        initial,
+        contributors.filter((id) => id !== onFieldId)
+      );
+      [0.3, 0.05, 0.05].forEach((weight, index) => {
+        const id = initialRest[index];
+        if (id) initialWeights.set(id, weight);
+      });
+      const perTrigParts: FormulaPart[] = [];
+      for (const [formula, weights] of [
+        [initial, initialWeights],
+        [vortex, vortexWeights],
+      ] as const) {
+        const ordered = [
+          onFieldId,
+          ...contributors.filter((id) => id !== onFieldId),
+        ];
+        for (const charId of ordered) {
+          const weight = weights.get(charId) ?? 0;
+          if (weight === 0) continue;
+          perTrigParts.push({
+            formula: new StellarFormula(
+              formula.talentMultiplier,
+              formula.tag,
+              formula.scalingKey as "atk" | "hp" | "def" | "em",
+              formula.extraTerm,
+              weight
+            ),
+            hits: 1,
+            statsCharId: charId,
+            offField: charId !== onFieldId || undefined,
+          });
+        }
+      }
+      this.formulas[`${baseId}-${onFieldId}`] = {
+        label: this.baseLabels[baseId] ?? sampleEntry.label,
+        parts: perTrigParts,
+        owner: onFieldId,
+        isMultiContributor: true,
+      };
     }
   }
 

@@ -121,6 +121,7 @@ export type StatKey =
   | MainStat
   | SubStat
   | "dmg%" // generic + ability + element DMG bonus
+  | "polestarField" // internal marker: apply CalcContext-scaled Polestar Cryo/Electro DMG Bonus
   | "baseDmg" // flat base DMG add (replaces ${AbilityType}Base: Yun Jin, Zhongli A4, Shenhe)
   | "baseDmg%" // 倍率乘区: "deal X% original DMG" multiplier (Yoimiya E, Neuvillette A1, Veil of Falsehood, etc.)
   | "reactionBaseDmg%" // 反应基础提升: lunar reaction base DMG bonus (Nod-Krai P3 passives)

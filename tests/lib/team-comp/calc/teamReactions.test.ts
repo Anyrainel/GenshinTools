@@ -1950,6 +1950,95 @@ describe("evaluateFormulaDisplay — multi-contributor contributorCharId", () =>
 });
 
 describe("multi-contributor N-part exact numerics", () => {
+  it("builds Odette Stellar Swirl's initial hit and peak level-2 Vortex with verified weights", () => {
+    const provider = createReactionProvider(
+      {
+        odette: "Cryo",
+        kaedehara_kazuha: "Anemo",
+        sucrose: "Anemo",
+        diona: "Cryo",
+      },
+      new Set(["stellarSwirl"])
+    );
+    provider.finalizeMultiContributorEntries(
+      {
+        odette: new StatSheet([
+          { key: "em", value: 500 },
+          { key: "cr", value: 1 },
+          { key: "cd", value: 1 },
+        ]),
+        kaedehara_kazuha: new StatSheet([
+          { key: "em", value: 300 },
+          { key: "cr", value: 1 },
+          { key: "cd", value: 1 },
+        ]),
+        sucrose: new StatSheet([{ key: "em", value: 1000 }]),
+        diona: new StatSheet([]),
+      },
+      { odette: 90, kaedehara_kazuha: 90, sucrose: 90, diona: 90 },
+      CTX
+    );
+
+    const entry = provider.getFormulaEntry("rx-stellarSwirl-kaedehara_kazuha");
+    const sucroseEntry = provider.getFormulaEntry("rx-stellarSwirl-sucrose");
+    expect(provider.getFormulaEntry("rx-stellarSwirl-odette")).toBeUndefined();
+    expect(entry?.isMultiContributor).toBe(true);
+    expect(
+      entry?.parts.reduce(
+        (sum, part) =>
+          sum +
+          part.formula.calc(
+            {
+              odette: new StatSheet([
+                { key: "em", value: 500 },
+                { key: "cr", value: 1 },
+                { key: "cd", value: 1 },
+              ]),
+              kaedehara_kazuha: new StatSheet([
+                { key: "em", value: 300 },
+                { key: "cr", value: 1 },
+                { key: "cd", value: 1 },
+              ]),
+              sucrose: new StatSheet([{ key: "em", value: 1000 }]),
+              diona: new StatSheet([]),
+            }[part.statsCharId!]!,
+            90,
+            CTX
+          ),
+        0
+      )
+    ).toBeGreaterThan(0);
+
+    const contribution = (element: "Anemo" | "Cryo", charId: string) =>
+      entry?.parts.find(
+        (part) =>
+          part.formula.tag.element === element && part.statsCharId === charId
+      )?.formula as unknown as {
+        talentMultiplier: number;
+        rankWeight: number;
+      };
+
+    expect(contribution("Anemo", "kaedehara_kazuha").talentMultiplier).toBe(
+      0.75
+    );
+    expect(contribution("Anemo", "kaedehara_kazuha").rankWeight).toBe(0.6);
+    expect(contribution("Anemo", "odette").rankWeight).toBe(0.3);
+    expect(
+      (
+        sucroseEntry?.parts.find(
+          (part) =>
+            part.formula.tag.element === "Anemo" &&
+            part.statsCharId === "sucrose"
+        )?.formula as unknown as { rankWeight: number }
+      ).rankWeight
+    ).toBe(0.6);
+    expect(contribution("Cryo", "odette").talentMultiplier).toBe(3);
+    expect(contribution("Cryo", "odette").rankWeight).toBe(0.6);
+    expect(contribution("Cryo", "kaedehara_kazuha").rankWeight).toBe(0.3);
+    expect(contribution("Cryo", "sucrose").rankWeight).toBe(0.05);
+    expect(contribution("Cryo", "diona").rankWeight).toBe(0.05);
+  });
+
   it("N-part total equals sum of per-part weighted contributions", () => {
     const tb = new TeamBuild(MIXED_LEVEL_LUNAR);
     const charIds = MIXED_LEVEL_LUNAR.map((c) => c.charId);

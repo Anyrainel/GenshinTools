@@ -123,7 +123,7 @@ Symmetric reactions are listed under both trigger directions.
 ### StellarSwirl *(Radiance upgrade of Cryo Swirl)*
 - **Requires**: the triggering character is in the `辉映·星扩散` Radiance state (see Part 3)
 - **Upgrades Cryo Swirl only.** Pyro, Hydro and Electro swirls are unaffected and still produce ordinary Swirl
-- **Type**: same direct-hit model as StellarConduct
+- **Type**: deals reaction damage (an initial Anemo hit plus a delayed Cryo Vortex) and also supports direct talent-tagged Stellar Swirl damage
 
 ### Quicken
 - **Trigger**: Dendro ↔ Electro (either direction)
@@ -184,7 +184,7 @@ Radiance is a **per-character combat state**, entered inside a 极星辉域 (Pol
   - **StellarSwirl**: Anemo on a Cryo aura (upgrades Cryo Swirl only)
 - **Enablers.** A party member who converts the base reaction into its Stellar form is required. The authoritative list is `STELLAR_ENABLERS` in `src/lib/dmgcalc/constants.ts` — keyed per reaction, because enabling one does not imply the other (Vesna enables Stellar Swirl only).
 - **Superseding behavior**: like Lunar, a Stellar reaction **replaces** the base reaction, so `hasReaction("superconduct")` is false on a Stellar-Conduct team. Swirl is only partially superseded — Cryo swirl becomes StellarSwirl, while Pyro/Hydro/Electro swirls survive. Both mappings live in `STELLAR_SUPERSEDES`.
-- **Damage model**: Stellar reaction damage lands as a direct hit whose coefficient scales with recorded Polestar Field attach hits, looked up in `STELLAR_DIRECT_COEFF_BY_HITS` (hits 1–12, range 1.45–2.0, default 1.64 at `STELLAR_ATTACH_HITS_DEFAULT = 5`). The same table serves both Stellar variants.
+- **Damage model**: Direct Stellar-Conduct damage uses a coefficient that scales with recorded Polestar Field attach hits, looked up in `STELLAR_DIRECT_COEFF_BY_HITS` (hits 1–12, range 1.45–2.0, peak optimizer default 2.0 at `STELLAR_ATTACH_HITS_DEFAULT = 12`). Direct Stellar Swirl uses a fixed 1.0 coefficient; its talent rows carry their own distinct multipliers. Reaction-triggered Stellar Swirl uses the level multiplier: 0.75 for the Anemo hit and 2.0/3.0 for a level-1/level-2 Cryo Vortex, aggregated across contributors at 0.6/0.3/0.05/0.05 weights.
 
 ---
 

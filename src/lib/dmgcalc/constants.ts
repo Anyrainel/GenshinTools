@@ -201,21 +201,18 @@ export const STELLAR_ENABLERS: Record<StellarReactionType, string[]> = {
  * Source: kuroo / meowtews via 6.7 live data; Honey Impact / Gachabase tutorials.
  * Index 0 = no buff; 1–10 = pre-launch cap; 11–12 = 6.7 launch stack extension.
  *
- * Applied to every StellarDirectFormula, including 星扩散 (Odette/Vesna). The table
- * was datamined from 星超导 only — 7.0 has published no separate 星扩散 table, and the
- * two reactions share one base-DMG framework in game text (Sandrone/Odette/Vesna P3
- * buff "上述反应的基础伤害" for both). Split this into a per-reaction table if 星扩散
- * numbers turn out to ramp differently.
+ * Applied only to direct Stellar-Conduct damage. Direct Stellar Swirl uses a
+ * fixed 1.0 reaction coefficient; its talent rows already carry the distinct MV.
  */
 export const STELLAR_DIRECT_COEFF_BY_HITS: readonly number[] = [
-  1.0, 1.45, 1.5, 1.54, 1.6, 1.64, 1.7, 1.75, 1.79, 1.85, 1.89, 1.95, 2.0,
+  1.0, 1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75, 1.8, 1.85, 1.9, 1.95, 2.0,
 ];
 
 /** UI slider range for Polestar Field attach hits (launch cap: 12 hits / 2.0×). */
 export const STELLAR_ATTACH_HITS_MIN = 1;
 export const STELLAR_ATTACH_HITS_MAX = 12;
-/** Default attach hits (index 5 → 1.64×, near old 1.6 placeholder). */
-export const STELLAR_ATTACH_HITS_DEFAULT = 5;
+/** Peak optimizer assumption: max recorded attach hits (index 12 → 2.0×). */
+export const STELLAR_ATTACH_HITS_DEFAULT = STELLAR_ATTACH_HITS_MAX;
 /** Launch datamine table supports up to 12 hits (coeff 2.0). */
 export const STELLAR_ATTACH_HITS_TABLE_MAX =
   STELLAR_DIRECT_COEFF_BY_HITS.length - 1;

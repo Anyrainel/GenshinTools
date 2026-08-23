@@ -246,122 +246,6 @@
     high-plunge-only changes none of the values above. It does share
     character5Snezhnaya.ts with that work — rebase on it before editing.
 
-- id: sandrone-c2-reactioncd-abilities-filter
-  entity: sandrone
-  rule: U3
-  status: completed
-  category: bug
-  summary: >
-    Both C2 buffs use `reactionCd` together with `filter.abilities: ["charge"]`,
-    which KEY_CONSTRAINTS in statBuff.ts forbids for reaction-CRIT keys.
-    `validateStatBuff` throws on them; the existing instantiation test never
-    catches it because it builds solo teams, where Radiance resolves to "off" and
-    the C2 branch is never constructed.
-  detail: >
-    Reproduced by instantiating Sandrone at C2/C4/C6 on a team that can produce a
-    Stellar reaction (e.g. sandrone + fischl + kaedehara_kazuha + diona, which
-    gives hasReaction("stellarConduct") === true) and running the same
-    `validateStatBuff` sweep as tests/lib/team-comp/calc/instantiation.test.ts:
-      [character:sandrone/C2] reactionCd is not expected to have a abilities
-      filter. Ask for review for this case.  (x2, one per stacked entry)
-
-    The scoping itself is right and both dimensions are load-bearing. C2 reads
-    "辉映·星烁：重击发射的冷凝射线的暴击伤害提升40%，且每次发射冷凝射线时，都会使
-    本次解算模式期间，发射的所有冷凝射线的暴击伤害进一步提升20%，该效果至多叠加3层"
-    — it targets the condensed beams only, so `abilities: ["charge"]` is needed to
-    keep it off the CA sweep (also ability "charge"), and `reactions` is needed to
-    keep it off the non-Radiance beam. Dropping either dimension mis-scopes the
-    buff, and `cd` + abilities-only would leak onto the sweep.
-
-    Two plausible resolutions, both needing a decision rather than a mechanical
-    edit: (a) add "sandrone/C2" to CONSTRAINT_ALLOWLIST with
-    "reactionCd:forbidsDims-abilities", the same escape hatch mavuika/C2 already
-    uses, or (b) relax the constraint so reactionCr/reactionCd may carry an
-    abilities filter when a reactions filter is also present. Either way the
-    instantiation test should be extended to instantiate option-bearing characters
-    on a team where each option branch is reachable, since today no test covers any
-    Radiance-on buff set.
-
-    Numerically nothing is wrong today: validateStatBuff is not called in
-    production and `cd`/`reactionCd` are summed by computeCritMult, so the
-    displayed damage is already correct. This is a latent rule/test-coverage
-    breach, not a damage error.
-
-    Triage 2026-08-13 — actionable, resolution (a), with a correction to how it
-    has to be wired.
-
-    Take the allowlist route, not the constraint relaxation. Option (b) as
-    written is a no-op: reactionCr/reactionCd already carry
-    `requiresReactionsFilter: true`, and that branch has no escape hatch, so a
-    reactions filter is present on every entry that ever reaches the forbidsDims
-    check. "Permit an abilities filter when a reactions filter is also present"
-    therefore permits it always — it deletes the abilities restriction on both
-    reaction-CRIT keys rather than relaxing it. That restriction is worth
-    keeping: it guards against the much more common error of ability-scoping a
-    reaction-CRIT bonus that the game text does not scope that way. Sandrone C2
-    is a genuine exception rather than a new general rule — a StellarDirect beam
-    sharing ability "charge" with the ordinary CA sweep is a Radiance-era shape
-    only a handful of kits will ever have, and until more appear the per-entity
-    escape hatch is the honest expression of "this one is deliberate".
-
-    Correction to option (a) as filed: the allowlist does not reach this
-    constraint yet. `isAllowlisted` is consulted only by the `requiresReceiver`
-    branch of `validateStatBuff`; the `forbidsDims` loop throws unconditionally,
-    its only exemption being the hardcoded swirl/elements carve-out. So the
-    expected outcome is that `validateStatBuff` accepts sandrone C2's two
-    `reactionCd` entries with `filter.abilities: ["charge"]` intact while still
-    rejecting every other reaction-CRIT key that carries an abilities filter,
-    which means the forbidsDims check has to honour the same per-entity
-    allowlist the receiver check already honours. Sandrone's buffs themselves do
-    not change — both filter dimensions are load-bearing and stay.
-
-    Test gap: keep it inside this item; do not open a second one. The tracker's
-    five categories describe damage-implementation defects and none of them fits
-    missing test coverage, and the gap is not sandrone-specific — it is every
-    option-bearing character in every region file, so it has no honest `entity`.
-    More decisively, splitting it allows the allowlist entry to land alone,
-    which is the one bad outcome available here: it would silence the only
-    current symptom while leaving the next Radiance-gated violation exactly as
-    invisible as this one was. So this item is not complete until the
-    instantiation sweep in tests/lib/team-comp/calc/instantiation.test.ts
-    exercises every reachable branch of an option-bearing character's buff set
-    instead of only the solo-team default. The reviewer's repro team
-    (sandrone + fischl + kaedehara_kazuha + diona) is a working starting point
-    for the Radiance-on branch.
-
-    Implemented 2026-08-13, both halves.
-
-    Engine: the `forbidsDims` loop in validateStatBuff now consults the same
-    per-entity `isAllowlisted` hook the `requiresReceiver` branch already used
-    (`if (isAllowlisted(source, key, `forbidsDims-${dim}`)) continue;`), and
-    CONSTRAINT_ALLOWLIST gained "sandrone/C2" →
-    "reactionCd:forbidsDims-abilities" with the load-bearing-filters rationale
-    as a comment. Sandrone's two C2 buffs are unchanged — both filter
-    dimensions stay. Every other reaction-CRIT key carrying an abilities filter
-    is still rejected; verified by temporarily breaking the allowlist lookup,
-    which made the new sweep fail on sandrone at C2 and C6 in both Radiance
-    branches, then restoring it.
-
-    Test: a new "Option branches on enabling teams" block inside
-    "Buff static validation" puts every option-bearing character on a team where
-    each of its own branches is actually enabled, then runs the same
-    validateAllBuffs sweep at C2 and C6. It searches a documented
-    CANDIDATE_ROSTERS list (solo, stellar-conduct, stellar-swirl, frozen, two
-    lunar rosters, two teammate-constellation rosters) crossed with teammate
-    constellation 6 and 0, so both ">= N" and "< N" predicates are satisfiable;
-    the search runs inside the test body because TeamMeta needs the character
-    stats resource that beforeAll preloads. A companion test asserts that no
-    option branch is left unreachable, so the coverage cannot silently decay
-    again as new predicate shapes appear.
-
-    Newly surfaced by that sweep, NOT triaged, recorded in a PENDING_TRIAGE map
-    in the test rather than dissolved into CONSTRAINT_ALLOWLIST (anything not
-    listed still fails): cyno/C2 reactionDmg% + abilities, wriothesley/C1
-    reactionDmg% + abilities (x2) and wriothesley/C6 reactionCr + reactionCd +
-    abilities. All are the same Radiance-era shape as sandrone C2 — game text
-    that scopes a reaction bonus to specific attacks — but they live in other
-    regions' files and need their own triage.
-
 - id: alyosha-c6-precision-stellar-rider
   entity: alyosha
   rule: U9
@@ -430,3 +314,31 @@
     teamOnField receiver, stellarConduct filter and the radianceOn gate are all
     unchanged; the buff origin now displays as "P3/C6" at C6, matching how the
     ATK% half already switches to "E/C6".
+
+- id: sandrone-polestar-element-dmg-buff
+  entity: sandrone
+  rule: S1
+  status: completed
+  category: missing-formula
+  summary: >
+    Polestar Field's hit-count-dependent Cryo/Electro DMG Bonus is absent, so
+    ordinary Cryo and Electro talent damage is under-counted by 20%-40% DMG Bonus.
+  detail: >
+    Added a Stellar-Conduct-only team marker scoped to ordinary Cryo/Electro
+    damage. Direct and Catalyze formulas resolve it from the selected Polestar
+    application count (29% at 1 through 40% at 12), while Stellar Direct remains
+    outside the ordinary DMG Bonus zone. Added targeted formula and provider tests.
+
+- id: odette-stellar-swirl-vortex-missing
+  entity: odette
+  rule: S7
+  status: completed
+  category: missing-formula
+  summary: >
+    The auto-generated Stellar Swirl reaction formula returns zero, omitting both
+    the initial Stellar Anemo hit and the Stellar Vortex Cryo explosion.
+  detail: >
+    Added reaction-triggered Stellar Swirl as a multi-contributor 0.75 Anemo hit
+    plus peak level-2 3.0 Cryo Vortex. Contributor ordering uses the verified
+    Anemo/Cryo priority rules and 0.6/0.3/0.05/0.05 weights. Added a targeted
+    Odette team reaction regression test.

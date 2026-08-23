@@ -87,6 +87,60 @@ describe("DirectFormula", () => {
   });
 });
 
+describe("Polestar Field ordinary elemental DMG bonus", () => {
+  const cryoFormula = new DirectFormula(1, {
+    element: "Cryo",
+    ability: "skill",
+    reaction: "none",
+  });
+  const physicalFormula = new DirectFormula(1, {
+    element: "Physical",
+    ability: "normal",
+    reaction: "none",
+  });
+  const stats = new StatSheet([{ key: "baseAtk", value: 1000 }]).merge(
+    StatSheet.fromEntries([{ key: "polestarField", value: 1 }], {
+      elements: ["Cryo", "Electro"],
+    })
+  );
+
+  it("follows the selected 1-12 recorded applications", () => {
+    const atOne = cryoFormula.calc(stats, 90, {
+      ...CTX,
+      stellarAttachHits: 1,
+    });
+    const atTwelve = cryoFormula.calc(stats, 90, {
+      ...CTX,
+      stellarAttachHits: 12,
+    });
+
+    expect(atTwelve / atOne).toBeCloseTo(1.4 / 1.29);
+  });
+
+  it("includes the Polestar bonus in the displayed damage-bonus zone", () => {
+    const displayed = cryoFormula.display(stats, 90, {
+      ...CTX,
+      stellarAttachHits: 12,
+    });
+
+    expect(displayed.statValues["dmg%"]).toBeCloseTo(0.4);
+  });
+
+  it("does not affect damage outside the Cryo/Electro-scoped marker", () => {
+    const withMarker = physicalFormula.calc(stats, 90, {
+      ...CTX,
+      stellarAttachHits: 12,
+    });
+    const withoutMarker = physicalFormula.calc(
+      new StatSheet([{ key: "baseAtk", value: 1000 }]),
+      90,
+      { ...CTX, stellarAttachHits: 12 }
+    );
+
+    expect(withMarker).toBeCloseTo(withoutMarker);
+  });
+});
+
 describe("DirectFormula — dual scaling", () => {
   it("captures extra scaling term in scalingKeys/scalingMulti", () => {
     const formula = new DirectFormula(
@@ -304,13 +358,17 @@ describe("StellarDirectFormula", () => {
   it("uses default attach hits from datamine table", () => {
     const dp = formula.display(baseStats, 90, CTX);
     expect(dp.template).toBe("stellarDirect");
+    expect(STELLAR_ATTACH_HITS_DEFAULT).toBe(12);
     expect(dp.params.attachHits).toBe(STELLAR_ATTACH_HITS_DEFAULT);
     expect(dp.params.directCoeff).toBeCloseTo(STELLAR_DIRECT_COEFF_DEFAULT);
   });
 
   it("maps attach hits to datamine coefficients", () => {
     expect(getStellarDirectCoeffForHits(1)).toBeCloseTo(1.45);
-    expect(getStellarDirectCoeffForHits(10)).toBeCloseTo(1.89);
+    expect(getStellarDirectCoeffForHits(3)).toBeCloseTo(1.55);
+    expect(getStellarDirectCoeffForHits(5)).toBeCloseTo(1.65);
+    expect(getStellarDirectCoeffForHits(8)).toBeCloseTo(1.8);
+    expect(getStellarDirectCoeffForHits(10)).toBeCloseTo(1.9);
     expect(STELLAR_DIRECT_COEFF_BY_HITS[12]).toBeCloseTo(2.0);
   });
 
@@ -329,7 +387,27 @@ describe("StellarDirectFormula", () => {
       stellarDirectCoeff: 1.9,
     });
     expect(dp.params.attachHits).toBe(10);
-    expect(dp.params.directCoeff).toBeCloseTo(1.89);
+    expect(dp.params.directCoeff).toBeCloseTo(1.9);
+  });
+
+  it("keeps direct Stellar Swirl at its fixed 1.0 coefficient", () => {
+    const swirl = new StellarDirectFormula(1.0, {
+      element: "Cryo",
+      ability: "skill",
+      reaction: "stellarSwirl",
+    });
+    const atOne = swirl.display(baseStats, 90, {
+      ...CTX,
+      stellarAttachHits: 1,
+    });
+    const atTwelve = swirl.display(baseStats, 90, {
+      ...CTX,
+      stellarAttachHits: 12,
+    });
+
+    expect(atOne.params.directCoeff).toBe(1);
+    expect(atTwelve.params.directCoeff).toBe(1);
+    expect(atTwelve.damage).toBeCloseTo(atOne.damage);
   });
 
   it("maps legacy ctx.stellarDirectCoeff 2.0 to hit 12", () => {

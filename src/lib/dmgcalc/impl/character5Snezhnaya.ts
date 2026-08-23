@@ -536,6 +536,21 @@ class Sandrone extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // Polestar Field: recorded applications grant 29%-40% ordinary
+      // Cryo/Electro DMG Bonus. The marker lets Direct/Catalyze formulas resolve
+      // the selected attach count from CalcContext; Stellar Direct ignores dmg%.
+      ...(this.teamMeta.hasReaction("stellarConduct")
+        ? [
+            new StatBuff(
+              cbs(this, "P3", ["stellarConduct"]),
+              {
+                receiver: "team",
+                filter: { elements: ["Cryo", "Electro"] },
+              },
+              [{ key: "polestarField", value: 1 }]
+            ),
+          ]
+        : []),
       // P3: Per 100 ATK → +0.7% reactionBaseDmg% of 星超导/星扩散, cap 14%
       new ScalingBuff(
         cbs(this, "P3", ["passive"]),
@@ -897,6 +912,18 @@ class Odette extends CharacterBase {
   readonly buffs = (() => {
     const maxSplendorStacks = this.constellation >= 1 ? 6 : 4;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      ...(this.teamMeta.hasReaction("stellarConduct")
+        ? [
+            new StatBuff(
+              cbs(this, "P3", ["stellarConduct"]),
+              {
+                receiver: "team",
+                filter: { elements: ["Cryo", "Electro"] },
+              },
+              [{ key: "polestarField", value: 1 }]
+            ),
+          ]
+        : []),
       // P1: Marvelous Splendor stacks -> Stellar Glimmer reaction DMG +15% per stack
       new StatBuff(
         cbs(this, "P1", []),

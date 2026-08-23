@@ -1181,6 +1181,18 @@ class TravelerCryo extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      ...(this.teamMeta.hasReaction("stellarConduct")
+        ? [
+            new StatBuff(
+              cbs(this, "P3", ["stellarConduct"]),
+              {
+                receiver: "team",
+                filter: { elements: ["Cryo", "Electro"] },
+              },
+              [{ key: "polestarField", value: 1 }]
+            ),
+          ]
+        : []),
       // P4 cross-resonance: all elements the Traveler has resonated with.
       // Unlike the other variants this sits on P4 (异邦的层冰), not P3.
       new StatBuff(

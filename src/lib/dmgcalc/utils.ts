@@ -83,6 +83,15 @@ export function resolveStellarDirectCoeff(ctx: CalcContext): number {
 }
 
 /**
+ * Polestar Field's ordinary Cryo/Electro DMG Bonus for the recorded attach count.
+ * Live values are 20% at 0 hits, 29% at 1, then +1% per hit through 40% at 12.
+ * The user-facing control currently covers the live 1-12 range.
+ */
+export function resolvePolestarElementDmgBonus(ctx: CalcContext): number {
+  return 0.28 + resolveStellarAttachHits(ctx) * 0.01;
+}
+
+/**
  * True when the party contains a Stellar enabler for any stellar reaction, i.e.
  * `StellarDirectFormula` damage can appear and `stellarAttachHits` is meaningful.
  * Element pairing is not re-checked here — every Radiance option is already gated

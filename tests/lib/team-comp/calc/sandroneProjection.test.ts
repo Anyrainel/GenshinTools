@@ -17,6 +17,16 @@ const fakeCharacterStats = {
       "90": { baseHp: "12000", baseAtk: "1000", baseDef: "700" },
     },
   },
+  odette: {
+    rarity: 5,
+    element: "Cryo",
+    weaponType: "Sword",
+    region: "Snezhnaya",
+    releaseDate: "2026-08-01",
+    levels: {
+      "90": { baseHp: "12000", baseAtk: "1000", baseDef: "700" },
+    },
+  },
   fischl: {
     rarity: 4,
     element: "Electro",
@@ -42,6 +52,7 @@ const fakeCharacterStats = {
 vi.mock("@/data/gameResources", () => ({
   allCharacters: [
     { id: "sandrone", rarity: 5, imagePath: "/character/sandrone.webp" },
+    { id: "odette", rarity: 5, imagePath: "/character/odette.webp" },
     { id: "fischl", rarity: 4, imagePath: "/character/fischl.webp" },
     { id: "sucrose", rarity: 4, imagePath: "/character/sucrose.webp" },
   ],
@@ -54,6 +65,7 @@ vi.mock("@/data/gameResources", () => ({
   sortedHalfSets: [],
   charactersById: {
     sandrone: { id: "sandrone", rarity: 5 },
+    odette: { id: "odette", rarity: 5 },
     fischl: { id: "fischl", rarity: 4 },
     sucrose: { id: "sucrose", rarity: 4 },
   },
@@ -139,6 +151,40 @@ function createC6Sandrone(
 }
 
 describe("Sandrone C6 Cluster Beam", () => {
+  it("provides the Polestar marker whenever the team can create the field, even with Radiance off", () => {
+    const conduct = createC6Sandrone("stellarConduct");
+    const radianceOff = createC6Sandrone("off");
+    const fieldBuff = conduct.buffs.find((buff) =>
+      buff.staticBuffs.some((entry) => entry.key === "polestarField")
+    );
+
+    expect(fieldBuff?.target).toEqual({
+      receiver: "team",
+      filter: { elements: ["Cryo", "Electro"] },
+    });
+    expect(fieldBuff?.staticBuffs).toEqual([
+      { key: "polestarField", value: 1 },
+    ]);
+    expect(
+      radianceOff.buffs.some((buff) =>
+        buff.staticBuffs.some((entry) => entry.key === "polestarField")
+      )
+    ).toBe(true);
+  });
+
+  it("Odette alone also provides the field marker on a Stellar-Conduct team", () => {
+    const teamMeta = new TeamMeta(["odette", "fischl"]);
+    const odette = createCharacter("odette", 90, 0, teamMeta, {
+      odette: "off",
+    });
+
+    expect(
+      odette.buffs.some((buff) =>
+        buff.staticBuffs.some((entry) => entry.key === "polestarField")
+      )
+    ).toBe(true);
+  });
+
   it("is available as 4-hit Cryo charged damage when Radiance is off", () => {
     const sandrone = createC6Sandrone("off");
     const entry = sandrone.getFormulaEntry("sandrone-c6-cluster");
