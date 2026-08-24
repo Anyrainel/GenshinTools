@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-08-19T11:59:08.199Z",
+  "generatedAt": "2026-08-24T00:48:59.846Z",
   "teams": {
     "YU06qLrWu1q46mwZ0O": {
       "teamName": "sandrone / odette / yae_miko / sucrose",
@@ -30,7 +30,7 @@
           "minCr": 0.05
         }
       },
-      "damage": 16132837.3257,
+      "damage": 19770562.9114,
       "comboResult": {
         "lineDamages": [
           {
@@ -42,36 +42,32 @@
             "total": 53168.4022
           },
           {
-            "perHit": 6723.2273,
-            "total": 13446.4546
+            "perHit": 8964.3031,
+            "total": 17928.6062
           },
           {
-            "perHit": 486271.7434,
-            "total": 972543.4868
+            "perHit": 593014.3212,
+            "total": 1186028.6425
           },
           {
-            "perHit": 6723.2273,
-            "total": 13446.4546
+            "perHit": 8964.3031,
+            "total": 17928.6062
           },
           {
-            "perHit": 290275.3871,
-            "total": 365699.3209
+            "perHit": 354427.6669,
+            "total": 446841.3663
           },
           {
-            "perHit": 1763158.3095,
-            "total": 3526316.619
+            "perHit": 2154371.2779,
+            "total": 4308742.5557
           },
           {
-            "perHit": 230250.6144,
-            "total": 460501.2288
+            "perHit": 280793.4322,
+            "total": 561586.8644
           },
           {
-            "perHit": 795130.0863,
-            "total": 1590260.1726
-          },
-          {
-            "perHit": 0,
-            "total": 0
+            "perHit": 969670.837,
+            "total": 1939341.6739
           },
           {
             "perHit": 0,
@@ -90,76 +86,72 @@
             "total": 35477.2171
           },
           {
-            "perHit": 14141.8383,
-            "total": 28283.6766
+            "perHit": 18855.7844,
+            "total": 37711.5688
           },
           {
-            "perHit": 12540.283,
-            "total": 25080.5659
+            "perHit": 16720.3773,
+            "total": 33440.7545
           },
           {
-            "perHit": 1687003.2945,
-            "total": 3374006.5889
+            "perHit": 2057321.0908,
+            "total": 4114642.1816
           },
           {
-            "perHit": 140636.9295,
-            "total": 281273.8589
+            "perHit": 172149.4471,
+            "total": 344298.8943
           },
           {
-            "perHit": 168156.7353,
-            "total": 336313.4707
+            "perHit": 205835.645,
+            "total": 411671.2901
           },
           {
-            "perHit": 65527.6889,
-            "total": 131055.3778
+            "perHit": 87370.2519,
+            "total": 174740.5037
           },
           {
-            "perHit": 778928.4765,
-            "total": 1557856.953
+            "perHit": 949912.7762,
+            "total": 1899825.5525
           },
           {
-            "perHit": 155162.3114,
-            "total": 310324.6228
-          },
-          {
-            "perHit": 0,
-            "total": 0
+            "perHit": 189222.331,
+            "total": 378444.6619
           },
           {
             "perHit": 0,
             "total": 0
           },
           {
-            "perHit": 779545.3784,
-            "total": 1559090.7569
+            "perHit": 878635.1302,
+            "total": 1757270.2605
           },
           {
-            "perHit": 67329.438,
-            "total": 134658.876
+            "perHit": 83249.913,
+            "total": 166499.826
           },
           {
-            "perHit": 269317.752,
-            "total": 538635.504
+            "perHit": 332999.652,
+            "total": 665999.304
           },
           {
-            "perHit": 292542.1588,
-            "total": 585084.3176
-          },
-          {
-            "perHit": 0,
-            "total": 0
-          },
-          {
-            "perHit": 5681.9256,
-            "total": 11363.8513
-          },
-          {
-            "perHit": 15926.6097,
-            "total": 31853.2194
+            "perHit": 334391.1133,
+            "total": 668782.2265
           },
           {
             "perHit": 0,
             "total": 0
+          },
+          {
+            "perHit": 5748.8582,
+            "total": 11497.7164
+          },
+          {
+            "perHit": 16114.2237,
+            "total": 32228.4474
+          },
+          {
+            "perHit": 154684.7298,
+            "total": 309369.4596
           },
           {
             "perHit": 6902.304,
@@ -170,7 +162,7 @@
             "total": 13804.6079
           }
         ],
-        "totalDamage": 16132837.3257
+        "totalDamage": 19770562.9114
       },
       "artifacts": {
         "sandrone": {
@@ -284,8 +276,8 @@
             "substats": {
               "er": 22.02,
               "cr": 6.61,
-              "atk%": 4.96,
-              "cd": 6.6
+              "cd": 6.6,
+              "atk%": 4.96
             }
           },
           "plume": {
@@ -293,8 +285,8 @@
             "mainStat": "atk",
             "substats": {
               "er": 22.02,
-              "cd": 6.6,
               "cr": 6.61,
+              "cd": 6.6,
               "atk%": 4.96
             }
           },
@@ -302,9 +294,9 @@
             "setKey": "generated",
             "mainStat": "er",
             "substats": {
-              "cr": 16.53,
-              "cd": 6.6,
-              "atk%": 4.96,
+              "cr": 9.92,
+              "cd": 13.21,
+              "atk%": 9.91,
               "em": 19.82
             }
           },
@@ -313,9 +305,9 @@
             "mainStat": "atk%",
             "substats": {
               "er": 22.02,
-              "cd": 13.21,
-              "em": 19.82,
-              "atk": 16.54
+              "cr": 6.61,
+              "cd": 6.6,
+              "em": 19.82
             }
           },
           "circlet": {
@@ -336,8 +328,8 @@
             "substats": {
               "er": 22.02,
               "em": 39.63,
-              "atk%": 4.96,
-              "cr": 3.31
+              "cr": 3.31,
+              "cd": 6.6
             }
           },
           "plume": {
@@ -346,7 +338,7 @@
             "substats": {
               "er": 22.02,
               "em": 39.63,
-              "atk%": 4.96,
+              "cd": 6.6,
               "cr": 3.31
             }
           },
@@ -355,18 +347,18 @@
             "mainStat": "em",
             "substats": {
               "er": 5.51,
-              "atk%": 24.77,
-              "cd": 6.6,
-              "cr": 3.31
+              "cd": 19.81,
+              "cr": 9.92,
+              "atk%": 4.96
             }
           },
           "goblet": {
             "setKey": "generated",
             "mainStat": "em",
             "substats": {
-              "atk%": 24.77,
-              "cr": 3.31,
-              "cd": 6.6,
+              "cr": 13.22,
+              "cd": 13.21,
+              "atk%": 4.96,
               "atk": 16.54
             }
           },
@@ -374,9 +366,9 @@
             "setKey": "generated",
             "mainStat": "em",
             "substats": {
-              "atk%": 24.77,
-              "cr": 3.31,
-              "cd": 6.6,
+              "cr": 9.92,
+              "cd": 19.81,
+              "atk%": 4.96,
               "atk": 16.54
             }
           }
@@ -402,22 +394,22 @@
         "yae_miko": {
           "hp": 4780,
           "er": 1.2887,
-          "cr": 0.6084,
+          "cr": 0.6085,
           "cd": 0.5944,
-          "atk": 328,
+          "atk": 311,
           "em": 59
         },
         "sucrose": {
           "hp": 4780,
           "er": 0.4955,
           "em": 639,
-          "cr": 0.1653,
-          "atk": 344,
-          "cd": 0.1982
+          "cr": 0.3966,
+          "cd": 0.6605,
+          "atk": 344
         }
       },
       "display": {
-        "totalDamage": 16132837.3257,
+        "totalDamage": 19770562.9114,
         "partsByFormula": {
           "sandrone.sandrone-normal": [
             {
@@ -441,67 +433,61 @@
           ],
           "sandrone.sandrone-charge-sweep": [
             {
-              "damage": 6723.2273,
+              "damage": 8964.3031,
               "template": "direct"
             }
           ],
           "sandrone.sandrone-charge-beam": [
             {
-              "damage": 486271.7434,
+              "damage": 593014.3212,
               "template": "stellarDirect"
             }
           ],
           "sandrone.sandrone-charge-overdrive": [
             {
-              "damage": 6723.2273,
+              "damage": 8964.3031,
               "template": "direct"
             }
           ],
           "sandrone.sandrone-skill": [
             {
-              "damage": 3806.7827,
+              "damage": 5075.7103,
               "template": "direct"
             },
             {
-              "damage": 286468.6044,
+              "damage": 349351.9566,
               "template": "stellarDirect"
             },
             {
-              "damage": 71617.1511,
+              "damage": 87337.9892,
               "template": "stellarDirect"
             }
           ],
           "sandrone.sandrone-burst": [
             {
-              "damage": 12236.2084,
+              "damage": 16314.9446,
               "template": "direct",
               "hits": 3
             },
             {
-              "damage": 1726449.6841,
+              "damage": 2105426.4441,
               "template": "stellarDirect"
             }
           ],
           "sandrone.sandrone-c4-coord": [
             {
-              "damage": 230250.6144,
+              "damage": 280793.4322,
               "template": "stellarDirect"
             }
           ],
           "sandrone.sandrone-c6-cluster": [
             {
-              "damage": 198782.5216,
+              "damage": 242417.7092,
               "template": "stellarDirect",
               "hits": 4
             }
           ],
           "sandrone.rx-stellarConduct-sandrone": [
-            {
-              "damage": 0,
-              "template": "stellar"
-            }
-          ],
-          "sandrone.rx-stellarSwirl-sandrone": [
             {
               "damage": 0,
               "template": "stellar"
@@ -547,62 +533,62 @@
           ],
           "odette.odette-skill-initial": [
             {
-              "damage": 14141.8383,
+              "damage": 18855.7844,
               "template": "direct"
             }
           ],
           "odette.odette-coda-dot": [
             {
-              "damage": 12540.283,
+              "damage": 16720.3773,
               "template": "direct"
             }
           ],
           "odette.odette-coda-end": [
             {
-              "damage": 1687003.2945,
+              "damage": 2057321.0908,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-plume-move": [
             {
-              "damage": 5631.6129,
+              "damage": 7508.8172,
               "template": "direct"
             },
             {
-              "damage": 135005.3166,
+              "damage": 164640.63,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-wing-move": [
             {
-              "damage": 6733.8598,
+              "damage": 8978.4797,
               "template": "direct"
             },
             {
-              "damage": 161422.8756,
+              "damage": 196857.1653,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-burst": [
             {
-              "damage": 14416.0916,
+              "damage": 19221.4554,
               "template": "direct",
               "hits": 3
             },
             {
-              "damage": 22279.4142,
+              "damage": 29705.8856,
               "template": "direct"
             }
           ],
           "odette.odette-c1-extra": [
             {
-              "damage": 778928.4765,
+              "damage": 949912.7762,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-c4-coord": [
             {
-              "damage": 155162.3114,
+              "damage": 189222.331,
               "template": "stellarDirect"
             }
           ],
@@ -612,43 +598,37 @@
               "template": "stellar"
             }
           ],
-          "odette.rx-stellarSwirl-odette": [
-            {
-              "damage": 0,
-              "template": "stellar"
-            }
-          ],
           "yae_miko.yae_miko-skill": [
             {
-              "damage": 59638.3949,
+              "damage": 67219.1643,
               "template": "direct",
               "hits": 7
             },
             {
-              "damage": 45259.5768,
+              "damage": 51012.6225,
               "template": "direct",
               "hits": 8
             }
           ],
           "yae_miko.yae_miko-p1-proc": [
             {
-              "damage": 67329.438,
+              "damage": 83249.913,
               "template": "stellarDirect"
             }
           ],
           "yae_miko.yae_miko-p4-sc-proc": [
             {
-              "damage": 269317.752,
+              "damage": 332999.652,
               "template": "stellarDirect"
             }
           ],
           "yae_miko.yae_miko-burst": [
             {
-              "damage": 60296.5491,
+              "damage": 68922.1351,
               "template": "direct"
             },
             {
-              "damage": 77415.2032,
+              "damage": 88489.6594,
               "template": "direct",
               "hits": 3
             }
@@ -661,20 +641,40 @@
           ],
           "sucrose.sucrose-skill": [
             {
-              "damage": 5681.9256,
+              "damage": 5748.8582,
               "template": "direct"
             }
           ],
           "sucrose.sucrose-burst": [
             {
-              "damage": 3981.6524,
+              "damage": 4028.5559,
               "template": "direct",
               "hits": 4
             }
           ],
           "sucrose.rx-stellarSwirl-sucrose": [
             {
-              "damage": 0,
+              "damage": 8426.879,
+              "template": "stellar"
+            },
+            {
+              "damage": 1104.5584,
+              "template": "stellar"
+            },
+            {
+              "damage": 11645.4164,
+              "template": "stellar"
+            },
+            {
+              "damage": 19662.7177,
+              "template": "stellar"
+            },
+            {
+              "damage": 5154.6057,
+              "template": "stellar"
+            },
+            {
+              "damage": 108690.5526,
               "template": "stellar"
             }
           ],
@@ -717,6 +717,20 @@
               }
             ],
             "providerCharId": "resonance"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "sandrone",
+              "origin": "P3"
+            },
+            "entries": [
+              {
+                "key": "polestarField",
+                "value": 1
+              }
+            ],
+            "providerCharId": "sandrone"
           },
           {
             "source": {
@@ -843,6 +857,20 @@
               }
             ],
             "providerCharId": "sandrone"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "odette",
+              "origin": "P3"
+            },
+            "entries": [
+              {
+                "key": "polestarField",
+                "value": 1
+              }
+            ],
+            "providerCharId": "odette"
           },
           {
             "source": {
@@ -1245,7 +1273,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1969.4046
+                "value": 1996.768
               }
             ],
             "providerCharId": "yae_miko"
@@ -1294,41 +1322,41 @@
           },
           "yae_miko": {
             "onField": {
-              "cr": 1.0004,
+              "cr": 1.0005,
               "cd": 1.7565,
               "er": 2.2887,
               "em": 481,
               "hp": 15889,
-              "atk": 2462,
+              "atk": 2496,
               "def": 609
             },
             "offField": {
-              "cr": 1.0004,
+              "cr": 1.0005,
               "cd": 1.7565,
               "er": 2.2887,
               "em": 481,
               "hp": 15889,
-              "atk": 2462,
+              "atk": 2496,
               "def": 609
             }
           },
           "sucrose": {
             "onField": {
-              "cr": 0.3653,
-              "cd": 0.6982,
+              "cr": 0.5966,
+              "cd": 1.1605,
               "er": 1.4955,
               "em": 1060,
               "hp": 14663,
-              "atk": 1853,
+              "atk": 1390,
               "def": 752
             },
             "offField": {
-              "cr": 0.3653,
-              "cd": 0.6982,
+              "cr": 0.5966,
+              "cd": 1.1605,
               "er": 1.4955,
               "em": 860,
               "hp": 14663,
-              "atk": 1853,
+              "atk": 1390,
               "def": 752
             }
           }
@@ -1349,7 +1377,8 @@
               "elevated%": 0.45,
               "reactionDmg%": 2.97,
               "reactionCd": 1,
-              "resReduction%": 0.4
+              "resReduction%": 0.4,
+              "polestarField": 2
             },
             "offField": {
               "atk": 3706,
@@ -1363,7 +1392,8 @@
               "reactionBaseDmg%": 0.28,
               "elevated%": 0.45,
               "reactionDmg%": 2.97,
-              "resReduction%": 0.4
+              "resReduction%": 0.4,
+              "polestarField": 2
             }
           },
           "odette": {
@@ -1381,7 +1411,8 @@
               "elevated%": 0.45,
               "reactionDmg%": 2.32,
               "reactionCd": 1.1,
-              "resReduction%": 0.4
+              "resReduction%": 0.4,
+              "polestarField": 2
             },
             "offField": {
               "atk": 3575,
@@ -1397,16 +1428,17 @@
               "elevated%": 0.45,
               "reactionDmg%": 2.32,
               "reactionCd": 1.1,
-              "resReduction%": 0.4
+              "resReduction%": 0.4,
+              "polestarField": 2
             }
           },
           "yae_miko": {
             "onField": {
-              "atk": 2462,
+              "atk": 2496,
               "hp": 15889,
               "def": 609,
               "em": 481,
-              "cr": 1.0004,
+              "cr": 1.0005,
               "cd": 1.7565,
               "er": 2.2887,
               "dmg%": 2.14,
@@ -1414,14 +1446,15 @@
               "elevated%": 0.25,
               "reactionDmg%": 2.01,
               "reactionCd": 2,
-              "resReduction%": 0.2
+              "resReduction%": 0.2,
+              "polestarField": 2
             },
             "offField": {
-              "atk": 2462,
+              "atk": 2496,
               "hp": 15889,
               "def": 609,
               "em": 481,
-              "cr": 1.0004,
+              "cr": 1.0005,
               "cd": 1.7565,
               "er": 2.2887,
               "dmg%": 2.14,
@@ -1429,27 +1462,28 @@
               "elevated%": 0.25,
               "reactionDmg%": 2.01,
               "reactionCd": 2,
-              "resReduction%": 0.2
+              "resReduction%": 0.2,
+              "polestarField": 2
             }
           },
           "sucrose": {
             "onField": {
-              "atk": 1853,
+              "atk": 1390,
               "hp": 14663,
               "def": 752,
               "em": 1060,
-              "cr": 0.3653,
-              "cd": 0.6982,
+              "cr": 0.5966,
+              "cd": 1.1605,
               "er": 1.4955,
               "dmg%": 0.24
             },
             "offField": {
-              "atk": 1853,
+              "atk": 1390,
               "hp": 14663,
               "def": 752,
               "em": 860,
-              "cr": 0.3653,
-              "cd": 0.6982,
+              "cr": 0.5966,
+              "cd": 1.1605,
               "er": 1.4955,
               "dmg%": 0.24
             }
@@ -1457,29 +1491,29 @@
         },
         "marginalGains": {
           "sandrone": {
-            "atk": 0.002,
+            "atk": 0.0019,
             "atk%": 0.0064,
             "em": 0.0026,
             "cd": 0.0091
           },
           "odette": {
             "atk": 0.0018,
-            "atk%": 0.0058,
-            "em": 0.0032,
+            "atk%": 0.0057,
+            "em": 0.0034,
             "cr": 0.001,
-            "cd": 0.0066
+            "cd": 0.0068
           },
           "yae_miko": {
-            "atk": 0.0012,
-            "atk%": 0.0036,
-            "em": 0.0012,
-            "cd": 0.0038
+            "atk": 0.0011,
+            "atk%": 0.0034,
+            "em": 0.001,
+            "cd": 0.0035
           },
           "sucrose": {
             "atk": 0,
-            "atk%": 0,
+            "atk%": 0.0001,
             "em": 0.0014,
-            "cr": 0,
+            "cr": 0.0001,
             "cd": 0.0001
           }
         },
@@ -20259,28 +20293,28 @@
           "minCr": 0.28
         }
       },
-      "damage": 12433596.4192,
+      "damage": 9833093.5669,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 5942.1384,
-            "total": 11884.2768
+            "perHit": 5930.5622,
+            "total": 11861.1244
           },
           {
-            "perHit": 9270.0022,
-            "total": 18540.0044
+            "perHit": 9251.9428,
+            "total": 18503.8855
           },
           {
-            "perHit": 7115.9028,
-            "total": 14231.8056
+            "perHit": 7102.0399,
+            "total": 14204.0797
           },
           {
-            "perHit": 112160.6715,
-            "total": 224321.343
+            "perHit": 111942.1644,
+            "total": 223884.3289
           },
           {
-            "perHit": 0,
-            "total": 0
+            "perHit": 409356.2699,
+            "total": 818712.5399
           },
           {
             "perHit": 29596.7235,
@@ -20303,63 +20337,55 @@
             "total": 39915.5254
           },
           {
-            "perHit": 3151173.94,
-            "total": 6302347.8801
+            "perHit": 1949774.9919,
+            "total": 3899549.9838
           },
           {
-            "perHit": 348483.8686,
-            "total": 696967.7373
+            "perHit": 247876.4808,
+            "total": 495752.9616
           },
           {
-            "perHit": 400809.4041,
-            "total": 801618.8082
+            "perHit": 280501.5566,
+            "total": 561003.1132
           },
           {
             "perHit": 104286.8067,
             "total": 208573.6135
           },
           {
-            "perHit": 1494043.0114,
-            "total": 2988086.0228
+            "perHit": 939329.3037,
+            "total": 1878658.6074
           },
           {
-            "perHit": 377617.3684,
-            "total": 755234.7369
+            "perHit": 261965.9507,
+            "total": 523931.9015
           },
           {
-            "perHit": 0,
-            "total": 0
+            "perHit": 19736.9439,
+            "total": 39473.8877
           },
           {
-            "perHit": 19754.31,
-            "total": 39508.6201
+            "perHit": 26774.4639,
+            "total": 53548.9279
           },
           {
-            "perHit": 26814.1027,
-            "total": 53628.2055
+            "perHit": 19736.9439,
+            "total": 39473.8877
           },
           {
-            "perHit": 19754.31,
-            "total": 39508.6201
+            "perHit": 380201.4233,
+            "total": 760402.8466
           },
           {
-            "perHit": 0,
-            "total": 0
+            "perHit": 29254.0295,
+            "total": 58508.059
           },
           {
-            "perHit": 27275.1137,
-            "total": 54550.2274
-          },
-          {
-            "perHit": 16920.5331,
-            "total": 33841.0661
-          },
-          {
-            "perHit": 0,
-            "total": 0
+            "perHit": 18148.1837,
+            "total": 36296.3673
           }
         ],
-        "totalDamage": 12433596.4192
+        "totalDamage": 9833093.5669
       },
       "artifacts": {
         "yumemizuki_mizuki": {
@@ -20407,8 +20433,8 @@
             "setKey": "generated",
             "mainStat": "em",
             "substats": {
-              "cr": 16.53,
-              "cd": 6.6,
+              "cr": 13.22,
+              "cd": 13.21,
               "atk%": 4.96,
               "atk": 16.54
             }
@@ -20473,8 +20499,8 @@
             "substats": {
               "er": 22.02,
               "cr": 6.61,
-              "atk%": 4.96,
-              "cd": 6.6
+              "cd": 6.6,
+              "atk%": 4.96
             }
           },
           "plume": {
@@ -20492,8 +20518,8 @@
             "mainStat": "er",
             "substats": {
               "cr": 16.53,
-              "atk%": 4.96,
               "cd": 6.6,
+              "atk%": 4.96,
               "atk": 16.54
             }
           },
@@ -20503,8 +20529,8 @@
             "substats": {
               "er": 22.02,
               "cr": 6.61,
-              "atk%": 4.96,
-              "cd": 6.6
+              "cd": 6.6,
+              "atk%": 4.96
             }
           },
           "circlet": {
@@ -20512,8 +20538,8 @@
             "mainStat": "cr",
             "substats": {
               "er": 5.51,
-              "atk%": 14.87,
-              "cd": 19.81,
+              "cd": 33.02,
+              "atk%": 4.96,
               "atk": 16.54
             }
           }
@@ -20534,8 +20560,8 @@
             "mainStat": "atk",
             "substats": {
               "er": 22.02,
-              "cr": 6.61,
               "cd": 6.6,
+              "cr": 6.61,
               "atk%": 4.96
             }
           },
@@ -20543,30 +20569,30 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 3.31,
-              "cd": 33.02,
+              "cd": 26.42,
+              "cr": 6.61,
               "atk": 16.54,
-              "hp%": 4.96
+              "em": 19.82
             }
           },
           "goblet": {
             "setKey": "generated",
             "mainStat": "cryo%",
             "substats": {
-              "atk%": 24.77,
-              "cr": 3.31,
-              "cd": 6.6,
+              "cd": 26.42,
+              "cr": 6.61,
+              "atk%": 4.96,
               "atk": 16.54
             }
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "atk%",
+            "mainStat": "cr",
             "substats": {
-              "cd": 13.21,
-              "cr": 13.22,
+              "cd": 33.02,
+              "atk%": 4.96,
               "atk": 16.54,
-              "hp%": 4.96
+              "em": 19.82
             }
           }
         }
@@ -20575,9 +20601,9 @@
         "yumemizuki_mizuki": {
           "hp": 4780,
           "er": 0.2202,
-          "cr": 0.5619,
+          "cr": 0.5288,
           "em": 698,
-          "cd": 0.3303,
+          "cd": 0.3963,
           "atk": 361
         },
         "odette": {
@@ -20592,51 +20618,80 @@
           "hp": 4780,
           "er": 1.2337,
           "cr": 0.6746,
-          "cd": 0.4623,
+          "cd": 0.5944,
           "atk": 344
         },
         "diona": {
           "hp": 4780,
           "er": 0.4404,
-          "cr": 0.3305,
-          "cd": 0.6605,
-          "atk": 361
+          "cr": 0.5754,
+          "cd": 0.9908,
+          "atk": 361,
+          "em": 40
         }
       },
       "display": {
-        "totalDamage": 12433596.4192,
+        "totalDamage": 9833093.5669,
         "partsByFormula": {
           "yumemizuki_mizuki.mizuki-skill-initial": [
             {
-              "damage": 5942.1384,
+              "damage": 5930.5622,
               "template": "direct"
             }
           ],
           "yumemizuki_mizuki.mizuki-burst-initial": [
             {
-              "damage": 9270.0022,
+              "damage": 9251.9428,
               "template": "direct"
             }
           ],
           "yumemizuki_mizuki.mizuki-burst-drop": [
             {
-              "damage": 7115.9028,
+              "damage": 7102.0399,
               "template": "direct"
             }
           ],
           "yumemizuki_mizuki.mizuki-skill-swirl": [
             {
-              "damage": 58136.9878,
+              "damage": 58023.7276,
               "template": "direct"
             },
             {
-              "damage": 54023.6837,
+              "damage": 53918.4368,
               "template": "direct"
             }
           ],
           "yumemizuki_mizuki.rx-stellarSwirl-yumemizuki_mizuki": [
             {
-              "damage": 0,
+              "damage": 67593.2934,
+              "template": "stellar"
+            },
+            {
+              "damage": 53774.1199,
+              "template": "stellar"
+            },
+            {
+              "damage": 4965.4124,
+              "template": "stellar"
+            },
+            {
+              "damage": 4034.938,
+              "template": "stellar"
+            },
+            {
+              "damage": 62588.3238,
+              "template": "stellar"
+            },
+            {
+              "damage": 201964.5956,
+              "template": "stellar"
+            },
+            {
+              "damage": 7988.2349,
+              "template": "stellar"
+            },
+            {
+              "damage": 6447.3519,
               "template": "stellar"
             }
           ],
@@ -20692,7 +20747,7 @@
           ],
           "odette.odette-coda-end": [
             {
-              "damage": 3151173.94,
+              "damage": 1949774.9919,
               "template": "stellarDirect"
             }
           ],
@@ -20702,7 +20757,7 @@
               "template": "direct"
             },
             {
-              "damage": 339067.0419,
+              "damage": 238459.6541,
               "template": "stellarDirect"
             }
           ],
@@ -20712,7 +20767,7 @@
               "template": "direct"
             },
             {
-              "damage": 389549.4698,
+              "damage": 269241.6223,
               "template": "stellarDirect"
             }
           ],
@@ -20729,64 +20784,80 @@
           ],
           "odette.odette-c1-extra": [
             {
-              "damage": 1494043.0114,
+              "damage": 939329.3037,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-c4-coord": [
             {
-              "damage": 377617.3684,
+              "damage": 261965.9507,
               "template": "stellarDirect"
-            }
-          ],
-          "odette.rx-stellarSwirl-odette": [
-            {
-              "damage": 0,
-              "template": "stellar"
             }
           ],
           "faruzan.faruzan-vortex": [
             {
-              "damage": 19754.31,
+              "damage": 19736.9439,
               "template": "direct"
             }
           ],
           "faruzan.faruzan-polyhedron": [
             {
-              "damage": 26814.1027,
+              "damage": 26774.4639,
               "template": "direct"
             }
           ],
           "faruzan.faruzan-c6-collapse": [
             {
-              "damage": 19754.31,
+              "damage": 19736.9439,
               "template": "direct"
             }
           ],
           "faruzan.rx-stellarSwirl-faruzan": [
             {
-              "damage": 0,
+              "damage": 56905.211,
+              "template": "stellar"
+            },
+            {
+              "damage": 5198.2565,
+              "template": "stellar"
+            },
+            {
+              "damage": 49744.0663,
+              "template": "stellar"
+            },
+            {
+              "damage": 3701.4916,
+              "template": "stellar"
+            },
+            {
+              "damage": 8100.095,
+              "template": "stellar"
+            },
+            {
+              "damage": 59016.6059,
+              "template": "stellar"
+            },
+            {
+              "damage": 191475.1867,
+              "template": "stellar"
+            },
+            {
+              "damage": 6060.5102,
               "template": "stellar"
             }
           ],
           "diona.diona-skill": [
             {
-              "damage": 5455.0227,
+              "damage": 5850.8059,
               "template": "direct",
               "hits": 5
             }
           ],
           "diona.diona-a4-paws": [
             {
-              "damage": 5640.1777,
+              "damage": 6049.3946,
               "template": "direct",
               "hits": 3
-            }
-          ],
-          "diona.rx-stellarSwirl-diona": [
-            {
-              "damage": 0,
-              "template": "stellar"
             }
           ]
         },
@@ -21251,8 +21322,8 @@
           "yumemizuki_mizuki": {
             "onField": {
               "em": 2062,
-              "cr": 0.9619,
-              "cd": 1.6303,
+              "cr": 0.9288,
+              "cd": 1.6963,
               "er": 1.2202,
               "hp": 18421,
               "atk": 1665,
@@ -21260,8 +21331,8 @@
             },
             "offField": {
               "em": 1842,
-              "cr": 0.9619,
-              "cd": 1.6303,
+              "cr": 0.9288,
+              "cd": 1.6963,
               "er": 1.2202,
               "hp": 18421,
               "atk": 1665,
@@ -21291,42 +21362,42 @@
           "faruzan": {
             "onField": {
               "cr": 0.8746,
-              "cd": 1.8444,
+              "cd": 1.9765,
               "er": 2.2337,
               "dmg%": 0.4,
               "em": 367,
               "hp": 18286,
-              "atk": 1927,
+              "atk": 1849,
               "def": 671
             },
             "offField": {
               "cr": 0.8746,
-              "cd": 1.8444,
+              "cd": 1.9765,
               "er": 2.2337,
               "dmg%": 0.4,
               "hp": 18286,
-              "atk": 1927,
+              "atk": 1849,
               "em": 187,
               "def": 671
             }
           },
           "diona": {
             "onField": {
-              "cr": 0.5305,
-              "cd": 1.1605,
+              "cr": 0.7754,
+              "cd": 1.4908,
               "er": 1.7464,
-              "em": 367,
-              "hp": 16026,
-              "atk": 2606,
+              "em": 407,
+              "hp": 15012,
+              "atk": 2095,
               "def": 642
             },
             "offField": {
-              "cr": 0.5305,
-              "cd": 1.1605,
+              "cr": 0.7754,
+              "cd": 1.4908,
               "er": 1.7464,
-              "hp": 16026,
-              "atk": 2606,
-              "em": 187,
+              "hp": 15012,
+              "atk": 2095,
+              "em": 227,
               "def": 642
             }
           }
@@ -21338,8 +21409,8 @@
               "hp": 18421,
               "def": 811,
               "em": 2062,
-              "cr": 0.9619,
-              "cd": 2.0303,
+              "cr": 0.9288,
+              "cd": 2.0963,
               "er": 1.2202,
               "dmg%": 0.3825,
               "baseDmg": 252.48,
@@ -21350,8 +21421,8 @@
               "hp": 18421,
               "def": 811,
               "em": 1842,
-              "cr": 0.9619,
-              "cd": 2.0303,
+              "cr": 0.9288,
+              "cd": 2.0963,
               "er": 1.2202,
               "dmg%": 0.3825,
               "baseDmg": 252.48,
@@ -21398,24 +21469,24 @@
           },
           "faruzan": {
             "onField": {
-              "atk": 1927,
+              "atk": 1849,
               "hp": 18286,
               "def": 671,
               "em": 367,
               "cr": 0.8746,
-              "cd": 2.2444,
+              "cd": 2.3765,
               "er": 2.2337,
               "dmg%": 1.2485,
               "baseDmg": 252.48,
               "resReduction%": 0.7
             },
             "offField": {
-              "atk": 1927,
+              "atk": 1849,
               "hp": 18286,
               "def": 671,
               "em": 187,
               "cr": 0.8746,
-              "cd": 2.2444,
+              "cd": 2.3765,
               "er": 2.2337,
               "dmg%": 1.2485,
               "baseDmg": 252.48,
@@ -21424,23 +21495,23 @@
           },
           "diona": {
             "onField": {
-              "atk": 2606,
-              "hp": 16026,
+              "atk": 2095,
+              "hp": 15012,
               "def": 642,
-              "em": 367,
-              "cr": 0.5305,
-              "cd": 1.1605,
+              "em": 407,
+              "cr": 0.7754,
+              "cd": 1.4908,
               "er": 1.7464,
               "dmg%": 1.5927,
               "resReduction%": 0.4
             },
             "offField": {
-              "atk": 2606,
-              "hp": 16026,
+              "atk": 2095,
+              "hp": 15012,
               "def": 642,
-              "em": 187,
-              "cr": 0.5305,
-              "cd": 1.1605,
+              "em": 227,
+              "cr": 0.7754,
+              "cd": 1.4908,
               "er": 1.7464,
               "dmg%": 1.6807,
               "resReduction%": 0.4
@@ -21451,28 +21522,30 @@
           "yumemizuki_mizuki": {
             "atk": 0,
             "atk%": 0.0001,
-            "em": 0.0038,
-            "cr": 0.0005,
-            "cd": 0.0005
+            "em": 0.0044,
+            "cr": 0.0006,
+            "cd": 0.0014
           },
           "odette": {
-            "atk": 0.0041,
-            "atk%": 0.0134,
-            "em": 0.0069,
-            "cr": 0.0028,
-            "cd": 0.0149
+            "atk": 0.0033,
+            "atk%": 0.0106,
+            "em": 0.006,
+            "cr": 0.0029,
+            "cd": 0.0139
           },
           "faruzan": {
             "atk": 0.0001,
-            "atk%": 0.0002,
-            "cr": 0.0003,
-            "cd": 0.0002
+            "atk%": 0.0003,
+            "em": 0.0001,
+            "cr": 0.0006,
+            "cd": 0.0006
           },
           "diona": {
-            "atk": 0,
-            "atk%": 0.0001,
-            "cr": 0.0002,
-            "cd": 0.0002
+            "atk": 0.0001,
+            "atk%": 0.0002,
+            "em": 0,
+            "cr": 0.0003,
+            "cd": 0.0003
           }
         },
         "levelUpGains": {}
@@ -86375,139 +86448,139 @@
           "minCr": 0.5
         }
       },
-      "damage": 12303610.2766,
+      "damage": 14704349.8441,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 170611.8725,
-            "total": 341223.7451
+            "perHit": 216635.1908,
+            "total": 433270.3816
           },
           {
-            "perHit": 70471.9684,
-            "total": 140943.9368
+            "perHit": 89470.5072,
+            "total": 178941.0144
           },
           {
-            "perHit": 483220.6056,
-            "total": 966441.2112
+            "perHit": 568917.4398,
+            "total": 1137834.8796
           },
           {
-            "perHit": 61383.6286,
-            "total": 122767.2571
+            "perHit": 77800.2642,
+            "total": 155600.5284
           },
           {
-            "perHit": 25422.2452,
-            "total": 50844.4904
+            "perHit": 32147.7069,
+            "total": 64295.4138
           },
           {
-            "perHit": 5931.8572,
-            "total": 11863.7144
+            "perHit": 7501.1316,
+            "total": 15002.2632
           },
           {
-            "perHit": 920745.3613,
-            "total": 1841490.7226
-          },
-          {
-            "perHit": 0,
-            "total": 0
-          },
-          {
-            "perHit": 75498.0705,
-            "total": 150996.141
-          },
-          {
-            "perHit": 19316.4473,
-            "total": 38632.8946
-          },
-          {
-            "perHit": 26229.156,
-            "total": 52458.3121
-          },
-          {
-            "perHit": 25761.9365,
-            "total": 51523.873
-          },
-          {
-            "perHit": 22844.4115,
-            "total": 45688.823
-          },
-          {
-            "perHit": 2001707.2603,
-            "total": 4003414.5206
-          },
-          {
-            "perHit": 123616.8563,
-            "total": 247233.7127
-          },
-          {
-            "perHit": 147806.3556,
-            "total": 295612.7112
-          },
-          {
-            "perHit": 119370.631,
-            "total": 238741.262
-          },
-          {
-            "perHit": 924234.5832,
-            "total": 1848469.1664
-          },
-          {
-            "perHit": 132034.9778,
-            "total": 264069.9556
+            "perHit": 1122860.1967,
+            "total": 2245720.3934
           },
           {
             "perHit": 0,
             "total": 0
           },
           {
-            "perHit": 30264.7888,
-            "total": 60529.5776
+            "perHit": 75939.2802,
+            "total": 151878.5603
           },
           {
-            "perHit": 10255.3075,
-            "total": 20510.615
+            "perHit": 19389.9823,
+            "total": 38779.9645
           },
           {
-            "perHit": 13477.4128,
-            "total": 26954.8256
+            "perHit": 26302.691,
+            "total": 52605.382
           },
           {
-            "perHit": 59407.9526,
-            "total": 118815.9051
+            "perHit": 32577.2636,
+            "total": 65154.5272
           },
           {
-            "perHit": 74259.9407,
-            "total": 148519.8814
+            "perHit": 28887.9066,
+            "total": 57775.8132
           },
           {
-            "perHit": 133623.9975,
-            "total": 267247.995
+            "perHit": 2441106.415,
+            "total": 4882212.83
           },
           {
-            "perHit": 89528.0783,
-            "total": 179056.1567
+            "perHit": 151145.6453,
+            "total": 302291.2907
+          },
+          {
+            "perHit": 180722.0293,
+            "total": 361444.0585
+          },
+          {
+            "perHit": 150950.163,
+            "total": 301900.326
+          },
+          {
+            "perHit": 1127115.3454,
+            "total": 2254230.6907
+          },
+          {
+            "perHit": 161018.2656,
+            "total": 322036.5312
           },
           {
             "perHit": 0,
             "total": 0
           },
           {
-            "perHit": 37495.3756,
-            "total": 74990.7512
+            "perHit": 29985.3475,
+            "total": 59970.695
           },
           {
-            "perHit": 93497.8601,
-            "total": 186995.7203
+            "perHit": 10159.512,
+            "total": 20319.024
           },
           {
-            "perHit": 194931.8509,
-            "total": 389863.7018
+            "perHit": 13351.0188,
+            "total": 26702.0376
           },
           {
-            "perHit": 58854.3485,
-            "total": 117708.697
+            "perHit": 67810.8469,
+            "total": 135621.6939
+          },
+          {
+            "perHit": 84763.5587,
+            "total": 169527.1174
+          },
+          {
+            "perHit": 152862.107,
+            "total": 305724.2141
+          },
+          {
+            "perHit": 102417.6117,
+            "total": 204835.2234
+          },
+          {
+            "perHit": 0,
+            "total": 0
+          },
+          {
+            "perHit": 37062.5245,
+            "total": 74125.049
+          },
+          {
+            "perHit": 92418.5096,
+            "total": 184837.0192
+          },
+          {
+            "perHit": 192681.5341,
+            "total": 385363.0682
+          },
+          {
+            "perHit": 58174.9268,
+            "total": 116349.8537
           }
         ],
-        "totalDamage": 12303610.2766
+        "totalDamage": 14704349.8441
       },
       "artifacts": {
         "traveler_cryo": {
@@ -86620,8 +86693,8 @@
             "mainStat": "hp",
             "substats": {
               "atk%": 14.87,
-              "cd": 13.21,
               "cr": 6.61,
+              "cd": 13.21,
               "er": 5.51
             }
           },
@@ -86629,8 +86702,8 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "atk%": 9.91,
-              "cd": 19.81,
+              "atk%": 14.87,
+              "cd": 13.21,
               "cr": 6.61,
               "er": 5.51
             }
@@ -86650,8 +86723,8 @@
             "mainStat": "electro%",
             "substats": {
               "atk%": 9.91,
-              "cd": 13.21,
-              "cr": 9.92,
+              "cr": 6.61,
+              "cd": 19.81,
               "er": 5.51
             }
           },
@@ -86672,8 +86745,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 22.02,
-              "cd": 6.6,
               "def%": 12.39,
+              "cd": 6.6,
               "cr": 3.31
             }
           },
@@ -86682,8 +86755,8 @@
             "mainStat": "atk",
             "substats": {
               "er": 22.02,
-              "def%": 12.39,
               "cd": 6.6,
+              "def%": 12.39,
               "cr": 3.31
             }
           },
@@ -86712,8 +86785,8 @@
             "mainStat": "cr",
             "substats": {
               "er": 16.52,
-              "cd": 13.21,
-              "def%": 12.39,
+              "def%": 18.58,
+              "cd": 6.6,
               "def": 19.67
             }
           }
@@ -86738,86 +86811,86 @@
         },
         "alyosha": {
           "hp": 4780,
+          "cr": 0.4297,
           "cd": 0.7926,
-          "cr": 0.4627,
           "er": 0.2753,
           "atk": 344
         },
         "xilonen": {
           "hp": 4780,
           "er": 1.046,
-          "cd": 0.5284,
+          "cd": 0.4624,
           "cr": 0.4432,
           "atk": 311,
           "def": 59
         }
       },
       "display": {
-        "totalDamage": 12303610.2766,
+        "totalDamage": 14704349.8441,
         "partsByFormula": {
           "traveler_cryo.traveler-cryo-normal": [
             {
-              "damage": 31664.4471,
+              "damage": 40218.8654,
               "template": "direct"
             },
             {
-              "damage": 31398.2456,
+              "damage": 39882.2402,
               "template": "direct"
             },
             {
-              "damage": 33860.6097,
+              "damage": 42996.0234,
               "template": "direct"
             },
             {
-              "damage": 35235.9842,
+              "damage": 44735.2536,
               "template": "direct"
             },
             {
-              "damage": 38452.5859,
+              "damage": 48802.8081,
               "template": "direct"
             }
           ],
           "traveler_cryo.traveler-cryo-charge": [
             {
-              "damage": 34614.8473,
+              "damage": 43949.7948,
               "template": "direct"
             },
             {
-              "damage": 35857.1211,
+              "damage": 45520.7124,
               "template": "direct"
             }
           ],
           "traveler_cryo.traveler-cryo-charge-freezing": [
             {
-              "damage": 233593.7898,
+              "damage": 274682.4845,
               "template": "stellarDirect"
             },
             {
-              "damage": 249626.8158,
+              "damage": 294234.9553,
               "template": "stellarDirect"
             }
           ],
           "traveler_cryo.traveler-cryo-plunge-high": [
             {
-              "damage": 61383.6286,
+              "damage": 77800.2642,
               "template": "direct"
             }
           ],
           "traveler_cryo.traveler-cryo-skill": [
             {
-              "damage": 25422.2452,
+              "damage": 32147.7069,
               "template": "direct"
             }
           ],
           "traveler_cryo.traveler-cryo-crystal": [
             {
-              "damage": 5931.8572,
+              "damage": 7501.1316,
               "template": "direct"
             }
           ],
           "traveler_cryo.traveler-cryo-burst": [
             {
-              "damage": 184149.0723,
+              "damage": 224572.0393,
               "template": "stellarDirect",
               "hits": 5
             }
@@ -86830,100 +86903,100 @@
           ],
           "odette.odette-normal": [
             {
-              "damage": 11967.9547,
+              "damage": 12041.4897,
               "template": "direct"
             },
             {
-              "damage": 11922.1127,
+              "damage": 11995.6476,
               "template": "direct"
             },
             {
-              "damage": 9422.2988,
+              "damage": 9495.8338,
               "template": "direct"
             },
             {
-              "damage": 10171.9245,
+              "damage": 10245.4594,
               "template": "direct"
             },
             {
-              "damage": 14972.5999,
+              "damage": 15046.1348,
               "template": "direct"
             },
             {
-              "damage": 17041.1799,
+              "damage": 17114.7149,
               "template": "direct"
             }
           ],
           "odette.odette-charge": [
             {
-              "damage": 19316.4473,
+              "damage": 19389.9823,
               "template": "direct"
             }
           ],
           "odette.odette-plunge-high": [
             {
-              "damage": 26229.156,
+              "damage": 26302.691,
               "template": "direct"
             }
           ],
           "odette.odette-skill-initial": [
             {
-              "damage": 25761.9365,
+              "damage": 32577.2636,
               "template": "direct"
             }
           ],
           "odette.odette-coda-dot": [
             {
-              "damage": 22844.4115,
+              "damage": 28887.9066,
               "template": "direct"
             }
           ],
           "odette.odette-coda-end": [
             {
-              "damage": 2001707.2603,
+              "damage": 2441106.415,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-plume-move": [
             {
-              "damage": 8734.4225,
+              "damage": 11045.1162,
               "template": "direct"
             },
             {
-              "damage": 114882.4339,
+              "damage": 140100.5291,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-wing-move": [
             {
-              "damage": 10443.9665,
+              "damage": 13206.9206,
               "template": "direct"
             },
             {
-              "damage": 137362.3891,
+              "damage": 167515.1087,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-burst": [
             {
-              "damage": 26261.5388,
+              "damage": 33209.0359,
               "template": "direct",
               "hits": 3
             },
             {
-              "damage": 40586.0145,
+              "damage": 51323.0554,
               "template": "direct"
             }
           ],
           "odette.odette-c1-extra": [
             {
-              "damage": 924234.5832,
+              "damage": 1127115.3454,
               "template": "stellarDirect"
             }
           ],
           "odette.odette-c4-coord": [
             {
-              "damage": 132034.9778,
+              "damage": 161018.2656,
               "template": "stellarDirect"
             }
           ],
@@ -86935,60 +87008,60 @@
           ],
           "alyosha.alyosha-na": [
             {
-              "damage": 6068.906,
+              "damage": 6012.8662,
               "template": "direct"
             },
             {
-              "damage": 6091.6891,
+              "damage": 6035.433,
               "template": "direct"
             },
             {
-              "damage": 5168.972,
+              "damage": 5121.4784,
               "template": "direct"
             },
             {
-              "damage": 5009.49,
+              "damage": 4963.511,
               "template": "direct"
             },
             {
-              "damage": 7925.7317,
+              "damage": 7852.0588,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-charge": [
             {
-              "damage": 10255.3075,
+              "damage": 10159.512,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-plunge-high": [
             {
-              "damage": 13477.4128,
+              "damage": 13351.0188,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-e-press": [
             {
-              "damage": 59407.9526,
+              "damage": 67810.8469,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-e-hold": [
             {
-              "damage": 74259.9407,
+              "damage": 84763.5587,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-q-field": [
             {
-              "damage": 13362.3998,
+              "damage": 15286.2107,
               "template": "direct",
               "hits": 10
             }
           ],
           "alyosha.alyosha-q-tugarin": [
             {
-              "damage": 8952.8078,
+              "damage": 10241.7612,
               "template": "direct",
               "hits": 10
             }
@@ -87001,41 +87074,41 @@
           ],
           "xilonen.xilonen-e-rush": [
             {
-              "damage": 37495.3756,
+              "damage": 37062.5245,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal-2": [
             {
-              "damage": 46843.7565,
+              "damage": 46302.9866,
               "template": "direct"
             },
             {
-              "damage": 46654.1036,
+              "damage": 46115.523,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal": [
             {
-              "damage": 46843.7565,
+              "damage": 46302.9866,
               "template": "direct"
             },
             {
-              "damage": 46654.1036,
+              "damage": 46115.523,
               "template": "direct"
             },
             {
-              "damage": 48749.9947,
+              "damage": 48187.2189,
               "template": "direct"
             },
             {
-              "damage": 52683.9961,
+              "damage": 52075.8057,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-q-initial": [
             {
-              "damage": 58854.3485,
+              "damage": 58174.9268,
               "template": "direct"
             }
           ]
@@ -87066,6 +87139,20 @@
               }
             ],
             "providerCharId": "resonance"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "traveler_cryo",
+              "origin": "P3"
+            },
+            "entries": [
+              {
+                "key": "polestarField",
+                "value": 1
+              }
+            ],
+            "providerCharId": "traveler_cryo"
           },
           {
             "source": {
@@ -87202,6 +87289,20 @@
               }
             ],
             "providerCharId": "traveler_cryo"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "odette",
+              "origin": "P3"
+            },
+            "entries": [
+              {
+                "key": "polestarField",
+                "value": 1
+              }
+            ],
+            "providerCharId": "odette"
           },
           {
             "source": {
@@ -87506,7 +87607,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2786.385
+                "value": 2826.4915
               }
             ],
             "providerCharId": "xilonen"
@@ -87520,7 +87621,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2786.385
+                "value": 2826.4915
               }
             ],
             "providerCharId": "xilonen"
@@ -87534,7 +87635,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2786.385
+                "value": 2826.4915
               }
             ],
             "providerCharId": "xilonen"
@@ -87548,7 +87649,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2786.385
+                "value": 2826.4915
               }
             ],
             "providerCharId": "xilonen"
@@ -87562,7 +87663,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 12860.2386
+                "value": 13045.3452
               }
             ],
             "providerCharId": "xilonen"
@@ -87682,41 +87783,41 @@
           "alyosha": {
             "onField": {
               "er": 1.8483,
-              "cr": 0.6627,
+              "cr": 0.6297,
               "cd": 1.2926,
               "em": 220,
               "hp": 17570,
-              "atk": 3217,
+              "atk": 3261,
               "def": 752
             },
             "offField": {
               "er": 1.8483,
-              "cr": 0.6627,
+              "cr": 0.6297,
               "cd": 1.2926,
               "hp": 17570,
-              "atk": 2768,
+              "atk": 2812,
               "def": 752
             }
           },
           "xilonen": {
             "onField": {
               "cr": 0.6432,
-              "cd": 1.0284,
+              "cd": 0.9624,
               "er": 2.046,
               "em": 220,
               "dmg%": 0.5,
               "hp": 18067,
               "atk": 1999,
-              "def": 4287
+              "def": 4348
             },
             "offField": {
               "cr": 0.6432,
-              "cd": 1.0284,
+              "cd": 0.9624,
               "er": 2.046,
               "dmg%": 0.5,
               "hp": 18067,
               "atk": 1559,
-              "def": 4287
+              "def": 4348
             }
           }
         },
@@ -87731,11 +87832,12 @@
               "cd": 2.7383,
               "er": 2.0808,
               "dmg%": 0.512,
-              "baseDmg": 5767.8198,
+              "baseDmg": 5807.9262,
               "reactionBaseDmg%": 0.21,
               "elevated%": 0.25,
               "reactionDmg%": 1.61,
-              "resReduction%": 0.65
+              "resReduction%": 0.65,
+              "polestarField": 2
             },
             "offField": {
               "atk": 3284,
@@ -87749,7 +87851,8 @@
               "reactionBaseDmg%": 0.21,
               "elevated%": 0.25,
               "reactionDmg%": 1.21,
-              "resReduction%": 0.65
+              "resReduction%": 0.65,
+              "polestarField": 2
             }
           },
           "odette": {
@@ -87762,13 +87865,14 @@
               "cd": 2.2766,
               "er": 2.1786,
               "dmg%": 0.512,
-              "baseDmg": 2786.385,
+              "baseDmg": 2826.4915,
               "baseDmg%": 0.3,
               "reactionBaseDmg%": 0.21,
               "elevated%": 0.45,
               "reactionDmg%": 2.32,
               "reactionCd": 1.1,
-              "resReduction%": 0.65
+              "resReduction%": 0.65,
+              "polestarField": 2
             },
             "offField": {
               "atk": 3107,
@@ -87784,52 +87888,55 @@
               "elevated%": 0.45,
               "reactionDmg%": 1.92,
               "reactionCd": 1.1,
-              "resReduction%": 0.65
+              "resReduction%": 0.65,
+              "polestarField": 2
             }
           },
           "alyosha": {
             "onField": {
-              "atk": 3217,
+              "atk": 3261,
               "hp": 17570,
               "def": 752,
               "em": 220,
-              "cr": 0.6627,
+              "cr": 0.6297,
               "cd": 1.2926,
               "er": 1.8483,
               "dmg%": 1.6249,
-              "baseDmg": 2786.385,
-              "resReduction%": 0.65
+              "baseDmg": 2826.4915,
+              "resReduction%": 0.65,
+              "polestarField": 2
             },
             "offField": {
-              "atk": 2768,
+              "atk": 2812,
               "hp": 17570,
               "def": 752,
-              "cr": 0.6627,
+              "cr": 0.6297,
               "cd": 1.2926,
               "er": 1.8483,
               "dmg%": 1.6249,
-              "resReduction%": 0.65
+              "resReduction%": 0.65,
+              "polestarField": 2
             }
           },
           "xilonen": {
             "onField": {
               "atk": 1999,
               "hp": 18067,
-              "def": 4287,
+              "def": 4348,
               "em": 220,
               "cr": 0.6432,
-              "cd": 1.0284,
+              "cd": 0.9624,
               "er": 2.046,
               "dmg%": 1.412,
-              "baseDmg": 15646.6236,
+              "baseDmg": 15871.8367,
               "resReduction%": 0.45
             },
             "offField": {
               "atk": 1559,
               "hp": 18067,
-              "def": 4287,
+              "def": 4348,
               "cr": 0.6432,
-              "cd": 1.0284,
+              "cd": 0.9624,
               "er": 2.046,
               "dmg%": 1.412,
               "resReduction%": 0.45
@@ -87839,30 +87946,30 @@
         "marginalGains": {
           "traveler_cryo": {
             "atk": 0.0012,
-            "atk%": 0.0031,
+            "atk%": 0.0032,
             "em": 0.0021,
-            "cr": 0.0011,
-            "cd": 0.005
+            "cr": 0.0012,
+            "cd": 0.0051
           },
           "odette": {
             "atk": 0.0027,
-            "atk%": 0.0087,
-            "em": 0.0064,
-            "cr": 0.0016,
-            "cd": 0.0091
+            "atk%": 0.0089,
+            "em": 0.0066,
+            "cr": 0.0017,
+            "cd": 0.0093
           },
           "alyosha": {
-            "atk": 0.0004,
-            "atk%": 0.001,
+            "atk": 0.0003,
+            "atk%": 0.0009,
             "er": 0.0004,
             "cr": 0.0015,
-            "cd": 0.0016
+            "cd": 0.0014
           },
           "xilonen": {
             "def": 0.0004,
-            "def%": 0.0013,
-            "cr": 0.0013,
-            "cd": 0.0016
+            "def%": 0.0011,
+            "cr": 0.001,
+            "cd": 0.0014
           }
         },
         "levelUpGains": {}
