@@ -2,6 +2,15 @@
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
 
+## 2026-08-23
+
+### features
+- Added an Achievement Archive that imports achievement progress from GOOD data and tracks it locally for each account profile
+
+### fixes
+- Fixed several Stellar-Conduct and Stellar Swirl damage calculations, including attach-hit scaling, Polestar Field bonuses, and team contribution totals
+- Account imports now correctly recognize Cryo Traveler instead of omitting or assigning the wrong variant
+
 ## 2026-08-15
 
 ### features
