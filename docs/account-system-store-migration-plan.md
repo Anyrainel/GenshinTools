@@ -17,7 +17,7 @@ The main migration rule is:
 
 ## Implementation Status
 
-The local store migrations needed before cloud backup work are complete on `master` through `b668a54f`. The remaining work before Cloudflare implementation is the cloud backup adapter/partition layer.
+The local store migrations needed before cloud backup work are complete on `main` through `b668a54f`. The remaining work before Cloudflare implementation is the cloud backup adapter/partition layer.
 
 | Phase | Status | Commit |
 | --- | --- | --- |

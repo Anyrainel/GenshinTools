@@ -17,7 +17,7 @@ React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tail
 
 ## Production Deployment
 
-- Production is auto-deployed after pushing to GitHub. For normal prod pushes, validate locally, push the intended commit to `origin/master`, and let the GitHub/Cloudflare deployment pipeline publish it.
+- Production is auto-deployed after pushing to GitHub. For normal prod pushes, validate locally, push the intended commit to `origin/main`, and let the GitHub/Cloudflare deployment pipeline publish it.
 - Do not run manual production deploy commands such as `wrangler deploy` or `npm run deploy:worker` unless the user explicitly asks for a manual Cloudflare deploy.
 
 ## Page Map
@@ -135,7 +135,7 @@ Multiple agents may share the same workspace.
 - Preserving pending work is more important than perfect commit boundaries.
 - Do not use partial staging to isolate your changes in a file; pre-commit checks and concurrent agents make it unsafe.
 
-Commit proactively without being asked: once a self-contained change scope is complete and validated, stage the files you touched and commit. Leaving finished work pending makes it harder for concurrent agents to tell your changes from theirs. Pushing stays opt-in — `origin/master` auto-deploys production, so only push when asked.
+Commit proactively without being asked: once a self-contained change scope is complete and validated, stage the files you touched and commit. Leaving finished work pending makes it harder for concurrent agents to tell your changes from theirs. Pushing stays opt-in — `origin/main` auto-deploys production, so only push when asked.
 
 ## File Safety
 

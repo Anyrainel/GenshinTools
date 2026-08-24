@@ -11,9 +11,9 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
     continue
   fi
-  # If remote sha is all zeros, this is a new branch — compare against merge-base with origin/master
+  # If remote sha is all zeros, this is a new branch — compare against merge-base with origin/main
   if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
-    merge_base=$(git merge-base origin/master "$local_sha" 2>/dev/null || echo "")
+    merge_base=$(git merge-base origin/main "$local_sha" 2>/dev/null || echo "")
     if [ -z "$merge_base" ]; then
       # Can't determine base — run all checks to be safe
       has_ts=true
