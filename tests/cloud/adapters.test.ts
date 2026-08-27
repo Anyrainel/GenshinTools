@@ -349,6 +349,7 @@ describe("cloud source adapters", () => {
     expect(partitions[0]).toMatchObject({
       namespace: "teams",
       partitionKey: "all",
+      schemaVersion: 2,
     });
     expect(partitions[0].payload).not.toHaveProperty("resultsByTeamId");
     expect(teamFromCloud(partitions)).toEqual({
@@ -359,6 +360,52 @@ describe("cloud source adapters", () => {
       description: "description",
       updatedAt: 200,
     });
+  });
+
+  it("migrates legacy formula units restored from v1 team backups", () => {
+    const snapshot: TeamCloudSnapshot = {
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {},
+      author: "",
+      description: "",
+      updatedAt: 200,
+    };
+    const [legacyPartition] = teamToCloud(snapshot);
+    legacyPartition.schemaVersion = 1;
+    legacyPartition.payload = {
+      ...legacyPartition.payload,
+      configsByTeamId: {
+        legacy: {
+          combatOptions: {},
+          damage: {
+            combo: {
+              id: "legacy",
+              label: { en: "Legacy", zh: "旧版" },
+              lines: [
+                {
+                  charId: "yae_miko",
+                  formulaId: "yae_miko-skill",
+                  count: 15,
+                },
+                { charId: "cyno", formulaId: "cyno-c6-bolts", count: 6 },
+              ],
+            },
+          },
+        },
+      },
+    };
+
+    expect(
+      teamFromCloud([legacyPartition]).configsByTeamId.legacy?.damage?.combo
+        ?.lines
+    ).toMatchObject([{ count: 1 }, { count: 1 }]);
+
+    legacyPartition.schemaVersion = 2;
+    expect(
+      teamFromCloud([legacyPartition]).configsByTeamId.legacy?.damage?.combo
+        ?.lines
+    ).toMatchObject([{ count: 15 }, { count: 6 }]);
   });
 
   it("omits default team config rows from the cloud payload", () => {

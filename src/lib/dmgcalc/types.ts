@@ -448,7 +448,7 @@ export type ReactionOverride = {
 };
 
 // ─── Combo Descriptor ───
-/** A single entry in a ComboDescriptor — one formula's hit count in a rotation. */
+/** A single entry in a ComboDescriptor — whole formula-entry repetitions. */
 export type ComboTemplateEntry = {
   id: string;
   count: number;

@@ -33,5 +33,10 @@ export function migrateTeamResultCacheStore(
     }
     state.resultsByTeamId = resultsByTeamId;
   }
+  if (version < 2) {
+    // Formula-unit migrations can change the meaning of a saved combo without
+    // changing its ID. Cached optimizer/analyzer results cannot be reconciled.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

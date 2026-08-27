@@ -207,7 +207,7 @@ When game text specifies that a **team/other buff** can only trigger a limited n
 
 - **[BUG]** if a team/other buff with explicit activation count limit in game text is missing `maxStacks`. This causes the calculator to assume every hit receives the buff, over-counting damage significantly on multi-hit formulas.
 - **[BUG]** if `maxStacks` value doesn't match the game text count.
-- **Pattern — "first cast only" self effects** (e.g., "the next Plunge Attack after E deals +X% DMG", "the first N hits of Q are buffed"): prefer `bespokeBuffs` on the targeted FormulaPart(s) with `maxStacks` equal to the part's hit count, attached to **every part** of the affected formula. This scopes the budget to that specific cast — every hit of the first cast is buffed and subsequent casts are not. A regular self-receiver buff with `maxStacks` is also valid, but its budget is distributed across the whole combo rather than a single cast; use that form only when the buff truly caps at N hits across the rotation regardless of which formula consumes them. The separate-formula pattern (buffed-first vs unbuffed-subsequent entries) is an alternate option when different hits have different multipliers.
+- **Pattern — "first cast only" self effects** (e.g., "the next Plunge Attack after E deals +X% DMG", "the first N hits of Q are buffed"): prefer `bespokeBuffs` on the targeted FormulaPart(s) with `maxStacks` equal to the part's hit count, attached to **every part** of the affected formula. This scopes the budget to that specific cast — every hit of the first cast is buffed and subsequent casts are not. A regular self-receiver buff with `maxStacks` is also valid, but its budget is distributed across the whole combo rather than a single cast; use that form only when the buff truly caps at N hits across the rotation regardless of which formula consumes them. The separate-formula pattern (buffed-first vs unbuffed-subsequent entries) is an alternate option when different hits have different multipliers. Any change to an existing entry's granularity must also obey S3's persisted-ID rule.
 - **Not applicable** to buffs with stack-based magnitude (e.g., "each stack increases ATK by 5%, max 4 stacks") — those are modeled via the stack count in the stat value itself. `maxStacks` is specifically for *hit-count-limited activation* where the buff fires on the first N hits then stops.
 - **Not applicable** to self buffs that refresh on a timer (e.g., "once per 0.8s" during a burst duration) — if the refresh is fast enough to be effectively unlimited over a rotation, omit `maxStacks`.
 
@@ -398,6 +398,11 @@ private readonly radianceOn =
 
 **Core principle — NEVER sum talent multipliers from separate hits into one `talentMultiplier`.** `baseDmg` flat buffs (Yun Jin, Shenhe, etc.) are added to each part's base damage independently. Combining multipliers collapses N parts into 1, so `baseDmg` applies once instead of N times, under-reporting damage by `(N−1) × baseDmg × downstream_multipliers`.
 
+**`hits` and combo `count` are separate multiplicative axes.** `FormulaPart.hits` is the number of damage instances inside **one** evaluation of a formula entry. Combo `count` repeats the **whole** formula entry in the rotation. A part therefore contributes `(hits ?? 1) × count` damage instances. For one N-tick source, choose exactly one representation: a per-tick entry with `hits: 1` and combo count N, or a rotation-total entry with `hits: N` and combo count 1.
+
+- **[BUG]** if the same physical repetitions are encoded in both `hits` and combo `count`, unless combat genuinely repeats an N-hit action multiple times.
+- **Persisted-ID rule:** formula IDs and combo counts are saved user data. Keeping an ID while changing its unit (per-hit versus whole sequence, splitting/merging entries, or moving repetitions between `hits` and combo `count`) is a store-schema change. Updating `comboDescriptor` fixes only newly generated combos. Before landing, either use a new ID with deliberate legacy handling or bump the team-store version and migrate both `damage.combo.lines` and `investment.comboOverrides`; add old-version migration coverage and audit persisted fixtures.
+
 **Example**: A Normal ATK sequence with hits at 85%, 90%, 120%:
 - **WRONG** — one part with `talentMultiplier: 2.95` (summed). `baseDmg` applies once: `ATK×2.95 + baseDmg`.
 - **CORRECT** — three parts at 0.85, 0.90, 1.20 each. `baseDmg` applies three times: `(ATK×0.85 + baseDmg) + (ATK×0.90 + baseDmg) + (ATK×1.20 + baseDmg)`.
@@ -496,8 +501,8 @@ For **5★ characters**, every damaging E/Q talent row must be represented in `f
 
 - **Damage rows:** rows with damage multipliers such as `{paramN:P}` or `{paramN:F1P}`. Skip clear non-damage rows like duration, CD, stamina, energy, and point limits.
 - **Grouping:** formulas should follow combat actions, not talent-table rows. Initial hit plus turret/tick damage usually means separate formulas; a slash plus bloom from one burst action can be one formula with multiple parts; tap/hold or first/follow-up modes should be separate formulas.
-- **Ticks:** prefer a per-tick formula with `comboDescriptor` count for simple periodic damage. Keep complex repeating patterns in one formula only when the pattern itself matters.
-- **Repeated same-multiplier hits:** use `hits: N` on one part, per S3.
+- **Ticks:** prefer a per-tick formula with `comboDescriptor` count for simple periodic damage. Keep complex repeating patterns in one formula only when the pattern itself matters; then the grouped entry has internal `hits` and normally a combo count of 1.
+- **Repeated same-multiplier hits:** use `hits: N` only for repeated hits inside one combat action or grouped formula entry, per S3. This is not permission to silently move a persisted combo count into `hits`.
 - **[BUG]** if a 5★ E/Q damage row has no corresponding formula part anywhere in `formulaMap`.
 
 ### S9. Constellation Enhancements: Buff vs. New Formula

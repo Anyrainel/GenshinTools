@@ -4,6 +4,7 @@ import {
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import type { TeamSetupConfig } from "@/lib/team-comp/types";
+import { migrateLegacyFormulaUnitConfigs } from "@/stores/migration/teamFormulaUnits";
 
 export type TeamCloudSnapshot = {
   activePresetId: string | null;
@@ -34,7 +35,7 @@ export function teamToCloud(
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 1,
+      schemaVersion: 2,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -59,7 +60,10 @@ export function teamFromCloud(
   return {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],
-    configsByTeamId: current?.configsByTeamId ?? {},
+    configsByTeamId:
+      partition && partition.schemaVersion < 2
+        ? migrateLegacyFormulaUnitConfigs(current?.configsByTeamId ?? {})
+        : (current?.configsByTeamId ?? {}),
     author: current?.author ?? "",
     description: current?.description ?? "",
     updatedAt:

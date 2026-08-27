@@ -22,6 +22,7 @@ import {
   type LegacyPersistedTeam,
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
+import { migrateLegacyFormulaUnitConfigs } from "./teamFormulaUnits";
 
 type TeamMigrationState = {
   teams?: LegacyPersistedTeam[];
@@ -571,6 +572,19 @@ export function migrateTeamStore(
     for (const config of Object.values(state.configsByTeamId ?? {})) {
       normalizeLegacyEnergyScenario(config);
     }
+  }
+
+  if (version < 20) {
+    // Before v20, several formula entries changed the unit represented by one
+    // persisted combo line without migrating saved data:
+    // - Yae Miko E: one bolt ×15 -> one 15-bolt aggregate ×1
+    // - Cyno C6: five-bolt groups ×6 -> one eight-bolt aggregate ×1
+    // - Kinich E: four ordinary cannons -> one enhanced + three ordinary
+    // Updating comboDescriptor fixed only newly generated combos; normalize the
+    // exact old defaults here while preserving authored/custom repetition counts.
+    state.configsByTeamId = migrateLegacyFormulaUnitConfigs(
+      state.configsByTeamId ?? {}
+    );
   }
 
   state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});

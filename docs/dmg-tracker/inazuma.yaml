@@ -317,6 +317,8 @@
     7, matching yae_miko-p4-sc-proc. Both parts keep offField: true. When the team
     has no Superconduct/Stellar-Conduct source the entry collapses to a single
     15-hit part with [P2, C6] and no P4 buff at all.
+    Because this changed the existing formula id from one bolt repeated 15 times
+    to one 15-bolt aggregate, team-store v20 migrates the old saved count 15 to 1.
     Scope is fixed as a side effect: the P4 enhancement no longer exists as an
     abilities ["skill"] buff, so it cannot reach yae_miko-p1-proc or
     yae_miko-p4-sc-proc.

@@ -232,7 +232,7 @@ export const useTeamResultCacheStore = create<TeamResultCacheState>()(
     }),
     {
       name: "team-result-cache",
-      version: 1,
+      version: 2,
       migrate: migrateTeamResultCacheStore,
       partialize: (state) => ({ resultsByTeamId: state.resultsByTeamId }),
       merge: (persistedState, currentState) => {

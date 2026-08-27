@@ -158,7 +158,7 @@ All in `calc/damageFormula.ts`. Base class: `DamageFormula(talentMultiplier, tag
 ```
 FormulaPart {
   formula: DamageFormula
-  hits?: number          // Repeated hits with same multiplier (preserves per-hit baseDmg)
+  hits?: number          // Damage instances per one formula-entry evaluation
   bespokeBuffs?: StatBuff[] // Per-part buffs, selfOnField scope only
   offField?: boolean     // Damage dealt while off-field (on-field buffs excluded)
 }
@@ -249,6 +249,12 @@ ReactionOverride { reaction?, partReactions?: Record<number, ReactionType>, part
 ```
 
 `evaluateCombo()` in `calc/combo.ts` evaluates a full rotation, caching team stats per on-field character.
+
+`count` is the number of whole formula-entry evaluations in the rotation. It multiplies every part and every internal hit in the entry:
+
+`line total = count × Σ(part damage × (part.hits ?? 1))`
+
+Formula IDs and their entry units are a persisted-data contract. Moving repetitions between `hits` and `count`, or splitting/merging an entry while retaining an ID, requires a team-store version bump plus migration of saved damage lines and investment combo overrides. A `comboDescriptor` change alone affects only newly generated combos.
 
 ---
 
