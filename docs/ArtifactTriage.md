@@ -1,5 +1,10 @@
 # Artifact Triage System — Rule-Based Design
 
+> **Historical design note:** this document records the original triage proposal
+> and is not the current behavioral contract. See `docs/TriageLockV2.md` for
+> current quota semantics, universal hoarding rules, protection behavior, and
+> defaults.
+
 圣遗物去留决策系统。对背包中每一个 **+0 圣遗物**回答："锁还是分解？"
 
 > 本文聚焦 +0 圣遗物（绝大多数使用场景）。已升级圣遗物的处理见附录 A。

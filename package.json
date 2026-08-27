@@ -38,6 +38,7 @@
     "regtest": "tsx --tsconfig tsconfig.app.json tests/regression/regression.ts",
     "depcheck": "depcruise src tests --config .dependency-cruiser.cjs",
     "check:boss-icons": "node scripts/dev/check-leyline-boss-icons.js",
+    "check:artifact-set-roles": "tsx --tsconfig tsconfig.scripts.json scripts/dev/check-artifact-set-roles.ts",
     "check:hoyolab": "node scripts/dev/check-hoyolab-version.js",
     "check:hoyolab:fix": "node scripts/dev/check-hoyolab-version.js --fix",
     "// --- Safe / Piped Variants (Agent Helpers) ---": "",

@@ -44,6 +44,18 @@ describe("concentratedStatRule", () => {
     });
   });
 
+  it("uses known initial values instead of attributing initial-roll quality to upgrades", () => {
+    const art = artifactWithRolls({ "hp%": 3, def: 2, atk: 2, hp: 1 });
+    art.initialValues = {
+      "hp%": getSubstatAvgRoll("hp%", 5) * 1.2,
+      def: getSubstatAvgRoll("def", 5) * 0.8,
+      atk: getSubstatAvgRoll("atk", 5) * 0.8,
+      hp: getSubstatAvgRoll("hp", 5) * 0.8,
+    };
+
+    expect(concentratedStatRule(art).kept).toBe(false);
+  });
+
   it("fires for concentrated ER", () => {
     const art = artifactWithRolls({ er: 6, atk: 1, hp: 1 });
     const r = concentratedStatRule(art);

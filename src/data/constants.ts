@@ -7,8 +7,50 @@ import type {
 } from "./enums";
 import artifactStatData from "./game/artifact_stat.json";
 
-/** Artifact support sets used by triage's support-only ER hoarding rule. */
+/**
+ * Explicit role assignments for every released artifact set.
+ *
+ * Keep these exhaustive: the pre-push role check fails when game data adds a
+ * set without a deliberate DPS, support, or other assignment.
+ */
+export const DPS_ARTIFACT_SET_IDS = [
+  "scarlet_proof",
+  "disenchantment_in_deep_shadow",
+  "a_day_carved_from_rising_winds",
+  "aubade_of_morningstar_and_moon",
+  "night_of_the_skys_unveiling",
+  "finale_of_the_deep_galleries",
+  "long_nights_oath",
+  "obsidian_codex",
+  "unfinished_reverie",
+  "fragment_of_harmonic_whimsy",
+  "nighttime_whispers_in_the_echoing_woods",
+  "golden_troupe",
+  "marechaussee_hunter",
+  "vourukashas_glow",
+  "nymphs_dream",
+  "desert_pavilion_chronicle",
+  "flower_of_paradise_lost",
+  "gilded_dreams",
+  "shimenawas_reminiscence",
+  "vermillion_hereafter",
+  "gladiators_finale",
+  "pale_flame",
+  "emblem_of_severed_fate",
+  "crimson_witch_of_flames",
+  "wanderers_troupe",
+  "heart_of_depth",
+  "bloodstained_chivalry",
+  "echoes_of_an_offering",
+  "thundering_fury",
+  "husk_of_opulent_dreams",
+  "blizzard_strayer",
+] as const;
+
+/** Five-star support sets eligible for triage's universal ER hoarding rule. */
 export const TRIAGE_SUPPORT_ARTIFACT_SET_IDS = [
+  "heart_of_the_furnace",
+  "celestial_gift",
   "silken_moons_serenade",
   "scroll_of_the_hero_of_cinder_city",
   "song_of_days_past",
@@ -32,6 +74,16 @@ export const TIER_LIST_4STAR_SUPPORT_ARTIFACT_SET_IDS = [
   "scholar",
 ] as const;
 
+/** Released four-star sets that are neither current support nor DPS targets. */
+export const TIER_LIST_4STAR_OTHER_ARTIFACT_SET_IDS = [
+  "gambler",
+  "resolution_of_sojourner",
+  "martial_artist",
+  "berserker",
+  "defenders_will",
+  "brave_heart",
+] as const;
+
 export const TIER_LIST_SUPPORT_ARTIFACT_SET_IDS = [
   ...TRIAGE_SUPPORT_ARTIFACT_SET_IDS,
   ...TIER_LIST_4STAR_SUPPORT_ARTIFACT_SET_IDS,
@@ -46,11 +98,18 @@ export const TIER_LIST_OTHER_ARTIFACT_SET_IDS = [
   "retracing_bolide",
   "lavawalker",
   "thundersoother",
+  ...TIER_LIST_4STAR_OTHER_ARTIFACT_SET_IDS,
 ] as const;
 
 export const TIER_LIST_OTHER_ARTIFACT_SETS: ReadonlySet<string> = new Set(
   TIER_LIST_OTHER_ARTIFACT_SET_IDS
 );
+
+export const ARTIFACT_SET_ROLE_IDS = {
+  dps: DPS_ARTIFACT_SET_IDS,
+  support: TIER_LIST_SUPPORT_ARTIFACT_SET_IDS,
+  other: TIER_LIST_OTHER_ARTIFACT_SET_IDS,
+} as const;
 
 // Function to get goblet pool with character's elemental damage bonus
 export const getGobletPool = (element?: Element): readonly MainStat[] => {

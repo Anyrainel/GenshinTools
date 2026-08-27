@@ -58,11 +58,11 @@ Build 的原始权重需要经过以下步骤转换为上锁算法的输入：
 
 #### 步骤2：主词条过滤
 
-主词条按权重过滤：低于 `mainStatThreshold`（默认 90）的主词条直接忽略。
+主词条按权重过滤：低于 `mainStatThreshold`（默认 80）的主词条直接忽略。
 
 ```
 例：Build 的杯子 acceptedMainStats = [{ pyro%: 100 }, { atk%: 30 }]
-  mainStatThreshold = 90 → 只保留 pyro%，atk% 被过滤
+  mainStatThreshold = 80 → 只保留 pyro%，atk% 被过滤
 ```
 
 #### 步骤3：副词条分类
@@ -223,11 +223,11 @@ Rarity 回答的问题：**"如果我重新刷，刷出一个至少跟这个一�
 
 | 旋钮 | 影响什么 | 默认值 |
 |------|---------|-------|
-| **fillerKeep** | 供不足时从 Neutral 中保留几个 | 2 |
-| **qualityMargin** | 供充足时额外保留的 Quality 缓冲数量 | 2 |
-| **setSlotKeep** | 每个套装×部位至少保留几个圣遗物（SP6） | 2 |
+| **fillerKeep** | 扩大后的目标内最多保留几个 Neutral | 3 |
+| **qualityMargin** | 直接扩大每个 build demand，不区分质量档位 | 5 |
+| **setSlotKeep** | 每个套装×部位至少保留几个圣遗物（SP6） | 3 |
 | **optionalSubThreshold** | 副词条权重低于此值视为 optional（0-100 刻度） | 50 |
-| **mainStatThreshold** | 主词条权重低于此值忽略（0-100 刻度） | 90 |
+| **mainStatThreshold** | 主词条权重低于此值忽略（0-100 刻度） | 80 |
 | **满级保护** (levelProtection) | ≥ 该等级不判 FODDER | 12 |
 | **装备保护** (equippedProtection) | 已装备不判 FODDER | 开 |
 
@@ -398,11 +398,11 @@ desired = [cr, cd, atk%], subN = 3, fillers = [atk], slot = flower
 
 | 规则 ID | 名称 | 条件 | 默认 | 效果 |
 |---------|------|------|------|------|
-| **SP1** | ER 囤积 | 4线 + ER 副词条 + 支援套（非沙漏） | 开 | 标记，后续强制锁 |
-| **SP5** | 双暴锁 | 4线 + CR + CD + 套装/部位/主词条匹配某规则 | 开 | 标记，后续强制锁 |
+| **SP1** | ER 囤积 | 4线 + ER 主/副词条 + 支援套 | 开 | 标记，后续强制锁 |
+| **SP5** | 双暴锁 | 4线 + CR + CD，不要求 build 匹配 | 开 | 标记，后续强制锁 |
 | **SP3** | 满级保护 | 等级 ≥ levelProtection | 12 | 标记为受保护（UI 展示在保护区） |
 | **SP4** | 装备保护 | 已装备在角色身上 | 开 | 标记为受保护（UI 展示在保护区） |
-| **SP6** | 套装部位保底 | 该套装×部位的锁定数 < setSlotKeep | 2 | 提升最好的未锁为锁 |
+| **SP6** | 套装部位保底 | 该套装×部位的锁定数 < setSlotKeep | 3 | 提升最好的未锁为锁 |
 | **FLEX** | 散件匹配 | 匹配已启用的 flex pattern | — | 标记，后续强制锁 |
 
 ### 3. 供需决策
@@ -422,9 +422,9 @@ SP1、SP5、FLEX 标记的圣遗物，若供需决策后仍为 unlock，强制�
 | Rule ID | 含义 |
 |---------|------|
 | **TP** | Premium tier → lock |
-| **TQ** | Quality tier → lock（供给充足时也锁） |
+| **TQ** | Quality tier → lock（在扩大后的目标内） |
 | **QB** | Quality borderline → unlock（供给超额，Quality 被淘汰） |
-| **NK** | Neutral keep → lock（供不足时从 Neutral 中保底保留） |
+| **NK** | Neutral keep → lock（在扩大后的目标内，且未达到 fillerKeep） |
 | **TN** | Neutral tier → unlock（正常情况） |
 | **TF** | Trash/failed → unlock（副词条不匹配） |
 | **TD** | No demand → unlock（无任何规则匹配此套装/部位/主词条） |
@@ -438,35 +438,24 @@ SP1、SP5、FLEX 标记的圣遗物，若供需决策后仍为 unlock，强制�
 ### 核心概念
 
 每个 embryoKey（套装类型×套装×部位×主词条×desired 组合）有 `demand` 个需求槽位。
-系统根据已有的 Premium + Quality 库存量决定如何处理圣遗物。
-
-### 两种场景
-
-**场景A：供不应求** — `premiumCount + qualityCount < demand`
+供需目标固定为 `capacity = demand + qualityMargin`。Premium、Quality、Neutral
+按稳定质量排名依次占用同一个目标，不因跨过某个质量档位而切换算法：
 
 ```
-Premium  → LOCK (TP)
-Quality  → LOCK (TQ)
-Neutral  → 从 Neutral 中挑最好的保留 fillerKeep 个 (NK)，其余 UNLOCK (TN)
-Trash    → UNLOCK (TF)
+Premium  → 永远 LOCK，并占用一个 capacity
+Quality  → capacity 尚有空位时 LOCK，否则 UNLOCK
+Neutral  → capacity 尚有空位且尚未达到 fillerKeep 时 LOCK，否则 UNLOCK
+Trash    → UNLOCK
 ```
 
-**场景B：供给充足** — `premiumCount + qualityCount ≥ demand`
+Premium 即使超过 capacity 仍全部保留；此时不会再为 Quality 或 Neutral 留出位置。
+`qualityMargin` 只负责把 demand 扩大为连续的保留目标，`fillerKeep` 则作为反向约束，
+防止扩大后的目标被过多 Neutral 填满。
 
-```
-Premium  → LOCK (TP)（永远锁，不论有多少）
-Quality  → 保留数量 = max(demand + qualityMargin - premiumCount, 0)
-           排名在保留数量内 → LOCK (TQ)
-           排名超出 → UNLOCK (QB)（超额了）
-Neutral  → UNLOCK (TN)（已经有足够好的了）
-Trash    → UNLOCK (TF)
-```
+SP1、SP5、FLEX 等通用囤积规则在供需分配完成后才提升为 LOCK，因此不占用
+build-based capacity，也不会挤掉正常配装规则选中的圣遗物。
 
-> **qualityMargin 的作用**：当 Premium 不够填满需求时，多留几个 Quality 做替补。
-> 例：demand=1, qualityMargin=2, premiumCount=0 → 保留 max(1+2-0, 0) = 3 个 Quality。
-> 如果 premiumCount=2 → 保留 max(1+2-2, 0) = 1 个 Quality（Premium 已经够了）。
-
-### Neutral 排名（场景A中从 Neutral 选保底时）
+### Neutral 排名（从 Neutral 中填补目标时）
 
 ```
 排序依据（优先级从高到低）：
@@ -491,13 +480,14 @@ Trash    → UNLOCK (TF)
 
 ### 套装部位保底 (SP6 / setSlotKeep)
 
-在供需决策完成后，检查每个 `套装×部位` 的锁定数量（含原始锁 + 本次锁定）。
-若不足 setSlotKeep（默认2），从该组的 unlock 圣遗物中按 tier → 等级排序选最好的提升为 lock (SK)。
+在供需决策与特殊规则提升完成后，检查每个 `套装×部位` 的最终保留数量。
+若不足 setSlotKeep（默认3），才从该组的 unlock 圣遗物中按 tier → 胚子质量 →
+roll 质量 → 等级排序选最好的提升为 lock (SK)。它是最终下限，不会在 demand margin
+之外再固定追加三件；已有锁定状态只能用于完全同质量候选之间的稳定排序。
 
 ### 重要原则
 
 - **Premium 永远锁**：极品多少个都不嫌多
-- **不降级已锁的**：库存够了只是"不再收新的"，不会把已锁的踢掉
 - **flex 层不查库存**：匹配即 LOCK
 
 ---
@@ -535,8 +525,8 @@ type FlexPattern = {
 
 | 规则 | 默认 | 说明 |
 |------|------|------|
-| **SP1 4线充能** | 开 | 4线 + ER 副词条 + 支援套（非沙漏） |
-| **SP5 4线双暴** | 开 | 4线 + CR + CD + 套装/部位/主词条匹配某规则 |
+| **SP1 4线充能** | 开 | 4线 + ER 主/副词条 + 支援套，不要求 build 匹配 |
+| **SP5 4线双暴** | 开 | 4线 + CR + CD，不要求 build 匹配 |
 
 ---
 
@@ -544,11 +534,11 @@ type FlexPattern = {
 
 | 设定 | 默认 | 说明 |
 |------|------|------|
-| **fillerKeep** | 2 | 供不足时从 Neutral 中保留几个 |
-| **qualityMargin** | 2 | 供充足时额外保留的 Quality 缓冲数量 |
-| **setSlotKeep** | 2 | 每个套装×部位至少保留的圣遗物数 |
+| **fillerKeep** | 3 | 扩大后的目标内最多保留几个 Neutral |
+| **qualityMargin** | 5 | 直接扩大每个 build demand，不区分质量档位 |
+| **setSlotKeep** | 3 | 每个套装×部位最终至少保留的圣遗物数 |
 | **optionalSubThreshold** | 50 | 副词条权重低于此值视为 optional（0-100 刻度） |
-| **mainStatThreshold** | 90 | 主词条权重低于此值忽略（0-100 刻度） |
+| **mainStatThreshold** | 80 | 主词条权重低于此值忽略（0-100 刻度） |
 | **levelProtection** | 12 | ≥ 此等级的圣遗物标记为受保护 |
 | **equippedProtection** | 开 | 已装备不判 FODDER |
 | **erHoardingEnabled** | 开 | SP1: 4线充能囤积 |

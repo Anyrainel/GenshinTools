@@ -223,6 +223,64 @@ describe("runTriage", () => {
     expect(decisions[0].decidingResult?.ruleId).toBe("supportSetErHoard");
   });
 
+  it("support-set ER hoarding is universal and accepts ER main stats", () => {
+    const art = makeArt({
+      setKey: "celestial_gift",
+      slotKey: "sands",
+      mainStatKey: "er",
+      substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+    });
+    const account = makeAccount([], [art]);
+    const { decisions } = runTriage(account, [], {
+      ...SETTINGS,
+      erHoardingEnabled: true,
+      doubleCritLockEnabled: false,
+      setSlotKeep: 0,
+    });
+
+    expect(decisions[0].label).toBe("lock");
+    expect(decisions[0].decidingResult?.ruleId).toBe("supportSetErHoard");
+  });
+
+  it("universal hoards do not consume build demand capacity", () => {
+    const hoarded = makeArt({
+      setKey: "viridescent_venerer",
+      substats: { er: 1, cr: 1, cd: 1, hp: 1 },
+    });
+    const buildCandidate = makeArt({
+      setKey: "viridescent_venerer",
+      substats: { cr: 1, cd: 1, hp: 1, def: 1 },
+    });
+    const account = makeAccount([{ key: "char_a" }], [hoarded, buildCandidate]);
+    const { decisions } = runTriage(
+      account,
+      [
+        {
+          characterId: "char_a",
+          builds: [makeBuild({ artifactSet: "viridescent_venerer" })],
+        },
+      ],
+      {
+        ...SETTINGS,
+        qualityMargin: 0,
+        fillerKeep: 1,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+
+    expect(
+      decisions.find((decision) => decision.artifact.id === hoarded.id)
+    ).toMatchObject({
+      label: "lock",
+      decidingResult: { ruleId: "supportSetErHoard" },
+    });
+    expect(
+      decisions.find((decision) => decision.artifact.id === buildCandidate.id)
+        ?.label
+    ).toBe("lock");
+  });
+
   it("all-set ER hoarding locks 4-line sands with ER substat", () => {
     const art = makeArt({
       setKey: "test_set",
@@ -247,17 +305,19 @@ describe("runTriage", () => {
     expect(decisions[0].decidingResult?.ruleId).toBe("allSetErHoard");
   });
 
-  it("double crit locks 4-line artifact with cr+cd", () => {
+  it("double crit universally locks a 4-line artifact with cr+cd", () => {
     const art = makeArt({
+      setKey: "unrelated_set",
       substats: { cr: 1, cd: 1, "hp%": 1, def: 1 },
     });
-    const account = makeAccount([{ key: "char_a", artifacts: {} }], [art]);
-    const { decisions } = runTriage(
-      account,
-      [{ characterId: "char_a", builds: [makeBuild()] }],
-      { ...SETTINGS, doubleCritLockEnabled: true }
-    );
+    const account = makeAccount([], [art]);
+    const { decisions } = runTriage(account, [], {
+      ...SETTINGS,
+      doubleCritLockEnabled: true,
+      setSlotKeep: 0,
+    });
     expect(decisions[0].specialRules).toContain("doubleCrit");
+    expect(decisions[0].label).toBe("lock");
   });
 
   it("level protection tags high-level artifacts", () => {
@@ -367,7 +427,15 @@ describe("runTriage", () => {
     const { decisions } = runTriage(
       account,
       [{ characterId: "char_a", builds: [makeBuild()] }],
-      { ...SETTINGS, setSlotKeep: 0 }
+      {
+        ...SETTINGS,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+        disabledFlexPatterns: [
+          "flex:flower:hp:cr,cd,atk%",
+          "flex:flower:hp:cr,cd,er",
+        ],
+      }
     );
     // All matching prime/solid artifacts for same embryo should be locked.
     const locked = decisions.filter((d) => d.label === "lock");
@@ -999,7 +1067,7 @@ describe("runTriage", () => {
     ).toHaveLength(2);
   });
 
-  it("alwaysLockSolidArtifacts: still caps filler locks by demand margin", () => {
+  it("alwaysLockSolidArtifacts: solid keeps consume the shared demand margin", () => {
     const solidArt = makeArt({
       substats: { cr: 1, cd: 1, hp: 1, def: 1 },
       level: 0,
@@ -1033,7 +1101,7 @@ describe("runTriage", () => {
       decisions.filter(
         (d) => d.decidingResult?.ruleId === "fillerShortfallKeep"
       )
-    ).toHaveLength(4);
+    ).toHaveLength(3);
   });
 
   it("loose mode preserves artifacts locked by strict mode", () => {
@@ -1231,22 +1299,19 @@ describe("runTriage", () => {
     expect(unlockRecs2).toHaveLength(0);
   });
 
-  it("set-slot floor prefers already-externally-locked artifacts when filling the floor", () => {
-    // 3 fodder flowers: one externally locked, two not. setSlotKeep=1.
-    // The floor should promote the externally-locked one (stability), not pick a fresh
-    // artifact and leave the user's lock flagged for unlock.
+  it("set-slot floor prefers a better candidate over already-locked trash", () => {
     const lockedTrash = makeArt({
+      setKey: "unrelated_set",
       lock: true,
-      substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
-      level: 0, // lowest level, would lose sort tiebreak without external-lock prefer
+      substats: { hp: 1, def: 1, "def%": 1, atk: 1 },
     });
     const freshA = makeArt({
-      substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
-      level: 20,
+      setKey: "unrelated_set",
+      substats: { cr: 1, cd: 1, hp: 1, def: 1 },
     });
     const freshB = makeArt({
+      setKey: "unrelated_set",
       substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
-      level: 16,
     });
     const account = makeAccount(
       [{ key: "char_a" }],
@@ -1260,14 +1325,16 @@ describe("runTriage", () => {
         setSlotKeep: 1,
         fillerKeep: 0,
         doubleCritLockEnabled: false,
+        disabledFlexPatterns: [
+          "flex:flower:hp:cr,cd,hp%",
+          "flex:flower:hp:cr,cd,def%",
+        ],
       }
     );
     const byId = (id: string) => decisions.find((d) => d.artifact.id === id)!;
-    expect(byId(lockedTrash.id).label).toBe("lock");
-    expect(byId(lockedTrash.id).decidingResult?.ruleId).toBe(
-      "setSlotFloorKeep"
-    );
-    expect(byId(freshA.id).label).toBe("unlock");
+    expect(byId(lockedTrash.id).label).toBe("unlock");
+    expect(byId(freshA.id).label).toBe("lock");
+    expect(byId(freshA.id).decidingResult?.ruleId).toBe("setSlotFloorKeep");
     expect(byId(freshB.id).label).toBe("unlock");
   });
 

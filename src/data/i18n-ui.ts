@@ -2723,8 +2723,8 @@ export const i18nUiData = {
     // Special rule labels (short, for inline display)
     sp: {
       supportSetErHoard: {
-        en: "4-liner ER (support set)",
-        zh: "4初始充能（辅助套）",
+        en: "4-liner with ER (support set)",
+        zh: "辅助套4初始含充能",
       },
       allSetErHoard: { en: "4-liner ER (all sets)", zh: "4初始充能（全套装）" },
       levelProtected: { en: "Level protected", zh: "高等级保护" },
@@ -2795,8 +2795,8 @@ export const i18nUiData = {
       zh: "精良装始终锁定",
     },
     fillerKeep: {
-      en: "Filler backup cap (max backups when short)",
-      zh: "过渡保底数（即使需求不足时最多留几个过渡）",
+      en: "Filler cap within the reserve target",
+      zh: "需求余量内的过渡装上限",
     },
     setSlotKeep: {
       en: "Min keep per set+slot",
@@ -2854,8 +2854,8 @@ export const i18nUiData = {
         zh: "先按套装、部位、主词条把圣遗物匹配到可能的配装；每个配装有它在意的几条副词条（核心词条）。",
       },
       howRarity: {
-        en: "Probability = chance that a random artifact of the same set, slot, and main stat has no fewer core-stat hits than this one. Lower probability → rarer.",
-        zh: "概率 = 随便抓一件同套、同部位、同主词条的圣遗物，其核心词条命中数不少于当前这件的概率；概率越低 → 越稀有。",
+        en: "Probability = chance that a random artifact in the same set and slot rolls this main stat and has no fewer core-stat hits. Lower probability → rarer.",
+        zh: "概率 = 随便抓一件同套、同部位的圣遗物，既出现该主词条、核心词条命中数又不少于当前这件的概率；概率越低 → 越稀有。",
       },
       howFactors: {
         en: "If this artifact has CR+CD together, 4 initial substats, or all core stats hit plus a useful minor stat, those conditions are added to the probability (harder to match → lower probability).",
@@ -2865,7 +2865,10 @@ export const i18nUiData = {
       badgeAlwaysLock: { en: "Always lock", zh: "无条件锁定" },
       badgeAlwaysFodder: { en: "Always fodder", zh: "无条件解锁" },
       badgeOverSupply: { en: "Over-supply → unlock", zh: "供过于求 → 解锁" },
-      badgeUnderSupply: { en: "Under-supply → lock", zh: "供不应求 → 锁定" },
+      badgeUnderSupply: {
+        en: "Within target → lock (capped)",
+        zh: "目标内保留（受上限限制）",
+      },
       tierPrime: {
         en: "Flower / Plume ≤ 1.5%  ·  Others ≤ 0.5%  (relaxed mode: 3% / 1%) — Always locked.",
         zh: "花/羽 ≤ 1.5%  ·  沙/杯/头 ≤ 0.5%（宽松模式：3% / 1%）— 无条件锁定。",
@@ -2875,16 +2878,16 @@ export const i18nUiData = {
         zh: "花/羽 ≤ 6%  ·  沙/杯/头 ≤ 2%（宽松模式：10% / 4%）— 默认锁定，供过于求时淘汰。",
       },
       tierFiller: {
-        en: "Flower / Plume ≤ 15%  ·  Others ≤ 10%  (relaxed mode: 25% / 20%) — Only kept when supply is short.",
-        zh: "花/羽 ≤ 15%  ·  沙/杯/头 ≤ 10%（宽松模式：25% / 20%）— 仅在供不应求时保留。",
+        en: "Flower / Plume ≤ 15%  ·  Others ≤ 10%  (relaxed mode: 25% / 20%) — May fill the demand-plus-margin target, up to the filler cap.",
+        zh: "花/羽 ≤ 15%  ·  沙/杯/头 ≤ 10%（宽松模式：25% / 20%）— 可填补需求与余量目标，但受过渡装上限限制。",
       },
       tierFodder: {
         en: "Everything else — Always fodder.",
         zh: "其余全部 — 无条件分解。",
       },
       supplyTitle: { en: "Supply & demand", zh: "供需机制" },
-      supplyOver: { en: "Plenty of pieces:", zh: "供给充足：" },
-      supplyUnder: { en: "Short on pieces:", zh: "供不应求：" },
+      supplyOver: { en: "Reserve target:", zh: "保留目标：" },
+      supplyUnder: { en: "Filler-capped:", zh: "过渡受限：" },
       supplyDemand: { en: "demand", zh: "需求" },
       supplyMargin: { en: "demand margin", zh: "需求余量" },
       supplyBackup: { en: "filler cap", zh: "过渡上限" },
@@ -2895,8 +2898,8 @@ export const i18nUiData = {
         zh: "此外还有套装部位最低保留，确保每个套装都能凑齐。",
       },
       backupAmountDetail: {
-        en: "Reserve buffer controls demand margin, filler cap, and set-slot keep: normal is 5 / 3 / 3, extra is 10 / 5 / 3. You can also customize this.",
-        zh: "保留余量设置选项（需求余量/过渡上限/套装部位保留）：标准为 5 / 3 / 3，额外为 10 / 5 / 3。也可以自定义数值。",
+        en: "Demand margin inflates each build target regardless of quality tier. Filler can fill that target only up to its separate cap. Prime, Solid, and Filler consume the target; universal ER, double-crit, and off-piece keeps do not. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 3 / 3; extra is 10 / 5 / 3.",
+        zh: "需求余量会直接扩大每个配装目标，不区分品质档位；过渡装可参与填补，但受独立上限限制。极品、精良和过渡都会占用目标，通用充能、双暴与散件保留不会占用。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 3 / 3，额外为 10 / 5 / 3。",
       },
       spTitle: { en: "Exceptions", zh: "例外规则" },
       spOverride: {

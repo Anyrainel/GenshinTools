@@ -88,7 +88,18 @@ function rollCountsByStat(artifact: ArtifactData): {
     const activated = artifact.substats?.[stat] ?? 0;
     const pending = artifact.unactivatedSubstats?.[stat] ?? 0;
     const value = activated + pending;
-    const count = estimateRollCount(stat, value, artifact.rarity);
+    const initialValue = artifact.initialValues?.[stat];
+    const upgradeRolls = estimateRollCount(
+      stat,
+      initialValue != null ? Math.max(0, value - initialValue) : undefined,
+      artifact.rarity
+    );
+    // GOOD v3 supplies exact initial values, so isolate upgrades from those.
+    // Older sources fall back to estimating all rolls and stripping one below.
+    const count =
+      initialValue != null
+        ? 1 + upgradeRolls
+        : estimateRollCount(stat, value, artifact.rarity);
     perStat[stat] = count;
     total += count;
   }

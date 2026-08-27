@@ -153,19 +153,16 @@ export function runTriage(
     const hasFourInitialSubstats = startedWithFourSubstats(artifact);
 
     // --- Pre-checks ---
-    // ER hoarding (support sets only)
+    // Universal ER hoarding for support sets. This intentionally ignores
+    // build demand and quota accounting: a 4-line support piece with ER as
+    // either main or substat is worth rolling independently of current builds.
     if (
       settings.erHoardingEnabled &&
       hasFourInitialSubstats &&
-      substats.includes("er") &&
+      (artifact.mainStatKey === "er" || substats.includes("er")) &&
       TRIAGE_SUPPORT_ARTIFACT_SETS.has(artifact.setKey)
     ) {
-      const anyRuleNeedsER = rules.some(
-        (rule) => rule.desired.includes("er") && rule.slot === artifact.slotKey
-      );
-      if (anyRuleNeedsER) {
-        specialRules.push("supportSetErHoard");
-      }
+      specialRules.push("supportSetErHoard");
     }
 
     // ER hoarding (all sets, not just support — off by default)
@@ -173,32 +170,21 @@ export function runTriage(
       settings.erHoardingAllEnabled &&
       !specialRules.includes("supportSetErHoard") &&
       hasFourInitialSubstats &&
-      substats.includes("er")
+      (artifact.mainStatKey === "er" || substats.includes("er"))
     ) {
-      const anyRuleNeedsER = rules.some(
-        (rule) => rule.desired.includes("er") && rule.slot === artifact.slotKey
-      );
-      if (anyRuleNeedsER) {
-        specialRules.push("allSetErHoard");
-      }
+      specialRules.push("allSetErHoard");
     }
 
-    // Double crit lock — tag only, normal evaluation continues
+    // Universal double-crit hoarding — tag only, normal evaluation continues.
+    // Like ER hoarding, this is deliberately independent of current builds
+    // and does not consume their demand-margin capacity.
     if (
       settings.doubleCritLockEnabled &&
       hasFourInitialSubstats &&
       substats.includes("cr") &&
       substats.includes("cd")
     ) {
-      const hasMatch = rules.some(
-        (rule) =>
-          rule.slot === artifact.slotKey &&
-          rule.mainStat === artifact.mainStatKey &&
-          matchesSet(rule, artifact.setKey)
-      );
-      if (hasMatch) {
-        specialRules.push("doubleCrit");
-      }
+      specialRules.push("doubleCrit");
     }
 
     // --- Classify & evaluate against rules ---
@@ -239,7 +225,7 @@ export function runTriage(
         rule,
         settings.triageMode
       );
-      const scopedScore = scoreSlot(
+      const scopedScore = scoreTriageSlot(
         artifact,
         statWeightsByEmbryoKey.get(embryoKey) ?? {}
       );
@@ -403,16 +389,26 @@ export function runTriage(
     edge.prelim.supplyDemand = supplyDemandByEdge.get(edge) ?? null;
   };
 
-  // Prime, and optionally solid, are hard keeps. They do not consume the
-  // demand+margin backup capacity, so loosening thresholds can only add locks.
+  // Prime, and optionally solid, are hard keeps. They still consume the
+  // build-based demand+margin target; only universal special-rule promotions
+  // (ER, double crit, flex) are deliberately outside quota accounting.
   const alwaysLockSolidArtifacts =
     settings.backupAmountMode === "custom" && settings.alwaysLockSolidArtifacts;
   for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
+    if (hasQuotaExemptKeep(edge.prelim.specialRules)) continue;
     if (edge.tier === "prime") {
       allocate(edge, "primeTierKeep");
+      usedCapacity.set(
+        edge.embryoKey,
+        (usedCapacity.get(edge.embryoKey) ?? 0) + 1
+      );
     } else if (alwaysLockSolidArtifacts && edge.tier === "solid") {
       allocate(edge, "solidTierKeep");
+      usedCapacity.set(
+        edge.embryoKey,
+        (usedCapacity.get(edge.embryoKey) ?? 0) + 1
+      );
     }
   }
 
@@ -420,6 +416,7 @@ export function runTriage(
   // per embryo key, independent of threshold-dependent tier counts.
   for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
+    if (hasQuotaExemptKeep(edge.prelim.specialRules)) continue;
     if (edge.tier !== "solid" && edge.tier !== "filler") continue;
 
     const demand = demandCounts.get(edge.embryoKey)?.size ?? 0;
@@ -531,17 +528,19 @@ export function runTriage(
       const neededKeepCount = targetKeepCount - algorithmLockedCount;
       if (neededKeepCount <= 0) continue;
 
-      // Candidates: anything not already locked by the algorithm. Sort
-      // externally-locked first (for stability), then by tier/intrinsics.
+      // Candidates: anything not already locked by the algorithm. Quality
+      // always wins; current lock state is only an exact-quality stability
+      // tiebreaker so old trash cannot displace a better floor candidate.
       const candidates = group
         .filter((prelim) => prelim.bestLabel !== "lock")
         .sort(
           (a, b) =>
-            (b.artifact.lock ? 1 : 0) - (a.artifact.lock ? 1 : 0) ||
             tierRank(a.bestTier) - tierRank(b.bestTier) ||
             setSlotFloorTiebreaker(a) - setSlotFloorTiebreaker(b) ||
             rollCount(b.artifact) - rollCount(a.artifact) ||
-            b.artifact.level - a.artifact.level
+            b.artifact.level - a.artifact.level ||
+            (b.artifact.lock ? 1 : 0) - (a.artifact.lock ? 1 : 0) ||
+            a.artifact.id.localeCompare(b.artifact.id)
         );
 
       for (let i = 0; i < Math.min(neededKeepCount, candidates.length); i++) {
@@ -606,6 +605,16 @@ function tierRank(t: QualityTier): number {
   return QUALITY_TIER_RANK[t];
 }
 
+function hasQuotaExemptKeep(specialRules: TriageSpecialRule[]): boolean {
+  return specialRules.some(
+    (rule) =>
+      rule === "supportSetErHoard" ||
+      rule === "allSetErHoard" ||
+      rule === "doubleCrit" ||
+      rule === "offPiecePattern"
+  );
+}
+
 const ELEMENTAL_MAINS = new Set<string>([
   "pyro%",
   "hydro%",
@@ -624,12 +633,26 @@ const ELEMENTAL_MAINS = new Set<string>([
 function rollCount(a: ArtifactData): number {
   const rarity = a.rarity === 4 ? 4 : 5;
   let total = 0;
-  for (const [stat, val] of Object.entries(a.substats ?? {})) {
-    if (typeof val !== "number") continue;
-    const avg = getSubstatAvgRoll(stat as SubStat, rarity);
-    if (avg > 0) total += val / avg;
+  for (const values of [a.substats, a.unactivatedSubstats]) {
+    for (const [stat, val] of Object.entries(values ?? {})) {
+      if (typeof val !== "number") continue;
+      const avg = getSubstatAvgRoll(stat as SubStat, rarity);
+      if (avg > 0) total += val / avg;
+    }
   }
   return total;
+}
+
+function scoreTriageSlot(
+  artifact: ArtifactData,
+  weights: StatWeightMap
+): number {
+  const activatedScore = scoreSlot(artifact, weights);
+  if (!artifact.unactivatedSubstats) return activatedScore;
+  return (
+    activatedScore +
+    scoreSlot({ ...artifact, substats: artifact.unactivatedSubstats }, weights)
+  );
 }
 
 type RankedTriageEdge = {
@@ -833,14 +856,14 @@ function buildSupplyDemandByEdge<T extends RankedTriageEdge>(
 /** Lower = better. Used when set-slot floor promotes same-tier artifacts. */
 function setSlotFloorTiebreaker(prelim: { artifact: ArtifactData }): number {
   const artifact = prelim.artifact;
-  const subs = Object.keys(artifact.substats ?? {});
+  const subs = getAllSubstats(artifact);
   let score = 0;
   // 4-line is best
   if (!startedWithFourSubstats(artifact)) score += 100;
   // elemental main stat
   if (!ELEMENTAL_MAINS.has(artifact.mainStatKey)) score += 50;
   // desirable stats in main or subs
-  const hasStatInMainOrSubs = (stat: string) =>
+  const hasStatInMainOrSubs = (stat: SubStat) =>
     artifact.mainStatKey === stat || subs.includes(stat);
   if (!hasStatInMainOrSubs("er")) score += 25;
   if (!hasStatInMainOrSubs("cr")) score += 12;
