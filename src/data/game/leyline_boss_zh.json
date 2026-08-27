@@ -361,7 +361,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "感电元素反应 | 护盾"
+          "text": "感电反应 | 护盾"
         }
       ],
       "bullets": [
@@ -489,7 +489,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "绽放相关元素反应"
+          "text": "绽放相关反应"
         }
       ],
       "disadvantage": [
@@ -559,7 +559,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "感电元素反应 | 雷元素角色"
+          "text": "感电反应 | 雷元素角色"
         }
       ],
       "bullets": [
@@ -1171,7 +1171,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "感电元素反应 | 雷元素角色"
+          "text": "感电反应 | 雷元素角色"
         }
       ],
       "bullets": [
@@ -1315,7 +1315,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "{SPRITE_PRESET#11028}/{SPRITE_PRESET#11024}反应优势"
+          "text": "火元素扩散/雷元素扩散反应优势"
         }
       ],
       "bullets": [
@@ -1367,7 +1367,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "{SPRITE_PRESET#11027}/{SPRITE_PRESET#11035}反应优势"
+          "text": "融化/蒸发反应优势"
         }
       ],
       "bullets": [
@@ -1587,7 +1587,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "{SPRITE_PRESET#11022}元素反应 | 冰元素角色"
+          "text": "超导反应 | 冰元素角色"
         }
       ],
       "bullets": [

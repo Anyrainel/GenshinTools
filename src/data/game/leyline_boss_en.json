@@ -1321,7 +1321,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "{SPRITE_PRESET#11028} {SPRITE_PRESET#11024} reactions have an advantage"
+          "text": "Pyro Swirl / Electro Swirl reactions have an advantage"
         }
       ],
       "bullets": [
@@ -1373,7 +1373,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "{SPRITE_PRESET#11027} {SPRITE_PRESET#11035} reactions have an advantage"
+          "text": "Melt / Vaporize reactions have an advantage"
         }
       ],
       "bullets": [
@@ -1599,7 +1599,7 @@
       "advantage": [
         {
           "tiers": [1, 2, 3, 4, 5, 6],
-          "text": "{SPRITE_PRESET#11022} Reactions | Cryo Characters"
+          "text": "Superconduct Reactions | Cryo Characters"
         }
       ],
       "bullets": [

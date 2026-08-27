@@ -34,6 +34,9 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   fi
 done
 
+echo "Checking Ley Line boss icon coverage..."
+node scripts/dev/check-leyline-boss-icons.js || exit 1
+
 # TypeScript type check + tests (always run full type-check when any TS file changed)
 if [ "$has_ts" = true ]; then
   echo "Running TypeScript type check..."

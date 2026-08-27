@@ -34,4 +34,10 @@ export const LEYLINE_BOSS_IMAGE_ENEMY_ID: Record<number, string> = {
   10071: "9266", // Hexadecatonic Battle-Hardened Mandragora
   10072: "8522", // Knuckle Duckle
   10081: "9478", // Radiant Moongecko
+  10091: "9262", // Battle-Hardened Glacial Wolf → Radiant Glacial Wolf
+  10093: "10553", // The Open-Eyed → Watcher: Fallen Vigil
+  10101: "2855", // Precursor's Overseer Network Matrix → Algorithm of Semi-Intransient Matrix
+  10103: "7056", // Secret Source Automaton: Configuration Device
+  10111: "2247", // Chimeric Winged Lion → Golden Wolflord
+  10112: "4345", // Veteran Wind Operative → Wind Operative
 };
