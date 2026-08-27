@@ -104,6 +104,24 @@ describe("hoyolabFetcher", () => {
     });
   });
 
+  it("identifies retcode 5003 as a security verification challenge", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ retcode: 5003, message: "", data: null }), {
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+
+    await expect(
+      fetchHoyolabData("123456789", {
+        ltuidV2: "uid",
+        ltmidV2: "mid",
+        ltokenV2: "token",
+      })
+    ).rejects.toThrow(
+      "米游社要求进行安全验证（5003）。请先在米游社 App 或网页中打开战绩页并完成验证，稍后再试。"
+    );
+  });
+
   it("preserves character/list element as a detail fallback", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")

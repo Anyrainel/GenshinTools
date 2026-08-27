@@ -98,6 +98,35 @@ describe("Worker API routing", () => {
     );
   });
 
+  it("uses the current upstream 米游社 web-client headers for CN requests", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ retcode: 0, message: "OK", data: {} }), {
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+
+    await worker.fetch(
+      new Request("https://example.com/api/hoyolab/cn/character/list", {
+        method: "POST",
+        headers: hoyolabCredentialHeaders,
+        body: JSON.stringify({ role_id: "123456789", server: "cn_gf01" }),
+      }),
+      fakeAssetEnv()
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character/list",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          "x-rpc-app_version": "2.109.0",
+          "x-rpc-channel": "miyousheluodi",
+          "X-Requested-With": "com.mihoyo.hyperion",
+          "User-Agent": expect.stringContaining("miHoYoBBS/2.109.0"),
+        }),
+      })
+    );
+  });
+
   it("rejects incomplete HoYoLAB credentials before upstream fetch", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
 

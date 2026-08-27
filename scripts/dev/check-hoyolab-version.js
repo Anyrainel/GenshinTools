@@ -29,15 +29,11 @@ const PROBE_PATH = resolve(ROOT, "scripts/hoyolab-probe.ts");
 const UPSTREAM = {
   cn: {
     constantsUrl:
-      "https://raw.githubusercontent.com/seriaati/genshin.py/master/genshin/constants.py",
-    dsUrl:
-      "https://raw.githubusercontent.com/seriaati/genshin.py/master/genshin/utility/ds.py",
+      "https://raw.githubusercontent.com/Womsxd/MihoyoBBSTools/master/setting.py",
     parseSalt: (text) =>
-      text.match(/types\.Region\.CHINESE:\s*"([^"]+)"/)?.[1],
+      text.match(/mihoyobbs_salt_x4\s*=\s*"([^"]+)"/)?.[1],
     parseVersion: (text) =>
-      text.match(
-        /region == types\.Region\.CHINESE:[\s\S]*?"x-rpc-app_version":\s*"([^"]+)"/
-      )?.[1],
+      text.match(/mihoyobbs_version\s*=\s*"([^"]+)"/)?.[1],
   },
   os: {
     constantsUrl:
@@ -83,11 +79,9 @@ async function fetchText(url, timeoutMs = 10_000) {
 // Helper to check and fix a region
 async function checkRegion(region, label, local, fix) {
   const cfg = UPSTREAM[region];
-  const [constantsText, dsText] = await Promise.all([
-    fetchText(cfg.constantsUrl),
-    fetchText(cfg.dsUrl),
-  ]);
-  const upstreamVersion = cfg.parseVersion(dsText);
+  const constantsText = await fetchText(cfg.constantsUrl);
+  const versionText = cfg.dsUrl ? await fetchText(cfg.dsUrl) : constantsText;
+  const upstreamVersion = cfg.parseVersion(versionText);
   const upstreamSalt = cfg.parseSalt(constantsText);
 
   let regionIssues = false;
@@ -139,7 +133,7 @@ async function main() {
   const local = readLocal(WORKER_PATH);
   let hasIssues = false;
 
-  console.log("[hoyolab-version] Checking CN upstream (genshin.py)...");
+  console.log("[hoyolab-version] Checking CN upstream (MihoyoBBSTools)...");
   try {
     const cnIssues = await checkRegion("cn", "CN", local, fix);
     if (cnIssues) hasIssues = true;

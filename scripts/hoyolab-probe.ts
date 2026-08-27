@@ -35,7 +35,7 @@ const BASES = {
 } as const;
 
 const APP_VERSION = {
-  cn: "2.11.1",
+  cn: "2.109.0",
   os: "1.5.0",
 } as const;
 
@@ -109,14 +109,14 @@ async function call(
 ): Promise<{ status: number; json: any }> {
   const url = `${BASES[region]}/${path}`;
   const headers: Record<string, string> = {
+    Accept: "application/json, text/plain, */*",
     "x-rpc-app_version": APP_VERSION[region],
     "x-rpc-client_type": "5",
-    "x-rpc-language": "en-us",
     "Content-Type": "application/json",
     Cookie: cookie,
     "User-Agent":
       region === "cn"
-        ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/2.11.1"
+        ? "Mozilla/5.0 (Linux; Android 12; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36 miHoYoBBS/2.109.0"
         : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     Referer:
       region === "cn"
@@ -128,6 +128,13 @@ async function call(
         : "https://act.hoyolab.com",
     DS: region === "cn" ? dsCn(body, null) : dsOs(),
   };
+  if (region === "cn") {
+    headers["x-rpc-channel"] = "miyousheluodi";
+    headers["X-Requested-With"] = "com.mihoyo.hyperion";
+    headers["Accept-Language"] = "zh-CN,en-US;q=0.8";
+  } else {
+    headers["x-rpc-language"] = "en-us";
+  }
 
   const res = await fetch(url, {
     method: "POST",

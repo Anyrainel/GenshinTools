@@ -27,7 +27,7 @@ const HOYOLAB_SALTS = {
 
 const HOYOLAB_APP_VERSION = {
   os: "1.5.0",
-  cn: "2.11.1",
+  cn: "2.109.0",
 } as const;
 
 const HOYOLAB_SERVER_BY_UID_PREFIX = {
@@ -291,10 +291,17 @@ async function handleHoyolabProxy(
     const upstream = await fetch(targetUrl, {
       method: "POST",
       headers: {
+        Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
         "x-rpc-app_version": HOYOLAB_APP_VERSION[region],
         "x-rpc-client_type": "5",
-        "x-rpc-language": "en-us",
+        ...(region === "cn"
+          ? {
+              "x-rpc-channel": "miyousheluodi",
+              "X-Requested-With": "com.mihoyo.hyperion",
+              "Accept-Language": "zh-CN,en-US;q=0.8",
+            }
+          : { "x-rpc-language": "en-us" }),
         DS: ds,
         Cookie: cookieResult.cookie,
         Referer:
@@ -307,7 +314,7 @@ async function handleHoyolabProxy(
             : "https://act.hoyolab.com",
         "User-Agent":
           region === "cn"
-            ? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/2.11.1"
+            ? "Mozilla/5.0 (Linux; Android 12; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36 miHoYoBBS/2.109.0"
             : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
       body: bodyText,

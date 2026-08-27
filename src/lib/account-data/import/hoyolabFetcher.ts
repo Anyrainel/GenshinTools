@@ -213,14 +213,16 @@ async function callProxy<T>(
   const envelope = (await res.json()) as HoyolabEnvelope<T>;
   if (envelope.retcode !== 0 || !envelope.data) {
     const label = region === "cn" ? "米游社" : "HoYoLAB";
-    // 5003 is returned for DS rejection and some miHoYo security challenges.
-    // Surface a helpful hint so users can report the upstream failure context.
-    const hint =
-      envelope.retcode === 5003
-        ? " This import path may need an app update or may have triggered a miHoYo security check; please report this issue."
-        : "";
+    // Upstream genshin.py classifies 5003 as a Geetest/risk-control response.
+    if (envelope.retcode === 5003) {
+      throw new Error(
+        region === "cn"
+          ? "米游社要求进行安全验证（5003）。请先在米游社 App 或网页中打开战绩页并完成验证，稍后再试。"
+          : "HoYoLAB requires a security check (5003). Open your Battle Chronicle in the HoYoLAB app or website, complete any verification, then try again later."
+      );
+    }
     throw new Error(
-      `${label} returned an error (${envelope.retcode}): ${envelope.message || "unknown"}${hint}`
+      `${label} returned an error (${envelope.retcode}): ${envelope.message || "unknown"}`
     );
   }
   return envelope.data;
