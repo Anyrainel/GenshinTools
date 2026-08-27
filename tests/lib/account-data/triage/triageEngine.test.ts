@@ -242,7 +242,7 @@ describe("runTriage", () => {
     expect(decisions[0].decidingResult?.ruleId).toBe("supportSetErHoard");
   });
 
-  it("universal hoards do not consume build demand capacity", () => {
+  it("special-rule tags do not alter normal build allocation", () => {
     const hoarded = makeArt({
       setKey: "viridescent_venerer",
       substats: { er: 1, cr: 1, cd: 1, hp: 1 },
@@ -269,16 +269,18 @@ describe("runTriage", () => {
       }
     );
 
-    expect(
-      decisions.find((decision) => decision.artifact.id === hoarded.id)
-    ).toMatchObject({
-      label: "lock",
-      decidingResult: { ruleId: "supportSetErHoard" },
-    });
+    const hoardedDecision = decisions.find(
+      (decision) => decision.artifact.id === hoarded.id
+    );
+    expect(hoardedDecision?.label).toBe("lock");
+    expect(hoardedDecision?.specialRules).toContain("supportSetErHoard");
+    expect(hoardedDecision?.decidingResult?.ruleId).not.toBe(
+      "supportSetErHoard"
+    );
     expect(
       decisions.find((decision) => decision.artifact.id === buildCandidate.id)
         ?.label
-    ).toBe("lock");
+    ).toBe("unlock");
   });
 
   it("all-set ER hoarding locks 4-line sands with ER substat", () => {

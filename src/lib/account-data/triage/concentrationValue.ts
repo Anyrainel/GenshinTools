@@ -94,8 +94,9 @@ function rollCountsByStat(artifact: ArtifactData): {
       initialValue != null ? Math.max(0, value - initialValue) : undefined,
       artifact.rarity
     );
-    // GOOD v3 supplies exact initial values, so isolate upgrades from those.
-    // Older sources fall back to estimating all rolls and stripping one below.
+    // `initialValue` is not a quality input. GOOD v3 supplies it only so we
+    // can subtract the exact base roll and measure upgrade allocation alone.
+    // Older sources estimate all rolls and strip one average initial roll.
     const count =
       initialValue != null
         ? 1 + upgradeRolls

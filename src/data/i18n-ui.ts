@@ -2898,8 +2898,8 @@ export const i18nUiData = {
         zh: "此外还有套装部位最低保留，确保每个套装都能凑齐。",
       },
       backupAmountDetail: {
-        en: "Demand margin inflates each build target regardless of quality tier. Filler can fill that target only up to its separate cap. Prime, Solid, and Filler consume the target; universal ER, double-crit, and off-piece keeps do not. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 3 / 3; extra is 10 / 5 / 3.",
-        zh: "需求余量会直接扩大每个配装目标，不区分品质档位；过渡装可参与填补，但受独立上限限制。极品、精良和过渡都会占用目标，通用充能、双暴与散件保留不会占用。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 3 / 3，额外为 10 / 5 / 3。",
+        en: "Demand margin inflates each build target regardless of quality tier. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 3 / 3; extra is 10 / 5 / 3.",
+        zh: "需求余量会直接扩大每个配装目标，不区分品质档位；过渡装可参与填补，但受独立上限限制。分配时忽略特殊标签：凡按配装质量入选的圣遗物都会占用目标；分配完成后，再额外锁定其余符合充能、双暴与散件规则的圣遗物。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 3 / 3，额外为 10 / 5 / 3。",
       },
       spTitle: { en: "Exceptions", zh: "例外规则" },
       spOverride: {

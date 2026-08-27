@@ -176,8 +176,9 @@ export function runTriage(
     }
 
     // Universal double-crit hoarding — tag only, normal evaluation continues.
-    // Like ER hoarding, this is deliberately independent of current builds
-    // and does not consume their demand-margin capacity.
+    // Special tags do not affect build allocation. If this artifact wins a
+    // build slot normally, it consumes that slot; otherwise it is promoted
+    // after allocation by the special-rule pass below.
     if (
       settings.doubleCritLockEnabled &&
       hasFourInitialSubstats &&
@@ -389,14 +390,13 @@ export function runTriage(
     edge.prelim.supplyDemand = supplyDemandByEdge.get(edge) ?? null;
   };
 
-  // Prime, and optionally solid, are hard keeps. They still consume the
-  // build-based demand+margin target; only universal special-rule promotions
-  // (ER, double crit, flex) are deliberately outside quota accounting.
+  // Prime, and optionally solid, are hard keeps. Build allocation deliberately
+  // ignores special-rule tags, so anything selected here consumes the normal
+  // demand+margin target. Unselected special-rule matches are promoted later.
   const alwaysLockSolidArtifacts =
     settings.backupAmountMode === "custom" && settings.alwaysLockSolidArtifacts;
   for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
-    if (hasQuotaExemptKeep(edge.prelim.specialRules)) continue;
     if (edge.tier === "prime") {
       allocate(edge, "primeTierKeep");
       usedCapacity.set(
@@ -416,7 +416,6 @@ export function runTriage(
   // per embryo key, independent of threshold-dependent tier counts.
   for (const edge of rankedEdges) {
     if (allocated.has(edge.prelim)) continue;
-    if (hasQuotaExemptKeep(edge.prelim.specialRules)) continue;
     if (edge.tier !== "solid" && edge.tier !== "filler") continue;
 
     const demand = demandCounts.get(edge.embryoKey)?.size ?? 0;
@@ -603,16 +602,6 @@ export function runTriage(
 
 function tierRank(t: QualityTier): number {
   return QUALITY_TIER_RANK[t];
-}
-
-function hasQuotaExemptKeep(specialRules: TriageSpecialRule[]): boolean {
-  return specialRules.some(
-    (rule) =>
-      rule === "supportSetErHoard" ||
-      rule === "allSetErHoard" ||
-      rule === "doubleCrit" ||
-      rule === "offPiecePattern"
-  );
 }
 
 const ELEMENTAL_MAINS = new Set<string>([

@@ -452,8 +452,10 @@ Premium 即使超过 capacity 仍全部保留；此时不会再为 Quality 或 N
 `qualityMargin` 只负责把 demand 扩大为连续的保留目标，`fillerKeep` 则作为反向约束，
 防止扩大后的目标被过多 Neutral 填满。
 
-SP1、SP5、FLEX 等通用囤积规则在供需分配完成后才提升为 LOCK，因此不占用
-build-based capacity，也不会挤掉正常配装规则选中的圣遗物。
+供需分配阶段完全忽略 SP1、SP5、FLEX 等特殊标签。若带特殊标签的圣遗物按
+正常配装质量排名入选，它仍照常占用 build-based capacity；分配完成后，才把
+其余符合通用囤积或散件规则的圣遗物提升为 LOCK。这样特殊规则不会改变正常
+配装候选的排名或缩减配装目标，只会在分配结果之外追加保留。
 
 ### Neutral 排名（从 Neutral 中填补目标时）
 
