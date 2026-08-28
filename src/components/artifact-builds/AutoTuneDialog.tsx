@@ -23,6 +23,10 @@ import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/dmgcalc/constants";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { ComboLine, I18nLabel } from "@/lib/dmgcalc/types";
+import {
+  markDeploymentAssetsHealthy,
+  scheduleStaleDeploymentRecovery,
+} from "@/lib/staleDeploymentRecovery";
 import { buildTeamSlotConfigs } from "@/lib/team-comp/teamConfigUtils";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
@@ -359,6 +363,7 @@ export function AutoTuneDialog({
         { type: "module" }
       );
       worker.onmessage = (e: MessageEvent<AutoTuneWorkerResponse>) => {
+        markDeploymentAssetsHealthy();
         worker.terminate();
         if (failed) return;
         const resp = e.data;
@@ -390,6 +395,7 @@ export function AutoTuneDialog({
       };
       worker.onerror = (e) => {
         worker.terminate();
+        scheduleStaleDeploymentRecovery();
         if (!failed) {
           failed = true;
           dispatch({

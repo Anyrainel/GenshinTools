@@ -9,6 +9,7 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { AppSessionProvider } from "./contexts/AppSessionContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { handleVitePreloadError } from "./lib/staleDeploymentRecovery";
 
 // Side-effect module: registers cross-store subscriptions at startup.
 import "./stores/storeEffects.ts";
@@ -23,6 +24,11 @@ if (new URLSearchParams(window.location.search).has("_r")) {
   url.searchParams.delete("_r");
   window.history.replaceState(null, "", url.toString());
 }
+
+// A tab left open across a deployment can still reference chunks that the new
+// deployment no longer serves. Vite exposes those failures before React can
+// render an error boundary, so recover with one data-preserving fresh reload.
+window.addEventListener("vite:preloadError", handleVitePreloadError);
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>

@@ -14,6 +14,10 @@ import { artifactHalfSetsById } from "@/data/gameResources";
 import type { ArtifactData } from "@/data/types";
 import type { ComboResult } from "@/lib/dmgcalc/types";
 import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
+import {
+  markDeploymentAssetsHealthy,
+  scheduleStaleDeploymentRecovery,
+} from "@/lib/staleDeploymentRecovery";
 import { scoreSlotWithMainStat } from "../../artifact/scoring/artifactScore";
 import {
   compileComboTeamDamage,
@@ -829,6 +833,7 @@ export async function* runTeamOptimization(
             if (resp.type === "ready") {
               // Worker setup done — switch to the full search budget
               workerReady = true;
+              markDeploymentAssetsHealthy();
               clearTimeout(timeoutId);
               timeoutId = setTimeout(
                 onTimeout,
@@ -892,6 +897,7 @@ export async function* runTeamOptimization(
             clearTimeout(timeoutId);
             worker.terminate();
             console.warn(`[optimizer] Worker crashed for ${charId}:`, e);
+            if (!workerReady) scheduleStaleDeploymentRecovery();
             const wr: WorkerResult = {
               charId,
               entries: [],

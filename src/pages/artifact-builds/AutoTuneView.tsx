@@ -28,6 +28,10 @@ import type {
 import { aggregateTeamResults } from "@/lib/artifact-builds/auto-tune/pipeline";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import {
+  markDeploymentAssetsHealthy,
+  scheduleStaleDeploymentRecovery,
+} from "@/lib/staleDeploymentRecovery";
 import { buildTeamSlotConfigs } from "@/lib/team-comp/teamConfigUtils";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
@@ -85,6 +89,7 @@ function runAutoTuneWorkers(
       workers.push(worker);
 
       worker.onmessage = (e: MessageEvent<AutoTuneWorkerResponse>) => {
+        markDeploymentAssetsHealthy();
         worker.terminate();
         if (failed) return;
         const resp = e.data;
@@ -110,6 +115,7 @@ function runAutoTuneWorkers(
 
       worker.onerror = (e) => {
         worker.terminate();
+        scheduleStaleDeploymentRecovery();
         if (!failed) {
           failed = true;
           for (const w of workers) w.terminate();
