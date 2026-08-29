@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "genshintools-presets",
+      "name": "GenshinTools presets",
+      "homepage": null,
+      "kind": "internal",
+      "status": "active",
+      "ingestionMode": "internal-adapter",
+      "permission": "internal",
+      "recordFormat": "genshintools-presets-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Highest-trust baseline, but implicit investment and gameplay assumptions remain unknown."
+      ]
+    },
+    {
+      "id": "legacy-team-research",
+      "name": "Legacy synthesized team research",
+      "homepage": null,
+      "kind": "internal",
+      "status": "active",
+      "ingestionMode": "internal-adapter",
+      "permission": "internal",
+      "recordFormat": "legacy-team-research-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Candidate coverage only. The file lists domains globally and has no per-team source locator."
+      ]
+    },
+    {
+      "id": "kqm",
+      "name": "KeqingMains guides and Theorycrafting Library",
+      "homepage": "https://keqingmains.com/",
+      "kind": "editorial",
+      "status": "planned",
+      "ingestionMode": "manual-observation",
+      "permission": "unknown",
+      "recordFormat": "manual-observation-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Capture narrow attributed observations and disclosed assumptions; do not mirror guide prose or authored target collections."
+      ]
+    },
+    {
+      "id": "gcsim",
+      "name": "gcsim",
+      "homepage": "https://github.com/genshinsim/gcsim",
+      "kind": "simulation",
+      "status": "planned",
+      "ingestionMode": "local-simulation",
+      "permission": "mixed",
+      "recordFormat": "simulation-evidence-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "The MIT engine can be run locally. Hosted user configurations require separate provenance and permission handling."
+      ]
+    },
+    {
+      "id": "crimson-witch",
+      "name": "Crimson Witch",
+      "homepage": "https://www.crimsonwitch.com/",
+      "kind": "structured-editorial",
+      "status": "planned",
+      "ingestionMode": "manual-observation",
+      "permission": "permission-required",
+      "recordFormat": "manual-observation-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Technically structured, but no reusable public data contract has been established."
+      ]
+    },
+    {
+      "id": "genshin-helper-builds",
+      "name": "Genshin Impact Helper Team Builds",
+      "homepage": "https://github.com/Genshin-Impact-Helper-Team/genshin-builds",
+      "kind": "structured-editorial",
+      "status": "blocked",
+      "ingestionMode": "permission-blocked",
+      "permission": "permission-required",
+      "recordFormat": "structured-external-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Its license notice does not permit systematic copying or derived recommendation data without written permission."
+      ]
+    },
+    {
+      "id": "lightkeepers",
+      "name": "Lightkeepers",
+      "homepage": "https://lightkeepers.moe/",
+      "kind": "structured-editorial",
+      "status": "blocked",
+      "ingestionMode": "permission-blocked",
+      "permission": "permission-required",
+      "recordFormat": "structured-external-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Useful product and architecture reference; no reusable data license has been established."
+      ]
+    },
+    {
+      "id": "genshin-optimizer",
+      "name": "Genshin Optimizer and GOOD",
+      "homepage": "https://github.com/frzyc/genshin-optimizer",
+      "kind": "computation-reference",
+      "status": "reference",
+      "ingestionMode": "reference-only",
+      "permission": "open-source-code",
+      "recordFormat": "none",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Algorithm and interoperability reference, not an editorial guide corpus."
+      ]
+    },
+    {
+      "id": "enka",
+      "name": "Enka.Network",
+      "homepage": "https://enka.network/",
+      "kind": "account-data",
+      "status": "reference",
+      "ingestionMode": "user-initiated-only",
+      "permission": "api-restricted",
+      "recordFormat": "account-observation-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "User-initiated account import only; UID enumeration and bulk corpus construction are out of scope."
+      ]
+    },
+    {
+      "id": "akasha",
+      "name": "Akasha",
+      "homepage": "https://akasha.cv/",
+      "kind": "empirical",
+      "status": "reference",
+      "ingestionMode": "manual-observation",
+      "permission": "unknown",
+      "recordFormat": "manual-observation-v1",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Potential aggregate sanity check only; leaderboard assumptions are not general guide truth."
+      ]
+    },
+    {
+      "id": "yshelper",
+      "name": "YShelper",
+      "homepage": "https://app.yshelper.com/",
+      "kind": "empirical",
+      "status": "reference",
+      "ingestionMode": "reference-only",
+      "permission": "unknown",
+      "recordFormat": "none",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Black-box product and aggregate benchmark; no supported reusable feed has been established."
+      ]
+    },
+    {
+      "id": "mona-uranai",
+      "name": "Mona Uranai",
+      "homepage": "https://github.com/wormtql/genshin_artifact",
+      "kind": "computation-reference",
+      "status": "reference",
+      "ingestionMode": "reference-only",
+      "permission": "open-source-code",
+      "recordFormat": "none",
+      "checkedAt": "2026-08-28",
+      "notes": [
+        "Algorithm reference for artifact assignment and stat-efficiency experiments."
+      ]
+    }
+  ]
+}
