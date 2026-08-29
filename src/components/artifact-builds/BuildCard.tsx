@@ -321,12 +321,12 @@ function BuildCardComponent({
     "border-border/40 bg-foreground/5 rounded-full h-auto w-auto",
     "min-w-10 pl-2 pr-1 py-1 text-xs [&>svg]:h-3 [&>svg]:w-3",
     "md:min-w-12 md:pl-3 md:pr-1.5 md:text-sm md:[&>svg]:h-3.5 md:[&>svg]:w-3.5",
-    "lg:pl-4 lg:pr-2"
+    "lg:pl-4 lg:pr-2 2xl:pl-2 2xl:pr-1 3xl:pl-4 3xl:pr-2"
   );
   const multiSelectItemClass = "text-xs md:text-sm";
 
   const labelsRow = (
-    <div className="flex items-center flex-wrap gap-1 md:gap-3 lg:gap-4">
+    <div className="flex items-center flex-wrap gap-1 md:gap-3 lg:gap-4 2xl:gap-2 3xl:gap-4">
       <LightweightMultiSelect
         className="ml-1 md:ml-3 lg:ml-4"
         options={styleOptions}
