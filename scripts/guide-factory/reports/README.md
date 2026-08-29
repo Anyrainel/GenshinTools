@@ -6,6 +6,30 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `character-guide-input-coverage.json` projects contributing non-ER guide
+  inputs across 125 guide-domain-eligible characters at C0 through C6: 875
+  compact rows backed by 3,084 group-level observations. Aloy and the Anemo,
+  Electro, Geo, and Hydro Traveler forms are the exact five characters with no
+  contributing guide input. That absence is not an unsupported-character
+  verdict, and constellation-unspecified evidence is not universal evidence.
+  Of 888 exact-team member investments, 887 are constellation-unspecified; C6
+  Diona is the sole explicit case. All 57 upstream KQM manual records remain
+  unreviewed; 56 non-energy records contribute provenance or coverage, while
+  the energy-guidance record contributes no observation. The repository
+  currently contributes zero repository-authored `damagePlans`. The report
+  links all 1,008 weapon and 1,068 artifact policy observations to their exact
+  search-coverage classifications. Linkage is not a positive representability
+  or compatibility result: 27 linked artifact outcomes are explicitly not
+  representable, and 12 linked weapon outcomes have native type mismatches.
+  Per-observation outcome payload hashes require the pinned upstream reports
+  for reconstruction. It preserves raw stat weights without inventing ordinal
+  priority, derives no rank from page or array order, and keeps the one coupled
+  multi-character artifact plan atomic. Structured ER targets, floors,
+  rotations, weapon conditions, and the energy-guidance record contribute no
+  observations; preserved unresolved free text may still mention energy, and
+  ordinary `er` remains a build-stat vocabulary token. The report supports no
+  recommendation, guide, rank, damage, or ER claim. A separate derived-formula-
+  fixture adapter is the next gate.
 - `keqing-lunar-cross-record-technical-matrix.json` authenticates the two
   checkpoint-18 compositions, translates each into one exact Keqing composed-
   source target plus three repository teammate targets, and prevalidates both
@@ -228,6 +252,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty reports in memory and rejects stale checked-in
-output. The Diona ER report is historical and deliberately decoupled from
-unrelated knowledge-repository changes while ER work is deferred.
+`validate.ts` rebuilds all twenty-one reports in memory and rejects stale
+checked-in output. The Diona ER report is historical and deliberately
+decoupled from unrelated knowledge-repository changes while ER work is
+deferred.

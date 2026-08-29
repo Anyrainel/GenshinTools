@@ -7,6 +7,7 @@ reports/*
 !reports/furina-neuvillette-formula-plan-draft.json
 !reports/keqing-ineffa-formula-plan-draft.json
 !reports/knowledge-corpus-inventory.json
+!reports/character-guide-input-coverage.json
 !reports/artifact-choice-search-coverage.json
 !reports/weapon-choice-search-coverage.json
 !reports/keqing-ineffa-artifact-generation-preflight.json

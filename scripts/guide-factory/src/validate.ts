@@ -1,9 +1,17 @@
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { characters } from "@/data/resources";
 import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
   buildArtifactChoiceSearchCoverageReport,
 } from "./artifactChoiceSearchCoverage";
+import {
+  buildCharacterGuideInputCoverageReport,
+  buildReleasedGuideDomainCatalog,
+  CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS,
+  CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS,
+} from "./characterGuideInputCoverage";
 import { loadGameCatalogs } from "./catalogs";
 import {
   buildDionaComparisonReport,
@@ -88,6 +96,7 @@ import {
 } from "./manualSnapshots";
 import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH,
+  CHARACTER_GUIDE_INPUT_COVERAGE_REPORT_PATH,
   DIONA_COMPARISON_REPORT_PATH,
   DIONA_ER_CALIBRATION_REPORT_PATH,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
@@ -162,6 +171,8 @@ export async function runValidation(): Promise<ValidationRunResult> {
     furinaNeuvilletteFormulaDraftInput,
     keqingIneffaFormulaDraftInput,
     knowledgeCorpusInventoryInput,
+    characterGuideInputCoverageInput,
+    characterGuideInputCoverageSourceFiles,
     artifactChoiceSearchCoverageInput,
     weaponChoiceSearchCoverageInput,
     keqingIneffaArtifactGenerationPreflightInput,
@@ -189,6 +200,18 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH),
       readJson(KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH),
       readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
+      readJson(CHARACTER_GUIDE_INPUT_COVERAGE_REPORT_PATH),
+      Promise.all(
+        CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
       readJson(ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
       readJson(WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
       readJson(KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH),
@@ -560,6 +583,39 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.team-roster-candidate-domain-experiment",
           message:
             "The saved team-roster candidate-domain experiment does not match the selected repository templates, eligible stable character boundary, runtime reaction gate, and validation targets.",
+        });
+      }
+
+      const characterGuideInputCoverageGeneratedFrom =
+        await hashRelativePaths(CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS);
+      const expectedCharacterGuideInputCoverage =
+        buildCharacterGuideInputCoverageReport({
+          repositoryInput: expectedKnowledge,
+          sourceRegistryInput: registry.data,
+          manualSnapshotInputs: manualInputs,
+          sourceFiles: characterGuideInputCoverageSourceFiles,
+          releasedCharacters: buildReleasedGuideDomainCatalog(
+            characters.map(({ id }) => id),
+            catalogs.characterElements,
+          ),
+          checkedInRosterReportInput:
+            expectedTeamRosterCandidateDomainExperiment,
+          weaponChoiceSearchCoverageReportInput:
+            expectedWeaponChoiceSearchCoverage,
+          artifactChoiceSearchCoverageReportInput:
+            expectedArtifactChoiceSearchCoverage,
+          generatedFrom: characterGuideInputCoverageGeneratedFrom,
+        });
+      if (
+        stableJson(expectedCharacterGuideInputCoverage) !==
+        stableJson(characterGuideInputCoverageInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_character_guide_input_coverage",
+          path: "reports.character-guide-input-coverage",
+          message:
+            "The saved character-guide input coverage does not match the current knowledge repository, source metadata, search coverage, and C0-C6 guide boundary.",
         });
       }
 

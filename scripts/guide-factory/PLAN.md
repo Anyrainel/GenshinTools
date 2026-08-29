@@ -71,6 +71,29 @@ presence across all 387 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
+A second durable inventory projects the contributing non-ER guide inputs across
+all 125 guide-domain-eligible characters at every C0-C6 boundary. Its 875 rows
+are backed by 3,084 group-level observations. Exactly five characters have no
+contributing guide input: Aloy and the Anemo, Electro, Geo, and Hydro Traveler
+forms. This is missing evidence, not an unsupported-character verdict. Likewise,
+constellation-unspecified applicability is not broadened to all investments.
+Of 888 exact-team member investments, 887 remain constellation-unspecified; C6
+Diona is the sole explicit case.
+
+All 57 upstream KQM manual records remain unreviewed. The 56 non-energy records
+contribute provenance or coverage; the energy-guidance record contributes no
+observation. The repository currently has zero repository-authored
+`damagePlans`. The inventory links 1,008 weapon and 1,068 artifact policy
+observations to their existing search-coverage classifications. Linkage is not
+a positive representability result: 27 linked artifact outcomes are explicitly
+not representable, and 12 linked weapon outcomes have native type mismatches.
+Raw stat weights are not converted into ordinal priorities, page or array order
+does not create rank, and the one coupled artifact plan is kept atomic.
+Structured ER targets, floors, weapon conditions, energy-guidance records, and
+rotations contribute no observations. Preserved unresolved free text may still
+mention energy requirements, and ordinary `er` remains only a stat vocabulary
+token. The report creates no recommendation, guide, rank, or damage claim.
+
 ## 4. Compose existing computation incrementally
 
 Only begin after source and consolidated records are useful enough to provide
@@ -379,6 +402,11 @@ assignment. A private pre-await snapshot and frozen process-local capability
 close caller-mutation seams. The full validator re-executes the current runtime
 and compares the complete report; its checked-in hash list is explicitly a
 declared direct-input list, not a transitive dependency claim.
+
+The next non-ER gate is a separate derived-formula-fixture adapter. It must
+inventory the existing technical fixtures without reclassifying them as
+repository-authored or source-validated formula plans, and without authorizing
+replay, optimization, recommendations, rankings, or damage claims.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

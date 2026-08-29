@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 19 runs the first fail-closed, source-conditioned technical matrix
-from an authenticated cross-record Keqing Lunar-Charged contract, without
-claiming a working guide factory:
+Checkpoint 20 adds a repository-wide, constellation-explicit inventory of the
+inputs that could eventually support character guides. It remains descriptive
+coverage evidence and does not claim a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -202,6 +202,25 @@ claiming a working guide factory:
 65. Hash the declared direct evidence/runtime inputs and make the durable
     validator re-execute the current runtime and compare the complete report,
     rather than claiming the declared list is a transitive module graph.
+66. Inventory all 125 guide-domain-eligible characters at C0 through C6 as 875
+    explicit rows, preserving absent and constellation-unspecified evidence
+    rather than broadening it to every investment level.
+67. Retain 3,084 group-level observations with source and applicability
+    provenance, while identifying exactly five characters with no contributing
+    guide input: Aloy and the Anemo, Electro, Geo, and Hydro Traveler forms.
+68. Preserve source groups without deriving rank from page or array order,
+    ordinal priority from raw stat weights, or independent choices from the one
+    coupled multi-character artifact plan.
+69. Link 1,008 weapon and 1,068 artifact policy observations to the exact
+    classifications in the existing search-coverage audits. Linkage is not a
+    positive representability or compatibility result: 27 artifact outcomes
+    are explicitly not representable and 12 weapon outcomes have native type
+    mismatches.
+70. Let structured ER targets, floors, rotations, weapon conditions, and the
+    energy-guidance record contribute no observations. Preserved unresolved
+    free text may still mention energy requirements, while ordinary `er`
+    remains a stat vocabulary token; create no guide, rank, recommendation, or
+    damage claim.
 
 The first two active sources are already in this repository:
 
@@ -272,6 +291,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/consolidate.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-knowledge-corpus.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-character-guide-input-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/compare-diona.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-team-template-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
@@ -306,16 +326,42 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty durable reports in memory: corpus inventory, team
-coverage, artifact- and weapon-choice search coverage, two formula-count
-comparisons, artifact-generation preflight, technical and sensitivity probes,
-the bounded joint artifact experiment, the bounded team-roster candidate
-domain, the full-team stat-marginal diagnostic, the Furina source-scoped role
-sample, the Keqing source-scoped role-pair sample, the Keqing Lunar equipment-
-evidence validation, the source-conditioned candidate lattice, the
-authenticated cross-record composition contract, the eight-cell cross-record
-technical matrix, Diona comparison, and historical ER calibration. Stale
-evidence cannot pass.
+It also rebuilds all twenty-one durable reports in memory: corpus inventory,
+all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
+choice search coverage, two formula-count comparisons, artifact-generation
+preflight, technical and sensitivity probes, the bounded joint artifact
+experiment, the bounded team-roster candidate domain, the full-team stat-
+marginal diagnostic, the Furina source-scoped role sample, the Keqing source-
+scoped role-pair sample, the Keqing Lunar equipment-evidence validation, the
+source-conditioned candidate lattice, the authenticated cross-record
+composition contract, the eight-cell cross-record technical matrix, Diona
+comparison, and historical ER calibration. Stale evidence cannot pass.
+
+The all-character inventory spans 125 guide-eligible characters and all seven
+C0-C6 investments, producing 875 compact rows backed by 3,084 group-level
+observations. Aloy and the Anemo, Electro, Geo, and Hydro Traveler forms are
+the exact five characters with no contributing guide input. Of 888 exact-team
+member investments, 887 are constellation-unspecified; the sole explicit
+investment is C6 Diona. All 57 KQM manual records remain unreviewed, and the
+repository currently supplies zero repository-authored `damagePlans`.
+
+The inventory links all 1,008 weapon and 1,068 artifact policy observations to
+their exact search-coverage classifications. Linkage does not itself mean
+representable or compatible: the report retains 27 explicitly not-representable
+artifact outcomes and 12 native weapon-type mismatches. The per-observation
+outcome payload hash is reconstructible only with the pinned upstream coverage
+report. Missing evidence is not an unsupported verdict, and constellation-
+unspecified evidence is not universal evidence. Raw stat weights remain raw
+values rather than ordinal ranks; page and array position create no rank; and
+the one coupled artifact plan remains atomic. All 57 upstream KQM manual records
+remain unreviewed; 56 non-energy records contribute provenance or coverage,
+while the energy-guidance record contributes none. Structured ER targets,
+floors, rotations, and weapon conditions contribute no observations, although
+preserved unresolved free text may mention energy requirements. The ordinary
+`er` stat token remains part of the build-stat vocabulary. No recommendation,
+guide, rank, or damage claim is derived. The next gate is a separate adapter
+that inventories the existing derived formula fixtures without presenting them
+as source-authored plans.
 
 ## Data flow
 
