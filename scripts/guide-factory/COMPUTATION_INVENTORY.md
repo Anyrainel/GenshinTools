@@ -510,6 +510,31 @@ This seam assembles zero builds and runs no generator, optimizer, formula,
 rotation, damage, ranking, ideal-roll, or ER calculation. It is validation of
 unreviewed source-condition bookkeeping, not a guide or gameplay result.
 
+## Request/account-context applicability seam
+
+`src/guideRequestContext.ts` overlays typed request and account facts on an
+immutable source-conditioned packet. A wrapper may replace only a pinned
+`unresolved-context` leaf. Every binding identifies the claim, source-condition
+array, full source predicate, leaf path, and leaf hash; exact-team facts and
+deferred-energy prerequisites cannot be replaced. Request facts are scoped to
+an exact team, with character role and optimization goal scoped further to one
+member. Weapon inventory is account-scoped and distinguishes complete from
+incomplete coverage, so an absent weapon is false only in a declared complete
+inventory. Account facts also retain an explicit snapshot identity.
+
+The Itto adapter uses a strict synthetic fixture with three independent
+contexts. Its two-key control gate requires the checked-in checkpoint 23 report
+to match a fresh canonical rebuild, then projects each context over all 45
+source cells. The 135 results contain 21 source-unresolved-to-applicable
+transitions. The six unique non-ER source cells for DEF Goblet and Retracing
+Bolide remain outside the current grammar, and 27 repeated ER-tail cells remain
+deferred. Source results and predicate rows are retained verbatim with hashes;
+context applicability is recorded separately.
+
+This seam does not authorize source claims, recommend account actions, combine
+the contexts, compose a build, or compute a score, rank, formula, rotation,
+damage result, ideal allocation, or ER requirement.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -551,6 +576,9 @@ unreviewed source-condition bookkeeping, not a guide or gameplay result.
 - Generic typed source-condition projection and the bounded Itto adapter:
   `scripts/guide-factory/src/sourceConditionedGuidePacket.ts` and
   `scripts/guide-factory/src/ittoSourceConditionedGuidePacket.ts`.
+- Generic typed request/account applicability and the bounded Itto adapter:
+  `scripts/guide-factory/src/guideRequestContext.ts` and
+  `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -623,10 +651,13 @@ factory.
   expansion is safe.
 - Source guide applicability remains attributed prose in repository records.
   The Keqing and Itto source-specific wrappers pin exact text to typed predicates
-  and can resolve exact roster facts, but they are not a global parser. High
-  Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
-  shield uptime, Bond clearance, CRIT overcap, inventory, preference, gameplay,
-  and omitted-energy inputs remain explicitly unresolved or deferred.
+  and can resolve exact roster facts, but they are not a global parser. The Itto
+  request-context adapter additionally resolves a bounded role, goal, weapon-
+  ownership/passive, and preference vocabulary; it does not generalize those
+  bindings across sources. High Base ATK, DMG Bonus, exceptional EM,
+  contribution ownership, refinement, shield uptime, Bond clearance, CRIT
+  overcap, artifact quality, comparative thresholds, gameplay, and omitted-
+  energy inputs remain explicitly unresolved or deferred.
 - The source evidence now exposes four artifact-search gaps: 4pc
   Thundersoother and three traditional 2pc combinations are recorded but not
   representable by the current candidate path. Search coverage is therefore a

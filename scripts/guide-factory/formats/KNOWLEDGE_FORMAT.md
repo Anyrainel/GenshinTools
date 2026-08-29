@@ -118,6 +118,29 @@ parse prose into a global condition ontology. Weapon and artifact arrays that
 share one recommendation are also not an atomic pair in V1; coupled equipment
 advice must remain deferred unless a first-class coupled shape is added.
 
+### Derived request/account applicability
+
+Request and account context is experiment input, not source knowledge. A strict
+context fixture may state team-scoped character intent, optimization goals,
+acquisition preferences, explicit execution assumptions, and bounded account-
+inventory facts. It must not contain source claim IDs, requested resolutions,
+recommendation fields, or source-condition prose.
+
+A source-specific wrapper owns the mapping from an exact source-condition leaf
+to a typed context query. The mapping pins the condition-array, full-predicate,
+leaf-path, and leaf hashes. Context may refine only a previously unresolved
+leaf; it cannot replace an exact-roster result or an omitted-energy
+prerequisite. Omitted request facts remain unknown. A missing inventory item is
+false only when the corresponding inventory domain is explicitly complete, and
+account facts must retain their snapshot identity.
+
+Derived context applicability must preserve the original source resolution and
+provenance separately. `applicable-under-supplied-context` means only that the
+supplied facts satisfy the mapped condition. It is not source authorization,
+comparative performance, rank, suitability, account advice, or a player-facing
+recommendation, and independently evaluated contexts must not be multiplied
+into one build.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

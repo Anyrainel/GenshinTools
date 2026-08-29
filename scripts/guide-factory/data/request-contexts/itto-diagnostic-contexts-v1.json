@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "itto-diagnostic-request-contexts-v1",
+  "contexts": [
+    {
+      "contextId": "on-field-personal-damage",
+      "context": {
+        "requestFactsByTeamRecordId": {
+          "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6": {
+            "characterFactsById": {
+              "arataki_itto": {
+                "intendedRole": "on-field-dps",
+                "optimizationGoal": "personal-damage"
+              }
+            }
+          },
+          "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6": {
+            "characterFactsById": {
+              "arataki_itto": {
+                "intendedRole": "on-field-dps",
+                "optimizationGoal": "personal-damage"
+              }
+            }
+          },
+          "kqm:team:itto-xilonen-furina-yelan-example-version-5-6": {
+            "characterFactsById": {
+              "arataki_itto": {
+                "intendedRole": "on-field-dps",
+                "optimizationGoal": "personal-damage"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "contextId": "owned-serpent-passive-supported",
+      "context": {
+        "requestFactsByTeamRecordId": {
+          "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6": {
+            "passiveExecutionAssumptions": {
+              "serpent-spine-passive-stacks-accommodated": true
+            }
+          },
+          "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6": {
+            "passiveExecutionAssumptions": {
+              "serpent-spine-passive-stacks-accommodated": true
+            }
+          },
+          "kqm:team:itto-xilonen-furina-yelan-example-version-5-6": {
+            "passiveExecutionAssumptions": {
+              "serpent-spine-passive-stacks-accommodated": true
+            }
+          }
+        },
+        "accountFacts": {
+          "snapshotId": "synthetic-account-inventory-v1",
+          "weaponInventory": {
+            "domain": "incomplete",
+            "weaponIds": ["serpent_spine"]
+          }
+        }
+      }
+    },
+    {
+      "contextId": "free-craftable-preferred",
+      "context": {
+        "requestFactsByTeamRecordId": {
+          "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6": {
+            "acquisitionPreference": "free-craftable"
+          },
+          "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6": {
+            "acquisitionPreference": "free-craftable"
+          },
+          "kqm:team:itto-xilonen-furina-yelan-example-version-5-6": {
+            "acquisitionPreference": "free-craftable"
+          }
+        }
+      }
+    }
+  ]
+}

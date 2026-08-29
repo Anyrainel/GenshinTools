@@ -6,6 +6,19 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `itto-request-context-applicability.json` authenticates both the checked-in
+  Itto source packet and a fresh canonical rebuild, then overlays three strict,
+  independent request/account contexts without changing the 45 source cells.
+  Its 135 projected cells contain 30 matched, 18 inapplicable, 60 unresolved,
+  and 27 unchanged deferred-energy outcomes. Exactly 21 of the source packet's
+  27 non-ER unresolved claim/team cells are addressable by at least one supplied
+  context; DEF Goblet and Retracing Bolide remain the six unique holdouts. The
+  fixture carries no claim bindings or requested outcomes, all bindings are
+  wrapper-owned and hash-pinned, and team-scoped facts cannot leak between
+  packets. Applicability is not source authorization, account advice, rank,
+  suitability, or a guide. The report combines no contexts, assembles zero
+  builds, and executes no generator, optimizer, formula, rotation, damage,
+  ideal-roll, or ER calculation.
 - `itto-source-conditioned-guide-packets.json` authenticates 15 atomic Itto
   source claims and projects them across three exact source teams as 45 cells:
   3 matched, 6 inapplicable, 27 unresolved-context, and 9 deferred omitted-
@@ -280,7 +293,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-three reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-four reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

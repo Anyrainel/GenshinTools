@@ -436,12 +436,23 @@ the Yelan and Xingqiu PHEC examples and structurally rejects the separate Gorou
 example. The sole exact baseline roster overlap remains investment-unresolved
 because source C2+ Xilonen is compared with baseline-unspecified Xilonen.
 
-The next bounded non-ER experiment should retain this source-facts-only packet
-as a control and add typed request/account context as a separate input. It may
-test explicit role, optimization goal, complete inventory, acquisition
-preference, and passive-execution assumptions without converting omitted facts
-to false or joining matched claims into a build. Human review of the 15 atoms,
-their pinned condition map, and all 45 source-only classifications remains a
+That separate request/account-context experiment now exists. It authenticates
+both the durable packet and a fresh canonical packet rebuild before projecting
+three strict contexts independently. Team/character-scoped role and goal facts,
+team-scoped preference and passive assumptions, and a global partial weapon
+inventory can address 21 of the 27 source-unresolved non-ER cells. DEF Goblet
+and Retracing Bolide remain unresolved because no buff-threshold/comparative or
+artifact-quality contract exists. All repeated offensive-tail cells keep the
+deferred energy prerequisite. The report preserves the source result in every
+cell and creates no combined context, build, rank, account advice, or guide.
+
+The next bounded non-ER gate should broaden validation before composition. It
+should inventory which exact attributed condition arrays across the repository
+are covered by the current typed fact vocabulary, which require new explicitly
+authored predicates, and which must remain gameplay/comparative holdouts. That
+coverage report must measure grammar reach without parsing arbitrary prose or
+turning condition frequency into confidence. Human review of the 15 Itto atoms,
+their pinned source predicates, and the 45 source-only classifications remains a
 prerequisite for publication, formula authoring, or build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete

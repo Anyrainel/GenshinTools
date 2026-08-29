@@ -21,13 +21,13 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 23 adds an authenticated, source-conditioned Itto packet
-experiment. It keeps 15 atomic stat, artifact, and weapon claims separate and
-projects them across three exact source teams as 45 descriptive cells: 3
-matched, 6 inapplicable, and 36 withheld. The withheld aggregate contains 27
-unresolved-context cells and 9 cells whose omitted energy prerequisite remains
-explicitly deferred. It assembles no build and still does not claim a working
-guide factory:
+Checkpoint 24 keeps the authenticated 45-cell Itto source-only packet unchanged
+and overlays three strict request/account contexts as independent diagnostics.
+Across 135 projected cells, 21 source-unresolved cells become applicable under
+supplied context, while the six DEF-Goblet/Bolide cells outside the current
+typed grammar remain unresolved and all 27 repeated ER-tail cells remain
+deferred. Applicability is not a rank or recommendation; the experiment
+assembles no build and still does not claim a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -274,6 +274,21 @@ guide factory:
 88. Authenticate the durable packet through a fresh typed rebuild while
     executing no generator, optimizer, formula, rotation, damage, ranking,
     ideal-roll, or ER calculation and assembling zero builds.
+89. Parse three synthetic request/account contexts through an isolated strict
+    schema that contains no claim IDs, requested resolutions, recommendation
+    fields, source prose, formula counts, rotations, or ER inputs.
+90. Bind request facts to exact team records, role and goal facts to Itto, and
+    Serpent Spine ownership to a separately complete-or-incomplete account
+    inventory snapshot boundary; omitted facts remain unknown.
+91. Pin eight source claims and nine unresolved leaves by source-condition,
+    full-predicate, leaf, and path hashes while forbidding request context from
+    replacing exact-roster or deferred-energy facts.
+92. Project the three contexts independently over the authenticated source
+    control: 30 matched, 18 inapplicable, 60 unresolved, and 27 deferred cells
+    across 135 total, including 21 source-unresolved-to-applicable transitions.
+93. Authenticate checkpoint 24 only when both the checked-in checkpoint 23
+    report and a fresh canonical checkpoint 23 rebuild agree; retain zero
+    builds, ranks, scores, account advice, guide claims, or ER conclusions.
 
 The first two active sources are already in this repository:
 
@@ -372,6 +387,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-cross-record-composition-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -388,7 +404,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-three durable reports in memory: corpus inventory,
+It also rebuilds all twenty-four durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -398,7 +414,8 @@ marginal diagnostic, the Furina source-scoped role sample, the Keqing source-
 scoped role-pair sample, the Keqing Lunar equipment-evidence validation, the
 source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
-comparison, the authenticated Itto source-conditioned packet, and historical
+comparison, the authenticated Itto source-conditioned packet, its separately
+authenticated request/account-context applicability projection, and historical
 ER calibration. Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
@@ -451,6 +468,17 @@ example. Only that Gorou roster overlaps a current preset, and its C2+ source
 Xilonen versus baseline-unspecified Xilonen remains unresolved in the separate
 constellation-only comparison. These are authenticated classifications of
 unreviewed evidence, not selected equipment or guide recommendations.
+
+The request/account-context report uses that packet as an immutable control.
+It authenticates both the checked-in packet and a fresh canonical rebuild,
+then evaluates three independent contexts: on-field personal damage, owned
+Serpent Spine with an explicit passive-accommodation assumption, and a free-
+craftable preference. The first produces 18 matched cells; the other two each
+produce 6. Across all three projections, 21 of the source packet's 27 non-ER
+unresolved cells are addressable by at least one supplied context. DEF% Goblet
+still lacks buff-coverage, investment-threshold, and comparative evidence;
+Retracing Bolide still lacks an artifact-quality contract. The contexts are not
+combined, ranked, or multiplied into equipment builds.
 
 ## Data flow
 

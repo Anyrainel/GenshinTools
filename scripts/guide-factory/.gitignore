@@ -24,3 +24,4 @@ reports/*
 !reports/keqing-lunar-cross-record-composition-contract.json
 !reports/keqing-lunar-cross-record-technical-matrix.json
 !reports/itto-source-conditioned-guide-packets.json
+!reports/itto-request-context-applicability.json

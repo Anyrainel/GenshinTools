@@ -72,6 +72,15 @@ import {
   ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS,
   ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_REPORT_PATH,
 } from "./ittoSourceConditionedGuidePacket";
+import {
+  authenticateIttoRequestContextApplicabilityReport,
+  ITTO_REQUEST_CONTEXT_APPLICABILITY_INPUT_PATHS,
+  ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH,
+  ITTO_REQUEST_CONTEXT_FIXTURE_RELATIVE_PATH,
+  ITTO_REQUEST_CONTEXT_SOURCE_REPORT_RELATIVE_PATH,
+  readHashedJsonSnapshot,
+  type IttoRequestContextApplicabilityReport,
+} from "./ittoRequestContextApplicability";
 import { readJson, sha256File, stableJson } from "./io";
 import {
   buildKeqingIneffaFormulaDraftReport,
@@ -204,6 +213,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
     ittoSourceConditionedGuidePacketInput,
+    ittoRequestContextApplicabilityInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -264,6 +274,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_REPORT_PATH),
       readJson(KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPORT_PATH),
       readJson(ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_REPORT_PATH),
+      readJson(ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -651,6 +662,68 @@ export async function runValidation(): Promise<ValidationRunResult> {
             "canonical-inputs-not-comparable"
               ? "The freshly rebuilt Itto source-conditioned packet is not comparable; a matching non-comparable serialized report is not valid durable evidence."
               : "The saved Itto source-conditioned packet does not match the authenticated source records, exact condition map, roster runtime, constellation-only baseline comparison, and current input hashes.",
+        });
+      }
+
+      const [
+        ittoRequestContextGeneratedFrom,
+        ittoRequestContextSourceReportSnapshot,
+        ittoRequestContextFixtureSnapshot,
+      ] = await Promise.all([
+        hashRelativePaths(ITTO_REQUEST_CONTEXT_APPLICABILITY_INPUT_PATHS),
+        readHashedJsonSnapshot(
+          REPOSITORY_ROOT,
+          ITTO_REQUEST_CONTEXT_SOURCE_REPORT_RELATIVE_PATH,
+        ),
+        readHashedJsonSnapshot(
+          REPOSITORY_ROOT,
+          ITTO_REQUEST_CONTEXT_FIXTURE_RELATIVE_PATH,
+        ),
+      ]);
+      const ittoRequestContextAuthentication =
+        await authenticateIttoRequestContextApplicabilityReport(
+          ittoRequestContextApplicabilityInput as IttoRequestContextApplicabilityReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: ittoManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            catalogs,
+            sourceReportSnapshot: ittoRequestContextSourceReportSnapshot,
+            contextFixtureSnapshot: ittoRequestContextFixtureSnapshot,
+            generatedFrom: ittoRequestContextGeneratedFrom,
+          },
+        );
+      if (!ittoRequestContextAuthentication.authenticated) {
+        const diagnosticByReason = {
+          "upstream-control-authentication-failed": {
+            code: "pipeline.unauthenticated_itto_request_context_control",
+            message:
+              "The Itto request-context projection cannot authenticate its checked-in checkpoint 23 source control against a fresh canonical rebuild.",
+          },
+          "context-input-invalid": {
+            code: "pipeline.invalid_itto_request_context_input",
+            message:
+              "The Itto request-context fixture, hashed snapshot, or generatedFrom boundary is invalid.",
+          },
+          "canonical-projection-not-comparable": {
+            code: "pipeline.non_comparable_itto_request_context_applicability",
+            message:
+              "The freshly rebuilt Itto request-context projection is not comparable and cannot serve as durable evidence.",
+          },
+          "serialized-report-mismatch": {
+            code: "pipeline.stale_itto_request_context_applicability",
+            message:
+              "The saved Itto request-context report does not match the authenticated source control, strict context fixture, pinned claim bindings, and current input hashes.",
+          },
+        } as const;
+        const diagnostic =
+          diagnosticByReason[ittoRequestContextAuthentication.reason];
+        diagnostics.push({
+          severity: "error",
+          code: diagnostic.code,
+          path: "reports.itto-request-context-applicability",
+          message: diagnostic.message,
         });
       }
 
