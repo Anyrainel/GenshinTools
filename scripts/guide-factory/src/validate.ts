@@ -116,6 +116,12 @@ import {
   type ManualSnapshotInput,
 } from "./manualSnapshots";
 import {
+  buildManualConditionArrayCoverageReport,
+  MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS,
+  MANUAL_CONDITION_ARRAY_COVERAGE_REPORT_PATH,
+  MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS,
+} from "./manualConditionArrayCoverageReport";
+import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH,
   CHARACTER_GUIDE_INPUT_COVERAGE_REPORT_PATH,
   DERIVED_FORMULA_FIXTURE_COVERAGE_REPORT_PATH,
@@ -214,6 +220,8 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingLunarCrossRecordTechnicalMatrixInput,
     ittoSourceConditionedGuidePacketInput,
     ittoRequestContextApplicabilityInput,
+    manualConditionArrayCoverageInput,
+    manualConditionArrayCoverageSourceFiles,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -275,6 +283,18 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPORT_PATH),
       readJson(ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_REPORT_PATH),
       readJson(ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH),
+      readJson(MANUAL_CONDITION_ARRAY_COVERAGE_REPORT_PATH),
+      Promise.all(
+        MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -724,6 +744,46 @@ export async function runValidation(): Promise<ValidationRunResult> {
           code: diagnostic.code,
           path: "reports.itto-request-context-applicability",
           message: diagnostic.message,
+        });
+      }
+
+      const manualConditionArrayCoverageGeneratedFrom =
+        await hashRelativePaths(MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS);
+      const expectedManualConditionArrayCoverage =
+        await buildManualConditionArrayCoverageReport({
+          repositoryInput: expectedKnowledge,
+          manualIndexInput,
+          sourceRegistryInput: registry.data,
+          manualInputs,
+          catalogs,
+          checkedInRosterDomainReportInput:
+            teamRosterCandidateDomainExperimentInput,
+          ittoDurableReportInput: ittoSourceConditionedGuidePacketInput,
+          keqingEquipmentDurableReportInput:
+            keqingLunarEquipmentEvidenceValidationInput,
+          keqingRolePairDurableReportInput:
+            keqingSourceScopedRolePairSampleInput,
+          sourceFiles: manualConditionArrayCoverageSourceFiles,
+          generatedFrom: manualConditionArrayCoverageGeneratedFrom,
+        });
+      if (expectedManualConditionArrayCoverage.comparisonStatus !== "comparable") {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.non_comparable_manual_condition_array_coverage",
+          path: "reports.manual-condition-array-coverage",
+          message:
+            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its three current wrapper boundaries.",
+        });
+      } else if (
+        stableJson(expectedManualConditionArrayCoverage) !==
+        stableJson(manualConditionArrayCoverageInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_manual_condition_array_coverage",
+          path: "reports.manual-condition-array-coverage",
+          message:
+            "The saved manual condition-array coverage does not match the seven indexed source snapshots, exact repository paths, authenticated condition bindings, and current input hashes.",
         });
       }
 

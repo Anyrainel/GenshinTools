@@ -141,6 +141,43 @@ comparative performance, rank, suitability, account advice, or a player-facing
 recommendation, and independently evaluated contexts must not be multiplied
 into one build.
 
+### Derived condition-array coverage
+
+Condition coverage is derived validation evidence, not a new knowledge record.
+The extractor traverses only schema-defined condition arrays in indexed manual
+snapshots and retains their exact source record, schema path, subject, ordered
+strings, and ordered-array hash. It then verifies the same array at the exact
+consolidated repository path; the repository copy is not counted as a second
+observation. A separate pre-schema recursive audit requires every raw
+`conditions` property to have one exact extracted path and ordered payload, so
+new or unknown condition-bearing fields cannot be stripped and omitted
+silently.
+
+A machine-readable binding must identify the source, record kind, source record,
+schema path, ordered-array hash, and subject. Text equality or hash equality
+alone is insufficient because the same condition can occur for multiple role
+members with different validation evidence. Binding and energy classifications
+remain independent:
+
+- `typed-bound` means an authenticated wrapper maps the exact array to explicit
+  predicates; it does not mean those predicates are true;
+- `exact-text-acknowledged` means an exact configured target carries the source
+  text; it does not validate gameplay execution;
+- `unbound` is an authoring backlog, not evidence that a condition is false;
+- binding coverage is counted across nonempty arrays independently from energy
+  status, with a separate non-structural view;
+- structural ER, typed deferred prerequisites, and exact authored source-text
+  deferrals remain explicit energy states; and
+- acknowledgement-only and unbound arrays default to `energy-unclassified`,
+  never semantic non-ER. A `not-energy-deferred` label requires an explicit
+  wrapper contract and still does not compute an ER requirement.
+
+Coverage reports must fail closed on stale or non-comparable wrappers,
+repository mismatch, ambiguous or partial expansion, duplicate/conflicting
+bindings, or subject leakage. They must not parse arbitrary English, infer a
+predicate from repetition, or turn coverage frequency into confidence,
+ranking, or recommendation quality.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

@@ -21,13 +21,16 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 24 keeps the authenticated 45-cell Itto source-only packet unchanged
-and overlays three strict request/account contexts as independent diagnostics.
-Across 135 projected cells, 21 source-unresolved cells become applicable under
-supplied context, while the six DEF-Goblet/Bolide cells outside the current
-typed grammar remain unresolved and all 27 repeated ER-tail cells remain
-deferred. Applicability is not a rank or recommendation; the experiment
-assembles no build and still does not claim a working guide factory:
+Checkpoint 25 inventories every schema-defined condition array in the seven
+active manual snapshots and proves exact parity with the consolidated
+repository. Its binding ledger counts all 126 nonempty arrays as 46 typed, 3
+exact-text acknowledged, and 77 unbound; excluding three structural ER arrays
+leaves 123 occurrences and 74 unbound. Energy is an independent ledger: 15
+rows are explicitly deferred, 43 typed rows are not energy-deferred, and 68
+remain energy-unclassified. No unbound row is presumed non-ER. Binding coverage
+is not condition truth, source authority, or a recommendation; the experiment
+parses no arbitrary prose, assembles no build, and still does not claim a
+working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -289,6 +292,31 @@ assembles no build and still does not claim a working guide factory:
 93. Authenticate checkpoint 24 only when both the checked-in checkpoint 23
     report and a fresh canonical checkpoint 23 rebuild agree; retain zero
     builds, ranks, scores, account advice, guide claims, or ER conclusions.
+94. Traverse only schema-defined condition-array fields in the seven indexed
+    manual snapshots, preserving array order, duplicate strings, exact source
+    paths, and extraction state without scanning prose or unknowns.
+95. Recursively inventory every raw `conditions` property before schema parsing
+    and require exact path/payload closure with the extractor, so a future or
+    unknown condition-bearing field fails instead of being silently omitted.
+96. Verify all 142 source occurrences against their exact consolidated
+    repository paths instead of counting the repository as a second corpus.
+97. Overlay only authenticated Itto, Keqing equipment, and Keqing role-pair
+    evidence keyed by source, record kind, source record, schema path, ordered-
+    array hash, and subject; reject stale, partial, duplicate, or leaked
+    bindings rather than silently downgrading them.
+98. Count binding classification independently from energy status: all 126
+    nonempty arrays contain 46 typed bindings, 3 exact-text acknowledgements,
+    and 77 unbound occurrences; the non-structural subset is 123/46/3/74.
+99. Default unbound and acknowledgement-only energy status to unclassified,
+    not non-ER. Defer nine exact authored Diona/Furina energy-sensitive arrays
+    alongside three structural ER arrays and three typed Itto prerequisites.
+100. Keep typed mapping distinct from condition truth, and do not extend the
+    three acknowledged Keqing Viridescent Venerer role members to Sayu or
+    Xianyun merely because the condition text is identical.
+101. Authenticate the durable checkpoint 25 report through raw JSON closure,
+    exact input hashes, fresh upstream wrapper rebuilds, and validator equality
+    while authorizing no guide, recommendation, rank, damage, optimizer, or ER
+    result.
 
 The first two active sources are already in this repository:
 
@@ -388,6 +416,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -404,7 +433,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-four durable reports in memory: corpus inventory,
+It also rebuilds all twenty-five durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -415,8 +444,9 @@ scoped role-pair sample, the Keqing Lunar equipment-evidence validation, the
 source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
-authenticated request/account-context applicability projection, and historical
-ER calibration. Stale evidence cannot pass.
+authenticated request/account-context applicability projection, the exact
+manual condition-array coverage inventory, and historical ER calibration.
+Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
@@ -479,6 +509,21 @@ unresolved cells are addressable by at least one supplied context. DEF% Goblet
 still lacks buff-coverage, investment-threshold, and comparative evidence;
 Retracing Bolide still lacks an artifact-quality contract. The contexts are not
 combined, ranked, or multiplied into equipment builds.
+
+The manual condition-array inventory broadens that validation boundary to all
+seven active external snapshots. It extracts 142 exact schema occurrences and
+matches all 142 to their consolidated copies. Sixteen arrays are unconditional.
+Across the 126 nonempty arrays, 46 are typed-bound, 3 are exact-text
+acknowledged, and 77 are unbound. The separate energy ledger marks 3 structural
+ER arrays, 3 typed Itto prerequisites, and 9 exact authored Diona/Furina rows as
+deferred; 43 typed rows are not energy-deferred and 68 rows remain energy-
+unclassified. Excluding only structural ER leaves 123 binding-coverage rows:
+46 typed, 3 acknowledged, and 74 unbound. The authenticated catalog deliberately
+binds only exact source occurrences. In particular, the shared Viridescent
+Venerer text is acknowledged for Jean, Kaedehara Kazuha, and Sucrose in
+exercised Keqing teams but remains unbound for Sayu and Xianyun. The report
+measures validation work; it does not prove a condition is satisfied, presume
+an unclassified row is non-ER, or establish that a recommendation is correct.
 
 ## Data flow
 

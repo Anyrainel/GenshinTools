@@ -446,14 +446,32 @@ artifact-quality contract exists. All repeated offensive-tail cells keep the
 deferred energy prerequisite. The report preserves the source result in every
 cell and creates no combined context, build, rank, account advice, or guide.
 
-The next bounded non-ER gate should broaden validation before composition. It
-should inventory which exact attributed condition arrays across the repository
-are covered by the current typed fact vocabulary, which require new explicitly
-authored predicates, and which must remain gameplay/comparative holdouts. That
-coverage report must measure grammar reach without parsing arbitrary prose or
-turning condition frequency into confidence. Human review of the 15 Itto atoms,
-their pinned source predicates, and the 45 source-only classifications remains a
-prerequisite for publication, formula authoring, or build composition.
+That broader condition inventory now exists. It traverses only the condition-array
+fields defined by the manual schema, preserves exact ordered text and paths,
+requires a pre-schema raw `conditions` path/payload audit to match the extractor,
+and verifies all 142 source occurrences against the consolidated repository.
+Across all 126 nonempty arrays, 46 have authenticated typed bindings, 3 have
+exact-text acknowledgements only, and 77 are unbound. The independent
+non-structural binding ledger contains 123 occurrences: 46 typed, 3
+acknowledged, and 74 unbound. Energy status is orthogonal: 3 structural ER
+arrays, 3 typed Itto prerequisites, and 9 exact authored Diona/Furina arrays
+are deferred; 43 typed rows are not energy-deferred and 68 remain energy-
+unclassified. No unbound row is presumed non-ER. Binding identity includes the
+source, record kind, source record, schema path, ordered-array hash, and subject,
+so identical Viridescent Venerer text cannot leak an acknowledgement from Jean,
+Kazuha, or Sucrose to Sayu or Xianyun. A typed binding records grammar reach,
+not condition truth, source quality, or recommendation accuracy.
+
+The next bounded non-ER gate should select a small source-local slice from the
+74 unbound occurrences, explicitly classify that slice as not energy-deferred,
+and author only predicates supported by existing exact roster or request facts.
+The nine authored energy-sensitive rows remain deferred; all other unselected
+rows remain energy-unclassified. Preserve comparative, quality, timing, and
+gameplay conditions as holdouts and measure the binding/energy delta against
+checkpoint 25. Do not infer predicates from repeated English or condition
+frequency. Human review of the Itto and Keqing bindings and their source
+classifications remains a prerequisite for publication, formula authoring, or
+build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

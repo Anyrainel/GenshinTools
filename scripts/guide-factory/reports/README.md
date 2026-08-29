@@ -6,6 +6,27 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `manual-condition-array-coverage.json` authenticates all 142 structured
+  condition-array occurrences from seven indexed KQM manual snapshots and
+  proves exact raw-path extraction closure and parity with the consolidated
+  repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
+  unique exact ordered nonempty arrays,
+  159 condition-string occurrences, and 97 unique strings. Binding and energy
+  are independent: all nonempty arrays contain 46 typed bindings, 3 exact-text
+  acknowledgements, and 77 unbound occurrences; excluding only three structural
+  ER rows leaves 123 occurrences: 46 typed, 3 acknowledged, and 74 unbound,
+  across 86 unique arrays. Those arrays contain 26 typed-only, 59 unbound-only,
+  and one mixed acknowledged/unbound status set.
+  The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
+  exact authored Diona/Furina rows; 43 typed rows are not energy-deferred and 68
+  remain energy-unclassified. Bindings are occurrence-, hash-, and subject-
+  scoped: identical Viridescent Venerer text is acknowledged for Jean,
+  Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound. Typed
+  coverage does not establish predicate truth, and unclassified does not mean
+  non-ER. The report parses no arbitrary prose, composes no choices, and
+  executes no guide, generator, optimizer, formula, rotation, damage, ideal-
+  roll, or ER work. All 64 source records remain agent-assisted and unreviewed,
+  so publication stays withheld.
 - `itto-request-context-applicability.json` authenticates both the checked-in
   Itto source packet and a fresh canonical rebuild, then overlays three strict,
   independent request/account contexts without changing the 45 source cells.
@@ -293,7 +314,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-four reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-five reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

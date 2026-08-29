@@ -535,6 +535,44 @@ This seam does not authorize source claims, recommend account actions, combine
 the contexts, compose a build, or compute a score, rank, formula, rotation,
 damage result, ideal allocation, or ER requirement.
 
+## Manual condition-array coverage seam
+
+`src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
+defined by the manual snapshot schema. It retains each ordered array at its
+exact source and repository path, preserves duplicates, and proves one-to-one
+parity for all 142 current occurrences. The repository is a consolidation
+target, not a second evidence corpus. An independent recursive audit runs on
+the raw snapshot values before schema parsing and requires every `conditions`
+property to match one extracted path and ordered payload, so future or unknown
+condition-bearing fields fail closed.
+
+`src/currentConditionBindingCatalog.ts` overlays only three authenticated
+current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
+IDs, and exact-text Keqing Viridescent Venerer acknowledgements. A binding is
+addressed by source, record kind, record ID, schema path, ordered-array hash,
+and subject. Stale or non-comparable upstream reports, partial expansions,
+duplicate/conflicting keys, or subject mismatches make the inventory
+non-comparable rather than converting evidence to an unbound result.
+
+The durable report keeps binding and energy as independent ledgers. Across all
+126 nonempty arrays, binding coverage is 46 typed, 3 exact-text acknowledged,
+and 77 unbound. Excluding only the three structural ER arrays leaves 123 rows:
+46 typed, 3 acknowledged, and 74 unbound, spanning 86 exact ordered arrays.
+Those arrays contain 26 typed-only sets, 59 unbound-only sets, and one mixed
+acknowledged/unbound Viridescent Venerer set.
+
+The energy ledger marks three structural ER arrays, three typed Itto energy
+prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
+deferred. Forty-three typed rows are not energy-deferred; 68 acknowledgement or
+unbound rows remain energy-unclassified; and 16 empty arrays are unconditional.
+An unclassified row is not presumed non-ER. Exact-text equality does not
+establish gameplay execution, and typed mapping does not establish that a
+predicate is true for a team or account.
+
+This seam runs no arbitrary-English parser, recommendation composer, generator,
+optimizer, formula, rotation, damage, ranking, ideal-roll, or ER calculation.
+Its output is an authenticated validation backlog, not a guide.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -579,6 +617,11 @@ damage result, ideal allocation, or ER requirement.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
+- Exact manual condition extraction, repository parity, and authenticated
+  current-wrapper coverage:
+  `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,
+  `scripts/guide-factory/src/currentConditionBindingCatalog.ts`, and
+  `scripts/guide-factory/src/manualConditionArrayCoverageReport.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -650,8 +693,11 @@ factory.
   disagreements still need broader attributed evidence before role-based roster
   expansion is safe.
 - Source guide applicability remains attributed prose in repository records.
-  The Keqing and Itto source-specific wrappers pin exact text to typed predicates
-  and can resolve exact roster facts, but they are not a global parser. The Itto
+  The exact inventory now identifies 74 non-structural occurrences as unbound;
+  it does not parse them or presume they are non-ER. Nine are exact authored
+  energy deferrals and the remaining 65 are energy-unclassified. The Keqing and
+  Itto source-specific wrappers pin exact text to typed predicates and can
+  resolve exact roster facts, but they are not a global parser. The Itto
   request-context adapter additionally resolves a bounded role, goal, weapon-
   ownership/passive, and preference vocabulary; it does not generalize those
   bindings across sources. High Base ATK, DMG Bonus, exceptional EM,
