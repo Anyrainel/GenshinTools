@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 17 adds a fail-closed source-conditioned candidate lattice over the
-four exact Keqing Lunar-Charged teams, without claiming a working guide
-factory:
+Checkpoint 18 adds a fail-closed Guide Factory-authored cross-record
+composition contract over the source-conditioned Keqing Lunar-Charged lattice,
+without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -161,6 +161,20 @@ factory:
     its unreviewed eight-blocker state authorizes zero technical comparisons.
 52. Withhold the entire lattice when source grouping, exact-team resolution,
     coverage, source-refinement, anchor, or formula-fixture invariants drift.
+53. Author exactly two cross-record Keqing input compositions from matched
+    Mistsplitter, artifact, and stat claims while labeling both joins as Guide
+    Factory-authored rather than source-authored builds.
+54. Pin the complete selected source groups, source conditions, recommendation
+    metadata, exact eight-cell stat inventory, teammate lineage, and upstream
+    no-claim/no-comparison boundary; withhold all compositions on any drift.
+55. Keep Marechaussee Hunter's source-local `default` label and the one-Nod-
+    Krai Night of the Sky's Unveiling `alternative` label without deriving any
+    ordering between the two cross-record compositions.
+56. Preserve the unresolved CRIT Rate Circlet branch as withheld and attribute
+    every exact-team condition resolution to the Guide Factory wrapper.
+57. Authenticate a serialized contract only by rebuilding it from the current
+    typed lattice, formula fixture, and exact input hashes; the contract itself
+    authorizes no generator, technical comparison, damage, ranking, or ER work.
 
 The first two active sources are already in this repository:
 
@@ -247,6 +261,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-source-conditioned-candidate-lattice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-cross-record-composition-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit

@@ -6,6 +6,18 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-lunar-cross-record-composition-contract.json` rebuilds exactly two
+  Guide Factory-authored joins for the exact Keqing/Ineffa/Furina/Xilonen
+  source team: one with 4pc Marechaussee Hunter and one with the exactly-one-
+  Nod-Krai Night of the Sky's Unveiling branch. Both retain the same matched
+  Mistsplitter and seven matched default-stat claims, while the unresolved CRIT
+  Rate Circlet claim and two-Nod-Krai artifact branch remain withheld. Complete
+  source conditions, recommendation metadata, teammate lineage, formula
+  assumptions, and upstream no-claim/no-comparison flags are fail-closed. The
+  two source-local classifications are not a cross-record order. The report
+  executes no generator, comparison, damage, ranking, or ER work and can be
+  authenticated only by rebuilding it from the current typed inputs and
+  hashes.
 - `keqing-lunar-source-conditioned-candidate-lattice.json` preserves 19
   source-local equipment groups and 12 stat claims across four exact teams. It
   classifies 76 equipment-group and 48 stat-claim cells while retaining all
@@ -197,6 +209,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all eighteen reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all nineteen reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

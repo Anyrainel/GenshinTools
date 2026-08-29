@@ -39,6 +39,10 @@ import {
   KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
 } from "./keqingLunarSourceConditionedCandidateLattice";
 import {
+  buildKeqingLunarCrossRecordCompositionContractReport,
+  KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_INPUT_PATHS,
+} from "./keqingLunarCrossRecordCompositionContract";
+import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
@@ -90,6 +94,7 @@ import {
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH,
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
+  KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_REPORT_PATH,
   KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
@@ -162,6 +167,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingSourceScopedRolePairSampleInput,
     keqingLunarEquipmentEvidenceValidationInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
+    keqingLunarCrossRecordCompositionContractInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -195,6 +201,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
       ),
+      readJson(KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -658,6 +665,29 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-lunar-source-conditioned-candidate-lattice",
           message:
             "The saved Keqing Lunar source-conditioned candidate lattice does not match the validated claim groups, four exact team resolutions, search-representability holdouts, and blocked technical-fixture boundary.",
+        });
+      }
+
+      const keqingLunarCrossRecordCompositionContractGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_INPUT_PATHS,
+        );
+      const expectedKeqingLunarCrossRecordCompositionContract =
+        buildKeqingLunarCrossRecordCompositionContractReport(
+          expectedKeqingLunarSourceConditionedCandidateLattice,
+          expectedKeqingIneffaFormulaDraft,
+          keqingLunarCrossRecordCompositionContractGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingLunarCrossRecordCompositionContract) !==
+        stableJson(keqingLunarCrossRecordCompositionContractInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_lunar_cross_record_composition_contract",
+          path: "reports.keqing-lunar-cross-record-composition-contract",
+          message:
+            "The saved Keqing Lunar cross-record composition contract does not match the exact source-conditioned claims, withheld branches, formula lineage, and Guide Factory-authored no-ordering join boundary.",
         });
       }
 

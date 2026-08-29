@@ -341,9 +341,23 @@ Keqing/Ineffa/Furina/Xilonen formula fixture is attached only as blocked
 availability metadata: Mistsplitter matches a source claim, 4pc Thundering Fury
 remains condition-withheld, the source refinement is unspecified, and the
 unreviewed fixture still has eight readiness blockers. Thus the current lattice
-authorizes zero technical comparisons. The next gate is an explicit
-guide-factory-authored cross-record composition contract, not an inferred
-source build.
+authorizes zero technical comparisons.
+
+The next gate now exists as an explicit Guide Factory-authored cross-record
+composition contract. It rebuilds exactly two unordered input compositions:
+matched general Mistsplitter plus either 4pc Marechaussee Hunter or the matched
+exactly-one-Nod-Krai Night of the Sky's Unveiling branch, joined to seven
+matched default stat claims. The CRIT Rate Circlet claim and the two-Nod-Krai
+artifact branch remain withheld. Exact source conditions, group provenance,
+recommendation metadata, the eight-cell stat inventory, teammate lineage, and
+every upstream no-claim/no-comparison flag are pinned; any drift withholds both
+compositions. Condition resolution is explicitly owned by the Guide Factory
+exact-team wrapper, and a serialized report is trusted only after a fresh
+typed-input rebuild and exact hash-bound comparison. The contract still
+executes no generator, damage, ranking, technical comparison, or ER work. A
+later bounded technical wrapper must derive its composed targets from this
+freshly authenticated contract and must separately identify execution as an
+experiment policy rather than source authorization.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

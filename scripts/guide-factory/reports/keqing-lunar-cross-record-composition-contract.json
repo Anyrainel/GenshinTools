@@ -1,0 +1,790 @@
+{
+  "cautions": [
+    "The two compositions are Guide Factory-authored joins across separate source claim records; KQM did not publish either as one atomic build.",
+    "Source classifications are retained per claim, while crossRecordOrdering remains none and establishes no relation between the two artifacts.",
+    "The CRIT Rate Circlet claim remains withheld because the exact team does not resolve the source's no-overcap condition.",
+    "R1, teammate equipment, formula lines, and calculator context are separately attributed experiment inputs and are not source facts about either composition.",
+    "The formula translation remains unreviewed and this contract executes no generator or numerical comparison.",
+    "Energy Recharge is absent from the contract and from every composition."
+  ],
+  "classification": "keqing-lunar-cross-record-composition-contract",
+  "compositions": [
+    {
+      "artifact": {
+        "artifact": {
+          "setId": "marechaussee_hunter",
+          "type": "4pc"
+        },
+        "claimId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+        "conditionResolution": "matched-by-exact-team-facts",
+        "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+        "groupId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0",
+        "searchRepresentability": "initially-representable",
+        "sourceClassification": "default"
+      },
+      "authoredBy": "guide-factory",
+      "characterId": "keqing",
+      "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+      "crossRecordOrdering": "none",
+      "formulaFixtureReference": {
+        "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+        "reviewStatus": "unreviewed",
+        "sourceBindingEstablished": false,
+        "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "technicalExecutionAuthorized": false
+      },
+      "joinKind": "cross-record-evidence-composition",
+      "sourceAuthored": false,
+      "sourceAuthoredBuild": false,
+      "statProfile": {
+        "crossRecordJoinAuthoredByGuideFactory": true,
+        "matchedClaimCount": 7,
+        "matchedClaims": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "main-stat",
+              "priority": null,
+              "slot": "circlet",
+              "statIds": [
+                "cd"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "main-stat",
+              "priority": 1,
+              "slot": "goblet",
+              "statIds": [
+                "electro%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 1,
+              "kind": "main-stat",
+              "priority": 2,
+              "slot": "goblet",
+              "statIds": [
+                "atk%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "main-stat",
+              "priority": null,
+              "slot": "sands",
+              "statIds": [
+                "atk%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "substat",
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 1,
+              "kind": "substat",
+              "priority": 2,
+              "statIds": [
+                "atk%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 2,
+              "kind": "substat",
+              "priority": 3,
+              "statIds": [
+                "em"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          }
+        ],
+        "profileSourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i",
+        "withheldClaimCount": 1,
+        "withheldClaims": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 1,
+              "kind": "main-stat",
+              "priority": null,
+              "slot": "circlet",
+              "statIds": [
+                "cr"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team.",
+              "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i",
+            "withholdingReason": "unresolved-no-overcap-condition"
+          }
+        ]
+      },
+      "teammateEquipmentReference": "originLedger.teammateEquipment",
+      "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "weapon": {
+        "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+        "conditionResolution": "matched-by-exact-team-facts",
+        "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+        "experimentPolicyReference": "originLedger.r1ExperimentPolicy",
+        "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+        "sourceRefinement": null,
+        "weaponId": "mistsplitter_reforged"
+      }
+    },
+    {
+      "artifact": {
+        "artifact": {
+          "setId": "night_of_the_skys_unveiling",
+          "type": "4pc"
+        },
+        "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0",
+        "conditionResolution": "matched-by-exact-team-facts",
+        "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+        "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0",
+        "searchRepresentability": "initially-representable",
+        "sourceClassification": "alternative"
+      },
+      "authoredBy": "guide-factory",
+      "characterId": "keqing",
+      "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+      "crossRecordOrdering": "none",
+      "formulaFixtureReference": {
+        "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+        "reviewStatus": "unreviewed",
+        "sourceBindingEstablished": false,
+        "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "technicalExecutionAuthorized": false
+      },
+      "joinKind": "cross-record-evidence-composition",
+      "sourceAuthored": false,
+      "sourceAuthoredBuild": false,
+      "statProfile": {
+        "crossRecordJoinAuthoredByGuideFactory": true,
+        "matchedClaimCount": 7,
+        "matchedClaims": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "main-stat",
+              "priority": null,
+              "slot": "circlet",
+              "statIds": [
+                "cd"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "main-stat",
+              "priority": 1,
+              "slot": "goblet",
+              "statIds": [
+                "electro%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 1,
+              "kind": "main-stat",
+              "priority": 2,
+              "slot": "goblet",
+              "statIds": [
+                "atk%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "main-stat",
+              "priority": null,
+              "slot": "sands",
+              "statIds": [
+                "atk%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 0,
+              "kind": "substat",
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 1,
+              "kind": "substat",
+              "priority": 2,
+              "statIds": [
+                "atk%"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+            "conditionResolution": "matched-by-exact-team-facts",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 2,
+              "kind": "substat",
+              "priority": 3,
+              "statIds": [
+                "em"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+          }
+        ],
+        "profileSourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i",
+        "withheldClaimCount": 1,
+        "withheldClaims": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+            "sourceClaim": {
+              "entryIndex": 1,
+              "kind": "main-stat",
+              "priority": null,
+              "slot": "circlet",
+              "statIds": [
+                "cr"
+              ],
+              "target": null
+            },
+            "sourceConditions": [
+              "Keqing is used in a Lunar-Charged team.",
+              "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses."
+            ],
+            "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i",
+            "withholdingReason": "unresolved-no-overcap-condition"
+          }
+        ]
+      },
+      "teammateEquipmentReference": "originLedger.teammateEquipment",
+      "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "weapon": {
+        "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+        "conditionResolution": "matched-by-exact-team-facts",
+        "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+        "experimentPolicyReference": "originLedger.r1ExperimentPolicy",
+        "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+        "sourceRefinement": null,
+        "weaponId": "mistsplitter_reforged"
+      }
+    }
+  ],
+  "contractStatus": "comparable",
+  "crossRecordOrdering": "none",
+  "damageComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "excludedSourceBranches": [
+    {
+      "artifact": {
+        "setId": "night_of_the_skys_unveiling",
+        "type": "4pc"
+      },
+      "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0",
+      "conditionResolution": "not-matched-by-exact-team-facts",
+      "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1",
+      "includedInCompositions": false,
+      "reason": "two-nod-krai-condition-does-not-match-exact-team"
+    }
+  ],
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
+      "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-source-conditioned-candidate-lattice.json",
+      "sha256": "9b8977311e6690324e653cce12c342b8408a22984e720dbd61d854dc587b0ad9"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarCrossRecordCompositionContract.ts",
+      "sha256": "b9b7ac32ea2160a330807ca70a1c92b5f7098234ce5ef8ed6c6041a82e71afad"
+    }
+  ],
+  "generatorExecuted": false,
+  "guideFactoryAuthoredCompositionCount": 2,
+  "inputBoundary": {
+    "candidateLatticeClassification": "keqing-lunar-source-conditioned-candidate-lattice",
+    "candidateLatticeSha256": "9b8977311e6690324e653cce12c342b8408a22984e720dbd61d854dc587b0ad9",
+    "candidateLatticeStatus": "comparable",
+    "formulaDraftSha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056",
+    "formulaFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+    "formulaSourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "targetTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+  },
+  "issues": [],
+  "originLedger": {
+    "calcContext": {
+      "appliedByThisContract": false,
+      "origin": "guide-factory-experiment-policy",
+      "sourceAuthored": false,
+      "value": {
+        "enemyLevel": 110,
+        "enemyRes": 0.1,
+        "rollMultiplier": 0.85,
+        "substatBudget": "8_6"
+      }
+    },
+    "energyRecovery": {
+      "inputsUsed": false,
+      "origin": "absent-by-contract",
+      "sequenceInputUsed": false,
+      "targetsUsed": false,
+      "thresholdsUsed": false
+    },
+    "fixtureAssumptions": {
+      "appliedByThisContract": false,
+      "assumptions": [
+        {
+          "characterId": "keqing",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "mistsplitter_reforged",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "ineffa",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "fractured_halo",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "splendor_of_tranquil_waters",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "xilonen",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "peak_patrol_song",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        }
+      ],
+      "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+      "origin": "guide-factory-formula-fixture-assumptions",
+      "sourceAuthored": false
+    },
+    "r1ExperimentPolicy": {
+      "appliedByThisContract": false,
+      "characterId": "keqing",
+      "experimentRefinement": 1,
+      "experimentRefinementIsSourceFact": false,
+      "origin": "guide-factory-experiment-policy",
+      "sourceAuthored": false,
+      "sourceRefinement": null,
+      "weaponId": "mistsplitter_reforged"
+    },
+    "sourceClaims": {
+      "artifactClaimIds": [
+        "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+        "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0"
+      ],
+      "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+      "excludedArtifactClaimIds": [
+        "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0"
+      ],
+      "matchedDefaultStatClaimIds": [
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+      ],
+      "origin": "kqm-character-guide-claim-records",
+      "sharedWeaponClaimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+      "sourceAuthored": true,
+      "sourceAuthoredCrossRecordJoin": false,
+      "withheldDefaultStatClaimIds": [
+        "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+      ]
+    },
+    "sourceRoster": {
+      "characterIds": [
+        "keqing",
+        "ineffa",
+        "furina",
+        "xilonen"
+      ],
+      "origin": "kqm-exact-team-record",
+      "sourceAuthored": true,
+      "supportsEquipmentBinding": false,
+      "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+    },
+    "teammateEquipment": {
+      "appliedByThisContract": false,
+      "exactTeamSourceBindsEquipment": false,
+      "members": [
+        {
+          "artifact": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "buildSourceRecordId": "FeFiQU8",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "characterId": "ineffa",
+          "guideSourceRefs": [
+            {
+              "locator": {
+                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "recordId": "ineffa"
+              },
+              "sourceId": "genshintools-presets",
+              "sourceRecordId": "ineffa"
+            }
+          ],
+          "guideStatus": "baseline",
+          "weaponId": "fractured_halo"
+        },
+        {
+          "artifact": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "buildSourceRecordId": "BQAI0BO",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "characterId": "furina",
+          "guideSourceRefs": [
+            {
+              "locator": {
+                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "recordId": "furina"
+              },
+              "sourceId": "genshintools-presets",
+              "sourceRecordId": "furina"
+            }
+          ],
+          "guideStatus": "baseline",
+          "weaponId": "splendor_of_tranquil_waters"
+        },
+        {
+          "artifact": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "buildSourceRecordId": "Dbt0Wkm",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "characterId": "xilonen",
+          "guideSourceRefs": [
+            {
+              "locator": {
+                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "recordId": "xilonen"
+              },
+              "sourceId": "genshintools-presets",
+              "sourceRecordId": "xilonen"
+            }
+          ],
+          "guideStatus": "baseline",
+          "weaponId": "peak_patrol_song"
+        }
+      ],
+      "origin": "genshintools-baseline-equipment-fixture",
+      "sourceAuthoredForExactKqmTeam": false
+    },
+    "unreviewedFormulaLines": {
+      "appliedByThisContract": false,
+      "lines": [
+        {
+          "characterId": "furina",
+          "count": 1,
+          "formulaId": "furina-burst",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "furina",
+          "count": 1,
+          "formulaId": "furina-skill-bubble",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "ineffa",
+          "count": 1,
+          "formulaId": "ineffa-burst",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "ineffa",
+          "count": 1,
+          "formulaId": "ineffa-skill-initial",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "keqing",
+          "count": 1,
+          "formulaId": "keqing-burst",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "keqing",
+          "count": 8,
+          "formulaId": "keqing-charged",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "partial"
+        },
+        {
+          "characterId": "keqing",
+          "count": 2,
+          "formulaId": "keqing-skill-slash",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "keqing",
+          "count": 2,
+          "formulaId": "keqing-stiletto",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 2,
+          "formulaId": "xilonen-e-rush",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 2,
+          "formulaId": "xilonen-normal-2",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 1,
+          "formulaId": "xilonen-q-initial",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        }
+      ],
+      "origin": "guide-factory-authored-source-translation",
+      "reviewStatus": "unreviewed",
+      "sourceAuthored": false,
+      "sourceBindingEstablished": false
+    }
+  },
+  "prohibitedInterpretations": [
+    "source-authored-build",
+    "relative-artifact-rank",
+    "equipment-recommendation",
+    "stat-recommendation",
+    "refinement-recommendation",
+    "generated-build",
+    "damage-result",
+    "score",
+    "winner",
+    "energy-requirement"
+  ],
+  "schemaVersion": 1,
+  "sourceAuthoredCompositionCount": 0,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRelativeArtifactClaims": false,
+  "supportsSourceAuthoredBuildClaims": false,
+  "supportsStatRecommendations": false,
+  "supportsTechnicalComparison": false,
+  "targetBoundary": {
+    "characterIds": [
+      "keqing",
+      "ineffa",
+      "furina",
+      "xilonen"
+    ],
+    "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+    "exactTeamConditionFactsOnly": true,
+    "sourceRosterAndDeclaredReactionFactsOnly": true,
+    "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+  },
+  "technicalComparisonExecuted": false
+}
