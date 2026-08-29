@@ -4,42 +4,120 @@ import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { render } from "../../utils/render";
 
-const mockDecisions = vi.hoisted(() => [
-  {
+const mockDecisions = vi.hoisted(() => {
+  type DecisionFixture = {
+    id: string;
+    setKey: string;
+    label: "lock" | "unlock";
+    lock: boolean;
+    ruleId: string;
+    specialRules?: string[];
+  };
+
+  const makeDecision = ({
+    id,
+    setKey,
+    label,
+    lock,
+    ruleId,
+    specialRules = [],
+  }: DecisionFixture) => ({
     artifact: {
-      id: "gladiator-flower",
+      id,
+      setKey,
+      slotKey: "flower",
+      level: 0,
+      rarity: 5,
+      lock,
+      mainStatKey: "hp",
+      substats: {},
+    },
+    label,
+    decidingResult: {
+      label,
+      ruleId,
+      tier: "fodder",
+      embryo: null,
+      reason: "",
+      reasonArgs: [],
+    },
+    allResults: [],
+    specialRules,
+    supplyDemand: null,
+  });
+
+  return [
+    makeDecision({
+      id: "flex-action",
       setKey: "gladiators_finale",
-      slotKey: "flower",
-      level: 0,
-      rarity: 5,
+      label: "lock",
       lock: false,
-      mainStatKey: "hp",
-      substats: {},
-    },
-    label: "lock",
-    decidingResult: null,
-    allResults: [],
-    specialRules: [],
-    supplyDemand: null,
-  },
-  {
-    artifact: {
-      id: "shimenawa-flower",
+      ruleId: "offPiecePattern",
+      specialRules: ["offPiecePattern"],
+    }),
+    makeDecision({
+      id: "normal-flex-match",
       setKey: "shimenawas_reminiscence",
-      slotKey: "flower",
-      level: 0,
-      rarity: 5,
+      label: "lock",
       lock: false,
-      mainStatKey: "hp",
-      substats: {},
-    },
-    label: "lock",
-    decidingResult: null,
-    allResults: [],
-    specialRules: [],
-    supplyDemand: null,
-  },
-]);
+      ruleId: "primeTierKeep",
+      specialRules: ["offPiecePattern"],
+    }),
+    makeDecision({
+      id: "unlock-action",
+      setKey: "emblem_of_severed_fate",
+      label: "unlock",
+      lock: true,
+      ruleId: "noDemand",
+    }),
+    makeDecision({
+      id: "flex-no-change",
+      setKey: "crimson_witch_of_flames",
+      label: "lock",
+      lock: true,
+      ruleId: "offPiecePattern",
+      specialRules: ["offPiecePattern"],
+    }),
+    makeDecision({
+      id: "other-no-change",
+      setKey: "noblesse_oblige",
+      label: "lock",
+      lock: true,
+      ruleId: "primeTierKeep",
+    }),
+    makeDecision({
+      id: "unlock-no-change",
+      setKey: "pale_flame",
+      label: "unlock",
+      lock: false,
+      ruleId: "noDemand",
+    }),
+    makeDecision({
+      id: "protected-flex",
+      setKey: "viridescent_venerer",
+      label: "lock",
+      lock: false,
+      ruleId: "offPiecePattern",
+      specialRules: ["offPiecePattern", "levelProtected"],
+    }),
+    makeDecision({
+      id: "protected-other",
+      setKey: "golden_troupe",
+      label: "lock",
+      lock: false,
+      ruleId: "primeTierKeep",
+      specialRules: ["levelProtected"],
+    }),
+    makeDecision({
+      id: "protected-unlock",
+      setKey: "maiden_beloved",
+      label: "unlock",
+      lock: true,
+      ruleId: "noDemand",
+      specialRules: ["equippedProtected"],
+    }),
+  ];
+});
 
 vi.mock("@/lib/account-data/triage/triageEngine", () => ({
   runTriage: () => ({ decisions: mockDecisions, flexPatterns: [] }),
@@ -48,16 +126,36 @@ vi.mock("@/lib/account-data/triage/triageEngine", () => ({
 vi.mock("@/components/account-data/TriageTabContent", () => ({
   TriageTabContent: ({
     recommendLock,
+    recommendUnlock,
+    noAction,
+    noChange,
   }: {
     recommendLock: typeof mockDecisions;
+    recommendUnlock: typeof mockDecisions;
+    noAction: typeof mockDecisions;
+    noChange: typeof mockDecisions;
   }) => (
     <div data-testid="visible-artifacts">
-      {recommendLock.map((decision) => decision.artifact.id).join(",")}
+      {[...recommendLock, ...recommendUnlock, ...noAction, ...noChange]
+        .map((decision) => decision.artifact.id)
+        .join(",")}
     </div>
   ),
 }));
 
-describe("TriageView artifact set filter", () => {
+function visibleArtifactIds() {
+  return new Set(
+    (screen.getByTestId("visible-artifacts").textContent ?? "")
+      .split(",")
+      .filter(Boolean)
+  );
+}
+
+const allArtifactIds = new Set(
+  mockDecisions.map((decision) => decision.artifact.id)
+);
+
+describe("TriageView filters", () => {
   beforeEach(() => {
     useAccountStore.getState().clearAccounts();
     useAccountStore.getState().addOrUpdateAccount(0, {
@@ -74,10 +172,7 @@ describe("TriageView artifact set filter", () => {
   it("shows icon-and-name chips and filters by the exact artifact set", () => {
     render(<TriageView />);
 
-    const visibleArtifacts = screen.getByTestId("visible-artifacts");
-    expect(visibleArtifacts).toHaveTextContent(
-      "gladiator-flower,shimenawa-flower"
-    );
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
 
     const expandButton = screen.getByRole("button", {
       name: /filter by artifact set/i,
@@ -103,21 +198,75 @@ describe("TriageView artifact set filter", () => {
     expect(chipGroup).toHaveClass("flex", "flex-wrap", "w-full", "min-w-0");
 
     fireEvent.click(gladiatorChip);
-    expect(visibleArtifacts).toHaveTextContent("gladiator-flower");
-    expect(visibleArtifacts).not.toHaveTextContent("shimenawa-flower");
+    expect(visibleArtifactIds()).toEqual(new Set(["flex-action"]));
 
     fireEvent.click(shimenawaChip);
-    expect(visibleArtifacts).toHaveTextContent(
-      "gladiator-flower,shimenawa-flower"
+    expect(visibleArtifactIds()).toEqual(
+      new Set(["flex-action", "normal-flex-match"])
     );
 
     fireEvent.click(gladiatorChip);
-    expect(visibleArtifacts).not.toHaveTextContent("gladiator-flower");
-    expect(visibleArtifacts).toHaveTextContent("shimenawa-flower");
+    expect(visibleArtifactIds()).toEqual(new Set(["normal-flex-match"]));
 
     fireEvent.click(shimenawaChip);
-    expect(visibleArtifacts).toHaveTextContent(
-      "gladiator-flower,shimenawa-flower"
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
+  });
+
+  it("filters by the decision that caused the final lock result", () => {
+    render(<TriageView />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /filter by lock result/i })
     );
+
+    const flexRuleLocked = screen.getByRole("button", {
+      name: "Locked by flex rules",
+    });
+    const otherLocked = screen.getByRole("button", {
+      name: "Locked for other reasons",
+    });
+    const unlocked = screen.getByRole("button", { name: "Unlocked" });
+
+    fireEvent.click(flexRuleLocked);
+    expect(visibleArtifactIds()).toEqual(
+      new Set(["flex-action", "flex-no-change", "protected-flex"])
+    );
+    fireEvent.click(flexRuleLocked);
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
+
+    fireEvent.click(otherLocked);
+    expect(visibleArtifactIds()).toEqual(
+      new Set(["normal-flex-match", "other-no-change", "protected-other"])
+    );
+    fireEvent.click(otherLocked);
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
+
+    fireEvent.click(unlocked);
+    expect(visibleArtifactIds()).toEqual(
+      new Set(["unlock-action", "unlock-no-change", "protected-unlock"])
+    );
+    fireEvent.click(unlocked);
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
+
+    fireEvent.click(flexRuleLocked);
+    fireEvent.click(otherLocked);
+    expect(visibleArtifactIds()).toEqual(
+      new Set([
+        "flex-action",
+        "flex-no-change",
+        "protected-flex",
+        "normal-flex-match",
+        "other-no-change",
+        "protected-other",
+      ])
+    );
+
+    fireEvent.click(flexRuleLocked);
+    expect(visibleArtifactIds()).toEqual(
+      new Set(["normal-flex-match", "other-no-change", "protected-other"])
+    );
+
+    fireEvent.click(otherLocked);
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
   });
 });

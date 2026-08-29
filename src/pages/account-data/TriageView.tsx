@@ -10,6 +10,7 @@ import { AccountDataSourceAgeBadge } from "@/components/account-data/AccountData
 import {
   type SortDimension,
   TriageHeader,
+  type TriageStatusFilter,
 } from "@/components/account-data/TriageHeader";
 import {
   TriageTabContent,
@@ -52,6 +53,13 @@ const SLOT_ORDER: Record<string, number> = {
   circlet: 4,
 };
 
+function getDecisionStatus(decision: TriageDecision): TriageStatusFilter {
+  if (decision.label === "unlock") return "unlocked";
+  if (decision.decidingResult?.ruleId === "offPiecePattern")
+    return "flexRuleLocked";
+  return "otherLocked";
+}
+
 export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const { t } = useLanguage();
   const activeAccount = useActiveAccount();
@@ -70,6 +78,9 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     new Set()
   );
   const [slotFilter, setSlotFilter] = useState<Set<Slot>>(new Set());
+  const [statusFilter, setStatusFilter] = useState<Set<TriageStatusFilter>>(
+    new Set()
+  );
 
   const [activeSortDim, setActiveSortDim] = useState<SortDimension>("name");
   const [activeSortDir, setActiveSortDir] = useState<"asc" | "desc">("desc");
@@ -127,8 +138,9 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
       passesTier(d) &&
       (artifactSetFilter.size === 0 ||
         artifactSetFilter.has(d.artifact.setKey)) &&
-      (slotFilter.size === 0 || slotFilter.has(d.artifact.slotKey)),
-    [passesTier, artifactSetFilter, slotFilter]
+      (slotFilter.size === 0 || slotFilter.has(d.artifact.slotKey)) &&
+      (statusFilter.size === 0 || statusFilter.has(getDecisionStatus(d))),
+    [passesTier, artifactSetFilter, slotFilter, statusFilter]
   );
   const sortDecisions = useCallback(
     (arr: TriageDecision[]) => {
@@ -263,6 +275,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           onArtifactSetFilterChange={setArtifactSetFilter}
           slotFilter={slotFilter}
           onSlotFilterChange={setSlotFilter}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
           activeSortDim={activeSortDim}
           activeSortDir={activeSortDir}
           onToggleSort={toggleSort}

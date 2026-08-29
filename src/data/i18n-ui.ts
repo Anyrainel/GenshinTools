@@ -2840,6 +2840,18 @@ export const i18nUiData = {
     },
     filterByHalfSet: { en: "Filter by 2pc set", zh: "按2件套过滤" },
     filterBySlot: { en: "Filter by slot", zh: "按部位过滤" },
+    filterByStatus: { en: "Filter by lock result", zh: "按锁定结果筛选" },
+    status: {
+      flexRuleLocked: {
+        en: "Locked by flex rules",
+        zh: "散件规则锁定",
+      },
+      otherLocked: {
+        en: "Locked for other reasons",
+        zh: "其他原因锁定",
+      },
+      unlocked: { en: "Unlocked", zh: "解锁" },
+    },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
     // Help dialog
     help: {

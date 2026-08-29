@@ -4,6 +4,8 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
   History,
+  Lock,
+  LockOpen,
   Monitor,
   Puzzle,
   Settings,
@@ -52,8 +54,28 @@ const TIER_COLOR = TRIAGE_TIER_COLORS.text;
 const TRIAGE_ARTIFACT_SET_IDS = sortedArtifacts
   .filter((artifactSet) => artifactSet.rarity === 5)
   .map((artifactSet) => artifactSet.id);
+const TRIAGE_STATUS_FILTERS = [
+  "flexRuleLocked",
+  "otherLocked",
+  "unlocked",
+] as const;
 
 export type SortDimension = "tier" | "name" | "level";
+export type TriageStatusFilter = (typeof TRIAGE_STATUS_FILTERS)[number];
+
+function statusFilterLabel(status: TriageStatusFilter, t: Translator) {
+  if (status === "flexRuleLocked") return t.ui("triage.status.flexRuleLocked");
+  if (status === "otherLocked") return t.ui("triage.status.otherLocked");
+  return t.ui("triage.status.unlocked");
+}
+
+function statusFilterIcon(status: TriageStatusFilter) {
+  if (status === "flexRuleLocked")
+    return <Puzzle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
+  if (status === "otherLocked")
+    return <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
+  return <LockOpen className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
+}
 
 function backupAmountModeLabel(
   mode: TriageSettings["backupAmountMode"],
@@ -76,6 +98,8 @@ export function TriageHeader({
   onArtifactSetFilterChange,
   slotFilter,
   onSlotFilterChange,
+  statusFilter,
+  onStatusFilterChange,
   activeSortDim,
   activeSortDir,
   onToggleSort,
@@ -94,6 +118,8 @@ export function TriageHeader({
   onArtifactSetFilterChange: (nextValues: Set<string>) => void;
   slotFilter: Set<Slot>;
   onSlotFilterChange: (nextValues: Set<Slot>) => void;
+  statusFilter: Set<TriageStatusFilter>;
+  onStatusFilterChange: (nextValues: Set<TriageStatusFilter>) => void;
   activeSortDim: SortDimension;
   activeSortDir: "asc" | "desc";
   onToggleSort: (dim: SortDimension) => void;
@@ -294,6 +320,19 @@ export function TriageHeader({
           getKey={(slot) => slot}
           getLabel={(slot) => t.slot(slot)}
           className="px-0"
+          collapsible
+        />
+      </div>
+      <div className="min-w-0">
+        <FilterChipGroup
+          label={t.ui("triage.filterByStatus")}
+          options={TRIAGE_STATUS_FILTERS}
+          selectedValues={statusFilter}
+          onSelectedValuesChange={onStatusFilterChange}
+          getKey={(status) => status}
+          getLabel={(status) => statusFilterLabel(status, t)}
+          getIcon={(status) => statusFilterIcon(status)}
+          className="w-full min-w-0 px-0"
           collapsible
         />
       </div>
