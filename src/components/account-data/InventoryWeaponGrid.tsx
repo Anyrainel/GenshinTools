@@ -59,14 +59,14 @@ export function InventoryWeaponGrid({
   onWeaponClick,
 }: InventoryWeaponGridProps) {
   return (
-    <div className="flex flex-wrap gap-3 px-2">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] gap-3 px-2">
       {weapons.map((w) => {
         const name = t.weapon(w.key);
 
         const cardContent = (
           <Card
             className={cn(
-              "flex flex-col bg-transparent border-0 shadow-none group",
+              "flex min-w-0 flex-col items-center bg-transparent border-0 shadow-none group",
               isEditMode ? "cursor-pointer" : "cursor-help"
             )}
             onClick={isEditMode ? () => onWeaponClick(w) : undefined}
@@ -86,18 +86,19 @@ export function InventoryWeaponGrid({
                   </div>
                 </div>
               )}
-              {w.equipped && (
-                <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
-              )}
             </div>
-            <div className="pt-1 text-xs text-center font-medium opacity-90 group-hover:opacity-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
+            <div className="line-clamp-2 w-full min-w-0 break-words pt-1 text-center text-xs font-medium leading-tight opacity-90 transition-colors group-hover:text-white group-hover:opacity-100">
               {name}
             </div>
           </Card>
         );
 
         if (isEditMode) {
-          return <div key={w.id}>{cardContent}</div>;
+          return (
+            <div key={w.id} className="min-w-0">
+              {cardContent}
+            </div>
+          );
         }
 
         return (

@@ -40,9 +40,6 @@ export function InventoryArtifactGrid({
               level={`+${a.level}`}
               size={iconSize}
             />
-            {a.equipped && (
-              <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
-            )}
           </div>
         );
 
