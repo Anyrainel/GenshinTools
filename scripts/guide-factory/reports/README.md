@@ -6,6 +6,14 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `weapon-choice-search-coverage.json` mirrors the private analyzer's small
+  candidate policy against released data and audits 982 non-ER weapon
+  occurrences on three independent axes. All 982 IDs are in the 236-weapon
+  released domain, all 982 refinements are unspecified, and 970 choices match
+  the character's native weapon type while 12 legacy selections do not. The
+  report does not equate ID membership with exact refinement coverage or
+  runtime success. Three historical ER weapon conditions are inventoried but
+  not analyzed.
 - `artifact-choice-search-coverage.json` calls the current analyzer candidate
   builders and classifies all 1,052 artifact-choice fields on non-rejected
   guide and team records against its released search grammar. The grammar
@@ -52,6 +60,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all seven reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all eight reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

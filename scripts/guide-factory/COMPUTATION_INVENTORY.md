@@ -150,6 +150,47 @@ set is suitable or that its generation and evaluation path succeeds. Auditing
 both assignments in a plan also does not show that the analyzer can enumerate
 or optimize the coupled assignment jointly.
 
+## Weapon-choice candidate-policy seam
+
+`src/weaponChoiceSearchCoverage.ts` mirrors the private runtime
+`getWeaponCandidates()` policy because calling the public analyzer just to
+discover candidates would also run artifact generation and damage evaluation.
+The report hashes both the mirror and the runtime source. Its default output
+cannot independently execute the private function, so a clean comparison is
+not presented as proof that the implementations are semantically identical.
+
+For released data, the mirrored policy contains 236 weapon IDs and 309
+weapon/refinement pairs:
+
+| Rarity | Weapon IDs | Candidate refinements | Pairs |
+| --- | ---: | --- | ---: |
+| 3-star | 24 | R5 | 24 |
+| 4-star | 139 | R5 | 139 |
+| 5-star | 73 | R1 and R5 | 146 |
+
+The consolidated repository has 982 non-ER weapon occurrences: 127 entries in
+character-guide weapon orders, 840 selected exact-team weapons, and 15
+character-guide recommendation entries. There are no team-member weapon
+recommendations yet.
+
+All 982 weapon IDs occur in the global released candidate domain. Refinement is
+a separate axis: none of the 982 observations supplies one, so the report has
+0 exact candidate pairs and 982 unspecified refinements. Native type is also
+separate: 970 observations are compatible and 12 are mismatched. Every mismatch
+is a selected weapon from the legacy candidate source; baseline and KQM records
+have none.
+
+The runtime uses the currently equipped seed weapon's stats to choose the
+candidate weapon class and skips the character if those stats are missing. A
+wrong-type seed can therefore create a wrong-class search. The report does not
+run that search, repair source rows, infer refinements, score weapons, or claim
+that a globally present ID is usable in a specific analyzer run.
+
+Three historical ER target weapon conditions are inventoried separately: two
+specific conditions and one category condition, containing four explicit
+weapon-ID occurrences in total. Their target numbers and adequacy are not
+copied into the observations or analyzed while ER work is deferred.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -203,6 +244,12 @@ None of these later modules is invoked by the first replay.
   current analyzer varies one character at a time and has no joint artifact-set
   assignment search. Individual candidate coverage must not be reported as
   coupled-plan coverage.
+- The current knowledge records do not specify refinements for any of the 982
+  non-ER weapon occurrences. A future computation must state its comparison
+  policy explicitly instead of silently treating source IDs as R1 or R5 facts.
+- Twelve legacy selected weapons have the wrong native type. Since the runtime
+  uses the equipped seed weapon to select a candidate class, they cannot safely
+  seed a weapon search even though their IDs exist in the global domain.
 - AutoTune varies one character while teammates use flower/plume-only sheets.
   If formulas are omitted, `autoTuneTeam` assigns count 1 to every available
   formula. `autoTune.ts` currently sets `DEFAULT_CALC_CTX.enemyRes` to `10`,
@@ -211,9 +258,7 @@ None of these later modules is invoked by the first replay.
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
 
-The next repository checkpoint should audit the mirrored weapon candidate
-policy against every non-ER weapon occurrence while keeping weapon ID,
-refinement specificity, and native-type compatibility as separate outcomes. A
-later computation checkpoint can then audit actual artifact generation for a
-reviewed fixture. Formula-plan review, explicit artifact stat sheets, and
-dual-path replay remain prerequisites for damage optimization.
+The next repository checkpoint should make refinement assumptions first-class
+in an experiment fixture and audit actual artifact generation for a reviewed
+case. Formula-plan review, explicit artifact stat sheets, and dual-path replay
+remain prerequisites for damage optimization.

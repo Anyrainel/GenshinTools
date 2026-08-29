@@ -21,8 +21,8 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 6 adds a source-backed coupled artifact assignment and checks it
-against the existing artifact-choice analyzer, without
+Checkpoint 7 audits the existing weapon candidate policy across the knowledge
+repository after adding a source-backed coupled artifact assignment, without
 claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
@@ -49,6 +49,9 @@ claiming a working guide factory:
 12. Preserve source-stated multi-character artifact assignments as coupled
     plans, validate their team membership and catalogs, and audit each choice
     without pretending the analyzer can optimize the plan jointly.
+13. Mirror the private weapon candidate policy in the offline lab and report
+    weapon-ID coverage, refinement specificity, and native weapon-type
+    compatibility as separate facts.
 
 The first two active sources are already in this repository:
 
@@ -100,6 +103,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-keqing-ineffa-formula-plan.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-artifact-choice-search-coverage.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-weapon-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -116,9 +120,10 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all seven durable reports in memory: corpus inventory, team
-coverage, artifact-choice search coverage, two formula-count comparisons,
-Diona comparison, and historical ER calibration. Stale evidence cannot pass.
+It also rebuilds all eight durable reports in memory: corpus inventory, team
+coverage, artifact- and weapon-choice search coverage, two formula-count
+comparisons, Diona comparison, and historical ER calibration. Stale evidence
+cannot pass.
 
 ## Data flow
 
@@ -239,6 +244,31 @@ failures comprise 18 Instructor occurrences, 2 Exile occurrences, Freminet's
 Cryo DMG plus Skill DMG pair, and C6 Yelan's repeated Hydro DMG pair. This is a
 search-domain audit only: it does not run artifact generation, compute damage,
 rank sets, or imply that any representable choice is suitable.
+
+The weapon-choice coverage report addresses a different prerequisite. The
+runtime candidate helper is private, so the offline lab mirrors its small
+released policy and hashes the runtime source and data inputs. The policy skips
+1- and 2-star weapons, considers 3- and 4-star weapons at R5, and considers
+5-star weapons at R1 and R5. This yields 236 weapon IDs and 309
+weapon/refinement pairs: 24 3-star pairs, 139 4-star pairs, and 146 pairs from
+73 5-star weapons.
+
+Across 982 non-ER weapon occurrences, all 982 IDs are present in that global
+released domain. This is not exact candidate coverage: none of the source
+observations specifies a refinement, so all 982 remain explicit refinement
+gaps. Native weapon-type comparison finds 970 compatible choices and 12
+mismatches, all selected weapons from the legacy candidate source. Baseline and
+KQM observations have no type mismatch.
+
+The runtime filters candidates using the currently equipped seed weapon's type,
+not a separate character-type lookup, and skips a character if that seed lacks
+weapon stats. A mismatched legacy seed can therefore lead to a wrong candidate
+class rather than merely one invalid comparison row. The report records this
+boundary but does not run the analyzer, correct the legacy source, choose a
+refinement policy, rank weapons, or compute damage. Historical weapon
+conditions attached to three ER targets are inventoried only to prove that they
+were excluded from the 982 observations; their target values receive no
+analysis.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

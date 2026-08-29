@@ -93,3 +93,8 @@ export const ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH = path.join(
   "reports",
   "artifact-choice-search-coverage.json"
 );
+export const WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "weapon-choice-search-coverage.json"
+);

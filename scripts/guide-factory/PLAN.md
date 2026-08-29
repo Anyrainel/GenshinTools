@@ -138,9 +138,17 @@ evaluated, or ranked successfully. The count includes both assignments in the
 new coupled Kokomi/Columbina plan, but only proves that each set name is in the
 individual candidate grammar; it does not prove joint-plan enumeration.
 
-The next computation step is a weapon candidate-policy audit with separate
-coverage axes for weapon ID, refinement specificity, and native weapon-type
-compatibility. After that, actual artifact generation still needs a reviewed
+The weapon candidate-policy audit now reports separate coverage axes for weapon
+ID, refinement specificity, and native weapon-type compatibility. Its released
+mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 982 non-ER
+repository occurrences have an ID in that global domain, but none supplies a
+refinement; 970 match the character's native type and 12 legacy selections do
+not. Because runtime derives the search type from the equipped seed weapon,
+those 12 mismatches can seed a wrong candidate class. This is a blocker, not a
+weapon ranking.
+
+The next computation step is to define a source- and experiment-visible
+refinement policy, then audit actual artifact generation for a reviewed
 fixture. Formula-plan review and an authored artifact-stat sheet remain required
 before damage comparisons. Neither fixture yet supports full rotation damage or
 equipment suitability.

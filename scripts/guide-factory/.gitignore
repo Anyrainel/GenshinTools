@@ -8,3 +8,4 @@ reports/*
 !reports/keqing-ineffa-formula-plan-draft.json
 !reports/knowledge-corpus-inventory.json
 !reports/artifact-choice-search-coverage.json
+!reports/weapon-choice-search-coverage.json

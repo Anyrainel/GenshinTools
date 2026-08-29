@@ -50,6 +50,7 @@ import {
   REPOSITORY_ROOT,
   SOURCE_REGISTRY_PATH,
   TEAM_TEMPLATE_COVERAGE_REPORT_PATH,
+  WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH,
 } from "./paths";
 import {
   GenshinToolsPresetSnapshotSchema,
@@ -73,6 +74,10 @@ import {
   buildTeamTemplateCoverageReport,
   TEAM_TEMPLATE_COVERAGE_INPUT_PATHS,
 } from "./teamTemplateCoverage";
+import {
+  buildWeaponChoiceSearchCoverageReport,
+  WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
+} from "./weaponChoiceSearchCoverage";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -96,6 +101,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaFormulaDraftInput,
     knowledgeCorpusInventoryInput,
     artifactChoiceSearchCoverageInput,
+    weaponChoiceSearchCoverageInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -110,6 +116,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH),
       readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
       readJson(ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
+      readJson(WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -265,6 +272,27 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.artifact-choice-search-coverage",
           message:
             "The saved artifact-choice search coverage does not match the current knowledge repository and analyzer candidate grammar.",
+        });
+      }
+
+      const weaponChoiceSearchCoverageGeneratedFrom = await hashRelativePaths(
+        WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS
+      );
+      const expectedWeaponChoiceSearchCoverage =
+        buildWeaponChoiceSearchCoverageReport(
+          expectedKnowledge,
+          weaponChoiceSearchCoverageGeneratedFrom
+        );
+      if (
+        stableJson(expectedWeaponChoiceSearchCoverage) !==
+        stableJson(weaponChoiceSearchCoverageInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_weapon_choice_search_coverage_report",
+          path: "reports.weapon-choice-search-coverage",
+          message:
+            "The saved weapon-choice search coverage does not match the current knowledge repository and mirrored analyzer candidate policy.",
         });
       }
 
