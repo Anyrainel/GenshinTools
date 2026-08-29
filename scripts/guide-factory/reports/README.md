@@ -6,6 +6,19 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `itto-source-conditioned-guide-packets.json` authenticates 15 atomic Itto
+  source claims and projects them across three exact source teams as 45 cells:
+  3 matched, 6 inapplicable, 27 unresolved-context, and 9 deferred omitted-
+  energy outcomes. The aggregate withheld count is 36. The real roster-domain
+  boundary accepts the Yelan and Xingqiu PHEC examples with multiplicity two
+  and a true Crystallize representation, while structurally rejecting the
+  separate Gorou example. Only that Gorou roster overlaps a GenshinTools preset;
+  source C2+ Xilonen versus baseline-unspecified Xilonen remains unresolved in
+  the constellation-only comparison. The report keeps CRIT pairs and source
+  recommendation groups atomic, parses no arbitrary prose, assembles zero
+  builds, joins no baseline equipment, and executes no generator, optimizer,
+  formula, rotation, damage, ranking, ideal-roll, or ER calculation. All seven
+  source records remain unreviewed and publication stays withheld.
 - `derived-formula-fixture-coverage.json` authenticates exactly two checked-in
   technical fixtures and inventories eight character-scenario observations
   across six unique characters. Furina and Xilonen occur in both scenarios;
@@ -267,7 +280,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-two reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-three reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

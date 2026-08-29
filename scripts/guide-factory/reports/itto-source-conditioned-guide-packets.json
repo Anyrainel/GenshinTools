@@ -1,0 +1,2185 @@
+{
+  "axesMultipliedIntoBuilds": false,
+  "baselineEquipmentUsed": false,
+  "cautions": [
+    "All seven KQM records are agent-assisted and unreviewed; this report is withheld from publication.",
+    "Thirty-six cells are withheld: twenty-seven retain unresolved non-roster context and nine retain the deliberately omitted energy prerequisite.",
+    "Template membership and TeamMeta.hasReaction are structural runtime representations only, not proof that a team executes Crystallize or satisfies the source gameplay conditions.",
+    "Exact roster overlap with a GenshinTools preset does not bind that preset's equipment to the KQM team and does not resolve unspecified baseline investment."
+  ],
+  "classification": "descriptive-cross-record-source-claim-projection",
+  "comparisonStatus": "comparable",
+  "damage": false,
+  "damageComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "ER": false,
+  "experimentId": "itto-source-conditioned-guide-packets-v1",
+  "formulas": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
+      "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts",
+      "sha256": "6425c34209b4ae70b90f212be0a3b78a460169d99bb71b9afcd65f3396edf7ad"
+    },
+    {
+      "path": "scripts/guide-factory/src/catalogs.ts",
+      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/ittoSourceConditionedGuidePacket.ts",
+      "sha256": "a2c48222112053ee76c4e75b7e09d4ca5025095b3bba5520c52a52623e442a49"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBaselineInvestmentComparison.ts",
+      "sha256": "767efb72ee08d41402303d0238d221d5ae04f8cad7d190deb0b517326e0c5fb5"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
+      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    }
+  ],
+  "generatorExecuted": false,
+  "issues": [],
+  "optimality": false,
+  "optimizerExecuted": false,
+  "playerFacingRecommendations": false,
+  "policyBoundary": {
+    "allowedStructuredFacts": [
+      "exact-source-team-roster",
+      "exact-catalog-identity",
+      "source-and-baseline-constellation-scope"
+    ],
+    "arbitraryEnglishParsingAllowed": false,
+    "conditionMap": {
+      "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0": {
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "The on-field damage-build condition is not established by an exact roster.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "e2c9dccf7a94008d3855b20423cdae5d6134d3c13dd61ff74261712c73740d50"
+      },
+      "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1": {
+        "predicate": {
+          "characterId": "furina",
+          "type": "exact-team-roster-includes"
+        },
+        "sourceConditionsSha256": "49f8d4a4332fb4e6865565324d08e84761c5a8b97c60d313161ba8452c69a6ef"
+      },
+      "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2": {
+        "predicate": {
+          "category": "owned-inventory",
+          "reason": "Owned artifact quality is account context and is not represented by a source team.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "99c4eba86a54fe92e665507731f989a677da5fb9e29c842297d18aaae344c869"
+      },
+      "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3": {
+        "predicate": {
+          "predicates": [
+            {
+              "characterId": "xianyun",
+              "type": "exact-team-roster-includes"
+            },
+            {
+              "category": "gameplay-sequence",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "type": "unresolved-context"
+            }
+          ],
+          "type": "all"
+        },
+        "sourceConditionsSha256": "a983b4a8c16211f74ef687a1f67957b144a2e3c619f24a62f1142a078f578b09"
+      },
+      "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0": {
+        "predicate": {
+          "category": "player-preference",
+          "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "34da8bb536186e86abba8a61e58d05ce6ee8fbdab16083f818b9a33abed51eb3"
+      },
+      "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1": {
+        "predicate": {
+          "predicates": [
+            {
+              "category": "owned-inventory",
+              "reason": "Weapon ownership is account context not represented by a source team.",
+              "type": "unresolved-context"
+            },
+            {
+              "category": "passive-execution",
+              "reason": "Passive-stack accommodation requires gameplay-sequence evidence.",
+              "type": "unresolved-context"
+            }
+          ],
+          "type": "all"
+        },
+        "sourceConditionsSha256": "7e97d371748aaa08ed777785b2bc57c691c6a4ac59deb118b29d5b8600ceffa3"
+      },
+      "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2": {
+        "predicate": {
+          "category": "player-preference",
+          "reason": "A preference for a free craftable option is not an exact-roster fact.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "55b2e598ff17458d3336ab5dea4ab4beea1da33a2d7a00079517267eed9258a0"
+      },
+      "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3": {
+        "predicate": {
+          "predicates": [
+            {
+              "characterId": "xianyun",
+              "type": "exact-team-roster-includes"
+            },
+            {
+              "characterId": "furina",
+              "type": "exact-team-roster-includes"
+            },
+            {
+              "category": "gameplay-sequence",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "type": "unresolved-context"
+            }
+          ],
+          "type": "all"
+        },
+        "sourceConditionsSha256": "da453e259cf6c1e05478ba067a8172d1c38c473dcdd56588bc435f56c6cf8d55"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0": {
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0": {
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1": {
+        "predicate": {
+          "predicates": [
+            {
+              "category": "gameplay-role",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "type": "unresolved-context"
+            },
+            {
+              "category": "buff-coverage",
+              "reason": "Abundant DMG Bonus depends on buff coverage not represented by the exact roster.",
+              "type": "unresolved-context"
+            },
+            {
+              "category": "investment-threshold",
+              "reason": "The source does not quantify the Xilonen or Furina investment threshold.",
+              "type": "unresolved-context"
+            },
+            {
+              "category": "comparative-performance",
+              "reason": "DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+              "type": "unresolved-context"
+            }
+          ],
+          "type": "all"
+        },
+        "sourceConditionsSha256": "c848c4d9bc66bc610ff6ed605674ad7300d55a9e16d14ad0a23067b20723baf9"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0": {
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "type": "unresolved-context"
+        },
+        "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0": {
+        "predicate": {
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "type": "deferred-energy-prerequisite"
+        },
+        "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1": {
+        "predicate": {
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "type": "deferred-energy-prerequisite"
+        },
+        "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+      },
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2": {
+        "predicate": {
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "type": "deferred-energy-prerequisite"
+        },
+        "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+      }
+    },
+    "conditionMapSha256": "e62bc61b41358ce6b82c8c9098d52e3e704f8f4b5fb7e0023939d08f9f0ddd30",
+    "conditionResolutionPolicy": "pinned-exact-condition-array-hash-to-typed-predicate-map",
+    "crossRecordJoinOwner": "guide-factory-wrapper",
+    "disallowedStructuredFacts": [
+      "gameplay-sequence",
+      "account-inventory",
+      "player-preference"
+    ],
+    "investmentComparisonScope": "constellation-only",
+    "sourceAuthoredCrossRecordJoin": false,
+    "talentLevelsEvaluated": false
+  },
+  "prohibitedInterpretations": [
+    "Do not publish these packets as character guides or player-facing recommendations.",
+    "Do not infer weapon, artifact, team, or stat rankings from catalog order or matched cells.",
+    "Do not infer damage, optimality, formulas, rotations, or ER requirements from this report.",
+    "Do not multiply claim axes into assembled builds; the forty-five cells are independent descriptive projections.",
+    "Do not treat source-unspecified constellation investment as universal evidence for a constrained baseline comparison."
+  ],
+  "publicationStatus": "withheld-unreviewed-source",
+  "ranking": false,
+  "reportType": "source-conditioned-guide-packet-report",
+  "rotations": false,
+  "schemaVersion": 1,
+  "sourceBoundary": {
+    "consolidatedGuideRecordIds": [
+      "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+      "kqm:character-guide:itto-contextual-weapons-version-5-6"
+    ],
+    "exactTeamRecordIds": [
+      "kqm:team:itto-xilonen-furina-yelan-example-version-5-6",
+      "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6",
+      "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6"
+    ],
+    "extractionMethod": "agent-assisted",
+    "pageUrl": "https://keqingmains.com/q/itto-quickguide/",
+    "promotionEligible": false,
+    "rawManualSourceRecordIds": [
+      "itto-on-field-artifact-stats-version-5-6",
+      "itto-contextual-artifact-sets-version-5-6",
+      "itto-contextual-weapons-version-5-6",
+      "itto-xilonen-double-geo-template-version-5-6",
+      "itto-xilonen-furina-yelan-example-version-5-6",
+      "itto-xilonen-furina-xingqiu-example-version-5-6",
+      "itto-c2-xilonen-gorou-furina-example-version-5-6"
+    ],
+    "repositoryRecordStatus": "candidate",
+    "reviewStatus": "unreviewed",
+    "sourceHashes": [
+      {
+        "path": "scripts/guide-factory/data/knowledge/repository.json",
+        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
+        "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+        "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      },
+      {
+        "path": "scripts/guide-factory/sources/registry.json",
+        "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      }
+    ],
+    "sourceId": "kqm",
+    "sourceRegistryPermission": "unknown",
+    "sourceRegistryStatus": "active",
+    "sourceVersion": "Version 5.6",
+    "templateRecordId": "kqm:team-template:itto-xilonen-double-geo-template-version-5-6"
+  },
+  "sourceClaimCatalog": [
+    {
+      "catalogIndex": 0,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+      "payload": {
+        "priority": null,
+        "slot": "sands",
+        "statIds": [
+          "def%"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 0
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "Itto is used as an on-field DPS."
+      ],
+      "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 1,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+      "payload": {
+        "priority": null,
+        "slot": "goblet",
+        "statIds": [
+          "geo%"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 0
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "Itto is used as an on-field DPS."
+      ],
+      "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 2,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+      "payload": {
+        "priority": null,
+        "slot": "goblet",
+        "statIds": [
+          "def%"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "predicate": {
+        "predicates": [
+          {
+            "category": "gameplay-role",
+            "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+            "type": "unresolved-context"
+          },
+          {
+            "category": "buff-coverage",
+            "reason": "Abundant DMG Bonus depends on buff coverage not represented by the exact roster.",
+            "type": "unresolved-context"
+          },
+          {
+            "category": "investment-threshold",
+            "reason": "The source does not quantify the Xilonen or Furina investment threshold.",
+            "type": "unresolved-context"
+          },
+          {
+            "category": "comparative-performance",
+            "reason": "DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+            "type": "unresolved-context"
+          }
+        ],
+        "type": "all"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 1
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "Itto is used as an on-field DPS.",
+        "The team provides abundant DMG Bonus, such as a Xilonen Double Geo team with Furina; investment in Xilonen or Furina can make DEF% outperform Geo DMG Bonus."
+      ],
+      "sourceConditionsSha256": "c848c4d9bc66bc610ff6ed605674ad7300d55a9e16d14ad0a23067b20723baf9",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 3,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+      "payload": {
+        "priority": null,
+        "slot": "circlet",
+        "statIds": [
+          "cr",
+          "cd"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 0
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "Itto is used as an on-field DPS."
+      ],
+      "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 4,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+      "payload": {
+        "priority": 1,
+        "statIds": [
+          "cr",
+          "cd"
+        ],
+        "target": null,
+        "type": "substat"
+      },
+      "predicate": {
+        "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+        "type": "deferred-energy-prerequisite"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 0
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "After meeting the deliberately omitted rotation-specific ER need; this priority captures only the offensive tail."
+      ],
+      "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 5,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+      "payload": {
+        "priority": 2,
+        "statIds": [
+          "def%"
+        ],
+        "target": null,
+        "type": "substat"
+      },
+      "predicate": {
+        "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+        "type": "deferred-energy-prerequisite"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 1
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "After meeting the deliberately omitted rotation-specific ER need; this priority captures only the offensive tail."
+      ],
+      "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 6,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2",
+      "payload": {
+        "priority": 3,
+        "statIds": [
+          "atk%"
+        ],
+        "target": null,
+        "type": "substat"
+      },
+      "predicate": {
+        "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+        "type": "deferred-energy-prerequisite"
+      },
+      "recommendation": {
+        "classification": null,
+        "grouping": null,
+        "label": "On-field artifact stats, excluding ER",
+        "ordering": null,
+        "recommendationId": "on-field-artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-stats",
+        "sourceIndex": 2
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "sourceConditions": [
+        "After meeting the deliberately omitted rotation-specific ER need; this priority captures only the offensive tail."
+      ],
+      "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+    },
+    {
+      "catalogIndex": 7,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "husk_of_opulent_dreams",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "The on-field damage-build condition is not established by an exact roster.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": "default",
+        "grouping": "single",
+        "label": "Default and contextual 4pc artifact sets",
+        "ordering": "unranked",
+        "recommendationId": "contextual-artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-sets",
+        "sourceIndex": 0
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+      "sourceConditions": [
+        "Itto uses an on-field damage build; the source describes this set as applicable across all of his team archetypes."
+      ],
+      "sourceConditionsSha256": "e2c9dccf7a94008d3855b20423cdae5d6134d3c13dd61ff74261712c73740d50",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-artifact-sets-version-5-6"
+    },
+    {
+      "catalogIndex": 8,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "marechaussee_hunter",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "predicate": {
+        "characterId": "furina",
+        "type": "exact-team-roster-includes"
+      },
+      "recommendation": {
+        "classification": "conditional",
+        "grouping": "single",
+        "label": "Default and contextual 4pc artifact sets",
+        "ordering": "unranked",
+        "recommendationId": "contextual-artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-sets",
+        "sourceIndex": 1
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+      "sourceConditions": [
+        "Itto is played in a team with Furina."
+      ],
+      "sourceConditionsSha256": "49f8d4a4332fb4e6865565324d08e84761c5a8b97c60d313161ba8452c69a6ef",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-artifact-sets-version-5-6"
+    },
+    {
+      "catalogIndex": 9,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "retracing_bolide",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "predicate": {
+        "category": "owned-inventory",
+        "reason": "Owned artifact quality is account context and is not represented by a source team.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": "available-only",
+        "grouping": "single",
+        "label": "Default and contextual 4pc artifact sets",
+        "ordering": "unranked",
+        "recommendationId": "contextual-artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-sets",
+        "sourceIndex": 2
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+      "sourceConditions": [
+        "A good Retracing Bolide set is already owned."
+      ],
+      "sourceConditionsSha256": "99c4eba86a54fe92e665507731f989a677da5fb9e29c842297d18aaae344c869",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-artifact-sets-version-5-6"
+    },
+    {
+      "catalogIndex": 10,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "long_nights_oath",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "predicate": {
+        "predicates": [
+          {
+            "characterId": "xianyun",
+            "type": "exact-team-roster-includes"
+          },
+          {
+            "category": "gameplay-sequence",
+            "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+            "type": "unresolved-context"
+          }
+        ],
+        "type": "all"
+      },
+      "recommendation": {
+        "classification": "conditional",
+        "grouping": "single",
+        "label": "Default and contextual 4pc artifact sets",
+        "ordering": "unranked",
+        "recommendationId": "contextual-artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "scope": "artifact-sets",
+        "sourceIndex": 3
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+      "sourceConditions": [
+        "Itto is played in a Plunge composition with Xianyun."
+      ],
+      "sourceConditionsSha256": "a983b4a8c16211f74ef687a1f67957b144a2e3c619f24a62f1142a078f578b09",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-artifact-sets-version-5-6"
+    },
+    {
+      "catalogIndex": 11,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+      "payload": {
+        "type": "weapon-group",
+        "weaponIds": [
+          "redhorn_stonethresher"
+        ]
+      },
+      "predicate": {
+        "category": "player-preference",
+        "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": "default",
+        "grouping": "single",
+        "label": "Default, accessible, and Plunge-specific weapons",
+        "ordering": "unranked",
+        "recommendationId": "contextual-weapons",
+        "roles": [
+          "dps"
+        ],
+        "scope": "weapons",
+        "sourceIndex": 0
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "sourceConditions": [
+        "Prioritize Itto's personal damage; the source identifies Redhorn Stonethresher as his signature Best-in-Slot option."
+      ],
+      "sourceConditionsSha256": "34da8bb536186e86abba8a61e58d05ce6ee8fbdab16083f818b9a33abed51eb3",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-weapons-version-5-6"
+    },
+    {
+      "catalogIndex": 12,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+      "payload": {
+        "type": "weapon-group",
+        "weaponIds": [
+          "serpent_spine"
+        ]
+      },
+      "predicate": {
+        "predicates": [
+          {
+            "category": "owned-inventory",
+            "reason": "Weapon ownership is account context not represented by a source team.",
+            "type": "unresolved-context"
+          },
+          {
+            "category": "passive-execution",
+            "reason": "Passive-stack accommodation requires gameplay-sequence evidence.",
+            "type": "unresolved-context"
+          }
+        ],
+        "type": "all"
+      },
+      "recommendation": {
+        "classification": "alternative",
+        "grouping": "single",
+        "label": "Default, accessible, and Plunge-specific weapons",
+        "ordering": "unranked",
+        "recommendationId": "contextual-weapons",
+        "roles": [
+          "dps"
+        ],
+        "scope": "weapons",
+        "sourceIndex": 1
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "sourceConditions": [
+        "Serpent Spine is owned and its passive stack requirements can be accommodated."
+      ],
+      "sourceConditionsSha256": "7e97d371748aaa08ed777785b2bc57c691c6a4ac59deb118b29d5b8600ceffa3",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-weapons-version-5-6"
+    },
+    {
+      "catalogIndex": 13,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2",
+      "payload": {
+        "type": "weapon-group",
+        "weaponIds": [
+          "whiteblind"
+        ]
+      },
+      "predicate": {
+        "category": "player-preference",
+        "reason": "A preference for a free craftable option is not an exact-roster fact.",
+        "type": "unresolved-context"
+      },
+      "recommendation": {
+        "classification": "alternative",
+        "grouping": "single",
+        "label": "Default, accessible, and Plunge-specific weapons",
+        "ordering": "unranked",
+        "recommendationId": "contextual-weapons",
+        "roles": [
+          "dps"
+        ],
+        "scope": "weapons",
+        "sourceIndex": 2
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "sourceConditions": [
+        "A free craftable option is preferred."
+      ],
+      "sourceConditionsSha256": "55b2e598ff17458d3336ab5dea4ab4beea1da33a2d7a00079517267eed9258a0",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-weapons-version-5-6"
+    },
+    {
+      "catalogIndex": 14,
+      "characterId": "arataki_itto",
+      "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3",
+      "payload": {
+        "type": "weapon-group",
+        "weaponIds": [
+          "fruitful_hook"
+        ]
+      },
+      "predicate": {
+        "predicates": [
+          {
+            "characterId": "xianyun",
+            "type": "exact-team-roster-includes"
+          },
+          {
+            "characterId": "furina",
+            "type": "exact-team-roster-includes"
+          },
+          {
+            "category": "gameplay-sequence",
+            "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+            "type": "unresolved-context"
+          }
+        ],
+        "type": "all"
+      },
+      "recommendation": {
+        "classification": "conditional",
+        "grouping": "single",
+        "label": "Default, accessible, and Plunge-specific weapons",
+        "ordering": "unranked",
+        "recommendationId": "contextual-weapons",
+        "roles": [
+          "dps"
+        ],
+        "scope": "weapons",
+        "sourceIndex": 3
+      },
+      "repositoryRecordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "sourceConditions": [
+        "Itto is played in a Plunge composition with Xianyun and Furina."
+      ],
+      "sourceConditionsSha256": "da453e259cf6c1e05478ba067a8172d1c38c473dcdd56588bc435f56c6cf8d55",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-contextual-weapons-version-5-6"
+    }
+  ],
+  "summary": {
+    "assembledBuildCount": 0,
+    "claimCellCount": 45,
+    "deferredEnergyCellCount": 9,
+    "inapplicableCellCount": 6,
+    "investmentConflictPacketCount": 0,
+    "investmentGuaranteedPacketCount": 0,
+    "investmentUnresolvedPacketCount": 1,
+    "matchedCellCount": 3,
+    "packetCount": 3,
+    "presetRosterPresentPacketCount": 1,
+    "presetRosterUncoveredPacketCount": 2,
+    "sourceClaimCount": 15,
+    "templateAcceptedPacketCount": 2,
+    "templateRejectedPacketCount": 1,
+    "unresolvedCellCount": 27,
+    "withheldCellCount": 36
+  },
+  "supportsGuideClaims": false,
+  "teamPackets": [
+    {
+      "claimCells": [
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "Abundant DMG Bonus depends on buff coverage not represented by the exact roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[2]",
+              "predicateType": "unresolved-context",
+              "reason": "The source does not quantify the Xilonen or Furina investment threshold.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[3]",
+              "predicateType": "unresolved-context",
+              "reason": "DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact. Abundant DMG Bonus depends on buff coverage not represented by the exact roster. The source does not quantify the Xilonen or Furina investment threshold. DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "c848c4d9bc66bc610ff6ed605674ad7300d55a9e16d14ad0a23067b20723baf9"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "The on-field damage-build condition is not established by an exact roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "The on-field damage-build condition is not established by an exact roster.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "e2c9dccf7a94008d3855b20423cdae5d6134d3c13dd61ff74261712c73740d50"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "reason": "Exact source-team roster includes furina.",
+          "resolution": "matched",
+          "sourceConditionsSha256": "49f8d4a4332fb4e6865565324d08e84761c5a8b97c60d313161ba8452c69a6ef"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Owned artifact quality is account context and is not represented by a source team.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Owned artifact quality is account context and is not represented by a source team.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "99c4eba86a54fe92e665507731f989a677da5fb9e29c842297d18aaae344c869"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include xianyun.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Exact source-team roster does not include xianyun.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "a983b4a8c16211f74ef687a1f67957b144a2e3c619f24a62f1142a078f578b09"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "34da8bb536186e86abba8a61e58d05ce6ee8fbdab16083f818b9a33abed51eb3"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "unresolved-context",
+              "reason": "Weapon ownership is account context not represented by a source team.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "Passive-stack accommodation requires gameplay-sequence evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Weapon ownership is account context not represented by a source team. Passive-stack accommodation requires gameplay-sequence evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "7e97d371748aaa08ed777785b2bc57c691c6a4ac59deb118b29d5b8600ceffa3"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "A preference for a free craftable option is not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "A preference for a free craftable option is not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "55b2e598ff17458d3336ab5dea4ab4beea1da33a2d7a00079517267eed9258a0"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include xianyun.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[2]",
+              "predicateType": "unresolved-context",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Exact source-team roster does not include xianyun.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "da453e259cf6c1e05478ba067a8172d1c38c473dcdd56588bc435f56c6cf8d55"
+        }
+      ],
+      "exhaustiveness": "non-exhaustive",
+      "intent": "example",
+      "label": "Itto — Xilonen — Furina — Yelan",
+      "members": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "yelan",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        }
+      ],
+      "packetIndex": 0,
+      "partitions": {
+        "deferredEnergyClaimIds": [
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2"
+        ],
+        "inapplicableClaimIds": [
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3"
+        ],
+        "matchedClaimIds": [
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1"
+        ],
+        "unresolvedClaimIds": [
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2"
+        ]
+      },
+      "presetOverlap": {
+        "investmentStatus": "not-evaluated-roster-uncovered",
+        "memberInvestmentComparisons": [],
+        "presetTeamId": null,
+        "rosterComparison": "exact-unordered-character-ids",
+        "rosterStatus": "uncovered"
+      },
+      "rankingClaim": "none",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-xilonen-furina-yelan-example-version-5-6",
+      "teamRecordId": "kqm:team:itto-xilonen-furina-yelan-example-version-5-6",
+      "templateStructuralResult": {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "declaredReactions": [
+          "crystallize"
+        ],
+        "reactionById": {
+          "crystallize": true
+        },
+        "reactionGate": "TeamMeta.hasReaction",
+        "representation": "structural-runtime-representation-not-gameplay-proof",
+        "runtimeGateExecutedForStructuralCandidates": true,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "supportsGameplayProof": false,
+        "templateId": "kqm:team-template:itto-xilonen-double-geo-template-version-5-6"
+      },
+      "unknowns": [
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "the source's sample rotation is deliberately outside this narrow capture",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Itto teams"
+      ]
+    },
+    {
+      "claimCells": [
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "Abundant DMG Bonus depends on buff coverage not represented by the exact roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[2]",
+              "predicateType": "unresolved-context",
+              "reason": "The source does not quantify the Xilonen or Furina investment threshold.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[3]",
+              "predicateType": "unresolved-context",
+              "reason": "DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact. Abundant DMG Bonus depends on buff coverage not represented by the exact roster. The source does not quantify the Xilonen or Furina investment threshold. DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "c848c4d9bc66bc610ff6ed605674ad7300d55a9e16d14ad0a23067b20723baf9"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "The on-field damage-build condition is not established by an exact roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "The on-field damage-build condition is not established by an exact roster.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "e2c9dccf7a94008d3855b20423cdae5d6134d3c13dd61ff74261712c73740d50"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "reason": "Exact source-team roster includes furina.",
+          "resolution": "matched",
+          "sourceConditionsSha256": "49f8d4a4332fb4e6865565324d08e84761c5a8b97c60d313161ba8452c69a6ef"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Owned artifact quality is account context and is not represented by a source team.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Owned artifact quality is account context and is not represented by a source team.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "99c4eba86a54fe92e665507731f989a677da5fb9e29c842297d18aaae344c869"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include xianyun.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Exact source-team roster does not include xianyun.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "a983b4a8c16211f74ef687a1f67957b144a2e3c619f24a62f1142a078f578b09"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "34da8bb536186e86abba8a61e58d05ce6ee8fbdab16083f818b9a33abed51eb3"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "unresolved-context",
+              "reason": "Weapon ownership is account context not represented by a source team.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "Passive-stack accommodation requires gameplay-sequence evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Weapon ownership is account context not represented by a source team. Passive-stack accommodation requires gameplay-sequence evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "7e97d371748aaa08ed777785b2bc57c691c6a4ac59deb118b29d5b8600ceffa3"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "A preference for a free craftable option is not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "A preference for a free craftable option is not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "55b2e598ff17458d3336ab5dea4ab4beea1da33a2d7a00079517267eed9258a0"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include xianyun.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[2]",
+              "predicateType": "unresolved-context",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Exact source-team roster does not include xianyun.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "da453e259cf6c1e05478ba067a8172d1c38c473dcdd56588bc435f56c6cf8d55"
+        }
+      ],
+      "exhaustiveness": "non-exhaustive",
+      "intent": "example",
+      "label": "Itto — Xilonen — Furina — Xingqiu",
+      "members": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "xingqiu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        }
+      ],
+      "packetIndex": 1,
+      "partitions": {
+        "deferredEnergyClaimIds": [
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2"
+        ],
+        "inapplicableClaimIds": [
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3"
+        ],
+        "matchedClaimIds": [
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1"
+        ],
+        "unresolvedClaimIds": [
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2"
+        ]
+      },
+      "presetOverlap": {
+        "investmentStatus": "not-evaluated-roster-uncovered",
+        "memberInvestmentComparisons": [],
+        "presetTeamId": null,
+        "rosterComparison": "exact-unordered-character-ids",
+        "rosterStatus": "uncovered"
+      },
+      "rankingClaim": "none",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-xilonen-furina-xingqiu-example-version-5-6",
+      "teamRecordId": "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6",
+      "templateStructuralResult": {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "declaredReactions": [
+          "crystallize"
+        ],
+        "reactionById": {
+          "crystallize": true
+        },
+        "reactionGate": "TeamMeta.hasReaction",
+        "representation": "structural-runtime-representation-not-gameplay-proof",
+        "runtimeGateExecutedForStructuralCandidates": true,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "supportsGameplayProof": false,
+        "templateId": "kqm:team-template:itto-xilonen-double-geo-template-version-5-6"
+      },
+      "unknowns": [
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "the source's sample rotation is deliberately outside this narrow capture",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Itto teams"
+      ]
+    },
+    {
+      "claimCells": [
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "Abundant DMG Bonus depends on buff coverage not represented by the exact roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[2]",
+              "predicateType": "unresolved-context",
+              "reason": "The source does not quantify the Xilonen or Furina investment threshold.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[3]",
+              "predicateType": "unresolved-context",
+              "reason": "DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact. Abundant DMG Bonus depends on buff coverage not represented by the exact roster. The source does not quantify the Xilonen or Furina investment threshold. DEF% versus Geo DMG Bonus has not been calculated for this team packet.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "c848c4d9bc66bc610ff6ed605674ad7300d55a9e16d14ad0a23067b20723baf9"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "An on-field DPS role is gameplay context, not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "423c45da9436f71273f4502eae3481c3e7cc4909c500d00a3728f0ac4a99eab7"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "deferred-energy-prerequisite",
+              "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+              "result": "deferred",
+              "structuredFact": "none-deferred-energy"
+            }
+          ],
+          "reason": "The source conditions this offensive priority on a rotation-specific ER need deliberately omitted from the repository.",
+          "resolution": "deferred-omitted-energy-prerequisite",
+          "sourceConditionsSha256": "18e8142762293c7dd5d1e799782f3eb7dfd5c75f43630ebf0202fc333cf1af43"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "The on-field damage-build condition is not established by an exact roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "The on-field damage-build condition is not established by an exact roster.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "e2c9dccf7a94008d3855b20423cdae5d6134d3c13dd61ff74261712c73740d50"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "reason": "Exact source-team roster includes furina.",
+          "resolution": "matched",
+          "sourceConditionsSha256": "49f8d4a4332fb4e6865565324d08e84761c5a8b97c60d313161ba8452c69a6ef"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Owned artifact quality is account context and is not represented by a source team.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Owned artifact quality is account context and is not represented by a source team.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "99c4eba86a54fe92e665507731f989a677da5fb9e29c842297d18aaae344c869"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include xianyun.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Exact source-team roster does not include xianyun.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "a983b4a8c16211f74ef687a1f67957b144a2e3c619f24a62f1142a078f578b09"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Prioritizing personal damage is a player preference, and the source description is not a computed cross-team ranking.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "34da8bb536186e86abba8a61e58d05ce6ee8fbdab16083f818b9a33abed51eb3"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "unresolved-context",
+              "reason": "Weapon ownership is account context not represented by a source team.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "unresolved-context",
+              "reason": "Passive-stack accommodation requires gameplay-sequence evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Weapon ownership is account context not represented by a source team. Passive-stack accommodation requires gameplay-sequence evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "7e97d371748aaa08ed777785b2bc57c691c6a4ac59deb118b29d5b8600ceffa3"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "A preference for a free craftable option is not an exact-roster fact.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "A preference for a free craftable option is not an exact-roster fact.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "55b2e598ff17458d3336ab5dea4ab4beea1da33a2d7a00079517267eed9258a0"
+        },
+        {
+          "claimId": "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate.predicates[0]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include xianyun.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[1]",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            },
+            {
+              "predicatePath": "predicate.predicates[2]",
+              "predicateType": "unresolved-context",
+              "reason": "A Plunge composition requires gameplay-sequence evidence beyond the roster.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Exact source-team roster does not include xianyun.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "da453e259cf6c1e05478ba067a8172d1c38c473dcdd56588bc435f56c6cf8d55"
+        }
+      ],
+      "exhaustiveness": "non-exhaustive",
+      "intent": "example",
+      "label": "Itto — C2+ Xilonen — Gorou — Furina",
+      "members": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "minConstellation": 2,
+            "status": "partial"
+          },
+          "rawSourceInvestment": {
+            "minConstellation": 2
+          }
+        },
+        {
+          "characterId": "gorou",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "rawSourceInvestment": {}
+        }
+      ],
+      "packetIndex": 2,
+      "partitions": {
+        "deferredEnergyClaimIds": [
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:1",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:substat:2"
+        ],
+        "inapplicableClaimIds": [
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:3",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:3"
+        ],
+        "matchedClaimIds": [
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:1"
+        ],
+        "unresolvedClaimIds": [
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:sands:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:0",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:goblet:1",
+          "kqm:character-guide:itto-on-field-artifact-stats-version-5-6:main-stat:circlet:0",
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:0",
+          "kqm:character-guide:itto-contextual-artifact-sets-version-5-6:artifact-group:2",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:0",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:1",
+          "kqm:character-guide:itto-contextual-weapons-version-5-6:weapon-group:2"
+        ]
+      },
+      "presetOverlap": {
+        "investmentStatus": "unresolved",
+        "memberInvestmentComparisons": [
+          {
+            "characterId": "arataki_itto",
+            "comparison": {
+              "baselineScope": {
+                "type": "unspecified"
+              },
+              "outcome": "not-constrained-by-source",
+              "sourceScope": {
+                "type": "unspecified"
+              },
+              "talentLevelsEvaluated": false
+            }
+          },
+          {
+            "characterId": "xilonen",
+            "comparison": {
+              "baselineScope": {
+                "type": "unspecified"
+              },
+              "outcome": "unresolved-baseline-unspecified",
+              "sourceScope": {
+                "minConstellation": 2,
+                "type": "range"
+              },
+              "talentLevelsEvaluated": false
+            }
+          },
+          {
+            "characterId": "gorou",
+            "comparison": {
+              "baselineScope": {
+                "type": "unspecified"
+              },
+              "outcome": "not-constrained-by-source",
+              "sourceScope": {
+                "type": "unspecified"
+              },
+              "talentLevelsEvaluated": false
+            }
+          },
+          {
+            "characterId": "furina",
+            "comparison": {
+              "baselineScope": {
+                "type": "unspecified"
+              },
+              "outcome": "not-constrained-by-source",
+              "sourceScope": {
+                "type": "unspecified"
+              },
+              "talentLevelsEvaluated": false
+            }
+          }
+        ],
+        "presetTeamId": "genshintools-presets:team:8ru0gxT0jJgK50AfWD",
+        "rosterComparison": "exact-unordered-character-ids",
+        "rosterStatus": "present"
+      },
+      "rankingClaim": "none",
+      "sourceId": "kqm",
+      "sourceRecordId": "itto-c2-xilonen-gorou-furina-example-version-5-6",
+      "teamRecordId": "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6",
+      "templateStructuralResult": {
+        "acceptedMembership": false,
+        "actualOutcome": "structural-rejected",
+        "declaredReactions": [
+          "crystallize"
+        ],
+        "reactionById": null,
+        "reactionGate": "TeamMeta.hasReaction",
+        "representation": "structural-runtime-representation-not-gameplay-proof",
+        "runtimeGateExecutedForStructuralCandidates": false,
+        "structuralAssignmentMultiplicity": 0,
+        "structuralMembership": false,
+        "supportsGameplayProof": false,
+        "templateId": "kqm:team-template:itto-xilonen-double-geo-template-version-5-6"
+      },
+      "unknowns": [
+        "Itto, Gorou, and Furina constellation bounds",
+        "Xilonen constellation investment beyond the source's C2 minimum",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "the source's sample rotation is deliberately outside this narrow capture",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Itto teams"
+      ]
+    }
+  ]
+}

@@ -21,11 +21,13 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 22 adds first-class exact-team constellation bounds and a narrow
-Itto source slice that exercises `C2+` without collapsing it to exact C2. It
-keeps the Itto page's contextual equipment, offensive stat tail, team template,
-and exact examples separate and omits ER, rotations, and formula counts. The
-broader lab still does not claim a working guide factory:
+Checkpoint 23 adds an authenticated, source-conditioned Itto packet
+experiment. It keeps 15 atomic stat, artifact, and weapon claims separate and
+projects them across three exact source teams as 45 descriptive cells: 3
+matched, 6 inapplicable, and 36 withheld. The withheld aggregate contains 27
+unresolved-context cells and 9 cells whose omitted energy prerequisite remains
+explicitly deferred. It assembles no build and still does not claim a working
+guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -254,6 +256,24 @@ broader lab still does not claim a working guide factory:
     compatibility unevaluated.
 82. Increase the all-character inventory with one atomic C2+ member observation
     while deriving no guide, build, rank, formula plan, damage, or ER result.
+83. Preserve the three Itto guide records as 15 atomic entries: 7 grouped stat
+    claims, 4 artifact groups, and 4 weapon groups, without splitting CRIT
+    pairs or deriving order from array position.
+84. Pin every exact source-condition array to a source-specific typed predicate
+    map and fail closed on text, map, source-record, or count drift instead of
+    parsing arbitrary English.
+85. Project those 15 entries across only the three exact Itto source teams,
+    retaining all 45 cells as 3 matched, 6 inapplicable, 27 unresolved-context,
+    and 9 deferred omitted-energy outcomes.
+86. Replay the real roster-domain runtime boundary: the Yelan and Xingqiu PHEC
+    examples are accepted with multiplicity two and Crystallize represented;
+    the separate Gorou example is structurally rejected by that template.
+87. Compare the sole exact baseline roster overlap by constellation scope only,
+    preserving C2+ Xilonen versus baseline-unspecified investment as unresolved
+    and excluding Talent levels and equipment.
+88. Authenticate the durable packet through a fresh typed rebuild while
+    executing no generator, optimizer, formula, rotation, damage, ranking,
+    ideal-roll, or ER calculation and assembling zero builds.
 
 The first two active sources are already in this repository:
 
@@ -351,6 +371,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-source-conditioned-candidate-lattice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-cross-record-composition-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -367,7 +388,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-two durable reports in memory: corpus inventory,
+It also rebuilds all twenty-three durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -377,7 +398,8 @@ marginal diagnostic, the Furina source-scoped role sample, the Keqing source-
 scoped role-pair sample, the Keqing Lunar equipment-evidence validation, the
 source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
-comparison, and historical ER calibration. Stale evidence cannot pass.
+comparison, the authenticated Itto source-conditioned packet, and historical
+ER calibration. Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
@@ -416,6 +438,19 @@ Furina fixture has no comparable readiness assessment or token-coverage
 ledger. Both source extractions and both action translations are unreviewed.
 The report performs no formula execution, replay, optimization, damage, or ER
 work and supports no recommendation, rank, guide, or source-validation claim.
+
+The Itto packet report separately tests source-condition projection without
+assembling a build. It retains 15 atomic source claims once, then emits 45
+claim/team cells across three exact examples. Furina presence matches the
+Marechaussee Hunter group in all three teams; Xianyun absence makes Long
+Night's Oath and Fruitful Hook inapplicable in all three. The other 36 cells
+are withheld: 27 need gameplay, buff, inventory, or preference context and 9
+retain the deliberately omitted energy prerequisite. The PHEC template accepts
+the Yelan and Xingqiu examples but structurally rejects the separate Gorou
+example. Only that Gorou roster overlaps a current preset, and its C2+ source
+Xilonen versus baseline-unspecified Xilonen remains unresolved in the separate
+constellation-only comparison. These are authenticated classifications of
+unreviewed evidence, not selected equipment or guide recommendations.
 
 ## Data flow
 

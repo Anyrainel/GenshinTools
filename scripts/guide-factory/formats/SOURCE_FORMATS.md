@@ -263,6 +263,11 @@ capture. The offensive substat tail retains text saying it begins only after
 the omitted ER need. All seven records are agent-assisted, unreviewed,
 promotion-ineligible, and contain no formula counts or damage claims.
 
+A derived Itto packet experiment may pin these exact condition arrays to a
+source-specific typed predicate map. That map is Guide Factory interpretation,
+not a mutation of the seven source records or a reusable natural-language
+condition parser; any condition-text drift must fail closed.
+
 ### KQM Keqing pilot
 
 The Keqing page stores 24 participating heading-scoped records from the visible

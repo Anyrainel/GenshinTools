@@ -36,6 +36,15 @@ One-sided ranges remain one-sided in serialized knowledge: `C2+` is
 Unspecified investment may be technically non-conflicting with a later local
 assumption, but it is not explicit source evidence for every constellation.
 
+Derived source-to-baseline comparison is constellation-only and preserves both
+raw scopes. An unspecified source does not constrain the baseline. A constrained
+source against an unspecified baseline remains unresolved. A baseline scope
+wholly inside the source scope is guaranteed to satisfy it; disjoint scopes
+conflict; overlapping scopes that are not wholly contained remain unresolved.
+This comparator does not evaluate Talent levels, equipment, or gameplay
+applicability, and it never serializes implicit C0 or C6 endpoints for a
+one-sided source range.
+
 An optional formula-count damage plan contains positive counts for formulas
 owned by members of the team. Formula IDs are structurally validated in this
 checkpoint; engine availability and gameplay feasibility are deferred until an

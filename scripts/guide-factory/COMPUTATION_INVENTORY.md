@@ -480,6 +480,36 @@ roster-domain report. The durable output contains named role evidence and four
 targets but no global role catalog, expanded pair domain, team ranking, damage,
 equipment, stat, or ER result.
 
+## Source-conditioned guide-packet projection seam
+
+`src/sourceConditionedGuidePacket.ts` is a descriptive projection core. It
+retains atomic source claims once and evaluates a wrapper-supplied typed
+predicate tree against exact source-team rosters. Predicate conjunction uses
+the fail-closed precedence false, deferred, unknown, then true. Every condition
+array is pinned by hash to its typed predicate; the core does not parse arbitrary
+source prose. It authenticates a durable report only by rebuilding the complete
+canonical result from current typed inputs.
+
+The Itto wrapper retains 7 grouped stat entries, 4 artifact groups, and 4
+weapon groups as 15 claims, then projects them across three exact source teams
+for 45 cells. All three teams match the Furina/Marechaussee Hunter predicate and
+reject the Xianyun-dependent Long Night's Oath and Fruitful Hook predicates.
+The remaining 36 cells are withheld: 27 need non-roster gameplay, buff,
+inventory, or preference context and 9 keep the deliberately omitted energy
+prerequisite as a separate deferred subtype.
+
+The wrapper also invokes the current roster-domain runtime boundary. The Yelan
+and Xingqiu PHEC examples are accepted with structural multiplicity two and a
+true Crystallize representation. The separate C2+ Xilonen/Gorou/Furina example
+is structurally rejected by the PHEC template with multiplicity zero. Only that
+roster overlaps a GenshinTools preset; its source C2+ Xilonen against baseline-
+unspecified Xilonen remains unresolved in a constellation-only comparison.
+Talent levels and baseline equipment are not evaluated or joined.
+
+This seam assembles zero builds and runs no generator, optimizer, formula,
+rotation, damage, ranking, ideal-roll, or ER calculation. It is validation of
+unreviewed source-condition bookkeeping, not a guide or gameplay result.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -518,6 +548,9 @@ equipment, stat, or ER result.
 - Source-local equipment groups and stat claims projected onto exact rosters
   without constructing a cross-product:
   `scripts/guide-factory/src/keqingLunarSourceConditionedCandidateLattice.ts`.
+- Generic typed source-condition projection and the bounded Itto adapter:
+  `scripts/guide-factory/src/sourceConditionedGuidePacket.ts` and
+  `scripts/guide-factory/src/ittoSourceConditionedGuidePacket.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -588,21 +621,22 @@ factory.
   contextual conditions, constellation boundaries, overlaps, and source
   disagreements still need broader attributed evidence before role-based roster
   expansion is safe.
-- Source guide applicability is still prose rather than typed team/build
-  predicates. The Keqing adapter can resolve exact roster facts, but high Base
-  ATK, DMG Bonus, exceptional EM, contribution ownership, refinement, shield
-  uptime, Bond clearance, CRIT overcap, and inventory availability remain
-  explicitly unresolved.
+- Source guide applicability remains attributed prose in repository records.
+  The Keqing and Itto source-specific wrappers pin exact text to typed predicates
+  and can resolve exact roster facts, but they are not a global parser. High
+  Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
+  shield uptime, Bond clearance, CRIT overcap, inventory, preference, gameplay,
+  and omitted-energy inputs remain explicitly unresolved or deferred.
 - The source evidence now exposes four artifact-search gaps: 4pc
   Thundersoother and three traditional 2pc combinations are recorded but not
   representable by the current candidate path. Search coverage is therefore a
   discrepancy report, not proof that the source options can be optimized.
 - V1 has no atomic weapon-plus-artifact recommendation. The KQM Whimsy plus
   Finale claim is intentionally not flattened into independent choices.
-- The first candidate lattice remains classification-only. It exposes 19
-  equipment groups and 12 stat claims over four exact teams, but it deliberately
-  creates zero assembled builds. A separate authored composition contract is
-  required before any source-conditioned generator experiment can run.
+- The first candidate lattice remains classification-only. Its separate
+  authored composition contract and eight-cell technical matrix now exist, but
+  neither promotes the unreviewed source evidence or blocked formula fixture
+  into a guide, source-authored build, or gameplay comparison.
 - The bounded joint experiment intentionally passes no explicit buff
   overrides, although it now records that the computed formula-override map is
   empty in all 48 current cells. A future performance-bearing experiment must

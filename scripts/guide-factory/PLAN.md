@@ -30,7 +30,7 @@ Questions to learn from real data:
   uncovered by the current GenshinTools baseline.
 - Require human review before a candidate becomes accepted knowledge.
 
-Six KQM pages have been ingested but not human-reviewed. Together they forced
+Seven KQM pages have been ingested but not human-reviewed. Together they forced
 separate energy guidance, explicit unranked lists, alternatives versus tied
 ranks, bounded constellation applicability, exact teams versus four-slot team
 templates, example-team intent, source-defined role constraints, and coupled
@@ -426,13 +426,23 @@ drafts and artifact-generation preflight reject concrete assumptions outside a
 captured interval, and exact-team baseline overlap is explicitly roster-only
 with investment unevaluated.
 
-The next non-ER gate is an authenticated Itto source-conditioned claim
-projection. It should preserve the three guide records as fifteen atomic claim
-groups and project them across the three exact source teams without multiplying
-weapon, artifact, and stat axes into builds. A pinned typed condition map may
-resolve only structured exact-roster facts; inventory, preference, buff,
-gameplay, and omitted-energy prerequisites remain unresolved or deferred. This
-is a validation step before formula authoring or computation, not a guide.
+The authenticated Itto source-conditioned projection now preserves the three
+guide records as fifteen atomic claim groups and projects them across the three
+exact source teams without multiplying weapon, artifact, and stat axes into
+builds. Of 45 cells, 3 match exact Furina roster facts, 6 are inapplicable from
+Xianyun absence, 27 retain unresolved non-roster context, and 9 retain the
+deliberately omitted energy prerequisite. The real roster-domain runtime accepts
+the Yelan and Xingqiu PHEC examples and structurally rejects the separate Gorou
+example. The sole exact baseline roster overlap remains investment-unresolved
+because source C2+ Xilonen is compared with baseline-unspecified Xilonen.
+
+The next bounded non-ER experiment should retain this source-facts-only packet
+as a control and add typed request/account context as a separate input. It may
+test explicit role, optimization goal, complete inventory, acquisition
+preference, and passive-execution assumptions without converting omitted facts
+to false or joining matched claims into a build. Human review of the 15 atoms,
+their pinned condition map, and all 45 source-only classifications remains a
+prerequisite for publication, formula authoring, or build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

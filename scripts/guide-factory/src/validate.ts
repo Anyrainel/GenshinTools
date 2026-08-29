@@ -67,6 +67,11 @@ import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
+import {
+  authenticateIttoSourceConditionedGuidePacketReport,
+  ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS,
+  ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_REPORT_PATH,
+} from "./ittoSourceConditionedGuidePacket";
 import { readJson, sha256File, stableJson } from "./io";
 import {
   buildKeqingIneffaFormulaDraftReport,
@@ -138,6 +143,7 @@ import {
   ManualObservationSnapshotSchema,
   SourceRegistrySchema,
 } from "./schemas";
+import type { SourceConditionedGuidePacketReport } from "./sourceConditionedGuidePacket";
 import {
   formatDiagnostics,
   validateGenshinToolsSnapshot,
@@ -197,6 +203,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
+    ittoSourceConditionedGuidePacketInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -256,6 +263,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_REPORT_PATH),
       readJson(KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPORT_PATH),
+      readJson(ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -605,6 +613,44 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.team-roster-candidate-domain-experiment",
           message:
             "The saved team-roster candidate-domain experiment does not match the selected repository templates, eligible stable character boundary, runtime reaction gate, and validation targets.",
+        });
+      }
+
+      const ittoSourceConditionedGuidePacketGeneratedFrom =
+        await hashRelativePaths(
+          ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS,
+        );
+      const ittoManualInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "itto-on-field-artifact-stats-version-5-6",
+      );
+      const ittoPacketAuthentication =
+        await authenticateIttoSourceConditionedGuidePacketReport(
+          ittoSourceConditionedGuidePacketInput as SourceConditionedGuidePacketReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: ittoManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            catalogs,
+            generatedFrom: ittoSourceConditionedGuidePacketGeneratedFrom,
+          },
+        );
+      if (!ittoPacketAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            ittoPacketAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_itto_source_conditioned_guide_packets"
+              : "pipeline.stale_itto_source_conditioned_guide_packets",
+          path: "reports.itto-source-conditioned-guide-packets",
+          message:
+            ittoPacketAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The freshly rebuilt Itto source-conditioned packet is not comparable; a matching non-comparable serialized report is not valid durable evidence."
+              : "The saved Itto source-conditioned packet does not match the authenticated source records, exact condition map, roster runtime, constellation-only baseline comparison, and current input hashes.",
         });
       }
 
