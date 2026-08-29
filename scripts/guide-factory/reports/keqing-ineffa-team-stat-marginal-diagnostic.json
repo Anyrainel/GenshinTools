@@ -148,7 +148,7 @@
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
-      "sha256": "18c5ae226f7019b0325a067e5bbf5d6dfa817721b9d4f9e68391614368dbacb8"
+      "sha256": "6e24db6601b8f22146cdf0b09d011e1043aba1ece536ea4ba95c9cd39c2c4ece"
     },
     {
       "path": "scripts/guide-factory/src/boundedJointArtifactExperiment.ts",
@@ -5257,7 +5257,7 @@
       },
       {
         "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
-        "sha256": "18c5ae226f7019b0325a067e5bbf5d6dfa817721b9d4f9e68391614368dbacb8"
+        "sha256": "6e24db6601b8f22146cdf0b09d011e1043aba1ece536ea4ba95c9cd39c2c4ece"
       },
       {
         "path": "scripts/guide-factory/src/boundedJointArtifactExperiment.ts",

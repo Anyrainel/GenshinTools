@@ -10,6 +10,7 @@ import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import type { GeneratorOptions } from "@/lib/team-comp/generator/generator";
 import { describe, expect, it } from "vitest";
 import {
+  prevalidateArtifactGenerationTechnicalProbeCandidates,
   runArtifactGenerationTechnicalProbe,
   type ArtifactGenerationComposedSourceClaimsValidationTarget,
 } from "../src/artifactGenerationTechnicalProbe";
@@ -30,6 +31,136 @@ import {
 } from "../src/schemas";
 
 describe("Keqing-Ineffa artifact-generation technical probe", () => {
+  it("prevalidates every runtime-ready candidate without invoking the generator", async () => {
+    const repository = KnowledgeRepositorySchema.parse(
+      await readJson(KNOWLEDGE_REPOSITORY_PATH),
+    );
+    const input =
+      await buildKeqingIneffaArtifactGenerationTechnicalProbeInput(repository);
+    input.candidates = input.candidates.slice(0, 4);
+
+    const prevalidation =
+      await prevalidateArtifactGenerationTechnicalProbeCandidates(input, {});
+
+    expect(prevalidation).toEqual({
+      valid: true,
+      candidateCount: 4,
+      candidateIds: input.candidates.map(({ candidateId }) => candidateId),
+      runtimeReadyCandidateCount: 4,
+      temporaryTeamBuildCount: 4,
+      generatorInvoked: false,
+    });
+    expect(collectObjectKeys(prevalidation)).not.toContain("teamBuild");
+    expect(collectObjectKeys(prevalidation)).not.toContain("teamBuilds");
+  }, 120_000);
+
+  it("collects all candidate and formula readiness failures before any generator call", async () => {
+    const repository = KnowledgeRepositorySchema.parse(
+      await readJson(KNOWLEDGE_REPOSITORY_PATH),
+    );
+    const input =
+      await buildKeqingIneffaArtifactGenerationTechnicalProbeInput(repository);
+    input.candidates = input.candidates.slice(0, 3);
+    (
+      input.candidates[0] as unknown as {
+        classification: string;
+      }
+    ).classification = "fabricated-classification";
+    delete (
+      input.candidates[1].validationTargets[0] as unknown as {
+        sands?: MainStat[];
+      }
+    ).sands;
+    input.formulaDraft.lines = [];
+
+    const prevalidation =
+      await prevalidateArtifactGenerationTechnicalProbeCandidates(input, {});
+
+    expect(prevalidation).toMatchObject({
+      valid: false,
+      candidateCount: 3,
+      candidateIds: input.candidates.map(({ candidateId }) => candidateId),
+      runtimeReadyCandidateCount: 0,
+      temporaryTeamBuildCount: 1,
+      generatorInvoked: false,
+      failures: [
+        {
+          candidateId: input.candidates[0].candidateId,
+          failure: {
+            code: "candidate-classification-invalid",
+            stage: "candidate-validation",
+          },
+        },
+        {
+          candidateId: input.candidates[1].candidateId,
+          failure: {
+            code: "candidate-validation-target-provenance-mismatch",
+            stage: "candidate-validation",
+          },
+        },
+        {
+          candidateId: input.candidates[2].candidateId,
+          failure: {
+            code: "candidate-formula-invalid",
+            stage: "formula-validation",
+          },
+        },
+      ],
+    });
+  }, 120_000);
+
+  it("keeps composed-target prevalidation default-deny and admits only the trusted capability", async () => {
+    const repository = KnowledgeRepositorySchema.parse(
+      await readJson(KNOWLEDGE_REPOSITORY_PATH),
+    );
+    const rejectedFixture = await buildComposedTargetProbeInput(repository);
+    const rejected =
+      await prevalidateArtifactGenerationTechnicalProbeCandidates(
+        rejectedFixture.input,
+        {},
+      );
+
+    expect(rejected).toMatchObject({
+      valid: false,
+      runtimeReadyCandidateCount: 0,
+      temporaryTeamBuildCount: 0,
+      generatorInvoked: false,
+      failures: [
+        {
+          failure: {
+            code: "candidate-validation-target-provenance-mismatch",
+            message: expect.stringContaining("trusted source-specific"),
+          },
+        },
+      ],
+    });
+
+    const acceptedFixture = await buildComposedTargetProbeInput(repository);
+    let trustedValidationCalls = 0;
+    const accepted =
+      await prevalidateArtifactGenerationTechnicalProbeCandidates(
+        acceptedFixture.input,
+        {
+          validateComposedSourceClaimsTarget: (target) => {
+            trustedValidationCalls++;
+            return target.compositionId === "validated-test-composition"
+              ? { valid: true }
+              : { valid: false, message: "unexpected test composition" };
+          },
+        },
+      );
+
+    expect(trustedValidationCalls).toBe(1);
+    expect(accepted).toEqual({
+      valid: true,
+      candidateCount: 1,
+      candidateIds: [acceptedFixture.input.candidates[0].candidateId],
+      runtimeReadyCandidateCount: 1,
+      temporaryTeamBuildCount: 1,
+      generatorInvoked: false,
+    });
+  }, 120_000);
+
   it("runs the bounded 2x2 matrix sequentially and preserves the negative control", async () => {
     const repository = KnowledgeRepositorySchema.parse(
       await readJson(KNOWLEDGE_REPOSITORY_PATH),

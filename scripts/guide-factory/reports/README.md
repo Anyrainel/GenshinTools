@@ -6,6 +6,25 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-lunar-cross-record-technical-matrix.json` authenticates the two
+  checkpoint-18 compositions, translates each into one exact Keqing composed-
+  source target plus three repository teammate targets, and prevalidates both
+  candidates before generation. It then makes exactly eight fresh sequential
+  calls: Marechaussee Hunter and the one-Nod-Krai Night of the Sky's Unveiling
+  branch under each of the four carry seeds. All eight current cells complete
+  structurally. From each generator result, the report retains only artifact
+  and validation-observation hashes; target provenance, assumptions, the
+  formula specification, and the origin ledger are retained alongside those
+  hashes. It performs no cross-node objective or artifact-set comparison. Its
+  private execution snapshot and frozen process-local validation capability
+  prevent caller mutation after preparation; any failed cell stops execution
+  and removes the whole matrix. Formula seed artifacts are explicitly
+  overridden by node assignments, while source stat arrays remain post-run
+  observations rather than constraints or weights. It supports no guide,
+  source-authored build, recommendation, stat priority, rank, winner, ideal
+  rolls, damage comparison, or ER claim. The declared hash list covers direct
+  inputs; `validate.ts` re-executes the current runtime and compares the full
+  report to catch effective transitive drift.
 - `keqing-lunar-cross-record-composition-contract.json` rebuilds exactly two
   Guide Factory-authored joins for the exact Keqing/Ineffa/Furina/Xilonen
   source team: one with 4pc Marechaussee Hunter and one with the exactly-one-
@@ -209,6 +228,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all nineteen reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all twenty reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

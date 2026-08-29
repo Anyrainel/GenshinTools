@@ -20,3 +20,4 @@ reports/*
 !reports/keqing-lunar-equipment-evidence-validation.json
 !reports/keqing-lunar-source-conditioned-candidate-lattice.json
 !reports/keqing-lunar-cross-record-composition-contract.json
+!reports/keqing-lunar-cross-record-technical-matrix.json

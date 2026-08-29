@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 18 adds a fail-closed Guide Factory-authored cross-record
-composition contract over the source-conditioned Keqing Lunar-Charged lattice,
-without claiming a working guide factory:
+Checkpoint 19 runs the first fail-closed, source-conditioned technical matrix
+from an authenticated cross-record Keqing Lunar-Charged contract, without
+claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -175,6 +175,33 @@ without claiming a working guide factory:
 57. Authenticate a serialized contract only by rebuilding it from the current
     typed lattice, formula fixture, and exact input hashes; the contract itself
     authorizes no generator, technical comparison, damage, ranking, or ER work.
+58. Translate those two authenticated Keqing compositions into full-payload
+    composed-source validation targets while retaining the exact team, weapon,
+    artifact, stat-claim, and teammate-repository lineage.
+59. Prevalidate both candidates, their four runtime targets, temporary teams,
+    and formula shapes before the first generator call; default-deny composed
+    targets unless the private source wrapper validates the full payload.
+60. Run the two source-conditioned artifact nodes once under each of the four
+    algorithmic carry seeds, for exactly eight fresh sequential `TeamBuild`
+    invocations.
+61. From each generator result, retain only artifact and validation-observation
+    hashes alongside independently assembled target provenance; perform no
+    cross-node objective or artifact-set comparison, retain no evaluated
+    objective value, and derive no rank, winner, recommendation, stat priority,
+    ideal-roll target, or ER requirement.
+62. Snapshot the authenticated execution plan before the first asynchronous
+    step and keep its validation capability frozen and backed by private
+    process-local state, so later caller mutation cannot alter the matrix.
+63. Stop on the first runtime failure and discard every partial node payload;
+    a comparable matrix requires all eight invocations, eight distinct teams,
+    eight runtime validations, and maximum concurrency one.
+64. Distinguish formula-fixture seed artifacts, per-node artifact assignments,
+    source stat observations, and the generator's internal objective in the
+    origin ledger; source stat arrays are observation targets, not constraints
+    or scoring weights.
+65. Hash the declared direct evidence/runtime inputs and make the durable
+    validator re-execute the current runtime and compare the complete report,
+    rather than claiming the declared list is a transitive module graph.
 
 The first two active sources are already in this repository:
 
@@ -262,6 +289,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-source-conditioned-candidate-lattice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-cross-record-composition-contract.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -278,14 +306,16 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all eighteen durable reports in memory: corpus inventory, team
+It also rebuilds all twenty durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
 the bounded joint artifact experiment, the bounded team-roster candidate
 domain, the full-team stat-marginal diagnostic, the Furina source-scoped role
 sample, the Keqing source-scoped role-pair sample, the Keqing Lunar equipment-
-evidence validation, the source-conditioned candidate lattice, Diona
-comparison, and historical ER calibration. Stale evidence cannot pass.
+evidence validation, the source-conditioned candidate lattice, the
+authenticated cross-record composition contract, the eight-cell cross-record
+technical matrix, Diona comparison, and historical ER calibration. Stale
+evidence cannot pass.
 
 ## Data flow
 

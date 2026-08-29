@@ -359,6 +359,27 @@ later bounded technical wrapper must derive its composed targets from this
 freshly authenticated contract and must separately identify execution as an
 experiment policy rather than source authorization.
 
+That bounded wrapper now executes the smallest source-conditioned technical
+matrix. It authenticates the durable contract against a fresh rebuild, derives
+exact full-payload Keqing targets for Marechaussee Hunter and the one-Nod-Krai
+Night of the Sky's Unveiling branch, attaches the three exact baseline
+teammate targets, and prevalidates both candidates before generation. The two
+nodes run under all four carry seeds as eight fresh sequential calls. Any
+failure stops the schedule and removes the entire matrix.
+
+From each generator result, the durable output keeps only artifact and
+validation-observation hashes. It also preserves the independently assembled
+target provenance, assumptions, formula specification, and origin ledger. It
+does not compare nodes or artifact sets, retain evaluated objective values, or
+turn the source's record-local default/alternative labels into an order. The
+source stat claims are post-generation validation observations, not generator
+constraints or scoring weights. Formula-fixture artifact fields are recorded
+as overridden seed provenance because the matrix supplies every runtime set
+assignment. A private pre-await snapshot and frozen process-local capability
+close caller-mutation seams. The full validator re-executes the current runtime
+and compares the complete report; its checked-in hash list is explicitly a
+declared direct-input list, not a transitive dependency claim.
+
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input
 revision.

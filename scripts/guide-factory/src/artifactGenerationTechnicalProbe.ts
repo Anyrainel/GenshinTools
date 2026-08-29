@@ -153,6 +153,33 @@ export type ArtifactGenerationTechnicalProbeEnvironment = {
       };
 };
 
+export type ArtifactGenerationTechnicalProbePrevalidationEnvironment = Pick<
+  ArtifactGenerationTechnicalProbeEnvironment,
+  "validateComposedSourceClaimsTarget"
+>;
+
+export type ArtifactGenerationTechnicalProbePrevalidation =
+  | {
+      valid: true;
+      candidateCount: number;
+      candidateIds: string[];
+      runtimeReadyCandidateCount: number;
+      temporaryTeamBuildCount: number;
+      generatorInvoked: false;
+    }
+  | {
+      valid: false;
+      candidateCount: number;
+      candidateIds: string[];
+      runtimeReadyCandidateCount: number;
+      temporaryTeamBuildCount: number;
+      generatorInvoked: false;
+      failures: Array<{
+        candidateId: string;
+        failure: ArtifactGenerationCandidateFailure;
+      }>;
+    };
+
 type GeneratorProgressObservation = {
   phase: string;
   progress: number;
@@ -315,6 +342,92 @@ export type ArtifactGenerationTechnicalProbeReport = {
 const DEFAULT_ENVIRONMENT: ArtifactGenerationTechnicalProbeEnvironment = {
   runGenerator,
 };
+
+/**
+ * Validate every candidate, temporary team, and formula shape before a caller
+ * starts a multi-run experiment. The temporary TeamBuild instances are not
+ * returned or reused; real probe runs still construct a fresh TeamBuild for
+ * every candidate invocation. This function never calls the generator runner.
+ */
+export async function prevalidateArtifactGenerationTechnicalProbeCandidates(
+  input: ArtifactGenerationTechnicalProbeInput,
+  environment: ArtifactGenerationTechnicalProbePrevalidationEnvironment = {},
+): Promise<ArtifactGenerationTechnicalProbePrevalidation> {
+  validateProbeInput(input);
+  await bootstrapGuideFactoryComputation();
+
+  const candidateIds = input.candidates.map(({ candidateId }) => candidateId);
+  const expectedCharacterIds = input.formulaDraft.assumptions.characters.map(
+    ({ characterId }) => characterId,
+  );
+  const failures: Array<{
+    candidateId: string;
+    failure: ArtifactGenerationCandidateFailure;
+  }> = [];
+  let temporaryTeamBuildCount = 0;
+
+  for (const candidate of input.candidates) {
+    const candidateValidation = validateCandidate(
+      candidate,
+      expectedCharacterIds,
+      input.validationProvenance,
+      environment,
+    );
+    if (candidateValidation.failure) {
+      failures.push({
+        candidateId: candidate.candidateId,
+        failure: candidateValidation.failure,
+      });
+      continue;
+    }
+
+    let teamBuild: TeamBuild;
+    try {
+      teamBuild = new TeamBuild(
+        buildCandidateTeamConfigs(
+          input.formulaDraft,
+          candidate.artifactSetIdsByCharacter,
+        ),
+        {},
+        undefined,
+        [],
+        undefined,
+        ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT,
+      );
+      temporaryTeamBuildCount++;
+    } catch (error) {
+      failures.push({
+        candidateId: candidate.candidateId,
+        failure: serializeFailure("team-build-failed", "team-build", error),
+      });
+      continue;
+    }
+
+    try {
+      buildGeneratorCombo(input.formulaDraft, teamBuild);
+    } catch (error) {
+      failures.push({
+        candidateId: candidate.candidateId,
+        failure: serializeFailure(
+          "candidate-formula-invalid",
+          "formula-validation",
+          error,
+        ),
+      });
+    }
+  }
+
+  const common = {
+    candidateCount: input.candidates.length,
+    candidateIds,
+    runtimeReadyCandidateCount: input.candidates.length - failures.length,
+    temporaryTeamBuildCount,
+    generatorInvoked: false as const,
+  };
+  return failures.length === 0
+    ? { valid: true, ...common }
+    : { valid: false, ...common, failures };
+}
 
 /**
  * Exercise the artifact generator through a small, explicitly ordered list.
@@ -695,7 +808,7 @@ function validateCandidate(
   candidate: ArtifactGenerationTechnicalCandidate,
   expectedCharacterIds: string[],
   provenance: ArtifactGenerationValidationProvenance,
-  environment: ArtifactGenerationTechnicalProbeEnvironment,
+  environment: ArtifactGenerationTechnicalProbePrevalidationEnvironment,
 ): {
   validation: CandidateBase["independentValidation"];
   failure: ArtifactGenerationCandidateFailure | null;
@@ -952,7 +1065,7 @@ type KnowledgeCharacterGuide = Extract<
 function validateTargetProvenance(
   target: ArtifactGenerationValidationTarget,
   provenance: ArtifactGenerationValidationProvenance,
-  environment: ArtifactGenerationTechnicalProbeEnvironment,
+  environment: ArtifactGenerationTechnicalProbePrevalidationEnvironment,
 ): string | null {
   const incompleteStats = [
     target.sands,

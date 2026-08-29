@@ -1,0 +1,1496 @@
+{
+  "artifactSetComparisonExecuted": false,
+  "cautions": [
+    "This matrix is a bounded Guide Factory structural experiment; neither source evidence nor the checkpoint-18 composition contract authorizes execution.",
+    "The generator uses the serialized numerical objective specification internally, but no evaluated objective value or damage value is retained and no cross-node objective or artifact-set comparison is performed.",
+    "The default and alternative labels remain local to separate source records; node or array order establishes no relation between Marechaussee Hunter and Night of the Sky's Unveiling.",
+    "The formula translation remains unreviewed and source-unbound; structural completion does not establish gameplay correctness or rotation quality.",
+    "Repository validation targets can contain source-recorded Energy Recharge keys, but this matrix uses no Energy Recharge threshold or sequence and establishes no floor or adequacy claim.",
+    "Source and repository stat arrays are provenance-validated post-generation observations only; they are not generator constraints, scoring weights, stat priorities, or ideal-roll targets.",
+    "Formula fixture selected-artifact fields are retained as seed provenance only; every runtime artifact assignment is replaced by the matrix node payload before generation.",
+    "Artifact hashes and validation-target observation hashes are reproducibility evidence, not build quality, score, rank, recommendation, or winner claims.",
+    "The pure matrix core checks consistency among caller-supplied typed snapshots and hash arrays, while the source CLI binds the declared direct paths to current bytes. That list is not a transitive module graph; the durable full validator re-executes the current runtime and compares the complete report to catch effective drift."
+  ],
+  "classification": "keqing-lunar-cross-record-technical-matrix",
+  "crossNodeObjectiveComparisonExecuted": false,
+  "crossRecordOrdering": "none",
+  "energyRecoverySequenceUsed": false,
+  "energyRecoveryThresholdsUsed": false,
+  "evaluatedObjectiveValueRetained": false,
+  "executionAudit": {
+    "maximumConcurrentGeneratorInvocationCount": 1,
+    "observedGeneratorInvocationCount": 8,
+    "partialStructuralOutputsDiscardedOnFailure": true,
+    "plannedGeneratorInvocationCount": 8,
+    "scheduling": "sequential",
+    "structurallyCompletedNodeCount": 8,
+    "trustedValidatorRuntimeCallCount": 8,
+    "uniqueTeamBuildInstanceCount": 8
+  },
+  "executionAuthorization": {
+    "authorizedOnlyBy": "bounded-guide-factory-structural-experiment-policy",
+    "compositionContractAuthorized": false,
+    "executionStarted": true,
+    "formulaFixtureAuthorized": false,
+    "guideFactoryExperimentPolicyDeclared": true,
+    "scope": "eight-fresh-sequential-structural-generator-invocations",
+    "sourceAuthorized": false,
+    "thisCanonicalInputAuthorizedAfterPrevalidation": true
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
+      "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
+      "sha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
+      "sha256": "d4ad0ed089c853944e9a41deb39cfac0489f98eac1a0021f0fc4b7a2c372a22b"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-source-conditioned-candidate-lattice.json",
+      "sha256": "9b8977311e6690324e653cce12c342b8408a22984e720dbd61d854dc587b0ad9"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
+      "sha256": "1bf022fbe89cf11a83fb68692fbf590adf1bd2c181db32d3e23b176e764f100f"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
+      "sha256": "e6d9953f22e473473af771e4bbbd8d05b21d7ef29b4353fed8e2a538d55540a9"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
+      "sha256": "6e24db6601b8f22146cdf0b09d011e1043aba1ece536ea4ba95c9cd39c2c4ece"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
+      "sha256": "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarCrossRecordCompositionContract.ts",
+      "sha256": "b9b7ac32ea2160a330807ca70a1c92b5f7098234ce5ef8ed6c6041a82e71afad"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarCrossRecordTechnicalMatrix.ts",
+      "sha256": "fca5baaf40d9eeb7a96791515f966f89bc2abd7ce43e0dd506d0d5dc6b545c09"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
+      "sha256": "fd4c38adc0e5a4ab26bb9917a68dc97dabdd9aa865f1de6e964610a797732740"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarSourceConditionedCandidateLattice.ts",
+      "sha256": "888f81d55ef49d10d8934ec23a71cb3a25acd526a3655eb9d6007f809db1c280"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
+      "sha256": "42358c4974cb31ac49d856fa594c43dcaa27ff632836cebeeefda1873fe2a6f8"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualSnapshots.ts",
+      "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "85d7a7152917047a69bd54e9d8e71b3cf719bab48632e2469e8606211efb44b9"
+    },
+    {
+      "path": "scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts",
+      "sha256": "13520e2bcbc07573753f89e6110f627c99f9c42bed30d2b47d6537c89ff9c02c"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
+      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
+      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/constants.ts",
+      "sha256": "3e076788dfac5447d5d59456dc23d47c8d7fe5827795264b2d1dc20bde532c08"
+    },
+    {
+      "path": "src/data/enums.ts",
+      "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/types.ts",
+      "sha256": "bdd204ea6ca5d18a3541de9667993a868c089da066bcc4deaa72af3426ac3e81"
+    },
+    {
+      "path": "src/lib/artifact/scoring/sheetBuilder.ts",
+      "sha256": "d982609ee2be21c3c0d3ff461a4b627a1b0f386e76356441bdf9712d2e1b989f"
+    },
+    {
+      "path": "src/lib/artifact/scoring/utils.ts",
+      "sha256": "7f8adecffa41ad02e21e7f64cac859845d89080b0446f5d2c142e547f0620e6a"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/formulaCompiler.ts",
+      "sha256": "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/statSheet.ts",
+      "sha256": "1239c11fe3774ef46c8bafaf9ee1354debca3eab34b4e105bb802477ad4cee10"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    },
+    {
+      "path": "src/lib/team-comp/analyzer/weaponChoice.ts",
+      "sha256": "297995b86d74d30422dcbc8948acd13a19401ff7c872435ccb28dd84aaac95f4"
+    },
+    {
+      "path": "src/lib/team-comp/generator/constrainedGreedy.ts",
+      "sha256": "64fba22398fd2283f1cb1f0de2eb1edf186ca5a8680d3279ae99ebac3aedbd7c"
+    },
+    {
+      "path": "src/lib/team-comp/generator/generator.ts",
+      "sha256": "d0c0b7cc165504fab2a913d1d2ab02db787639764750e93a90a7e6723b6a5cc0"
+    },
+    {
+      "path": "src/lib/team-comp/generator/substatBudget.ts",
+      "sha256": "1ad0229b3a5a5eb370d239d371bea95037b0525f6dcf37173115459a11acfc02"
+    },
+    {
+      "path": "src/lib/team-comp/optimizer/erCrConstraints.ts",
+      "sha256": "01ea055b9e92cdf7e728b663d02e6fc5861102f5297d8eb8515270aa4d62daa0"
+    },
+    {
+      "path": "src/lib/team-comp/teamConfigUtils.ts",
+      "sha256": "538633ab68a20c0af9833d9a77120bc2855b4b8dbd99f588b6fea43ab7f48bbc"
+    }
+  ],
+  "inputBoundary": {
+    "candidateLatticeSha256": "9b8977311e6690324e653cce12c342b8408a22984e720dbd61d854dc587b0ad9",
+    "canonicalContractRebuiltFromTypedInputs": true,
+    "canonicalContractSha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f",
+    "canonicalContractStatus": "comparable",
+    "contractGeneratedFromPolicy": "supplied-wrapper-current-canonical-input-bytes",
+    "formulaDraftGeneratedFromMatchesSuppliedCurrentBytes": true,
+    "formulaDraftSha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056",
+    "matrixGeneratedFromPolicy": "supplied-wrapper-declared-direct-authority-and-runtime-bytes",
+    "repositorySha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7",
+    "serializedContractAuthenticatedAgainstRebuild": true,
+    "serializedContractSha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f",
+    "serializedContractUsedAsAuthority": false
+  },
+  "issues": [],
+  "matrix": {
+    "carryCharacterIds": [
+      "keqing",
+      "ineffa",
+      "furina",
+      "xilonen"
+    ],
+    "compositionIds": [
+      "guide-factory:keqing-lunar:marechaussee-hunter",
+      "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai"
+    ],
+    "nodeCount": 8,
+    "nodes": [
+      {
+        "artifactSetId": "marechaussee_hunter",
+        "carryCharacterId": "keqing",
+        "composedTargetSha256": "c9f62f5d7c0234bd586fc5f9df8d5c0837aa6e4ea2dc6252603b0d37e3a42ede",
+        "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "1f34efa36e5d8469963c880e5fb57c5473ad555e929e51b7e1e09731e76e8f91",
+        "generatorInvocationOrdinal": 1,
+        "nodeId": "node-01:keqing:guide-factory:keqing-lunar:marechaussee-hunter",
+        "recordLocalSourceClassification": "default",
+        "sequence": 0,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "f693d6c4740a3294dfc3eae0f43c21461c1dd8d3cb73df0d834d5a58a0e30cee",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "marechaussee_hunter",
+            "characterId": "keqing",
+            "observationSha256": "f968e2f0b524863918fea404d5b6e5258437e6381cb90cec6e413276e6be776b",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "7d0a234d69f100fc0f6059c7636d16d1ea86e125e71bc19539561846b6c7fe87",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "night_of_the_skys_unveiling",
+        "carryCharacterId": "keqing",
+        "composedTargetSha256": "63cebdecd5499e8ce14dca181a19756c301c36e444da8804ff2bdda84a963ba3",
+        "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "982717a9f81dca7950101added70c90d5de468d7310cbe7ca1ef1d3361a5938e",
+        "generatorInvocationOrdinal": 2,
+        "nodeId": "node-02:keqing:guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "recordLocalSourceClassification": "alternative",
+        "sequence": 1,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "f693d6c4740a3294dfc3eae0f43c21461c1dd8d3cb73df0d834d5a58a0e30cee",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "night_of_the_skys_unveiling",
+            "characterId": "keqing",
+            "observationSha256": "1ed66cc93080d8ae3863ef037e93c83e4ede836275e2689e9e3378fdf7b9896c",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "7d0a234d69f100fc0f6059c7636d16d1ea86e125e71bc19539561846b6c7fe87",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "marechaussee_hunter",
+        "carryCharacterId": "ineffa",
+        "composedTargetSha256": "c9f62f5d7c0234bd586fc5f9df8d5c0837aa6e4ea2dc6252603b0d37e3a42ede",
+        "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "1f34efa36e5d8469963c880e5fb57c5473ad555e929e51b7e1e09731e76e8f91",
+        "generatorInvocationOrdinal": 3,
+        "nodeId": "node-03:ineffa:guide-factory:keqing-lunar:marechaussee-hunter",
+        "recordLocalSourceClassification": "default",
+        "sequence": 2,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "f693d6c4740a3294dfc3eae0f43c21461c1dd8d3cb73df0d834d5a58a0e30cee",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "marechaussee_hunter",
+            "characterId": "keqing",
+            "observationSha256": "f968e2f0b524863918fea404d5b6e5258437e6381cb90cec6e413276e6be776b",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "7d0a234d69f100fc0f6059c7636d16d1ea86e125e71bc19539561846b6c7fe87",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "night_of_the_skys_unveiling",
+        "carryCharacterId": "ineffa",
+        "composedTargetSha256": "63cebdecd5499e8ce14dca181a19756c301c36e444da8804ff2bdda84a963ba3",
+        "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "982717a9f81dca7950101added70c90d5de468d7310cbe7ca1ef1d3361a5938e",
+        "generatorInvocationOrdinal": 4,
+        "nodeId": "node-04:ineffa:guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "recordLocalSourceClassification": "alternative",
+        "sequence": 3,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "f693d6c4740a3294dfc3eae0f43c21461c1dd8d3cb73df0d834d5a58a0e30cee",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "night_of_the_skys_unveiling",
+            "characterId": "keqing",
+            "observationSha256": "1ed66cc93080d8ae3863ef037e93c83e4ede836275e2689e9e3378fdf7b9896c",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "7d0a234d69f100fc0f6059c7636d16d1ea86e125e71bc19539561846b6c7fe87",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "marechaussee_hunter",
+        "carryCharacterId": "furina",
+        "composedTargetSha256": "c9f62f5d7c0234bd586fc5f9df8d5c0837aa6e4ea2dc6252603b0d37e3a42ede",
+        "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "a18dcbdbc72e58fe516a48f8630ddb4369bb0836db2c9a079ab9f0474cfbd4d8",
+        "generatorInvocationOrdinal": 5,
+        "nodeId": "node-05:furina:guide-factory:keqing-lunar:marechaussee-hunter",
+        "recordLocalSourceClassification": "default",
+        "sequence": 4,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "604c4b8379269c14e8738650542bb7a0047b948f849fa63269361cc7b87ad11c",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "marechaussee_hunter",
+            "characterId": "keqing",
+            "observationSha256": "f968e2f0b524863918fea404d5b6e5258437e6381cb90cec6e413276e6be776b",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "7d0a234d69f100fc0f6059c7636d16d1ea86e125e71bc19539561846b6c7fe87",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "night_of_the_skys_unveiling",
+        "carryCharacterId": "furina",
+        "composedTargetSha256": "63cebdecd5499e8ce14dca181a19756c301c36e444da8804ff2bdda84a963ba3",
+        "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "e4d5bc7611f45c077a9e09b87354458b191fcfeca5f12f929d0fddde65a6defa",
+        "generatorInvocationOrdinal": 6,
+        "nodeId": "node-06:furina:guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "recordLocalSourceClassification": "alternative",
+        "sequence": 5,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "604c4b8379269c14e8738650542bb7a0047b948f849fa63269361cc7b87ad11c",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "night_of_the_skys_unveiling",
+            "characterId": "keqing",
+            "observationSha256": "1ed66cc93080d8ae3863ef037e93c83e4ede836275e2689e9e3378fdf7b9896c",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "7d0a234d69f100fc0f6059c7636d16d1ea86e125e71bc19539561846b6c7fe87",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "marechaussee_hunter",
+        "carryCharacterId": "xilonen",
+        "composedTargetSha256": "c9f62f5d7c0234bd586fc5f9df8d5c0837aa6e4ea2dc6252603b0d37e3a42ede",
+        "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "357f524875ea96e6e42ed71d45b9cce60462744443ce42db061892e9dc65bd2e",
+        "generatorInvocationOrdinal": 7,
+        "nodeId": "node-07:xilonen:guide-factory:keqing-lunar:marechaussee-hunter",
+        "recordLocalSourceClassification": "default",
+        "sequence": 6,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "f693d6c4740a3294dfc3eae0f43c21461c1dd8d3cb73df0d834d5a58a0e30cee",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "marechaussee_hunter",
+            "characterId": "keqing",
+            "observationSha256": "f968e2f0b524863918fea404d5b6e5258437e6381cb90cec6e413276e6be776b",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "eba2ce27075904e2b3c513e13af6fd2db81138e78dd54125a2b703df4b745edb",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      },
+      {
+        "artifactSetId": "night_of_the_skys_unveiling",
+        "carryCharacterId": "xilonen",
+        "composedTargetSha256": "63cebdecd5499e8ce14dca181a19756c301c36e444da8804ff2bdda84a963ba3",
+        "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "crossRecordOrdering": "none",
+        "generatedArtifactsSha256": "1796f8670e623ab149931d6aead9bb6414ce7508cfd364a03a36c42a2e592026",
+        "generatorInvocationOrdinal": 8,
+        "nodeId": "node-08:xilonen:guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+        "recordLocalSourceClassification": "alternative",
+        "sequence": 7,
+        "sourceAuthored": false,
+        "validationTargetObservations": [
+          {
+            "artifactSetId": "golden_troupe",
+            "characterId": "furina",
+            "observationSha256": "f693d6c4740a3294dfc3eae0f43c21461c1dd8d3cb73df0d834d5a58a0e30cee",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "BQAI0BO",
+              "characterGuideId": "genshintools-presets:character-guide:furina",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "aubade_of_morningstar_and_moon",
+            "characterId": "ineffa",
+            "observationSha256": "3c1caf5d67dec21ef0f4ba9819ef4dc940bb5f0af7ae648ccae48c61b84cfb05",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "FeFiQU8",
+              "characterGuideId": "genshintools-presets:character-guide:ineffa",
+              "kind": "repository-build"
+            }
+          },
+          {
+            "artifactSetId": "night_of_the_skys_unveiling",
+            "characterId": "keqing",
+            "observationSha256": "1ed66cc93080d8ae3863ef037e93c83e4ede836275e2689e9e3378fdf7b9896c",
+            "validationTargetProvenance": {
+              "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+              "equipmentClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0"
+              ],
+              "kind": "composed-source-claims",
+              "matchedStatClaimIds": {
+                "circlet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0"
+                ],
+                "goblet": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1"
+                ],
+                "sands": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0"
+                ],
+                "substats": [
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+                  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2"
+                ]
+              },
+              "repositoryRecordIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+                "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+                "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+              ],
+              "sourceAuthored": false,
+              "sourcePriorityGroups": [
+                [
+                  "cr",
+                  "cd"
+                ],
+                [
+                  "atk%"
+                ],
+                [
+                  "em"
+                ]
+              ],
+              "withheldStatClaimIds": [
+                "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+              ]
+            }
+          },
+          {
+            "artifactSetId": "scroll_of_the_hero_of_cinder_city",
+            "characterId": "xilonen",
+            "observationSha256": "eba2ce27075904e2b3c513e13af6fd2db81138e78dd54125a2b703df4b745edb",
+            "validationTargetProvenance": {
+              "buildSourceRecordId": "Dbt0Wkm",
+              "characterGuideId": "genshintools-presets:character-guide:xilonen",
+              "kind": "repository-build"
+            }
+          }
+        ]
+      }
+    ],
+    "status": "complete-structurally"
+  },
+  "matrixStatus": "comparable",
+  "numericalDamageRetained": false,
+  "originLedger": {
+    "calcContext": {
+      "appliedForInternalGeneratorExecution": true,
+      "origin": "guide-factory-experiment-policy",
+      "value": {
+        "enemyLevel": 110,
+        "enemyRes": 0.1,
+        "rollMultiplier": 0.85,
+        "substatBudget": "8_6"
+      }
+    },
+    "canonicalCompositionContract": {
+      "contractTechnicalExecutionAuthorized": false,
+      "crossRecordOrdering": "none",
+      "guideFactoryAuthoredCompositionCount": 2,
+      "origin": "rebuilt-checkpoint-18-contract",
+      "sha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f",
+      "sourceAuthoredCompositionCount": 0
+    },
+    "carryRoster": {
+      "characterIds": [
+        "keqing",
+        "ineffa",
+        "furina",
+        "xilonen"
+      ],
+      "impliesCharacterOrdering": false,
+      "origin": "guide-factory-experiment-policy"
+    },
+    "energyRecovery": {
+      "computationExecuted": false,
+      "floorOrAdequacyClaim": false,
+      "repositoryTargetsMayContainSourceRecordedKeys": true,
+      "sequenceUsed": false,
+      "thresholdsUsed": false
+    },
+    "fixtureAssumptions": {
+      "artifactAssignmentsOverriddenByMatrixNodes": true,
+      "assumptions": [
+        {
+          "characterId": "keqing",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "mistsplitter_reforged",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "ineffa",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "fractured_halo",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "splendor_of_tranquil_waters",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "xilonen",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "peak_patrol_song",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        }
+      ],
+      "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+      "nonArtifactFieldsAppliedForInternalGeneratorExecution": true,
+      "origin": "guide-factory-formula-fixture-assumptions",
+      "selectedArtifactFieldsApplied": false,
+      "selectedArtifactFieldsRetainedAsSeedProvenanceOnly": true,
+      "sourceAuthored": false
+    },
+    "r1ExperimentPolicy": {
+      "appliedForInternalGeneratorExecution": true,
+      "characterRefinements": [
+        {
+          "characterId": "keqing",
+          "experimentRefinement": 1
+        },
+        {
+          "characterId": "ineffa",
+          "experimentRefinement": 1
+        },
+        {
+          "characterId": "furina",
+          "experimentRefinement": 1
+        },
+        {
+          "characterId": "xilonen",
+          "experimentRefinement": 1
+        }
+      ],
+      "origin": "guide-factory-experiment-policy",
+      "sourceAuthored": false
+    },
+    "sourceClaimTargets": {
+      "conditionResolutionOrigin": "guide-factory-exact-team-facts-wrapper",
+      "excludedClaimIds": [
+        "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0"
+      ],
+      "keqingStatTarget": {
+        "circlet": [
+          "cd"
+        ],
+        "energyRecoveryFree": true,
+        "goblet": [
+          "electro%",
+          "atk%"
+        ],
+        "sands": [
+          "atk%"
+        ],
+        "sourcePriorityGroups": [
+          [
+            "cr",
+            "cd"
+          ],
+          [
+            "atk%"
+          ],
+          [
+            "em"
+          ]
+        ],
+        "substats": [
+          "cr",
+          "cd",
+          "atk%",
+          "em"
+        ],
+        "usedAsGeneratorConstraint": false,
+        "usedAsScoringWeight": false,
+        "usedOnlyForPostGenerationObservation": true,
+        "withheldClaimIds": [
+          "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1"
+        ]
+      },
+      "origin": "authenticated-canonical-composition-claims",
+      "sourceAuthored": false,
+      "targets": [
+        {
+          "artifactSetId": "marechaussee_hunter",
+          "compositionId": "guide-factory:keqing-lunar:marechaussee-hunter",
+          "recordLocalSourceClassification": "default",
+          "targetSha256": "c9f62f5d7c0234bd586fc5f9df8d5c0837aa6e4ea2dc6252603b0d37e3a42ede"
+        },
+        {
+          "artifactSetId": "night_of_the_skys_unveiling",
+          "compositionId": "guide-factory:keqing-lunar:night-of-the-skys-unveiling-one-nod-krai",
+          "recordLocalSourceClassification": "alternative",
+          "targetSha256": "63cebdecd5499e8ce14dca181a19756c301c36e444da8804ff2bdda84a963ba3"
+        }
+      ]
+    },
+    "teammateEquipment": {
+      "members": [
+        {
+          "artifact": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "buildSourceRecordId": "FeFiQU8",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "characterId": "ineffa",
+          "guideSourceRefs": [
+            {
+              "locator": {
+                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "recordId": "ineffa"
+              },
+              "sourceId": "genshintools-presets",
+              "sourceRecordId": "ineffa"
+            }
+          ],
+          "guideStatus": "baseline",
+          "weaponId": "fractured_halo"
+        },
+        {
+          "artifact": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "buildSourceRecordId": "BQAI0BO",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "characterId": "furina",
+          "guideSourceRefs": [
+            {
+              "locator": {
+                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "recordId": "furina"
+              },
+              "sourceId": "genshintools-presets",
+              "sourceRecordId": "furina"
+            }
+          ],
+          "guideStatus": "baseline",
+          "weaponId": "splendor_of_tranquil_waters"
+        },
+        {
+          "artifact": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "buildSourceRecordId": "Dbt0Wkm",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "characterId": "xilonen",
+          "guideSourceRefs": [
+            {
+              "locator": {
+                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "recordId": "xilonen"
+              },
+              "sourceId": "genshintools-presets",
+              "sourceRecordId": "xilonen"
+            }
+          ],
+          "guideStatus": "baseline",
+          "weaponId": "peak_patrol_song"
+        }
+      ],
+      "origin": "guide-factory-experiment-policy-from-validated-fixture",
+      "repositoryStatTargetsUsedAsGeneratorConstraint": false,
+      "repositoryStatTargetsUsedAsScoringWeight": false,
+      "repositoryStatTargetsUsedOnlyForPostGenerationObservation": true,
+      "sourceAuthoredForExactTeam": false,
+      "weaponAndArtifactAssignmentsAppliedForInternalGeneratorExecution": true
+    },
+    "unreviewedFormulaLines": {
+      "appliedForInternalGeneratorObjective": true,
+      "evaluatedObjectiveValueRetained": false,
+      "lines": [
+        {
+          "characterId": "furina",
+          "count": 1,
+          "formulaId": "furina-burst",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "furina",
+          "count": 1,
+          "formulaId": "furina-skill-bubble",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "ineffa",
+          "count": 1,
+          "formulaId": "ineffa-burst",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "ineffa",
+          "count": 1,
+          "formulaId": "ineffa-skill-initial",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "keqing",
+          "count": 1,
+          "formulaId": "keqing-burst",
+          "relation": "matches",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "keqing",
+          "count": 8,
+          "formulaId": "keqing-charged",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "partial"
+        },
+        {
+          "characterId": "keqing",
+          "count": 2,
+          "formulaId": "keqing-skill-slash",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "keqing",
+          "count": 2,
+          "formulaId": "keqing-stiletto",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 2,
+          "formulaId": "xilonen-e-rush",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 2,
+          "formulaId": "xilonen-normal-2",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 1,
+          "formulaId": "xilonen-q-initial",
+          "relation": "source-translation-higher",
+          "sourceTokenCoverage": "complete"
+        }
+      ],
+      "origin": "guide-factory-authored-source-translation",
+      "reviewStatus": "unreviewed",
+      "sourceBindingEstablished": false
+    }
+  },
+  "prevalidation": {
+    "candidateEnvelopeCount": 2,
+    "canonicalComposedTargetCount": 2,
+    "generatorInvoked": false,
+    "noRunRuntimeReadyCandidateCount": 2,
+    "status": "passed",
+    "temporaryTeamBuildCount": 2,
+    "validationTargetCountPerCandidate": 4
+  },
+  "prohibitedInterpretations": [
+    "source-authored-build",
+    "artifact-set-comparison",
+    "damage-comparison",
+    "cross-node-objective-comparison",
+    "candidate-ranking",
+    "winner",
+    "artifact-recommendation",
+    "stat-recommendation",
+    "energy-requirement",
+    "ideal-stat-rolls"
+  ],
+  "schemaVersion": 1,
+  "scoreRetained": false,
+  "supportsArtifactRecommendations": false,
+  "supportsArtifactSetComparison": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsSourceAuthoredBuildClaims": false,
+  "supportsStatRecommendations": false,
+  "supportsWinnerClaims": false,
+  "winnerSelected": false
+}

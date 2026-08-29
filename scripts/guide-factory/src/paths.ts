@@ -161,3 +161,9 @@ export const KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_REPORT_PATH =
     "reports",
     "keqing-lunar-cross-record-composition-contract.json"
   );
+export const KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-lunar-cross-record-technical-matrix.json"
+  );
