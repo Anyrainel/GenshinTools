@@ -16,6 +16,15 @@
     {
       "files": [
         {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+          "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
+        }
+      ],
+      "sourceId": "kqm"
+    },
+    {
+      "files": [
+        {
           "path": "scripts/team_comps_research.json",
           "sha256": "630cf1bb48c0334454848da1922a5cc7bf91ba818b199f65ad7aabeb3c967d4d"
         }
@@ -18374,6 +18383,573 @@
       ]
     },
     {
+      "builds": [],
+      "characterId": "diona",
+      "id": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "noblesse_oblige",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [
+                "The damage dealer scales with ATK and no other teammate holds this set."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "scroll_of_the_hero_of_cinder_city",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "alternative",
+              "conditions": [
+                "Teammates value Elemental DMG buffs."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "song_of_days_past",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "alternative",
+              "conditions": [
+                "Another teammate can hold Noblesse Oblige."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "tenacity_of_the_millelith",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "The team triggers Stellar-Conduct or Superconduct and another teammate can hold Noblesse Oblige."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "deepwood_memories",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "The team deals Dendro or Bloom-related damage."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "instructor",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "The team values EM and can accept weaker shielding and healing."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "id": "support-artifact-sets",
+          "label": "Support artifact sets",
+          "roles": [
+            "support",
+            "sustain"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/diona-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "diona-support-artifact-sets-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "quantitative artifact performance",
+        "team-specific artifact assignment",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "diona",
+      "id": "kqm:character-guide:diona-support-artifact-stats-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "support-artifact-stats",
+          "label": "Support artifact stats",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [],
+                "priority": 1,
+                "statIds": [
+                  "hp%"
+                ]
+              },
+              {
+                "conditions": [],
+                "priority": 2,
+                "statIds": [
+                  "heal%"
+                ]
+              },
+              {
+                "conditions": [
+                  "Diona uses Favonius Warbow."
+                ],
+                "priority": 2,
+                "statIds": [
+                  "cr"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [],
+                "statIds": [
+                  "hp%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [],
+                "statIds": [
+                  "hp%",
+                  "er"
+                ]
+              }
+            ]
+          },
+          "roles": [
+            "support",
+            "sustain"
+          ],
+          "scope": "artifact-stats",
+          "substats": [
+            {
+              "conditions": [],
+              "priority": 1,
+              "statIds": [
+                "er"
+              ],
+              "target": "until the scenario-specific ER requirement"
+            },
+            {
+              "conditions": [],
+              "priority": 2,
+              "statIds": [
+                "hp%"
+              ]
+            },
+            {
+              "conditions": [
+                "Diona uses Favonius Warbow."
+              ],
+              "priority": 3,
+              "statIds": [
+                "cr"
+              ]
+            },
+            {
+              "conditions": [],
+              "priority": 4,
+              "statIds": [
+                "hp"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Stats",
+            "url": "https://keqingmains.com/q/diona-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "diona-support-artifact-stats-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "numeric stat weights",
+        "scenario-specific ER target",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "diona",
+      "id": "kqm:character-guide:diona-support-weapons-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "support-weapons",
+          "label": "Support weapons",
+          "roles": [
+            "support",
+            "sustain"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "default",
+              "conditions": [],
+              "grouping": "single",
+              "weaponIds": [
+                "favonius_warbow"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "The team values Cryo batterying or Diona can appear twice per rotation."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "sacrificial_bow"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "The team benefits from its buffs and can tolerate variable passive uptime."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "elegy_for_the_end"
+              ]
+            },
+            {
+              "classification": "available-only",
+              "conditions": [
+                "The weapon is already owned and maximizing Diona's HP is valuable."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "silvershower_heartstrings"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Maximizing shield strength and healing is more important than team energy."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "recurve_bow"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/diona-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "diona-support-weapons-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "quantitative weapon performance",
+        "refinement assumptions outside the ER table",
+        "team-specific weapon choice",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "characterId": "diona",
+      "constellation": 6,
+      "id": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
+      "kind": "energy_guidance",
+      "promotionEligible": false,
+      "rotation": {
+        "assumptions": [],
+        "durationSeconds": 20,
+        "id": "erc-6.7-mavuika",
+        "label": "KQM ERC 6.7 Mavuika rotation",
+        "notation": "Mavuika E > Bennett E N1 > Diona hEQ > Bennett Q > Citlali EQ N2 > Mavuika Q combo",
+        "unresolvedSegments": [
+          "Mavuika Q combo"
+        ]
+      },
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > ER Requirements > Mavuika / Gaming - Citlali - Bennett",
+            "url": "https://keqingmains.com/q/diona-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-er"
+        },
+        {
+          "locator": {
+            "heading": "Diona ER calculations, Version 6.7; Mavuika / Citlali / Bennett row 38; C1+ columns M/N/O",
+            "url": "https://docs.google.com/spreadsheets/d/1P-Tdu87f4Fse0ZilB0wcV2Y7baHCw7uFN5BBvPC3cro/edit?gid=23487323"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-er"
+        }
+      ],
+      "status": "candidate",
+      "targets": [
+        {
+          "assumptions": [
+            "safe particle RNG",
+            "default enemy particles",
+            "the linked ER calculations are labeled Version 6.7"
+          ],
+          "conditions": [
+            "C6 Diona uses Sacrificial Bow."
+          ],
+          "maxPercent": 180,
+          "minPercent": 170,
+          "supportingCalculationPercent": 169.6153645425604,
+          "supportingDisplayedPercent": 170,
+          "weapon": {
+            "type": "specific",
+            "weaponIds": [
+              "sacrificial_bow"
+            ]
+          }
+        },
+        {
+          "assumptions": [
+            "safe particle RNG",
+            "default enemy particles",
+            "the linked ER calculations are labeled Version 6.7"
+          ],
+          "conditions": [
+            "C6 Diona uses Favonius Warbow."
+          ],
+          "maxPercent": 200,
+          "minPercent": 190,
+          "supportingCalculationPercent": 192.1826030394418,
+          "supportingDisplayedPercent": 192,
+          "weapon": {
+            "type": "specific",
+            "weaponIds": [
+              "favonius_warbow"
+            ]
+          }
+        },
+        {
+          "assumptions": [
+            "safe particle RNG",
+            "default enemy particles",
+            "the linked ER calculations are labeled Version 6.7"
+          ],
+          "conditions": [
+            "C6 Diona uses another Bow."
+          ],
+          "maxPercent": 240,
+          "minPercent": 230,
+          "supportingCalculationPercent": 233.6280641219179,
+          "supportingDisplayedPercent": 234,
+          "weapon": {
+            "excludedWeaponIds": [
+              "sacrificial_bow",
+              "favonius_warbow"
+            ],
+            "type": "category",
+            "weaponType": "Bow"
+          }
+        }
+      ],
+      "teamContext": {
+        "oneOfCharacterIds": [],
+        "requiredCharacterIds": [
+          "mavuika",
+          "citlali",
+          "bennett"
+        ]
+      },
+      "unknowns": [
+        "action-to-energy-event expansion for the source rotation",
+        "Gaming rotation and target details are outside this sample",
+        "weapon refinements",
+        "particle funneling details beyond the linked sheet",
+        "whether the Luna VIII guide still endorses every Version 6.7 calculation input",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+      "intent": "example",
+      "kind": "team",
+      "label": "C6 Diona - Mavuika - Citlali - Bennett",
+      "members": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "song_of_days_past",
+                  "type": "4pc"
+                },
+                {
+                  "setId": "noblesse_oblige",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "recommended",
+              "conditions": [
+                "Diona uses a support build in this team."
+              ],
+              "grouping": "alternatives"
+            }
+          ],
+          "characterId": "diona",
+          "investment": {
+            "constellation": 6,
+            "status": "partial"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "mavuika",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "scroll_of_the_hero_of_cinder_city",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "recommended",
+              "conditions": [
+                "Citlali uses a support build in this team."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "characterId": "citlali",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "noblesse_oblige",
+                  "type": "4pc"
+                },
+                {
+                  "setId": "instructor",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "recommended",
+              "conditions": [
+                "Bennett uses a support build in this team."
+              ],
+              "grouping": "alternatives"
+            }
+          ],
+          "characterId": "bennett",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "melt"
+      ],
+      "rotations": [
+        {
+          "assumptions": [],
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "Mavuika E > Bennett E N1 > Diona hEQ > Bennett Q > Citlali EQ N2 > Mavuika Q combo",
+          "unresolvedSegments": [
+            "Mavuika Q combo"
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Forward Melt > Example Teams > C6 Diona - Mavuika - Citlali - Bennett",
+            "url": "https://keqingmains.com/q/diona-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "Mavuika Q combo expansion",
+        "formula counts for every action",
+        "weapon and refinement choices",
+        "constellations for Mavuika, Citlali, and Bennett",
+        "rotation duration",
+        "enemy scenario",
+        "coordinated Noblesse Oblige assignment",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
       "damagePlans": [],
       "id": "legacy-team-research:team:team-046fd2f1a324",
       "kind": "team",
@@ -30085,5 +30661,5 @@
     }
   ],
   "schemaVersion": 1,
-  "sourceRegistrySha256": "6b36ae6e32122e6c05ef5fde8f212212460db9c7cc1ddbfe0d00e285dda2abf7"
+  "sourceRegistrySha256": "f3fa98fb544022230cc128cf591e65cb80e0e4eeb3c4ce6b29e894fbdcd67de7"
 }

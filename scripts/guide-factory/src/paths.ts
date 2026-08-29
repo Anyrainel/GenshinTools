@@ -43,9 +43,25 @@ export const LEGACY_SNAPSHOT_PATH = path.join(
   "source-snapshots",
   "legacy-team-research.json"
 );
+export const KQM_MANUAL_SNAPSHOT_PATH = path.join(
+  FACTORY_ROOT,
+  "data",
+  "source-snapshots",
+  "kqm-diona-manual.json"
+);
 export const KNOWLEDGE_REPOSITORY_PATH = path.join(
   FACTORY_ROOT,
   "data",
   "knowledge",
   "repository.json"
+);
+export const DIONA_COMPARISON_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "kqm-diona-comparison.json"
+);
+export const DIONA_ER_CALIBRATION_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "kqm-diona-er-calibration.json"
 );

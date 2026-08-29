@@ -1,0 +1,287 @@
+{
+  "engineInputs": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "feee7d62d16cd1da566c2dd9f5338f1cb800baa6e049f9e23bb007ab0c385ea0"
+    },
+    {
+      "path": "scripts/guide-factory/src/dionaErCalibration.ts",
+      "sha256": "0d08d4f96ec2dbfb3f95742dd34c1b2683127c517d924bdf19dd03e46abc821f"
+    },
+    {
+      "path": "src/data/ercalc/particles.json",
+      "sha256": "969c9d84d000f545e792ae35b557e3eeabfc1a51753f5ffd1adb9deaff217fe6"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-fontaine.json",
+      "sha256": "a2d5c082d6ba7f8b1d8f3189f88c1ea4a52894969a44bb11c89783f56c0d2495"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-inazuma.json",
+      "sha256": "59c37973382ae9d8e5f0bc3fc5eeb65f3e57cfe2e9db8b9050c4313c25cca53d"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-liyue.json",
+      "sha256": "f564c4c12a4f3d642e67c0593d31f6c7fe30ccb468d24070253c696beebc85da"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-mondstadt.json",
+      "sha256": "8bc322f54b8cc6873d67695930d3ecbfa35c4e083ba449bd118a2d93a44d1bf1"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-natlan.json",
+      "sha256": "3415bdf635893e66da1bd060581c3a26482b563536e8ff378a9c16100daca0b4"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-nod-krai.json",
+      "sha256": "8fac916ca6b7e3a06f02e2076d5f3844700958a9a7ea349fd54ea0d86f87046a"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-none.json",
+      "sha256": "e2ce939329d46c16f1d5f610a37a523cd7e200b9c5327494019dbcb8fcabc71d"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-snezhnaya.json",
+      "sha256": "0ef6cde9aae2de439b6edcd76120f67a2ade7b9b0756977102ce8c462518d4e3"
+    },
+    {
+      "path": "src/data/ercalc/selfEnergy-sumeru.json",
+      "sha256": "48f9e53f63db45e44984b0d1fc2f29ff41f7fdcf6c377fe11ab7b9a63c4431e3"
+    },
+    {
+      "path": "src/lib/ercalc/artifactEnergy.ts",
+      "sha256": "a141339cbef85b0368c7fad6b6eba29741837217f3da5761f63710fccf17ac5f"
+    },
+    {
+      "path": "src/lib/ercalc/constants.ts",
+      "sha256": "b5816d0732e77fc02ab194db4cbc4fe05055c4cda566cc6fc154ae396adb3cde"
+    },
+    {
+      "path": "src/lib/ercalc/erCalculator.ts",
+      "sha256": "897447ca107cdfc93a2a3fe4e8cb92395cc5723e8eb6ad5d41cb287233f7ddf6"
+    },
+    {
+      "path": "src/lib/ercalc/types.ts",
+      "sha256": "f47b89426633e414e846a1d61af745d4c89cf2573919fea69c0335f59c05a7aa"
+    },
+    {
+      "path": "src/lib/ercalc/utils.ts",
+      "sha256": "f17fa958d5774e9b8921228a49c411a07ecc62d22ad2cae05f18eb894910040f"
+    },
+    {
+      "path": "src/lib/ercalc/weaponEnergy.ts",
+      "sha256": "16817bc77b75423fb8a959659d71ae3146453783e1c22def1103c485fdfae6dd"
+    }
+  ],
+  "engineScenario": {
+    "ordinalDurationSeconds": 11.5,
+    "team": [
+      {
+        "burstCost": 0,
+        "constellation": 0,
+        "element": "Pyro",
+        "id": "mavuika",
+        "weaponType": "Claymore"
+      },
+      {
+        "burstCost": 60,
+        "constellation": 0,
+        "element": "Pyro",
+        "id": "bennett",
+        "weaponType": "Sword"
+      },
+      {
+        "burstCost": 80,
+        "constellation": 6,
+        "element": "Cryo",
+        "id": "diona",
+        "refinement": 0,
+        "weaponId": "favonius_warbow",
+        "weaponType": "Bow"
+      },
+      {
+        "burstCost": 60,
+        "constellation": 0,
+        "element": "Cryo",
+        "id": "citlali",
+        "weaponType": "Catalyst"
+      }
+    ],
+    "timeline": {
+      "actions": [
+        {
+          "action": "E",
+          "char": "mavuika"
+        },
+        {
+          "action": "E",
+          "char": "bennett"
+        },
+        {
+          "action": "NA",
+          "char": "bennett"
+        },
+        {
+          "action": "holdE",
+          "char": "diona",
+          "favoniusProc": true
+        },
+        {
+          "action": "Q",
+          "char": "diona"
+        },
+        {
+          "action": "Q",
+          "char": "bennett"
+        },
+        {
+          "action": "E",
+          "char": "citlali"
+        },
+        {
+          "action": "Q",
+          "char": "citlali"
+        },
+        {
+          "action": "NA",
+          "char": "citlali"
+        },
+        {
+          "action": "NA",
+          "char": "citlali"
+        },
+        {
+          "action": "Q",
+          "char": "mavuika"
+        }
+      ],
+      "periodic": []
+    },
+    "unmodeledSourceDurationSeconds": 8.5
+  },
+  "fixtureId": "kqm-diona-favonius-er-v1",
+  "normalizationDecisions": {
+    "actionMapping": [
+      {
+        "engineActions": [
+          "E"
+        ],
+        "sourceSegment": "Mavuika E"
+      },
+      {
+        "engineActions": [
+          "E",
+          "NA"
+        ],
+        "sourceSegment": "Bennett E N1"
+      },
+      {
+        "engineActions": [
+          "holdE",
+          "Q"
+        ],
+        "sourceSegment": "Diona hEQ"
+      },
+      {
+        "engineActions": [
+          "Q"
+        ],
+        "sourceSegment": "Bennett Q"
+      },
+      {
+        "engineActions": [
+          "E",
+          "Q",
+          "NA",
+          "NA"
+        ],
+        "sourceSegment": "Citlali EQ N2"
+      },
+      {
+        "engineActions": [
+          "Q",
+          "combo unresolved"
+        ],
+        "sourceSegment": "Mavuika Q combo"
+      }
+    ],
+    "calcMode": "full-energy-repeat",
+    "dionaWeapon": {
+      "id": "favonius_warbow",
+      "refinementEncoding": 0
+    },
+    "enemyDrops": 0,
+    "favoniusCooldownTreatment": "explicit-proc-not-engine-validated",
+    "favoniusProcs": [
+      {
+        "actionIndex": 3,
+        "count": 1
+      }
+    ],
+    "periodicProcs": 0,
+    "sourceAssumptionsImplemented": [],
+    "sourceAssumptionsNotImplemented": [
+      "safe particle RNG",
+      "default enemy particles"
+    ],
+    "unspecifiedTeammateConstellations": 0
+  },
+  "outputs": [
+    {
+      "diona": {
+        "bindingQIndex": 4,
+        "deltaFromSupportingCalculation": 15.153920086555672,
+        "energyAt100": {
+          "flat": 15,
+          "particles": 31.35,
+          "scalable": 0
+        },
+        "erPercent": 207.33652312599747,
+        "hasQ": true,
+        "matchesSupportingCalculation": false,
+        "withinPageBand": false
+      },
+      "particleMode": "expected"
+    },
+    {
+      "diona": {
+        "bindingQIndex": 4,
+        "deltaFromSupportingCalculation": -5.400993844039078,
+        "energyAt100": {
+          "flat": 15,
+          "particles": 34.8,
+          "scalable": 0
+        },
+        "erPercent": 186.78160919540272,
+        "hasQ": true,
+        "matchesSupportingCalculation": false,
+        "withinPageBand": false
+      },
+      "particleMode": "max"
+    }
+  ],
+  "promotionEligible": false,
+  "schemaVersion": 1,
+  "source": {
+    "durationSeconds": 20,
+    "knowledgeRecordId": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
+    "pageBandPercent": [
+      190,
+      200
+    ],
+    "rotation": "Mavuika E > Bennett E N1 > Diona hEQ > Bennett Q > Citlali EQ N2 > Mavuika Q combo",
+    "supportingCalculationPercent": 192.1826030394418,
+    "supportingDisplayedPercent": 192,
+    "supportingSheetCell": "N38"
+  },
+  "status": "assumption-incomplete",
+  "unresolved": [
+    "mathematical meaning of safe particle RNG",
+    "event-model meaning and timing of default enemy particles",
+    "whether one Favonius proc is guaranteed for the source target",
+    "constellations of Mavuika, Bennett, and Citlali",
+    "whether the raw sheet value or rounded page band is the eventual acceptance target",
+    "energy-relevant expansion and duration of Mavuika Q combo",
+    "engine validation of Favonius cooldown across the 20-second source rotation"
+  ]
+}

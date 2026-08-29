@@ -34,13 +34,14 @@
       "name": "KeqingMains guides and Theorycrafting Library",
       "homepage": "https://keqingmains.com/",
       "kind": "editorial",
-      "status": "planned",
+      "status": "active",
       "ingestionMode": "manual-observation",
       "permission": "unknown",
       "recordFormat": "manual-observation-v1",
       "checkedAt": "2026-08-28",
       "notes": [
-        "Capture narrow attributed observations and disclosed assumptions; do not mirror guide prose or authored target collections."
+        "Capture only narrow attributed observations with an exact page and heading; do not mirror guides, images, translations, or authored target collections.",
+        "KQM requests that content using a guide as a reference link the original, but no broad republication license was found."
       ]
     },
     {
@@ -68,7 +69,8 @@
       "recordFormat": "manual-observation-v1",
       "checkedAt": "2026-08-28",
       "notes": [
-        "Technically structured, but no reusable public data contract has been established."
+        "Technically structured, but no reusable public data contract or license has been established.",
+        "The undocumented page payload has no per-record upstream citations, so it remains a manual cross-check or link-out until written permission is obtained."
       ]
     },
     {

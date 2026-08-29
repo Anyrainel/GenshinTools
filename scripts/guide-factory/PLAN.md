@@ -30,8 +30,9 @@ Questions to learn from real data:
   uncovered by the current GenshinTools baseline.
 - Require human review before a candidate becomes accepted knowledge.
 
-The consolidated schema is expected to change after the first external source
-is ingested and reviewed.
+The first external pilot has been ingested but not human-reviewed. It already
+forced separate energy-guidance records, explicit unranked lists, alternatives
+versus tied ranks, and example-team intent into the schema.
 
 ## 3. Build validation tooling
 
@@ -69,11 +70,15 @@ Candidate experiments, in increasing scope:
 Each experiment must emit intermediate results and discrepancies. Unexpected
 results are review cases, not automatic preset changes.
 
-Current progress: the offline bootstrap, formula-coverage gate, buff-override
-construction, and direct-versus-compiled replay have been exercised with a
-structural-only fixture. The next step is still experiment 1 with a
-human-reviewed combo and artifact stat sheets; the structural fixture is not an
-authored loadout target.
+Current progress: the offline bootstrap and direct-versus-compiled damage replay
+remain structural-only. The first external ER target now has an authored team,
+rotation, page band, formatted sheet value, and raw supporting calculation. A
+normalized probe produces 207.34% in expected-particle mode and 186.78% in
+max-particle mode, versus a raw sheet result of 192.1826030394418% (formatted
+as 192%). Neither result is a verdict because safe RNG, default enemy
+particles, and 8.5 seconds of rotation duration remain unresolved. The next
+iteration must resolve source-fidelity review and ER-model semantics before
+using this fixture as an acceptance test.
 
 ## 5. Derive guides only after the factory is credible
 
@@ -97,3 +102,15 @@ process have been explicitly accepted.
   evident;
 - a proposed consolidation rule would discard meaningful alternatives;
 - source licensing or permission is unclear before systematic extraction.
+
+Current owner questions from the Diona calibration fixture:
+
+- What should `safe particle RNG` mean in our event model?
+- What does the source's default enemy-particle assumption correspond to?
+- Should the Favonius proc be guaranteed, probabilistic, or user-configured?
+- Should unspecified teammate constellations remain unresolved instead of C0?
+- Should eventual acceptance target the raw sheet calculation, its formatted
+  cell, or the rounded page band?
+- Is leaving Mavuika's damage combo unexpanded valid for an energy-only replay?
+- How should Favonius cooldown feasibility be represented when source duration
+  exceeds the engine's currently expanded ordinal timeline?

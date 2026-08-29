@@ -58,6 +58,160 @@ export const WeightedStatSchema = z
   })
   .strict();
 
+const RecommendationClassificationSchema = z.enum([
+  "default",
+  "recommended",
+  "alternative",
+  "conditional",
+  "available-only",
+]);
+
+const RecommendationConditionsSchema = z.array(z.string().min(1)).default([]);
+const RecommendationGroupingSchema = z.enum([
+  "single",
+  "alternatives",
+  "tied",
+]);
+const RecommendationOrderingSchema = z.enum(["unranked", "ranked-groups"]);
+
+export const WeaponRecommendationSchema = z
+  .object({
+    weaponIds: z.array(IdSchema).min(1),
+    grouping: RecommendationGroupingSchema,
+    classification: RecommendationClassificationSchema,
+    conditions: RecommendationConditionsSchema,
+  })
+  .strict();
+
+export const ArtifactRecommendationSchema = z
+  .object({
+    artifacts: z.array(ArtifactChoiceSchema).min(1),
+    grouping: RecommendationGroupingSchema,
+    classification: RecommendationClassificationSchema,
+    conditions: RecommendationConditionsSchema,
+  })
+  .strict();
+
+export const OrdinalStatRecommendationSchema = z
+  .object({
+    statIds: z.array(IdSchema).min(1),
+    priority: z.number().int().positive().optional(),
+    conditions: RecommendationConditionsSchema,
+    target: z.string().min(1).optional(),
+  })
+  .strict();
+
+export const MainStatRecommendationsSchema = z
+  .object({
+    sands: z.array(OrdinalStatRecommendationSchema).min(1),
+    goblet: z.array(OrdinalStatRecommendationSchema).min(1),
+    circlet: z.array(OrdinalStatRecommendationSchema).min(1),
+  })
+  .strict();
+
+const ErWeaponConditionSchema = z.discriminatedUnion("type", [
+  z
+    .object({
+      type: z.literal("specific"),
+      weaponIds: z.array(IdSchema).min(1),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("category"),
+      weaponType: z.string().min(1),
+      excludedWeaponIds: z.array(IdSchema).default([]),
+    })
+    .strict(),
+]);
+
+export const ErTargetSchema = z
+  .object({
+    minPercent: z.number().finite().min(100),
+    maxPercent: z.number().finite().min(100),
+    supportingCalculationPercent: z.number().finite().min(100).optional(),
+    supportingDisplayedPercent: z.number().finite().min(100).optional(),
+    weapon: ErWeaponConditionSchema.optional(),
+    conditions: RecommendationConditionsSchema,
+    assumptions: z.array(z.string().min(1)).default([]),
+  })
+  .strict()
+  .refine((target) => target.maxPercent >= target.minPercent, {
+    message: "ER target maximum must not be lower than its minimum.",
+    path: ["maxPercent"],
+  })
+  .refine(
+    (target) =>
+      target.supportingDisplayedPercent == null ||
+      (target.supportingDisplayedPercent >= target.minPercent &&
+        target.supportingDisplayedPercent <= target.maxPercent),
+    {
+      message: "Supporting displayed ER must fall inside the public range.",
+      path: ["supportingDisplayedPercent"],
+    },
+  )
+  .refine(
+    (target) =>
+      target.supportingCalculationPercent == null ||
+      target.supportingDisplayedPercent == null ||
+      Math.round(target.supportingCalculationPercent) ===
+        target.supportingDisplayedPercent,
+    {
+      message:
+        "Supporting displayed ER must equal the rounded calculation value.",
+      path: ["supportingDisplayedPercent"],
+    },
+  );
+
+export const GuideBuildRecommendationSchema = z
+  .object({
+    id: IdSchema,
+    label: z.string().min(1).optional(),
+    scope: z.enum([
+      "weapons",
+      "artifact-sets",
+      "artifact-stats",
+      "energy",
+      "combined",
+    ]),
+    minConstellation: z.number().int().min(0).max(6).optional(),
+    roles: z.array(IdSchema).default([]),
+    weaponOrdering: RecommendationOrderingSchema.optional(),
+    weaponRecommendations: z
+      .array(WeaponRecommendationSchema)
+      .min(1)
+      .optional(),
+    artifactOrdering: RecommendationOrderingSchema.optional(),
+    artifactRecommendations: z
+      .array(ArtifactRecommendationSchema)
+      .min(1)
+      .optional(),
+    mainStats: MainStatRecommendationsSchema.optional(),
+    substats: z.array(OrdinalStatRecommendationSchema).min(1).optional(),
+    erTargets: z.array(ErTargetSchema).min(1).optional(),
+  })
+  .strict()
+  .refine(
+    (recommendation) =>
+      recommendation.weaponRecommendations != null ||
+      recommendation.artifactRecommendations != null ||
+      recommendation.mainStats != null ||
+      recommendation.substats != null ||
+      recommendation.erTargets != null,
+    { message: "A guide recommendation must contain at least one claim." }
+  );
+
+export const RotationObservationSchema = z
+  .object({
+    id: IdSchema,
+    label: z.string().min(1),
+    notation: z.string().min(1),
+    durationSeconds: z.number().finite().positive().optional(),
+    unresolvedSegments: z.array(z.string().min(1)).default([]),
+    assumptions: z.array(z.string().min(1)).default([]),
+  })
+  .strict();
+
 const SourceRevisionSchema = z
   .object({
     files: z
@@ -166,6 +320,113 @@ export const LegacyTeamSnapshotSchema = z
   })
   .strict();
 
+const ManualExtractionSchema = z.discriminatedUnion("reviewStatus", [
+  z
+    .object({
+      method: z.enum(["manual", "agent-assisted"]),
+      reviewStatus: z.literal("unreviewed"),
+    })
+    .strict(),
+  z
+    .object({
+      method: z.enum(["manual", "agent-assisted"]),
+      reviewStatus: z.literal("reviewed"),
+      reviewer: z.string().min(1),
+      reviewedAt: z.string().date(),
+    })
+    .strict(),
+]);
+
+const ManualTeamMemberSchema = z
+  .object({
+    characterId: IdSchema,
+    constellation: z.number().int().min(0).max(6).optional(),
+    weaponOrdering: RecommendationOrderingSchema.optional(),
+    weaponRecommendations: z.array(WeaponRecommendationSchema),
+    artifactOrdering: RecommendationOrderingSchema.optional(),
+    artifactRecommendations: z.array(ArtifactRecommendationSchema),
+    mainStats: MainStatRecommendationsSchema.optional(),
+    substats: z.array(OrdinalStatRecommendationSchema).optional(),
+    erTargets: z.array(ErTargetSchema),
+  })
+  .strict();
+
+const ManualCharacterGuideRecordSchema = z
+  .object({
+    kind: z.literal("character_guide"),
+    sourceRecordId: IdSchema,
+    locator: SourceLocatorSchema,
+    supportingLocators: z.array(SourceLocatorSchema).default([]),
+    extraction: ManualExtractionSchema,
+    characterId: IdSchema,
+    recommendation: GuideBuildRecommendationSchema,
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
+const ManualTeamRecordSchema = z
+  .object({
+    kind: z.literal("team"),
+    sourceRecordId: IdSchema,
+    locator: SourceLocatorSchema,
+    supportingLocators: z.array(SourceLocatorSchema).default([]),
+    extraction: ManualExtractionSchema,
+    label: z.string().min(1).optional(),
+    intent: z.enum(["example", "prescriptive"]),
+    exhaustiveness: z.enum(["non-exhaustive", "exhaustive", "unspecified"]),
+    rankingClaim: z.enum(["none", "ordered", "unordered"]),
+    members: z.array(ManualTeamMemberSchema).length(4),
+    reactions: z.array(IdSchema).optional(),
+    rotations: z.array(RotationObservationSchema),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
+const ManualEnergyGuidanceRecordSchema = z
+  .object({
+    kind: z.literal("energy_guidance"),
+    sourceRecordId: IdSchema,
+    locator: SourceLocatorSchema,
+    supportingLocators: z.array(SourceLocatorSchema).default([]),
+    extraction: ManualExtractionSchema,
+    characterId: IdSchema,
+    constellation: z.number().int().min(0).max(6).optional(),
+    teamContext: z
+      .object({
+        requiredCharacterIds: z.array(IdSchema),
+        oneOfCharacterIds: z.array(IdSchema),
+      })
+      .strict(),
+    targets: z.array(ErTargetSchema).min(1),
+    rotation: RotationObservationSchema.optional(),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
+export const ManualObservationRecordSchema = z.discriminatedUnion("kind", [
+  ManualCharacterGuideRecordSchema,
+  ManualTeamRecordSchema,
+  ManualEnergyGuidanceRecordSchema,
+]);
+
+export const ManualObservationSnapshotSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    sourceId: IdSchema,
+    capturedAt: z.string().date(),
+    page: z
+      .object({
+        title: z.string().min(1),
+        url: z.string().url(),
+        publisher: z.string().min(1),
+        sourceVersion: z.string().min(1).optional(),
+        attributionNote: z.string().min(1),
+      })
+      .strict(),
+    records: z.array(ManualObservationRecordSchema).min(1),
+  })
+  .strict();
+
 export const SourceManifestSchema = z
   .object({
     id: IdSchema,
@@ -230,6 +491,19 @@ const InvestmentSchema = z.discriminatedUnion("status", [
   z.object({ status: z.literal("unspecified") }).strict(),
   z
     .object({
+      status: z.literal("partial"),
+      constellation: z.number().int().min(0).max(6).optional(),
+      talentLevels: z
+        .tuple([
+          z.number().int().min(1),
+          z.number().int().min(1),
+          z.number().int().min(1),
+        ])
+        .optional(),
+    })
+    .strict(),
+  z
+    .object({
       status: z.literal("specified"),
       constellation: z.number().int().min(0).max(6),
       talentLevels: z.tuple([
@@ -273,7 +547,20 @@ const KnowledgeTeamMemberSchema = z
     investment: InvestmentSchema,
     selectedWeapon: SelectedWeaponSchema.nullable(),
     selectedArtifact: ArtifactChoiceSchema.nullable(),
+    weaponOrdering: RecommendationOrderingSchema.optional(),
+    weaponRecommendations: z
+      .array(WeaponRecommendationSchema)
+      .min(1)
+      .optional(),
+    artifactOrdering: RecommendationOrderingSchema.optional(),
+    artifactRecommendations: z
+      .array(ArtifactRecommendationSchema)
+      .min(1)
+      .optional(),
+    mainStats: MainStatRecommendationsSchema.optional(),
+    substats: z.array(OrdinalStatRecommendationSchema).min(1).optional(),
     erFloorPercent: z.number().finite().min(100).optional(),
+    erTargets: z.array(ErTargetSchema).min(1).optional(),
   })
   .strict();
 
@@ -290,10 +577,38 @@ export const KnowledgeTeamSchema = z
     id: IdSchema,
     kind: z.literal("team"),
     status: KnowledgeStatusSchema,
+    promotionEligible: z.boolean().optional(),
     label: z.string().min(1).optional(),
+    intent: z.enum(["example", "prescriptive"]).optional(),
+    exhaustiveness: z
+      .enum(["non-exhaustive", "exhaustive", "unspecified"])
+      .optional(),
+    rankingClaim: z.enum(["none", "ordered", "unordered"]).optional(),
     members: z.array(KnowledgeTeamMemberSchema).length(4),
     reactions: z.array(IdSchema).optional(),
     damagePlans: z.array(DamagePlanSchema),
+    rotations: z.array(RotationObservationSchema).optional(),
+    sourceRefs: z.array(SourceReferenceSchema).min(1),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
+export const KnowledgeEnergyGuidanceSchema = z
+  .object({
+    id: IdSchema,
+    kind: z.literal("energy_guidance"),
+    status: KnowledgeStatusSchema,
+    promotionEligible: z.boolean().optional(),
+    characterId: IdSchema,
+    constellation: z.number().int().min(0).max(6).optional(),
+    teamContext: z
+      .object({
+        requiredCharacterIds: z.array(IdSchema),
+        oneOfCharacterIds: z.array(IdSchema),
+      })
+      .strict(),
+    targets: z.array(ErTargetSchema).min(1),
+    rotation: RotationObservationSchema.optional(),
     sourceRefs: z.array(SourceReferenceSchema).min(1),
     unknowns: UnknownsSchema,
   })
@@ -304,9 +619,11 @@ export const KnowledgeCharacterGuideSchema = z
     id: IdSchema,
     kind: z.literal("character_guide"),
     status: KnowledgeStatusSchema,
+    promotionEligible: z.boolean().optional(),
     characterId: IdSchema,
     weaponOrder: z.array(IdSchema).optional(),
     builds: z.array(PresetBuildRecordSchema),
+    recommendations: z.array(GuideBuildRecommendationSchema).optional(),
     sourceRefs: z.array(SourceReferenceSchema).min(1),
     unknowns: UnknownsSchema,
   })
@@ -315,6 +632,7 @@ export const KnowledgeCharacterGuideSchema = z
 export const KnowledgeRecordSchema = z.discriminatedUnion("kind", [
   KnowledgeTeamSchema,
   KnowledgeCharacterGuideSchema,
+  KnowledgeEnergyGuidanceSchema,
 ]);
 
 export const KnowledgeRepositorySchema = z
@@ -349,6 +667,9 @@ export type KnowledgeRepository = z.infer<typeof KnowledgeRepositorySchema>;
 export type LegacyTeamSnapshot = z.infer<typeof LegacyTeamSnapshotSchema>;
 export type LegacyArtifactChoice = z.infer<
   typeof LegacyArtifactChoiceSchema
+>;
+export type ManualObservationSnapshot = z.infer<
+  typeof ManualObservationSnapshotSchema
 >;
 export type SourceLocator = z.infer<typeof SourceLocatorSchema>;
 export type SourceRegistry = z.infer<typeof SourceRegistrySchema>;

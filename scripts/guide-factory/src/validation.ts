@@ -13,6 +13,7 @@ import {
   GenshinToolsPresetSnapshotSchema,
   KnowledgeRepositorySchema,
   LegacyTeamSnapshotSchema,
+  ManualObservationSnapshotSchema,
   SourceRegistrySchema,
   type ArtifactChoice,
   type GenshinToolsPresetSnapshot,
@@ -20,6 +21,7 @@ import {
   type KnowledgeRepository,
   type LegacyArtifactChoice,
   type LegacyTeamSnapshot,
+  type ManualObservationSnapshot,
   type SourceLocator,
   type SourceRegistry,
 } from "./schemas";
@@ -41,7 +43,19 @@ export interface KnowledgeValidationContext {
   expectedSourceRegistrySha256?: string;
   genshinToolsSnapshot?: GenshinToolsPresetSnapshot;
   legacySnapshot?: LegacyTeamSnapshot;
+  manualSnapshots?: ManualObservationSnapshot[];
 }
+
+type ManualRecord = ManualObservationSnapshot["records"][number];
+type ManualGuideRecommendation = Extract<
+  ManualRecord,
+  { kind: "character_guide" }
+>["recommendation"];
+type ManualTeamMember = Extract<ManualRecord, { kind: "team" }>["members"][number];
+type KnowledgeTeamMember = Extract<
+  KnowledgeRecord,
+  { kind: "team" }
+>["members"][number];
 
 const TEXT_EXTENSIONS = new Set([
   ".cjs",
@@ -223,6 +237,510 @@ export function validateLegacySnapshot(
   }
 
   return diagnostics;
+}
+
+export function validateManualObservationSnapshot(
+  input: unknown,
+  catalogs: GameCatalogs,
+  expectedSourceId?: string
+): ValidationDiagnostic[] {
+  const parsed = ManualObservationSnapshotSchema.safeParse(input);
+  if (!parsed.success) return zodDiagnostics("manual-observation", parsed.error);
+
+  const snapshot = parsed.data;
+  const diagnostics: ValidationDiagnostic[] = [];
+  const sourcePath = `manual-observation.${snapshot.sourceId}`;
+  if (expectedSourceId && snapshot.sourceId !== expectedSourceId) {
+    diagnostics.push({
+      severity: "error",
+      code: "provenance.unexpected_source_id",
+      path: `${sourcePath}.sourceId`,
+      message: `Expected source ID ${expectedSourceId}, received ${snapshot.sourceId}.`,
+    });
+  }
+  checkDuplicateValues(
+    snapshot.records.map(({ sourceRecordId }) => sourceRecordId),
+    `${sourcePath}.records`,
+    "source_record.duplicate_id",
+    diagnostics
+  );
+
+  for (const [recordIndex, record] of snapshot.records.entries()) {
+    const recordPath = `${sourcePath}.records[${recordIndex}]`;
+    validateManualLocator(
+      record.locator,
+      `${recordPath}.locator`,
+      diagnostics,
+      { expectedPageUrl: snapshot.page.url, requireHeading: true }
+    );
+    for (const [locatorIndex, locator] of record.supportingLocators.entries()) {
+      validateManualLocator(
+        locator,
+        `${recordPath}.supportingLocators[${locatorIndex}]`,
+        diagnostics
+      );
+    }
+
+    if (record.kind === "character_guide") {
+      validateCharacterId(
+        record.characterId,
+        `${recordPath}.characterId`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      validateGuideRecommendation(
+        record.recommendation,
+        record.characterId,
+        `${recordPath}.recommendation`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      continue;
+    }
+
+    if (record.kind === "energy_guidance") {
+      validateCharacterId(
+        record.characterId,
+        `${recordPath}.characterId`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      for (const [index, characterId] of [
+        ...record.teamContext.requiredCharacterIds,
+        ...record.teamContext.oneOfCharacterIds,
+      ].entries()) {
+        validateCharacterId(
+          characterId,
+          `${recordPath}.teamContext.characters[${index}]`,
+          catalogs,
+          "warning",
+          diagnostics
+        );
+      }
+      checkDuplicateValues(
+        [
+          ...record.teamContext.requiredCharacterIds,
+          ...record.teamContext.oneOfCharacterIds,
+        ],
+        `${recordPath}.teamContext`,
+        "team.duplicate_character",
+        diagnostics
+      );
+      validateErTargets(
+        record.targets,
+        record.characterId,
+        `${recordPath}.targets`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      if (record.rotation) {
+        validateRotationObservation(
+          record.rotation,
+          `${recordPath}.rotation`,
+          diagnostics
+        );
+      }
+      continue;
+    }
+
+    checkDuplicateValues(
+      record.members.map(({ characterId }) => characterId),
+      `${recordPath}.members`,
+      "team.duplicate_character",
+      diagnostics
+    );
+    for (const [memberIndex, member] of record.members.entries()) {
+      const memberPath = `${recordPath}.members[${memberIndex}]`;
+      validateCharacterId(
+        member.characterId,
+        `${memberPath}.characterId`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      validateRecommendationClaims(
+        member,
+        member.characterId,
+        memberPath,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+    }
+    validateReactionIds(
+      record.reactions,
+      recordPath,
+      catalogs,
+      "warning",
+      diagnostics
+    );
+    checkDuplicateValues(
+      record.rotations.map(({ id }) => id),
+      `${recordPath}.rotations`,
+      "rotation.duplicate_id",
+      diagnostics
+    );
+    for (const [rotationIndex, rotation] of record.rotations.entries()) {
+      validateRotationObservation(
+        rotation,
+        `${recordPath}.rotations[${rotationIndex}]`,
+        diagnostics
+      );
+    }
+  }
+
+  return diagnostics;
+}
+
+function validateGuideRecommendation(
+  recommendation: ManualGuideRecommendation,
+  characterId: string,
+  recommendationPath: string,
+  catalogs: GameCatalogs,
+  catalogSeverity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  validateRecommendationClaims(
+    recommendation,
+    characterId,
+    recommendationPath,
+    catalogs,
+    catalogSeverity,
+    diagnostics
+  );
+  const expectedClaim = {
+    weapons: (recommendation.weaponRecommendations?.length ?? 0) > 0,
+    "artifact-sets":
+      (recommendation.artifactRecommendations?.length ?? 0) > 0,
+    "artifact-stats":
+      recommendation.mainStats != null ||
+      (recommendation.substats?.length ?? 0) > 0,
+    energy: (recommendation.erTargets?.length ?? 0) > 0,
+    combined: true,
+  }[recommendation.scope];
+  if (!expectedClaim) {
+    diagnostics.push({
+      severity: "error",
+      code: "recommendation.scope_without_claim",
+      path: `${recommendationPath}.scope`,
+      message: `Scope ${recommendation.scope} has no corresponding recommendation claim.`,
+    });
+  }
+}
+
+function validateRecommendationClaims(
+  claims: ManualGuideRecommendation | ManualTeamMember | KnowledgeTeamMember,
+  characterId: string,
+  claimsPath: string,
+  catalogs: GameCatalogs,
+  catalogSeverity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  const weaponRecommendations = claims.weaponRecommendations ?? [];
+  if (weaponRecommendations.length > 0 && !claims.weaponOrdering) {
+    diagnostics.push({
+      severity: "error",
+      code: "ranking.missing_ordering_claim",
+      path: `${claimsPath}.weaponOrdering`,
+      message: "Weapon recommendations must state whether the source ranks them.",
+    });
+  }
+  for (const [groupIndex, group] of weaponRecommendations.entries()) {
+    validateRecommendationGroupSize(
+      group.grouping,
+      group.weaponIds.length,
+      `${claimsPath}.weaponRecommendations[${groupIndex}]`,
+      diagnostics
+    );
+    validateOrderingGrouping(
+      claims.weaponOrdering,
+      group.grouping,
+      `${claimsPath}.weaponRecommendations[${groupIndex}].grouping`,
+      diagnostics
+    );
+    checkDuplicateValues(
+      group.weaponIds,
+      `${claimsPath}.weaponRecommendations[${groupIndex}].weaponIds`,
+      "ranking.duplicate_choice",
+      diagnostics
+    );
+    for (const [weaponIndex, weaponId] of group.weaponIds.entries()) {
+      validateWeaponId(
+        weaponId,
+        characterId,
+        `${claimsPath}.weaponRecommendations[${groupIndex}].weaponIds[${weaponIndex}]`,
+        catalogs,
+        catalogSeverity,
+        diagnostics
+      );
+    }
+  }
+
+  const artifactRecommendations = claims.artifactRecommendations ?? [];
+  if (artifactRecommendations.length > 0 && !claims.artifactOrdering) {
+    diagnostics.push({
+      severity: "error",
+      code: "ranking.missing_ordering_claim",
+      path: `${claimsPath}.artifactOrdering`,
+      message: "Artifact recommendations must state whether the source ranks them.",
+    });
+  }
+  for (const [groupIndex, group] of artifactRecommendations.entries()) {
+    validateRecommendationGroupSize(
+      group.grouping,
+      group.artifacts.length,
+      `${claimsPath}.artifactRecommendations[${groupIndex}]`,
+      diagnostics
+    );
+    validateOrderingGrouping(
+      claims.artifactOrdering,
+      group.grouping,
+      `${claimsPath}.artifactRecommendations[${groupIndex}].grouping`,
+      diagnostics
+    );
+    for (const [artifactIndex, artifact] of group.artifacts.entries()) {
+      validateArtifactChoice(
+        artifact,
+        `${claimsPath}.artifactRecommendations[${groupIndex}].artifacts[${artifactIndex}]`,
+        catalogs,
+        catalogSeverity,
+        diagnostics
+      );
+    }
+  }
+
+  if (claims.mainStats) {
+    for (const slot of ["sands", "goblet", "circlet"] as const) {
+      validateOrdinalStats(
+        claims.mainStats[slot],
+        catalogs.mainStatsBySlot[slot],
+        `${claimsPath}.mainStats.${slot}`,
+        diagnostics
+      );
+    }
+  }
+  if (claims.substats) {
+    validateOrdinalStats(
+      claims.substats,
+      catalogs.substatIds,
+      `${claimsPath}.substats`,
+      diagnostics
+    );
+  }
+  if (claims.erTargets) {
+    validateErTargets(
+      claims.erTargets,
+      characterId,
+      `${claimsPath}.erTargets`,
+      catalogs,
+      catalogSeverity,
+      diagnostics
+    );
+  }
+}
+
+function validateRecommendationGroupSize(
+  grouping: "single" | "alternatives" | "tied",
+  choiceCount: number,
+  groupPath: string,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  const valid = grouping === "single" ? choiceCount === 1 : choiceCount >= 2;
+  if (!valid) {
+    diagnostics.push({
+      severity: "error",
+      code: "ranking.invalid_group_size",
+      path: `${groupPath}.grouping`,
+      message:
+        grouping === "single"
+          ? "A single recommendation must contain exactly one choice."
+          : `A ${grouping} group must contain at least two choices.`,
+    });
+  }
+}
+
+function validateOrderingGrouping(
+  ordering: "unranked" | "ranked-groups" | undefined,
+  grouping: "single" | "alternatives" | "tied",
+  groupingPath: string,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  const invalid =
+    (ordering === "unranked" && grouping === "tied") ||
+    (ordering === "ranked-groups" && grouping === "alternatives");
+  if (!invalid) return;
+  diagnostics.push({
+    severity: "error",
+    code: "ranking.inconsistent_grouping",
+    path: groupingPath,
+    message:
+      ordering === "unranked"
+        ? "An unranked source cannot assert a tied rank group."
+        : "A ranked source must represent equal ranks as tied groups, not alternatives.",
+  });
+}
+
+function validateOrdinalStats(
+  groups: ReadonlyArray<{
+    statIds: string[];
+    priority?: number;
+  }>,
+  allowed: ReadonlySet<string>,
+  groupsPath: string,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  const prioritiesPresent = groups.map(({ priority }) => priority != null);
+  if (
+    prioritiesPresent.some(Boolean) &&
+    !prioritiesPresent.every(Boolean)
+  ) {
+    diagnostics.push({
+      severity: "error",
+      code: "ranking.partial_priorities",
+      path: groupsPath,
+      message: "A stat recommendation list must prioritize every group or none of them.",
+    });
+  }
+  let lastPriority = 0;
+  for (const [groupIndex, group] of groups.entries()) {
+    checkDuplicateValues(
+      group.statIds,
+      `${groupsPath}[${groupIndex}].statIds`,
+      "ranking.duplicate_choice",
+      diagnostics
+    );
+    if (group.priority != null && group.priority < lastPriority) {
+      diagnostics.push({
+        severity: "error",
+        code: "ranking.non_ascending_priority",
+        path: `${groupsPath}[${groupIndex}].priority`,
+        message: "Ordinal priority groups must appear in ascending order.",
+      });
+    }
+    lastPriority = group.priority ?? lastPriority;
+    for (const [statIndex, statId] of group.statIds.entries()) {
+      if (!allowed.has(statId)) {
+        diagnostics.push({
+          severity: "warning",
+          code: "stat.invalid_for_slot",
+          path: `${groupsPath}[${groupIndex}].statIds[${statIndex}]`,
+          message: `Stat ${statId} is not valid in this recommendation slot.`,
+        });
+      }
+    }
+  }
+}
+
+function validateErTargets(
+  targets: ReadonlyArray<{
+    weapon?:
+      | { type: "specific"; weaponIds: string[] }
+      | {
+          type: "category";
+          weaponType: string;
+          excludedWeaponIds: string[];
+        };
+  }>,
+  characterId: string,
+  targetsPath: string,
+  catalogs: GameCatalogs,
+  catalogSeverity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  for (const [targetIndex, target] of targets.entries()) {
+    if (!target.weapon) continue;
+    const weaponIds =
+      target.weapon.type === "specific"
+        ? target.weapon.weaponIds
+        : target.weapon.excludedWeaponIds;
+    if (target.weapon.type === "category") {
+      const characterWeaponType = catalogs.characterWeaponTypes.get(characterId);
+      if (
+        characterWeaponType &&
+        target.weapon.weaponType !== characterWeaponType
+      ) {
+        diagnostics.push({
+          severity: catalogSeverity,
+          code: "catalog.weapon_category_mismatch",
+          path: `${targetsPath}[${targetIndex}].weapon.weaponType`,
+          message: `${characterId} uses ${characterWeaponType}, but the ER target names ${target.weapon.weaponType}.`,
+        });
+      }
+    }
+    checkDuplicateValues(
+      weaponIds,
+      `${targetsPath}[${targetIndex}].weapon.weaponIds`,
+      "ranking.duplicate_choice",
+      diagnostics
+    );
+    for (const [weaponIndex, weaponId] of weaponIds.entries()) {
+      validateWeaponId(
+        weaponId,
+        characterId,
+        `${targetsPath}[${targetIndex}].weapon.weaponIds[${weaponIndex}]`,
+        catalogs,
+        catalogSeverity,
+        diagnostics
+      );
+    }
+  }
+}
+
+function validateManualLocator(
+  locator: SourceLocator,
+  locatorPath: string,
+  diagnostics: ValidationDiagnostic[],
+  options?: { expectedPageUrl?: string; requireHeading?: boolean }
+): void {
+  if ("file" in locator) {
+    diagnostics.push({
+      severity: "error",
+      code: "provenance.manual_locator_requires_url",
+      path: locatorPath,
+      message: "Manual external observations require a URL locator.",
+    });
+    return;
+  }
+  if (options?.expectedPageUrl && locator.url !== options.expectedPageUrl) {
+    diagnostics.push({
+      severity: "error",
+      code: "provenance.primary_locator_page_mismatch",
+      path: `${locatorPath}.url`,
+      message: `Primary locator ${locator.url} does not match snapshot page ${options.expectedPageUrl}.`,
+    });
+  }
+  if (options?.requireHeading && !locator.heading) {
+    diagnostics.push({
+      severity: "error",
+      code: "provenance.primary_locator_requires_heading",
+      path: `${locatorPath}.heading`,
+      message: "A primary manual observation locator requires a page heading.",
+    });
+  }
+}
+
+function validateRotationObservation(
+  rotation: {
+    notation: string;
+    unresolvedSegments: string[];
+  },
+  rotationPath: string,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  for (const [segmentIndex, segment] of rotation.unresolvedSegments.entries()) {
+    if (!rotation.notation.includes(segment)) {
+      diagnostics.push({
+        severity: "error",
+        code: "rotation.unresolved_segment_not_found",
+        path: `${rotationPath}.unresolvedSegments[${segmentIndex}]`,
+        message: `Unresolved segment ${segment} is absent from the recorded notation.`,
+      });
+    }
+  }
 }
 
 export function validateKnowledgeRepository(
@@ -415,6 +933,16 @@ function validateKnowledgeRecord(
       diagnostics
     );
     const memberIds = new Set(record.members.map(({ characterId }) => characterId));
+    for (const [memberIndex, member] of record.members.entries()) {
+      validateRecommendationClaims(
+        member,
+        member.characterId,
+        `${recordPath}.members[${memberIndex}]`,
+        catalogs,
+        catalogSeverity,
+        diagnostics
+      );
+    }
     for (const [planIndex, plan] of record.damagePlans.entries()) {
       for (const [lineIndex, line] of plan.lines.entries()) {
         if (!memberIds.has(line.characterId)) {
@@ -427,6 +955,15 @@ function validateKnowledgeRecord(
         }
       }
     }
+    for (const [rotationIndex, rotation] of (
+      record.rotations ?? []
+    ).entries()) {
+      validateRotationObservation(
+        rotation,
+        `${recordPath}.rotations[${rotationIndex}]`,
+        diagnostics
+      );
+    }
     return;
   }
 
@@ -437,6 +974,36 @@ function validateKnowledgeRecord(
     catalogSeverity,
     diagnostics
   );
+  if (record.kind === "energy_guidance") {
+    for (const [index, characterId] of [
+      ...record.teamContext.requiredCharacterIds,
+      ...record.teamContext.oneOfCharacterIds,
+    ].entries()) {
+      validateCharacterId(
+        characterId,
+        `${recordPath}.teamContext.characters[${index}]`,
+        catalogs,
+        catalogSeverity,
+        diagnostics
+      );
+    }
+    validateErTargets(
+      record.targets,
+      record.characterId,
+      `${recordPath}.targets`,
+      catalogs,
+      catalogSeverity,
+      diagnostics
+    );
+    if (record.rotation) {
+      validateRotationObservation(
+        record.rotation,
+        `${recordPath}.rotation`,
+        diagnostics
+      );
+    }
+    return;
+  }
   validateWeaponOrder(
     record.weaponOrder,
     record.characterId,
@@ -455,6 +1022,18 @@ function validateKnowledgeRecord(
     validateBuild(
       build,
       `${recordPath}.builds[${buildIndex}]`,
+      catalogs,
+      catalogSeverity,
+      diagnostics
+    );
+  }
+  for (const [recommendationIndex, recommendation] of (
+    record.recommendations ?? []
+  ).entries()) {
+    validateGuideRecommendation(
+      recommendation,
+      record.characterId,
+      `${recordPath}.recommendations[${recommendationIndex}]`,
       catalogs,
       catalogSeverity,
       diagnostics
@@ -803,7 +1382,7 @@ function validateSourceReferences(
   recordPath: string,
   manifests: ReadonlyMap<string, SourceRegistry["sources"][number]>,
   generatedSourceIds: ReadonlySet<string>,
-  sourceRecordCatalog: ReadonlyMap<string, SourceLocator>,
+  sourceRecordCatalog: ReadonlyMap<string, readonly SourceLocator[]>,
   diagnostics: ValidationDiagnostic[]
 ): void {
   const seen = new Set<string>();
@@ -840,6 +1419,8 @@ function validateSourceReferences(
       });
     }
     if (
+      manifest.status !== "active" ||
+      manifest.permission === "permission-required" ||
       manifest.ingestionMode === "permission-blocked" ||
       manifest.ingestionMode === "reference-only" ||
       manifest.ingestionMode === "user-initiated-only"
@@ -848,16 +1429,12 @@ function validateSourceReferences(
         severity: "error",
         code: "provenance.ingestion_not_permitted",
         path: `${referencePath}.sourceId`,
-        message: `Registry ingestion mode ${manifest.ingestionMode} does not permit repository records.`,
+        message: `Registry status ${manifest.status}, permission ${manifest.permission}, and ingestion mode ${manifest.ingestionMode} do not permit repository records.`,
       });
     }
 
-    const expectedLocator = sourceRecordCatalog.get(referenceKey);
-    if (
-      (manifest.recordFormat === "genshintools-presets-v1" ||
-        manifest.recordFormat === "legacy-team-research-v1") &&
-      !expectedLocator
-    ) {
+    const expectedLocators = sourceRecordCatalog.get(referenceKey);
+    if (!expectedLocators) {
       diagnostics.push({
         severity: "error",
         code: "provenance.dangling_source_record",
@@ -865,8 +1442,9 @@ function validateSourceReferences(
         message: `Source record ${referenceKey} does not exist in its snapshot.`,
       });
     } else if (
-      expectedLocator &&
-      stableJson(expectedLocator) !== stableJson(reference.locator)
+      !expectedLocators.some(
+        (locator) => stableJson(locator) === stableJson(reference.locator)
+      )
     ) {
       diagnostics.push({
         severity: "error",
@@ -880,25 +1458,31 @@ function validateSourceReferences(
 
 function buildSourceRecordCatalog(
   context: KnowledgeValidationContext
-): ReadonlyMap<string, SourceLocator> {
-  const catalog = new Map<string, SourceLocator>();
+): ReadonlyMap<string, readonly SourceLocator[]> {
+  const catalog = new Map<string, SourceLocator[]>();
   if (context.genshinToolsSnapshot) {
     for (const record of [
       ...context.genshinToolsSnapshot.teams,
       ...context.genshinToolsSnapshot.characterGuides,
     ]) {
-      catalog.set(
-        `genshintools-presets:${record.sourceRecordId}`,
-        record.locator
-      );
+      catalog.set(`genshintools-presets:${record.sourceRecordId}`, [
+        record.locator,
+      ]);
     }
   }
   if (context.legacySnapshot) {
     for (const record of context.legacySnapshot.records) {
-      catalog.set(
-        `legacy-team-research:${record.sourceRecordId}`,
-        record.locator
-      );
+      catalog.set(`legacy-team-research:${record.sourceRecordId}`, [
+        record.locator,
+      ]);
+    }
+  }
+  for (const snapshot of context.manualSnapshots ?? []) {
+    for (const record of snapshot.records) {
+      catalog.set(`${snapshot.sourceId}:${record.sourceRecordId}`, [
+        record.locator,
+        ...record.supportingLocators,
+      ]);
     }
   }
   return catalog;

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { consolidateKnowledge } from "../src/consolidation";
+import { loadGameCatalogs } from "../src/catalogs";
 import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
@@ -7,17 +8,28 @@ import {
 import { readJson, sha256File, stableJson } from "../src/io";
 import {
   BUILD_PRESET_PATH,
+  GENSHINTOOLS_SNAPSHOT_PATH,
+  KQM_MANUAL_SNAPSHOT_PATH,
   LEGACY_RESEARCH_PATH,
+  LEGACY_SNAPSHOT_PATH,
+  KNOWLEDGE_REPOSITORY_PATH,
+  REPOSITORY_ROOT,
   SOURCE_REGISTRY_PATH,
   TEAM_PRESET_PATH,
 } from "../src/paths";
 import {
+  GenshinToolsPresetSnapshotSchema,
+  KnowledgeRepositorySchema,
+  LegacyTeamSnapshotSchema,
   SourceRegistrySchema,
+  ManualObservationSnapshotSchema,
   type LegacyArtifactChoice,
 } from "../src/schemas";
 import { runValidation } from "../src/validate";
 import {
   formatDiagnostics,
+  validateKnowledgeRepository,
+  validateManualObservationSnapshot,
   validateWorkspaceBoundary,
 } from "../src/validation";
 
@@ -179,14 +191,173 @@ describe("guide-factory data pipeline", () => {
     ]);
   });
 
+  it("keeps the KQM pilot heading-scoped, unranked, and unreviewed", async () => {
+    const snapshot = ManualObservationSnapshotSchema.parse(
+      await readJson(KQM_MANUAL_SNAPSHOT_PATH)
+    );
+
+    expect(snapshot.sourceId).toBe("kqm");
+    expect(snapshot.records).toHaveLength(5);
+    expectUnique(snapshot.records.map((record) => record.sourceRecordId));
+    expect(
+      snapshot.records.every(
+        (record) =>
+          "url" in record.locator &&
+          record.locator.heading != null &&
+          record.extraction.reviewStatus === "unreviewed"
+      )
+    ).toBe(true);
+
+    const weapons = snapshot.records.find(
+      (record) =>
+        record.kind === "character_guide" &&
+        record.recommendation.scope === "weapons"
+    );
+    expect(
+      weapons?.kind === "character_guide"
+        ? weapons.recommendation.weaponOrdering
+        : undefined
+    ).toBe("unranked");
+    if (!weapons || weapons.kind !== "character_guide") {
+      throw new Error("Missing KQM weapon record");
+    }
+    const emptyClaim = structuredClone(snapshot);
+    const emptyWeaponRecord = emptyClaim.records.find(
+      (record) => record.sourceRecordId === weapons.sourceRecordId
+    );
+    if (!emptyWeaponRecord || emptyWeaponRecord.kind !== "character_guide") {
+      throw new Error("Missing cloned KQM weapon record");
+    }
+    emptyWeaponRecord.recommendation.weaponRecommendations = [];
+    expect(ManualObservationSnapshotSchema.safeParse(emptyClaim).success).toBe(
+      false
+    );
+
+    const energy = snapshot.records.find(
+      (record) => record.kind === "energy_guidance"
+    );
+    expect(energy?.kind).toBe("energy_guidance");
+    if (!energy || energy.kind !== "energy_guidance") {
+      throw new Error("Missing KQM energy record");
+    }
+    expect(energy.rotation?.durationSeconds).toBe(20);
+    expect(energy.teamContext).toEqual({
+      requiredCharacterIds: ["mavuika", "citlali", "bennett"],
+      oneOfCharacterIds: [],
+    });
+    expect(
+      energy.targets.find(
+        (target) => target.weapon?.type === "specific" &&
+          target.weapon.weaponIds.includes("favonius_warbow")
+      )
+    ).toMatchObject({
+      minPercent: 190,
+      maxPercent: 200,
+      supportingDisplayedPercent: 192,
+      supportingCalculationPercent: 192.1826030394418,
+    });
+
+    const team = snapshot.records.find((record) => record.kind === "team");
+    expect(team?.kind === "team" ? team : undefined).toMatchObject({
+      intent: "example",
+      exhaustiveness: "non-exhaustive",
+      rankingClaim: "none",
+    });
+  });
+
+  it("binds every primary manual assertion to its declared page", async () => {
+    const snapshot = ManualObservationSnapshotSchema.parse(
+      await readJson(KQM_MANUAL_SNAPSHOT_PATH)
+    );
+    const mutated = structuredClone(snapshot);
+    const first = mutated.records[0];
+    if (!first || !("url" in first.locator)) {
+      throw new Error("Expected the KQM fixture to use URL locators");
+    }
+    first.locator.url = "https://example.com/not-the-snapshot-page";
+
+    const diagnostics = validateManualObservationSnapshot(
+      mutated,
+      await loadGameCatalogs(),
+      "kqm"
+    );
+    expect(diagnostics.map(({ code }) => code)).toContain(
+      "provenance.primary_locator_page_mismatch"
+    );
+  });
+
+  it("rejects repository records when the registry requires permission", async () => {
+    const [
+      registryInput,
+      knowledgeInput,
+      genshinToolsInput,
+      legacyInput,
+      manualInput,
+      catalogs,
+    ] = await Promise.all([
+      readJson(SOURCE_REGISTRY_PATH),
+      readJson(KNOWLEDGE_REPOSITORY_PATH),
+      readJson(GENSHINTOOLS_SNAPSHOT_PATH),
+      readJson(LEGACY_SNAPSHOT_PATH),
+      readJson(KQM_MANUAL_SNAPSHOT_PATH),
+      loadGameCatalogs(),
+    ]);
+    const registry = SourceRegistrySchema.parse(registryInput);
+    const permissionRequired = structuredClone(registry);
+    const kqm = permissionRequired.sources.find(({ id }) => id === "kqm");
+    if (!kqm) throw new Error("Missing KQM source manifest");
+    kqm.permission = "permission-required";
+
+    const diagnostics = validateKnowledgeRepository(
+      KnowledgeRepositorySchema.parse(knowledgeInput),
+      {
+        catalogs,
+        sourceRegistry: permissionRequired,
+        genshinToolsSnapshot:
+          GenshinToolsPresetSnapshotSchema.parse(genshinToolsInput),
+        legacySnapshot: LegacyTeamSnapshotSchema.parse(legacyInput),
+        manualSnapshots: [
+          ManualObservationSnapshotSchema.parse(manualInput),
+        ],
+      }
+    );
+    expect(
+      diagnostics.some(
+        ({ code, message }) =>
+          code === "provenance.ingestion_not_permitted" &&
+          message.includes("permission permission-required")
+      )
+    ).toBe(true);
+  });
+
   it("consolidates deterministically without erasing source unknowns", async () => {
     const registryInput = await readJson(SOURCE_REGISTRY_PATH);
-    const [genshinTools, legacy, sourceRegistrySha256] = await Promise.all([
+    const [
+      genshinTools,
+      legacy,
+      kqmInput,
+      kqmSnapshotSha256,
+      sourceRegistrySha256,
+    ] = await Promise.all([
       importGenshinToolsPresets(registryInput),
       importLegacyTeamResearch(registryInput),
+      readJson(KQM_MANUAL_SNAPSHOT_PATH),
+      sha256File(KQM_MANUAL_SNAPSHOT_PATH),
       sha256File(SOURCE_REGISTRY_PATH),
     ]);
-    const input = { sourceRegistrySha256, genshinTools, legacy };
+    const kqm = ManualObservationSnapshotSchema.parse(kqmInput);
+    const input = {
+      sourceRegistrySha256,
+      genshinTools,
+      legacy,
+      kqm,
+      kqmSnapshotFile: {
+        path: KQM_MANUAL_SNAPSHOT_PATH.slice(
+          REPOSITORY_ROOT.length + 1
+        ).replaceAll("\\", "/"),
+        sha256: kqmSnapshotSha256,
+      },
+    };
     const first = consolidateKnowledge(input);
     const second = consolidateKnowledge(input);
 
@@ -195,7 +366,8 @@ describe("guide-factory data pipeline", () => {
     expect(first.records).toHaveLength(
       genshinTools.teams.length +
         genshinTools.characterGuides.length +
-        legacy.records.length
+        legacy.records.length +
+        kqm.records.length
     );
     expect(first.records.map((record) => record.id)).toEqual(
       first.records.map((record) => record.id).sort()
@@ -271,6 +443,50 @@ describe("guide-factory data pipeline", () => {
         )
       ).toBe(true);
     }
+
+    for (const sourceRecord of kqm.records) {
+      const kind =
+        sourceRecord.kind === "character_guide"
+          ? "character-guide"
+          : sourceRecord.kind === "energy_guidance"
+            ? "energy-guidance"
+            : "team";
+      const record = first.records.find(
+        (candidate) =>
+          candidate.id === `kqm:${kind}:${sourceRecord.sourceRecordId}`
+      );
+      expect(record, `Missing KQM record ${sourceRecord.sourceRecordId}`).toBeDefined();
+      expect(record?.status).toBe("candidate");
+      expect(record?.promotionEligible).toBe(false);
+      expect(record?.unknowns).toContain(
+        "agent-assisted extraction has not been human-reviewed"
+      );
+      expect(record?.sourceRefs.map(({ locator }) => locator)).toEqual([
+        sourceRecord.locator,
+        ...sourceRecord.supportingLocators,
+      ]);
+    }
+
+    const reviewedInput = structuredClone(kqmInput) as {
+      records: Array<Record<string, unknown>>;
+    };
+    for (const record of reviewedInput.records) {
+      record.extraction = {
+        method: "agent-assisted",
+        reviewStatus: "reviewed",
+        reviewer: "guide-factory regression fixture",
+        reviewedAt: "2026-08-29",
+      };
+    }
+    const reviewedRepository = consolidateKnowledge({
+      ...input,
+      kqm: ManualObservationSnapshotSchema.parse(reviewedInput),
+    });
+    expect(
+      reviewedRepository.records
+        .filter(({ id }) => id.startsWith("kqm:"))
+        .every(({ promotionEligible }) => promotionEligible === false)
+    ).toBe(true);
   });
 
   it("keeps live failures visible and known candidate warnings explicit", async () => {

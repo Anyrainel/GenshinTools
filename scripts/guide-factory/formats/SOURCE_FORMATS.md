@@ -124,8 +124,29 @@ reviewable page section, table, post, or video segment. It requires:
 - a narrow paraphrased proposal;
 - explicit unknowns.
 
-Agent output is always unreviewed. It cannot update accepted knowledge or copy
-an entire guide field by field.
+Rank behavior is explicit. `unranked` means array order is not evidence of
+priority. A grouped choice says whether its members are alternatives or share a
+rank; those meanings are never inferred from layout. Reviewed extraction must
+name the reviewer and date. Extraction review confirms source fidelity only,
+not gameplay acceptance.
+
+Team examples preserve whether the source calls the list non-exhaustive and
+whether it makes a power-ranking claim. ER tables are separate energy-guidance
+records unless the source explicitly binds them to a particular team and
+rotation. Rounded guide bands, formatted supporting-sheet cells, and raw
+calculation values remain separate fields.
+
+Agent output is always unreviewed and promotion-ineligible. It cannot update
+accepted knowledge or copy an entire guide field by field.
+
+### KQM Diona pilot
+
+The pilot stores five heading-scoped records from one linked guide: weapons,
+artifact sets, artifact stats, ER guidance, and one example team. The guide's
+`Luna VIII` label and the linked ER sheet's Version 6.7 label are separate
+provenance facts. KQM invites linked reference use, but no broad republication
+license was found, so this format is not authorization for bulk ingestion,
+mirroring, translation, or image reuse.
 
 ## `simulation-evidence-v1`
 

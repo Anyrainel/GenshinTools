@@ -1,0 +1,303 @@
+{
+  "assertions": [
+    {
+      "baseline": [
+        {
+          "fieldPointer": "/weaponOrder",
+          "knowledgeRecordId": "genshintools-presets:character-guide:diona"
+        }
+      ],
+      "baselineOnly": [],
+      "caveats": [
+        "KQM explicitly supplies an unranked list while qualifying Favonius Warbow as its default.",
+        "The baseline does not disclose the team or refinement assumptions behind its weapon order."
+      ],
+      "dimension": "weapons",
+      "id": "diona-weapons",
+      "orderingRelation": "not-comparable",
+      "promotionEligible": false,
+      "relation": "overlap",
+      "scopeRelation": "unknown",
+      "shared": [
+        "sacrificial_bow"
+      ],
+      "source": [
+        {
+          "fieldPointer": "/recommendations/0/weaponRecommendations",
+          "knowledgeRecordId": "kqm:character-guide:diona-support-weapons-luna-viii"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "elegy_for_the_end",
+        "favonius_warbow",
+        "recurve_bow",
+        "silvershower_heartstrings"
+      ]
+    },
+    {
+      "baseline": [
+        {
+          "fieldPointer": "/builds/0/artifact",
+          "knowledgeRecordId": "genshintools-presets:character-guide:diona"
+        }
+      ],
+      "baselineOnly": [],
+      "caveats": [
+        "KQM's additional sets are conditional rather than a global ranking.",
+        "The baseline build has unknown team applicability."
+      ],
+      "dimension": "artifact sets",
+      "id": "diona-artifact-sets",
+      "orderingRelation": "not-comparable",
+      "promotionEligible": false,
+      "relation": "overlap",
+      "scopeRelation": "unknown",
+      "shared": [
+        "4pc:noblesse_oblige"
+      ],
+      "source": [
+        {
+          "fieldPointer": "/recommendations/0/artifactRecommendations",
+          "knowledgeRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "4pc:deepwood_memories",
+        "4pc:instructor",
+        "4pc:scroll_of_the_hero_of_cinder_city",
+        "4pc:song_of_days_past",
+        "4pc:tenacity_of_the_millelith"
+      ]
+    },
+    {
+      "baseline": [
+        {
+          "fieldPointer": "/builds/0/sands",
+          "knowledgeRecordId": "genshintools-presets:character-guide:diona"
+        }
+      ],
+      "baselineOnly": [],
+      "caveats": [
+        "KQM presents HP% and ER as alternatives without ranking them."
+      ],
+      "dimension": "sands main stats",
+      "id": "diona-sands",
+      "orderingRelation": "source-unranked",
+      "promotionEligible": false,
+      "relation": "overlap",
+      "scopeRelation": "unknown",
+      "shared": [
+        "er"
+      ],
+      "source": [
+        {
+          "fieldPointer": "/recommendations/0/mainStats/sands",
+          "knowledgeRecordId": "kqm:character-guide:diona-support-artifact-stats-luna-viii"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "hp%"
+      ]
+    },
+    {
+      "baseline": [
+        {
+          "fieldPointer": "/builds/0/goblet",
+          "knowledgeRecordId": "genshintools-presets:character-guide:diona"
+        }
+      ],
+      "baselineOnly": [],
+      "caveats": [],
+      "dimension": "goblet main stats",
+      "id": "diona-goblet",
+      "orderingRelation": "not-applicable",
+      "promotionEligible": false,
+      "relation": "same",
+      "scopeRelation": "unknown",
+      "shared": [
+        "hp%"
+      ],
+      "source": [
+        {
+          "fieldPointer": "/recommendations/0/mainStats/goblet",
+          "knowledgeRecordId": "kqm:character-guide:diona-support-artifact-stats-luna-viii"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": []
+    },
+    {
+      "baseline": [
+        {
+          "fieldPointer": "/builds/0/circlet",
+          "knowledgeRecordId": "genshintools-presets:character-guide:diona"
+        }
+      ],
+      "baselineOnly": [],
+      "caveats": [
+        "KQM places HP% above Healing Bonus and adds CRIT Rate only for Favonius Warbow; the baseline ties HP% and Healing Bonus at weight 100."
+      ],
+      "dimension": "circlet main stats",
+      "id": "diona-circlet",
+      "orderingRelation": "different",
+      "promotionEligible": false,
+      "relation": "overlap",
+      "scopeRelation": "unknown",
+      "shared": [
+        "heal%",
+        "hp%"
+      ],
+      "source": [
+        {
+          "fieldPointer": "/recommendations/0/mainStats/circlet",
+          "knowledgeRecordId": "kqm:character-guide:diona-support-artifact-stats-luna-viii"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "cr"
+      ]
+    },
+    {
+      "baseline": [
+        {
+          "fieldPointer": "/builds/0/substats",
+          "knowledgeRecordId": "genshintools-presets:character-guide:diona"
+        }
+      ],
+      "baselineOnly": [],
+      "caveats": [
+        "KQM prioritizes ER only until a scenario-specific target, then HP%; the baseline weights HP% above ER without an ER target."
+      ],
+      "dimension": "substats",
+      "id": "diona-substats",
+      "orderingRelation": "different",
+      "promotionEligible": false,
+      "relation": "overlap",
+      "scopeRelation": "unknown",
+      "shared": [
+        "er",
+        "hp%"
+      ],
+      "source": [
+        {
+          "fieldPointer": "/recommendations/0/substats",
+          "knowledgeRecordId": "kqm:character-guide:diona-support-artifact-stats-luna-viii"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "cr",
+        "hp"
+      ]
+    },
+    {
+      "baseline": [],
+      "baselineLookup": "genshintools-presets:character-guide:diona has no ER target, and no exact baseline team matches the source team.",
+      "baselineOnly": [],
+      "caveats": [
+        "The page bands and sheet cells are formatted displays; raw supporting calculation values are recorded separately.",
+        "The guide version and calculation-sheet version remain separate provenance facts."
+      ],
+      "dimension": "ER guidance",
+      "id": "diona-er-guidance",
+      "orderingRelation": "not-applicable",
+      "promotionEligible": false,
+      "relation": "source-only",
+      "scopeRelation": "unknown",
+      "shared": [],
+      "source": [
+        {
+          "fieldPointer": "/targets",
+          "knowledgeRecordId": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "Bow:other:230-240%; supporting sheet 234% (raw 233.6280641219179%)",
+        "favonius_warbow:190-200%; supporting sheet 192% (raw 192.1826030394418%)",
+        "sacrificial_bow:170-180%; supporting sheet 170% (raw 169.6153645425604%)"
+      ]
+    },
+    {
+      "baseline": [],
+      "baselineLookup": "Exact unordered four-character match among GenshinTools baseline teams.",
+      "baselineOnly": [],
+      "caveats": [
+        "KQM labels this an example in a non-exhaustive list and makes no power-ranking claim.",
+        "No nearest-neighbor team is substituted for the absent exact match."
+      ],
+      "dimension": "exact team composition",
+      "id": "diona-forward-melt-team",
+      "orderingRelation": "not-applicable",
+      "promotionEligible": false,
+      "relation": "source-only",
+      "scopeRelation": "unknown",
+      "shared": [],
+      "source": [
+        {
+          "fieldPointer": "/members",
+          "knowledgeRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "bennett+citlali+diona+mavuika"
+      ]
+    },
+    {
+      "baseline": [],
+      "baselineLookup": "The exact baseline team is absent.",
+      "baselineOnly": [],
+      "caveats": [
+        "Mavuika Q combo remains an unresolved source shorthand rather than an inferred formula sequence."
+      ],
+      "dimension": "rotation",
+      "id": "diona-forward-melt-rotation",
+      "orderingRelation": "not-applicable",
+      "promotionEligible": false,
+      "relation": "source-only",
+      "scopeRelation": "unknown",
+      "shared": [],
+      "source": [
+        {
+          "fieldPointer": "/rotations",
+          "knowledgeRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+        }
+      ],
+      "sourceExtractionReviewStatus": "unreviewed",
+      "sourceOnly": [
+        "Mavuika E > Bennett E N1 > Diona hEQ > Bennett Q > Citlali EQ N2 > Mavuika Q combo"
+      ]
+    }
+  ],
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "feee7d62d16cd1da566c2dd9f5338f1cb800baa6e049f9e23bb007ab0c385ea0"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
+      "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+      "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
+    },
+    {
+      "path": "scripts/guide-factory/src/comparison.ts",
+      "sha256": "2d75093fdda65a365035938c51ec3067adc2a5a257baf675ea5018ec0ebc7694"
+    }
+  ],
+  "prohibitedAggregates": [
+    "winner",
+    "confidence",
+    "vote-count",
+    "merged-order"
+  ],
+  "schemaVersion": 1,
+  "subject": "diona"
+}

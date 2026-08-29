@@ -1,3 +1,5 @@
 cache/
 reports/*
 !reports/README.md
+!reports/kqm-diona-comparison.json
+!reports/kqm-diona-er-calibration.json
