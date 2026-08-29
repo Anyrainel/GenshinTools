@@ -181,10 +181,33 @@ Electro Goblet, Xilonen chooses Geo DMG instead of the listed DEF% Goblet, and
 Furina's Tenacity cells choose HP% instead of the listed ER Sands. With ER
 constraints and other gameplay assumptions unresolved, the probe cannot assign
 causality or make an ER conclusion. These results are not guide
-recommendations. The next safe computation step is to measure carry/order
-sensitivity of this greedy procedure before designing any coordinate-descent or
-joint-search wrapper. Formula-plan review remains required before comparative
-damage or ranking.
+recommendations.
+
+The follow-up sensitivity probe makes seven accepted calls with a fresh
+`TeamBuild` each time. It holds the seed composition fixed across all four
+algorithmic carry choices and runs the seed and two-character endpoint in both
+forward and reverse execution order under Keqing carry. Keqing and Ineffa carry
+produce one complete-artifact equivalence class; Furina and Xilonen each
+produce a distinct class. The carry changes are not confined to the named
+character: both Furina and Xilonen carry replace EM with flat ATK among
+Keqing's positive Flower substat keys, alongside different carry Circlets.
+
+The two endpoint candidates produce identical fingerprints under the two
+tested schedules, so no cross-run execution-order effect is observed here.
+This does not establish general order independence. The report retains hashes
+and structural explanations but no damage, ranking, winner, or guide claim.
+Formula-plan review remains required before comparative damage or ranking.
+
+The next safe computation step is a tiny, exhaustively auditable composition
+experiment: generate each current 2x2 set-assignment node under every
+algorithmic carry, deduplicate the per-character outputs within that node, and
+recombine only those compatible sheets before replaying the same fixed
+objective. Coordinate-descent or beam policies should then be replayed against
+that cached table rather than trusted in isolation. This can measure search
+behavior, but the four-node lattice is too small for meaningful beam-width
+calibration. Exhaustive enumeration should be the baseline, with beam replay
+treated only as a coverage trace. The unreviewed formula plan still prevents
+guide or performance claims.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

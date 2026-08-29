@@ -21,8 +21,8 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 9 runs the first bounded artifact-generator experiment and adds a
-narrow Klee old-character refresh, without claiming a working guide factory:
+Checkpoint 10 measures two concrete sensitivities of the existing greedy
+artifact generator, without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -66,6 +66,13 @@ narrow Klee old-character refresh, without claiming a working guide factory:
 18. Capture separate Klee 5-star and 4-star generalist weapon claims, C2+
     support equipment, contextual sets, and exact teams while leaving ER and
     unresolved combo details unfilled.
+19. Hold one repository-build composition fixed while supplying each of the
+    four team members as the generator's algorithmic `carryCharId`.
+20. Reverse two candidate executions under the same carry while constructing a
+    fresh team for every invocation, adding one narrow cross-run scheduling
+    check alongside the carry observations.
+21. Preserve complete artifact outputs only as hashes and retain explainable
+    main-stat/substat-key differences, without damage, ranking, or guide claims.
 
 The first two active sources are already in this repository:
 
@@ -131,6 +138,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-weapon-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-artifact-generation.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation-sensitivity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -147,10 +155,10 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all ten durable reports in memory: corpus inventory, team
+It also rebuilds all eleven durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
-comparisons, artifact-generation preflight and technical probe, Diona
-comparison, and historical ER calibration. Stale evidence cannot pass.
+comparisons, artifact-generation preflight, technical and sensitivity probes,
+Diona comparison, and historical ER calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -330,6 +338,29 @@ Sands for Furina where that source build lists ER. Because ER thresholds and
 other gameplay assumptions remain unresolved, this boundary cannot adjudicate
 the mismatch or support an ER conclusion. These disagreements are evidence that
 successful execution is not enough to make the output credible.
+
+The sensitivity probe then makes seven accepted, sequential generator calls.
+It runs the seed composition A and the two-character composition B in forward
+and reverse execution order under Keqing carry, then reuses forward A/Keqing
+and runs A once each with Ineffa, Furina, and Xilonen as the algorithmic carry.
+Every call receives a distinct `TeamBuild`; none receives `perChar` constraints,
+buff overrides, set-key overrides, or ER thresholds.
+
+For this fixed A composition, Keqing and Ineffa carry produce the same complete
+artifact fingerprint, while Furina and Xilonen each produce distinct outputs.
+Furina carry changes Furina's Circlet from CRIT Rate to CRIT DMG and replaces
+EM with flat ATK among Keqing's positive Flower substat keys. Xilonen carry
+makes the same Keqing Flower change and changes Xilonen's Circlet from DEF% to
+CRIT DMG. These are algorithm-behavior observations, not stat
+recommendations. Both A and B produce identical complete fingerprints when
+their execution order is reversed in this process. That is no observed
+cross-run scheduling effect for these two candidates, not proof of general
+order independence.
+
+The report retains hashes of complete generated artifacts plus main stats and
+positive substat keys for explanation. It retains no artifact records, damage,
+score, rank, winner, or ER conclusion. A failed run makes every dependent
+comparison explicitly not comparable while later scheduled runs still execute.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

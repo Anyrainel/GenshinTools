@@ -275,6 +275,45 @@ one small multi-character set matrix. It does not show that the unreviewed
 formula objective is correct, that its greedy result is jointly optimal, or
 that any generated stat choice belongs in a guide.
 
+## Artifact-generation sensitivity seam
+
+`src/artifactGenerationSensitivityProbe.ts` wraps the same fail-closed
+technical runner and records two bounded observations that the first matrix did
+not expose:
+
+- does changing the generator's algorithmic `carryCharId` alter its artifact
+  output for one fixed assignment; and
+- does merely reversing two independent candidate executions alter either
+  output within the same process?
+
+The Keqing/Ineffa fixture makes exactly seven accepted generator calls. It runs
+assignment A then B and B then A under Keqing carry, then runs A under Ineffa,
+Furina, and Xilonen carry while reusing the forward A/Keqing result as the
+fourth carry cell. Every invocation constructs a distinct `TeamBuild` and runs
+sequentially. The wrapper passes no `perChar` constraints, buff overrides,
+set-key overrides, ignored-set fallback, or ER threshold.
+
+Complete generated artifact records exist only transiently and are retained as
+canonical SHA-256 fingerprints. The report keeps main stats and positive
+substat keys as an explainable structural summary. It stores no artifact
+records, damage value, score, rank, winner, or ER conclusion. A failed run is
+preserved as `not-comparable`; later scheduled calls still run, and every
+dependent comparison also becomes `not-comparable` instead of manufacturing a
+boolean result.
+
+The fixed A assignment currently produces three artifact-output equivalence
+classes: Keqing and Ineffa carry match, Furina differs, and Xilonen differs.
+Furina carry changes Furina's Circlet from CRIT Rate to CRIT DMG and replaces
+EM with flat ATK among Keqing's positive Flower substat keys. Xilonen carry
+makes the same Keqing Flower change and changes Xilonen's Circlet from DEF% to
+CRIT DMG. This shows that the privileged carry path can change another
+character's greedy substat allocation; it does not say which output is better.
+
+Assignments A and B each produce identical complete fingerprints under the
+forward and reverse schedules. That is no observed cross-run execution-order
+effect for two candidates with fresh teams in this fixture, not a proof that
+the generator or a future cache is generally order-independent.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -298,10 +337,10 @@ that any generated stat choice belongs in a guide.
 - Constellation/refinement investment analysis and allocation-specific formula
   counts: `src/lib/team-comp/analyzer/analyzer.ts`.
 
-The new technical probe invokes only `runGenerator` and its immediate
-calculation dependencies. The comparison, owned-inventory optimization,
-AutoTune, and investment analyzers remain inventoried rather than composed into
-the factory.
+The technical and sensitivity probes invoke only `runGenerator` and its
+immediate calculation dependencies. The comparison, owned-inventory
+optimization, AutoTune, and investment analyzers remain inventoried rather
+than composed into the factory.
 
 ## Current blockers
 
@@ -323,6 +362,10 @@ the factory.
 - `runGenerator` is ordered greedy, not exhaustive joint optimization.
   `runWeaponChoice` varies one character at a time. The owned-artifact optimizer
   jointly assigns inventory pieces but does not search team weapons and sets.
+- `runGenerator` also gives `carryCharId` a privileged initial and refinement
+  path. The current sensitivity probe finds three outputs from four carry
+  choices and a cross-character Keqing substat-key change. A factory cannot
+  silently choose one carry seed and present its result as canonical.
 - The existing artifact analyzer does not enumerate non-five-star sets such as
   Instructor and cannot dynamically discover every damage-oriented two-piece
   family. Its two-piece candidate grammar is conditional on successful
@@ -350,12 +393,13 @@ the factory.
   same objective is applied throughout every greedy and refinement phase before
   its output can support comparisons.
 
-The next computation checkpoint should rerun the same repository-build-seeded
-candidate while varying which character is supplied as the generator's algorithmic
-`carryCharId`, then test candidate/configuration order separately. This is a
-carry/order-sensitivity measurement of an ordered greedy procedure, not a claim
-about an in-game carry role. Only after those effects are visible should the
-lab consider a coordinate-descent or wider joint-search wrapper. Formula-plan
-review remains required before comparative damage, ranking, or guide
-validation; explicit artifact stat sheets and dual-path replay remain
-prerequisites for those later claims. ER remains deferred.
+The next computation checkpoint should expand only the current 2x2 assignment
+lattice across the four carry seeds, deduplicate node-local character sheets,
+and exhaustively replay compatible cross-compositions under the same fixed
+objective. Coordinate-descent and beam policies can then be replayed over that
+cached table and compared with the tiny exhaustive result. This is a search-
+behavior experiment, not a guide ranking. The four-node lattice is too small
+for meaningful beam-width calibration: exhaustively enumerate it as the
+baseline and treat any beam replay only as a coverage trace. Formula-plan
+review, explicit combat assumptions, and dual-path replay remain prerequisites
+for later performance claims. ER remains deferred.

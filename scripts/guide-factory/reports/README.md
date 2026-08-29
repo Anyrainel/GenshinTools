@@ -6,6 +6,16 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-artifact-generation-sensitivity.json` makes seven accepted
+  generator calls to measure algorithmic carry selection alongside one narrow
+  execution-order check. One fixed assignment produces three complete-artifact
+  fingerprint classes across four carries: Keqing and Ineffa match, Furina
+  differs, and Xilonen differs. The latter two also change Keqing's positive
+  Flower substat keys. Reversing two candidate executions changes neither
+  fingerprint in this fixture. The report retains hashes and structural
+  explanations, not artifact records, damage, ranking, winner, recommendation,
+  or ER conclusions; affected comparisons become not comparable after a run
+  failure.
 - `keqing-ineffa-artifact-generation-technical-probe.json` directly runs the
   generator over four all-5-star combinations assembled from independently
   recorded character-guide builds and retains one Xilonen Instructor policy
@@ -77,6 +87,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all ten reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all eleven reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

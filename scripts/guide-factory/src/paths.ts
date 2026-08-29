@@ -110,3 +110,9 @@ export const KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_REPORT_PATH =
     "reports",
     "keqing-ineffa-artifact-generation-technical-probe.json"
   );
+export const KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-ineffa-artifact-generation-sensitivity.json"
+  );

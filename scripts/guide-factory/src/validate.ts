@@ -40,6 +40,10 @@ import {
   runKeqingIneffaArtifactGenerationTechnicalProbe,
 } from "./keqingIneffaArtifactGenerationTechnicalProbe";
 import {
+  KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_INPUT_PATHS,
+  runKeqingIneffaArtifactGenerationSensitivityProbe,
+} from "./keqingIneffaArtifactGenerationSensitivityProbe";
+import {
   loadManualSnapshotInputs,
   requiredManualSnapshotInputContaining,
   type ManualSnapshotInput,
@@ -51,6 +55,7 @@ import {
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
   GENSHINTOOLS_SNAPSHOT_PATH,
   KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH,
+  KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH,
   KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_REPORT_PATH,
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
@@ -114,6 +119,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     weaponChoiceSearchCoverageInput,
     keqingIneffaArtifactGenerationPreflightInput,
     keqingIneffaArtifactGenerationTechnicalProbeInput,
+    keqingIneffaArtifactGenerationSensitivityInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -132,6 +138,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH),
       readJson(
         KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_REPORT_PATH,
+      ),
+      readJson(
+        KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH,
       ),
     ]);
 
@@ -416,6 +425,28 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-artifact-generation-technical-probe",
           message:
             "The saved Keqing-Ineffa artifact-generation technical probe does not match current source builds, calculator defaults, candidate policy, and generator implementation.",
+        });
+      }
+
+      const keqingIneffaArtifactGenerationSensitivityGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_INPUT_PATHS,
+        );
+      const expectedKeqingIneffaArtifactGenerationSensitivity =
+        await runKeqingIneffaArtifactGenerationSensitivityProbe(
+          expectedKnowledge,
+          keqingIneffaArtifactGenerationSensitivityGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingIneffaArtifactGenerationSensitivity) !==
+        stableJson(keqingIneffaArtifactGenerationSensitivityInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_artifact_generation_sensitivity",
+          path: "reports.keqing-ineffa-artifact-generation-sensitivity",
+          message:
+            "The saved Keqing-Ineffa artifact-generation sensitivity probe does not match current repository builds, calculator defaults, candidate schedule, and generator implementation.",
         });
       }
 
