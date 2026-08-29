@@ -1,16 +1,32 @@
 ---
 name: genshin-knowledge
 description: >
-  Reference and verification tools for the Genshin Impact damage calculator.
-  TRIGGER when: verifying or looking up character/weapon/artifact game data (talent values, buff percentages, multipliers, conditions),
-  reviewing or writing buff/formula implementations, or needing damage calc code patterns.
-  Key tool: `impl_audit.py show C|W|A <id>` exports official game text and talent parameters — use this as the first step
-  to verify in-game values.
+  Verify concrete Genshin mechanics and support implementation or review in `src/lib/dmgcalc/`.
+  Use only when the task requires exact game text, values, or activation conditions; implements or audits a specific
+  character, weapon, artifact, reaction, buff, or damage formula; or investigates a concrete calculator correctness or
+  coverage issue. Do not use for product strategy, guide-source collection, data/schema design, team/build recommendation
+  research, optimizer or UX architecture, or work that merely mentions formulas or formula counts.
 ---
 
 # Genshin Knowledge Base
 
-Reference material for implementing, reviewing, and tracking damage calculator extensions in `src/lib/dmgcalc/`.
+Reference material for verifying concrete game mechanics and implementing, reviewing, or tracking damage calculator
+extensions in `src/lib/dmgcalc/`. This is not a general team-building, guide-research, or optimization-design skill.
+
+## Activation Boundary
+
+Use this skill when at least one of these is required:
+
+- verify an exact multiplier, stat value, game-text condition, reaction rule, or buff interaction;
+- implement or review a specific character, weapon, artifact, reaction, buff, or formula in the damage engine;
+- diagnose a concrete damage-calculator discrepancy or implementation-coverage gap.
+
+Do not load it for high-level product planning, guide-source ingestion, recommendation-data schemas, team discovery,
+optimizer design, or UX work unless that task also requires one of the concrete mechanic checks above. Formula IDs or
+formula counts used only as data-model inputs are not enough to trigger this skill.
+
+When exact entity data is needed, `impl_audit.py show C|W|A <id>` exports official game text and talent parameters; use it
+as the first verification step.
 
 ## Topics
 
