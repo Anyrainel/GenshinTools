@@ -6,6 +6,31 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-bounded-joint-artifact-experiment.json` runs the four
+  released 5-star set nodes under all four team-member carry inputs, captures
+  16 fresh generator runs, and exhausts 48 node-local `StatSheet`
+  recombinations. All cells pass direct-versus-compiled agreement under 11
+  exact-valued but unreviewed technical formula lines. No ER or per-character
+  constraint and no explicit buff override is supplied; the separately
+  computed formula-override map has zero lines in all current cells and is
+  retained by count and hash. Wrapper provenance binds the inputs to the
+  fixture, exact team, and sample rotation while preserving 10 complete and 1
+  partial mappings plus all 8 readiness blockers; the generic core itself does
+  not claim a source binding. Node-local recombination improves the bounded
+  technical reference over the best intact carry by about 0.1191% in the two
+  Golden nodes and 0.4090% in the two Tenacity nodes. The Golden pair is an
+  exact objective tie, as is the Tenacity pair, so Aubade/Tenacity is only a
+  deterministic representative of the two-node bounded-reference equivalence
+  class. Both cached Ineffa-set edges have zero objective delta while both
+  Furina-set edges share the same positive delta; this is retained as possible
+  objective blindness or implementation invariance, not artifact suitability
+  or causal game performance. Cached coordinate descent and beam output use
+  zero evaluator calls; the coordinate terminal exposes the equal-neighbor
+  plateau, and the table selector fails closed if any declared node failed;
+  the beam is explicitly non-calibrated and non-exhaustive. Any failed run or
+  evaluation removes the global comparison and withholds both policy traces.
+  This is bounded search-behavior evidence, not a guide, recommendation,
+  game-performance comparison, or global optimum.
 - `keqing-ineffa-artifact-generation-sensitivity.json` makes seven accepted
   generator calls to measure algorithmic carry selection alongside one narrow
   execution-order check. One fixed assignment produces three complete-artifact
@@ -87,6 +112,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all eleven reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all twelve reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

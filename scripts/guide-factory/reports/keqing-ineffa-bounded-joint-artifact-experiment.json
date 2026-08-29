@@ -1,0 +1,4225 @@
+{
+  "boundedReferenceComposition": {
+    "compositionId": "02-aubade-tenacity:composition-08",
+    "equivalentReferences": [
+      {
+        "compositionId": "02-aubade-tenacity:composition-08",
+        "nodeId": "02-aubade-tenacity"
+      },
+      {
+        "compositionId": "04-silken-tenacity:composition-08",
+        "nodeId": "04-silken-tenacity"
+      }
+    ],
+    "nodeId": "02-aubade-tenacity",
+    "representativeSelectionPolicy": "first-candidate-then-enumerated-composition-exact-objective-tie",
+    "unreviewedTechnicalObjective": 972611.695357222
+  },
+  "cachedPolicyReplay": {
+    "beamCoverage": {
+      "calibration": "not-calibrated",
+      "classification": "cached-lattice-beam-coverage-trace",
+      "direction": "maximize",
+      "encounteredFailures": [],
+      "evaluationSource": "cached-node-table-only",
+      "evaluatorCalls": 0,
+      "exhaustive": false,
+      "frontierByDepth": [
+        {
+          "depth": 0,
+          "nodeIds": [
+            "01-seed-aubade-golden"
+          ]
+        },
+        {
+          "depth": 1,
+          "nodeIds": [
+            "02-aubade-tenacity"
+          ]
+        },
+        {
+          "depth": 2,
+          "nodeIds": [
+            "04-silken-tenacity"
+          ]
+        }
+      ],
+      "interpretation": "coverage-only",
+      "levels": [
+        {
+          "comparableNodeIds": [
+            "02-aubade-tenacity",
+            "03-silken-golden"
+          ],
+          "depth": 1,
+          "failureNodeIds": [],
+          "parentFrontierNodeIds": [
+            "01-seed-aubade-golden"
+          ],
+          "prunedComparableNodeIds": [
+            "03-silken-golden"
+          ],
+          "retainedNodeIds": [
+            "02-aubade-tenacity"
+          ],
+          "visitedNodeIds": [
+            "02-aubade-tenacity",
+            "03-silken-golden"
+          ]
+        },
+        {
+          "comparableNodeIds": [
+            "04-silken-tenacity"
+          ],
+          "depth": 2,
+          "failureNodeIds": [],
+          "parentFrontierNodeIds": [
+            "02-aubade-tenacity"
+          ],
+          "prunedComparableNodeIds": [],
+          "retainedNodeIds": [
+            "04-silken-tenacity"
+          ],
+          "visitedNodeIds": [
+            "04-silken-tenacity"
+          ]
+        }
+      ],
+      "maxDepth": 2,
+      "schemaVersion": 1,
+      "startNodeId": "01-seed-aubade-golden",
+      "tolerance": {
+        "absolute": 0,
+        "relative": 0
+      },
+      "visitedNodeIds": [
+        "01-seed-aubade-golden",
+        "02-aubade-tenacity",
+        "03-silken-golden",
+        "04-silken-tenacity"
+      ],
+      "width": 1
+    },
+    "boundedTableReference": {
+      "bestObservedTechnicalObjective": 972611.695357222,
+      "classification": "cached-table-best-comparable-reference",
+      "deterministicTiePolicy": "lowest-node-id-among-tolerance-equivalent-best-values",
+      "direction": "maximize",
+      "equivalentNodeIds": [
+        "02-aubade-tenacity",
+        "04-silken-tenacity"
+      ],
+      "evaluatorCalls": 0,
+      "failureNodeIds": [],
+      "nodeId": "02-aubade-tenacity",
+      "representative": {
+        "nodeId": "02-aubade-tenacity",
+        "technicalObjective": 972611.695357222
+      },
+      "scope": "declared-node-table-only",
+      "status": "selected",
+      "technicalObjective": 972611.695357222,
+      "tolerance": {
+        "absolute": 0,
+        "relative": 0
+      }
+    },
+    "cautions": [
+      "Coordinate descent replays only the cached four-node table; it does not warm-start or invoke the artifact generator.",
+      "Beam output is a non-calibrated, non-exhaustive coverage trace, not a quality or optimality result.",
+      "Singular node IDs in cached traces are deterministic representatives; exact-objective ties remain explicit in boundedTableReference.equivalentNodeIds."
+    ],
+    "coordinateDescent": {
+      "classification": "cached-lattice-coordinate-descent-trace",
+      "direction": "maximize",
+      "encounteredFailures": [],
+      "evaluationSource": "cached-node-table-only",
+      "evaluatorCalls": 0,
+      "pathNodeIds": [
+        "01-seed-aubade-golden",
+        "02-aubade-tenacity"
+      ],
+      "policy": "deterministic-best-improvement",
+      "schemaVersion": 1,
+      "startNodeId": "01-seed-aubade-golden",
+      "steps": [
+        {
+          "comparableNeighborNodeIds": [
+            "02-aubade-tenacity",
+            "03-silken-golden"
+          ],
+          "currentNodeId": "01-seed-aubade-golden",
+          "currentTechnicalObjective": 916673.236600247,
+          "failureNeighborNodeIds": [],
+          "improvingNeighborNodeIds": [
+            "02-aubade-tenacity"
+          ],
+          "iteration": 0,
+          "neighborNodeIds": [
+            "02-aubade-tenacity",
+            "03-silken-golden"
+          ],
+          "selectedEquivalentNextNodeIds": [
+            "02-aubade-tenacity"
+          ],
+          "selectedNextNodeId": "02-aubade-tenacity",
+          "selectedRepresentativeTiePolicy": "lowest-node-id-among-tolerance-equivalent-best-values"
+        },
+        {
+          "comparableNeighborNodeIds": [
+            "01-seed-aubade-golden",
+            "04-silken-tenacity"
+          ],
+          "currentNodeId": "02-aubade-tenacity",
+          "currentTechnicalObjective": 972611.695357222,
+          "failureNeighborNodeIds": [],
+          "improvingNeighborNodeIds": [],
+          "iteration": 1,
+          "neighborNodeIds": [
+            "01-seed-aubade-golden",
+            "04-silken-tenacity"
+          ],
+          "selectedEquivalentNextNodeIds": [],
+          "selectedNextNodeId": null,
+          "selectedRepresentativeTiePolicy": null
+        }
+      ],
+      "terminal": {
+        "equivalentNeighborNodeIds": [
+          "04-silken-tenacity"
+        ],
+        "nodeId": "02-aubade-tenacity",
+        "plateauObserved": true,
+        "reason": "no-strictly-improving-comparable-neighbor",
+        "technicalObjective": 972611.695357222
+      },
+      "tolerance": {
+        "absolute": 0,
+        "relative": 0
+      },
+      "visitedNodeIds": [
+        "01-seed-aubade-golden",
+        "02-aubade-tenacity",
+        "03-silken-golden",
+        "04-silken-tenacity"
+      ]
+    },
+    "dimensionEffectSummary": {
+      "caution": "Zero or positive edge sensitivity under this unreviewed objective can reveal objective blindness or implementation behavior; it does not establish artifact suitability or causal game performance.",
+      "classification": "cached-four-node-technical-objective-sensitivity",
+      "evaluationSource": "evaluated-four-node-cache-only",
+      "furinaArtifactSetEdges": [
+        {
+          "fromNodeId": "01-seed-aubade-golden",
+          "relation": "positive",
+          "toNodeId": "02-aubade-tenacity",
+          "unreviewedTechnicalObjectiveDelta": 55938.458756975
+        },
+        {
+          "fromNodeId": "03-silken-golden",
+          "relation": "positive",
+          "toNodeId": "04-silken-tenacity",
+          "unreviewedTechnicalObjectiveDelta": 55938.458756975
+        }
+      ],
+      "ineffaArtifactSetEdges": [
+        {
+          "fromNodeId": "01-seed-aubade-golden",
+          "relation": "exact-zero",
+          "toNodeId": "03-silken-golden",
+          "unreviewedTechnicalObjectiveDelta": 0
+        },
+        {
+          "fromNodeId": "02-aubade-tenacity",
+          "relation": "exact-zero",
+          "toNodeId": "04-silken-tenacity",
+          "unreviewedTechnicalObjectiveDelta": 0
+        }
+      ],
+      "objectiveSource": "node-bounded-reference-compositions",
+      "observations": {
+        "bothFurinaSetEdgesShareExactPositiveDelta": true,
+        "bothIneffaSetEdgesAreExactZero": true
+      },
+      "supportsArtifactSuitabilityClaims": false,
+      "supportsCausalGamePerformanceClaims": false
+    },
+    "evaluationSource": "evaluated-four-node-cache-only",
+    "evaluatorCalls": 0,
+    "status": "available"
+  },
+  "cautions": [
+    "The four nodes interpolate independently recorded character builds; no source binds a complete node assignment to this exact team.",
+    "The supplied technical formula lines are unreviewed; this generic experiment does not itself establish their source binding, rotation order, buff timing, or field time.",
+    "The bounded reference is only the maximum observed technical objective inside these four set nodes and their node-local carry-derived sheet pools.",
+    "No cross-node sheet recombination, weapon choice, constellation choice, ER target, gameplay claim, or guide recommendation is evaluated.",
+    "Exact sheet dumps are intentionally not retained; reproduction reruns all 16 generator calls and verifies the retained artifact, sheet, and team-config fingerprints before evaluating the node-local lattice."
+  ],
+  "classification": "bounded-joint-artifact-stat-technical-experiment",
+  "comparisonStatus": "comparable",
+  "execution": {
+    "calcContext": {
+      "enemyLevel": 110,
+      "enemyRes": 0.1,
+      "rollMultiplier": 0.85,
+      "substatBudget": "8_6"
+    },
+    "candidateIds": [
+      "01-seed-aubade-golden",
+      "02-aubade-tenacity",
+      "03-silken-golden",
+      "04-silken-tenacity"
+    ],
+    "carryCharacterIds": [
+      "keqing",
+      "ineffa",
+      "furina",
+      "xilonen"
+    ],
+    "energyRecoveryThresholdsUsed": false,
+    "explicitFormulaBuffOverridesPassedToReplay": false,
+    "explicitGeneratorBuffOverridesPassed": false,
+    "freshTeamBuildPerInvocation": true,
+    "maximumGeneratorConcurrency": 1,
+    "observedGeneratorInvocations": 16,
+    "perCharacterConstraintsPassed": false,
+    "plannedGeneratorInvocations": 16,
+    "scheduling": "sequential",
+    "warmStartSupported": false
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
+      "sha256": "e6d9953f22e473473af771e4bbbd8d05b21d7ef29b4353fed8e2a538d55540a9"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactGenerationSensitivityProbe.ts",
+      "sha256": "1fdd85275aae914246b81889c80219d7a13c3028220162b286be043758923015"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
+      "sha256": "823c4dd25377c39f1e9aa69ebe235fecf463084ef0dbe9919df56c714112a704"
+    },
+    {
+      "path": "scripts/guide-factory/src/boundedJointArtifactExperiment.ts",
+      "sha256": "9c18a005a285b4e1036df05dd3299cb346d9262ddc70928393800da9cd1ca03d"
+    },
+    {
+      "path": "scripts/guide-factory/src/boundedLatticePolicy.ts",
+      "sha256": "8a2a91be99543e620737bcf5fb2ccb551af4cac4c064cb4dc8292b45d61068f3"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
+      "sha256": "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaArtifactGenerationPreflight.ts",
+      "sha256": "7b2e3411137ccf24fe65dc9b3b703b02e68a85a1ab007389bfe5109ffd30e669"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaArtifactGenerationTechnicalProbe.ts",
+      "sha256": "3ab99ecfc05bbe7f5188bc4662f7f99e42143f38f09ab4e434e3e74581fb85a6"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaBoundedJointArtifactExperiment.ts",
+      "sha256": "d4979000a35dc5e2c2dde55eab962c5c80d26565950ec401cd3bb08de0f697b3"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "41f2b65ed9233089918458cc7c9074e0c8e1cbfa1f652b702e8b7c1e972c1a1e"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
+      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
+      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/enums.ts",
+      "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/types.ts",
+      "sha256": "bdd204ea6ca5d18a3541de9667993a868c089da066bcc4deaa72af3426ac3e81"
+    },
+    {
+      "path": "src/lib/artifact/scoring/sheetBuilder.ts",
+      "sha256": "d982609ee2be21c3c0d3ff461a4b627a1b0f386e76356441bdf9712d2e1b989f"
+    },
+    {
+      "path": "src/lib/artifact/scoring/utils.ts",
+      "sha256": "7f8adecffa41ad02e21e7f64cac859845d89080b0446f5d2c142e547f0620e6a"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/formulaCompiler.ts",
+      "sha256": "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/statSheet.ts",
+      "sha256": "1239c11fe3774ef46c8bafaf9ee1354debca3eab34b4e105bb802477ad4cee10"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    },
+    {
+      "path": "src/lib/team-comp/analyzer/weaponChoice.ts",
+      "sha256": "297995b86d74d30422dcbc8948acd13a19401ff7c872435ccb28dd84aaac95f4"
+    },
+    {
+      "path": "src/lib/team-comp/generator/constrainedGreedy.ts",
+      "sha256": "64fba22398fd2283f1cb1f0de2eb1edf186ca5a8680d3279ae99ebac3aedbd7c"
+    },
+    {
+      "path": "src/lib/team-comp/generator/generator.ts",
+      "sha256": "d0c0b7cc165504fab2a913d1d2ab02db787639764750e93a90a7e6723b6a5cc0"
+    },
+    {
+      "path": "src/lib/team-comp/generator/substatBudget.ts",
+      "sha256": "1ad0229b3a5a5eb370d239d371bea95037b0525f6dcf37173115459a11acfc02"
+    },
+    {
+      "path": "src/lib/team-comp/optimizer/erCrConstraints.ts",
+      "sha256": "01ea055b9e92cdf7e728b663d02e6fc5861102f5297d8eb8515270aa4d62daa0"
+    },
+    {
+      "path": "src/lib/team-comp/teamConfigUtils.ts",
+      "sha256": "538633ab68a20c0af9833d9a77120bc2855b4b8dbd99f588b6fea43ab7f48bbc"
+    }
+  ],
+  "latticeBoundary": {
+    "candidateNodeCount": 4,
+    "crossNodeSheetCompositionsAllowed": false,
+    "nodeLocalSheetPoolsOnly": true,
+    "totalExpectedCompositions": 48,
+    "totalObservedCompositions": 48
+  },
+  "nodes": [
+    {
+      "bestIntactCarryComposition": {
+        "compositionId": "01-seed-aubade-golden:composition-06",
+        "equivalentCompositionIds": [
+          "01-seed-aubade-golden:composition-06"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 915583.078243519
+      },
+      "boundedReferenceComposition": {
+        "compositionId": "01-seed-aubade-golden:composition-04",
+        "equivalentCompositionIds": [
+          "01-seed-aubade-golden:composition-04"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 916673.236600247
+      },
+      "boundedReferenceOverBestIntact": 1.00119067115004,
+      "boundedReferenceOverBestIntactStatus": "available",
+      "capturedTeamConfigSha256": "a6d92299d528a0deffd62f611be299e86bd80ff3a21603bfd83b045fca6eceac",
+      "carryRuns": [
+        {
+          "artifactFingerprintSha256": "4dbd42f6944e5314fc2e96db48c77c5a31f02b7744164cfdb431278236237282",
+          "carryCharacterId": "keqing",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "25f0076cdfd007248c9574bfd853359619b33b8923ce1e53ce25aba2f0f254ab",
+          "carryCharacterId": "ineffa",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "562e4973d5e60eb4392502f0b376c5e9126dd34d70014a934f05a99befd48c31",
+          "carryCharacterId": "furina",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "35ad99dfbd398e094676d7bf6093202b0aec4946450e896c2cee9c1deffaffe2",
+          "carryCharacterId": "xilonen",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48",
+            "xilonen": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        }
+      ],
+      "comparisonStatus": "comparable",
+      "compositions": [
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.02225225302629e-7,
+            "compiledObjective": 902225.225302629,
+            "interpretedObjective": 902225.225302629,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-01",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "keqing"
+          ],
+          "normalizedToBoundedReference": 0.984238646094651,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 902225.225302629
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.16584601362024e-7,
+            "compiledObjective": 916584.601362024,
+            "interpretedObjective": 916584.601362024,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-02",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999903307705861,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 916584.601362024
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.02313860540852e-7,
+            "compiledObjective": 902313.860540851,
+            "interpretedObjective": 902313.860540851,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-03",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.98433533838879,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 902313.860540851
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.16673236600247e-7,
+            "compiledObjective": 916673.236600247,
+            "interpretedObjective": 916673.236600247,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-04",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 1,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 916673.236600247
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.01223702184124e-7,
+            "compiledObjective": 901223.702184124,
+            "interpretedObjective": 901223.702184123,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-05",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "ineffa"
+          ],
+          "normalizedToBoundedReference": 0.983146083250534,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 901223.702184123
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.15583078243519e-7,
+            "compiledObjective": 915583.078243519,
+            "interpretedObjective": 915583.078243519,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-06",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "xilonen"
+          ],
+          "normalizedToBoundedReference": 0.998810744861745,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 915583.078243519
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.01312337422346e-7,
+            "compiledObjective": 901312.337422346,
+            "interpretedObjective": 901312.337422346,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-07",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "furina"
+          ],
+          "normalizedToBoundedReference": 0.983242775544673,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 901312.337422346
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.15671713481741e-7,
+            "compiledObjective": 915671.713481741,
+            "interpretedObjective": 915671.713481741,
+            "passed": true
+          },
+          "compositionId": "01-seed-aubade-golden:composition-08",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.998907437155883,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "01-seed-aubade-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 915671.713481741
+        }
+      ],
+      "expectedCartesianCompositionCount": 8,
+      "intactCarryCoverage": [
+        {
+          "carryCharacterId": "keqing",
+          "compositionId": "01-seed-aubade-golden:composition-01"
+        },
+        {
+          "carryCharacterId": "ineffa",
+          "compositionId": "01-seed-aubade-golden:composition-05"
+        },
+        {
+          "carryCharacterId": "furina",
+          "compositionId": "01-seed-aubade-golden:composition-07"
+        },
+        {
+          "carryCharacterId": "xilonen",
+          "compositionId": "01-seed-aubade-golden:composition-06"
+        }
+      ],
+      "nodeFailures": [],
+      "nodeId": "01-seed-aubade-golden",
+      "observedCartesianCompositionCount": 8,
+      "poolSizesByCharacter": {
+        "furina": 2,
+        "ineffa": 1,
+        "keqing": 2,
+        "xilonen": 2
+      },
+      "requestedArtifactSetIdsByCharacter": {
+        "furina": "golden_troupe",
+        "ineffa": "aubade_of_morningstar_and_moon",
+        "keqing": "thundering_fury",
+        "xilonen": "scroll_of_the_hero_of_cinder_city"
+      },
+      "sheetPoolsByCharacter": {
+        "furina": [
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "xilonen"
+            ],
+            "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+          },
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "furina"
+            ],
+            "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+          }
+        ],
+        "ineffa": [
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+          }
+        ],
+        "keqing": [
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "keqing"
+            ],
+            "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+          },
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "ineffa",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+          }
+        ],
+        "xilonen": [
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "furina"
+            ],
+            "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          },
+          {
+            "nodeId": "01-seed-aubade-golden",
+            "originCarryCharacterIds": [
+              "xilonen"
+            ],
+            "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        ]
+      },
+      "sourceBuildIdsByCharacter": {
+        "furina": "BQAI0BO",
+        "ineffa": "FeFiQU8",
+        "keqing": "1WswsAu",
+        "xilonen": "Dbt0Wkm"
+      },
+      "technicalTeamConfigs": [
+        {
+          "artifactSet": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "charId": "keqing",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "mistsplitter_reforged"
+        },
+        {
+          "artifactSet": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "charId": "ineffa",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "fractured_halo"
+        },
+        {
+          "artifactSet": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "charId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "splendor_of_tranquil_waters"
+        },
+        {
+          "artifactSet": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "charId": "xilonen",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "peak_patrol_song"
+        }
+      ]
+    },
+    {
+      "bestIntactCarryComposition": {
+        "compositionId": "02-aubade-tenacity:composition-10",
+        "equivalentCompositionIds": [
+          "02-aubade-tenacity:composition-10"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 968649.606154722
+      },
+      "boundedReferenceComposition": {
+        "compositionId": "02-aubade-tenacity:composition-08",
+        "equivalentCompositionIds": [
+          "02-aubade-tenacity:composition-08"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 972611.695357222
+      },
+      "boundedReferenceOverBestIntact": 1.00409032242136,
+      "boundedReferenceOverBestIntactStatus": "available",
+      "capturedTeamConfigSha256": "7843af6168486cac8082354c63e46101be25eed7bb7cd0c68d74e32d30f416ae",
+      "carryRuns": [
+        {
+          "artifactFingerprintSha256": "63d10be1c58c7f7a4e1a654770f80ee3b49d063db6fb8a07104b65388b463767",
+          "carryCharacterId": "keqing",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "d600a81f16579a215a5332332b237dd53da96d9e031f1a235134345c66f2f3f5",
+          "carryCharacterId": "ineffa",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61",
+            "keqing": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "13b7d884cb139472c0840b25833bd544e039ed9863d0fc9ec9a61420d6545d1c",
+          "carryCharacterId": "furina",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "03bf4520cb758646ecbe3dddafa484c0e86b9d01850287ff85a5ca5afd6ce59b",
+          "carryCharacterId": "xilonen",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6",
+            "xilonen": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        }
+      ],
+      "comparisonStatus": "comparable",
+      "compositions": [
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.5451358220831e-7,
+            "compiledObjective": 954513.58220831,
+            "interpretedObjective": 954513.58220831,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-01",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "keqing"
+          ],
+          "normalizedToBoundedReference": 0.981392252185221,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954513.58220831
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.68872958267705e-7,
+            "compiledObjective": 968872.958267705,
+            "interpretedObjective": 968872.958267705,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-02",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.996155981768095,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968872.958267705
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 3.49245965480804e-10,
+            "allowedDifference": 9.54601396261216e-7,
+            "compiledObjective": 954601.396261216,
+            "interpretedObjective": 954601.396261215,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-03",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.981482539042066,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954601.396261215
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 3.49245965480804e-10,
+            "allowedDifference": 9.68960772320611e-7,
+            "compiledObjective": 968960.772320611,
+            "interpretedObjective": 968960.77232061,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-04",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.996246268624941,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968960.77232061
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.58164505244921e-7,
+            "compiledObjective": 958164.505244921,
+            "interpretedObjective": 958164.505244921,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-05",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.985145983560279,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 958164.505244921
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.72523881304316e-7,
+            "compiledObjective": 972523.881304316,
+            "interpretedObjective": 972523.881304316,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-06",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999909713143153,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972523.881304316
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.58252319297827e-7,
+            "compiledObjective": 958252.319297827,
+            "interpretedObjective": 958252.319297827,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-07",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.985236270417126,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 958252.319297827
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.72611695357222e-7,
+            "compiledObjective": 972611.695357222,
+            "interpretedObjective": 972611.695357222,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-08",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 1,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972611.695357222
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.54290230095327e-7,
+            "compiledObjective": 954290.230095327,
+            "interpretedObjective": 954290.230095326,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-09",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.981162610577938,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954290.230095326
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.68649606154722e-7,
+            "compiledObjective": 968649.606154722,
+            "interpretedObjective": 968649.606154722,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-10",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "xilonen"
+          ],
+          "normalizedToBoundedReference": 0.995926340160813,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968649.606154722
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.54378044148232e-7,
+            "compiledObjective": 954378.044148232,
+            "interpretedObjective": 954378.044148232,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-11",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "furina"
+          ],
+          "normalizedToBoundedReference": 0.981252897434784,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954378.044148232
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.68737420207627e-7,
+            "compiledObjective": 968737.420207627,
+            "interpretedObjective": 968737.420207627,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-12",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.996016627017659,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968737.420207627
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.57941153131938e-7,
+            "compiledObjective": 957941.153131938,
+            "interpretedObjective": 957941.153131938,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-13",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "ineffa"
+          ],
+          "normalizedToBoundedReference": 0.984916341952997,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 957941.153131938
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.72300529191333e-7,
+            "compiledObjective": 972300.529191333,
+            "interpretedObjective": 972300.529191333,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-14",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999680071535872,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972300.529191333
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.58028967184844e-7,
+            "compiledObjective": 958028.967184844,
+            "interpretedObjective": 958028.967184843,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-15",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.985006628809843,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 958028.967184843
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.72388343244239e-7,
+            "compiledObjective": 972388.343244239,
+            "interpretedObjective": 972388.343244239,
+            "passed": true
+          },
+          "compositionId": "02-aubade-tenacity:composition-16",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999770358392718,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "02-aubade-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972388.343244239
+        }
+      ],
+      "expectedCartesianCompositionCount": 16,
+      "intactCarryCoverage": [
+        {
+          "carryCharacterId": "keqing",
+          "compositionId": "02-aubade-tenacity:composition-01"
+        },
+        {
+          "carryCharacterId": "ineffa",
+          "compositionId": "02-aubade-tenacity:composition-13"
+        },
+        {
+          "carryCharacterId": "furina",
+          "compositionId": "02-aubade-tenacity:composition-11"
+        },
+        {
+          "carryCharacterId": "xilonen",
+          "compositionId": "02-aubade-tenacity:composition-10"
+        }
+      ],
+      "nodeFailures": [],
+      "nodeId": "02-aubade-tenacity",
+      "observedCartesianCompositionCount": 16,
+      "poolSizesByCharacter": {
+        "furina": 2,
+        "ineffa": 2,
+        "keqing": 2,
+        "xilonen": 2
+      },
+      "requestedArtifactSetIdsByCharacter": {
+        "furina": "tenacity_of_the_millelith",
+        "ineffa": "aubade_of_morningstar_and_moon",
+        "keqing": "thundering_fury",
+        "xilonen": "scroll_of_the_hero_of_cinder_city"
+      },
+      "sheetPoolsByCharacter": {
+        "furina": [
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "xilonen"
+            ],
+            "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+          },
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "furina"
+            ],
+            "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+          }
+        ],
+        "ineffa": [
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "keqing",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+          },
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "ineffa"
+            ],
+            "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+          }
+        ],
+        "keqing": [
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "keqing"
+            ],
+            "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+          },
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "ineffa",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+          }
+        ],
+        "xilonen": [
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "furina"
+            ],
+            "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          },
+          {
+            "nodeId": "02-aubade-tenacity",
+            "originCarryCharacterIds": [
+              "xilonen"
+            ],
+            "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        ]
+      },
+      "sourceBuildIdsByCharacter": {
+        "furina": "BQA4H1m",
+        "ineffa": "FeFiQU8",
+        "keqing": "1WswsAu",
+        "xilonen": "Dbt0Wkm"
+      },
+      "technicalTeamConfigs": [
+        {
+          "artifactSet": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "charId": "keqing",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "mistsplitter_reforged"
+        },
+        {
+          "artifactSet": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "charId": "ineffa",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "fractured_halo"
+        },
+        {
+          "artifactSet": {
+            "setId": "tenacity_of_the_millelith",
+            "type": "4pc"
+          },
+          "charId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "splendor_of_tranquil_waters"
+        },
+        {
+          "artifactSet": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "charId": "xilonen",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "peak_patrol_song"
+        }
+      ]
+    },
+    {
+      "bestIntactCarryComposition": {
+        "compositionId": "03-silken-golden:composition-06",
+        "equivalentCompositionIds": [
+          "03-silken-golden:composition-06"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 915583.078243519
+      },
+      "boundedReferenceComposition": {
+        "compositionId": "03-silken-golden:composition-04",
+        "equivalentCompositionIds": [
+          "03-silken-golden:composition-04"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 916673.236600247
+      },
+      "boundedReferenceOverBestIntact": 1.00119067115004,
+      "boundedReferenceOverBestIntactStatus": "available",
+      "capturedTeamConfigSha256": "d58395748d1ba05ce9961eecf13a3b076e0c43f86bfdf5d7a570eb2c71d1e424",
+      "carryRuns": [
+        {
+          "artifactFingerprintSha256": "e6099e3a6965746afbae8dae023fb5b94b9ff42c8cc7fe9895d1bb54e453b6c1",
+          "carryCharacterId": "keqing",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "1057b1fdd6e9b5c6047d19a5719ed5ceb552027f9017870fd316a5b0d1d4f999",
+          "carryCharacterId": "ineffa",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "61b781da42466eb5c5a8fdcfa5c2dad58c2bcd587b95fc0d70354018ef7c8bfa",
+          "carryCharacterId": "furina",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "c9012b56221bf478628b2e457cf69b7c577dafeb5a0a7be951593eeec4e73487",
+          "carryCharacterId": "xilonen",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48",
+            "xilonen": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        }
+      ],
+      "comparisonStatus": "comparable",
+      "compositions": [
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.02225225302629e-7,
+            "compiledObjective": 902225.225302629,
+            "interpretedObjective": 902225.225302629,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-01",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "keqing"
+          ],
+          "normalizedToBoundedReference": 0.984238646094651,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 902225.225302629
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.16584601362024e-7,
+            "compiledObjective": 916584.601362024,
+            "interpretedObjective": 916584.601362024,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-02",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999903307705861,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 916584.601362024
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.02313860540852e-7,
+            "compiledObjective": 902313.860540851,
+            "interpretedObjective": 902313.860540851,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-03",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.98433533838879,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 902313.860540851
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.16673236600247e-7,
+            "compiledObjective": 916673.236600247,
+            "interpretedObjective": 916673.236600247,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-04",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 1,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 916673.236600247
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.01223702184124e-7,
+            "compiledObjective": 901223.702184124,
+            "interpretedObjective": 901223.702184123,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-05",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "ineffa"
+          ],
+          "normalizedToBoundedReference": 0.983146083250534,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 901223.702184123
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.15583078243519e-7,
+            "compiledObjective": 915583.078243519,
+            "interpretedObjective": 915583.078243519,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-06",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "xilonen"
+          ],
+          "normalizedToBoundedReference": 0.998810744861745,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 915583.078243519
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.01312337422346e-7,
+            "compiledObjective": 901312.337422346,
+            "interpretedObjective": 901312.337422346,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-07",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "furina"
+          ],
+          "normalizedToBoundedReference": 0.983242775544673,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 901312.337422346
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 0,
+            "allowedDifference": 9.15671713481741e-7,
+            "compiledObjective": 915671.713481741,
+            "interpretedObjective": 915671.713481741,
+            "passed": true
+          },
+          "compositionId": "03-silken-golden:composition-08",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.998907437155883,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+            },
+            "xilonen": {
+              "nodeId": "03-silken-golden",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 915671.713481741
+        }
+      ],
+      "expectedCartesianCompositionCount": 8,
+      "intactCarryCoverage": [
+        {
+          "carryCharacterId": "keqing",
+          "compositionId": "03-silken-golden:composition-01"
+        },
+        {
+          "carryCharacterId": "ineffa",
+          "compositionId": "03-silken-golden:composition-05"
+        },
+        {
+          "carryCharacterId": "furina",
+          "compositionId": "03-silken-golden:composition-07"
+        },
+        {
+          "carryCharacterId": "xilonen",
+          "compositionId": "03-silken-golden:composition-06"
+        }
+      ],
+      "nodeFailures": [],
+      "nodeId": "03-silken-golden",
+      "observedCartesianCompositionCount": 8,
+      "poolSizesByCharacter": {
+        "furina": 2,
+        "ineffa": 1,
+        "keqing": 2,
+        "xilonen": 2
+      },
+      "requestedArtifactSetIdsByCharacter": {
+        "furina": "golden_troupe",
+        "ineffa": "silken_moons_serenade",
+        "keqing": "thundering_fury",
+        "xilonen": "scroll_of_the_hero_of_cinder_city"
+      },
+      "sheetPoolsByCharacter": {
+        "furina": [
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "xilonen"
+            ],
+            "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+          },
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "furina"
+            ],
+            "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+          }
+        ],
+        "ineffa": [
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+          }
+        ],
+        "keqing": [
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "keqing"
+            ],
+            "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+          },
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "ineffa",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "f35060473dd7de2659c154d0bce9f29db8ad9b3d825d13c86c2dde202c754e48"
+          }
+        ],
+        "xilonen": [
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "furina"
+            ],
+            "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          },
+          {
+            "nodeId": "03-silken-golden",
+            "originCarryCharacterIds": [
+              "xilonen"
+            ],
+            "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        ]
+      },
+      "sourceBuildIdsByCharacter": {
+        "furina": "BQAI0BO",
+        "ineffa": "FeFi2JG",
+        "keqing": "1WswsAu",
+        "xilonen": "Dbt0Wkm"
+      },
+      "technicalTeamConfigs": [
+        {
+          "artifactSet": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "charId": "keqing",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "mistsplitter_reforged"
+        },
+        {
+          "artifactSet": {
+            "setId": "silken_moons_serenade",
+            "type": "4pc"
+          },
+          "charId": "ineffa",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "fractured_halo"
+        },
+        {
+          "artifactSet": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "charId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "splendor_of_tranquil_waters"
+        },
+        {
+          "artifactSet": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "charId": "xilonen",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "peak_patrol_song"
+        }
+      ]
+    },
+    {
+      "bestIntactCarryComposition": {
+        "compositionId": "04-silken-tenacity:composition-10",
+        "equivalentCompositionIds": [
+          "04-silken-tenacity:composition-10"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 968649.606154722
+      },
+      "boundedReferenceComposition": {
+        "compositionId": "04-silken-tenacity:composition-08",
+        "equivalentCompositionIds": [
+          "04-silken-tenacity:composition-08"
+        ],
+        "representativeSelectionPolicy": "first-enumerated-exact-objective-tie",
+        "unreviewedTechnicalObjective": 972611.695357222
+      },
+      "boundedReferenceOverBestIntact": 1.00409032242136,
+      "boundedReferenceOverBestIntactStatus": "available",
+      "capturedTeamConfigSha256": "4f425999c2cac27f328ef65d051d31ca12709b3c3c67fb45e3eb0c456b3bb4c2",
+      "carryRuns": [
+        {
+          "artifactFingerprintSha256": "269dcf1e59b904aa2c6fa2ad0fe6afa8fe4d38026346e884c23f52759a301c12",
+          "carryCharacterId": "keqing",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "119f9f38a238f57100ce48c00770c7f036e679418bf5cdd8c73181e2f0ad652a",
+          "carryCharacterId": "ineffa",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61",
+            "keqing": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "1e7a9eaaa88d3fcc081b5fed224522668c3625d53224232a08fc086f0668b539",
+          "carryCharacterId": "furina",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6",
+            "xilonen": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          }
+        },
+        {
+          "artifactFingerprintSha256": "00bd19a40221093797d1c9fdfc669c0301fdd69b4d6de3552fbfa59ccca2b62f",
+          "carryCharacterId": "xilonen",
+          "outcome": "captured",
+          "sheetFingerprintsByCharacter": {
+            "furina": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85",
+            "ineffa": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298",
+            "keqing": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6",
+            "xilonen": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        }
+      ],
+      "comparisonStatus": "comparable",
+      "compositions": [
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.5451358220831e-7,
+            "compiledObjective": 954513.58220831,
+            "interpretedObjective": 954513.58220831,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-01",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "keqing"
+          ],
+          "normalizedToBoundedReference": 0.981392252185221,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954513.58220831
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.68872958267705e-7,
+            "compiledObjective": 968872.958267705,
+            "interpretedObjective": 968872.958267705,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-02",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.996155981768095,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968872.958267705
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 3.49245965480804e-10,
+            "allowedDifference": 9.54601396261216e-7,
+            "compiledObjective": 954601.396261216,
+            "interpretedObjective": 954601.396261215,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-03",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.981482539042066,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954601.396261215
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 3.49245965480804e-10,
+            "allowedDifference": 9.68960772320611e-7,
+            "compiledObjective": 968960.772320611,
+            "interpretedObjective": 968960.77232061,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-04",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.996246268624941,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968960.77232061
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.58164505244921e-7,
+            "compiledObjective": 958164.505244921,
+            "interpretedObjective": 958164.505244921,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-05",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.985145983560279,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 958164.505244921
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.72523881304316e-7,
+            "compiledObjective": 972523.881304316,
+            "interpretedObjective": 972523.881304316,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-06",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999909713143153,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972523.881304316
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.58252319297827e-7,
+            "compiledObjective": 958252.319297827,
+            "interpretedObjective": 958252.319297827,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-07",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.985236270417126,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 958252.319297827
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.72611695357222e-7,
+            "compiledObjective": 972611.695357222,
+            "interpretedObjective": 972611.695357222,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-08",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 1,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing"
+              ],
+              "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972611.695357222
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.54290230095327e-7,
+            "compiledObjective": 954290.230095327,
+            "interpretedObjective": 954290.230095326,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-09",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.981162610577938,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954290.230095326
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.68649606154722e-7,
+            "compiledObjective": 968649.606154722,
+            "interpretedObjective": 968649.606154722,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-10",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "xilonen"
+          ],
+          "normalizedToBoundedReference": 0.995926340160813,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968649.606154722
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.54378044148232e-7,
+            "compiledObjective": 954378.044148232,
+            "interpretedObjective": 954378.044148232,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-11",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "furina"
+          ],
+          "normalizedToBoundedReference": 0.981252897434784,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 954378.044148232
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.68737420207627e-7,
+            "compiledObjective": 968737.420207627,
+            "interpretedObjective": 968737.420207627,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-12",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.996016627017659,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 968737.420207627
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.57941153131938e-7,
+            "compiledObjective": 957941.153131938,
+            "interpretedObjective": 957941.153131938,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-13",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [
+            "ineffa"
+          ],
+          "normalizedToBoundedReference": 0.984916341952997,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 957941.153131938
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 2.3283064365387e-10,
+            "allowedDifference": 9.72300529191333e-7,
+            "compiledObjective": 972300.529191333,
+            "interpretedObjective": 972300.529191333,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-14",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999680071535872,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "xilonen"
+              ],
+              "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972300.529191333
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.58028967184844e-7,
+            "compiledObjective": 958028.967184844,
+            "interpretedObjective": 958028.967184843,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-15",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.985006628809843,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "keqing",
+                "ineffa",
+                "furina"
+              ],
+              "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+            }
+          },
+          "unreviewedTechnicalObjective": 958028.967184843
+        },
+        {
+          "calculatorAgreement": {
+            "absoluteDifference": 1.16415321826935e-10,
+            "allowedDifference": 9.72388343244239e-7,
+            "compiledObjective": 972388.343244239,
+            "interpretedObjective": 972388.343244239,
+            "passed": true
+          },
+          "compositionId": "04-silken-tenacity:composition-16",
+          "computedBuffOverrideLineCount": 0,
+          "computedBuffOverridesSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+          "failure": null,
+          "intactCarryCharacterIds": [],
+          "normalizedToBoundedReference": 0.999770358392718,
+          "normalizedToBoundedReferenceStatus": "available",
+          "outcome": "evaluated",
+          "sheetsByCharacter": {
+            "furina": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "furina"
+              ],
+              "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+            },
+            "ineffa": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa"
+              ],
+              "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+            },
+            "keqing": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "ineffa",
+                "furina",
+                "xilonen"
+              ],
+              "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+            },
+            "xilonen": {
+              "nodeId": "04-silken-tenacity",
+              "originCarryCharacterIds": [
+                "xilonen"
+              ],
+              "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+            }
+          },
+          "unreviewedTechnicalObjective": 972388.343244239
+        }
+      ],
+      "expectedCartesianCompositionCount": 16,
+      "intactCarryCoverage": [
+        {
+          "carryCharacterId": "keqing",
+          "compositionId": "04-silken-tenacity:composition-01"
+        },
+        {
+          "carryCharacterId": "ineffa",
+          "compositionId": "04-silken-tenacity:composition-13"
+        },
+        {
+          "carryCharacterId": "furina",
+          "compositionId": "04-silken-tenacity:composition-11"
+        },
+        {
+          "carryCharacterId": "xilonen",
+          "compositionId": "04-silken-tenacity:composition-10"
+        }
+      ],
+      "nodeFailures": [],
+      "nodeId": "04-silken-tenacity",
+      "observedCartesianCompositionCount": 16,
+      "poolSizesByCharacter": {
+        "furina": 2,
+        "ineffa": 2,
+        "keqing": 2,
+        "xilonen": 2
+      },
+      "requestedArtifactSetIdsByCharacter": {
+        "furina": "tenacity_of_the_millelith",
+        "ineffa": "silken_moons_serenade",
+        "keqing": "thundering_fury",
+        "xilonen": "scroll_of_the_hero_of_cinder_city"
+      },
+      "sheetPoolsByCharacter": {
+        "furina": [
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "xilonen"
+            ],
+            "sheetId": "73251aae6dde2b3c93ec8593a5c62e053d14590aaafc9231e217272b069acb85"
+          },
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "furina"
+            ],
+            "sheetId": "701a915d14314ce8d5fc43f4f872913932b6eb105679a3b5f05ed48fcb30c08a"
+          }
+        ],
+        "ineffa": [
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "keqing",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "adbc1f8d38d305aae2d779371dc83b5a54ba8139686dcf487476208d24bc3298"
+          },
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "ineffa"
+            ],
+            "sheetId": "2d5bbdb650cefb98cda0bf867423cc0ab5bc728000b9de34e6055de28f341a61"
+          }
+        ],
+        "keqing": [
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "keqing"
+            ],
+            "sheetId": "436b3019bc869b311b1f88e5d43130ff02e7cf7fe9debb2b2d5ac3c854fb63fd"
+          },
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "ineffa",
+              "furina",
+              "xilonen"
+            ],
+            "sheetId": "527cee9bb1d3be171a50ec1115ff6f5f321fb9a7aa6016a0ad0175f7f32c9bb6"
+          }
+        ],
+        "xilonen": [
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "keqing",
+              "ineffa",
+              "furina"
+            ],
+            "sheetId": "3bf3749b0857b68a64fe470696b100847f21fd4742f2e10223a5943a0ee675e6"
+          },
+          {
+            "nodeId": "04-silken-tenacity",
+            "originCarryCharacterIds": [
+              "xilonen"
+            ],
+            "sheetId": "2712c9c25a37362657a7385f00a968e252784f8a7d8d850535d6a8322dd423da"
+          }
+        ]
+      },
+      "sourceBuildIdsByCharacter": {
+        "furina": "BQA4H1m",
+        "ineffa": "FeFi2JG",
+        "keqing": "1WswsAu",
+        "xilonen": "Dbt0Wkm"
+      },
+      "technicalTeamConfigs": [
+        {
+          "artifactSet": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "charId": "keqing",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "mistsplitter_reforged"
+        },
+        {
+          "artifactSet": {
+            "setId": "silken_moons_serenade",
+            "type": "4pc"
+          },
+          "charId": "ineffa",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "fractured_halo"
+        },
+        {
+          "artifactSet": {
+            "setId": "tenacity_of_the_millelith",
+            "type": "4pc"
+          },
+          "charId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "splendor_of_tranquil_waters"
+        },
+        {
+          "artifactSet": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "charId": "xilonen",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          },
+          "weaponId": "peak_patrol_song"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 1,
+  "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+  "supportsArtifactRecommendations": false,
+  "supportsGamePerformanceClaims": false,
+  "supportsGlobalOptimality": false,
+  "supportsGuideClaims": false,
+  "supportsTechnicalObjectiveComparison": true,
+  "technicalObjectiveInputs": {
+    "calcContext": {
+      "enemyLevel": 110,
+      "enemyRes": 0.1,
+      "rollMultiplier": 0.85,
+      "substatBudget": "8_6"
+    },
+    "combatOptions": {},
+    "enemyAura": null,
+    "explicitFormulaBuffOverrides": null,
+    "extraBuffs": [],
+    "sharedCharacterConfigs": [
+      {
+        "characterId": "keqing",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedWeaponId": "mistsplitter_reforged",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "ineffa",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedWeaponId": "fractured_halo",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "furina",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedWeaponId": "splendor_of_tranquil_waters",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "xilonen",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedWeaponId": "peak_patrol_song",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      }
+    ],
+    "unreviewedTechnicalFormulaPlan": {
+      "lines": [
+        {
+          "characterId": "furina",
+          "count": 1,
+          "formulaId": "furina-burst"
+        },
+        {
+          "characterId": "furina",
+          "count": 1,
+          "formulaId": "furina-skill-bubble"
+        },
+        {
+          "characterId": "ineffa",
+          "count": 1,
+          "formulaId": "ineffa-burst"
+        },
+        {
+          "characterId": "ineffa",
+          "count": 1,
+          "formulaId": "ineffa-skill-initial"
+        },
+        {
+          "characterId": "keqing",
+          "count": 1,
+          "formulaId": "keqing-burst"
+        },
+        {
+          "characterId": "keqing",
+          "count": 8,
+          "formulaId": "keqing-charged"
+        },
+        {
+          "characterId": "keqing",
+          "count": 2,
+          "formulaId": "keqing-skill-slash"
+        },
+        {
+          "characterId": "keqing",
+          "count": 2,
+          "formulaId": "keqing-stiletto"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 2,
+          "formulaId": "xilonen-e-rush"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 2,
+          "formulaId": "xilonen-normal-2"
+        },
+        {
+          "characterId": "xilonen",
+          "count": 1,
+          "formulaId": "xilonen-q-initial"
+        }
+      ],
+      "reviewStatus": "unreviewed",
+      "sha256": "cb0f071bd5151936f010b3cbbcc6582233b0ae08f2aace0df654f2f58afe060a",
+      "sourceBindingEstablishedByCore": false
+    }
+  },
+  "technicalObjectiveProvenance": {
+    "classification": "fixture-wrapper-objective-provenance",
+    "completeTokenMappingCount": 10,
+    "derivation": "exact-authored-translation-comparisons",
+    "exactClaimCount": 11,
+    "formulaDraftFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+    "formulaLineCount": 11,
+    "partialTokenMappingCount": 1,
+    "readiness": {
+      "blockerCodes": [
+        "translation-unreviewed",
+        "partial-token-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-source-token"
+      ],
+      "blockerCount": 8,
+      "readyForDamageReplay": false
+    },
+    "reviewStatus": "unreviewed",
+    "sourceBindingEstablishedByCore": false,
+    "sourceRotationId": "sample-rotation",
+    "sourceRotationRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "supportsGuideClaims": false
+  }
+}

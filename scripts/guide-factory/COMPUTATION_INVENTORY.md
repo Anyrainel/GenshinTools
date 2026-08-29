@@ -314,6 +314,68 @@ forward and reverse schedules. That is no observed cross-run execution-order
 effect for two candidates with fresh teams in this fixture, not a proof that
 the generator or a future cache is generally order-independent.
 
+## Bounded joint artifact-stat composition seam
+
+`src/boundedJointArtifactExperiment.ts` composes the generator and replay seams
+without changing either runtime. It accepts exactly four released 5-star set
+nodes, four distinct carry seeds, and positive unreviewed technical formula
+lines. For each of 16 sequential calls it constructs a fresh team, captures the
+final complete artifact fingerprint, `StatSheet` dumps, and team configs, then
+deduplicates sheets per character inside that set node. It never creates a
+cross-node sheet pool and cannot warm-start `runGenerator`.
+
+The Keqing/Ineffa wrapper derives its 11 formula lines from exact-valued
+authored-translation comparisons and records the formula fixture, source team,
+sample rotation, 10 complete and 1 partial mappings, and all 8 readiness
+blockers. The generic core records that it does not itself establish that
+source binding. The wrapper therefore explains the objective's provenance
+without treating it as reviewed rotation truth.
+
+The observed node-local pool sizes are:
+
+| Node | Keqing | Ineffa | Furina | Xilonen | Cartesian cells |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Aubade / Golden | 2 | 1 | 2 | 2 | 8 |
+| Aubade / Tenacity | 2 | 2 | 2 | 2 | 16 |
+| Silken / Golden | 2 | 1 | 2 | 2 | 8 |
+| Silken / Tenacity | 2 | 2 | 2 | 2 | 16 |
+
+All 48 cells pass the direct-versus-compiled replay check. No explicit
+generator or formula buff override is passed. The replay's independently
+computed formula-override map has zero entries in every current cell and is
+retained as a count and hash; this is not a claim that implementation buffs are
+absent. Complete artifacts and sheet entries remain transient, while the
+durable report retains hashes, pool membership, objectives, calculator
+agreement, and failure data.
+
+Within the bounded table, node-local recombination exceeds the strongest intact
+carry by about 0.1191% in the two Golden nodes and 0.4090% in the two Tenacity
+nodes. The two Golden nodes tie exactly, and the two Tenacity nodes tie exactly
+at the outer reference. Both Ineffa-set edges have zero technical-objective
+delta; both Furina-set edges share the same positive delta. This is
+objective-sensitivity evidence that may reveal objective blindness or
+implementation invariance. It is not artifact suitability or causal game
+performance.
+
+`src/boundedLatticePolicy.ts` is a reusable, evaluator-free cached-table seam.
+Its reference selector reports tolerance-equivalent node IDs and fails closed
+when any declared node is a cached failure. Coordinate descent exposes strict
+improvements, equal-neighbor plateaus, and a separate
+`neighborhood-incomparable` terminal. In this fixture it moves from
+Aubade/Golden to the Aubade/Tenacity representative and exposes
+Silken/Tenacity as an equal neighbor. A synthetic `10, 9, 9, 12` table proves
+the policy can miss a pair-only improvement. Beam output is explicitly a
+non-calibrated, non-exhaustive coverage trace; it makes no evaluator call.
+
+Any generator/capture failure skips that node's recombination, and any replay
+failure makes its node not comparable. One failed node removes the cross-node
+reference and causes the fixture wrapper to withhold cached policy traces. This
+failure boundary prevents a survivor-only ordering from appearing complete.
+
+The seam supports bounded technical-objective comparison only. It does not
+support guide, artifact-recommendation, game-performance, ER, or global-
+optimality claims.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -336,11 +398,17 @@ the generator or a future cache is generally order-independent.
   `src/lib/artifact-builds/auto-tune/pipeline.ts`.
 - Constellation/refinement investment analysis and allocation-specific formula
   counts: `src/lib/team-comp/analyzer/analyzer.ts`.
+- Node-local carry-sheet recombination and exhaustive replay:
+  `scripts/guide-factory/src/boundedJointArtifactExperiment.ts`.
+- Cached finite-lattice reference, coordinate, and beam traces:
+  `scripts/guide-factory/src/boundedLatticePolicy.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
-immediate calculation dependencies. The comparison, owned-inventory
-optimization, AutoTune, and investment analyzers remain inventoried rather
-than composed into the factory.
+immediate calculation dependencies. The bounded joint seam now composes
+`runGenerator` with the dual-path replay, but only over carry-derived,
+node-local stat sheets. The comparison, owned-inventory optimization, AutoTune,
+and investment analyzers remain inventoried rather than composed into the
+factory.
 
 ## Current blockers
 
@@ -366,6 +434,10 @@ than composed into the factory.
   path. The current sensitivity probe finds three outputs from four carry
   choices and a cross-character Keqing substat-key change. A factory cannot
   silently choose one carry seed and present its result as canonical.
+- Exhausting the carry-derived node-local sheet pool is still not global
+  artifact-stat optimization. The current bounded table also has zero objective
+  sensitivity on both Ineffa-set edges, so apparently clean search completion
+  can expose an objective-blind dimension rather than credible set guidance.
 - The existing artifact analyzer does not enumerate non-five-star sets such as
   Instructor and cannot dynamically discover every damage-oriented two-piece
   family. Its two-piece candidate grammar is conditional on successful
@@ -388,18 +460,16 @@ than composed into the factory.
   `autoTuneTeam` has no context override. These are unresolved assumptions that
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
-- The first generator probe intentionally passes no buff overrides. A future
-  damage-bearing experiment must define them explicitly and verify that the
-  same objective is applied throughout every greedy and refinement phase before
-  its output can support comparisons.
+- The bounded joint experiment intentionally passes no explicit buff
+  overrides, although it now records that the computed formula-override map is
+  empty in all 48 current cells. A future performance-bearing experiment must
+  define or validate its buff semantics explicitly and verify that the same
+  objective is applied throughout every greedy, refinement, and replay phase.
 
-The next computation checkpoint should expand only the current 2x2 assignment
-lattice across the four carry seeds, deduplicate node-local character sheets,
-and exhaustively replay compatible cross-compositions under the same fixed
-objective. Coordinate-descent and beam policies can then be replayed over that
-cached table and compared with the tiny exhaustive result. This is a search-
-behavior experiment, not a guide ranking. The four-node lattice is too small
-for meaningful beam-width calibration: exhaustively enumerate it as the
-baseline and treat any beam replay only as a coverage trace. Formula-plan
-review, explicit combat assumptions, and dual-path replay remain prerequisites
-for later performance claims. ER remains deferred.
+The current 2x2-by-four-carry table is now exhausted rather than planned. Its
+reusable seams can be applied to another source-backed fixture or a carefully
+expanded equipment dimension, but each expansion needs its own exhaustive
+boundary, intermediate discrepancies, and fail-closed validation. The
+unreviewed formula plan, zero-sensitivity Ineffa dimension, and tiny beam trace
+make extrapolation unsafe. Formula-plan review and explicit gameplay
+assumptions remain prerequisites for performance claims. ER remains deferred.

@@ -21,8 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 10 measures two concrete sensitivities of the existing greedy
-artifact generator, without claiming a working guide factory:
+Checkpoint 11 exhausts one deliberately tiny, node-local artifact-stat
+composition table under an unreviewed technical objective, without claiming a
+working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -73,6 +74,20 @@ artifact generator, without claiming a working guide factory:
     check alongside the carry observations.
 21. Preserve complete artifact outputs only as hashes and retain explainable
     main-stat/substat-key differences, without damage, ranking, or guide claims.
+22. Run all four released 5-star set nodes under all four team-member carry
+    seeds, producing 16 fresh, sequential generator calls without ER or
+    per-character constraints.
+23. Deduplicate complete generated `StatSheet` dumps within each set node and
+    exhaust only the node-local Cartesian products: 8, 16, 8, and 16
+    compositions, respectively.
+24. Replay all 48 compositions through both calculator paths under the same 11
+    exact-valued but unreviewed source-count lines, retaining agreement and
+    computed-override fingerprints as technical evidence.
+25. Preserve exact objective ties explicitly and compare node-local
+    recombinations with intact carry outputs only inside this bounded table.
+26. Replay coordinate descent and a width-one beam over the already evaluated
+    four-node cache with zero new evaluator calls; treat both as policy traces,
+    not optimization or calibration results.
 
 The first two active sources are already in this repository:
 
@@ -139,6 +154,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-artifact-generation.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation-sensitivity.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-keqing-ineffa-bounded-joint-artifacts.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -155,10 +171,11 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all eleven durable reports in memory: corpus inventory, team
+It also rebuilds all twelve durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
-Diona comparison, and historical ER calibration. Stale evidence cannot pass.
+the bounded joint artifact experiment, Diona comparison, and historical ER
+calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -361,6 +378,62 @@ The report retains hashes of complete generated artifacts plus main stats and
 positive substat keys for explanation. It retains no artifact records, damage,
 score, rank, winner, or ER conclusion. A failed run makes every dependent
 comparison explicitly not comparable while later scheduled runs still execute.
+
+The bounded joint experiment then expands the same four released 5-star set
+nodes across all four carry inputs. It performs 16 sequential generator calls,
+each with a fresh `TeamBuild`, and captures complete artifacts only as hashes.
+Within each node it canonicalizes and deduplicates the generated character
+`StatSheet` dumps, then exhausts only that node's Cartesian product. The pool
+sizes produce 8, 16, 8, and 16 compositions for 48 total; sheets are never
+recombined across set nodes.
+
+Every composition is replayed under the 11 exact-valued source-count claims.
+Those lines remain agent-authored and unreviewed, and the core explicitly does
+not establish their source binding. The fixture wrapper records the exact team
+and `sample-rotation` IDs, 10 complete and 1 partial token mappings, and all 8
+readiness blockers: unreviewed translation, partial mapping, five unresolved
+formula mappings, and one unresolved source token. All 48 cells pass
+direct-versus-compiled calculator agreement. No explicit generator or replay
+buff override is passed;
+the replay's separately computed formula-override map contains zero lines in
+every current cell and is retained by count and hash. This does not mean that
+all buffs are absent from character, weapon, artifact, or team implementations.
+
+Node-local recombination raises the bounded technical reference over the best
+intact carry output by about 0.1191% in the Aubade/Golden and Silken/Golden
+nodes, and about 0.4090% in the Aubade/Tenacity and Silken/Tenacity nodes. These
+are search-space observations under an unreviewed objective, not game-damage or
+artifact-quality claims. The two Golden nodes are exact objective ties, as are
+the two Tenacity nodes. The global bounded reference therefore preserves both
+Tenacity nodes as equivalent; the singular Aubade/Tenacity ID is only the
+deterministic first-candidate representative, not a unique best or winner.
+
+The cached outer-node table also shows zero technical-objective change on both
+Aubade-to-Silken edges and the same positive change on both
+Golden-to-Tenacity edges. This is an objective-sensitivity warning: the current
+unreviewed objective may be blind to the Ineffa set dimension, or the measured
+implementation may be invariant at this boundary. It is not evidence that the
+sets are interchangeable, suitable, or causally responsible for in-game
+performance.
+
+Cached coordinate descent starts at Aubade/Golden, moves to Aubade/Tenacity,
+and terminates with `no-strictly-improving-comparable-neighbor` while exposing
+Silken/Tenacity as an equal-neighbor plateau. It therefore stops in the same
+exact-reference equivalence class that contains both Tenacity nodes. It makes
+no generator or evaluator call and does not warm-start the runtime. A separate
+synthetic test demonstrates that this policy can miss a pair-only improvement.
+The width-one, depth-two beam is retained only as a
+non-calibrated, non-exhaustive coverage trace; although this tiny fixture's
+trace visits all four cached nodes, that is not a general beam guarantee.
+
+Any failed generator run or composition replay makes its node not comparable.
+One incomparable node removes the global bounded reference and withholds both
+cached policy traces instead of ranking the surviving nodes. The reusable
+cached-table selector also returns `withheld` when any declared node is a
+failure, so callers cannot rank only the survivors by accident. The experiment
+supports technical objective comparison only inside this fixed table. It does
+not support a guide, artifact recommendation, game-performance claim, or
+global-optimality claim.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

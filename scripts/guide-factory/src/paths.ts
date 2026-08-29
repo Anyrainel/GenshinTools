@@ -116,3 +116,9 @@ export const KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH =
     "reports",
     "keqing-ineffa-artifact-generation-sensitivity.json"
   );
+export const KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-ineffa-bounded-joint-artifact-experiment.json"
+  );

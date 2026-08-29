@@ -44,6 +44,10 @@ import {
   runKeqingIneffaArtifactGenerationSensitivityProbe,
 } from "./keqingIneffaArtifactGenerationSensitivityProbe";
 import {
+  KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_INPUT_PATHS,
+  runKeqingIneffaBoundedJointArtifactExperiment,
+} from "./keqingIneffaBoundedJointArtifactExperiment";
+import {
   loadManualSnapshotInputs,
   requiredManualSnapshotInputContaining,
   type ManualSnapshotInput,
@@ -57,6 +61,7 @@ import {
   KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH,
   KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH,
   KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_REPORT_PATH,
+  KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
@@ -120,6 +125,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaArtifactGenerationPreflightInput,
     keqingIneffaArtifactGenerationTechnicalProbeInput,
     keqingIneffaArtifactGenerationSensitivityInput,
+    keqingIneffaBoundedJointArtifactExperimentInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -141,6 +147,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(
         KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH,
+      ),
+      readJson(
+        KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
       ),
     ]);
 
@@ -447,6 +456,28 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-artifact-generation-sensitivity",
           message:
             "The saved Keqing-Ineffa artifact-generation sensitivity probe does not match current repository builds, calculator defaults, candidate schedule, and generator implementation.",
+        });
+      }
+
+      const keqingIneffaBoundedJointArtifactExperimentGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_INPUT_PATHS,
+        );
+      const expectedKeqingIneffaBoundedJointArtifactExperiment =
+        await runKeqingIneffaBoundedJointArtifactExperiment(
+          expectedKnowledge,
+          keqingIneffaBoundedJointArtifactExperimentGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingIneffaBoundedJointArtifactExperiment) !==
+        stableJson(keqingIneffaBoundedJointArtifactExperimentInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_bounded_joint_artifact_experiment",
+          path: "reports.keqing-ineffa-bounded-joint-artifact-experiment",
+          message:
+            "The saved Keqing-Ineffa bounded joint artifact experiment does not match the current four-node input lattice, unreviewed technical objective, generator implementation, and replay implementation.",
         });
       }
 

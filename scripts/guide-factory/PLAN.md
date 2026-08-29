@@ -198,16 +198,30 @@ This does not establish general order independence. The report retains hashes
 and structural explanations but no damage, ranking, winner, or guide claim.
 Formula-plan review remains required before comparative damage or ranking.
 
-The next safe computation step is a tiny, exhaustively auditable composition
-experiment: generate each current 2x2 set-assignment node under every
-algorithmic carry, deduplicate the per-character outputs within that node, and
-recombine only those compatible sheets before replaying the same fixed
-objective. Coordinate-descent or beam policies should then be replayed against
-that cached table rather than trusted in isolation. This can measure search
-behavior, but the four-node lattice is too small for meaningful beam-width
-calibration. Exhaustive enumeration should be the baseline, with beam replay
-treated only as a coverage trace. The unreviewed formula plan still prevents
-guide or performance claims.
+The bounded composition experiment now performs that step rather than merely
+planning it. Sixteen fresh generator calls cover all four set-assignment nodes
+and all four carry seeds. Node-local deduplication yields pools of 8, 16, 8,
+and 16 compatible compositions, and all 48 cells pass interpreted-versus-
+compiled replay agreement under the same 11 exact-valued but unreviewed
+technical lines. Any failed run or replay removes the outer comparison and
+withholds cached policies instead of ranking survivors.
+
+The recombined reference exceeds the best intact carry by about 0.1191% in the
+two Golden nodes and 0.4090% in the two Tenacity nodes under this objective.
+Both Ineffa-set edges have exactly zero objective delta, while both Furina-set
+edges have the same positive delta. Those facts are preserved as possible
+objective blindness or implementation invariance, not artifact suitability or
+causal game performance. The Golden nodes tie exactly and the Tenacity nodes
+tie exactly; singular IDs are deterministic representatives only.
+
+Cached coordinate descent reaches the two-node reference plateau from the seed
+with zero evaluator calls, while a synthetic 2x2 case proves the policy can
+miss a pair-only improvement. The width-one beam remains a non-calibrated,
+non-exhaustive coverage trace even though it happens to visit all four nodes in
+this tiny table. The reusable bounded composition and cached-policy seams can
+now support later experiments, but the unreviewed formula plan still prevents
+guide or performance claims. Further work should add new bounded evidence
+tables and validation targets rather than extrapolate this one fixture.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

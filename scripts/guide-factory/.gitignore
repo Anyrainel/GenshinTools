@@ -12,3 +12,4 @@ reports/*
 !reports/keqing-ineffa-artifact-generation-preflight.json
 !reports/keqing-ineffa-artifact-generation-technical-probe.json
 !reports/keqing-ineffa-artifact-generation-sensitivity.json
+!reports/keqing-ineffa-bounded-joint-artifact-experiment.json
