@@ -16,6 +16,10 @@
     {
       "sourceId": "kqm",
       "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json"
+    },
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json"
     }
   ]
 }

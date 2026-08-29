@@ -3,7 +3,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
+      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
@@ -14029,6 +14029,38 @@
           },
           "sourceId": "kqm",
           "sourceRecordId": "kokomi-on-field-nod-krai-artifact-delegation-luna-v"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "husk_of_opulent_dreams",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "noelle",
+      "classification": "default",
+      "conditions": [],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:noelle-general-husk-luna-viii:recommendation:general-husk:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "General Noelle artifact set",
+      "recordId": "kqm:character-guide:noelle-general-husk-luna-viii",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "general-husk",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets > Recommended Sets > 4pc Husk of Opulent Dreams",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-general-husk-luna-viii"
         }
       ]
     },
@@ -30139,9 +30171,9 @@
   "summary": {
     "all": {
       "conditionallyRepresentable": 21,
-      "enumeratedInitially": 1009,
+      "enumeratedInitially": 1010,
       "notRepresentable": 22,
-      "total": 1052
+      "total": 1053
     },
     "byFailureReason": {
       "beta-only-artifact": 0,
@@ -30163,9 +30195,9 @@
     },
     "recommendations": {
       "conditionallyRepresentable": 0,
-      "enumeratedInitially": 20,
+      "enumeratedInitially": 21,
       "notRepresentable": 2,
-      "total": 22
+      "total": 23
     },
     "teamArtifactPlanAssignments": {
       "conditionallyRepresentable": 0,

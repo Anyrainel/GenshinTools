@@ -350,15 +350,27 @@ const SOURCE_ABSENT_MAPPINGS: SourceAbsentFormulaMapping[] = [
   },
 ];
 
+/**
+ * Materialize the fixed Keqing-Ineffa source-backed equipment fixture shared
+ * by offline experiments. The selections remain owned by this fixture so
+ * callers cannot silently substitute equipment while reusing its identity.
+ */
+export function buildKeqingIneffaSourceBackedEquipmentScenario(
+  repository: KnowledgeRepository,
+): SourceBackedEquipmentScenario {
+  return materializeSourceBackedEquipmentScenario(
+    repository,
+    KEQING_INEFFA_EXTERNAL_TEAM_ID,
+    EQUIPMENT_SELECTIONS,
+  );
+}
+
 export async function buildKeqingIneffaFormulaDraftReport(
   repository: KnowledgeRepository,
   generatedFrom: Array<{ path: string; sha256: string }>
 ): Promise<KeqingIneffaFormulaDraftReport> {
-  const scenario = materializeSourceBackedEquipmentScenario(
-    repository,
-    KEQING_INEFFA_EXTERNAL_TEAM_ID,
-    EQUIPMENT_SELECTIONS
-  );
+  const scenario =
+    buildKeqingIneffaSourceBackedEquipmentScenario(repository);
   const sourceRotation = requiredRotation(
     scenario.team,
     KEQING_INEFFA_SOURCE_ROTATION_ID

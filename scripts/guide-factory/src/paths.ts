@@ -98,3 +98,9 @@ export const WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH = path.join(
   "reports",
   "weapon-choice-search-coverage.json"
 );
+export const KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-ineffa-artifact-generation-preflight.json"
+  );

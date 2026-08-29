@@ -32,6 +32,10 @@ import {
   KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS,
 } from "./keqingIneffaFormulaDraft";
 import {
+  buildKeqingIneffaArtifactGenerationPreflightReport,
+  KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS,
+} from "./keqingIneffaArtifactGenerationPreflight";
+import {
   loadManualSnapshotInputs,
   requiredManualSnapshotInputContaining,
   type ManualSnapshotInput,
@@ -42,6 +46,7 @@ import {
   DIONA_ER_CALIBRATION_REPORT_PATH,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
   GENSHINTOOLS_SNAPSHOT_PATH,
+  KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH,
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
@@ -102,6 +107,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     knowledgeCorpusInventoryInput,
     artifactChoiceSearchCoverageInput,
     weaponChoiceSearchCoverageInput,
+    keqingIneffaArtifactGenerationPreflightInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -117,6 +123,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
       readJson(ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
       readJson(WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
+      readJson(KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -356,6 +363,28 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-formula-plan-draft",
           message:
             "The saved Keqing-Ineffa formula-plan draft does not match current knowledge, equipment evidence, and calculator defaults.",
+        });
+      }
+
+      const keqingIneffaArtifactGenerationPreflightGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS
+        );
+      const expectedKeqingIneffaArtifactGenerationPreflight =
+        await buildKeqingIneffaArtifactGenerationPreflightReport(
+          expectedKnowledge,
+          keqingIneffaArtifactGenerationPreflightGeneratedFrom
+        );
+      if (
+        stableJson(expectedKeqingIneffaArtifactGenerationPreflight) !==
+        stableJson(keqingIneffaArtifactGenerationPreflightInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_artifact_generation_preflight",
+          path: "reports.keqing-ineffa-artifact-generation-preflight",
+          message:
+            "The saved Keqing-Ineffa artifact-generation preflight does not match current source equipment, refinement policy, formula readiness, and analyzer candidate grammar.",
         });
       }
 

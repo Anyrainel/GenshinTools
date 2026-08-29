@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildKeqingIneffaFormulaDraftReport,
+  buildKeqingIneffaSourceBackedEquipmentScenario,
   KEQING_INEFFA_EXTERNAL_TEAM_ID,
   KEQING_INEFFA_SOURCE_ROTATION_ID,
 } from "../src/keqingIneffaFormulaDraft";
@@ -9,6 +10,47 @@ import { KNOWLEDGE_REPOSITORY_PATH } from "../src/paths";
 import { KnowledgeRepositorySchema } from "../src/schemas";
 
 describe("Keqing-Ineffa formula-plan review fixture", () => {
+  it("exposes one deterministic source-backed equipment scenario", async () => {
+    const repository = KnowledgeRepositorySchema.parse(
+      await readJson(KNOWLEDGE_REPOSITORY_PATH)
+    );
+
+    const first =
+      buildKeqingIneffaSourceBackedEquipmentScenario(repository);
+    const second =
+      buildKeqingIneffaSourceBackedEquipmentScenario(repository);
+
+    expect(second).toEqual(first);
+    expect(second).not.toBe(first);
+    expect(second.team).not.toBe(first.team);
+    expect(first).toMatchObject({
+      classification: "source-backed-equipment-fixture",
+      supportsGuideClaims: false,
+      sourceTeamRecordId: KEQING_INEFFA_EXTERNAL_TEAM_ID,
+      team: {
+        id: KEQING_INEFFA_EXTERNAL_TEAM_ID,
+        members: [
+          {
+            characterId: "keqing",
+            selectedWeapon: { weaponId: "mistsplitter_reforged" },
+          },
+          {
+            characterId: "ineffa",
+            selectedWeapon: { weaponId: "fractured_halo" },
+          },
+          {
+            characterId: "furina",
+            selectedWeapon: { weaponId: "splendor_of_tranquil_waters" },
+          },
+          {
+            characterId: "xilonen",
+            selectedWeapon: { weaponId: "peak_patrol_song" },
+          },
+        ],
+      },
+    });
+  });
+
   it("preserves equipment provenance, branch counts, partial tokens, and unresolved aggregates", async () => {
     const repository = KnowledgeRepositorySchema.parse(
       await readJson(KNOWLEDGE_REPOSITORY_PATH)

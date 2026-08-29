@@ -6,19 +6,26 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-artifact-generation-preflight.json` binds one fixed
+  source-backed equipment fixture to an explicit comparison refinement policy,
+  the mirrored weapon domain, native weapon types, initial artifact grammar,
+  formula-draft assumptions, and the formula-readiness inventory. Its four
+  equipment rows pass the technical-probe gates, but the unreviewed formula
+  plan's eight blockers keep the reviewed-experiment gate closed. It runs no
+  generator, damage calculation, ranking, or energy calculation.
 - `weapon-choice-search-coverage.json` mirrors the private analyzer's small
-  candidate policy against released data and audits 982 non-ER weapon
-  occurrences on three independent axes. All 982 IDs are in the 236-weapon
-  released domain, all 982 refinements are unspecified, and 970 choices match
+  candidate policy against released data and audits 983 non-ER weapon
+  occurrences on three independent axes. All 983 IDs are in the 236-weapon
+  released domain, all 983 refinements are unspecified, and 971 choices match
   the character's native weapon type while 12 legacy selections do not. The
   report does not equate ID membership with exact refinement coverage or
   runtime success. Three historical ER weapon conditions are inventoried but
   not analyzed.
 - `artifact-choice-search-coverage.json` calls the current analyzer candidate
-  builders and classifies all 1,052 artifact-choice fields on non-rejected
+  builders and classifies all 1,053 artifact-choice fields on non-rejected
   guide and team records against its released search grammar. The grammar
   contains 43 initial four-piece keys and at most 14 conditionally discovered
-  two-piece pairs. Of those occurrences, 1,009 are initially enumerated, 21
+  two-piece pairs. Of those occurrences, 1,010 are initially enumerated, 21
   are conditionally representable, and 22 are not representable by the current
   grammar. Two of the initially enumerated occurrences are assignments in one
   coupled plan; they are audited individually, not jointly optimized. It runs
@@ -32,7 +39,7 @@ Current durable pilot evidence:
   teams with exact baseline rosters. It emits present, uncovered, or explicitly
   role-unresolved results and no quality score, rank, or winner. The current
   result has 3 present, 1 role-unresolved, and 2 uncovered templates, plus 1
-  present and 6 uncovered exact external teams. Keqing Lunar-Charged is
+  present and 7 uncovered exact external teams. Keqing Lunar-Charged is
   uncovered because the baseline lacks the required Keqing–Ineffa core; its
   off-field-Hydro and resistance-shred roles are not weakened into element
   matches.
@@ -60,6 +67,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all eight reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all nine reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

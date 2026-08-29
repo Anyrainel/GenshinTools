@@ -133,12 +133,12 @@ runtime derives positive substats from successful four-piece evaluations and
 may append a smaller set in a real analyzer run.
 
 The report accounts for every artifact-choice field on current non-rejected
-character-guide and team records: 1,052 occurrences in total. Of 188 guide
+character-guide and team records: 1,053 occurrences in total. Of 188 guide
 builds, 167 are initially enumerated, 14 are conditionally representable, and
 7 are not representable by the current grammar. Of 840 team-member selected
 artifacts, 820 are initially enumerated, 7 are conditional, and 13 are not
-representable. Of 22 character-guide and team-member recommendation
-occurrences, 20 are initially enumerated and 2 are not representable. Two more
+representable. Of 23 character-guide and team-member recommendation
+occurrences, 21 are initially enumerated and 2 are not representable. Two more
 occurrences are the assignments in one coupled Kokomi/Columbina artifact plan;
 both are initially enumerated individually. The 22
 failures are 18 Instructor occurrences, 2 Exile occurrences, and 2
@@ -168,15 +168,15 @@ weapon/refinement pairs:
 | 4-star | 139 | R5 | 139 |
 | 5-star | 73 | R1 and R5 | 146 |
 
-The consolidated repository has 982 non-ER weapon occurrences: 127 entries in
-character-guide weapon orders, 840 selected exact-team weapons, and 15
-character-guide recommendation entries. There are no team-member weapon
-recommendations yet.
+The consolidated repository has 983 non-ER weapon occurrences: 127 entries in
+character-guide weapon orders, 840 selected exact-team weapons, and 16
+character-guide recommendation entries, including Noelle's conditional Gest
+choice. There are no team-member weapon recommendations yet.
 
-All 982 weapon IDs occur in the global released candidate domain. Refinement is
-a separate axis: none of the 982 observations supplies one, so the report has
-0 exact candidate pairs and 982 unspecified refinements. Native type is also
-separate: 970 observations are compatible and 12 are mismatched. Every mismatch
+All 983 weapon IDs occur in the global released candidate domain. Refinement is
+a separate axis: none of the 983 observations supplies one, so the report has
+0 exact candidate pairs and 983 unspecified refinements. Native type is also
+separate: 971 observations are compatible and 12 are mismatched. Every mismatch
 is a selected weapon from the legacy candidate source; baseline and KQM records
 have none.
 
@@ -190,6 +190,31 @@ Three historical ER target weapon conditions are inventoried separately: two
 specific conditions and one category condition, containing four explicit
 weapon-ID occurrences in total. Their target numbers and adequacy are not
 copied into the observations or analyzed while ER work is deferred.
+
+## Artifact-generation preflight seam
+
+`src/artifactGenerationPreflight.ts` turns the earlier coverage facts into an
+executable gate. It preserves and validates explicit fixture refinements; when
+the source fixture omits refinement, the named `comparison-baseline-v1`
+experiment policy resolves 3- and 4-star weapons to R5 and 5-star weapons to
+R1. Those values are labeled experiment inputs, never source evidence.
+
+The preflight separately checks fixture evidence, exact weapon/refinement
+pairs, native weapon types, initial artifact-set grammar, formula-draft member
+and equipment binding, explicit investment compatibility, and formula-readiness
+inventory binding. It exposes two outcomes:
+
+- `equipmentReadyForTechnicalProbe` means the current computation can be
+  exercised without claiming that its objective is correct;
+- `readyForReviewedGeneratorExperiment` means all of those gates plus the
+  reviewed formula-plan gate pass.
+
+For the Keqing/Ineffa fixture, every equipment and binding gate passes. Its
+four unspecified 5-star weapons resolve to R1 under the experiment policy. The
+technical-probe outcome is therefore true, while the reviewed-experiment
+outcome remains false because the formula translation retains eight blockers.
+The report runs no generator or damage calculation and contains no generated
+build, score, or ranking.
 
 ## Callable modules for later experiments
 
@@ -244,9 +269,10 @@ None of these later modules is invoked by the first replay.
   current analyzer varies one character at a time and has no joint artifact-set
   assignment search. Individual candidate coverage must not be reported as
   coupled-plan coverage.
-- The current knowledge records do not specify refinements for any of the 982
-  non-ER weapon occurrences. A future computation must state its comparison
-  policy explicitly instead of silently treating source IDs as R1 or R5 facts.
+- The current knowledge records do not specify refinements for any of the 983
+  non-ER weapon occurrences. The preflight now states one comparison policy
+  explicitly, but that convention remains an experiment input rather than a
+  source fact.
 - Twelve legacy selected weapons have the wrong native type. Since the runtime
   uses the equipped seed weapon to select a candidate class, they cannot safely
   seed a weapon search even though their IDs exist in the global domain.
@@ -258,7 +284,8 @@ None of these later modules is invoked by the first replay.
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
 
-The next repository checkpoint should make refinement assumptions first-class
-in an experiment fixture and audit actual artifact generation for a reviewed
-case. Formula-plan review, explicit artifact stat sheets, and dual-path replay
-remain prerequisites for damage optimization.
+The next computation checkpoint can run one bounded technical generator probe
+behind this preflight, retain candidate-specific failures, and label every
+generated stat choice as structural-only. Formula-plan review remains required
+before comparative damage, ranking, or guide validation; explicit artifact
+stat sheets and dual-path replay remain prerequisites for those later claims.

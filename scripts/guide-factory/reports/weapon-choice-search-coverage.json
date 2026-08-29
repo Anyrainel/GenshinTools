@@ -148,7 +148,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
+      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -20503,6 +20503,56 @@
         "outcome": "in-released-candidate-domain",
         "releasedResourceAvailable": true,
         "resolvedPolicyRarity": 3,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "noelle",
+      "classification": "conditional",
+      "conditions": [
+        "Noelle is played in a Hexerei team."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Claymore",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Claymore"
+      },
+      "observationId": "kqm:character-guide:noelle-hexerei-gest-luna-viii:recommendation:hexerei-gest:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "hexerei-gest",
+      "recommendationLabel": "Gest of the Mighty Wolf in Hexerei teams",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:noelle-hexerei-gest-luna-viii",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > Gest of the Mighty Wolf",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-hexerei-gest-luna-viii"
+        }
+      ],
+      "weaponId": "gest_of_the_mighty_wolf",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
         "weaponStatsAvailable": true
       },
       "weaponIndex": 0
@@ -51770,16 +51820,16 @@
   },
   "summary": {
     "all": {
-      "total": 982
+      "total": 983
     },
     "bySourceKind": {
-      "characterGuideRecommendations": 15,
+      "characterGuideRecommendations": 16,
       "guideWeaponOrder": 127,
       "teamMemberRecommendations": 0,
       "teamSelectedWeapons": 840
     },
     "nativeTypeCompatibility": {
-      "compatible": 970,
+      "compatible": 971,
       "mismatched": 12,
       "unknown": 0
     },
@@ -51791,7 +51841,7 @@
       },
       "exactCandidate": 0,
       "excludedByPolicy": 0,
-      "unspecified": 982
+      "unspecified": 983
     },
     "weaponIdDomain": {
       "byFailureReason": {
@@ -51801,7 +51851,7 @@
         "unexpected-policy-omission": 0
       },
       "excludedFromReleasedCandidateDomain": 0,
-      "inReleasedCandidateDomain": 982
+      "inReleasedCandidateDomain": 983
     }
   },
   "supportsGuideClaims": false

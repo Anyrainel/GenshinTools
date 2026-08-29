@@ -7,9 +7,9 @@ Status: active for narrow manual observations only.
 ## Capture unit
 
 One JSON snapshot represents one guide page at one visible source version. The
-active narrow samples currently cover Diona, Furina, Keqing, and Kokomi. A record
-represents one independently reviewable heading-scoped claim group, not the
-whole guide.
+active narrow samples currently cover Diona, Furina, Keqing, Kokomi, and
+Noelle. A record represents one independently reviewable heading-scoped claim
+group, not the whole guide.
 
 Required page metadata:
 
@@ -52,6 +52,12 @@ source's one-way condition that a well-invested Columbina can use Aubade when
 Kokomi takes Silken Moon's Serenade. It does not invent an investment
 breakpoint, a reverse implication, or a ranking between that plan and
 Ocean-Hued Clam.
+
+The Noelle Luna VIII sample tests an old-character build refresh. Its general
+Hexerei weapon, artifact set, investment-scoped stat branches, and exact team
+remain separate records. The general recommendations must not be attached to
+the exact team without a source claim that binds them together, and the
+offensive priority capture omits the source's ER term while ER work is deferred.
 
 ## Naming and review
 

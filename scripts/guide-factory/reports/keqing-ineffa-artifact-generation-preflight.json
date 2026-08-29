@@ -1,0 +1,516 @@
+{
+  "blockers": [
+    {
+      "code": "formula-plan-not-ready",
+      "message": "Preflight kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example cannot authorize a reviewed artifact-generator experiment while the formula plan has 8 blocker(s)."
+    }
+  ],
+  "cautions": [
+    "Resolved refinements are experiment inputs, not source facts or weapon recommendations.",
+    "Initial artifact-grammar coverage only proves that the analyzer can name the selected four-piece set.",
+    "readyForGenerator is an evidence-policy gate for a reviewed experiment, not a statement that the runtime is merely technically executable.",
+    "This preflight runs no artifact generator, damage calculation, ranking, or energy calculation."
+  ],
+  "classification": "artifact-generation-experiment-preflight",
+  "equipmentReadyForTechnicalProbe": true,
+  "fixtureClassification": "source-backed-equipment-fixture",
+  "formulaDraftBinding": {
+    "assumptionClassification": "calculator-fixture-experiment-assumptions",
+    "characters": [
+      {
+        "characterId": "furina",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "golden_troupe",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "splendor_of_tranquil_waters",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "ineffa",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "aubade_of_morningstar_and_moon",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "fractured_halo",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "keqing",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "thundering_fury",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "mistsplitter_reforged",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "xilonen",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "scroll_of_the_hero_of_cinder_city",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "peak_patrol_song",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      }
+    ],
+    "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+  },
+  "formulaReadiness": {
+    "blockers": [
+      {
+        "code": "translation-unreviewed",
+        "message": "The source-to-formula translation has not been reviewed."
+      },
+      {
+        "characterId": "keqing",
+        "code": "partial-token-mapping",
+        "formulaId": "keqing-charged",
+        "message": "Source token mapping for keqing.keqing-charged is partial."
+      },
+      {
+        "characterId": "furina",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "furina-salon-total",
+        "message": "Mapping for furina.furina-salon-total remains unresolved: The calculator formula bakes in 32 Salon Member hits, while the source gives no duration or hit count proving that the aggregate fits.",
+        "sourceToken": "ED (Salon Members after cast)"
+      },
+      {
+        "characterId": "furina",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "rx-lunarCharged-furina",
+        "message": "Mapping for furina.rx-lunarCharged-furina remains unresolved: The calculator exposes a zero-count Furina Lunar-Charged formula, but the source does not establish that Furina owns zero triggers.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "characterId": "ineffa",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "ineffa-birgitta",
+        "message": "Mapping for ineffa.ineffa-birgitta remains unresolved: The calculator formula bakes in ten Birgitta discharges and ten additional Lunar-Direct parts with Hydro, while the source gives no duration or hit count proving that the aggregate fits.",
+        "sourceToken": "E (Birgitta discharges after cast)"
+      },
+      {
+        "characterId": "ineffa",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "rx-lunarCharged-ineffa",
+        "message": "Mapping for ineffa.rx-lunarCharged-ineffa remains unresolved: The calculator assigns nine default Lunar-Charged triggers to Ineffa through an internal ownership heuristic; the source notation does not establish trigger count or ownership.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "characterId": "keqing",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "rx-lunarCharged-keqing",
+        "message": "Mapping for keqing.rx-lunarCharged-keqing remains unresolved: The calculator exposes a zero-count Keqing Lunar-Charged formula, but the source does not establish that Keqing owns zero triggers.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "characterId": "keqing",
+        "code": "unresolved-source-token",
+        "message": "Source token keqing:8[N1] within 5[N1C] + 3[N1C] has no resolved calculator formula: The calculator exposes no C0 Keqing Normal Attack formula, so the Charged Attack mapping covers only part of each N1C token.",
+        "sourceToken": "8[N1] within 5[N1C] + 3[N1C]"
+      }
+    ],
+    "positiveDefaultCoverage": {
+      "mapped": 10,
+      "sourceAbsent": 0,
+      "total": 13,
+      "unclassified": 0,
+      "unresolved": 3
+    },
+    "readyForDamageReplay": false,
+    "reviewStatus": "unreviewed",
+    "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+  },
+  "gates": {
+    "artifactsInitiallyEnumerated": true,
+    "equipmentComplete": true,
+    "exactCandidatePairs": true,
+    "fixtureEvidenceConsistent": true,
+    "formulaDraftMatchesResolvedFixture": true,
+    "formulaPlanReady": false,
+    "formulaPlanSourceMatches": true,
+    "formulaReadinessMatchesDraft": true,
+    "nativeTypesCompatible": true,
+    "refinementsResolved": true,
+    "uniqueTeamCharacters": true
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
+      "sha256": "e6d9953f22e473473af771e4bbbd8d05b21d7ef29b4353fed8e2a538d55540a9"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
+      "sha256": "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaArtifactGenerationPreflight.ts",
+      "sha256": "7b2e3411137ccf24fe65dc9b3b703b02e68a85a1ab007389bfe5109ffd30e669"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "41f2b65ed9233089918458cc7c9074e0c8e1cbfa1f652b702e8b7c1e972c1a1e"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
+      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
+      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    },
+    {
+      "path": "src/lib/team-comp/analyzer/weaponChoice.ts",
+      "sha256": "297995b86d74d30422dcbc8948acd13a19401ff7c872435ccb28dd84aaac95f4"
+    }
+  ],
+  "members": [
+    {
+      "artifact": {
+        "choice": {
+          "setId": "thundering_fury",
+          "type": "4pc"
+        },
+        "initialGrammarCoverage": "enumerated-initially"
+      },
+      "blockerCodes": [],
+      "characterId": "keqing",
+      "fixtureEvidence": {
+        "buildSourceRecordId": "1WswsAu",
+        "characterGuideId": "genshintools-presets:character-guide:keqing",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "keqing"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "keqing"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponOrderIndex": 0
+      },
+      "fixtureInvestment": {
+        "status": "unspecified"
+      },
+      "ready": true,
+      "weapon": {
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "characterNativeWeaponType": "Sword",
+        "exactCandidatePair": true,
+        "experimentRefinement": 1,
+        "fixtureRefinement": null,
+        "nativeTypeCompatibility": "compatible",
+        "rarity": 5,
+        "refinementOrigin": "experiment-policy",
+        "weaponId": "mistsplitter_reforged",
+        "weaponTypeFromStats": "Sword"
+      }
+    },
+    {
+      "artifact": {
+        "choice": {
+          "setId": "aubade_of_morningstar_and_moon",
+          "type": "4pc"
+        },
+        "initialGrammarCoverage": "enumerated-initially"
+      },
+      "blockerCodes": [],
+      "characterId": "ineffa",
+      "fixtureEvidence": {
+        "buildSourceRecordId": "FeFiQU8",
+        "characterGuideId": "genshintools-presets:character-guide:ineffa",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "ineffa"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "ineffa"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponOrderIndex": 0
+      },
+      "fixtureInvestment": {
+        "status": "unspecified"
+      },
+      "ready": true,
+      "weapon": {
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "characterNativeWeaponType": "Polearm",
+        "exactCandidatePair": true,
+        "experimentRefinement": 1,
+        "fixtureRefinement": null,
+        "nativeTypeCompatibility": "compatible",
+        "rarity": 5,
+        "refinementOrigin": "experiment-policy",
+        "weaponId": "fractured_halo",
+        "weaponTypeFromStats": "Polearm"
+      }
+    },
+    {
+      "artifact": {
+        "choice": {
+          "setId": "golden_troupe",
+          "type": "4pc"
+        },
+        "initialGrammarCoverage": "enumerated-initially"
+      },
+      "blockerCodes": [],
+      "characterId": "furina",
+      "fixtureEvidence": {
+        "buildSourceRecordId": "BQAI0BO",
+        "characterGuideId": "genshintools-presets:character-guide:furina",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "furina"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "furina"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponOrderIndex": 2
+      },
+      "fixtureInvestment": {
+        "status": "unspecified"
+      },
+      "ready": true,
+      "weapon": {
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "characterNativeWeaponType": "Sword",
+        "exactCandidatePair": true,
+        "experimentRefinement": 1,
+        "fixtureRefinement": null,
+        "nativeTypeCompatibility": "compatible",
+        "rarity": 5,
+        "refinementOrigin": "experiment-policy",
+        "weaponId": "splendor_of_tranquil_waters",
+        "weaponTypeFromStats": "Sword"
+      }
+    },
+    {
+      "artifact": {
+        "choice": {
+          "setId": "scroll_of_the_hero_of_cinder_city",
+          "type": "4pc"
+        },
+        "initialGrammarCoverage": "enumerated-initially"
+      },
+      "blockerCodes": [],
+      "characterId": "xilonen",
+      "fixtureEvidence": {
+        "buildSourceRecordId": "Dbt0Wkm",
+        "characterGuideId": "genshintools-presets:character-guide:xilonen",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "xilonen"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "xilonen"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponOrderIndex": 0
+      },
+      "fixtureInvestment": {
+        "status": "unspecified"
+      },
+      "ready": true,
+      "weapon": {
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "characterNativeWeaponType": "Sword",
+        "exactCandidatePair": true,
+        "experimentRefinement": 1,
+        "fixtureRefinement": null,
+        "nativeTypeCompatibility": "compatible",
+        "rarity": 5,
+        "refinementOrigin": "experiment-policy",
+        "weaponId": "peak_patrol_song",
+        "weaponTypeFromStats": "Sword"
+      }
+    }
+  ],
+  "prohibitedInterpretations": [
+    "generated-build",
+    "damage-result",
+    "score",
+    "rank",
+    "winner",
+    "guide-recommendation"
+  ],
+  "readyForGenerator": false,
+  "readyForReviewedGeneratorExperiment": false,
+  "refinementPolicy": {
+    "explicitFixtureRefinement": "preserve-and-validate",
+    "id": "comparison-baseline-v1",
+    "unspecifiedFiveStar": 1,
+    "unspecifiedThreeOrFourStar": 5
+  },
+  "schemaVersion": 1,
+  "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+  "supportsGuideClaims": false
+}

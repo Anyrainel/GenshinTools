@@ -30,6 +30,10 @@
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
           "sha256": "cf2acb8697a87480e388932032626be857b9ed5e8edfbe4b8cd8aa93bd03ab71"
+        },
+        {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+          "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
         }
       ],
       "sourceId": "kqm"
@@ -19230,6 +19234,318 @@
       ]
     },
     {
+      "builds": [],
+      "characterId": "noelle",
+      "id": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "c0-c5-talent-9-artifact-stats",
+          "label": "C0–C5 and Burst Talent Level 9 artifact stats",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [
+                  "Noelle is C0–C5 and her Burst Talent is Level 9."
+                ],
+                "statIds": [
+                  "cr",
+                  "cd"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [
+                  "Noelle is C0–C5 and her Burst Talent is Level 9."
+                ],
+                "statIds": [
+                  "geo%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [
+                  "Noelle is C0–C5 and her Burst Talent is Level 9."
+                ],
+                "statIds": [
+                  "atk%"
+                ]
+              }
+            ]
+          },
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "substats": [
+            {
+              "conditions": [
+                "Noelle is C0–C5 and her Burst Talent is Level 9; this priority covers offensive stats only."
+              ],
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ]
+            },
+            {
+              "conditions": [
+                "Noelle is C0–C5 and her Burst Talent is Level 9; this priority covers offensive stats only."
+              ],
+              "priority": 2,
+              "statIds": [
+                "atk%"
+              ]
+            },
+            {
+              "conditions": [
+                "Noelle is C0–C5 and her Burst Talent is Level 9; this priority covers offensive stats only."
+              ],
+              "priority": 3,
+              "statIds": [
+                "def%"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Stats > C0–C5 and Burst Talent Level 9",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "numeric stat weights",
+        "weapon-dependent stat balance",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "noelle",
+      "id": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "c6-or-talent-10-artifact-stats",
+          "label": "C6 or Burst Talent Level 10+ artifact stats",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [
+                  "Noelle is C6 or her Burst Talent is Level 10 or higher."
+                ],
+                "statIds": [
+                  "cr",
+                  "cd"
+                ]
+              },
+              {
+                "conditions": [
+                  "Noelle is C6 or her Burst Talent is Level 10 or higher.",
+                  "Noelle uses Redhorn Stonethresher, and the build falls within the rare circumstances where a DEF% Circlet can be optimal."
+                ],
+                "statIds": [
+                  "def%"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [
+                  "Noelle is C6 or her Burst Talent is Level 10 or higher."
+                ],
+                "statIds": [
+                  "geo%"
+                ]
+              },
+              {
+                "conditions": [
+                  "Noelle is C6 or her Burst Talent is Level 10 or higher.",
+                  "The team provides a large amount of DMG Bonus."
+                ],
+                "statIds": [
+                  "def%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [
+                  "Noelle is C6 or her Burst Talent is Level 10 or higher."
+                ],
+                "statIds": [
+                  "def%"
+                ]
+              }
+            ]
+          },
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "substats": [
+            {
+              "conditions": [
+                "Noelle is C6 or her Burst Talent is Level 10 or higher; this priority covers offensive stats only."
+              ],
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ]
+            },
+            {
+              "conditions": [
+                "Noelle is C6 or her Burst Talent is Level 10 or higher; this priority covers offensive stats only."
+              ],
+              "priority": 2,
+              "statIds": [
+                "def%"
+              ]
+            },
+            {
+              "conditions": [
+                "Noelle is C6 or her Burst Talent is Level 10 or higher; this priority covers offensive stats only."
+              ],
+              "priority": 3,
+              "statIds": [
+                "atk%"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Stats > C6 or Burst Talent Level 10+",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "numeric stat weights",
+        "the exact build threshold for a DEF% Goblet",
+        "the exact build threshold for a DEF% Circlet",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "noelle",
+      "id": "kqm:character-guide:noelle-general-husk-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "husk_of_opulent_dreams",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [],
+              "grouping": "single"
+            }
+          ],
+          "id": "general-husk",
+          "label": "General Noelle artifact set",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets > Recommended Sets > 4pc Husk of Opulent Dreams",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-general-husk-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "quantitative artifact performance",
+        "the best specialized set for each team context",
+        "the effect of owned artifact quality on the choice",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "noelle",
+      "id": "kqm:character-guide:noelle-hexerei-gest-luna-viii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "hexerei-gest",
+          "label": "Gest of the Mighty Wolf in Hexerei teams",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Noelle is played in a Hexerei team."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "gest_of_the_mighty_wolf"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > Gest of the Mighty Wolf",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-hexerei-gest-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "quantitative weapon performance",
+        "refinement assumptions",
+        "comparison against other weapons in a specific Hexerei team",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
       "characterId": "diona",
       "constellation": 6,
       "id": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
@@ -20574,6 +20890,82 @@
         "rotation duration and buff timing",
         "formula mappings, formula counts, and Lunar-Charged ownership",
         "enemy scenario",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+      "intent": "example",
+      "kind": "team",
+      "label": "Noelle — Durin — Nicole — Xilonen",
+      "members": [
+        {
+          "characterId": "noelle",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "durin",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "nicole",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "rotations": [
+        {
+          "assumptions": [
+            "Use Nicole's parenthesized Burst only when it is available."
+          ],
+          "id": "sample-rotation-xilonen",
+          "label": "KQM sample rotation (Xilonen)",
+          "notation": "Nicole (Q)¹E > Durin EEQ > Xilonen EN2 > Noelle EQ 2[N3D] N2 > Xilonen EN2 > Noelle N3D N2",
+          "unresolvedSegments": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Hexerei Teams > Example Teams > Noelle — Durin — Nicole — Xilonen",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "rotation duration",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Noelle teams",
         "agent-assisted extraction has not been human-reviewed"
       ]
     },

@@ -30,7 +30,7 @@ Questions to learn from real data:
   uncovered by the current GenshinTools baseline.
 - Require human review before a candidate becomes accepted knowledge.
 
-Four KQM pages have been ingested but not human-reviewed. Together they forced
+Five KQM pages have been ingested but not human-reviewed. Together they forced
 separate energy guidance, explicit unranked lists, alternatives versus tied
 ranks, bounded constellation applicability, exact teams versus four-slot team
 templates, example-team intent, source-defined role constraints, and coupled
@@ -40,6 +40,9 @@ refreshing an old character when a new release changes available teams; it is
 not evidence that the captured Lunar-Charged teams are optimal. The Kokomi Luna
 V slice preserves a conditional Kokomi/Columbina artifact delegation without
 turning its two assignments into independent global recommendations.
+The Noelle Luna VIII slice adds another old-character refresh: a newer Hexerei
+weapon condition, investment-scoped stat branches, and a new exact team are
+kept as separate claims rather than being merged into one implied build.
 
 ## 3. Build validation tooling
 
@@ -60,7 +63,7 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 353 records. It excludes ER details from evidence and
+presence across all 358 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
@@ -98,7 +101,7 @@ explicit level-90, C0, R1, 10/10/10 assumptions. The comparison finds five
 token-supported count mismatches and retains six unresolved formula mappings.
 Neither the mapping nor either count plan is accepted yet.
 
-The next checkpoint now materializes a second fixture from two independent
+The second fixture materializes data from two independent
 knowledge layers: the external exact Keqing/Ineffa/Furina/Xilonen roster and
 one explicit baseline character-guide weapon/build selection per member. The
 materializer validates exact member/guide association, baseline or accepted
@@ -127,8 +130,8 @@ coverage and a complete formula-classification ledger.
 Before ranking any artifact set, the current checkpoint measures whether the
 existing analyzer can name the choices already recorded in the repository. Its
 released grammar contains 43 initial four-piece choices and at most 14
-stat-derived two-piece pairs. Across 1,052 artifact-choice fields on
-non-rejected guide and team records, 1,009 are initially enumerated, 21 are
+stat-derived two-piece pairs. Across 1,053 artifact-choice fields on
+non-rejected guide and team records, 1,010 are initially enumerated, 21 are
 conditionally representable, and 22 are not representable by the current
 grammar. The failures expose two specific search-domain gaps: 18 Instructor
 and 2 Exile occurrences are filtered out with all non-five-star sets, while
@@ -140,18 +143,26 @@ individual candidate grammar; it does not prove joint-plan enumeration.
 
 The weapon candidate-policy audit now reports separate coverage axes for weapon
 ID, refinement specificity, and native weapon-type compatibility. Its released
-mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 982 non-ER
+mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 983 non-ER
 repository occurrences have an ID in that global domain, but none supplies a
-refinement; 970 match the character's native type and 12 legacy selections do
+refinement; 971 match the character's native type and 12 legacy selections do
 not. Because runtime derives the search type from the equipped seed weapon,
 those 12 mismatches can seed a wrong candidate class. This is a blocker, not a
 weapon ranking.
 
-The next computation step is to define a source- and experiment-visible
-refinement policy, then audit actual artifact generation for a reviewed
-fixture. Formula-plan review and an authored artifact-stat sheet remain required
-before damage comparisons. Neither fixture yet supports full rotation damage or
-equipment suitability.
+The artifact-generation preflight now defines the missing refinement policy as
+an experiment convention: preserve explicit values, otherwise compare 3- and
+4-star weapons at R5 and 5-star weapons at R1. It binds those resolved values,
+the artifact choices, native types, fixture provenance, formula-draft
+assumptions, explicit investment fields, and readiness inventory. The current
+Keqing/Ineffa fixture passes the technical-probe gates but remains blocked for a
+reviewed generator experiment by the same eight formula-plan blockers.
+
+The next computation step can exercise `runGenerator` once as a bounded
+structural probe, retain each candidate's success or failure, and suppress any
+ranking or guide interpretation. Formula-plan review and an authored
+artifact-stat sheet remain required before comparative damage. Neither fixture
+yet supports full rotation damage or equipment suitability.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

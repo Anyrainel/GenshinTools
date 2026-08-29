@@ -551,14 +551,16 @@
       },
       "characterId": "durin",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 0,
         "sourceIds": []
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -1493,14 +1495,16 @@
       },
       "characterId": "nicole",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 0,
         "sourceIds": []
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -1549,8 +1553,10 @@
       },
       "characterId": "noelle",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 5,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 1,
@@ -1558,7 +1564,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -2153,7 +2159,7 @@
       },
       "characterId": "xilonen",
       "externalEditorial": {
-        "recordCount": 2,
+        "recordCount": 3,
         "sourceIds": [
           "kqm"
         ]
@@ -2394,7 +2400,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
+      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -2451,36 +2457,36 @@
     },
     {
       "byKind": {
-        "character_guide": 9,
+        "character_guide": 13,
         "energy_guidance": 1,
-        "team": 7,
+        "team": 8,
         "team_template": 6
       },
       "byStatus": {
         "accepted": 0,
         "baseline": 0,
-        "candidate": 23,
+        "candidate": 28,
         "contested": 0,
         "rejected": 0
       },
       "evidence": {
-        "artifactChoiceOccurrences": 24,
-        "exactTeamRecords": 7,
-        "exactTeamRecordsWithRotations": 7,
-        "exactTeamRotationEntries": 9,
-        "mainStatGroups": 9,
-        "mainStatIdOccurrences": 12,
-        "recordsWithArtifacts": 7,
-        "recordsWithMainStats": 2,
-        "recordsWithSubstats": 2,
-        "recordsWithWeapons": 2,
-        "substatGroups": 6,
-        "substatIdOccurrences": 7,
+        "artifactChoiceOccurrences": 25,
+        "exactTeamRecords": 8,
+        "exactTeamRecordsWithRotations": 8,
+        "exactTeamRotationEntries": 10,
+        "mainStatGroups": 17,
+        "mainStatIdOccurrences": 22,
+        "recordsWithArtifacts": 8,
+        "recordsWithMainStats": 4,
+        "recordsWithSubstats": 4,
+        "recordsWithWeapons": 3,
+        "substatGroups": 12,
+        "substatIdOccurrences": 15,
         "teamTemplateRecords": 6,
-        "weaponIdOccurrences": 15
+        "weaponIdOccurrences": 16
       },
       "ingestionMode": "manual-observation",
-      "records": 23,
+      "records": 28,
       "sourceId": "kqm",
       "sourceKind": "editorial"
     },
@@ -2523,35 +2529,35 @@
   "supportsGuideClaims": false,
   "totals": {
     "byKind": {
-      "character_guide": 129,
+      "character_guide": 133,
       "energy_guidance": 1,
-      "team": 217,
+      "team": 218,
       "team_template": 6
     },
     "byStatus": {
       "accepted": 0,
       "baseline": 191,
-      "candidate": 162,
+      "candidate": 167,
       "contested": 0,
       "rejected": 0
     },
     "evidence": {
-      "artifactChoiceOccurrences": 1052,
-      "exactTeamRecords": 217,
-      "exactTeamRecordsWithRotations": 7,
-      "exactTeamRotationEntries": 9,
-      "mainStatGroups": 721,
-      "mainStatIdOccurrences": 724,
-      "recordsWithArtifacts": 337,
-      "recordsWithMainStats": 122,
-      "recordsWithSubstats": 122,
-      "recordsWithWeapons": 321,
-      "substatGroups": 596,
-      "substatIdOccurrences": 597,
+      "artifactChoiceOccurrences": 1053,
+      "exactTeamRecords": 218,
+      "exactTeamRecordsWithRotations": 8,
+      "exactTeamRotationEntries": 10,
+      "mainStatGroups": 729,
+      "mainStatIdOccurrences": 734,
+      "recordsWithArtifacts": 338,
+      "recordsWithMainStats": 124,
+      "recordsWithSubstats": 124,
+      "recordsWithWeapons": 322,
+      "substatGroups": 602,
+      "substatIdOccurrences": 605,
       "teamTemplateRecords": 6,
-      "weaponIdOccurrences": 982
+      "weaponIdOccurrences": 983
     },
-    "records": 353,
-    "sourceAttributedRecords": 353
+    "records": 358,
+    "sourceAttributedRecords": 358
   }
 }

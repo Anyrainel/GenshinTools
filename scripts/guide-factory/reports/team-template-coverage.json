@@ -122,12 +122,27 @@
         }
       ],
       "teamId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Hexerei Teams > Example Teams > Noelle — Durin — Nicole — Xilonen",
+            "url": "https://keqingmains.com/q/noelle-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+        }
+      ],
+      "teamId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
     }
   ],
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
+      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",

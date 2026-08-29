@@ -9,3 +9,4 @@ reports/*
 !reports/knowledge-corpus-inventory.json
 !reports/artifact-choice-search-coverage.json
 !reports/weapon-choice-search-coverage.json
+!reports/keqing-ineffa-artifact-generation-preflight.json

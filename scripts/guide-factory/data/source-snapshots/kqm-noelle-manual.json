@@ -289,7 +289,17 @@
           "erTargets": []
         }
       ],
-      "rotations": [],
+      "rotations": [
+        {
+          "id": "sample-rotation-xilonen",
+          "label": "KQM sample rotation (Xilonen)",
+          "notation": "Nicole (Q)¹E > Durin EEQ > Xilonen EN2 > Noelle EQ 2[N3D] N2 > Xilonen EN2 > Noelle N3D N2",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "Use Nicole's parenthesized Burst only when it is available."
+          ]
+        }
+      ],
       "unknowns": [
         "team member constellations",
         "team member weapons and refinements",
