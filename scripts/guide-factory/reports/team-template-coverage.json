@@ -106,6 +106,54 @@
       "sourceRefs": [
         {
           "locator": {
+            "heading": "Character Overview > Combos > Standard Combos",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-chevreuse-durin-fischl-overload-example-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Teams > Klee Overload (Kloverload) > Example Teams > Klee — Chevreuse — Durin — Fischl",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-chevreuse-durin-fischl-overload-example-luna-iv"
+        }
+      ],
+      "teamId": "kqm:team:klee-chevreuse-durin-fischl-overload-example-luna-iv"
+    },
+    {
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:3AG6YxT0jJgK51SlW5"
+      ],
+      "outcome": "present",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Character Overview > Combos > Standard Combos",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-furina-albedo-xilonen-example-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Teams > Furina Teams (Kleerina) > Example Teams > Klee — Furina — Albedo — Xilonen",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-furina-albedo-xilonen-example-luna-iv"
+        }
+      ],
+      "teamId": "kqm:team:klee-furina-albedo-xilonen-example-luna-iv"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
             "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
             "url": "https://keqingmains.com/q/kokomi-quickguide/"
           },
@@ -142,7 +190,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
+      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",

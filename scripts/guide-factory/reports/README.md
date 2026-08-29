@@ -6,6 +6,16 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-artifact-generation-technical-probe.json` directly runs the
+  generator over four all-5-star combinations assembled from independently
+  recorded character-guide builds and retains one Xilonen Instructor policy
+  rejection without invoking it. No source record binds those builds to this
+  exact team or to one another. All four admitted candidates complete,
+  including a simultaneous Ineffa/Furina set change. The report stores
+  generated stat shapes only as repository-build review observations; it
+  contains no damage, score, ranking, winner, or ER adequacy conclusion.
+  Keqing Goblet, Xilonen Goblet, and Furina Tenacity Sands discrepancies are
+  preserved instead of being declared correct or assigned a cause.
 - `keqing-ineffa-artifact-generation-preflight.json` binds one fixed
   source-backed equipment fixture to an explicit comparison refinement policy,
   the mirrored weapon domain, native weapon types, initial artifact grammar,
@@ -14,19 +24,19 @@ Current durable pilot evidence:
   plan's eight blockers keep the reviewed-experiment gate closed. It runs no
   generator, damage calculation, ranking, or energy calculation.
 - `weapon-choice-search-coverage.json` mirrors the private analyzer's small
-  candidate policy against released data and audits 983 non-ER weapon
-  occurrences on three independent axes. All 983 IDs are in the 236-weapon
-  released domain, all 983 refinements are unspecified, and 971 choices match
+  candidate policy against released data and audits 987 non-ER weapon
+  occurrences on three independent axes. All 987 IDs are in the 236-weapon
+  released domain, all 987 refinements are unspecified, and 975 choices match
   the character's native weapon type while 12 legacy selections do not. The
   report does not equate ID membership with exact refinement coverage or
   runtime success. Three historical ER weapon conditions are inventoried but
   not analyzed.
 - `artifact-choice-search-coverage.json` calls the current analyzer candidate
-  builders and classifies all 1,053 artifact-choice fields on non-rejected
+  builders and classifies all 1,059 artifact-choice fields on non-rejected
   guide and team records against its released search grammar. The grammar
   contains 43 initial four-piece keys and at most 14 conditionally discovered
-  two-piece pairs. Of those occurrences, 1,010 are initially enumerated, 21
-  are conditionally representable, and 22 are not representable by the current
+  two-piece pairs. Of those occurrences, 1,015 are initially enumerated, 21
+  are conditionally representable, and 23 are not representable by the current
   grammar. Two of the initially enumerated occurrences are assignments in one
   coupled plan; they are audited individually, not jointly optimized. It runs
   no generation, damage, score, rank, or winner logic and does not support
@@ -38,8 +48,8 @@ Current durable pilot evidence:
 - `team-template-coverage.json` compares external templates and exact manual
   teams with exact baseline rosters. It emits present, uncovered, or explicitly
   role-unresolved results and no quality score, rank, or winner. The current
-  result has 3 present, 1 role-unresolved, and 2 uncovered templates, plus 1
-  present and 7 uncovered exact external teams. Keqing Lunar-Charged is
+  result has 3 present, 1 role-unresolved, and 2 uncovered templates, plus 2
+  present and 8 uncovered exact external teams. Keqing Lunar-Charged is
   uncovered because the baseline lacks the required Keqing–Ineffa core; its
   off-field-Hydro and resistance-shred roles are not weakened into element
   matches.
@@ -67,6 +77,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all nine reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all ten reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

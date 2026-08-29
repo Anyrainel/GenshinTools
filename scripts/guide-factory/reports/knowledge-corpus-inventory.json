@@ -29,8 +29,10 @@
       },
       "characterId": "albedo",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 3,
@@ -38,7 +40,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -289,8 +291,10 @@
       },
       "characterId": "chevreuse",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 8,
@@ -298,7 +302,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -551,7 +555,7 @@
       },
       "characterId": "durin",
       "externalEditorial": {
-        "recordCount": 1,
+        "recordCount": 2,
         "sourceIds": [
           "kqm"
         ]
@@ -651,8 +655,10 @@
       },
       "characterId": "fischl",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 32,
@@ -660,7 +666,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -711,7 +717,7 @@
       },
       "characterId": "furina",
       "externalEditorial": {
-        "recordCount": 14,
+        "recordCount": 15,
         "sourceIds": [
           "kqm"
         ]
@@ -1115,8 +1121,10 @@
       },
       "characterId": "klee",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 7,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 3,
@@ -1124,7 +1132,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -2159,7 +2167,7 @@
       },
       "characterId": "xilonen",
       "externalEditorial": {
-        "recordCount": 3,
+        "recordCount": 4,
         "sourceIds": [
           "kqm"
         ]
@@ -2400,7 +2408,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
+      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -2457,36 +2465,36 @@
     },
     {
       "byKind": {
-        "character_guide": 13,
+        "character_guide": 18,
         "energy_guidance": 1,
-        "team": 8,
+        "team": 10,
         "team_template": 6
       },
       "byStatus": {
         "accepted": 0,
         "baseline": 0,
-        "candidate": 28,
+        "candidate": 35,
         "contested": 0,
         "rejected": 0
       },
       "evidence": {
-        "artifactChoiceOccurrences": 25,
-        "exactTeamRecords": 8,
-        "exactTeamRecordsWithRotations": 8,
-        "exactTeamRotationEntries": 10,
-        "mainStatGroups": 17,
-        "mainStatIdOccurrences": 22,
-        "recordsWithArtifacts": 8,
-        "recordsWithMainStats": 4,
-        "recordsWithSubstats": 4,
-        "recordsWithWeapons": 3,
-        "substatGroups": 12,
-        "substatIdOccurrences": 15,
+        "artifactChoiceOccurrences": 31,
+        "exactTeamRecords": 10,
+        "exactTeamRecordsWithRotations": 10,
+        "exactTeamRotationEntries": 12,
+        "mainStatGroups": 21,
+        "mainStatIdOccurrences": 27,
+        "recordsWithArtifacts": 10,
+        "recordsWithMainStats": 5,
+        "recordsWithSubstats": 5,
+        "recordsWithWeapons": 6,
+        "substatGroups": 14,
+        "substatIdOccurrences": 18,
         "teamTemplateRecords": 6,
-        "weaponIdOccurrences": 16
+        "weaponIdOccurrences": 20
       },
       "ingestionMode": "manual-observation",
-      "records": 28,
+      "records": 35,
       "sourceId": "kqm",
       "sourceKind": "editorial"
     },
@@ -2529,35 +2537,35 @@
   "supportsGuideClaims": false,
   "totals": {
     "byKind": {
-      "character_guide": 133,
+      "character_guide": 138,
       "energy_guidance": 1,
-      "team": 218,
+      "team": 220,
       "team_template": 6
     },
     "byStatus": {
       "accepted": 0,
       "baseline": 191,
-      "candidate": 167,
+      "candidate": 174,
       "contested": 0,
       "rejected": 0
     },
     "evidence": {
-      "artifactChoiceOccurrences": 1053,
-      "exactTeamRecords": 218,
-      "exactTeamRecordsWithRotations": 8,
-      "exactTeamRotationEntries": 10,
-      "mainStatGroups": 729,
-      "mainStatIdOccurrences": 734,
-      "recordsWithArtifacts": 338,
-      "recordsWithMainStats": 124,
-      "recordsWithSubstats": 124,
-      "recordsWithWeapons": 322,
-      "substatGroups": 602,
-      "substatIdOccurrences": 605,
+      "artifactChoiceOccurrences": 1059,
+      "exactTeamRecords": 220,
+      "exactTeamRecordsWithRotations": 10,
+      "exactTeamRotationEntries": 12,
+      "mainStatGroups": 733,
+      "mainStatIdOccurrences": 739,
+      "recordsWithArtifacts": 340,
+      "recordsWithMainStats": 125,
+      "recordsWithSubstats": 125,
+      "recordsWithWeapons": 325,
+      "substatGroups": 604,
+      "substatIdOccurrences": 608,
       "teamTemplateRecords": 6,
-      "weaponIdOccurrences": 983
+      "weaponIdOccurrences": 987
     },
-    "records": 358,
-    "sourceAttributedRecords": 358
+    "records": 365,
+    "sourceAttributedRecords": 365
   }
 }

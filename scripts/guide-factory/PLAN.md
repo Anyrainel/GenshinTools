@@ -30,7 +30,7 @@ Questions to learn from real data:
   uncovered by the current GenshinTools baseline.
 - Require human review before a candidate becomes accepted knowledge.
 
-Five KQM pages have been ingested but not human-reviewed. Together they forced
+Six KQM pages have been ingested but not human-reviewed. Together they forced
 separate energy guidance, explicit unranked lists, alternatives versus tied
 ranks, bounded constellation applicability, exact teams versus four-slot team
 templates, example-team intent, source-defined role constraints, and coupled
@@ -43,6 +43,10 @@ turning its two assignments into independent global recommendations.
 The Noelle Luna VIII slice adds another old-character refresh: a newer Hexerei
 weapon condition, investment-scoped stat branches, and a new exact team are
 kept as separate claims rather than being merged into one implied build.
+The Klee Luna IV slice adds separate best-generalist claims by weapon rarity,
+contextual artifact sets, a C2+ support branch, and two exact teams. It leaves
+`Klee Combo` unresolved and records the missing C4+ standalone-playstyle shape
+as a schema gap.
 
 ## 3. Build validation tooling
 
@@ -63,7 +67,7 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 358 records. It excludes ER details from evidence and
+presence across all 365 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
@@ -130,10 +134,10 @@ coverage and a complete formula-classification ledger.
 Before ranking any artifact set, the current checkpoint measures whether the
 existing analyzer can name the choices already recorded in the repository. Its
 released grammar contains 43 initial four-piece choices and at most 14
-stat-derived two-piece pairs. Across 1,053 artifact-choice fields on
-non-rejected guide and team records, 1,010 are initially enumerated, 21 are
-conditionally representable, and 22 are not representable by the current
-grammar. The failures expose two specific search-domain gaps: 18 Instructor
+stat-derived two-piece pairs. Across 1,059 artifact-choice fields on
+non-rejected guide and team records, 1,015 are initially enumerated, 21 are
+conditionally representable, and 23 are not representable by the current
+grammar. The failures expose two specific search-domain gaps: 19 Instructor
 and 2 Exile occurrences are filtered out with all non-five-star sets, while
 two damage-oriented half-set choices are absent from dynamic two-piece
 discovery. This does not establish that any enumerated choice can be generated,
@@ -143,9 +147,9 @@ individual candidate grammar; it does not prove joint-plan enumeration.
 
 The weapon candidate-policy audit now reports separate coverage axes for weapon
 ID, refinement specificity, and native weapon-type compatibility. Its released
-mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 983 non-ER
+mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 987 non-ER
 repository occurrences have an ID in that global domain, but none supplies a
-refinement; 971 match the character's native type and 12 legacy selections do
+refinement; 975 match the character's native type and 12 legacy selections do
 not. Because runtime derives the search type from the equipped seed weapon,
 those 12 mismatches can seed a wrong candidate class. This is a blocker, not a
 weapon ranking.
@@ -158,11 +162,29 @@ assumptions, explicit investment fields, and readiness inventory. The current
 Keqing/Ineffa fixture passes the technical-probe gates but remains blocked for a
 reviewed generator experiment by the same eight formula-plan blockers.
 
-The next computation step can exercise `runGenerator` once as a bounded
-structural probe, retain each candidate's success or failure, and suppress any
-ranking or guide interpretation. Formula-plan review and an authored
-artifact-stat sheet remain required before comparative damage. Neither fixture
-yet supports full rotation damage or equipment suitability.
+The first direct generator probe now exercises four all-5-star combinations
+assembled from independently recorded character-guide builds: Ineffa's
+Aubade/Silken Moon choices crossed with Furina's Golden Troupe/Tenacity choices.
+No source record binds those four build targets to this exact team or to one
+another. Each candidate gets a fresh team and all four complete sequentially,
+including the simultaneous two-character change. A fifth Xilonen/Instructor
+build target is retained as a deterministic search-policy rejection and is
+never passed to the generator. The runner prevalidates every translated
+`charId` formula because the compiler otherwise silently drops invalid lines
+and can produce plausible-looking output for a zero objective.
+
+The report retains execution order for reproducibility but derives no
+comparative ordering or ranking and stores no numerical damage. It compares
+main stats and positive substat keys with the exact repository build records and
+exposes three recurring review cases: Keqing chooses ATK% instead of the listed
+Electro Goblet, Xilonen chooses Geo DMG instead of the listed DEF% Goblet, and
+Furina's Tenacity cells choose HP% instead of the listed ER Sands. With ER
+constraints and other gameplay assumptions unresolved, the probe cannot assign
+causality or make an ER conclusion. These results are not guide
+recommendations. The next safe computation step is to measure carry/order
+sensitivity of this greedy procedure before designing any coordinate-descent or
+joint-search wrapper. Formula-plan review remains required before comparative
+damage or ranking.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

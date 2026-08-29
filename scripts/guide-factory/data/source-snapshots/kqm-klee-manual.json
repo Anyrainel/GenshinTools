@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "kqm",
+  "capturedAt": "2026-08-29",
+  "page": {
+    "title": "Klee Quick Guide",
+    "url": "https://keqingmains.com/q/klee-quickguide/",
+    "publisher": "KeqingMains",
+    "sourceVersion": "Luna IV",
+    "attributionNote": "KQM asks readers to link the original guide when using it as a content reference; this snapshot stores narrow paraphrased claims and source locators."
+  },
+  "records": [
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Artifacts > Artifact Stats"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "klee",
+      "recommendation": {
+        "id": "on-field-artifact-stats",
+        "label": "General on-field artifact stats, excluding ER",
+        "scope": "artifact-stats",
+        "roles": ["dps"],
+        "mainStats": {
+          "sands": [
+            {
+              "statIds": ["atk%"],
+              "conditions": ["Klee is used as an on-field DPS."]
+            }
+          ],
+          "goblet": [
+            {
+              "statIds": ["pyro%"],
+              "conditions": ["Klee is used as an on-field DPS."]
+            },
+            {
+              "statIds": ["atk%"],
+              "conditions": [
+                "Klee is used as an on-field DPS.",
+                "The team provides significant DMG Bonus but few ATK buffs, such as some Furina teams."
+              ]
+            }
+          ],
+          "circlet": [
+            {
+              "statIds": ["cr", "cd"],
+              "conditions": ["Klee is used as an on-field DPS."]
+            }
+          ]
+        },
+        "substats": [
+          {
+            "statIds": ["cr", "cd"],
+            "priority": 1,
+            "conditions": [
+              "Klee is used as an on-field DPS; this priority covers offensive stats only."
+            ]
+          },
+          {
+            "statIds": ["atk%"],
+            "priority": 2,
+            "conditions": [
+              "Klee is used as an on-field DPS; this priority covers offensive stats only."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "the source's ER term is deliberately omitted while ER capture is deferred",
+        "numeric stat weights",
+        "weapon-dependent stat balance",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Artifacts > Artifact Sets"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "klee",
+      "recommendation": {
+        "id": "on-field-contextual-artifact-sets",
+        "label": "General and contextual on-field 4pc artifact sets",
+        "scope": "artifact-sets",
+        "roles": ["dps"],
+        "artifactOrdering": "unranked",
+        "artifactRecommendations": [
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "a_day_carved_from_rising_winds" }
+            ],
+            "grouping": "single",
+            "classification": "default",
+            "conditions": [
+              "Klee is used as an on-field DPS; the source calls this her best set in almost any team."
+            ]
+          },
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "crimson_witch_of_flames" }
+            ],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": ["Klee is used in a reaction team."]
+          },
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "marechaussee_hunter" }
+            ],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": ["Klee is used in a Furina team."]
+          },
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "night_of_the_skys_unveiling" }
+            ],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "Klee's team includes Ineffa or Columbina, or both."
+            ]
+          },
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "unfinished_reverie" }
+            ],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": ["Klee is used in a Burning team."]
+          }
+        ]
+      },
+      "unknowns": [
+        "quantitative artifact performance",
+        "the relative ordering of artifact sets across unlike team contexts",
+        "the effect of owned artifact quality on the choice",
+        "mixed 2pc, placeholder, niche, and support-set recommendations omitted from this narrow on-field 4pc capture",
+        "formula counts"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "klee-generalist-best-five-star-weapon-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Weapons > 5★ Reliquary of Truth"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "klee",
+      "recommendation": {
+        "id": "generalist-best-five-star",
+        "label": "Best generalist 5-star weapon",
+        "scope": "weapons",
+        "roles": ["dps"],
+        "weaponOrdering": "unranked",
+        "weaponRecommendations": [
+          {
+            "weaponIds": ["reliquary_of_truth"],
+            "grouping": "single",
+            "classification": "default",
+            "conditions": [
+              "This claim is scoped to generalist 5-star weapons for on-field Klee."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "quantitative weapon performance",
+        "refinement assumptions",
+        "team-specific weapons that can outperform the generalist choice",
+        "cross-rarity ordering",
+        "formula counts"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "klee-generalist-best-four-star-weapon-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Weapons > 4★ The Widsith"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "klee",
+      "recommendation": {
+        "id": "generalist-best-four-star",
+        "label": "Best generalist 4-star weapon",
+        "scope": "weapons",
+        "roles": ["dps"],
+        "weaponOrdering": "unranked",
+        "weaponRecommendations": [
+          {
+            "weaponIds": ["the_widsith"],
+            "grouping": "single",
+            "classification": "default",
+            "conditions": [
+              "This claim is scoped to generalist 4-star weapons for on-field Klee."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "quantitative weapon performance",
+        "refinement assumptions",
+        "the effect of Widsith's two-rotation passive availability and RNG on a specific run",
+        "team-specific 4-star weapons that can outperform the generalist choice",
+        "cross-rarity ordering",
+        "formula counts"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Character Overview > Playstyles > Off-Field C2 Support"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/klee-quickguide/",
+          "heading": "Weapons > 3★ TTDS / 4★ Evenstar"
+        },
+        {
+          "url": "https://keqingmains.com/q/klee-quickguide/",
+          "heading": "Artifacts > Artifact Sets > Support Set"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "klee",
+      "recommendation": {
+        "id": "c2-off-field-support-equipment",
+        "label": "C2+ off-field support equipment",
+        "scope": "combined",
+        "minConstellation": 2,
+        "roles": ["support"],
+        "weaponOrdering": "unranked",
+        "weaponRecommendations": [
+          {
+            "weaponIds": [
+              "thrilling_tales_of_dragon_slayers",
+              "wandering_evenstar"
+            ],
+            "grouping": "alternatives",
+            "classification": "recommended",
+            "conditions": [
+              "Klee is used as an off-field C2+ support.",
+              "Choose between these weapons according to the rotation and the team's damage distribution."
+            ]
+          }
+        ],
+        "artifactOrdering": "unranked",
+        "artifactRecommendations": [
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "instructor" }
+            ],
+            "grouping": "single",
+            "classification": "recommended",
+            "conditions": [
+              "Klee is used as a support; the source calls Instructor the most commonly used support set."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "which support weapon is preferable for a specific team and rotation",
+        "other viable support weapons and artifact sets",
+        "weapon refinements",
+        "team-specific equipment interactions",
+        "the C4+ quickswap playstyle is not separately represented because the current schema has no standalone playstyle observation and the source does not bind unique equipment to it",
+        "formula counts"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "klee-chevreuse-durin-fischl-overload-example-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Teams > Klee Overload (Kloverload) > Example Teams > Klee — Chevreuse — Durin — Fischl"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/klee-quickguide/",
+          "heading": "Character Overview > Combos > Standard Combos"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Klee — Chevreuse — Durin — Fischl",
+      "intent": "example",
+      "exhaustiveness": "non-exhaustive",
+      "rankingClaim": "unordered",
+      "members": [
+        {
+          "characterId": "klee",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "chevreuse",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "durin",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "fischl",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "reactions": ["overloaded"],
+      "rotations": [
+        {
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "(Fischl E) > Durin EE > Fischl N1 Q/E > Durin Q > Chevreuse Q hE > Klee Combo",
+          "unresolvedSegments": ["Fischl N1 Q/E", "Klee Combo"],
+          "assumptions": [
+            "Use the parenthesized opening Fischl Skill only in the first rotation or when Fischl holds Sacrificial Bow.",
+            "Fischl uses her Burst every rotation when she holds Sacrificial Bow.",
+            "Klee Combo points to the guide's separate Standard Combos section; this team rotation does not select one exact Klee attack sequence."
+          ]
+        }
+      ],
+      "unknowns": [
+        "the exact Klee combo and hit counts",
+        "Fischl's exact Skill-or-Burst branch outside the stated Sacrificial Bow condition",
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts and reaction ownership",
+        "the source calls this one of Klee's best teams but does not order it against the other best-team examples"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "klee-furina-albedo-xilonen-example-luna-iv",
+      "locator": {
+        "url": "https://keqingmains.com/q/klee-quickguide/",
+        "heading": "Teams > Furina Teams (Kleerina) > Example Teams > Klee — Furina — Albedo — Xilonen"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/klee-quickguide/",
+          "heading": "Character Overview > Combos > Standard Combos"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Klee — Furina — Albedo — Xilonen",
+      "intent": "example",
+      "exhaustiveness": "non-exhaustive",
+      "rankingClaim": "unordered",
+      "members": [
+        {
+          "characterId": "klee",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "furina",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "albedo",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "xilonen",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "reactions": ["vaporize"],
+      "rotations": [
+        {
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "(Klee N1) > Xilonen EN2 Q > Furina EDQ > Albedo EQ > Xilonen EN2 > Klee Combo",
+          "unresolvedSegments": ["Klee Combo"],
+          "assumptions": [
+            "Use the parenthesized opening Klee Normal Attack only in the first rotation.",
+            "Klee Combo points to the guide's separate Standard Combos section; this team rotation does not select one exact Klee attack sequence."
+          ]
+        }
+      ],
+      "unknowns": [
+        "the exact Klee combo and hit counts",
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts and reaction ownership",
+        "the source calls this one of Klee's best teams but does not order it against the other best-team examples"
+      ]
+    }
+  ]
+}

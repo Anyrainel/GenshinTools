@@ -3,7 +3,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
+      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
@@ -13986,6 +13986,228 @@
           },
           "sourceId": "kqm",
           "sourceRecordId": "furina-c6-marechaussee-luna-ii"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "instructor",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "klee",
+      "classification": "recommended",
+      "conditions": [
+        "Klee is used as a support; the source calls Instructor the most commonly used support set."
+      ],
+      "failureReason": "non-five-star-filter",
+      "grouping": "single",
+      "minConstellation": 2,
+      "observationId": "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv:recommendation:c2-off-field-support-equipment:0:0",
+      "outcome": "not-representable",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "C2+ off-field support equipment",
+      "recordId": "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv",
+      "recordStatus": "candidate",
+      "roles": [
+        "support"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "c2-off-field-support-equipment",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Character Overview > Playstyles > Off-Field C2 Support",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Weapons > 3★ TTDS / 4★ Evenstar",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets > Support Set",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "a_day_carved_from_rising_winds",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "klee",
+      "classification": "default",
+      "conditions": [
+        "Klee is used as an on-field DPS; the source calls this her best set in almost any team."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation:on-field-contextual-artifact-sets:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "General and contextual on-field 4pc artifact sets",
+      "recordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "on-field-contextual-artifact-sets",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "crimson_witch_of_flames",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "klee",
+      "classification": "conditional",
+      "conditions": [
+        "Klee is used in a reaction team."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation:on-field-contextual-artifact-sets:1:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 1,
+      "recommendationLabel": "General and contextual on-field 4pc artifact sets",
+      "recordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "on-field-contextual-artifact-sets",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "marechaussee_hunter",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "klee",
+      "classification": "conditional",
+      "conditions": [
+        "Klee is used in a Furina team."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation:on-field-contextual-artifact-sets:2:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 2,
+      "recommendationLabel": "General and contextual on-field 4pc artifact sets",
+      "recordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "on-field-contextual-artifact-sets",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "night_of_the_skys_unveiling",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "klee",
+      "classification": "conditional",
+      "conditions": [
+        "Klee's team includes Ineffa or Columbina, or both."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation:on-field-contextual-artifact-sets:3:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 3,
+      "recommendationLabel": "General and contextual on-field 4pc artifact sets",
+      "recordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "on-field-contextual-artifact-sets",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "unfinished_reverie",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "klee",
+      "classification": "conditional",
+      "conditions": [
+        "Klee is used in a Burning team."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation:on-field-contextual-artifact-sets:4:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 4,
+      "recommendationLabel": "General and contextual on-field 4pc artifact sets",
+      "recordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "on-field-contextual-artifact-sets",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
         }
       ]
     },
@@ -30171,9 +30393,9 @@
   "summary": {
     "all": {
       "conditionallyRepresentable": 21,
-      "enumeratedInitially": 1010,
-      "notRepresentable": 22,
-      "total": 1053
+      "enumeratedInitially": 1015,
+      "notRepresentable": 23,
+      "total": 1059
     },
     "byFailureReason": {
       "beta-only-artifact": 0,
@@ -30181,7 +30403,7 @@
       "missing-runtime-artifact": 0,
       "missing-runtime-half-set": 0,
       "no-released-five-star-set-for-half-set": 0,
-      "non-five-star-filter": 20,
+      "non-five-star-filter": 21,
       "tier-list-other-filter": 0,
       "unexpected-conditional-candidate-omission": 0,
       "unexpected-initial-candidate-omission": 0,
@@ -30195,9 +30417,9 @@
     },
     "recommendations": {
       "conditionallyRepresentable": 0,
-      "enumeratedInitially": 21,
-      "notRepresentable": 2,
-      "total": 23
+      "enumeratedInitially": 26,
+      "notRepresentable": 3,
+      "total": 29
     },
     "teamArtifactPlanAssignments": {
       "conditionallyRepresentable": 0,

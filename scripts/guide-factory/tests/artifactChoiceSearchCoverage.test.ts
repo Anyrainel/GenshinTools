@@ -33,10 +33,10 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 13,
         },
         recommendations: {
-          total: 23,
-          enumeratedInitially: 21,
+          total: 29,
+          enumeratedInitially: 26,
           conditionallyRepresentable: 0,
-          notRepresentable: 2,
+          notRepresentable: 3,
         },
         teamArtifactPlanAssignments: {
           total: 2,
@@ -45,10 +45,10 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 0,
         },
         all: {
-          total: 1053,
-          enumeratedInitially: 1010,
+          total: 1059,
+          enumeratedInitially: 1015,
           conditionallyRepresentable: 21,
-          notRepresentable: 22,
+          notRepresentable: 23,
         },
       },
     });
@@ -101,14 +101,14 @@ describe("artifact-choice search-space coverage", () => {
         }),
       ]),
     );
-    expect(failures).toHaveLength(22);
+    expect(failures).toHaveLength(23);
     expect(report.summary.byFailureReason).toEqual({
       "beta-only-artifact": 0,
       "insufficient-distinct-released-five-star-sets": 0,
       "missing-runtime-artifact": 0,
       "missing-runtime-half-set": 0,
       "no-released-five-star-set-for-half-set": 0,
-      "non-five-star-filter": 20,
+      "non-five-star-filter": 21,
       "tier-list-other-filter": 0,
       "unexpected-conditional-candidate-omission": 0,
       "unexpected-initial-candidate-omission": 0,
@@ -244,6 +244,23 @@ describe("artifact-choice search-space coverage", () => {
       sourceKind: "team-member-recommendation",
       recordStatus: "candidate",
       conditions: ["Bennett uses a support build in this team."],
+      outcome: "not-representable",
+      failureReason: "non-five-star-filter",
+    });
+
+    const kleeSupportInstructor = report.observations.find(
+      ({ recordId, characterId, artifact, sourceKind }) =>
+        recordId ===
+          "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv" &&
+        characterId === "klee" &&
+        sourceKind === "character-guide-recommendation" &&
+        artifact.type === "4pc" &&
+        artifact.setId === "instructor",
+    );
+    expect(kleeSupportInstructor).toMatchObject({
+      recordStatus: "candidate",
+      minConstellation: 2,
+      classification: "recommended",
       outcome: "not-representable",
       failureReason: "non-five-star-filter",
     });

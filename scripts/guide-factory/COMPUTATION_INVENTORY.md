@@ -133,15 +133,15 @@ runtime derives positive substats from successful four-piece evaluations and
 may append a smaller set in a real analyzer run.
 
 The report accounts for every artifact-choice field on current non-rejected
-character-guide and team records: 1,053 occurrences in total. Of 188 guide
+character-guide and team records: 1,059 occurrences in total. Of 188 guide
 builds, 167 are initially enumerated, 14 are conditionally representable, and
 7 are not representable by the current grammar. Of 840 team-member selected
 artifacts, 820 are initially enumerated, 7 are conditional, and 13 are not
-representable. Of 23 character-guide and team-member recommendation
-occurrences, 21 are initially enumerated and 2 are not representable. Two more
+representable. Of 29 character-guide and team-member recommendation
+occurrences, 26 are initially enumerated and 3 are not representable. Two more
 occurrences are the assignments in one coupled Kokomi/Columbina artifact plan;
-both are initially enumerated individually. The 22
-failures are 18 Instructor occurrences, 2 Exile occurrences, and 2
+both are initially enumerated individually. The 23
+failures are 19 Instructor occurrences, 2 Exile occurrences, and 2
 damage-oriented two-piece combinations absent from the dynamic half-set map.
 
 This seam runs no artifact generator or damage formula and emits no score,
@@ -168,15 +168,16 @@ weapon/refinement pairs:
 | 4-star | 139 | R5 | 139 |
 | 5-star | 73 | R1 and R5 | 146 |
 
-The consolidated repository has 983 non-ER weapon occurrences: 127 entries in
+The consolidated repository has 987 non-ER weapon occurrences: 127 entries in
 character-guide weapon orders, 840 selected exact-team weapons, and 16
-character-guide recommendation entries, including Noelle's conditional Gest
-choice. There are no team-member weapon recommendations yet.
+character-guide recommendation entries plus the four Klee recommendation
+occurrences, including Noelle's conditional Gest choice. There are no
+team-member weapon recommendations yet.
 
-All 983 weapon IDs occur in the global released candidate domain. Refinement is
-a separate axis: none of the 983 observations supplies one, so the report has
-0 exact candidate pairs and 983 unspecified refinements. Native type is also
-separate: 971 observations are compatible and 12 are mismatched. Every mismatch
+All 987 weapon IDs occur in the global released candidate domain. Refinement is
+a separate axis: none of the 987 observations supplies one, so the report has
+0 exact candidate pairs and 987 unspecified refinements. Native type is also
+separate: 975 observations are compatible and 12 are mismatched. Every mismatch
 is a selected weapon from the legacy candidate source; baseline and KQM records
 have none.
 
@@ -216,6 +217,64 @@ outcome remains false because the formula translation retains eight blockers.
 The report runs no generator or damage calculation and contains no generated
 build, score, or ranking.
 
+## Artifact-generation technical-probe seam
+
+`src/artifactGenerationTechnicalProbe.ts` calls `runGenerator()` directly
+rather than going through the one-character-at-a-time `runWeaponChoice()`
+comparison wrapper. The first probe is a bounded 2x2 matrix assembled from
+independently recorded character-guide builds: Ineffa uses either 4pc Aubade of
+Morningstar and Moon or 4pc Silken Moon's Serenade, while Furina uses either
+4pc Golden Troupe or 4pc Tenacity of the Millelith. Keqing remains on 4pc
+Thundering Fury and Xilonen on 4pc Scroll of the Hero of Cinder City. No source
+record binds these four build targets to the exact team or to one another.
+
+All four matrix cells completed with their requested assignments. A fifth
+repository-recorded build target that gives Xilonen 4pc Instructor is retained
+as a `non-five-star-set` rejection with `generatorInvoked: false`. That rejection is
+a deterministic experiment policy, not evidence that `runGenerator()` itself
+cannot accept Instructor. The probe admits only 5-star sets because the
+generator's lower-rarity display/flex-piece path can select a random 5-star set
+key; excluding that path keeps repeated probe output byte-stable.
+
+The runner deliberately narrows the experiment boundary:
+
+- it creates a fresh `TeamBuild` for every candidate and runs candidates
+  sequentially, so one mutation-heavy generator run cannot contaminate the
+  next;
+- it supplies the explicit enemy level 110, enemy resistance 0.1, roll
+  multiplier 0.85, and `8_6` substat budget;
+- it passes neither buff overrides nor a `perChar` constraint map, so no ER
+  threshold is invented or enforced;
+- it validates the requested sets independently before and after generation;
+  and
+- it retains generated artifact shapes, main stats, positive substat keys, and
+  candidate-local failures, but no numerical damage, score, rank, winner, or
+  recommendation.
+
+One integration trap was concrete rather than hypothetical. The guide-factory
+draft line type calls its owner field `characterId`, while the runtime combo
+line type requires `charId`. Passing draft lines through unchanged does not
+necessarily fail loudly: the normal compiled path filters invalid lines, so a
+zero objective can still yield plausible-looking generated artifacts. The
+probe therefore checks every character/formula pair against the rebuilt
+candidate catalog and explicitly translates `characterId` to `charId` before
+calling the generator.
+
+The completed output is structurally valid but already disagrees with its
+source-build validation targets. Every matrix cell generates an ATK% Goblet
+for Keqing where the source build lists Electro DMG, and a Geo DMG Goblet for
+Xilonen where the source build lists DEF%. Both Tenacity cells generate an HP%
+Sands for Furina where that source build lists ER. ER constraints and other
+gameplay assumptions remain unresolved, so the probe cannot adjudicate or
+assign a cause to that experiment outcome. Generated filler flat-stat keys can
+also be absent from the source priority list, which is not treated as a
+contradiction because that source list is not exhaustive.
+
+This seam proves that the existing generator can be driven reproducibly across
+one small multi-character set matrix. It does not show that the unreviewed
+formula objective is correct, that its greedy result is jointly optimal, or
+that any generated stat choice belongs in a guide.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -239,7 +298,10 @@ build, score, or ranking.
 - Constellation/refinement investment analysis and allocation-specific formula
   counts: `src/lib/team-comp/analyzer/analyzer.ts`.
 
-None of these later modules is invoked by the first replay.
+The new technical probe invokes only `runGenerator` and its immediate
+calculation dependencies. The comparison, owned-inventory optimization,
+AutoTune, and investment analyzers remain inventoried rather than composed into
+the factory.
 
 ## Current blockers
 
@@ -269,7 +331,7 @@ None of these later modules is invoked by the first replay.
   current analyzer varies one character at a time and has no joint artifact-set
   assignment search. Individual candidate coverage must not be reported as
   coupled-plan coverage.
-- The current knowledge records do not specify refinements for any of the 983
+- The current knowledge records do not specify refinements for any of the 987
   non-ER weapon occurrences. The preflight now states one comparison policy
   explicitly, but that convention remains an experiment input rather than a
   source fact.
@@ -283,9 +345,17 @@ None of these later modules is invoked by the first replay.
   `autoTuneTeam` has no context override. These are unresolved assumptions that
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
+- The first generator probe intentionally passes no buff overrides. A future
+  damage-bearing experiment must define them explicitly and verify that the
+  same objective is applied throughout every greedy and refinement phase before
+  its output can support comparisons.
 
-The next computation checkpoint can run one bounded technical generator probe
-behind this preflight, retain candidate-specific failures, and label every
-generated stat choice as structural-only. Formula-plan review remains required
-before comparative damage, ranking, or guide validation; explicit artifact
-stat sheets and dual-path replay remain prerequisites for those later claims.
+The next computation checkpoint should rerun the same repository-build-seeded
+candidate while varying which character is supplied as the generator's algorithmic
+`carryCharId`, then test candidate/configuration order separately. This is a
+carry/order-sensitivity measurement of an ordered greedy procedure, not a claim
+about an in-game carry role. Only after those effects are visible should the
+lab consider a coordinate-descent or wider joint-search wrapper. Formula-plan
+review remains required before comparative damage, ranking, or guide
+validation; explicit artifact stat sheets and dual-path replay remain
+prerequisites for those later claims. ER remains deferred.

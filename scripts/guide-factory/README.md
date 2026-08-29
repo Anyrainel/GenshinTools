@@ -21,9 +21,8 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 8 adds a fail-closed artifact-generation preflight and refreshes the
-knowledge corpus with a current Noelle source slice, without claiming a working
-guide factory:
+Checkpoint 9 runs the first bounded artifact-generator experiment and adds a
+narrow Klee old-character refresh, without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -58,6 +57,15 @@ guide factory:
 15. Capture a current old-character refresh that keeps Hexerei equipment,
     investment-scoped stat branches, and an exact example team as separate
     source claims.
+16. Run a 2x2 artifact-set matrix assembled from independently recorded
+    character builds directly through `runGenerator`, retaining structural
+    output and candidate-local failures but no damage totals or rankings.
+17. Compare generated stat shapes with the exact baseline build records as
+    review observations, including disagreements, without calling either side
+    correct.
+18. Capture separate Klee 5-star and 4-star generalist weapon claims, C2+
+    support equipment, contextual sets, and exact teams while leaving ER and
+    unresolved combo details unfilled.
 
 The first two active sources are already in this repository:
 
@@ -69,7 +77,7 @@ several domains globally but has no per-team locator, so consolidation must not
 treat any row as verified external knowledge.
 
 The active external observations are narrow, linked snapshots of KQM's Diona,
-Furina, Keqing, Kokomi, and Noelle Quick Guides. Diona remains the
+Furina, Keqing, Klee, Kokomi, and Noelle Quick Guides. Diona remains the
 assumption-incomplete historical ER pilot. Furina adds conditional builds,
 constellation-bounded advice, five team
 templates, three exact example teams, and their published sample rotations. Two
@@ -89,7 +97,12 @@ weapon, one general artifact-set choice, two explicitly investment-scoped
 offensive stat branches, and a Noelle/Durin/Nicole/Xilonen example. Those
 general build claims are not attached to the exact team, and the capture omits
 ER entirely. All five Noelle records remain unreviewed and
-promotion-ineligible. This is not a reusable KQM corpus adapter.
+promotion-ineligible. Klee adds contextual on-field sets, separate best-
+generalist claims within the 5-star and 4-star weapon classes, C2+ support
+equipment, and two Hexerei-era exact teams. `Klee Combo` remains unresolved in
+both rotations, and the C4+ quickswap playstyle remains a schema gap rather than
+an invented equipment record. All seven Klee records are unreviewed and omit ER
+targets. This is not a reusable KQM corpus adapter.
 
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
@@ -117,6 +130,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-artifact-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-weapon-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-artifact-generation.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -133,10 +147,10 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all nine durable reports in memory: corpus inventory, team
+It also rebuilds all ten durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
-comparisons, artifact-generation preflight, Diona comparison, and historical
-ER calibration. Stale evidence cannot pass.
+comparisons, artifact-generation preflight and technical probe, Diona
+comparison, and historical ER calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -162,10 +176,10 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 358 unique records: 133
-character guides, 218 exact teams, 6 team templates, and 1 historical energy
-record. Of those, 191 are baseline records and 167 are candidates. KQM
-contributes 28 records, including 8 exact teams with 10 explicit rotation
+The descriptive corpus inventory currently counts 365 unique records: 138
+character guides, 220 exact teams, 6 team templates, and 1 historical energy
+record. Of those, 191 are baseline records and 174 are candidates. KQM
+contributes 35 records, including 10 exact teams with 12 explicit rotation
 entries. The inventory also reports explicit weapon, artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
 not votes or recommendation confidence.
@@ -191,11 +205,12 @@ two uncovered templates. The uncovered templates are Furina Quickbloom and
 Keqing Lunar-Charged. The Keqing template keeps `off-field-hydro-applier` and
 `resistance-shred` as unresolved role constraints; it is still uncovered, not
 role-unresolved, because no baseline team contains the required Keqing–Ineffa
-core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen roster matches one current
-preset. The other seven exact KQM teams, including both Keqing examples, the
-Kokomi/Ineffa/Columbina/Sucrose example, and the Noelle Hexerei example, are
-uncovered. Source presence does not automatically promote any of them into the
-baseline.
+core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen and
+Klee/Furina/Albedo/Xilonen rosters each match a current preset. The other eight
+exact KQM teams, including both Keqing examples, the
+Kokomi/Ineffa/Columbina/Sucrose example, the Noelle Hexerei example, and the
+Klee/Chevreuse/Durin/Fischl example, are uncovered. Source presence does not
+automatically promote any of them into the baseline.
 
 That matched roster produces a calculator-default draft with 12 positive and 6
 zero-count available formulas under explicit level 90, C0, R1, 10/10/10
@@ -244,16 +259,16 @@ keys and a maximum of 14 stat-derived two-piece pair keys. The latter is an
 upper bound: the runtime discovers a potentially smaller set only after
 successful four-piece evaluations.
 
-The report covers 1,053 non-rejected artifact-choice occurrences. Of 188 guide
+The report covers 1,059 non-rejected artifact-choice occurrences. Of 188 guide
 builds, 167 are initially enumerated, 14 are only conditionally representable,
 and 7 are not representable by the current grammar. Of 840 selected artifacts
 on team members, 820 are initially enumerated, 7 are conditional, and 13 are
-not representable. Of 23 character-guide and team-member recommendation
-occurrences, 21 are initially enumerated and 2 are not representable. Both
+not representable. Of 29 character-guide and team-member recommendation
+occurrences, 26 are initially enumerated and 3 are not representable. Both
 assignments in the Kokomi/Columbina coupled plan are initially enumerated as
 individual choices. That does not establish that the analyzer can search the
-coupled assignment jointly. The 22
-failures comprise 18 Instructor occurrences, 2 Exile occurrences, Freminet's
+coupled assignment jointly. The 23
+failures comprise 19 Instructor occurrences, 2 Exile occurrences, Freminet's
 Cryo DMG plus Skill DMG pair, and C6 Yelan's repeated Hydro DMG pair. This is a
 search-domain audit only: it does not run artifact generation, compute damage,
 rank sets, or imply that any representable choice is suitable.
@@ -266,10 +281,10 @@ released policy and hashes the runtime source and data inputs. The policy skips
 weapon/refinement pairs: 24 3-star pairs, 139 4-star pairs, and 146 pairs from
 73 5-star weapons.
 
-Across 983 non-ER weapon occurrences, all 983 IDs are present in that global
+Across 987 non-ER weapon occurrences, all 987 IDs are present in that global
 released domain. This is not exact candidate coverage: none of the source
-observations specifies a refinement, so all 983 remain explicit refinement
-gaps. Native weapon-type comparison finds 971 compatible choices and 12
+observations specifies a refinement, so all 987 remain explicit refinement
+gaps. Native weapon-type comparison finds 975 compatible choices and 12
 mismatches, all selected weapons from the legacy candidate source. Baseline and
 KQM observations have no type mismatch.
 
@@ -280,7 +295,7 @@ class rather than merely one invalid comparison row. The report records this
 boundary but does not run the analyzer, correct the legacy source, choose a
 refinement policy, rank weapons, or compute damage. Historical weapon
 conditions attached to three ER targets are inventoried only to prove that they
-were excluded from the 983 observations; their target values receive no
+were excluded from the 987 observations; their target values receive no
 analysis.
 
 The artifact-generation preflight makes the missing refinement convention
@@ -293,6 +308,28 @@ formula-readiness inventory match. That is enough for a technical probe, but
 not for a reviewed generator experiment: the formula plan still has the same
 eight gameplay-review blockers. The preflight runs no generator or damage
 calculation and emits no build or ranking.
+
+The technical probe then calls `runGenerator` directly, never the one-character
+comparison wrapper. It rebuilds a fresh team for each cell in a 2x2 matrix
+assembled from independently recorded character-guide builds:
+Ineffa uses either Aubade or Silken Moon while Furina uses either Golden Troupe
+or Tenacity; Keqing and Xilonen remain fixed. All four released 5-star-set
+candidates complete deterministically, including the cell that changes two
+characters at once. No source record binds those four build targets to this
+exact team or to one another. A fifth repository-recorded Xilonen Instructor
+build is retained as a `non-five-star-set` policy rejection with
+`generatorInvoked: false`; this does not claim that the generator itself cannot
+handle Instructor.
+
+The report stores no damage value and derives no ordering. It does retain the
+generated main stats and positive substat keys as review observations against
+the exact baseline build records. Every matrix cell chooses an ATK% Goblet for
+Keqing where the source build lists Electro DMG, and a Geo DMG Goblet for
+Xilonen where the source build lists DEF%. The two Tenacity cells choose an HP%
+Sands for Furina where that source build lists ER. Because ER thresholds and
+other gameplay assumptions remain unresolved, this boundary cannot adjudicate
+the mismatch or support an ER conclusion. These disagreements are evidence that
+successful execution is not enough to make the output credible.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

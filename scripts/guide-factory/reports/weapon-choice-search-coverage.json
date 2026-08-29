@@ -148,7 +148,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "155ae270239bbeafe46d4e2bf151697a9a1987f5cdc5361448857d246a65a2b2"
+      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -20503,6 +20503,239 @@
         "outcome": "in-released-candidate-domain",
         "releasedResourceAvailable": true,
         "resolvedPolicyRarity": 3,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "klee",
+      "classification": "recommended",
+      "conditions": [
+        "Klee is used as an off-field C2+ support.",
+        "Choose between these weapons according to the rotation and the team's damage distribution."
+      ],
+      "grouping": "alternatives",
+      "minConstellation": 2,
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Catalyst",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Catalyst"
+      },
+      "observationId": "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv:recommendation:c2-off-field-support-equipment:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "c2-off-field-support-equipment",
+      "recommendationLabel": "C2+ off-field support equipment",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "support"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Character Overview > Playstyles > Off-Field C2 Support",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Weapons > 3★ TTDS / 4★ Evenstar",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets > Support Set",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        }
+      ],
+      "weaponId": "thrilling_tales_of_dragon_slayers",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 3,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "klee",
+      "classification": "recommended",
+      "conditions": [
+        "Klee is used as an off-field C2+ support.",
+        "Choose between these weapons according to the rotation and the team's damage distribution."
+      ],
+      "grouping": "alternatives",
+      "minConstellation": 2,
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Catalyst",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Catalyst"
+      },
+      "observationId": "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv:recommendation:c2-off-field-support-equipment:weapon-group:0:1",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "c2-off-field-support-equipment",
+      "recommendationLabel": "C2+ off-field support equipment",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:klee-c2-off-field-support-equipment-luna-iv",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "support"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Character Overview > Playstyles > Off-Field C2 Support",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Weapons > 3★ TTDS / 4★ Evenstar",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        },
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets > Support Set",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-c2-off-field-support-equipment-luna-iv"
+        }
+      ],
+      "weaponId": "wandering_evenstar",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 1
+    },
+    {
+      "characterId": "klee",
+      "classification": "default",
+      "conditions": [
+        "This claim is scoped to generalist 5-star weapons for on-field Klee."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Catalyst",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Catalyst"
+      },
+      "observationId": "kqm:character-guide:klee-generalist-best-five-star-weapon-luna-iv:recommendation:generalist-best-five-star:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "generalist-best-five-star",
+      "recommendationLabel": "Best generalist 5-star weapon",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:klee-generalist-best-five-star-weapon-luna-iv",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Reliquary of Truth",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-generalist-best-five-star-weapon-luna-iv"
+        }
+      ],
+      "weaponId": "reliquary_of_truth",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "klee",
+      "classification": "default",
+      "conditions": [
+        "This claim is scoped to generalist 4-star weapons for on-field Klee."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Catalyst",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Catalyst"
+      },
+      "observationId": "kqm:character-guide:klee-generalist-best-four-star-weapon-luna-iv:recommendation:generalist-best-four-star:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "generalist-best-four-star",
+      "recommendationLabel": "Best generalist 4-star weapon",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:klee-generalist-best-four-star-weapon-luna-iv",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ The Widsith",
+            "url": "https://keqingmains.com/q/klee-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-generalist-best-four-star-weapon-luna-iv"
+        }
+      ],
+      "weaponId": "the_widsith",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
         "weaponStatsAvailable": true
       },
       "weaponIndex": 0
@@ -51820,16 +52053,16 @@
   },
   "summary": {
     "all": {
-      "total": 983
+      "total": 987
     },
     "bySourceKind": {
-      "characterGuideRecommendations": 16,
+      "characterGuideRecommendations": 20,
       "guideWeaponOrder": 127,
       "teamMemberRecommendations": 0,
       "teamSelectedWeapons": 840
     },
     "nativeTypeCompatibility": {
-      "compatible": 971,
+      "compatible": 975,
       "mismatched": 12,
       "unknown": 0
     },
@@ -51841,7 +52074,7 @@
       },
       "exactCandidate": 0,
       "excludedByPolicy": 0,
-      "unspecified": 983
+      "unspecified": 987
     },
     "weaponIdDomain": {
       "byFailureReason": {
@@ -51851,7 +52084,7 @@
         "unexpected-policy-omission": 0
       },
       "excludedFromReleasedCandidateDomain": 0,
-      "inReleasedCandidateDomain": 983
+      "inReleasedCandidateDomain": 987
     }
   },
   "supportsGuideClaims": false

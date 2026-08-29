@@ -7,7 +7,7 @@ Status: active for narrow manual observations only.
 ## Capture unit
 
 One JSON snapshot represents one guide page at one visible source version. The
-active narrow samples currently cover Diona, Furina, Keqing, Kokomi, and
+active narrow samples currently cover Diona, Furina, Keqing, Klee, Kokomi, and
 Noelle. A record represents one independently reviewable heading-scoped claim
 group, not the whole guide.
 
@@ -58,6 +58,15 @@ Hexerei weapon, artifact set, investment-scoped stat branches, and exact team
 remain separate records. The general recommendations must not be attached to
 the exact team without a source claim that binds them together, and the
 offensive priority capture omits the source's ER term while ER work is deferred.
+
+The Klee Luna IV sample tests a broader old-character refresh without mirroring
+the page. It keeps default and team-conditional artifact sets distinct,
+preserves separate best-generalist claims within the 5-star and 4-star weapon
+classes, and records C2+ support equipment without inventing a cross-playstyle
+ranking. Its two exact teams retain `Klee Combo` as an unresolved segment rather
+than selecting an attack string from a different section. The C4+ quickswap
+playstyle remains an explicit schema gap because the source does not bind it to
+unique equipment and the current repository has no standalone playstyle record.
 
 ## Naming and review
 
