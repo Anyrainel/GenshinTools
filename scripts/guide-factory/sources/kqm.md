@@ -56,11 +56,17 @@ store an `artifactPlans` entry. Its assignments remain one coupled conditional
 claim. They must not be flattened into independent global character
 recommendations or interpreted as a jointly optimized result.
 
-The Keqing Luna I sample is intentionally team-only. It tests whether a new
-release can expose changed team options for an old character. Its
-off-field-Hydro and resistance-shred requirements remain source-defined role
-selectors; element and named-character callouts are highlights, not substitutes
-for those hard constraints.
+The Keqing Luna I sample tests whether a new release can expose changed team
+options for an old character. It preserves fully captured source-positive lists for the
+off-field-Hydro and resistance-shred role selectors with unspecified
+exhaustiveness and no rank, plus four exact teams from the same page. The
+paired sample validates only the four Hydro/shred pairs actually published as
+exact teams; unexercised positive members remain in their source records, and
+the remaining cross-product is neither emitted nor judged. Viridescent
+Venerer text is retained as a condition acknowledgement boundary, not proof of
+aura setup or gameplay execution. Element and named-character callouts remain
+highlights, not substitutes for the hard role constraints, and the template
+stays unresolved for broad coverage.
 
 The Kokomi Luna V sample tests coupled artifact delegation. It preserves the
 source's one-way condition that a well-invested Columbina can use Aubade when

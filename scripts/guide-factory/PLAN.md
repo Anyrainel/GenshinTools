@@ -67,7 +67,7 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 365 records. It excludes ER details from evidence and
+presence across all 370 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
@@ -95,7 +95,7 @@ remain structural-only. A team-template coverage pass now identifies present,
 uncovered, and role-unresolved roster shapes without ranking them. Two exact
 KQM Quickbloom examples now substantiate one uncovered template without being
 promoted into presets. The Keqing Luna I slice adds another uncovered template
-and two uncovered exact teams around the new Keqing–Ineffa core. Its
+and four uncovered exact teams around the new Keqing–Ineffa core. Its
 off-field-Hydro and resistance-shred slots remain role constraints so broad
 element matches cannot create false coverage. One exact
 Furina/Neuvillette/Kazuha/Xilonen roster is independently present in KQM and the
@@ -292,6 +292,19 @@ template remains `withheld-unresolved-role` under the existing roster-domain
 core. The named observation therefore adds a validation target without
 silently becoming a global `healer` selector. More attributed, context-bearing
 role observations are needed before designing a bounded role candidate domain.
+
+The paired Keqing seam now retains two fully captured, unranked source-positive
+role inventories and validates them only through four exact teams published on the
+same KQM page. Each configured binding has structural multiplicity one. The
+exact Viridescent Venerer text for Jean, Sucrose, and Kaedehara Kazuha is
+acknowledged and reported as text-set equality, not gameplay satisfaction.
+Xingqiu, Sayu, and Xianyun remain unexercised positive members; no missing or
+additional role-member pair is evaluated. The wrapper pins all member objects,
+the four target identities and bindings, the exact page URL, and seven indexed
+extraction states. It also requires both a fresh roster-domain replay and the
+checked-in report to keep Keqing Lunar-Charged
+`withheld-unresolved-role`. This is a stronger validation target, not a role
+catalog or a candidate-team generator.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

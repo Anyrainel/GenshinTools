@@ -1,0 +1,1006 @@
+{
+  "cautions": [
+    "Both role records preserve source-positive members with unspecified exhaustiveness and no ranking; unexercised members remain evidence rather than failures or inferred negatives.",
+    "Only the four exact teams published on the same KQM page are evaluated. No other combination of the two role-member lists is generated, judged, or recommended.",
+    "Viridescent Venerer conditions are acknowledged for the configured Jean, Sucrose, and Kaedehara Kazuha targets, but the wrapper does not verify aura setup, timing, or gameplay execution.",
+    "The current 125-ID catalog is checked against independently stored counts and fingerprints in the checked-in roster-domain report; same-count fingerprint drift fails this gate.",
+    "The Keqing Lunar-Charged template remains role-withheld in both a fresh roster-domain replay and the checked-in roster-domain report; these observations are not installed as a global resolver.",
+    "No damage, equipment, stat allocation, rotation-quality, or energy-recovery computation is performed."
+  ],
+  "classification": "keqing-source-scoped-role-pair-sample",
+  "comparisonStatus": "comparable",
+  "completePairDomain": false,
+  "completeRoleDomains": false,
+  "configuredPublishedTargets": [
+    {
+      "acknowledgedConditionsByRoleRecordId": {
+        "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers": [],
+        "kqm:character-role:keqing-lunar-charged-resistance-shred-options": [
+          "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+        ]
+      },
+      "expectedStructuralBindingMultiplicity": 1,
+      "memberCharacterIds": [
+        "keqing",
+        "ineffa",
+        "aino",
+        "sucrose"
+      ],
+      "roleMemberBindings": [
+        {
+          "characterId": "aino",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers"
+        },
+        {
+          "characterId": "sucrose",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options"
+        }
+      ],
+      "sourceSlotBinding": {
+        "ineffa": "ineffa",
+        "keqing": "keqing",
+        "off-field-hydro": "aino",
+        "resistance-shred": "sucrose"
+      },
+      "sourceSlotBindingBasis": "same-page-inferred-fit",
+      "targetId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "targetTeamId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
+    },
+    {
+      "acknowledgedConditionsByRoleRecordId": {
+        "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers": [],
+        "kqm:character-role:keqing-lunar-charged-resistance-shred-options": [
+          "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+        ]
+      },
+      "expectedStructuralBindingMultiplicity": 1,
+      "memberCharacterIds": [
+        "keqing",
+        "ineffa",
+        "furina",
+        "jean"
+      ],
+      "roleMemberBindings": [
+        {
+          "characterId": "furina",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers"
+        },
+        {
+          "characterId": "jean",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options"
+        }
+      ],
+      "sourceSlotBinding": {
+        "ineffa": "ineffa",
+        "keqing": "keqing",
+        "off-field-hydro": "furina",
+        "resistance-shred": "jean"
+      },
+      "sourceSlotBindingBasis": "same-page-inferred-fit",
+      "targetId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+      "targetTeamId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
+    },
+    {
+      "acknowledgedConditionsByRoleRecordId": {
+        "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers": [],
+        "kqm:character-role:keqing-lunar-charged-resistance-shred-options": []
+      },
+      "expectedStructuralBindingMultiplicity": 1,
+      "memberCharacterIds": [
+        "keqing",
+        "ineffa",
+        "furina",
+        "xilonen"
+      ],
+      "roleMemberBindings": [
+        {
+          "characterId": "furina",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers"
+        },
+        {
+          "characterId": "xilonen",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options"
+        }
+      ],
+      "sourceSlotBinding": {
+        "ineffa": "ineffa",
+        "keqing": "keqing",
+        "off-field-hydro": "furina",
+        "resistance-shred": "xilonen"
+      },
+      "sourceSlotBindingBasis": "same-page-inferred-fit",
+      "targetId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "targetTeamId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+    },
+    {
+      "acknowledgedConditionsByRoleRecordId": {
+        "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers": [],
+        "kqm:character-role:keqing-lunar-charged-resistance-shred-options": [
+          "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+        ]
+      },
+      "expectedStructuralBindingMultiplicity": 1,
+      "memberCharacterIds": [
+        "keqing",
+        "ineffa",
+        "yelan",
+        "kaedehara_kazuha"
+      ],
+      "roleMemberBindings": [
+        {
+          "characterId": "yelan",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers"
+        },
+        {
+          "characterId": "kaedehara_kazuha",
+          "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options"
+        }
+      ],
+      "sourceSlotBinding": {
+        "ineffa": "ineffa",
+        "keqing": "keqing",
+        "off-field-hydro": "yelan",
+        "resistance-shred": "kaedehara_kazuha"
+      },
+      "sourceSlotBindingBasis": "same-page-inferred-fit",
+      "targetId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example",
+      "targetTeamId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+    }
+  ],
+  "energyRecoveryInputsUsed": false,
+  "existingRosterDomainBoundary": {
+    "checkedInObservedStatus": "withheld-unresolved-role",
+    "checkedInRemainsWithheldUnresolvedRole": true,
+    "expectedStatus": "withheld-unresolved-role",
+    "freshObservedStatus": "withheld-unresolved-role",
+    "freshRemainsWithheldUnresolvedRole": true,
+    "namedRoleEvidenceInstalledAsGlobalResolver": false,
+    "templateId": "kqm:team-template:keqing-team-template-lunar-charged"
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "30cdd5023e928b28e5b4c0d74f1a29a3188d2a7591d077db0c0f2026e7d528be"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "4dba754a9bda9b5699fcd2588675eead4ffa68024bc44d3ad0daae77199c7d6d"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+    },
+    {
+      "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
+      "sha256": "23f05fed2b9ddef395e63f227251017f18e01ae03a44a90f59922df47b6c8e07"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/catalogs.ts",
+      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
+      "sha256": "42358c4974cb31ac49d856fa594c43dcaa27ff632836cebeeefda1873fe2a6f8"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualSnapshots.ts",
+      "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+    },
+    {
+      "path": "scripts/guide-factory/src/rosterCatalogReference.ts",
+      "sha256": "65fc634143a777823008196abd6cb6b977ac4fd8383f02f919382d35eee43aba"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceScopedRolePairSample.ts",
+      "sha256": "fb30fea602789e5430c8ebdf42bd44e8e1b6523bc4cd91fe50727147f7935d63"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceScopedRoleSample.ts",
+      "sha256": "ade2007a2ca2e705971d5b232d3f37f3ebd8d8a2a250093a98fb82615120b6ab"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
+      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
+      "sha256": "bc96bd4f9a5abd50c6fe30381e08072b8bb36cdba22c4f500d793eb7d2d32f05"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
+      "sha256": "3b142dbea8b1d45bdafc919cf54a18306f92c4aaa3fbe01c7261ca81c880821b"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    }
+  ],
+  "prohibitedInterpretations": [
+    "complete-role-domain",
+    "complete-role-pair-domain",
+    "global-role-resolution",
+    "team-recommendation",
+    "team-ranking",
+    "gameplay-quality",
+    "damage-quality",
+    "equipment-recommendation",
+    "stat-recommendation",
+    "energy-requirement"
+  ],
+  "publishedTargetBoundary": {
+    "configuredTargetCount": 4,
+    "configuredTargetsMatchExpectation": true,
+    "configuredTargetTeamIds": [
+      "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+    ],
+    "evaluatedTargetCount": 4,
+    "evaluatedTargetsMatchConfiguration": true,
+    "evaluatedTargetTeamIds": [
+      "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+    ],
+    "expectedTargetCount": 4,
+    "expectedTargetTeamIds": [
+      "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+    ]
+  },
+  "releasedCatalogBoundary": {
+    "checkedInRosterReportComparison": {
+      "allChecksMatch": true,
+      "eligibleCatalogHashMatches": true,
+      "eligibleCharacterCountMatches": true,
+      "eligibleCharacterIdsHashMatches": true,
+      "playableIdentityCountMatches": true,
+      "referenceReportComparable": true
+    },
+    "checkedInRosterReportReference": {
+      "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
+      "eligibleCharacterCount": 125,
+      "eligibleCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+      "playableIdentityCount": 119,
+      "reportComparisonStatus": "comparable",
+      "source": "checked-in-team-roster-candidate-domain-report"
+    },
+    "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
+    "eligibleCharacterCount": 125,
+    "eligibleCharacterCountMatchesExpectation": true,
+    "eligibleCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+    "excludedSpecialAvatarFormCount": 14,
+    "excludedSpecialAvatarFormsSha256": "86178627101600f7d50850a7b15707271b96caeee99fc012e8c00283722fb0b1",
+    "expectedEligibleCharacterCount": 125,
+    "fullStableCharacterCount": 139,
+    "playableIdentityCount": 119,
+    "source": "stable-resources",
+    "travelerIdentityPolicy": "all traveler element variants share playableIdentityId=traveler"
+  },
+  "roleInventoryBoundary": {
+    "allRoleInventoriesMatchExpectation": true,
+    "expectedRoleRecordCount": 2,
+    "roleRecords": [
+      {
+        "exhaustiveness": "unspecified",
+        "matchesExpectedMemberInventory": true,
+        "matchesExpectedUnspecifiedUnrankedScope": true,
+        "members": [
+          {
+            "characterId": "aino",
+            "conditions": []
+          },
+          {
+            "characterId": "furina",
+            "conditions": []
+          },
+          {
+            "characterId": "xingqiu",
+            "conditions": []
+          },
+          {
+            "characterId": "yelan",
+            "conditions": []
+          }
+        ],
+        "promotionEligible": false,
+        "rankingClaim": "none",
+        "roleId": "off-field-hydro-applier",
+        "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+        "slotId": "off-field-hydro",
+        "status": "candidate",
+        "templateId": "kqm:team-template:keqing-team-template-lunar-charged"
+      },
+      {
+        "exhaustiveness": "unspecified",
+        "matchesExpectedMemberInventory": true,
+        "matchesExpectedUnspecifiedUnrankedScope": true,
+        "members": [
+          {
+            "characterId": "jean",
+            "conditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ]
+          },
+          {
+            "characterId": "kaedehara_kazuha",
+            "conditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ]
+          },
+          {
+            "characterId": "sayu",
+            "conditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ]
+          },
+          {
+            "characterId": "sucrose",
+            "conditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ]
+          },
+          {
+            "characterId": "xianyun",
+            "conditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ]
+          },
+          {
+            "characterId": "xilonen",
+            "conditions": []
+          }
+        ],
+        "promotionEligible": false,
+        "rankingClaim": "none",
+        "roleId": "resistance-shred",
+        "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+        "slotId": "resistance-shred",
+        "status": "candidate",
+        "templateId": "kqm:team-template:keqing-team-template-lunar-charged"
+      }
+    ]
+  },
+  "rolePairSample": {
+    "comparisonStatus": "comparable",
+    "completePairDomain": false,
+    "completeRoleDomains": false,
+    "issues": [],
+    "pairCombinationPolicy": "configured-published-targets-only",
+    "reportType": "source-scoped-role-pair-sample",
+    "roleEvidence": [
+      {
+        "exercisedByConfiguredTargetMemberIds": [
+          "aino",
+          "furina",
+          "yelan"
+        ],
+        "exhaustiveness": "unspecified",
+        "rankingClaim": "none",
+        "roleId": "off-field-hydro-applier",
+        "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+        "slotId": "off-field-hydro",
+        "sourceObservedMemberIds": [
+          "aino",
+          "furina",
+          "xingqiu",
+          "yelan"
+        ],
+        "templateId": "kqm:team-template:keqing-team-template-lunar-charged",
+        "unexercisedByConfiguredTargetMemberIds": [
+          "xingqiu"
+        ]
+      },
+      {
+        "exercisedByConfiguredTargetMemberIds": [
+          "jean",
+          "kaedehara_kazuha",
+          "sucrose",
+          "xilonen"
+        ],
+        "exhaustiveness": "unspecified",
+        "rankingClaim": "none",
+        "roleId": "resistance-shred",
+        "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+        "slotId": "resistance-shred",
+        "sourceObservedMemberIds": [
+          "jean",
+          "kaedehara_kazuha",
+          "sayu",
+          "sucrose",
+          "xianyun",
+          "xilonen"
+        ],
+        "templateId": "kqm:team-template:keqing-team-template-lunar-charged",
+        "unexercisedByConfiguredTargetMemberIds": [
+          "sayu",
+          "xianyun"
+        ]
+      }
+    ],
+    "schemaVersion": 1,
+    "supportsGlobalRoleResolution": false,
+    "supportsGuideClaims": false,
+    "supportsRankClaims": false,
+    "supportsTeamRecommendations": false,
+    "targets": [
+      {
+        "comparisonStatus": "comparable",
+        "issues": [],
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "aino",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "characterId": "sucrose",
+            "conditionsMatch": true,
+            "requiredConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "aino",
+          "resistance-shred": "sucrose"
+        },
+        "sourceSlotBindingBasis": "same-page-inferred-fit",
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+        "targetMemberCharacterIds": [
+          "keqing",
+          "ineffa",
+          "aino",
+          "sucrose"
+        ],
+        "targetTeamId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
+      },
+      {
+        "comparisonStatus": "comparable",
+        "issues": [],
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "furina",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "characterId": "jean",
+            "conditionsMatch": true,
+            "requiredConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "furina",
+          "resistance-shred": "jean"
+        },
+        "sourceSlotBindingBasis": "same-page-inferred-fit",
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+        "targetMemberCharacterIds": [
+          "keqing",
+          "ineffa",
+          "furina",
+          "jean"
+        ],
+        "targetTeamId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
+      },
+      {
+        "comparisonStatus": "comparable",
+        "issues": [],
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "furina",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [],
+            "characterId": "xilonen",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "furina",
+          "resistance-shred": "xilonen"
+        },
+        "sourceSlotBindingBasis": "same-page-inferred-fit",
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "targetMemberCharacterIds": [
+          "keqing",
+          "ineffa",
+          "furina",
+          "xilonen"
+        ],
+        "targetTeamId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+      },
+      {
+        "comparisonStatus": "comparable",
+        "issues": [],
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "yelan",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "characterId": "kaedehara_kazuha",
+            "conditionsMatch": true,
+            "requiredConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "yelan",
+          "resistance-shred": "kaedehara_kazuha"
+        },
+        "sourceSlotBindingBasis": "same-page-inferred-fit",
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example",
+        "targetMemberCharacterIds": [
+          "keqing",
+          "ineffa",
+          "yelan",
+          "kaedehara_kazuha"
+        ],
+        "targetTeamId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+      }
+    ],
+    "unconfiguredRoleMemberPairsEvaluated": false,
+    "validatedPairObservations": [
+      {
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "aino",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "characterId": "sucrose",
+            "conditionsMatch": true,
+            "requiredConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "aino",
+          "resistance-shred": "sucrose"
+        },
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+        "targetTeamId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
+      },
+      {
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "furina",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "characterId": "jean",
+            "conditionsMatch": true,
+            "requiredConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "furina",
+          "resistance-shred": "jean"
+        },
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+        "targetTeamId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
+      },
+      {
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "furina",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [],
+            "characterId": "xilonen",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "furina",
+          "resistance-shred": "xilonen"
+        },
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "targetTeamId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+      },
+      {
+        "roleMemberBindings": [
+          {
+            "acknowledgedConditions": [],
+            "characterId": "yelan",
+            "conditionsMatch": true,
+            "requiredConditions": [],
+            "roleId": "off-field-hydro-applier",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+            "slotId": "off-field-hydro"
+          },
+          {
+            "acknowledgedConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "characterId": "kaedehara_kazuha",
+            "conditionsMatch": true,
+            "requiredConditions": [
+              "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+            ],
+            "roleId": "resistance-shred",
+            "roleRecordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+            "slotId": "resistance-shred"
+          }
+        ],
+        "sourceLineage": {
+          "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+          "sourceId": "kqm"
+        },
+        "sourceSlotBinding": {
+          "ineffa": "ineffa",
+          "keqing": "keqing",
+          "off-field-hydro": "yelan",
+          "resistance-shred": "kaedehara_kazuha"
+        },
+        "structuralBindingMultiplicity": 1,
+        "targetId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example",
+        "targetTeamId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+      }
+    ]
+  },
+  "schemaVersion": 1,
+  "sourceExtractionBoundary": {
+    "allExtractionStatesMatch": true,
+    "configuredRecordsPresentExactlyOnce": true,
+    "expectedExtractionMethod": "agent-assisted",
+    "expectedParticipatingRecordCount": 7,
+    "expectedReviewStatus": "unreviewed",
+    "observedSnapshotRecordCount": 7,
+    "records": [
+      {
+        "kind": "team",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-ineffa-aino-sucrose-lunar-charged-example"
+      },
+      {
+        "kind": "team",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-ineffa-furina-jean-lunar-charged-example"
+      },
+      {
+        "kind": "team",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example"
+      },
+      {
+        "kind": "team",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-ineffa-yelan-kazuha-lunar-charged-example"
+      },
+      {
+        "kind": "character_role",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-lunar-charged-off-field-hydro-appliers"
+      },
+      {
+        "kind": "character_role",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-lunar-charged-resistance-shred-options"
+      },
+      {
+        "kind": "team_template",
+        "matchesExpectedExtractionMethod": true,
+        "matchesExpectedReviewStatus": true,
+        "observedExtractionMethod": "agent-assisted",
+        "observedReviewStatus": "unreviewed",
+        "occurrenceCount": 1,
+        "presentExactlyOnce": true,
+        "sourceRecordId": "keqing-team-template-lunar-charged"
+      }
+    ],
+    "snapshotFile": {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "4dba754a9bda9b5699fcd2588675eead4ffa68024bc44d3ad0daae77199c7d6d"
+    },
+    "sourceId": "kqm"
+  },
+  "sourcePageBoundary": {
+    "allRepositoryRecordsUseExactPage": true,
+    "expectedPageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+    "observedSnapshotPageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+    "repositoryRecords": [
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:character-role:keqing-lunar-charged-off-field-hydro-appliers",
+        "usesExactPage": true
+      },
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:character-role:keqing-lunar-charged-resistance-shred-options",
+        "usesExactPage": true
+      },
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:team-template:keqing-team-template-lunar-charged",
+        "usesExactPage": true
+      },
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+        "usesExactPage": true
+      },
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+        "usesExactPage": true
+      },
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "usesExactPage": true
+      },
+      {
+        "observedSourcePages": [
+          {
+            "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+            "sourceId": "kqm"
+          }
+        ],
+        "recordId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example",
+        "usesExactPage": true
+      }
+    ],
+    "snapshotPageUrlMatchesExpectation": true
+  },
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGameplayValidation": false,
+  "supportsGlobalRoleResolution": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "unconfiguredRoleMemberPairsEvaluated": false
+}

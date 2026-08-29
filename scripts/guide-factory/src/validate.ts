@@ -27,6 +27,10 @@ import {
   runFurinaSourceScopedRoleSample,
 } from "./furinaSourceScopedRoleSample";
 import {
+  KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_INPUT_PATHS,
+  runKeqingSourceScopedRolePairSample,
+} from "./keqingSourceScopedRolePairSample";
+import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
@@ -77,6 +81,7 @@ import {
   KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH,
+  KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
   LEGACY_SNAPSHOT_PATH,
@@ -144,6 +149,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     teamRosterCandidateDomainExperimentInput,
     keqingIneffaTeamStatMarginalDiagnosticInput,
     furinaSourceScopedRoleSampleInput,
+    keqingSourceScopedRolePairSampleInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -172,6 +178,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH),
       readJson(KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH),
       readJson(FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH),
+      readJson(KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -565,6 +572,30 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.furina-source-scoped-role-sample",
           message:
             "The saved Furina source-scoped role sample does not match the indexed extraction status, exact same-page role/template/team records, stable eligible-character boundary, and role-withheld roster-domain status.",
+        });
+      }
+
+      const keqingSourceScopedRolePairSampleGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_INPUT_PATHS,
+        );
+      const expectedKeqingSourceScopedRolePairSample =
+        await runKeqingSourceScopedRolePairSample(
+          expectedKnowledge,
+          manualInputs,
+          teamRosterCandidateDomainExperimentInput,
+          keqingSourceScopedRolePairSampleGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingSourceScopedRolePairSample) !==
+        stableJson(keqingSourceScopedRolePairSampleInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_source_scoped_role_pair_sample",
+          path: "reports.keqing-source-scoped-role-pair-sample",
+          message:
+            "The saved Keqing source-scoped role-pair sample does not match the seven indexed extraction states, exact full role inventories, four same-page published targets, independently checked catalog boundary, and fresh plus checked-in role-withheld roster statuses.",
         });
       }
 

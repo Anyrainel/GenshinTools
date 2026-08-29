@@ -91,6 +91,37 @@
       "sourceRefs": [
         {
           "locator": {
+            "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Furina — Jean",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-furina-jean-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-furina-jean-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-furina-jean-lunar-charged-example"
+        }
+      ],
+      "teamId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
             "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Furina — Xilonen",
             "url": "https://keqingmains.com/q/keqing-quickguide/"
           },
@@ -99,6 +130,37 @@
         }
       ],
       "teamId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Yelan — Kazuha",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-yelan-kazuha-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-yelan-kazuha-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-yelan-kazuha-lunar-charged-example"
+        }
+      ],
+      "teamId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
     },
     {
       "matchedBaselineTeamIds": [],
@@ -190,7 +252,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "0282b4ac17320ccd4d948c42652654ea784fa4cb2411da3a6ecec248bf653a39"
+      "sha256": "30cdd5023e928b28e5b4c0d74f1a29a3188d2a7591d077db0c0f2026e7d528be"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",

@@ -1,12 +1,10 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
-  compareEligibleCatalogWithCheckedInRosterReport,
   FURINA_ROLE_RECORD_ID,
   FURINA_ROLE_TARGET_TEAM_ID,
   FURINA_ROLE_TEMPLATE_ID,
   FURINA_SOURCE_SCOPED_ROLE_SAMPLE_INPUT_PATHS,
-  parseCheckedInRosterCatalogReference,
   runFurinaSourceScopedRoleSample,
 } from "../src/furinaSourceScopedRoleSample";
 import { readJson, sha256File, stableJson } from "../src/io";
@@ -23,6 +21,10 @@ import {
   KnowledgeRepositorySchema,
   ManualObservationSnapshotSchema,
 } from "../src/schemas";
+import {
+  compareEligibleCatalogWithCheckedInRosterReport,
+  parseCheckedInRosterCatalogReference,
+} from "../src/rosterCatalogReference";
 import { buildTeamRosterCandidateDomainExperimentFixture } from "../src/teamRosterCandidateDomainExperiment";
 
 describe("Furina source-scoped role sample integration", () => {

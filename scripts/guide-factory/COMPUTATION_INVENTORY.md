@@ -425,7 +425,7 @@ technical combo is replayed through both calculator paths at several endpoints.
 It does not validate AutoTune's default context, replace constrained allocation,
 or make the unreviewed objective credible enough for player-facing weights.
 
-## Source-scoped role-sample seam
+## Source-scoped role-sample seams
 
 `src/sourceScopedRoleSample.ts` evaluates one named member from one
 `character_role` knowledge record against one exact team and one applicable
@@ -451,6 +451,33 @@ one source-scoped member is not installed as a global role resolver. This seam
 therefore supports provenance and structural validation only, not complete role
 membership, team recommendation, gameplay quality, damage, equipment, stats,
 or ER.
+
+`src/sourceScopedRolePairSample.ts` generalizes the structural check to exactly
+two source-scoped role records, but only over explicit published exact-team
+targets supplied by a wrapper. It requires the template, roles, and targets to
+remain candidate and promotion-ineligible, and validates exact role-slot application,
+lineage, eligible identities, member bindings, constellation bounds, exact
+condition-text acknowledgements, complete slot bindings, and structural
+multiplicity. Every target must pass or the combined result is withheld. Target
+and binding order, including binding-object key order, is canonicalized for
+deterministic output.
+
+The Keqing wrapper pins the full captured member objects for the off-field-Hydro and
+resistance-shred records, both with unspecified exhaustiveness and no rank. It
+evaluates exactly the four same-page teams that publish Furina/Xilonen,
+Aino/Sucrose, Furina/Jean, and Yelan/Kazuha pairings. Xingqiu, Sayu, and Xianyun
+remain unexercised positive evidence. No other cross-role member pair is
+constructed or judged. The exact Viridescent Venerer strings for Jean, Sucrose,
+and Kazuha are reported as acknowledged text equality, not gameplay
+verification.
+
+The paired wrapper records all seven participating indexed extraction states,
+requires the exact KQM page URL, reuses the independent checked-in catalog
+fingerprints, and requires the Keqing template to remain
+`withheld-unresolved-role` in both a fresh core replay and the checked-in
+roster-domain report. The durable output contains named role evidence and four
+targets but no global role catalog, expanded pair domain, team ranking, damage,
+equipment, stat, or ER result.
 
 ## Callable modules for later experiments
 
@@ -482,6 +509,8 @@ or ER.
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
 - One named source-scoped role binding without a global resolver:
   `scripts/guide-factory/src/sourceScopedRoleSample.ts`.
+- Two source-scoped roles checked only against configured published pairs:
+  `scripts/guide-factory/src/sourceScopedRolePairSample.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -545,10 +574,13 @@ factory.
   roll exchange. Its objective still has eight readiness blockers and omits
   reaction lines, so it cannot yet produce credible scalar weights or an ideal
   allocation.
-- The repository now has one source-scoped role observation, but one named
-  Xilonen sample cannot define a global healer catalog. Contextual conditions,
-  constellation boundaries, overlaps, and source disagreements need multiple
-  attributed validation targets before role-based roster expansion is safe.
+- The repository now has three source-scoped role observations, but neither the
+  one-member Furina healer slice nor the two unreviewed Keqing positive lists
+  define a global role catalog. The Keqing pair seam deliberately exercises
+  only four exact published pairs and leaves three members unexercised;
+  contextual conditions, constellation boundaries, overlaps, and source
+  disagreements still need broader attributed evidence before role-based roster
+  expansion is safe.
 - The bounded joint experiment intentionally passes no explicit buff
   overrides, although it now records that the computed formula-override map is
   empty in all 48 current cells. A future performance-bearing experiment must

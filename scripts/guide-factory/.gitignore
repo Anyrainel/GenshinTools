@@ -16,3 +16,4 @@ reports/*
 !reports/team-roster-candidate-domain-experiment.json
 !reports/keqing-ineffa-team-stat-marginal-diagnostic.json
 !reports/furina-source-scoped-role-sample.json
+!reports/keqing-source-scoped-role-pair-sample.json

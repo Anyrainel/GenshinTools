@@ -13,7 +13,7 @@ import { ManualObservationSnapshotSchema } from "../src/schemas";
 import { validateManualObservationSnapshot } from "../src/validation";
 
 describe("KQM Keqing pilot", () => {
-  it("captures an old-character team refresh without widening strict roles or adding ER targets", async () => {
+  it("captures source-scoped Lunar-Charged roles and every named example without adding ER targets", async () => {
     const manualInputs = await loadManualSnapshotInputs(
       await readJson(MANUAL_SNAPSHOT_INDEX_PATH),
       await readJson(SOURCE_REGISTRY_PATH),
@@ -26,7 +26,7 @@ describe("KQM Keqing pilot", () => {
     const snapshot = ManualObservationSnapshotSchema.parse(input.snapshot);
 
     expect(snapshot.page).toMatchObject({ sourceVersion: "Luna I" });
-    expect(snapshot.records).toHaveLength(3);
+    expect(snapshot.records).toHaveLength(7);
     expect(
       snapshot.records.some(({ kind }) => kind === "energy_guidance"),
     ).toBe(false);
@@ -61,10 +61,96 @@ describe("KQM Keqing pilot", () => {
       reactions: ["lunarCharged"],
     });
 
+    const roles = snapshot.records.flatMap((record) =>
+      record.kind === "character_role" ? [record] : [],
+    );
+    expect(roles).toHaveLength(2);
+    expect(roles.map(({ sourceRecordId }) => sourceRecordId)).toEqual([
+      "keqing-lunar-charged-off-field-hydro-appliers",
+      "keqing-lunar-charged-resistance-shred-options",
+    ]);
+    expect(
+      roles.every(
+        ({ exhaustiveness, rankingClaim }) =>
+          exhaustiveness === "unspecified" && rankingClaim === "none",
+      ),
+    ).toBe(true);
+    expect(
+      roles.flatMap(({ members }) =>
+        members.filter(
+          (member) =>
+            "minConstellation" in member || "maxConstellation" in member,
+        ),
+      ),
+    ).toEqual([]);
+
+    const hydroRole = roles.find(
+      ({ roleId }) => roleId === "off-field-hydro-applier",
+    );
+    expect(hydroRole).toMatchObject({
+      appliesTo: {
+        teamTemplateSourceRecordId: "keqing-team-template-lunar-charged",
+        slotId: "off-field-hydro",
+      },
+      members: [
+        { characterId: "furina", conditions: [] },
+        { characterId: "aino", conditions: [] },
+        { characterId: "yelan", conditions: [] },
+        { characterId: "xingqiu", conditions: [] },
+      ],
+      unknowns: expect.arrayContaining([
+        expect.stringContaining("star beside Furina"),
+        expect.stringContaining("cross-product"),
+      ]),
+    });
+
+    const shredRole = roles.find(
+      ({ roleId }) => roleId === "resistance-shred",
+    );
+    expect(shredRole).toMatchObject({
+      appliesTo: {
+        teamTemplateSourceRecordId: "keqing-team-template-lunar-charged",
+        slotId: "resistance-shred",
+      },
+      members: [
+        {
+          characterId: "kaedehara_kazuha",
+          conditions: [expect.stringContaining("Viridescent Venerer")],
+        },
+        {
+          characterId: "sucrose",
+          conditions: [expect.stringContaining("Viridescent Venerer")],
+        },
+        {
+          characterId: "jean",
+          conditions: [expect.stringContaining("Viridescent Venerer")],
+        },
+        {
+          characterId: "xianyun",
+          conditions: [expect.stringContaining("Viridescent Venerer")],
+        },
+        {
+          characterId: "sayu",
+          conditions: [expect.stringContaining("Viridescent Venerer")],
+        },
+        { characterId: "xilonen", conditions: [] },
+      ],
+      unknowns: expect.arrayContaining([
+        expect.stringContaining("exact aura and action sequence"),
+        expect.stringContaining("cross-product"),
+      ]),
+    });
+
     const exactTeams = snapshot.records.flatMap((record) =>
       record.kind === "team" ? [record] : [],
     );
-    expect(exactTeams).toHaveLength(2);
+    expect(exactTeams).toHaveLength(4);
+    expect(exactTeams.map(({ sourceRecordId }) => sourceRecordId)).toEqual([
+      "keqing-ineffa-furina-jean-lunar-charged-example",
+      "keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "keqing-ineffa-yelan-kazuha-lunar-charged-example",
+    ]);
     expect(
       exactTeams.flatMap(({ members }) =>
         members.flatMap(({ erTargets }) => erTargets),
@@ -86,19 +172,52 @@ describe("KQM Keqing pilot", () => {
       ),
     ).toBe(true);
 
-    const furinaTeam = exactTeams.find(({ members }) =>
-      members.some(({ characterId }) => characterId === "furina"),
+    const furinaJeanTeam = exactTeams.find(
+      ({ sourceRecordId }) =>
+        sourceRecordId ===
+        "keqing-ineffa-furina-jean-lunar-charged-example",
     );
-    expect(furinaTeam?.members.map(({ characterId }) => characterId)).toEqual([
+    expect(furinaJeanTeam?.members.map(({ characterId }) => characterId)).toEqual([
+      "keqing",
+      "ineffa",
+      "furina",
+      "jean",
+    ]);
+    expect(furinaJeanTeam?.rotations).toEqual([
+      expect.objectContaining({
+        id: "sample-longer-rotation-low-er-requirements",
+        notation:
+          "Ineffa E > Furina ED Q > Jean EQ > Keqing EQE 5[N1C] > Ineffa Q > Jean tE > Keqing EQE 5[N1C] > Jean tE",
+        assumptions: [expect.stringContaining("shortened")],
+      }),
+      expect.objectContaining({
+        id: "sample-shorter-rotation-max-fanfare-uptime",
+        notation:
+          "Ineffa EQ > Furina ED Q > Jean EQ > Keqing EQE 5[N1C] > Jean tE > Keqing EE 5[N1C]",
+        assumptions: expect.arrayContaining([
+          expect.stringContaining("shortened"),
+          expect.stringContaining("close to 20 seconds"),
+        ]),
+      }),
+    ]);
+
+    const furinaXilonenTeam = exactTeams.find(
+      ({ sourceRecordId }) =>
+        sourceRecordId ===
+        "keqing-ineffa-furina-xilonen-lunar-charged-example",
+    );
+    expect(
+      furinaXilonenTeam?.members.map(({ characterId }) => characterId),
+    ).toEqual([
       "keqing",
       "ineffa",
       "furina",
       "xilonen",
     ]);
-    expect(furinaTeam).toMatchObject({
+    expect(furinaXilonenTeam).toMatchObject({
       reactions: ["lunarCharged"],
     });
-    expect(furinaTeam?.rotations).toEqual([
+    expect(furinaXilonenTeam?.rotations).toEqual([
       expect.objectContaining({
         id: "sample-rotation",
         notation:
@@ -131,6 +250,30 @@ describe("KQM Keqing pilot", () => {
         assumptions: expect.arrayContaining([
           expect.stringContaining("every other rotation"),
         ]),
+      }),
+    ]);
+
+    const yelanTeam = exactTeams.find(({ members }) =>
+      members.some(({ characterId }) => characterId === "yelan"),
+    );
+    expect(yelanTeam?.members.map(({ characterId }) => characterId)).toEqual([
+      "keqing",
+      "ineffa",
+      "yelan",
+      "kaedehara_kazuha",
+    ]);
+    expect(yelanTeam?.rotations).toEqual([
+      expect.objectContaining({
+        id: "sample-rotation",
+        notation:
+          "Ineffa E Q > Yelan Q N1 E N1 > Kazuha tEP N1 > Keqing E N1 Q E 5[N1C] > Yelan E N3 > Kazuha tEPQ",
+        assumptions: [expect.stringContaining("two Yelan Skill casts")],
+      }),
+      expect.objectContaining({
+        id: "sample-rotation-yelan-c1-plus",
+        notation:
+          "Ineffa E Q > Yelan E Q N1 E N3 > Kazuha tEPQ N1 > Keqing E N1 Q E 5[N1C] > Kazuha tEP",
+        assumptions: [expect.stringContaining("Yelan C1 or higher")],
       }),
     ]);
 

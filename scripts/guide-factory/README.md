@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 14 adds one source-scoped role observation and a named same-page
-binding test after the full-team stat-marginal diagnostic, without claiming a
-working guide factory:
+Checkpoint 15 adds a two-role, source-scoped Keqing sample over four exact
+same-page teams after the one-role Furina seam, without claiming a working
+guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -118,6 +118,18 @@ working guide factory:
     report; compare the fresh catalog with the independently checked-in roster-
     domain fingerprints, and keep the broader Hypercarry template role-
     withheld.
+37. Preserve the fully captured source-positive member objects for Keqing's
+    source-defined off-field-Hydro and resistance-shred roles with unspecified
+    exhaustiveness and no rank, including members not exercised by an exact
+    example.
+38. Evaluate only the four exact Lunar-Charged teams published on that same
+    KQM page, acknowledging the exact Viridescent Venerer condition text for
+    Jean, Sucrose, and Kaedehara Kazuha without verifying gameplay execution.
+39. Report exercised and unexercised positive evidence separately and never
+    enumerate, reject, or endorse the other cross-role member combinations.
+40. Require all seven participating indexed extraction states, the exact page
+    URL, the checked-in catalog fingerprints, and both fresh and checked-in
+    Keqing roster statuses to remain role-withheld.
 
 The first two active sources are already in this repository:
 
@@ -138,11 +150,14 @@ Its contextual weapon record includes Favonius Sword and Serenity's Call rather
 than silently omitting them. One additional Furina record names Xilonen as a
 non-exhaustive, unranked member of the Hypercarry template's healer slot. It is
 used only for one same-page binding test and is not a global healer catalog.
-Keqing adds one Lunar-Charged template and two
-exact example teams with three published rotation variants. This deliberately
+Keqing adds one Lunar-Charged template, two source-scoped positive role
+inventories, and four exact example teams with seven published rotation
+variants. This deliberately
 tests whether a new release can surface changed team options for an old
 character; it does not claim that the examples are optimal. Every record
-remains unreviewed and promotion-ineligible. Kokomi adds one exact
+remains unreviewed and promotion-ineligible. The paired sample evaluates only
+the four published teams; Xingqiu, Sayu, and Xianyun remain unexercised positive
+evidence, and no remaining member cross-product is inferred. Kokomi adds one exact
 Lunar-Charged example whose artifact advice is intrinsically coupled: under the
 source's undefined "well-invested Columbina" condition, Kokomi can take Silken
 Moon's Serenade so Columbina can take Aubade. The condition and assignment are
@@ -191,6 +206,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -207,13 +223,13 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all fifteen durable reports in memory: corpus inventory, team
+It also rebuilds all sixteen durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
 the bounded joint artifact experiment, the bounded team-roster candidate
 domain, the full-team stat-marginal diagnostic, the Furina source-scoped role
-sample, Diona comparison, and historical ER calibration. Stale evidence cannot
-pass.
+sample, the Keqing source-scoped role-pair sample, Diona comparison, and
+historical ER calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -239,11 +255,11 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 366 unique records: 138
-character guides, 1 character-role observation, 220 exact teams, 6 team
+The descriptive corpus inventory currently counts 370 unique records: 138
+character guides, 3 character-role observations, 222 exact teams, 6 team
 templates, and 1 historical energy record. Of those, 191 are baseline records
-and 175 are candidates. KQM contributes 36 records, including 10 exact teams
-and 12 explicit rotation entries. The inventory also reports explicit weapon,
+and 179 are candidates. KQM contributes 40 records, including 12 exact teams
+and 16 explicit rotation entries. The inventory also reports explicit weapon,
 artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
 not votes or recommendation confidence.
@@ -271,8 +287,8 @@ Keqing Lunar-Charged. The Keqing template keeps `off-field-hydro-applier` and
 `resistance-shred` as unresolved role constraints; it is still uncovered, not
 role-unresolved, because no baseline team contains the required Keqing–Ineffa
 core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen and
-Klee/Furina/Albedo/Xilonen rosters each match a current preset. The other eight
-exact KQM teams, including both Keqing examples, the
+Klee/Furina/Albedo/Xilonen rosters each match a current preset. The other ten
+exact KQM teams, including all four Keqing examples, the
 Kokomi/Ineffa/Columbina/Sucrose example, the Noelle Hexerei example, and the
 Klee/Chevreuse/Durin/Fischl example, are uncovered. Source presence does not
 automatically promote any of them into the baseline.

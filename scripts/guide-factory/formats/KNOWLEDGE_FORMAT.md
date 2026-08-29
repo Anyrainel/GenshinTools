@@ -68,7 +68,10 @@ Manual character-role records consolidate one-to-one as candidates with
 `promotionEligible: false`. They are not merged across templates, slots, pages,
 or publishers. Their named members can be inventoried as bounded evidence, but
 they do not resolve role selectors in template coverage or create a reusable
-character-to-role catalog.
+character-to-role catalog. When two records are inspected together, fully
+captured source-positive member lists remain intact and only explicit
+exact-team targets may be validated; unexercised members do not authorize a
+Cartesian pair domain.
 
 ## Character-guide records
 

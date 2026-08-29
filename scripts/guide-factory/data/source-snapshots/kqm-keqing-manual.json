@@ -78,6 +78,192 @@
       ]
     },
     {
+      "kind": "character_role",
+      "sourceRecordId": "keqing-lunar-charged-off-field-hydro-appliers",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "roleId": "off-field-hydro-applier",
+      "appliesTo": {
+        "teamTemplateSourceRecordId": "keqing-team-template-lunar-charged",
+        "slotId": "off-field-hydro"
+      },
+      "members": [
+        { "characterId": "furina", "conditions": [] },
+        { "characterId": "aino", "conditions": [] },
+        { "characterId": "yelan", "conditions": [] },
+        { "characterId": "xingqiu", "conditions": [] }
+      ],
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "unknowns": [
+        "whether the named Hydro list is exhaustive",
+        "the source displays a star beside Furina, but its exact ordering semantics are not stated in the nearby text and are not encoded as a rank",
+        "relative performance, application cadence, and rotation fit among the named members",
+        "Aino C6 is optional performance context and is not recorded as a role-membership floor",
+        "the named role members do not establish that every cross-product with a resistance-shred member is a published or recommended team"
+      ]
+    },
+    {
+      "kind": "character_role",
+      "sourceRecordId": "keqing-lunar-charged-resistance-shred-options",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "roleId": "resistance-shred",
+      "appliesTo": {
+        "teamTemplateSourceRecordId": "keqing-team-template-lunar-charged",
+        "slotId": "resistance-shred"
+      },
+      "members": [
+        {
+          "characterId": "kaedehara_kazuha",
+          "conditions": [
+            "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+          ]
+        },
+        {
+          "characterId": "sucrose",
+          "conditions": [
+            "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+          ]
+        },
+        {
+          "characterId": "jean",
+          "conditions": [
+            "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+          ]
+        },
+        {
+          "characterId": "xianyun",
+          "conditions": [
+            "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+          ]
+        },
+        {
+          "characterId": "sayu",
+          "conditions": [
+            "Equipped with 4pc Viridescent Venerer and activates its relevant RES reduction."
+          ]
+        },
+        { "characterId": "xilonen", "conditions": [] }
+      ],
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "unknowns": [
+        "whether the named Anemo and Xilonen list is exhaustive",
+        "relative performance and rotation fit among the named members",
+        "the exact aura and action sequence needed to activate the relevant Viridescent Venerer RES reduction",
+        "Xilonen is listed for her own RES Shred and 4pc Scroll contribution rather than Viridescent Venerer",
+        "no constellation is stated as a role-membership requirement",
+        "the named role members do not establish that every cross-product with an off-field Hydro member is a published or recommended team"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "keqing-ineffa-furina-jean-lunar-charged-example",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Furina — Jean"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro"
+        },
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Keqing — Ineffa — Furina — Jean",
+      "intent": "example",
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "members": [
+        {
+          "characterId": "keqing",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "ineffa",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "furina",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "jean",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "rotations": [
+        {
+          "id": "sample-longer-rotation-low-er-requirements",
+          "label": "KQM sample longer rotation with low ER requirements",
+          "notation": "Ineffa E > Furina ED Q > Jean EQ > Keqing EQE 5[N1C] > Ineffa Q > Jean tE > Keqing EQE 5[N1C] > Jean tE",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "The final Keqing combo can be shortened by one or two Charged Attacks."
+          ]
+        },
+        {
+          "id": "sample-shorter-rotation-max-fanfare-uptime",
+          "label": "KQM sample shorter rotation for maximum Fanfare uptime",
+          "notation": "Ineffa EQ > Furina ED Q > Jean EQ > Keqing EQE 5[N1C] > Jean tE > Keqing EE 5[N1C]",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "The final Keqing combo can be shortened by one or two Charged Attacks.",
+          "The source describes this branch as close to 20 seconds as possible rather than an exact duration."
+          ]
+        }
+      ],
+      "unknowns": [
+        "which published rotation is preferable for a specific account and investment level",
+        "numeric Energy Recharge requirements are not captured",
+        "exact rotation duration, Fanfare stacking, and buff coverage",
+        "constellations, weapons, artifacts, and refinements",
+        "formula mappings, formula counts, and reaction ownership",
+        "enemy scenario"
+      ]
+    },
+    {
       "kind": "team",
       "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example",
       "locator": {
@@ -217,6 +403,89 @@
         "formula mappings, formula counts, and reaction ownership",
         "enemy scenario",
         "Aino C6 is optional investment context that can change Lunar-Charged contribution; it is not a team or rotation requirement"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "keqing-ineffa-yelan-kazuha-lunar-charged-example",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Yelan — Kazuha"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro"
+        },
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Keqing — Ineffa — Yelan — Kazuha",
+      "intent": "example",
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "members": [
+        {
+          "characterId": "keqing",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "ineffa",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "yelan",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "kaedehara_kazuha",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "rotations": [
+        {
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "Ineffa E Q > Yelan Q N1 E N1 > Kazuha tEP N1 > Keqing E N1 Q E 5[N1C] > Yelan E N3 > Kazuha tEPQ",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "The source uses two Yelan Skill casts in this slightly long rotation to lower her Energy Recharge requirements."
+          ]
+        },
+        {
+          "id": "sample-rotation-yelan-c1-plus",
+          "label": "KQM sample rotation for Yelan C1 or higher",
+          "notation": "Ineffa E Q > Yelan E Q N1 E N3 > Kazuha tEPQ N1 > Keqing E N1 Q E 5[N1C] > Kazuha tEP",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "This published rotation branch requires Yelan C1 or higher."
+          ]
+        }
+      ],
+      "unknowns": [
+        "which published rotation branch is preferable at Yelan C1 or higher",
+        "numeric Energy Recharge requirements are not captured",
+        "exact rotation duration and buff coverage",
+        "constellations other than the explicit Yelan C1 rotation branch",
+        "weapons, artifacts, and refinements",
+        "formula mappings, formula counts, and reaction ownership",
+        "the exact Viridescent Venerer aura and activation sequence",
+        "enemy scenario"
       ]
     }
   ]

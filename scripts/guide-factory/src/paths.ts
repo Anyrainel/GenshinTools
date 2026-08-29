@@ -138,3 +138,8 @@ export const FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH = path.join(
   "reports",
   "furina-source-scoped-role-sample.json"
 );
+export const KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "keqing-source-scoped-role-pair-sample.json"
+);

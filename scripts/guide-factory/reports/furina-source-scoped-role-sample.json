@@ -20,7 +20,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "0282b4ac17320ccd4d948c42652654ea784fa4cb2411da3a6ecec248bf653a39"
+      "sha256": "30cdd5023e928b28e5b4c0d74f1a29a3188d2a7591d077db0c0f2026e7d528be"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
@@ -32,7 +32,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "0719982cbd6593b8c329acce4d594efe9c109f26ea3ecbcc0c3cd6d1dcc66813"
+      "sha256": "23f05fed2b9ddef395e63f227251017f18e01ae03a44a90f59922df47b6c8e07"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -44,7 +44,7 @@
     },
     {
       "path": "scripts/guide-factory/src/furinaSourceScopedRoleSample.ts",
-      "sha256": "19033e5f0e44ab0d8ebfa3d860f028856dc468cca7405b46b95be4afd1031f7d"
+      "sha256": "3bc12073eb8820ef76ad89e2bee2da15a73a61f67321fe002a190ac181176eeb"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
@@ -53,6 +53,10 @@
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
       "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+    },
+    {
+      "path": "scripts/guide-factory/src/rosterCatalogReference.ts",
+      "sha256": "65fc634143a777823008196abd6cb6b977ac4fd8383f02f919382d35eee43aba"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",

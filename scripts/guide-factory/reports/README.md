@@ -6,6 +6,23 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-source-scoped-role-pair-sample.json` preserves the fully captured
+  source-positive member objects for the KQM Keqing Lunar-Charged off-field-Hydro and
+  resistance-shred roles. Both lists keep unspecified exhaustiveness and no
+  rank. It evaluates only four exact same-page published teams, each with
+  structural multiplicity one, and records exact condition-text
+  acknowledgements for the Jean, Sucrose, and Kaedehara Kazuha Viridescent
+  Venerer bindings without claiming gameplay verification. Xingqiu, Sayu, and
+  Xianyun remain explicit unexercised positive evidence; the report neither
+  emits nor judges any other member pairing. All seven participating indexed
+  extraction records and the exact KQM page URL are fail-closed boundaries.
+  Their consolidated template, role, and exact-team records must also remain
+  candidate and promotion-ineligible.
+  The fresh 125-ID catalog must match the independently checked-in roster-domain
+  count and fingerprints, and the Keqing template must remain
+  `withheld-unresolved-role` in both a fresh replay and that checked-in report.
+  It supports no guide, recommendation, rank, global role, gameplay, damage,
+  equipment, stat, or ER claim.
 - `furina-source-scoped-role-sample.json` validates one non-exhaustive,
   unranked KQM observation that names Xilonen for the healer slot of the Furina
   Hypercarry / Mono template against the exact same-page Furina, Neuvillette,
@@ -132,7 +149,7 @@ Current durable pilot evidence:
   teams with exact baseline rosters. It emits present, uncovered, or explicitly
   role-unresolved results and no quality score, rank, or winner. The current
   result has 3 present, 1 role-unresolved, and 2 uncovered templates, plus 2
-  present and 8 uncovered exact external teams. Keqing Lunar-Charged is
+  present and 10 uncovered exact external teams. Keqing Lunar-Charged is
   uncovered because the baseline lacks the required Keqing–Ineffa core; its
   off-field-Hydro and resistance-shred roles are not weakened into element
   matches.
@@ -160,6 +177,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all fifteen reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all sixteen reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

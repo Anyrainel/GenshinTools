@@ -190,7 +190,11 @@ claims; omission from a non-exhaustive or unspecified record is never negative
 evidence, and array order is not a rank when `rankingClaim` is `none` or
 `unordered`. A highlighted role is not a valid scope. These records remain
 candidate, promotion-ineligible evidence and do not form or resolve a global
-role catalog.
+role catalog. A paired validation sample retains both fully captured source-
+positive member lists, reports which members its explicit exact-team targets
+exercise, and leaves the rest as unexercised evidence. It may validate only
+named same-page target pairs; it must not fill, reject, or recommend the
+remaining Cartesian product.
 
 ### KQM Diona pilot
 
@@ -230,10 +234,11 @@ All records are unreviewed and promotion-ineligible.
 
 ### KQM Keqing pilot
 
-The third page stores three heading-scoped team records from the visible Luna I
-guide version: one Lunar-Charged template and two exact example teams. It is a
-source-breadth test for detecting new-release team changes for an old character,
-not a broad Keqing build extraction or an optimality claim.
+The third page stores seven participating heading-scoped records from the
+visible Luna I guide version: one Lunar-Charged template, two positive
+character-role inventories, and four exact example teams. It is a source-
+breadth test for detecting new-release team changes for an old character, not a
+broad Keqing build extraction or an optimality claim.
 
 The template hard-requires Keqing and Ineffa. Its other hard selectors are the
 source-defined roles `off-field-hydro-applier` and `resistance-shred`; Hydro,
@@ -242,11 +247,19 @@ element-only requirements. This avoids false coverage until reviewed role data
 exists. Because no baseline team contains the required Keqing–Ineffa core, the
 coverage result is uncovered rather than role-unresolved.
 
-The Furina/Xilonen example retains two published rotation variants. The
-Aino/Sucrose example retains one rotation and its every-other-rotation Burst
-scheduling note. Neither record supplies or receives a numeric ER target,
-equipment ranking, formula mapping, or inferred investment level. Both remain
-examples with no power-ranking claim, unreviewed and promotion-ineligible.
+The off-field-Hydro record names Furina, Aino, Yelan, and Xingqiu. The
+resistance-shred record names Kazuha, Sucrose, Jean, Xianyun, Sayu, and Xilonen;
+the five Anemo members retain the source-stated Viridescent Venerer condition.
+Both inventories have unspecified exhaustiveness and no rank. Four published
+pairs are exercised by exact teams: Furina/Xilonen, Aino/Sucrose, Furina/Jean,
+and Yelan/Kazuha. Xingqiu, Xianyun, and Sayu remain positive but unexercised;
+their absence from an example is not negative evidence, and no other pair is
+inferred.
+
+The four exact teams retain seven published rotation variants and their nearby
+assumptions. None supplies or receives a numeric ER target, equipment ranking,
+formula mapping, or inferred investment level. All remain examples with no
+power-ranking claim, unreviewed and promotion-ineligible.
 
 ### KQM Kokomi pilot
 
