@@ -67,7 +67,7 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 370 records. It excludes ER details from evidence and
+presence across all 387 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
@@ -134,22 +134,23 @@ coverage and a complete formula-classification ledger.
 Before ranking any artifact set, the current checkpoint measures whether the
 existing analyzer can name the choices already recorded in the repository. Its
 released grammar contains 43 initial four-piece choices and at most 14
-stat-derived two-piece pairs. Across 1,059 artifact-choice fields on
-non-rejected guide and team records, 1,015 are initially enumerated, 21 are
-conditionally representable, and 23 are not representable by the current
-grammar. The failures expose two specific search-domain gaps: 19 Instructor
-and 2 Exile occurrences are filtered out with all non-five-star sets, while
-two damage-oriented half-set choices are absent from dynamic two-piece
-discovery. This does not establish that any enumerated choice can be generated,
+stat-derived two-piece pairs. Across 1,068 artifact-choice fields on
+non-rejected guide and team records, 1,020 are initially enumerated, 21 are
+conditionally representable, and 27 are not representable by the current
+grammar. The failures include 19 Instructor and 2 Exile occurrences filtered
+out with all non-five-star sets, five choices whose half-set families are
+absent from dynamic two-piece discovery, and one Thundersoother occurrence
+excluded by the tier-list-derived four-piece policy. This does not establish
+that any enumerated choice can be generated,
 evaluated, or ranked successfully. The count includes both assignments in the
 new coupled Kokomi/Columbina plan, but only proves that each set name is in the
 individual candidate grammar; it does not prove joint-plan enumeration.
 
 The weapon candidate-policy audit now reports separate coverage axes for weapon
 ID, refinement specificity, and native weapon-type compatibility. Its released
-mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 987 non-ER
+mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 1,008 non-ER
 repository occurrences have an ID in that global domain, but none supplies a
-refinement; 975 match the character's native type and 12 legacy selections do
+refinement; 996 match the character's native type and 12 legacy selections do
 not. Because runtime derives the search type from the equipped seed weapon,
 those 12 mismatches can seed a wrong candidate class. This is a blocker, not a
 weapon ranking.
@@ -305,6 +306,27 @@ extraction states. It also requires both a fresh roster-domain replay and the
 checked-in report to keep Keqing Lunar-Charged
 `withheld-unresolved-role`. This is a stronger validation target, not a role
 catalog or a candidate-team generator.
+
+The first source-conditioned equipment seam now preserves seventeen KQM
+Keqing Lunar-Charged records as 42 claim units and checks them against only the
+four published rosters. The wrapper maps sixteen exact condition strings to
+explicit predicates; it can acknowledge Lunar-Charged scope, Furina presence,
+and Nod-Krai roster count, but withholds every build, gameplay, refinement,
+threshold, contribution, shield, healing, and timing condition. Candidate KQM
+records remain validation targets and never enter the source-backed fixture or
+generator.
+
+The same report cross-references 30 equipment claims with the existing search-
+coverage builders. All 21 weapon claims are released native-type-compatible
+Sword observations with source refinements still unspecified. Five artifact
+claims are currently representable; Thundersoother plus three traditional 2pc
+combinations are not. The internal Keqing baseline structurally overlaps the
+source default main stats and Mistsplitter, differs on the ATK-versus-EM
+priority relation, and lists 4pc Thundering Fury only under an unresolved
+source condition. These are discrepancies and coverage boundaries, not guide
+judgments. V1 also retains the source's other-5-star-versus-Mistsplitter
+ordering as a schema gap rather than inferring an order across separate
+recommendation records.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

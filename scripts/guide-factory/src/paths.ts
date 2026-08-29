@@ -143,3 +143,9 @@ export const KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH = path.join(
   "reports",
   "keqing-source-scoped-role-pair-sample.json"
 );
+export const KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-lunar-equipment-evidence-validation.json"
+  );

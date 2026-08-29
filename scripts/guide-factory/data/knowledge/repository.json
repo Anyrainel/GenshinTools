@@ -25,7 +25,7 @@
         },
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
-          "sha256": "4dba754a9bda9b5699fcd2588675eead4ffa68024bc44d3ad0daae77199c7d6d"
+          "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
         },
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
@@ -19169,6 +19169,1050 @@
         "main-stat ordering from C2 onward",
         "numeric stat weights",
         "weapon-dependent stat balance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-default-artifact-stats",
+          "label": "Default Lunar-Charged offensive artifact stats",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team."
+                ],
+                "statIds": [
+                  "cd"
+                ]
+              },
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team.",
+                  "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses."
+                ],
+                "statIds": [
+                  "cr"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team."
+                ],
+                "priority": 1,
+                "statIds": [
+                  "electro%"
+                ]
+              },
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team."
+                ],
+                "priority": 2,
+                "statIds": [
+                  "atk%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team."
+                ],
+                "statIds": [
+                  "atk%"
+                ]
+              }
+            ]
+          },
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "substats": [
+            {
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team."
+              ],
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ]
+            },
+            {
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team."
+              ],
+              "priority": 2,
+              "statIds": [
+                "atk%"
+              ]
+            },
+            {
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team."
+              ],
+              "priority": 3,
+              "statIds": [
+                "em"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Stats",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "numeric stat weights",
+        "the exact CRIT Rate cap after all character, artifact, and team buffs",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-equal-refinement-four-star-ranking",
+          "label": "Equal-refinement four-star comparison",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "ranked-groups",
+          "weaponRecommendations": [
+            {
+              "classification": "recommended",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The compared weapons have equal Refinement."
+              ],
+              "grouping": "tied",
+              "weaponIds": [
+                "lions_roar",
+                "the_black_sword"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The compared weapons have equal Refinement."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "wolffang"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 4★ The Black Sword, Wolf-Fang",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the exact numeric gaps",
+        "artifact-dependent CRIT Rate compatibility",
+        "passive uptime for a concrete rotation",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-exceptional-em-foliar-tie",
+          "label": "Exceptional-EM Foliar and Mistsplitter tie",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "ranked-groups",
+          "weaponRecommendations": [
+            {
+              "classification": "recommended",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "Keqing has an exceptional amount of Elemental Mastery."
+              ],
+              "grouping": "tied",
+              "weaponIds": [
+                "light_of_foliar_incision",
+                "mistsplitter_reforged"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 5★ Light of Foliar Incision",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-exceptional-em-foliar-tie-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the Elemental Mastery threshold",
+        "refinement assumptions",
+        "the source warns that a personal-damage gain can reduce overall team damage by changing Lunar-Charged contribution ownership",
+        "numeric team-damage performance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-freedom-sworn",
+          "label": "Freedom-Sworn personal and team-buff option",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "freedomsworn"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 5★ Freedom-Sworn",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-freedom-sworn-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "weapon-buff trigger cadence",
+        "refinement assumptions",
+        "the split between Keqing personal damage and teamwide buff value",
+        "numeric team-damage performance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-full-shield-eshu-lions-roar-tie",
+          "label": "Full-shield Eshu and R5 Lion's Roar tie",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "ranked-groups",
+          "weaponRecommendations": [
+            {
+              "classification": "recommended",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "Calamity of Eshu is compared against R5 Lion's Roar, and its shield-dependent passive has full uptime."
+              ],
+              "grouping": "tied",
+              "weaponIds": [
+                "calamity_of_eshu",
+                "lions_roar"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 4★ Calamity of Eshu",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the schema has no first-class refinement field for recommendations",
+        "shield uptime for each rotation branch",
+        "shield break risk",
+        "the exact numeric gap when the passive loses uptime",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "marechaussee_hunter",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The team contains Furina.",
+                "The team contains exactly one Nod-Krai character."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "id": "lunar-charged-furina-marechaussee-hunter",
+          "label": "Furina and one-Nod-Krai Marechaussee Hunter context",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Marechaussee Hunter",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-furina-marechaussee-hunter-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the exact performance margin for a concrete team and inventory",
+        "whether future Nod-Krai rosters change the condition",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-general-mistsplitter",
+          "label": "General Lunar-Charged Mistsplitter recommendation",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "default",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "mistsplitter_reforged"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 5★ Mistsplitter Reforged",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-general-mistsplitter-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "refinement assumptions",
+        "numeric weapon performance",
+        "the later Jade Cutter and Foliar contexts qualify this general statement",
+        "artifact-dependent ranking outside the explicit contexts",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-harbinger-of-dawn-availability",
+          "label": "Harbinger of Dawn availability condition",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "available-only",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "Harbinger of Dawn's passive remains active, Furina is absent, and Keqing is not using 4pc Marechaussee Hunter."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "harbinger_of_dawn"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 3★ Harbinger of Dawn",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-harbinger-of-dawn-availability-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "passive uptime against a concrete enemy and rotation",
+        "refinement assumptions",
+        "the source's negative Furina and Marechaussee Hunter advice has no first-class exclusion field",
+        "the comparison with high-refinement Lion's Roar",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-high-buff-goblet-stats",
+          "label": "High-Base-ATK and high-DMG-Bonus Goblet alternatives",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team."
+                ],
+                "statIds": [
+                  "cd"
+                ]
+              },
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team.",
+                  "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses."
+                ],
+                "statIds": [
+                  "cr"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team.",
+                  "Keqing has both a high-Base-ATK weapon and large amounts of DMG Bonus."
+                ],
+                "statIds": [
+                  "electro%",
+                  "atk%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [
+                  "Keqing is used in a Lunar-Charged team."
+                ],
+                "statIds": [
+                  "atk%"
+                ]
+              }
+            ]
+          },
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Stats > ATK% Goblet note",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-high-buff-goblet-stats-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the Base ATK threshold",
+        "the DMG Bonus threshold",
+        "which Goblet is better for a concrete loadout",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-low-rarity-fallbacks",
+          "label": "Low-priority free weapon fallbacks",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "available-only",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "No stronger listed weapon is available."
+              ],
+              "grouping": "alternatives",
+              "weaponIds": [
+                "moonweavers_dawn",
+                "kagotsurube_isshin"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 4★ Moonweaver's Dawn, Kagotsurube Isshin",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-low-rarity-fallbacks-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "future refinement availability",
+        "relative ordering between the two fallbacks",
+        "account inventory",
+        "numeric weapon performance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "night_of_the_skys_unveiling",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "alternative",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The team contains exactly one Nod-Krai character."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "night_of_the_skys_unveiling",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The team contains Ineffa and Aino as its two Nod-Krai characters."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "id": "lunar-charged-notsu-contexts",
+          "label": "One- and two-Nod-Krai Night of the Sky's Unveiling contexts",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Night of the Sky's Unveiling",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-notsu-contexts-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the approximate one-Nod-Krai comparison cannot be expressed as a numeric tie",
+        "the exact two-Nod-Krai performance margin",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-other-five-star-crit-options",
+          "label": "Other unranked 5-star CRIT options",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team."
+              ],
+              "grouping": "alternatives",
+              "weaponIds": [
+                "absolution",
+                "azurelight",
+                "haran_geppaku_futsu",
+                "uraku_misugiri",
+                "splendor_of_tranquil_waters"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > Other 5★ CRIT Stat Sticks",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-other-five-star-crit-options-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "relative ordering within the source group",
+        "the source's never-competitive-with-Mistsplitter cross-record ordering is not represented by the V1 recommendation schema",
+        "the source explicitly identifies Splendor of Tranquil Waters as the weakest option in this group, but V1 cannot encode that partial order without over-ranking the other four alternatives",
+        "refinement assumptions",
+        "artifact-dependent CRIT Rate compatibility",
+        "whether Splendor of Tranquil Waters should remain on Furina for a concrete account",
+        "numeric weapon performance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-r5-finale-healer",
+          "label": "R5 Finale with per-combo Bond clearing",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "Finale of the Deep is R5.",
+                "A healer clears Finale of the Deep's Bond of Life for every Keqing combo."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "finale_of_the_deep"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 4★ Finale of the Deep",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-r5-finale-healer-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the schema has no first-class refinement field for recommendations",
+        "whether a concrete rotation clears the Bond of Life every combo",
+        "the exact 5-star stat-stick comparison group",
+        "numeric weapon performance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-shielded-summit-shaper",
+          "label": "Shield-conditioned Summit Shaper option",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "Ineffa's shield remains active for the compared damage window."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "summit_shaper"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 5★ Summit Shaper",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-shielded-summit-shaper-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "shield uptime for each rotation branch",
+        "shield break risk",
+        "refinement assumptions",
+        "numeric weapon performance",
+        "Lunar-Charged contribution ownership",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "thundering_fury",
+                  "type": "4pc"
+                },
+                {
+                  "setId": "gilded_dreams",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set."
+              ],
+              "grouping": "alternatives"
+            }
+          ],
+          "id": "lunar-charged-top-contributor-artifact-options",
+          "label": "Top-Lunar-Charged-contributor artifact options",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundering Fury / 4pc Gilded Dreams",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "Lunar-Charged reaction ownership and contribution share",
+        "the numeric comparison with mixed sets",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "thundersoother",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The comparison is restricted to the source's traditional artifact-set options."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "halfSetIds": [
+                    "electro%-15",
+                    "atk%-18"
+                  ],
+                  "type": "2pc+2pc"
+                },
+                {
+                  "halfSetIds": [
+                    "electro%-15",
+                    "na-ca-dmg%-15"
+                  ],
+                  "type": "2pc+2pc"
+                },
+                {
+                  "halfSetIds": [
+                    "atk%-18",
+                    "na-ca-dmg%-15"
+                  ],
+                  "type": "2pc+2pc"
+                }
+              ],
+              "classification": "alternative",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The comparison is restricted to the source's traditional artifact-set options."
+              ],
+              "grouping": "alternatives"
+            }
+          ],
+          "id": "lunar-charged-traditional-artifact-options",
+          "label": "Traditional Thundersoother and mixed-set options",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundersoother",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 2pc Mixed Sets (TF/ATK/MH)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the exact boundary of the source's traditional artifact-set category",
+        "the numeric gap between Thundersoother and mixed sets",
+        "the high-DMG-Bonus exception to Thundersoother's performance",
+        "the concrete source-set identities behind generic 2pc effect groups",
+        "the source identifies mixed combinations using the 2pc Marechaussee Hunter effect as weakest, but V1 cannot encode that partial order without over-ranking the other mixed alternatives",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "keqing",
+      "id": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "lunar-charged-traditional-jade-cutter-ranking",
+          "label": "Traditional-set Jade Cutter comparison",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "ranked-groups",
+          "weaponRecommendations": [
+            {
+              "classification": "recommended",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The comparison is restricted to the source's traditional artifact-set options."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "primordial_jade_cutter"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Keqing is used in a Lunar-Charged team.",
+                "The comparison is restricted to the source's traditional artifact-set options."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "mistsplitter_reforged"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Weapons > 5★ Primordial Jade Cutter",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "refinement assumptions",
+        "numeric weapon performance",
+        "the source's negative Jade Cutter interaction with CRIT Rate artifact sets has no first-class exclusion field",
+        "the exact boundary of the source's traditional artifact-set category",
         "formula counts",
         "agent-assisted extraction has not been human-reviewed"
       ]

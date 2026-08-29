@@ -1061,7 +1061,7 @@
       },
       "characterId": "keqing",
       "externalEditorial": {
-        "recordCount": 5,
+        "recordCount": 22,
         "sourceIds": [
           "kqm"
         ]
@@ -2418,7 +2418,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "30cdd5023e928b28e5b4c0d74f1a29a3188d2a7591d077db0c0f2026e7d528be"
+      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -2476,7 +2476,7 @@
     },
     {
       "byKind": {
-        "character_guide": 18,
+        "character_guide": 35,
         "character_role": 3,
         "energy_guidance": 1,
         "team": 12,
@@ -2485,28 +2485,28 @@
       "byStatus": {
         "accepted": 0,
         "baseline": 0,
-        "candidate": 40,
+        "candidate": 57,
         "contested": 0,
         "rejected": 0
       },
       "evidence": {
-        "artifactChoiceOccurrences": 31,
+        "artifactChoiceOccurrences": 40,
         "exactTeamRecords": 12,
         "exactTeamRecordsWithRotations": 12,
         "exactTeamRotationEntries": 16,
-        "mainStatGroups": 21,
-        "mainStatIdOccurrences": 27,
-        "recordsWithArtifacts": 10,
-        "recordsWithMainStats": 5,
-        "recordsWithSubstats": 5,
-        "recordsWithWeapons": 6,
-        "substatGroups": 14,
-        "substatIdOccurrences": 18,
+        "mainStatGroups": 30,
+        "mainStatIdOccurrences": 37,
+        "recordsWithArtifacts": 14,
+        "recordsWithMainStats": 7,
+        "recordsWithSubstats": 6,
+        "recordsWithWeapons": 17,
+        "substatGroups": 17,
+        "substatIdOccurrences": 22,
         "teamTemplateRecords": 6,
-        "weaponIdOccurrences": 20
+        "weaponIdOccurrences": 41
       },
       "ingestionMode": "manual-observation",
-      "records": 40,
+      "records": 57,
       "sourceId": "kqm",
       "sourceKind": "editorial"
     },
@@ -2550,7 +2550,7 @@
   "supportsGuideClaims": false,
   "totals": {
     "byKind": {
-      "character_guide": 138,
+      "character_guide": 155,
       "character_role": 3,
       "energy_guidance": 1,
       "team": 222,
@@ -2559,27 +2559,27 @@
     "byStatus": {
       "accepted": 0,
       "baseline": 191,
-      "candidate": 179,
+      "candidate": 196,
       "contested": 0,
       "rejected": 0
     },
     "evidence": {
-      "artifactChoiceOccurrences": 1059,
+      "artifactChoiceOccurrences": 1068,
       "exactTeamRecords": 222,
       "exactTeamRecordsWithRotations": 12,
       "exactTeamRotationEntries": 16,
-      "mainStatGroups": 733,
-      "mainStatIdOccurrences": 739,
-      "recordsWithArtifacts": 340,
-      "recordsWithMainStats": 125,
-      "recordsWithSubstats": 125,
-      "recordsWithWeapons": 325,
-      "substatGroups": 604,
-      "substatIdOccurrences": 608,
+      "mainStatGroups": 742,
+      "mainStatIdOccurrences": 749,
+      "recordsWithArtifacts": 344,
+      "recordsWithMainStats": 127,
+      "recordsWithSubstats": 126,
+      "recordsWithWeapons": 336,
+      "substatGroups": 607,
+      "substatIdOccurrences": 612,
       "teamTemplateRecords": 6,
-      "weaponIdOccurrences": 987
+      "weaponIdOccurrences": 1008
     },
-    "records": 370,
-    "sourceAttributedRecords": 370
+    "records": 387,
+    "sourceAttributedRecords": 387
   }
 }

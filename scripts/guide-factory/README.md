@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 15 adds a two-role, source-scoped Keqing sample over four exact
-same-page teams after the one-role Furina seam, without claiming a working
-guide factory:
+Checkpoint 16 adds source-conditioned Keqing Lunar-Charged equipment and stat
+evidence plus a four-team structural comparison against the current internal
+baseline, without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -130,6 +130,24 @@ guide factory:
 40. Require all seven participating indexed extraction states, the exact page
     URL, the checked-in catalog fingerprints, and both fresh and checked-in
     Keqing roster statuses to remain role-withheld.
+41. Capture seventeen heading-scoped Keqing Lunar-Charged artifact-stat,
+    artifact-set, and weapon records without flattening contextual inversions
+    into one global rank.
+42. Keep Whimsy plus Finale deferred because V1 cannot bind a weapon and
+    artifact set atomically, and retain all refinement, threshold, contribution,
+    shield, healing, and timing gaps as unresolved source conditions.
+43. Split the source records into 42 claim units and acknowledge conditions by
+    an exact wrapper-owned text map rather than parsing prose.
+44. Resolve only four exact-team facts: the published Lunar-Charged boundary,
+    Furina presence, one Nod-Krai member, and the exact Ineffa/Aino two-member
+    Nod-Krai roster. Build and gameplay conditions remain withheld.
+45. Cross-reference 30 equipment claims with the real artifact and weapon
+    search-coverage builders without using candidate KQM records as generator
+    inputs or computed recommendations.
+46. Compare the exact GenshinTools Keqing baseline structurally: preserve the
+    main-stat overlap and Mistsplitter match, report the ATK-versus-EM priority
+    disagreement, and leave 4pc Thundering Fury behind its unresolved source
+    condition.
 
 The first two active sources are already in this repository:
 
@@ -151,13 +169,20 @@ than silently omitting them. One additional Furina record names Xilonen as a
 non-exhaustive, unranked member of the Hypercarry template's healer slot. It is
 used only for one same-page binding test and is not a global healer catalog.
 Keqing adds one Lunar-Charged template, two source-scoped positive role
-inventories, and four exact example teams with seven published rotation
-variants. This deliberately
+inventories, four exact example teams with seven published rotation variants,
+and seventeen heading-scoped equipment/stat observations. This deliberately
 tests whether a new release can surface changed team options for an old
 character; it does not claim that the examples are optimal. Every record
 remains unreviewed and promotion-ineligible. The paired sample evaluates only
 the four published teams; Xingqiu, Sayu, and Xianyun remain unexercised positive
-evidence, and no remaining member cross-product is inferred. Kokomi adds one exact
+evidence, and no remaining member cross-product is inferred. The equipment
+observations preserve contextual artifact and weapon branches separately,
+including Furina/Marechaussee Hunter, Aino/Night of the Sky's Unveiling,
+traditional-set Jade Cutter, and exceptional-EM Foliar cases. They do not
+become a global order or optimizer input. V1 also cannot encode the source's
+cross-record statement that the other 5-star CRIT options do not compete with
+Mistsplitter, so that ordering remains an explicit schema gap. Kokomi adds one
+exact
 Lunar-Charged example whose artifact advice is intrinsically coupled: under the
 source's undefined "well-invested Columbina" condition, Kokomi can take Silken
 Moon's Serenade so Columbina can take Aubade. The condition and assignment are
@@ -207,6 +232,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -223,13 +249,14 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all sixteen durable reports in memory: corpus inventory, team
+It also rebuilds all seventeen durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
 the bounded joint artifact experiment, the bounded team-roster candidate
 domain, the full-team stat-marginal diagnostic, the Furina source-scoped role
-sample, the Keqing source-scoped role-pair sample, Diona comparison, and
-historical ER calibration. Stale evidence cannot pass.
+sample, the Keqing source-scoped role-pair sample, the Keqing Lunar equipment-
+evidence validation, Diona comparison, and historical ER calibration. Stale
+evidence cannot pass.
 
 ## Data flow
 
@@ -255,10 +282,10 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 370 unique records: 138
+The descriptive corpus inventory currently counts 387 unique records: 155
 character guides, 3 character-role observations, 222 exact teams, 6 team
 templates, and 1 historical energy record. Of those, 191 are baseline records
-and 179 are candidates. KQM contributes 40 records, including 12 exact teams
+and 196 are candidates. KQM contributes 57 records, including 12 exact teams
 and 16 explicit rotation entries. The inventory also reports explicit weapon,
 artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
@@ -340,19 +367,19 @@ keys and a maximum of 14 stat-derived two-piece pair keys. The latter is an
 upper bound: the runtime discovers a potentially smaller set only after
 successful four-piece evaluations.
 
-The report covers 1,059 non-rejected artifact-choice occurrences. Of 188 guide
+The report covers 1,068 non-rejected artifact-choice occurrences. Of 188 guide
 builds, 167 are initially enumerated, 14 are only conditionally representable,
 and 7 are not representable by the current grammar. Of 840 selected artifacts
 on team members, 820 are initially enumerated, 7 are conditional, and 13 are
-not representable. Of 29 character-guide and team-member recommendation
-occurrences, 26 are initially enumerated and 3 are not representable. Both
+not representable. Of 38 character-guide and team-member recommendation
+occurrences, 31 are initially enumerated and 7 are not representable. Both
 assignments in the Kokomi/Columbina coupled plan are initially enumerated as
 individual choices. That does not establish that the analyzer can search the
-coupled assignment jointly. The 23
-failures comprise 19 Instructor occurrences, 2 Exile occurrences, Freminet's
-Cryo DMG plus Skill DMG pair, and C6 Yelan's repeated Hydro DMG pair. This is a
-search-domain audit only: it does not run artifact generation, compute damage,
-rank sets, or imply that any representable choice is suitable.
+coupled assignment jointly. The 27 failures comprise 19 Instructor occurrences,
+2 Exile occurrences, 5 dynamic half-set-family omissions, and the new
+Thundersoother tier-list-filter omission. This is a search-domain audit only:
+it does not run artifact generation, compute damage, rank sets, or imply that
+any representable choice is suitable.
 
 The weapon-choice coverage report addresses a different prerequisite. The
 runtime candidate helper is private, so the offline lab mirrors its small
@@ -362,10 +389,10 @@ released policy and hashes the runtime source and data inputs. The policy skips
 weapon/refinement pairs: 24 3-star pairs, 139 4-star pairs, and 146 pairs from
 73 5-star weapons.
 
-Across 987 non-ER weapon occurrences, all 987 IDs are present in that global
+Across 1,008 non-ER weapon occurrences, all 1,008 IDs are present in that global
 released domain. This is not exact candidate coverage: none of the source
-observations specifies a refinement, so all 987 remain explicit refinement
-gaps. Native weapon-type comparison finds 975 compatible choices and 12
+observations specifies a refinement, so all 1,008 remain explicit refinement
+gaps. Native weapon-type comparison finds 996 compatible choices and 12
 mismatches, all selected weapons from the legacy candidate source. Baseline and
 KQM observations have no type mismatch.
 
@@ -376,7 +403,7 @@ class rather than merely one invalid comparison row. The report records this
 boundary but does not run the analyzer, correct the legacy source, choose a
 refinement policy, rank weapons, or compute damage. Historical weapon
 conditions attached to three ER targets are inventoried only to prove that they
-were excluded from the 987 observations; their target values receive no
+were excluded from the 1,008 observations; their target values receive no
 analysis.
 
 The artifact-generation preflight makes the missing refinement convention

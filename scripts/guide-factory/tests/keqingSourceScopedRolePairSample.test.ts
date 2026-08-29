@@ -56,7 +56,7 @@ describe("Keqing source-scoped role-pair sample integration", () => {
     expect(report.sourceExtractionBoundary).toMatchObject({
       sourceId: "kqm",
       expectedParticipatingRecordCount: 7,
-      observedSnapshotRecordCount: 7,
+      observedSnapshotRecordCount: 24,
       configuredRecordsPresentExactlyOnce: true,
       expectedExtractionMethod: "agent-assisted",
       expectedReviewStatus: "unreviewed",
@@ -495,7 +495,7 @@ describe("Keqing source-scoped role-pair sample integration", () => {
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.sourceExtractionBoundary).toMatchObject({
       expectedParticipatingRecordCount: 7,
-      observedSnapshotRecordCount: 8,
+      observedSnapshotRecordCount: 25,
       configuredRecordsPresentExactlyOnce: true,
       allExtractionStatesMatch: true,
     });

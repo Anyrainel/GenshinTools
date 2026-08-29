@@ -20,7 +20,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "30cdd5023e928b28e5b4c0d74f1a29a3188d2a7591d077db0c0f2026e7d528be"
+      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
@@ -32,7 +32,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "23f05fed2b9ddef395e63f227251017f18e01ae03a44a90f59922df47b6c8e07"
+      "sha256": "de7d2f6762e0152f4732aa9c6d8aee2ff4834d6f1713ecf0986e4dfacd9e5cce"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",

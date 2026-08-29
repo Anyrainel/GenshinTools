@@ -31,6 +31,10 @@ import {
   runKeqingSourceScopedRolePairSample,
 } from "./keqingSourceScopedRolePairSample";
 import {
+  buildKeqingLunarEquipmentEvidenceValidationReport,
+  KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
+} from "./keqingLunarEquipmentEvidenceValidation";
+import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
@@ -81,6 +85,7 @@ import {
   KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH,
+  KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
@@ -150,6 +155,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaTeamStatMarginalDiagnosticInput,
     furinaSourceScopedRoleSampleInput,
     keqingSourceScopedRolePairSampleInput,
+    keqingLunarEquipmentEvidenceValidationInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -179,6 +185,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH),
       readJson(FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH),
       readJson(KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH),
+      readJson(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -596,6 +603,29 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-source-scoped-role-pair-sample",
           message:
             "The saved Keqing source-scoped role-pair sample does not match the seven indexed extraction states, exact full role inventories, four same-page published targets, independently checked catalog boundary, and fresh plus checked-in role-withheld roster statuses.",
+        });
+      }
+
+      const keqingLunarEquipmentEvidenceValidationGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
+        );
+      const expectedKeqingLunarEquipmentEvidenceValidation =
+        buildKeqingLunarEquipmentEvidenceValidationReport(
+          expectedKnowledge,
+          manualInputs,
+          keqingLunarEquipmentEvidenceValidationGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingLunarEquipmentEvidenceValidation) !==
+        stableJson(keqingLunarEquipmentEvidenceValidationInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_lunar_equipment_evidence_validation",
+          path: "reports.keqing-lunar-equipment-evidence-validation",
+          message:
+            "The saved Keqing Lunar equipment-evidence validation does not match the exact source records, published team facts, baseline build, and read-only search-coverage boundary.",
         });
       }
 

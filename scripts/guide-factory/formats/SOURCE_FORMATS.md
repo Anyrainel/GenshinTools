@@ -234,11 +234,11 @@ All records are unreviewed and promotion-ineligible.
 
 ### KQM Keqing pilot
 
-The third page stores seven participating heading-scoped records from the
-visible Luna I guide version: one Lunar-Charged template, two positive
-character-role inventories, and four exact example teams. It is a source-
-breadth test for detecting new-release team changes for an old character, not a
-broad Keqing build extraction or an optimality claim.
+The third page stores 24 participating heading-scoped records from the visible
+Luna I guide version: one Lunar-Charged template, two positive character-role
+inventories, four exact example teams, and seventeen equipment/stat
+observations. It is a source-breadth test for detecting new-release team and
+build changes for an old character, not an optimality claim.
 
 The template hard-requires Keqing and Ineffa. Its other hard selectors are the
 source-defined roles `off-field-hydro-applier` and `resistance-shred`; Hydro,
@@ -260,6 +260,15 @@ The four exact teams retain seven published rotation variants and their nearby
 assumptions. None supplies or receives a numeric ER target, equipment ranking,
 formula mapping, or inferred investment level. All remain examples with no
 power-ranking claim, unreviewed and promotion-ineligible.
+
+The seventeen guide records keep the Lunar-Charged stat order and contextual
+artifact/weapon branches separate. Furina/Marechaussee Hunter, Aino/two-Nod-
+Krai Night of the Sky's Unveiling, traditional-set Jade Cutter, exceptional-EM
+Foliar, shield uptime, equal refinement, and Bond-of-Life clearance remain
+distinct source conditions. Undefined thresholds are not filled from roster
+presence. Whimsy plus Finale is deliberately omitted because V1 cannot bind
+the two choices atomically. All records are agent-assisted, unreviewed,
+promotion-ineligible, and contain no ER target.
 
 ### KQM Kokomi pilot
 

@@ -33,10 +33,10 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 13,
         },
         recommendations: {
-          total: 29,
-          enumeratedInitially: 26,
+          total: 38,
+          enumeratedInitially: 31,
           conditionallyRepresentable: 0,
-          notRepresentable: 3,
+          notRepresentable: 7,
         },
         teamArtifactPlanAssignments: {
           total: 2,
@@ -45,10 +45,10 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 0,
         },
         all: {
-          total: 1059,
-          enumeratedInitially: 1015,
+          total: 1068,
+          enumeratedInitially: 1020,
           conditionallyRepresentable: 21,
-          notRepresentable: 23,
+          notRepresentable: 27,
         },
       },
     });
@@ -101,7 +101,7 @@ describe("artifact-choice search-space coverage", () => {
         }),
       ]),
     );
-    expect(failures).toHaveLength(23);
+    expect(failures).toHaveLength(27);
     expect(report.summary.byFailureReason).toEqual({
       "beta-only-artifact": 0,
       "insufficient-distinct-released-five-star-sets": 0,
@@ -109,10 +109,10 @@ describe("artifact-choice search-space coverage", () => {
       "missing-runtime-half-set": 0,
       "no-released-five-star-set-for-half-set": 0,
       "non-five-star-filter": 21,
-      "tier-list-other-filter": 0,
+      "tier-list-other-filter": 1,
       "unexpected-conditional-candidate-omission": 0,
       "unexpected-initial-candidate-omission": 0,
-      "unmapped-dynamic-half-set-family": 2,
+      "unmapped-dynamic-half-set-family": 5,
     });
 
     const unavailableTeamSelections = report.observations.filter(

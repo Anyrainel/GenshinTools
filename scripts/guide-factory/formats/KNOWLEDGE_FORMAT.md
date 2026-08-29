@@ -94,6 +94,14 @@ applies only to a limited investment range.
 An unranked source list never becomes a ranking merely because its items have a
 display order.
 
+Applicability conditions in V1 remain attributed source prose. A source-
+specific validator may acknowledge an exact condition through an explicit
+text-to-predicate table, but it must report which predicates are merely roster-
+decidable and which remain unresolved build or gameplay inputs. It must not
+parse prose into a global condition ontology. Weapon and artifact arrays that
+share one recommendation are also not an atomic pair in V1; coupled equipment
+advice must remain deferred unless a first-class coupled shape is added.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

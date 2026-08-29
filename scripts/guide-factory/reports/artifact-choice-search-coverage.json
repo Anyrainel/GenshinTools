@@ -3,7 +3,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "30cdd5023e928b28e5b4c0d74f1a29a3188d2a7591d077db0c0f2026e7d528be"
+      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
@@ -13986,6 +13986,367 @@
           },
           "sourceId": "kqm",
           "sourceRecordId": "furina-c6-marechaussee-luna-ii"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "marechaussee_hunter",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "keqing",
+      "classification": "default",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The team contains Furina.",
+        "The team contains exactly one Nod-Krai character."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:recommendation:lunar-charged-furina-marechaussee-hunter:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Furina and one-Nod-Krai Marechaussee Hunter context",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-furina-marechaussee-hunter",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Marechaussee Hunter",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-furina-marechaussee-hunter-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "night_of_the_skys_unveiling",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "keqing",
+      "classification": "alternative",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The team contains exactly one Nod-Krai character."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:recommendation:lunar-charged-notsu-contexts:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "One- and two-Nod-Krai Night of the Sky's Unveiling contexts",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-notsu-contexts",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Night of the Sky's Unveiling",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-notsu-contexts-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "night_of_the_skys_unveiling",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "keqing",
+      "classification": "default",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The team contains Ineffa and Aino as its two Nod-Krai characters."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:recommendation:lunar-charged-notsu-contexts:1:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 1,
+      "recommendationLabel": "One- and two-Nod-Krai Night of the Sky's Unveiling contexts",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-notsu-contexts",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Night of the Sky's Unveiling",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-notsu-contexts-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "thundering_fury",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "keqing",
+      "classification": "conditional",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set."
+      ],
+      "grouping": "alternatives",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:recommendation:lunar-charged-top-contributor-artifact-options:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Top-Lunar-Charged-contributor artifact options",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-top-contributor-artifact-options",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundering Fury / 4pc Gilded Dreams",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "gilded_dreams",
+        "type": "4pc"
+      },
+      "artifactIndex": 1,
+      "characterId": "keqing",
+      "classification": "conditional",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set."
+      ],
+      "grouping": "alternatives",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:recommendation:lunar-charged-top-contributor-artifact-options:0:1",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Top-Lunar-Charged-contributor artifact options",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-top-contributor-artifact-options",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundering Fury / 4pc Gilded Dreams",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "thundersoother",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "keqing",
+      "classification": "default",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "failureReason": "tier-list-other-filter",
+      "grouping": "single",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:0:0",
+      "outcome": "not-representable",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Traditional Thundersoother and mixed-set options",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-traditional-artifact-options",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundersoother",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 2pc Mixed Sets (TF/ATK/MH)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "halfSetIds": [
+          "electro%-15",
+          "atk%-18"
+        ],
+        "type": "2pc+2pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "keqing",
+      "classification": "alternative",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "failureReason": "unmapped-dynamic-half-set-family",
+      "grouping": "alternatives",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:1:0",
+      "outcome": "not-representable",
+      "recommendationGroupIndex": 1,
+      "recommendationLabel": "Traditional Thundersoother and mixed-set options",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-traditional-artifact-options",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundersoother",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 2pc Mixed Sets (TF/ATK/MH)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "halfSetIds": [
+          "electro%-15",
+          "na-ca-dmg%-15"
+        ],
+        "type": "2pc+2pc"
+      },
+      "artifactIndex": 1,
+      "characterId": "keqing",
+      "classification": "alternative",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "failureReason": "unmapped-dynamic-half-set-family",
+      "grouping": "alternatives",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:1:1",
+      "outcome": "not-representable",
+      "recommendationGroupIndex": 1,
+      "recommendationLabel": "Traditional Thundersoother and mixed-set options",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-traditional-artifact-options",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundersoother",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 2pc Mixed Sets (TF/ATK/MH)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "halfSetIds": [
+          "atk%-18",
+          "na-ca-dmg%-15"
+        ],
+        "type": "2pc+2pc"
+      },
+      "artifactIndex": 2,
+      "characterId": "keqing",
+      "classification": "alternative",
+      "conditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "failureReason": "unmapped-dynamic-half-set-family",
+      "grouping": "alternatives",
+      "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:1:2",
+      "outcome": "not-representable",
+      "recommendationGroupIndex": 1,
+      "recommendationLabel": "Traditional Thundersoother and mixed-set options",
+      "recordId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lunar-charged-traditional-artifact-options",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 4pc Thundersoother",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Artifact Sets > 2pc Mixed Sets (TF/ATK/MH)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
         }
       ]
     },
@@ -30393,9 +30754,9 @@
   "summary": {
     "all": {
       "conditionallyRepresentable": 21,
-      "enumeratedInitially": 1015,
-      "notRepresentable": 23,
-      "total": 1059
+      "enumeratedInitially": 1020,
+      "notRepresentable": 27,
+      "total": 1068
     },
     "byFailureReason": {
       "beta-only-artifact": 0,
@@ -30404,10 +30765,10 @@
       "missing-runtime-half-set": 0,
       "no-released-five-star-set-for-half-set": 0,
       "non-five-star-filter": 21,
-      "tier-list-other-filter": 0,
+      "tier-list-other-filter": 1,
       "unexpected-conditional-candidate-omission": 0,
       "unexpected-initial-candidate-omission": 0,
-      "unmapped-dynamic-half-set-family": 2
+      "unmapped-dynamic-half-set-family": 5
     },
     "guideBuilds": {
       "conditionallyRepresentable": 14,
@@ -30417,9 +30778,9 @@
     },
     "recommendations": {
       "conditionallyRepresentable": 0,
-      "enumeratedInitially": 26,
-      "notRepresentable": 3,
-      "total": 29
+      "enumeratedInitially": 31,
+      "notRepresentable": 7,
+      "total": 38
     },
     "teamArtifactPlanAssignments": {
       "conditionallyRepresentable": 0,
