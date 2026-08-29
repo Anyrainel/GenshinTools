@@ -46,7 +46,7 @@ export function FilterChipGroup<T>({
     [onSelectedValuesChange, selectedValues]
   );
 
-  const showChips = !collapsible || expanded;
+  const showAllOptions = !collapsible || expanded;
 
   return (
     <div className={cn("flex flex-wrap items-center gap-1 px-2", className)}>
@@ -55,6 +55,7 @@ export function FilterChipGroup<T>({
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
             className="text-sm font-medium text-foreground bg-background/30 hover:bg-background/50 border border-border px-3 py-0.5 rounded-md shrink-0"
           >
             {label} {expanded ? "<" : ">"}
@@ -64,25 +65,26 @@ export function FilterChipGroup<T>({
             {label}:
           </span>
         ))}
-      {showChips &&
-        options.map((option) => {
-          const value = getValue(option);
-          const active =
-            (emptyMeansAll && selectedValues.size === 0) ||
-            selectedValues.has(value);
+      {options.map((option) => {
+        const value = getValue(option);
+        const explicitlySelected = selectedValues.has(value);
+        if (!showAllOptions && !explicitlySelected) return null;
 
-          return (
-            <FilterChip
-              key={getKey(option)}
-              active={active}
-              onClick={() => handleToggle(value)}
-              color={getColor?.(option, active) ?? color}
-            >
-              {getIcon?.(option, active)}
-              {getLabel(option, active)}
-            </FilterChip>
-          );
-        })}
+        const active =
+          (emptyMeansAll && selectedValues.size === 0) || explicitlySelected;
+
+        return (
+          <FilterChip
+            key={getKey(option)}
+            active={active}
+            onClick={() => handleToggle(value)}
+            color={getColor?.(option, active) ?? color}
+          >
+            {getIcon?.(option, active)}
+            {getLabel(option, active)}
+          </FilterChip>
+        );
+      })}
     </div>
   );
 }

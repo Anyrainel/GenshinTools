@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 import { TriageView } from "@/pages/account-data/TriageView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -210,6 +210,44 @@ describe("TriageView filters", () => {
 
     fireEvent.click(shimenawaChip);
     expect(visibleArtifactIds()).toEqual(allArtifactIds);
+  });
+
+  it("keeps a collapsed active filter visible and resettable after account data updates", () => {
+    render(<TriageView />);
+
+    const expandButton = screen.getByRole("button", {
+      name: /filter by artifact set/i,
+    });
+    fireEvent.click(expandButton);
+
+    fireEvent.click(screen.getByRole("button", { name: "Gladiator's Finale" }));
+    expect(visibleArtifactIds()).toEqual(new Set(["flex-action"]));
+
+    fireEvent.click(expandButton);
+    expect(
+      screen.getByRole("button", { name: "Gladiator's Finale" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Shimenawa's Reminiscence" })
+    ).not.toBeInTheDocument();
+
+    act(() => {
+      useAccountStore.getState().addOrUpdateAccount(0, {
+        data: { characters: [], extraArtifacts: [], extraWeapons: [] },
+      });
+    });
+
+    const activeFilter = screen.getByRole("button", {
+      name: "Gladiator's Finale",
+    });
+    expect(activeFilter).toBeInTheDocument();
+    expect(visibleArtifactIds()).toEqual(new Set(["flex-action"]));
+
+    fireEvent.click(activeFilter);
+    expect(visibleArtifactIds()).toEqual(allArtifactIds);
+    expect(
+      screen.queryByRole("button", { name: "Gladiator's Finale" })
+    ).not.toBeInTheDocument();
   });
 
   it("filters by the decision that caused the final lock result", () => {
