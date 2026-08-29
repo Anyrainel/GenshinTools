@@ -193,3 +193,127 @@ describe("migrateTeamStore — v20 formula entry units", () => {
     expect(combo?.lines[4]?.count).toBe(4);
   });
 });
+
+describe("migrateTeamStore — v21 Skirk C6 shared stack pool", () => {
+  function persistedSkirkState(version = 20) {
+    return migrateTeamStore(
+      {
+        activePresetId: null,
+        compDeltas: [],
+        configsByTeamId: {
+          "both-branches": {
+            combatOptions: {},
+            damage: {
+              combo: {
+                id: "legacy-skirk-default",
+                label: { en: "Legacy Skirk", zh: "旧版丝柯克" },
+                lines: [
+                  {
+                    charId: "skirk",
+                    formulaId: "skirk-c6-burst-coord",
+                    count: 1,
+                  },
+                  {
+                    charId: "skirk",
+                    formulaId: "skirk-c6-normal-coord",
+                    count: 4,
+                  },
+                  { charId: "shenhe", formulaId: "shenhe-burst", count: 1 },
+                ],
+                buffOverrides: {
+                  0: { burstBuff: { 0: 1 } },
+                  1: { normalBuff: { 0: 1 } },
+                  2: { shenheBuff: { 0: 1 } },
+                },
+              },
+            },
+            investment: {
+              comboOverrides: {
+                "skirk|6|skirk-c6-normal-coord": 4,
+              },
+            },
+          },
+          "normal-only": {
+            combatOptions: {},
+            damage: {
+              combo: {
+                id: "legacy-skirk-normal",
+                label: { en: "Normal branch", zh: "普攻分支" },
+                lines: [
+                  {
+                    charId: "skirk",
+                    formulaId: "skirk-c6-normal-coord",
+                    count: 4,
+                  },
+                  { charId: "furina", formulaId: "furina-burst", count: 1 },
+                ],
+                buffOverrides: {
+                  0: { normalBuff: { 0: 0 } },
+                  1: { furinaBuff: { 0: 1 } },
+                },
+              },
+            },
+            investment: {
+              comboOverrides: {
+                "skirk|6|skirk-c6-normal-coord": 4,
+                "skirk|6|skirk-c6-burst-coord": 0,
+              },
+            },
+          },
+        },
+        author: "",
+        description: "",
+        updatedAt: 1_700_000_000_000,
+      },
+      version
+    ) as { configsByTeamId: Record<string, TeamSetupConfig> };
+  }
+
+  it("removes the repeated Normal branch when the Burst branch spends the pool", () => {
+    const config = persistedSkirkState().configsByTeamId["both-branches"];
+    expect(config.damage?.combo?.lines).toEqual([
+      {
+        charId: "skirk",
+        formulaId: "skirk-c6-burst-coord",
+        count: 1,
+      },
+      { charId: "shenhe", formulaId: "shenhe-burst", count: 1 },
+    ]);
+    expect(config.damage?.combo?.buffOverrides).toEqual({
+      0: { burstBuff: { 0: 1 } },
+      1: { shenheBuff: { 0: 1 } },
+    });
+    expect(config.investment?.comboOverrides).toEqual({});
+  });
+
+  it("keeps a Normal-only branch once and preserves its line overrides", () => {
+    const config = persistedSkirkState().configsByTeamId["normal-only"];
+    expect(config.damage?.combo?.lines).toEqual([
+      {
+        charId: "skirk",
+        formulaId: "skirk-c6-normal-coord",
+        count: 1,
+      },
+      { charId: "furina", formulaId: "furina-burst", count: 1 },
+    ]);
+    expect(config.damage?.combo?.buffOverrides).toEqual({
+      0: { normalBuff: { 0: 0 } },
+      1: { furinaBuff: { 0: 1 } },
+    });
+    expect(config.investment?.comboOverrides).toEqual({
+      "skirk|6|skirk-c6-normal-coord": 1,
+      "skirk|6|skirk-c6-burst-coord": 0,
+    });
+  });
+
+  it("does not reinterpret current v21 data", () => {
+    const configs = persistedSkirkState(21).configsByTeamId;
+    expect(configs["both-branches"].damage?.combo?.lines[1]).toMatchObject({
+      formulaId: "skirk-c6-normal-coord",
+      count: 4,
+    });
+    expect(configs["both-branches"].investment?.comboOverrides).toMatchObject({
+      "skirk|6|skirk-c6-normal-coord": 4,
+    });
+  });
+});

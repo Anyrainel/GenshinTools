@@ -22,7 +22,10 @@ import {
   type LegacyPersistedTeam,
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
-import { migrateLegacyFormulaUnitConfigs } from "./teamFormulaUnits";
+import {
+  migrateLegacyFormulaUnitConfigs,
+  migrateLegacySkirkFormulaUnitConfigs,
+} from "./teamFormulaUnits";
 
 type TeamMigrationState = {
   teams?: LegacyPersistedTeam[];
@@ -583,6 +586,17 @@ export function migrateTeamStore(
     // Updating comboDescriptor fixed only newly generated combos; normalize the
     // exact old defaults here while preserving authored/custom repetition counts.
     state.configsByTeamId = migrateLegacyFormulaUnitConfigs(
+      state.configsByTeamId ?? {}
+    );
+  }
+
+  if (version < 21) {
+    // Before v21, Skirk's saved C6 default combo contained both coordinated
+    // attack branches even though they consume the same Havoc: Sever stack
+    // pool. The Normal branch was also saved as count 4 even though the formula
+    // itself represented the complete stack pool. Remove that branch when the
+    // Burst branch is active; custom Normal-only combos become one aggregate.
+    state.configsByTeamId = migrateLegacySkirkFormulaUnitConfigs(
       state.configsByTeamId ?? {}
     );
   }

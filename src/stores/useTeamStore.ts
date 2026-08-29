@@ -459,7 +459,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 20,
+      version: 21,
       migrate: migrateTeamStore,
       partialize: (state) =>
         ({

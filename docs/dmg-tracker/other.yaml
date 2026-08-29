@@ -105,7 +105,10 @@
     hits at 180% ATK) and only the burst branch is in the default combo, since
     it is worth more per stack and the rotation absorbs its rifts with the
     Charged Attack immediately before Havoc: Ruin. The NA branch stays
-    selectable for players who spend the pool that way.
+    selectable for players who spend the pool that way. Persisted pre-fix
+    combos are migrated:
+    the Normal branch is removed when Burst spends the pool, or normalized to
+    one aggregate use for authored Normal-only rotations.
 
 - id: traveler-anemo-absorption-selection
   entity: traveler_anemo

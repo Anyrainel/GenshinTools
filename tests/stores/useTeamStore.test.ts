@@ -336,6 +336,70 @@ describe("useTeamStore", () => {
 });
 
 describe("team store migration", () => {
+  it("hydrates a realistic v20 Skirk combo through the persisted store", async () => {
+    window.localStorage.setItem(
+      "team-builder-storage",
+      JSON.stringify({
+        version: 20,
+        state: {
+          activePresetId: null,
+          compDeltas: [
+            {
+              kind: "custom",
+              id: "legacy-skirk",
+              value: {
+                id: "legacy-skirk",
+                name: "Legacy Skirk",
+                slots: [{ charId: "skirk", weaponId: null }],
+                reactions: [],
+              },
+              displayIndex: 0,
+            },
+          ],
+          configsByTeamId: {
+            "legacy-skirk": {
+              combatOptions: {},
+              damage: {
+                combo: {
+                  id: "legacy-skirk-combo",
+                  label: { en: "Legacy Skirk", zh: "旧版丝柯克" },
+                  lines: [
+                    {
+                      charId: "skirk",
+                      formulaId: "skirk-c6-burst-coord",
+                      count: 1,
+                    },
+                    {
+                      charId: "skirk",
+                      formulaId: "skirk-c6-normal-coord",
+                      count: 4,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          author: "",
+          description: "",
+          updatedAt: 1_700_000_000_000,
+        },
+      })
+    );
+
+    await useTeamStore.persist.rehydrate();
+
+    expect(
+      useTeamStore.getState().configsByTeamId["legacy-skirk"]?.damage?.combo
+        ?.lines
+    ).toEqual([
+      {
+        charId: "skirk",
+        formulaId: "skirk-c6-burst-coord",
+        count: 1,
+      },
+    ]);
+  });
+
   it("migrates legacy flat teams into comp deltas and setup configs", () => {
     const result = migrateTeamStore(
       {

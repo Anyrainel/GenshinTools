@@ -4,7 +4,10 @@ import {
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import type { TeamSetupConfig } from "@/lib/team-comp/types";
-import { migrateLegacyFormulaUnitConfigs } from "@/stores/migration/teamFormulaUnits";
+import {
+  migrateLegacyFormulaUnitConfigs,
+  migrateLegacySkirkFormulaUnitConfigs,
+} from "@/stores/migration/teamFormulaUnits";
 
 export type TeamCloudSnapshot = {
   activePresetId: string | null;
@@ -35,7 +38,7 @@ export function teamToCloud(
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 2,
+      schemaVersion: 3,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -57,13 +60,17 @@ export function teamFromCloud(
     (partition) => partition.namespace === "teams"
   );
   const current = partition?.payload as TeamCloudPayload | undefined;
+  let configsByTeamId = current?.configsByTeamId ?? {};
+  if (partition && partition.schemaVersion < 2) {
+    configsByTeamId = migrateLegacyFormulaUnitConfigs(configsByTeamId);
+  }
+  if (partition && partition.schemaVersion < 3) {
+    configsByTeamId = migrateLegacySkirkFormulaUnitConfigs(configsByTeamId);
+  }
   return {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],
-    configsByTeamId:
-      partition && partition.schemaVersion < 2
-        ? migrateLegacyFormulaUnitConfigs(current?.configsByTeamId ?? {})
-        : (current?.configsByTeamId ?? {}),
+    configsByTeamId,
     author: current?.author ?? "",
     description: current?.description ?? "",
     updatedAt:

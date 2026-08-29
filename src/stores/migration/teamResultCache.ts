@@ -33,9 +33,11 @@ export function migrateTeamResultCacheStore(
     }
     state.resultsByTeamId = resultsByTeamId;
   }
-  if (version < 2) {
+  if (version < 3) {
     // Formula-unit migrations can change the meaning of a saved combo without
-    // changing its ID. Cached optimizer/analyzer results cannot be reconciled.
+    // changing its ID. v3 also removes Skirk's mutually exclusive C6 Normal
+    // branch when the Burst branch spends the shared stack pool. Cached
+    // optimizer/analyzer results cannot be reconciled.
     state.resultsByTeamId = {};
   }
   return state;

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { migrateTeamResultCacheStore } from "@/stores/migration/teamResultCache";
 
 describe("migrateTeamResultCacheStore", () => {
-  it("clears pre-v2 results after formula entry units change", () => {
+  it("clears pre-v3 results after formula entry units or branches change", () => {
     const result = migrateTeamResultCacheStore(
       {
         resultsByTeamId: {
@@ -20,11 +20,19 @@ describe("migrateTeamResultCacheStore", () => {
     expect(result.resultsByTeamId).toEqual({});
   });
 
-  it("preserves v2 results", () => {
+  it("clears v2 results after the Skirk shared-branch migration", () => {
+    const result = migrateTeamResultCacheStore(
+      { resultsByTeamId: { "team-1": { investmentResult: {} } } },
+      2
+    );
+    expect(result.resultsByTeamId).toEqual({});
+  });
+
+  it("preserves v3 results", () => {
     const resultsByTeamId = {
       "team-1": { investmentResult: { timestamp: 1 } },
     };
-    const result = migrateTeamResultCacheStore({ resultsByTeamId }, 2);
+    const result = migrateTeamResultCacheStore({ resultsByTeamId }, 3);
     expect(result.resultsByTeamId).toBe(resultsByTeamId);
   });
 });

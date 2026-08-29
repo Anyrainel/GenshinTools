@@ -349,7 +349,7 @@ describe("cloud source adapters", () => {
     expect(partitions[0]).toMatchObject({
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 2,
+      schemaVersion: 3,
     });
     expect(partitions[0].payload).not.toHaveProperty("resultsByTeamId");
     expect(teamFromCloud(partitions)).toEqual({
@@ -406,6 +406,76 @@ describe("cloud source adapters", () => {
       teamFromCloud([legacyPartition]).configsByTeamId.legacy?.damage?.combo
         ?.lines
     ).toMatchObject([{ count: 15 }, { count: 6 }]);
+  });
+
+  it("hydrates v2 Skirk combos through the v3 shared-stack migration", () => {
+    const snapshot: TeamCloudSnapshot = {
+      activePresetId: null,
+      compDeltas: [],
+      configsByTeamId: {},
+      author: "",
+      description: "",
+      updatedAt: 200,
+    };
+    const [legacyPartition] = teamToCloud(snapshot);
+    legacyPartition.schemaVersion = 2;
+    legacyPartition.payload = {
+      ...legacyPartition.payload,
+      configsByTeamId: {
+        legacy: {
+          combatOptions: {},
+          damage: {
+            combo: {
+              id: "legacy-skirk",
+              label: { en: "Legacy Skirk", zh: "旧版丝柯克" },
+              lines: [
+                {
+                  charId: "skirk",
+                  formulaId: "skirk-c6-burst-coord",
+                  count: 1,
+                },
+                {
+                  charId: "skirk",
+                  formulaId: "skirk-c6-normal-coord",
+                  count: 4,
+                },
+                { charId: "furina", formulaId: "furina-burst", count: 1 },
+              ],
+              buffOverrides: {
+                1: { removed: { 0: 1 } },
+                2: { retained: { 0: 1 } },
+              },
+            },
+          },
+          investment: {
+            comboOverrides: {
+              "skirk|6|skirk-c6-normal-coord": 4,
+            },
+          },
+        },
+      },
+    };
+
+    const restored = teamFromCloud([legacyPartition]).configsByTeamId.legacy;
+    expect(restored.damage?.combo?.lines).toEqual([
+      {
+        charId: "skirk",
+        formulaId: "skirk-c6-burst-coord",
+        count: 1,
+      },
+      { charId: "furina", formulaId: "furina-burst", count: 1 },
+    ]);
+    expect(restored.damage?.combo?.buffOverrides).toEqual({
+      1: { retained: { 0: 1 } },
+    });
+    expect(restored.investment?.comboOverrides).toEqual({});
+
+    legacyPartition.schemaVersion = 3;
+    const current = teamFromCloud([legacyPartition]).configsByTeamId.legacy;
+    expect(current.damage?.combo?.lines[1]).toMatchObject({
+      formulaId: "skirk-c6-normal-coord",
+      count: 4,
+    });
   });
 
   it("omits default team config rows from the cloud payload", () => {
