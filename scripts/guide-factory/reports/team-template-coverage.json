@@ -194,7 +194,7 @@
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
-      "sha256": "4933a825d470208e65e3602cca9d08189d3754b11f3188d123404e65a68986f4"
+      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",

@@ -1,0 +1,1341 @@
+{
+  "cautions": [
+    "Same-page authored examples test extraction and domain membership against the same source; they are not independent gameplay validation.",
+    "Cross-source GenshinTools baseline overlap is an internal data-overlap observation, not evidence that a generated roster follows the template's intended play or is good.",
+    "Runtime reaction acceptance checks calculator TeamMeta availability under fixed C0 and no enemy aura; it does not establish rotation execution, trigger ownership, or damage.",
+    "A template is withheld if any actual slot option is an unresolved role; role selectors are not weakened to element or unrestricted matches.",
+    "Highlighted options remain annotations and do not narrow an otherwise resolved slot pool.",
+    "Slot bindings are validation fits inferred from page context or constructed across pages; none is a machine-readable source binding.",
+    "Recorded reaction relationships preserve repository labels only; they do not prove template intent or in-game execution."
+  ],
+  "classification": "bounded-team-roster-candidate-domain-experiment",
+  "comparisonStatus": "comparable",
+  "domain": {
+    "allHoldoutsMatch": true,
+    "assumptions": {
+      "constellation": 0,
+      "enemyAura": null,
+      "highlightedOptionsSemantics": "annotation-only",
+      "maximumTheoreticalOrderedAssignmentCount": 2000000,
+      "reactionGate": "TeamMeta.hasReaction",
+      "requiredRoleSelectorSemantics": "withhold-template-if-any-required-slot-option-is-role",
+      "rosterIdentitySemantics": "four-distinct-playable-identities",
+      "slotOptionSemantics": "or-within-slot;and-across-slots"
+    },
+    "catalogBoundary": {
+      "characterCount": 125,
+      "characterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+      "label": "guide-domain-eligible-released-character-ids",
+      "playableIdentityCount": 119,
+      "sharedPlayableIdentityGroups": [
+        {
+          "characterIds": [
+            "traveler_anemo",
+            "traveler_cryo",
+            "traveler_dendro",
+            "traveler_electro",
+            "traveler_geo",
+            "traveler_hydro",
+            "traveler_pyro"
+          ],
+          "playableIdentityId": "traveler"
+        }
+      ]
+    },
+    "claimFlags": {
+      "supportsDamageComparison": false,
+      "supportsIndependentGameplayValidation": false,
+      "supportsOptimality": false,
+      "supportsRanking": false,
+      "supportsRecommendation": false,
+      "usesEnergyRecovery": false
+    },
+    "failures": [],
+    "hashContracts": {
+      "characterIdsSha256": "sha256(stable-json(sorted-character-id-array))",
+      "rosterDomainSha256": "sha256(stable-json(sorted-canonical-roster-id-arrays))"
+    },
+    "holdouts": [
+      {
+        "acceptedMembership": false,
+        "actualOutcome": "reaction-rejected",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "reaction-rejected",
+        "expectedStructuralAssignmentMultiplicity": 1,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "raiden_shogun",
+          "columbina",
+          "xilonen",
+          "furina"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "C8O2y1jWpNRe5gSc04"
+        },
+        "reactionById": {
+          "electroCharged": false
+        },
+        "reactionRejected": true,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 1,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:C8O2y1jWpNRe5gSc04",
+        "templateId": "kqm:team-template:furina-team-template-electro-charged"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "varesa",
+          "iansan",
+          "xianyun",
+          "furina"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "PSK5xCCWjKgdZ2Sc04"
+        },
+        "reactionById": {
+          "electroCharged": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:PSK5xCCWjKgdZ2Sc04",
+        "templateId": "kqm:team-template:furina-team-template-electro-charged"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "ifa",
+          "ororon",
+          "furina",
+          "fischl"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "QCC32ya0kJgK51AC0e"
+        },
+        "reactionById": {
+          "electroCharged": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:QCC32ya0kJgK51AC0e",
+        "templateId": "kqm:team-template:furina-team-template-electro-charged"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "eula",
+          "furina",
+          "mika",
+          "raiden_shogun"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "1ZC3ATIWeGrK1fWd0N"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:1ZC3ATIWeGrK1fWd0N",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "ganyu",
+          "furina",
+          "shenhe",
+          "venti"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "6te0ITIWe72K1eia0O"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:6te0ITIWe72K1eia0O",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 6,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "kamisato_ayaka",
+          "escoffier",
+          "furina",
+          "shenhe"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "7sa0JFZ0jJam0WuIWD"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 6,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:7sa0JFZ0jJam0WuIWD",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 1,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "hu_tao",
+          "citlali",
+          "furina",
+          "yelan"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "8IS2p3X0jJb451cfWN"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 1,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 6,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "freminet",
+          "escoffier",
+          "furina",
+          "shenhe"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "IZC0JFZ0DJgK50uIWD"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 6,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:IZC0JFZ0DJgK50uIWD",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "wriothesley",
+          "xilonen",
+          "furina",
+          "shenhe"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "JAG4wxT0jJgK50uIWD"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:JAG4wxT0jJgK50uIWD",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 1,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "neuvillette",
+          "citlali",
+          "xilonen",
+          "furina"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "JQC4x3X0jNRe0gTIWe"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 1,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:JQC4x3X0jNRe0gTIWe",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 6,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "skirk",
+          "escoffier",
+          "furina",
+          "kamisato_ayaka"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "QSW63FZ0jJam0W_T0D"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 6,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:QSW63FZ0jJam0W_T0D",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 6,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "skirk",
+          "escoffier",
+          "furina",
+          "shenhe"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "QSW63FZ0jJam0WuIWD"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 6,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:QSW63FZ0jJam0WuIWD",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 4,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "lohen",
+          "escoffier",
+          "furina",
+          "mona"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "Xjy6ZFZ0DJam0X8h0r"
+        },
+        "reactionById": {
+          "frozen": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 4,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:Xjy6ZFZ0DJam0X8h0r",
+        "templateId": "kqm:team-template:furina-team-template-freeze"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 1,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "hu_tao",
+          "xilonen",
+          "furina",
+          "xingqiu"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "8IS2oxT0jJgK51CXWN"
+        },
+        "reactionById": {
+          "vaporize": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 1,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:8IS2oxT0jJgK51CXWN",
+        "templateId": "kqm:team-template:furina-team-template-vaporize"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 1,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "hu_tao",
+          "citlali",
+          "furina",
+          "yelan"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "8IS2p3X0jJb451cfWN"
+        },
+        "reactionById": {
+          "vaporize": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 1,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "templateId": "kqm:team-template:furina-team-template-vaporize"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "gaming",
+          "xianyun",
+          "furina",
+          "bennett"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "Kqy2obKWOJgK50orWD"
+        },
+        "reactionById": {
+          "vaporize": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:Kqy2obKWOJgK50orWD",
+        "templateId": "kqm:team-template:furina-team-template-vaporize"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "cross-source-internal-baseline-overlap",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 4,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "arlecchino",
+          "furina",
+          "yelan",
+          "bennett"
+        ],
+        "provenance": {
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "LQm5QT3W4Cte2uorWD"
+        },
+        "reactionById": {
+          "vaporize": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": null,
+        "sourceSlotBindingBasis": null,
+        "sourceSlotBindingMembership": null,
+        "structuralAssignmentMultiplicity": 4,
+        "structuralMembership": true,
+        "targetId": "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:LQm5QT3W4Cte2uorWD",
+        "templateId": "kqm:team-template:furina-team-template-vaporize"
+      },
+      {
+        "acceptedMembership": false,
+        "actualOutcome": "reaction-rejected",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "same-publisher-cross-page-negative",
+        "expectedOutcome": "reaction-rejected",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "keqing",
+          "ineffa",
+          "furina",
+          "xilonen"
+        ],
+        "provenance": {
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example"
+        },
+        "reactionById": {
+          "electroCharged": false
+        },
+        "reactionRejected": true,
+        "sourceSlotBinding": {
+          "anemo-or-flex": "xilonen",
+          "electro": "keqing",
+          "electro-or-hydro": "ineffa",
+          "furina": "furina"
+        },
+        "sourceSlotBindingBasis": "cross-page-audit-fit",
+        "sourceSlotBindingMembership": true,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "runtime-negative:keqing-ineffa-furina-xilonen-as-electro-charged",
+        "templateId": "kqm:team-template:furina-team-template-electro-charged"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "same-page-authored-domain-check",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "furina",
+          "alhaitham",
+          "kuki_shinobu",
+          "nahida"
+        ],
+        "provenance": {
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-alhaitham-shinobu-nahida-quickbloom-example"
+        },
+        "reactionById": {
+          "hyperbloom": true,
+          "quicken": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": {
+          "dendro": "alhaitham",
+          "electro": "kuki_shinobu",
+          "flex": "nahida",
+          "furina": "furina"
+        },
+        "sourceSlotBindingBasis": "same-page-inferred-fit",
+        "sourceSlotBindingMembership": true,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "same-page:furina-alhaitham-shinobu-nahida-quickbloom",
+        "templateId": "kqm:team-template:furina-team-template-quickbloom"
+      },
+      {
+        "acceptedMembership": true,
+        "actualOutcome": "accepted",
+        "bindingMultiplicityMatchesExpectation": true,
+        "category": "same-page-authored-domain-check",
+        "expectedOutcome": "accepted",
+        "expectedStructuralAssignmentMultiplicity": 2,
+        "failure": null,
+        "matchesExpectation": true,
+        "memberCharacterIds": [
+          "furina",
+          "nahida",
+          "cyno",
+          "baizhu"
+        ],
+        "provenance": {
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-nahida-cyno-baizhu-quickbloom-example"
+        },
+        "reactionById": {
+          "hyperbloom": true,
+          "quicken": true
+        },
+        "reactionRejected": false,
+        "sourceSlotBinding": {
+          "dendro": "nahida",
+          "electro": "cyno",
+          "flex": "baizhu",
+          "furina": "furina"
+        },
+        "sourceSlotBindingBasis": "same-page-inferred-fit",
+        "sourceSlotBindingMembership": true,
+        "structuralAssignmentMultiplicity": 2,
+        "structuralMembership": true,
+        "targetId": "same-page:furina-nahida-cyno-baizhu-quickbloom",
+        "templateId": "kqm:team-template:furina-team-template-quickbloom"
+      }
+    ],
+    "prohibitedClaims": [
+      "score",
+      "rank",
+      "winner",
+      "best",
+      "recommendation"
+    ],
+    "reportType": "team-roster-candidate-domain",
+    "schemaVersion": 1,
+    "templates": [
+      {
+        "assignmentMultiplicityHistogram": [
+          {
+            "assignmentCount": 1,
+            "rosterCount": 27902
+          },
+          {
+            "assignmentCount": 2,
+            "rosterCount": 19010
+          },
+          {
+            "assignmentCount": 4,
+            "rosterCount": 3021
+          },
+          {
+            "assignmentCount": 6,
+            "rosterCount": 1140
+          }
+        ],
+        "canonicalRosterCount": 51073,
+        "duplicateMemberAssignmentRejectionCount": 7654,
+        "exactDuplicateMemberAssignmentRejectionCount": 7100,
+        "failures": [],
+        "reactionAcceptedDomainSha256": "4d66f3bb35094bcd58d8de54519ffb19c12d9ffaaf3063fb9255154a05c31d37",
+        "reactionGate": {
+          "acceptedCanonicalRosterCount": 41866,
+          "acceptedOrderedAssignmentCount": 68035,
+          "declaredReactions": [
+            "electroCharged"
+          ],
+          "rejectedCanonicalRosterCount": 9207,
+          "rejectedOrderedAssignmentCount": 16811,
+          "status": "completed"
+        },
+        "samePlayableIdentityAssignmentRejectionCount": 554,
+        "slotPools": [
+          {
+            "poolSha256": "4197d36baaaa44073ae19d742f01d545035c1c351f1492f238602fb93e1ea216",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "furina",
+            "slotIndex": 0,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "b81c5f5f444fb67bcddf1b255af53da2ece9c78f3c6636cca4e4500739b14969",
+            "poolSize": 20,
+            "resolution": "resolved",
+            "slotId": "electro",
+            "slotIndex": 1,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "158b9e703a009781e461afe71c82f2bed37bb501ba5f0f35f337a36bcf254207",
+            "poolSize": 37,
+            "resolution": "resolved",
+            "slotId": "electro-or-hydro",
+            "slotIndex": 2,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "e385270a4a5bf7f01255d0fc6277f52067d5b480b2febbb38685ae28bab76b24",
+            "poolSize": 125,
+            "resolution": "resolved",
+            "slotId": "anemo-or-flex",
+            "slotIndex": 3,
+            "unresolvedRoleIds": []
+          }
+        ],
+        "status": "comparable",
+        "structuralDomainSha256": "de643aa7cb44ef8cf1eb3ef6101f32fa8ca38bd3d68bfa95cd95684b19f9a49c",
+        "templateId": "kqm:team-template:furina-team-template-electro-charged",
+        "theoreticalOrderedAssignmentCount": 92500,
+        "unresolvedRoleIds": [],
+        "validOrderedAssignmentCount": 84846
+      },
+      {
+        "assignmentMultiplicityHistogram": [
+          {
+            "assignmentCount": 1,
+            "rosterCount": 30006
+          },
+          {
+            "assignmentCount": 2,
+            "rosterCount": 22386
+          },
+          {
+            "assignmentCount": 4,
+            "rosterCount": 3675
+          },
+          {
+            "assignmentCount": 6,
+            "rosterCount": 1540
+          }
+        ],
+        "canonicalRosterCount": 57607,
+        "duplicateMemberAssignmentRejectionCount": 8532,
+        "exactDuplicateMemberAssignmentRejectionCount": 7942,
+        "failures": [],
+        "reactionAcceptedDomainSha256": "9db83c959d91bbe0d952c5fed76798c02ff8ec82aca3b963f18eeb6b23fd8db7",
+        "reactionGate": {
+          "acceptedCanonicalRosterCount": 57607,
+          "acceptedOrderedAssignmentCount": 98718,
+          "declaredReactions": [
+            "frozen"
+          ],
+          "rejectedCanonicalRosterCount": 0,
+          "rejectedOrderedAssignmentCount": 0,
+          "status": "completed"
+        },
+        "samePlayableIdentityAssignmentRejectionCount": 590,
+        "slotPools": [
+          {
+            "poolSha256": "8355bfad31a97f568dfe7f63f5db640c2c7acc7fd6c480086e21f0f455207d02",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "furina",
+            "slotIndex": 0,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "0f0534169fddbefd9f9410454b33d7c020f6d550998bfbdda6bd375fef6f07ee",
+            "poolSize": 22,
+            "resolution": "resolved",
+            "slotId": "cryo",
+            "slotIndex": 1,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "851480d6ec05c44606f1f4861c2f2226534c64b0671348aa28e323a9e2a48f30",
+            "poolSize": 39,
+            "resolution": "resolved",
+            "slotId": "cryo-or-hydro",
+            "slotIndex": 2,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "ba27f4d83bbd5af5070dfcabace396bd8bd14494f70ad74882055637a39ea182",
+            "poolSize": 125,
+            "resolution": "resolved",
+            "slotId": "support-flex",
+            "slotIndex": 3,
+            "unresolvedRoleIds": []
+          }
+        ],
+        "status": "comparable",
+        "structuralDomainSha256": "9db83c959d91bbe0d952c5fed76798c02ff8ec82aca3b963f18eeb6b23fd8db7",
+        "templateId": "kqm:team-template:furina-team-template-freeze",
+        "theoreticalOrderedAssignmentCount": 107250,
+        "unresolvedRoleIds": [],
+        "validOrderedAssignmentCount": 98718
+      },
+      {
+        "assignmentMultiplicityHistogram": [],
+        "canonicalRosterCount": null,
+        "duplicateMemberAssignmentRejectionCount": null,
+        "exactDuplicateMemberAssignmentRejectionCount": null,
+        "failures": [],
+        "reactionAcceptedDomainSha256": null,
+        "reactionGate": null,
+        "samePlayableIdentityAssignmentRejectionCount": null,
+        "slotPools": [
+          {
+            "poolSha256": "4ff99019ce3cbaae0f96e4e152874222badf055a9273f66b4bc24145e473db77",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "furina",
+            "slotIndex": 0,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": null,
+            "poolSize": null,
+            "resolution": "unresolved-role",
+            "slotId": "healer",
+            "slotIndex": 1,
+            "unresolvedRoleIds": [
+              "healer"
+            ]
+          },
+          {
+            "poolSha256": "c456d072d6a6f0fc856dcd8ac5e172f35338d697e1af120b1aa3a4074f83edec",
+            "poolSize": 125,
+            "resolution": "resolved",
+            "slotId": "flex-1",
+            "slotIndex": 2,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "63e875cd326704043e4eedf6f1f03e8f7f3c05d70a93fecdd7f0ba218e7a9ec5",
+            "poolSize": 125,
+            "resolution": "resolved",
+            "slotId": "flex-2",
+            "slotIndex": 3,
+            "unresolvedRoleIds": []
+          }
+        ],
+        "status": "withheld-unresolved-role",
+        "structuralDomainSha256": null,
+        "templateId": "kqm:team-template:furina-team-template-hypercarry-mono",
+        "theoreticalOrderedAssignmentCount": null,
+        "unresolvedRoleIds": [
+          "healer"
+        ],
+        "validOrderedAssignmentCount": null
+      },
+      {
+        "assignmentMultiplicityHistogram": [
+          {
+            "assignmentCount": 1,
+            "rosterCount": 23414
+          },
+          {
+            "assignmentCount": 2,
+            "rosterCount": 3999
+          }
+        ],
+        "canonicalRosterCount": 27413,
+        "duplicateMemberAssignmentRejectionCount": 1088,
+        "exactDuplicateMemberAssignmentRejectionCount": 780,
+        "failures": [],
+        "reactionAcceptedDomainSha256": "ca46c4eae8fa5caa01e095bb78c8279f4c330c64ac80c4b47f21fa15ec328a9b",
+        "reactionGate": {
+          "acceptedCanonicalRosterCount": 27413,
+          "acceptedOrderedAssignmentCount": 31412,
+          "declaredReactions": [
+            "hyperbloom",
+            "quicken"
+          ],
+          "rejectedCanonicalRosterCount": 0,
+          "rejectedOrderedAssignmentCount": 0,
+          "status": "completed"
+        },
+        "samePlayableIdentityAssignmentRejectionCount": 308,
+        "slotPools": [
+          {
+            "poolSha256": "210ac4fcec7b285aeb33abad5f7713d48bf21993e09f813099fd5ecb9f53909d",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "furina",
+            "slotIndex": 0,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "3e6e91ef6f3df2fb7975f7c8f56a688cfec7d0889dd95152331fb6f486d8fd2a",
+            "poolSize": 13,
+            "resolution": "resolved",
+            "slotId": "dendro",
+            "slotIndex": 1,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "63629401f149307295784cd31667d56b8e6bba7c1972e7a6daa91805a50b9044",
+            "poolSize": 20,
+            "resolution": "resolved",
+            "slotId": "electro",
+            "slotIndex": 2,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "f87f60b5cb75bd7bf4dd9e7732ae226af6353cc3d2fd6be706cc0664f9253308",
+            "poolSize": 125,
+            "resolution": "resolved",
+            "slotId": "flex",
+            "slotIndex": 3,
+            "unresolvedRoleIds": []
+          }
+        ],
+        "status": "comparable",
+        "structuralDomainSha256": "ca46c4eae8fa5caa01e095bb78c8279f4c330c64ac80c4b47f21fa15ec328a9b",
+        "templateId": "kqm:team-template:furina-team-template-quickbloom",
+        "theoreticalOrderedAssignmentCount": 32500,
+        "unresolvedRoleIds": [],
+        "validOrderedAssignmentCount": 31412
+      },
+      {
+        "assignmentMultiplicityHistogram": [
+          {
+            "assignmentCount": 1,
+            "rosterCount": 46778
+          },
+          {
+            "assignmentCount": 2,
+            "rosterCount": 23610
+          },
+          {
+            "assignmentCount": 4,
+            "rosterCount": 6120
+          },
+          {
+            "assignmentCount": 6,
+            "rosterCount": 969
+          }
+        ],
+        "canonicalRosterCount": 77477,
+        "duplicateMemberAssignmentRejectionCount": 8708,
+        "exactDuplicateMemberAssignmentRejectionCount": 7828,
+        "failures": [],
+        "reactionAcceptedDomainSha256": "34c96c4bb3df24c69f71a1a074defe1e959dbd1872f8dce6e146b18447e83e1e",
+        "reactionGate": {
+          "acceptedCanonicalRosterCount": 77477,
+          "acceptedOrderedAssignmentCount": 124292,
+          "declaredReactions": [
+            "vaporize"
+          ],
+          "rejectedCanonicalRosterCount": 0,
+          "rejectedOrderedAssignmentCount": 0,
+          "status": "completed"
+        },
+        "samePlayableIdentityAssignmentRejectionCount": 880,
+        "slotPools": [
+          {
+            "poolSha256": "4bf6d1b8a742427bbf23bf3accfa17d42cb05dbf34288cec27edd9c98b0d4993",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "furina",
+            "slotIndex": 0,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "7e4738a24b82794b7eecf6559fb94068811c98a93b7efc8318d54360b38e9b10",
+            "poolSize": 19,
+            "resolution": "resolved",
+            "slotId": "pyro",
+            "slotIndex": 1,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "467274b18daf615f5940410d4cbdef8602fef909387c105bd9d570ff2085853a",
+            "poolSize": 56,
+            "resolution": "resolved",
+            "slotId": "second-applier",
+            "slotIndex": 2,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "d4115abb30deac4b7a610438a3c36b5455010adfc43e7c73f1297307a71dfdfd",
+            "poolSize": 125,
+            "resolution": "resolved",
+            "slotId": "flex-or-healer",
+            "slotIndex": 3,
+            "unresolvedRoleIds": []
+          }
+        ],
+        "status": "comparable",
+        "structuralDomainSha256": "34c96c4bb3df24c69f71a1a074defe1e959dbd1872f8dce6e146b18447e83e1e",
+        "templateId": "kqm:team-template:furina-team-template-vaporize",
+        "theoreticalOrderedAssignmentCount": 133000,
+        "unresolvedRoleIds": [],
+        "validOrderedAssignmentCount": 124292
+      },
+      {
+        "assignmentMultiplicityHistogram": [],
+        "canonicalRosterCount": null,
+        "duplicateMemberAssignmentRejectionCount": null,
+        "exactDuplicateMemberAssignmentRejectionCount": null,
+        "failures": [],
+        "reactionAcceptedDomainSha256": null,
+        "reactionGate": null,
+        "samePlayableIdentityAssignmentRejectionCount": null,
+        "slotPools": [
+          {
+            "poolSha256": "e4a57dfffb2a7213dec9631d740160ebae4f0a8ce8643e9bc8b6e0a125bea444",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "keqing",
+            "slotIndex": 0,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": "02b38168e0481efa8884885205cb30b36a9bb8bc24c0c478bb54f0159a93dad5",
+            "poolSize": 1,
+            "resolution": "resolved",
+            "slotId": "ineffa",
+            "slotIndex": 1,
+            "unresolvedRoleIds": []
+          },
+          {
+            "poolSha256": null,
+            "poolSize": null,
+            "resolution": "unresolved-role",
+            "slotId": "off-field-hydro",
+            "slotIndex": 2,
+            "unresolvedRoleIds": [
+              "off-field-hydro-applier"
+            ]
+          },
+          {
+            "poolSha256": null,
+            "poolSize": null,
+            "resolution": "unresolved-role",
+            "slotId": "resistance-shred",
+            "slotIndex": 3,
+            "unresolvedRoleIds": [
+              "resistance-shred"
+            ]
+          }
+        ],
+        "status": "withheld-unresolved-role",
+        "structuralDomainSha256": null,
+        "templateId": "kqm:team-template:keqing-team-template-lunar-charged",
+        "theoreticalOrderedAssignmentCount": null,
+        "unresolvedRoleIds": [
+          "off-field-hydro-applier",
+          "resistance-shred"
+        ],
+        "validOrderedAssignmentCount": null
+      }
+    ]
+  },
+  "energyRecoveryInputsUsed": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
+    },
+    {
+      "path": "scripts/guide-factory/src/catalogs.ts",
+      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "41f2b65ed9233089918458cc7c9074e0c8e1cbfa1f652b702e8b7c1e972c1a1e"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
+      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
+      "sha256": "bc96bd4f9a5abd50c6fe30381e08072b8bb36cdba22c4f500d793eb7d2d32f05"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
+      "sha256": "3b142dbea8b1d45bdafc919cf54a18306f92c4aaa3fbe01c7261ca81c880821b"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    }
+  ],
+  "prohibitedInterpretations": [
+    "candidate-ranking",
+    "winner",
+    "team-recommendation",
+    "gameplay-quality",
+    "independent-gameplay-validation",
+    "energy-requirement"
+  ],
+  "releasedCatalogBoundary": {
+    "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
+    "eligibleCharacterCount": 125,
+    "excludedSpecialAvatarForms": {
+      "count": 14,
+      "reason": "Manekin and Manekina element variants are special-avatar forms withheld from the first guide-oriented team domain.",
+      "sha256": "86178627101600f7d50850a7b15707271b96caeee99fc012e8c00283722fb0b1"
+    },
+    "fullStableCatalogSha256": "746eceae23ed319088a12d83e98a1e09b5e629f8f25ca0cf5a371e766e23d6f7",
+    "fullStableCharacterCount": 139,
+    "source": "stable-resources",
+    "travelerIdentityPolicy": "all traveler element variants share playableIdentityId=traveler"
+  },
+  "schemaVersion": 1,
+  "supportsGameplayValidation": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsTeamRecommendations": false,
+  "templateBoundary": {
+    "expectedRoleSelectorWithheldTemplateIds": [
+      "kqm:team-template:furina-team-template-hypercarry-mono",
+      "kqm:team-template:keqing-team-template-lunar-charged"
+    ],
+    "highlightedOptionsPolicy": "annotation-only",
+    "repositoryRoleSelectorTemplateIds": [
+      "kqm:team-template:furina-team-template-hypercarry-mono",
+      "kqm:team-template:keqing-team-template-lunar-charged"
+    ],
+    "roleSelectorPolicy": "withhold-template-if-any-slot-option-is-unresolved-role",
+    "roleSelectorWithholdingMatchesExpectation": true,
+    "selectedTemplateCount": 6,
+    "selectedTemplateIds": [
+      "kqm:team-template:furina-team-template-electro-charged",
+      "kqm:team-template:furina-team-template-freeze",
+      "kqm:team-template:furina-team-template-hypercarry-mono",
+      "kqm:team-template:furina-team-template-quickbloom",
+      "kqm:team-template:furina-team-template-vaporize",
+      "kqm:team-template:keqing-team-template-lunar-charged"
+    ],
+    "selectedTemplateRecordsSha256": "b06e47b293e328fb5a0c59271c230a79039cea8fbd935cffff3c15efb152ac69"
+  },
+  "validationEvidenceBoundary": {
+    "allTargetsMatch": true,
+    "baselineOverlapCompletenessAgainstCurrentTemplateCoverage": true,
+    "crossSourceInternalBaselineOverlap": {
+      "establishesGameplayQuality": false,
+      "establishesIntendedPlay": false,
+      "targetCount": 17,
+      "targetDefinitionsSha256": "94addceccecbe475c50aa32be2288c96dc59422202d89b72a4d09272a75159ec",
+      "targetIds": [
+        "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:C8O2y1jWpNRe5gSc04",
+        "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:PSK5xCCWjKgdZ2Sc04",
+        "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:QCC32ya0kJgK51AC0e",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:1ZC3ATIWeGrK1fWd0N",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:6te0ITIWe72K1eia0O",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:7sa0JFZ0jJam0WuIWD",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:IZC0JFZ0DJgK50uIWD",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:JAG4wxT0jJgK50uIWD",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:JQC4x3X0jNRe0gTIWe",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:QSW63FZ0jJam0W_T0D",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:QSW63FZ0jJam0WuIWD",
+        "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:Xjy6ZFZ0DJam0X8h0r",
+        "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:8IS2oxT0jJgK51CXWN",
+        "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:Kqy2obKWOJgK50orWD",
+        "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:LQm5QT3W4Cte2uorWD"
+      ],
+      "uniqueRepositoryTeamRecordCount": 16
+    },
+    "explicitRuntimeGateNegatives": {
+      "establishesGameplayQuality": false,
+      "establishesIntendedPlay": false,
+      "targetCount": 2,
+      "targetDefinitionsSha256": "565f6f88d76e96f4773f8be2fce02ba1f51ec89174f1f2b1b0c049998de776de",
+      "targetIds": [
+        "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:C8O2y1jWpNRe5gSc04",
+        "runtime-negative:keqing-ineffa-furina-xilonen-as-electro-charged"
+      ],
+      "uniqueRepositoryTeamRecordCount": 2
+    },
+    "independentGameplayValidation": {
+      "status": "not-supplied",
+      "supportsGameplayValidation": false,
+      "targetCount": 0
+    },
+    "recordedReactionRelationships": {
+      "aligned-with-template": {
+        "targetCount": 14,
+        "targetIds": [
+          "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:QCC32ya0kJgK51AC0e",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:6te0ITIWe72K1eia0O",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:7sa0JFZ0jJam0WuIWD",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:IZC0JFZ0DJgK50uIWD",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:JAG4wxT0jJgK50uIWD",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:QSW63FZ0jJam0W_T0D",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:QSW63FZ0jJam0WuIWD",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:Xjy6ZFZ0DJam0X8h0r",
+          "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:8IS2oxT0jJgK51CXWN",
+          "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:8IS2p3X0jJb451cfWN",
+          "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:Kqy2obKWOJgK50orWD",
+          "baseline-overlap:kqm:team-template:furina-team-template-vaporize:genshintools-presets:team:LQm5QT3W4Cte2uorWD",
+          "same-page:furina-alhaitham-shinobu-nahida-quickbloom",
+          "same-page:furina-nahida-cyno-baizhu-quickbloom"
+        ]
+      },
+      "different-from-template": {
+        "targetCount": 4,
+        "targetIds": [
+          "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:C8O2y1jWpNRe5gSc04",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:1ZC3ATIWeGrK1fWd0N",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:8IS2p3X0jJb451cfWN",
+          "runtime-negative:keqing-ineffa-furina-xilonen-as-electro-charged"
+        ]
+      },
+      "not-recorded": {
+        "targetCount": 2,
+        "targetIds": [
+          "baseline-overlap:kqm:team-template:furina-team-template-electro-charged:genshintools-presets:team:PSK5xCCWjKgdZ2Sc04",
+          "baseline-overlap:kqm:team-template:furina-team-template-freeze:genshintools-presets:team:JQC4x3X0jNRe0gTIWe"
+        ]
+      }
+    },
+    "samePageAuthoredDomainChecks": {
+      "establishesGameplayQuality": false,
+      "establishesIntendedPlay": false,
+      "targetCount": 2,
+      "targetDefinitionsSha256": "8872a51d59529a9d7fd83dea305b814200324e56464659d8289fb4468a0880af",
+      "targetIds": [
+        "same-page:furina-alhaitham-shinobu-nahida-quickbloom",
+        "same-page:furina-nahida-cyno-baizhu-quickbloom"
+      ],
+      "uniqueRepositoryTeamRecordCount": 2
+    },
+    "targetAssociationCount": 20,
+    "uniqueRepositoryTeamRecordCount": 19
+  }
+}

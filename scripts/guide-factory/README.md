@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 11 exhausts one deliberately tiny, node-local artifact-stat
-composition table under an unreviewed technical objective, without claiming a
-working guide factory:
+Checkpoint 12 adds a bounded, compact team-roster candidate-domain experiment
+over selected repository templates and a guide-oriented stable catalog,
+without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -88,6 +88,17 @@ working guide factory:
 26. Replay coordinate descent and a width-one beam over the already evaluated
     four-node cache with zero new evaluator calls; treat both as policy traces,
     not optimization or calibration results.
+27. Select six repository team templates and withhold any template whose
+    actual slot options contain an unresolved role selector.
+28. Expand the four resolved templates over 125 guide-domain-eligible stable
+    character IDs while excluding special-avatar forms and enforcing one
+    shared playable identity across Traveler forms.
+29. Retain only compact pool, assignment, canonical-roster, multiplicity, and
+    runtime-reaction counts and hashes; do not serialize candidate teams.
+30. Check 20 template/team associations over 19 unique repository team records
+    as same-page extraction targets, cross-source baseline-overlap
+    observations, and explicit runtime-gate negatives while recording that
+    independent gameplay validation is absent.
 
 The first two active sources are already in this repository:
 
@@ -155,6 +166,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation-sensitivity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-keqing-ineffa-bounded-joint-artifacts.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -171,11 +183,12 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twelve durable reports in memory: corpus inventory, team
+It also rebuilds all thirteen durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
-the bounded joint artifact experiment, Diona comparison, and historical ER
-calibration. Stale evidence cannot pass.
+the bounded joint artifact experiment, the bounded team-roster candidate
+domain, Diona comparison, and historical ER calibration. Stale evidence cannot
+pass.
 
 ## Data flow
 
@@ -434,6 +447,34 @@ failure, so callers cannot rank only the survivors by accident. The experiment
 supports technical objective comparison only inside this fixed table. It does
 not support a guide, artifact recommendation, game-performance claim, or
 global-optimality claim.
+
+The bounded roster-domain experiment then selects all six current KQM team
+templates and expands the four whose actual slot options can be resolved from
+the released character catalog. Starting from 139 stable IDs, it withholds 14
+Manekin/Manekina special-avatar forms and treats seven Traveler elements as one
+playable identity, leaving 125 eligible IDs and 119 identities. Hypercarry/Mono
+and Keqing Lunar-Charged remain wholly withheld because at least one actual
+slot option is an unresolved role; highlighted options remain annotations.
+
+The four resolved domains retain only slot-pool, ordered-assignment,
+canonical-roster, multiplicity, reaction-gate counts, and stable hashes. They
+contain 68,035 accepted Electro-Charged assignments, 98,718 Freeze, 31,412
+Quickbloom, and 124,292 Vaporize assignments. Only Electro-Charged currently
+has runtime rejections. These are membership counts under
+`TeamMeta.hasReaction` at C0 with no enemy aura, not team scores or gameplay
+validation.
+
+Twenty template/team associations over 19 unique repository records exercise
+membership and failure boundaries: two same-page Quickbloom examples, 17
+cross-source baseline/template associations over 16 unique baseline records,
+and two Electro-Charged runtime-gate negatives, one of which is also a baseline
+overlap. Same-page slot fits are explicitly inferred; the Keqing cross-page fit
+is an audit construction, not a published binding. All current targets match
+their expected structural multiplicity, inferred binding where supplied, and
+runtime outcome. This does not establish intended play or gameplay quality,
+and no independent gameplay-validation target is supplied. The durable report
+serializes no expanded candidate team, ranking, winner, recommendation, damage
+comparison, or ER input.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

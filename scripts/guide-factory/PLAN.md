@@ -223,6 +223,32 @@ now support later experiments, but the unreviewed formula plan still prevents
 guide or performance claims. Further work should add new bounded evidence
 tables and validation targets rather than extrapolate this one fixture.
 
+The first roster-expansion seam now selects all six current repository team
+templates and builds compact domains for the four that contain no unresolved
+actual role option. It uses 125 guide-domain-eligible stable character IDs
+after withholding 14 Manekin/Manekina special-avatar forms and enforces one
+shared playable identity across the seven Traveler elements. Hypercarry/Mono
+and Keqing Lunar-Charged remain withheld; highlighted options are annotations,
+not fallback role resolution.
+
+The core records slot-pool hashes, duplicate rejections, canonical
+multiplicities, and runtime `TeamMeta.hasReaction` acceptance at C0 with no
+enemy aura. It emits no expanded candidate-roster array. The four resolved
+templates currently contain 41,866 accepted canonical Electro-Charged rosters,
+57,607 Freeze, 27,413 Quickbloom, and 77,477 Vaporize rosters. These are domain
+membership observations, not rankings or evidence of intended execution.
+
+Twenty template/team associations over 19 unique repository records currently
+match their expected structural multiplicity and runtime outcome. Two are
+same-page Quickbloom extraction checks, 17 associations over 16 unique
+GenshinTools baseline records are template-overlap observations, and two are
+explicit Electro-Charged reaction-gate negatives, with one negative also in
+the baseline-overlap class. Same-page slot fits are explicitly inferred and the
+Keqing binding is a cross-page audit fit, not a source-published mapping. The
+report preserves this overlap and records zero independent gameplay-validation
+targets. Runtime errors, validation mismatch, or role-withholding drift make
+the whole wrapper not comparable rather than ranking surviving domains.
+
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input
 revision.

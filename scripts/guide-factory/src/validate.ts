@@ -48,6 +48,10 @@ import {
   runKeqingIneffaBoundedJointArtifactExperiment,
 } from "./keqingIneffaBoundedJointArtifactExperiment";
 import {
+  runTeamRosterCandidateDomainExperiment,
+  TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_INPUT_PATHS,
+} from "./teamRosterCandidateDomainExperiment";
+import {
   loadManualSnapshotInputs,
   requiredManualSnapshotInputContaining,
   type ManualSnapshotInput,
@@ -70,6 +74,7 @@ import {
   REPOSITORY_ROOT,
   SOURCE_REGISTRY_PATH,
   TEAM_TEMPLATE_COVERAGE_REPORT_PATH,
+  TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH,
   WEAPON_CHOICE_SEARCH_COVERAGE_REPORT_PATH,
 } from "./paths";
 import {
@@ -126,6 +131,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaArtifactGenerationTechnicalProbeInput,
     keqingIneffaArtifactGenerationSensitivityInput,
     keqingIneffaBoundedJointArtifactExperimentInput,
+    teamRosterCandidateDomainExperimentInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -151,6 +157,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(
         KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
       ),
+      readJson(TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -478,6 +485,28 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-bounded-joint-artifact-experiment",
           message:
             "The saved Keqing-Ineffa bounded joint artifact experiment does not match the current four-node input lattice, unreviewed technical objective, generator implementation, and replay implementation.",
+        });
+      }
+
+      const teamRosterCandidateDomainExperimentGeneratedFrom =
+        await hashRelativePaths(
+          TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_INPUT_PATHS,
+        );
+      const expectedTeamRosterCandidateDomainExperiment =
+        await runTeamRosterCandidateDomainExperiment(
+          expectedKnowledge,
+          teamRosterCandidateDomainExperimentGeneratedFrom,
+        );
+      if (
+        stableJson(expectedTeamRosterCandidateDomainExperiment) !==
+        stableJson(teamRosterCandidateDomainExperimentInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_team_roster_candidate_domain_experiment",
+          path: "reports.team-roster-candidate-domain-experiment",
+          message:
+            "The saved team-roster candidate-domain experiment does not match the selected repository templates, eligible stable character boundary, runtime reaction gate, and validation targets.",
         });
       }
 

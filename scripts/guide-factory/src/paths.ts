@@ -122,3 +122,8 @@ export const KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH =
     "reports",
     "keqing-ineffa-bounded-joint-artifact-experiment.json"
   );
+export const TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "team-roster-candidate-domain-experiment.json"
+);

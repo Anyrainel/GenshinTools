@@ -37,7 +37,7 @@ export interface GameCatalogs {
   substatIds: ReadonlySet<string>;
 }
 
-const TEAM_REACTION_IDS = [
+export const GUIDE_FACTORY_TEAM_REACTION_IDS = [
   "melt",
   "vaporize",
   "quicken",
@@ -48,10 +48,12 @@ const TEAM_REACTION_IDS = [
   "superconduct",
   "swirl",
   "frozen",
+  "shatter",
   "bloom",
   "hyperbloom",
   "burgeon",
   "burning",
+  "crystallize",
   "lunarCharged",
   "lunarBloom",
   "lunarCrystallize",
@@ -168,7 +170,7 @@ export async function loadGameCatalogs(): Promise<GameCatalogs> {
         stats.type ? [[id, stats.type] as const] : []
       )
     ),
-    reactionIds: new Set(TEAM_REACTION_IDS),
+    reactionIds: new Set(GUIDE_FACTORY_TEAM_REACTION_IDS),
     mainStatsBySlot: MAIN_STATS_BY_SLOT,
     substatIds: SUBSTAT_IDS,
   };

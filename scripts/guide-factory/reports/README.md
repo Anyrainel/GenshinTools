@@ -6,6 +6,22 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `team-roster-candidate-domain-experiment.json` expands four resolved
+  repository templates over a 125-ID guide-domain-eligible stable catalog and
+  withholds two templates whose actual slot options contain unresolved roles.
+  The report retains only pool, assignment, canonical-roster, multiplicity,
+  reaction-gate counts and hashes plus 20 validation associations over 19
+  unique exact team records; it serializes no expanded candidate-roster array.
+  All targets currently match, including two same-page Quickbloom extraction
+  checks, 17 cross-source baseline associations over 16 unique records, and two
+  structurally admitted Electro-Charged runtime negatives, with one target
+  shared by the latter two classes. Slot bindings are labeled as same-page
+  inferred fits or a cross-page audit fit, never source-published mappings.
+  These are
+  membership and failure-boundary observations, not intended-play, gameplay,
+  ranking, recommendation, damage, or ER evidence. Independent gameplay
+  validation remains absent, and any runtime failure or validation drift makes
+  the experiment not comparable.
 - `keqing-ineffa-bounded-joint-artifact-experiment.json` runs the four
   released 5-star set nodes under all four team-member carry inputs, captures
   16 fresh generator runs, and exhausts 48 node-local `StatSheet`
@@ -112,6 +128,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twelve reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all thirteen reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.
