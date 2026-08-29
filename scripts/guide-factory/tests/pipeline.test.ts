@@ -455,6 +455,8 @@ describe("guide-factory data pipeline", () => {
         const kind =
           sourceRecord.kind === "character_guide"
             ? "character-guide"
+            : sourceRecord.kind === "character_role"
+              ? "character-role"
             : sourceRecord.kind === "energy_guidance"
               ? "energy-guidance"
               : sourceRecord.kind === "team_template"

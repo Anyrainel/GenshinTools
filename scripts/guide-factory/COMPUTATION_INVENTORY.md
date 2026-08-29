@@ -425,6 +425,33 @@ technical combo is replayed through both calculator paths at several endpoints.
 It does not validate AutoTune's default context, replace constrained allocation,
 or make the unreviewed objective credible enough for player-facing weights.
 
+## Source-scoped role-sample seam
+
+`src/sourceScopedRoleSample.ts` evaluates one named member from one
+`character_role` knowledge record against one exact team and one applicable
+template slot. It requires exact source/page lineage, one non-exhaustive and
+unranked evidence member, an explicit same-page inferred binding, acknowledged
+conditions and constellation bounds, and the expected structural binding
+multiplicity. Any mismatch removes the survivor; it never ranks a surviving
+subset.
+
+The Furina wrapper uses the existing roster-domain fixture seam to obtain the
+same 125 eligible stable IDs. That full catalog is transient: the durable report
+keeps only catalog counts and hashes, plus Xilonen and the exact
+Furina/Neuvillette/Kazuha/Xilonen target. It verifies the manual role record's
+observed extraction status through the indexed snapshot. The fresh catalog's
+count, full hash, ID-only hash, and identity count are compared with the
+independently stored checked-in roster-domain report boundary; a same-count
+membership mutation fails that seam. The exact binding has multiplicity two
+because Neuvillette and Kazuha can exchange unrestricted flex slots.
+
+The wrapper separately replays the existing roster-domain core on the full
+Hypercarry template and requires it to remain `withheld-unresolved-role`. The
+one source-scoped member is not installed as a global role resolver. This seam
+therefore supports provenance and structural validation only, not complete role
+membership, team recommendation, gameplay quality, damage, equipment, stats,
+or ER.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -453,6 +480,8 @@ or make the unreviewed objective credible enough for player-facing weights.
   `scripts/guide-factory/src/boundedLatticePolicy.ts`.
 - Full-team non-ER local marginals with fail-closed multi-endpoint ranges:
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
+- One named source-scoped role binding without a global resolver:
+  `scripts/guide-factory/src/sourceScopedRoleSample.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -516,6 +545,10 @@ factory.
   roll exchange. Its objective still has eight readiness blockers and omits
   reaction lines, so it cannot yet produce credible scalar weights or an ideal
   allocation.
+- The repository now has one source-scoped role observation, but one named
+  Xilonen sample cannot define a global healer catalog. Contextual conditions,
+  constellation boundaries, overlaps, and source disagreements need multiple
+  attributed validation targets before role-based roster expansion is safe.
 - The bounded joint experiment intentionally passes no explicit buff
   overrides, although it now records that the computed formula-override map is
   empty in all 48 current cells. A future performance-bearing experiment must

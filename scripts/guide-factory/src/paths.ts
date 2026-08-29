@@ -133,3 +133,8 @@ export const KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH =
     "reports",
     "keqing-ineffa-team-stat-marginal-diagnostic.json"
   );
+export const FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "furina-source-scoped-role-sample.json"
+);

@@ -1,0 +1,236 @@
+{
+  "cautions": [
+    "The one Xilonen observation is non-exhaustive and unranked; it is not a reusable healer catalog.",
+    "The exact target team, template, and role evidence share one KQM page, so this is a same-page extraction and structural-binding check rather than independent gameplay validation.",
+    "The two flex-slot permutations explain the structural multiplicity of two; they are not two distinct recommended teams.",
+    "The broader roster-domain experiment deliberately remains role-withheld because this named observation is not installed as a global role resolver.",
+    "The current 125-ID catalog is checked against the independently stored counts and fingerprints in the checked-in roster-domain report; same-count membership drift does not pass this gate.",
+    "No energy threshold, rotation energy model, damage objective, equipment search, or stat allocation is evaluated here."
+  ],
+  "classification": "furina-source-scoped-role-sample",
+  "comparisonStatus": "comparable",
+  "energyRecoveryInputsUsed": false,
+  "existingRosterDomainBoundary": {
+    "expectedStatus": "withheld-unresolved-role",
+    "namedRoleEvidenceInstalledAsGlobalResolver": false,
+    "observedStatus": "withheld-unresolved-role",
+    "remainsWithheldUnresolvedRole": true,
+    "templateId": "kqm:team-template:furina-team-template-hypercarry-mono"
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "0282b4ac17320ccd4d948c42652654ea784fa4cb2411da3a6ecec248bf653a39"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+      "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+    },
+    {
+      "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
+      "sha256": "0719982cbd6593b8c329acce4d594efe9c109f26ea3ecbcc0c3cd6d1dcc66813"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/catalogs.ts",
+      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+    },
+    {
+      "path": "scripts/guide-factory/src/furinaSourceScopedRoleSample.ts",
+      "sha256": "19033e5f0e44ab0d8ebfa3d860f028856dc468cca7405b46b95be4afd1031f7d"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualSnapshots.ts",
+      "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceScopedRoleSample.ts",
+      "sha256": "ade2007a2ca2e705971d5b232d3f37f3ebd8d8a2a250093a98fb82615120b6ab"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
+      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
+      "sha256": "bc96bd4f9a5abd50c6fe30381e08072b8bb36cdba22c4f500d793eb7d2d32f05"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
+      "sha256": "3b142dbea8b1d45bdafc919cf54a18306f92c4aaa3fbe01c7261ca81c880821b"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    }
+  ],
+  "namedSampleBoundary": {
+    "evidenceCharacterId": "xilonen",
+    "expectedStructuralBindingMultiplicity": 2,
+    "roleRecordId": "kqm:character-role:furina-xilonen-healer-role-luna-ii",
+    "sourceSlotBinding": {
+      "flex-1": "neuvillette",
+      "flex-2": "kaedehara_kazuha",
+      "furina": "furina",
+      "healer": "xilonen"
+    },
+    "sourceSlotBindingBasis": "same-page-inferred-fit",
+    "targetTeamId": "kqm:team:furina-neuvillette-kazuha-xilonen-example",
+    "templateId": "kqm:team-template:furina-team-template-hypercarry-mono"
+  },
+  "prohibitedInterpretations": [
+    "complete-healer-domain",
+    "global-role-resolution",
+    "team-recommendation",
+    "team-ranking",
+    "gameplay-quality",
+    "independent-gameplay-validation",
+    "energy-requirement"
+  ],
+  "releasedCatalogBoundary": {
+    "checkedInRosterReportComparison": {
+      "allChecksMatch": true,
+      "eligibleCatalogHashMatches": true,
+      "eligibleCharacterCountMatches": true,
+      "eligibleCharacterIdsHashMatches": true,
+      "playableIdentityCountMatches": true,
+      "referenceReportComparable": true
+    },
+    "checkedInRosterReportReference": {
+      "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
+      "eligibleCharacterCount": 125,
+      "eligibleCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+      "playableIdentityCount": 119,
+      "reportComparisonStatus": "comparable",
+      "source": "checked-in-team-roster-candidate-domain-report"
+    },
+    "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
+    "eligibleCharacterCount": 125,
+    "eligibleCharacterCountMatchesExpectation": true,
+    "eligibleCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+    "excludedSpecialAvatarFormCount": 14,
+    "excludedSpecialAvatarFormsSha256": "86178627101600f7d50850a7b15707271b96caeee99fc012e8c00283722fb0b1",
+    "expectedEligibleCharacterCount": 125,
+    "fullStableCharacterCount": 139,
+    "playableIdentityCount": 119,
+    "source": "stable-resources",
+    "travelerIdentityPolicy": "all traveler element variants share playableIdentityId=traveler"
+  },
+  "roleSample": {
+    "bindingProvenance": "same-page-inferred-fit",
+    "comparisonStatus": "comparable",
+    "completeDomain": false,
+    "evidencePoolCharacterIds": [
+      "xilonen"
+    ],
+    "issues": [],
+    "reportType": "source-scoped-role-sample",
+    "reviewStatus": "unreviewed",
+    "schemaVersion": 1,
+    "structuralBindingMultiplicity": 2,
+    "supportsGuideClaims": false,
+    "supportsRankClaims": false,
+    "supportsTeamRecommendations": false,
+    "survivor": {
+      "characterId": "xilonen",
+      "roleId": "healer",
+      "slotId": "healer",
+      "sourceLineage": {
+        "pageUrl": "https://keqingmains.com/q/furina-quickguide/",
+        "sourceId": "kqm"
+      },
+      "sourceSlotBinding": {
+        "flex-1": "neuvillette",
+        "flex-2": "kaedehara_kazuha",
+        "furina": "furina",
+        "healer": "xilonen"
+      },
+      "sourceSlotBindingBasis": "same-page-inferred-fit",
+      "structuralBindingMultiplicity": 2,
+      "targetMemberCharacterIds": [
+        "furina",
+        "neuvillette",
+        "kaedehara_kazuha",
+        "xilonen"
+      ],
+      "targetTeamId": "kqm:team:furina-neuvillette-kazuha-xilonen-example",
+      "templateId": "kqm:team-template:furina-team-template-hypercarry-mono"
+    }
+  },
+  "schemaVersion": 1,
+  "sourceExtractionBoundary": {
+    "expectedReviewStatus": "unreviewed",
+    "extractionMethod": "agent-assisted",
+    "matchesExpectedReviewStatus": true,
+    "observedReviewStatus": "unreviewed",
+    "snapshotFile": {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+      "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
+    },
+    "sourceId": "kqm",
+    "sourceRecordId": "furina-xilonen-healer-role-luna-ii"
+  },
+  "supportsGlobalRoleResolution": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsTeamRecommendations": false
+}

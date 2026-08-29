@@ -6,6 +6,21 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `furina-source-scoped-role-sample.json` validates one non-exhaustive,
+  unranked KQM observation that names Xilonen for the healer slot of the Furina
+  Hypercarry / Mono template against the exact same-page Furina, Neuvillette,
+  Kazuha, and Xilonen example. The explicit inferred binding has structural
+  multiplicity two because the flex characters can exchange slots. The wrapper
+  obtains the existing 125-ID guide-eligible stable catalog transiently and
+  stores only counts and hashes plus the named evidence and target. The fresh
+  catalog count, complete-catalog hash, character-ID hash, and identity count
+  must match the independently stored boundary in the checked-in roster-domain
+  report, so same-count membership drift fails. It verifies the manual record's
+  observed `agent-assisted` / `unreviewed` extraction state through the indexed
+  snapshot. The broader roster-domain status remains
+  `withheld-unresolved-role`; this record is not installed as a global healer
+  resolver. The report supports no complete role domain, recommendation,
+  ranking, gameplay validation, damage, equipment, stat, or ER claim.
 - `keqing-ineffa-team-stat-marginal-diagnostic.json` captures four fresh
   carry-derived final sheets for the fixed Aubade/Golden seed node, then runs
   148 full interpreted-and-compiled replay points: one baseline plus nine
@@ -145,6 +160,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all fourteen reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all fifteen reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

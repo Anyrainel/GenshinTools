@@ -182,6 +182,16 @@ roles inside a broader hard slot without narrowing it. Highlights cannot use
 unresolved until a separate reviewed role catalog exists; they are not silently
 mapped from character impressions.
 
+A `character_role` observation may name positive character members for one
+hard role option in one team-template slot from the same manual snapshot. Each
+member may preserve source-stated conditions and optional minimum or maximum
+constellation bounds. Exhaustiveness and ranking claims remain explicit source
+claims; omission from a non-exhaustive or unspecified record is never negative
+evidence, and array order is not a rank when `rankingClaim` is `none` or
+`unordered`. A highlighted role is not a valid scope. These records remain
+candidate, promotion-ineligible evidence and do not form or resolve a global
+role catalog.
+
 ### KQM Diona pilot
 
 The pilot stores five heading-scoped records from one linked guide: weapons,
@@ -193,10 +203,10 @@ mirroring, translation, or image reuse.
 
 ### KQM Furina pilot
 
-The second page stores 13 heading-scoped records: contextual weapons, artifact
+The second page stores 14 heading-scoped records: contextual weapons, artifact
 sets, pre-C2 main stats, post-required-ER offensive substats without an ER
-number, a C6 artifact option, five team templates, and three exact example
-teams.
+number, a C6 artifact option, five team templates, one narrow Xilonen healer
+role observation, and three exact example teams.
 The source's contextual weapon sections are not turned into one global ranking.
 Advice bounded to “before C2” uses `maxConstellation: 1`; the C6 artifact option
 uses `minConstellation: 6`.
@@ -212,6 +222,10 @@ The five templates are non-exhaustive and do not imply that every matching
 composition is source-endorsed or optimal. Exact examples remain separate team
 records. The Vaporize healer, Freeze Escoffier/Anemo, and Electro-Charged
 Anemo callouts are preserved as highlights rather than hard slot constraints.
+The Xilonen observation is scoped only to the Hypercarry & Mono Element
+template's hard healer slot. It is neither a complete nor ranked healer list,
+adds no C0 applicability claim, and does not make that template globally
+role-resolvable.
 All records are unreviewed and promotion-ineligible.
 
 ### KQM Keqing pilot

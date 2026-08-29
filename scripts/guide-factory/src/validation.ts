@@ -58,6 +58,15 @@ type TeamTemplateSlot = Extract<
   { kind: "team_template" }
 >["slots"][number];
 type TeamTemplateSelector = TeamTemplateSlot["options"][number];
+type CharacterRoleMember = Extract<
+  ManualRecord,
+  { kind: "character_role" }
+>["members"][number];
+type ManualCharacterRole = Extract<ManualRecord, { kind: "character_role" }>;
+type KnowledgeCharacterRole = Extract<
+  KnowledgeRecord,
+  { kind: "character_role" }
+>;
 type KnowledgeTeamMember = Extract<
   KnowledgeRecord,
   { kind: "team" }
@@ -273,6 +282,9 @@ export function validateManualObservationSnapshot(
     "source_record.duplicate_id",
     diagnostics
   );
+  const recordsBySourceRecordId = new Map(
+    snapshot.records.map((record) => [record.sourceRecordId, record]),
+  );
 
   for (const [recordIndex, record] of snapshot.records.entries()) {
     const recordPath = `${sourcePath}.records[${recordIndex}]`;
@@ -353,6 +365,23 @@ export function validateManualObservationSnapshot(
           diagnostics
         );
       }
+      continue;
+    }
+
+    if (record.kind === "character_role") {
+      validateCharacterRoleMembers(
+        record.members,
+        `${recordPath}.members`,
+        catalogs,
+        "warning",
+        diagnostics,
+      );
+      validateManualCharacterRoleScope(
+        record,
+        recordPath,
+        recordsBySourceRecordId,
+        diagnostics,
+      );
       continue;
     }
 
@@ -896,6 +925,9 @@ export function validateKnowledgeRepository(
     "knowledge.duplicate_record_id",
     diagnostics
   );
+  const recordsById = new Map(
+    repository.records.map((record) => [record.id, record]),
+  );
 
   const sourceRecordCatalog = buildSourceRecordCatalog(context);
   for (const [recordIndex, record] of repository.records.entries()) {
@@ -906,6 +938,7 @@ export function validateKnowledgeRepository(
       recordPath,
       context.catalogs,
       catalogSeverity,
+      recordsById,
       diagnostics
     );
     validateSourceReferences(
@@ -1009,6 +1042,7 @@ function validateKnowledgeRecord(
   recordPath: string,
   catalogs: GameCatalogs,
   catalogSeverity: ValidationSeverity,
+  recordsById: ReadonlyMap<string, KnowledgeRecord>,
   diagnostics: ValidationDiagnostic[]
 ): void {
   if (record.kind === "team") {
@@ -1089,6 +1123,41 @@ function validateKnowledgeRecord(
       catalogs,
       catalogSeverity,
       diagnostics
+    );
+    return;
+  }
+
+
+  if (record.kind === "character_role") {
+    if (record.status !== "candidate") {
+      diagnostics.push({
+        severity: "error",
+        code: "character_role.invalid_status",
+        path: `${recordPath}.status`,
+        message: "A source-scoped character-role record must remain a candidate.",
+      });
+    }
+    if (record.promotionEligible !== false) {
+      diagnostics.push({
+        severity: "error",
+        code: "character_role.promotion_eligible",
+        path: `${recordPath}.promotionEligible`,
+        message:
+          "A source-scoped character-role record must be explicitly promotion-ineligible.",
+      });
+    }
+    validateCharacterRoleMembers(
+      record.members,
+      `${recordPath}.members`,
+      catalogs,
+      catalogSeverity,
+      diagnostics,
+    );
+    validateKnowledgeCharacterRoleScope(
+      record,
+      recordPath,
+      recordsById,
+      diagnostics,
     );
     return;
   }
@@ -1207,6 +1276,179 @@ function validateArtifactPlans(
         diagnostics
       );
     }
+  }
+}
+
+function validateCharacterRoleMembers(
+  members: readonly CharacterRoleMember[],
+  membersPath: string,
+  catalogs: GameCatalogs,
+  catalogSeverity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[],
+): void {
+  checkDuplicateValues(
+    members.map(({ characterId }) => characterId),
+    membersPath,
+    "character_role.duplicate_member",
+    diagnostics,
+  );
+  for (const [memberIndex, member] of members.entries()) {
+    validateCharacterId(
+      member.characterId,
+      `${membersPath}[${memberIndex}].characterId`,
+      catalogs,
+      catalogSeverity,
+      diagnostics,
+    );
+  }
+}
+
+function validateManualCharacterRoleScope(
+  record: ManualCharacterRole,
+  recordPath: string,
+  recordsBySourceRecordId: ReadonlyMap<string, ManualRecord>,
+  diagnostics: ValidationDiagnostic[],
+): void {
+  const template = recordsBySourceRecordId.get(
+    record.appliesTo.teamTemplateSourceRecordId,
+  );
+  if (!template) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.unknown_team_template",
+      path: `${recordPath}.appliesTo.teamTemplateSourceRecordId`,
+      message: `Unknown same-snapshot team template ${record.appliesTo.teamTemplateSourceRecordId}.`,
+    });
+    return;
+  }
+  if (template.kind !== "team_template") {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.scope_not_team_template",
+      path: `${recordPath}.appliesTo.teamTemplateSourceRecordId`,
+      message: `${record.appliesTo.teamTemplateSourceRecordId} is not a team-template record.`,
+    });
+    return;
+  }
+  validateCharacterRoleSlot(
+    record.roleId,
+    record.appliesTo.slotId,
+    template.slots,
+    recordPath,
+    diagnostics,
+  );
+}
+
+function validateKnowledgeCharacterRoleScope(
+  record: KnowledgeCharacterRole,
+  recordPath: string,
+  recordsById: ReadonlyMap<string, KnowledgeRecord>,
+  diagnostics: ValidationDiagnostic[],
+): void {
+  const template = recordsById.get(record.appliesTo.teamTemplateId);
+  if (!template) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.unknown_team_template",
+      path: `${recordPath}.appliesTo.teamTemplateId`,
+      message: `Unknown team template ${record.appliesTo.teamTemplateId}.`,
+    });
+    return;
+  }
+  if (template.kind !== "team_template") {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.scope_not_team_template",
+      path: `${recordPath}.appliesTo.teamTemplateId`,
+      message: `${record.appliesTo.teamTemplateId} is not a team-template record.`,
+    });
+    return;
+  }
+
+  const roleSourceIds = new Set(
+    record.sourceRefs.map(({ sourceId }) => sourceId),
+  );
+  if (roleSourceIds.size !== 1) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.multiple_source_ids",
+      path: `${recordPath}.sourceRefs`,
+      message:
+        "A source-scoped character-role record must reference exactly one source ID.",
+    });
+  }
+  const templateSourceIds = new Set(
+    template.sourceRefs.map(({ sourceId }) => sourceId),
+  );
+  if (![...roleSourceIds].every((sourceId) => templateSourceIds.has(sourceId))) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.cross_source_team_template",
+      path: `${recordPath}.appliesTo.teamTemplateId`,
+      message:
+        "A character-role record may bind only to a team template from the same source.",
+    });
+  }
+  const templateUrlLineages = new Set(
+    template.sourceRefs.flatMap((reference) =>
+      "url" in reference.locator
+        ? [`${reference.sourceId}\u0000${reference.locator.url}`]
+        : [],
+    ),
+  );
+  const sharesExactPageLineage = record.sourceRefs.some(
+    (reference) =>
+      "url" in reference.locator &&
+      templateUrlLineages.has(
+        `${reference.sourceId}\u0000${reference.locator.url}`,
+      ),
+  );
+  if (!sharesExactPageLineage) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.cross_page_team_template",
+      path: `${recordPath}.appliesTo.teamTemplateId`,
+      message:
+        "A source-scoped character-role record and its team template must share an exact source ID and page URL.",
+    });
+  }
+
+  validateCharacterRoleSlot(
+    record.roleId,
+    record.appliesTo.slotId,
+    template.slots,
+    recordPath,
+    diagnostics,
+  );
+}
+
+function validateCharacterRoleSlot(
+  roleId: string,
+  slotId: string,
+  slots: readonly TeamTemplateSlot[],
+  recordPath: string,
+  diagnostics: ValidationDiagnostic[],
+): void {
+  const slot = slots.find(({ id }) => id === slotId);
+  if (!slot) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.unknown_slot",
+      path: `${recordPath}.appliesTo.slotId`,
+      message: `The scoped team template has no slot ${slotId}.`,
+    });
+    return;
+  }
+  const isHardRole = slot.options.some(
+    (option) => option.type === "roles" && option.roleIds.includes(roleId),
+  );
+  if (!isHardRole) {
+    diagnostics.push({
+      severity: "error",
+      code: "character_role.role_not_in_hard_slot",
+      path: `${recordPath}.roleId`,
+      message: `Role ${roleId} is not a hard role option of slot ${slotId}.`,
+    });
   }
 }
 

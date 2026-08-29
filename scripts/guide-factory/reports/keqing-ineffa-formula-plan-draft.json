@@ -992,7 +992,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
+      "sha256": "0282b4ac17320ccd4d948c42652654ea784fa4cb2411da3a6ecec248bf653a39"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",

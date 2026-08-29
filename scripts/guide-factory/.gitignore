@@ -15,3 +15,4 @@ reports/*
 !reports/keqing-ineffa-bounded-joint-artifact-experiment.json
 !reports/team-roster-candidate-domain-experiment.json
 !reports/keqing-ineffa-team-stat-marginal-diagnostic.json
+!reports/furina-source-scoped-role-sample.json

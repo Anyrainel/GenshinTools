@@ -21,7 +21,7 @@
         },
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
-          "sha256": "a6bd0c5d9ee7d5d19b56ee4bf5caae1c01420bc415dc7ed74cae50cfe66a0977"
+          "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
         },
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
@@ -19933,6 +19933,51 @@
         "refinement assumptions",
         "comparison against other weapons in a specific Hexerei team",
         "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "appliesTo": {
+        "slotId": "healer",
+        "teamTemplateId": "kqm:team-template:furina-team-template-hypercarry-mono"
+      },
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:character-role:furina-xilonen-healer-role-luna-ii",
+      "kind": "character_role",
+      "members": [
+        {
+          "characterId": "xilonen",
+          "conditions": []
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "roleId": "healer",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Notable Teammates > Single-Ally Off-Field Healers",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-xilonen-healer-role-luna-ii"
+        },
+        {
+          "locator": {
+            "heading": "Teams > Hypercarry & Mono Element",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-xilonen-healer-role-luna-ii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "whether Xilonen is suitable with every pair of Hypercarry or Mono Element flex teammates",
+        "healing and Fanfare assumptions for a specific team",
+        "other source-listed healers are intentionally outside this narrow observation",
+        "whether the healer slot is mandatory for self-sustaining on-fielders; the source says the Neuvillette example can function without one",
+        "constellation applicability is not numerically bounded by this observation",
         "agent-assisted extraction has not been human-reviewed"
       ]
     },

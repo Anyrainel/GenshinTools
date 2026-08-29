@@ -275,6 +275,24 @@ weights, later experiments should review the objective and test budget-neutral
 roll exchanges or another legality-preserving local move across multiple
 operating points.
 
+The first source-scoped role sample now preserves one unreviewed KQM
+observation that names Xilonen for the healer slot of Furina's Hypercarry / Mono
+template. It validates that observation only against the exact same-page
+Furina/Neuvillette/Kazuha/Xilonen example and its explicit inferred binding.
+The two unrestricted flex slots yield the expected structural multiplicity of
+two; this is permutation evidence, not two recommendations.
+
+The wrapper reuses the existing 125-ID stable guide-domain catalog only as a
+transient eligibility boundary and retains counts and hashes rather than a
+global role roster. Fresh catalog counts, complete and ID-only hashes, and the
+playable-identity count must match the independently stored boundary in the
+checked-in roster-domain report, including after a same-count membership
+change. The wrapper also independently confirms that the broader Hypercarry
+template remains `withheld-unresolved-role` under the existing roster-domain
+core. The named observation therefore adds a validation target without
+silently becoming a global `healer` selector. More attributed, context-bearing
+role observations are needed before designing a bounded role candidate domain.
+
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input
 revision.

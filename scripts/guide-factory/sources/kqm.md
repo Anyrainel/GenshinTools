@@ -27,6 +27,8 @@ their facts must remain distinguishable.
 
 - `character_guide` for contextual weapons, artifacts, main stats, and substat
   priorities;
+- `character_role` for a narrow positive member observation scoped to one hard
+  role option in one same-page team-template slot;
 - `team_template` for four-slot archetypes that are broader than exact teams;
 - `team` for an explicitly listed four-character example;
 - `energy_guidance` only when the source supplies a concrete target and its
@@ -35,6 +37,19 @@ their facts must remain distinguishable.
 Recommendation ordering, tied groups, conditions, constellation bounds,
 example intent, exhaustiveness, and ranking claims must be stated explicitly.
 Page order is never treated as a ranking by default.
+
+A KQM `character_role` record is not a publisher-wide role catalog. It must
+bind to a role that appears in the target slot's hard `options`, never only in
+`highlightedOptions`. Named members, conditions, optional constellation bounds,
+exhaustiveness, and any ranking claim must come from the located source slice.
+Omitted characters are not negative evidence unless the source explicitly
+claims exhaustiveness, and consolidation must not merge the record into a
+global resolver.
+
+The Furina Luna II sample captures only Xilonen as positive evidence for the
+Hypercarry & Mono Element template's healer slot. It intentionally omits other
+healers, supplies no numeric constellation bound, makes no ranking claim, and
+leaves the template's role selector unresolved for coverage.
 
 When a source binds two or more artifact assignments together, the team may
 store an `artifactPlans` entry. Its assignments remain one coupled conditional

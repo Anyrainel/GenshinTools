@@ -26,7 +26,7 @@ describe("KQM Furina pilot", () => {
     const snapshot = ManualObservationSnapshotSchema.parse(input.snapshot);
 
     expect(snapshot.page).toMatchObject({ sourceVersion: "Luna II" });
-    expect(snapshot.records).toHaveLength(13);
+    expect(snapshot.records).toHaveLength(14);
     expect(
       snapshot.records.some(({ kind }) => kind === "energy_guidance"),
     ).toBe(false);
@@ -69,6 +69,27 @@ describe("KQM Furina pilot", () => {
           exhaustiveness === "non-exhaustive" && rankingClaim === "none",
       ),
     ).toBe(true);
+
+    const healerRole = snapshot.records.find(
+      (record) =>
+        record.kind === "character_role" &&
+        record.sourceRecordId === "furina-xilonen-healer-role-luna-ii",
+    );
+    if (!healerRole || healerRole.kind !== "character_role") {
+      throw new Error("Missing Furina-scoped Xilonen healer observation.");
+    }
+    expect(healerRole).toMatchObject({
+      roleId: "healer",
+      appliesTo: {
+        teamTemplateSourceRecordId: "furina-team-template-hypercarry-mono",
+        slotId: "healer",
+      },
+      exhaustiveness: "non-exhaustive",
+      rankingClaim: "none",
+      members: [{ characterId: "xilonen", conditions: [] }],
+    });
+    expect(healerRole.members[0]).not.toHaveProperty("minConstellation");
+    expect(healerRole.members[0]).not.toHaveProperty("maxConstellation");
 
     const exactTeam = snapshot.records.find(
       (record) =>

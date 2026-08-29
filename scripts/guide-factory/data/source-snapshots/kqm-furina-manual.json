@@ -393,6 +393,44 @@
       ]
     },
     {
+      "kind": "character_role",
+      "sourceRecordId": "furina-xilonen-healer-role-luna-ii",
+      "locator": {
+        "url": "https://keqingmains.com/q/furina-quickguide/",
+        "heading": "Teams > Notable Teammates > Single-Ally Off-Field Healers"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/furina-quickguide/",
+          "heading": "Teams > Hypercarry & Mono Element"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "roleId": "healer",
+      "appliesTo": {
+        "teamTemplateSourceRecordId": "furina-team-template-hypercarry-mono",
+        "slotId": "healer"
+      },
+      "members": [
+        {
+          "characterId": "xilonen",
+          "conditions": []
+        }
+      ],
+      "exhaustiveness": "non-exhaustive",
+      "rankingClaim": "none",
+      "unknowns": [
+        "whether Xilonen is suitable with every pair of Hypercarry or Mono Element flex teammates",
+        "healing and Fanfare assumptions for a specific team",
+        "other source-listed healers are intentionally outside this narrow observation",
+        "whether the healer slot is mandatory for self-sustaining on-fielders; the source says the Neuvillette example can function without one",
+        "constellation applicability is not numerically bounded by this observation"
+      ]
+    },
+    {
       "kind": "team_template",
       "sourceRecordId": "furina-team-template-vaporize",
       "locator": {

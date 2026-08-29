@@ -225,6 +225,42 @@ function consolidateManualRecord(
     };
   }
 
+  if (record.kind === "character_role") {
+    return {
+      id: recordId(
+        snapshot.sourceId,
+        "character-role",
+        record.sourceRecordId
+      ),
+      kind: "character_role",
+      status: "candidate",
+      promotionEligible: false,
+      roleId: record.roleId,
+      appliesTo: {
+        teamTemplateId: recordId(
+          snapshot.sourceId,
+          "team-template",
+          record.appliesTo.teamTemplateSourceRecordId
+        ),
+        slotId: record.appliesTo.slotId,
+      },
+      members: record.members.map((member) => ({
+        characterId: member.characterId,
+        ...(member.minConstellation != null
+          ? { minConstellation: member.minConstellation }
+          : {}),
+        ...(member.maxConstellation != null
+          ? { maxConstellation: member.maxConstellation }
+          : {}),
+        conditions: [...member.conditions],
+      })),
+      exhaustiveness: record.exhaustiveness,
+      rankingClaim: record.rankingClaim,
+      sourceRefs,
+      unknowns,
+    };
+  }
+
   if (record.kind === "team_template") {
     return {
       id: recordId(
@@ -394,6 +430,7 @@ function recordId(
   kind:
     | "team"
     | "team-template"
+    | "character-role"
     | "character-guide"
     | "energy-guidance",
   sourceRecordId: string

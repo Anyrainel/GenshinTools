@@ -1,8 +1,8 @@
 # Consolidated Knowledge Format V1
 
 The consolidated format is a union of exact-team, team-template,
-character-guide, and energy-guidance records. It does not merge assertions
-from different sources.
+character-role, character-guide, and energy-guidance records. It does not merge
+assertions from different sources.
 
 Every record has:
 
@@ -53,7 +53,22 @@ silently narrow an unrestricted slot to the highlighted examples.
 Templates preserve example or prescriptive intent, exhaustiveness, and ranking
 claims. They are not expanded into exact teams during consolidation. Current
 coverage computation can resolve character, element, and unrestricted slots;
-role slots remain unresolved because V1 has no role catalog.
+role slots remain unresolved because V1 has no global role catalog.
+
+## Character-role records
+
+A character-role record preserves positive named members for exactly one hard
+role option in one same-source team-template slot. Members can carry source-
+stated conditions and optional minimum or maximum constellation bounds. The
+record also preserves whether the source claims the list is exhaustive and
+whether it claims an order; absent members are not negative evidence unless a
+future reviewed, explicitly exhaustive record supports that interpretation.
+
+Manual character-role records consolidate one-to-one as candidates with
+`promotionEligible: false`. They are not merged across templates, slots, pages,
+or publishers. Their named members can be inventoried as bounded evidence, but
+they do not resolve role selectors in template coverage or create a reusable
+character-to-role catalog.
 
 ## Character-guide records
 

@@ -290,7 +290,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "550eddb6f3d0914cd95cc368fcecafe70f99917239980b1ece58e061b07cb73f"
+      "sha256": "0282b4ac17320ccd4d948c42652654ea784fa4cb2411da3a6ecec248bf653a39"
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
@@ -346,7 +346,7 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "41f2b65ed9233089918458cc7c9074e0c8e1cbfa1f652b702e8b7c1e972c1a1e"
+      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",

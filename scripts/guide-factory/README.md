@@ -21,8 +21,8 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 13 adds a full-team, multi-operating-point local stat-marginal
-diagnostic after the bounded roster-domain experiment, without claiming a
+Checkpoint 14 adds one source-scoped role observation and a named same-page
+binding test after the full-team stat-marginal diagnostic, without claiming a
 working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
@@ -110,6 +110,14 @@ working guide factory:
     GenshinTools baseline priority-band overlap.
 34. Classify baseline-listed all-zero and some-zero observations as objective-
     coverage or operating-point review cases rather than guide disagreements.
+35. Preserve one non-exhaustive Xilonen-as-healer observation only for the
+    exact KQM Furina Hypercarry slot that sourced it, then validate one named
+    same-page team binding without creating a global healer catalog.
+36. Reuse the existing 125-ID guide-eligible roster seam transiently while
+    retaining only counts, hashes, and named evidence in the durable role
+    report; compare the fresh catalog with the independently checked-in roster-
+    domain fingerprints, and keep the broader Hypercarry template role-
+    withheld.
 
 The first two active sources are already in this repository:
 
@@ -127,7 +135,10 @@ constellation-bounded advice, five team
 templates, three exact example teams, and their published sample rotations. Two
 of those exact teams are Quickbloom examples absent from the current baseline.
 Its contextual weapon record includes Favonius Sword and Serenity's Call rather
-than silently omitting them. Keqing adds one Lunar-Charged template and two
+than silently omitting them. One additional Furina record names Xilonen as a
+non-exhaustive, unranked member of the Hypercarry template's healer slot. It is
+used only for one same-page binding test and is not a global healer catalog.
+Keqing adds one Lunar-Charged template and two
 exact example teams with three published rotation variants. This deliberately
 tests whether a new release can surface changed team options for an old
 character; it does not claim that the examples are optimal. Every record
@@ -179,6 +190,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-keqing-ineffa-bounded-joint-artifacts.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -195,12 +207,13 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all fourteen durable reports in memory: corpus inventory, team
+It also rebuilds all fifteen durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
 the bounded joint artifact experiment, the bounded team-roster candidate
-domain, the full-team stat-marginal diagnostic, Diona comparison, and
-historical ER calibration. Stale evidence cannot pass.
+domain, the full-team stat-marginal diagnostic, the Furina source-scoped role
+sample, Diona comparison, and historical ER calibration. Stale evidence cannot
+pass.
 
 ## Data flow
 
@@ -226,11 +239,12 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 365 unique records: 138
-character guides, 220 exact teams, 6 team templates, and 1 historical energy
-record. Of those, 191 are baseline records and 174 are candidates. KQM
-contributes 35 records, including 10 exact teams with 12 explicit rotation
-entries. The inventory also reports explicit weapon, artifact, main-stat,
+The descriptive corpus inventory currently counts 366 unique records: 138
+character guides, 1 character-role observation, 220 exact teams, 6 team
+templates, and 1 historical energy record. Of those, 191 are baseline records
+and 175 are candidates. KQM contributes 36 records, including 10 exact teams
+and 12 explicit rotation entries. The inventory also reports explicit weapon,
+artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
 not votes or recommendation confidence.
 

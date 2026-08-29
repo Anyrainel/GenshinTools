@@ -493,6 +493,47 @@ export const ManualTeamTemplateRecordSchema = z
   })
   .strict();
 
+export const CharacterRoleMemberSchema = z
+  .object({
+    characterId: IdSchema,
+    minConstellation: z.number().int().min(0).max(6).optional(),
+    maxConstellation: z.number().int().min(0).max(6).optional(),
+    conditions: RecommendationConditionsSchema,
+  })
+  .strict()
+  .refine(
+    (member) =>
+      member.minConstellation == null ||
+      member.maxConstellation == null ||
+      member.maxConstellation >= member.minConstellation,
+    {
+      message:
+        "Maximum constellation must not be lower than minimum constellation.",
+      path: ["maxConstellation"],
+    },
+  );
+
+export const ManualCharacterRoleRecordSchema = z
+  .object({
+    kind: z.literal("character_role"),
+    sourceRecordId: IdSchema,
+    locator: SourceLocatorSchema,
+    supportingLocators: z.array(SourceLocatorSchema).default([]),
+    extraction: ManualExtractionSchema,
+    roleId: IdSchema,
+    appliesTo: z
+      .object({
+        teamTemplateSourceRecordId: IdSchema,
+        slotId: IdSchema,
+      })
+      .strict(),
+    members: z.array(CharacterRoleMemberSchema).min(1),
+    exhaustiveness: z.enum(["non-exhaustive", "exhaustive", "unspecified"]),
+    rankingClaim: z.enum(["none", "ordered", "unordered"]),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
 const ManualEnergyGuidanceRecordSchema = z
   .object({
     kind: z.literal("energy_guidance"),
@@ -516,6 +557,7 @@ const ManualEnergyGuidanceRecordSchema = z
 
 export const ManualObservationRecordSchema = z.discriminatedUnion("kind", [
   ManualCharacterGuideRecordSchema,
+  ManualCharacterRoleRecordSchema,
   ManualTeamRecordSchema,
   ManualTeamTemplateRecordSchema,
   ManualEnergyGuidanceRecordSchema,
@@ -739,6 +781,27 @@ export const KnowledgeTeamTemplateSchema = z
   })
   .strict();
 
+export const KnowledgeCharacterRoleSchema = z
+  .object({
+    id: IdSchema,
+    kind: z.literal("character_role"),
+    status: KnowledgeStatusSchema,
+    promotionEligible: z.boolean().optional(),
+    roleId: IdSchema,
+    appliesTo: z
+      .object({
+        teamTemplateId: IdSchema,
+        slotId: IdSchema,
+      })
+      .strict(),
+    members: z.array(CharacterRoleMemberSchema).min(1),
+    exhaustiveness: z.enum(["non-exhaustive", "exhaustive", "unspecified"]),
+    rankingClaim: z.enum(["none", "ordered", "unordered"]),
+    sourceRefs: z.array(SourceReferenceSchema).min(1),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
 export const KnowledgeEnergyGuidanceSchema = z
   .object({
     id: IdSchema,
@@ -778,6 +841,7 @@ export const KnowledgeCharacterGuideSchema = z
 export const KnowledgeRecordSchema = z.discriminatedUnion("kind", [
   KnowledgeTeamSchema,
   KnowledgeTeamTemplateSchema,
+  KnowledgeCharacterRoleSchema,
   KnowledgeCharacterGuideSchema,
   KnowledgeEnergyGuidanceSchema,
 ]);

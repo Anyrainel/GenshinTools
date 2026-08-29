@@ -23,6 +23,10 @@ import {
   FURINA_NEUVILLETTE_FORMULA_DRAFT_INPUT_PATHS,
 } from "./furinaNeuvilletteFormulaDraft";
 import {
+  FURINA_SOURCE_SCOPED_ROLE_SAMPLE_INPUT_PATHS,
+  runFurinaSourceScopedRoleSample,
+} from "./furinaSourceScopedRoleSample";
+import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
@@ -65,6 +69,7 @@ import {
   DIONA_COMPARISON_REPORT_PATH,
   DIONA_ER_CALIBRATION_REPORT_PATH,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
+  FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH,
   GENSHINTOOLS_SNAPSHOT_PATH,
   KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_REPORT_PATH,
   KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_REPORT_PATH,
@@ -138,6 +143,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaBoundedJointArtifactExperimentInput,
     teamRosterCandidateDomainExperimentInput,
     keqingIneffaTeamStatMarginalDiagnosticInput,
+    furinaSourceScopedRoleSampleInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -165,6 +171,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH),
       readJson(KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH),
+      readJson(FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -536,6 +543,28 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-team-stat-marginal-diagnostic",
           message:
             "The saved Keqing-Ineffa team-stat marginal diagnostic does not match the fixed generator endpoint domain, non-ER marginal domain, unreviewed technical objective, and GenshinTools baseline priority-band overlap.",
+        });
+      }
+
+      const furinaSourceScopedRoleSampleGeneratedFrom =
+        await hashRelativePaths(FURINA_SOURCE_SCOPED_ROLE_SAMPLE_INPUT_PATHS);
+      const expectedFurinaSourceScopedRoleSample =
+        await runFurinaSourceScopedRoleSample(
+          expectedKnowledge,
+          manualInputs,
+          teamRosterCandidateDomainExperimentInput,
+          furinaSourceScopedRoleSampleGeneratedFrom,
+        );
+      if (
+        stableJson(expectedFurinaSourceScopedRoleSample) !==
+        stableJson(furinaSourceScopedRoleSampleInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_furina_source_scoped_role_sample",
+          path: "reports.furina-source-scoped-role-sample",
+          message:
+            "The saved Furina source-scoped role sample does not match the indexed extraction status, exact same-page role/template/team records, stable eligible-character boundary, and role-withheld roster-domain status.",
         });
       }
 

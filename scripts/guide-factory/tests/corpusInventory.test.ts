@@ -16,6 +16,7 @@ import {
 import {
   KnowledgeRepositorySchema,
   SourceRegistrySchema,
+  type KnowledgeRecord,
   type KnowledgeRepository,
   type SourceRegistry,
 } from "../src/schemas";
@@ -176,6 +177,61 @@ describe("knowledge corpus inventory", () => {
     expect(report.characters.map(({ characterId }) => characterId)).toEqual(
       [...new Set(explicitIds)].sort(),
     );
+  });
+
+  it("inventories named role members without counting them as build evidence", async () => {
+    const { repository, registry } = await loadInputs();
+    const role: Extract<KnowledgeRecord, { kind: "character_role" }> = {
+      id: "kqm:character-role:synthetic-xilonen-healer",
+      kind: "character_role",
+      status: "candidate",
+      promotionEligible: false,
+      roleId: "healer",
+      appliesTo: {
+        teamTemplateId:
+          "kqm:team-template:furina-team-template-hypercarry-mono",
+        slotId: "healer",
+      },
+      members: [{ characterId: "xilonen", conditions: [] }],
+      exhaustiveness: "non-exhaustive",
+      rankingClaim: "none",
+      sourceRefs: [
+        {
+          sourceId: "kqm",
+          sourceRecordId: "synthetic-xilonen-healer",
+          locator: {
+            url: "https://keqingmains.com/q/furina-quickguide/",
+            heading: "Teams > Notable Teammates",
+          },
+        },
+      ],
+      unknowns: [],
+    };
+    const roleOnlyRepository: KnowledgeRepository = {
+      ...repository,
+      generatedFrom: repository.generatedFrom.filter(
+        ({ sourceId }) => sourceId === "kqm",
+      ),
+      records: [role],
+    };
+    const report = buildKnowledgeCorpusInventoryReport(
+      roleOnlyRepository,
+      registry,
+      [],
+    );
+
+    expect(report.totals).toMatchObject({
+      records: 1,
+      byKind: { character_role: 1 },
+      evidence: emptyEvidence(),
+    });
+    expect(report.characters).toEqual([
+      expect.objectContaining({
+        characterId: "xilonen",
+        presence: "external-only",
+        externalEditorial: { recordCount: 1, sourceIds: ["kqm"] },
+      }),
+    ]);
   });
 
   it("counts coupled artifact-plan assignments as explicit artifact evidence", async () => {

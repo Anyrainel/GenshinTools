@@ -17,6 +17,10 @@ import {
 
 const SHA256 = "0".repeat(64);
 const PACKAGE_PATH = "package.json";
+type ManualCharacterRoleRecord = Extract<
+  ManualObservationSnapshot["records"][number],
+  { kind: "character_role" }
+>;
 
 describe("guide-factory team templates", () => {
   it("models four slots with explicit alternative selector types", () => {
@@ -244,6 +248,303 @@ describe("guide-factory team templates", () => {
       "team_template.redundant_any_selector"
     );
   });
+
+  it("consolidates one source-scoped role observation without resolving the template globally", async () => {
+    const fileSha256 = await sha256File(`${REPOSITORY_ROOT}/${PACKAGE_PATH}`);
+    const snapshot = manualSnapshot();
+    const sourceRole = manualCharacterRoleRecord();
+    snapshot.records.push(sourceRole);
+
+    expect(
+      validateManualObservationSnapshot(
+        snapshot,
+        await loadGameCatalogs(),
+        "kqm",
+      ),
+    ).toEqual([]);
+
+    const repository = consolidateKnowledge({
+      sourceRegistrySha256: SHA256,
+      sourceRegistry: sourceRegistry(),
+      genshinTools: emptyGenshinToolsSnapshot(fileSha256),
+      legacy: emptyLegacySnapshot(fileSha256),
+      manualSnapshots: [
+        {
+          expectedSourceId: "kqm",
+          snapshot,
+          snapshotFile: { path: PACKAGE_PATH, sha256: fileSha256 },
+        },
+      ],
+    });
+    const role = repository.records.find(
+      (record) => record.kind === "character_role",
+    );
+    expect(role).toMatchObject({
+      id: "kqm:character-role:furina-xilonen-healer-role",
+      kind: "character_role",
+      status: "candidate",
+      promotionEligible: false,
+      roleId: "team-wide-healer",
+      appliesTo: {
+        teamTemplateId: "kqm:team-template:furina-hypercarry-template",
+        slotId: "healer",
+      },
+      members: [{ characterId: "xilonen", conditions: [] }],
+      exhaustiveness: "non-exhaustive",
+      rankingClaim: "none",
+      unknowns: [
+        "other source-listed healers were not captured",
+        "agent-assisted extraction has not been human-reviewed",
+      ],
+    });
+    if (!role || role.kind !== "character_role") {
+      throw new Error("Expected a consolidated character-role record");
+    }
+    expect(role.members).not.toBe(sourceRole.members);
+    expect(role.members[0]?.conditions).not.toBe(
+      sourceRole.members[0]?.conditions,
+    );
+
+    expect(
+      validateKnowledgeRepository(repository, {
+        catalogs: await loadGameCatalogs(),
+        sourceRegistry: sourceRegistry(),
+        genshinToolsSnapshot: emptyGenshinToolsSnapshot(fileSha256),
+        legacySnapshot: emptyLegacySnapshot(fileSha256),
+        manualSnapshots: [snapshot],
+      }),
+    ).toEqual([]);
+  });
+
+  it("validates role member bounds, uniqueness, and catalog membership", async () => {
+    const invalidBounds = manualSnapshot();
+    const boundedRole = manualCharacterRoleRecord();
+    boundedRole.members[0] = {
+      characterId: "xilonen",
+      minConstellation: 2,
+      maxConstellation: 1,
+      conditions: [],
+    };
+    invalidBounds.records.push(boundedRole);
+    expect(
+      ManualObservationSnapshotSchema.safeParse(invalidBounds).success,
+    ).toBe(false);
+
+    const explicitClaims = manualSnapshot();
+    explicitClaims.records.push({
+      ...manualCharacterRoleRecord(),
+      exhaustiveness: "exhaustive",
+      rankingClaim: "ordered",
+    });
+    expect(
+      ManualObservationSnapshotSchema.safeParse(explicitClaims).success,
+    ).toBe(true);
+
+    const invalidMembers = manualSnapshot();
+    const role = manualCharacterRoleRecord();
+    role.members.push(
+      structuredClone(role.members[0]),
+      { characterId: "unknown-character", conditions: [] },
+    );
+    invalidMembers.records.push(role);
+    const diagnostics = validateManualObservationSnapshot(
+      invalidMembers,
+      await loadGameCatalogs(),
+      "kqm",
+    );
+    expect(diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          severity: "error",
+          code: "character_role.duplicate_member",
+        }),
+        expect.objectContaining({
+          severity: "warning",
+          code: "catalog.unknown_character",
+        }),
+      ]),
+    );
+  });
+
+  it("requires the scoped role to be a hard option rather than a highlight", async () => {
+    const snapshot = manualSnapshot();
+    const role = manualCharacterRoleRecord();
+    role.roleId = "sustain";
+    role.appliesTo.slotId = "flex";
+    snapshot.records.push(role);
+
+    const diagnostics = validateManualObservationSnapshot(
+      snapshot,
+      await loadGameCatalogs(),
+      "kqm",
+    );
+    expect(diagnostics.map(({ code }) => code)).toContain(
+      "character_role.role_not_in_hard_slot",
+    );
+  });
+
+  it("rejects a role scope whose same-snapshot template target is missing", async () => {
+    const snapshot = manualSnapshot();
+    const role = manualCharacterRoleRecord();
+    role.appliesTo.teamTemplateSourceRecordId = "missing-template";
+    snapshot.records.push(role);
+
+    const diagnostics = validateManualObservationSnapshot(
+      snapshot,
+      await loadGameCatalogs(),
+      "kqm",
+    );
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        severity: "error",
+        code: "character_role.unknown_team_template",
+        path: expect.stringContaining(
+          ".appliesTo.teamTemplateSourceRecordId",
+        ),
+      }),
+    );
+  });
+
+  it("rejects a role scope whose target record is not a template", async () => {
+    const snapshot = manualSnapshot();
+    const role = manualCharacterRoleRecord();
+    role.appliesTo.teamTemplateSourceRecordId = role.sourceRecordId;
+    snapshot.records.push(role);
+
+    const diagnostics = validateManualObservationSnapshot(
+      snapshot,
+      await loadGameCatalogs(),
+      "kqm",
+    );
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        severity: "error",
+        code: "character_role.scope_not_team_template",
+        path: expect.stringContaining(
+          ".appliesTo.teamTemplateSourceRecordId",
+        ),
+      }),
+    );
+  });
+
+  it("rejects a role scope whose template slot is unknown", async () => {
+    const snapshot = manualSnapshot();
+    const role = manualCharacterRoleRecord();
+    role.appliesTo.slotId = "missing-slot";
+    snapshot.records.push(role);
+
+    const diagnostics = validateManualObservationSnapshot(
+      snapshot,
+      await loadGameCatalogs(),
+      "kqm",
+    );
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        severity: "error",
+        code: "character_role.unknown_slot",
+        path: expect.stringContaining(".appliesTo.slotId"),
+      }),
+    );
+  });
+
+  it("rejects a consolidated role binding to a template from another source", async () => {
+    const { fileSha256, repository, snapshot } =
+      await consolidatedRoleFixture();
+    const template = repository.records.find(
+      (record) => record.kind === "team_template",
+    );
+    if (!template || template.kind !== "team_template") {
+      throw new Error("Expected a consolidated team-template record");
+    }
+    template.sourceRefs = template.sourceRefs.map((reference) => ({
+      ...reference,
+      sourceId: "legacy-team-research",
+    }));
+
+    const diagnostics = validateKnowledgeRepository(repository, {
+      catalogs: await loadGameCatalogs(),
+      sourceRegistry: sourceRegistry(),
+      genshinToolsSnapshot: emptyGenshinToolsSnapshot(fileSha256),
+      legacySnapshot: emptyLegacySnapshot(fileSha256),
+      manualSnapshots: [snapshot],
+    });
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        severity: "error",
+        code: "character_role.cross_source_team_template",
+        path: expect.stringContaining(".appliesTo.teamTemplateId"),
+      }),
+    );
+  });
+
+  it("rejects a consolidated role binding to a same-source template from another page", async () => {
+    const { fileSha256, repository, snapshot } =
+      await consolidatedRoleFixture();
+    const template = repository.records.find(
+      (record) => record.kind === "team_template",
+    );
+    if (!template || template.kind !== "team_template") {
+      throw new Error("Expected a consolidated team-template record");
+    }
+    template.sourceRefs = template.sourceRefs.map((reference) => ({
+      ...reference,
+      locator:
+        "url" in reference.locator
+          ? {
+              ...reference.locator,
+              url: "https://example.com/different-page",
+            }
+          : reference.locator,
+    }));
+
+    const diagnostics = validateKnowledgeRepository(repository, {
+      catalogs: await loadGameCatalogs(),
+      sourceRegistry: sourceRegistry(),
+      genshinToolsSnapshot: emptyGenshinToolsSnapshot(fileSha256),
+      legacySnapshot: emptyLegacySnapshot(fileSha256),
+      manualSnapshots: [snapshot],
+    });
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        severity: "error",
+        code: "character_role.cross_page_team_template",
+        path: expect.stringContaining(".appliesTo.teamTemplateId"),
+      }),
+    );
+  });
+
+  it("keeps consolidated role evidence candidate and promotion-ineligible", async () => {
+    const { fileSha256, repository, snapshot } =
+      await consolidatedRoleFixture();
+    const role = repository.records.find(
+      (record) => record.kind === "character_role",
+    );
+    if (!role || role.kind !== "character_role") {
+      throw new Error("Expected a consolidated character-role record");
+    }
+    role.status = "accepted";
+    role.promotionEligible = true;
+
+    const diagnostics = validateKnowledgeRepository(repository, {
+      catalogs: await loadGameCatalogs(),
+      sourceRegistry: sourceRegistry(),
+      genshinToolsSnapshot: emptyGenshinToolsSnapshot(fileSha256),
+      legacySnapshot: emptyLegacySnapshot(fileSha256),
+      manualSnapshots: [snapshot],
+    });
+    expect(diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          severity: "error",
+          code: "character_role.invalid_status",
+        }),
+        expect.objectContaining({
+          severity: "error",
+          code: "character_role.promotion_eligible",
+        }),
+      ]),
+    );
+  });
 });
 
 function manualSnapshot(): ManualObservationSnapshot {
@@ -308,6 +609,51 @@ function manualSnapshot(): ManualObservationSnapshot {
       },
     ],
   });
+}
+
+function manualCharacterRoleRecord(): ManualCharacterRoleRecord {
+  return {
+    kind: "character_role",
+    sourceRecordId: "furina-xilonen-healer-role",
+    locator: {
+      url: "https://example.com/furina",
+      heading: "Notable teammates > Xilonen",
+    },
+    supportingLocators: [],
+    extraction: {
+      method: "agent-assisted",
+      reviewStatus: "unreviewed",
+    },
+    roleId: "team-wide-healer",
+    appliesTo: {
+      teamTemplateSourceRecordId: "furina-hypercarry-template",
+      slotId: "healer",
+    },
+    members: [{ characterId: "xilonen", conditions: [] }],
+    exhaustiveness: "non-exhaustive",
+    rankingClaim: "none",
+    unknowns: ["other source-listed healers were not captured"],
+  };
+}
+
+async function consolidatedRoleFixture() {
+  const fileSha256 = await sha256File(`${REPOSITORY_ROOT}/${PACKAGE_PATH}`);
+  const snapshot = manualSnapshot();
+  snapshot.records.push(manualCharacterRoleRecord());
+  const repository = consolidateKnowledge({
+    sourceRegistrySha256: SHA256,
+    sourceRegistry: sourceRegistry(),
+    genshinTools: emptyGenshinToolsSnapshot(fileSha256),
+    legacy: emptyLegacySnapshot(fileSha256),
+    manualSnapshots: [
+      {
+        expectedSourceId: "kqm",
+        snapshot,
+        snapshotFile: { path: PACKAGE_PATH, sha256: fileSha256 },
+      },
+    ],
+  });
+  return { fileSha256, repository, snapshot };
 }
 
 function emptyGenshinToolsSnapshot(sha256: string) {

@@ -12,6 +12,7 @@ export const KNOWLEDGE_CORPUS_INVENTORY_INPUT_PATHS = [
 
 const RECORD_KINDS = [
   "character_guide",
+  "character_role",
   "energy_guidance",
   "team",
   "team_template",
@@ -204,7 +205,7 @@ export function buildKnowledgeCorpusInventoryReport(
       rotations:
         "Exact-team rotation counts include only explicit RotationObservation entries attached to team records; unresolved segments are still explicit stored observations and are not treated as complete or optimal rotations.",
       characterPresence:
-        "Character presence is derived only from character-guide subjects, exact-team members, and explicit character selectors in team templates. Element, role, and any selectors are not expanded.",
+        "Character presence is derived only from character-guide subjects, exact-team members, explicit character selectors in team templates, and named members in source-scoped character-role records. Element, role, and any selectors are not expanded.",
       externalEditorial:
         "External editorial presence means an attributed source whose registry kind is editorial or structured-editorial. Baseline presence means record status baseline; other records are reported separately.",
       erExclusion:
@@ -234,6 +235,7 @@ function emptyRecordCounts(): CorpusInventoryRecordCounts {
     records: 0,
     byKind: {
       character_guide: 0,
+      character_role: 0,
       energy_guidance: 0,
       team: 0,
       team_template: 0,
@@ -303,6 +305,7 @@ function addRecord(
 
 function observeEvidence(record: KnowledgeRecord): EvidenceObservation {
   if (record.kind === "energy_guidance") return emptyEvidenceObservation();
+  if (record.kind === "character_role") return emptyEvidenceObservation();
   if (record.kind === "team_template") {
     return {
       ...emptyEvidenceObservation(),
@@ -470,6 +473,11 @@ function addCharacterPresence(
 
 function explicitCharacterIds(record: KnowledgeRecord): string[] {
   if (record.kind === "character_guide") return [record.characterId];
+  if (record.kind === "character_role") {
+    return sorted(
+      new Set(record.members.map(({ characterId }) => characterId)),
+    );
+  }
   if (record.kind === "team") {
     return sorted(new Set(record.members.map(({ characterId }) => characterId)));
   }
