@@ -5,4 +5,5 @@ reports/*
 !reports/kqm-diona-er-calibration.json
 !reports/team-template-coverage.json
 !reports/furina-neuvillette-formula-plan-draft.json
+!reports/keqing-ineffa-formula-plan-draft.json
 !reports/knowledge-corpus-inventory.json

@@ -23,6 +23,17 @@ Current durable pilot evidence:
   the baseline. It also translates KQM's sample rotation, reports five
   token-supported count mismatches, and preserves six unresolved mappings. Its
   status is `needs-domain-review`; it does not support guide claims.
+- `keqing-ineffa-formula-plan-draft.json` materializes an external exact team
+  with explicit baseline weapon/build selections, then exposes 13 positive and
+  5 zero-count calculator defaults. Its source translation contains 11 exact
+  claims, 10 complete mappings, 1 partial mapping, and no ranges. Furina's
+  footnote relocates one exact Skill cast rather than making it optional. Its
+  readiness ledger classifies all 18 formulas as 11 mapped, 5 unresolved, 2
+  source-absent, and 0 unclassified; 8 blockers leave the report not considered
+  ready for damage replay. The assessment is advisory and is not enforced by
+  `replayTeamDamage`. It is a fixture rather than an equipment recommendation
+  or full rotation damage result. Its status is `needs-domain-review`; it does
+  not support guide claims or authorize a replay.
 
 - `kqm-diona-comparison.json` compares nine source assertions with exact
   baseline fields and deliberately emits no aggregate winner or merged order.
@@ -31,6 +42,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all five reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all six reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

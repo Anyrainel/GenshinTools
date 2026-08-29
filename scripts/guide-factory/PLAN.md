@@ -93,9 +93,37 @@ baseline. Its source sample rotation is now translated into action counts
 and compared with the calculator's 12 positive and 6 zero-count defaults under
 explicit level-90, C0, R1, 10/10/10 assumptions. The comparison finds five
 token-supported count mismatches and retains six unresolved formula mappings.
-Neither the mapping nor either count plan is accepted yet. The next computation
-step is to review or correct this translation, then add an authored
-artifact-stat sheet and reproduce the selected loadout.
+Neither the mapping nor either count plan is accepted yet.
+
+The next checkpoint now materializes a second fixture from two independent
+knowledge layers: the external exact Keqing/Ineffa/Furina/Xilonen roster and
+one explicit baseline character-guide weapon/build selection per member. The
+materializer validates exact member/guide association, baseline or accepted
+guide status, weapon presence and unique order position, build presence, and
+refusal to overwrite source equipment. It does not itself validate weapon-type
+compatibility or team suitability. It emits a reproducible scenario; it does
+not recommend the equipment or copy stat sheets, refinements, or ER targets.
+The resulting draft exposes 13 positive and 5 zero-count defaults. Translating
+the source rotation produced 11 exact claims, 10 complete mappings, and one
+partial mapping because Keqing's eight N1 hits have no C0 formula. Furina's
+Skill count is exactly one: the footnote relocates it beside her Burst rather
+than making it optional. The generic comparator supports ranges only for a
+genuinely optional source count; this translation has zero ranges.
+
+The advisory readiness assessment accounts for all 18 available formulas: 11
+mapped, 5 unresolved, 2 source-absent, and none unclassified. Ten of 13 positive
+defaults are mapped and 3 remain unresolved. Eight blockers—the unreviewed
+translation, one partial mapping, five unresolved formula mappings, and one
+unresolved source token—mean the report is not considered ready for damage
+replay. The assessment is advisory: `replayTeamDamage` does not consume or
+enforce it, and this checkpoint does not produce or authorize a replay. An
+enforced wrapper is future work if it becomes useful. This is concrete evidence that a scalar
+formula count alone was too weak, so the comparator also preserves partial-token
+coverage and a complete formula-classification ledger.
+
+The next computation step is to review or correct both source translations,
+then add an authored artifact-stat sheet and reproduce one selected loadout.
+Neither fixture yet supports full rotation damage or equipment suitability.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input
@@ -136,6 +164,9 @@ Current owner-review target:
   and Swirl formulas?
 - Should the first artifact allocation fixture use C0/R1, or another investment
   level that is more representative for validating the pipeline?
+- For the Keqing/Ineffa fixture, how should the eight unsupported N1 hits, the
+  10-discharge Ineffa aggregate, Furina's 32-hit Salon aggregate, and the three
+  Lunar-Charged ownership/count mappings be represented?
 
 Deferred ER questions remain recorded in `CHECKPOINT-2.md`; they are not on the
 critical path for the current repository and damage-plan work.

@@ -24,6 +24,10 @@ import {
 } from "./importers";
 import { readJson, sha256File, stableJson } from "./io";
 import {
+  buildKeqingIneffaFormulaDraftReport,
+  KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS,
+} from "./keqingIneffaFormulaDraft";
+import {
   loadManualSnapshotInputs,
   requiredManualSnapshotInputContaining,
   type ManualSnapshotInput,
@@ -33,6 +37,7 @@ import {
   DIONA_ER_CALIBRATION_REPORT_PATH,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
   GENSHINTOOLS_SNAPSHOT_PATH,
+  KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
   LEGACY_SNAPSHOT_PATH,
@@ -83,6 +88,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     erCalibrationInput,
     teamTemplateCoverageInput,
     furinaNeuvilletteFormulaDraftInput,
+    keqingIneffaFormulaDraftInput,
     knowledgeCorpusInventoryInput,
   ] =
     await Promise.all([
@@ -95,6 +101,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(DIONA_ER_CALIBRATION_REPORT_PATH),
       readJson(TEAM_TEMPLATE_COVERAGE_REPORT_PATH),
       readJson(FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH),
+      readJson(KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH),
       readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
     ]);
 
@@ -273,6 +280,27 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.furina-neuvillette-formula-plan-draft",
           message:
             "The saved Furina-Neuvillette formula-plan draft does not match current knowledge and calculator defaults.",
+        });
+      }
+
+      const keqingIneffaFormulaDraftGeneratedFrom = await hashRelativePaths(
+        KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS
+      );
+      const expectedKeqingIneffaFormulaDraft =
+        await buildKeqingIneffaFormulaDraftReport(
+          expectedKnowledge,
+          keqingIneffaFormulaDraftGeneratedFrom
+        );
+      if (
+        stableJson(expectedKeqingIneffaFormulaDraft) !==
+        stableJson(keqingIneffaFormulaDraftInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_formula_plan_draft",
+          path: "reports.keqing-ineffa-formula-plan-draft",
+          message:
+            "The saved Keqing-Ineffa formula-plan draft does not match current knowledge, equipment evidence, and calculator defaults.",
         });
       }
 

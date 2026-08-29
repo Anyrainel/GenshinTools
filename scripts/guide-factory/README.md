@@ -21,8 +21,8 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 3 grows the external validation corpus and adds non-ER coverage and
-formula-count experiments without claiming a working guide factory:
+Checkpoint 4 composes source and baseline knowledge into a second non-ER
+formula-count experiment without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -36,6 +36,11 @@ formula-count experiments without claiming a working guide factory:
    preserving mismatches and unresolved mappings instead of choosing a winner.
 8. Inventory explicit evidence coverage across the whole corpus without turning
    record counts into a quality score.
+9. Materialize one explicit baseline build per member of an external exact team
+   as a reproducible calculator fixture, not an equipment recommendation.
+10. Compare source rotations using exact counts, genuinely source-optional
+    ranges, and explicit partial token coverage when one source action has no
+    calculator formula.
 
 The first two active sources are already in this repository:
 
@@ -78,6 +83,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/compare-diona.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-team-template-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-keqing-ineffa-formula-plan.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -94,9 +100,9 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds the durable corpus inventory, team coverage, formula-count
-comparison, Diona comparison, and historical ER calibration reports in memory
-so stale evidence cannot pass.
+It also rebuilds all six durable reports in memory: corpus inventory, team
+coverage, two formula-count comparisons, Diona comparison, and historical ER
+calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -165,6 +171,36 @@ Spiritbreath proc count, and Kazuha's absorbed plunge, absorbed Burst, and Swirl
 counts remain six explicit unmapped cases. The translation is unreviewed and
 supports no guide claim, but it is now a useful falsification target rather
 than an unexamined default.
+
+The uncovered Keqing/Ineffa/Furina/Xilonen source team now provides a second
+falsification target. A source-backed scenario materializer pairs that exact
+external roster with one explicit baseline build per member: Mistsplitter
+Reforged plus 4pc Thundering Fury for Keqing, Fractured Halo plus 4pc Aubade of
+Morningstar and Moon for Ineffa, Splendor of Tranquil Waters plus 4pc Golden
+Troupe for Furina, and Peak Patrol Song plus 4pc Scroll of the Hero of Cinder
+City for Xilonen. This is only fixture provenance. It does not establish that
+the equipment suits the source team, and it copies no stat sheet, refinement,
+or ER target.
+
+Under explicit level 90, C0, R1, 10/10/10 and calculator-default combat
+options, the resulting report exposes 13 positive and 5 zero-count available
+defaults. Its source translation makes 11 exact count claims: 10 complete
+mappings and one partial mapping. Furina's Skill count is exactly one because
+the source footnote relocates that cast beside her Burst on subsequent
+rotations; it does not make the cast optional. Six direct counts disagree with
+defaults, five available formulas remain unresolved, and one source token has
+no formula. Keqing's eight N1 hits have no C0 formula, so the Charged Attack
+mapping covers only part of `8[N1C]`.
+
+The readiness ledger classifies all 18 available formulas as 11 mapped, 5
+unresolved, 2 source-absent, and 0 unclassified. Of 13 positive defaults, 10
+are mapped and 3 unresolved. Eight blockers—unreviewed status, one partial
+mapping, five unresolved formulas, and one unresolved source token—leave the
+report not considered ready for a damage replay. This advisory flag is not
+enforced by `replayTeamDamage`; the checkpoint does not produce or authorize a
+replay. An enforced wrapper can be added later if useful. The experiment
+demonstrated that scalar formula counts alone were inadequate; it did not
+compute full rotation damage or validate the selected equipment.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

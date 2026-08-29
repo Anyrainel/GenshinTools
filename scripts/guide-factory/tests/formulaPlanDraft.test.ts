@@ -3,10 +3,12 @@ import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { describe, expect, it } from "vitest";
 import { bootstrapGuideFactoryComputation } from "../src/computationReplay";
 import {
+  compareSourceFormulaCountClaims,
   compareSourceTranslatedFormulaPlan,
   draftCalculatorDefaultFormulaPlan,
   type FormulaPlanCharacterAssumption,
   type FormulaPlanDraftOutput,
+  type SourceFormulaCountClaimLine,
 } from "../src/formulaPlanDraft";
 import { readJson, stableJson } from "../src/io";
 import { KNOWLEDGE_REPOSITORY_PATH } from "../src/paths";
@@ -197,6 +199,124 @@ describe("source-translated formula-plan comparison", () => {
         },
       ]),
     ).toThrow("count must be positive and finite");
+  });
+});
+
+describe("source formula count-claim comparison", () => {
+  const draft: FormulaPlanDraftOutput = {
+    schemaVersion: 1,
+    classification: "calculator-default-draft",
+    supportsGuideClaims: false,
+    sourceTeamRecordId: "source:team:test",
+    assumptions: { combatOptions: "calculator-defaults", characters: [] },
+    cautions: ["test fixture"],
+    lines: [
+      { characterId: "a", formulaId: "a-skill", count: 2 },
+      { characterId: "b", formulaId: "b-burst", count: 1 },
+    ],
+    zeroCountAvailableFormulas: [
+      { characterId: "a", formulaId: "a-burst" },
+    ],
+  };
+
+  it("preserves exact, range, and partial-token claims without tuning them", () => {
+    const result = compareSourceFormulaCountClaims(draft, [
+      {
+        characterId: "b",
+        formulaId: "b-burst",
+        countClaim: { type: "exact", value: 1 },
+        sourceTokenCoverage: "complete",
+        mappingBasis: "one source Q",
+      },
+      {
+        characterId: "a",
+        formulaId: "a-skill",
+        countClaim: { type: "range", minimum: 1, maximum: 3 },
+        sourceTokenCoverage: "partial",
+        mappingBasis: "one required and up to two optional source actions",
+      },
+      {
+        characterId: "a",
+        formulaId: "a-burst",
+        countClaim: { type: "range", minimum: 1, maximum: 2 },
+        sourceTokenCoverage: "complete",
+        mappingBasis: "one or two source Q casts",
+      },
+    ]);
+
+    expect(result.formulaComparisons).toEqual([
+      expect.objectContaining({
+        formulaId: "a-burst",
+        sourceCountClaim: { type: "range", minimum: 1, maximum: 2 },
+        calculatorDefaultCount: 0,
+        relation: "calculator-default-below-source-range",
+      }),
+      expect.objectContaining({
+        formulaId: "a-skill",
+        sourceTokenCoverage: "partial",
+        relation: "calculator-default-within-source-range",
+      }),
+      expect.objectContaining({
+        formulaId: "b-burst",
+        relation: "matches",
+      }),
+    ]);
+    expect(result.discrepancies).toHaveLength(1);
+
+    expect(
+      compareSourceFormulaCountClaims(draft, [
+        {
+          characterId: "a",
+          formulaId: "a-skill",
+          countClaim: { type: "range", minimum: 0, maximum: 1 },
+          sourceTokenCoverage: "complete",
+          mappingBasis: "optional source action",
+        },
+      ]).formulaComparisons[0]?.relation
+    ).toBe("calculator-default-above-source-range");
+  });
+
+  it("rejects invalid ranges, duplicates, unavailable formulas, and coverage", () => {
+    const validLine: SourceFormulaCountClaimLine = {
+      characterId: "a",
+      formulaId: "a-skill",
+      countClaim: { type: "exact", value: 1 },
+      sourceTokenCoverage: "complete",
+      mappingBasis: "one source E",
+    };
+
+    expect(() =>
+      compareSourceFormulaCountClaims(draft, [
+        validLine,
+        { ...validLine, countClaim: { type: "exact", value: 2 } },
+      ])
+    ).toThrow("repeat a.a-skill");
+    expect(() =>
+      compareSourceFormulaCountClaims(draft, [
+        {
+          ...validLine,
+          countClaim: { type: "range", minimum: 1, maximum: 1 },
+        },
+      ])
+    ).toThrow("0 <= minimum < maximum");
+    expect(() =>
+      compareSourceFormulaCountClaims(draft, [
+        { ...validLine, countClaim: { type: "exact", value: 0 } },
+      ])
+    ).toThrow("exact value must be positive and finite");
+    expect(() =>
+      compareSourceFormulaCountClaims(draft, [
+        { ...validLine, formulaId: "not-available" },
+      ])
+    ).toThrow("unavailable calculator formula a.not-available");
+    expect(() =>
+      compareSourceFormulaCountClaims(draft, [
+        {
+          ...validLine,
+          sourceTokenCoverage: "invalid",
+        } as unknown as SourceFormulaCountClaimLine,
+      ])
+    ).toThrow("invalid source-token coverage");
   });
 });
 

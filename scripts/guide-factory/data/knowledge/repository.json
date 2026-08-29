@@ -25,7 +25,7 @@
         },
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
-          "sha256": "f774ca74f4e94b478934a078e051e895bd017edb3e8ee29fe03122f705761d6a"
+          "sha256": "349c07f0d86ac4961e53e426351951d6c97d22bc8e5d45583d1046ee757e4775"
         }
       ],
       "sourceId": "kqm"
@@ -20305,7 +20305,7 @@
       "rotations": [
         {
           "assumptions": [
-            "On subsequent rotations, the optional opening Furina Skill may instead be performed together with her Burst."
+            "On subsequent rotations, the opening Furina Skill can be moved from the opening position to be performed together with her Burst."
           ],
           "id": "sample-rotation",
           "label": "KQM sample rotation",

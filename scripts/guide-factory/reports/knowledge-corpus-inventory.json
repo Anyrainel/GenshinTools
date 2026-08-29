@@ -2390,7 +2390,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "87f8ddd1a2251402cda724ca8b6999c50c1c530583ae7a71b661aff190a268f1"
+      "sha256": "e84820b4d15cf10e680fab385278b23de41c0e54e0fc9b59375a89829a4a6131"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",

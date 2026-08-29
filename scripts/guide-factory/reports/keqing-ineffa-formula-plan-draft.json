@@ -1,0 +1,1242 @@
+{
+  "assumptions": {
+    "characters": [
+      {
+        "characterId": "keqing",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "thundering_fury",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "mistsplitter_reforged",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "ineffa",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "aubade_of_morningstar_and_moon",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "fractured_halo",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "furina",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "golden_troupe",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "splendor_of_tranquil_waters",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "xilonen",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "scroll_of_the_hero_of_cinder_city",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "peak_patrol_song",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      }
+    ],
+    "combatOptions": "calculator-defaults"
+  },
+  "authoredTranslation": {
+    "actionCounts": [
+      {
+        "action": "stiletto-cast",
+        "characterId": "keqing",
+        "countClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokens": [
+          "EQE:first E",
+          "EE:first E"
+        ]
+      },
+      {
+        "action": "skill-slash-recast",
+        "characterId": "keqing",
+        "countClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokens": [
+          "EQE:second E",
+          "EE:second E"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "keqing",
+        "countClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokens": [
+          "EQE:Q"
+        ]
+      },
+      {
+        "action": "normal-plus-charged-sequence",
+        "characterId": "keqing",
+        "countClaim": {
+          "type": "exact",
+          "value": 8
+        },
+        "sourceTokens": [
+          "5[N1C]",
+          "3[N1C]"
+        ]
+      },
+      {
+        "action": "skill-cast",
+        "characterId": "ineffa",
+        "countClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokens": [
+          "E"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "ineffa",
+        "countClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokens": [
+          "Q"
+        ]
+      },
+      {
+        "action": "skill-cast",
+        "characterId": "furina",
+        "countClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokens": [
+          "(ED), relocated beside Q on subsequent rotations"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "furina",
+        "countClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokens": [
+          "Q"
+        ]
+      },
+      {
+        "action": "skill-cast",
+        "characterId": "xilonen",
+        "countClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokens": [
+          "E",
+          "E"
+        ]
+      },
+      {
+        "action": "two-normal-sequence",
+        "characterId": "xilonen",
+        "countClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokens": [
+          "N2",
+          "N2"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "xilonen",
+        "countClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokens": [
+          "Q"
+        ]
+      }
+    ],
+    "discrepancies": [
+      {
+        "calculatorDefaultCount": 5,
+        "characterId": "keqing",
+        "formulaId": "keqing-charged",
+        "mappingBasis": "The C portion of 5[N1C] plus 3[N1C] maps to eight Charged Attack formulas; the eight N1 hits remain unsupported.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 8
+        },
+        "sourceTokenCoverage": "partial"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "keqing",
+        "formulaId": "keqing-skill-slash",
+        "mappingBasis": "The second E in each of EQE and EE maps to one Skill slash recast.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "keqing",
+        "formulaId": "keqing-stiletto",
+        "mappingBasis": "The leading E in each of EQE and EE maps to one Stiletto cast.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-e-rush",
+        "mappingBasis": "Each of the two source E casts maps to one Rush formula.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-normal-2",
+        "mappingBasis": "Each source N2 maps to one calculator two-Normal sequence.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 0,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-q-initial",
+        "mappingBasis": "The source contains one Xilonen Q cast.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      }
+    ],
+    "formulaComparisons": [
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "furina",
+        "formulaId": "furina-burst",
+        "mappingBasis": "The source contains one Furina Q cast.",
+        "relation": "matches",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "furina",
+        "formulaId": "furina-skill-bubble",
+        "mappingBasis": "The source footnote moves the parenthesized Furina ED beside her Burst on subsequent rotations, so both stated orderings contain one Skill cast.",
+        "relation": "matches",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "ineffa",
+        "formulaId": "ineffa-burst",
+        "mappingBasis": "The source contains one Ineffa Q cast.",
+        "relation": "matches",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "ineffa",
+        "formulaId": "ineffa-skill-initial",
+        "mappingBasis": "The source contains one Ineffa E cast.",
+        "relation": "matches",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "keqing",
+        "formulaId": "keqing-burst",
+        "mappingBasis": "The source contains one Keqing Q cast.",
+        "relation": "matches",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 5,
+        "characterId": "keqing",
+        "formulaId": "keqing-charged",
+        "mappingBasis": "The C portion of 5[N1C] plus 3[N1C] maps to eight Charged Attack formulas; the eight N1 hits remain unsupported.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 8
+        },
+        "sourceTokenCoverage": "partial"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "keqing",
+        "formulaId": "keqing-skill-slash",
+        "mappingBasis": "The second E in each of EQE and EE maps to one Skill slash recast.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "keqing",
+        "formulaId": "keqing-stiletto",
+        "mappingBasis": "The leading E in each of EQE and EE maps to one Stiletto cast.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-e-rush",
+        "mappingBasis": "Each of the two source E casts maps to one Rush formula.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-normal-2",
+        "mappingBasis": "Each source N2 maps to one calculator two-Normal sequence.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 2
+        },
+        "sourceTokenCoverage": "complete"
+      },
+      {
+        "calculatorDefaultCount": 0,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-q-initial",
+        "mappingBasis": "The source contains one Xilonen Q cast.",
+        "relation": "source-translation-higher",
+        "sourceCountClaim": {
+          "type": "exact",
+          "value": 1
+        },
+        "sourceTokenCoverage": "complete"
+      }
+    ],
+    "reviewStatus": "unreviewed",
+    "sourceAbsentMappings": [
+      {
+        "characterId": "keqing",
+        "formulaId": "keqing-skill-thunderclap",
+        "reason": "The authored translation maps both EQE and EE tokens to Stiletto and Skill Slash formulas and assigns no source token to the alternative Thunderclap formula."
+      },
+      {
+        "characterId": "xilonen",
+        "formulaId": "xilonen-normal",
+        "reason": "Both source N2 tokens map to the calculator's two-Normal aggregate, while the source has no N4 sequence to assign to the four-Normal aggregate."
+      }
+    ],
+    "unresolvedMappings": [
+      {
+        "calculatorFormulaId": null,
+        "characterId": "keqing",
+        "reason": "The calculator exposes no C0 Keqing Normal Attack formula, so the Charged Attack mapping covers only part of each N1C token.",
+        "sourceToken": "8[N1] within 5[N1C] + 3[N1C]"
+      },
+      {
+        "calculatorFormulaId": "ineffa-birgitta",
+        "characterId": "ineffa",
+        "reason": "The calculator formula bakes in ten Birgitta discharges and ten additional Lunar-Direct parts with Hydro, while the source gives no duration or hit count proving that the aggregate fits.",
+        "sourceToken": "E (Birgitta discharges after cast)"
+      },
+      {
+        "calculatorFormulaId": "furina-salon-total",
+        "characterId": "furina",
+        "reason": "The calculator formula bakes in 32 Salon Member hits, while the source gives no duration or hit count proving that the aggregate fits.",
+        "sourceToken": "ED (Salon Members after cast)"
+      },
+      {
+        "calculatorFormulaId": "rx-lunarCharged-ineffa",
+        "characterId": "ineffa",
+        "reason": "The calculator assigns nine default Lunar-Charged triggers to Ineffa through an internal ownership heuristic; the source notation does not establish trigger count or ownership.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "calculatorFormulaId": "rx-lunarCharged-keqing",
+        "characterId": "keqing",
+        "reason": "The calculator exposes a zero-count Keqing Lunar-Charged formula, but the source does not establish that Keqing owns zero triggers.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "calculatorFormulaId": "rx-lunarCharged-furina",
+        "characterId": "furina",
+        "reason": "The calculator exposes a zero-count Furina Lunar-Charged formula, but the source does not establish that Furina owns zero triggers.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      }
+    ]
+  },
+  "cautions": [
+    "Formula counts come from calculator comboDescriptor implementation defaults, not source-reviewed rotation truth.",
+    "This draft does not establish an optimal rotation, buff sequence, field-time plan, ER feasibility, or guide recommendation.",
+    "Calculator combat options use their implementation defaults because the knowledge team does not provide option selections.",
+    "Constellation- or option-gated formulas unavailable under the explicit assumptions are checked for catalog integrity but omitted from the draft.",
+    "Each equipment choice is an explicit fixture selected from a source-backed character guide; it does not prove that the guide build applies to this team.",
+    "The selected weapons and artifacts are not computed winners or a ranking produced by the guide factory.",
+    "Weapon refinements are unspecified and are not inferred by this materializer.",
+    "Build stat sheets, main-stat choices, and substat weights are not copied into the team fixture.",
+    "Combining individually sourced choices does not establish team synergy or optimality.",
+    "No ER floor, ER target, or energy feasibility claim is inferred or added.",
+    "The source action-to-formula translation is agent-authored and unreviewed; direct token correspondence does not prove equivalent damage semantics or buff timing.",
+    "The source omits duration, off-field hit counts, and Lunar-Charged trigger ownership, so aggregate and reaction defaults remain unresolved.",
+    "Furina's parenthesized Skill changes position rather than count: the source footnote relocates it beside her Burst on subsequent rotations, leaving action order unresolved."
+  ],
+  "classification": "calculator-default-draft",
+  "damageReplayReadiness": {
+    "availableFormulaCoverage": {
+      "mapped": 11,
+      "rows": [
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "furina",
+          "classification": "mapped",
+          "formulaId": "furina-burst",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "furina",
+          "classification": "unresolved",
+          "formulaId": "furina-salon-total",
+          "reason": "The calculator formula bakes in 32 Salon Member hits, while the source gives no duration or hit count proving that the aggregate fits.",
+          "sourceToken": "ED (Salon Members after cast)"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "furina",
+          "classification": "mapped",
+          "formulaId": "furina-skill-bubble",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 0,
+          "characterId": "furina",
+          "classification": "unresolved",
+          "formulaId": "rx-lunarCharged-furina",
+          "reason": "The calculator exposes a zero-count Furina Lunar-Charged formula, but the source does not establish that Furina owns zero triggers.",
+          "sourceToken": "Lunar-Charged occurrences and ownership"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "ineffa",
+          "classification": "unresolved",
+          "formulaId": "ineffa-birgitta",
+          "reason": "The calculator formula bakes in ten Birgitta discharges and ten additional Lunar-Direct parts with Hydro, while the source gives no duration or hit count proving that the aggregate fits.",
+          "sourceToken": "E (Birgitta discharges after cast)"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "ineffa",
+          "classification": "mapped",
+          "formulaId": "ineffa-burst",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "ineffa",
+          "classification": "mapped",
+          "formulaId": "ineffa-skill-initial",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 9,
+          "characterId": "ineffa",
+          "classification": "unresolved",
+          "formulaId": "rx-lunarCharged-ineffa",
+          "reason": "The calculator assigns nine default Lunar-Charged triggers to Ineffa through an internal ownership heuristic; the source notation does not establish trigger count or ownership.",
+          "sourceToken": "Lunar-Charged occurrences and ownership"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-burst",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 5,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-charged",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 8
+          },
+          "sourceTokenCoverage": "partial"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-skill-slash",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 0,
+          "characterId": "keqing",
+          "classification": "source-absent",
+          "formulaId": "keqing-skill-thunderclap",
+          "reason": "The authored translation maps both EQE and EE tokens to Stiletto and Skill Slash formulas and assigns no source token to the alternative Thunderclap formula."
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-stiletto",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 0,
+          "characterId": "keqing",
+          "classification": "unresolved",
+          "formulaId": "rx-lunarCharged-keqing",
+          "reason": "The calculator exposes a zero-count Keqing Lunar-Charged formula, but the source does not establish that Keqing owns zero triggers.",
+          "sourceToken": "Lunar-Charged occurrences and ownership"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "xilonen",
+          "classification": "mapped",
+          "formulaId": "xilonen-e-rush",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 0,
+          "characterId": "xilonen",
+          "classification": "source-absent",
+          "formulaId": "xilonen-normal",
+          "reason": "Both source N2 tokens map to the calculator's two-Normal aggregate, while the source has no N4 sequence to assign to the four-Normal aggregate."
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "xilonen",
+          "classification": "mapped",
+          "formulaId": "xilonen-normal-2",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 0,
+          "characterId": "xilonen",
+          "classification": "mapped",
+          "formulaId": "xilonen-q-initial",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        }
+      ],
+      "sourceAbsent": 2,
+      "total": 18,
+      "unclassified": 0,
+      "unresolved": 5
+    },
+    "blockers": [
+      {
+        "code": "translation-unreviewed",
+        "message": "The source-to-formula translation has not been reviewed."
+      },
+      {
+        "characterId": "keqing",
+        "code": "partial-token-mapping",
+        "formulaId": "keqing-charged",
+        "message": "Source token mapping for keqing.keqing-charged is partial."
+      },
+      {
+        "characterId": "furina",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "furina-salon-total",
+        "message": "Mapping for furina.furina-salon-total remains unresolved: The calculator formula bakes in 32 Salon Member hits, while the source gives no duration or hit count proving that the aggregate fits.",
+        "sourceToken": "ED (Salon Members after cast)"
+      },
+      {
+        "characterId": "furina",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "rx-lunarCharged-furina",
+        "message": "Mapping for furina.rx-lunarCharged-furina remains unresolved: The calculator exposes a zero-count Furina Lunar-Charged formula, but the source does not establish that Furina owns zero triggers.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "characterId": "ineffa",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "ineffa-birgitta",
+        "message": "Mapping for ineffa.ineffa-birgitta remains unresolved: The calculator formula bakes in ten Birgitta discharges and ten additional Lunar-Direct parts with Hydro, while the source gives no duration or hit count proving that the aggregate fits.",
+        "sourceToken": "E (Birgitta discharges after cast)"
+      },
+      {
+        "characterId": "ineffa",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "rx-lunarCharged-ineffa",
+        "message": "Mapping for ineffa.rx-lunarCharged-ineffa remains unresolved: The calculator assigns nine default Lunar-Charged triggers to Ineffa through an internal ownership heuristic; the source notation does not establish trigger count or ownership.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "characterId": "keqing",
+        "code": "unresolved-formula-mapping",
+        "formulaId": "rx-lunarCharged-keqing",
+        "message": "Mapping for keqing.rx-lunarCharged-keqing remains unresolved: The calculator exposes a zero-count Keqing Lunar-Charged formula, but the source does not establish that Keqing owns zero triggers.",
+        "sourceToken": "Lunar-Charged occurrences and ownership"
+      },
+      {
+        "characterId": "keqing",
+        "code": "unresolved-source-token",
+        "message": "Source token keqing:8[N1] within 5[N1C] + 3[N1C] has no resolved calculator formula: The calculator exposes no C0 Keqing Normal Attack formula, so the Charged Attack mapping covers only part of each N1C token.",
+        "sourceToken": "8[N1] within 5[N1C] + 3[N1C]"
+      }
+    ],
+    "classification": "formula-plan-readiness-assessment",
+    "positiveDefaultCoverage": {
+      "mapped": 10,
+      "rows": [
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "furina",
+          "classification": "mapped",
+          "formulaId": "furina-burst",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "furina",
+          "classification": "unresolved",
+          "formulaId": "furina-salon-total",
+          "reason": "The calculator formula bakes in 32 Salon Member hits, while the source gives no duration or hit count proving that the aggregate fits.",
+          "sourceToken": "ED (Salon Members after cast)"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "furina",
+          "classification": "mapped",
+          "formulaId": "furina-skill-bubble",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "ineffa",
+          "classification": "unresolved",
+          "formulaId": "ineffa-birgitta",
+          "reason": "The calculator formula bakes in ten Birgitta discharges and ten additional Lunar-Direct parts with Hydro, while the source gives no duration or hit count proving that the aggregate fits.",
+          "sourceToken": "E (Birgitta discharges after cast)"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "ineffa",
+          "classification": "mapped",
+          "formulaId": "ineffa-burst",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "ineffa",
+          "classification": "mapped",
+          "formulaId": "ineffa-skill-initial",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 9,
+          "characterId": "ineffa",
+          "classification": "unresolved",
+          "formulaId": "rx-lunarCharged-ineffa",
+          "reason": "The calculator assigns nine default Lunar-Charged triggers to Ineffa through an internal ownership heuristic; the source notation does not establish trigger count or ownership.",
+          "sourceToken": "Lunar-Charged occurrences and ownership"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-burst",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 1
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 5,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-charged",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 8
+          },
+          "sourceTokenCoverage": "partial"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-skill-slash",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "keqing",
+          "classification": "mapped",
+          "formulaId": "keqing-stiletto",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "xilonen",
+          "classification": "mapped",
+          "formulaId": "xilonen-e-rush",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        },
+        {
+          "calculatorDefaultCount": 1,
+          "characterId": "xilonen",
+          "classification": "mapped",
+          "formulaId": "xilonen-normal-2",
+          "sourceCountClaim": {
+            "type": "exact",
+            "value": 2
+          },
+          "sourceTokenCoverage": "complete"
+        }
+      ],
+      "sourceAbsent": 0,
+      "total": 13,
+      "unclassified": 0,
+      "unresolved": 3
+    },
+    "readyForDamageReplay": false,
+    "reviewStatus": "unreviewed",
+    "schemaVersion": 1,
+    "sourceMappingSummary": {
+      "comparisons": 11,
+      "completeTokenMappings": 10,
+      "exactClaims": 11,
+      "nonNullFormulaUnresolvedMappings": 5,
+      "nullFormulaUnresolvedMappings": 1,
+      "partialTokenMappings": 1,
+      "rangeClaims": 0,
+      "sourceAbsentMappings": 2,
+      "unresolvedMappings": 6
+    },
+    "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "supportsGuideClaims": false
+  },
+  "equipmentFixture": {
+    "cautions": [
+      "Each equipment choice is an explicit fixture selected from a source-backed character guide; it does not prove that the guide build applies to this team.",
+      "The selected weapons and artifacts are not computed winners or a ranking produced by the guide factory.",
+      "Weapon refinements are unspecified and are not inferred by this materializer.",
+      "Build stat sheets, main-stat choices, and substat weights are not copied into the team fixture.",
+      "Combining individually sourced choices does not establish team synergy or optimality.",
+      "No ER floor, ER target, or energy feasibility claim is inferred or added."
+    ],
+    "classification": "source-backed-equipment-fixture",
+    "evidence": [
+      {
+        "build": {
+          "artifact": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "visible": true
+        },
+        "buildSourceRecordId": "1WswsAu",
+        "characterGuideId": "genshintools-presets:character-guide:keqing",
+        "characterId": "keqing",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "keqing"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "keqing"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponId": "mistsplitter_reforged",
+        "weaponOrderIndex": 0
+      },
+      {
+        "build": {
+          "artifact": {
+            "setId": "aubade_of_morningstar_and_moon",
+            "type": "4pc"
+          },
+          "visible": true
+        },
+        "buildSourceRecordId": "FeFiQU8",
+        "characterGuideId": "genshintools-presets:character-guide:ineffa",
+        "characterId": "ineffa",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "ineffa"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "ineffa"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponId": "fractured_halo",
+        "weaponOrderIndex": 0
+      },
+      {
+        "build": {
+          "artifact": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "visible": true
+        },
+        "buildSourceRecordId": "BQAI0BO",
+        "characterGuideId": "genshintools-presets:character-guide:furina",
+        "characterId": "furina",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "furina"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "furina"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponId": "splendor_of_tranquil_waters",
+        "weaponOrderIndex": 2
+      },
+      {
+        "build": {
+          "artifact": {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          },
+          "visible": true
+        },
+        "buildSourceRecordId": "Dbt0Wkm",
+        "characterGuideId": "genshintools-presets:character-guide:xilonen",
+        "characterId": "xilonen",
+        "guideSourceRefs": [
+          {
+            "locator": {
+              "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+              "recordId": "xilonen"
+            },
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "xilonen"
+          }
+        ],
+        "guideStatus": "baseline",
+        "weaponId": "peak_patrol_song",
+        "weaponOrderIndex": 0
+      }
+    ],
+    "schemaVersion": 1,
+    "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "supportsGuideClaims": false
+  },
+  "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "e84820b4d15cf10e680fab385278b23de41c0e54e0fc9b59375a89829a4a6131"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
+      "sha256": "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+      "sha256": "1eddee7335cd572fdae525db91a0cfc63bfb96352daefa8cb19a34cae7b2ad1d"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
+      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    }
+  ],
+  "lines": [
+    {
+      "characterId": "keqing",
+      "count": 1,
+      "formulaId": "keqing-burst"
+    },
+    {
+      "characterId": "keqing",
+      "count": 5,
+      "formulaId": "keqing-charged"
+    },
+    {
+      "characterId": "keqing",
+      "count": 1,
+      "formulaId": "keqing-skill-slash"
+    },
+    {
+      "characterId": "keqing",
+      "count": 1,
+      "formulaId": "keqing-stiletto"
+    },
+    {
+      "characterId": "ineffa",
+      "count": 1,
+      "formulaId": "ineffa-birgitta"
+    },
+    {
+      "characterId": "ineffa",
+      "count": 1,
+      "formulaId": "ineffa-burst"
+    },
+    {
+      "characterId": "ineffa",
+      "count": 1,
+      "formulaId": "ineffa-skill-initial"
+    },
+    {
+      "characterId": "ineffa",
+      "count": 9,
+      "formulaId": "rx-lunarCharged-ineffa"
+    },
+    {
+      "characterId": "furina",
+      "count": 1,
+      "formulaId": "furina-burst"
+    },
+    {
+      "characterId": "furina",
+      "count": 1,
+      "formulaId": "furina-salon-total"
+    },
+    {
+      "characterId": "furina",
+      "count": 1,
+      "formulaId": "furina-skill-bubble"
+    },
+    {
+      "characterId": "xilonen",
+      "count": 1,
+      "formulaId": "xilonen-e-rush"
+    },
+    {
+      "characterId": "xilonen",
+      "count": 1,
+      "formulaId": "xilonen-normal-2"
+    }
+  ],
+  "promotionEligible": false,
+  "schemaVersion": 1,
+  "sourceRotation": {
+    "assumptions": [
+      "On subsequent rotations, the opening Furina Skill can be moved from the opening position to be performed together with her Burst."
+    ],
+    "notation": "(Furina ED) > Ineffa E > Xilonen EQ N2 > Furina Q > Keqing EQE 5[N1C] > Xilonen E N2 > Ineffa Q > Keqing EE 3[N1C]",
+    "recordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "rotationId": "sample-rotation",
+    "unresolvedSegments": []
+  },
+  "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+  "status": "needs-domain-review",
+  "supportsGuideClaims": false,
+  "validationTargets": [
+    {
+      "recordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "supports": [
+        "roster",
+        "rotation"
+      ]
+    },
+    {
+      "recordId": "genshintools-presets:character-guide:keqing",
+      "supports": [
+        "weapon-presence",
+        "artifact-build"
+      ]
+    },
+    {
+      "recordId": "genshintools-presets:character-guide:ineffa",
+      "supports": [
+        "weapon-presence",
+        "artifact-build"
+      ]
+    },
+    {
+      "recordId": "genshintools-presets:character-guide:furina",
+      "supports": [
+        "weapon-presence",
+        "artifact-build"
+      ]
+    },
+    {
+      "recordId": "genshintools-presets:character-guide:xilonen",
+      "supports": [
+        "weapon-presence",
+        "artifact-build"
+      ]
+    }
+  ],
+  "zeroCountAvailableFormulas": [
+    {
+      "characterId": "keqing",
+      "formulaId": "keqing-skill-thunderclap"
+    },
+    {
+      "characterId": "keqing",
+      "formulaId": "rx-lunarCharged-keqing"
+    },
+    {
+      "characterId": "furina",
+      "formulaId": "rx-lunarCharged-furina"
+    },
+    {
+      "characterId": "xilonen",
+      "formulaId": "xilonen-normal"
+    },
+    {
+      "characterId": "xilonen",
+      "formulaId": "xilonen-q-initial"
+    }
+  ]
+}

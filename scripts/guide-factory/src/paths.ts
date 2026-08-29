@@ -78,6 +78,11 @@ export const FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH = path.join(
   "reports",
   "furina-neuvillette-formula-plan-draft.json"
 );
+export const KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "keqing-ineffa-formula-plan-draft.json"
+);
 export const KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH = path.join(
   FACTORY_ROOT,
   "reports",

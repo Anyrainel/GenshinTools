@@ -28,6 +28,19 @@ export type SourceTranslatedFormulaPlanLine = FormulaPlanDraftLine & {
   mappingBasis: string;
 };
 
+export type SourceFormulaCountClaim =
+  | { type: "exact"; value: number }
+  | { type: "range"; minimum: number; maximum: number };
+
+export type SourceFormulaCountClaimLine = Omit<
+  FormulaPlanDraftLine,
+  "count"
+> & {
+  countClaim: SourceFormulaCountClaim;
+  sourceTokenCoverage: "complete" | "partial";
+  mappingBasis: string;
+};
+
 export type FormulaPlanCountComparison = {
   characterId: string;
   formulaId: string;
@@ -37,6 +50,22 @@ export type FormulaPlanCountComparison = {
     | "matches"
     | "source-translation-higher"
     | "calculator-default-higher";
+  mappingBasis: string;
+};
+
+export type FormulaCountClaimComparison = {
+  characterId: string;
+  formulaId: string;
+  sourceCountClaim: SourceFormulaCountClaim;
+  calculatorDefaultCount: number;
+  relation:
+    | "matches"
+    | "source-translation-higher"
+    | "calculator-default-higher"
+    | "calculator-default-within-source-range"
+    | "calculator-default-below-source-range"
+    | "calculator-default-above-source-range";
+  sourceTokenCoverage: "complete" | "partial";
   mappingBasis: string;
 };
 
@@ -167,12 +196,7 @@ export function compareSourceTranslatedFormulaPlan(
   formulaComparisons: FormulaPlanCountComparison[];
   mismatches: FormulaPlanCountComparison[];
 } {
-  const calculatorCounts = new Map(
-    [
-      ...draft.lines,
-      ...draft.zeroCountAvailableFormulas.map((line) => ({ ...line, count: 0 })),
-    ].map((line) => [`${line.characterId}\0${line.formulaId}`, line.count])
-  );
+  const calculatorCounts = calculatorFormulaCounts(draft);
   const seen = new Set<string>();
   const formulaComparisons = sourceLines
     .map((sourceLine): FormulaPlanCountComparison => {
@@ -226,6 +250,152 @@ export function compareSourceTranslatedFormulaPlan(
       ({ relation }) => relation !== "matches"
     ),
   };
+}
+
+/**
+ * Compare source count claims that can be exact or branch-dependent ranges.
+ *
+ * This still validates only formula availability and count syntax. A range
+ * records uncertainty already present in the source rotation; it is not a
+ * license to tune the range around a calculator default. `sourceTokenCoverage`
+ * also makes partial mappings such as the Charged Attack portion of N1C
+ * explicit without claiming that the full source token was represented.
+ */
+export function compareSourceFormulaCountClaims(
+  draft: FormulaPlanDraftOutput,
+  sourceLines: SourceFormulaCountClaimLine[]
+): {
+  formulaComparisons: FormulaCountClaimComparison[];
+  discrepancies: FormulaCountClaimComparison[];
+} {
+  const calculatorCounts = calculatorFormulaCounts(draft);
+  const seen = new Set<string>();
+  const formulaComparisons = sourceLines
+    .map((sourceLine): FormulaCountClaimComparison => {
+      const key = `${sourceLine.characterId}\0${sourceLine.formulaId}`;
+      if (seen.has(key)) {
+        throw new Error(
+          `Source formula count claims repeat ${sourceLine.characterId}.${sourceLine.formulaId}.`
+        );
+      }
+      seen.add(key);
+      if (!sourceLine.mappingBasis.trim()) {
+        throw new Error(
+          `Source formula count claim ${sourceLine.characterId}.${sourceLine.formulaId} requires a mapping basis.`
+        );
+      }
+      if (
+        sourceLine.sourceTokenCoverage !== "complete" &&
+        sourceLine.sourceTokenCoverage !== "partial"
+      ) {
+        throw new Error(
+          `Source formula count claim ${sourceLine.characterId}.${sourceLine.formulaId} has invalid source-token coverage.`
+        );
+      }
+      const calculatorDefaultCount = calculatorCounts.get(key);
+      if (calculatorDefaultCount == null) {
+        throw new Error(
+          `Source formula count claim references unavailable calculator formula ${sourceLine.characterId}.${sourceLine.formulaId}.`
+        );
+      }
+      const sourceCountClaim = validateAndCloneSourceCountClaim(
+        sourceLine.characterId,
+        sourceLine.formulaId,
+        sourceLine.countClaim
+      );
+      const relation = compareCountClaim(
+        sourceCountClaim,
+        calculatorDefaultCount
+      );
+      return {
+        characterId: sourceLine.characterId,
+        formulaId: sourceLine.formulaId,
+        sourceCountClaim,
+        calculatorDefaultCount,
+        relation,
+        sourceTokenCoverage: sourceLine.sourceTokenCoverage,
+        mappingBasis: sourceLine.mappingBasis,
+      };
+    })
+    .sort(
+      (left, right) =>
+        left.characterId.localeCompare(right.characterId) ||
+        left.formulaId.localeCompare(right.formulaId)
+    );
+
+  return {
+    formulaComparisons,
+    discrepancies: formulaComparisons.filter(
+      ({ relation }) =>
+        relation !== "matches" &&
+        relation !== "calculator-default-within-source-range"
+    ),
+  };
+}
+
+function calculatorFormulaCounts(
+  draft: FormulaPlanDraftOutput
+): Map<string, number> {
+  return new Map(
+    [
+      ...draft.lines,
+      ...draft.zeroCountAvailableFormulas.map((line) => ({
+        ...line,
+        count: 0,
+      })),
+    ].map((line) => [`${line.characterId}\0${line.formulaId}`, line.count])
+  );
+}
+
+function validateAndCloneSourceCountClaim(
+  characterId: string,
+  formulaId: string,
+  countClaim: SourceFormulaCountClaim
+): SourceFormulaCountClaim {
+  if (countClaim.type === "exact") {
+    if (!Number.isFinite(countClaim.value) || countClaim.value <= 0) {
+      throw new Error(
+        `Source formula count claim ${characterId}.${formulaId} exact value must be positive and finite.`
+      );
+    }
+    return { type: "exact", value: countClaim.value };
+  }
+
+  if (
+    !Number.isFinite(countClaim.minimum) ||
+    !Number.isFinite(countClaim.maximum) ||
+    countClaim.minimum < 0 ||
+    countClaim.maximum <= 0 ||
+    countClaim.minimum >= countClaim.maximum
+  ) {
+    throw new Error(
+      `Source formula count claim ${characterId}.${formulaId} range must have finite 0 <= minimum < maximum.`
+    );
+  }
+  return {
+    type: "range",
+    minimum: countClaim.minimum,
+    maximum: countClaim.maximum,
+  };
+}
+
+function compareCountClaim(
+  countClaim: SourceFormulaCountClaim,
+  calculatorDefaultCount: number
+): FormulaCountClaimComparison["relation"] {
+  if (countClaim.type === "exact") {
+    if (countClaim.value === calculatorDefaultCount) return "matches";
+    return countClaim.value > calculatorDefaultCount
+      ? "source-translation-higher"
+      : "calculator-default-higher";
+  }
+  if (calculatorDefaultCount < countClaim.minimum) {
+    return "calculator-default-below-source-range";
+  }
+  if (calculatorDefaultCount > countClaim.maximum) {
+    return "calculator-default-above-source-range";
+  }
+  return "calculator-default-within-source-range";
 }
 
 function buildTeamConfigs(
