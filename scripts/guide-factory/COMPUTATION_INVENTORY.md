@@ -117,6 +117,35 @@ and supports no guide claim. This assessment is advisory; `replayTeamDamage`
 does not consume or enforce it, and this checkpoint does not produce or
 authorize a replay. A readiness-enforcing wrapper is future work if useful.
 
+## Artifact-choice search-domain seam
+
+`src/artifactChoiceSearchCoverage.ts` calls the existing analyzer's exported
+`buildArtifactSetChoiceCandidates()` and
+`buildTwoPieceArtifactChoiceCandidates()` functions. It compares that released
+candidate grammar with every eligible artifact occurrence in the consolidated
+repository while preserving record status, source references, visibility,
+constellation bounds, roles, conditions, and team-member context.
+
+The current released grammar has 43 initial four-piece keys. Supplying every
+legal artifact substat to the dynamic builder produces a maximum grammar of 14
+two-piece pair keys. This is deliberately labeled conditional coverage: the
+runtime derives positive substats from successful four-piece evaluations and
+may append a smaller set in a real analyzer run.
+
+The report accounts for every artifact-choice field on current non-rejected
+character-guide and team records: 1,046 occurrences in total. Of 188 guide
+builds, 167 are initially enumerated, 14 are conditionally representable, and
+7 are not representable by the current grammar. Of 840 team-member selected
+artifacts, 820 are initially enumerated, 7 are conditional, and 13 are not
+representable. Of 18 character-guide and team-member recommendation
+occurrences, 16 are initially enumerated and 2 are not representable. The 22
+failures are 18 Instructor occurrences, 2 Exile occurrences, and 2
+damage-oriented two-piece combinations absent from the dynamic half-set map.
+
+This seam runs no artifact generator or damage formula and emits no score,
+rank, winner, or guide recommendation. Candidate naming is not evidence that a
+set is suitable or that its generation and evaluation path succeeds.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -162,6 +191,10 @@ None of these later modules is invoked by the first replay.
 - `runGenerator` is ordered greedy, not exhaustive joint optimization.
   `runWeaponChoice` varies one character at a time. The owned-artifact optimizer
   jointly assigns inventory pieces but does not search team weapons and sets.
+- The existing artifact analyzer does not enumerate non-five-star sets such as
+  Instructor and cannot dynamically discover every damage-oriented two-piece
+  family. Its two-piece candidate grammar is conditional on successful
+  four-piece evaluations, not an unconditional search list.
 - AutoTune varies one character while teammates use flower/plume-only sheets.
   If formulas are omitted, `autoTuneTeam` assigns count 1 to every available
   formula. `autoTune.ts` currently sets `DEFAULT_CALC_CTX.enemyRes` to `10`,
@@ -170,8 +203,9 @@ None of these later modules is invoked by the first replay.
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
 
-The next computation checkpoint should review the action-to-formula translation
-and resolve or parameterize its aggregate hit counts and reaction ownership.
-It can then add explicit artifact stat sheets and replay a selected loadout
-through both calculator paths. Optimization remains out of scope until that
-replay is credible.
+The next repository checkpoint should add a narrow, provenance-preserving
+structured-source pilot and measure what new team, rotation, and equipment
+evidence it contributes. A later computation checkpoint can then audit actual
+artifact generation for a reviewed fixture. Formula-plan review, explicit
+artifact stat sheets, and dual-path replay remain prerequisites for damage
+optimization.

@@ -21,8 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 4 composes source and baseline knowledge into a second non-ER
-formula-count experiment without claiming a working guide factory:
+Checkpoint 5 audits whether the existing artifact-choice analyzer can express
+artifact choices already present in the knowledge repository, without
+claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -41,6 +42,10 @@ formula-count experiment without claiming a working guide factory:
 10. Compare source rotations using exact counts, genuinely source-optional
     ranges, and explicit partial token coverage when one source action has no
     calculator formula.
+11. Enumerate the analyzer's released artifact-choice grammar and classify
+    every artifact-choice field on non-rejected guide and team records as
+    initially enumerated, conditionally representable, or not representable by
+    that grammar.
 
 The first two active sources are already in this repository:
 
@@ -84,6 +89,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-team-template-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-keqing-ineffa-formula-plan.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-artifact-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -100,9 +106,9 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all six durable reports in memory: corpus inventory, team
-coverage, two formula-count comparisons, Diona comparison, and historical ER
-calibration. Stale evidence cannot pass.
+It also rebuilds all seven durable reports in memory: corpus inventory, team
+coverage, artifact-choice search coverage, two formula-count comparisons,
+Diona comparison, and historical ER calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -201,6 +207,24 @@ enforced by `replayTeamDamage`; the checkpoint does not produce or authorize a
 replay. An enforced wrapper can be added later if useful. The experiment
 demonstrated that scalar formula counts alone were inadequate; it did not
 compute full rotation damage or validate the selected equipment.
+
+The artifact-choice coverage report then calls the production analyzer's own
+candidate builders against all eligible artifact occurrences in the knowledge
+repository. The released search grammar contains 43 initial four-piece set
+keys and a maximum of 14 stat-derived two-piece pair keys. The latter is an
+upper bound: the runtime discovers a potentially smaller set only after
+successful four-piece evaluations.
+
+The report covers 1,046 non-rejected artifact-choice occurrences. Of 188 guide
+builds, 167 are initially enumerated, 14 are only conditionally representable,
+and 7 are not representable by the current grammar. Of 840 selected artifacts
+on team members, 820 are initially enumerated, 7 are conditional, and 13 are
+not representable. Of 18 character-guide and team-member recommendation
+occurrences, 16 are initially enumerated and 2 are not representable. The 22
+failures comprise 18 Instructor occurrences, 2 Exile occurrences, Freminet's
+Cryo DMG plus Skill DMG pair, and C6 Yelan's repeated Hydro DMG pair. This is a
+search-domain audit only: it does not run artifact generation, compute damage,
+rank sets, or imply that any representable choice is suitable.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

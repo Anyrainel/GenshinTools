@@ -121,9 +121,23 @@ enforced wrapper is future work if it becomes useful. This is concrete evidence 
 formula count alone was too weak, so the comparator also preserves partial-token
 coverage and a complete formula-classification ledger.
 
-The next computation step is to review or correct both source translations,
-then add an authored artifact-stat sheet and reproduce one selected loadout.
-Neither fixture yet supports full rotation damage or equipment suitability.
+Before ranking any artifact set, the current checkpoint measures whether the
+existing analyzer can name the choices already recorded in the repository. Its
+released grammar contains 43 initial four-piece choices and at most 14
+stat-derived two-piece pairs. Across 1,046 artifact-choice fields on
+non-rejected guide and team records, 1,003 are initially enumerated, 21 are
+conditionally representable, and 22 are not representable by the current
+grammar. The failures expose two specific search-domain gaps: 18 Instructor
+and 2 Exile occurrences are filtered out with all non-five-star sets, while
+two damage-oriented half-set choices are absent from dynamic two-piece
+discovery. This does not establish that any enumerated choice can be generated,
+evaluated, or ranked successfully.
+
+The next computation steps are to widen and validate the knowledge corpus with
+a narrow structured source pilot, then audit actual artifact generation for a
+reviewed fixture. Formula-plan review and an authored artifact-stat sheet remain
+required before damage comparisons. Neither fixture yet supports full rotation
+damage or equipment suitability.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

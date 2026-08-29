@@ -6,6 +6,14 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `artifact-choice-search-coverage.json` calls the current analyzer candidate
+  builders and classifies all 1,046 artifact-choice fields on non-rejected
+  guide and team records against its released search grammar. The grammar
+  contains 43 initial four-piece keys and at most 14 conditionally discovered
+  two-piece pairs. Of those occurrences, 1,003 are initially enumerated, 21
+  are conditionally representable, and 22 are not representable by the current
+  grammar. It runs no generation, damage, score, rank, or winner logic and does
+  not support guide claims.
 - `knowledge-corpus-inventory.json` describes explicit record, evidence-field,
   source, and character presence across the consolidated repository. It emits
   no quality score, source vote, average, recommendation, or rank. ER guidance
@@ -42,6 +50,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all six reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all seven reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

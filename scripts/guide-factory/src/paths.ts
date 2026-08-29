@@ -88,3 +88,8 @@ export const KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH = path.join(
   "reports",
   "knowledge-corpus-inventory.json"
 );
+export const ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "artifact-choice-search-coverage.json"
+);

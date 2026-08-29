@@ -7,3 +7,4 @@ reports/*
 !reports/furina-neuvillette-formula-plan-draft.json
 !reports/keqing-ineffa-formula-plan-draft.json
 !reports/knowledge-corpus-inventory.json
+!reports/artifact-choice-search-coverage.json

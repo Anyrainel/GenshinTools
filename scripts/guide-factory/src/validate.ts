@@ -1,5 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
+  buildArtifactChoiceSearchCoverageReport,
+} from "./artifactChoiceSearchCoverage";
 import { loadGameCatalogs } from "./catalogs";
 import {
   buildDionaComparisonReport,
@@ -33,6 +37,7 @@ import {
   type ManualSnapshotInput,
 } from "./manualSnapshots";
 import {
+  ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH,
   DIONA_COMPARISON_REPORT_PATH,
   DIONA_ER_CALIBRATION_REPORT_PATH,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
@@ -90,6 +95,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     furinaNeuvilletteFormulaDraftInput,
     keqingIneffaFormulaDraftInput,
     knowledgeCorpusInventoryInput,
+    artifactChoiceSearchCoverageInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -103,6 +109,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH),
       readJson(KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH),
       readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
+      readJson(ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -238,6 +245,26 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.knowledge-corpus-inventory",
           message:
             "The saved knowledge-corpus inventory does not match current knowledge and source metadata.",
+        });
+      }
+
+      const artifactChoiceSearchCoverageGeneratedFrom =
+        await hashRelativePaths(ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS);
+      const expectedArtifactChoiceSearchCoverage =
+        buildArtifactChoiceSearchCoverageReport(
+          expectedKnowledge,
+          artifactChoiceSearchCoverageGeneratedFrom,
+        );
+      if (
+        stableJson(expectedArtifactChoiceSearchCoverage) !==
+        stableJson(artifactChoiceSearchCoverageInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_artifact_choice_search_coverage_report",
+          path: "reports.artifact-choice-search-coverage",
+          message:
+            "The saved artifact-choice search coverage does not match the current knowledge repository and analyzer candidate grammar.",
         });
       }
 
