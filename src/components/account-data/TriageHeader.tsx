@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/popover";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots, type Slot } from "@/data/enums";
-import { allHalfSetIds } from "@/data/gameResources";
+import { artifactsById, sortedArtifacts } from "@/data/gameResources";
 import type { ManagePayload } from "@/lib/account-data/manager/types";
 import { QUALITY_TIERS } from "@/lib/account-data/triage/constants";
 import type {
@@ -36,7 +36,7 @@ import type {
   TriageDecision,
   TriageSettings,
 } from "@/lib/account-data/triage/types";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
 
 type Translator = ReturnType<typeof useLanguage>["t"];
@@ -49,6 +49,9 @@ const TIER_KEY = {
 } as const;
 
 const TIER_COLOR = TRIAGE_TIER_COLORS.text;
+const TRIAGE_ARTIFACT_SET_IDS = sortedArtifacts
+  .filter((artifactSet) => artifactSet.rarity === 5)
+  .map((artifactSet) => artifactSet.id);
 
 export type SortDimension = "tier" | "name" | "level";
 
@@ -69,8 +72,8 @@ export function TriageHeader({
   decisions,
   tierFilter,
   onToggleTier,
-  halfSetFilter,
-  onHalfSetFilterChange,
+  artifactSetFilter,
+  onArtifactSetFilterChange,
   slotFilter,
   onSlotFilterChange,
   activeSortDim,
@@ -87,8 +90,8 @@ export function TriageHeader({
   decisions: TriageDecision[];
   tierFilter: Set<QualityTier>;
   onToggleTier: (tier: QualityTier) => void;
-  halfSetFilter: Set<string>;
-  onHalfSetFilterChange: (nextValues: Set<string>) => void;
+  artifactSetFilter: Set<string>;
+  onArtifactSetFilterChange: (nextValues: Set<string>) => void;
   slotFilter: Set<Slot>;
   onSlotFilterChange: (nextValues: Set<Slot>) => void;
   activeSortDim: SortDimension;
@@ -259,15 +262,26 @@ export function TriageHeader({
           </Button>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-1">
+      <div className="min-w-0">
         <FilterChipGroup
-          label={t.ui("triage.filterByHalfSet")}
-          options={allHalfSetIds}
-          selectedValues={halfSetFilter}
-          onSelectedValuesChange={onHalfSetFilterChange}
-          getKey={(halfSetId) => halfSetId}
-          getLabel={(halfSetId) => t.halfSetShort(halfSetId)}
-          className="px-0"
+          label={t.ui("evaluation.setFilterLabel")}
+          options={TRIAGE_ARTIFACT_SET_IDS}
+          selectedValues={artifactSetFilter}
+          onSelectedValuesChange={onArtifactSetFilterChange}
+          getKey={(setId) => setId}
+          getLabel={(setId) => (
+            <span className="whitespace-nowrap">{t.artifact(setId)}</span>
+          )}
+          getIcon={(setId) => (
+            <img
+              src={getAssetUrl(artifactsById[setId].imagePaths.flower)}
+              alt=""
+              aria-hidden="true"
+              className="h-4 w-4 shrink-0 object-contain"
+              draggable={false}
+            />
+          )}
+          className="w-full min-w-0 px-0"
           collapsible
         />
       </div>

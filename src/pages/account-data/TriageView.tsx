@@ -18,7 +18,6 @@ import {
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
-import { artifactIdToHalfSetId } from "@/data/gameResources";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
 import {
@@ -67,7 +66,9 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const [tierFilter, setTierFilter] = useState<Set<QualityTier>>(
     new Set(QUALITY_TIERS)
   );
-  const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(new Set());
+  const [artifactSetFilter, setArtifactSetFilter] = useState<Set<string>>(
+    new Set()
+  );
   const [slotFilter, setSlotFilter] = useState<Set<Slot>>(new Set());
 
   const [activeSortDim, setActiveSortDim] = useState<SortDimension>("name");
@@ -124,10 +125,10 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const passesFilters = useCallback(
     (d: TriageDecision) =>
       passesTier(d) &&
-      (halfSetFilter.size === 0 ||
-        halfSetFilter.has(artifactIdToHalfSetId[d.artifact.setKey] ?? "")) &&
+      (artifactSetFilter.size === 0 ||
+        artifactSetFilter.has(d.artifact.setKey)) &&
       (slotFilter.size === 0 || slotFilter.has(d.artifact.slotKey)),
-    [passesTier, halfSetFilter, slotFilter]
+    [passesTier, artifactSetFilter, slotFilter]
   );
   const sortDecisions = useCallback(
     (arr: TriageDecision[]) => {
@@ -258,8 +259,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           decisions={decisions}
           tierFilter={tierFilter}
           onToggleTier={toggleTier}
-          halfSetFilter={halfSetFilter}
-          onHalfSetFilterChange={setHalfSetFilter}
+          artifactSetFilter={artifactSetFilter}
+          onArtifactSetFilterChange={setArtifactSetFilter}
           slotFilter={slotFilter}
           onSlotFilterChange={setSlotFilter}
           activeSortDim={activeSortDim}
