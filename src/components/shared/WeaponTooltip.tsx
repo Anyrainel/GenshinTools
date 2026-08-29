@@ -5,15 +5,25 @@ import {
   getWeaponStatsAt90,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
+import type { WeaponData } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { BetaBadge } from "./BetaBadge";
 import { getRarityColor } from "./colors";
+import { ItemIcon } from "./ItemIcon";
 
 interface WeaponTooltipProps {
   weaponId: string;
+  inventoryWeapon?: WeaponData;
+  showIcon?: boolean;
+  className?: string;
 }
 
-export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
+export function WeaponTooltip({
+  weaponId,
+  inventoryWeapon,
+  showIcon = false,
+  className,
+}: WeaponTooltipProps) {
   const { t } = useLanguage();
   const weaponStats = weaponStatsResource.use();
   const weapon = weaponsById[weaponId];
@@ -27,12 +37,18 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
     : null;
 
   const name = t.weapon(weapon.id);
-  const effectHtml = t.weaponEffect(weapon.id);
+  const effectHtml = t.weaponEffect(weapon.id, inventoryWeapon?.refinement);
   const statName = meta.secondaryStat != null ? t.stat(meta.secondaryStat) : "";
   const weaponType = meta.type != null ? t.weaponType(meta.type) : "";
 
   return (
-    <div className="w-96 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
+    <div
+      className={cn(
+        "overflow-hidden rounded-lg border border-slate-700 bg-slate-900 text-slate-100 shadow-xl",
+        showIcon ? "w-full max-w-96 select-text" : "w-96 select-none",
+        className
+      )}
+    >
       {/* Header */}
       <div
         className={cn(
@@ -43,8 +59,19 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
         {/* Background gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent pointer-events-none" />
 
-        <div className="relative z-10 flex-1">
-          <h3 className="font-bold text-lg leading-tight text-white mb-2 drop-shadow-md">
+        {showIcon && inventoryWeapon && (
+          <ItemIcon
+            weaponId={weapon.id}
+            badge={inventoryWeapon.refinement}
+            lock={inventoryWeapon.lock}
+            level={`Lv. ${inventoryWeapon.level}`}
+            size="lg"
+            className="relative z-10 shrink-0"
+          />
+        )}
+
+        <div className="relative z-10 min-w-0 flex-1">
+          <h3 className="mb-2 break-words text-lg font-bold leading-tight text-white drop-shadow-md">
             {name}
             <span className="mx-2 text-yellow-400 text-base align-middle">
               {"★".repeat(meta.rarity)}
@@ -68,16 +95,34 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
               </span>
             )}
 
+            {inventoryWeapon && (
+              <>
+                <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10">
+                  {t.ui("common.level")} {inventoryWeapon.level}
+                </span>
+                <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10">
+                  {t.format(
+                    "common.refinementFormat",
+                    inventoryWeapon.refinement
+                  )}
+                </span>
+              </>
+            )}
+
             {level90 != null && (
               <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10 flex items-center gap-1">
-                <span className="text-gray-300">{t.stat("atk")}:</span>
+                <span className="text-gray-300">
+                  {t.format("accountData.maxLevelStat", t.stat("atk"))}:
+                </span>
                 <span className="font-bold text-white">{level90.baseAtk}</span>
               </span>
             )}
 
             {statName && meta.secondaryStat != null && level90 != null && (
               <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10 flex items-center gap-1">
-                <span className="text-white/90">{statName}:</span>
+                <span className="text-white/90">
+                  {t.format("accountData.maxLevelStat", statName)}:
+                </span>
                 <span className="font-bold text-white ml-0.5">
                   {level90.secondaryStatValue}
                 </span>

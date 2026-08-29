@@ -1,11 +1,6 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { WeaponDataHoverCard } from "@/components/shared/WeaponDataHoverCard";
 import { Card } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { WeaponData } from "@/data/types";
 import { cn } from "@/lib/utils";
@@ -66,8 +61,8 @@ export function InventoryWeaponGrid({
         const cardContent = (
           <Card
             className={cn(
-              "flex min-w-0 flex-col items-center bg-transparent border-0 shadow-none group",
-              isEditMode ? "cursor-pointer" : "cursor-help"
+              "group flex w-full min-w-0 flex-col items-center border-0 bg-transparent shadow-none",
+              isEditMode && "cursor-pointer"
             )}
             onClick={isEditMode ? () => onWeaponClick(w) : undefined}
           >
@@ -102,15 +97,9 @@ export function InventoryWeaponGrid({
         }
 
         return (
-          <Tooltip key={w.id}>
-            <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="p-0 border-none bg-transparent"
-            >
-              <WeaponTooltip weaponId={w.key} />
-            </TooltipContent>
-          </Tooltip>
+          <WeaponDataHoverCard key={w.id} weapon={w} side="right">
+            {cardContent}
+          </WeaponDataHoverCard>
         );
       })}
     </div>
