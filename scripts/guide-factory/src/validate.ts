@@ -48,6 +48,10 @@ import {
   runKeqingIneffaBoundedJointArtifactExperiment,
 } from "./keqingIneffaBoundedJointArtifactExperiment";
 import {
+  KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_INPUT_PATHS,
+  runKeqingIneffaTeamStatMarginalDiagnostic,
+} from "./keqingIneffaTeamStatMarginalDiagnostic";
+import {
   runTeamRosterCandidateDomainExperiment,
   TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_INPUT_PATHS,
 } from "./teamRosterCandidateDomainExperiment";
@@ -67,6 +71,7 @@ import {
   KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_REPORT_PATH,
   KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
+  KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
   LEGACY_SNAPSHOT_PATH,
@@ -132,6 +137,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaArtifactGenerationSensitivityInput,
     keqingIneffaBoundedJointArtifactExperimentInput,
     teamRosterCandidateDomainExperimentInput,
+    keqingIneffaTeamStatMarginalDiagnosticInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -158,6 +164,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
         KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_REPORT_PATH,
       ),
       readJson(TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH),
+      readJson(KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -507,6 +514,28 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.team-roster-candidate-domain-experiment",
           message:
             "The saved team-roster candidate-domain experiment does not match the selected repository templates, eligible stable character boundary, runtime reaction gate, and validation targets.",
+        });
+      }
+
+      const keqingIneffaTeamStatMarginalDiagnosticGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_INPUT_PATHS,
+        );
+      const expectedKeqingIneffaTeamStatMarginalDiagnostic =
+        await runKeqingIneffaTeamStatMarginalDiagnostic(
+          expectedKnowledge,
+          keqingIneffaTeamStatMarginalDiagnosticGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingIneffaTeamStatMarginalDiagnostic) !==
+        stableJson(keqingIneffaTeamStatMarginalDiagnosticInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_team_stat_marginal_diagnostic",
+          path: "reports.keqing-ineffa-team-stat-marginal-diagnostic",
+          message:
+            "The saved Keqing-Ineffa team-stat marginal diagnostic does not match the fixed generator endpoint domain, non-ER marginal domain, unreviewed technical objective, and GenshinTools baseline priority-band overlap.",
         });
       }
 

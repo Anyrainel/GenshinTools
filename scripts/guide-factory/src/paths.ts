@@ -127,3 +127,9 @@ export const TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH = path.join(
   "reports",
   "team-roster-candidate-domain-experiment.json"
 );
+export const KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-ineffa-team-stat-marginal-diagnostic.json"
+  );

@@ -249,6 +249,32 @@ report preserves this overlap and records zero independent gameplay-validation
 targets. Runtime errors, validation mismatch, or role-withholding drift make
 the whole wrapper not comparable rather than ranking surviving domains.
 
+The first full-team stat-marginal diagnostic now captures four fresh final
+sheet maps for the fixed Keqing/Ineffa Aubade-and-Golden composition, once per
+algorithmic carry. It evaluates one baseline plus nine non-ER +1-average-roll
+perturbations for every team member at every endpoint. All 148 current replay
+points pass interpreted-versus-compiled agreement, but the result remains a
+local derivative over an unreviewed objective rather than a feasible roll
+allocation.
+
+The cross-endpoint layer preserves raw, relative, and within-character
+normalized ranges plus tolerance-aware signs; it performs no endpoint average.
+The existing GenshinTools 100/75/50 build-priority bands remain categorical
+overlap metadata, not a scale comparable with those marginals. This already
+surfaces two kinds of review evidence: Keqing and Ineffa EM are all-zero under
+an objective with no reaction lines or overrides, while Furina CR is positive
+at three endpoints and zero at the Furina-carry endpoint. The former is an
+objective-coverage gap and the latter is operating-point sensitivity; neither
+is a guide disagreement.
+
+The exact four-carry domain, four generator calls, sequential concurrency, all
+sheet/config fingerprints, and all 148 replay outcomes are fail-closed. A
+capture failure skips the diagnostic, and a replay or agreement failure removes
+the cross-endpoint summary rather than averaging survivors. Before deriving
+weights, later experiments should review the objective and test budget-neutral
+roll exchanges or another legality-preserving local move across multiple
+operating points.
+
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input
 revision.

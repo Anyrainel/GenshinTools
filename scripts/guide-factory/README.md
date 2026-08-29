@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 12 adds a bounded, compact team-roster candidate-domain experiment
-over selected repository templates and a guide-oriented stable catalog,
-without claiming a working guide factory:
+Checkpoint 13 adds a full-team, multi-operating-point local stat-marginal
+diagnostic after the bounded roster-domain experiment, without claiming a
+working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -99,6 +99,17 @@ without claiming a working guide factory:
     as same-page extraction targets, cross-source baseline-overlap
     observations, and explicit runtime-gate negatives while recording that
     independent gameplay validation is absent.
+31. Capture four fresh carry-derived final sheets for one fixed repository-
+    build composition while requiring the exact carry set, run count, and
+    sequential execution boundary.
+32. Replay one baseline plus nine explicit non-ER +1-average-roll
+    perturbations for every character at every endpoint, producing 148 full
+    interpreted-and-compiled checks.
+33. Retain raw, relative, normalized-range, sign, and zero evidence without
+    averaging endpoints into weights, and compare only categorical
+    GenshinTools baseline priority-band overlap.
+34. Classify baseline-listed all-zero and some-zero observations as objective-
+    coverage or operating-point review cases rather than guide disagreements.
 
 The first two active sources are already in this repository:
 
@@ -167,6 +178,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation-sensitivity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-keqing-ineffa-bounded-joint-artifacts.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -183,12 +195,12 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirteen durable reports in memory: corpus inventory, team
+It also rebuilds all fourteen durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
 the bounded joint artifact experiment, the bounded team-roster candidate
-domain, Diona comparison, and historical ER calibration. Stale evidence cannot
-pass.
+domain, the full-team stat-marginal diagnostic, Diona comparison, and
+historical ER calibration. Stale evidence cannot pass.
 
 ## Data flow
 
@@ -234,6 +246,7 @@ mean that:
 - formula counts describe an executable rotation;
 - a source is authoritative;
 - two apparently conflicting sources share the same assumptions.
+- a local marginal is a scalar stat weight or legal roll allocation;
 
 Those questions belong to later experiments and human review.
 

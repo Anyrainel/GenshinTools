@@ -376,6 +376,55 @@ The seam supports bounded technical-objective comparison only. It does not
 support guide, artifact-recommendation, game-performance, ER, or global-
 optimality claims.
 
+## Full-team local stat-marginal diagnostic seam
+
+`src/teamStatMarginalDiagnostic.ts` accepts already captured four-character
+team configs and `StatSheet` operating points. It evaluates one baseline plus
+one average five-star roll of each of nine hard-coded non-ER stats for every
+character. The generic core recomputes team-config and sheet fingerprints,
+checks every replay through the interpreted and compiled calculator paths, and
+fails the whole cross-endpoint summary closed after any capture, replay,
+agreement, or finite-number error. A caller's complete-artifact capture hash is
+explicitly opaque correlation metadata and receives syntax validation only.
+
+The core retains raw and relative deltas, within-character endpoint-local
+normalization, effective numerical tolerance, and tolerance-aware signs. It
+aggregates endpoints only as min/max ranges and sign/zero classifications; it
+does not average them into weights. A +1-roll perturbation is not budget-
+neutral and does not enforce artifact legality, so the output is a local
+derivative rather than an allocation.
+
+The Keqing/Ineffa wrapper captures four fresh endpoints for the fixed
+Aubade/Golden node through the existing technical-probe generator injection.
+The exact carry set, four invocations, fresh teams, and maximum concurrency of
+one are comparability gates. Across four endpoints, four characters, and nine
+stats, the current run performs 148 full dual-path replays. All pass agreement;
+the computed formula-override map is empty throughout.
+
+The four captures yield one unique Ineffa sheet and two unique sheets each for
+Keqing, Furina, and Xilonen. Several local marginals are visibly operating-
+point dependent. Keqing CR remains positive but ranges from approximately
+0.217 to 0.912 of that endpoint's largest positive Keqing marginal. Furina CR
+is positive at three endpoints and tolerance-zero at the Furina-carry endpoint.
+This is retained as an operating-point review case rather than averaged into a
+single weight.
+
+The wrapper separately overlays the fixed GenshinTools baseline build priority
+bands. Their 100/75/50 values are categorical baseline labels, not external
+truth and not a scale comparable with marginal normalization. Keqing and
+Ineffa EM are baseline-listed but all-zero under the current objective. Because
+the 11 unreviewed lines contain no reaction line or reaction override, these
+are objective-coverage review cases, not guide disagreements. Existing
+generator sheets may contain incidental or filler ER only as part of the
+operating point and fingerprint; no ER threshold, perturbation, or conclusion
+is present.
+
+This seam addresses two weaknesses of direct AutoTune reuse: teammates retain
+their complete generated operating-point sheets, and the full four-character
+technical combo is replayed through both calculator paths at several endpoints.
+It does not validate AutoTune's default context, replace constrained allocation,
+or make the unreviewed objective credible enough for player-facing weights.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -402,6 +451,8 @@ optimality claims.
   `scripts/guide-factory/src/boundedJointArtifactExperiment.ts`.
 - Cached finite-lattice reference, coordinate, and beam traces:
   `scripts/guide-factory/src/boundedLatticePolicy.ts`.
+- Full-team non-ER local marginals with fail-closed multi-endpoint ranges:
+  `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -460,16 +511,22 @@ factory.
   `autoTuneTeam` has no context override. These are unresolved assumptions that
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
+- The new stat-marginal seam uses complete generated team sheets and a normal
+  resistance value, but each +1-roll probe is additive rather than a legal
+  roll exchange. Its objective still has eight readiness blockers and omits
+  reaction lines, so it cannot yet produce credible scalar weights or an ideal
+  allocation.
 - The bounded joint experiment intentionally passes no explicit buff
   overrides, although it now records that the computed formula-override map is
   empty in all 48 current cells. A future performance-bearing experiment must
   define or validate its buff semantics explicitly and verify that the same
   objective is applied throughout every greedy, refinement, and replay phase.
 
-The current 2x2-by-four-carry table is now exhausted rather than planned. Its
-reusable seams can be applied to another source-backed fixture or a carefully
-expanded equipment dimension, but each expansion needs its own exhaustive
-boundary, intermediate discrepancies, and fail-closed validation. The
-unreviewed formula plan, zero-sensitivity Ineffa dimension, and tiny beam trace
-make extrapolation unsafe. Formula-plan review and explicit gameplay
-assumptions remain prerequisites for performance claims. ER remains deferred.
+The current 2x2-by-four-carry table and its first nine-stat local derivative
+pass are now executed rather than planned. The reusable seams can be applied to
+another source-backed fixture or to budget-neutral roll exchanges, but each
+expansion needs its own exhaustive boundary, intermediate discrepancies, and
+fail-closed validation. The unreviewed formula plan, omitted reaction coverage,
+zero-sensitivity Ineffa set dimension, and carry-dependent marginal ranges make
+extrapolation unsafe. Formula-plan review and explicit gameplay assumptions
+remain prerequisites for performance claims. ER remains deferred.

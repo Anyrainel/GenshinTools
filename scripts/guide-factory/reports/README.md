@@ -6,6 +6,23 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-team-stat-marginal-diagnostic.json` captures four fresh
+  carry-derived final sheets for the fixed Aubade/Golden seed node, then runs
+  148 full interpreted-and-compiled replay points: one baseline plus nine
+  explicit non-ER +1-average-roll perturbations for every character at every
+  endpoint. It retains raw, relative, within-character normalized, tolerance-
+  aware sign, and cross-endpoint range evidence without averaging endpoints
+  into weights. Existing GenshinTools 100/75/50 build priority bands remain a
+  separate categorical namespace and are never compared numerically with the
+  normalized marginals. Baseline-listed Keqing and Ineffa EM are all-zero
+  under a combo with no reaction lines or overrides and are marked objective-
+  coverage review cases; Furina CR is positive at three endpoints and zero at
+  the Furina-carry endpoint, so it is marked operating-point-sensitive rather
+  than collapsed into one priority. Captured sheets may contain incidental
+  filler ER only as part of the operating-point fingerprint; no threshold,
+  perturbation, or ER conclusion is present. This is local derivative evidence
+  under 11 unreviewed formula lines and eight readiness blockers, not a stat
+  weight, legal allocation, recommendation, ranking, or optimum.
 - `team-roster-candidate-domain-experiment.json` expands four resolved
   repository templates over a 125-ID guide-domain-eligible stable catalog and
   withholds two templates whose actual slot options contain unresolved roles.
@@ -128,6 +145,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirteen reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all fourteen reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.
