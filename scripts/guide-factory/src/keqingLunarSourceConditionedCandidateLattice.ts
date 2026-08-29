@@ -756,7 +756,7 @@ function validateFormulaBoundary(
     issues,
     "formula.blocker_ledger_changed",
     "technicalComparisonBoundary.blockers",
-    "The exact source rotation or eight-blocker readiness ledger changed.",
+    "The source rotation ID or ordered eight-blocker code ledger changed.",
   );
   const keqingEvidence = formulaDraft.equipmentFixture.evidence.filter(
     ({ characterId }) => characterId === "keqing",

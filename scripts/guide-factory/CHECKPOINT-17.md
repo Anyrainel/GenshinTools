@@ -83,7 +83,8 @@ any required invariant changes, including:
 - a weapon leaving the released native-type-compatible domain;
 - the exact Mistsplitter or Thundering Fury anchor changing; or
 - the formula fixture moving to another team, becoming reviewed/replay-ready,
-  or changing its exact blocker ledger without a new checkpoint review.
+  or changing its rotation ID or ordered blocker-code ledger without a new
+  checkpoint review.
 
 ## What this checkpoint does not establish
 
