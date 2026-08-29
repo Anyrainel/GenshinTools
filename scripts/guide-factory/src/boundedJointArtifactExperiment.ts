@@ -557,14 +557,7 @@ async function buildNodeObservation(
     requestedArtifactSetIdsByCharacter: sortTextRecord(
       candidate.artifactSetIdsByCharacter,
     ),
-    sourceBuildIdsByCharacter: sortTextRecord(
-      Object.fromEntries(
-        candidate.validationTargets.map((target) => [
-          target.characterId,
-          target.buildSourceRecordId,
-        ]),
-      ),
-    ),
+    sourceBuildIdsByCharacter: sourceBuildIds(candidate),
     carryRuns,
     nodeFailures,
     technicalTeamConfigs,
@@ -622,11 +615,18 @@ async function buildNodeObservation(
           notes: [
             "Unreviewed technical formula lines used as a bounded objective only.",
           ],
-          sourceRefs: candidate.validationTargets.map((target) => ({
-              kind: "knowledge_record",
+          sourceRefs: candidate.validationTargets.map((target) => {
+            if (target.kind !== "repository-build") {
+              throw new Error(
+                `Bounded joint experiment requires repository-build validation targets; ${target.characterId} is ${target.kind}.`,
+              );
+            }
+            return {
+              kind: "knowledge_record" as const,
               recordId: target.characterGuideId,
-              supports: ["artifact_stats"],
-            })),
+              supports: ["artifact_stats" as const],
+            };
+          }),
         },
         teamConfigs: firstCapture.teamConfigs,
         combatOptions: {},
@@ -836,8 +836,26 @@ function validateAndResolveInput(
         `Bounded joint experiment candidate ${candidateId} is missing or is a negative control.`,
       );
     }
+    sourceBuildIds(candidate);
     return candidate;
   });
+}
+
+function sourceBuildIds(
+  candidate: ArtifactGenerationTechnicalCandidate,
+): Record<string, string> {
+  return sortTextRecord(
+    Object.fromEntries(
+      candidate.validationTargets.map((target) => {
+        if (target.kind !== "repository-build") {
+          throw new Error(
+            `Bounded joint experiment requires repository-build validation targets; ${target.characterId} is ${target.kind}.`,
+          );
+        }
+        return [target.characterId, target.buildSourceRecordId];
+      }),
+    ),
+  );
 }
 
 function validateTechnicalFormulaLines(

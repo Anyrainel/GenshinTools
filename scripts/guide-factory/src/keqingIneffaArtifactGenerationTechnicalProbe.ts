@@ -143,6 +143,9 @@ export async function buildKeqingIneffaArtifactGenerationTechnicalProbeInput(
   return {
     preflight,
     formulaDraft,
+    validationProvenance: {
+      repository,
+    },
     carryCharacterId: "keqing",
     candidates,
     generatedFrom,
@@ -178,6 +181,7 @@ function buildValidationTarget(
   validateSourceBuildTarget(characterId, artifactSetId, build);
 
   return {
+    kind: "repository-build",
     characterId,
     characterGuideId,
     buildSourceRecordId: build.sourceRecordId,

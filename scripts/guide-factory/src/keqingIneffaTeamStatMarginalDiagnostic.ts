@@ -10,6 +10,7 @@ import { fingerprintGeneratedArtifacts } from "./artifactGenerationSensitivityPr
 import {
   ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT,
   runArtifactGenerationTechnicalProbe,
+  type ArtifactGenerationRepositoryBuildValidationTarget,
   type ArtifactGenerationTechnicalCandidate,
 } from "./artifactGenerationTechnicalProbe";
 import {
@@ -266,6 +267,7 @@ export async function runKeqingIneffaTeamStatMarginalDiagnostic(
     buildKeqingIneffaFormulaDraftReport(repository, []),
   ]);
   const candidate = requireFixedCandidate(boundedInput.baseProbeInput.candidates);
+  requireRepositoryBuildTargets(candidate);
   validateFixtureInvariants(
     boundedInput.unreviewedTechnicalFormulaLines,
     formulaDraft,
@@ -505,7 +507,7 @@ export async function runKeqingIneffaTeamStatMarginalDiagnostic(
               recordId: formulaDraft.sourceTeamRecordId,
               supports: ["roster", "damage_plan"],
             },
-            ...candidate.validationTargets.map((target) => ({
+            ...requireRepositoryBuildTargets(candidate).map((target) => ({
               kind: "knowledge_record" as const,
               recordId: target.characterGuideId,
               supports: ["artifact_stats" as const],
@@ -587,7 +589,7 @@ export async function runKeqingIneffaTeamStatMarginalDiagnostic(
       ),
       sourceBuildIdsByCharacter: sortTextRecord(
         Object.fromEntries(
-          candidate.validationTargets.map((target) => [
+          requireRepositoryBuildTargets(candidate).map((target) => [
             target.characterId,
             target.buildSourceRecordId,
           ]),
@@ -677,7 +679,7 @@ function buildSourcePriorityOverlap(
     { comparisonStatus: "comparable" }
   >,
 ): KeqingIneffaSourcePriorityOverlap {
-  const characters = candidate.validationTargets.map((target) => {
+  const characters = requireRepositoryBuildTargets(candidate).map((target) => {
     const guide = repository.records.find(
       (record): record is CharacterGuide =>
         record.kind === "character_guide" &&
@@ -960,6 +962,19 @@ function cloneCandidate(
       substats: [...target.substats],
     })),
   };
+}
+
+function requireRepositoryBuildTargets(
+  candidate: ArtifactGenerationTechnicalCandidate,
+): ArtifactGenerationRepositoryBuildValidationTarget[] {
+  return candidate.validationTargets.map((target) => {
+    if (target.kind !== "repository-build") {
+      throw new Error(
+        `Keqing/Ineffa baseline diagnostic requires repository-build validation targets; ${target.characterId} is ${target.kind}.`,
+      );
+    }
+    return target;
+  });
 }
 
 function isNonErDiagnosticStat(

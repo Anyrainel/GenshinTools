@@ -189,8 +189,8 @@
       "generatorInvoked": true,
       "independentValidation": {
         "allSetsAreFiveStar": true,
-        "repositoryBuildTargetsMatchAssignment": true,
-        "runtimeRegistration": "passed"
+        "runtimeRegistration": "passed",
+        "validationTargetsMatchAssignmentAndProvenance": true
       },
       "outcome": "completed-structurally",
       "progress": [
@@ -242,51 +242,66 @@
         "xilonen": "scroll_of_the_hero_of_cinder_city"
       },
       "requestedAssignmentsSatisfied": true,
-      "sequence": 0,
-      "sourceBuildIdsByCharacter": {
-        "furina": "BQAI0BO",
-        "ineffa": "FeFiQU8",
-        "keqing": "1WswsAu",
-        "xilonen": "Dbt0Wkm"
+      "requestedClassification": "repository-build-seed",
+      "requestedValidationTargetsByCharacter": {
+        "furina": {
+          "buildSourceRecordId": "BQAI0BO",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "kind": "repository-build"
+        },
+        "ineffa": {
+          "buildSourceRecordId": "FeFiQU8",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "kind": "repository-build"
+        },
+        "keqing": {
+          "buildSourceRecordId": "1WswsAu",
+          "characterGuideId": "genshintools-presets:character-guide:keqing",
+          "kind": "repository-build"
+        },
+        "xilonen": {
+          "buildSourceRecordId": "Dbt0Wkm",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "kind": "repository-build"
+        }
       },
+      "sequence": 0,
       "validationTargetComparisons": [
         {
           "artifactSetId": "golden_troupe",
-          "buildSourceRecordId": "BQAI0BO",
-          "characterGuideId": "genshintools-presets:character-guide:furina",
           "characterId": "furina",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cr"
               ]
             },
             "goblet": {
               "generated": "hp%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "hp%",
                 "hydro%"
               ]
             },
             "sands": {
               "generated": "hp%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "er",
                 "hp%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "hp%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "em",
               "hp"
             ],
@@ -297,53 +312,56 @@
               "hp",
               "hp%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "er",
               "hp%"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "BQAI0BO",
+            "characterGuideId": "genshintools-presets:character-guide:furina",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "aubade_of_morningstar_and_moon",
-          "buildSourceRecordId": "FeFiQU8",
-          "characterGuideId": "genshintools-presets:character-guide:ineffa",
           "characterId": "ineffa",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -353,52 +371,55 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "FeFiQU8",
+            "characterGuideId": "genshintools-presets:character-guide:ineffa",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "thundering_fury",
-          "buildSourceRecordId": "1WswsAu",
-          "characterGuideId": "genshintools-presets:character-guide:keqing",
           "characterId": "keqing",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cd",
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "electro%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -408,50 +429,53 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "1WswsAu",
+            "characterGuideId": "genshintools-presets:character-guide:keqing",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "scroll_of_the_hero_of_cinder_city",
-          "buildSourceRecordId": "Dbt0Wkm",
-          "characterGuideId": "genshintools-presets:character-guide:xilonen",
           "characterId": "xilonen",
           "mainStats": {
             "circlet": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "goblet": {
               "generated": "geo%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "sands": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "def%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk%",
               "def"
             ],
@@ -462,15 +486,20 @@
               "def",
               "def%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "def%",
               "er"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "Dbt0Wkm",
+            "characterGuideId": "genshintools-presets:character-guide:xilonen",
+            "kind": "repository-build"
           }
         }
       ]
@@ -666,8 +695,8 @@
       "generatorInvoked": true,
       "independentValidation": {
         "allSetsAreFiveStar": true,
-        "repositoryBuildTargetsMatchAssignment": true,
-        "runtimeRegistration": "passed"
+        "runtimeRegistration": "passed",
+        "validationTargetsMatchAssignmentAndProvenance": true
       },
       "outcome": "completed-structurally",
       "progress": [
@@ -719,50 +748,65 @@
         "xilonen": "scroll_of_the_hero_of_cinder_city"
       },
       "requestedAssignmentsSatisfied": true,
-      "sequence": 1,
-      "sourceBuildIdsByCharacter": {
-        "furina": "BQA4H1m",
-        "ineffa": "FeFiQU8",
-        "keqing": "1WswsAu",
-        "xilonen": "Dbt0Wkm"
+      "requestedClassification": "repository-build-composition",
+      "requestedValidationTargetsByCharacter": {
+        "furina": {
+          "buildSourceRecordId": "BQA4H1m",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "kind": "repository-build"
+        },
+        "ineffa": {
+          "buildSourceRecordId": "FeFiQU8",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "kind": "repository-build"
+        },
+        "keqing": {
+          "buildSourceRecordId": "1WswsAu",
+          "characterGuideId": "genshintools-presets:character-guide:keqing",
+          "kind": "repository-build"
+        },
+        "xilonen": {
+          "buildSourceRecordId": "Dbt0Wkm",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "kind": "repository-build"
+        }
       },
+      "sequence": 1,
       "validationTargetComparisons": [
         {
           "artifactSetId": "tenacity_of_the_millelith",
-          "buildSourceRecordId": "BQA4H1m",
-          "characterGuideId": "genshintools-presets:character-guide:furina",
           "characterId": "furina",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cr",
                 "hp%"
               ]
             },
             "goblet": {
               "generated": "hp%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "hp%"
               ]
             },
             "sands": {
               "generated": "hp%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "er"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "hp%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "em",
               "hp"
             ],
@@ -773,53 +817,56 @@
               "hp",
               "hp%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "er",
               "hp%"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "BQA4H1m",
+            "characterGuideId": "genshintools-presets:character-guide:furina",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "aubade_of_morningstar_and_moon",
-          "buildSourceRecordId": "FeFiQU8",
-          "characterGuideId": "genshintools-presets:character-guide:ineffa",
           "characterId": "ineffa",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -829,52 +876,55 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "FeFiQU8",
+            "characterGuideId": "genshintools-presets:character-guide:ineffa",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "thundering_fury",
-          "buildSourceRecordId": "1WswsAu",
-          "characterGuideId": "genshintools-presets:character-guide:keqing",
           "characterId": "keqing",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cd",
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "electro%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -884,50 +934,53 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "1WswsAu",
+            "characterGuideId": "genshintools-presets:character-guide:keqing",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "scroll_of_the_hero_of_cinder_city",
-          "buildSourceRecordId": "Dbt0Wkm",
-          "characterGuideId": "genshintools-presets:character-guide:xilonen",
           "characterId": "xilonen",
           "mainStats": {
             "circlet": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "goblet": {
               "generated": "geo%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "sands": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "def%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk%",
               "def"
             ],
@@ -938,15 +991,20 @@
               "def",
               "def%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "def%",
               "er"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "Dbt0Wkm",
+            "characterGuideId": "genshintools-presets:character-guide:xilonen",
+            "kind": "repository-build"
           }
         }
       ]
@@ -1142,8 +1200,8 @@
       "generatorInvoked": true,
       "independentValidation": {
         "allSetsAreFiveStar": true,
-        "repositoryBuildTargetsMatchAssignment": true,
-        "runtimeRegistration": "passed"
+        "runtimeRegistration": "passed",
+        "validationTargetsMatchAssignmentAndProvenance": true
       },
       "outcome": "completed-structurally",
       "progress": [
@@ -1195,51 +1253,66 @@
         "xilonen": "scroll_of_the_hero_of_cinder_city"
       },
       "requestedAssignmentsSatisfied": true,
-      "sequence": 2,
-      "sourceBuildIdsByCharacter": {
-        "furina": "BQAI0BO",
-        "ineffa": "FeFi2JG",
-        "keqing": "1WswsAu",
-        "xilonen": "Dbt0Wkm"
+      "requestedClassification": "repository-build-composition",
+      "requestedValidationTargetsByCharacter": {
+        "furina": {
+          "buildSourceRecordId": "BQAI0BO",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "kind": "repository-build"
+        },
+        "ineffa": {
+          "buildSourceRecordId": "FeFi2JG",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "kind": "repository-build"
+        },
+        "keqing": {
+          "buildSourceRecordId": "1WswsAu",
+          "characterGuideId": "genshintools-presets:character-guide:keqing",
+          "kind": "repository-build"
+        },
+        "xilonen": {
+          "buildSourceRecordId": "Dbt0Wkm",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "kind": "repository-build"
+        }
       },
+      "sequence": 2,
       "validationTargetComparisons": [
         {
           "artifactSetId": "golden_troupe",
-          "buildSourceRecordId": "BQAI0BO",
-          "characterGuideId": "genshintools-presets:character-guide:furina",
           "characterId": "furina",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cr"
               ]
             },
             "goblet": {
               "generated": "hp%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "hp%",
                 "hydro%"
               ]
             },
             "sands": {
               "generated": "hp%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "er",
                 "hp%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "hp%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "em",
               "hp"
             ],
@@ -1250,54 +1323,57 @@
               "hp",
               "hp%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "er",
               "hp%"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "BQAI0BO",
+            "characterGuideId": "genshintools-presets:character-guide:furina",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "silken_moons_serenade",
-          "buildSourceRecordId": "FeFi2JG",
-          "characterGuideId": "genshintools-presets:character-guide:ineffa",
           "characterId": "ineffa",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%",
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -1307,52 +1383,55 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "FeFi2JG",
+            "characterGuideId": "genshintools-presets:character-guide:ineffa",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "thundering_fury",
-          "buildSourceRecordId": "1WswsAu",
-          "characterGuideId": "genshintools-presets:character-guide:keqing",
           "characterId": "keqing",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cd",
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "electro%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -1362,50 +1441,53 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "1WswsAu",
+            "characterGuideId": "genshintools-presets:character-guide:keqing",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "scroll_of_the_hero_of_cinder_city",
-          "buildSourceRecordId": "Dbt0Wkm",
-          "characterGuideId": "genshintools-presets:character-guide:xilonen",
           "characterId": "xilonen",
           "mainStats": {
             "circlet": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "goblet": {
               "generated": "geo%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "sands": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "def%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk%",
               "def"
             ],
@@ -1416,15 +1498,20 @@
               "def",
               "def%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "def%",
               "er"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "Dbt0Wkm",
+            "characterGuideId": "genshintools-presets:character-guide:xilonen",
+            "kind": "repository-build"
           }
         }
       ]
@@ -1621,8 +1708,8 @@
       "generatorInvoked": true,
       "independentValidation": {
         "allSetsAreFiveStar": true,
-        "repositoryBuildTargetsMatchAssignment": true,
-        "runtimeRegistration": "passed"
+        "runtimeRegistration": "passed",
+        "validationTargetsMatchAssignmentAndProvenance": true
       },
       "outcome": "completed-structurally",
       "progress": [
@@ -1674,50 +1761,65 @@
         "xilonen": "scroll_of_the_hero_of_cinder_city"
       },
       "requestedAssignmentsSatisfied": true,
-      "sequence": 3,
-      "sourceBuildIdsByCharacter": {
-        "furina": "BQA4H1m",
-        "ineffa": "FeFi2JG",
-        "keqing": "1WswsAu",
-        "xilonen": "Dbt0Wkm"
+      "requestedClassification": "repository-build-composition",
+      "requestedValidationTargetsByCharacter": {
+        "furina": {
+          "buildSourceRecordId": "BQA4H1m",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "kind": "repository-build"
+        },
+        "ineffa": {
+          "buildSourceRecordId": "FeFi2JG",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "kind": "repository-build"
+        },
+        "keqing": {
+          "buildSourceRecordId": "1WswsAu",
+          "characterGuideId": "genshintools-presets:character-guide:keqing",
+          "kind": "repository-build"
+        },
+        "xilonen": {
+          "buildSourceRecordId": "Dbt0Wkm",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "kind": "repository-build"
+        }
       },
+      "sequence": 3,
       "validationTargetComparisons": [
         {
           "artifactSetId": "tenacity_of_the_millelith",
-          "buildSourceRecordId": "BQA4H1m",
-          "characterGuideId": "genshintools-presets:character-guide:furina",
           "characterId": "furina",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cr",
                 "hp%"
               ]
             },
             "goblet": {
               "generated": "hp%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "hp%"
               ]
             },
             "sands": {
               "generated": "hp%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "er"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "hp%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "em",
               "hp"
             ],
@@ -1728,54 +1830,57 @@
               "hp",
               "hp%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "er",
               "hp%"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "BQA4H1m",
+            "characterGuideId": "genshintools-presets:character-guide:furina",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "silken_moons_serenade",
-          "buildSourceRecordId": "FeFi2JG",
-          "characterGuideId": "genshintools-presets:character-guide:ineffa",
           "characterId": "ineffa",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%",
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -1785,52 +1890,55 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "FeFi2JG",
+            "characterGuideId": "genshintools-presets:character-guide:ineffa",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "thundering_fury",
-          "buildSourceRecordId": "1WswsAu",
-          "characterGuideId": "genshintools-presets:character-guide:keqing",
           "characterId": "keqing",
           "mainStats": {
             "circlet": {
               "generated": "cr",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "cd",
                 "cr"
               ]
             },
             "goblet": {
               "generated": "atk%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "electro%"
               ]
             },
             "sands": {
               "generated": "atk%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "atk%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "atk%",
               "cd",
               "cr",
               "em"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk"
             ],
             "generatedPositiveKeys": [
@@ -1840,50 +1948,53 @@
               "cr",
               "em"
             ],
-            "sourceKeysNotGenerated": [],
-            "sourceObservedKeys": [
+            "validationTargetKeysNotGenerated": [],
+            "validationTargetObservedKeys": [
               "atk%",
               "cd",
               "cr",
               "em"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "1WswsAu",
+            "characterGuideId": "genshintools-presets:character-guide:keqing",
+            "kind": "repository-build"
           }
         },
         {
           "artifactSetId": "scroll_of_the_hero_of_cinder_city",
-          "buildSourceRecordId": "Dbt0Wkm",
-          "characterGuideId": "genshintools-presets:character-guide:xilonen",
           "characterId": "xilonen",
           "mainStats": {
             "circlet": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "goblet": {
               "generated": "geo%",
-              "relation": "not-listed-by-source-build",
-              "sourceObserved": [
+              "relation": "not-listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             },
             "sands": {
               "generated": "def%",
-              "relation": "listed-by-source-build",
-              "sourceObserved": [
+              "relation": "listed-by-validation-target",
+              "validationTargetObserved": [
                 "def%"
               ]
             }
           },
           "substats": {
-            "generatedKeysListedBySource": [
+            "generatedKeysListedByValidationTarget": [
               "cd",
               "cr",
               "def%"
             ],
-            "generatedKeysNotListedBySource": [
+            "generatedKeysNotListedByValidationTarget": [
               "atk%",
               "def"
             ],
@@ -1894,15 +2005,20 @@
               "def",
               "def%"
             ],
-            "sourceKeysNotGenerated": [
+            "validationTargetKeysNotGenerated": [
               "er"
             ],
-            "sourceObservedKeys": [
+            "validationTargetObservedKeys": [
               "cd",
               "cr",
               "def%",
               "er"
             ]
+          },
+          "validationTargetProvenance": {
+            "buildSourceRecordId": "Dbt0Wkm",
+            "characterGuideId": "genshintools-presets:character-guide:xilonen",
+            "kind": "repository-build"
           }
         }
       ]
@@ -1912,7 +2028,6 @@
       "changedFromSeedCharacters": [
         "xilonen"
       ],
-      "classification": "repository-build-negative-control",
       "failure": {
         "code": "non-five-star-set",
         "message": "Candidate 05-instructor-negative-control assigns 4-star set instructor to xilonen; the deterministic probe admits only 5-star sets (non-five-star-filter).",
@@ -1922,8 +2037,8 @@
       "generatorInvoked": false,
       "independentValidation": {
         "allSetsAreFiveStar": false,
-        "repositoryBuildTargetsMatchAssignment": true,
-        "runtimeRegistration": "not-attempted"
+        "runtimeRegistration": "not-attempted",
+        "validationTargetsMatchAssignmentAndProvenance": true
       },
       "outcome": "rejected-before-run",
       "progress": [],
@@ -1934,18 +2049,35 @@
         "xilonen": "instructor"
       },
       "requestedAssignmentsSatisfied": false,
-      "sequence": 4,
-      "sourceBuildIdsByCharacter": {
-        "furina": "BQAI0BO",
-        "ineffa": "FeFiQU8",
-        "keqing": "1WswsAu",
-        "xilonen": "Dbspw5m"
-      }
+      "requestedClassification": "repository-build-negative-control",
+      "requestedValidationTargetsByCharacter": {
+        "furina": {
+          "buildSourceRecordId": "BQAI0BO",
+          "characterGuideId": "genshintools-presets:character-guide:furina",
+          "kind": "repository-build"
+        },
+        "ineffa": {
+          "buildSourceRecordId": "FeFiQU8",
+          "characterGuideId": "genshintools-presets:character-guide:ineffa",
+          "kind": "repository-build"
+        },
+        "keqing": {
+          "buildSourceRecordId": "1WswsAu",
+          "characterGuideId": "genshintools-presets:character-guide:keqing",
+          "kind": "repository-build"
+        },
+        "xilonen": {
+          "buildSourceRecordId": "Dbspw5m",
+          "characterGuideId": "genshintools-presets:character-guide:xilonen",
+          "kind": "repository-build"
+        }
+      },
+      "sequence": 4
     }
   ],
   "cautions": [
-    "The candidates compose independently recorded character-guide builds; no source record binds them to this exact team or to one another, and changed assignments have no reviewed formula binding.",
-    "Generated main stats and positive substat keys are review observations against repository build targets, not correctness, ranking, or recommendation claims.",
+    "Repository-build validation is relative to the caller-supplied schema-valid consolidated snapshot, whose revision is authenticated by the source wrapper and durable validator rather than this generic probe; composed targets require a trusted source-specific environment validator, and neither boundary binds the full candidate to this exact team, the other targets, or a reviewed formula.",
+    "Generated main stats and positive substat keys are review observations against provenance-validated targets, not correctness, ranking, or recommendation claims.",
     "An observed ER main stat or substat key does not establish an ER floor, rotation feasibility, or ER adequacy.",
     "The generator is ordered and greedy; completing this probe does not establish joint optimality."
   ],
@@ -1967,10 +2099,12 @@
     ],
     "carryCharacterId": "keqing",
     "comparisonWrapperUsed": false,
+    "composedSourceClaimsValidationPolicy": "default-deny-trusted-environment-capability-only",
     "energyRecoveryThresholdsUsed": false,
     "generatorApi": "runGenerator",
     "numericalDamageRetained": false,
-    "scheduling": "sequential"
+    "scheduling": "sequential",
+    "trustedComposedSourceClaimsValidatorAvailable": false
   },
   "generatedFrom": [
     {
@@ -1983,7 +2117,7 @@
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
-      "sha256": "823c4dd25377c39f1e9aa69ebe235fecf463084ef0dbe9919df56c714112a704"
+      "sha256": "18c5ae226f7019b0325a067e5bbf5d6dfa817721b9d4f9e68391614368dbacb8"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -2003,7 +2137,7 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaArtifactGenerationTechnicalProbe.ts",
-      "sha256": "3ab99ecfc05bbe7f5188bc4662f7f99e42143f38f09ab4e434e3e74581fb85a6"
+      "sha256": "8a3c79cecc3e250c3c1d2f34f905ce26c846547381a3971d89ca50879b124c85"
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
@@ -2170,7 +2304,7 @@
     "stat-recommendation",
     "energy-requirement"
   ],
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "seedPreflight": {
     "authorizesChangedCandidateFormulaBinding": false,
     "equipmentReadyForTechnicalProbe": true,

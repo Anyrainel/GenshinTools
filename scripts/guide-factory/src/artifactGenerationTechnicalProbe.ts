@@ -16,8 +16,20 @@ import {
 import type { ArtifactGenerationPreflightReport } from "./artifactGenerationPreflight";
 import { bootstrapGuideFactoryComputation } from "./computationReplay";
 import type { FormulaPlanDraftOutput } from "./formulaPlanDraft";
+import { stableJson } from "./io";
+import {
+  type KnowledgeRecord,
+  type KnowledgeRepository,
+  KnowledgeRepositorySchema,
+} from "./schemas";
 
 const MAX_CANDIDATES = 8;
+const ALLOWED_CANDIDATE_CLASSIFICATIONS = new Set<string>([
+  "repository-build-seed",
+  "repository-build-composition",
+  "repository-build-negative-control",
+  "composed-source-claims",
+]);
 
 class CandidateResultValidationError extends Error {
   override readonly name = "CandidateResultValidationError";
@@ -30,10 +42,8 @@ export const ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT: CalcContext = {
   substatBudget: "8_6",
 };
 
-export type ArtifactGenerationValidationTarget = {
+type ArtifactGenerationValidationTargetStats = {
   characterId: string;
-  characterGuideId: string;
-  buildSourceRecordId: string;
   artifactSetId: string;
   sands: MainStat[];
   goblet: MainStat[];
@@ -41,12 +51,56 @@ export type ArtifactGenerationValidationTarget = {
   substats: SubStat[];
 };
 
+export type ArtifactGenerationRepositoryBuildValidationTarget =
+  ArtifactGenerationValidationTargetStats & {
+    kind: "repository-build";
+    characterGuideId: string;
+    buildSourceRecordId: string;
+  };
+
+export type ArtifactGenerationComposedSourceClaimsValidationTarget =
+  ArtifactGenerationValidationTargetStats & {
+    kind: "composed-source-claims";
+    compositionId: string;
+    repositoryRecordIds: string[];
+    equipmentClaimIds: string[];
+    matchedStatClaimIds: {
+      sands: string[];
+      goblet: string[];
+      circlet: string[];
+      substats: string[];
+    };
+    withheldStatClaimIds: string[];
+    sourcePriorityGroups: SubStat[][];
+    sourceAuthored: false;
+  };
+
+export type ArtifactGenerationValidationTarget =
+  | ArtifactGenerationRepositoryBuildValidationTarget
+  | ArtifactGenerationComposedSourceClaimsValidationTarget;
+
+/**
+ * Runtime provenance available to the generic probe.
+ *
+ * Repository targets are checked against the caller-supplied, schema-valid
+ * consolidated repository snapshot. Its source revision is authenticated by
+ * the source wrapper and durable validator, not by this generic probe.
+ * Composed-target authorization is intentionally absent from this serializable
+ * input. A source-specific caller must supply a trusted validator capability in
+ * the execution environment; the generic probe defaults to rejecting composed
+ * targets because it does not know any source-specific evidence schema.
+ */
+export type ArtifactGenerationValidationProvenance = {
+  repository: KnowledgeRepository;
+};
+
 export type ArtifactGenerationTechnicalCandidate = {
   candidateId: string;
   classification:
     | "repository-build-seed"
     | "repository-build-composition"
-    | "repository-build-negative-control";
+    | "repository-build-negative-control"
+    | "composed-source-claims";
   artifactSetIdsByCharacter: Record<string, string>;
   validationTargets: ArtifactGenerationValidationTarget[];
 };
@@ -54,6 +108,7 @@ export type ArtifactGenerationTechnicalCandidate = {
 export type ArtifactGenerationTechnicalProbeInput = {
   preflight: ArtifactGenerationPreflightReport;
   formulaDraft: FormulaPlanDraftOutput;
+  validationProvenance: ArtifactGenerationValidationProvenance;
   carryCharacterId: string;
   candidates: ArtifactGenerationTechnicalCandidate[];
   generatedFrom: Array<{ path: string; sha256: string }>;
@@ -63,6 +118,8 @@ export type ArtifactGenerationCandidateFailure = {
   code:
     | "candidate-character-mismatch"
     | "candidate-build-target-mismatch"
+    | "candidate-classification-invalid"
+    | "candidate-validation-target-provenance-mismatch"
     | "unknown-artifact-set"
     | "non-five-star-set"
     | "candidate-formula-invalid"
@@ -86,6 +143,14 @@ type GeneratorRunner = (
 
 export type ArtifactGenerationTechnicalProbeEnvironment = {
   runGenerator: GeneratorRunner;
+  validateComposedSourceClaimsTarget?: (
+    target: ArtifactGenerationComposedSourceClaimsValidationTarget,
+  ) =>
+    | { valid: true }
+    | {
+        valid: false;
+        message: string;
+      };
 };
 
 type GeneratorProgressObservation = {
@@ -96,14 +161,13 @@ type GeneratorProgressObservation = {
 
 type MainStatReviewObservation = {
   generated: MainStat;
-  sourceObserved: MainStat[];
-  relation: "listed-by-source-build" | "not-listed-by-source-build";
+  validationTargetObserved: MainStat[];
+  relation: "listed-by-validation-target" | "not-listed-by-validation-target";
 };
 
 type CharacterValidationObservation = {
   characterId: string;
-  characterGuideId: string;
-  buildSourceRecordId: string;
+  validationTargetProvenance: ArtifactGenerationValidationTargetProvenance;
   artifactSetId: string;
   mainStats: {
     sands: MainStatReviewObservation;
@@ -112,12 +176,29 @@ type CharacterValidationObservation = {
   };
   substats: {
     generatedPositiveKeys: SubStat[];
-    sourceObservedKeys: SubStat[];
-    generatedKeysListedBySource: SubStat[];
-    generatedKeysNotListedBySource: SubStat[];
-    sourceKeysNotGenerated: SubStat[];
+    validationTargetObservedKeys: SubStat[];
+    generatedKeysListedByValidationTarget: SubStat[];
+    generatedKeysNotListedByValidationTarget: SubStat[];
+    validationTargetKeysNotGenerated: SubStat[];
   };
 };
+
+export type ArtifactGenerationValidationTargetProvenance =
+  | {
+      kind: "repository-build";
+      characterGuideId: string;
+      buildSourceRecordId: string;
+    }
+  | {
+      kind: "composed-source-claims";
+      compositionId: string;
+      repositoryRecordIds: string[];
+      equipmentClaimIds: string[];
+      matchedStatClaimIds: ArtifactGenerationComposedSourceClaimsValidationTarget["matchedStatClaimIds"];
+      withheldStatClaimIds: string[];
+      sourcePriorityGroups: SubStat[][];
+      sourceAuthored: false;
+    };
 
 type ArtifactShapeObservation = {
   characterId: string;
@@ -131,16 +212,34 @@ type ArtifactShapeObservation = {
   }>;
 };
 
+type RequestedValidationTargetObservation =
+  | {
+      kind: "repository-build";
+      characterGuideId: string | null;
+      buildSourceRecordId: string | null;
+    }
+  | {
+      kind: "composed-source-claims";
+      compositionId: string | null;
+    }
+  | {
+      kind: "unrecognized";
+      requestedKind: string | null;
+    };
+
 type CandidateBase = {
   sequence: number;
   candidateId: string;
-  classification: ArtifactGenerationTechnicalCandidate["classification"];
+  requestedClassification: string;
   requestedArtifactSetIdsByCharacter: Record<string, string>;
   changedFromSeedCharacters: string[];
-  sourceBuildIdsByCharacter: Record<string, string>;
+  requestedValidationTargetsByCharacter: Record<
+    string,
+    RequestedValidationTargetObservation
+  >;
   independentValidation: {
-    repositoryBuildTargetsMatchAssignment: boolean;
-    allSetsAreFiveStar: boolean;
+    validationTargetsMatchAssignmentAndProvenance: boolean;
+    allSetsAreFiveStar: boolean | "not-evaluated";
     runtimeRegistration: "passed" | "failed" | "not-attempted";
   };
   generatorInvoked: boolean;
@@ -150,8 +249,9 @@ type CandidateBase = {
 export type ArtifactGenerationTechnicalCandidateObservation =
   | (CandidateBase & {
       outcome: "completed-structurally";
+      classification: ArtifactGenerationTechnicalCandidate["classification"];
       independentValidation: CandidateBase["independentValidation"] & {
-        repositoryBuildTargetsMatchAssignment: true;
+        validationTargetsMatchAssignmentAndProvenance: true;
         allSetsAreFiveStar: true;
         runtimeRegistration: "passed";
       };
@@ -167,7 +267,7 @@ export type ArtifactGenerationTechnicalCandidateObservation =
     });
 
 export type ArtifactGenerationTechnicalProbeReport = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   classification: "artifact-generation-technical-probe";
   supportsGuideClaims: false;
   supportsArtifactRecommendations: false;
@@ -192,11 +292,13 @@ export type ArtifactGenerationTechnicalProbeReport = {
     calcContext: CalcContext;
     energyRecoveryThresholdsUsed: false;
     numericalDamageRetained: false;
+    composedSourceClaimsValidationPolicy: "default-deny-trusted-environment-capability-only";
+    trustedComposedSourceClaimsValidatorAvailable: boolean;
   };
   candidates: ArtifactGenerationTechnicalCandidateObservation[];
   cautions: [
-    "The candidates compose independently recorded character-guide builds; no source record binds them to this exact team or to one another, and changed assignments have no reviewed formula binding.",
-    "Generated main stats and positive substat keys are review observations against repository build targets, not correctness, ranking, or recommendation claims.",
+    "Repository-build validation is relative to the caller-supplied schema-valid consolidated snapshot, whose revision is authenticated by the source wrapper and durable validator rather than this generic probe; composed targets require a trusted source-specific environment validator, and neither boundary binds the full candidate to this exact team, the other targets, or a reviewed formula.",
+    "Generated main stats and positive substat keys are review observations against provenance-validated targets, not correctness, ranking, or recommendation claims.",
     "An observed ER main stat or substat key does not establish an ER floor, rotation feasibility, or ER adequacy.",
     "The generator is ordered and greedy; completing this probe does not establish joint optimality.",
   ];
@@ -250,7 +352,7 @@ export async function runArtifactGenerationTechnicalProbe(
   }
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     classification: "artifact-generation-technical-probe",
     supportsGuideClaims: false,
     supportsArtifactRecommendations: false,
@@ -280,11 +382,15 @@ export async function runArtifactGenerationTechnicalProbe(
       calcContext: { ...ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT },
       energyRecoveryThresholdsUsed: false,
       numericalDamageRetained: false,
+      composedSourceClaimsValidationPolicy:
+        "default-deny-trusted-environment-capability-only",
+      trustedComposedSourceClaimsValidatorAvailable:
+        environment.validateComposedSourceClaimsTarget != null,
     },
     candidates: observations,
     cautions: [
-      "The candidates compose independently recorded character-guide builds; no source record binds them to this exact team or to one another, and changed assignments have no reviewed formula binding.",
-      "Generated main stats and positive substat keys are review observations against repository build targets, not correctness, ranking, or recommendation claims.",
+      "Repository-build validation is relative to the caller-supplied schema-valid consolidated snapshot, whose revision is authenticated by the source wrapper and durable validator rather than this generic probe; composed targets require a trusted source-specific environment validator, and neither boundary binds the full candidate to this exact team, the other targets, or a reviewed formula.",
+      "Generated main stats and positive substat keys are review observations against provenance-validated targets, not correctness, ranking, or recommendation claims.",
       "An observed ER main stat or substat key does not establish an ER floor, rotation feasibility, or ER adequacy.",
       "The generator is ordered and greedy; completing this probe does not establish joint optimality.",
     ],
@@ -316,23 +422,22 @@ async function runCandidate(
         seedArtifactSetIdsByCharacter[characterId],
     )
     .sort();
-  const sourceBuildIdsByCharacter = sortTextRecord(
+  const requestedValidationTargetsByCharacter = sortTextRecord(
     Object.fromEntries(
-      candidate.validationTargets.map((target) => [
-        target.characterId,
-        target.buildSourceRecordId,
-      ]),
+      candidate.validationTargets.map((target, targetIndex) =>
+        describeRequestedValidationTarget(target, targetIndex),
+      ),
     ),
   );
   const base: Omit<CandidateBase, "independentValidation"> = {
     sequence: index,
     candidateId: candidate.candidateId,
-    classification: candidate.classification,
+    requestedClassification: String(candidate.classification),
     requestedArtifactSetIdsByCharacter: sortTextRecord(
       candidate.artifactSetIdsByCharacter,
     ),
     changedFromSeedCharacters,
-    sourceBuildIdsByCharacter,
+    requestedValidationTargetsByCharacter,
     generatorInvoked: false,
     progress,
   };
@@ -340,6 +445,8 @@ async function runCandidate(
   const candidateValidation = validateCandidate(
     candidate,
     Object.keys(seedArtifactSetIdsByCharacter),
+    input.validationProvenance,
+    environment,
   );
   if (candidateValidation.failure) {
     return {
@@ -476,8 +583,9 @@ async function runCandidate(
       ...base,
       generatorInvoked: true,
       outcome: "completed-structurally",
+      classification: candidate.classification,
       independentValidation: {
-        repositoryBuildTargetsMatchAssignment: true,
+        validationTargetsMatchAssignmentAndProvenance: true,
         allSetsAreFiveStar: true,
         runtimeRegistration: "passed",
       },
@@ -508,6 +616,14 @@ async function runCandidate(
 }
 
 function validateProbeInput(input: ArtifactGenerationTechnicalProbeInput): void {
+  const repositoryResult = KnowledgeRepositorySchema.safeParse(
+    input.validationProvenance.repository,
+  );
+  if (!repositoryResult.success) {
+    throw new Error(
+      "Artifact-generation technical probe requires a valid consolidated knowledge repository for provenance checks.",
+    );
+  }
   if (!input.preflight.equipmentReadyForTechnicalProbe) {
     throw new Error(
       "Artifact-generation technical probe requires a passing seed equipment preflight.",
@@ -578,10 +694,31 @@ function validateProbeInput(input: ArtifactGenerationTechnicalProbeInput): void 
 function validateCandidate(
   candidate: ArtifactGenerationTechnicalCandidate,
   expectedCharacterIds: string[],
+  provenance: ArtifactGenerationValidationProvenance,
+  environment: ArtifactGenerationTechnicalProbeEnvironment,
 ): {
   validation: CandidateBase["independentValidation"];
   failure: ArtifactGenerationCandidateFailure | null;
 } {
+  if (!ALLOWED_CANDIDATE_CLASSIFICATIONS.has(String(candidate.classification))) {
+    return candidateRejection(
+      "candidate-classification-invalid",
+      `Candidate ${candidate.candidateId} has unsupported classification ${String(candidate.classification)}.`,
+      false,
+      "not-evaluated",
+    );
+  }
+  const invalidTargetIndex = candidate.validationTargets.findIndex(
+    (target) => !hasRecognizedValidationTargetEnvelope(target),
+  );
+  if (invalidTargetIndex >= 0) {
+    return candidateRejection(
+      "candidate-validation-target-provenance-mismatch",
+      `Candidate ${candidate.candidateId} validation target ${invalidTargetIndex} has an unsupported kind or malformed identity envelope.`,
+      false,
+      "not-evaluated",
+    );
+  }
   const requestedIds = Object.keys(candidate.artifactSetIdsByCharacter).sort();
   const expectedIds = [...expectedCharacterIds].sort();
   if (requestedIds.join("\0") !== expectedIds.join("\0")) {
@@ -589,14 +726,15 @@ function validateCandidate(
       "candidate-character-mismatch",
       `Candidate ${candidate.candidateId} must assign exactly ${expectedIds.join(", ")}.`,
       false,
-      false,
+      "not-evaluated",
     );
   }
 
   const targetsByCharacter = new Map(
     candidate.validationTargets.map((target) => [target.characterId, target]),
   );
-  const repositoryBuildTargetsMatchAssignment =
+  const validationTargetsMatchAssignment =
+    candidate.validationTargets.length === expectedIds.length &&
     targetsByCharacter.size === expectedIds.length &&
     expectedIds.every((characterId) => {
       const target = targetsByCharacter.get(characterId);
@@ -605,13 +743,55 @@ function validateCandidate(
         candidate.artifactSetIdsByCharacter[characterId]
       );
     });
-  if (!repositoryBuildTargetsMatchAssignment) {
+  if (!validationTargetsMatchAssignment) {
     return candidateRejection(
       "candidate-build-target-mismatch",
-      `Candidate ${candidate.candidateId} does not have one matching repository build target per assignment.`,
+      `Candidate ${candidate.candidateId} does not have one matching validation target per assignment.`,
       false,
-      false,
+      "not-evaluated",
     );
+  }
+
+  const hasComposedTarget = candidate.validationTargets.some(
+    ({ kind }) => kind === "composed-source-claims",
+  );
+  if (
+    (candidate.classification.startsWith("repository-build-") &&
+      hasComposedTarget) ||
+    (candidate.classification === "composed-source-claims" &&
+      !hasComposedTarget)
+  ) {
+    return candidateRejection(
+      "candidate-validation-target-provenance-mismatch",
+      `Candidate ${candidate.candidateId} classification ${candidate.classification} is inconsistent with its validation-target kinds.`,
+      false,
+      "not-evaluated",
+    );
+  }
+
+  for (const characterId of expectedIds) {
+    const target = targetsByCharacter.get(characterId);
+    if (!target) {
+      return candidateRejection(
+        "candidate-build-target-mismatch",
+        `Candidate ${candidate.candidateId} is missing validation target ${characterId}.`,
+        false,
+        "not-evaluated",
+      );
+    }
+    const provenanceMismatch = validateTargetProvenance(
+      target,
+      provenance,
+      environment,
+    );
+    if (provenanceMismatch) {
+      return candidateRejection(
+        "candidate-validation-target-provenance-mismatch",
+        `Candidate ${candidate.candidateId} target ${characterId} failed provenance validation: ${provenanceMismatch}`,
+        false,
+        "not-evaluated",
+      );
+    }
   }
 
   for (const characterId of expectedIds) {
@@ -637,7 +817,7 @@ function validateCandidate(
 
   return {
     validation: {
-      repositoryBuildTargetsMatchAssignment: true,
+      validationTargetsMatchAssignmentAndProvenance: true,
       allSetsAreFiveStar: true,
       runtimeRegistration: "not-attempted",
     },
@@ -648,12 +828,12 @@ function validateCandidate(
 function candidateRejection(
   code: ArtifactGenerationCandidateFailure["code"],
   message: string,
-  repositoryBuildTargetsMatchAssignment: boolean,
-  allSetsAreFiveStar: boolean,
+  validationTargetsMatchAssignmentAndProvenance: boolean,
+  allSetsAreFiveStar: boolean | "not-evaluated",
 ): ReturnType<typeof validateCandidate> {
   return {
     validation: {
-      repositoryBuildTargetsMatchAssignment,
+      validationTargetsMatchAssignmentAndProvenance,
       allSetsAreFiveStar,
       runtimeRegistration: "not-attempted",
     },
@@ -664,6 +844,337 @@ function candidateRejection(
       message,
     },
   };
+}
+
+function hasRecognizedValidationTargetEnvelope(
+  target: unknown,
+): target is ArtifactGenerationValidationTarget {
+  if (target == null || typeof target !== "object") return false;
+  const record = target as Record<string, unknown>;
+  if (
+    typeof record.characterId !== "string" ||
+    typeof record.artifactSetId !== "string" ||
+    !isStringArray(record.sands) ||
+    !isStringArray(record.goblet) ||
+    !isStringArray(record.circlet) ||
+    !isStringArray(record.substats)
+  ) {
+    return false;
+  }
+  if (record.kind === "repository-build") {
+    return (
+      typeof record.characterGuideId === "string" &&
+      typeof record.buildSourceRecordId === "string"
+    );
+  }
+  if (record.kind === "composed-source-claims") {
+    const matchedStatClaimIds =
+      record.matchedStatClaimIds != null &&
+      typeof record.matchedStatClaimIds === "object"
+        ? (record.matchedStatClaimIds as Record<string, unknown>)
+        : null;
+    return (
+      typeof record.compositionId === "string" &&
+      isStringArray(record.repositoryRecordIds) &&
+      isStringArray(record.equipmentClaimIds) &&
+      isStringArray(record.withheldStatClaimIds) &&
+      Array.isArray(record.sourcePriorityGroups) &&
+      record.sourcePriorityGroups.every(isStringArray) &&
+      matchedStatClaimIds != null &&
+      isStringArray(matchedStatClaimIds.sands) &&
+      isStringArray(matchedStatClaimIds.goblet) &&
+      isStringArray(matchedStatClaimIds.circlet) &&
+      isStringArray(matchedStatClaimIds.substats) &&
+      record.sourceAuthored === false
+    );
+  }
+  return false;
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((entry) => typeof entry === "string");
+}
+
+function describeRequestedValidationTarget(
+  target: unknown,
+  targetIndex: number,
+): [string, RequestedValidationTargetObservation] {
+  const record =
+    target != null && typeof target === "object"
+      ? (target as Record<string, unknown>)
+      : {};
+  const characterKey =
+    typeof record.characterId === "string"
+      ? record.characterId
+      : `invalid-target-${targetIndex}`;
+  if (record.kind === "repository-build") {
+    return [
+      characterKey,
+      {
+        kind: record.kind,
+        characterGuideId:
+          typeof record.characterGuideId === "string"
+            ? record.characterGuideId
+            : null,
+        buildSourceRecordId:
+          typeof record.buildSourceRecordId === "string"
+            ? record.buildSourceRecordId
+            : null,
+      },
+    ];
+  }
+  if (record.kind === "composed-source-claims") {
+    return [
+      characterKey,
+      {
+        kind: record.kind,
+        compositionId:
+          typeof record.compositionId === "string"
+            ? record.compositionId
+            : null,
+      },
+    ];
+  }
+  return [
+    characterKey,
+    {
+      kind: "unrecognized",
+      requestedKind: typeof record.kind === "string" ? record.kind : null,
+    },
+  ];
+}
+
+type KnowledgeCharacterGuide = Extract<
+  KnowledgeRecord,
+  { kind: "character_guide" }
+>;
+
+function validateTargetProvenance(
+  target: ArtifactGenerationValidationTarget,
+  provenance: ArtifactGenerationValidationProvenance,
+  environment: ArtifactGenerationTechnicalProbeEnvironment,
+): string | null {
+  const incompleteStats = [
+    target.sands,
+    target.goblet,
+    target.circlet,
+    target.substats,
+  ].some((values) => values.length === 0);
+  if (incompleteStats) {
+    return "main-stat and substat observations must all be non-empty";
+  }
+  const statDomainMismatch = validateValidationTargetStatDomains(target);
+  if (statDomainMismatch) return statDomainMismatch;
+
+  if (target.kind === "repository-build") {
+    return validateRepositoryBuildTarget(target, provenance.repository);
+  }
+  const structuralMismatch = validateComposedSourceClaimsTargetShape(target);
+  if (structuralMismatch) return structuralMismatch;
+  const trustedValidator = environment.validateComposedSourceClaimsTarget;
+  if (!trustedValidator) {
+    return "composed source claims require a trusted source-specific environment validator";
+  }
+  try {
+    const result = trustedValidator(cloneComposedSourceClaimsTarget(target));
+    if (result.valid) return null;
+    return result.message.trim()
+      ? `trusted source-specific validator rejected the target: ${result.message}`
+      : "trusted source-specific validator rejected the target without a reason";
+  } catch (error) {
+    return `trusted source-specific validator threw ${serializeErrorMessage(error)}`;
+  }
+}
+
+function validateValidationTargetStatDomains(
+  target: ArtifactGenerationValidationTarget,
+): string | null {
+  const mainStatSlots = ["sands", "goblet", "circlet"] as const;
+  for (const slot of mainStatSlots) {
+    const legalMainStats = statPools[slot] as readonly MainStat[];
+    const illegalStat = target[slot].find(
+      (stat) => !legalMainStats.includes(stat),
+    );
+    if (illegalStat) {
+      return `validation target ${slot} contains slot-illegal main stat ${illegalStat}`;
+    }
+  }
+  const illegalSubstat = target.substats.find(
+    (stat) => !LEGAL_SUBSTAT_KEYS.has(stat),
+  );
+  if (illegalSubstat) {
+    return `validation target substats contain illegal substat ${illegalSubstat}`;
+  }
+  if (target.kind === "composed-source-claims") {
+    const illegalPriorityStat = target.sourcePriorityGroups
+      .flat()
+      .find((stat) => !LEGAL_SUBSTAT_KEYS.has(stat));
+    if (illegalPriorityStat) {
+      return `composed source priority groups contain illegal substat ${illegalPriorityStat}`;
+    }
+  }
+  return null;
+}
+
+function validateRepositoryBuildTarget(
+  target: ArtifactGenerationRepositoryBuildValidationTarget,
+  repository: KnowledgeRepository,
+): string | null {
+  const guides = repository.records.filter(
+    (record): record is KnowledgeCharacterGuide =>
+      record.kind === "character_guide" && record.id === target.characterGuideId,
+  );
+  if (guides.length !== 1) {
+    return `expected one repository character guide ${target.characterGuideId}, found ${guides.length}`;
+  }
+  const guide = guides[0];
+  if (guide.characterId !== target.characterId) {
+    return `guide ${target.characterGuideId} belongs to ${guide.characterId}, not ${target.characterId}`;
+  }
+  const builds = guide.builds.filter(
+    ({ sourceRecordId }) => sourceRecordId === target.buildSourceRecordId,
+  );
+  if (builds.length !== 1) {
+    return `expected one repository build ${target.buildSourceRecordId} in ${target.characterGuideId}, found ${builds.length}`;
+  }
+  const build = builds[0];
+  if (
+    build.artifact.type !== "4pc" ||
+    build.artifact.setId !== target.artifactSetId
+  ) {
+    return `repository build ${target.buildSourceRecordId} does not select 4pc ${target.artifactSetId}`;
+  }
+  const repositoryStats = {
+    sands: build.sands.map(({ stat }) => stat),
+    goblet: build.goblet.map(({ stat }) => stat),
+    circlet: build.circlet.map(({ stat }) => stat),
+    substats: build.substats.map(({ stat }) => stat),
+  };
+  const targetStats = {
+    sands: target.sands,
+    goblet: target.goblet,
+    circlet: target.circlet,
+    substats: target.substats,
+  };
+  if (stableJson(repositoryStats) !== stableJson(targetStats)) {
+    return `repository build ${target.buildSourceRecordId} stat observations do not match the declared target`;
+  }
+  return null;
+}
+
+function validateComposedSourceClaimsTargetShape(
+  target: ArtifactGenerationComposedSourceClaimsValidationTarget,
+): string | null {
+  const claimIdGroups = [
+    target.equipmentClaimIds,
+    target.matchedStatClaimIds.sands,
+    target.matchedStatClaimIds.goblet,
+    target.matchedStatClaimIds.circlet,
+    target.matchedStatClaimIds.substats,
+    target.withheldStatClaimIds,
+  ];
+  if (
+    !target.compositionId.trim() ||
+    target.repositoryRecordIds.length === 0 ||
+    target.equipmentClaimIds.length === 0 ||
+    target.repositoryRecordIds.some((recordId) => !recordId.trim()) ||
+    claimIdGroups.some((claimIds) =>
+      claimIds.some((claimId) => !claimId.trim()),
+    )
+  ) {
+    return "composition and source-claim IDs must be non-empty";
+  }
+  const matchedClaimIds = [
+    ...target.matchedStatClaimIds.sands,
+    ...target.matchedStatClaimIds.goblet,
+    ...target.matchedStatClaimIds.circlet,
+    ...target.matchedStatClaimIds.substats,
+  ];
+  if (
+    new Set(target.repositoryRecordIds).size !==
+      target.repositoryRecordIds.length ||
+    new Set(target.equipmentClaimIds).size !== target.equipmentClaimIds.length ||
+    new Set(matchedClaimIds).size !== matchedClaimIds.length ||
+    new Set(target.withheldStatClaimIds).size !==
+      target.withheldStatClaimIds.length ||
+    matchedClaimIds.some((claimId) =>
+      target.withheldStatClaimIds.includes(claimId),
+    )
+  ) {
+    return "composed source-claim IDs must be unique and matched/withheld stat claims must be disjoint";
+  }
+  if (
+    target.sourceAuthored !== false ||
+    target.sourcePriorityGroups.length === 0 ||
+    target.sourcePriorityGroups.some((group) => group.length === 0)
+  ) {
+    return "composed targets must be factory-authored and retain non-empty source priority groups";
+  }
+
+  return null;
+}
+
+function cloneComposedSourceClaimsTarget(
+  target: ArtifactGenerationComposedSourceClaimsValidationTarget,
+): ArtifactGenerationComposedSourceClaimsValidationTarget {
+  return {
+    ...target,
+    repositoryRecordIds: [...target.repositoryRecordIds],
+    equipmentClaimIds: [...target.equipmentClaimIds],
+    matchedStatClaimIds: {
+      sands: [...target.matchedStatClaimIds.sands],
+      goblet: [...target.matchedStatClaimIds.goblet],
+      circlet: [...target.matchedStatClaimIds.circlet],
+      substats: [...target.matchedStatClaimIds.substats],
+    },
+    withheldStatClaimIds: [...target.withheldStatClaimIds],
+    sourcePriorityGroups: target.sourcePriorityGroups.map((group) => [...group]),
+    sands: [...target.sands],
+    goblet: [...target.goblet],
+    circlet: [...target.circlet],
+    substats: [...target.substats],
+  };
+}
+
+function serializeErrorMessage(error: unknown): string {
+  return error instanceof Error
+    ? `${error.name}: ${error.message}`
+    : `NonErrorThrow: ${String(error)}`;
+}
+
+export function describeArtifactGenerationValidationTargetProvenance(
+  target: ArtifactGenerationValidationTarget,
+): ArtifactGenerationValidationTargetProvenance {
+  if (target.kind === "repository-build") {
+    return {
+      kind: target.kind,
+      characterGuideId: target.characterGuideId,
+      buildSourceRecordId: target.buildSourceRecordId,
+    };
+  }
+  return {
+    kind: target.kind,
+    compositionId: target.compositionId,
+    repositoryRecordIds: [...target.repositoryRecordIds],
+    equipmentClaimIds: [...target.equipmentClaimIds],
+    matchedStatClaimIds: {
+      sands: [...target.matchedStatClaimIds.sands],
+      goblet: [...target.matchedStatClaimIds.goblet],
+      circlet: [...target.matchedStatClaimIds.circlet],
+      substats: [...target.matchedStatClaimIds.substats],
+    },
+    withheldStatClaimIds: [...target.withheldStatClaimIds],
+    sourcePriorityGroups: target.sourcePriorityGroups.map((group) => [...group]),
+    sourceAuthored: false,
+  };
+}
+
+export function artifactGenerationValidationTargetKnowledgeRecordIds(
+  target: ArtifactGenerationValidationTarget,
+): string[] {
+  return target.kind === "repository-build"
+    ? [target.characterGuideId]
+    : [...target.repositoryRecordIds];
 }
 
 function buildCandidateTeamConfigs(
@@ -883,14 +1394,16 @@ function compareValidationTargets(
       const generatedPositiveKeys = [
         ...new Set(allSlots.flatMap((slot) => positiveSubstatKeys(artifacts[slot]))),
       ].sort(compareText);
-      const sourceObservedKeys = [...new Set(target.substats)].sort(compareText);
-      const sourceKeySet = new Set(sourceObservedKeys);
+      const validationTargetObservedKeys = [...new Set(target.substats)].sort(
+        compareText,
+      );
+      const validationTargetKeySet = new Set(validationTargetObservedKeys);
       const generatedKeySet = new Set(generatedPositiveKeys);
 
       return {
         characterId: target.characterId,
-        characterGuideId: target.characterGuideId,
-        buildSourceRecordId: target.buildSourceRecordId,
+        validationTargetProvenance:
+          describeArtifactGenerationValidationTargetProvenance(target),
         artifactSetId: target.artifactSetId,
         mainStats: {
           sands: compareMainStat(artifacts.sands.mainStatKey, target.sands),
@@ -902,14 +1415,15 @@ function compareValidationTargets(
         },
         substats: {
           generatedPositiveKeys,
-          sourceObservedKeys,
-          generatedKeysListedBySource: generatedPositiveKeys.filter((key) =>
-            sourceKeySet.has(key),
+          validationTargetObservedKeys,
+          generatedKeysListedByValidationTarget: generatedPositiveKeys.filter(
+            (key) => validationTargetKeySet.has(key),
           ),
-          generatedKeysNotListedBySource: generatedPositiveKeys.filter(
-            (key) => !sourceKeySet.has(key),
-          ),
-          sourceKeysNotGenerated: sourceObservedKeys.filter(
+          generatedKeysNotListedByValidationTarget:
+            generatedPositiveKeys.filter(
+              (key) => !validationTargetKeySet.has(key),
+            ),
+          validationTargetKeysNotGenerated: validationTargetObservedKeys.filter(
             (key) => !generatedKeySet.has(key),
           ),
         },
@@ -920,15 +1434,17 @@ function compareValidationTargets(
 
 function compareMainStat(
   generated: MainStat,
-  sourceObserved: MainStat[],
+  validationTargetObserved: MainStat[],
 ): MainStatReviewObservation {
-  const sortedSourceObserved = [...new Set(sourceObserved)].sort(compareText);
+  const sortedValidationTargetObserved = [
+    ...new Set(validationTargetObserved),
+  ].sort(compareText);
   return {
     generated,
-    sourceObserved: sortedSourceObserved,
-    relation: sortedSourceObserved.includes(generated)
-      ? "listed-by-source-build"
-      : "not-listed-by-source-build",
+    validationTargetObserved: sortedValidationTargetObserved,
+    relation: sortedValidationTargetObserved.includes(generated)
+      ? "listed-by-validation-target"
+      : "not-listed-by-validation-target",
   };
 }
 

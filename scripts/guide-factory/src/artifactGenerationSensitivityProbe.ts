@@ -479,6 +479,8 @@ function validateAndResolveInput(input: ArtifactGenerationSensitivityProbeInput)
       "Artifact sensitivity probe candidate IDs must exist in the technical-probe input.",
     );
   }
+  sourceBuildIds(firstCandidate);
+  sourceBuildIds(secondCandidate);
   if (
     firstCandidate.classification === "repository-build-negative-control" ||
     secondCandidate.classification === "repository-build-negative-control"
@@ -728,7 +730,14 @@ function sourceBuildIds(
 ): Record<string, string> {
   return Object.fromEntries(
     candidate.validationTargets
-      .map((target) => [target.characterId, target.buildSourceRecordId])
+      .map((target): [string, string] => {
+        if (target.kind !== "repository-build") {
+          throw new Error(
+            `Artifact sensitivity probe requires repository-build validation targets; ${target.characterId} is ${target.kind}.`,
+          );
+        }
+        return [target.characterId, target.buildSourceRecordId];
+      })
       .sort(([left], [right]) => compareText(left, right)),
   );
 }
