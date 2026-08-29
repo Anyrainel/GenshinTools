@@ -6,6 +6,13 @@ snapshots actually contain, proves that those arrays survived consolidation,
 and overlays only the narrow typed or exact-text bindings already exercised by
 authenticated Guide Factory checkpoints.
 
+> Historical boundary: the 46 typed / 3 acknowledged / 74 unbound non-
+> structural counts below are the Checkpoint 25 snapshot. Checkpoint 26 adds
+> four exact Klee typed bindings, so the current catalog has 53 entries (50
+> typed and 3 acknowledged) and current non-structural coverage is 50 / 3 / 70.
+> Its independent energy ledger is now 15 deferred, 47 explicitly not energy-
+> deferred, and 64 nonempty energy-unclassified rows. See `CHECKPOINT-26.md`.
+
 ## Exact corpus boundary
 
 The indexed manual-observation snapshots are the sole authoritative corpus for

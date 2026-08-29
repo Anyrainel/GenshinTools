@@ -21,16 +21,18 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 25 inventories every schema-defined condition array in the seven
-active manual snapshots and proves exact parity with the consolidated
-repository. Its binding ledger counts all 126 nonempty arrays as 46 typed, 3
-exact-text acknowledged, and 77 unbound; excluding three structural ER arrays
-leaves 123 occurrences and 74 unbound. Energy is an independent ledger: 15
-rows are explicitly deferred, 43 typed rows are not energy-deferred, and 68
-remain energy-unclassified. No unbound row is presumed non-ER. Binding coverage
-is not condition truth, source authority, or a recommendation; the experiment
-parses no arbitrary prose, assembles no build, and still does not claim a
-working guide factory:
+Checkpoint 26 adds a reusable source-local condition slice and exercises it on
+four exact Klee occurrences across two same-page teams. The eight source cells
+contain 1 matched, 1 inapplicable, and 6 unresolved results; explicit team-
+scoped Klee role facts make the effective partition 7 matched and 1
+inapplicable without replacing the exact-roster control. The other 11 Klee
+occurrences are exact holdouts and receive no classification from the slice.
+The downstream catalog now contains 50 typed bindings and 3 exact-text
+acknowledgements, leaving 70 of 123 non-structural occurrences unbound. Energy
+remains independent: 15 rows are deferred, 47 are explicitly not energy-
+deferred, and 64 remain energy-unclassified. This is validation evidence, not
+condition truth, source authority, a recommendation, or a working guide
+factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -317,6 +319,29 @@ working guide factory:
     exact input hashes, fresh upstream wrapper rebuilds, and validator equality
     while authorizing no guide, recommendation, rank, damage, optimizer, or ER
     result.
+102. Compose the existing source-condition and request-context evaluators behind
+    a reusable source-local core that preserves both resolution layers and
+    accepts only exact same-document claims and teams.
+103. Select exactly four Klee occurrences: three on-field-role main-stat rows
+    and the Furina-roster Marechaussee Hunter row; retain the remaining eleven
+    Klee condition occurrences as exact holdouts.
+104. Project the four claims across the two exact same-page Klee teams, producing
+    eight source cells: one matched, one inapplicable, and six unresolved.
+105. Supply Klee's on-field intent independently for each exact team, producing
+    seven effective matches and one effective inapplicable result without
+    deriving runtime intent from recommendation roles or replacing roster truth.
+106. Keep the source-local slice free of recommendation composition, builds,
+    ranking, generation, optimization, formula, rotation, damage, and ER work;
+    author no predicate or energy state for any holdout.
+107. Authenticate the Klee durable report against a fresh canonical rebuild,
+    then admit its four exact path/hash/subject-scoped entries into the current
+    binding catalog only when durable and fresh evidence agree.
+108. Refresh global non-structural coverage to 123/50/3/70 while keeping energy
+    orthogonal: 15 deferred, 47 explicitly not energy-deferred, 64 nonempty
+    energy-unclassified, and 16 unconditional rows.
+109. Preserve an acyclic dependency direction from raw Klee evidence to the
+    source-local slice, then the current catalog, then condition coverage; ER
+    remains deferred.
 
 The first two active sources are already in this repository:
 
@@ -416,6 +441,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -433,7 +459,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-five durable reports in memory: corpus inventory,
+It also rebuilds all twenty-six durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -445,7 +471,8 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-manual condition-array coverage inventory, and historical ER calibration.
+Klee source-local condition slice, the exact manual condition-array coverage
+inventory, and historical ER calibration.
 Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
@@ -510,20 +537,33 @@ still lacks buff-coverage, investment-threshold, and comparative evidence;
 Retracing Bolide still lacks an artifact-quality contract. The contexts are not
 combined, ranked, or multiplied into equipment builds.
 
-The manual condition-array inventory broadens that validation boundary to all
-seven active external snapshots. It extracts 142 exact schema occurrences and
-matches all 142 to their consolidated copies. Sixteen arrays are unconditional.
-Across the 126 nonempty arrays, 46 are typed-bound, 3 are exact-text
-acknowledged, and 77 are unbound. The separate energy ledger marks 3 structural
-ER arrays, 3 typed Itto prerequisites, and 9 exact authored Diona/Furina rows as
-deferred; 43 typed rows are not energy-deferred and 68 rows remain energy-
-unclassified. Excluding only structural ER leaves 123 binding-coverage rows:
-46 typed, 3 acknowledged, and 74 unbound. The authenticated catalog deliberately
-binds only exact source occurrences. In particular, the shared Viridescent
-Venerer text is acknowledged for Jean, Kaedehara Kazuha, and Sucrose in
-exercised Keqing teams but remains unbound for Sayu and Xianyun. The report
-measures validation work; it does not prove a condition is satisfied, presume
-an unclassified row is non-ER, or establish that a recommendation is correct.
+The source-local core composes the existing typed source-condition and strict
+request-context evaluators over an exact source document without assembling the
+preserved payloads. Its first adapter selects three Klee on-field-role main-stat
+occurrences and one Furina-roster Marechaussee Hunter occurrence. Across the
+Klee/Chevreuse/Durin/Fischl and Klee/Furina/Albedo/Xilonen source examples, the
+eight source cells are 1 matched, 1 inapplicable, and 6 unresolved. Explicit
+team-scoped on-field intent makes the effective partition 7 matched and 1
+inapplicable. The other 11 Klee occurrences remain exact holdouts and receive no
+binding or energy classification from this slice.
+
+The manual condition-array inventory then broadens that validation boundary to
+all seven active external snapshots. It extracts 142 exact schema occurrences
+and matches all 142 to their consolidated copies. Sixteen arrays are
+unconditional. Across the 126 nonempty arrays, 50 are typed-bound, 3 are exact-
+text acknowledged, and 73 are unbound. Excluding only structural ER leaves 123
+binding-coverage rows: 50 typed, 3 acknowledged, and 70 unbound. The separate
+energy ledger still defers 3 structural ER arrays, 3 typed Itto prerequisites,
+and 9 exact authored Diona/Furina rows; 47 rows are explicitly not energy-
+deferred and 64 nonempty rows remain energy-unclassified. The authenticated
+catalog deliberately binds only exact source occurrences. The shared
+Viridescent Venerer text remains acknowledged for Jean, Kaedehara Kazuha, and
+Sucrose but unbound for Sayu and Xianyun. The Klee report is rebuilt and
+authenticated before its four entries can reach the catalog, and coverage is
+rebuilt downstream of that catalog; neither layer feeds back into the Klee
+slice. These reports measure validation work. They do not prove a condition is
+satisfied, presume an unclassified row is non-ER, or establish that a preserved
+payload is a correct recommendation.
 
 ## Data flow
 

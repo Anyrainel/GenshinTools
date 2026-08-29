@@ -446,31 +446,42 @@ artifact-quality contract exists. All repeated offensive-tail cells keep the
 deferred energy prerequisite. The report preserves the source result in every
 cell and creates no combined context, build, rank, account advice, or guide.
 
-That broader condition inventory now exists. It traverses only the condition-array
-fields defined by the manual schema, preserves exact ordered text and paths,
-requires a pre-schema raw `conditions` path/payload audit to match the extractor,
-and verifies all 142 source occurrences against the consolidated repository.
-Across all 126 nonempty arrays, 46 have authenticated typed bindings, 3 have
-exact-text acknowledgements only, and 77 are unbound. The independent
-non-structural binding ledger contains 123 occurrences: 46 typed, 3
-acknowledged, and 74 unbound. Energy status is orthogonal: 3 structural ER
-arrays, 3 typed Itto prerequisites, and 9 exact authored Diona/Furina arrays
-are deferred; 43 typed rows are not energy-deferred and 68 remain energy-
-unclassified. No unbound row is presumed non-ER. Binding identity includes the
+Checkpoint 25 established the broader condition inventory. It traverses only
+the condition-array fields defined by the manual schema, preserves exact ordered
+text and paths, requires a pre-schema raw `conditions` path/payload audit to
+match the extractor, and verifies all 142 source occurrences against the
+consolidated repository. Its historical non-structural boundary was 123
+occurrences: 46 typed, 3 acknowledged, and 74 unbound. Binding identity includes
 source, record kind, source record, schema path, ordered-array hash, and subject,
 so identical Viridescent Venerer text cannot leak an acknowledgement from Jean,
-Kazuha, or Sucrose to Sayu or Xianyun. A typed binding records grammar reach,
-not condition truth, source quality, or recommendation accuracy.
+Kazuha, or Sucrose to Sayu or Xianyun.
 
-The next bounded non-ER gate should select a small source-local slice from the
-74 unbound occurrences, explicitly classify that slice as not energy-deferred,
-and author only predicates supported by existing exact roster or request facts.
-The nine authored energy-sensitive rows remain deferred; all other unselected
-rows remain energy-unclassified. Preserve comparative, quality, timing, and
-gameplay conditions as holdouts and measure the binding/energy delta against
-checkpoint 25. Do not infer predicates from repeated English or condition
-frequency. Human review of the Itto and Keqing bindings and their source
-classifications remains a prerequisite for publication, formula authoring, or
+Checkpoint 26 now completes the first bounded source-local follow-up. A reusable
+core composes the existing source-condition and request-context evaluators while
+preserving both results and accepting only exact same-document claims and teams.
+The Klee adapter selects three on-field-role main-stat occurrences and one
+Furina-roster Marechaussee Hunter occurrence from the Luna IV page. Across two
+exact Klee teams, the eight source cells contain 1 matched, 1 inapplicable, and
+6 unresolved results. Explicit team-scoped Klee role facts produce an effective
+7 matched and 1 inapplicable result without turning recommendation metadata into
+runtime intent or replacing exact-roster truth.
+
+The other 11 Klee occurrences are authenticated holdouts and receive no binding
+or energy classification from the slice. The downstream catalog now contains
+53 entries: 50 typed and 3 exact-text acknowledged. Current non-structural
+coverage is therefore 123/50/3/70. Energy remains orthogonal: 15 rows are
+deferred, 47 are explicitly not energy-deferred, 64 nonempty rows remain energy-
+unclassified, and 16 empty arrays are unconditional. No unbound row is presumed
+non-ER, and the slice composes no recommendation or build.
+
+The next bounded non-ER gate should select another exact source-local slice from
+the 70 unbound occurrences and author only predicates supported by existing
+exact roster or request facts. Nine of those rows are exact authored energy
+deferrals; the other 61 remain energy-unclassified. Preserve comparative,
+quality, timing, and gameplay conditions as holdouts, and do not infer
+predicates from repeated English or condition frequency. Human review of the
+Itto, Keqing, and Klee bindings and their source classifications remains a
+prerequisite for publication, formula authoring, recommendation composition, or
 build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete

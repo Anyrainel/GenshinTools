@@ -535,6 +535,36 @@ This seam does not authorize source claims, recommend account actions, combine
 the contexts, compose a build, or compute a score, rank, formula, rotation,
 damage result, ideal allocation, or ER requirement.
 
+## Source-local condition-slice seam
+
+`src/sourceLocalConditionSlice.ts` is a reusable, source-local composition of
+the existing typed source-condition evaluator and strict request-context
+evaluator. It accepts only exact condition occurrences and exact teams from one
+source document. Occurrences are pinned by source, record, schema path,
+ordered-array hash, predicate hash, payload hash, and repository parity.
+Request facts are scoped independently to an exact team and character, may
+refine only an `unresolved-context` leaf, and cannot replace a source-owned
+roster result or deferred-energy prerequisite. The source result and the
+context result remain separate.
+
+The first adapter, `src/kleeSourceLocalConditionSlice.ts`, selects four of the
+15 condition occurrences on the authenticated KQM Klee Luna IV page: three
+on-field-role main-stat rows and the Marechaussee Hunter row conditioned on a
+Furina roster. The other 11 exact occurrences are holdouts and receive neither
+a binding nor an energy classification from this slice. Across two exact source
+teams, the four selected occurrences form eight cells. Source evaluation is 1
+matched, 1 inapplicable, and 6 unresolved. Supplying Klee's `on-field-dps`
+intent independently for each team makes the effective partition 7 matched and
+1 inapplicable; the two roster results remain source-owned.
+
+The adapter authenticates four raw inputs and 13 exact generated-from paths,
+requires the selected/holdout partition to close all 15 Klee occurrences, and
+compares durable output with a fresh canonical rebuild before downstream use.
+Its capabilities for recommendation composition, assembled builds, ranking,
+generation, optimization, formulas, rotations, damage, ideal rolls, and ER are
+all disabled. Context applicability is not a recommendation or a claim that a
+preserved payload is best.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -546,28 +576,36 @@ the raw snapshot values before schema parsing and requires every `conditions`
 property to match one extracted path and ordered payload, so future or unknown
 condition-bearing fields fail closed.
 
-`src/currentConditionBindingCatalog.ts` overlays only three authenticated
+`src/currentConditionBindingCatalog.ts` overlays only four authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
-IDs, and exact-text Keqing Viridescent Venerer acknowledgements. A binding is
-addressed by source, record kind, record ID, schema path, ordered-array hash,
-and subject. Stale or non-comparable upstream reports, partial expansions,
-duplicate/conflicting keys, or subject mismatches make the inventory
-non-comparable rather than converting evidence to an unbound result.
+IDs, exact-text Keqing Viridescent Venerer acknowledgements, and the four Klee
+source-local typed bindings. A binding is addressed by source, record kind,
+record ID, schema path, ordered-array hash, and subject. Stale or non-comparable
+upstream reports, partial expansions, duplicate/conflicting keys, subject
+mismatches, or a Klee durable report that differs from its fresh authenticated
+rebuild make the inventory non-comparable rather than converting evidence to
+an unbound result.
 
 The durable report keeps binding and energy as independent ledgers. Across all
-126 nonempty arrays, binding coverage is 46 typed, 3 exact-text acknowledged,
-and 77 unbound. Excluding only the three structural ER arrays leaves 123 rows:
-46 typed, 3 acknowledged, and 74 unbound, spanning 86 exact ordered arrays.
-Those arrays contain 26 typed-only sets, 59 unbound-only sets, and one mixed
-acknowledged/unbound Viridescent Venerer set.
+126 nonempty arrays, the current catalog contributes 53 entries: 50 typed and
+3 exact-text acknowledged. Binding coverage is therefore 50 typed, 3
+acknowledged, and 73 unbound. Excluding only the three structural ER arrays
+leaves 123 rows: 50 typed, 3 acknowledged, and 70 unbound, spanning 86 exact
+ordered arrays. Those arrays contain 28 typed-only sets, 57 unbound-only sets,
+and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Forty-three typed rows are not energy-deferred; 68 acknowledgement or
-unbound rows remain energy-unclassified; and 16 empty arrays are unconditional.
-An unclassified row is not presumed non-ER. Exact-text equality does not
-establish gameplay execution, and typed mapping does not establish that a
-predicate is true for a team or account.
+deferred. Forty-seven typed rows are explicitly not energy-deferred; 64
+nonempty rows remain energy-unclassified; and 16 empty arrays are
+unconditional. An unclassified row is not presumed non-ER. Exact-text equality
+does not establish gameplay execution, and typed mapping does not establish
+that a predicate is true for a team or account.
+
+The dependency direction remains acyclic: raw source inputs feed the Klee
+source-local slice, that authenticated slice feeds the binding catalog, and the
+catalog feeds coverage. The validator rebuilds the Klee slice before rebuilding
+coverage; the source-local core never imports the downstream catalog or report.
 
 This seam runs no arbitrary-English parser, recommendation composer, generator,
 optimizer, formula, rotation, damage, ranking, ideal-roll, or ER calculation.
@@ -617,6 +655,9 @@ Its output is an authenticated validation backlog, not a guide.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
+- Generic source-local condition evaluation and the bounded Klee adapter:
+  `scripts/guide-factory/src/sourceLocalConditionSlice.ts` and
+  `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`.
 - Exact manual condition extraction, repository parity, and authenticated
   current-wrapper coverage:
   `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,
@@ -693,17 +734,19 @@ factory.
   disagreements still need broader attributed evidence before role-based roster
   expansion is safe.
 - Source guide applicability remains attributed prose in repository records.
-  The exact inventory now identifies 74 non-structural occurrences as unbound;
+  The exact inventory now identifies 70 non-structural occurrences as unbound;
   it does not parse them or presume they are non-ER. Nine are exact authored
-  energy deferrals and the remaining 65 are energy-unclassified. The Keqing and
-  Itto source-specific wrappers pin exact text to typed predicates and can
-  resolve exact roster facts, but they are not a global parser. The Itto
-  request-context adapter additionally resolves a bounded role, goal, weapon-
-  ownership/passive, and preference vocabulary; it does not generalize those
-  bindings across sources. High Base ATK, DMG Bonus, exceptional EM,
-  contribution ownership, refinement, shield uptime, Bond clearance, CRIT
-  overcap, artifact quality, comparative thresholds, gameplay, and omitted-
-  energy inputs remain explicitly unresolved or deferred.
+  energy deferrals and the remaining 61 are energy-unclassified. The Keqing,
+  Itto, and Klee source-specific wrappers pin exact text to typed predicates and
+  can resolve only their authored facts; they are not a global parser. The Itto
+  request-context adapter resolves a bounded role, goal, weapon-ownership/
+  passive, and preference vocabulary. The reusable source-local core can carry
+  equally narrow source-specific bindings, but the Klee slice classifies only
+  four exact occurrences and gives its 11 holdouts no binding or energy state.
+  High Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
+  shield uptime, Bond clearance, CRIT overcap, artifact quality, comparative
+  thresholds, gameplay, and omitted-energy inputs remain explicitly unresolved
+  or deferred.
 - The source evidence now exposes four artifact-search gaps: 4pc
   Thundersoother and three traditional 2pc combinations are recorded but not
   representable by the current candidate path. Search coverage is therefore a

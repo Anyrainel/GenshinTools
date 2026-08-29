@@ -1,13 +1,15 @@
 {
   "arbitraryEnglishParsingAllowed": false,
   "bindingBoundary": {
-    "catalogReportSha256": "87c196146aacdf67dc3074e36d1a047fb5a390f0b206d8d1e6cc56fae08bf2eb",
+    "catalogReportSha256": "79aa96c4aef6c31446cc3c222aed9ebac967e6256df7ae7faf0ae3ed3fc7b626",
     "exactTextAcknowledgementOccurrenceCount": 3,
     "ittoAuthenticated": true,
     "keqingEquipmentAtomicClaimCount": 42,
     "keqingEquipmentDurableMatchesCurrent": true,
     "keqingRolePairDurableMatchesCurrent": true,
-    "occurrenceCount": 49,
+    "kleeSourceLocalDurableMatchesCurrent": true,
+    "kleeSourceLocalOccurrenceCount": 4,
+    "occurrenceCount": 53,
     "status": "authenticated",
     "typedBindingMeansConditionTruth": false
   },
@@ -91,6 +93,10 @@
       "sha256": "d401236b0bade4d068f61843ec85676ba740a3fb09c4729d38b24b66c241a465"
     },
     {
+      "path": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
+      "sha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4"
+    },
+    {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
       "sha256": "27d4bef6b93a09489e3d0b4433672f39cee5369ecb9b71c76935c350a3339eca"
     },
@@ -107,16 +113,24 @@
       "sha256": "6425c34209b4ae70b90f212be0a3b78a460169d99bb71b9afcd65f3396edf7ad"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts",
+      "sha256": "a65da927710accb1ba1a468a1ae4fe721fe1eb39ea1b6ac32ee4700138f2fa27"
+    },
+    {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "75377e708f36e7b8e0262c02ed0f4e8c196ce66e70a5f6f0ad12dd595b4e1ce1"
+      "sha256": "96bded91bfe177d754e4cbe4c43c0b47d5dd076ad72b0959fe7156bc18b7fcf2"
     },
     {
       "path": "scripts/guide-factory/src/exactAuthoredEnergyDeferralCatalog.ts",
       "sha256": "0c2b01ec3bb1afb515235460fb1fcfefc8020ad2fc0e7950f1637c98187fa9b8"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
     },
     {
       "path": "scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts",
@@ -139,12 +153,16 @@
       "sha256": "42358c4974cb31ac49d856fa594c43dcaa27ff632836cebeeefda1873fe2a6f8"
     },
     {
+      "path": "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
+      "sha256": "8755b3cc1329f1d8ffe9816768bb2589240ed68e9d3d5583bfe883311931e7ad"
+    },
+    {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
       "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "916163280e8a8092b92ae8041e42d2dccdb0f8c922e021dfe13df01860ab068e"
+      "sha256": "049a7a76232cf31f7cd5be6670dd8925eaa7f196cd20548bd123103dfec15d06"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -169,6 +187,10 @@
     {
       "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
       "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
     },
     {
       "path": "scripts/guide-factory/src/sourceScopedRolePairSample.ts",
@@ -989,7 +1011,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Klee is used as an on-field DPS."
@@ -1429,7 +1451,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Klee is used in a Furina team."
@@ -5351,18 +5373,38 @@
       "subject": "klee"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "klee-source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
+        "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+        "predicateAst": {
+          "category": "gameplay-role",
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+        "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
       "claimAxis": "main-stat",
       "conditions": [
         "Klee is used as an on-field DPS."
       ],
       "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "klee-source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+        "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -5385,18 +5427,38 @@
       "subject": "klee"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "klee-source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
+        "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+        "predicateAst": {
+          "category": "gameplay-role",
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+        "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
       "claimAxis": "main-stat",
       "conditions": [
         "Klee is used as an on-field DPS."
       ],
       "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "klee-source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+        "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -5454,18 +5516,38 @@
       "subject": "klee"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "klee-source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
+        "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+        "predicateAst": {
+          "category": "gameplay-role",
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+        "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
       "claimAxis": "main-stat",
       "conditions": [
         "Klee is used as an on-field DPS."
       ],
       "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "klee-source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+        "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -5620,18 +5702,37 @@
       "subject": "klee"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "klee-source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
+        "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+        "predicateAst": {
+          "characterId": "furina",
+          "type": "exact-team-roster-includes"
+        },
+        "predicateAstSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+        "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions:feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
       "claimAxis": "artifact-recommendation",
       "conditions": [
         "Klee is used in a Furina team."
       ],
       "conditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "klee-source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+        "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+        "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -7069,7 +7170,7 @@
   "rawInputBoundary": {
     "exactPathSet": true,
     "rawJsonObjectClosure": true,
-    "sourceFileCount": 14,
+    "sourceFileCount": 15,
     "status": "accepted"
   },
   "recommendationCompositionExecuted": false,
@@ -7085,10 +7186,10 @@
       "nonemptyCount": 126,
       "occurrenceCount": 126,
       "stringOccurrenceCount": 159,
-      "typedBoundOccurrenceCount": 46,
-      "typedBoundStringOccurrenceCount": 68,
-      "unboundOccurrenceCount": 77,
-      "unboundStringOccurrenceCount": 88,
+      "typedBoundOccurrenceCount": 50,
+      "typedBoundStringOccurrenceCount": 72,
+      "unboundOccurrenceCount": 73,
+      "unboundStringOccurrenceCount": 84,
       "uniqueExactArrayCount": 89,
       "uniqueStringCount": 97
     },
@@ -7099,12 +7200,12 @@
         "erDeferredCount": 12,
         "exactTextAcknowledgedCount": 0,
         "groupId": "character_guide",
-        "knownButUnboundCount": 64,
+        "knownButUnboundCount": 60,
         "nonemptyCount": 110,
         "nonStructuralBindingCoverageConditionCount": 110,
         "occurrenceCount": 120,
         "stringOccurrenceCount": 143,
-        "typedBoundCount": 46,
+        "typedBoundCount": 50,
         "unconditionalCount": 10,
         "uniqueExactArrayCount": 77,
         "uniqueStringCount": 85
@@ -7181,12 +7282,12 @@
         "erDeferredCount": 15,
         "exactTextAcknowledgedCount": 3,
         "groupId": "kqm",
-        "knownButUnboundCount": 77,
+        "knownButUnboundCount": 73,
         "nonemptyCount": 126,
         "nonStructuralBindingCoverageConditionCount": 123,
         "occurrenceCount": 142,
         "stringOccurrenceCount": 159,
-        "typedBoundCount": 46,
+        "typedBoundCount": 50,
         "unconditionalCount": 16,
         "uniqueExactArrayCount": 89,
         "uniqueStringCount": 97
@@ -7375,12 +7476,12 @@
         "erDeferredCount": 0,
         "exactTextAcknowledgedCount": 0,
         "groupId": "klee",
-        "knownButUnboundCount": 15,
+        "knownButUnboundCount": 11,
         "nonemptyCount": 15,
         "nonStructuralBindingCoverageConditionCount": 15,
         "occurrenceCount": 15,
         "stringOccurrenceCount": 17,
-        "typedBoundCount": 0,
+        "typedBoundCount": 4,
         "unconditionalCount": 0,
         "uniqueExactArrayCount": 12,
         "uniqueStringCount": 13
@@ -7534,8 +7635,8 @@
       "er-deferred": 15,
       "exact-text-acknowledged": 3,
       "invalid": 0,
-      "known-but-unbound": 65,
-      "typed-bound": 43,
+      "known-but-unbound": 61,
+      "typed-bound": 47,
       "unconditional": 16
     },
     "energyCoverage": {
@@ -7557,11 +7658,11 @@
       },
       "energyUnclassified": {
         "emptyCount": 0,
-        "nonemptyCount": 68,
-        "occurrenceCount": 68,
-        "stringOccurrenceCount": 76,
-        "uniqueExactArrayCount": 52,
-        "uniqueStringCount": 56
+        "nonemptyCount": 64,
+        "occurrenceCount": 64,
+        "stringOccurrenceCount": 72,
+        "uniqueExactArrayCount": 50,
+        "uniqueStringCount": 55
       },
       "exactAuthoredEnergyRelatedDeferral": {
         "emptyCount": 0,
@@ -7573,11 +7674,11 @@
       },
       "notEnergyDeferred": {
         "emptyCount": 0,
-        "nonemptyCount": 43,
-        "occurrenceCount": 43,
-        "stringOccurrenceCount": 65,
-        "uniqueExactArrayCount": 25,
-        "uniqueStringCount": 26
+        "nonemptyCount": 47,
+        "occurrenceCount": 47,
+        "stringOccurrenceCount": 69,
+        "uniqueExactArrayCount": 27,
+        "uniqueStringCount": 28
       },
       "structuralEr": {
         "emptyCount": 0,
@@ -7605,18 +7706,18 @@
       "nonemptyCount": 123,
       "occurrenceCount": 123,
       "stringOccurrenceCount": 156,
-      "typedBoundOccurrenceCount": 46,
-      "typedBoundStringOccurrenceCount": 68,
-      "unboundOccurrenceCount": 74,
-      "unboundStringOccurrenceCount": 85,
+      "typedBoundOccurrenceCount": 50,
+      "typedBoundStringOccurrenceCount": 72,
+      "unboundOccurrenceCount": 70,
+      "unboundStringOccurrenceCount": 81,
       "uniqueExactArrayCount": 86,
       "uniqueStringCount": 94
     },
     "nonStructuralUniqueBindingArrayCoverage": {
       "mixedAcknowledgedAndUnboundCount": 1,
       "otherMixedCount": 0,
-      "typedOnlyCount": 26,
-      "unboundOnlyCount": 59,
+      "typedOnlyCount": 28,
+      "unboundOnlyCount": 57,
       "uniqueExactArrayCount": 86
     },
     "total": {

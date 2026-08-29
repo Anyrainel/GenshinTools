@@ -6,24 +6,36 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `klee-source-local-condition-slice.json` authenticates one reusable source-
+  local condition-slice adapter over four exact Klee Luna IV occurrences and
+  two exact source teams. Three on-field-role main-stat rows and one Furina-
+  roster artifact-set row produce eight cells: source evaluation is 1 matched,
+  1 inapplicable, and 6 unresolved; explicit per-team Klee role intent makes
+  the effective partition 7 matched and 1 inapplicable. The selected and
+  holdout partitions close all 15 Klee occurrences, and the 11 holdouts receive
+  no binding or energy classification from the slice. The report authenticates
+  four raw inputs and 13 generated-from paths, and downstream use requires the
+  durable report to equal a fresh canonical rebuild. All recommendation,
+  composition, build, rank, generator, optimizer, formula, rotation, damage,
+  ideal-roll, and ER capabilities remain disabled.
 - `manual-condition-array-coverage.json` authenticates all 142 structured
   condition-array occurrences from seven indexed KQM manual snapshots and
   proves exact raw-path extraction closure and parity with the consolidated
   repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
   unique exact ordered nonempty arrays,
   159 condition-string occurrences, and 97 unique strings. Binding and energy
-  are independent: all nonempty arrays contain 46 typed bindings, 3 exact-text
-  acknowledgements, and 77 unbound occurrences; excluding only three structural
-  ER rows leaves 123 occurrences: 46 typed, 3 acknowledged, and 74 unbound,
-  across 86 unique arrays. Those arrays contain 26 typed-only, 59 unbound-only,
+  are independent: all nonempty arrays contain 50 typed bindings, 3 exact-text
+  acknowledgements, and 73 unbound occurrences; excluding only three structural
+  ER rows leaves 123 occurrences: 50 typed, 3 acknowledged, and 70 unbound,
+  across 86 unique arrays. Those arrays contain 28 typed-only, 57 unbound-only,
   and one mixed acknowledged/unbound status set.
   The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
-  exact authored Diona/Furina rows; 43 typed rows are not energy-deferred and 68
-  remain energy-unclassified. Bindings are occurrence-, hash-, and subject-
-  scoped: identical Viridescent Venerer text is acknowledged for Jean,
-  Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound. Typed
-  coverage does not establish predicate truth, and unclassified does not mean
-  non-ER. The report parses no arbitrary prose, composes no choices, and
+  exact authored Diona/Furina rows; 47 typed rows are not energy-deferred and 64
+  nonempty rows remain energy-unclassified. Bindings are occurrence-, hash-,
+  and subject-scoped: identical Viridescent Venerer text is acknowledged for
+  Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
+  Typed coverage does not establish predicate truth, and unclassified does not
+  mean non-ER. The report parses no arbitrary prose, composes no choices, and
   executes no guide, generator, optimizer, formula, rotation, damage, ideal-
   roll, or ER work. All 64 source records remain agent-assisted and unreviewed,
   so publication stays withheld.
@@ -314,7 +326,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-five reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-six reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

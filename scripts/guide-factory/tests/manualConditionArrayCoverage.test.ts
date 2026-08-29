@@ -23,9 +23,12 @@ import {
   TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_REPORT_PATH,
 } from "../src/paths";
 import { readJson } from "../src/io";
+import { KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS } from "../src/kleeSourceLocalConditionSlice";
 
 const KEQING_EQUIPMENT_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
+const KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
+  "scripts/guide-factory/reports/klee-source-local-condition-slice.json";
 
 describe("manual condition-array coverage report", () => {
   let input: BuildManualConditionArrayCoverageReportInput;
@@ -43,7 +46,7 @@ describe("manual condition-array coverage report", () => {
       status: "accepted",
       exactPathSet: true,
       rawJsonObjectClosure: true,
-      sourceFileCount: 14,
+      sourceFileCount: 15,
     });
     expect(report.corpusBoundary).toMatchObject({
       snapshotCount: 7,
@@ -56,11 +59,13 @@ describe("manual condition-array coverage report", () => {
     });
     expect(report.bindingBoundary).toMatchObject({
       status: "authenticated",
-      occurrenceCount: 49,
+      occurrenceCount: 53,
       ittoAuthenticated: true,
       keqingEquipmentDurableMatchesCurrent: true,
       keqingRolePairDurableMatchesCurrent: true,
+      kleeSourceLocalDurableMatchesCurrent: true,
       keqingEquipmentAtomicClaimCount: 42,
+      kleeSourceLocalOccurrenceCount: 4,
       exactTextAcknowledgementOccurrenceCount: 3,
       typedBindingMeansConditionTruth: false,
     });
@@ -70,6 +75,18 @@ describe("manual condition-array coverage report", () => {
         input.generatedFrom,
       ),
     ).not.toThrow();
+    const generatedPaths = new Set(report.generatedFrom.map(({ path }) => path));
+    expect(generatedPaths.size).toBe(report.generatedFrom.length);
+    expect(generatedPaths).toContain(KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
+    expect(generatedPaths).toContain(
+      "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
+    );
+    expect(generatedPaths).toContain(
+      "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+    );
+    expect(KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS).not.toContain(
+      "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
+    );
   });
 
   it("rejects the reviewer's self-declared boundary mutation", () => {
@@ -171,13 +188,13 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 89,
       stringOccurrenceCount: 159,
       uniqueStringCount: 97,
-      typedBoundOccurrenceCount: 46,
+      typedBoundOccurrenceCount: 50,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 77,
+      unboundOccurrenceCount: 73,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 68,
+      typedBoundStringOccurrenceCount: 72,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 88,
+      unboundStringOccurrenceCount: 84,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralBindingCoverage).toEqual({
@@ -187,19 +204,19 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 86,
       stringOccurrenceCount: 156,
       uniqueStringCount: 94,
-      typedBoundOccurrenceCount: 46,
+      typedBoundOccurrenceCount: 50,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 74,
+      unboundOccurrenceCount: 70,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 68,
+      typedBoundStringOccurrenceCount: 72,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 85,
+      unboundStringOccurrenceCount: 81,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralUniqueBindingArrayCoverage).toEqual({
       uniqueExactArrayCount: 86,
-      typedOnlyCount: 26,
-      unboundOnlyCount: 59,
+      typedOnlyCount: 28,
+      unboundOnlyCount: 57,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     });
@@ -229,20 +246,20 @@ describe("manual condition-array coverage report", () => {
         uniqueStringCount: 11,
       },
       notEnergyDeferred: {
-        occurrenceCount: 43,
+        occurrenceCount: 47,
         emptyCount: 0,
-        nonemptyCount: 43,
-        uniqueExactArrayCount: 25,
-        stringOccurrenceCount: 65,
-        uniqueStringCount: 26,
+        nonemptyCount: 47,
+        uniqueExactArrayCount: 27,
+        stringOccurrenceCount: 69,
+        uniqueStringCount: 28,
       },
       energyUnclassified: {
-        occurrenceCount: 68,
+        occurrenceCount: 64,
         emptyCount: 0,
-        nonemptyCount: 68,
-        uniqueExactArrayCount: 52,
-        stringOccurrenceCount: 76,
-        uniqueStringCount: 56,
+        nonemptyCount: 64,
+        uniqueExactArrayCount: 50,
+        stringOccurrenceCount: 72,
+        uniqueStringCount: 55,
       },
       unconditional: {
         occurrenceCount: 16,
@@ -410,7 +427,7 @@ describe("manual condition-array coverage report", () => {
         ({ energyClassification }) =>
           energyClassification === "not-energy-deferred",
       ),
-    ).toHaveLength(43);
+    ).toHaveLength(47);
     expect(
       report.occurrences
         .filter(
@@ -440,6 +457,67 @@ describe("manual condition-array coverage report", () => {
       damageComputationExecuted: false,
       energyRecoveryComputationExecuted: false,
     });
+  });
+
+  it("promotes only the four freshly authenticated Klee occurrences", () => {
+    const kleeRows = report.occurrences.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence?.kind === "klee-source-local-typed-predicate-ast",
+    );
+
+    expect(kleeRows).toHaveLength(4);
+    expect(
+      kleeRows.map(({ occurrenceId }) => occurrenceId).sort(),
+    ).toEqual([
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+    ]);
+    expect(
+      kleeRows.every(
+        (row) =>
+          row.bindingClassification === "typed-bound" &&
+          row.energyClassification === "not-energy-deferred" &&
+          row.displayStatus === "typed-bound" &&
+          row.bindingEvidence?.kind ===
+            "klee-source-local-typed-predicate-ast" &&
+          row.bindingEvidence.selectedOccurrenceId === row.occurrenceId &&
+          row.energyEvidence?.kind ===
+            "klee-source-local-not-energy-deferred" &&
+          row.energyEvidence.selectedOccurrenceId === row.occurrenceId &&
+          row.energyEvidence.selectedOccurrenceSha256 ===
+            row.bindingEvidence.selectedOccurrenceSha256,
+      ),
+    ).toBe(true);
+    const holdoutRows = report.occurrences.filter(
+      ({ subject, bindingClassification }) =>
+        subject === "klee" && bindingClassification === "unbound",
+    );
+    const durableSource = input.sourceFiles.find(
+      ({ path: sourcePath }) =>
+        sourcePath === KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH,
+    );
+    if (!durableSource) throw new Error("Missing Klee durable report fixture.");
+    const durableHoldoutIds = (
+      JSON.parse(durableSource.text) as {
+        holdoutOccurrences: Array<{ occurrenceId: string }>;
+      }
+    ).holdoutOccurrences
+      .map(({ occurrenceId }) => occurrenceId)
+      .sort();
+    expect(holdoutRows).toHaveLength(11);
+    expect(holdoutRows.map(({ occurrenceId }) => occurrenceId).sort()).toEqual(
+      durableHoldoutIds,
+    );
+    expect(
+      holdoutRows.every(
+        ({ energyClassification, bindingEvidence, energyEvidence }) =>
+          energyClassification === "energy-unclassified" &&
+          bindingEvidence == null &&
+          energyEvidence == null,
+      ),
+    ).toBe(true);
   });
 
   it("fails closed when a byte-authenticated durable wrapper is stale", async () => {
@@ -474,6 +552,34 @@ describe("manual condition-array coverage report", () => {
         staleInput.generatedFrom,
       ),
     ).toThrow("Refusing to write");
+  });
+
+  it("fails closed when the byte-authenticated Klee report is stale against a fresh rebuild", async () => {
+    const staleInput = structuredClone(input);
+    const source = staleInput.sourceFiles.find(
+      ({ path: sourcePath }) =>
+        sourcePath === KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH,
+    );
+    if (!source) throw new Error("Missing Klee durable report fixture.");
+    const staleKlee = JSON.parse(source.text) as {
+      selectedOccurrences: unknown[];
+    };
+    staleKlee.selectedOccurrences.pop();
+    const staleText = stableJson(staleKlee);
+    source.text = staleText;
+    staleInput.generatedFrom = staleInput.generatedFrom.map((entry) =>
+      entry.path === KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH
+        ? { ...entry, sha256: sha256Text(staleText) }
+        : entry,
+    );
+
+    const stale = await buildManualConditionArrayCoverageReport(staleInput);
+    expect(stale.comparisonStatus).toBe("not-comparable");
+    expect(stale.occurrences).toEqual([]);
+    expect(stale.bindingBoundary.status).toBe("rejected");
+    expect(stale.issues[0]?.message).toContain(
+      "failed a fresh current rebuild",
+    );
   });
 
   it("authenticates the checked-in durable report against a fresh rebuild", async () => {

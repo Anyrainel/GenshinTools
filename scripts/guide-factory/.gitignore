@@ -26,3 +26,4 @@ reports/*
 !reports/itto-source-conditioned-guide-packets.json
 !reports/itto-request-context-applicability.json
 !reports/manual-condition-array-coverage.json
+!reports/klee-source-local-condition-slice.json

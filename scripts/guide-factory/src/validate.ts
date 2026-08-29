@@ -50,6 +50,13 @@ import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
 } from "./keqingLunarEquipmentEvidenceValidation";
 import {
+  authenticateKleeSourceLocalConditionSliceReport,
+  KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+  KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
+  KLEE_SOURCE_LOCAL_CONDITION_SLICE_SOURCE_FILE_PATHS,
+  type KleeSourceLocalConditionSliceReport,
+} from "./kleeSourceLocalConditionSlice";
+import {
   buildKeqingLunarSourceConditionedCandidateLatticeReport,
   KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
 } from "./keqingLunarSourceConditionedCandidateLattice";
@@ -222,6 +229,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     ittoRequestContextApplicabilityInput,
     manualConditionArrayCoverageInput,
     manualConditionArrayCoverageSourceFiles,
+    kleeSourceLocalConditionSliceInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -295,6 +303,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
           }),
         ),
       ),
+      readJson(KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -747,6 +756,49 @@ export async function runValidation(): Promise<ValidationRunResult> {
         });
       }
 
+      const kleeSourceLocalGeneratedFrom = await hashRelativePaths(
+        KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+      );
+      const kleeManualInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "klee-on-field-artifact-stats-luna-iv",
+      );
+      const kleeSourceFilePathSet = new Set<string>(
+        KLEE_SOURCE_LOCAL_CONDITION_SLICE_SOURCE_FILE_PATHS,
+      );
+      const kleeSourceFiles = manualConditionArrayCoverageSourceFiles.filter(
+        ({ path: sourcePath }) => kleeSourceFilePathSet.has(sourcePath),
+      );
+      const kleeCanonicalInput = {
+        repositoryInput: expectedKnowledge,
+        manualSnapshotInput: kleeManualInput.snapshot,
+        manualIndexInput,
+        sourceRegistryInput: registry.data,
+        sourceFiles: kleeSourceFiles,
+        generatedFrom: kleeSourceLocalGeneratedFrom,
+      };
+      const kleeSourceLocalAuthentication =
+        authenticateKleeSourceLocalConditionSliceReport(
+          kleeSourceLocalConditionSliceInput as KleeSourceLocalConditionSliceReport,
+          kleeCanonicalInput,
+        );
+      if (!kleeSourceLocalAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            kleeSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_klee_source_local_condition_slice"
+              : "pipeline.stale_klee_source_local_condition_slice",
+          path: "reports.klee-source-local-condition-slice",
+          message:
+            kleeSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The freshly rebuilt Klee source-local condition slice could not authenticate its exact source, repository, team, predicate, or holdout boundary."
+              : "The saved Klee source-local condition slice does not match the current raw source, consolidated records, exact typed bindings, scoped request projection, and input hashes.",
+        });
+      }
       const manualConditionArrayCoverageGeneratedFrom =
         await hashRelativePaths(MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS);
       const expectedManualConditionArrayCoverage =

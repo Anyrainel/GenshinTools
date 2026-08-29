@@ -6,6 +6,7 @@ import {
   KEQING_SHRED_ROLE_RECORD_ID,
   type KeqingSourceScopedRolePairSampleReport,
 } from "./keqingSourceScopedRolePairSample";
+import type { KleeSourceLocalConditionSliceReport } from "./kleeSourceLocalConditionSlice";
 import type {
   SourceConditionedGuidePacketAuthentication,
   SourceConditionedGuidePacketReport,
@@ -54,6 +55,16 @@ export type CurrentConditionBindingEvidence =
       targetTeamIds: string[];
       targetIds: string[];
       acknowledgementCount: number;
+    }
+  | {
+      kind: "klee-source-local-typed-predicate-ast";
+      sliceId: string;
+      selectedOccurrenceId: string;
+      selectedOccurrenceSha256: string;
+      predicateAst: SourceConditionPredicateAst;
+      predicateAstSha256: string;
+      payloadSha256: string;
+      occurrenceControlSha256: string;
     };
 
 export type CurrentConditionEnergyEvidence =
@@ -81,6 +92,14 @@ export type CurrentConditionEnergyEvidence =
       category: string;
       reason: string;
       occurrenceKey: string;
+    }
+  | {
+      kind: "klee-source-local-not-energy-deferred";
+      structuralErEvidencePresent: false;
+      energyRelatedWorkDeferred: false;
+      sliceId: string;
+      selectedOccurrenceId: string;
+      selectedOccurrenceSha256: string;
     };
 
 export interface CurrentConditionBindingCatalogEntry
@@ -106,6 +125,7 @@ export interface BuildCurrentConditionBindingCatalogInput {
   ittoAuthentication: SourceConditionedGuidePacketAuthentication;
   keqingEquipment: AuthenticatedCurrentReportPair<KeqingLunarEquipmentEvidenceValidationReport>;
   keqingRolePair: AuthenticatedCurrentReportPair<KeqingSourceScopedRolePairSampleReport>;
+  kleeSourceLocal: AuthenticatedCurrentReportPair<KleeSourceLocalConditionSliceReport>;
 }
 
 export interface CurrentConditionBindingCatalogIssue {
@@ -130,6 +150,7 @@ export interface CurrentConditionBindingCatalogReport {
     ittoAuthenticated: boolean;
     keqingEquipmentDurableMatchesCurrent: boolean;
     keqingRolePairDurableMatchesCurrent: boolean;
+    kleeSourceLocalDurableMatchesCurrent: boolean;
   };
   entries: CurrentConditionBindingCatalogEntry[];
   summary: {
@@ -151,6 +172,9 @@ export interface CurrentConditionBindingCatalogReport {
     keqingVvAcknowledgedOccurrenceCount: number;
     keqingVvExactTextAcknowledgementCount: number;
     keqingVvUnacknowledgedSourceMemberIds: string[];
+    kleeSourceLocalOccurrenceCount: number;
+    kleeSourceLocalTypedBindingCount: number;
+    kleeSourceLocalNotEnergyDeferredCount: number;
   };
   issues: CurrentConditionBindingCatalogIssue[];
 }
@@ -168,6 +192,14 @@ const KEQING_VV_EXPECTED_ACKNOWLEDGED_CHARACTERS = [
 const KEQING_VV_UNACKNOWLEDGED_SOURCE_MEMBERS = ["sayu", "xianyun"] as const;
 const KEQING_SHRED_ROLE_SOURCE_RECORD_ID =
   "keqing-lunar-charged-resistance-shred-options";
+const KLEE_SOURCE_LOCAL_SLICE_ID =
+  "kqm-klee-source-local-condition-slice-luna-iv";
+const KLEE_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCE_IDS = [
+  "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+  "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+  "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+  "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+] as const;
 
 const KEQING_SHRED_SOURCE_MEMBER_INDEX: Readonly<Record<string, number>> = {
   kaedehara_kazuha: 0,
@@ -235,10 +267,14 @@ export function buildCurrentConditionBindingCatalog(
   const keqingRolePairDurableMatchesCurrent = exactCurrentReportMatches(
     input.keqingRolePair,
   );
+  const kleeSourceLocalDurableMatchesCurrent = exactCurrentReportMatches(
+    input.kleeSourceLocal,
+  );
   const authenticationBoundary = {
     ittoAuthenticated,
     keqingEquipmentDurableMatchesCurrent,
     keqingRolePairDurableMatchesCurrent,
+    kleeSourceLocalDurableMatchesCurrent,
   };
 
   if (!ittoAuthenticated) {
@@ -265,6 +301,14 @@ export function buildCurrentConditionBindingCatalog(
       "The durable Keqing role-pair report differs from the current rebuilt report.",
     );
   }
+  if (!kleeSourceLocalDurableMatchesCurrent) {
+    addIssue(
+      issues,
+      "authentication.klee-source-local-stale",
+      "kleeSourceLocal",
+      "The durable Klee source-local report differs from the current rebuilt report.",
+    );
+  }
   if (issues.length > 0) {
     return failedReport(authenticationBoundary, issues);
   }
@@ -278,6 +322,10 @@ export function buildCurrentConditionBindingCatalog(
         issues,
       ),
       ...extractKeqingVvEntries(input.keqingRolePair.currentReport, issues),
+      ...extractKleeSourceLocalEntries(
+        input.kleeSourceLocal.currentReport,
+        issues,
+      ),
     ];
     validateCombinedEntries(entries, issues);
     if (issues.length > 0) {
@@ -952,6 +1000,262 @@ function extractKeqingVvEntries(
   });
 }
 
+function extractKleeSourceLocalEntries(
+  report: KleeSourceLocalConditionSliceReport,
+  issues: CurrentConditionBindingCatalogIssue[],
+): CurrentConditionBindingCatalogEntry[] {
+  const sourceLocalSlice = report.sourceLocalSlice;
+  if (
+    report.comparisonStatus !== "comparable" ||
+    report.reportType !== "klee-source-local-condition-slice" ||
+    report.classification !==
+      "authenticated-source-local-condition-binding-slice" ||
+    report.sliceId !== KLEE_SOURCE_LOCAL_SLICE_ID ||
+    report.issues.length !== 0 ||
+    sourceLocalSlice == null ||
+    sourceLocalSlice.comparisonStatus !== "comparable"
+  ) {
+    addIssue(
+      issues,
+      "klee-source-local.non-comparable",
+      "kleeSourceLocal.currentReport",
+      "The Klee source-local report is not the expected comparable authenticated slice.",
+    );
+    return [];
+  }
+  if (
+    report.supportsGuideClaims !== false ||
+    report.supportsTeamRecommendations !== false ||
+    report.supportsEquipmentRecommendations !== false ||
+    report.supportsStatRecommendations !== false ||
+    report.supportsRankClaims !== false ||
+    report.supportsDamageClaims !== false ||
+    report.supportsEnergyRecoveryClaims !== false ||
+    report.recommendationCompositionExecuted !== false ||
+    report.generatorExecuted !== false ||
+    report.optimizerExecuted !== false ||
+    report.damageComputationExecuted !== false ||
+    report.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.supportsSourceAuthorization !== false ||
+    sourceLocalSlice.supportsGuideClaims !== false ||
+    sourceLocalSlice.supportsTeamRecommendations !== false ||
+    sourceLocalSlice.supportsBuildRecommendations !== false ||
+    sourceLocalSlice.supportsStatRecommendations !== false ||
+    sourceLocalSlice.supportsRankClaims !== false ||
+    sourceLocalSlice.supportsDamageClaims !== false ||
+    sourceLocalSlice.supportsRotationClaims !== false ||
+    sourceLocalSlice.supportsEnergyRecoveryClaims !== false ||
+    sourceLocalSlice.playerFacingRecommendations !== false ||
+    sourceLocalSlice.ranking !== false ||
+    sourceLocalSlice.buildComposition !== false ||
+    sourceLocalSlice.damage !== false ||
+    sourceLocalSlice.formulas !== false ||
+    sourceLocalSlice.rotations !== false ||
+    sourceLocalSlice.ER !== false ||
+    sourceLocalSlice.recommendationCompositionExecuted !== false ||
+    sourceLocalSlice.generatorExecuted !== false ||
+    sourceLocalSlice.optimizerExecuted !== false ||
+    sourceLocalSlice.damageComputationExecuted !== false ||
+    sourceLocalSlice.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.assembledBuildCount !== 0 ||
+    sourceLocalSlice.issues.length !== 0 ||
+    sourceLocalSlice.sourceDocumentBoundary.status !== "accepted" ||
+    sourceLocalSlice.sourceDocumentBoundary.sourceId !== "kqm" ||
+    sourceLocalSlice.sourceDocumentBoundary.exactOccurrenceIds.length !== 4 ||
+    !sourceLocalSlice.sourceDocumentBoundary
+      .allClaimsAndTeamsShareExactSourceDocument ||
+    report.sourceBoundary.status !== "accepted" ||
+    report.sourceBoundary.sourceId !== "kqm" ||
+    report.sourceBoundary.repositoryParity !== "exact" ||
+    !report.sourceBoundary.selectedAndHoldoutsCloseAllKleeConditions ||
+    report.sourceBoundary.selectedOccurrenceCount !== 4 ||
+    report.sourceBoundary.holdoutOccurrenceCount !== 11 ||
+    report.selectedOccurrences.length !== 4 ||
+    report.holdoutOccurrences.length !== 11 ||
+    report.summary.selectedOccurrenceCount !== 4 ||
+    report.summary.selectedNotEnergyDeferredCount !== 4 ||
+    report.summary.holdoutOccurrenceCount !== 11 ||
+    report.summary.holdoutWithoutAuthoredEnergyClassificationCount !== 11 ||
+    report.summary.assembledBuildCount !== 0 ||
+    sourceLocalSlice.sourceClaimCatalog.length !== 4 ||
+    sourceLocalSlice.conditionControls.length !== 4
+  ) {
+    addIssue(
+      issues,
+      "klee-source-local.partial-or-capability-crossing-evidence",
+      "kleeSourceLocal.currentReport",
+      "The Klee checkpoint lost its exact four-selected/eleven-holdout boundary or crossed a prohibited computation boundary.",
+    );
+    return [];
+  }
+
+  const actualSelectedIds = report.selectedOccurrences
+    .map(({ occurrenceId }) => occurrenceId)
+    .sort();
+  if (
+    stableJson(actualSelectedIds) !==
+    stableJson([...KLEE_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCE_IDS].sort())
+  ) {
+    addIssue(
+      issues,
+      "klee-source-local.selected-occurrence-scope-drift",
+      "kleeSourceLocal.currentReport.selectedOccurrences",
+      "The Klee typed slice must remain limited to the four exact authenticated occurrences.",
+    );
+    return [];
+  }
+  const holdoutIds = report.holdoutOccurrences.map(
+    ({ occurrenceId }) => occurrenceId,
+  );
+  if (
+    new Set(holdoutIds).size !== 11 ||
+    holdoutIds.some((occurrenceId) => actualSelectedIds.includes(occurrenceId)) ||
+    report.holdoutOccurrences.some(
+      (holdout) =>
+        holdout.repositoryParity !== "exact" ||
+        holdout.sliceDisposition !== "holdout" ||
+        holdout.bindingAuthoredBySlice ||
+        holdout.energyClassificationAuthoredBySlice,
+    )
+  ) {
+    addIssue(
+      issues,
+      "klee-source-local.selected-holdout-partition-drift",
+      "kleeSourceLocal.currentReport.holdoutOccurrences",
+      "The exact selected and holdout occurrence sets must remain unique, disjoint, and limited to slice-authored dispositions.",
+    );
+    return [];
+  }
+
+  const claimById = exactSingleRowsById(
+    sourceLocalSlice.sourceClaimCatalog,
+    ({ claimId }) => claimId,
+    "klee-source-local.duplicate-source-claim",
+    "kleeSourceLocal.currentReport.sourceLocalSlice.sourceClaimCatalog",
+    issues,
+  );
+  const controlById = exactSingleRowsById(
+    sourceLocalSlice.conditionControls,
+    ({ claimId }) => claimId,
+    "klee-source-local.duplicate-condition-control",
+    "kleeSourceLocal.currentReport.sourceLocalSlice.conditionControls",
+    issues,
+  );
+  if (issues.length > 0) return [];
+
+  const entries: CurrentConditionBindingCatalogEntry[] = [];
+  for (const selected of report.selectedOccurrences) {
+    const claim = claimById.get(selected.occurrenceId);
+    const control = controlById.get(selected.occurrenceId);
+    const conditionsSha256 = sha256Text(stableJson(selected.conditions));
+    const predicateAstSha256 = sha256Text(stableJson(selected.predicate));
+    const payloadSha256 = sha256Text(stableJson(selected.payload));
+    const expectedOccurrenceId = buildCurrentConditionArrayOccurrenceId({
+      sourceId: "kqm",
+      recordKind: "character_guide",
+      sourceRecordId: selected.sourceRecordId,
+      manualClaimPath: selected.manualClaimPath,
+    });
+    if (
+      selected.occurrenceId !== expectedOccurrenceId ||
+      selected.conditions.length === 0 ||
+      selected.conditionsSha256 !== conditionsSha256 ||
+      selected.predicateSha256 !== predicateAstSha256 ||
+      selected.payloadSha256 !== payloadSha256 ||
+      selected.repositoryParity !== "exact" ||
+      selected.sliceDisposition !== "selected" ||
+      !selected.bindingAuthoredBySlice ||
+      selected.sliceBindingClassification !== "typed-bound" ||
+      !selected.energyClassificationAuthoredBySlice ||
+      selected.sliceEnergyClassification !== "not-energy-deferred" ||
+      claim == null ||
+      claim.sourceId !== "kqm" ||
+      claim.sourceRecordId !== selected.sourceRecordId ||
+      claim.sourceConditionsSha256 !== selected.conditionsSha256 ||
+      stableJson(claim.sourceConditions) !== stableJson(selected.conditions) ||
+      stableJson(claim.predicate) !== stableJson(selected.predicate) ||
+      control == null ||
+      control.occurrenceControl.occurrenceId !== selected.occurrenceId ||
+      control.occurrenceControl.sourceId !== "kqm" ||
+      control.occurrenceControl.sourceRecordId !== selected.sourceRecordId ||
+      control.occurrenceControl.manualClaimPath !== selected.manualClaimPath ||
+      control.occurrenceControl.sourceConditionsSha256 !==
+        selected.conditionsSha256 ||
+      control.occurrenceControl.sourcePredicateSha256 !==
+        selected.predicateSha256 ||
+      control.occurrenceControl.payloadSha256 !== selected.payloadSha256 ||
+      control.occurrenceControl.repositoryParity !== "exact" ||
+      control.occurrenceControl.sliceDisposition !== "selected" ||
+      control.occurrenceControl.energyClassification !== "not-energy-deferred"
+    ) {
+      addIssue(
+        issues,
+        "klee-source-local.conflicting-occurrence-evidence",
+        `kleeSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+        "The selected occurrence, source claim, condition control, predicate, payload, and exact source identity do not agree.",
+      );
+      continue;
+    }
+
+    const selectedOccurrenceSha256 = sha256Text(stableJson(selected));
+    entries.push(
+      makeEntry({
+        sourceId: "kqm",
+        recordKind: "character_guide",
+        sourceRecordId: selected.sourceRecordId,
+        manualClaimPath: selected.manualClaimPath,
+        subject: "klee",
+        orderedConditions: selected.conditions,
+        bindingClassification: "typed-bound",
+        energyClassification: "not-energy-deferred",
+        bindingEvidence: {
+          kind: "klee-source-local-typed-predicate-ast",
+          sliceId: report.sliceId,
+          selectedOccurrenceId: selected.occurrenceId,
+          selectedOccurrenceSha256,
+          predicateAst: structuredClone(selected.predicate),
+          predicateAstSha256,
+          payloadSha256,
+          occurrenceControlSha256: sha256Text(stableJson(control)),
+        },
+        energyEvidence: {
+          kind: "klee-source-local-not-energy-deferred",
+          structuralErEvidencePresent: false,
+          energyRelatedWorkDeferred: false,
+          sliceId: report.sliceId,
+          selectedOccurrenceId: selected.occurrenceId,
+          selectedOccurrenceSha256,
+        },
+      }),
+    );
+  }
+  return entries;
+}
+
+function exactSingleRowsById<T>(
+  rows: readonly T[],
+  id: (row: T) => string,
+  duplicateCode: string,
+  path: string,
+  issues: CurrentConditionBindingCatalogIssue[],
+): Map<string, T> {
+  const result = new Map<string, T>();
+  for (const row of rows) {
+    const rowId = id(row);
+    if (result.has(rowId)) {
+      addIssue(
+        issues,
+        duplicateCode,
+        `${path}.${rowId}`,
+        `Expected one authenticated row for ${rowId}.`,
+      );
+    } else {
+      result.set(rowId, row);
+    }
+  }
+  return result;
+}
+
 function makeEntry(input: {
   sourceId: string;
   recordKind: "character_guide" | "character_role";
@@ -1058,12 +1362,12 @@ function validateCombinedEntries(
       );
     }
   }
-  if (entries.length !== 49) {
+  if (entries.length !== 53) {
     addIssue(
       issues,
       "catalog.occurrence-count-drift",
       "entries",
-      `Expected 49 authenticated current bindings, found ${entries.length}.`,
+      `Expected 53 authenticated current bindings, found ${entries.length}.`,
     );
   }
 }
@@ -1081,6 +1385,10 @@ function summarize(
   const vvEntries = entries.filter(
     ({ bindingEvidence }) =>
       bindingEvidence.kind === "keqing-role-exact-text-acknowledgement",
+  );
+  const kleeEntries = entries.filter(
+    ({ bindingEvidence }) =>
+      bindingEvidence.kind === "klee-source-local-typed-predicate-ast",
   );
   return {
     occurrenceCount: entries.length,
@@ -1128,6 +1436,14 @@ function summarize(
     keqingVvUnacknowledgedSourceMemberIds: [
       ...KEQING_VV_UNACKNOWLEDGED_SOURCE_MEMBERS,
     ],
+    kleeSourceLocalOccurrenceCount: kleeEntries.length,
+    kleeSourceLocalTypedBindingCount: kleeEntries.filter(
+      ({ typedBinding }) => typedBinding,
+    ).length,
+    kleeSourceLocalNotEnergyDeferredCount: kleeEntries.filter(
+      ({ energyClassification }) =>
+        energyClassification === "not-energy-deferred",
+    ).length,
   };
 }
 

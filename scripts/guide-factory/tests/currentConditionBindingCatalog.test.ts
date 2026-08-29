@@ -14,13 +14,17 @@ import type { KeqingLunarEquipmentEvidenceValidationReport } from "../src/keqing
 import { KEQING_ROLE_PAIR_VV_CONDITION } from "../src/keqingSourceScopedRolePairSample";
 import type { KeqingSourceScopedRolePairSampleReport } from "../src/keqingSourceScopedRolePairSample";
 import {
+  KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
+  type KleeSourceLocalConditionSliceReport,
+} from "../src/kleeSourceLocalConditionSlice";
+import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
 } from "../src/paths";
 import type { SourceConditionedGuidePacketReport } from "../src/sourceConditionedGuidePacket";
 
 describe("authenticated current condition-binding catalog", () => {
-  it("builds the deterministic 49-occurrence catalog with exact current coverage", async () => {
+  it("builds the deterministic 53-occurrence catalog with exact current coverage", async () => {
     const fixture = await loadFixture();
     const before = structuredClone(fixture);
     const report = buildCurrentConditionBindingCatalog(fixture);
@@ -30,32 +34,32 @@ describe("authenticated current condition-binding catalog", () => {
     expect(fixture).toEqual(before);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.issues).toEqual([]);
-    expect(report.entries).toHaveLength(49);
+    expect(report.entries).toHaveLength(53);
     expect(report.entries.map(({ occurrenceKey }) => occurrenceKey)).toEqual(
       [...report.entries.map(({ occurrenceKey }) => occurrenceKey)].sort(),
     );
     expect(
       new Set(report.entries.map(({ occurrenceId }) => occurrenceId)).size,
-    ).toBe(49);
+    ).toBe(53);
     expect(
       new Set(report.entries.map(({ occurrenceKey }) => occurrenceKey)).size,
-    ).toBe(49);
+    ).toBe(53);
     expect(report.summary).toEqual({
-      occurrenceCount: 49,
+      occurrenceCount: 53,
       bindingClassificationCounts: {
-        "typed-bound": 46,
+        "typed-bound": 50,
         "exact-text-acknowledged": 3,
         unbound: 0,
         invalid: 0,
       },
       energyClassificationCounts: {
         "energy-unclassified": 3,
-        "not-energy-deferred": 43,
+        "not-energy-deferred": 47,
         "structural-er": 0,
         "deferred-energy-prerequisite": 3,
         "exact-authored-energy-related-deferral": 0,
       },
-      typedBindingCount: 46,
+      typedBindingCount: 50,
       ittoOccurrenceCount: 15,
       ittoTypedBindingCount: 15,
       ittoDeferredEnergyPrerequisiteCount: 3,
@@ -64,6 +68,9 @@ describe("authenticated current condition-binding catalog", () => {
       keqingVvAcknowledgedOccurrenceCount: 3,
       keqingVvExactTextAcknowledgementCount: 3,
       keqingVvUnacknowledgedSourceMemberIds: ["sayu", "xianyun"],
+      kleeSourceLocalOccurrenceCount: 4,
+      kleeSourceLocalTypedBindingCount: 4,
+      kleeSourceLocalNotEnergyDeferredCount: 4,
     });
     expect(report).toMatchObject({
       supportsGuideClaims: false,
@@ -77,6 +84,7 @@ describe("authenticated current condition-binding catalog", () => {
         ittoAuthenticated: true,
         keqingEquipmentDurableMatchesCurrent: true,
         keqingRolePairDurableMatchesCurrent: true,
+        kleeSourceLocalDurableMatchesCurrent: true,
       },
     });
     for (const entry of report.entries) {
@@ -234,6 +242,57 @@ describe("authenticated current condition-binding catalog", () => {
     ).toBe(true);
   });
 
+  it("binds only the four authenticated Klee occurrences with occurrence-scoped non-ER evidence", async () => {
+    const fixture = await loadFixture();
+    const report = requireComparableCurrentConditionBindingCatalog(
+      buildCurrentConditionBindingCatalog(fixture),
+    );
+    const kleeEntries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "klee-source-local-typed-predicate-ast",
+    );
+
+    expect(kleeEntries).toHaveLength(4);
+    expect(
+      kleeEntries.map(({ manualClaimPath }) => manualClaimPath).sort(),
+    ).toEqual([
+      "recommendation.artifactRecommendations[2].conditions",
+      "recommendation.mainStats.circlet[0].conditions",
+      "recommendation.mainStats.goblet[0].conditions",
+      "recommendation.mainStats.sands[0].conditions",
+    ]);
+    expect(
+      kleeEntries.every(
+        (entry) => {
+          const selected =
+            fixture.kleeSourceLocal.currentReport.selectedOccurrences.find(
+              ({ occurrenceId }) => occurrenceId === entry.occurrenceId,
+            );
+          return (
+            selected != null &&
+            entry.subject === "klee" &&
+            entry.bindingClassification === "typed-bound" &&
+            entry.energyClassification === "not-energy-deferred" &&
+            entry.bindingEvidence.kind ===
+              "klee-source-local-typed-predicate-ast" &&
+            entry.bindingEvidence.selectedOccurrenceId ===
+              entry.occurrenceId &&
+            entry.bindingEvidence.selectedOccurrenceSha256 ===
+              sha256Text(stableJson(selected)) &&
+            entry.bindingEvidence.predicateAstSha256 ===
+              sha256Text(stableJson(entry.bindingEvidence.predicateAst)) &&
+            entry.energyEvidence?.kind ===
+              "klee-source-local-not-energy-deferred" &&
+            entry.energyEvidence.selectedOccurrenceId === entry.occurrenceId &&
+            entry.energyEvidence.selectedOccurrenceSha256 ===
+              entry.bindingEvidence.selectedOccurrenceSha256 &&
+            !entry.energyEvidence.energyRelatedWorkDeferred
+          );
+        },
+      ),
+    ).toBe(true);
+  });
+
   it("fails closed on unauthenticated, stale, partial, duplicate, conflicting, or leaked evidence", async () => {
     const base = await loadFixture();
 
@@ -319,6 +378,37 @@ describe("authenticated current condition-binding catalog", () => {
       leaked.keqingRolePair.currentReport,
     );
     expectFailure(leaked, "keqing-role-pair.vv-acknowledgement-scope-drift");
+
+    const staleKlee = structuredClone(base);
+    const staleKleeDurable = structuredClone(
+      staleKlee.kleeSourceLocal.durableReport,
+    ) as KleeSourceLocalConditionSliceReport;
+    staleKleeDurable.selectedOccurrences.pop();
+    staleKlee.kleeSourceLocal.durableReport = staleKleeDurable;
+    expectFailure(staleKlee, "authentication.klee-source-local-stale");
+
+    const partialKlee = structuredClone(base);
+    partialKlee.kleeSourceLocal.currentReport.selectedOccurrences.pop();
+    partialKlee.kleeSourceLocal.durableReport = structuredClone(
+      partialKlee.kleeSourceLocal.currentReport,
+    );
+    expectFailure(
+      partialKlee,
+      "klee-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const capabilityCrossingKlee = structuredClone(base);
+    const nestedSlice = capabilityCrossingKlee.kleeSourceLocal.currentReport
+      .sourceLocalSlice as { supportsGuideClaims: boolean } | null;
+    if (!nestedSlice) throw new Error("Missing nested Klee slice fixture.");
+    nestedSlice.supportsGuideClaims = true;
+    capabilityCrossingKlee.kleeSourceLocal.durableReport = structuredClone(
+      capabilityCrossingKlee.kleeSourceLocal.currentReport,
+    );
+    expectFailure(
+      capabilityCrossingKlee,
+      "klee-source-local.partial-or-capability-crossing-evidence",
+    );
   });
 });
 
@@ -332,6 +422,9 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
   const keqingRolePair = (await readJson(
     KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
   )) as KeqingSourceScopedRolePairSampleReport;
+  const kleeSourceLocal = (await readJson(
+    KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
+  )) as KleeSourceLocalConditionSliceReport;
   return {
     ittoAuthentication: {
       authenticated: true,
@@ -344,6 +437,10 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
     keqingRolePair: {
       durableReport: structuredClone(keqingRolePair),
       currentReport: structuredClone(keqingRolePair),
+    },
+    kleeSourceLocal: {
+      durableReport: structuredClone(kleeSourceLocal),
+      currentReport: structuredClone(kleeSourceLocal),
     },
   };
 }

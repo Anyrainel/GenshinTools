@@ -141,6 +141,39 @@ comparative performance, rank, suitability, account advice, or a player-facing
 recommendation, and independently evaluated contexts must not be multiplied
 into one build.
 
+### Derived source-local condition slices
+
+A source-local slice may compose typed source-condition evaluation with strict
+request/account applicability for a deliberately selected subset of one source
+document. It must identify every selected occurrence by its exact source
+record, schema path, ordered-condition hash, predicate hash, payload hash, and
+repository counterpart, and it may evaluate only exact teams belonging to that
+same document. Selected occurrences and explicit holdouts must close the
+adapter's declared source boundary; unselected occurrences receive no binding
+or energy classification merely because their wording is similar.
+
+The source resolution remains primary. Request facts may refine only an exact
+`unresolved-context` leaf and must be scoped independently to one team and
+character. They cannot replace roster-decidable truth, deferred-energy
+prerequisites, or omitted facts. A slice must retain source and effective
+partitions separately and must not convert the resulting cells into
+recommendation groups, builds, ranks, formula inputs, damage results, or ER
+targets.
+
+The current Klee Luna IV adapter selects exactly four of 15 occurrences: three
+on-field-role main-stat rows and one Furina-roster artifact-set row. Two exact
+teams yield eight cells with a source partition of 1 matched, 1 inapplicable,
+and 6 unresolved. Explicit per-team Klee role intent yields an effective
+partition of 7 matched and 1 inapplicable. The 11 holdouts receive no
+classification from this slice.
+
+A durable source-local report is downstream evidence only when it equals a
+fresh authenticated rebuild from the exact raw inputs. Dependency direction
+must stay acyclic: raw source inputs feed the source-local slice, an
+authenticated slice may feed the condition-binding catalog, and that catalog
+may feed coverage. The source-local evaluator must not read either downstream
+artifact.
+
 ### Derived condition-array coverage
 
 Condition coverage is derived validation evidence, not a new knowledge record.
@@ -174,8 +207,9 @@ remain independent:
 
 Coverage reports must fail closed on stale or non-comparable wrappers,
 repository mismatch, ambiguous or partial expansion, duplicate/conflicting
-bindings, or subject leakage. They must not parse arbitrary English, infer a
-predicate from repetition, or turn coverage frequency into confidence,
+bindings, subject leakage, or a durable source-local report that differs from
+its fresh authenticated rebuild. They must not parse arbitrary English, infer
+a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
 ## Energy-guidance records
