@@ -26,6 +26,8 @@ export const KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS = [
   "scripts/guide-factory/src/formulaPlanReadiness.ts",
   "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
   "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+  "scripts/guide-factory/src/schemas.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   "src/data/game/character_stats.json",
   "src/data/game/weapon_stats.json",

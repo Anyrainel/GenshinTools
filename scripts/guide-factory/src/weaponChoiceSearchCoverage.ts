@@ -3,10 +3,12 @@ import weaponStatsInput from "@/data/game/weapon_stats.json";
 import { weapons } from "@/data/resources";
 import { betaWeapons } from "@/data/resources_beta";
 import type { KnowledgeRecord, KnowledgeRepository } from "./schemas";
+import { cloneTeamMemberInvestment } from "./teamMemberInvestment";
 
 export const WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
   "scripts/guide-factory/src/schemas.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   "src/data/betaState.ts",
   "src/data/game/character_stats.json",
@@ -778,7 +780,7 @@ function collectTeamObservations(team: KnowledgeTeam): RawWeaponObservation[] {
           : { requestedRefinement: member.selectedWeapon.refinement }),
         sourceKind: "team-selected-weapon",
         memberIndex,
-        memberInvestment: cloneInvestment(member.investment),
+        memberInvestment: cloneTeamMemberInvestment(member.investment),
         teamContext: cloneTeamContextValue(teamContext),
         sourceRefs: sourceRefs.map(cloneSourceReference),
       });
@@ -798,7 +800,7 @@ function collectTeamObservations(team: KnowledgeTeam): RawWeaponObservation[] {
           weaponId,
           sourceKind: "team-member-recommendation",
           memberIndex,
-          memberInvestment: cloneInvestment(member.investment),
+          memberInvestment: cloneTeamMemberInvestment(member.investment),
           teamContext: cloneTeamContextValue(teamContext),
           ...(member.weaponOrdering == null
             ? {}
@@ -901,7 +903,7 @@ function collectDeferredWeaponConditions(
             weaponCondition: cloneWeaponCondition(target.weapon),
             sourceKind: "team-member-er-target",
             memberIndex,
-            memberInvestment: cloneInvestment(member.investment),
+            memberInvestment: cloneTeamMemberInvestment(member.investment),
             teamContext: cloneTeamContextValue(teamContext),
             sourceRefs: sourceRefs.map(cloneSourceReference),
           });
@@ -1098,7 +1100,7 @@ function cloneRawObservation(
   }
   return {
     ...observation,
-    memberInvestment: cloneInvestment(observation.memberInvestment),
+    memberInvestment: cloneTeamMemberInvestment(observation.memberInvestment),
     teamContext: cloneTeamContextValue(observation.teamContext),
     ...(observation.sourceKind === "team-member-recommendation"
       ? { conditions: [...observation.conditions] }
@@ -1127,28 +1129,6 @@ function cloneTeamContextValue(teamContext: TeamContext): TeamContext {
     ...teamContext,
     reactions: [...teamContext.reactions],
     characterIds: [...teamContext.characterIds],
-  };
-}
-
-function cloneInvestment(
-  investment: TeamMember["investment"],
-): TeamMember["investment"] {
-  if (investment.status === "unspecified") return { status: "unspecified" };
-  if (investment.status === "partial") {
-    return {
-      status: "partial",
-      ...(investment.constellation == null
-        ? {}
-        : { constellation: investment.constellation }),
-      ...(investment.talentLevels == null
-        ? {}
-        : { talentLevels: [...investment.talentLevels] }),
-    };
-  }
-  return {
-    status: "specified",
-    constellation: investment.constellation,
-    talentLevels: [...investment.talentLevels],
   };
 }
 

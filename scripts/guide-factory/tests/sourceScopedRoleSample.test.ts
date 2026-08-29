@@ -210,6 +210,33 @@ describe("source-scoped role sample", () => {
       expect.objectContaining({ code: "role-constellation-unverified" }),
     );
   });
+
+  it("does not treat bounded target investment as an exact constellation", () => {
+    const input = fixture();
+    input.roleRecord.members[0] = {
+      characterId: "xilonen",
+      minConstellation: 2,
+      maxConstellation: 6,
+      conditions: [],
+    };
+    const targetMember = input.targetTeam.members.find(
+      ({ characterId }) => characterId === "xilonen",
+    );
+    if (!targetMember) throw new Error("Missing Xilonen target member.");
+    targetMember.investment = {
+      status: "partial",
+      minConstellation: 2,
+      maxConstellation: 6,
+    };
+
+    const report = evaluateSourceScopedRoleSample(input);
+
+    expect(report.comparisonStatus).toBe("not-comparable");
+    expect(report.survivor).toBeNull();
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({ code: "role-constellation-unverified" }),
+    );
+  });
 });
 
 function fixture(): SourceScopedRoleSampleInput {

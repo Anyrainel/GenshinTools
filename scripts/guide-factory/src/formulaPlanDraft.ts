@@ -3,6 +3,7 @@ import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { TalentLevels, TeamSlotConfig } from "@/lib/dmgcalc/types";
 import { bootstrapGuideFactoryComputation } from "./computationReplay";
 import { KnowledgeTeamSchema, type KnowledgeRecord } from "./schemas";
+import { investmentMatchesConcreteAssumption } from "./teamMemberInvestment";
 
 export type KnowledgeTeam = Extract<KnowledgeRecord, { kind: "team" }>;
 
@@ -438,6 +439,14 @@ function buildTeamConfigs(
 
     const assumption = assumptions[member.characterId];
     validateAssumption(team.id, member.characterId, assumption);
+    if (
+      !investmentMatchesConcreteAssumption(member.investment, assumption)
+    ) {
+      throw new Error(
+        `Formula-plan draft ${team.id}: concrete investment assumptions for ` +
+          `${member.characterId} conflict with the team's explicit investment.`,
+      );
+    }
     return {
       charId: member.characterId,
       charLevel: assumption.charLevel,

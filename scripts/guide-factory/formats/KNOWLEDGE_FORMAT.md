@@ -19,7 +19,8 @@ A team has exactly four distinct members. Each member may preserve:
 - a selected weapon and optional refinement;
 - a selected 4-piece artifact set or two 2-piece effect-group IDs;
 - an optional sourced ER floor in percent;
-- an explicitly specified or unspecified investment state.
+- an exact, one-sided, two-sided, or unspecified constellation investment
+  state, plus Talent levels when the source actually supplies them;
 - unranked or ranked weapon and artifact recommendations with conditions;
 - ordinal main-stat and substat recommendations;
 - optional ER targets when the source binds them directly to that team.
@@ -28,6 +29,12 @@ An editorial team also records whether it is an example or prescription,
 whether its list is exhaustive, and whether the source makes a ranking claim.
 Source rotations remain notation plus unresolved segments; they do not become
 formula counts automatically.
+
+An exact constellation and a constellation range are mutually exclusive.
+One-sided ranges remain one-sided in serialized knowledge: `C2+` is
+`minConstellation: 2`, not exact C2 and not an invented C2-C6 record set.
+Unspecified investment may be technically non-conflicting with a later local
+assumption, but it is not explicit source evidence for every constellation.
 
 An optional formula-count damage plan contains positive counts for formulas
 owned by members of the team. Formula IDs are structurally validated in this

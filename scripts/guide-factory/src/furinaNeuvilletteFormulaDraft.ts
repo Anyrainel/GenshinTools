@@ -12,6 +12,8 @@ export const FURINA_NEUVILLETTE_FORMULA_DRAFT_INPUT_PATHS = [
   "scripts/guide-factory/src/computationReplay.ts",
   "scripts/guide-factory/src/formulaPlanDraft.ts",
   "scripts/guide-factory/src/furinaNeuvilletteFormulaDraft.ts",
+  "scripts/guide-factory/src/schemas.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   "src/data/game/character_stats.json",
   "src/data/game/weapon_stats.json",

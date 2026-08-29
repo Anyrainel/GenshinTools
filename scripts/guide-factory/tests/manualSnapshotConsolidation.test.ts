@@ -161,6 +161,75 @@ describe("manual snapshot consolidation", () => {
     ).toEqual([]);
   });
 
+  it("preserves exact and one- or two-sided team investment claims", () => {
+    const snapshot = structuredClone(dionaSnapshot);
+    const sourceTeam = snapshot.records.find(
+      (record) => record.kind === "team",
+    );
+    if (!sourceTeam || sourceTeam.kind !== "team") {
+      throw new Error("Missing Diona team fixture.");
+    }
+    const [diona, mavuika, citlali, bennett] = sourceTeam.members;
+    if (!diona || !mavuika || !citlali || !bennett) {
+      throw new Error("Incomplete Diona team fixture.");
+    }
+    mavuika.minConstellation = 2;
+    citlali.maxConstellation = 4;
+    bennett.minConstellation = 1;
+    bennett.maxConstellation = 5;
+
+    const repository = consolidateKnowledge({
+      sourceRegistry: sourceRegistry(["kqm"]),
+      sourceRegistrySha256: SOURCE_REGISTRY_SHA256,
+      genshinTools: genshinToolsSnapshot,
+      legacy: legacySnapshot,
+      manualSnapshots: [
+        {
+          expectedSourceId: "kqm",
+          snapshot: ManualObservationSnapshotSchema.parse(snapshot),
+          snapshotFile: {
+            path: "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+            sha256: FIRST_SNAPSHOT_SHA256,
+          },
+        },
+      ],
+    });
+    const team = repository.records.find(
+      ({ id }) =>
+        id ===
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+    );
+    if (!team || team.kind !== "team") {
+      throw new Error("Missing consolidated Diona team fixture.");
+    }
+
+    expect(team.members.map(({ characterId, investment }) => ({
+      characterId,
+      investment,
+    }))).toEqual([
+      {
+        characterId: "diona",
+        investment: { status: "partial", constellation: 6 },
+      },
+      {
+        characterId: "mavuika",
+        investment: { status: "partial", minConstellation: 2 },
+      },
+      {
+        characterId: "citlali",
+        investment: { status: "partial", maxConstellation: 4 },
+      },
+      {
+        characterId: "bennett",
+        investment: {
+          status: "partial",
+          minConstellation: 1,
+          maxConstellation: 5,
+        },
+      },
+    ]);
+  });
+
   it("rejects unregistered or non-manual sources in validation and consolidation", () => {
     const sourceId = "synthetic-editorial";
     const snapshot = snapshotWithOneRecord(sourceId, "registry-policy", 0);

@@ -40,7 +40,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
@@ -48,23 +48,23 @@
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-      "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+      "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
-      "sha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f"
+      "sha256": "eef3f7e72e1d54e63123bc59dd09aa3a719b33e751d8b2d4cdd77501ad5c1445"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-      "sha256": "d4ad0ed089c853944e9a41deb39cfac0489f98eac1a0021f0fc4b7a2c372a22b"
+      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-source-conditioned-candidate-lattice.json",
-      "sha256": "9b8977311e6690324e653cce12c342b8408a22984e720dbd61d854dc587b0ad9"
+      "sha256": "1208721277e12f9483572f648ad01e40359c96dffc8ae1c37938dfd96d806d98"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -72,11 +72,11 @@
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
-      "sha256": "1bf022fbe89cf11a83fb68692fbf590adf1bd2c181db32d3e23b176e764f100f"
+      "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
-      "sha256": "e6d9953f22e473473af771e4bbbd8d05b21d7ef29b4353fed8e2a538d55540a9"
+      "sha256": "52e4125e3923f766927b353a1ed70a4690ffd013efd3d186c3cff1b0ae1046ff"
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
@@ -88,7 +88,7 @@
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
-      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+      "sha256": "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407"
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
@@ -100,7 +100,7 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarCrossRecordCompositionContract.ts",
@@ -136,15 +136,19 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
       "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
     },
     {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
-      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+      "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
     },
     {
       "path": "src/data/betaState.ts",
@@ -300,17 +304,17 @@
     }
   ],
   "inputBoundary": {
-    "candidateLatticeSha256": "9b8977311e6690324e653cce12c342b8408a22984e720dbd61d854dc587b0ad9",
+    "candidateLatticeSha256": "1208721277e12f9483572f648ad01e40359c96dffc8ae1c37938dfd96d806d98",
     "canonicalContractRebuiltFromTypedInputs": true,
-    "canonicalContractSha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f",
+    "canonicalContractSha256": "eef3f7e72e1d54e63123bc59dd09aa3a719b33e751d8b2d4cdd77501ad5c1445",
     "canonicalContractStatus": "comparable",
     "contractGeneratedFromPolicy": "supplied-wrapper-current-canonical-input-bytes",
     "formulaDraftGeneratedFromMatchesSuppliedCurrentBytes": true,
-    "formulaDraftSha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056",
+    "formulaDraftSha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
     "matrixGeneratedFromPolicy": "supplied-wrapper-declared-direct-authority-and-runtime-bytes",
-    "repositorySha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7",
+    "repositorySha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
     "serializedContractAuthenticatedAgainstRebuild": true,
-    "serializedContractSha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f",
+    "serializedContractSha256": "eef3f7e72e1d54e63123bc59dd09aa3a719b33e751d8b2d4cdd77501ad5c1445",
     "serializedContractUsedAsAuthority": false
   },
   "issues": [],
@@ -1124,7 +1128,7 @@
       "crossRecordOrdering": "none",
       "guideFactoryAuthoredCompositionCount": 2,
       "origin": "rebuilt-checkpoint-18-contract",
-      "sha256": "08e8a6b1f311cd486bd412af3d4c342b4cf9a40751380852c6494e585564336f",
+      "sha256": "eef3f7e72e1d54e63123bc59dd09aa3a719b33e751d8b2d4cdd77501ad5c1445",
       "sourceAuthoredCompositionCount": 0
     },
     "carryRoster": {

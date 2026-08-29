@@ -342,6 +342,85 @@ describe("artifact-generation experiment preflight", () => {
     );
   });
 
+  it("accepts formula constellations within fixture bounds and blocks every outside shape", () => {
+    const fixture = syntheticFixture();
+    fixture.team.members[0].investment = {
+      status: "partial",
+      minConstellation: 0,
+      maxConstellation: 2,
+    };
+    fixture.team.members[1].investment = {
+      status: "partial",
+      minConstellation: 1,
+    };
+    fixture.team.members[2].investment = {
+      status: "partial",
+      maxConstellation: 0,
+    };
+    fixture.team.members[3].investment = {
+      status: "partial",
+      constellation: 0,
+    };
+    const withinDraft = syntheticFormulaDraft(fixture);
+    const bAssumption = withinDraft.assumptions.characters.find(
+      ({ characterId }) => characterId === "b",
+    );
+    if (!bAssumption) throw new Error("Missing b assumption fixture.");
+    bAssumption.constellation = 1;
+    const fixtureBefore = structuredClone(fixture);
+
+    const withinReport = buildArtifactGenerationPreflight(
+      {
+        fixture,
+        formulaDraft: withinDraft,
+        formulaReadiness: syntheticReadiness(),
+      },
+      [],
+      syntheticEnvironment(),
+    );
+
+    expect(withinReport.gates.formulaDraftMatchesResolvedFixture).toBe(true);
+    expect(
+      withinReport.blockers.filter(
+        ({ code }) => code === "formula-draft-investment-mismatch",
+      ),
+    ).toEqual([]);
+    expect(
+      withinReport.members.map(({ fixtureInvestment }) => fixtureInvestment),
+    ).toEqual([
+      { status: "partial", minConstellation: 0, maxConstellation: 2 },
+      { status: "partial", minConstellation: 1 },
+      { status: "partial", maxConstellation: 0 },
+      { status: "partial", constellation: 0 },
+    ]);
+    expect(fixture).toEqual(fixtureBefore);
+
+    const outsideDraft = structuredClone(withinDraft);
+    const outsideConstellations = { a: 3, b: 0, c: 1, d: 1 };
+    for (const assumption of outsideDraft.assumptions.characters) {
+      assumption.constellation =
+        outsideConstellations[
+          assumption.characterId as keyof typeof outsideConstellations
+        ];
+    }
+    const outsideReport = buildArtifactGenerationPreflight(
+      {
+        fixture,
+        formulaDraft: outsideDraft,
+        formulaReadiness: syntheticReadiness(),
+      },
+      [],
+      syntheticEnvironment(),
+    );
+
+    expect(outsideReport.gates.formulaDraftMatchesResolvedFixture).toBe(false);
+    expect(
+      outsideReport.blockers
+        .filter(({ code }) => code === "formula-draft-investment-mismatch")
+        .map(({ characterId }) => characterId),
+    ).toEqual(["a", "b", "c", "d"]);
+  });
+
   it("rejects duplicate or internally inconsistent candidate-domain metadata", () => {
     const fixture = syntheticFixture();
     const input = {

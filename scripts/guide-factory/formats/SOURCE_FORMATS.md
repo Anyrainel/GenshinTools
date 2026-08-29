@@ -136,6 +136,13 @@ records unless the source explicitly binds them to a particular team and
 rotation. Rounded guide bands, formatted supporting-sheet cells, and raw
 calculation values remain separate fields.
 
+An exact-team member may preserve an exact constellation, a minimum, a maximum,
+or both bounds. Exact and ranged shapes are mutually exclusive, and an absent
+side is never invented. Thus a source-stated `C2+` member uses only
+`minConstellation: 2`; it is not stored as exact C2 or copied into five records.
+No investment fields means the source left that member's investment
+unspecified, not that the team applies universally at C0-C6.
+
 Agent output is always unreviewed and promotion-ineligible. It cannot update
 accepted knowledge or copy an entire guide field by field.
 
@@ -232,9 +239,33 @@ adds no C0 applicability claim, and does not make that template globally
 role-resolvable.
 All records are unreviewed and promotion-ineligible.
 
+### KQM Itto pilot
+
+The Itto page stores seven narrow records from the visible `Version 5.6` guide:
+artifact stats, contextual sets, contextual weapons, one
+Itto/Xilonen/PHEC/PHEC template, two variants from the shared
+Yelan-or-Xingqiu example card, and one C2+ Xilonen/Gorou/Furina example.
+
+The template retains the source's explicit Crystallize reaction. The two
+PHEC variants share the same source-card locator rather than pretending the
+page publishes two headings. The C2+ Xilonen member carries only a lower
+constellation bound; the other eleven exact-team member observations remain
+constellation-unspecified.
+
+Husk, Furina/Marechaussee Hunter, owned-set Retracing Bolide, and
+Xianyun/Long Night's Oath remain separate contextual groups. Redhorn, Serpent
+Spine, Whiteblind, and Fruitful Hook also remain unranked contextual groups.
+The conditional DEF% Goblet does not receive a persistent lower ordinal rank,
+because the source says it can outperform Geo DMG Bonus under its condition.
+
+The source's ER term and sample rotations are deliberately outside this narrow
+capture. The offensive substat tail retains text saying it begins only after
+the omitted ER need. All seven records are agent-assisted, unreviewed,
+promotion-ineligible, and contain no formula counts or damage claims.
+
 ### KQM Keqing pilot
 
-The third page stores 24 participating heading-scoped records from the visible
+The Keqing page stores 24 participating heading-scoped records from the visible
 Luna I guide version: one Lunar-Charged template, two positive character-role
 inventories, four exact example teams, and seventeen equipment/stat
 observations. It is a source-breadth test for detecting new-release team and
@@ -272,7 +303,7 @@ promotion-ineligible, and contain no ER target.
 
 ### KQM Kokomi pilot
 
-The fourth page stores two heading-scoped records from the visible Luna V
+The Kokomi page stores two heading-scoped records from the visible Luna V
 guide: one contextual Kokomi artifact observation and one exact
 Kokomi/Ineffa/Columbina/Sucrose Lunar-Charged example. The team remains one
 example in a source-declared non-comprehensive list and carries no power rank.

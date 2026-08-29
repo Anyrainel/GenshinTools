@@ -25,6 +25,7 @@ export const TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_INPUT_PATHS = [
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
   "scripts/guide-factory/src/teamTemplateCoverage.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   ...TEAM_ROSTER_CANDIDATE_DOMAIN_STATIC_DEPENDENCY_PATHS,
 ] as const;

@@ -2109,11 +2109,11 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
-      "sha256": "e6d9953f22e473473af771e4bbbd8d05b21d7ef29b4353fed8e2a538d55540a9"
+      "sha256": "52e4125e3923f766927b353a1ed70a4690ffd013efd3d186c3cff1b0ae1046ff"
     },
     {
       "path": "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
@@ -2125,7 +2125,7 @@
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
-      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+      "sha256": "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407"
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
@@ -2141,19 +2141,23 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
       "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
     },
     {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
-      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+      "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
     },
     {
       "path": "src/data/betaState.ts",

@@ -343,7 +343,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -351,11 +351,19 @@
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
-      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+      "sha256": "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407"
     },
     {
       "path": "scripts/guide-factory/src/furinaNeuvilletteFormulaDraft.ts",
-      "sha256": "4aea0d30f14978e52b93e2bb687c74cb563be79c6f2c64bacd60277c5cf6c598"
+      "sha256": "6f923cdd5b8d8a4827c44c565fc782b979b9657bfe1a8a266f85169a3c987ff0"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
     },
     {
       "path": "src/data/game/character_stats.json",

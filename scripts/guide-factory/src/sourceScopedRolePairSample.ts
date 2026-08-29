@@ -744,7 +744,7 @@ function validateMemberConstraints(
       addIssue(
         "role-constellation-unverified",
         "role-evidence",
-        `${member.characterId} has a bound in ${roleRecord.id}, but target investment is unspecified.`,
+        `${member.characterId} has a bound in ${roleRecord.id}, but the target investment does not specify an exact constellation.`,
       );
     } else if (
       (member.minConstellation !== undefined &&

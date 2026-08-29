@@ -1,8 +1,41 @@
 {
   "exactTeams": [
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "diona",
+          "investment": {
+            "constellation": 6,
+            "status": "partial"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "mavuika",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "citlali",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "bennett",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -16,8 +49,40 @@
       "teamId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "alhaitham",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "kuki_shinobu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "nahida",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -31,8 +96,40 @@
       "teamId": "kqm:team:furina-alhaitham-shinobu-nahida-quickbloom-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "nahida",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "cyno",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "baizhu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -46,10 +143,42 @@
       "teamId": "kqm:team:furina-nahida-cyno-baizhu-quickbloom-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [
         "genshintools-presets:team:JQC4wxT0jJgK50gc0O"
       ],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "neuvillette",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "kaedehara_kazuha",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "present",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -63,8 +192,184 @@
       "teamId": "kqm:team:furina-neuvillette-kazuha-xilonen-example"
     },
     {
+      "investmentEvaluated": false,
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:8ru0gxT0jJgK50AfWD"
+      ],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "minConstellation": 2,
+            "status": "partial"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "gorou",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
+      "outcome": "present",
+      "outcomeBasis": "character-roster-only",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Triple and Mono Geo > Example Teams > Itto — C2+ Xilonen — Gorou — Furina",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-c2-xilonen-gorou-furina-example-version-5-6"
+        }
+      ],
+      "teamId": "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6"
+    },
+    {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "xingqiu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Xilonen Double Geo > Example Teams > Itto — Xilonen — Furina — Yelan / Xingqiu",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-xilonen-furina-xingqiu-example-version-5-6"
+        }
+      ],
+      "teamId": "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6"
+    },
+    {
+      "investmentEvaluated": false,
+      "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "yelan",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
+      "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Xilonen Double Geo > Example Teams > Itto — Xilonen — Furina — Yelan / Xingqiu",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-xilonen-furina-yelan-example-version-5-6"
+        }
+      ],
+      "teamId": "kqm:team:itto-xilonen-furina-yelan-example-version-5-6"
+    },
+    {
+      "investmentEvaluated": false,
+      "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "keqing",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "aino",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "sucrose",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
+      "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -86,8 +391,40 @@
       "teamId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "keqing",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "jean",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -117,8 +454,40 @@
       "teamId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "keqing",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -132,8 +501,40 @@
       "teamId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "keqing",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "yelan",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "kaedehara_kazuha",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -163,8 +564,40 @@
       "teamId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "klee",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "chevreuse",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "durin",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "fischl",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -186,10 +619,42 @@
       "teamId": "kqm:team:klee-chevreuse-durin-fischl-overload-example-luna-iv"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [
         "genshintools-presets:team:3AG6YxT0jJgK51SlW5"
       ],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "klee",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "albedo",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "present",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -211,8 +676,40 @@
       "teamId": "kqm:team:klee-furina-albedo-xilonen-example-luna-iv"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "sangonomiya_kokomi",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "columbina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "sucrose",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -234,8 +731,40 @@
       "teamId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example"
     },
     {
+      "investmentEvaluated": false,
       "matchedBaselineTeamIds": [],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "noelle",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "durin",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "nicole",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
       "outcome": "uncovered",
+      "outcomeBasis": "character-roster-only",
       "sourceRefs": [
         {
           "locator": {
@@ -252,15 +781,23 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
       "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
-      "sha256": "3b142dbea8b1d45bdafc919cf54a18306f92c4aaa3fbe01c7261ca81c880821b"
+      "sha256": "bad1d04f242eae911998ae902f3fd210f1fe27838e724ff24080f6639c2563fa"
     },
     {
       "path": "src/data/game/character_stats.json",
@@ -410,6 +947,23 @@
         }
       ],
       "templateId": "kqm:team-template:furina-team-template-vaporize",
+      "unresolvedBaselineTeamIds": [],
+      "unresolvedRoleIds": []
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Xilonen Double Geo",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-xilonen-double-geo-template-version-5-6"
+        }
+      ],
+      "templateId": "kqm:team-template:itto-xilonen-double-geo-template-version-5-6",
       "unresolvedBaselineTeamIds": [],
       "unresolvedRoleIds": []
     },

@@ -67,25 +67,25 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 387 records. It excludes ER details from evidence and
+presence across all 394 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
 A second durable inventory projects the contributing non-ER guide inputs across
 all 125 guide-domain-eligible characters at every C0-C6 boundary. Its 875 rows
-are backed by 3,084 group-level observations. Exactly five characters have no
+are backed by 3,104 group-level observations. Exactly five characters have no
 contributing guide input: Aloy and the Anemo, Electro, Geo, and Hydro Traveler
 forms. This is missing evidence, not an unsupported-character verdict. Likewise,
 constellation-unspecified applicability is not broadened to all investments.
-Of 888 exact-team member investments, 887 remain constellation-unspecified; C6
-Diona is the sole explicit case.
+Of 900 exact-team member investments, 898 remain constellation-unspecified;
+C6 Diona is exact and C2+ Xilonen is one lower-bounded case.
 
-All 57 upstream KQM manual records remain unreviewed. The 56 non-energy records
+All 64 upstream KQM manual records remain unreviewed. The 63 non-energy records
 contribute provenance or coverage; the energy-guidance record contributes no
 observation. The repository currently has zero repository-authored
-`damagePlans`. The inventory links 1,008 weapon and 1,068 artifact policy
+`damagePlans`. The inventory links 1,012 weapon and 1,072 artifact policy
 observations to their existing search-coverage classifications. Linkage is not
-a positive representability result: 27 linked artifact outcomes are explicitly
+a positive representability result: 28 linked artifact outcomes are explicitly
 not representable, and 12 linked weapon outcomes have native type mismatches.
 Raw stat weights are not converted into ordinal priorities, page or array order
 does not create rank, and the one coupled artifact plan is kept atomic.
@@ -157,13 +157,14 @@ coverage and a complete formula-classification ledger.
 Before ranking any artifact set, the current checkpoint measures whether the
 existing analyzer can name the choices already recorded in the repository. Its
 released grammar contains 43 initial four-piece choices and at most 14
-stat-derived two-piece pairs. Across 1,068 artifact-choice fields on
-non-rejected guide and team records, 1,020 are initially enumerated, 21 are
-conditionally representable, and 27 are not representable by the current
+stat-derived two-piece pairs. Across 1,072 artifact-choice fields on
+non-rejected guide and team records, 1,023 are initially enumerated, 21 are
+conditionally representable, and 28 are not representable by the current
 grammar. The failures include 19 Instructor and 2 Exile occurrences filtered
 out with all non-five-star sets, five choices whose half-set families are
-absent from dynamic two-piece discovery, and one Thundersoother occurrence
-excluded by the tier-list-derived four-piece policy. This does not establish
+absent from dynamic two-piece discovery, and Thundersoother plus Retracing Bolide
+Oath occurrences excluded by the tier-list-derived four-piece policy. This
+does not establish
 that any enumerated choice can be generated,
 evaluated, or ranked successfully. The count includes both assignments in the
 new coupled Kokomi/Columbina plan, but only proves that each set name is in the
@@ -171,9 +172,9 @@ individual candidate grammar; it does not prove joint-plan enumeration.
 
 The weapon candidate-policy audit now reports separate coverage axes for weapon
 ID, refinement specificity, and native weapon-type compatibility. Its released
-mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 1,008 non-ER
+mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 1,012 non-ER
 repository occurrences have an ID in that global domain, but none supplies a
-refinement; 996 match the character's native type and 12 legacy selections do
+refinement; 1,000 match the character's native type and 12 legacy selections do
 not. Because runtime derives the search type from the equipped seed weapon,
 those 12 mismatches can seed a wrong candidate class. This is a blocker, not a
 weapon ranking.
@@ -415,6 +416,23 @@ coverage ledger. Both source extractions and action translations remain
 unreviewed, which is the next human-evidence gap. The adapter authorizes no
 replay, optimization, recommendation, ranking, damage, source-validation, or ER
 claim.
+
+The repository now also preserves team-member constellation intervals. Exact,
+lower-bounded, upper-bounded, and closed-range source shapes remain distinct;
+mixed exact/range and inverted intervals are invalid. A narrow Itto Version 5.6
+slice exercises this with one C2+ Xilonen exact-team member while leaving the
+other eleven new team-member observations constellation-unspecified. Formula
+drafts and artifact-generation preflight reject concrete assumptions outside a
+captured interval, and exact-team baseline overlap is explicitly roster-only
+with investment unevaluated.
+
+The next non-ER gate is an authenticated Itto source-conditioned claim
+projection. It should preserve the three guide records as fifteen atomic claim
+groups and project them across the three exact source teams without multiplying
+weapon, artifact, and stat axes into builds. A pinned typed condition map may
+resolve only structured exact-roster facts; inventory, preference, buff,
+gameplay, and omitted-energy prerequisites remain unresolved or deferred. This
+is a validation step before formula authoring or computation, not a guide.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

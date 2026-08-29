@@ -76,24 +76,24 @@ describe("weapon-choice candidate-policy coverage", () => {
         },
       },
       summary: {
-        all: { total: 1008 },
+        all: { total: 1012 },
         bySourceKind: {
           guideWeaponOrder: 127,
           teamSelectedWeapons: 840,
-          characterGuideRecommendations: 41,
+          characterGuideRecommendations: 45,
           teamMemberRecommendations: 0,
         },
         weaponIdDomain: {
-          inReleasedCandidateDomain: 1008,
+          inReleasedCandidateDomain: 1012,
           excludedFromReleasedCandidateDomain: 0,
         },
         refinementCoverage: {
           exactCandidate: 0,
-          unspecified: 1008,
+          unspecified: 1012,
           excludedByPolicy: 0,
         },
         nativeTypeCompatibility: {
-          compatible: 996,
+          compatible: 1000,
           mismatched: 12,
           unknown: 0,
         },
@@ -237,6 +237,44 @@ describe("weapon-choice candidate-policy coverage", () => {
     expect(selectedWeapon?.sourceRefs).toEqual(sourceRecord?.sourceRefs);
     expect(selectedWeapon?.sourceRefs).not.toBe(sourceRecord?.sourceRefs);
     expect(repository).toEqual(before);
+  });
+
+  it("preserves bounded team-member investment evidence", () => {
+    const repository = syntheticRepository();
+    const team = repository.records.find(
+      ({ id }) => id === "synthetic:team",
+    );
+    if (!team || team.kind !== "team") {
+      throw new Error("Missing bounded weapon-investment fixture.");
+    }
+    team.members[0].investment = {
+      status: "partial",
+      minConstellation: 2,
+      maxConstellation: 5,
+      talentLevels: [9, 10, 10],
+    };
+
+    const report = buildWeaponChoiceSearchCoverageReport(repository, [], {
+      policyInputs: syntheticPolicyInputs(),
+    });
+    const observation = report.observations.find(
+      (candidate) =>
+        candidate.recordId === team.id &&
+        candidate.sourceKind === "team-selected-weapon" &&
+        candidate.memberIndex === 0,
+    );
+    expect(observation).toMatchObject({
+      memberInvestment: {
+        status: "partial",
+        minConstellation: 2,
+        maxConstellation: 5,
+        talentLevels: [9, 10, 10],
+      },
+    });
+    if (!observation || !("memberInvestment" in observation)) {
+      throw new Error("Bounded weapon investment was not observed.");
+    }
+    expect(observation.memberInvestment).not.toBe(team.members[0].investment);
   });
 
   it("is deterministic and accounts for each eligible occurrence once", async () => {

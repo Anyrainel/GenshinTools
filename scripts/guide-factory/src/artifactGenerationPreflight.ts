@@ -13,6 +13,10 @@ import {
   type KnowledgeRecord,
 } from "./schemas";
 import {
+  cloneTeamMemberInvestment,
+  investmentMatchesConcreteAssumption,
+} from "./teamMemberInvestment";
+import {
   buildMirroredWeaponCandidateDomain,
   type MirroredWeaponCandidate,
   type MirroredWeaponCandidateDomain,
@@ -22,6 +26,7 @@ export const ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS = [
   "scripts/guide-factory/src/artifactGenerationPreflight.ts",
   "scripts/guide-factory/src/formulaPlanReadiness.ts",
   "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
   "scripts/guide-factory/src/schemas.ts",
   "src/data/betaState.ts",
@@ -558,7 +563,7 @@ function buildMemberPreflight(
 
   return {
     characterId: member.characterId,
-    fixtureInvestment: cloneInvestment(member.investment),
+    fixtureInvestment: cloneTeamMemberInvestment(member.investment),
     weapon: {
       weaponId,
       rarity: candidateMetadata?.rarity ?? null,
@@ -692,7 +697,7 @@ function validateFormulaDraftBinding(
     );
     if (
       fixtureMember != null &&
-      !investmentMatchesAssumption(fixtureMember.investment, assumption)
+      !investmentMatchesConcreteAssumption(fixtureMember.investment, assumption)
     ) {
       blockers.push({
         code: "formula-draft-investment-mismatch",
@@ -774,30 +779,6 @@ function formulaInventorySignature(
     .join("\n");
 }
 
-function investmentMatchesAssumption(
-  investment: TeamMember["investment"],
-  assumption: FormulaPlanDraftOutput["assumptions"]["characters"][number],
-): boolean {
-  if (investment.status === "unspecified") return true;
-  if (
-    investment.constellation != null &&
-    investment.constellation !== assumption.constellation
-  ) {
-    return false;
-  }
-  if (investment.talentLevels != null) {
-    const [auto, skill, burst] = investment.talentLevels;
-    if (
-      auto !== assumption.talentLevels.auto ||
-      skill !== assumption.talentLevels.skill ||
-      burst !== assumption.talentLevels.burst
-    ) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function classifyArtifact(
   artifact: ArtifactChoice | null,
   initialFourPieceArtifactSetIds: ReadonlySet<string>,
@@ -866,28 +847,6 @@ function artifactChoicesEqual(
   right: ArtifactChoice,
 ): boolean {
   return JSON.stringify(cloneArtifact(left)) === JSON.stringify(cloneArtifact(right));
-}
-
-function cloneInvestment(
-  investment: TeamMember["investment"],
-): TeamMember["investment"] {
-  if (investment.status === "unspecified") return { status: "unspecified" };
-  if (investment.status === "partial") {
-    return {
-      status: "partial",
-      ...(investment.constellation == null
-        ? {}
-        : { constellation: investment.constellation }),
-      ...(investment.talentLevels == null
-        ? {}
-        : { talentLevels: [...investment.talentLevels] }),
-    };
-  }
-  return {
-    status: "specified",
-    constellation: investment.constellation,
-    talentLevels: [...investment.talentLevels],
-  };
 }
 
 function cloneSourceReference(

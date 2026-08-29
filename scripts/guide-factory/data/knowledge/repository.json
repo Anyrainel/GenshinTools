@@ -24,6 +24,10 @@
           "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
         },
         {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
+          "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
+        },
+        {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
           "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
         },
@@ -19175,6 +19179,287 @@
     },
     {
       "builds": [],
+      "characterId": "arataki_itto",
+      "id": "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "husk_of_opulent_dreams",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [
+                "Itto uses an on-field damage build; the source describes this set as applicable across all of his team archetypes."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "marechaussee_hunter",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Itto is played in a team with Furina."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "retracing_bolide",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "available-only",
+              "conditions": [
+                "A good Retracing Bolide set is already owned."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "long_nights_oath",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Itto is played in a Plunge composition with Xianyun."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "id": "contextual-artifact-sets",
+          "label": "Default and contextual 4pc artifact sets",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-contextual-artifact-sets-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "quantitative artifact performance",
+        "the relative ordering of sets across unlike team contexts",
+        "Husk pre-stacking procedure",
+        "the effect of owned artifact quality outside the stated Retracing Bolide case",
+        "mixed 2pc placeholder recommendations are outside this narrow capture",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "arataki_itto",
+      "id": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "contextual-weapons",
+          "label": "Default, accessible, and Plunge-specific weapons",
+          "roles": [
+            "dps"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "default",
+              "conditions": [
+                "Prioritize Itto's personal damage; the source identifies Redhorn Stonethresher as his signature Best-in-Slot option."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "redhorn_stonethresher"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Serpent Spine is owned and its passive stack requirements can be accommodated."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "serpent_spine"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "A free craftable option is preferred."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "whiteblind"
+              ]
+            },
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Itto is played in a Plunge composition with Xianyun and Furina."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "fruitful_hook"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-contextual-weapons-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "no cross-context global weapon ranking",
+        "quantitative weapon performance",
+        "refinement-specific comparisons",
+        "the source's ER-dependent weapon options are deliberately omitted while ER capture is deferred",
+        "other viable and negatively assessed weapons are outside this narrow capture",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "arataki_itto",
+      "id": "kqm:character-guide:itto-on-field-artifact-stats-version-5-6",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "on-field-artifact-stats",
+          "label": "On-field artifact stats, excluding ER",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [
+                  "Itto is used as an on-field DPS."
+                ],
+                "statIds": [
+                  "cr",
+                  "cd"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [
+                  "Itto is used as an on-field DPS."
+                ],
+                "statIds": [
+                  "geo%"
+                ]
+              },
+              {
+                "conditions": [
+                  "Itto is used as an on-field DPS.",
+                  "The team provides abundant DMG Bonus, such as a Xilonen Double Geo team with Furina; investment in Xilonen or Furina can make DEF% outperform Geo DMG Bonus."
+                ],
+                "statIds": [
+                  "def%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [
+                  "Itto is used as an on-field DPS."
+                ],
+                "statIds": [
+                  "def%"
+                ]
+              }
+            ]
+          },
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "substats": [
+            {
+              "conditions": [
+                "After meeting the deliberately omitted rotation-specific ER need; this priority captures only the offensive tail."
+              ],
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ]
+            },
+            {
+              "conditions": [
+                "After meeting the deliberately omitted rotation-specific ER need; this priority captures only the offensive tail."
+              ],
+              "priority": 2,
+              "statIds": [
+                "def%"
+              ]
+            },
+            {
+              "conditions": [
+                "After meeting the deliberately omitted rotation-specific ER need; this priority captures only the offensive tail."
+              ],
+              "priority": 3,
+              "statIds": [
+                "atk%"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Stats",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-on-field-artifact-stats-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "the source's ER term and numeric ER table are deliberately omitted while ER capture is deferred",
+        "numeric stat weights",
+        "the exact investment threshold where a DEF% Goblet overtakes a Geo DMG Bonus Goblet",
+        "weapon-dependent stat balance",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
       "characterId": "keqing",
       "id": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
       "kind": "character_guide",
@@ -21669,6 +21954,89 @@
       ]
     },
     {
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team-template:itto-xilonen-double-geo-template-version-5-6",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Itto — Xilonen — PHEC — PHEC",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "crystallize"
+      ],
+      "slots": [
+        {
+          "id": "itto",
+          "options": [
+            {
+              "characterIds": [
+                "arataki_itto"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "xilonen",
+          "options": [
+            {
+              "characterIds": [
+                "xilonen"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "phec-1",
+          "options": [
+            {
+              "elements": [
+                "pyro",
+                "hydro",
+                "electro",
+                "cryo"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "id": "phec-2",
+          "options": [
+            {
+              "elements": [
+                "pyro",
+                "hydro",
+                "electro",
+                "cryo"
+              ],
+              "type": "elements"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Xilonen Double Geo",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-xilonen-double-geo-template-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which two PHEC characters are best for a specific account and scenario",
+        "constellations, weapons, and artifact assignments",
+        "rotation and formula counts",
+        "enemy scenario",
+        "the source's notable-teammate preferences are not converted into a ranking",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
       "exhaustiveness": "unspecified",
       "id": "kqm:team-template:keqing-team-template-lunar-charged",
       "intent": "prescriptive",
@@ -22163,6 +22531,209 @@
         "Salon Member hit count over the sequence",
         "Kazuha reaction ownership and absorbed-element timing",
         "enemy scenario",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:itto-c2-xilonen-gorou-furina-example-version-5-6",
+      "intent": "example",
+      "kind": "team",
+      "label": "Itto — C2+ Xilonen — Gorou — Furina",
+      "members": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "minConstellation": 2,
+            "status": "partial"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "gorou",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "rotations": [],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Triple and Mono Geo > Example Teams > Itto — C2+ Xilonen — Gorou — Furina",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-c2-xilonen-gorou-furina-example-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "Itto, Gorou, and Furina constellation bounds",
+        "Xilonen constellation investment beyond the source's C2 minimum",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "the source's sample rotation is deliberately outside this narrow capture",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Itto teams",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:itto-xilonen-furina-xingqiu-example-version-5-6",
+      "intent": "example",
+      "kind": "team",
+      "label": "Itto — Xilonen — Furina — Xingqiu",
+      "members": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xingqiu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "rotations": [],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Xilonen Double Geo > Example Teams > Itto — Xilonen — Furina — Yelan / Xingqiu",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-xilonen-furina-xingqiu-example-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "the source's sample rotation is deliberately outside this narrow capture",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Itto teams",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:itto-xilonen-furina-yelan-example-version-5-6",
+      "intent": "example",
+      "kind": "team",
+      "label": "Itto — Xilonen — Furina — Yelan",
+      "members": [
+        {
+          "characterId": "arataki_itto",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "yelan",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "rotations": [],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Xilonen Double Geo > Example Teams > Itto — Xilonen — Furina — Yelan / Xingqiu",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-xilonen-furina-yelan-example-version-5-6"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "team member constellations",
+        "team member weapons and refinements",
+        "team-specific artifact assignments",
+        "the source's sample rotation is deliberately outside this narrow capture",
+        "rotation duration and buff timing",
+        "enemy scenario",
+        "formula counts",
+        "relative performance against other Itto teams",
         "agent-assisted extraction has not been human-reviewed"
       ]
     },

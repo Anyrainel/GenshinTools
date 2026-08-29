@@ -13,10 +13,12 @@ import type {
   KnowledgeRecord,
   KnowledgeRepository,
 } from "./schemas";
+import { cloneTeamMemberInvestment } from "./teamMemberInvestment";
 
 export const ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
   "scripts/guide-factory/src/schemas.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   "src/data/betaState.ts",
   "src/data/constants.ts",
@@ -442,7 +444,7 @@ function collectTeamObservations(
         ...(team.label == null ? {} : { teamLabel: team.label }),
         ...(team.intent == null ? {} : { teamIntent: team.intent }),
         memberIndex,
-        memberInvestment: cloneInvestment(member.investment),
+        memberInvestment: cloneTeamMemberInvestment(member.investment),
         artifact: cloneArtifact(member.selectedArtifact),
         ...classifyArtifactChoice(member.selectedArtifact, searchSpace),
         sourceRefs: sourceRefs.map(cloneSourceReference),
@@ -464,7 +466,7 @@ function collectTeamObservations(
           ...(team.label == null ? {} : { teamLabel: team.label }),
           ...(team.intent == null ? {} : { teamIntent: team.intent }),
           memberIndex,
-          memberInvestment: cloneInvestment(member.investment),
+          memberInvestment: cloneTeamMemberInvestment(member.investment),
           recommendationGroupIndex: groupIndex,
           artifactIndex,
           grouping: group.grouping,
@@ -505,7 +507,7 @@ function collectTeamObservations(
         planConditions: [...plan.conditions],
         assignmentIndex,
         memberIndex,
-        memberInvestment: cloneInvestment(member.investment),
+        memberInvestment: cloneTeamMemberInvestment(member.investment),
         artifact: cloneArtifact(assignment.artifact),
         ...classifyArtifactChoice(assignment.artifact, searchSpace),
         sourceRefs: sourceRefs.map(cloneSourceReference),
@@ -648,26 +650,6 @@ function cloneArtifact(artifact: ArtifactChoice): ArtifactChoice {
 
 function cloneSourceReference(reference: SourceReference): SourceReference {
   return { ...reference, locator: { ...reference.locator } };
-}
-
-function cloneInvestment(investment: TeamMember["investment"]): TeamMember["investment"] {
-  if (investment.status === "unspecified") return { status: "unspecified" };
-  if (investment.status === "partial") {
-    return {
-      status: "partial",
-      ...(investment.constellation == null
-        ? {}
-        : { constellation: investment.constellation }),
-      ...(investment.talentLevels == null
-        ? {}
-        : { talentLevels: [...investment.talentLevels] }),
-    };
-  }
-  return {
-    status: "specified",
-    constellation: investment.constellation,
-    talentLevels: [...investment.talentLevels],
-  };
 }
 
 function requiredTeamSourceRecordId(

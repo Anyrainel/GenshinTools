@@ -19,6 +19,7 @@ import {
   type KnowledgeRepository,
   type SourceRegistry,
 } from "./schemas";
+import { cloneTeamMemberInvestment } from "./teamMemberInvestment";
 import type { ReleasedCharacterCatalogEntry } from "./teamRosterCandidateDomain";
 import {
   buildWeaponChoiceSearchCoverageReport,
@@ -54,6 +55,7 @@ export const CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS = [
   MANUAL_INDEX_RELATIVE_PATH,
   "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+  "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
@@ -69,6 +71,7 @@ export const CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/paths.ts",
   "scripts/guide-factory/src/rosterCatalogReference.ts",
   "scripts/guide-factory/src/schemas.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   ...CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS,
@@ -123,6 +126,7 @@ export interface CharacterObservationApplicability {
   applicability: ConstellationApplicability;
   basis:
     | "exact-team-member-investment"
+    | "bounded-team-member-investment"
     | "guide-build-bound"
     | "guide-recommendation-bound"
     | "role-member-bound"
@@ -1067,14 +1071,12 @@ function observeTeam(
       payload: {
         sourceShape: "atomic-exact-team",
         teamCharacterIds,
-        memberInvestmentStates: record.members.map(({ characterId, investment }) => ({
-          characterId,
-          status: investment.status,
-          constellation:
-            investment.status === "specified" || investment.status === "partial"
-              ? investment.constellation ?? null
-              : null,
-        })),
+        memberInvestmentStates: record.members.map(
+          ({ characterId, investment }) => ({
+            characterId,
+            investment: cloneTeamMemberInvestment(investment),
+          }),
+        ),
         rosterMayNotBeDetached: true,
       },
     });
@@ -1653,23 +1655,37 @@ function addObservation(
 function teamMemberApplicability(
   member: Extract<KnowledgeRecord, { kind: "team" }>["members"][number],
 ): CharacterObservationApplicability {
-  const constellation =
-    member.investment.status === "specified" ||
-    member.investment.status === "partial"
-      ? member.investment.constellation
+  const { investment } = member;
+  const exactConstellation =
+    investment.status === "specified" || investment.status === "partial"
+      ? investment.constellation
       : undefined;
-  if (constellation == null) return unspecifiedApplicability(member.characterId);
-  return {
-    characterId: member.characterId,
-    applicability: {
-      state: "explicit-range",
-      minConstellation: constellation,
-      maxConstellation: constellation,
-      sourceMinBoundPresent: true,
-      sourceMaxBoundPresent: true,
-    },
-    basis: "exact-team-member-investment",
-  };
+  if (exactConstellation != null) {
+    return {
+      characterId: member.characterId,
+      applicability: {
+        state: "explicit-range",
+        minConstellation: exactConstellation,
+        maxConstellation: exactConstellation,
+        sourceMinBoundPresent: true,
+        sourceMaxBoundPresent: true,
+      },
+      basis: "exact-team-member-investment",
+    };
+  }
+  if (
+    investment.status === "partial" &&
+    (investment.minConstellation != null ||
+      investment.maxConstellation != null)
+  ) {
+    return rangeApplicability(
+      member.characterId,
+      investment.minConstellation,
+      investment.maxConstellation,
+      "bounded-team-member-investment",
+    );
+  }
+  return unspecifiedApplicability(member.characterId);
 }
 
 function rangeApplicability(
@@ -1677,6 +1693,7 @@ function rangeApplicability(
   minConstellation: number | undefined,
   maxConstellation: number | undefined,
   basis:
+    | "bounded-team-member-investment"
     | "guide-build-bound"
     | "guide-recommendation-bound"
     | "role-member-bound",

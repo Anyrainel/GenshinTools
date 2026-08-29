@@ -372,6 +372,8 @@ const ManualTeamMemberSchema = z
   .object({
     characterId: IdSchema,
     constellation: z.number().int().min(0).max(6).optional(),
+    minConstellation: z.number().int().min(0).max(6).optional(),
+    maxConstellation: z.number().int().min(0).max(6).optional(),
     weaponOrdering: RecommendationOrderingSchema.optional(),
     weaponRecommendations: z.array(WeaponRecommendationSchema),
     artifactOrdering: RecommendationOrderingSchema.optional(),
@@ -380,7 +382,32 @@ const ManualTeamMemberSchema = z
     substats: z.array(OrdinalStatRecommendationSchema).optional(),
     erTargets: z.array(ErTargetSchema),
   })
-  .strict();
+  .strict()
+  .superRefine((member, context) => {
+    if (
+      member.constellation != null &&
+      (member.minConstellation != null || member.maxConstellation != null)
+    ) {
+      context.addIssue({
+        code: "custom",
+        message:
+          "Exact constellation must not be combined with constellation bounds.",
+        path: ["constellation"],
+      });
+    }
+    if (
+      member.minConstellation != null &&
+      member.maxConstellation != null &&
+      member.maxConstellation < member.minConstellation
+    ) {
+      context.addIssue({
+        code: "custom",
+        message:
+          "Maximum constellation must not be lower than minimum constellation.",
+        path: ["maxConstellation"],
+      });
+    }
+  });
 
 const ManualCharacterGuideRecordSchema = z
   .object({
@@ -657,33 +684,63 @@ const SourceReferenceSchema = z
   })
   .strict();
 
-const InvestmentSchema = z.discriminatedUnion("status", [
-  z.object({ status: z.literal("unspecified") }).strict(),
-  z
-    .object({
-      status: z.literal("partial"),
-      constellation: z.number().int().min(0).max(6).optional(),
-      talentLevels: z
-        .tuple([
+export const InvestmentSchema = z
+  .discriminatedUnion("status", [
+    z.object({ status: z.literal("unspecified") }).strict(),
+    z
+      .object({
+        status: z.literal("partial"),
+        constellation: z.number().int().min(0).max(6).optional(),
+        minConstellation: z.number().int().min(0).max(6).optional(),
+        maxConstellation: z.number().int().min(0).max(6).optional(),
+        talentLevels: z
+          .tuple([
+            z.number().int().min(1),
+            z.number().int().min(1),
+            z.number().int().min(1),
+          ])
+          .optional(),
+      })
+      .strict(),
+    z
+      .object({
+        status: z.literal("specified"),
+        constellation: z.number().int().min(0).max(6),
+        talentLevels: z.tuple([
           z.number().int().min(1),
           z.number().int().min(1),
           z.number().int().min(1),
-        ])
-        .optional(),
-    })
-    .strict(),
-  z
-    .object({
-      status: z.literal("specified"),
-      constellation: z.number().int().min(0).max(6),
-      talentLevels: z.tuple([
-        z.number().int().min(1),
-        z.number().int().min(1),
-        z.number().int().min(1),
-      ]),
-    })
-    .strict(),
-]);
+        ]),
+      })
+      .strict(),
+  ])
+  .superRefine((investment, context) => {
+    if (investment.status !== "partial") return;
+    if (
+      investment.constellation != null &&
+      (investment.minConstellation != null ||
+        investment.maxConstellation != null)
+    ) {
+      context.addIssue({
+        code: "custom",
+        message:
+          "Exact constellation must not be combined with constellation bounds.",
+        path: ["constellation"],
+      });
+    }
+    if (
+      investment.minConstellation != null &&
+      investment.maxConstellation != null &&
+      investment.maxConstellation < investment.minConstellation
+    ) {
+      context.addIssue({
+        code: "custom",
+        message:
+          "Maximum constellation must not be lower than minimum constellation.",
+        path: ["maxConstellation"],
+      });
+    }
+  });
 
 const SelectedWeaponSchema = z
   .object({

@@ -1,9 +1,12 @@
 import type { GameCatalogs } from "./catalogs";
 import type { KnowledgeRecord, KnowledgeRepository } from "./schemas";
+import { cloneTeamMemberInvestment } from "./teamMemberInvestment";
 
 export const TEAM_TEMPLATE_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/catalogs.ts",
+  "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamTemplateCoverage.ts",
+  "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
   "src/data/game/character_stats.json",
 ] as const;
@@ -12,6 +15,7 @@ type BaselineTeam = Extract<KnowledgeRecord, { kind: "team" }>;
 type TeamTemplate = Extract<KnowledgeRecord, { kind: "team_template" }>;
 type SourceReference = TeamTemplate["sourceRefs"][number];
 type TemplateSlot = TeamTemplate["slots"][number];
+type TeamMember = BaselineTeam["members"][number];
 
 type CandidateEvaluation =
   | { outcome: "match"; unresolvedRoleIds: [] }
@@ -41,6 +45,13 @@ export interface ExternalExactTeamCoverageEntry {
   teamId: string;
   outcome: "present" | "uncovered";
   matchedBaselineTeamIds: string[];
+  outcomeBasis: "character-roster-only";
+  investmentEvaluated: false;
+  memberInvestmentScopes: Array<{
+    memberIndex: number;
+    characterId: string;
+    investment: TeamMember["investment"];
+  }>;
   sourceRefs: BaselineTeam["sourceRefs"];
 }
 
@@ -118,6 +129,15 @@ function buildExactTeamCoverage(
     teamId: team.id,
     outcome: matchedBaselineTeamIds.length > 0 ? "present" : "uncovered",
     matchedBaselineTeamIds,
+    outcomeBasis: "character-roster-only",
+    investmentEvaluated: false,
+    memberInvestmentScopes: team.members.map(
+      ({ characterId, investment }, memberIndex) => ({
+        memberIndex,
+        characterId,
+        investment: cloneTeamMemberInvestment(investment),
+      }),
+    ),
     sourceRefs: [...team.sourceRefs]
       .map(cloneSourceReference)
       .sort(compareSourceReferences),

@@ -21,10 +21,11 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 21 adds a separate, authenticated inventory of the two existing
-derived formula fixtures. It preserves their local-assumption and unreviewed
-status instead of promoting them into source-authored plans. The broader lab
-still does not claim a working guide factory:
+Checkpoint 22 adds first-class exact-team constellation bounds and a narrow
+Itto source slice that exercises `C2+` without collapsing it to exact C2. It
+keeps the Itto page's contextual equipment, offensive stat tail, team template,
+and exact examples separate and omits ER, rotations, and formula counts. The
+broader lab still does not claim a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -237,6 +238,22 @@ still does not claim a working guide factory:
     keep source extraction and action translation review states separate.
 76. Withhold both fixtures from guide use and authorize no replay, optimizer,
     recommendation, rank, damage, source-validation, or ER claim.
+77. Represent exact, minimum, maximum, and closed-range team-member
+    constellation knowledge as distinct shapes; reject mixed exact/range and
+    inverted ranges without inventing a missing bound.
+78. Preserve `C2+ Xilonen` as one lower-bounded source observation rather than
+    exact C2 or five C2-C6 observations, while keeping unspecified teammates
+    constellation-unspecified.
+79. Require concrete formula-plan and artifact-generation assumptions to fit
+    captured team-member bounds and Talent levels before technical execution.
+80. Capture seven narrow, unreviewed Itto Version 5.6 records: offensive stats,
+    contextual sets, contextual weapons, one PHEC template, and three exact
+    examples, with ER and rotations deliberately omitted.
+81. Label external exact-team baseline overlap as character-roster-only,
+    preserve all four investment scopes, and explicitly leave investment
+    compatibility unevaluated.
+82. Increase the all-character inventory with one atomic C2+ member observation
+    while deriving no guide, build, rank, formula plan, damage, or ER result.
 
 The first two active sources are already in this repository:
 
@@ -248,7 +265,7 @@ several domains globally but has no per-team locator, so consolidation must not
 treat any row as verified external knowledge.
 
 The active external observations are narrow, linked snapshots of KQM's Diona,
-Furina, Keqing, Klee, Kokomi, and Noelle Quick Guides. Diona remains the
+Furina, Itto, Keqing, Klee, Kokomi, and Noelle Quick Guides. Diona remains the
 assumption-incomplete historical ER pilot. Furina adds conditional builds,
 constellation-bounded advice, five team
 templates, three exact example teams, and their published sample rotations. Two
@@ -276,7 +293,14 @@ Lunar-Charged example whose artifact advice is intrinsically coupled: under the
 source's undefined "well-invested Columbina" condition, Kokomi can take Silken
 Moon's Serenade so Columbina can take Aubade. The condition and assignment are
 preserved without inventing a breakpoint, reverse implication, or global
-ranking. Noelle adds a Luna VIII old-character refresh: a conditional Hexerei
+ranking. Itto adds one Xilonen Double Geo template with its explicit Crystallize
+reaction, two PHEC exact examples,
+and one C2+ Xilonen/Gorou/Furina exact example. Its character-wide equipment
+records retain Husk, Furina/Marechaussee Hunter, owned-set Bolide,
+Xianyun/Long Night's Oath, and four contextual weapons without manufacturing a
+cross-context order. The offensive stat record begins after an explicitly
+omitted ER need; the snapshot contains no ER target, rotation, or formula
+count. Noelle adds a Luna VIII old-character refresh: a conditional Hexerei
 weapon, one general artifact-set choice, two explicitly investment-scoped
 offensive stat branches, and a Noelle/Durin/Nicole/Xilonen example. Those
 general build claims are not attached to the exact team, and the capture omits
@@ -356,23 +380,24 @@ composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, and historical ER calibration. Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
-C0-C6 investments, producing 875 compact rows backed by 3,084 group-level
+C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
 observations. Aloy and the Anemo, Electro, Geo, and Hydro Traveler forms are
-the exact five characters with no contributing guide input. Of 888 exact-team
-member investments, 887 are constellation-unspecified; the sole explicit
-investment is C6 Diona. All 57 KQM manual records remain unreviewed, and the
-repository currently supplies zero repository-authored `damagePlans`.
+the exact five characters with no contributing guide input. Of 900 exact-team
+member investments, 898 are constellation-unspecified; C6 Diona is exact and
+C2+ Xilonen is one lower-bounded observation. All 64 KQM manual records remain
+unreviewed, and the repository currently supplies zero repository-authored
+`damagePlans`.
 
-The inventory links all 1,008 weapon and 1,068 artifact policy observations to
+The inventory links all 1,012 weapon and 1,072 artifact policy observations to
 their exact search-coverage classifications. Linkage does not itself mean
-representable or compatible: the report retains 27 explicitly not-representable
+representable or compatible: the report retains 28 explicitly not-representable
 artifact outcomes and 12 native weapon-type mismatches. The per-observation
 outcome payload hash is reconstructible only with the pinned upstream coverage
 report. Missing evidence is not an unsupported verdict, and constellation-
 unspecified evidence is not universal evidence. Raw stat weights remain raw
 values rather than ordinal ranks; page and array position create no rank; and
-the one coupled artifact plan remains atomic. All 57 upstream KQM manual records
-remain unreviewed; 56 non-energy records contribute provenance or coverage,
+the one coupled artifact plan remains atomic. All 64 upstream KQM manual records
+remain unreviewed; 63 non-energy records contribute provenance or coverage,
 while the energy-guidance record contributes none. Structured ER targets,
 floors, rotations, and weapon conditions contribute no observations, although
 preserved unresolved free text may mention energy requirements. The ordinary
@@ -416,10 +441,10 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 387 unique records: 155
-character guides, 3 character-role observations, 222 exact teams, 6 team
+The descriptive corpus inventory currently counts 394 unique records: 158
+character guides, 3 character-role observations, 225 exact teams, 7 team
 templates, and 1 historical energy record. Of those, 191 are baseline records
-and 196 are candidates. KQM contributes 57 records, including 12 exact teams
+and 203 are candidates. KQM contributes 64 records, including 15 exact teams
 and 16 explicit rotation entries. The inventory also reports explicit weapon,
 artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
@@ -443,13 +468,17 @@ Those questions belong to later experiments and human review.
 
 The team coverage report currently finds three templates with baseline matches,
 one healer-dependent template that cannot be resolved without role data, and
-two uncovered templates. The uncovered templates are Furina Quickbloom and
-Keqing Lunar-Charged. The Keqing template keeps `off-field-hydro-applier` and
+three uncovered templates. The uncovered templates are Furina Quickbloom,
+Itto Xilonen Double Geo, and Keqing Lunar-Charged. The Keqing template keeps
+`off-field-hydro-applier` and
 `resistance-shred` as unresolved role constraints; it is still uncovered, not
 role-unresolved, because no baseline team contains the required Keqing–Ineffa
-core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen and
-Klee/Furina/Albedo/Xilonen rosters each match a current preset. The other ten
-exact KQM teams, including all four Keqing examples, the
+core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen,
+Klee/Furina/Albedo/Xilonen, and Itto/C2+ Xilonen/Gorou/Furina rosters each
+match a current preset by character IDs. Exact-team coverage explicitly does
+not evaluate investment, so the last overlap is not a C2 validation. The other
+twelve exact KQM teams, including both PHEC Itto examples, all four Keqing
+examples, the
 Kokomi/Ineffa/Columbina/Sucrose example, the Noelle Hexerei example, and the
 Klee/Chevreuse/Durin/Fischl example, are uncovered. Source presence does not
 automatically promote any of them into the baseline.
@@ -501,17 +530,18 @@ keys and a maximum of 14 stat-derived two-piece pair keys. The latter is an
 upper bound: the runtime discovers a potentially smaller set only after
 successful four-piece evaluations.
 
-The report covers 1,068 non-rejected artifact-choice occurrences. Of 188 guide
+The report covers 1,072 non-rejected artifact-choice occurrences. Of 188 guide
 builds, 167 are initially enumerated, 14 are only conditionally representable,
 and 7 are not representable by the current grammar. Of 840 selected artifacts
 on team members, 820 are initially enumerated, 7 are conditional, and 13 are
-not representable. Of 38 character-guide and team-member recommendation
-occurrences, 31 are initially enumerated and 7 are not representable. Both
+not representable. Of 42 character-guide and team-member recommendation
+occurrences, 34 are initially enumerated and 8 are not representable. Both
 assignments in the Kokomi/Columbina coupled plan are initially enumerated as
 individual choices. That does not establish that the analyzer can search the
-coupled assignment jointly. The 27 failures comprise 19 Instructor occurrences,
-2 Exile occurrences, 5 dynamic half-set-family omissions, and the new
-Thundersoother tier-list-filter omission. This is a search-domain audit only:
+coupled assignment jointly. The 28 failures comprise 19 Instructor occurrences,
+2 Exile occurrences, 5 dynamic half-set-family omissions, and the
+Thundersoother and Retracing Bolide tier-list-filter omissions. This is a
+search-domain audit only:
 it does not run artifact generation, compute damage, rank sets, or imply that
 any representable choice is suitable.
 
@@ -523,10 +553,10 @@ released policy and hashes the runtime source and data inputs. The policy skips
 weapon/refinement pairs: 24 3-star pairs, 139 4-star pairs, and 146 pairs from
 73 5-star weapons.
 
-Across 1,008 non-ER weapon occurrences, all 1,008 IDs are present in that global
+Across 1,012 non-ER weapon occurrences, all 1,012 IDs are present in that global
 released domain. This is not exact candidate coverage: none of the source
-observations specifies a refinement, so all 1,008 remain explicit refinement
-gaps. Native weapon-type comparison finds 996 compatible choices and 12
+observations specifies a refinement, so all 1,012 remain explicit refinement
+gaps. Native weapon-type comparison finds 1,000 compatible choices and 12
 mismatches, all selected weapons from the legacy candidate source. Baseline and
 KQM observations have no type mismatch.
 
@@ -537,7 +567,7 @@ class rather than merely one invalid comparison row. The report records this
 boundary but does not run the analyzer, correct the legacy source, choose a
 refinement policy, rank weapons, or compute damage. Historical weapon
 conditions attached to three ER targets are inventoried only to prove that they
-were excluded from the 1,008 observations; their target values receive no
+were excluded from the 1,012 observations; their target values receive no
 analysis.
 
 The artifact-generation preflight makes the missing refinement convention

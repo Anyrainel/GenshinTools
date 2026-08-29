@@ -148,15 +148,19 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
     },
     {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
-      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+      "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
     },
     {
       "path": "src/data/betaState.ts",
@@ -20503,6 +20507,203 @@
         "outcome": "in-released-candidate-domain",
         "releasedResourceAvailable": true,
         "resolvedPolicyRarity": 3,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "arataki_itto",
+      "classification": "default",
+      "conditions": [
+        "Prioritize Itto's personal damage; the source identifies Redhorn Stonethresher as his signature Best-in-Slot option."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Claymore",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Claymore"
+      },
+      "observationId": "kqm:character-guide:itto-contextual-weapons-version-5-6:recommendation:contextual-weapons:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "contextual-weapons",
+      "recommendationLabel": "Default, accessible, and Plunge-specific weapons",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-contextual-weapons-version-5-6"
+        }
+      ],
+      "weaponId": "redhorn_stonethresher",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "arataki_itto",
+      "classification": "alternative",
+      "conditions": [
+        "Serpent Spine is owned and its passive stack requirements can be accommodated."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Claymore",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Claymore"
+      },
+      "observationId": "kqm:character-guide:itto-contextual-weapons-version-5-6:recommendation:contextual-weapons:weapon-group:1:0",
+      "recommendationGroupIndex": 1,
+      "recommendationId": "contextual-weapons",
+      "recommendationLabel": "Default, accessible, and Plunge-specific weapons",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-contextual-weapons-version-5-6"
+        }
+      ],
+      "weaponId": "serpent_spine",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "arataki_itto",
+      "classification": "alternative",
+      "conditions": [
+        "A free craftable option is preferred."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Claymore",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Claymore"
+      },
+      "observationId": "kqm:character-guide:itto-contextual-weapons-version-5-6:recommendation:contextual-weapons:weapon-group:2:0",
+      "recommendationGroupIndex": 2,
+      "recommendationId": "contextual-weapons",
+      "recommendationLabel": "Default, accessible, and Plunge-specific weapons",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-contextual-weapons-version-5-6"
+        }
+      ],
+      "weaponId": "whiteblind",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "arataki_itto",
+      "classification": "conditional",
+      "conditions": [
+        "Itto is played in a Plunge composition with Xianyun and Furina."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Claymore",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Claymore"
+      },
+      "observationId": "kqm:character-guide:itto-contextual-weapons-version-5-6:recommendation:contextual-weapons:weapon-group:3:0",
+      "recommendationGroupIndex": 3,
+      "recommendationId": "contextual-weapons",
+      "recommendationLabel": "Default, accessible, and Plunge-specific weapons",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:itto-contextual-weapons-version-5-6",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/itto-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "itto-contextual-weapons-version-5-6"
+        }
+      ],
+      "weaponId": "fruitful_hook",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
         "weaponStatsAvailable": true
       },
       "weaponIndex": 0
@@ -53109,16 +53310,16 @@
   },
   "summary": {
     "all": {
-      "total": 1008
+      "total": 1012
     },
     "bySourceKind": {
-      "characterGuideRecommendations": 41,
+      "characterGuideRecommendations": 45,
       "guideWeaponOrder": 127,
       "teamMemberRecommendations": 0,
       "teamSelectedWeapons": 840
     },
     "nativeTypeCompatibility": {
-      "compatible": 996,
+      "compatible": 1000,
       "mismatched": 12,
       "unknown": 0
     },
@@ -53130,7 +53331,7 @@
       },
       "exactCandidate": 0,
       "excludedByPolicy": 0,
-      "unspecified": 1008
+      "unspecified": 1012
     },
     "weaponIdDomain": {
       "byFailureReason": {
@@ -53140,7 +53341,7 @@
         "unexpected-policy-omission": 0
       },
       "excludedFromReleasedCandidateDomain": 0,
-      "inReleasedCandidateDomain": 1008
+      "inReleasedCandidateDomain": 1012
     }
   },
   "supportsGuideClaims": false

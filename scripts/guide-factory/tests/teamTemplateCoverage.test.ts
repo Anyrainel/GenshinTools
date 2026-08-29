@@ -194,8 +194,94 @@ describe("team-template baseline coverage", () => {
         teamId: "external:exact",
         outcome: "present",
         matchedBaselineTeamIds: ["baseline:exact"],
+        outcomeBasis: "character-roster-only",
+        investmentEvaluated: false,
       }),
     ]);
+  });
+
+  it("preserves bounded external investments without using them for roster overlap", () => {
+    const baseline = baselineTeam("baseline:bounded", [
+      "neuvillette",
+      "xilonen",
+      "furina",
+      "kazuha",
+    ]);
+    const external = {
+      ...baselineTeam("external:bounded", [
+        "furina",
+        "neuvillette",
+        "kazuha",
+        "xilonen",
+      ]),
+      status: "candidate" as const,
+      promotionEligible: false,
+    };
+    if (external.kind !== "team") {
+      throw new Error("External bounded fixture is not a team.");
+    }
+    external.members[0].investment = {
+      status: "partial",
+      minConstellation: 2,
+      maxConstellation: 6,
+      talentLevels: [9, 10, 10],
+    };
+    external.members[1].investment = {
+      status: "partial",
+      maxConstellation: 1,
+    };
+    external.members[2].investment = {
+      status: "partial",
+      constellation: 2,
+    };
+
+    const parsedRepository = repository([baseline, external]);
+    const parsedExternal = parsedRepository.records.find(
+      ({ id }) => id === "external:bounded",
+    );
+    if (!parsedExternal || parsedExternal.kind !== "team") {
+      throw new Error("Parsed external bounded fixture is missing.");
+    }
+    const report = buildTeamTemplateCoverageReport(parsedRepository, catalogs());
+    const entry = report.exactTeams[0];
+
+    expect(entry).toMatchObject({
+      teamId: "external:bounded",
+      outcome: "present",
+      matchedBaselineTeamIds: ["baseline:bounded"],
+      outcomeBasis: "character-roster-only",
+      investmentEvaluated: false,
+      memberInvestmentScopes: [
+        {
+          memberIndex: 0,
+          characterId: "furina",
+          investment: {
+            status: "partial",
+            minConstellation: 2,
+            maxConstellation: 6,
+            talentLevels: [9, 10, 10],
+          },
+        },
+        {
+          memberIndex: 1,
+          characterId: "neuvillette",
+          investment: { status: "partial", maxConstellation: 1 },
+        },
+        {
+          memberIndex: 2,
+          characterId: "kazuha",
+          investment: { status: "partial", constellation: 2 },
+        },
+        {
+          memberIndex: 3,
+          characterId: "xilonen",
+          investment: { status: "unspecified" },
+        },
+      ],
+    });
+    expect(entry?.memberInvestmentScopes[0]?.investment).not.toBe(
+      parsedExternal.members[0].investment,
+    );
   });
 });
 

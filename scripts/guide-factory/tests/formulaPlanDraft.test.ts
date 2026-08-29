@@ -113,6 +113,49 @@ describe("calculator-default formula-plan draft", () => {
       draftCalculatorDefaultFormulaPlan({ team: incompleteTeam, assumptions })
     ).rejects.toThrow("requires a selected artifact set");
   });
+
+  it("accepts concrete assumptions within team bounds and rejects conflicts", async () => {
+    const team = await loadBaselineTeam();
+    const boundedTeam = structuredClone(team);
+    const boundedMember = boundedTeam.members[0];
+    if (!boundedMember) throw new Error("Missing bounded member fixture.");
+    boundedMember.investment = {
+      status: "partial",
+      minConstellation: 1,
+      maxConstellation: 2,
+    };
+    const assumptions = Object.fromEntries(
+      boundedTeam.members.map((member) => [
+        member.characterId,
+        { ...INVESTMENT, talentLevels: { ...INVESTMENT.talentLevels } },
+      ]),
+    );
+
+    await expect(
+      draftCalculatorDefaultFormulaPlan({ team: boundedTeam, assumptions }),
+    ).rejects.toThrow("conflict with the team's explicit investment");
+
+    assumptions[boundedMember.characterId].constellation = 1;
+    const withinBounds = await draftCalculatorDefaultFormulaPlan({
+      team: boundedTeam,
+      assumptions,
+    });
+    expect(
+      withinBounds.assumptions.characters.find(
+        ({ characterId }) => characterId === boundedMember.characterId,
+      )?.constellation,
+    ).toBe(1);
+
+    boundedMember.investment = { status: "partial", maxConstellation: 0 };
+    await expect(
+      draftCalculatorDefaultFormulaPlan({ team: boundedTeam, assumptions }),
+    ).rejects.toThrow("conflict with the team's explicit investment");
+
+    boundedMember.investment = { status: "partial", constellation: 6 };
+    await expect(
+      draftCalculatorDefaultFormulaPlan({ team: boundedTeam, assumptions }),
+    ).rejects.toThrow("conflict with the team's explicit investment");
+  });
 });
 
 describe("source-translated formula-plan comparison", () => {

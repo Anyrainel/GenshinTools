@@ -21,18 +21,19 @@ Current durable pilot evidence:
   source-validation claim.
 - `character-guide-input-coverage.json` projects contributing non-ER guide
   inputs across 125 guide-domain-eligible characters at C0 through C6: 875
-  compact rows backed by 3,084 group-level observations. Aloy and the Anemo,
+  compact rows backed by 3,104 group-level observations. Aloy and the Anemo,
   Electro, Geo, and Hydro Traveler forms are the exact five characters with no
   contributing guide input. That absence is not an unsupported-character
   verdict, and constellation-unspecified evidence is not universal evidence.
-  Of 888 exact-team member investments, 887 are constellation-unspecified; C6
-  Diona is the sole explicit case. All 57 upstream KQM manual records remain
-  unreviewed; 56 non-energy records contribute provenance or coverage, while
+  Of 900 exact-team member investments, 898 are constellation-unspecified; C6
+  Diona is exact and C2+ Xilonen is one lower-bounded case. All 64 upstream KQM
+  manual records remain unreviewed; 63 non-energy records contribute
+  provenance or coverage, while
   the energy-guidance record contributes no observation. The repository
   currently contributes zero repository-authored `damagePlans`. The report
-  links all 1,008 weapon and 1,068 artifact policy observations to their exact
+  links all 1,012 weapon and 1,072 artifact policy observations to their exact
   search-coverage classifications. Linkage is not a positive representability
-  or compatibility result: 27 linked artifact outcomes are explicitly not
+  or compatibility result: 28 linked artifact outcomes are explicitly not
   representable, and 12 linked weapon outcomes have native type mismatches.
   Per-observation outcome payload hashes require the pinned upstream reports
   for reconstruction. It preserves raw stat weights without inventing ordinal
@@ -211,19 +212,19 @@ Current durable pilot evidence:
   plan's eight blockers keep the reviewed-experiment gate closed. It runs no
   generator, damage calculation, ranking, or energy calculation.
 - `weapon-choice-search-coverage.json` mirrors the private analyzer's small
-  candidate policy against released data and audits 1,008 non-ER weapon
-  occurrences on three independent axes. All 1,008 IDs are in the 236-weapon
-  released domain, all 1,008 refinements are unspecified, and 996 choices match
+  candidate policy against released data and audits 1,012 non-ER weapon
+  occurrences on three independent axes. All 1,012 IDs are in the 236-weapon
+  released domain, all 1,012 refinements are unspecified, and 1,000 choices match
   the character's native weapon type while 12 legacy selections do not. The
   report does not equate ID membership with exact refinement coverage or
   runtime success. Three historical ER weapon conditions are inventoried but
   not analyzed.
 - `artifact-choice-search-coverage.json` calls the current analyzer candidate
-  builders and classifies all 1,068 artifact-choice fields on non-rejected
+  builders and classifies all 1,072 artifact-choice fields on non-rejected
   guide and team records against its released search grammar. The grammar
   contains 43 initial four-piece keys and at most 14 conditionally discovered
-  two-piece pairs. Of those occurrences, 1,020 are initially enumerated, 21
-  are conditionally representable, and 27 are not representable by the current
+  two-piece pairs. Of those occurrences, 1,023 are initially enumerated, 21
+  are conditionally representable, and 28 are not representable by the current
   grammar. Two of the initially enumerated occurrences are assignments in one
   coupled plan; they are audited individually, not jointly optimized. It runs
   no generation, damage, score, rank, or winner logic and does not support
@@ -235,8 +236,10 @@ Current durable pilot evidence:
 - `team-template-coverage.json` compares external templates and exact manual
   teams with exact baseline rosters. It emits present, uncovered, or explicitly
   role-unresolved results and no quality score, rank, or winner. The current
-  result has 3 present, 1 role-unresolved, and 2 uncovered templates, plus 2
-  present and 10 uncovered exact external teams. Keqing Lunar-Charged is
+  result has 3 present, 1 role-unresolved, and 3 uncovered templates, plus 3
+  present and 12 uncovered exact external teams. Exact-team outcomes are
+  character-roster-only, preserve member investment scopes, and explicitly do
+  not evaluate investment. Keqing Lunar-Charged is
   uncovered because the baseline lacks the required Keqing–Ineffa core; its
   off-field-Hydro and resistance-shred roles are not weakened into element
   matches.

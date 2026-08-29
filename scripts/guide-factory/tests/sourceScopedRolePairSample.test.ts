@@ -325,6 +325,33 @@ describe("source-scoped paired-role sample", () => {
     );
   });
 
+  it("does not treat bounded target investment as an exact constellation", () => {
+    const input = fixtureWithOnlyFirstTarget();
+    const furinaRoleMember = hydroRole(input).members.find(
+      ({ characterId }) => characterId === "furina",
+    );
+    if (!furinaRoleMember) throw new Error("Missing Furina role member.");
+    furinaRoleMember.minConstellation = 2;
+    furinaRoleMember.maxConstellation = 6;
+    const targetMember = input.targets[0].targetTeam.members.find(
+      ({ characterId }) => characterId === "furina",
+    );
+    if (!targetMember) throw new Error("Missing Furina target member.");
+    targetMember.investment = {
+      status: "partial",
+      minConstellation: 2,
+      maxConstellation: 6,
+    };
+
+    const report = evaluateSourceScopedRolePairSample(input);
+
+    expect(report.comparisonStatus).toBe("not-comparable");
+    expect(report.validatedPairObservations).toBeNull();
+    expect(targetIssueCodes(report)).toContain(
+      "role-constellation-unverified",
+    );
+  });
+
   it("reports structural role-slot ambiguity as multiplicity rather than extra teams", () => {
     const input = fixtureWithOnlyFirstTarget();
     hydroRole(input).members.push({ characterId: "xilonen", conditions: [] });

@@ -311,7 +311,18 @@ function consolidateManualRecord(
               status: "partial" as const,
               constellation: member.constellation,
             }
-          : { status: "unspecified" as const },
+          : member.minConstellation != null ||
+              member.maxConstellation != null
+            ? {
+                status: "partial" as const,
+                ...(member.minConstellation == null
+                  ? {}
+                  : { minConstellation: member.minConstellation }),
+                ...(member.maxConstellation == null
+                  ? {}
+                  : { maxConstellation: member.maxConstellation }),
+              }
+            : { status: "unspecified" as const },
       selectedWeapon: null,
       selectedArtifact: null,
       ...(member.weaponOrdering

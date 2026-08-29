@@ -101,7 +101,7 @@ describe("character-guide input coverage", () => {
   });
 
   it("keeps exact teams atomic and reconstructs every compact row bucket from the ledger", () => {
-    expect(report.summary.observationCountsByAxis["exact-team"]).toBe(222);
+    expect(report.summary.observationCountsByAxis["exact-team"]).toBe(225);
     const teamObservation = observation(
       "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:exact-team",
     );
@@ -296,6 +296,125 @@ describe("character-guide input coverage", () => {
     );
   });
 
+  it("keeps bounded team investments as one ranged source observation", () => {
+    const repository = clonedRepository();
+    const team = repository.records.find(
+      (record) =>
+        record.id ===
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+    );
+    if (!team || team.kind !== "team") {
+      throw new Error("Missing bounded team-investment fixture.");
+    }
+    const diona = team.members.find(({ characterId }) => characterId === "diona");
+    const mavuika = team.members.find(
+      ({ characterId }) => characterId === "mavuika",
+    );
+    const citlali = team.members.find(
+      ({ characterId }) => characterId === "citlali",
+    );
+    const bennett = team.members.find(
+      ({ characterId }) => characterId === "bennett",
+    );
+    if (!diona || !mavuika || !citlali || !bennett) {
+      throw new Error("Bounded team-investment fixture lost a member.");
+    }
+    diona.investment = {
+      status: "partial",
+      minConstellation: 2,
+      maxConstellation: 4,
+      talentLevels: [9, 12, 12],
+    };
+    mavuika.investment = { status: "partial", constellation: 0 };
+    citlali.investment = { status: "partial", minConstellation: 3 };
+    bennett.investment = { status: "partial", maxConstellation: 1 };
+
+    const changed = buildWithRepository(repository);
+    const exactTeamObservations = changed.observations.filter(
+      ({ axis, repositoryRecordId }) =>
+        axis === "exact-team" && repositoryRecordId === team.id,
+    );
+    expect(exactTeamObservations).toHaveLength(1);
+    const exactTeam = exactTeamObservations[0];
+    expect(exactTeam?.characterApplicabilities).toEqual(
+      expect.arrayContaining([
+        {
+          characterId: "diona",
+          applicability: {
+            state: "explicit-range",
+            minConstellation: 2,
+            maxConstellation: 4,
+            sourceMinBoundPresent: true,
+            sourceMaxBoundPresent: true,
+          },
+          basis: "bounded-team-member-investment",
+        },
+        {
+          characterId: "citlali",
+          applicability: {
+            state: "explicit-range",
+            minConstellation: 3,
+            maxConstellation: 6,
+            sourceMinBoundPresent: true,
+            sourceMaxBoundPresent: false,
+          },
+          basis: "bounded-team-member-investment",
+        },
+        {
+          characterId: "bennett",
+          applicability: {
+            state: "explicit-range",
+            minConstellation: 0,
+            maxConstellation: 1,
+            sourceMinBoundPresent: false,
+            sourceMaxBoundPresent: true,
+          },
+          basis: "bounded-team-member-investment",
+        },
+        {
+          characterId: "mavuika",
+          applicability: {
+            state: "explicit-range",
+            minConstellation: 0,
+            maxConstellation: 0,
+            sourceMinBoundPresent: true,
+            sourceMaxBoundPresent: true,
+          },
+          basis: "exact-team-member-investment",
+        },
+      ]),
+    );
+    expect(exactTeam?.payload.memberInvestmentStates).toEqual(
+      expect.arrayContaining([
+        {
+          characterId: "diona",
+          investment: {
+            status: "partial",
+            minConstellation: 2,
+            maxConstellation: 4,
+            talentLevels: [9, 12, 12],
+          },
+        },
+      ]),
+    );
+    const dionaApplicability = exactTeam?.characterApplicabilities.find(
+      ({ characterId }) => characterId === "diona",
+    )?.applicability;
+    if (!dionaApplicability || dionaApplicability.state !== "explicit-range") {
+      throw new Error("Diona bounded applicability was not preserved.");
+    }
+    expect([0, 1, 5, 6].every(
+      (constellation) =>
+        constellation < dionaApplicability.minConstellation ||
+        constellation > dionaApplicability.maxConstellation,
+    )).toBe(true);
+    expect([2, 3, 4].every(
+      (constellation) =>
+        constellation >= dionaApplicability.minConstellation &&
+        constellation <= dionaApplicability.maxConstellation,
+    )).toBe(true);
+  });
+
   it("keeps the one artifact plan coupled and links every equipment choice to existing search coverage", () => {
     const plans = report.observations.filter(
       ({ inputRepresentability }) =>
@@ -333,19 +452,19 @@ describe("character-guide input coverage", () => {
     expect(plans[0].searchGrammarRepresentability.policyObservationIds).toHaveLength(2);
     expect(report.boundaries.representability).toMatchObject({
       allEquipmentPolicyObservationsLinked: true,
-      weaponCoverageObservationCount: 1008,
-      weaponLinkedPolicyObservationCount: 1008,
-      artifactCoverageObservationCount: 1068,
-      artifactLinkedPolicyObservationCount: 1068,
+      weaponCoverageObservationCount: 1012,
+      weaponLinkedPolicyObservationCount: 1012,
+      artifactCoverageObservationCount: 1072,
+      artifactLinkedPolicyObservationCount: 1072,
       weaponOutcomeClassificationCounts: {
-        "in-released-candidate-domain|unspecified|compatible": 996,
+        "in-released-candidate-domain|unspecified|compatible": 1000,
         "in-released-candidate-domain|unspecified|mismatched": 12,
       },
       artifactOutcomeClassificationCounts: {
         "conditionally-representable": 21,
-        "enumerated-initially": 1020,
+        "enumerated-initially": 1023,
         "not-representable:non-five-star-filter": 21,
-        "not-representable:tier-list-other-filter": 1,
+        "not-representable:tier-list-other-filter": 2,
         "not-representable:unmapped-dynamic-half-set-family": 5,
       },
       suitabilityAssessed: false,
@@ -442,10 +561,10 @@ describe("character-guide input coverage", () => {
         count + ManualObservationSnapshotSchema.parse(input.snapshot).records.length,
       0,
     );
-    expect(upstreamKqmRecordCount).toBe(57);
+    expect(upstreamKqmRecordCount).toBe(64);
     expect(
       report.sourceProvenance.filter(({ sourceId }) => sourceId === "kqm"),
-    ).toHaveLength(56);
+    ).toHaveLength(63);
     expect(
       report.recordContexts.some(
         ({ repositoryRecordKind }) =>

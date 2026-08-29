@@ -33,10 +33,10 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 13,
         },
         recommendations: {
-          total: 38,
-          enumeratedInitially: 31,
+          total: 42,
+          enumeratedInitially: 34,
           conditionallyRepresentable: 0,
-          notRepresentable: 7,
+          notRepresentable: 8,
         },
         teamArtifactPlanAssignments: {
           total: 2,
@@ -45,10 +45,10 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 0,
         },
         all: {
-          total: 1068,
-          enumeratedInitially: 1020,
+          total: 1072,
+          enumeratedInitially: 1023,
           conditionallyRepresentable: 21,
-          notRepresentable: 27,
+          notRepresentable: 28,
         },
       },
     });
@@ -99,9 +99,16 @@ describe("artifact-choice search-space coverage", () => {
           characterId: "bennett",
           failureReason: "non-five-star-filter",
         }),
+        expect.objectContaining({
+          recordId:
+            "kqm:character-guide:itto-contextual-artifact-sets-version-5-6",
+          characterId: "arataki_itto",
+          sourceRecordId: "contextual-artifact-sets",
+          failureReason: "tier-list-other-filter",
+        }),
       ]),
     );
-    expect(failures).toHaveLength(27);
+    expect(failures).toHaveLength(28);
     expect(report.summary.byFailureReason).toEqual({
       "beta-only-artifact": 0,
       "insufficient-distinct-released-five-star-sets": 0,
@@ -109,7 +116,7 @@ describe("artifact-choice search-space coverage", () => {
       "missing-runtime-half-set": 0,
       "no-released-five-star-set-for-half-set": 0,
       "non-five-star-filter": 21,
-      "tier-list-other-filter": 1,
+      "tier-list-other-filter": 2,
       "unexpected-conditional-candidate-omission": 0,
       "unexpected-initial-candidate-omission": 0,
       "unmapped-dynamic-half-set-family": 5,
@@ -298,6 +305,46 @@ describe("artifact-choice search-space coverage", () => {
         }),
       ]),
     );
+  });
+
+  it("preserves bounded team-member investment evidence", async () => {
+    const repository = await loadRepository();
+    const team = repository.records.find(
+      (record) =>
+        record.id ===
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+    );
+    if (!team || team.kind !== "team") {
+      throw new Error("Missing bounded artifact-investment fixture.");
+    }
+    const diona = team.members.find(({ characterId }) => characterId === "diona");
+    if (!diona) throw new Error("Missing Diona artifact-investment fixture.");
+    diona.investment = {
+      status: "partial",
+      minConstellation: 2,
+      maxConstellation: 5,
+      talentLevels: [9, 12, 12],
+    };
+
+    const report = buildArtifactChoiceSearchCoverageReport(repository);
+    const observation = report.observations.find(
+      ({ recordId, characterId, sourceKind }) =>
+        recordId === team.id &&
+        characterId === "diona" &&
+        sourceKind === "team-member-recommendation",
+    );
+    expect(observation).toMatchObject({
+      memberInvestment: {
+        status: "partial",
+        minConstellation: 2,
+        maxConstellation: 5,
+        talentLevels: [9, 12, 12],
+      },
+    });
+    if (!observation || !("memberInvestment" in observation)) {
+      throw new Error("Bounded artifact investment was not observed.");
+    }
+    expect(observation.memberInvestment).not.toBe(diona.investment);
   });
 
   it("distinguishes current candidate-grammar failure causes", () => {

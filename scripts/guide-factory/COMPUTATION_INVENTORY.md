@@ -133,17 +133,17 @@ runtime derives positive substats from successful four-piece evaluations and
 may append a smaller set in a real analyzer run.
 
 The report accounts for every artifact-choice field on current non-rejected
-character-guide and team records: 1,068 occurrences in total. Of 188 guide
+character-guide and team records: 1,072 occurrences in total. Of 188 guide
 builds, 167 are initially enumerated, 14 are conditionally representable, and
 7 are not representable by the current grammar. Of 840 team-member selected
 artifacts, 820 are initially enumerated, 7 are conditional, and 13 are not
-representable. Of 38 character-guide and team-member recommendation
-occurrences, 31 are initially enumerated and 7 are not representable. Two more
+representable. Of 42 character-guide and team-member recommendation
+occurrences, 34 are initially enumerated and 8 are not representable. Two more
 occurrences are the assignments in one coupled Kokomi/Columbina artifact plan;
-both are initially enumerated individually. The 27 failures are 19 Instructor
+both are initially enumerated individually. The 28 failures are 19 Instructor
 occurrences, 2 Exile occurrences, 5 two-piece combinations absent from the
-dynamic half-set map, and 1 Thundersoother occurrence excluded by the current
-tier-list-derived four-piece candidate policy.
+dynamic half-set map, and the Thundersoother and Retracing Bolide occurrences
+excluded by the current tier-list-derived four-piece candidate policy.
 
 This seam runs no artifact generator or damage formula and emits no score,
 rank, winner, or guide recommendation. Candidate naming is not evidence that a
@@ -169,16 +169,16 @@ weapon/refinement pairs:
 | 4-star | 139 | R5 | 139 |
 | 5-star | 73 | R1 and R5 | 146 |
 
-The consolidated repository has 1,008 non-ER weapon occurrences: 127 entries
-in character-guide weapon orders, 840 selected exact-team weapons, and 41
-character-guide recommendation entries. The last group includes the 21 new
-Keqing Lunar-Charged weapon claims. There are no team-member weapon
+The consolidated repository has 1,012 non-ER weapon occurrences: 127 entries
+in character-guide weapon orders, 840 selected exact-team weapons, and 45
+character-guide recommendation entries. The last group includes the Itto
+source slice's four contextual weapons. There are no team-member weapon
 recommendations yet.
 
-All 1,008 weapon IDs occur in the global released candidate domain. Refinement
-is a separate axis: none of the 1,008 observations supplies one, so the report
-has 0 exact candidate pairs and 1,008 unspecified refinements. Native type is
-also separate: 996 observations are compatible and 12 are mismatched. Every
+All 1,012 weapon IDs occur in the global released candidate domain. Refinement
+is a separate axis: none of the 1,012 observations supplies one, so the report
+has 0 exact candidate pairs and 1,012 unspecified refinements. Native type is
+also separate: 1,000 observations are compatible and 12 are mismatched. Every
 mismatch is a selected weapon from the legacy candidate source; baseline and
 KQM records have none.
 
@@ -562,7 +562,7 @@ factory.
   current analyzer varies one character at a time and has no joint artifact-set
   assignment search. Individual candidate coverage must not be reported as
   coupled-plan coverage.
-- The current knowledge records do not specify refinements for any of the 1,008
+- The current knowledge records do not specify refinements for any of the 1,012
   non-ER weapon occurrences. The preflight now states one comparison policy
   explicitly, but that convention remains an experiment input rather than a
   source fact.

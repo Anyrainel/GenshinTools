@@ -4323,7 +4323,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
@@ -4331,7 +4331,7 @@
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -4339,7 +4339,7 @@
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
-      "sha256": "1bf022fbe89cf11a83fb68692fbf590adf1bd2c181db32d3e23b176e764f100f"
+      "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
@@ -4355,11 +4355,15 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
     },
     {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
-      "sha256": "cd3d6697675d42793147220a8737aaa725b7e12f871a1e72161af2c1c897b3fc"
+      "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
     },
     {
       "path": "src/data/betaState.ts",

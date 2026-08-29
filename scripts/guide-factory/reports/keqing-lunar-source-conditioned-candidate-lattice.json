@@ -1148,15 +1148,15 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-      "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+      "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-      "sha256": "d4ad0ed089c853944e9a41deb39cfac0489f98eac1a0021f0fc4b7a2c372a22b"
+      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
@@ -1169,7 +1169,7 @@
   ],
   "inputBoundary": {
     "evidenceClaimCount": 42,
-    "evidenceReportSha256": "d4ad0ed089c853944e9a41deb39cfac0489f98eac1a0021f0fc4b7a2c372a22b",
+    "evidenceReportSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
     "evidenceValidationStatus": "comparable",
     "exactTeamIds": [
       "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
@@ -1177,7 +1177,7 @@
       "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
       "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
     ],
-    "formulaDraftSha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056",
+    "formulaDraftSha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
     "formulaFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
     "formulaSourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
   },

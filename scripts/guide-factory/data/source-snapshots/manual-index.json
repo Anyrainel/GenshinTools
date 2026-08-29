@@ -11,6 +11,10 @@
     },
     {
       "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json"
+    },
+    {
+      "sourceId": "kqm",
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"
     },
     {

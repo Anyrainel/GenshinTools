@@ -20,7 +20,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
@@ -28,11 +28,11 @@
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "de7d2f6762e0152f4732aa9c6d8aee2ff4834d6f1713ecf0986e4dfacd9e5cce"
+      "sha256": "27d4bef6b93a09489e3d0b4433672f39cee5369ecb9b71c76935c350a3339eca"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -60,11 +60,15 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
     },
     {
       "path": "scripts/guide-factory/src/sourceScopedRoleSample.ts",
       "sha256": "ade2007a2ca2e705971d5b232d3f37f3ebd8d8a2a250093a98fb82615120b6ab"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
     },
     {
       "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
@@ -72,11 +76,11 @@
     },
     {
       "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
-      "sha256": "bc96bd4f9a5abd50c6fe30381e08072b8bb36cdba22c4f500d793eb7d2d32f05"
+      "sha256": "c085ac93bf752b5c9e98a0419874d7177f8dee6309de020604da92c56e8d2924"
     },
     {
       "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
-      "sha256": "3b142dbea8b1d45bdafc919cf54a18306f92c4aaa3fbe01c7261ca81c880821b"
+      "sha256": "bad1d04f242eae911998ae902f3fd210f1fe27838e724ff24080f6639c2563fa"
     },
     {
       "path": "src/data/betaState.ts",
