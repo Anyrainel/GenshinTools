@@ -21,9 +21,9 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 16 adds source-conditioned Keqing Lunar-Charged equipment and stat
-evidence plus a four-team structural comparison against the current internal
-baseline, without claiming a working guide factory:
+Checkpoint 17 adds a fail-closed source-conditioned candidate lattice over the
+four exact Keqing Lunar-Charged teams, without claiming a working guide
+factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -148,6 +148,19 @@ baseline, without claiming a working guide factory:
     main-stat overlap and Mistsplitter match, report the ATK-versus-EM priority
     disagreement, and leave 4pc Thundering Fury behind its unresolved source
     condition.
+47. Preserve 19 source-local equipment groups and 12 stat claims without
+    deduplicating contextual evidence or inventing cross-record ordering.
+48. Project those definitions onto only the four exact source teams, retaining
+    76 equipment-group cells, 48 stat-claim cells, and all 168 underlying
+    claim/team rows.
+49. Keep condition resolution and search representability as independent axes,
+    including all 16 unresolved/unrepresentable artifact rows.
+50. Construct no weapon-by-artifact-by-stat product and emit zero assembled
+    builds, computed recommendations, ranks, or winners.
+51. Attach the exact Xilonen-team formula fixture as availability metadata only;
+    its unreviewed eight-blocker state authorizes zero technical comparisons.
+52. Withhold the entire lattice when source grouping, exact-team resolution,
+    coverage, source-refinement, anchor, or formula-fixture invariants drift.
 
 The first two active sources are already in this repository:
 
@@ -233,6 +246,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-source-conditioned-candidate-lattice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -249,14 +263,14 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all seventeen durable reports in memory: corpus inventory, team
+It also rebuilds all eighteen durable reports in memory: corpus inventory, team
 coverage, artifact- and weapon-choice search coverage, two formula-count
 comparisons, artifact-generation preflight, technical and sensitivity probes,
 the bounded joint artifact experiment, the bounded team-roster candidate
 domain, the full-team stat-marginal diagnostic, the Furina source-scoped role
 sample, the Keqing source-scoped role-pair sample, the Keqing Lunar equipment-
-evidence validation, Diona comparison, and historical ER calibration. Stale
-evidence cannot pass.
+evidence validation, the source-conditioned candidate lattice, Diona
+comparison, and historical ER calibration. Stale evidence cannot pass.
 
 ## Data flow
 

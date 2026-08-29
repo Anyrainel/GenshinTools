@@ -6,12 +6,19 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-lunar-source-conditioned-candidate-lattice.json` preserves 19
+  source-local equipment groups and 12 stat claims across four exact teams. It
+  classifies 76 equipment-group and 48 stat-claim cells while retaining all
+  168 underlying claim/team resolutions. Unsupported artifacts remain holdouts;
+  no axes are multiplied, no build is assembled, and the one exact formula
+  fixture remains unreviewed, replay-blocked, and unauthorized for comparison.
 - `keqing-lunar-equipment-evidence-validation.json` pins seventeen complete
   KQM Keqing Lunar-Charged equipment/stat records and splits them into 42 claim
   units across four exact published teams. Its exact condition map resolves
-  roster facts only and withholds build, gameplay, refinement, threshold,
-  contribution, shield, healing, and timing conditions. Thirty equipment
-  claims are cross-referenced against the real search-coverage builders; all
+  exact roster and declared-reaction facts only and withholds build, gameplay,
+  refinement, threshold, contribution, shield, healing, and timing conditions.
+  Thirty equipment claims are cross-referenced against the real search-coverage
+  builders; all
   21 weapon claims are in the released native Sword domain, while
   Thundersoother and three traditional 2pc combinations expose four current
   artifact-search representation gaps. The independent baseline comparison
@@ -190,6 +197,6 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all seventeen reports in memory and rejects stale checked-in
+`validate.ts` rebuilds all eighteen reports in memory and rejects stale checked-in
 output. The Diona ER report is historical and deliberately decoupled from
 unrelated knowledge-repository changes while ER work is deferred.

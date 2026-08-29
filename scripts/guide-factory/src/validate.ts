@@ -35,6 +35,10 @@ import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
 } from "./keqingLunarEquipmentEvidenceValidation";
 import {
+  buildKeqingLunarSourceConditionedCandidateLatticeReport,
+  KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
+} from "./keqingLunarSourceConditionedCandidateLattice";
+import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
@@ -86,6 +90,7 @@ import {
   KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH,
   KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_REPORT_PATH,
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
+  KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
   KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
@@ -156,6 +161,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     furinaSourceScopedRoleSampleInput,
     keqingSourceScopedRolePairSampleInput,
     keqingLunarEquipmentEvidenceValidationInput,
+    keqingLunarSourceConditionedCandidateLatticeInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -186,6 +192,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH),
       readJson(KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH),
       readJson(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH),
+      readJson(
+        KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
+      ),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -626,6 +635,29 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-lunar-equipment-evidence-validation",
           message:
             "The saved Keqing Lunar equipment-evidence validation does not match the exact source records, published team facts, baseline build, and read-only search-coverage boundary.",
+        });
+      }
+
+      const keqingLunarSourceConditionedCandidateLatticeGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
+        );
+      const expectedKeqingLunarSourceConditionedCandidateLattice =
+        buildKeqingLunarSourceConditionedCandidateLatticeReport(
+          expectedKeqingLunarEquipmentEvidenceValidation,
+          expectedKeqingIneffaFormulaDraft,
+          keqingLunarSourceConditionedCandidateLatticeGeneratedFrom,
+        );
+      if (
+        stableJson(expectedKeqingLunarSourceConditionedCandidateLattice) !==
+        stableJson(keqingLunarSourceConditionedCandidateLatticeInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_lunar_source_conditioned_candidate_lattice",
+          path: "reports.keqing-lunar-source-conditioned-candidate-lattice",
+          message:
+            "The saved Keqing Lunar source-conditioned candidate lattice does not match the validated claim groups, four exact team resolutions, search-representability holdouts, and blocked technical-fixture boundary.",
         });
       }
 

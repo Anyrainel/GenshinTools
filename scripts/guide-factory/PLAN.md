@@ -328,6 +328,23 @@ judgments. V1 also retains the source's other-5-star-versus-Mistsplitter
 ordering as a schema gap rather than inferring an order across separate
 recommendation records.
 
+The first source-conditioned candidate lattice now groups those observations
+without flattening them: 13 weapon groups, 6 artifact groups, and 12 stat
+claims are projected onto the four exact source teams. Its 76 equipment-group
+cells and 48 stat-claim cells retain all 168 claim/team resolutions. Condition
+resolution and search representability stay independent, so Thundersoother and
+the three unsupported traditional 2pc choices remain unresolved holdouts in
+all four teams instead of being dropped.
+
+The lattice creates no cross-product or assembled build. The exact
+Keqing/Ineffa/Furina/Xilonen formula fixture is attached only as blocked
+availability metadata: Mistsplitter matches a source claim, 4pc Thundering Fury
+remains condition-withheld, the source refinement is unspecified, and the
+unreviewed fixture still has eight readiness blockers. Thus the current lattice
+authorizes zero technical comparisons. The next gate is an explicit
+guide-factory-authored cross-record composition contract, not an inferred
+source build.
+
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input
 revision.

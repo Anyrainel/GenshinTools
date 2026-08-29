@@ -515,6 +515,9 @@ equipment, stat, or ER result.
 - Source-conditioned Keqing equipment/stat evidence checked against exact
   rosters, the baseline guide, and real search-coverage builders:
   `scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts`.
+- Source-local equipment groups and stat claims projected onto exact rosters
+  without constructing a cross-product:
+  `scripts/guide-factory/src/keqingLunarSourceConditionedCandidateLattice.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes
@@ -596,6 +599,10 @@ factory.
   discrepancy report, not proof that the source options can be optimized.
 - V1 has no atomic weapon-plus-artifact recommendation. The KQM Whimsy plus
   Finale claim is intentionally not flattened into independent choices.
+- The first candidate lattice remains classification-only. It exposes 19
+  equipment groups and 12 stat claims over four exact teams, but it deliberately
+  creates zero assembled builds. A separate authored composition contract is
+  required before any source-conditioned generator experiment can run.
 - The bounded joint experiment intentionally passes no explicit buff
   overrides, although it now records that the computed formula-override map is
   empty in all 48 current cells. A future performance-bearing experiment must

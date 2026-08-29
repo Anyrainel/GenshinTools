@@ -149,3 +149,9 @@ export const KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH =
     "reports",
     "keqing-lunar-equipment-evidence-validation.json"
   );
+export const KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH =
+  path.join(
+    FACTORY_ROOT,
+    "reports",
+    "keqing-lunar-source-conditioned-candidate-lattice.json"
+  );

@@ -1,0 +1,2962 @@
+{
+  "assembledBuildCount": 0,
+  "candidateGenerationExecuted": false,
+  "cautions": [
+    "A matched cell means only that exact roster and declared-reaction facts satisfy the source condition map; it is not computed equipment applicability.",
+    "Source groups remain separate and no weapon, artifact, or stat axes are multiplied into assembled builds.",
+    "Unresolved and unrepresentable cells are retained as holdouts rather than removed from the candidate boundary.",
+    "Analyzer candidate refinements remain search-policy metadata; every source weapon refinement is still unspecified.",
+    "The exact Xilonen-team formula fixture is unreviewed and replay-blocked, so its presence authorizes no numerical comparison.",
+    "No Energy Recharge input, constraint, target, or interpretation participates in this report."
+  ],
+  "classification": "keqing-lunar-source-conditioned-candidate-lattice",
+  "comparisonStatus": "comparable",
+  "crossProductConstructed": false,
+  "energyRecoveryInputsUsed": false,
+  "equipmentGroups": [
+    {
+      "classification": "recommended",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "tied",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:recommendation:lunar-charged-equal-refinement-four-star-ranking:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "tied",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "lions_roar",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:recommendation:lunar-charged-equal-refinement-four-star-ranking:weapon-group:0:1",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "tied",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "the_black_sword",
+            "weaponIndex": 1
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-equal-refinement-four-star-ranking",
+      "recommendationOrdering": "ranked-groups",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The compared weapons have equal Refinement."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i"
+    },
+    {
+      "classification": "alternative",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1",
+      "groupIndex": 1,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:recommendation:lunar-charged-equal-refinement-four-star-ranking:weapon-group:1:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 1,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "wolffang",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-equal-refinement-four-star-ranking",
+      "recommendationOrdering": "ranked-groups",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The compared weapons have equal Refinement."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i"
+    },
+    {
+      "classification": "recommended",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "tied",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:recommendation:lunar-charged-exceptional-em-foliar-tie:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "tied",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "light_of_foliar_incision",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:1",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:recommendation:lunar-charged-exceptional-em-foliar-tie:weapon-group:0:1",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "tied",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "mistsplitter_reforged",
+            "weaponIndex": 1
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-exceptional-em-foliar-tie",
+      "recommendationOrdering": "ranked-groups",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing has an exceptional amount of Elemental Mastery."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-exceptional-em-foliar-tie-luna-i"
+    },
+    {
+      "classification": "alternative",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:recommendation:lunar-charged-freedom-sworn:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "freedomsworn",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-freedom-sworn",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-freedom-sworn-luna-i"
+    },
+    {
+      "classification": "recommended",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "tied",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:recommendation:lunar-charged-full-shield-eshu-lions-roar-tie:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "tied",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "calamity_of_eshu",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:1",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:recommendation:lunar-charged-full-shield-eshu-lions-roar-tie:weapon-group:0:1",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "tied",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "lions_roar",
+            "weaponIndex": 1
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-full-shield-eshu-lions-roar-tie",
+      "recommendationOrdering": "ranked-groups",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Calamity of Eshu is compared against R5 Lion's Roar, and its shield-dependent passive has full uptime."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i"
+    },
+    {
+      "classification": "default",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "artifact",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "failureReason": null,
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:recommendation:lunar-charged-furina-marechaussee-hunter:0:0",
+            "outcome": "enumerated-initially"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "setId": "marechaussee_hunter",
+              "type": "4pc"
+            },
+            "artifactIndex": 0,
+            "classification": "default",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-furina-marechaussee-hunter",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "artifact-sets",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The team contains Furina.",
+        "The team contains exactly one Nod-Krai character."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-furina-marechaussee-hunter-luna-i"
+    },
+    {
+      "classification": "default",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:recommendation:lunar-charged-general-mistsplitter:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "default",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "mistsplitter_reforged",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-general-mistsplitter",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-general-mistsplitter-luna-i"
+    },
+    {
+      "classification": "available-only",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:recommendation:lunar-charged-harbinger-of-dawn-availability:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "available-only",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "harbinger_of_dawn",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-harbinger-of-dawn-availability",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Harbinger of Dawn's passive remains active, Furina is absent, and Keqing is not using 4pc Marechaussee Hunter."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-harbinger-of-dawn-availability-luna-i"
+    },
+    {
+      "classification": "available-only",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "alternatives",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:recommendation:lunar-charged-low-rarity-fallbacks:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "available-only",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "moonweavers_dawn",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:1",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:recommendation:lunar-charged-low-rarity-fallbacks:weapon-group:0:1",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "available-only",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "kagotsurube_isshin",
+            "weaponIndex": 1
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-low-rarity-fallbacks",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "No stronger listed weapon is available."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-low-rarity-fallbacks-luna-i"
+    },
+    {
+      "classification": "alternative",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "artifact",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "failureReason": null,
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:recommendation:lunar-charged-notsu-contexts:0:0",
+            "outcome": "enumerated-initially"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "setId": "night_of_the_skys_unveiling",
+              "type": "4pc"
+            },
+            "artifactIndex": 0,
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-notsu-contexts",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "artifact-sets",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The team contains exactly one Nod-Krai character."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-notsu-contexts-luna-i"
+    },
+    {
+      "classification": "default",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1",
+      "groupIndex": 1,
+      "grouping": "single",
+      "kind": "artifact",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "failureReason": null,
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:recommendation:lunar-charged-notsu-contexts:1:0",
+            "outcome": "enumerated-initially"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "setId": "night_of_the_skys_unveiling",
+              "type": "4pc"
+            },
+            "artifactIndex": 0,
+            "classification": "default",
+            "groupIndex": 1,
+            "grouping": "single",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-notsu-contexts",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "artifact-sets",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The team contains Ineffa and Aino as its two Nod-Krai characters."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-notsu-contexts-luna-i"
+    },
+    {
+      "classification": "alternative",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "alternatives",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:recommendation:lunar-charged-other-five-star-crit-options:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "absolution",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:1",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:recommendation:lunar-charged-other-five-star-crit-options:weapon-group:0:1",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "azurelight",
+            "weaponIndex": 1
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:2",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:recommendation:lunar-charged-other-five-star-crit-options:weapon-group:0:2",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "haran_geppaku_futsu",
+            "weaponIndex": 2
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:3",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:recommendation:lunar-charged-other-five-star-crit-options:weapon-group:0:3",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "uraku_misugiri",
+            "weaponIndex": 3
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:4",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:recommendation:lunar-charged-other-five-star-crit-options:weapon-group:0:4",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "splendor_of_tranquil_waters",
+            "weaponIndex": 4
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-other-five-star-crit-options",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-other-five-star-crit-options-luna-i"
+    },
+    {
+      "classification": "conditional",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:recommendation:lunar-charged-r5-finale-healer:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "conditional",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "finale_of_the_deep",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-r5-finale-healer",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Finale of the Deep is R5.",
+        "A healer clears Finale of the Deep's Bond of Life for every Keqing combo."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-r5-finale-healer-luna-i"
+    },
+    {
+      "classification": "conditional",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:recommendation:lunar-charged-shielded-summit-shaper:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "conditional",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "unranked",
+            "weaponId": "summit_shaper",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-shielded-summit-shaper",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Ineffa's shield remains active for the compared damage window."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-shielded-summit-shaper-luna-i"
+    },
+    {
+      "classification": "conditional",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0",
+      "groupIndex": 0,
+      "grouping": "alternatives",
+      "kind": "artifact",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "failureReason": null,
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:recommendation:lunar-charged-top-contributor-artifact-options:0:0",
+            "outcome": "enumerated-initially"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "setId": "thundering_fury",
+              "type": "4pc"
+            },
+            "artifactIndex": 0,
+            "classification": "conditional",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "failureReason": null,
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:recommendation:lunar-charged-top-contributor-artifact-options:0:1",
+            "outcome": "enumerated-initially"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "setId": "gilded_dreams",
+              "type": "4pc"
+            },
+            "artifactIndex": 1,
+            "classification": "conditional",
+            "groupIndex": 0,
+            "grouping": "alternatives",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-top-contributor-artifact-options",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "artifact-sets",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i"
+    },
+    {
+      "classification": "default",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "artifact",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0:0",
+          "representability": "not-representable",
+          "searchCoverage": {
+            "failureReason": "tier-list-other-filter",
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:0:0",
+            "outcome": "not-representable"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "setId": "thundersoother",
+              "type": "4pc"
+            },
+            "artifactIndex": 0,
+            "classification": "default",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-traditional-artifact-options",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "artifact-sets",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+    },
+    {
+      "classification": "alternative",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1",
+      "groupIndex": 1,
+      "grouping": "alternatives",
+      "kind": "artifact",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:0",
+          "representability": "not-representable",
+          "searchCoverage": {
+            "failureReason": "unmapped-dynamic-half-set-family",
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:1:0",
+            "outcome": "not-representable"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "halfSetIds": [
+                "electro%-15",
+                "atk%-18"
+              ],
+              "type": "2pc+2pc"
+            },
+            "artifactIndex": 0,
+            "classification": "alternative",
+            "groupIndex": 1,
+            "grouping": "alternatives",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:1",
+          "representability": "not-representable",
+          "searchCoverage": {
+            "failureReason": "unmapped-dynamic-half-set-family",
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:1:1",
+            "outcome": "not-representable"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "halfSetIds": [
+                "electro%-15",
+                "na-ca-dmg%-15"
+              ],
+              "type": "2pc+2pc"
+            },
+            "artifactIndex": 1,
+            "classification": "alternative",
+            "groupIndex": 1,
+            "grouping": "alternatives",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        },
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:2",
+          "representability": "not-representable",
+          "searchCoverage": {
+            "failureReason": "unmapped-dynamic-half-set-family",
+            "kind": "artifact-search-coverage",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:recommendation:lunar-charged-traditional-artifact-options:1:2",
+            "outcome": "not-representable"
+          },
+          "sourceClaim": {
+            "artifact": {
+              "halfSetIds": [
+                "atk%-18",
+                "na-ca-dmg%-15"
+              ],
+              "type": "2pc+2pc"
+            },
+            "artifactIndex": 2,
+            "classification": "alternative",
+            "groupIndex": 1,
+            "grouping": "alternatives",
+            "kind": "artifact",
+            "recommendationOrdering": "unranked"
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-traditional-artifact-options",
+      "recommendationOrdering": "unranked",
+      "recommendationScope": "artifact-sets",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-traditional-artifact-options-luna-i"
+    },
+    {
+      "classification": "recommended",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0",
+      "groupIndex": 0,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:recommendation:lunar-charged-traditional-jade-cutter-ranking:weapon-group:0:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "recommended",
+            "groupIndex": 0,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "primordial_jade_cutter",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-traditional-jade-cutter-ranking",
+      "recommendationOrdering": "ranked-groups",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i"
+    },
+    {
+      "classification": "alternative",
+      "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1",
+      "groupIndex": 1,
+      "grouping": "single",
+      "kind": "weapon",
+      "members": [
+        {
+          "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1:0",
+          "representability": "initially-representable",
+          "searchCoverage": {
+            "candidateRefinements": [
+              1,
+              5
+            ],
+            "kind": "weapon-search-coverage",
+            "nativeTypeCompatibilityOutcome": "compatible",
+            "observationId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:recommendation:lunar-charged-traditional-jade-cutter-ranking:weapon-group:1:0",
+            "refinementCoverageOutcome": "unspecified",
+            "weaponIdDomainOutcome": "in-released-candidate-domain"
+          },
+          "sourceClaim": {
+            "classification": "alternative",
+            "groupIndex": 1,
+            "grouping": "single",
+            "kind": "weapon",
+            "recommendationOrdering": "ranked-groups",
+            "weaponId": "mistsplitter_reforged",
+            "weaponIndex": 0
+          },
+          "sourceRefinement": null
+        }
+      ],
+      "recommendationId": "lunar-charged-traditional-jade-cutter-ranking",
+      "recommendationOrdering": "ranked-groups",
+      "recommendationScope": "weapons",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "The comparison is restricted to the source's traditional artifact-set options."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i"
+    }
+  ],
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
+      "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
+      "sha256": "d4ad0ed089c853944e9a41deb39cfac0489f98eac1a0021f0fc4b7a2c372a22b"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
+      "sha256": "fd4c38adc0e5a4ab26bb9917a68dc97dabdd9aa865f1de6e964610a797732740"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarSourceConditionedCandidateLattice.ts",
+      "sha256": "b3619aee197abde6e3194e2e18221232c44725f54348bcda3ee5688da908f7c2"
+    }
+  ],
+  "inputBoundary": {
+    "evidenceClaimCount": 42,
+    "evidenceReportSha256": "d4ad0ed089c853944e9a41deb39cfac0489f98eac1a0021f0fc4b7a2c372a22b",
+    "evidenceValidationStatus": "comparable",
+    "exactTeamIds": [
+      "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example",
+      "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+    ],
+    "formulaDraftSha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056",
+    "formulaFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+    "formulaSourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+  },
+  "issues": [],
+  "lattice": {
+    "combinationPolicy": "source-groups-only-no-cross-product",
+    "equipmentGroupCellCount": 76,
+    "equipmentGroupCount": 19,
+    "statClaimCellCount": 48,
+    "statClaimCount": 12,
+    "summary": {
+      "allClaimTeamRows": {
+        "matched": 70,
+        "notMatched": 8,
+        "unresolved": 90
+      },
+      "equipmentClaimTeamRows": {
+        "matched": {
+          "representable": 34,
+          "unrepresentable": 0
+        },
+        "notMatched": {
+          "representable": 8,
+          "unrepresentable": 0
+        },
+        "unresolved": {
+          "representable": 62,
+          "unrepresentable": 16
+        }
+      },
+      "equipmentGroupCells": {
+        "matched": {
+          "representable": 18,
+          "unrepresentable": 0
+        },
+        "notMatched": {
+          "representable": 8,
+          "unrepresentable": 0
+        },
+        "unresolved": {
+          "representable": 42,
+          "unrepresentable": 8
+        }
+      },
+      "statClaimTeamRows": {
+        "matched": 36,
+        "notMatched": 0,
+        "unresolved": 12
+      }
+    },
+    "teamCount": 4,
+    "teams": [
+      {
+        "characterIds": [
+          "keqing",
+          "ineffa",
+          "aino",
+          "sucrose"
+        ],
+        "equipmentGroupCells": [
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:1",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:2",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:3",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:4",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:2",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          }
+        ],
+        "statClaimCells": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          }
+        ],
+        "teamRecordId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
+      },
+      {
+        "characterIds": [
+          "keqing",
+          "ineffa",
+          "furina",
+          "jean"
+        ],
+        "equipmentGroupCells": [
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:1",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:2",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:3",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:4",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:2",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          }
+        ],
+        "statClaimCells": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          }
+        ],
+        "teamRecordId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
+      },
+      {
+        "characterIds": [
+          "keqing",
+          "ineffa",
+          "furina",
+          "xilonen"
+        ],
+        "equipmentGroupCells": [
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:1",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:2",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:3",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:4",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:2",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          }
+        ],
+        "statClaimCells": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          }
+        ],
+        "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+      },
+      {
+        "characterIds": [
+          "keqing",
+          "ineffa",
+          "yelan",
+          "kaedehara_kazuha"
+        ],
+        "equipmentGroupCells": [
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-exceptional-em-foliar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-freedom-sworn-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-furina-marechaussee-hunter-luna-i:artifact:0:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-harbinger-of-dawn-availability-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-low-rarity-fallbacks-luna-i:weapon:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "not-matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-notsu-contexts-luna-i:artifact:1:0",
+                "conditionResolution": "not-matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "matched-by-exact-team-facts",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:0",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:1",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:2",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:3",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i:weapon:0:4",
+                "conditionResolution": "matched-by-exact-team-facts",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-r5-finale-healer-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-shielded-summit-shaper-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:1",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              },
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-artifact-options-luna-i:artifact:1:2",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "not-representable"
+              }
+            ],
+            "searchRepresentability": "no-members-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:0:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          },
+          {
+            "conditionResolution": "withheld-unresolved-source-condition",
+            "groupId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1",
+            "members": [
+              {
+                "claimId": "kqm:character-guide:keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i:weapon:1:0",
+                "conditionResolution": "withheld-unresolved-source-condition",
+                "searchRepresentability": "initially-representable"
+              }
+            ],
+            "searchRepresentability": "all-members-initially-representable"
+          }
+        ],
+        "statClaimCells": [
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:1",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:goblet:0",
+            "conditionResolution": "withheld-unresolved-source-condition"
+          },
+          {
+            "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:sands:0",
+            "conditionResolution": "matched-by-exact-team-facts"
+          }
+        ],
+        "teamRecordId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+      }
+    ],
+    "underlyingClaimTeamRowCount": 168
+  },
+  "prohibitedInterpretations": [
+    "assembled-build-candidate",
+    "equipment-recommendation",
+    "stat-recommendation",
+    "source-rank-validation",
+    "condition-applicability-validation",
+    "damage-comparison",
+    "optimizer-result",
+    "energy-recharge-guidance"
+  ],
+  "schemaVersion": 1,
+  "statClaims": [
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "circlet",
+        "statIds": [
+          "cd"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 1,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "circlet",
+        "statIds": [
+          "cr"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "main-stat",
+        "priority": 1,
+        "slot": "goblet",
+        "statIds": [
+          "electro%"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 1,
+        "kind": "main-stat",
+        "priority": 2,
+        "slot": "goblet",
+        "statIds": [
+          "atk%"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "sands",
+        "statIds": [
+          "atk%"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "substat",
+        "priority": 1,
+        "statIds": [
+          "cr",
+          "cd"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 1,
+        "kind": "substat",
+        "priority": 2,
+        "statIds": [
+          "atk%"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
+      "recommendationId": "lunar-charged-default-artifact-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 2,
+        "kind": "substat",
+        "priority": 3,
+        "statIds": [
+          "em"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:0",
+      "recommendationId": "lunar-charged-high-buff-goblet-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "circlet",
+        "statIds": [
+          "cd"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-high-buff-goblet-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:1",
+      "recommendationId": "lunar-charged-high-buff-goblet-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 1,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "circlet",
+        "statIds": [
+          "cr"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-high-buff-goblet-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:goblet:0",
+      "recommendationId": "lunar-charged-high-buff-goblet-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "goblet",
+        "statIds": [
+          "electro%",
+          "atk%"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team.",
+        "Keqing has both a high-Base-ATK weapon and large amounts of DMG Bonus."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-high-buff-goblet-stats-luna-i"
+    },
+    {
+      "claimId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:sands:0",
+      "recommendationId": "lunar-charged-high-buff-goblet-stats",
+      "recommendationScope": "artifact-stats",
+      "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i",
+      "roles": [
+        "dps"
+      ],
+      "sourceClaim": {
+        "entryIndex": 0,
+        "kind": "main-stat",
+        "priority": null,
+        "slot": "sands",
+        "statIds": [
+          "atk%"
+        ],
+        "target": null
+      },
+      "sourceConditions": [
+        "Keqing is used in a Lunar-Charged team."
+      ],
+      "sourceRecordId": "keqing-lunar-charged-high-buff-goblet-stats-luna-i"
+    }
+  ],
+  "supportsConditionApplicabilityClaims": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsStatRecommendations": false,
+  "technicalComparisonBoundary": {
+    "authorizedSourceConditionedComparisonCount": 0,
+    "exactFixtureCount": 1,
+    "status": "availability-only-no-comparison-authorized",
+    "teamFixtures": [
+      {
+        "status": "no-exact-formula-fixture",
+        "teamRecordId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
+      },
+      {
+        "status": "no-exact-formula-fixture",
+        "teamRecordId": "kqm:team:keqing-ineffa-furina-jean-lunar-charged-example"
+      },
+      {
+        "blockerCodes": [
+          "translation-unreviewed",
+          "partial-token-mapping",
+          "unresolved-formula-mapping",
+          "unresolved-formula-mapping",
+          "unresolved-formula-mapping",
+          "unresolved-formula-mapping",
+          "unresolved-formula-mapping",
+          "unresolved-source-token"
+        ],
+        "damageReplayReady": false,
+        "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+        "keqingAnchor": {
+          "artifact": {
+            "setId": "thundering_fury",
+            "type": "4pc"
+          },
+          "artifactClaimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+          "artifactConditionResolution": "withheld-unresolved-source-condition",
+          "completeSourceConditionedEquipmentAnchor": false,
+          "fixtureRefinement": 1,
+          "fixtureRefinementIsSourceFact": false,
+          "sourceRefinement": null,
+          "weaponClaimId": "kqm:character-guide:keqing-lunar-charged-general-mistsplitter-luna-i:weapon:0:0",
+          "weaponConditionResolution": "matched-by-exact-team-facts",
+          "weaponId": "mistsplitter_reforged"
+        },
+        "reviewStatus": "unreviewed",
+        "status": "fixture-available-but-not-authorized",
+        "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+      },
+      {
+        "status": "no-exact-formula-fixture",
+        "teamRecordId": "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
+      }
+    ]
+  },
+  "technicalComparisonExecuted": false
+}
