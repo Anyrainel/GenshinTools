@@ -1,0 +1,551 @@
+{
+  "assumptions": {
+    "characters": [
+      {
+        "characterId": "neuvillette",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "marechaussee_hunter",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "tome_of_the_eternal_flow",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "xilonen",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "scroll_of_the_hero_of_cinder_city",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "peak_patrol_song",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "furina",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "golden_troupe",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "splendor_of_tranquil_waters",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      },
+      {
+        "characterId": "kaedehara_kazuha",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "selectedArtifact": {
+          "setId": "viridescent_venerer",
+          "type": "4pc"
+        },
+        "selectedWeaponId": "freedomsworn",
+        "talentLevels": {
+          "auto": 10,
+          "burst": 10,
+          "skill": 10
+        }
+      }
+    ],
+    "combatOptions": "calculator-defaults"
+  },
+  "authoredTranslation": {
+    "actionCounts": [
+      {
+        "action": "skill-cast",
+        "characterId": "neuvillette",
+        "count": 2,
+        "sourceTokens": [
+          "E",
+          "E"
+        ]
+      },
+      {
+        "action": "charged-attack",
+        "characterId": "neuvillette",
+        "count": 4,
+        "sourceTokens": [
+          "C",
+          "C",
+          "2[C]"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "neuvillette",
+        "count": 1,
+        "sourceTokens": [
+          "Q"
+        ]
+      },
+      {
+        "action": "skill-cast",
+        "characterId": "furina",
+        "count": 1,
+        "sourceTokens": [
+          "E"
+        ]
+      },
+      {
+        "action": "normal-attack",
+        "characterId": "furina",
+        "count": 1,
+        "sourceTokens": [
+          "N1"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "furina",
+        "count": 1,
+        "sourceTokens": [
+          "Q"
+        ]
+      },
+      {
+        "action": "skill-cast",
+        "characterId": "xilonen",
+        "count": 2,
+        "sourceTokens": [
+          "E",
+          "E"
+        ]
+      },
+      {
+        "action": "two-normal-sequence",
+        "characterId": "xilonen",
+        "count": 2,
+        "sourceTokens": [
+          "N2",
+          "N2"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "xilonen",
+        "count": 1,
+        "sourceTokens": [
+          "Q"
+        ]
+      },
+      {
+        "action": "tap-skill-cast",
+        "characterId": "kaedehara_kazuha",
+        "count": 2,
+        "sourceTokens": [
+          "tE",
+          "tE"
+        ]
+      },
+      {
+        "action": "plunging-attack",
+        "characterId": "kaedehara_kazuha",
+        "count": 2,
+        "sourceTokens": [
+          "P",
+          "P"
+        ]
+      },
+      {
+        "action": "burst-cast",
+        "characterId": "kaedehara_kazuha",
+        "count": 1,
+        "sourceTokens": [
+          "Q"
+        ]
+      }
+    ],
+    "formulaComparisons": [
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "furina",
+        "formulaId": "furina-burst",
+        "mappingBasis": "The source contains one Q cast.",
+        "relation": "matches",
+        "sourceTranslatedCount": 1
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "furina",
+        "formulaId": "furina-skill-bubble",
+        "mappingBasis": "The source contains one E cast.",
+        "relation": "matches",
+        "sourceTranslatedCount": 1
+      },
+      {
+        "calculatorDefaultCount": 2,
+        "characterId": "kaedehara_kazuha",
+        "formulaId": "kazuha-skill",
+        "mappingBasis": "Each source tE maps to the calculator Tap Skill formula.",
+        "relation": "matches",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "neuvillette",
+        "formulaId": "neuvillette-burst",
+        "mappingBasis": "The source contains one Q cast.",
+        "relation": "matches",
+        "sourceTranslatedCount": 1
+      },
+      {
+        "calculatorDefaultCount": 3,
+        "characterId": "neuvillette",
+        "formulaId": "neuvillette-judgment",
+        "mappingBasis": "Each source C maps to one full Equitable Judgment formula.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 4
+      },
+      {
+        "calculatorDefaultCount": 3,
+        "characterId": "neuvillette",
+        "formulaId": "neuvillette-skill",
+        "mappingBasis": "Each source E maps to one Skill damage formula.",
+        "relation": "calculator-default-higher",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-e-rush",
+        "mappingBasis": "Each of the two source E casts maps to one Rush formula.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-normal-2",
+        "mappingBasis": "Each source N2 maps to one calculator two-Normal sequence.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 0,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-q-initial",
+        "mappingBasis": "The source contains one Q cast.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 1
+      }
+    ],
+    "mismatches": [
+      {
+        "calculatorDefaultCount": 3,
+        "characterId": "neuvillette",
+        "formulaId": "neuvillette-judgment",
+        "mappingBasis": "Each source C maps to one full Equitable Judgment formula.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 4
+      },
+      {
+        "calculatorDefaultCount": 3,
+        "characterId": "neuvillette",
+        "formulaId": "neuvillette-skill",
+        "mappingBasis": "Each source E maps to one Skill damage formula.",
+        "relation": "calculator-default-higher",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-e-rush",
+        "mappingBasis": "Each of the two source E casts maps to one Rush formula.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 1,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-normal-2",
+        "mappingBasis": "Each source N2 maps to one calculator two-Normal sequence.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 2
+      },
+      {
+        "calculatorDefaultCount": 0,
+        "characterId": "xilonen",
+        "formulaId": "xilonen-q-initial",
+        "mappingBasis": "The source contains one Q cast.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 1
+      }
+    ],
+    "reviewStatus": "unreviewed",
+    "unresolvedMappings": [
+      {
+        "calculatorFormulaId": null,
+        "characterId": "furina",
+        "reason": "The source uses one C0 Normal Attack, but this calculator implementation exposes no C0 Furina Normal Attack formula.",
+        "sourceToken": "N1"
+      },
+      {
+        "calculatorFormulaId": "furina-salon-total",
+        "characterId": "furina",
+        "reason": "The calculator formula bakes in 32 Salon Member hits, while the source gives no rotation duration or hit count proving that the full aggregate fits this rotation.",
+        "sourceToken": "E (Salon Members after cast)"
+      },
+      {
+        "calculatorFormulaId": "neuvillette-spiritbreath",
+        "characterId": "neuvillette",
+        "reason": "Two source Skill casts do not establish two Spiritbreath procs because the source supplies no rotation duration or proc timing.",
+        "sourceToken": "E (Spiritbreath Thorn proc)"
+      },
+      {
+        "calculatorFormulaId": "kazuha-plunge-hydro",
+        "characterId": "kaedehara_kazuha",
+        "reason": "The source establishes two plunges but does not establish the calculator's Hydro-absorbed formula variant or absorption timing.",
+        "sourceToken": "2[P]"
+      },
+      {
+        "calculatorFormulaId": "kazuha-burst-hydro",
+        "characterId": "kaedehara_kazuha",
+        "reason": "The source establishes one Burst but does not establish the calculator's Hydro-absorbed formula variant or absorption timing.",
+        "sourceToken": "Q"
+      },
+      {
+        "calculatorFormulaId": "rx-swirl-Hydro-kaedehara_kazuha",
+        "characterId": "kaedehara_kazuha",
+        "reason": "The source action notation does not enumerate reaction ownership or Swirl occurrence counts.",
+        "sourceToken": "Swirl occurrences"
+      }
+    ]
+  },
+  "cautions": [
+    "Formula counts come from calculator comboDescriptor implementation defaults, not source-reviewed rotation truth.",
+    "This draft does not establish an optimal rotation, buff sequence, field-time plan, ER feasibility, or guide recommendation.",
+    "Calculator combat options use their implementation defaults because the knowledge team does not provide option selections.",
+    "Constellation- or option-gated formulas unavailable under the explicit assumptions are checked for catalog integrity but omitted from the draft.",
+    "The source action-to-formula translation is agent-authored and unreviewed; matching the written tokens does not prove the calculator formula semantics or buff timing are equivalent.",
+    "The source rotation does not specify duration, Salon Member hit counts, Swirl occurrences, or reaction ownership, so those values remain unresolved."
+  ],
+  "classification": "calculator-default-draft",
+  "fixtureId": "furina-neuvillette-source-rotation-comparison-v2",
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "87f8ddd1a2251402cda724ca8b6999c50c1c530583ae7a71b661aff190a268f1"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "d942bb4971a7984621b9f58563bcddc01d9c509f22fc119f4edcdc6cc54eac9b"
+    },
+    {
+      "path": "scripts/guide-factory/src/furinaNeuvilletteFormulaDraft.ts",
+      "sha256": "4aea0d30f14978e52b93e2bb687c74cb563be79c6f2c64bacd60277c5cf6c598"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Inazuma.ts",
+      "sha256": "16778887d05d77f314891562c3726d5b4af78e111e341e11e1dda62327bfc83d"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    }
+  ],
+  "lines": [
+    {
+      "characterId": "neuvillette",
+      "count": 1,
+      "formulaId": "neuvillette-burst"
+    },
+    {
+      "characterId": "neuvillette",
+      "count": 3,
+      "formulaId": "neuvillette-judgment"
+    },
+    {
+      "characterId": "neuvillette",
+      "count": 3,
+      "formulaId": "neuvillette-skill"
+    },
+    {
+      "characterId": "neuvillette",
+      "count": 3,
+      "formulaId": "neuvillette-spiritbreath"
+    },
+    {
+      "characterId": "xilonen",
+      "count": 1,
+      "formulaId": "xilonen-e-rush"
+    },
+    {
+      "characterId": "xilonen",
+      "count": 1,
+      "formulaId": "xilonen-normal-2"
+    },
+    {
+      "characterId": "furina",
+      "count": 1,
+      "formulaId": "furina-burst"
+    },
+    {
+      "characterId": "furina",
+      "count": 1,
+      "formulaId": "furina-salon-total"
+    },
+    {
+      "characterId": "furina",
+      "count": 1,
+      "formulaId": "furina-skill-bubble"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "count": 1,
+      "formulaId": "kazuha-burst-hydro"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "count": 2,
+      "formulaId": "kazuha-plunge-hydro"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "count": 2,
+      "formulaId": "kazuha-skill"
+    }
+  ],
+  "promotionEligible": false,
+  "rosterAgreement": {
+    "characterIds": [
+      "furina",
+      "kaedehara_kazuha",
+      "neuvillette",
+      "xilonen"
+    ],
+    "exact": true
+  },
+  "schemaVersion": 1,
+  "sourceRotation": {
+    "assumptions": [],
+    "notation": "Neuvillette E > Furina ED N1 > Xilonen EQ N2 > Kazuha tEPQ > Furina Q > Neuvillette C E C Q > Xilonen E N2 > Kazuha tEP > Neuvillette 2[C]",
+    "recordId": "kqm:team:furina-neuvillette-kazuha-xilonen-example",
+    "rotationId": "sample-rotation-xilonen",
+    "unresolvedSegments": []
+  },
+  "sourceTeamRecordId": "genshintools-presets:team:JQC4wxT0jJgK50gc0O",
+  "status": "needs-domain-review",
+  "supportsGuideClaims": false,
+  "validationTargets": [
+    {
+      "recordId": "genshintools-presets:team:JQC4wxT0jJgK50gc0O",
+      "supports": [
+        "roster",
+        "selected-weapons",
+        "selected-artifact-sets"
+      ]
+    },
+    {
+      "recordId": "kqm:team:furina-neuvillette-kazuha-xilonen-example",
+      "supports": [
+        "roster",
+        "rotation"
+      ]
+    }
+  ],
+  "zeroCountAvailableFormulas": [
+    {
+      "characterId": "xilonen",
+      "formulaId": "xilonen-normal"
+    },
+    {
+      "characterId": "xilonen",
+      "formulaId": "xilonen-q-initial"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "formulaId": "kazuha-burst"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "formulaId": "kazuha-plunge"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "formulaId": "kazuha-skill-hold"
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "formulaId": "rx-swirl-Hydro-kaedehara_kazuha"
+    }
+  ]
+}

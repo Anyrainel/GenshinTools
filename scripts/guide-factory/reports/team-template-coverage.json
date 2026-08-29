@@ -1,0 +1,294 @@
+{
+  "exactTeams": [
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Forward Melt > Example Teams > C6 Diona - Mavuika - Citlali - Bennett",
+            "url": "https://keqingmains.com/q/diona-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+        }
+      ],
+      "teamId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Quickbloom > Example Teams > Furina — Alhaitham — Shinobu — Nahida",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-alhaitham-shinobu-nahida-quickbloom-example"
+        }
+      ],
+      "teamId": "kqm:team:furina-alhaitham-shinobu-nahida-quickbloom-example"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Quickbloom > Example Teams > Furina — Nahida — Cyno — Baizhu",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-nahida-cyno-baizhu-quickbloom-example"
+        }
+      ],
+      "teamId": "kqm:team:furina-nahida-cyno-baizhu-quickbloom-example"
+    },
+    {
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:JQC4wxT0jJgK50gc0O"
+      ],
+      "outcome": "present",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Hypercarry & Mono Element > Example Teams > Furina — Neuvillette — Kazuha — Xilonen / Zhongli / Pyro Traveler",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-neuvillette-kazuha-xilonen-example"
+        }
+      ],
+      "teamId": "kqm:team:furina-neuvillette-kazuha-xilonen-example"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Aino — Sucrose",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-aino-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-aino-sucrose-lunar-charged-example"
+        }
+      ],
+      "teamId": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example"
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Furina — Xilonen",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example"
+        }
+      ],
+      "teamId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
+    }
+  ],
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "87f8ddd1a2251402cda724ca8b6999c50c1c530583ae7a71b661aff190a268f1"
+    },
+    {
+      "path": "scripts/guide-factory/src/catalogs.ts",
+      "sha256": "4933a825d470208e65e3602cca9d08189d3754b11f3188d123404e65a68986f4"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
+      "sha256": "3b142dbea8b1d45bdafc919cf54a18306f92c4aaa3fbe01c7261ca81c880821b"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    }
+  ],
+  "limitations": [
+    "Templates and promotion-ineligible external exact teams are compared only with exact team records carrying baseline status.",
+    "Character, element, and any selectors are resolved; role selectors remain unresolved because no role catalog is available.",
+    "Coverage measures repository overlap, not gameplay quality, rotation validity, damage, or optimality."
+  ],
+  "prohibitedAggregates": [
+    "score",
+    "rank",
+    "winner"
+  ],
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:C8O2y1jWpNRe5gSc04",
+        "genshintools-presets:team:PSK5xCCWjKgdZ2Sc04",
+        "genshintools-presets:team:QCC32ya0kJgK51AC0e"
+      ],
+      "outcome": "present",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Electro-Charged",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-electro-charged"
+        }
+      ],
+      "templateId": "kqm:team-template:furina-team-template-electro-charged",
+      "unresolvedBaselineTeamIds": [],
+      "unresolvedRoleIds": []
+    },
+    {
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:1ZC3ATIWeGrK1fWd0N",
+        "genshintools-presets:team:6te0ITIWe72K1eia0O",
+        "genshintools-presets:team:7sa0JFZ0jJam0WuIWD",
+        "genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "genshintools-presets:team:IZC0JFZ0DJgK50uIWD",
+        "genshintools-presets:team:JAG4wxT0jJgK50uIWD",
+        "genshintools-presets:team:JQC4x3X0jNRe0gTIWe",
+        "genshintools-presets:team:QSW63FZ0jJam0W_T0D",
+        "genshintools-presets:team:QSW63FZ0jJam0WuIWD",
+        "genshintools-presets:team:Xjy6ZFZ0DJam0X8h0r"
+      ],
+      "outcome": "present",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Freeze",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-freeze"
+        }
+      ],
+      "templateId": "kqm:team-template:furina-team-template-freeze",
+      "unresolvedBaselineTeamIds": [],
+      "unresolvedRoleIds": []
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "unresolved",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Hypercarry & Mono Element",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-hypercarry-mono"
+        }
+      ],
+      "templateId": "kqm:team-template:furina-team-template-hypercarry-mono",
+      "unresolvedBaselineTeamIds": [
+        "genshintools-presets:team:1ZC3ATIWeGrK1fWd0N",
+        "genshintools-presets:team:3AG6YxT0jJgK51SlW5",
+        "genshintools-presets:team:6te0ITIWe72K1eia0O",
+        "genshintools-presets:team:7sa0JFZ0jJam0WuIWD",
+        "genshintools-presets:team:8IS2oxT0jJgK51CXWN",
+        "genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "genshintools-presets:team:8ru0gxT0jJgK50AfWD",
+        "genshintools-presets:team:C8O2y1jWpNRe5gSc04",
+        "genshintools-presets:team:CX03obKWOJgK51-fWO",
+        "genshintools-presets:team:IZC0JFZ0DJgK50uIWD",
+        "genshintools-presets:team:JAG4wxT0jJgK50uIWD",
+        "genshintools-presets:team:JgK5xXhWDOS85gbKyO",
+        "genshintools-presets:team:JQC4wxT0jJgK50gc0O",
+        "genshintools-presets:team:JQC4x3X0jNRe0gTIWe",
+        "genshintools-presets:team:KAS5AxT0jJgK50orWD",
+        "genshintools-presets:team:KAS5C1jWoNRe5gTIW4",
+        "genshintools-presets:team:KiNZ2Sc0eFrC0WoB0D",
+        "genshintools-presets:team:Kqy2obKWOJgK50orWD",
+        "genshintools-presets:team:LAe0gxT0jJam50AfW5",
+        "genshintools-presets:team:LQm5QT3W4Cte2uorWD",
+        "genshintools-presets:team:Ny05p3X0jJeS0WoB0D",
+        "genshintools-presets:team:PSK5xCCWjKgdZ2Sc04",
+        "genshintools-presets:team:QCC32ya0kJgK51AC0e",
+        "genshintools-presets:team:QSW63FZ0jJam0W_T0D",
+        "genshintools-presets:team:QSW63FZ0jJam0WuIWD",
+        "genshintools-presets:team:Xjy6ZFZ0DJam0X8h0r"
+      ],
+      "unresolvedRoleIds": [
+        "healer"
+      ]
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Quickbloom",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-quickbloom"
+        }
+      ],
+      "templateId": "kqm:team-template:furina-team-template-quickbloom",
+      "unresolvedBaselineTeamIds": [],
+      "unresolvedRoleIds": []
+    },
+    {
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:8IS2oxT0jJgK51CXWN",
+        "genshintools-presets:team:8IS2p3X0jJb451cfWN",
+        "genshintools-presets:team:Kqy2obKWOJgK50orWD",
+        "genshintools-presets:team:LQm5QT3W4Cte2uorWD"
+      ],
+      "outcome": "present",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Vaporize",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-vaporize"
+        }
+      ],
+      "templateId": "kqm:team-template:furina-team-template-vaporize",
+      "unresolvedBaselineTeamIds": [],
+      "unresolvedRoleIds": []
+    },
+    {
+      "matchedBaselineTeamIds": [],
+      "outcome": "uncovered",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-team-template-lunar-charged"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-team-template-lunar-charged"
+        }
+      ],
+      "templateId": "kqm:team-template:keqing-team-template-lunar-charged",
+      "unresolvedBaselineTeamIds": [],
+      "unresolvedRoleIds": []
+    }
+  ]
+}

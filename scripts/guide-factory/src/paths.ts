@@ -6,6 +6,11 @@ export const FACTORY_ROOT = path.resolve(
   ".."
 );
 export const REPOSITORY_ROOT = path.resolve(FACTORY_ROOT, "../..");
+export const SOURCE_SNAPSHOT_ROOT = path.join(
+  FACTORY_ROOT,
+  "data",
+  "source-snapshots"
+);
 
 export const SOURCE_REGISTRY_PATH = path.join(
   FACTORY_ROOT,
@@ -32,22 +37,20 @@ export const LEGACY_RESEARCH_PATH = path.join(
   "team_comps_research.json"
 );
 export const GENSHINTOOLS_SNAPSHOT_PATH = path.join(
-  FACTORY_ROOT,
-  "data",
-  "source-snapshots",
+  SOURCE_SNAPSHOT_ROOT,
   "genshintools-presets.json"
 );
 export const LEGACY_SNAPSHOT_PATH = path.join(
-  FACTORY_ROOT,
-  "data",
-  "source-snapshots",
+  SOURCE_SNAPSHOT_ROOT,
   "legacy-team-research.json"
 );
 export const KQM_MANUAL_SNAPSHOT_PATH = path.join(
-  FACTORY_ROOT,
-  "data",
-  "source-snapshots",
+  SOURCE_SNAPSHOT_ROOT,
   "kqm-diona-manual.json"
+);
+export const MANUAL_SNAPSHOT_INDEX_PATH = path.join(
+  SOURCE_SNAPSHOT_ROOT,
+  "manual-index.json"
 );
 export const KNOWLEDGE_REPOSITORY_PATH = path.join(
   FACTORY_ROOT,
@@ -64,4 +67,19 @@ export const DIONA_ER_CALIBRATION_REPORT_PATH = path.join(
   FACTORY_ROOT,
   "reports",
   "kqm-diona-er-calibration.json"
+);
+export const TEAM_TEMPLATE_COVERAGE_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "team-template-coverage.json"
+);
+export const FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "furina-neuvillette-formula-plan-draft.json"
+);
+export const KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "knowledge-corpus-inventory.json"
 );

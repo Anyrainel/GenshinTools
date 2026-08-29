@@ -7,23 +7,39 @@ import {
 } from "./comparison";
 import { consolidateKnowledge } from "./consolidation";
 import {
+  buildKnowledgeCorpusInventoryReport,
+  KNOWLEDGE_CORPUS_INVENTORY_INPUT_PATHS,
+} from "./corpusInventory";
+import {
   buildDionaErCalibrationReport,
   DIONA_ER_ENGINE_INPUT_PATHS,
 } from "./dionaErCalibration";
+import {
+  buildFurinaNeuvilletteFormulaDraftReport,
+  FURINA_NEUVILLETTE_FORMULA_DRAFT_INPUT_PATHS,
+} from "./furinaNeuvilletteFormulaDraft";
 import {
   importGenshinToolsPresets,
   importLegacyTeamResearch,
 } from "./importers";
 import { readJson, sha256File, stableJson } from "./io";
 import {
+  loadManualSnapshotInputs,
+  requiredManualSnapshotInputContaining,
+  type ManualSnapshotInput,
+} from "./manualSnapshots";
+import {
   DIONA_COMPARISON_REPORT_PATH,
   DIONA_ER_CALIBRATION_REPORT_PATH,
+  FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
   GENSHINTOOLS_SNAPSHOT_PATH,
-  KQM_MANUAL_SNAPSHOT_PATH,
+  KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
   LEGACY_SNAPSHOT_PATH,
+  MANUAL_SNAPSHOT_INDEX_PATH,
   REPOSITORY_ROOT,
   SOURCE_REGISTRY_PATH,
+  TEAM_TEMPLATE_COVERAGE_REPORT_PATH,
 } from "./paths";
 import {
   GenshinToolsPresetSnapshotSchema,
@@ -38,10 +54,15 @@ import {
   validateKnowledgeRepository,
   validateLegacySnapshot,
   validateManualObservationSnapshot,
+  validateManualSnapshotCollection,
   validateSourceRegistry,
   validateWorkspaceBoundary,
   type ValidationDiagnostic,
 } from "./validation";
+import {
+  buildTeamTemplateCoverageReport,
+  TEAM_TEMPLATE_COVERAGE_INPUT_PATHS,
+} from "./teamTemplateCoverage";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -56,19 +77,25 @@ export async function runValidation(): Promise<ValidationRunResult> {
     registryInput,
     genshinToolsInput,
     legacyInput,
-    kqmInput,
+    manualIndexInput,
     knowledgeInput,
     comparisonInput,
     erCalibrationInput,
+    teamTemplateCoverageInput,
+    furinaNeuvilletteFormulaDraftInput,
+    knowledgeCorpusInventoryInput,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
       readJson(GENSHINTOOLS_SNAPSHOT_PATH),
       readJson(LEGACY_SNAPSHOT_PATH),
-      readJson(KQM_MANUAL_SNAPSHOT_PATH),
+      readJson(MANUAL_SNAPSHOT_INDEX_PATH),
       readJson(KNOWLEDGE_REPOSITORY_PATH),
       readJson(DIONA_COMPARISON_REPORT_PATH),
       readJson(DIONA_ER_CALIBRATION_REPORT_PATH),
+      readJson(TEAM_TEMPLATE_COVERAGE_REPORT_PATH),
+      readJson(FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH),
+      readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -76,21 +103,61 @@ export async function runValidation(): Promise<ValidationRunResult> {
     ...validateGenshinToolsSnapshot(genshinToolsInput, catalogs)
   );
   diagnostics.push(...validateLegacySnapshot(legacyInput, catalogs));
-  diagnostics.push(
-    ...validateManualObservationSnapshot(kqmInput, catalogs, "kqm")
-  );
+  let manualInputs: ManualSnapshotInput[] = [];
+  try {
+    manualInputs = await loadManualSnapshotInputs(
+      manualIndexInput,
+      registryInput
+    );
+  } catch (error) {
+    diagnostics.push({
+      severity: "error",
+      code: "pipeline.manual_snapshot_load_failed",
+      path: "manual-snapshots",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Manual snapshot loading failed.",
+    });
+  }
+  for (const manualInput of manualInputs) {
+    diagnostics.push(
+      ...validateManualObservationSnapshot(
+        manualInput.snapshot,
+        catalogs,
+        manualInput.expectedSourceId
+      )
+    );
+  }
 
   const registry = SourceRegistrySchema.safeParse(registryInput);
   const genshinTools =
     GenshinToolsPresetSnapshotSchema.safeParse(genshinToolsInput);
   const legacy = LegacyTeamSnapshotSchema.safeParse(legacyInput);
-  const kqm = ManualObservationSnapshotSchema.safeParse(kqmInput);
+  const manualSnapshots = manualInputs.map(({ snapshot }) =>
+    ManualObservationSnapshotSchema.safeParse(snapshot)
+  );
+  const validManualSnapshots = manualSnapshots.flatMap((parsed) =>
+    parsed.success ? [parsed.data] : []
+  );
+  if (
+    registry.success &&
+    validManualSnapshots.length === manualInputs.length
+  ) {
+    diagnostics.push(
+      ...validateManualSnapshotCollection(
+        validManualSnapshots,
+        registry.data
+      )
+    );
+  }
   const knowledge = KnowledgeRepositorySchema.safeParse(knowledgeInput);
   if (
     registry.success &&
     genshinTools.success &&
     legacy.success &&
-    kqm.success &&
+    manualInputs.length > 0 &&
+    validManualSnapshots.length === manualInputs.length &&
     knowledge.success
   ) {
     const sourceRegistrySha256 = await sha256File(SOURCE_REGISTRY_PATH);
@@ -101,7 +168,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
         expectedSourceRegistrySha256: sourceRegistrySha256,
         genshinToolsSnapshot: genshinTools.data,
         legacySnapshot: legacy.data,
-        manualSnapshots: [kqm.data],
+        manualSnapshots: validManualSnapshots,
       })
     );
 
@@ -130,16 +197,11 @@ export async function runValidation(): Promise<ValidationRunResult> {
       }
 
       const expectedKnowledge = consolidateKnowledge({
+        sourceRegistry: registry.data,
         sourceRegistrySha256,
         genshinTools: expectedGenshinTools,
         legacy: expectedLegacy,
-        kqm: kqm.data,
-        kqmSnapshotFile: {
-          path: KQM_MANUAL_SNAPSHOT_PATH.slice(
-            REPOSITORY_ROOT.length + 1
-          ).replaceAll("\\", "/"),
-          sha256: await sha256File(KQM_MANUAL_SNAPSHOT_PATH),
-        },
+        manualSnapshots: manualInputs,
       });
       if (stableJson(expectedKnowledge) !== stableJson(knowledge.data)) {
         diagnostics.push({
@@ -151,13 +213,81 @@ export async function runValidation(): Promise<ValidationRunResult> {
         });
       }
 
-      const comparisonGeneratedFrom = await hashRelativePaths(
+      const corpusInventoryGeneratedFrom = await hashRelativePaths(
+        KNOWLEDGE_CORPUS_INVENTORY_INPUT_PATHS
+      );
+      const expectedCorpusInventory = buildKnowledgeCorpusInventoryReport(
+        expectedKnowledge,
+        registry.data,
+        corpusInventoryGeneratedFrom
+      );
+      if (
+        stableJson(expectedCorpusInventory) !==
+        stableJson(knowledgeCorpusInventoryInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_knowledge_corpus_inventory",
+          path: "reports.knowledge-corpus-inventory",
+          message:
+            "The saved knowledge-corpus inventory does not match current knowledge and source metadata.",
+        });
+      }
+
+      const teamTemplateCoverageGeneratedFrom = await hashRelativePaths(
+        TEAM_TEMPLATE_COVERAGE_INPUT_PATHS
+      );
+      const expectedTeamTemplateCoverage = buildTeamTemplateCoverageReport(
+        expectedKnowledge,
+        catalogs,
+        teamTemplateCoverageGeneratedFrom
+      );
+      if (
+        stableJson(expectedTeamTemplateCoverage) !==
+        stableJson(teamTemplateCoverageInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_team_template_coverage_report",
+          path: "reports.team-template-coverage",
+          message:
+            "The saved team-template coverage report does not match current knowledge and character catalogs.",
+        });
+      }
+
+      const formulaDraftGeneratedFrom = await hashRelativePaths(
+        FURINA_NEUVILLETTE_FORMULA_DRAFT_INPUT_PATHS
+      );
+      const expectedFormulaDraft =
+        await buildFurinaNeuvilletteFormulaDraftReport(
+          expectedKnowledge,
+          formulaDraftGeneratedFrom
+        );
+      if (
+        stableJson(expectedFormulaDraft) !==
+        stableJson(furinaNeuvilletteFormulaDraftInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_formula_plan_draft",
+          path: "reports.furina-neuvillette-formula-plan-draft",
+          message:
+            "The saved Furina-Neuvillette formula-plan draft does not match current knowledge and calculator defaults.",
+        });
+      }
+
+      const comparisonStaticGeneratedFrom = await hashRelativePaths(
         DIONA_COMPARISON_INPUT_PATHS
+      );
+      const dionaInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "diona-support-weapons-luna-viii"
       );
       const expectedComparison = buildDionaComparisonReport(
         expectedKnowledge,
-        kqm.data,
-        comparisonGeneratedFrom
+        ManualObservationSnapshotSchema.parse(dionaInput.snapshot),
+        [...comparisonStaticGeneratedFrom, dionaInput.snapshotFile]
       );
       if (stableJson(expectedComparison) !== stableJson(comparisonInput)) {
         diagnostics.push({

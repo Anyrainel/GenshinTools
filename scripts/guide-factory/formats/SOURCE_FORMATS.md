@@ -139,6 +139,23 @@ calculation values remain separate fields.
 Agent output is always unreviewed and promotion-ineligible. It cannot update
 accepted knowledge or copy an entire guide field by field.
 
+Active manual files are listed in `data/source-snapshots/manual-index.json`.
+The index is the reviewed corpus boundary; a filesystem glob is not. Loading
+fails on unsafe or noncanonical paths, missing indexed files, unindexed manual
+files, case-equivalent duplicates, source-ID mismatches, and duplicate
+publisher-local record IDs across active files. Files are consolidated in
+canonical path order, and multiple pages from one publisher share one grouped
+source revision.
+
+Team archetypes use four explicit slots. A slot's `options` can accept named
+characters, one or more elements, source-defined role labels, or any character;
+those selectors are the alternatives used for coverage matching. Optional
+`highlightedOptions` preserve source-recommended named characters, elements, or
+roles inside a broader hard slot without narrowing it. Highlights cannot use
+`any` and do not participate in coverage matching. Role labels remain
+unresolved until a separate reviewed role catalog exists; they are not silently
+mapped from character impressions.
+
 ### KQM Diona pilot
 
 The pilot stores five heading-scoped records from one linked guide: weapons,
@@ -147,6 +164,53 @@ artifact sets, artifact stats, ER guidance, and one example team. The guide's
 provenance facts. KQM invites linked reference use, but no broad republication
 license was found, so this format is not authorization for bulk ingestion,
 mirroring, translation, or image reuse.
+
+### KQM Furina pilot
+
+The second page stores 13 heading-scoped records: contextual weapons, artifact
+sets, pre-C2 main stats, post-required-ER offensive substats without an ER
+number, a C6 artifact option, five team templates, and three exact example
+teams.
+The source's contextual weapon sections are not turned into one global ranking.
+Advice bounded to “before C2” uses `maxConstellation: 1`; the C6 artifact option
+uses `minConstellation: 6`.
+
+The contextual weapon observation includes Favonius Sword and Serenity's Call
+with their source conditions but no computed ER target. The exact team retains
+the source's Xilonen sample rotation. The two exact Quickbloom examples retain
+their simple or advanced rotations and the stated artifact condition for the
+Cyno combo. Formula counts translated from notation remain separate unreviewed
+computation reports rather than source facts in this format.
+
+The five templates are non-exhaustive and do not imply that every matching
+composition is source-endorsed or optimal. Exact examples remain separate team
+records. The Vaporize healer, Freeze Escoffier/Anemo, and Electro-Charged
+Anemo callouts are preserved as highlights rather than hard slot constraints.
+All records are unreviewed and promotion-ineligible.
+
+### KQM Keqing pilot
+
+The third page stores three heading-scoped team records from the visible Luna I
+guide version: one Lunar-Charged template and two exact example teams. It is a
+source-breadth test for detecting new-release team changes for an old character,
+not a broad Keqing build extraction or an optimality claim.
+
+The template hard-requires Keqing and Ineffa. Its other hard selectors are the
+source-defined roles `off-field-hydro-applier` and `resistance-shred`; Hydro,
+Anemo, and Xilonen are retained as highlights instead of being weakened into
+element-only requirements. This avoids false coverage until reviewed role data
+exists. Because no baseline team contains the required Keqing–Ineffa core, the
+coverage result is uncovered rather than role-unresolved.
+
+The Furina/Xilonen example retains two published rotation variants. The
+Aino/Sucrose example retains one rotation and its every-other-rotation Burst
+scheduling note. Neither record supplies or receives a numeric ER target,
+equipment ranking, formula mapping, or inferred investment level. Both remain
+examples with no power-ranking claim, unreviewed and promotion-ineligible.
+
+Mobalytics was considered as a second publisher but is registered as
+permission-blocked under its current terms. No Mobalytics observation file is
+part of the active corpus.
 
 ## `simulation-evidence-v1`
 

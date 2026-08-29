@@ -1,12 +1,12 @@
 {
   "engineInputs": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "feee7d62d16cd1da566c2dd9f5338f1cb800baa6e049f9e23bb007ab0c385ea0"
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+      "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
     },
     {
       "path": "scripts/guide-factory/src/dionaErCalibration.ts",
-      "sha256": "0d08d4f96ec2dbfb3f95742dd34c1b2683127c517d924bdf19dd03e46abc821f"
+      "sha256": "c95702bc129a86d7b98927643a4cc574729bbb49fe3a750fd58fa5a288b08024"
     },
     {
       "path": "src/data/ercalc/particles.json",

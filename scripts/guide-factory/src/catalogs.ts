@@ -10,6 +10,7 @@ import { readJson } from "./io";
 import { REPOSITORY_ROOT } from "./paths";
 
 type CharacterStatsEntry = {
+  element?: string;
   weaponType?: string;
 };
 
@@ -26,6 +27,7 @@ export interface GameCatalogs {
   betaCharacterIds: ReadonlySet<string>;
   betaWeaponIds: ReadonlySet<string>;
   betaArtifactSetIds: ReadonlySet<string>;
+  characterElements: ReadonlyMap<string, string>;
   characterWeaponTypes: ReadonlyMap<string, string>;
   weaponTypes: ReadonlyMap<string, string>;
   reactionIds: ReadonlySet<string>;
@@ -38,6 +40,7 @@ export interface GameCatalogs {
 const TEAM_REACTION_IDS = [
   "melt",
   "vaporize",
+  "quicken",
   "spread",
   "aggravate",
   "overloaded",
@@ -148,6 +151,13 @@ export async function loadGameCatalogs(): Promise<GameCatalogs> {
     betaCharacterIds: new Set(betaCharacters.map(({ id }) => id)),
     betaWeaponIds: new Set(betaWeapons.map(({ id }) => id)),
     betaArtifactSetIds: new Set(betaArtifacts.map(({ id }) => id)),
+    characterElements: new Map(
+      Object.entries(characterStats).flatMap(([id, stats]) =>
+        stats.element
+          ? [[id, stats.element.toLowerCase()] as const]
+          : []
+      )
+    ),
     characterWeaponTypes: new Map(
       Object.entries(characterStats).flatMap(([id, stats]) =>
         stats.weaponType ? [[id, stats.weaponType] as const] : []

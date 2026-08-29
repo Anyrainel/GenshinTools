@@ -5,6 +5,7 @@ import path from "node:path";
 import type { ZodError } from "zod";
 import type { GameCatalogs } from "./catalogs";
 import { stableJson } from "./io";
+import { manualSourceRegistryProblem } from "./manualSnapshots";
 import {
   FACTORY_ROOT,
   REPOSITORY_ROOT,
@@ -52,6 +53,11 @@ type ManualGuideRecommendation = Extract<
   { kind: "character_guide" }
 >["recommendation"];
 type ManualTeamMember = Extract<ManualRecord, { kind: "team" }>["members"][number];
+type TeamTemplateSlot = Extract<
+  ManualRecord,
+  { kind: "team_template" }
+>["slots"][number];
+type TeamTemplateSelector = TeamTemplateSlot["options"][number];
 type KnowledgeTeamMember = Extract<
   KnowledgeRecord,
   { kind: "team" }
@@ -347,6 +353,24 @@ export function validateManualObservationSnapshot(
       continue;
     }
 
+    if (record.kind === "team_template") {
+      validateTeamTemplateSlots(
+        record.slots,
+        `${recordPath}.slots`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      validateReactionIds(
+        record.reactions,
+        recordPath,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      continue;
+    }
+
     checkDuplicateValues(
       record.members.map(({ characterId }) => characterId),
       `${recordPath}.members`,
@@ -393,6 +417,38 @@ export function validateManualObservationSnapshot(
     }
   }
 
+  return diagnostics;
+}
+
+export function validateManualSnapshotCollection(
+  snapshots: readonly ManualObservationSnapshot[],
+  sourceRegistry: SourceRegistry
+): ValidationDiagnostic[] {
+  const diagnostics: ValidationDiagnostic[] = [];
+  const seen = new Map<string, string>();
+  for (const [snapshotIndex, snapshot] of snapshots.entries()) {
+    validateManualSnapshotSourceRegistryEntry(
+      snapshot.sourceId,
+      `manual-snapshots[${snapshotIndex}].sourceId`,
+      sourceRegistry,
+      diagnostics
+    );
+    for (const [recordIndex, record] of snapshot.records.entries()) {
+      const key = `${snapshot.sourceId}:${record.sourceRecordId}`;
+      const recordPath = `manual-snapshots[${snapshotIndex}].records[${recordIndex}]`;
+      const previous = seen.get(key);
+      if (previous) {
+        diagnostics.push({
+          severity: "error",
+          code: "source_record.duplicate_cross_snapshot_id",
+          path: `${recordPath}.sourceRecordId`,
+          message: `Source record ${key} duplicates ${previous}.`,
+        });
+      } else {
+        seen.set(key, `${recordPath}.sourceRecordId`);
+      }
+    }
+  }
   return diagnostics;
 }
 
@@ -757,6 +813,17 @@ export function validateKnowledgeRepository(
   );
   const generatedSourceIds = new Set<string>();
 
+  for (const [snapshotIndex, snapshot] of (
+    context.manualSnapshots ?? []
+  ).entries()) {
+    validateManualSnapshotSourceRegistryEntry(
+      snapshot.sourceId,
+      `knowledge.manualSnapshots[${snapshotIndex}].sourceId`,
+      context.sourceRegistry,
+      diagnostics
+    );
+  }
+
   if (
     context.expectedSourceRegistrySha256 &&
     repository.sourceRegistrySha256 !== context.expectedSourceRegistrySha256
@@ -841,6 +908,28 @@ export function validateKnowledgeRepository(
   }
 
   return diagnostics;
+}
+
+function validateManualSnapshotSourceRegistryEntry(
+  sourceId: string,
+  sourcePath: string,
+  sourceRegistry: SourceRegistry,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  const problem = manualSourceRegistryProblem(sourceId, sourceRegistry);
+  if (problem == null) return;
+
+  diagnostics.push({
+    severity: "error",
+    code:
+      problem.kind === "missing"
+        ? "provenance.manual_source_missing"
+        : problem.kind === "duplicate"
+          ? "provenance.manual_source_registry_duplicate"
+          : "provenance.manual_source_format_mismatch",
+    path: sourcePath,
+    message: problem.message,
+  });
 }
 
 export async function validateWorkspaceBoundary(): Promise<
@@ -967,6 +1056,24 @@ function validateKnowledgeRecord(
     return;
   }
 
+  if (record.kind === "team_template") {
+    validateTeamTemplateSlots(
+      record.slots,
+      `${recordPath}.slots`,
+      catalogs,
+      catalogSeverity,
+      diagnostics
+    );
+    validateReactionIds(
+      record.reactions,
+      recordPath,
+      catalogs,
+      catalogSeverity,
+      diagnostics
+    );
+    return;
+  }
+
   validateCharacterId(
     record.characterId,
     `${recordPath}.characterId`,
@@ -1038,6 +1145,110 @@ function validateKnowledgeRecord(
       catalogSeverity,
       diagnostics
     );
+  }
+}
+
+function validateTeamTemplateSlots(
+  slots: readonly TeamTemplateSlot[],
+  slotsPath: string,
+  catalogs: GameCatalogs,
+  severity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  checkDuplicateValues(
+    slots.map(({ id }) => id),
+    slotsPath,
+    "team_template.duplicate_slot_id",
+    diagnostics
+  );
+
+  for (const [slotIndex, slot] of slots.entries()) {
+    const slotPath = `${slotsPath}[${slotIndex}]`;
+    checkDuplicateValues(
+      slot.options.map((option) => stableJson(option)),
+      `${slotPath}.options`,
+      "team_template.duplicate_selector",
+      diagnostics
+    );
+    if (
+      slot.options.length > 1 &&
+      slot.options.some((option) => option.type === "any")
+    ) {
+      diagnostics.push({
+        severity: "error",
+        code: "team_template.redundant_any_selector",
+        path: `${slotPath}.options`,
+        message: "An any selector makes every other slot selector redundant.",
+      });
+    }
+
+    validateTeamTemplateSelectors(
+      slot.options,
+      `${slotPath}.options`,
+      catalogs,
+      severity,
+      diagnostics
+    );
+
+    if (slot.highlightedOptions) {
+      checkDuplicateValues(
+        slot.highlightedOptions.map((option) => stableJson(option)),
+        `${slotPath}.highlightedOptions`,
+        "team_template.duplicate_highlighted_selector",
+        diagnostics
+      );
+      validateTeamTemplateSelectors(
+        slot.highlightedOptions,
+        `${slotPath}.highlightedOptions`,
+        catalogs,
+        severity,
+        diagnostics
+      );
+    }
+  }
+}
+
+function validateTeamTemplateSelectors(
+  selectors: readonly TeamTemplateSelector[],
+  selectorsPath: string,
+  catalogs: GameCatalogs,
+  severity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  for (const [optionIndex, option] of selectors.entries()) {
+    const optionPath = `${selectorsPath}[${optionIndex}]`;
+    if (option.type === "characters") {
+      checkDuplicateValues(
+        option.characterIds,
+        `${optionPath}.characterIds`,
+        "team_template.duplicate_character_selector",
+        diagnostics
+      );
+      for (const [characterIndex, characterId] of
+        option.characterIds.entries()) {
+        validateCharacterId(
+          characterId,
+          `${optionPath}.characterIds[${characterIndex}]`,
+          catalogs,
+          severity,
+          diagnostics
+        );
+      }
+    } else if (option.type === "elements") {
+      checkDuplicateValues(
+        option.elements,
+        `${optionPath}.elements`,
+        "team_template.duplicate_element_selector",
+        diagnostics
+      );
+    } else if (option.type === "roles") {
+      checkDuplicateValues(
+        option.roleIds,
+        `${optionPath}.roleIds`,
+        "team_template.duplicate_role_selector",
+        diagnostics
+      );
+    }
   }
 }
 

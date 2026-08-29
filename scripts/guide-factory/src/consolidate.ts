@@ -1,40 +1,33 @@
 import { consolidateKnowledge } from "./consolidation";
 import { readJson, sha256File, writeJson } from "./io";
+import { loadManualSnapshotInputs } from "./manualSnapshots";
 import {
   GENSHINTOOLS_SNAPSHOT_PATH,
-  KQM_MANUAL_SNAPSHOT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
   LEGACY_SNAPSHOT_PATH,
-  REPOSITORY_ROOT,
+  MANUAL_SNAPSHOT_INDEX_PATH,
   SOURCE_REGISTRY_PATH,
 } from "./paths";
 
-const [
-  genshinTools,
-  legacy,
-  kqm,
-  kqmSnapshotSha256,
-  sourceRegistrySha256,
-] = await Promise.all([
+const [genshinTools, legacy, manualIndex, sourceRegistry, sourceRegistrySha256] =
+  await Promise.all([
   readJson(GENSHINTOOLS_SNAPSHOT_PATH),
   readJson(LEGACY_SNAPSHOT_PATH),
-  readJson(KQM_MANUAL_SNAPSHOT_PATH),
-  sha256File(KQM_MANUAL_SNAPSHOT_PATH),
+  readJson(MANUAL_SNAPSHOT_INDEX_PATH),
+  readJson(SOURCE_REGISTRY_PATH),
   sha256File(SOURCE_REGISTRY_PATH),
 ]);
+const manualSnapshots = await loadManualSnapshotInputs(
+  manualIndex,
+  sourceRegistry
+);
 
 const repository = consolidateKnowledge({
+  sourceRegistry,
   sourceRegistrySha256,
   genshinTools,
   legacy,
-  kqm,
-  kqmSnapshotFile: {
-    path: KQM_MANUAL_SNAPSHOT_PATH.slice(REPOSITORY_ROOT.length + 1).replaceAll(
-      "\\",
-      "/"
-    ),
-    sha256: kqmSnapshotSha256,
-  },
+  manualSnapshots,
 });
 
 await writeJson(KNOWLEDGE_REPOSITORY_PATH, repository);

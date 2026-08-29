@@ -276,10 +276,6 @@
   ],
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "feee7d62d16cd1da566c2dd9f5338f1cb800baa6e049f9e23bb007ab0c385ea0"
-    },
-    {
       "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
       "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
     },
@@ -289,7 +285,7 @@
     },
     {
       "path": "scripts/guide-factory/src/comparison.ts",
-      "sha256": "2d75093fdda65a365035938c51ec3067adc2a5a257baf675ea5018ec0ebc7694"
+      "sha256": "96941f08835a9867131a7bc4dcde22b7396d59a437ec08bb2fdcf5af78f626e1"
     }
   ],
   "prohibitedAggregates": [

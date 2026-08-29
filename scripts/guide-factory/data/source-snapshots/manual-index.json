@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "snapshots": [
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json"
+    },
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json"
+    },
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"
+    }
+  ]
+}

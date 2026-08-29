@@ -1,0 +1,2553 @@
+{
+  "characters": [
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "aino",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "albedo",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "alhaitham",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "alyosha",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "amber",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "arataki_itto",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 5,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "arlecchino",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 5,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "baizhu",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 5,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "barbara",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "beidou",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 18,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "bennett",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 53,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "candace",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "charlotte",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "chasca",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 7,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "chevreuse",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 8,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "chiori",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "chongyun",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 12,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "citlali",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 8,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "clorinde",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 6,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "collei",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 7,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "columbina",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "cyno",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "dahlia",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "dehya",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "diluc",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "diona",
+      "externalEditorial": {
+        "recordCount": 4,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "dori",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 15,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "durin",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "emilie",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 6,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "escoffier",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 6,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "eula",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 6,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "faruzan",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 8,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 11,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "fischl",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 32,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "flins",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "freminet",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 27,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "furina",
+      "externalEditorial": {
+        "recordCount": 14,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 37,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "gaming",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "ganyu",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "gorou",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "hu_tao",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "iansan",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "ifa",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "illuga",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "ineffa",
+      "externalEditorial": {
+        "recordCount": 3,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "jahoda",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "jean",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kachina",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 8,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kaedehara_kazuha",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 30,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kaeya",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kamisato_ayaka",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kamisato_ayato",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kaveh",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "keqing",
+      "externalEditorial": {
+        "recordCount": 3,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 5,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kinich",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kirara",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "klee",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kujou_sara",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "kuki_shinobu",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 5,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "lan_yan",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 5,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "lauma",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "layla",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "linnea",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "lisa",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "lohen",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "lynette",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "lyney",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 5,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "mavuika",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 10,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "mika",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 6,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "mona",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "mualani",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 9,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "nahida",
+      "externalEditorial": {
+        "recordCount": 2,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 28,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "navia",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "nefer",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "neuvillette",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 6,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 12,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "nicole",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "nilou",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 6,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "ningguang",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "noelle",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "odette",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "ororon",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "prune",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "qiqi",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 5,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "raiden_shogun",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 10,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "razor",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "rosaria",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "sandrone",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "sangonomiya_kokomi",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 6,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "sayu",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "sethos",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 7,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "shenhe",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 9,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "shikanoin_heizou",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "sigewinne",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "skirk",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "sucrose",
+      "externalEditorial": {
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 8,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "tartaglia",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "thoma",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "tighnari",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "traveler_cryo",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "traveler_dendro",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "traveler_pyro",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "varesa",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "varka",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "venti",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "wanderer",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "wriothesley",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 7,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "xiangling",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 14,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 6,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "xianyun",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 7,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "xiao",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 4,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 23,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "xilonen",
+      "externalEditorial": {
+        "recordCount": 2,
+        "sourceIds": [
+          "kqm"
+        ]
+      },
+      "other": {
+        "recordCount": 20,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "both"
+    },
+    {
+      "baseline": {
+        "recordCount": 5,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "xingqiu",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 23,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "xinyan",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yae_miko",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yanfei",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 1,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yaoyao",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 3,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 4,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yelan",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 13,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yoimiya",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 2,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yumemizuki_mizuki",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "yun_jin",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "zhongli",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 20,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "zibai",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 1,
+        "sourceIds": [
+          "legacy-team-research"
+        ]
+      },
+      "presence": "baseline-only"
+    }
+  ],
+  "classification": "descriptive-inventory",
+  "definitions": {
+    "characterPresence": "Character presence is derived only from character-guide subjects, exact-team members, and explicit character selectors in team templates. Element, role, and any selectors are not expanded.",
+    "erExclusion": "Energy-guidance records remain visible in kind and status totals, but their targets, weapon conditions, rotations, and character associations do not contribute to evidence or character-presence counts.",
+    "evidenceCounts": "recordsWith fields count records containing at least one explicit value; occurrence fields count each stored ID, choice object, stat group, or rotation entry without deduplication.",
+    "exactTeams": "An exact team is a record of kind team, whose schema names exactly four characters. A team template is counted separately and is never expanded into exact teams.",
+    "externalEditorial": "External editorial presence means an attributed source whose registry kind is editorial or structured-editorial. Baseline presence means record status baseline; other records are reported separately.",
+    "rotations": "Exact-team rotation counts include only explicit RotationObservation entries attached to team records; unresolved segments are still explicit stored observations and are not treated as complete or optimal rotations.",
+    "sourceCounts": "A record is counted once for every distinct sourceId in its sourceRefs. Therefore source-attributed record totals can exceed the unique repository record count."
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "87f8ddd1a2251402cda724ca8b6999c50c1c530583ae7a71b661aff190a268f1"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "292c63c4f5dc73275e7f0da8637015bc783dc131256e421cc48aa4cb417c4490"
+    },
+    {
+      "path": "scripts/guide-factory/src/corpusInventory.ts",
+      "sha256": "40feac59dad9abed6664f59a3b16d2426cf0a63d795dc732d0e2452e9859e5f1"
+    }
+  ],
+  "prohibitedInterpretations": [
+    "quality-score",
+    "recommendation",
+    "source-vote",
+    "source-average",
+    "ranking"
+  ],
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "byKind": {
+        "character_guide": 120,
+        "energy_guidance": 0,
+        "team": 71,
+        "team_template": 0
+      },
+      "byStatus": {
+        "accepted": 0,
+        "baseline": 191,
+        "candidate": 0,
+        "contested": 0,
+        "rejected": 0
+      },
+      "evidence": {
+        "artifactChoiceOccurrences": 472,
+        "exactTeamRecords": 71,
+        "exactTeamRecordsWithRotations": 0,
+        "exactTeamRotationEntries": 0,
+        "mainStatGroups": 712,
+        "mainStatIdOccurrences": 712,
+        "recordsWithArtifacts": 191,
+        "recordsWithMainStats": 120,
+        "recordsWithSubstats": 120,
+        "recordsWithWeapons": 180,
+        "substatGroups": 590,
+        "substatIdOccurrences": 590,
+        "teamTemplateRecords": 0,
+        "weaponIdOccurrences": 411
+      },
+      "ingestionMode": "internal-adapter",
+      "records": 191,
+      "sourceId": "genshintools-presets",
+      "sourceKind": "internal"
+    },
+    {
+      "byKind": {
+        "character_guide": 8,
+        "energy_guidance": 1,
+        "team": 6,
+        "team_template": 6
+      },
+      "byStatus": {
+        "accepted": 0,
+        "baseline": 0,
+        "candidate": 21,
+        "contested": 0,
+        "rejected": 0
+      },
+      "evidence": {
+        "artifactChoiceOccurrences": 18,
+        "exactTeamRecords": 6,
+        "exactTeamRecordsWithRotations": 6,
+        "exactTeamRotationEntries": 8,
+        "mainStatGroups": 9,
+        "mainStatIdOccurrences": 12,
+        "recordsWithArtifacts": 5,
+        "recordsWithMainStats": 2,
+        "recordsWithSubstats": 2,
+        "recordsWithWeapons": 2,
+        "substatGroups": 6,
+        "substatIdOccurrences": 7,
+        "teamTemplateRecords": 6,
+        "weaponIdOccurrences": 15
+      },
+      "ingestionMode": "manual-observation",
+      "records": 21,
+      "sourceId": "kqm",
+      "sourceKind": "editorial"
+    },
+    {
+      "byKind": {
+        "character_guide": 0,
+        "energy_guidance": 0,
+        "team": 139,
+        "team_template": 0
+      },
+      "byStatus": {
+        "accepted": 0,
+        "baseline": 0,
+        "candidate": 139,
+        "contested": 0,
+        "rejected": 0
+      },
+      "evidence": {
+        "artifactChoiceOccurrences": 556,
+        "exactTeamRecords": 139,
+        "exactTeamRecordsWithRotations": 0,
+        "exactTeamRotationEntries": 0,
+        "mainStatGroups": 0,
+        "mainStatIdOccurrences": 0,
+        "recordsWithArtifacts": 139,
+        "recordsWithMainStats": 0,
+        "recordsWithSubstats": 0,
+        "recordsWithWeapons": 139,
+        "substatGroups": 0,
+        "substatIdOccurrences": 0,
+        "teamTemplateRecords": 0,
+        "weaponIdOccurrences": 556
+      },
+      "ingestionMode": "internal-adapter",
+      "records": 139,
+      "sourceId": "legacy-team-research",
+      "sourceKind": "internal"
+    }
+  ],
+  "supportsGuideClaims": false,
+  "totals": {
+    "byKind": {
+      "character_guide": 128,
+      "energy_guidance": 1,
+      "team": 216,
+      "team_template": 6
+    },
+    "byStatus": {
+      "accepted": 0,
+      "baseline": 191,
+      "candidate": 160,
+      "contested": 0,
+      "rejected": 0
+    },
+    "evidence": {
+      "artifactChoiceOccurrences": 1046,
+      "exactTeamRecords": 216,
+      "exactTeamRecordsWithRotations": 6,
+      "exactTeamRotationEntries": 8,
+      "mainStatGroups": 721,
+      "mainStatIdOccurrences": 724,
+      "recordsWithArtifacts": 335,
+      "recordsWithMainStats": 122,
+      "recordsWithSubstats": 122,
+      "recordsWithWeapons": 321,
+      "substatGroups": 596,
+      "substatIdOccurrences": 597,
+      "teamTemplateRecords": 6,
+      "weaponIdOccurrences": 982
+    },
+    "records": 351,
+    "sourceAttributedRecords": 351
+  }
+}

@@ -11,7 +11,7 @@ import type { KnowledgeRepository } from "./schemas";
 
 export const DIONA_ER_ENGINE_INPUT_PATHS = [
   "scripts/guide-factory/src/dionaErCalibration.ts",
-  "scripts/guide-factory/data/knowledge/repository.json",
+  "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
   "src/lib/ercalc/erCalculator.ts",
   "src/lib/ercalc/artifactEnergy.ts",
   "src/lib/ercalc/constants.ts",

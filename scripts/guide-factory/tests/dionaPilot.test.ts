@@ -3,8 +3,13 @@ import { buildDionaComparisonReport } from "../src/comparison";
 import { buildDionaErCalibrationReport } from "../src/dionaErCalibration";
 import { readJson } from "../src/io";
 import {
-  KQM_MANUAL_SNAPSHOT_PATH,
+  loadManualSnapshotInputs,
+  requiredManualSnapshotInputContaining,
+} from "../src/manualSnapshots";
+import {
   KNOWLEDGE_REPOSITORY_PATH,
+  MANUAL_SNAPSHOT_INDEX_PATH,
+  SOURCE_REGISTRY_PATH,
 } from "../src/paths";
 import {
   KnowledgeRepositorySchema,
@@ -13,12 +18,22 @@ import {
 
 describe("KQM Diona pilot", () => {
   it("compares assertions without manufacturing consensus or an order", async () => {
-    const [repositoryInput, snapshotInput] = await Promise.all([
+    const [repositoryInput, manualIndexInput, sourceRegistryInput] = await Promise.all([
       readJson(KNOWLEDGE_REPOSITORY_PATH),
-      readJson(KQM_MANUAL_SNAPSHOT_PATH),
+      readJson(MANUAL_SNAPSHOT_INDEX_PATH),
+      readJson(SOURCE_REGISTRY_PATH),
     ]);
     const repository = KnowledgeRepositorySchema.parse(repositoryInput);
-    const snapshot = ManualObservationSnapshotSchema.parse(snapshotInput);
+    const manualInputs = await loadManualSnapshotInputs(
+      manualIndexInput,
+      sourceRegistryInput
+    );
+    const dionaInput = requiredManualSnapshotInputContaining(
+      manualInputs,
+      "kqm",
+      "diona-support-weapons-luna-viii",
+    );
+    const snapshot = ManualObservationSnapshotSchema.parse(dionaInput.snapshot);
     const report = buildDionaComparisonReport(repository, snapshot, []);
 
     expect(report.assertions).toHaveLength(9);

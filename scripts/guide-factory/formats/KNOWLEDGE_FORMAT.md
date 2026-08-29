@@ -1,7 +1,8 @@
 # Consolidated Knowledge Format V1
 
-The consolidated format is a union of team, character-guide, and energy-
-guidance records. It does not merge assertions from different sources.
+The consolidated format is a union of exact-team, team-template,
+character-guide, and energy-guidance records. It does not merge assertions
+from different sources.
 
 Every record has:
 
@@ -33,6 +34,27 @@ owned by members of the team. Formula IDs are structurally validated in this
 checkpoint; engine availability and gameplay feasibility are deferred until an
 exact calculation variant exists.
 
+## Team-template records
+
+A team template has exactly four slots. Each slot's required `options` contain
+one or more explicit alternative selectors:
+
+- named character IDs;
+- lowercase element IDs;
+- source-defined role labels;
+- unrestricted `any`.
+
+An optional `highlightedOptions` list preserves named characters, elements, or
+source-defined roles that the source calls out within an otherwise broad slot.
+Highlights are recommendations, not additional matching requirements, and
+cannot use `any`. Coverage therefore evaluates only `options`; it does not
+silently narrow an unrestricted slot to the highlighted examples.
+
+Templates preserve example or prescriptive intent, exhaustiveness, and ranking
+claims. They are not expanded into exact teams during consolidation. Current
+coverage computation can resolve character, element, and unrestricted slots;
+role slots remain unresolved because V1 has no role catalog.
+
 ## Character-guide records
 
 A character guide can preserve weighted internal build records or heading-
@@ -49,6 +71,8 @@ percentages.
 External recommendations preserve their source scope (`weapons`, `artifact-
 sets`, `artifact-stats`, or `energy`), whether order is meaningful, the
 difference between alternatives and tied ranks, and applicability conditions.
+They may carry both minimum and maximum constellation bounds for advice that
+applies only to a limited investment range.
 An unranked source list never becomes a ranking merely because its items have a
 display order.
 
@@ -81,6 +105,11 @@ V1 does not define:
 - ER adequacy;
 - computed equipment rankings;
 - cross-source publication eligibility.
+
+Formula-count drafts and coverage reports are derived review evidence, not
+additional knowledge-record kinds. A calculator-default formula draft cannot
+be placed in a team's `damagePlans` until its counts and assumptions have been
+reviewed as an authored validation target.
 
 Those decisions will be introduced only after real source observations expose
 the necessary distinctions.

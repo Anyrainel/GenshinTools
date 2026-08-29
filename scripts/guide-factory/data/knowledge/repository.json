@@ -18,6 +18,14 @@
         {
           "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
           "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
+        },
+        {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+          "sha256": "a6bd0c5d9ee7d5d19b56ee4bf5caae1c01420bc415dc7ed74cae50cfe66a0977"
+        },
+        {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+          "sha256": "f774ca74f4e94b478934a078e051e895bd017edb3e8ee29fe03122f705761d6a"
         }
       ],
       "sourceId": "kqm"
@@ -18698,6 +18706,462 @@
       ]
     },
     {
+      "builds": [],
+      "characterId": "furina",
+      "id": "kqm:character-guide:furina-artifact-sets-luna-ii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "golden_troupe",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "default",
+              "conditions": [
+                "Furina's personal off-field damage is a meaningful team contribution."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "tenacity_of_the_millelith",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Furina's personal damage share is already low and the team benefits from the set's ATK buff."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "scroll_of_the_hero_of_cinder_city",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Furina's personal damage share is low and her teammates do not benefit from Tenacity's ATK buff."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "silken_moons_serenade",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Furina's personal damage share is low and her teammates do not benefit from Tenacity's ATK buff.",
+                "The team has at least one Nod-Krai character; the EM support is strongest with at least two."
+              ],
+              "grouping": "single"
+            },
+            {
+              "artifacts": [
+                {
+                  "setId": "deepwood_memories",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "A Kinich team has no other Deepwood Memories holder, or Furina is used as a support-set holder in a Nefer team."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "id": "off-field-artifact-sets",
+          "label": "Contextual off-field artifact sets",
+          "roles": [
+            "dps",
+            "support"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-artifact-sets-luna-ii"
+        },
+        {
+          "locator": {
+            "heading": "Teams > Notable Teammates > Dendro > Kinich and Nefer",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-artifact-sets-luna-ii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "quantitative artifact performance by team",
+        "teamwide damage tradeoffs between personal-damage and support sets",
+        "exact two-piece placeholder combinations",
+        "other support-set assignments in Kinich and Nefer teams",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "furina",
+      "id": "kqm:character-guide:furina-c6-marechaussee-luna-ii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "marechaussee_hunter",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Furina uses her C6-enhanced attacks on-field.",
+                "Treat this as an option rather than an automatic upgrade over Golden Troupe because its stacks neither accumulate nor refresh while she is off-field."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "id": "c6-brief-on-field-artifact-set",
+          "label": "C6 brief on-field artifact option",
+          "minConstellation": 6,
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Sets > 4pc Marechaussee Hunter",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-c6-marechaussee-luna-ii"
+        },
+        {
+          "locator": {
+            "heading": "Character Overview > Constellations > Constellation 6",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-c6-marechaussee-luna-ii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "C6 artifact performance by attack sequence and field time",
+        "whether Furina remains on-field after her enhanced attacks",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "furina",
+      "id": "kqm:character-guide:furina-contextual-weapons-luna-ii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "contextual-weapons",
+          "label": "Contextual personal-damage and team-support weapons",
+          "roles": [
+            "dps",
+            "support"
+          ],
+          "scope": "weapons",
+          "weaponOrdering": "unranked",
+          "weaponRecommendations": [
+            {
+              "classification": "recommended",
+              "conditions": [
+                "Prioritize Furina's personal damage after meeting the rotation-specific energy requirement."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "splendor_of_tranquil_waters"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Prioritize personal damage after meeting the rotation-specific energy requirement.",
+                "Its performance improves when a teammate deals Geo damage."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "uraku_misugiri"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Prioritize personal damage; within that comparison, the source places it after Splendor and Uraku."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "primordial_jade_cutter"
+              ]
+            },
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Prioritize team damage in a reaction team that values its partywide EM buff, such as Vaporize or Lunar-Charged."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "key_of_khajnisut"
+              ]
+            },
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Use as a high-investment support option for an ATK-scaling Normal or Charged Attack damage dealer that does not depend on EM."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "freedomsworn"
+              ]
+            },
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Use when meeting the team's energy needs is more valuable than Furina's personal damage.",
+                "The source especially highlights teams with very high energy requirements for Furina; no numeric target is captured here."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "favonius_sword"
+              ]
+            },
+            {
+              "classification": "conditional",
+              "conditions": [
+                "Furina's personal damage matters and her energy requirement is high.",
+                "Without its full passive, the source compares it to Festering Desire; with Moonsign: Ascendant Gleam enabling the full passive, it can surpass that comparison."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "serenitys_call"
+              ]
+            },
+            {
+              "classification": "available-only",
+              "conditions": [
+                "The legacy Version 1.2 event weapon is already owned."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "festering_desire"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "A free fishing weapon is preferred; the source describes it as a weaker analogue to Festering Desire."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "fleuve_cendre_ferryman"
+              ]
+            },
+            {
+              "classification": "alternative",
+              "conditions": [
+                "Use as a low-cost fallback when stronger options are unavailable and fishing is not desired.",
+                "Maintaining its passive requires sustained, strong teamwide healing."
+              ],
+              "grouping": "single",
+              "weaponIds": [
+                "harbinger_of_dawn"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-contextual-weapons-luna-ii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "no cross-context global weapon ranking",
+        "rotation-specific ER requirements",
+        "refinement-specific comparisons",
+        "exact teamwide damage tradeoffs",
+        "additional CRIT stat-stick swords omitted from this narrow snapshot",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "furina",
+      "id": "kqm:character-guide:furina-post-er-substats-luna-ii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "post-er-substat-priority",
+          "label": "Offensive substats after the required ER",
+          "roles": [
+            "dps",
+            "support"
+          ],
+          "scope": "artifact-stats",
+          "substats": [
+            {
+              "conditions": [
+                "After meeting the rotation-specific ER requirement."
+              ],
+              "priority": 1,
+              "statIds": [
+                "cr",
+                "cd"
+              ]
+            },
+            {
+              "conditions": [
+                "After meeting the rotation-specific ER requirement."
+              ],
+              "priority": 2,
+              "statIds": [
+                "hp%"
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Stats > Stat Priority",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-post-er-substats-luna-ii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "rotation-specific ER requirement",
+        "numeric stat weights",
+        "weapon-dependent stat balance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "builds": [],
+      "characterId": "furina",
+      "id": "kqm:character-guide:furina-pre-c2-artifact-main-stats-luna-ii",
+      "kind": "character_guide",
+      "promotionEligible": false,
+      "recommendations": [
+        {
+          "id": "pre-c2-artifact-main-stats",
+          "label": "Pre-C2 off-field artifact main stats",
+          "mainStats": {
+            "circlet": [
+              {
+                "conditions": [],
+                "statIds": [
+                  "cr",
+                  "cd"
+                ]
+              }
+            ],
+            "goblet": [
+              {
+                "conditions": [
+                  "Preferred for most builds before C2."
+                ],
+                "priority": 1,
+                "statIds": [
+                  "hp%"
+                ]
+              },
+              {
+                "conditions": [
+                  "A viable alternative, including before C2."
+                ],
+                "priority": 2,
+                "statIds": [
+                  "hydro%"
+                ]
+              }
+            ],
+            "sands": [
+              {
+                "conditions": [
+                  "Choose between HP% and ER according to the rotation-specific energy requirement."
+                ],
+                "statIds": [
+                  "hp%",
+                  "er"
+                ]
+              }
+            ]
+          },
+          "maxConstellation": 1,
+          "roles": [
+            "dps",
+            "support"
+          ],
+          "scope": "artifact-stats"
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Artifact Stats",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-pre-c2-artifact-main-stats-luna-ii"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "rotation-specific ER requirement",
+        "main-stat ordering from C2 onward",
+        "numeric stat weights",
+        "weapon-dependent stat balance",
+        "formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
       "characterId": "diona",
       "constellation": 6,
       "id": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
@@ -18810,6 +19274,508 @@
         "weapon refinements",
         "particle funneling details beyond the linked sheet",
         "whether the Luna VIII guide still endorses every Version 6.7 calculation input",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team-template:furina-team-template-electro-charged",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Furina — Electro — Electro / Hydro — Anemo / Flex",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "electroCharged"
+      ],
+      "slots": [
+        {
+          "id": "furina",
+          "options": [
+            {
+              "characterIds": [
+                "furina"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "electro",
+          "options": [
+            {
+              "elements": [
+                "electro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "id": "electro-or-hydro",
+          "options": [
+            {
+              "elements": [
+                "electro",
+                "hydro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "highlightedOptions": [
+            {
+              "elements": [
+                "anemo"
+              ],
+              "type": "elements"
+            }
+          ],
+          "id": "anemo-or-flex",
+          "options": [
+            {
+              "type": "any"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Electro-Charged",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-electro-charged"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "whether a candidate team emphasizes Electro-Charged or Lunar-Charged damage",
+        "which Anemo or flex character is optimal",
+        "constellations and weapons",
+        "rotation and formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team-template:furina-team-template-freeze",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Furina — Cryo — Cryo / Hydro — Escoffier / Anemo / Flex",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "frozen"
+      ],
+      "slots": [
+        {
+          "id": "furina",
+          "options": [
+            {
+              "characterIds": [
+                "furina"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "cryo",
+          "options": [
+            {
+              "elements": [
+                "cryo"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "id": "cryo-or-hydro",
+          "options": [
+            {
+              "elements": [
+                "cryo",
+                "hydro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "highlightedOptions": [
+            {
+              "characterIds": [
+                "escoffier"
+              ],
+              "type": "characters"
+            },
+            {
+              "elements": [
+                "anemo"
+              ],
+              "type": "elements"
+            }
+          ],
+          "id": "support-flex",
+          "options": [
+            {
+              "type": "any"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Freeze",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-freeze"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which Cryo or Hydro damage dealer is optimal",
+        "enemy Freeze susceptibility",
+        "constellations and weapons",
+        "rotation and formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team-template:furina-team-template-hypercarry-mono",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Furina — Healer — Flex — Flex",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "slots": [
+        {
+          "id": "furina",
+          "options": [
+            {
+              "characterIds": [
+                "furina"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "healer",
+          "options": [
+            {
+              "roleIds": [
+                "healer"
+              ],
+              "type": "roles"
+            }
+          ]
+        },
+        {
+          "id": "flex-1",
+          "options": [
+            {
+              "type": "any"
+            }
+          ]
+        },
+        {
+          "id": "flex-2",
+          "options": [
+            {
+              "type": "any"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Hypercarry & Mono Element",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-hypercarry-mono"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which healer and flex characters are optimal for a specific damage dealer",
+        "constellations and weapons",
+        "rotation and formula counts",
+        "scenario-specific healing needs",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team-template:furina-team-template-quickbloom",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Furina — Dendro — Electro — Flex",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "quicken",
+        "hyperbloom"
+      ],
+      "slots": [
+        {
+          "id": "furina",
+          "options": [
+            {
+              "characterIds": [
+                "furina"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "dendro",
+          "options": [
+            {
+              "elements": [
+                "dendro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "id": "electro",
+          "options": [
+            {
+              "elements": [
+                "electro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "id": "flex",
+          "options": [
+            {
+              "type": "any"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Quickbloom",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-quickbloom"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which teammate triggers Hyperbloom",
+        "which Dendro or Electro damage dealer is optimal",
+        "constellations and weapons",
+        "rotation and formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team-template:furina-team-template-vaporize",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Furina — Pyro — Pyro / Hydro / Electro — Flex / Healer",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "vaporize"
+      ],
+      "slots": [
+        {
+          "id": "furina",
+          "options": [
+            {
+              "characterIds": [
+                "furina"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "pyro",
+          "options": [
+            {
+              "elements": [
+                "pyro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "id": "second-applier",
+          "options": [
+            {
+              "elements": [
+                "pyro",
+                "hydro",
+                "electro"
+              ],
+              "type": "elements"
+            }
+          ]
+        },
+        {
+          "highlightedOptions": [
+            {
+              "roleIds": [
+                "healer"
+              ],
+              "type": "roles"
+            }
+          ],
+          "id": "flex-or-healer",
+          "options": [
+            {
+              "type": "any"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Vaporize",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-team-template-vaporize"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which Pyro characters Furina can enable without another aura source",
+        "which flex or healer is optimal",
+        "constellations and weapons",
+        "rotation and formula counts",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "exhaustiveness": "unspecified",
+      "id": "kqm:team-template:keqing-team-template-lunar-charged",
+      "intent": "prescriptive",
+      "kind": "team_template",
+      "label": "Keqing — Ineffa — Hydro — Anemo / Flex",
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "lunarCharged"
+      ],
+      "slots": [
+        {
+          "id": "keqing",
+          "options": [
+            {
+              "characterIds": [
+                "keqing"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "id": "ineffa",
+          "options": [
+            {
+              "characterIds": [
+                "ineffa"
+              ],
+              "type": "characters"
+            }
+          ]
+        },
+        {
+          "highlightedOptions": [
+            {
+              "elements": [
+                "hydro"
+              ],
+              "type": "elements"
+            }
+          ],
+          "id": "off-field-hydro",
+          "options": [
+            {
+              "roleIds": [
+                "off-field-hydro-applier"
+              ],
+              "type": "roles"
+            }
+          ]
+        },
+        {
+          "highlightedOptions": [
+            {
+              "elements": [
+                "anemo"
+              ],
+              "type": "elements"
+            },
+            {
+              "characterIds": [
+                "xilonen"
+              ],
+              "type": "characters"
+            }
+          ],
+          "id": "resistance-shred",
+          "options": [
+            {
+              "roleIds": [
+                "resistance-shred"
+              ],
+              "type": "roles"
+            }
+          ]
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-team-template-lunar-charged"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-team-template-lunar-charged"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which eligible off-field Hydro applier is optimal",
+        "which source of RES Shred is optimal",
+        "constellations, weapons, and artifacts",
+        "rotation and formula counts",
+        "enemy scenario",
+        "the source says Ineffa usually contributes the most team damage and Keqing faces strong competition for her slot; this template does not establish that every matching roster is optimal",
         "agent-assisted extraction has not been human-reviewed"
       ]
     },
@@ -18946,6 +19912,435 @@
         "rotation duration",
         "enemy scenario",
         "coordinated Noblesse Oblige assignment",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:furina-alhaitham-shinobu-nahida-quickbloom-example",
+      "intent": "example",
+      "kind": "team",
+      "label": "Furina — Alhaitham — Shinobu — Nahida",
+      "members": [
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "alhaitham",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "kuki_shinobu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "nahida",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "quicken",
+        "hyperbloom",
+        "spread"
+      ],
+      "rotations": [
+        {
+          "assumptions": [],
+          "id": "sample-rotation-simple",
+          "label": "KQM simple sample rotation",
+          "notation": "Furina ED > Nahida E Q > Furina Q > Shinobu E > Alhaitham Q 2[N3D] N2 E 2[N3D] N1C 4[N3D]",
+          "unresolvedSegments": []
+        },
+        {
+          "assumptions": [],
+          "id": "sample-rotation-advanced",
+          "label": "KQM advanced sample rotation",
+          "notation": "Shinobu E > Nahida E Q > Furina ED Q > Alhaitham hEP N2C N3C > Shinobu Q E > Alhaitham Q N3D N3C 5[N3D]",
+          "unresolvedSegments": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Quickbloom > Example Teams > Furina — Alhaitham — Shinobu — Nahida",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-alhaitham-shinobu-nahida-quickbloom-example"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "weapons and refinements",
+        "artifact assignments",
+        "constellations",
+        "rotation durations",
+        "formula mappings and reaction ownership",
+        "enemy scenario",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:furina-nahida-cyno-baizhu-quickbloom-example",
+      "intent": "example",
+      "kind": "team",
+      "label": "Furina — Nahida — Cyno — Baizhu",
+      "members": [
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "nahida",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "artifactOrdering": "unranked",
+          "artifactRecommendations": [
+            {
+              "artifacts": [
+                {
+                  "setId": "thundering_fury",
+                  "type": "4pc"
+                }
+              ],
+              "classification": "conditional",
+              "conditions": [
+                "Required for the source's stated sample combo."
+              ],
+              "grouping": "single"
+            }
+          ],
+          "characterId": "cyno",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "baizhu",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "quicken",
+        "hyperbloom",
+        "aggravate"
+      ],
+      "rotations": [
+        {
+          "assumptions": [
+            "Cyno equips 4pc Thundering Fury for the stated combo."
+          ],
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "Furina ED Q > Nahida EQ > Baizhu N1 EQ > Cyno EQ N1 E 6[N4E]",
+          "unresolvedSegments": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Quickbloom > Example Teams > Furina — Nahida — Cyno — Baizhu",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-nahida-cyno-baizhu-quickbloom-example"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "numeric ER requirements are deferred",
+        "weapons and refinements",
+        "constellations",
+        "rotation duration",
+        "formula mappings and reaction ownership",
+        "enemy scenario",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "non-exhaustive",
+      "id": "kqm:team:furina-neuvillette-kazuha-xilonen-example",
+      "intent": "example",
+      "kind": "team",
+      "label": "Furina — Neuvillette — Kazuha — Xilonen",
+      "members": [
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "neuvillette",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "kaedehara_kazuha",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "rotations": [
+        {
+          "assumptions": [],
+          "id": "sample-rotation-xilonen",
+          "label": "KQM sample rotation (Xilonen variant)",
+          "notation": "Neuvillette E > Furina ED N1 > Xilonen EQ N2 > Kazuha tEPQ > Furina Q > Neuvillette C E C Q > Xilonen E N2 > Kazuha tEP > Neuvillette 2[C]",
+          "unresolvedSegments": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Hypercarry & Mono Element > Example Teams > Furina — Neuvillette — Kazuha — Xilonen / Zhongli / Pyro Traveler",
+            "url": "https://keqingmains.com/q/furina-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "furina-neuvillette-kazuha-xilonen-example"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "constellations and weapons",
+        "artifact assignments",
+        "formula mappings and non-explicit hit counts",
+        "Salon Member hit count over the sequence",
+        "Kazuha reaction ownership and absorbed-element timing",
+        "enemy scenario",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "unspecified",
+      "id": "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "intent": "example",
+      "kind": "team",
+      "label": "Keqing — Ineffa — Aino — Sucrose",
+      "members": [
+        {
+          "characterId": "keqing",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "aino",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "sucrose",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "lunarCharged"
+      ],
+      "rotations": [
+        {
+          "assumptions": [
+            "Use Ineffa's and Sucrose's optional Bursts every other rotation, alternating which character Bursts.",
+            "The source describes the rotation as approximately 16 seconds.",
+            "Sucrose returns on-field at the end to refresh Viridescent Venerer."
+          ],
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "Ineffa E (Q) > Aino EQ > Sucrose ED (Q) > Keqing EQE 5[N1C] > Sucrose N2",
+          "unresolvedSegments": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Aino — Sucrose",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-aino-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-aino-sucrose-lunar-charged-example"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "weapons, artifacts, and refinements",
+        "constellations other than the source's optional Aino C6 context",
+        "formula mappings, formula counts, and reaction ownership",
+        "enemy scenario",
+        "Aino C6 is optional investment context that can change Lunar-Charged contribution; it is not a team or rotation requirement",
+        "agent-assisted extraction has not been human-reviewed"
+      ]
+    },
+    {
+      "damagePlans": [],
+      "exhaustiveness": "unspecified",
+      "id": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "intent": "example",
+      "kind": "team",
+      "label": "Keqing — Ineffa — Furina — Xilonen",
+      "members": [
+        {
+          "characterId": "keqing",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "ineffa",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        },
+        {
+          "characterId": "xilonen",
+          "investment": {
+            "status": "unspecified"
+          },
+          "selectedArtifact": null,
+          "selectedWeapon": null
+        }
+      ],
+      "promotionEligible": false,
+      "rankingClaim": "none",
+      "reactions": [
+        "lunarCharged"
+      ],
+      "rotations": [
+        {
+          "assumptions": [
+            "On subsequent rotations, the optional opening Furina Skill may instead be performed together with her Burst."
+          ],
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "(Furina ED) > Ineffa E > Xilonen EQ N2 > Furina Q > Keqing EQE 5[N1C] > Xilonen E N2 > Ineffa Q > Keqing EE 3[N1C]",
+          "unresolvedSegments": []
+        },
+        {
+          "assumptions": [
+            "Use Ineffa's optional Burst whenever it is available."
+          ],
+          "id": "sample-rotation-max-shield-uptime",
+          "label": "KQM sample rotation for maximum shield uptime",
+          "notation": "Ineffa (Q) E > Furina ED Q > Xilonen EQ N2 > Keqing EQE 5[N1C] > Xilonen E N2",
+          "unresolvedSegments": []
+        }
+      ],
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Furina — Xilonen",
+            "url": "https://keqingmains.com/q/keqing-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example"
+        }
+      ],
+      "status": "candidate",
+      "unknowns": [
+        "which published rotation is preferable for a specific account",
+        "the optimal sequence at Xilonen C2, Furina C6, or other investment levels",
+        "exact investment allocation, weapons, artifacts, and refinements",
+        "rotation duration and buff timing",
+        "formula mappings, formula counts, and reaction ownership",
+        "enemy scenario",
+        "Xilonen generally cannot activate Scroll for Hydro in the stated setup because of the Crystallize interaction; the source presents pause-menu booking only as a niche exception",
         "agent-assisted extraction has not been human-reviewed"
       ]
     },
@@ -30661,5 +32056,5 @@
     }
   ],
   "schemaVersion": 1,
-  "sourceRegistrySha256": "f3fa98fb544022230cc128cf591e65cb80e0e4eeb3c4ce6b29e894fbdcd67de7"
+  "sourceRegistrySha256": "292c63c4f5dc73275e7f0da8637015bc783dc131256e421cc48aa4cb417c4490"
 }

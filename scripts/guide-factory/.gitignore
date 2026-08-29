@@ -3,3 +3,6 @@ reports/*
 !reports/README.md
 !reports/kqm-diona-comparison.json
 !reports/kqm-diona-er-calibration.json
+!reports/team-template-coverage.json
+!reports/furina-neuvillette-formula-plan-draft.json
+!reports/knowledge-corpus-inventory.json

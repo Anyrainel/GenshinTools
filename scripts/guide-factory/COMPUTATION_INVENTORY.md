@@ -29,6 +29,36 @@ It uses one selected Eula team, but assigns explicit test-only C0/R1, level 90,
 that the offline wiring works. It does **not** support a claim about a rotation,
 damage benchmark, stat allocation, ER, equipment ranking, or guide quality.
 
+## Formula-count review seam
+
+`src/formulaPlanDraft.ts` turns one exact consolidated team into a deterministic
+view of the damage calculator's current `comboDescriptor` defaults. It requires
+selected weapons and artifact sets plus explicit character level,
+constellation, refinement, and all three talent levels. Every descriptor ID is
+checked against the full formula catalog; formulas unavailable at the supplied
+investment are omitted, and every available formula appears exactly once in a
+positive-count or zero-count list.
+
+This seam does not derive a rotation. Its output is labeled
+`calculator-default-draft`, does not support guide claims, and records that
+combat options use implementation defaults.
+
+The same module also compares a manually translated source plan against those
+defaults. It rejects unavailable formulas, duplicate lines, nonpositive counts,
+and missing mapping explanations. That check validates comparison structure,
+not whether an action was mapped to the right calculator formula.
+
+The first durable draft uses the baseline
+Furina/Neuvillette/Xilonen/Kaedehara Kazuha team that also appears as an exact
+KQM example. Under explicit level 90, C0, R1, 10/10/10 assumptions it exposes
+12 positive and 6 zero-count formulas. KQM's Xilonen sample rotation is captured
+separately and translated into formula counts. Five token-supported rows
+disagree with calculator defaults: Neuvillette's Judgment and Skill counts,
+plus Xilonen's Skill rush, N2 sequence, and Burst. Furina's baked Salon
+aggregate and C0 Normal Attack, Neuvillette's Spiritbreath proc count, and
+Kazuha's absorbed plunge, absorbed Burst, and Swirl counts remain unresolved
+rather than being assigned invented values.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -56,9 +86,10 @@ None of these later modules is invoked by the first replay.
 
 ## Current blockers
 
-- The consolidated repository currently has no executable damage plans or
-  specified investment. Selected weapons have no refinements, and team records
-  do not contain artifact main stats or substat rolls.
+- The consolidated repository still has no accepted executable damage plan.
+  The source-rotation translation and its fixture investment are explicit but
+  unreviewed. Team records still do not contain reviewed artifact main stats or
+  substat rolls for a calculation target.
 - Character combo descriptors provide formula counts, not action order, timing,
   buff-window coverage, or a full team rotation. Allocation-aware derivation
   still needs an authored template combo.
@@ -81,7 +112,7 @@ None of these later modules is invoked by the first replay.
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
 
-The next computation checkpoint should replace the structural fixture with one
-human-reviewed validation target containing an explicit combo and artifact
-stat sheets. Optimization should remain out of scope until that replay is
-credible.
+The next computation checkpoint should review the action-to-formula translation
+and resolve or parameterize its aggregate hit counts. It can then add explicit
+artifact stat sheets and replay the selected loadout through both calculator
+paths. Optimization remains out of scope until that replay is credible.

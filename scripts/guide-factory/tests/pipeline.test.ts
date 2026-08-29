@@ -6,6 +6,7 @@ import {
   importLegacyTeamResearch,
 } from "../src/importers";
 import { readJson, sha256File, stableJson } from "../src/io";
+import { loadManualSnapshotInputs } from "../src/manualSnapshots";
 import {
   BUILD_PRESET_PATH,
   GENSHINTOOLS_SNAPSHOT_PATH,
@@ -13,7 +14,7 @@ import {
   LEGACY_RESEARCH_PATH,
   LEGACY_SNAPSHOT_PATH,
   KNOWLEDGE_REPOSITORY_PATH,
-  REPOSITORY_ROOT,
+  MANUAL_SNAPSHOT_INDEX_PATH,
   SOURCE_REGISTRY_PATH,
   TEAM_PRESET_PATH,
 } from "../src/paths";
@@ -76,6 +77,13 @@ describe("guide-factory data pipeline", () => {
             source.ingestionMode !== "reference-only"
         )
     ).toBe(true);
+    expect(
+      registry.sources.find(({ id }) => id === "mobalytics")
+    ).toMatchObject({
+      status: "blocked",
+      ingestionMode: "permission-blocked",
+      permission: "permission-required",
+    });
   });
 
   it("imports every live GenshinTools preset record", async () => {
@@ -332,31 +340,26 @@ describe("guide-factory data pipeline", () => {
 
   it("consolidates deterministically without erasing source unknowns", async () => {
     const registryInput = await readJson(SOURCE_REGISTRY_PATH);
-    const [
-      genshinTools,
-      legacy,
-      kqmInput,
-      kqmSnapshotSha256,
-      sourceRegistrySha256,
-    ] = await Promise.all([
+    const [genshinTools, legacy, manualIndexInput, sourceRegistrySha256] =
+      await Promise.all([
       importGenshinToolsPresets(registryInput),
       importLegacyTeamResearch(registryInput),
-      readJson(KQM_MANUAL_SNAPSHOT_PATH),
-      sha256File(KQM_MANUAL_SNAPSHOT_PATH),
+      readJson(MANUAL_SNAPSHOT_INDEX_PATH),
       sha256File(SOURCE_REGISTRY_PATH),
     ]);
-    const kqm = ManualObservationSnapshotSchema.parse(kqmInput);
+    const manualInputs = await loadManualSnapshotInputs(
+      manualIndexInput,
+      registryInput
+    );
+    const manualSnapshots = manualInputs.map(({ snapshot }) =>
+      ManualObservationSnapshotSchema.parse(snapshot)
+    );
     const input = {
+      sourceRegistry: registryInput,
       sourceRegistrySha256,
       genshinTools,
       legacy,
-      kqm,
-      kqmSnapshotFile: {
-        path: KQM_MANUAL_SNAPSHOT_PATH.slice(
-          REPOSITORY_ROOT.length + 1
-        ).replaceAll("\\", "/"),
-        sha256: kqmSnapshotSha256,
-      },
+      manualSnapshots: manualInputs,
     };
     const first = consolidateKnowledge(input);
     const second = consolidateKnowledge(input);
@@ -364,10 +367,13 @@ describe("guide-factory data pipeline", () => {
     expect(stableJson(second)).toBe(stableJson(first));
     expect(first.sourceRegistrySha256).toBe(sourceRegistrySha256);
     expect(first.records).toHaveLength(
-      genshinTools.teams.length +
+        genshinTools.teams.length +
         genshinTools.characterGuides.length +
         legacy.records.length +
-        kqm.records.length
+        manualSnapshots.reduce(
+          (recordCount, snapshot) => recordCount + snapshot.records.length,
+          0
+        )
     );
     expect(first.records.map((record) => record.id)).toEqual(
       first.records.map((record) => record.id).sort()
@@ -444,43 +450,54 @@ describe("guide-factory data pipeline", () => {
       ).toBe(true);
     }
 
-    for (const sourceRecord of kqm.records) {
-      const kind =
-        sourceRecord.kind === "character_guide"
-          ? "character-guide"
-          : sourceRecord.kind === "energy_guidance"
-            ? "energy-guidance"
-            : "team";
-      const record = first.records.find(
-        (candidate) =>
-          candidate.id === `kqm:${kind}:${sourceRecord.sourceRecordId}`
-      );
-      expect(record, `Missing KQM record ${sourceRecord.sourceRecordId}`).toBeDefined();
-      expect(record?.status).toBe("candidate");
-      expect(record?.promotionEligible).toBe(false);
-      expect(record?.unknowns).toContain(
-        "agent-assisted extraction has not been human-reviewed"
-      );
-      expect(record?.sourceRefs.map(({ locator }) => locator)).toEqual([
-        sourceRecord.locator,
-        ...sourceRecord.supportingLocators,
-      ]);
+    for (const snapshot of manualSnapshots) {
+      for (const sourceRecord of snapshot.records) {
+        const kind =
+          sourceRecord.kind === "character_guide"
+            ? "character-guide"
+            : sourceRecord.kind === "energy_guidance"
+              ? "energy-guidance"
+              : sourceRecord.kind === "team_template"
+                ? "team-template"
+                : "team";
+        const record = first.records.find(
+          (candidate) =>
+            candidate.id ===
+            `${snapshot.sourceId}:${kind}:${sourceRecord.sourceRecordId}`
+        );
+        expect(
+          record,
+          `Missing ${snapshot.sourceId} record ${sourceRecord.sourceRecordId}`
+        ).toBeDefined();
+        expect(record?.status).toBe("candidate");
+        expect(record?.promotionEligible).toBe(false);
+        expect(record?.unknowns).toContain(
+          "agent-assisted extraction has not been human-reviewed"
+        );
+        expect(record?.sourceRefs.map(({ locator }) => locator)).toEqual([
+          sourceRecord.locator,
+          ...sourceRecord.supportingLocators,
+        ]);
+      }
     }
 
-    const reviewedInput = structuredClone(kqmInput) as {
-      records: Array<Record<string, unknown>>;
-    };
-    for (const record of reviewedInput.records) {
-      record.extraction = {
-        method: "agent-assisted",
-        reviewStatus: "reviewed",
-        reviewer: "guide-factory regression fixture",
-        reviewedAt: "2026-08-29",
-      };
-    }
+    const reviewedManualInputs = manualInputs.map((manualInput) => {
+      const reviewedSnapshot = structuredClone(
+        ManualObservationSnapshotSchema.parse(manualInput.snapshot)
+      );
+      for (const record of reviewedSnapshot.records) {
+        record.extraction = {
+          method: "agent-assisted",
+          reviewStatus: "reviewed",
+          reviewer: "guide-factory regression fixture",
+          reviewedAt: "2026-08-29",
+        };
+      }
+      return { ...manualInput, snapshot: reviewedSnapshot };
+    });
     const reviewedRepository = consolidateKnowledge({
       ...input,
-      kqm: ManualObservationSnapshotSchema.parse(reviewedInput),
+      manualSnapshots: reviewedManualInputs,
     });
     expect(
       reviewedRepository.records

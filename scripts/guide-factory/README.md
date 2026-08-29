@@ -21,17 +21,21 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 2 adds one external, reviewable pilot without claiming a working
-guide factory:
+Checkpoint 3 grows the external validation corpus and adds non-ER coverage and
+formula-count experiments without claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
 3. Consolidate those snapshots into one provisional repository format.
 4. Validate objective structure and entity references.
-5. Compare source assertions with baseline assertions without voting or
-   manufacturing a merged order.
-6. Replay one sourced ER target as a calibration fixture while keeping
-   unimplemented source assumptions explicit.
+5. Represent editorial team archetypes without expanding them into invented
+   exact teams.
+6. Compute baseline roster coverage without voting, scoring, or manufacturing
+   a merged order.
+7. Compare calculator-default formula counts with a source-authored rotation,
+   preserving mismatches and unresolved mappings instead of choosing a winner.
+8. Inventory explicit evidence coverage across the whole corpus without turning
+   record counts into a quality score.
 
 The first two active sources are already in this repository:
 
@@ -42,10 +46,25 @@ The legacy aggregate is deliberately retained as a candidate source. It lists
 several domains globally but has no per-team locator, so consolidation must not
 treat any row as verified external knowledge.
 
-The first external pilot is a narrow, linked observation of KQM's Diona Quick
-Guide. It is split into heading-scoped records for weapons, artifact sets,
-artifact stats, ER guidance, and one example team. Every record remains
-unreviewed and promotion-ineligible. It is not a reusable KQM corpus adapter.
+The active external observations are narrow, linked snapshots of KQM's Diona,
+Furina, and Keqing Quick Guides. Diona remains the assumption-incomplete ER
+pilot. Furina adds conditional builds, constellation-bounded advice, five team
+templates, three exact example teams, and their published sample rotations. Two
+of those exact teams are Quickbloom examples absent from the current baseline.
+Its contextual weapon record includes Favonius Sword and Serenity's Call rather
+than silently omitting them. Keqing adds one Lunar-Charged template and two
+exact example teams with three published rotation variants. This deliberately
+tests whether a new release can surface changed team options for an old
+character; it does not claim that the examples are optimal. Every record
+remains unreviewed and promotion-ineligible. This is not a reusable KQM corpus
+adapter.
+
+Mobalytics is registered as permission-blocked after its current terms were
+reviewed. Technically accessible content is not automatically active knowledge.
+Source-specific capture contracts live beside `sources/registry.json`.
+Crimson Witch has a separate permission-gated source profile: its current app
+looks structurally adaptable, but no public recommendation-data contract or
+reuse grant has been established.
 
 ## Commands
 
@@ -55,7 +74,10 @@ Run from the repository root:
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/import-sources.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/consolidate.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-knowledge-corpus.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/compare-diona.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-team-template-coverage.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -72,8 +94,9 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds the durable Diona comparison and ER calibration reports in
-memory so stale evidence cannot pass.
+It also rebuilds the durable corpus inventory, team coverage, formula-count
+comparison, Diona comparison, and historical ER calibration reports in memory
+so stale evidence cannot pass.
 
 ## Data flow
 
@@ -83,6 +106,8 @@ sources/registry.json
 repository source files
         |
         v
+data/source-snapshots/manual-index.json
+        +
 data/source-snapshots/*.json
         |
         v
@@ -96,6 +121,14 @@ Source snapshots preserve what a source actually contains. The consolidated
 repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
+
+The descriptive corpus inventory currently counts 351 unique records: 128
+character guides, 216 exact teams, 6 team templates, and 1 historical energy
+record. Of those, 191 are baseline records and 160 are candidates. KQM
+contributes 21 records, including 6 exact teams with 8 explicit rotation
+entries. The inventory also reports explicit weapon, artifact, main-stat,
+substat, and rotation presence by generated source. These are coverage facts,
+not votes or recommendation confidence.
 
 ## What validation does not claim
 
@@ -112,14 +145,30 @@ mean that:
 
 Those questions belong to later experiments and human review.
 
-The Diona ER probe currently produces about 207.34% in `expected` mode and
-186.78% in `max` mode. The linked sheet's raw Favonius calculation is
-192.1826030394418%, formatted as 192%, while the guide shows a 190-200% band.
-These numbers are not yet a valid pass/fail comparison: the source's safe-RNG
-and default-enemy-particle assumptions are not implemented, and 8.5 seconds of
-the source rotation remain unexpanded. The report is therefore
-`assumption-incomplete`, not tuned into agreement or labeled a calculator
-failure.
+The team coverage report currently finds three templates with baseline matches,
+one healer-dependent template that cannot be resolved without role data, and
+two uncovered templates. The uncovered templates are Furina Quickbloom and
+Keqing Lunar-Charged. The Keqing template keeps `off-field-hydro-applier` and
+`resistance-shred` as unresolved role constraints; it is still uncovered, not
+role-unresolved, because no baseline team contains the required Keqing–Ineffa
+core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen roster matches one current
+preset. The other five exact KQM teams, including both Keqing examples, are
+uncovered. Source presence does not automatically promote any of them into the
+baseline.
+
+That matched roster produces a calculator-default draft with 12 positive and 6
+zero-count available formulas under explicit level 90, C0, R1, 10/10/10
+assumptions. Translating KQM's Xilonen sample rotation exposes five
+token-supported count mismatches: two on Neuvillette and three on Xilonen.
+Furina's C0 Normal Attack and baked 32-hit Salon aggregate, Neuvillette's
+Spiritbreath proc count, and Kazuha's absorbed plunge, absorbed Burst, and Swirl
+counts remain six explicit unmapped cases. The translation is unreviewed and
+supports no guide claim, but it is now a useful falsification target rather
+than an unexamined default.
+
+ER work is deferred. The Diona ER report remains an
+`assumption-incomplete` historical fixture and is decoupled from unrelated
+knowledge-repository growth.
 
 Candidate catalog defects are warnings and promotion blockers. The same defect
 is an error on a baseline or accepted record.

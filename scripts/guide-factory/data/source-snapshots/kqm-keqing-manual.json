@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "kqm",
+  "capturedAt": "2026-08-29",
+  "page": {
+    "title": "Keqing Quick Guide",
+    "url": "https://keqingmains.com/q/keqing-quickguide/",
+    "publisher": "KeqingMains",
+    "sourceVersion": "Luna I",
+    "attributionNote": "KQM asks readers to link the original guide when using it as a content reference; this snapshot stores narrow paraphrased claims and source locators."
+  },
+  "records": [
+    {
+      "kind": "team_template",
+      "sourceRecordId": "keqing-team-template-lunar-charged",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams > Notable Teammates > Anemo (and Xilonen)"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Keqing — Ineffa — Hydro — Anemo / Flex",
+      "intent": "prescriptive",
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "slots": [
+        {
+          "id": "keqing",
+          "options": [
+            { "type": "characters", "characterIds": ["keqing"] }
+          ]
+        },
+        {
+          "id": "ineffa",
+          "options": [
+            { "type": "characters", "characterIds": ["ineffa"] }
+          ]
+        },
+        {
+          "id": "off-field-hydro",
+          "options": [
+            {
+              "type": "roles",
+              "roleIds": ["off-field-hydro-applier"]
+            }
+          ],
+          "highlightedOptions": [
+            { "type": "elements", "elements": ["hydro"] }
+          ]
+        },
+        {
+          "id": "resistance-shred",
+          "options": [
+            { "type": "roles", "roleIds": ["resistance-shred"] }
+          ],
+          "highlightedOptions": [
+            { "type": "elements", "elements": ["anemo"] },
+            { "type": "characters", "characterIds": ["xilonen"] }
+          ]
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "unknowns": [
+        "which eligible off-field Hydro applier is optimal",
+        "which source of RES Shred is optimal",
+        "constellations, weapons, and artifacts",
+        "rotation and formula counts",
+        "enemy scenario",
+        "the source says Ineffa usually contributes the most team damage and Keqing faces strong competition for her slot; this template does not establish that every matching roster is optimal"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Furina — Xilonen"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Keqing — Ineffa — Furina — Xilonen",
+      "intent": "example",
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "members": [
+        {
+          "characterId": "keqing",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "ineffa",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "furina",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "xilonen",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "rotations": [
+        {
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "(Furina ED) > Ineffa E > Xilonen EQ N2 > Furina Q > Keqing EQE 5[N1C] > Xilonen E N2 > Ineffa Q > Keqing EE 3[N1C]",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "On subsequent rotations, the optional opening Furina Skill may instead be performed together with her Burst."
+          ]
+        },
+        {
+          "id": "sample-rotation-max-shield-uptime",
+          "label": "KQM sample rotation for maximum shield uptime",
+          "notation": "Ineffa (Q) E > Furina ED Q > Xilonen EQ N2 > Keqing EQE 5[N1C] > Xilonen E N2",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "Use Ineffa's optional Burst whenever it is available."
+          ]
+        }
+      ],
+      "unknowns": [
+        "which published rotation is preferable for a specific account",
+        "the optimal sequence at Xilonen C2, Furina C6, or other investment levels",
+        "exact investment allocation, weapons, artifacts, and refinements",
+        "rotation duration and buff timing",
+        "formula mappings, formula counts, and reaction ownership",
+        "enemy scenario",
+        "Xilonen generally cannot activate Scroll for Hydro in the stated setup because of the Crystallize interaction; the source presents pause-menu booking only as a niche exception"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "keqing-ineffa-aino-sucrose-lunar-charged-example",
+      "locator": {
+        "url": "https://keqingmains.com/q/keqing-quickguide/",
+        "heading": "Lunar-Charged > Teams > Example Teams > Keqing — Ineffa — Aino — Sucrose"
+      },
+      "supportingLocators": [
+        {
+          "url": "https://keqingmains.com/q/keqing-quickguide/",
+          "heading": "Lunar-Charged > Teams > Notable Teammates > Hydro"
+        }
+      ],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Keqing — Ineffa — Aino — Sucrose",
+      "intent": "example",
+      "exhaustiveness": "unspecified",
+      "rankingClaim": "none",
+      "members": [
+        {
+          "characterId": "keqing",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "ineffa",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "aino",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "sucrose",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "rotations": [
+        {
+          "id": "sample-rotation",
+          "label": "KQM sample rotation",
+          "notation": "Ineffa E (Q) > Aino EQ > Sucrose ED (Q) > Keqing EQE 5[N1C] > Sucrose N2",
+          "unresolvedSegments": [],
+          "assumptions": [
+            "Use Ineffa's and Sucrose's optional Bursts every other rotation, alternating which character Bursts.",
+            "The source describes the rotation as approximately 16 seconds.",
+            "Sucrose returns on-field at the end to refresh Viridescent Venerer."
+          ]
+        }
+      ],
+      "unknowns": [
+        "weapons, artifacts, and refinements",
+        "constellations other than the source's optional Aino C6 context",
+        "formula mappings, formula counts, and reaction ownership",
+        "enemy scenario",
+        "Aino C6 is optional investment context that can change Lunar-Charged contribution; it is not a team or rotation requirement"
+      ]
+    }
+  ]
+}

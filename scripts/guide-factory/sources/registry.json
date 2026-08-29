@@ -38,7 +38,7 @@
       "ingestionMode": "manual-observation",
       "permission": "unknown",
       "recordFormat": "manual-observation-v1",
-      "checkedAt": "2026-08-28",
+      "checkedAt": "2026-08-29",
       "notes": [
         "Capture only narrow attributed observations with an exact page and heading; do not mirror guides, images, translations, or authored target collections.",
         "KQM requests that content using a guide as a reference link the original, but no broad republication license was found."
@@ -59,6 +59,21 @@
       ]
     },
     {
+      "id": "mobalytics",
+      "name": "Mobalytics Genshin Impact guides",
+      "homepage": "https://mobalytics.gg/genshin-impact/",
+      "kind": "editorial",
+      "status": "blocked",
+      "ingestionMode": "permission-blocked",
+      "permission": "permission-required",
+      "recordFormat": "manual-observation-v1",
+      "checkedAt": "2026-08-29",
+      "notes": [
+        "Potentially useful as a manual cross-check, but its current terms restrict automated agents, crawling, data mining, commercial use, and third-party content reuse without permission.",
+        "Do not add guide observations to the active corpus unless permission or another valid reuse basis is established."
+      ]
+    },
+    {
       "id": "crimson-witch",
       "name": "Crimson Witch",
       "homepage": "https://www.crimsonwitch.com/",
@@ -67,9 +82,10 @@
       "ingestionMode": "manual-observation",
       "permission": "permission-required",
       "recordFormat": "manual-observation-v1",
-      "checkedAt": "2026-08-28",
+      "checkedAt": "2026-08-29",
       "notes": [
-        "Technically structured, but no reusable public data contract or license has been established.",
+        "The current site is technically structured, but no reusable public data contract or license has been established.",
+        "The legal page provides the HoYoverse affiliation disclaimer but no recommendation-data reuse grant; the contact page is the available permission path.",
         "The undocumented page payload has no per-record upstream citations, so it remains a manual cross-check or link-out until written permission is obtained."
       ]
     },

@@ -175,6 +175,7 @@ export const GuideBuildRecommendationSchema = z
       "combined",
     ]),
     minConstellation: z.number().int().min(0).max(6).optional(),
+    maxConstellation: z.number().int().min(0).max(6).optional(),
     roles: z.array(IdSchema).default([]),
     weaponOrdering: RecommendationOrderingSchema.optional(),
     weaponRecommendations: z
@@ -191,6 +192,17 @@ export const GuideBuildRecommendationSchema = z
     erTargets: z.array(ErTargetSchema).min(1).optional(),
   })
   .strict()
+  .refine(
+    (recommendation) =>
+      recommendation.minConstellation == null ||
+      recommendation.maxConstellation == null ||
+      recommendation.maxConstellation >= recommendation.minConstellation,
+    {
+      message:
+        "Maximum constellation must not be lower than minimum constellation.",
+      path: ["maxConstellation"],
+    }
+  )
   .refine(
     (recommendation) =>
       recommendation.weaponRecommendations != null ||
@@ -382,6 +394,85 @@ const ManualTeamRecordSchema = z
   })
   .strict();
 
+export const GenshinElementSchema = z.enum([
+  "anemo",
+  "cryo",
+  "dendro",
+  "electro",
+  "geo",
+  "hydro",
+  "pyro",
+]);
+
+const TeamTemplateCharacterSelectorSchema = z
+  .object({
+    type: z.literal("characters"),
+    characterIds: z.array(IdSchema).min(1),
+  })
+  .strict();
+
+const TeamTemplateElementSelectorSchema = z
+  .object({
+    type: z.literal("elements"),
+    elements: z.array(GenshinElementSchema).min(1),
+  })
+  .strict();
+
+const TeamTemplateRoleSelectorSchema = z
+  .object({
+    type: z.literal("roles"),
+    roleIds: z.array(IdSchema).min(1),
+  })
+  .strict();
+
+export const TeamTemplateHighlightedSelectorSchema = z.discriminatedUnion(
+  "type",
+  [
+    TeamTemplateCharacterSelectorSchema,
+    TeamTemplateElementSelectorSchema,
+    TeamTemplateRoleSelectorSchema,
+  ]
+);
+
+export const TeamTemplateSelectorSchema = z.discriminatedUnion("type", [
+  TeamTemplateCharacterSelectorSchema,
+  TeamTemplateElementSelectorSchema,
+  TeamTemplateRoleSelectorSchema,
+  z
+    .object({
+      type: z.literal("any"),
+    })
+    .strict(),
+]);
+
+export const TeamTemplateSlotSchema = z
+  .object({
+    id: IdSchema,
+    options: z.array(TeamTemplateSelectorSchema).min(1),
+    highlightedOptions: z
+      .array(TeamTemplateHighlightedSelectorSchema)
+      .min(1)
+      .optional(),
+  })
+  .strict();
+
+export const ManualTeamTemplateRecordSchema = z
+  .object({
+    kind: z.literal("team_template"),
+    sourceRecordId: IdSchema,
+    locator: SourceLocatorSchema,
+    supportingLocators: z.array(SourceLocatorSchema).default([]),
+    extraction: ManualExtractionSchema,
+    label: z.string().min(1).optional(),
+    intent: z.enum(["example", "prescriptive"]),
+    exhaustiveness: z.enum(["non-exhaustive", "exhaustive", "unspecified"]),
+    rankingClaim: z.enum(["none", "ordered", "unordered"]),
+    slots: z.array(TeamTemplateSlotSchema).length(4),
+    reactions: z.array(IdSchema).optional(),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
 const ManualEnergyGuidanceRecordSchema = z
   .object({
     kind: z.literal("energy_guidance"),
@@ -406,6 +497,7 @@ const ManualEnergyGuidanceRecordSchema = z
 export const ManualObservationRecordSchema = z.discriminatedUnion("kind", [
   ManualCharacterGuideRecordSchema,
   ManualTeamRecordSchema,
+  ManualTeamTemplateRecordSchema,
   ManualEnergyGuidanceRecordSchema,
 ]);
 
@@ -424,6 +516,22 @@ export const ManualObservationSnapshotSchema = z
       })
       .strict(),
     records: z.array(ManualObservationRecordSchema).min(1),
+  })
+  .strict();
+
+export const ManualSnapshotIndexSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    snapshots: z
+      .array(
+        z
+          .object({
+            sourceId: IdSchema,
+            path: z.string().min(1),
+          })
+          .strict()
+      )
+      .min(1),
   })
   .strict();
 
@@ -593,6 +701,23 @@ export const KnowledgeTeamSchema = z
   })
   .strict();
 
+export const KnowledgeTeamTemplateSchema = z
+  .object({
+    id: IdSchema,
+    kind: z.literal("team_template"),
+    status: KnowledgeStatusSchema,
+    promotionEligible: z.boolean().optional(),
+    label: z.string().min(1).optional(),
+    intent: z.enum(["example", "prescriptive"]),
+    exhaustiveness: z.enum(["non-exhaustive", "exhaustive", "unspecified"]),
+    rankingClaim: z.enum(["none", "ordered", "unordered"]),
+    slots: z.array(TeamTemplateSlotSchema).length(4),
+    reactions: z.array(IdSchema).optional(),
+    sourceRefs: z.array(SourceReferenceSchema).min(1),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
 export const KnowledgeEnergyGuidanceSchema = z
   .object({
     id: IdSchema,
@@ -631,6 +756,7 @@ export const KnowledgeCharacterGuideSchema = z
 
 export const KnowledgeRecordSchema = z.discriminatedUnion("kind", [
   KnowledgeTeamSchema,
+  KnowledgeTeamTemplateSchema,
   KnowledgeCharacterGuideSchema,
   KnowledgeEnergyGuidanceSchema,
 ]);
@@ -671,5 +797,6 @@ export type LegacyArtifactChoice = z.infer<
 export type ManualObservationSnapshot = z.infer<
   typeof ManualObservationSnapshotSchema
 >;
+export type ManualSnapshotIndex = z.infer<typeof ManualSnapshotIndexSchema>;
 export type SourceLocator = z.infer<typeof SourceLocatorSchema>;
 export type SourceRegistry = z.infer<typeof SourceRegistrySchema>;

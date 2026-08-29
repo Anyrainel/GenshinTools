@@ -3,6 +3,7 @@ import {
   KnowledgeRepositorySchema,
   LegacyTeamSnapshotSchema,
   ManualObservationSnapshotSchema,
+  SourceRegistrySchema,
   type GenshinToolsPresetSnapshot,
   type KnowledgeRecord,
   type KnowledgeRepository,
@@ -10,13 +11,18 @@ import {
   type LegacyTeamSnapshot,
   type ManualObservationSnapshot,
 } from "./schemas";
+import { assertManualSnapshotSourcesRegistered } from "./manualSnapshots";
 
 export interface KnowledgeConsolidationInput {
+  sourceRegistry: unknown;
   sourceRegistrySha256: string;
   genshinTools: unknown;
   legacy: unknown;
-  kqm: unknown;
-  kqmSnapshotFile: { path: string; sha256: string };
+  manualSnapshots: Array<{
+    expectedSourceId: string;
+    snapshot: unknown;
+    snapshotFile: { path: string; sha256: string };
+  }>;
 }
 
 /**
@@ -29,11 +35,27 @@ export interface KnowledgeConsolidationInput {
 export function consolidateKnowledge(
   input: KnowledgeConsolidationInput
 ): KnowledgeRepository {
+  const sourceRegistry = SourceRegistrySchema.parse(input.sourceRegistry);
   const genshinTools = GenshinToolsPresetSnapshotSchema.parse(
     input.genshinTools
   );
   const legacy = LegacyTeamSnapshotSchema.parse(input.legacy);
-  const kqm = ManualObservationSnapshotSchema.parse(input.kqm);
+  const manualSnapshots = input.manualSnapshots.map(
+    ({ expectedSourceId, snapshot: snapshotInput, snapshotFile }) => {
+      const snapshot = ManualObservationSnapshotSchema.parse(snapshotInput);
+      if (snapshot.sourceId !== expectedSourceId) {
+        throw new Error(
+          `Manual snapshot ${snapshotFile.path} declares ${snapshot.sourceId}, expected ${expectedSourceId}.`
+        );
+      }
+      return { snapshot, snapshotFile };
+    }
+  );
+  assertManualSnapshotSourcesRegistered(
+    manualSnapshots.map(({ snapshot }) => snapshot.sourceId),
+    sourceRegistry
+  );
+  assertUniqueManualSourceRecordIds(manualSnapshots);
 
   const records = [
     ...genshinTools.teams.map((team) => ({
@@ -121,7 +143,11 @@ export function consolidateKnowledge(
       ],
       unknowns: [...team.unknowns],
     })),
-    ...kqm.records.map((record) => consolidateManualRecord(kqm, record)),
+    ...manualSnapshots.flatMap(({ snapshot }) =>
+      snapshot.records.map((record) =>
+        consolidateManualRecord(snapshot, record)
+      )
+    ),
   ].sort(compareKnowledgeRecords);
 
   assertUniqueRecordIds(records);
@@ -129,14 +155,14 @@ export function consolidateKnowledge(
   return KnowledgeRepositorySchema.parse({
     schemaVersion: 1,
     sourceRegistrySha256: input.sourceRegistrySha256,
-    generatedFrom: [
+    generatedFrom: mergeSourceRevisions([
       sourceRevision(genshinTools),
       sourceRevision(legacy),
-      {
-        sourceId: kqm.sourceId,
-        files: [{ ...input.kqmSnapshotFile }],
-      },
-    ].sort((left, right) => compareText(left.sourceId, right.sourceId)),
+      ...manualSnapshots.map(({ snapshot, snapshotFile }) => ({
+        sourceId: snapshot.sourceId,
+        files: [{ ...snapshotFile }],
+      })),
+    ]),
     records,
   });
 }
@@ -199,6 +225,39 @@ function consolidateManualRecord(
     };
   }
 
+  if (record.kind === "team_template") {
+    return {
+      id: recordId(
+        snapshot.sourceId,
+        "team-template",
+        record.sourceRecordId
+      ),
+      kind: "team_template",
+      status: "candidate",
+      promotionEligible: false,
+      ...(record.label ? { label: record.label } : {}),
+      intent: record.intent,
+      exhaustiveness: record.exhaustiveness,
+      rankingClaim: record.rankingClaim,
+      slots: record.slots.map((slot) => ({
+        id: slot.id,
+        options: slot.options.map(cloneTeamTemplateSelector),
+        ...(slot.highlightedOptions
+          ? {
+              highlightedOptions: slot.highlightedOptions.map(
+                cloneTeamTemplateSelector
+              ),
+            }
+          : {}),
+      })),
+      ...(record.reactions?.length
+        ? { reactions: [...record.reactions] }
+        : {}),
+      sourceRefs,
+      unknowns,
+    };
+  }
+
   return {
     id: recordId(snapshot.sourceId, "team", record.sourceRecordId),
     kind: "team",
@@ -243,6 +302,25 @@ function consolidateManualRecord(
   };
 }
 
+function cloneTeamTemplateSelector<
+  T extends
+    | { type: "characters"; characterIds: string[] }
+    | { type: "elements"; elements: string[] }
+    | { type: "roles"; roleIds: string[] }
+    | { type: "any" },
+>(option: T): T {
+  if (option.type === "characters") {
+    return { ...option, characterIds: [...option.characterIds] };
+  }
+  if (option.type === "elements") {
+    return { ...option, elements: [...option.elements] };
+  }
+  if (option.type === "roles") {
+    return { ...option, roleIds: [...option.roleIds] };
+  }
+  return { ...option };
+}
+
 function sourceRevision(
   snapshot: GenshinToolsPresetSnapshot | LegacyTeamSnapshot
 ) {
@@ -254,9 +332,49 @@ function sourceRevision(
   };
 }
 
+function mergeSourceRevisions(
+  revisions: Array<{
+    sourceId: string;
+    files: Array<{ path: string; sha256: string }>;
+  }>
+): Array<{
+  sourceId: string;
+  files: Array<{ path: string; sha256: string }>;
+}> {
+  const bySource = new Map<
+    string,
+    Map<string, { path: string; sha256: string }>
+  >();
+  for (const revision of revisions) {
+    const files = bySource.get(revision.sourceId) ?? new Map();
+    bySource.set(revision.sourceId, files);
+    for (const file of revision.files) {
+      const previous = files.get(file.path);
+      if (previous && previous.sha256 !== file.sha256) {
+        throw new Error(
+          `Conflicting hashes for ${revision.sourceId} source file ${file.path}.`
+        );
+      }
+      files.set(file.path, { ...file });
+    }
+  }
+  return [...bySource.entries()]
+    .map(([sourceId, files]) => ({
+      sourceId,
+      files: [...files.values()].sort((left, right) =>
+        compareText(left.path, right.path)
+      ),
+    }))
+    .sort((left, right) => compareText(left.sourceId, right.sourceId));
+}
+
 function recordId(
   sourceId: string,
-  kind: "team" | "character-guide" | "energy-guidance",
+  kind:
+    | "team"
+    | "team-template"
+    | "character-guide"
+    | "energy-guidance",
   sourceRecordId: string
 ): string {
   return `${sourceId}:${kind}:${sourceRecordId}`;
@@ -301,5 +419,26 @@ function assertUniqueRecordIds(records: KnowledgeRecord[]): void {
       throw new Error(`Duplicate consolidated record ID: ${record.id}`);
     }
     seen.add(record.id);
+  }
+}
+
+function assertUniqueManualSourceRecordIds(
+  snapshots: Array<{
+    snapshot: ManualObservationSnapshot;
+    snapshotFile: { path: string; sha256: string };
+  }>
+): void {
+  const seen = new Map<string, string>();
+  for (const { snapshot, snapshotFile } of snapshots) {
+    for (const record of snapshot.records) {
+      const key = `${snapshot.sourceId}:${record.sourceRecordId}`;
+      const previousPath = seen.get(key);
+      if (previousPath) {
+        throw new Error(
+          `Duplicate manual source record ID ${key} in ${previousPath} and ${snapshotFile.path}.`
+        );
+      }
+      seen.set(key, snapshotFile.path);
+    }
   }
 }

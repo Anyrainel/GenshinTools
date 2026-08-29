@@ -8,8 +8,6 @@ import type {
 export const DIONA_COMPARISON_INPUT_PATHS = [
   "scripts/guide-factory/src/comparison.ts",
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
-  "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
-  "scripts/guide-factory/data/knowledge/repository.json",
 ] as const;
 
 type SetRelation =
