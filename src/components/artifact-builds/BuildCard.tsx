@@ -328,7 +328,7 @@ function BuildCardComponent({
   const labelsRow = (
     <div className="flex items-center flex-wrap gap-1 md:gap-3 lg:gap-4 2xl:gap-2 3xl:gap-4">
       <LightweightMultiSelect
-        className="ml-1 md:ml-3 lg:ml-4"
+        className="ml-1 md:ml-3 lg:ml-4 2xl:ml-0 3xl:ml-4"
         options={styleOptions}
         value={currentStyles}
         onValueChange={(value: string[]) =>
@@ -386,7 +386,6 @@ function BuildCardComponent({
               onCheckedChange={handleToggleVisibility}
               className="data-[state=checked]:bg-primary/70 flex-shrink-0"
             />
-            {labelsRow}
             {!isMobile && (
               <div className="flex-1 min-w-0 px-2">
                 <Input
@@ -398,6 +397,7 @@ function BuildCardComponent({
                 />
               </div>
             )}
+            {labelsRow}
             <div className="flex items-center gap-0.5 ml-auto flex-shrink-0">
               <ValidationPopover
                 isValid={validation.isValid}
