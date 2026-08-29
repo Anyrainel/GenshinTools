@@ -1,0 +1,812 @@
+{
+  "boundaries": {
+    "constellation": {
+      "calculationTeamInvestment": "constellation-unspecified",
+      "derivedC0Basis": "calculator-local-fixture-assumptions-only",
+      "observedDerivedConstellations": [
+        0
+      ],
+      "sourceConstellationUsedAsC0Evidence": false,
+      "sourceRotationTeamInvestment": "constellation-unspecified",
+      "unobservedDerivedConstellations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "exclusions": {
+      "damageReplayPerformed": false,
+      "energyRecoveryComputed": false,
+      "energyRecoveryInputsRead": false,
+      "formulaExecutionPerformed": false,
+      "optimizerUsed": false
+    },
+    "fixtureSet": {
+      "completeExpectedInputSetRequired": true,
+      "embeddedGeneratedFromMustMatchCurrentFiles": true,
+      "expectedFixtureCount": 2,
+      "fixtureReportPaths": [
+        "scripts/guide-factory/reports/furina-neuvillette-formula-plan-draft.json",
+        "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json"
+      ],
+      "reportFileHashesAuthenticatedAgainstGeneratedFrom": true
+    },
+    "review": {
+      "actionTranslationsHumanReviewed": false,
+      "furinaFixtureReadiness": "not-assessed",
+      "furinaFixtureSourceTokenCoverage": "not-recorded",
+      "keqingFixtureBlockerCount": 8,
+      "keqingFixtureReadiness": "assessed-blocked",
+      "sourceRotationsHumanReviewed": false
+    },
+    "roster": {
+      "checkedInRosterReferenceMatched": true,
+      "everyObservedCharacterIsReleased": true,
+      "releasedCharacterCount": 125,
+      "releasedCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f"
+    }
+  },
+  "cautions": [
+    "C0 is observed only as an exact local calculator-fixture assumption; neither the calculation team nor the source-rotation team specifies constellation investment.",
+    "The two scenario observations for Furina and Xilonen remain separate and are not votes, averages, or corroboration.",
+    "The source rotations and agent-authored action translations are unreviewed.",
+    "The older Furina fixture has no readiness assessment and does not record token-coverage classifications.",
+    "The Keqing fixture is blocked by eight recorded readiness blockers."
+  ],
+  "characters": [
+    {
+      "characterId": "furina",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "furina-neuvillette-source-rotation-comparison-v2:furina:C0",
+            "keqing-ineffa-source-rotation-comparison-v1:furina:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "furina-neuvillette-source-rotation-comparison-v2:furina:C0",
+        "keqing-ineffa-source-rotation-comparison-v1:furina:C0"
+      ]
+    },
+    {
+      "characterId": "ineffa",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "keqing-ineffa-source-rotation-comparison-v1:ineffa:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "keqing-ineffa-source-rotation-comparison-v1:ineffa:C0"
+      ]
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "furina-neuvillette-source-rotation-comparison-v2:kaedehara_kazuha:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "furina-neuvillette-source-rotation-comparison-v2:kaedehara_kazuha:C0"
+      ]
+    },
+    {
+      "characterId": "keqing",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "keqing-ineffa-source-rotation-comparison-v1:keqing:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "keqing-ineffa-source-rotation-comparison-v1:keqing:C0"
+      ]
+    },
+    {
+      "characterId": "neuvillette",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "furina-neuvillette-source-rotation-comparison-v2:neuvillette:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "furina-neuvillette-source-rotation-comparison-v2:neuvillette:C0"
+      ]
+    },
+    {
+      "characterId": "xilonen",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "furina-neuvillette-source-rotation-comparison-v2:xilonen:C0",
+            "keqing-ineffa-source-rotation-comparison-v1:xilonen:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "furina-neuvillette-source-rotation-comparison-v2:xilonen:C0",
+        "keqing-ineffa-source-rotation-comparison-v1:xilonen:C0"
+      ]
+    }
+  ],
+  "classification": "descriptive-derived-fixture-inventory",
+  "comparisonStatus": "comparable",
+  "coveragePayloadSha256": "df95a3dc1ea43d4453cfa621039d7e076db361165f7981b0783f5f1da7fb19af",
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "9be7cedef00bf704d88c7a02873068cd7ea1faba21fa75e2250e4652b43114e7"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+      "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "59a9943f3c12ab0677696030d7fde0f0608a0659662cb54833ec533138a023d8"
+    },
+    {
+      "path": "scripts/guide-factory/reports/furina-neuvillette-formula-plan-draft.json",
+      "sha256": "85c91e1e036292cb9c529d8055debdee61f2fe295635bad868289a6fecf23d18"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
+      "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+    },
+    {
+      "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
+      "sha256": "de7d2f6762e0152f4732aa9c6d8aee2ff4834d6f1713ecf0986e4dfacd9e5cce"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/derivedFormulaFixtureCoverage.ts",
+      "sha256": "8aee1e07ff76a4581458f2d7454424682342948ef5e48779eda025078d32a0da"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "266b0675bfa873b5cf547395b770ded141342e1c56564497a76350249da0e590"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanReadiness.ts",
+      "sha256": "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922"
+    },
+    {
+      "path": "scripts/guide-factory/src/furinaNeuvilletteFormulaDraft.ts",
+      "sha256": "4aea0d30f14978e52b93e2bb687c74cb563be79c6f2c64bacd60277c5cf6c598"
+    },
+    {
+      "path": "scripts/guide-factory/src/inventory-derived-formula-fixture-coverage.ts",
+      "sha256": "e9567a15e8ac8cbc2a5fb2119a5e778ead8a5c3a4ed92cc95049d7e7df61d0d4"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
+      "sha256": "be829058cd2c69871101cce1f997e2e3fe4fc0da03f0f71f1b467b0cc9c93112"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "09c15f78f3e74e63336f7df07e2b7f7a24e28a3e4adb4a19159004cd186b12d6"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
+      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Inazuma.ts",
+      "sha256": "16778887d05d77f314891562c3726d5b4af78e111e341e11e1dda62327bfc83d"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    }
+  ],
+  "prohibitedInterpretations": [
+    "Do not treat fixture membership, local C0 assumptions, or formula availability as source validation.",
+    "Do not use this report to recommend, rank, or compare teams, builds, formulas, rotations, or damage.",
+    "Do not infer any C1-C6 coverage from a C0 local fixture assumption.",
+    "Do not infer energy requirements, rotation feasibility, buff coverage, or optimization results."
+  ],
+  "reportType": "derived-formula-fixture-coverage",
+  "scenarios": [
+    {
+      "calculationTeamRecordId": "genshintools-presets:team:JQC4wxT0jJgK50gc0O",
+      "fixtureId": "furina-neuvillette-source-rotation-comparison-v2",
+      "fixtureReport": {
+        "generatedFromSha256": "e229dad4b336e8060885d6a47d964b1e72a2750a794699dbb4322bed9502f6b7",
+        "path": "scripts/guide-factory/reports/furina-neuvillette-formula-plan-draft.json",
+        "sha256": "85c91e1e036292cb9c529d8055debdee61f2fe295635bad868289a6fecf23d18"
+      },
+      "memberObservations": [
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "furina",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "7523061d780ea1448a46f643eee76f178a52070431fc470caef4826a1b5884ab",
+            "positiveDefaultFormulaCount": 3,
+            "zeroDefaultFormulaCount": 0
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "furina-neuvillette-source-rotation-comparison-v2:furina:C0",
+          "scenarioId": "furina-neuvillette-source-rotation-comparison-v2",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "kaedehara_kazuha",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "3e7d1928598867220255618cf64f1a44456f1a2f6e8376b9ca199b09e0b79810",
+            "positiveDefaultFormulaCount": 3,
+            "zeroDefaultFormulaCount": 4
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "furina-neuvillette-source-rotation-comparison-v2:kaedehara_kazuha:C0",
+          "scenarioId": "furina-neuvillette-source-rotation-comparison-v2",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "neuvillette",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "9c5c5eed6e25ae6a6799ac193e7b5669a631616f66aababcba0dee93c46a46c5",
+            "positiveDefaultFormulaCount": 4,
+            "zeroDefaultFormulaCount": 0
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "furina-neuvillette-source-rotation-comparison-v2:neuvillette:C0",
+          "scenarioId": "furina-neuvillette-source-rotation-comparison-v2",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "xilonen",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "2f2800f85080b7886794cceaf9b96d535331f4352cbec4de4dd03ab2e65e6803",
+            "positiveDefaultFormulaCount": 2,
+            "zeroDefaultFormulaCount": 2
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "furina-neuvillette-source-rotation-comparison-v2:xilonen:C0",
+          "scenarioId": "furina-neuvillette-source-rotation-comparison-v2",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        }
+      ],
+      "provenance": {
+        "actionTranslationReviewStatus": "unreviewed",
+        "manualSnapshot": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+          "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
+        },
+        "sourceId": "kqm",
+        "sourceRecordId": "furina-neuvillette-kazuha-xilonen-example",
+        "sourceRotationExtractionReviewStatus": "unreviewed"
+      },
+      "readiness": {
+        "blockerCount": null,
+        "readyForDamageReplay": null,
+        "sourceTokenCoverage": "not-recorded",
+        "state": "not-assessed"
+      },
+      "scenarioId": "furina-neuvillette-source-rotation-comparison-v2",
+      "sourceAuthoredFormulaPlan": false,
+      "sourceRotation": {
+        "recordId": "kqm:team:furina-neuvillette-kazuha-xilonen-example",
+        "rotationId": "sample-rotation-xilonen"
+      },
+      "supportsDamageClaims": false,
+      "supportsGuideClaims": false,
+      "supportsRanking": false,
+      "supportsRecommendations": false,
+      "supportsSourceValidation": false,
+      "validationDisposition": "withheld-from-guide-use"
+    },
+    {
+      "calculationTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+      "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
+      "fixtureReport": {
+        "generatedFromSha256": "997ce4ec35d2c2f0c2aef59c5fd1cb7be37e824a775e2535b5d5b88464488ba0",
+        "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
+        "sha256": "3c65d731ce8616afe444b03611999699174b7d9d561fc90c37f178e5ba5f6056"
+      },
+      "memberObservations": [
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "furina",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "09a16e7af50156b86c071ffded60005f2cd1cc77008cda76d820a00abce9669a",
+            "positiveDefaultFormulaCount": 3,
+            "zeroDefaultFormulaCount": 1
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "keqing-ineffa-source-rotation-comparison-v1:furina:C0",
+          "scenarioId": "keqing-ineffa-source-rotation-comparison-v1",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "ineffa",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "d3d439a5407e8326cd4169baa254b04459fc347a4ead7353281af38e717e71e6",
+            "positiveDefaultFormulaCount": 4,
+            "zeroDefaultFormulaCount": 0
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "keqing-ineffa-source-rotation-comparison-v1:ineffa:C0",
+          "scenarioId": "keqing-ineffa-source-rotation-comparison-v1",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "keqing",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "f5a871f11fe937f602cd6f54e0307fca671e105f0d95b3f42af82acd63121176",
+            "positiveDefaultFormulaCount": 4,
+            "zeroDefaultFormulaCount": 2
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "keqing-ineffa-source-rotation-comparison-v1:keqing:C0",
+          "scenarioId": "keqing-ineffa-source-rotation-comparison-v1",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "xilonen",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "2f2800f85080b7886794cceaf9b96d535331f4352cbec4de4dd03ab2e65e6803",
+            "positiveDefaultFormulaCount": 2,
+            "zeroDefaultFormulaCount": 2
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "keqing-ineffa-source-rotation-comparison-v1:xilonen:C0",
+          "scenarioId": "keqing-ineffa-source-rotation-comparison-v1",
+          "sourceRotationTeamInvestment": "constellation-unspecified"
+        }
+      ],
+      "provenance": {
+        "actionTranslationReviewStatus": "unreviewed",
+        "manualSnapshot": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+          "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+        },
+        "sourceId": "kqm",
+        "sourceRecordId": "keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "sourceRotationExtractionReviewStatus": "unreviewed"
+      },
+      "readiness": {
+        "blockerCount": 8,
+        "readyForDamageReplay": false,
+        "sourceTokenCoverage": "recorded",
+        "state": "assessed-blocked"
+      },
+      "scenarioId": "keqing-ineffa-source-rotation-comparison-v1",
+      "sourceAuthoredFormulaPlan": false,
+      "sourceRotation": {
+        "recordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "rotationId": "sample-rotation"
+      },
+      "supportsDamageClaims": false,
+      "supportsGuideClaims": false,
+      "supportsRanking": false,
+      "supportsRecommendations": false,
+      "supportsSourceValidation": false,
+      "validationDisposition": "withheld-from-guide-use"
+    }
+  ],
+  "schemaVersion": 1,
+  "sourceAuthoredFormulaPlan": false,
+  "summary": {
+    "characterScenarioObservationCount": 8,
+    "derivedC0ObservationCount": 8,
+    "fixtureCount": 2,
+    "guideReadyObservationCount": 0,
+    "positiveDefaultFormulaRowCount": 25,
+    "sharedCharacterScenarioObservationCounts": {
+      "furina": 2,
+      "xilonen": 2
+    },
+    "sourceConstellationSpecifiedObservationCount": 0,
+    "sourceConstellationUnspecifiedObservationCount": 8,
+    "sourceValidatedObservationCount": 0,
+    "uniqueCharacterCount": 6,
+    "zeroDefaultFormulaRowCount": 11
+  },
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsGuideClaims": false,
+  "supportsRanking": false,
+  "supportsRecommendations": false,
+  "supportsSourceValidation": false,
+  "validationDisposition": "withheld-from-guide-use"
+}

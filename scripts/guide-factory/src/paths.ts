@@ -83,6 +83,11 @@ export const KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH = path.join(
   "reports",
   "keqing-ineffa-formula-plan-draft.json"
 );
+export const DERIVED_FORMULA_FIXTURE_COVERAGE_REPORT_PATH = path.join(
+  FACTORY_ROOT,
+  "reports",
+  "derived-formula-fixture-coverage.json"
+);
 export const KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH = path.join(
   FACTORY_ROOT,
   "reports",

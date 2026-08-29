@@ -21,9 +21,10 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 20 adds a repository-wide, constellation-explicit inventory of the
-inputs that could eventually support character guides. It remains descriptive
-coverage evidence and does not claim a working guide factory:
+Checkpoint 21 adds a separate, authenticated inventory of the two existing
+derived formula fixtures. It preserves their local-assumption and unreviewed
+status instead of promoting them into source-authored plans. The broader lab
+still does not claim a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -221,6 +222,21 @@ coverage evidence and does not claim a working guide factory:
     free text may still mention energy requirements, while ordinary `er`
     remains a stat vocabulary token; create no guide, rank, recommendation, or
     damage claim.
+71. Inventory exactly two checked-in technical formula fixtures as eight
+    character-scenario observations across six unique characters.
+72. Authenticate each supplied fixture against its current report bytes and
+    embedded input hashes, while retaining the fixed fixture IDs, rosters,
+    source rotations, and released-character boundary.
+73. Record every fixture member as an exact local C0 calculator assumption while
+    separately preserving that both source teams leave constellation
+    investment unspecified; leave C1 through C6 unobserved.
+74. Keep Furina's and Xilonen's two scenario observations separate rather than
+    treating repeated membership as votes, corroboration, or an average.
+75. Preserve the Keqing fixture's eight replay-readiness blockers while marking
+    the older Furina fixture as not assessed with token coverage not recorded;
+    keep source extraction and action translation review states separate.
+76. Withhold both fixtures from guide use and authorize no replay, optimizer,
+    recommendation, rank, damage, source-validation, or ER claim.
 
 The first two active sources are already in this repository:
 
@@ -296,6 +312,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-team-template-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-keqing-ineffa-formula-plan.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-derived-formula-fixture-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-artifact-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-weapon-choice-search-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-artifact-generation.ts
@@ -326,9 +343,10 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-one durable reports in memory: corpus inventory,
+It also rebuilds all twenty-two durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
-choice search coverage, two formula-count comparisons, artifact-generation
+choice search coverage, two formula-count comparisons, the derived formula-
+fixture inventory, artifact-generation
 preflight, technical and sensitivity probes, the bounded joint artifact
 experiment, the bounded team-roster candidate domain, the full-team stat-
 marginal diagnostic, the Furina source-scoped role sample, the Keqing source-
@@ -359,9 +377,20 @@ while the energy-guidance record contributes none. Structured ER targets,
 floors, rotations, and weapon conditions contribute no observations, although
 preserved unresolved free text may mention energy requirements. The ordinary
 `er` stat token remains part of the build-stat vocabulary. No recommendation,
-guide, rank, or damage claim is derived. The next gate is a separate adapter
-that inventories the existing derived formula fixtures without presenting them
-as source-authored plans.
+guide, rank, or damage claim is derived.
+
+The separate derived-fixture inventory authenticates exactly two technical
+reports and records eight character-scenario observations across six unique
+characters. Furina and Xilonen each occur in both scenarios; Keqing, Ineffa,
+Neuvillette, and Kaedehara Kazuha occur once. All eight observations use exact
+local C0 calculator assumptions, while the source investments remain
+constellation-unspecified; C1-C6 are not observed. The two fixtures contain 25
+positive and 11 zero-default formula rows, but zero source-validated or guide-
+ready plans. Keqing remains blocked by eight readiness issues. The older
+Furina fixture has no comparable readiness assessment or token-coverage
+ledger. Both source extractions and both action translations are unreviewed.
+The report performs no formula execution, replay, optimization, damage, or ER
+work and supports no recommendation, rank, guide, or source-validation claim.
 
 ## Data flow
 

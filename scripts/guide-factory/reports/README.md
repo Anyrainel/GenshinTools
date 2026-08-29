@@ -6,6 +6,19 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `derived-formula-fixture-coverage.json` authenticates exactly two checked-in
+  technical fixtures and inventories eight character-scenario observations
+  across six unique characters. Furina and Xilonen occur in both scenarios;
+  Keqing, Ineffa, Neuvillette, and Kaedehara Kazuha occur once. All observations
+  are exact C0 only as local calculator assumptions, while both source teams
+  leave constellation investment unspecified; C1-C6 remain unobserved. The
+  fixtures contain 25 positive and 11 zero-default formula rows, but zero
+  source-validated or guide-ready plans. Keqing retains eight readiness
+  blockers; the older Furina fixture is not assessed and records no token-
+  coverage classification. Both manual source extractions and both action
+  translations remain unreviewed. The report executes no formula, replay,
+  optimizer, damage, or ER path and supports no guide, recommendation, rank, or
+  source-validation claim.
 - `character-guide-input-coverage.json` projects contributing non-ER guide
   inputs across 125 guide-domain-eligible characters at C0 through C6: 875
   compact rows backed by 3,084 group-level observations. Aloy and the Anemo,
@@ -28,8 +41,7 @@ Current durable pilot evidence:
   rotations, weapon conditions, and the energy-guidance record contribute no
   observations; preserved unresolved free text may still mention energy, and
   ordinary `er` remains a build-stat vocabulary token. The report supports no
-  recommendation, guide, rank, damage, or ER claim. A separate derived-formula-
-  fixture adapter is the next gate.
+  recommendation, guide, rank, damage, or ER claim.
 - `keqing-lunar-cross-record-technical-matrix.json` authenticates the two
   checkpoint-18 compositions, translates each into one exact Keqing composed-
   source target plus three repository teammate targets, and prevalidates both
@@ -252,7 +264,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-one reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-two reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

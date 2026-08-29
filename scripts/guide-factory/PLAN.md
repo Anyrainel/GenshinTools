@@ -403,10 +403,18 @@ close caller-mutation seams. The full validator re-executes the current runtime
 and compares the complete report; its checked-in hash list is explicitly a
 declared direct-input list, not a transitive dependency claim.
 
-The next non-ER gate is a separate derived-formula-fixture adapter. It must
-inventory the existing technical fixtures without reclassifying them as
-repository-authored or source-validated formula plans, and without authorizing
-replay, optimization, recommendations, rankings, or damage claims.
+The derived-formula-fixture adapter now inventories exactly two checked-in
+technical fixtures as eight character-scenario observations across six unique
+characters. It authenticates the current report bytes and embedded input hashes
+without importing calculator runtime modules. Every observation is exact C0
+only as a local fixture assumption; both source teams remain constellation-
+unspecified, C1-C6 remain unobserved, and the report contains zero source-
+validated or guide-ready plans. The Keqing fixture retains eight readiness
+blockers. The older Furina fixture remains not assessed and has no token-
+coverage ledger. Both source extractions and action translations remain
+unreviewed, which is the next human-evidence gap. The adapter authorizes no
+replay, optimization, recommendation, ranking, damage, source-validation, or ER
+claim.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

@@ -27,6 +27,13 @@ import {
   DIONA_ER_ENGINE_INPUT_PATHS,
 } from "./dionaErCalibration";
 import {
+  buildDerivedFormulaFixtureCoverageReport,
+  DERIVED_FORMULA_FIXTURE_COVERAGE_INPUT_PATHS,
+  DERIVED_FORMULA_FIXTURE_COVERAGE_SOURCE_FILE_PATHS,
+  DERIVED_FORMULA_FIXTURE_MANUAL_SNAPSHOT_PATHS,
+  DERIVED_FORMULA_FIXTURE_REPORT_PATHS,
+} from "./derivedFormulaFixtureCoverage";
+import {
   buildFurinaNeuvilletteFormulaDraftReport,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_INPUT_PATHS,
 } from "./furinaNeuvilletteFormulaDraft";
@@ -97,6 +104,7 @@ import {
 import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH,
   CHARACTER_GUIDE_INPUT_COVERAGE_REPORT_PATH,
+  DERIVED_FORMULA_FIXTURE_COVERAGE_REPORT_PATH,
   DIONA_COMPARISON_REPORT_PATH,
   DIONA_ER_CALIBRATION_REPORT_PATH,
   FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH,
@@ -170,6 +178,8 @@ export async function runValidation(): Promise<ValidationRunResult> {
     teamTemplateCoverageInput,
     furinaNeuvilletteFormulaDraftInput,
     keqingIneffaFormulaDraftInput,
+    derivedFormulaFixtureCoverageInput,
+    derivedFormulaFixtureCoverageSourceFiles,
     knowledgeCorpusInventoryInput,
     characterGuideInputCoverageInput,
     characterGuideInputCoverageSourceFiles,
@@ -199,6 +209,18 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(TEAM_TEMPLATE_COVERAGE_REPORT_PATH),
       readJson(FURINA_NEUVILLETTE_FORMULA_DRAFT_REPORT_PATH),
       readJson(KEQING_INEFFA_FORMULA_DRAFT_REPORT_PATH),
+      readJson(DERIVED_FORMULA_FIXTURE_COVERAGE_REPORT_PATH),
+      Promise.all(
+        DERIVED_FORMULA_FIXTURE_COVERAGE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
       readJson(KNOWLEDGE_CORPUS_INVENTORY_REPORT_PATH),
       readJson(CHARACTER_GUIDE_INPUT_COVERAGE_REPORT_PATH),
       Promise.all(
@@ -583,6 +605,53 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.team-roster-candidate-domain-experiment",
           message:
             "The saved team-roster candidate-domain experiment does not match the selected repository templates, eligible stable character boundary, runtime reaction gate, and validation targets.",
+        });
+      }
+
+      const derivedFormulaFixtureCoverageGeneratedFrom =
+        await hashRelativePaths(DERIVED_FORMULA_FIXTURE_COVERAGE_INPUT_PATHS);
+      const derivedFormulaFixtureManualInputs = manualInputs
+        .filter(({ snapshotFile }) =>
+          DERIVED_FORMULA_FIXTURE_MANUAL_SNAPSHOT_PATHS.some(
+            (relativePath) => relativePath === snapshotFile.path,
+          ),
+        )
+        .map(({ snapshot, snapshotFile }) => ({
+          path: snapshotFile.path,
+          snapshotInput: snapshot,
+        }));
+      const expectedDerivedFormulaFixtureCoverage =
+        buildDerivedFormulaFixtureCoverageReport({
+          fixtureReportInputs: [
+            {
+              path: DERIVED_FORMULA_FIXTURE_REPORT_PATHS[0],
+              reportInput: expectedFormulaDraft,
+            },
+            {
+              path: DERIVED_FORMULA_FIXTURE_REPORT_PATHS[1],
+              reportInput: expectedKeqingIneffaFormulaDraft,
+            },
+          ],
+          repositoryInput: expectedKnowledge,
+          sourceRegistryInput: registry.data,
+          manualIndexInput,
+          manualSnapshotInputs: derivedFormulaFixtureManualInputs,
+          sourceFiles: derivedFormulaFixtureCoverageSourceFiles,
+          releasedCharacterIds: characters.map(({ id }) => id),
+          checkedInRosterReportInput:
+            expectedTeamRosterCandidateDomainExperiment,
+          generatedFrom: derivedFormulaFixtureCoverageGeneratedFrom,
+        });
+      if (
+        stableJson(expectedDerivedFormulaFixtureCoverage) !==
+        stableJson(derivedFormulaFixtureCoverageInput)
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_derived_formula_fixture_coverage",
+          path: "reports.derived-formula-fixture-coverage",
+          message:
+            "The saved derived formula-fixture coverage does not match the two authenticated technical fixtures, source provenance, local C0 assumptions, and withheld-use boundary.",
         });
       }
 

@@ -6,6 +6,7 @@ reports/*
 !reports/team-template-coverage.json
 !reports/furina-neuvillette-formula-plan-draft.json
 !reports/keqing-ineffa-formula-plan-draft.json
+!reports/derived-formula-fixture-coverage.json
 !reports/knowledge-corpus-inventory.json
 !reports/character-guide-input-coverage.json
 !reports/artifact-choice-search-coverage.json
