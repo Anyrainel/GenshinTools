@@ -294,6 +294,27 @@ function consolidateManualRecord(
       ...(member.substats ? { substats: member.substats } : {}),
       ...(member.erTargets.length ? { erTargets: member.erTargets } : {}),
     })),
+    ...(record.artifactPlans
+      ? {
+          artifactPlans: record.artifactPlans.map((plan) => ({
+            ...plan,
+            conditions: [...plan.conditions],
+            assignments: plan.assignments.map((assignment) => ({
+              characterId: assignment.characterId,
+              artifact:
+                assignment.artifact.type === "4pc"
+                  ? { ...assignment.artifact }
+                  : {
+                      ...assignment.artifact,
+                      halfSetIds: [...assignment.artifact.halfSetIds] as [
+                        string,
+                        string,
+                      ],
+                    },
+            })),
+          })),
+        }
+      : {}),
     ...(record.reactions?.length ? { reactions: record.reactions } : {}),
     damagePlans: [],
     rotations: record.rotations,

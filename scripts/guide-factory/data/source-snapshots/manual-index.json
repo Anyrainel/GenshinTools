@@ -12,6 +12,10 @@
     {
       "sourceId": "kqm",
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"
+    },
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json"
     }
   ]
 }

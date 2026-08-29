@@ -133,18 +133,22 @@ runtime derives positive substats from successful four-piece evaluations and
 may append a smaller set in a real analyzer run.
 
 The report accounts for every artifact-choice field on current non-rejected
-character-guide and team records: 1,046 occurrences in total. Of 188 guide
+character-guide and team records: 1,052 occurrences in total. Of 188 guide
 builds, 167 are initially enumerated, 14 are conditionally representable, and
 7 are not representable by the current grammar. Of 840 team-member selected
 artifacts, 820 are initially enumerated, 7 are conditional, and 13 are not
-representable. Of 18 character-guide and team-member recommendation
-occurrences, 16 are initially enumerated and 2 are not representable. The 22
+representable. Of 22 character-guide and team-member recommendation
+occurrences, 20 are initially enumerated and 2 are not representable. Two more
+occurrences are the assignments in one coupled Kokomi/Columbina artifact plan;
+both are initially enumerated individually. The 22
 failures are 18 Instructor occurrences, 2 Exile occurrences, and 2
 damage-oriented two-piece combinations absent from the dynamic half-set map.
 
 This seam runs no artifact generator or damage formula and emits no score,
 rank, winner, or guide recommendation. Candidate naming is not evidence that a
-set is suitable or that its generation and evaluation path succeeds.
+set is suitable or that its generation and evaluation path succeeds. Auditing
+both assignments in a plan also does not show that the analyzer can enumerate
+or optimize the coupled assignment jointly.
 
 ## Callable modules for later experiments
 
@@ -195,6 +199,10 @@ None of these later modules is invoked by the first replay.
   Instructor and cannot dynamically discover every damage-oriented two-piece
   family. Its two-piece candidate grammar is conditional on successful
   four-piece evaluations, not an unconditional search list.
+- Coupled source plans are now representable in the knowledge schema, but the
+  current analyzer varies one character at a time and has no joint artifact-set
+  assignment search. Individual candidate coverage must not be reported as
+  coupled-plan coverage.
 - AutoTune varies one character while teammates use flower/plume-only sheets.
   If formulas are omitted, `autoTuneTeam` assigns count 1 to every available
   formula. `autoTune.ts` currently sets `DEFAULT_CALC_CTX.enemyRes` to `10`,
@@ -203,9 +211,9 @@ None of these later modules is invoked by the first replay.
   require validation before the pipeline can be reused; this inventory does not
   diagnose which value or policy was intended.
 
-The next repository checkpoint should add a narrow, provenance-preserving
-structured-source pilot and measure what new team, rotation, and equipment
-evidence it contributes. A later computation checkpoint can then audit actual
-artifact generation for a reviewed fixture. Formula-plan review, explicit
-artifact stat sheets, and dual-path replay remain prerequisites for damage
-optimization.
+The next repository checkpoint should audit the mirrored weapon candidate
+policy against every non-ER weapon occurrence while keeping weapon ID,
+refinement specificity, and native-type compatibility as separate outcomes. A
+later computation checkpoint can then audit actual artifact generation for a
+reviewed fixture. Formula-plan review, explicit artifact stat sheets, and
+dual-path replay remain prerequisites for damage optimization.

@@ -139,6 +139,32 @@ calculation values remain separate fields.
 Agent output is always unreviewed and promotion-ineligible. It cannot update
 accepted knowledge or copy an entire guide field by field.
 
+A team may carry a coupled artifact-assignment plan when the source explicitly
+ties multiple members' sets together:
+
+```json
+{
+  "id": "conditional-artifact-delegation",
+  "classification": "conditional",
+  "conditions": ["The source-stated team condition."],
+  "assignments": [
+    {
+      "characterId": "character_a",
+      "artifact": { "type": "4pc", "setId": "support_set" }
+    },
+    {
+      "characterId": "character_b",
+      "artifact": { "type": "4pc", "setId": "offensive_set" }
+    }
+  ]
+}
+```
+
+Plans require at least two distinct members of that exact team. Their IDs,
+membership, and artifact catalogs are validated, and consolidation preserves
+the coupling. A plan is not a generic loadout, a global recommendation, or
+evidence that the current analyzer can optimize the assignments jointly.
+
 Active manual files are listed in `data/source-snapshots/manual-index.json`.
 The index is the reviewed corpus boundary; a filesystem glob is not. Loading
 fails on unsafe or noncanonical paths, missing indexed files, unindexed manual
@@ -207,6 +233,25 @@ Aino/Sucrose example retains one rotation and its every-other-rotation Burst
 scheduling note. Neither record supplies or receives a numeric ER target,
 equipment ranking, formula mapping, or inferred investment level. Both remain
 examples with no power-ranking claim, unreviewed and promotion-ineligible.
+
+### KQM Kokomi pilot
+
+The fourth page stores two heading-scoped records from the visible Luna V
+guide: one contextual Kokomi artifact observation and one exact
+Kokomi/Ineffa/Columbina/Sucrose Lunar-Charged example. The team remains one
+example in a source-declared non-comprehensive list and carries no power rank.
+
+The source says Ocean-Hued Clam performs well on Kokomi in that team and gives
+one conditional alternative: with a well-invested Columbina, Kokomi can hold
+Silken Moon's Serenade so Columbina can use Aubade of Morningstar and Moon. The
+snapshot stores both member-level observations and one coupled two-assignment
+plan. It does not infer how much investment is sufficient, what Columbina uses
+otherwise, the reverse condition, or which plan is globally better.
+
+The published sample rotation is retained with Ineffa's and Sucrose's Bursts
+marked optional when available. Kokomi's linked combo remains unresolved. No
+ER values, formula counts, hit counts, weapon choices, refinements, duration,
+or enemy assumptions are added.
 
 Mobalytics was considered as a second publisher but is registered as
 permission-blocked under its current terms. No Mobalytics observation file is

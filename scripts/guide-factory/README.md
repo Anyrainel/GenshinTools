@@ -21,8 +21,8 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 5 audits whether the existing artifact-choice analyzer can express
-artifact choices already present in the knowledge repository, without
+Checkpoint 6 adds a source-backed coupled artifact assignment and checks it
+against the existing artifact-choice analyzer, without
 claiming a working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
@@ -46,6 +46,9 @@ claiming a working guide factory:
     every artifact-choice field on non-rejected guide and team records as
     initially enumerated, conditionally representable, or not representable by
     that grammar.
+12. Preserve source-stated multi-character artifact assignments as coupled
+    plans, validate their team membership and catalogs, and audit each choice
+    without pretending the analyzer can optimize the plan jointly.
 
 The first two active sources are already in this repository:
 
@@ -57,7 +60,7 @@ several domains globally but has no per-team locator, so consolidation must not
 treat any row as verified external knowledge.
 
 The active external observations are narrow, linked snapshots of KQM's Diona,
-Furina, and Keqing Quick Guides. Diona remains the assumption-incomplete ER
+Furina, Keqing, and Kokomi Quick Guides. Diona remains the assumption-incomplete ER
 pilot. Furina adds conditional builds, constellation-bounded advice, five team
 templates, three exact example teams, and their published sample rotations. Two
 of those exact teams are Quickbloom examples absent from the current baseline.
@@ -66,8 +69,12 @@ than silently omitting them. Keqing adds one Lunar-Charged template and two
 exact example teams with three published rotation variants. This deliberately
 tests whether a new release can surface changed team options for an old
 character; it does not claim that the examples are optimal. Every record
-remains unreviewed and promotion-ineligible. This is not a reusable KQM corpus
-adapter.
+remains unreviewed and promotion-ineligible. Kokomi adds one exact
+Lunar-Charged example whose artifact advice is intrinsically coupled: under the
+source's undefined "well-invested Columbina" condition, Kokomi can take Silken
+Moon's Serenade so Columbina can take Aubade. The condition and assignment are
+preserved without inventing a breakpoint, reverse implication, or global
+ranking. This is not a reusable KQM corpus adapter.
 
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
@@ -75,6 +82,9 @@ Source-specific capture contracts live beside `sources/registry.json`.
 Crimson Witch has a separate permission-gated source profile: its current app
 looks structurally adaptable, but no public recommendation-data contract or
 reuse grant has been established.
+The archived gcsimactions repository is also permission-blocked: its
+community-contributed configurations have no established reuse grant and use a
+legacy APL language that requires explicit migration and renewed validation.
 
 ## Commands
 
@@ -134,10 +144,10 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 351 unique records: 128
-character guides, 216 exact teams, 6 team templates, and 1 historical energy
-record. Of those, 191 are baseline records and 160 are candidates. KQM
-contributes 21 records, including 6 exact teams with 8 explicit rotation
+The descriptive corpus inventory currently counts 353 unique records: 129
+character guides, 217 exact teams, 6 team templates, and 1 historical energy
+record. Of those, 191 are baseline records and 162 are candidates. KQM
+contributes 23 records, including 7 exact teams with 9 explicit rotation
 entries. The inventory also reports explicit weapon, artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
 not votes or recommendation confidence.
@@ -164,8 +174,9 @@ Keqing Lunar-Charged. The Keqing template keeps `off-field-hydro-applier` and
 `resistance-shred` as unresolved role constraints; it is still uncovered, not
 role-unresolved, because no baseline team contains the required Keqing–Ineffa
 core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen roster matches one current
-preset. The other five exact KQM teams, including both Keqing examples, are
-uncovered. Source presence does not automatically promote any of them into the
+preset. The other six exact KQM teams, including both Keqing examples and the
+Kokomi/Ineffa/Columbina/Sucrose example, are uncovered. Source presence does
+not automatically promote any of them into the
 baseline.
 
 That matched roster produces a calculator-default draft with 12 positive and 6
@@ -215,12 +226,15 @@ keys and a maximum of 14 stat-derived two-piece pair keys. The latter is an
 upper bound: the runtime discovers a potentially smaller set only after
 successful four-piece evaluations.
 
-The report covers 1,046 non-rejected artifact-choice occurrences. Of 188 guide
+The report covers 1,052 non-rejected artifact-choice occurrences. Of 188 guide
 builds, 167 are initially enumerated, 14 are only conditionally representable,
 and 7 are not representable by the current grammar. Of 840 selected artifacts
 on team members, 820 are initially enumerated, 7 are conditional, and 13 are
-not representable. Of 18 character-guide and team-member recommendation
-occurrences, 16 are initially enumerated and 2 are not representable. The 22
+not representable. Of 22 character-guide and team-member recommendation
+occurrences, 20 are initially enumerated and 2 are not representable. Both
+assignments in the Kokomi/Columbina coupled plan are initially enumerated as
+individual choices. That does not establish that the analyzer can search the
+coupled assignment jointly. The 22
 failures comprise 18 Instructor occurrences, 2 Exile occurrences, Freminet's
 Cryo DMG plus Skill DMG pair, and C6 Yelan's repeated Hydro DMG pair. This is a
 search-domain audit only: it does not run artifact generation, compute damage,

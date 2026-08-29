@@ -39,6 +39,7 @@ type ArtifactRecommendation = NonNullable<
   GuideRecommendation["artifactRecommendations"]
 >[number];
 type TeamMember = KnowledgeTeam["members"][number];
+type TeamArtifactPlan = NonNullable<KnowledgeTeam["artifactPlans"]>[number];
 
 export type ArtifactChoiceSearchCoverageOutcome =
   | "enumerated-initially"
@@ -110,6 +111,18 @@ export type ArtifactChoiceSearchCoverageObservation = ObservationBase &
         classification: ArtifactRecommendation["classification"];
         conditions: string[];
       }
+    | {
+        sourceKind: "team-artifact-plan-assignment";
+        teamLabel?: string;
+        teamIntent?: KnowledgeTeam["intent"];
+        planId: string;
+        planLabel?: string;
+        planClassification: TeamArtifactPlan["classification"];
+        planConditions: string[];
+        assignmentIndex: number;
+        memberIndex: number;
+        memberInvestment: TeamMember["investment"];
+      }
   );
 
 export interface ArtifactChoiceSearchCoverageCounts {
@@ -120,7 +133,7 @@ export interface ArtifactChoiceSearchCoverageCounts {
 }
 
 export interface ArtifactChoiceSearchCoverageReport {
-  schemaVersion: 1;
+  schemaVersion: 2;
   classification: "artifact-choice-search-space-coverage";
   supportsGuideClaims: false;
   generatedFrom: Array<{ path: string; sha256: string }>;
@@ -135,6 +148,7 @@ export interface ArtifactChoiceSearchCoverageReport {
     guideBuilds: ArtifactChoiceSearchCoverageCounts;
     teamSelectedArtifacts: ArtifactChoiceSearchCoverageCounts;
     recommendations: ArtifactChoiceSearchCoverageCounts;
+    teamArtifactPlanAssignments: ArtifactChoiceSearchCoverageCounts;
     byFailureReason: Record<ArtifactChoiceSearchFailureReason, number>;
   };
   observations: ArtifactChoiceSearchCoverageObservation[];
@@ -142,9 +156,10 @@ export interface ArtifactChoiceSearchCoverageReport {
     "Initial 4-piece enumeration does not prove that artifact generation or damage evaluation succeeds for a set.",
     "The 2-piece search space is only a maximum grammar derived from every legal substat; runtime appends a potentially smaller set after successful 4-piece evaluations.",
     "Coverage means that the analyzer can name an artifact choice, not that the choice is suitable, competitive, or optimal for the character or team.",
-    "Source conditions, visibility, and constellation scope are preserved but not evaluated.",
+    "Source conditions, visibility, constellation scope, and artifact-plan coupling are preserved but not evaluated.",
     "Rejected records are excluded; every artifact choice field on non-rejected character-guide and team records is otherwise audited.",
     "This report uses the released artifact catalog and fails if beta-only sets leak into the candidate grammar.",
+    "Plan assignments are audited individually; coverage of every assignment does not prove that the analyzer can enumerate or optimize the coupled plan jointly.",
   ];
   prohibitedInterpretations: [
     "score",
@@ -257,9 +272,12 @@ export function buildArtifactChoiceSearchCoverageReport(
       sourceKind === "character-guide-recommendation" ||
       sourceKind === "team-member-recommendation",
   );
+  const teamArtifactPlanAssignments = observations.filter(
+    ({ sourceKind }) => sourceKind === "team-artifact-plan-assignment",
+  );
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     classification: "artifact-choice-search-space-coverage",
     supportsGuideClaims: false,
     generatedFrom: generatedFrom
@@ -276,6 +294,9 @@ export function buildArtifactChoiceSearchCoverageReport(
       guideBuilds: countOutcomes(guideBuilds),
       teamSelectedArtifacts: countOutcomes(teamSelectedArtifacts),
       recommendations: countOutcomes(recommendations),
+      teamArtifactPlanAssignments: countOutcomes(
+        teamArtifactPlanAssignments,
+      ),
       byFailureReason: Object.fromEntries(
         FAILURE_REASONS.map((reason) => [
           reason,
@@ -290,9 +311,10 @@ export function buildArtifactChoiceSearchCoverageReport(
       "Initial 4-piece enumeration does not prove that artifact generation or damage evaluation succeeds for a set.",
       "The 2-piece search space is only a maximum grammar derived from every legal substat; runtime appends a potentially smaller set after successful 4-piece evaluations.",
       "Coverage means that the analyzer can name an artifact choice, not that the choice is suitable, competitive, or optimal for the character or team.",
-      "Source conditions, visibility, and constellation scope are preserved but not evaluated.",
+      "Source conditions, visibility, constellation scope, and artifact-plan coupling are preserved but not evaluated.",
       "Rejected records are excluded; every artifact choice field on non-rejected character-guide and team records is otherwise audited.",
       "This report uses the released artifact catalog and fails if beta-only sets leak into the candidate grammar.",
+      "Plan assignments are audited individually; coverage of every assignment does not prove that the analyzer can enumerate or optimize the coupled plan jointly.",
     ],
     prohibitedInterpretations: [
       "score",
@@ -453,6 +475,41 @@ function collectTeamObservations(
           sourceRefs: sourceRefs.map(cloneSourceReference),
         });
       }
+    }
+  }
+  for (const plan of team.artifactPlans ?? []) {
+    for (const [assignmentIndex, assignment] of plan.assignments.entries()) {
+      const memberIndex = team.members.findIndex(
+        ({ characterId }) => characterId === assignment.characterId,
+      );
+      if (memberIndex < 0) {
+        throw new Error(
+          `Artifact search coverage plan ${team.id}/${plan.id} assigns non-member ${assignment.characterId}.`,
+        );
+      }
+      const member = team.members[memberIndex];
+      observations.push({
+        observationId:
+          `${team.id}:artifact-plan:${plan.id}:assignment:` +
+          assignmentIndex,
+        recordId: team.id,
+        recordStatus: team.status,
+        characterId: assignment.characterId,
+        sourceKind: "team-artifact-plan-assignment",
+        sourceRecordId,
+        ...(team.label == null ? {} : { teamLabel: team.label }),
+        ...(team.intent == null ? {} : { teamIntent: team.intent }),
+        planId: plan.id,
+        ...(plan.label == null ? {} : { planLabel: plan.label }),
+        planClassification: plan.classification,
+        planConditions: [...plan.conditions],
+        assignmentIndex,
+        memberIndex,
+        memberInvestment: cloneInvestment(member.investment),
+        artifact: cloneArtifact(assignment.artifact),
+        ...classifyArtifactChoice(assignment.artifact, searchSpace),
+        sourceRefs: sourceRefs.map(cloneSourceReference),
+      });
     }
   }
   return observations;

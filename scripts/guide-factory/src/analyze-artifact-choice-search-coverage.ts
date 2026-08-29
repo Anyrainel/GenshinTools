@@ -29,13 +29,19 @@ const report = buildArtifactChoiceSearchCoverageReport(
 );
 await writeJson(ARTIFACT_CHOICE_SEARCH_COVERAGE_REPORT_PATH, report);
 
-const { all, guideBuilds, teamSelectedArtifacts, recommendations } =
-  report.summary;
+const {
+  all,
+  guideBuilds,
+  teamSelectedArtifacts,
+  recommendations,
+  teamArtifactPlanAssignments,
+} = report.summary;
 console.log(
   `Wrote ${all.total} artifact-choice coverage observations: ` +
     `guide-builds=${formatCounts(guideBuilds)}; ` +
     `team-selections=${formatCounts(teamSelectedArtifacts)}; ` +
-    `recommendations=${formatCounts(recommendations)}.`,
+    `recommendations=${formatCounts(recommendations)}; ` +
+    `coupled-plan-assignments=${formatCounts(teamArtifactPlanAssignments)}.`,
 );
 
 function formatCounts(counts: typeof guideBuilds): string {

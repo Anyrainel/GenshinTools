@@ -409,8 +409,10 @@
       },
       "characterId": "columbina",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 4,
@@ -418,7 +420,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -869,7 +871,7 @@
       },
       "characterId": "ineffa",
       "externalEditorial": {
-        "recordCount": 3,
+        "recordCount": 4,
         "sourceIds": [
           "kqm"
         ]
@@ -1719,8 +1721,10 @@
       },
       "characterId": "sangonomiya_kokomi",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 2,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 6,
@@ -1728,7 +1732,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -1855,7 +1859,7 @@
       },
       "characterId": "sucrose",
       "externalEditorial": {
-        "recordCount": 1,
+        "recordCount": 2,
         "sourceIds": [
           "kqm"
         ]
@@ -2381,7 +2385,7 @@
   "definitions": {
     "characterPresence": "Character presence is derived only from character-guide subjects, exact-team members, and explicit character selectors in team templates. Element, role, and any selectors are not expanded.",
     "erExclusion": "Energy-guidance records remain visible in kind and status totals, but their targets, weapon conditions, rotations, and character associations do not contribute to evidence or character-presence counts.",
-    "evidenceCounts": "recordsWith fields count records containing at least one explicit value; occurrence fields count each stored ID, choice object, stat group, or rotation entry without deduplication.",
+    "evidenceCounts": "recordsWith fields count records containing at least one explicit value; occurrence fields count each stored ID, choice object, stat group, or rotation entry without deduplication. Artifact occurrences include every coupled-plan assignment as a separate stored choice while preserving the plan in the repository.",
     "exactTeams": "An exact team is a record of kind team, whose schema names exactly four characters. A team template is counted separately and is never expanded into exact teams.",
     "externalEditorial": "External editorial presence means an attributed source whose registry kind is editorial or structured-editorial. Baseline presence means record status baseline; other records are reported separately.",
     "rotations": "Exact-team rotation counts include only explicit RotationObservation entries attached to team records; unresolved segments are still explicit stored observations and are not treated as complete or optimal rotations.",
@@ -2390,15 +2394,15 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "e84820b4d15cf10e680fab385278b23de41c0e54e0fc9b59375a89829a4a6131"
+      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "292c63c4f5dc73275e7f0da8637015bc783dc131256e421cc48aa4cb417c4490"
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
     },
     {
       "path": "scripts/guide-factory/src/corpusInventory.ts",
-      "sha256": "40feac59dad9abed6664f59a3b16d2426cf0a63d795dc732d0e2452e9859e5f1"
+      "sha256": "7950ebfa06ef3dfa5db52331950463c29925aebec70e0ce84c23b899b8ea346a"
     }
   ],
   "prohibitedInterpretations": [
@@ -2408,7 +2412,7 @@
     "source-average",
     "ranking"
   ],
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "sources": [
     {
       "byKind": {
@@ -2447,26 +2451,26 @@
     },
     {
       "byKind": {
-        "character_guide": 8,
+        "character_guide": 9,
         "energy_guidance": 1,
-        "team": 6,
+        "team": 7,
         "team_template": 6
       },
       "byStatus": {
         "accepted": 0,
         "baseline": 0,
-        "candidate": 21,
+        "candidate": 23,
         "contested": 0,
         "rejected": 0
       },
       "evidence": {
-        "artifactChoiceOccurrences": 18,
-        "exactTeamRecords": 6,
-        "exactTeamRecordsWithRotations": 6,
-        "exactTeamRotationEntries": 8,
+        "artifactChoiceOccurrences": 24,
+        "exactTeamRecords": 7,
+        "exactTeamRecordsWithRotations": 7,
+        "exactTeamRotationEntries": 9,
         "mainStatGroups": 9,
         "mainStatIdOccurrences": 12,
-        "recordsWithArtifacts": 5,
+        "recordsWithArtifacts": 7,
         "recordsWithMainStats": 2,
         "recordsWithSubstats": 2,
         "recordsWithWeapons": 2,
@@ -2476,7 +2480,7 @@
         "weaponIdOccurrences": 15
       },
       "ingestionMode": "manual-observation",
-      "records": 21,
+      "records": 23,
       "sourceId": "kqm",
       "sourceKind": "editorial"
     },
@@ -2519,26 +2523,26 @@
   "supportsGuideClaims": false,
   "totals": {
     "byKind": {
-      "character_guide": 128,
+      "character_guide": 129,
       "energy_guidance": 1,
-      "team": 216,
+      "team": 217,
       "team_template": 6
     },
     "byStatus": {
       "accepted": 0,
       "baseline": 191,
-      "candidate": 160,
+      "candidate": 162,
       "contested": 0,
       "rejected": 0
     },
     "evidence": {
-      "artifactChoiceOccurrences": 1046,
-      "exactTeamRecords": 216,
-      "exactTeamRecordsWithRotations": 6,
-      "exactTeamRotationEntries": 8,
+      "artifactChoiceOccurrences": 1052,
+      "exactTeamRecords": 217,
+      "exactTeamRecordsWithRotations": 7,
+      "exactTeamRotationEntries": 9,
       "mainStatGroups": 721,
       "mainStatIdOccurrences": 724,
-      "recordsWithArtifacts": 335,
+      "recordsWithArtifacts": 337,
       "recordsWithMainStats": 122,
       "recordsWithSubstats": 122,
       "recordsWithWeapons": 321,
@@ -2547,7 +2551,7 @@
       "teamTemplateRecords": 6,
       "weaponIdOccurrences": 982
     },
-    "records": 351,
-    "sourceAttributedRecords": 351
+    "records": 353,
+    "sourceAttributedRecords": 353
   }
 }

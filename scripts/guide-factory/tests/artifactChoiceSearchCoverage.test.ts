@@ -15,7 +15,7 @@ describe("artifact-choice search-space coverage", () => {
     );
 
     expect(report).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       classification: "artifact-choice-search-space-coverage",
       supportsGuideClaims: false,
       searchSpace: { catalogScope: "released" },
@@ -33,14 +33,20 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 13,
         },
         recommendations: {
-          total: 18,
-          enumeratedInitially: 16,
+          total: 22,
+          enumeratedInitially: 20,
           conditionallyRepresentable: 0,
           notRepresentable: 2,
         },
+        teamArtifactPlanAssignments: {
+          total: 2,
+          enumeratedInitially: 2,
+          conditionallyRepresentable: 0,
+          notRepresentable: 0,
+        },
         all: {
-          total: 1046,
-          enumeratedInitially: 1003,
+          total: 1052,
+          enumeratedInitially: 1009,
           conditionallyRepresentable: 21,
           notRepresentable: 22,
         },
@@ -241,6 +247,40 @@ describe("artifact-choice search-space coverage", () => {
       outcome: "not-representable",
       failureReason: "non-five-star-filter",
     });
+
+    const kokomiPlanAssignments = report.observations.filter(
+      ({ recordId, sourceKind }) =>
+        recordId ===
+          "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example" &&
+        sourceKind === "team-artifact-plan-assignment",
+    );
+    expect(kokomiPlanAssignments).toHaveLength(2);
+    expect(kokomiPlanAssignments).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          characterId: "sangonomiya_kokomi",
+          planId: "well-invested-columbina-artifact-delegation",
+          planClassification: "conditional",
+          planConditions: ["Columbina is well-invested."],
+          artifact: {
+            type: "4pc",
+            setId: "silken_moons_serenade",
+          },
+          outcome: "enumerated-initially",
+        }),
+        expect.objectContaining({
+          characterId: "columbina",
+          planId: "well-invested-columbina-artifact-delegation",
+          planClassification: "conditional",
+          planConditions: ["Columbina is well-invested."],
+          artifact: {
+            type: "4pc",
+            setId: "aubade_of_morningstar_and_moon",
+          },
+          outcome: "enumerated-initially",
+        }),
+      ]),
+    );
   });
 
   it("distinguishes current candidate-grammar failure causes", () => {
@@ -385,6 +425,11 @@ function countEligibleArtifactOccurrences(
           ),
         0,
       );
+      count +=
+        record.artifactPlans?.reduce(
+          (planTotal, plan) => planTotal + plan.assignments.length,
+          0,
+        ) ?? 0;
     }
   }
   return count;

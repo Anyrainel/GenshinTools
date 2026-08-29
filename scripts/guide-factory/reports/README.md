@@ -7,13 +7,15 @@ be committed only when it becomes durable review evidence.
 Current durable pilot evidence:
 
 - `artifact-choice-search-coverage.json` calls the current analyzer candidate
-  builders and classifies all 1,046 artifact-choice fields on non-rejected
+  builders and classifies all 1,052 artifact-choice fields on non-rejected
   guide and team records against its released search grammar. The grammar
   contains 43 initial four-piece keys and at most 14 conditionally discovered
-  two-piece pairs. Of those occurrences, 1,003 are initially enumerated, 21
+  two-piece pairs. Of those occurrences, 1,009 are initially enumerated, 21
   are conditionally representable, and 22 are not representable by the current
-  grammar. It runs no generation, damage, score, rank, or winner logic and does
-  not support guide claims.
+  grammar. Two of the initially enumerated occurrences are assignments in one
+  coupled plan; they are audited individually, not jointly optimized. It runs
+  no generation, damage, score, rank, or winner logic and does not support
+  guide claims.
 - `knowledge-corpus-inventory.json` describes explicit record, evidence-field,
   source, and character presence across the consolidated repository. It emits
   no quality score, source vote, average, recommendation, or rank. ER guidance
@@ -22,7 +24,7 @@ Current durable pilot evidence:
   teams with exact baseline rosters. It emits present, uncovered, or explicitly
   role-unresolved results and no quality score, rank, or winner. The current
   result has 3 present, 1 role-unresolved, and 2 uncovered templates, plus 1
-  present and 5 uncovered exact external teams. Keqing Lunar-Charged is
+  present and 6 uncovered exact external teams. Keqing Lunar-Charged is
   uncovered because the baseline lacks the required Keqing–Ineffa core; its
   off-field-Hydro and resistance-shred roles are not weakened into element
   matches.

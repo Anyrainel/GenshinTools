@@ -92,6 +92,25 @@ export const ArtifactRecommendationSchema = z
   })
   .strict();
 
+export const ArtifactPlanSchema = z
+  .object({
+    id: IdSchema,
+    label: z.string().min(1).optional(),
+    classification: RecommendationClassificationSchema,
+    conditions: RecommendationConditionsSchema,
+    assignments: z
+      .array(
+        z
+          .object({
+            characterId: IdSchema,
+            artifact: ArtifactChoiceSchema,
+          })
+          .strict(),
+      )
+      .min(2),
+  })
+  .strict();
+
 export const OrdinalStatRecommendationSchema = z
   .object({
     statIds: z.array(IdSchema).min(1),
@@ -388,6 +407,7 @@ const ManualTeamRecordSchema = z
     exhaustiveness: z.enum(["non-exhaustive", "exhaustive", "unspecified"]),
     rankingClaim: z.enum(["none", "ordered", "unordered"]),
     members: z.array(ManualTeamMemberSchema).length(4),
+    artifactPlans: z.array(ArtifactPlanSchema).min(1).optional(),
     reactions: z.array(IdSchema).optional(),
     rotations: z.array(RotationObservationSchema),
     unknowns: UnknownsSchema,
@@ -693,6 +713,7 @@ export const KnowledgeTeamSchema = z
       .optional(),
     rankingClaim: z.enum(["none", "ordered", "unordered"]).optional(),
     members: z.array(KnowledgeTeamMemberSchema).length(4),
+    artifactPlans: z.array(ArtifactPlanSchema).min(1).optional(),
     reactions: z.array(IdSchema).optional(),
     damagePlans: z.array(DamagePlanSchema),
     rotations: z.array(RotationObservationSchema).optional(),

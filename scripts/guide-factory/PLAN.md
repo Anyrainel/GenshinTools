@@ -30,13 +30,16 @@ Questions to learn from real data:
   uncovered by the current GenshinTools baseline.
 - Require human review before a candidate becomes accepted knowledge.
 
-Three KQM pages have been ingested but not human-reviewed. Together they forced
+Four KQM pages have been ingested but not human-reviewed. Together they forced
 separate energy guidance, explicit unranked lists, alternatives versus tied
 ranks, bounded constellation applicability, exact teams versus four-slot team
-templates, example-team intent, and source-defined role constraints into the
-schema. The Keqing Luna I slice is specifically a source-breadth test for
+templates, example-team intent, source-defined role constraints, and coupled
+multi-character artifact assignments into the schema. The Keqing Luna I slice
+is specifically a source-breadth test for
 refreshing an old character when a new release changes available teams; it is
-not evidence that the captured Lunar-Charged teams are optimal.
+not evidence that the captured Lunar-Charged teams are optimal. The Kokomi Luna
+V slice preserves a conditional Kokomi/Columbina artifact delegation without
+turning its two assignments into independent global recommendations.
 
 ## 3. Build validation tooling
 
@@ -57,7 +60,7 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 351 records. It excludes ER details from evidence and
+presence across all 353 records. It excludes ER details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
@@ -124,20 +127,23 @@ coverage and a complete formula-classification ledger.
 Before ranking any artifact set, the current checkpoint measures whether the
 existing analyzer can name the choices already recorded in the repository. Its
 released grammar contains 43 initial four-piece choices and at most 14
-stat-derived two-piece pairs. Across 1,046 artifact-choice fields on
-non-rejected guide and team records, 1,003 are initially enumerated, 21 are
+stat-derived two-piece pairs. Across 1,052 artifact-choice fields on
+non-rejected guide and team records, 1,009 are initially enumerated, 21 are
 conditionally representable, and 22 are not representable by the current
 grammar. The failures expose two specific search-domain gaps: 18 Instructor
 and 2 Exile occurrences are filtered out with all non-five-star sets, while
 two damage-oriented half-set choices are absent from dynamic two-piece
 discovery. This does not establish that any enumerated choice can be generated,
-evaluated, or ranked successfully.
+evaluated, or ranked successfully. The count includes both assignments in the
+new coupled Kokomi/Columbina plan, but only proves that each set name is in the
+individual candidate grammar; it does not prove joint-plan enumeration.
 
-The next computation steps are to widen and validate the knowledge corpus with
-a narrow structured source pilot, then audit actual artifact generation for a
-reviewed fixture. Formula-plan review and an authored artifact-stat sheet remain
-required before damage comparisons. Neither fixture yet supports full rotation
-damage or equipment suitability.
+The next computation step is a weapon candidate-policy audit with separate
+coverage axes for weapon ID, refinement specificity, and native weapon-type
+compatibility. After that, actual artifact generation still needs a reviewed
+fixture. Formula-plan review and an authored artifact-stat sheet remain required
+before damage comparisons. Neither fixture yet supports full rotation damage or
+equipment suitability.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

@@ -59,6 +59,22 @@
       ]
     },
     {
+      "id": "gcsimactions",
+      "name": "gcsimactions community action-list archive",
+      "homepage": "https://github.com/genshinsim/gcsimactions",
+      "kind": "simulation",
+      "status": "blocked",
+      "ingestionMode": "permission-blocked",
+      "permission": "permission-required",
+      "recordFormat": "structured-external-v1",
+      "checkedAt": "2026-08-29",
+      "notes": [
+        "The archived repository contains community-contributed configurations, but no repository license file or contributor-data reuse grant was found during the audit.",
+        "Its configurations use a legacy action-list language that cannot be treated as current executable simulation evidence without an explicit migration and revalidation step.",
+        "Do not ingest or vendor its configurations unless reuse permission and a source-preserving migration policy are established."
+      ]
+    },
+    {
       "id": "mobalytics",
       "name": "Mobalytics Genshin Impact guides",
       "homepage": "https://mobalytics.gg/genshin-impact/",

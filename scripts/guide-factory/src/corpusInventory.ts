@@ -76,7 +76,7 @@ export interface CorpusInventoryCharacterPresence {
 }
 
 export interface KnowledgeCorpusInventoryReport {
-  schemaVersion: 1;
+  schemaVersion: 2;
   generatedFrom: Array<{ path: string; sha256: string }>;
   classification: "descriptive-inventory";
   supportsGuideClaims: false;
@@ -188,7 +188,7 @@ export function buildKnowledgeCorpusInventoryReport(
   );
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedFrom: generatedFrom
       .map((file) => ({ ...file }))
       .sort((left, right) => compareText(left.path, right.path)),
@@ -198,7 +198,7 @@ export function buildKnowledgeCorpusInventoryReport(
       sourceCounts:
         "A record is counted once for every distinct sourceId in its sourceRefs. Therefore source-attributed record totals can exceed the unique repository record count.",
       evidenceCounts:
-        "recordsWith fields count records containing at least one explicit value; occurrence fields count each stored ID, choice object, stat group, or rotation entry without deduplication.",
+        "recordsWith fields count records containing at least one explicit value; occurrence fields count each stored ID, choice object, stat group, or rotation entry without deduplication. Artifact occurrences include every coupled-plan assignment as a separate stored choice while preserving the plan in the repository.",
       exactTeams:
         "An exact team is a record of kind team, whose schema names exactly four characters. A team template is counted separately and is never expanded into exact teams.",
       rotations:
@@ -334,6 +334,11 @@ function observeEvidence(record: KnowledgeRecord): EvidenceObservation {
       addMainStats(observation, member.mainStats);
       addSubstats(observation, member.substats);
     }
+    observation.artifactChoiceOccurrences +=
+      record.artifactPlans?.reduce(
+        (sum, plan) => sum + plan.assignments.length,
+        0,
+      ) ?? 0;
     return observation;
   }
 

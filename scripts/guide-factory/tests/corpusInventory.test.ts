@@ -45,6 +45,7 @@ describe("knowledge corpus inventory", () => {
     const second = buildKnowledgeCorpusInventoryReport(repository, registry, []);
 
     expect(stableJson(first)).toBe(stableJson(second));
+    expect(first.schemaVersion).toBe(2);
     expect(first.classification).toBe("descriptive-inventory");
     expect(first.supportsGuideClaims).toBe(false);
     expect(first.prohibitedInterpretations).toEqual([
@@ -175,6 +176,54 @@ describe("knowledge corpus inventory", () => {
     expect(report.characters.map(({ characterId }) => characterId)).toEqual(
       [...new Set(explicitIds)].sort(),
     );
+  });
+
+  it("counts coupled artifact-plan assignments as explicit artifact evidence", async () => {
+    const { repository, registry } = await loadInputs();
+    const team = repository.records.find(
+      ({ id }) =>
+        id ===
+        "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+    );
+    if (!team || team.kind !== "team") {
+      throw new Error("Missing Kokomi coupled artifact-plan fixture.");
+    }
+    const sourceId = team.sourceRefs[0]?.sourceId;
+    if (!sourceId) throw new Error("Kokomi team has no source attribution.");
+    const teamOnlyRepository: KnowledgeRepository = {
+      ...repository,
+      generatedFrom: repository.generatedFrom.filter(
+        (generated) => generated.sourceId === sourceId,
+      ),
+      records: [team],
+    };
+    const report = buildKnowledgeCorpusInventoryReport(
+      teamOnlyRepository,
+      registry,
+      [],
+    );
+    const memberArtifactOccurrences = team.members.reduce(
+      (memberTotal, member) =>
+        memberTotal +
+        (member.selectedArtifact == null ? 0 : 1) +
+        (member.artifactRecommendations?.reduce(
+          (groupTotal, group) => groupTotal + group.artifacts.length,
+          0,
+        ) ?? 0),
+      0,
+    );
+    const planAssignmentOccurrences =
+      team.artifactPlans?.reduce(
+        (planTotal, plan) => planTotal + plan.assignments.length,
+        0,
+      ) ?? 0;
+
+    expect(planAssignmentOccurrences).toBe(2);
+    expect(report.totals.evidence).toMatchObject({
+      recordsWithArtifacts: 1,
+      artifactChoiceOccurrences:
+        memberArtifactOccurrences + planAssignmentOccurrences,
+    });
   });
 });
 

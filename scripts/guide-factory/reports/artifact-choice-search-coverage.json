@@ -3,15 +3,15 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "e84820b4d15cf10e680fab385278b23de41c0e54e0fc9b59375a89829a4a6131"
+      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
-      "sha256": "8d395b953e7f668b1f7ad418ea27b049f4fffb8b7117946b70e0bcb5cf8c3ba0"
+      "sha256": "1bf022fbe89cf11a83fb68692fbf590adf1bd2c181db32d3e23b176e764f100f"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "b506d4c60d11cd5fba66b86b05ab9f91cca996e5a3eeab2a96248f4fe7f2834c"
+      "sha256": "41f2b65ed9233089918458cc7c9074e0c8e1cbfa1f652b702e8b7c1e972c1a1e"
     },
     {
       "path": "src/data/betaState.ts",
@@ -50,9 +50,10 @@
     "Initial 4-piece enumeration does not prove that artifact generation or damage evaluation succeeds for a set.",
     "The 2-piece search space is only a maximum grammar derived from every legal substat; runtime appends a potentially smaller set after successful 4-piece evaluations.",
     "Coverage means that the analyzer can name an artifact choice, not that the choice is suitable, competitive, or optimal for the character or team.",
-    "Source conditions, visibility, and constellation scope are preserved but not evaluated.",
+    "Source conditions, visibility, constellation scope, and artifact-plan coupling are preserved but not evaluated.",
     "Rejected records are excluded; every artifact choice field on non-rejected character-guide and team records is otherwise audited.",
-    "This report uses the released artifact catalog and fails if beta-only sets leak into the candidate grammar."
+    "This report uses the released artifact catalog and fails if beta-only sets leak into the candidate grammar.",
+    "Plan assignments are audited individually; coverage of every assignment does not prove that the analyzer can enumerate or optimize the coupled plan jointly."
   ],
   "observations": [
     {
@@ -13990,6 +13991,49 @@
     },
     {
       "artifact": {
+        "setId": "silken_moons_serenade",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "sangonomiya_kokomi",
+      "classification": "conditional",
+      "conditions": [
+        "Kokomi is played on-field in a team with Nod-Krai units.",
+        "Columbina is well-invested; Kokomi is selected to hold this support set so Columbina can equip an offensive set such as 4pc Aubade of Morningstar and Moon."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:kokomi-on-field-nod-krai-artifact-delegation-luna-v:recommendation:on-field-nod-krai-artifact-delegation:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Conditional on-field Nod-Krai artifact delegation",
+      "recordId": "kqm:character-guide:kokomi-on-field-nod-krai-artifact-delegation-luna-v",
+      "recordStatus": "candidate",
+      "roles": [
+        "support"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "on-field-nod-krai-artifact-delegation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "On-Field Healer / Enabler > Artifact Sets > 4pc Silken Moon's Serenade",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-on-field-nod-krai-artifact-delegation-luna-v"
+        },
+        {
+          "locator": {
+            "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-on-field-nod-krai-artifact-delegation-luna-v"
+        }
+      ]
+    },
+    {
+      "artifact": {
         "setId": "song_of_days_past",
         "type": "4pc"
       },
@@ -14206,6 +14250,226 @@
       ],
       "teamIntent": "example",
       "teamLabel": "Furina — Nahida — Cyno — Baizhu"
+    },
+    {
+      "artifact": {
+        "setId": "silken_moons_serenade",
+        "type": "4pc"
+      },
+      "assignmentIndex": 0,
+      "characterId": "sangonomiya_kokomi",
+      "memberIndex": 0,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:artifact-plan:well-invested-columbina-artifact-delegation:assignment:0",
+      "outcome": "enumerated-initially",
+      "planClassification": "conditional",
+      "planConditions": [
+        "Columbina is well-invested."
+      ],
+      "planId": "well-invested-columbina-artifact-delegation",
+      "planLabel": "Kokomi SMS with Columbina Aubade",
+      "recordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "recordStatus": "candidate",
+      "sourceKind": "team-artifact-plan-assignment",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "On-Field Healer / Enabler > Artifact Sets > 4pc Silken Moon's Serenade",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        }
+      ],
+      "teamIntent": "example",
+      "teamLabel": "Kokomi — Ineffa — Columbina — Sucrose"
+    },
+    {
+      "artifact": {
+        "setId": "aubade_of_morningstar_and_moon",
+        "type": "4pc"
+      },
+      "assignmentIndex": 1,
+      "characterId": "columbina",
+      "memberIndex": 2,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:artifact-plan:well-invested-columbina-artifact-delegation:assignment:1",
+      "outcome": "enumerated-initially",
+      "planClassification": "conditional",
+      "planConditions": [
+        "Columbina is well-invested."
+      ],
+      "planId": "well-invested-columbina-artifact-delegation",
+      "planLabel": "Kokomi SMS with Columbina Aubade",
+      "recordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "recordStatus": "candidate",
+      "sourceKind": "team-artifact-plan-assignment",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "On-Field Healer / Enabler > Artifact Sets > 4pc Silken Moon's Serenade",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        }
+      ],
+      "teamIntent": "example",
+      "teamLabel": "Kokomi — Ineffa — Columbina — Sucrose"
+    },
+    {
+      "artifact": {
+        "setId": "oceanhued_clam",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "sangonomiya_kokomi",
+      "classification": "recommended",
+      "conditions": [
+        "For Kokomi in this exact Lunar-Charged example team."
+      ],
+      "grouping": "single",
+      "memberIndex": 0,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:member:0:artifact-group:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "recordStatus": "candidate",
+      "sourceKind": "team-member-recommendation",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "On-Field Healer / Enabler > Artifact Sets > 4pc Silken Moon's Serenade",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        }
+      ],
+      "teamIntent": "example",
+      "teamLabel": "Kokomi — Ineffa — Columbina — Sucrose"
+    },
+    {
+      "artifact": {
+        "setId": "silken_moons_serenade",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "sangonomiya_kokomi",
+      "classification": "conditional",
+      "conditions": [
+        "Columbina is well-invested and Kokomi takes the team-support artifact set so Columbina can equip 4pc Aubade of Morningstar and Moon."
+      ],
+      "grouping": "single",
+      "memberIndex": 0,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:member:0:artifact-group:1:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 1,
+      "recordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "recordStatus": "candidate",
+      "sourceKind": "team-member-recommendation",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "On-Field Healer / Enabler > Artifact Sets > 4pc Silken Moon's Serenade",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        }
+      ],
+      "teamIntent": "example",
+      "teamLabel": "Kokomi — Ineffa — Columbina — Sucrose"
+    },
+    {
+      "artifact": {
+        "setId": "aubade_of_morningstar_and_moon",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "columbina",
+      "classification": "conditional",
+      "conditions": [
+        "Columbina is well-invested and Kokomi holds 4pc Silken Moon's Serenade."
+      ],
+      "grouping": "single",
+      "memberIndex": 2,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:member:2:artifact-group:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "recordStatus": "candidate",
+      "sourceKind": "team-member-recommendation",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Electro-Charged and Lunar-Charged > Example Teams > Kokomi — Ineffa — Columbina — Sucrose",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        },
+        {
+          "locator": {
+            "heading": "On-Field Healer / Enabler > Artifact Sets > 4pc Silken Moon's Serenade",
+            "url": "https://keqingmains.com/q/kokomi-quickguide/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        }
+      ],
+      "teamIntent": "example",
+      "teamLabel": "Kokomi — Ineffa — Columbina — Sucrose"
     },
     {
       "artifact": {
@@ -29795,7 +30059,7 @@
     "energy-target",
     "guide-recommendation"
   ],
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "searchSpace": {
     "catalogScope": "released",
     "initialFourPieceKeys": [
@@ -29875,9 +30139,9 @@
   "summary": {
     "all": {
       "conditionallyRepresentable": 21,
-      "enumeratedInitially": 1003,
+      "enumeratedInitially": 1009,
       "notRepresentable": 22,
-      "total": 1046
+      "total": 1052
     },
     "byFailureReason": {
       "beta-only-artifact": 0,
@@ -29899,9 +30163,15 @@
     },
     "recommendations": {
       "conditionallyRepresentable": 0,
-      "enumeratedInitially": 16,
+      "enumeratedInitially": 20,
       "notRepresentable": 2,
-      "total": 18
+      "total": 22
+    },
+    "teamArtifactPlanAssignments": {
+      "conditionallyRepresentable": 0,
+      "enumeratedInitially": 2,
+      "notRepresentable": 0,
+      "total": 2
     },
     "teamSelectedArtifacts": {
       "conditionallyRepresentable": 7,

@@ -343,7 +343,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "e84820b4d15cf10e680fab385278b23de41c0e54e0fc9b59375a89829a4a6131"
+      "sha256": "9e747127b7af284898cbc54f42adc5a6c8a7dea9e0a8f4ac234c454918b864cf"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",

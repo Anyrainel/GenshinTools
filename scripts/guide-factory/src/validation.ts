@@ -62,6 +62,9 @@ type KnowledgeTeamMember = Extract<
   KnowledgeRecord,
   { kind: "team" }
 >["members"][number];
+type ArtifactPlan = NonNullable<
+  Extract<KnowledgeRecord, { kind: "team" }>["artifactPlans"]
+>[number];
 
 const TEXT_EXTENSIONS = new Set([
   ".cjs",
@@ -395,6 +398,14 @@ export function validateManualObservationSnapshot(
         diagnostics
       );
     }
+    validateArtifactPlans(
+      record.artifactPlans ?? [],
+      new Set(record.members.map(({ characterId }) => characterId)),
+      `${recordPath}.artifactPlans`,
+      catalogs,
+      "warning",
+      diagnostics
+    );
     validateReactionIds(
       record.reactions,
       recordPath,
@@ -1032,6 +1043,14 @@ function validateKnowledgeRecord(
         diagnostics
       );
     }
+    validateArtifactPlans(
+      record.artifactPlans ?? [],
+      memberIds,
+      `${recordPath}.artifactPlans`,
+      catalogs,
+      catalogSeverity,
+      diagnostics
+    );
     for (const [planIndex, plan] of record.damagePlans.entries()) {
       for (const [lineIndex, line] of plan.lines.entries()) {
         if (!memberIds.has(line.characterId)) {
@@ -1145,6 +1164,49 @@ function validateKnowledgeRecord(
       catalogSeverity,
       diagnostics
     );
+  }
+}
+
+function validateArtifactPlans(
+  plans: readonly ArtifactPlan[],
+  memberIds: ReadonlySet<string>,
+  plansPath: string,
+  catalogs: GameCatalogs,
+  catalogSeverity: ValidationSeverity,
+  diagnostics: ValidationDiagnostic[]
+): void {
+  checkDuplicateValues(
+    plans.map(({ id }) => id),
+    plansPath,
+    "artifact_plan.duplicate_id",
+    diagnostics
+  );
+  for (const [planIndex, plan] of plans.entries()) {
+    const planPath = `${plansPath}[${planIndex}]`;
+    checkDuplicateValues(
+      plan.assignments.map(({ characterId }) => characterId),
+      `${planPath}.assignments`,
+      "artifact_plan.duplicate_assignment",
+      diagnostics
+    );
+    for (const [assignmentIndex, assignment] of plan.assignments.entries()) {
+      const assignmentPath = `${planPath}.assignments[${assignmentIndex}]`;
+      if (!memberIds.has(assignment.characterId)) {
+        diagnostics.push({
+          severity: "error",
+          code: "artifact_plan.non_member_assignment",
+          path: `${assignmentPath}.characterId`,
+          message: `Artifact assignment owner ${assignment.characterId} is not a member of this team.`,
+        });
+      }
+      validateArtifactChoice(
+        assignment.artifact,
+        `${assignmentPath}.artifact`,
+        catalogs,
+        catalogSeverity,
+        diagnostics
+      );
+    }
   }
 }
 

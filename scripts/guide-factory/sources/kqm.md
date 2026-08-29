@@ -7,7 +7,7 @@ Status: active for narrow manual observations only.
 ## Capture unit
 
 One JSON snapshot represents one guide page at one visible source version. The
-active narrow samples currently cover Diona, Furina, and Keqing. A record
+active narrow samples currently cover Diona, Furina, Keqing, and Kokomi. A record
 represents one independently reviewable heading-scoped claim group, not the
 whole guide.
 
@@ -36,11 +36,22 @@ Recommendation ordering, tied groups, conditions, constellation bounds,
 example intent, exhaustiveness, and ranking claims must be stated explicitly.
 Page order is never treated as a ranking by default.
 
+When a source binds two or more artifact assignments together, the team may
+store an `artifactPlans` entry. Its assignments remain one coupled conditional
+claim. They must not be flattened into independent global character
+recommendations or interpreted as a jointly optimized result.
+
 The Keqing Luna I sample is intentionally team-only. It tests whether a new
 release can expose changed team options for an old character. Its
 off-field-Hydro and resistance-shred requirements remain source-defined role
 selectors; element and named-character callouts are highlights, not substitutes
 for those hard constraints.
+
+The Kokomi Luna V sample tests coupled artifact delegation. It preserves the
+source's one-way condition that a well-invested Columbina can use Aubade when
+Kokomi takes Silken Moon's Serenade. It does not invent an investment
+breakpoint, a reverse implication, or a ranking between that plan and
+Ocean-Hued Clam.
 
 ## Naming and review
 
