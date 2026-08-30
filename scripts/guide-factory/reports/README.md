@@ -6,6 +6,23 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `diona-source-local-support-slice.json` authenticates three team-member
+  artifact condition occurrences from the exact
+  `kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt` record: Diona member
+  0, Citlali member 2, and Bennett member 3. All three source cells are
+  unresolved gameplay-role predicates; independent support facts scoped to the
+  exact team and exact character make the effective partition three matched.
+  The report preserves Diona's Song of Days Past/Noblesse Oblige alternatives,
+  Citlali's Scroll of the Hero of Cinder City singleton, and Bennett's Noblesse
+  Oblige/Instructor alternatives in source order without choosing, assigning,
+  comparing, or composing them. Its 26-array source boundary contains 18
+  nonempty and 8 empty arrays. Three are selected; the other 15 nonempty rows
+  are descriptive holdouts split into 10 ordinary and 5 ER-deferred rows. The
+  slice consumes, binds, and energy-classifies zero holdouts. It executes zero
+  builds, recommendations, compositions, ranks, generator or optimizer calls,
+  formulas, rotations, damage, ideal-roll, or ER calculations. Catalog entries
+  use generic source-local evidence labels while retaining this exact wrapper,
+  extraction boundary, occurrence identity, and `sliceId`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -21,7 +38,9 @@ Current durable pilot evidence:
   authored rather than source-authored and consumes zero of the 11 Klee
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
-  optimizer, formula, rotation, damage, ideal-roll, or ER work.
+  optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
+  regenerated after Diona changes its declared manual-coverage input; its Klee
+  claim and team-control boundary is unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -40,13 +59,13 @@ Current durable pilot evidence:
   repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
   unique exact ordered nonempty arrays,
   159 condition-string occurrences, and 97 unique strings. Binding and energy
-  are independent: all nonempty arrays contain 50 typed bindings, 3 exact-text
-  acknowledgements, and 73 unbound occurrences; excluding only three structural
-  ER rows leaves 123 occurrences: 50 typed, 3 acknowledged, and 70 unbound,
-  across 86 unique arrays. Those arrays contain 28 typed-only, 57 unbound-only,
+  are independent: all nonempty arrays contain 53 typed bindings, 3 exact-text
+  acknowledgements, and 70 unbound occurrences; excluding only three structural
+  ER rows leaves 123 occurrences: 53 typed, 3 acknowledged, and 67 unbound,
+  across 86 unique arrays. Those arrays contain 31 typed-only, 54 unbound-only,
   and one mixed acknowledged/unbound status set.
   The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
-  exact authored Diona/Furina rows; 47 typed rows are not energy-deferred and 64
+  exact authored Diona/Furina rows; 50 typed rows are not energy-deferred and 61
   nonempty rows remain energy-unclassified. Bindings are occurrence-, hash-,
   and subject-scoped: identical Viridescent Venerer text is acknowledged for
   Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
@@ -342,7 +361,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-seven reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-eight reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

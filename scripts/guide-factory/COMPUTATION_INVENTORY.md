@@ -565,6 +565,22 @@ generation, optimization, formulas, rotations, damage, ideal rolls, and ER are
 all disabled. Context applicability is not a recommendation or a claim that a
 preserved payload is best.
 
+The second integrated adapter, `src/dionaSourceLocalSupportSlice.ts`, selects
+three artifact condition occurrences from the exact
+`kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt` record: Diona member 0,
+Citlali member 2, and Bennett member 3. All three source cells remain unresolved
+gameplay-role predicates. Independent support facts scoped to the exact team and
+respective character make the effective partition three matched. The source
+result and context result remain distinct.
+
+The adapter preserves Diona's Song of Days Past/Noblesse Oblige alternatives,
+Citlali's Scroll of the Hero of Cinder City singleton, and Bennett's Noblesse
+Oblige/Instructor alternatives in source order. It performs no choice,
+assignment, comparison, or composition. The Diona snapshot closes 26 condition
+arrays as 18 nonempty and 8 empty. Three are selected; 15 nonempty occurrences
+remain holdouts, descriptively inventoried as 10 ordinary and 5 ER-deferred.
+The slice consumes, binds, and energy-classifies zero holdouts.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -576,36 +592,40 @@ the raw snapshot values before schema parsing and requires every `conditions`
 property to match one extracted path and ordered payload, so future or unknown
 condition-bearing fields fail closed.
 
-`src/currentConditionBindingCatalog.ts` overlays only four authenticated
+`src/currentConditionBindingCatalog.ts` overlays only five authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
 IDs, exact-text Keqing Viridescent Venerer acknowledgements, and the four Klee
-source-local typed bindings. A binding is addressed by source, record kind,
-record ID, schema path, ordered-array hash, and subject. Stale or non-comparable
-upstream reports, partial expansions, duplicate/conflicting keys, subject
-mismatches, or a Klee durable report that differs from its fresh authenticated
-rebuild make the inventory non-comparable rather than converting evidence to
-an unbound result.
+plus three Diona source-local typed bindings. Source-local catalog entries share
+the generic `source-local-typed-predicate-ast` and `source-local-not-energy-
+deferred` evidence labels, but wrapper authentication, extraction, occurrence
+identity, and `sliceId` remain source-specific. A binding is addressed by
+source, record kind, source record, schema path, ordered-array hash, and subject.
+Stale or non-comparable upstream reports, partial expansions, duplicate or
+conflicting keys, subject mismatches, or a durable source-local report that
+differs from its fresh source-specific rebuild make the inventory non-comparable
+rather than converting evidence to an unbound result.
 
 The durable report keeps binding and energy as independent ledgers. Across all
-126 nonempty arrays, the current catalog contributes 53 entries: 50 typed and
-3 exact-text acknowledged. Binding coverage is therefore 50 typed, 3
-acknowledged, and 73 unbound. Excluding only the three structural ER arrays
-leaves 123 rows: 50 typed, 3 acknowledged, and 70 unbound, spanning 86 exact
-ordered arrays. Those arrays contain 28 typed-only sets, 57 unbound-only sets,
+126 nonempty arrays, the current catalog contributes 56 entries: 53 typed and
+3 exact-text acknowledged. Binding coverage is therefore 53 typed, 3
+acknowledged, and 70 unbound. Excluding only the three structural ER arrays
+leaves 123 rows: 53 typed, 3 acknowledged, and 67 unbound, spanning 86 exact
+ordered arrays. Those arrays contain 31 typed-only sets, 54 unbound-only sets,
 and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Forty-seven typed rows are explicitly not energy-deferred; 64
+deferred. Fifty typed rows are explicitly not energy-deferred; 61
 nonempty rows remain energy-unclassified; and 16 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
 
-The dependency direction remains acyclic: raw source inputs feed the Klee
-source-local slice, that authenticated slice feeds the binding catalog, and the
-catalog feeds coverage. The validator rebuilds the Klee slice before rebuilding
-coverage; the source-local core never imports the downstream catalog or report.
+The dependency direction remains acyclic. Diona raw inputs feed the
+authenticated Diona wrapper, then the 56-entry binding catalog, manual coverage,
+and the regenerated checkpoint 27 Klee witness. The validator follows that
+order. The generic source-local core and source-specific wrappers never import
+the downstream catalog, coverage report, or witness.
 
 This seam runs no arbitrary-English parser, recommendation composer, generator,
 optimizer, formula, rotation, damage, ranking, ideal-roll, or ER calculation.
@@ -642,6 +662,9 @@ zero candidates. It runs no payload-axis expansion, choice selection,
 compatibility evaluation, cross-product, recommendation composition, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER calculation.
 Independent applicability is validation evidence, not a build or guide.
+After Diona catalog integration, the durable witness is regenerated against the
+updated coverage input. Its four Klee claims, positive team, negative control,
+and interpretation boundary remain unchanged.
 
 ## Callable modules for later experiments
 
@@ -687,9 +710,11 @@ Independent applicability is validation evidence, not a build or guide.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation and the bounded Klee adapter:
-  `scripts/guide-factory/src/sourceLocalConditionSlice.ts` and
-  `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`.
+- Generic source-local condition evaluation and the integrated Klee and Diona
+  adapters:
+  `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
+  `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`, and
+  `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`.
 - Exact manual condition extraction, repository parity, and authenticated
   current-wrapper coverage:
   `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,

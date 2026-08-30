@@ -167,12 +167,31 @@ and 6 unresolved. Explicit per-team Klee role intent yields an effective
 partition of 7 matched and 1 inapplicable. The 11 holdouts receive no
 classification from this slice.
 
+The current Diona Luna VIII adapter selects three artifact condition
+occurrences from one exact C6 Diona/Mavuika/Citlali/Bennett team record: Diona
+member 0, Citlali member 2, and Bennett member 3. All three source predicates
+remain unresolved gameplay-role facts until independent support facts scoped to
+the exact team and exact character make them applicable. Diona's Song/Noblesse
+group, Citlali's Scroll singleton, and Bennett's Noblesse/Instructor group retain
+source order without becoming choices, assignments, or a composed team build.
+The source boundary closes 26 arrays as 18 nonempty and 8 empty; the selected
+three and 15 nonempty holdouts are exact and disjoint. Ten holdouts are ordinary
+descriptive inventory and five are ER-deferred descriptive inventory. The slice
+consumes, binds, or energy-classifies none of them.
+
 A durable source-local report is downstream evidence only when it equals a
 fresh authenticated rebuild from the exact raw inputs. Dependency direction
 must stay acyclic: raw source inputs feed the source-local slice, an
 authenticated slice may feed the condition-binding catalog, and that catalog
 may feed coverage. The source-local evaluator must not read either downstream
 artifact.
+
+Catalog evidence kinds may be shared by source-local adapters only when the
+entry retains its exact source-specific wrapper authentication, occurrence
+identity, extraction contract, and `sliceId`. The current generic labels are
+`source-local-typed-predicate-ast` and `source-local-not-energy-deferred`;
+generic labels do not authorize a generic source extractor or cross-source
+predicate inference.
 
 ### Derived condition-array coverage
 
@@ -212,6 +231,13 @@ its fresh authenticated rebuild. They must not parse arbitrary English, infer
 a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
+The current authenticated catalog contains 56 entries: 53 typed bindings and 3
+exact-text acknowledgements. The non-structural coverage partition is 123 rows:
+53 typed, 3 acknowledged, and 67 unbound. Its 86 unique ordered arrays contain
+31 typed-only, 54 unbound-only, and one mixed acknowledged/unbound set. The
+independent energy ledger remains 15 deferred, 50 explicitly not energy-
+deferred, 61 nonempty unclassified, and 16 empty unconditional arrays.
+
 ### Derived condition-resolved flat claim joins
 
 A downstream witness may collect independently applicable claims under one
@@ -236,6 +262,9 @@ one unchosen payload group. The exact Klee/Chevreuse/Durin/Fischl control keeps
 the three role claims applicable but leaves the Furina-conditioned
 Marechaussee Hunter claim source-definitely-inapplicable, so it produces no
 positive witness. None of the 11 Klee holdouts is consumed.
+When upstream coverage changes, the durable Klee witness must be regenerated
+and reauthenticated; a broader catalog does not add claims to that exact
+witness.
 
 ## Energy-guidance records
 

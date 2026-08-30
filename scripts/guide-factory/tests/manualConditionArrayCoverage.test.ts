@@ -24,11 +24,14 @@ import {
 } from "../src/paths";
 import { readJson } from "../src/io";
 import { KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS } from "../src/kleeSourceLocalConditionSlice";
+import { DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS } from "../src/dionaSourceLocalSupportSlice";
 
 const KEQING_EQUIPMENT_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 const KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/klee-source-local-condition-slice.json";
+const DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
+  "scripts/guide-factory/reports/diona-source-local-support-slice.json";
 
 describe("manual condition-array coverage report", () => {
   let input: BuildManualConditionArrayCoverageReportInput;
@@ -46,7 +49,7 @@ describe("manual condition-array coverage report", () => {
       status: "accepted",
       exactPathSet: true,
       rawJsonObjectClosure: true,
-      sourceFileCount: 15,
+      sourceFileCount: 16,
     });
     expect(report.corpusBoundary).toMatchObject({
       snapshotCount: 7,
@@ -59,13 +62,15 @@ describe("manual condition-array coverage report", () => {
     });
     expect(report.bindingBoundary).toMatchObject({
       status: "authenticated",
-      occurrenceCount: 53,
+      occurrenceCount: 56,
       ittoAuthenticated: true,
       keqingEquipmentDurableMatchesCurrent: true,
       keqingRolePairDurableMatchesCurrent: true,
       kleeSourceLocalDurableMatchesCurrent: true,
+      dionaSourceLocalDurableMatchesCurrent: true,
       keqingEquipmentAtomicClaimCount: 42,
       kleeSourceLocalOccurrenceCount: 4,
+      dionaSourceLocalOccurrenceCount: 3,
       exactTextAcknowledgementOccurrenceCount: 3,
       typedBindingMeansConditionTruth: false,
     });
@@ -78,6 +83,7 @@ describe("manual condition-array coverage report", () => {
     const generatedPaths = new Set(report.generatedFrom.map(({ path }) => path));
     expect(generatedPaths.size).toBe(report.generatedFrom.length);
     expect(generatedPaths).toContain(KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
+    expect(generatedPaths).toContain(DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(
       "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
     );
@@ -85,6 +91,9 @@ describe("manual condition-array coverage report", () => {
       "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
     );
     expect(KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS).not.toContain(
+      "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
+    );
+    expect(DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS).not.toContain(
       "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
     );
   });
@@ -188,13 +197,13 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 89,
       stringOccurrenceCount: 159,
       uniqueStringCount: 97,
-      typedBoundOccurrenceCount: 50,
+      typedBoundOccurrenceCount: 53,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 73,
+      unboundOccurrenceCount: 70,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 72,
+      typedBoundStringOccurrenceCount: 75,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 84,
+      unboundStringOccurrenceCount: 81,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralBindingCoverage).toEqual({
@@ -204,19 +213,19 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 86,
       stringOccurrenceCount: 156,
       uniqueStringCount: 94,
-      typedBoundOccurrenceCount: 50,
+      typedBoundOccurrenceCount: 53,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 70,
+      unboundOccurrenceCount: 67,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 72,
+      typedBoundStringOccurrenceCount: 75,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 81,
+      unboundStringOccurrenceCount: 78,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralUniqueBindingArrayCoverage).toEqual({
       uniqueExactArrayCount: 86,
-      typedOnlyCount: 28,
-      unboundOnlyCount: 57,
+      typedOnlyCount: 31,
+      unboundOnlyCount: 54,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     });
@@ -246,20 +255,20 @@ describe("manual condition-array coverage report", () => {
         uniqueStringCount: 11,
       },
       notEnergyDeferred: {
-        occurrenceCount: 47,
+        occurrenceCount: 50,
         emptyCount: 0,
-        nonemptyCount: 47,
-        uniqueExactArrayCount: 27,
-        stringOccurrenceCount: 69,
-        uniqueStringCount: 28,
+        nonemptyCount: 50,
+        uniqueExactArrayCount: 30,
+        stringOccurrenceCount: 72,
+        uniqueStringCount: 31,
       },
       energyUnclassified: {
-        occurrenceCount: 64,
+        occurrenceCount: 61,
         emptyCount: 0,
-        nonemptyCount: 64,
-        uniqueExactArrayCount: 50,
-        stringOccurrenceCount: 72,
-        uniqueStringCount: 55,
+        nonemptyCount: 61,
+        uniqueExactArrayCount: 47,
+        stringOccurrenceCount: 69,
+        uniqueStringCount: 52,
       },
       unconditional: {
         occurrenceCount: 16,
@@ -427,7 +436,7 @@ describe("manual condition-array coverage report", () => {
         ({ energyClassification }) =>
           energyClassification === "not-energy-deferred",
       ),
-    ).toHaveLength(47);
+    ).toHaveLength(50);
     expect(
       report.occurrences
         .filter(
@@ -462,7 +471,9 @@ describe("manual condition-array coverage report", () => {
   it("promotes only the four freshly authenticated Klee occurrences", () => {
     const kleeRows = report.occurrences.filter(
       ({ bindingEvidence }) =>
-        bindingEvidence?.kind === "klee-source-local-typed-predicate-ast",
+        bindingEvidence?.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-klee-source-local-condition-slice-luna-iv",
     );
 
     expect(kleeRows).toHaveLength(4);
@@ -481,10 +492,10 @@ describe("manual condition-array coverage report", () => {
           row.energyClassification === "not-energy-deferred" &&
           row.displayStatus === "typed-bound" &&
           row.bindingEvidence?.kind ===
-            "klee-source-local-typed-predicate-ast" &&
+            "source-local-typed-predicate-ast" &&
           row.bindingEvidence.selectedOccurrenceId === row.occurrenceId &&
           row.energyEvidence?.kind ===
-            "klee-source-local-not-energy-deferred" &&
+            "source-local-not-energy-deferred" &&
           row.energyEvidence.selectedOccurrenceId === row.occurrenceId &&
           row.energyEvidence.selectedOccurrenceSha256 ===
             row.bindingEvidence.selectedOccurrenceSha256,
@@ -518,6 +529,90 @@ describe("manual condition-array coverage report", () => {
           energyEvidence == null,
       ),
     ).toBe(true);
+  });
+
+  it("promotes only the three freshly authenticated Diona support occurrences", () => {
+    const dionaRows = report.occurrences.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence?.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-diona-source-local-support-slice-luna-viii",
+    );
+    expect(
+      dionaRows.map(({ occurrenceId, recordKind, subject }) => ({
+        occurrenceId,
+        recordKind,
+        subject,
+      })),
+    ).toEqual([
+      {
+        occurrenceId:
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        recordKind: "team",
+        subject: "diona",
+      },
+      {
+        occurrenceId:
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        recordKind: "team",
+        subject: "citlali",
+      },
+      {
+        occurrenceId:
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+        recordKind: "team",
+        subject: "bennett",
+      },
+    ]);
+    expect(
+      dionaRows.every(
+        (row) =>
+          row.bindingClassification === "typed-bound" &&
+          row.energyClassification === "not-energy-deferred" &&
+          row.displayStatus === "typed-bound" &&
+          row.bindingEvidence?.kind ===
+            "source-local-typed-predicate-ast" &&
+          row.energyEvidence?.kind ===
+            "source-local-not-energy-deferred" &&
+          row.energyEvidence.sliceId === row.bindingEvidence.sliceId &&
+          row.energyEvidence.selectedOccurrenceId === row.occurrenceId &&
+          row.energyEvidence.selectedOccurrenceSha256 ===
+            row.bindingEvidence.selectedOccurrenceSha256,
+      ),
+    ).toBe(true);
+
+    const durableSource = input.sourceFiles.find(
+      ({ path: sourcePath }) =>
+        sourcePath === DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH,
+    );
+    if (!durableSource) throw new Error("Missing Diona durable report fixture.");
+    const durableHoldoutIds = (
+      JSON.parse(durableSource.text) as {
+        holdoutOccurrences: Array<{ occurrenceId: string }>;
+      }
+    ).holdoutOccurrences
+      .map(({ occurrenceId }) => occurrenceId)
+      .sort();
+    const holdoutRows = report.occurrences.filter(({ occurrenceId }) =>
+      durableHoldoutIds.includes(occurrenceId),
+    );
+    expect(holdoutRows).toHaveLength(15);
+    expect(holdoutRows.map(({ occurrenceId }) => occurrenceId).sort()).toEqual(
+      durableHoldoutIds,
+    );
+    expect(
+      holdoutRows.every(
+        ({ bindingClassification, bindingEvidence }) =>
+          bindingClassification === "unbound" && bindingEvidence == null,
+      ),
+    ).toBe(true);
+    expect(
+      holdoutRows.filter(
+        ({ energyClassification }) =>
+          energyClassification === "structural-er" ||
+          energyClassification === "exact-authored-energy-related-deferral",
+      ),
+    ).toHaveLength(5);
   });
 
   it("fails closed when a byte-authenticated durable wrapper is stale", async () => {
@@ -579,6 +674,34 @@ describe("manual condition-array coverage report", () => {
     expect(stale.bindingBoundary.status).toBe("rejected");
     expect(stale.issues[0]?.message).toContain(
       "failed a fresh current rebuild",
+    );
+  });
+
+  it("fails closed when the byte-authenticated Diona report is stale against a fresh rebuild", async () => {
+    const staleInput = structuredClone(input);
+    const source = staleInput.sourceFiles.find(
+      ({ path: sourcePath }) =>
+        sourcePath === DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH,
+    );
+    if (!source) throw new Error("Missing Diona durable report fixture.");
+    const staleDiona = JSON.parse(source.text) as {
+      selectedOccurrences: unknown[];
+    };
+    staleDiona.selectedOccurrences.pop();
+    const staleText = stableJson(staleDiona);
+    source.text = staleText;
+    staleInput.generatedFrom = staleInput.generatedFrom.map((entry) =>
+      entry.path === DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH
+        ? { ...entry, sha256: sha256Text(staleText) }
+        : entry,
+    );
+
+    const stale = await buildManualConditionArrayCoverageReport(staleInput);
+    expect(stale.comparisonStatus).toBe("not-comparable");
+    expect(stale.occurrences).toEqual([]);
+    expect(stale.bindingBoundary.status).toBe("rejected");
+    expect(stale.issues[0]?.message).toContain(
+      "checked-in Diona source-local report failed a fresh current rebuild",
     );
   });
 

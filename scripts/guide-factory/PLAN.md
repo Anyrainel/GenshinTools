@@ -467,12 +467,12 @@ exact Klee teams, the eight source cells contain 1 matched, 1 inapplicable, and
 runtime intent or replacing exact-roster truth.
 
 The other 11 Klee occurrences are authenticated holdouts and receive no binding
-or energy classification from the slice. The downstream catalog now contains
-53 entries: 50 typed and 3 exact-text acknowledged. Current non-structural
-coverage is therefore 123/50/3/70. Energy remains orthogonal: 15 rows are
-deferred, 47 are explicitly not energy-deferred, 64 nonempty rows remain energy-
-unclassified, and 16 empty arrays are unconditional. No unbound row is presumed
-non-ER, and the slice composes no recommendation or build.
+or energy classification from the slice. At checkpoint 26, the downstream
+catalog contained 53 entries: 50 typed and 3 exact-text acknowledged. That
+checkpoint's non-structural coverage was 123/50/3/70, while its energy partition
+was 15 deferred, 47 explicitly not energy-deferred, 64 nonempty unclassified,
+and 16 empty unconditional arrays. No unbound row was presumed non-ER, and the
+slice composed no recommendation or build.
 
 Checkpoint 27 proves one narrower downstream operation over that authenticated
 evidence. It fresh-authenticates the Klee source-local slice, requires the
@@ -493,18 +493,48 @@ product, choice, recommendation, rank, generator, optimizer, or guide. It
 consumes zero of the 11 Klee holdouts and changes no binding-coverage or energy
 classification.
 
-The next bounded non-ER gate should reuse the source-local slice boundary for
-the Diona, Citlali, and Bennett support-artifact recommendations carried by the
-same exact C6 Diona/Mavuika/Citlali/Bennett source team record. Keep each
-character's artifact group and alternatives intact, scope every support-role
-fact to that exact team and character, retain the other 15 nonempty Diona
-condition occurrences as explicit holdouts, and preserve the eight empty arrays
-as unconditional source closure. Do not infer artifact ordering, compatibility,
-a multi-character build, or a recommendation from same-record proximity. ER-
-sensitive Diona rows remain deferred. Human review of the Itto, Keqing, Klee,
-and future Diona bindings and their source classifications remains a
-prerequisite for publication, formula authoring, recommendation composition, or
-build composition.
+Checkpoint 28 completes that Diona slice. It selects the exact member-0 Diona,
+member-2 Citlali, and member-3 Bennett artifact condition occurrences from
+`kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt`. All three source cells
+remain unresolved gameplay-role predicates. Three separately scoped support-
+role request facts, each bound to the exact team and exact character, make the
+effective partition three matched without converting source condition text or
+recommendation metadata into runtime intent.
+
+The payloads remain atomic and source-ordered: Diona preserves Song of Days
+Past then Noblesse Oblige, Citlali preserves the Scroll of the Hero of Cinder
+City singleton, and Bennett preserves Noblesse Oblige then Instructor. The
+slice does not choose, assign, compare, combine, or compose them. Its exact
+source closure contains 26 condition arrays: 18 nonempty and 8 empty. The three
+selected rows and 15 nonempty holdouts are disjoint and complete; the holdouts
+remain descriptive inventory only, split into 10 ordinary and 5 ER-deferred
+rows. Their consumed, bound, and slice-authored energy counts are all zero.
+
+Catalog integration uses reusable `source-local-typed-predicate-ast` and
+`source-local-not-energy-deferred` evidence labels while keeping the Diona and
+Klee wrappers, authentication, extraction, identities, and exact `sliceId`
+scopes source-specific. The resulting catalog has 56 entries: 53 typed and 3
+acknowledged. Current non-structural coverage is 123/53/3/67, with 31 typed-
+only, 54 unbound-only, and one mixed unique condition set. Energy remains
+orthogonal at 15 deferred, 50 explicitly not energy-deferred, 61 nonempty
+unclassified, and 16 empty arrays.
+
+The dependency order is exact: Diona raw inputs feed the authenticated Diona
+wrapper, then the 56-entry catalog, manual coverage, and finally the regenerated
+checkpoint 27 Klee witness. The Klee witness changes only its authenticated
+coverage dependency; its four Klee claims and interpretation boundary remain
+the same. No build, recommendation, composition, rank, optimizer, damage,
+rotation, or ER work is authorized.
+
+The next bounded non-ER gate is an authenticated Kokomi source-local slice for
+the exact Kokomi/Ineffa/Columbina/Sucrose team-member 4pc Ocean-Hued Clam
+condition. Select exactly that one occurrence, preserve the other four nonempty
+Kokomi occurrences as holdouts, and do not integrate the slice into the current
+binding catalog yet. The exact roster predicate can be source-decided, but a
+match is not an assignment, comparison, recommendation, or build. Human review
+of the Itto, Keqing, Klee, Diona, and future Kokomi bindings and source
+classifications remains a prerequisite for publication, formula authoring,
+recommendation composition, or build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

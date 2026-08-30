@@ -27,6 +27,13 @@ import {
   DIONA_ER_ENGINE_INPUT_PATHS,
 } from "./dionaErCalibration";
 import {
+  authenticateDionaSourceLocalSupportSliceReport,
+  DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS,
+  DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH,
+  DIONA_SOURCE_LOCAL_SUPPORT_SLICE_SOURCE_FILE_PATHS,
+  type DionaSourceLocalSupportSliceReport,
+} from "./dionaSourceLocalSupportSlice";
+import {
   buildDerivedFormulaFixtureCoverageReport,
   DERIVED_FORMULA_FIXTURE_COVERAGE_INPUT_PATHS,
   DERIVED_FORMULA_FIXTURE_COVERAGE_SOURCE_FILE_PATHS,
@@ -237,6 +244,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     manualConditionArrayCoverageInput,
     manualConditionArrayCoverageSourceFiles,
     kleeSourceLocalConditionSliceInput,
+    dionaSourceLocalSupportSliceInput,
     kleeTeamScopedClaimJoinWitnessInput,
     kleeTeamScopedClaimJoinWitnessSourceFiles,
   ] =
@@ -313,6 +321,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
         ),
       ),
       readJson(KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH),
+      readJson(DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH),
       readJson(KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_REPORT_PATH),
       Promise.all(
         KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_SOURCE_FILE_PATHS.map(
@@ -820,6 +829,48 @@ export async function runValidation(): Promise<ValidationRunResult> {
               : "The saved Klee source-local condition slice does not match the current raw source, consolidated records, exact typed bindings, scoped request projection, and input hashes.",
         });
       }
+      const dionaSourceLocalGeneratedFrom = await hashRelativePaths(
+        DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS,
+      );
+      const dionaManualInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "c6-diona-mavuika-citlali-bennett-forward-melt",
+      );
+      const dionaSourceFilePathSet = new Set<string>(
+        DIONA_SOURCE_LOCAL_SUPPORT_SLICE_SOURCE_FILE_PATHS,
+      );
+      const dionaSourceFiles = manualConditionArrayCoverageSourceFiles.filter(
+        ({ path: sourcePath }) => dionaSourceFilePathSet.has(sourcePath),
+      );
+      const dionaSourceLocalAuthentication =
+        authenticateDionaSourceLocalSupportSliceReport(
+          dionaSourceLocalSupportSliceInput as DionaSourceLocalSupportSliceReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: dionaManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            sourceFiles: dionaSourceFiles,
+            generatedFrom: dionaSourceLocalGeneratedFrom,
+          },
+        );
+      if (!dionaSourceLocalAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            dionaSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_diona_source_local_support_slice"
+              : "pipeline.stale_diona_source_local_support_slice",
+          path: "reports.diona-source-local-support-slice",
+          message:
+            dionaSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The freshly rebuilt Diona source-local support slice could not authenticate its exact source, repository, same-record team, support-role predicates, or holdout boundary."
+              : "The saved Diona source-local support slice does not match the current raw source, consolidated records, exact typed bindings, scoped request projection, and input hashes.",
+        });
+      }
       const manualConditionArrayCoverageGeneratedFrom =
         await hashRelativePaths(MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS);
       const expectedManualConditionArrayCoverage =
@@ -845,7 +896,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
           code: "pipeline.non_comparable_manual_condition_array_coverage",
           path: "reports.manual-condition-array-coverage",
           message:
-            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its four current wrapper families.",
+            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its five current wrapper families.",
         });
       } else if (
         stableJson(expectedManualConditionArrayCoverage) !==

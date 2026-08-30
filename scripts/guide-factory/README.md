@@ -21,17 +21,18 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 27 cross-links the authenticated Klee source-local slice and manual
-condition coverage into one flat, team-scoped applicability witness. For the
-exact Klee/Furina/Albedo/Xilonen source team, three on-field main-stat claims
-and the Furina-conditioned Marechaussee Hunter claim are independently
-applicable; the four claims come from two source records. The exact
-Klee/Chevreuse/Durin/Fischl control retains the three role claims as applicable
-but keeps Marechaussee Hunter source-definitely-inapplicable, so it produces no
-positive witness. This is a Guide Factory-authored evidence join, not a source-
-authored build, candidate, cross-product, compatibility result, recommendation,
-rank, optimizer, generator, or working guide factory. It consumes zero of the
-11 Klee holdouts, and ER remains deferred:
+Checkpoint 28 authenticates one same-record Diona source-local support slice for
+the exact C6 Diona/Mavuika/Citlali/Bennett team. Three team-member artifact
+conditions are source-unresolved until separately scoped support-role facts make
+the Diona, Citlali, and Bennett cells applicable. Their source payloads remain
+unchosen groups: Diona keeps Song of Days Past then Noblesse Oblige, Citlali
+keeps Scroll of the Hero of Cinder City, and Bennett keeps Noblesse Oblige then
+Instructor. The 26-array Diona boundary closes as 18 nonempty plus 8 empty;
+three rows are selected and the other 15 nonempty rows remain holdouts. The
+catalog now has 53 typed bindings plus 3 acknowledgements, leaving 67 of 123
+non-structural rows unbound. This is authenticated applicability and coverage
+evidence, not an artifact assignment, build, recommendation, composition,
+rank, optimizer, damage, rotation, ER result, or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -360,6 +361,34 @@ rank, optimizer, generator, or working guide factory. It consumes zero of the
 115. Consume zero of the 11 Klee holdouts; the next source-local extension is a
     same-record Diona/Citlali/Bennett support-artifact slice, with ER still
     deferred.
+116. Authenticate the Diona Luna VIII snapshot, consolidated repository, manual
+    index, and source registry as an exact four-file raw-input boundary.
+117. Select exactly the Diona member-0, Citlali member-2, and Bennett member-3
+    artifact condition occurrences from the exact
+    C6 Diona/Mavuika/Citlali/Bennett team record.
+118. Preserve all three source predicates as unresolved gameplay-role facts,
+    then make them applicable only through independent support-role facts scoped
+    to the exact team and exact character.
+119. Keep Diona's Song/Noblesse alternatives, Citlali's Scroll singleton, and
+    Bennett's Noblesse/Instructor alternatives in source order without choosing,
+    assigning, comparing, or composing them.
+120. Close all 26 Diona condition arrays as 18 nonempty and 8 empty: three
+    selected rows plus 15 nonempty holdouts, of which 10 are ordinary and 5 are
+    descriptively ER-deferred.
+121. Consume, bind, and energy-classify zero holdouts; only the three selected
+    rows receive typed bindings and explicit not-energy-deferred states.
+122. Generalize the catalog evidence labels while keeping source wrappers,
+    authentication, extraction, occurrence identity, and `sliceId` scopes exact
+    and source-specific.
+123. Refresh the catalog to 56 entries and non-structural coverage to
+    123/53/3/67; keep energy orthogonal at 15 deferred, 50 explicitly not
+    energy-deferred, 61 nonempty unclassified, and 16 empty arrays.
+124. Preserve the one-way Diona raw-to-wrapper-to-catalog-to-coverage boundary,
+    then regenerate the downstream Klee witness against that updated coverage;
+    execute no build, recommendation, composition, rank, optimizer, damage,
+    rotation, or ER work.
+125. Use one exact-team Ocean-Hued Clam occurrence as the next bounded Kokomi
+    source-local slice, with four holdouts and no catalog integration yet.
 
 The first two active sources are already in this repository:
 
@@ -371,8 +400,11 @@ several domains globally but has no per-team locator, so consolidation must not
 treat any row as verified external knowledge.
 
 The active external observations are narrow, linked snapshots of KQM's Diona,
-Furina, Itto, Keqing, Klee, Kokomi, and Noelle Quick Guides. Diona remains the
-assumption-incomplete historical ER pilot. Furina adds conditional builds,
+Furina, Itto, Keqing, Klee, Kokomi, and Noelle Quick Guides. Diona's historical
+ER pilot remains assumption-incomplete. Its separate source-local slice now
+authenticates the Diona, Citlali, and Bennett support-artifact conditions from
+one exact same-record team without choosing or assigning their payloads. Furina
+adds conditional builds,
 constellation-bounded advice, five team
 templates, three exact example teams, and their published sample rotations. Two
 of those exact teams are Quickbloom examples absent from the current baseline.
@@ -460,6 +492,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
@@ -478,7 +511,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-seven durable reports in memory: corpus inventory,
+It also rebuilds all twenty-eight durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -490,9 +523,9 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-Klee source-local condition slice, the exact manual condition-array coverage
-inventory, the authenticated flat Klee team-scoped claim-join witness, and
-historical ER calibration.
+Klee and Diona source-local condition slices, the exact manual condition-array
+coverage inventory, the authenticated flat Klee team-scoped claim-join witness,
+and historical ER calibration.
 Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
@@ -567,23 +600,40 @@ team-scoped on-field intent makes the effective partition 7 matched and 1
 inapplicable. The other 11 Klee occurrences remain exact holdouts and receive no
 binding or energy classification from this slice.
 
+The Diona adapter reuses that core over one exact same-record team. It selects
+the Diona member-0, Citlali member-2, and Bennett member-3 artifact conditions
+from `kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt`. All three source
+cells remain unresolved gameplay-role predicates until independent exact-team,
+exact-character support facts make them applicable. Diona retains 4pc Song of
+Days Past then 4pc Noblesse Oblige; Citlali retains 4pc Scroll of the Hero of
+Cinder City; Bennett retains 4pc Noblesse Oblige then 4pc Instructor. These are
+source-ordered payload groups, not choices or assignments. The snapshot closes
+26 condition arrays: 18 nonempty and 8 empty. Three are selected; the other 15
+nonempty rows remain descriptive holdouts, split into 10 ordinary and 5 ER-
+deferred rows. The slice consumes, binds, and energy-classifies none of them.
+
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
 and matches all 142 to their consolidated copies. Sixteen arrays are
-unconditional. Across the 126 nonempty arrays, 50 are typed-bound, 3 are exact-
-text acknowledged, and 73 are unbound. Excluding only structural ER leaves 123
-binding-coverage rows: 50 typed, 3 acknowledged, and 70 unbound. The separate
+unconditional. Across the 126 nonempty arrays, 53 are typed-bound, 3 are exact-
+text acknowledged, and 70 are unbound. Excluding only structural ER leaves 123
+binding-coverage rows: 53 typed, 3 acknowledged, and 67 unbound. The 86 unique
+non-structural arrays split into 31 typed-only, 54 unbound-only, and one mixed
+acknowledged/unbound set. The separate
 energy ledger still defers 3 structural ER arrays, 3 typed Itto prerequisites,
-and 9 exact authored Diona/Furina rows; 47 rows are explicitly not energy-
-deferred and 64 nonempty rows remain energy-unclassified. The authenticated
-catalog deliberately binds only exact source occurrences. The shared
+and 9 exact authored Diona/Furina rows; 50 rows are explicitly not energy-
+deferred and 61 nonempty rows remain energy-unclassified. The authenticated
+catalog deliberately binds only exact source occurrences. Its reusable evidence
+labels are `source-local-typed-predicate-ast` and `source-local-not-energy-
+deferred`, while each wrapper, fresh authentication, extraction path, and
+`sliceId` remains source-specific. The shared
 Viridescent Venerer text remains acknowledged for Jean, Kaedehara Kazuha, and
-Sucrose but unbound for Sayu and Xianyun. The Klee report is rebuilt and
-authenticated before its four entries can reach the catalog, and coverage is
-rebuilt downstream of that catalog; neither layer feeds back into the Klee
-slice. These reports measure validation work. They do not prove a condition is
-satisfied, presume an unclassified row is non-ER, or establish that a preserved
-payload is a correct recommendation.
+Sucrose but unbound for Sayu and Xianyun. The validator follows one exact DAG:
+Diona raw inputs, authenticated Diona wrapper, 56-entry catalog, manual
+coverage, then the regenerated Klee witness. Neither catalog nor coverage feeds
+back into a source-local slice. These reports measure validation work. They do
+not prove a condition is satisfied, presume an unclassified row is non-ER, or
+establish that a preserved payload is a correct recommendation.
 
 The Klee team-scoped claim-join witness then consumes both authenticated
 boundaries without changing either one. For the exact
@@ -596,6 +646,9 @@ contain Furina. The join is Guide Factory-authored, consumes none of the 11
 holdouts, and performs no payload expansion, compatibility evaluation, build or
 candidate construction, cross-product, selection, recommendation, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
+Its durable report is regenerated because manual coverage is a declared input;
+the four Klee claims, two team controls, and interpretation boundary do not
+change.
 
 ## Data flow
 

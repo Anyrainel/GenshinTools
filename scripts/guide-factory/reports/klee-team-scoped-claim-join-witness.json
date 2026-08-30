@@ -66,6 +66,10 @@
       "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
     },
     {
+      "path": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
+      "sha256": "c1901906e1cf6d4147999d799787ab0fb012c644e90a75a66e908cabdba29366"
+    },
+    {
       "path": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
       "sha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956"
     },
@@ -83,7 +87,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
-      "sha256": "afa64a5431d13ee812a59bbf9420c460e4198f63cf03775ee19705bb64fac945"
+      "sha256": "ed3c4add84c0ba01376648efc96f420bd94ae5b4d0eff45a87173954b1b55e28"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -96,6 +100,10 @@
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
       "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts",
+      "sha256": "845132a9a921385e744455fc3f7df0883f9c3ca528a4b04e336323b25dac7877"
     },
     {
       "path": "scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts",
@@ -115,7 +123,11 @@
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "96bded91bfe177d754e4cbe4c43c0b47d5dd076ad72b0959fe7156bc18b7fcf2"
+      "sha256": "a4aa9404849f911ac6112b9db099899e82cb33f0480649a24d66a6749df956c3"
+    },
+    {
+      "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
+      "sha256": "3c4ab5faa936688f3a5cb6bc7ae7edce152db8fe1828dc8c3f763020ee9bf833"
     },
     {
       "path": "scripts/guide-factory/src/exactAuthoredEnergyDeferralCatalog.ts",
@@ -151,7 +163,7 @@
     },
     {
       "path": "scripts/guide-factory/src/kleeTeamScopedClaimJoinWitness.ts",
-      "sha256": "e325ddafb0aaccb222db3703e8acdeb76d8676f8670e7462c314feb54a62925f"
+      "sha256": "d380b1042889fa7935d3caf2e611a64397102c222f5766352e7f777d6b19cfe1"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -159,7 +171,7 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "049a7a76232cf31f7cd5be6670dd8925eaa7f196cd20548bd123103dfec15d06"
+      "sha256": "db24c13e02111068511099f3c4bfa8cb7cf19aa7af02cd76d6a0f42a47745d99"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -343,7 +355,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
             "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
             "predicateAst": {
@@ -366,7 +378,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
             "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -393,7 +405,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "60f24857be4e443598743e14619c0d64fb112d78decc554061fc8bbd6bdfa40a",
+        "coverageOccurrenceSha256": "f26f954396e4c47c2f353ebec0f20f761abf1ce7fa02f62a0302e06a3287b244",
         "factoryDisposition": "negative-control-applicable-only",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
@@ -585,7 +597,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
             "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
             "predicateAst": {
@@ -608,7 +620,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
             "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -635,7 +647,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "0590e80a650bfc6736b41858c3a7955c9d559ffd8263371d055a086f360b0b5d",
+        "coverageOccurrenceSha256": "cca210eab0cdceaceb9744923354fb30440f65619df4602592bdeecff48d16f4",
         "factoryDisposition": "negative-control-applicable-only",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
@@ -825,7 +837,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
             "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
             "predicateAst": {
@@ -848,7 +860,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
             "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -875,7 +887,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "6200d9cac58a99e2286a73093636dbf40d7e4bba58de0b4ddbef6c649e7df58b",
+        "coverageOccurrenceSha256": "50fc4ac58977d8175220a0a9ec56226869b9629e140fe0efd85d020e7149d25c",
         "factoryDisposition": "negative-control-applicable-only",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
@@ -1054,7 +1066,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
             "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
             "predicateAst": {
@@ -1076,7 +1088,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
             "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -1102,7 +1114,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "98cf0354e99f09358f57b36ebb1b9893d637164bc35757215353131d7f66671c",
+        "coverageOccurrenceSha256": "84204e56da69505f343737ecea91b78688d9e8a49f1099a5963ddcc64e9d7ef8",
         "factoryDisposition": "negative-control-source-definitely-inapplicable",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
@@ -1307,7 +1319,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
             "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
             "predicateAst": {
@@ -1330,7 +1342,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
             "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -1357,7 +1369,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "60f24857be4e443598743e14619c0d64fb112d78decc554061fc8bbd6bdfa40a",
+        "coverageOccurrenceSha256": "f26f954396e4c47c2f353ebec0f20f761abf1ce7fa02f62a0302e06a3287b244",
         "factoryDisposition": "positive-independent-applicability-witness-member",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
@@ -1549,7 +1561,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
             "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
             "predicateAst": {
@@ -1572,7 +1584,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
             "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -1599,7 +1611,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "0590e80a650bfc6736b41858c3a7955c9d559ffd8263371d055a086f360b0b5d",
+        "coverageOccurrenceSha256": "cca210eab0cdceaceb9744923354fb30440f65619df4602592bdeecff48d16f4",
         "factoryDisposition": "positive-independent-applicability-witness-member",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
@@ -1789,7 +1801,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
             "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
             "predicateAst": {
@@ -1812,7 +1824,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
             "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -1839,7 +1851,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "6200d9cac58a99e2286a73093636dbf40d7e4bba58de0b4ddbef6c649e7df58b",
+        "coverageOccurrenceSha256": "50fc4ac58977d8175220a0a9ec56226869b9629e140fe0efd85d020e7149d25c",
         "factoryDisposition": "positive-independent-applicability-witness-member",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
@@ -2018,7 +2030,7 @@
           "bindingClassification": "typed-bound",
           "bindingCoverageEligible": true,
           "bindingEvidence": {
-            "kind": "klee-source-local-typed-predicate-ast",
+            "kind": "source-local-typed-predicate-ast",
             "occurrenceControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
             "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
             "predicateAst": {
@@ -2040,7 +2052,7 @@
           "energyClassification": "not-energy-deferred",
           "energyEvidence": {
             "energyRelatedWorkDeferred": false,
-            "kind": "klee-source-local-not-energy-deferred",
+            "kind": "source-local-not-energy-deferred",
             "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
             "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
             "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -2066,7 +2078,7 @@
           "structuralEnergyDimension": "not-structural-er",
           "subject": "klee"
         },
-        "coverageOccurrenceSha256": "98cf0354e99f09358f57b36ebb1b9893d637164bc35757215353131d7f66671c",
+        "coverageOccurrenceSha256": "84204e56da69505f343737ecea91b78688d9e8a49f1099a5963ddcc64e9d7ef8",
         "factoryDisposition": "positive-independent-applicability-witness-member",
         "requestProjection": {
           "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
@@ -2306,11 +2318,11 @@
       "sourceTeamCount": 2
     },
     "manualCoverage": {
-      "bindingOccurrenceCount": 53,
+      "bindingOccurrenceCount": 56,
       "corpusOccurrenceCount": 142,
       "currentBoundaryAuthenticated": true,
-      "durableReportCanonicalObjectSha256": "afa64a5431d13ee812a59bbf9420c460e4198f63cf03775ee19705bb64fac945",
-      "durableReportFileSha256": "afa64a5431d13ee812a59bbf9420c460e4198f63cf03775ee19705bb64fac945",
+      "durableReportCanonicalObjectSha256": "ed3c4add84c0ba01376648efc96f420bd94ae5b4d0eff45a87173954b1b55e28",
+      "durableReportFileSha256": "ed3c4add84c0ba01376648efc96f420bd94ae5b4d0eff45a87173954b1b55e28",
       "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
       "kleeSourceLocalOccurrenceCount": 4,
       "typedBindingMeansConditionTruth": false

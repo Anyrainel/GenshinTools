@@ -1,7 +1,9 @@
 {
   "arbitraryEnglishParsingAllowed": false,
   "bindingBoundary": {
-    "catalogReportSha256": "79aa96c4aef6c31446cc3c222aed9ebac967e6256df7ae7faf0ae3ed3fc7b626",
+    "catalogReportSha256": "6ec04c872d8433940da97135a3e69eef2f66af046ef38ff577c634da4a3da544",
+    "dionaSourceLocalDurableMatchesCurrent": true,
+    "dionaSourceLocalOccurrenceCount": 3,
     "exactTextAcknowledgementOccurrenceCount": 3,
     "ittoAuthenticated": true,
     "keqingEquipmentAtomicClaimCount": 42,
@@ -9,7 +11,7 @@
     "keqingRolePairDurableMatchesCurrent": true,
     "kleeSourceLocalDurableMatchesCurrent": true,
     "kleeSourceLocalOccurrenceCount": 4,
-    "occurrenceCount": 53,
+    "occurrenceCount": 56,
     "status": "authenticated",
     "typedBindingMeansConditionTruth": false
   },
@@ -81,6 +83,10 @@
       "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
     },
     {
+      "path": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
+      "sha256": "c1901906e1cf6d4147999d799787ab0fb012c644e90a75a66e908cabdba29366"
+    },
+    {
       "path": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
       "sha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956"
     },
@@ -109,6 +115,10 @@
       "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts",
+      "sha256": "845132a9a921385e744455fc3f7df0883f9c3ca528a4b04e336323b25dac7877"
+    },
+    {
       "path": "scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts",
       "sha256": "6425c34209b4ae70b90f212be0a3b78a460169d99bb71b9afcd65f3396edf7ad"
     },
@@ -122,7 +132,11 @@
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "96bded91bfe177d754e4cbe4c43c0b47d5dd076ad72b0959fe7156bc18b7fcf2"
+      "sha256": "a4aa9404849f911ac6112b9db099899e82cb33f0480649a24d66a6749df956c3"
+    },
+    {
+      "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
+      "sha256": "3c4ab5faa936688f3a5cb6bc7ae7edce152db8fe1828dc8c3f763020ee9bf833"
     },
     {
       "path": "scripts/guide-factory/src/exactAuthoredEnergyDeferralCatalog.ts",
@@ -162,7 +176,7 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "049a7a76232cf31f7cd5be6670dd8925eaa7f196cd20548bd123103dfec15d06"
+      "sha256": "db24c13e02111068511099f3c4bfa8cb7cf19aa7af02cd76d6a0f42a47745d99"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -294,7 +308,7 @@
   "nonStructuralUniqueBindingStatusSets": [
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Citlali uses a support build in this team."
@@ -344,7 +358,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Diona uses a support build in this team."
@@ -929,7 +943,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Bennett uses a support build in this team."
@@ -5376,7 +5390,7 @@
       "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
       "bindingEvidence": {
-        "kind": "klee-source-local-typed-predicate-ast",
+        "kind": "source-local-typed-predicate-ast",
         "occurrenceControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
         "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
         "predicateAst": {
@@ -5399,7 +5413,7 @@
       "energyClassification": "not-energy-deferred",
       "energyEvidence": {
         "energyRelatedWorkDeferred": false,
-        "kind": "klee-source-local-not-energy-deferred",
+        "kind": "source-local-not-energy-deferred",
         "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
         "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
         "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -5430,7 +5444,7 @@
       "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
       "bindingEvidence": {
-        "kind": "klee-source-local-typed-predicate-ast",
+        "kind": "source-local-typed-predicate-ast",
         "occurrenceControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
         "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
         "predicateAst": {
@@ -5453,7 +5467,7 @@
       "energyClassification": "not-energy-deferred",
       "energyEvidence": {
         "energyRelatedWorkDeferred": false,
-        "kind": "klee-source-local-not-energy-deferred",
+        "kind": "source-local-not-energy-deferred",
         "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
         "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
         "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -5519,7 +5533,7 @@
       "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
       "bindingEvidence": {
-        "kind": "klee-source-local-typed-predicate-ast",
+        "kind": "source-local-typed-predicate-ast",
         "occurrenceControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
         "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
         "predicateAst": {
@@ -5542,7 +5556,7 @@
       "energyClassification": "not-energy-deferred",
       "energyEvidence": {
         "energyRelatedWorkDeferred": false,
-        "kind": "klee-source-local-not-energy-deferred",
+        "kind": "source-local-not-energy-deferred",
         "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
         "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
         "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -5705,7 +5719,7 @@
       "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
       "bindingEvidence": {
-        "kind": "klee-source-local-typed-predicate-ast",
+        "kind": "source-local-typed-predicate-ast",
         "occurrenceControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
         "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
         "predicateAst": {
@@ -5727,7 +5741,7 @@
       "energyClassification": "not-energy-deferred",
       "energyEvidence": {
         "energyRelatedWorkDeferred": false,
-        "kind": "klee-source-local-not-energy-deferred",
+        "kind": "source-local-not-energy-deferred",
         "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
         "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
         "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
@@ -6894,18 +6908,38 @@
       "subject": "diona"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "b6d947e0adfd9f7fc21f446771e68f06e5e2d0054aca96057fab935ea430e796",
+        "payloadSha256": "4e839978e28d338288feea3678928a73c9bd8de3a64a2abac115e2b1b16c1716",
+        "predicateAst": {
+          "category": "gameplay-role",
+          "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "6caad253478d8cc5937e8cb6ab4b2620b53002f71e2eb067a38c74729db7c7ab",
+        "selectedOccurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "f8ef9f8423e4175acab22b4be89004831653e999b44805037ab23b1a7afec65e",
+        "sliceId": "kqm-diona-source-local-support-slice-luna-viii"
+      },
+      "bindingOccurrenceKey": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions:08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe",
       "claimAxis": "artifact-recommendation",
       "conditions": [
         "Diona uses a support build in this team."
       ],
       "conditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "f8ef9f8423e4175acab22b4be89004831653e999b44805037ab23b1a7afec65e",
+        "sliceId": "kqm-diona-source-local-support-slice-luna-viii",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -6927,18 +6961,38 @@
       "subject": "diona"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "0abe3377c0281a5043d2e2d2a04c75df92d6f47eee0cfeb34652aa625a9d89a5",
+        "payloadSha256": "850ca8732700319db2ceb56502180d0b6067c9e1d11c5b69bb04be1024d5e056",
+        "predicateAst": {
+          "category": "gameplay-role",
+          "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "9c3bfbcc46cebc2bfad3efdd75318f5d5c3fc0f2a2407b5ef9f5fdc2ee0a6755",
+        "selectedOccurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "26e121cdbbd27d5e440b8d6e38a4cfd6d45d2be5d295a52c0c417c4d78433e2f",
+        "sliceId": "kqm-diona-source-local-support-slice-luna-viii"
+      },
+      "bindingOccurrenceKey": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions:026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9",
       "claimAxis": "artifact-recommendation",
       "conditions": [
         "Citlali uses a support build in this team."
       ],
       "conditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "26e121cdbbd27d5e440b8d6e38a4cfd6d45d2be5d295a52c0c417c4d78433e2f",
+        "sliceId": "kqm-diona-source-local-support-slice-luna-viii",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -6960,18 +7014,38 @@
       "subject": "citlali"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "aff787282fc19eb79fc0e3407a243798086550c82ce3316bff7135c3f27aa39e",
+        "payloadSha256": "88398bdd4d438dc83a1342900b2bcedcf0fef2fb5095b3ecedaf424c7a767e43",
+        "predicateAst": {
+          "category": "gameplay-role",
+          "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "94c49920ce9193d0e758720e598307ce38c57bb1d7e1d0ce482fd1ef1463737a",
+        "selectedOccurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "35b126dbdac00b74ca1fb4bb6e89b3f6d6041bde1204c0ee39c57ff30c9c3503",
+        "sliceId": "kqm-diona-source-local-support-slice-luna-viii"
+      },
+      "bindingOccurrenceKey": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions:8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e",
       "claimAxis": "artifact-recommendation",
       "conditions": [
         "Bennett uses a support build in this team."
       ],
       "conditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "35b126dbdac00b74ca1fb4bb6e89b3f6d6041bde1204c0ee39c57ff30c9c3503",
+        "sliceId": "kqm-diona-source-local-support-slice-luna-viii",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -7170,7 +7244,7 @@
   "rawInputBoundary": {
     "exactPathSet": true,
     "rawJsonObjectClosure": true,
-    "sourceFileCount": 15,
+    "sourceFileCount": 16,
     "status": "accepted"
   },
   "recommendationCompositionExecuted": false,
@@ -7186,10 +7260,10 @@
       "nonemptyCount": 126,
       "occurrenceCount": 126,
       "stringOccurrenceCount": 159,
-      "typedBoundOccurrenceCount": 50,
-      "typedBoundStringOccurrenceCount": 72,
-      "unboundOccurrenceCount": 73,
-      "unboundStringOccurrenceCount": 84,
+      "typedBoundOccurrenceCount": 53,
+      "typedBoundStringOccurrenceCount": 75,
+      "unboundOccurrenceCount": 70,
+      "unboundStringOccurrenceCount": 81,
       "uniqueExactArrayCount": 89,
       "uniqueStringCount": 97
     },
@@ -7216,12 +7290,12 @@
         "erDeferredCount": 0,
         "exactTextAcknowledgedCount": 0,
         "groupId": "team",
-        "knownButUnboundCount": 8,
+        "knownButUnboundCount": 5,
         "nonemptyCount": 8,
         "nonStructuralBindingCoverageConditionCount": 8,
         "occurrenceCount": 8,
         "stringOccurrenceCount": 8,
-        "typedBoundCount": 0,
+        "typedBoundCount": 3,
         "unconditionalCount": 0,
         "uniqueExactArrayCount": 8,
         "uniqueStringCount": 8
@@ -7282,12 +7356,12 @@
         "erDeferredCount": 15,
         "exactTextAcknowledgedCount": 3,
         "groupId": "kqm",
-        "knownButUnboundCount": 73,
+        "knownButUnboundCount": 70,
         "nonemptyCount": 126,
         "nonStructuralBindingCoverageConditionCount": 123,
         "occurrenceCount": 142,
         "stringOccurrenceCount": 159,
-        "typedBoundCount": 50,
+        "typedBoundCount": 53,
         "unconditionalCount": 16,
         "uniqueExactArrayCount": 89,
         "uniqueStringCount": 97
@@ -7332,12 +7406,12 @@
         "erDeferredCount": 0,
         "exactTextAcknowledgedCount": 0,
         "groupId": "bennett",
-        "knownButUnboundCount": 1,
+        "knownButUnboundCount": 0,
         "nonemptyCount": 1,
         "nonStructuralBindingCoverageConditionCount": 1,
         "occurrenceCount": 1,
         "stringOccurrenceCount": 1,
-        "typedBoundCount": 0,
+        "typedBoundCount": 1,
         "unconditionalCount": 0,
         "uniqueExactArrayCount": 1,
         "uniqueStringCount": 1
@@ -7348,12 +7422,12 @@
         "erDeferredCount": 0,
         "exactTextAcknowledgedCount": 0,
         "groupId": "citlali",
-        "knownButUnboundCount": 1,
+        "knownButUnboundCount": 0,
         "nonemptyCount": 1,
         "nonStructuralBindingCoverageConditionCount": 1,
         "occurrenceCount": 1,
         "stringOccurrenceCount": 1,
-        "typedBoundCount": 0,
+        "typedBoundCount": 1,
         "unconditionalCount": 0,
         "uniqueExactArrayCount": 1,
         "uniqueStringCount": 1
@@ -7396,12 +7470,12 @@
         "erDeferredCount": 5,
         "exactTextAcknowledgedCount": 0,
         "groupId": "diona",
-        "knownButUnboundCount": 16,
+        "knownButUnboundCount": 15,
         "nonemptyCount": 16,
         "nonStructuralBindingCoverageConditionCount": 13,
         "occurrenceCount": 24,
         "stringOccurrenceCount": 16,
-        "typedBoundCount": 0,
+        "typedBoundCount": 1,
         "unconditionalCount": 8,
         "uniqueExactArrayCount": 15,
         "uniqueStringCount": 15
@@ -7635,8 +7709,8 @@
       "er-deferred": 15,
       "exact-text-acknowledged": 3,
       "invalid": 0,
-      "known-but-unbound": 61,
-      "typed-bound": 47,
+      "known-but-unbound": 58,
+      "typed-bound": 50,
       "unconditional": 16
     },
     "energyCoverage": {
@@ -7658,11 +7732,11 @@
       },
       "energyUnclassified": {
         "emptyCount": 0,
-        "nonemptyCount": 64,
-        "occurrenceCount": 64,
-        "stringOccurrenceCount": 72,
-        "uniqueExactArrayCount": 50,
-        "uniqueStringCount": 55
+        "nonemptyCount": 61,
+        "occurrenceCount": 61,
+        "stringOccurrenceCount": 69,
+        "uniqueExactArrayCount": 47,
+        "uniqueStringCount": 52
       },
       "exactAuthoredEnergyRelatedDeferral": {
         "emptyCount": 0,
@@ -7674,11 +7748,11 @@
       },
       "notEnergyDeferred": {
         "emptyCount": 0,
-        "nonemptyCount": 47,
-        "occurrenceCount": 47,
-        "stringOccurrenceCount": 69,
-        "uniqueExactArrayCount": 27,
-        "uniqueStringCount": 28
+        "nonemptyCount": 50,
+        "occurrenceCount": 50,
+        "stringOccurrenceCount": 72,
+        "uniqueExactArrayCount": 30,
+        "uniqueStringCount": 31
       },
       "structuralEr": {
         "emptyCount": 0,
@@ -7706,18 +7780,18 @@
       "nonemptyCount": 123,
       "occurrenceCount": 123,
       "stringOccurrenceCount": 156,
-      "typedBoundOccurrenceCount": 50,
-      "typedBoundStringOccurrenceCount": 72,
-      "unboundOccurrenceCount": 70,
-      "unboundStringOccurrenceCount": 81,
+      "typedBoundOccurrenceCount": 53,
+      "typedBoundStringOccurrenceCount": 75,
+      "unboundOccurrenceCount": 67,
+      "unboundStringOccurrenceCount": 78,
       "uniqueExactArrayCount": 86,
       "uniqueStringCount": 94
     },
     "nonStructuralUniqueBindingArrayCoverage": {
       "mixedAcknowledgedAndUnboundCount": 1,
       "otherMixedCount": 0,
-      "typedOnlyCount": 28,
-      "unboundOnlyCount": 57,
+      "typedOnlyCount": 31,
+      "unboundOnlyCount": 54,
       "uniqueExactArrayCount": 86
     },
     "total": {

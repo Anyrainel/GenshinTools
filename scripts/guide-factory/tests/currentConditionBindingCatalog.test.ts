@@ -7,6 +7,10 @@ import {
   requireComparableCurrentConditionBindingCatalog,
 } from "../src/currentConditionBindingCatalog";
 import {
+  DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH,
+  type DionaSourceLocalSupportSliceReport,
+} from "../src/dionaSourceLocalSupportSlice";
+import {
   ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_REPORT_PATH,
 } from "../src/ittoSourceConditionedGuidePacket";
 import { readJson, sha256Text, stableJson } from "../src/io";
@@ -24,7 +28,7 @@ import {
 import type { SourceConditionedGuidePacketReport } from "../src/sourceConditionedGuidePacket";
 
 describe("authenticated current condition-binding catalog", () => {
-  it("builds the deterministic 53-occurrence catalog with exact current coverage", async () => {
+  it("builds the deterministic 56-occurrence catalog with exact current coverage", async () => {
     const fixture = await loadFixture();
     const before = structuredClone(fixture);
     const report = buildCurrentConditionBindingCatalog(fixture);
@@ -34,32 +38,32 @@ describe("authenticated current condition-binding catalog", () => {
     expect(fixture).toEqual(before);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.issues).toEqual([]);
-    expect(report.entries).toHaveLength(53);
+    expect(report.entries).toHaveLength(56);
     expect(report.entries.map(({ occurrenceKey }) => occurrenceKey)).toEqual(
       [...report.entries.map(({ occurrenceKey }) => occurrenceKey)].sort(),
     );
     expect(
       new Set(report.entries.map(({ occurrenceId }) => occurrenceId)).size,
-    ).toBe(53);
+    ).toBe(56);
     expect(
       new Set(report.entries.map(({ occurrenceKey }) => occurrenceKey)).size,
-    ).toBe(53);
+    ).toBe(56);
     expect(report.summary).toEqual({
-      occurrenceCount: 53,
+      occurrenceCount: 56,
       bindingClassificationCounts: {
-        "typed-bound": 50,
+        "typed-bound": 53,
         "exact-text-acknowledged": 3,
         unbound: 0,
         invalid: 0,
       },
       energyClassificationCounts: {
         "energy-unclassified": 3,
-        "not-energy-deferred": 47,
+        "not-energy-deferred": 50,
         "structural-er": 0,
         "deferred-energy-prerequisite": 3,
         "exact-authored-energy-related-deferral": 0,
       },
-      typedBindingCount: 50,
+      typedBindingCount: 53,
       ittoOccurrenceCount: 15,
       ittoTypedBindingCount: 15,
       ittoDeferredEnergyPrerequisiteCount: 3,
@@ -71,6 +75,9 @@ describe("authenticated current condition-binding catalog", () => {
       kleeSourceLocalOccurrenceCount: 4,
       kleeSourceLocalTypedBindingCount: 4,
       kleeSourceLocalNotEnergyDeferredCount: 4,
+      dionaSourceLocalOccurrenceCount: 3,
+      dionaSourceLocalTypedBindingCount: 3,
+      dionaSourceLocalNotEnergyDeferredCount: 3,
     });
     expect(report).toMatchObject({
       supportsGuideClaims: false,
@@ -85,6 +92,7 @@ describe("authenticated current condition-binding catalog", () => {
         keqingEquipmentDurableMatchesCurrent: true,
         keqingRolePairDurableMatchesCurrent: true,
         kleeSourceLocalDurableMatchesCurrent: true,
+        dionaSourceLocalDurableMatchesCurrent: true,
       },
     });
     for (const entry of report.entries) {
@@ -249,7 +257,9 @@ describe("authenticated current condition-binding catalog", () => {
     );
     const kleeEntries = report.entries.filter(
       ({ bindingEvidence }) =>
-        bindingEvidence.kind === "klee-source-local-typed-predicate-ast",
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-klee-source-local-condition-slice-luna-iv",
     );
 
     expect(kleeEntries).toHaveLength(4);
@@ -274,7 +284,7 @@ describe("authenticated current condition-binding catalog", () => {
             entry.bindingClassification === "typed-bound" &&
             entry.energyClassification === "not-energy-deferred" &&
             entry.bindingEvidence.kind ===
-              "klee-source-local-typed-predicate-ast" &&
+              "source-local-typed-predicate-ast" &&
             entry.bindingEvidence.selectedOccurrenceId ===
               entry.occurrenceId &&
             entry.bindingEvidence.selectedOccurrenceSha256 ===
@@ -282,7 +292,7 @@ describe("authenticated current condition-binding catalog", () => {
             entry.bindingEvidence.predicateAstSha256 ===
               sha256Text(stableJson(entry.bindingEvidence.predicateAst)) &&
             entry.energyEvidence?.kind ===
-              "klee-source-local-not-energy-deferred" &&
+              "source-local-not-energy-deferred" &&
             entry.energyEvidence.selectedOccurrenceId === entry.occurrenceId &&
             entry.energyEvidence.selectedOccurrenceSha256 ===
               entry.bindingEvidence.selectedOccurrenceSha256 &&
@@ -290,6 +300,74 @@ describe("authenticated current condition-binding catalog", () => {
           );
         },
       ),
+    ).toBe(true);
+  });
+
+  it("binds only the three authenticated Diona team-member support occurrences", async () => {
+    const fixture = await loadFixture();
+    const report = requireComparableCurrentConditionBindingCatalog(
+      buildCurrentConditionBindingCatalog(fixture),
+    );
+    const dionaEntries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-diona-source-local-support-slice-luna-viii",
+    );
+
+    expect(dionaEntries).toHaveLength(3);
+    expect(
+      dionaEntries.map(({ occurrenceId, recordKind, subject }) => ({
+        occurrenceId,
+        recordKind,
+        subject,
+      })),
+    ).toEqual([
+      {
+        occurrenceId:
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        recordKind: "team",
+        subject: "diona",
+      },
+      {
+        occurrenceId:
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        recordKind: "team",
+        subject: "citlali",
+      },
+      {
+        occurrenceId:
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+        recordKind: "team",
+        subject: "bennett",
+      },
+    ]);
+    expect(
+      dionaEntries.every((entry) => {
+        const selected =
+          fixture.dionaSourceLocal.currentReport.selectedOccurrences.find(
+            ({ occurrenceId }) => occurrenceId === entry.occurrenceId,
+          );
+        return (
+          selected != null &&
+          entry.bindingClassification === "typed-bound" &&
+          entry.energyClassification === "not-energy-deferred" &&
+          entry.bindingEvidence.kind ===
+            "source-local-typed-predicate-ast" &&
+          entry.bindingEvidence.selectedOccurrenceId === entry.occurrenceId &&
+          entry.bindingEvidence.selectedOccurrenceSha256 ===
+            sha256Text(stableJson(selected)) &&
+          entry.bindingEvidence.predicateAstSha256 ===
+            sha256Text(stableJson(entry.bindingEvidence.predicateAst)) &&
+          entry.energyEvidence?.kind ===
+            "source-local-not-energy-deferred" &&
+          entry.energyEvidence.sliceId === entry.bindingEvidence.sliceId &&
+          entry.energyEvidence.selectedOccurrenceId === entry.occurrenceId &&
+          entry.energyEvidence.selectedOccurrenceSha256 ===
+            entry.bindingEvidence.selectedOccurrenceSha256 &&
+          !entry.energyEvidence.energyRelatedWorkDeferred
+        );
+      }),
     ).toBe(true);
   });
 
@@ -409,6 +487,123 @@ describe("authenticated current condition-binding catalog", () => {
       capabilityCrossingKlee,
       "klee-source-local.partial-or-capability-crossing-evidence",
     );
+
+    const collidingKleeSlice = structuredClone(base);
+    const nestedCollidingKlee = collidingKleeSlice.kleeSourceLocal.currentReport
+      .sourceLocalSlice;
+    if (!nestedCollidingKlee) {
+      throw new Error("Missing nested Klee slice collision fixture.");
+    }
+    nestedCollidingKlee.sliceId =
+      "kqm-diona-source-local-support-slice-luna-viii";
+    collidingKleeSlice.kleeSourceLocal.durableReport = structuredClone(
+      collidingKleeSlice.kleeSourceLocal.currentReport,
+    );
+    expectFailure(
+      collidingKleeSlice,
+      "klee-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const staleDiona = structuredClone(base);
+    const staleDionaDurable = structuredClone(
+      staleDiona.dionaSourceLocal.durableReport,
+    ) as DionaSourceLocalSupportSliceReport;
+    staleDionaDurable.selectedOccurrences.pop();
+    staleDiona.dionaSourceLocal.durableReport = staleDionaDurable;
+    expectFailure(staleDiona, "authentication.diona-source-local-stale");
+
+    const partialDiona = structuredClone(base);
+    partialDiona.dionaSourceLocal.currentReport.selectedOccurrences.pop();
+    partialDiona.dionaSourceLocal.durableReport = structuredClone(
+      partialDiona.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      partialDiona,
+      "diona-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const capabilityCrossingDiona = structuredClone(base);
+    capabilityCrossingDiona.dionaSourceLocal.currentReport.teamCompositionExecuted =
+      true as false;
+    capabilityCrossingDiona.dionaSourceLocal.durableReport = structuredClone(
+      capabilityCrossingDiona.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      capabilityCrossingDiona,
+      "diona-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const collidingDionaSlice = structuredClone(base);
+    const nestedCollidingDiona = collidingDionaSlice.dionaSourceLocal
+      .currentReport.sourceLocalSlice;
+    if (!nestedCollidingDiona) {
+      throw new Error("Missing nested Diona slice collision fixture.");
+    }
+    nestedCollidingDiona.sliceId =
+      "kqm-klee-source-local-condition-slice-luna-iv";
+    collidingDionaSlice.dionaSourceLocal.durableReport = structuredClone(
+      collidingDionaSlice.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      collidingDionaSlice,
+      "diona-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const leakedDionaHoldout = structuredClone(base);
+    const dionaHoldout =
+      leakedDionaHoldout.dionaSourceLocal.currentReport.holdoutOccurrences[0];
+    if (!dionaHoldout) throw new Error("Missing Diona holdout fixture.");
+    dionaHoldout.consumedBySlice = true as false;
+    leakedDionaHoldout.dionaSourceLocal.durableReport = structuredClone(
+      leakedDionaHoldout.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      leakedDionaHoldout,
+      "diona-source-local.selected-holdout-partition-drift",
+    );
+
+    const memberDrift = structuredClone(base);
+    const selectedDiona =
+      memberDrift.dionaSourceLocal.currentReport.selectedOccurrences[0];
+    if (!selectedDiona) throw new Error("Missing selected Diona fixture.");
+    selectedDiona.memberIndex = 2;
+    memberDrift.dionaSourceLocal.durableReport = structuredClone(
+      memberDrift.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      memberDrift,
+      "diona-source-local.conflicting-occurrence-evidence",
+    );
+
+    const duplicateDionaControl = structuredClone(base);
+    const dionaSlice = duplicateDionaControl.dionaSourceLocal.currentReport
+      .sourceLocalSlice;
+    if (!dionaSlice) throw new Error("Missing nested Diona slice fixture.");
+    dionaSlice.conditionControls[2] = structuredClone(
+      dionaSlice.conditionControls[0]!,
+    );
+    duplicateDionaControl.dionaSourceLocal.durableReport = structuredClone(
+      duplicateDionaControl.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      duplicateDionaControl,
+      "diona-source-local.duplicate-condition-control",
+    );
+
+    const conflictingDionaClaim = structuredClone(base);
+    const conflictingDionaSlice = conflictingDionaClaim.dionaSourceLocal
+      .currentReport.sourceLocalSlice;
+    if (!conflictingDionaSlice) {
+      throw new Error("Missing nested Diona claim fixture.");
+    }
+    conflictingDionaSlice.sourceClaimCatalog[0]!.characterId = "bennett";
+    conflictingDionaClaim.dionaSourceLocal.durableReport = structuredClone(
+      conflictingDionaClaim.dionaSourceLocal.currentReport,
+    );
+    expectFailure(
+      conflictingDionaClaim,
+      "diona-source-local.conflicting-occurrence-evidence",
+    );
   });
 });
 
@@ -425,6 +620,9 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
   const kleeSourceLocal = (await readJson(
     KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
   )) as KleeSourceLocalConditionSliceReport;
+  const dionaSourceLocal = (await readJson(
+    DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH,
+  )) as DionaSourceLocalSupportSliceReport;
   return {
     ittoAuthentication: {
       authenticated: true,
@@ -441,6 +639,10 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
     kleeSourceLocal: {
       durableReport: structuredClone(kleeSourceLocal),
       currentReport: structuredClone(kleeSourceLocal),
+    },
+    dionaSourceLocal: {
+      durableReport: structuredClone(dionaSourceLocal),
+      currentReport: structuredClone(dionaSourceLocal),
     },
   };
 }

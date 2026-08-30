@@ -1,0 +1,1293 @@
+{
+  "arbitraryEnglishParsingAllowed": false,
+  "artifactAssignmentExecuted": false,
+  "buildCompositionExecuted": false,
+  "cautions": [
+    "The three selected occurrences remain agent-assisted and unreviewed source observations.",
+    "Applicable-under-supplied-context means only that an explicit exact-team, exact-character request fact satisfies one pinned gameplay-role predicate.",
+    "Each support-role fact is supplied independently for Diona, Citlali, and Bennett; the source condition text and recommendation metadata do not establish that runtime fact.",
+    "The generic claim adapter's recommendationId and scope are structural locators for the exact team-member arrays, not source-authored recommendation labels.",
+    "The fifteen nonempty holdouts are descriptive inventory only: ten ordinary and five ER-deferred; this slice consumes or classifies none of them.",
+    "Not-energy-deferred is occurrence-scoped only to the three selected support-role conditions and does not provide an ER requirement or prove ER adequacy."
+  ],
+  "classification": "authenticated-source-local-condition-binding-slice",
+  "comparisonStatus": "comparable",
+  "conditionTruthEstablishedFromRecommendationMetadata": false,
+  "damageComputationExecuted": false,
+  "energyRecoveryComputationExecuted": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+      "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts",
+      "sha256": "845132a9a921385e744455fc3f7df0883f9c3ca528a4b04e336323b25dac7877"
+    },
+    {
+      "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
+      "sha256": "3c4ab5faa936688f3a5cb6bc7ae7edce152db8fe1828dc8c3f763020ee9bf833"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+    }
+  ],
+  "generatorExecuted": false,
+  "holdoutOccurrences": [
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "The damage dealer scales with ATK and no other teammate holds this set."
+      ],
+      "conditionsSha256": "2f83efd20834b38bfc4c894df2a74627b0f773bfc3d23eedab6c42bf7921f64f",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[0].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-sets-luna-viii:recommendation.artifactRecommendations[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-sets-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Teammates value Elemental DMG buffs."
+      ],
+      "conditionsSha256": "787152fb4e5726e500967551b7eb8632f98233cd2791fef9d8549725eecc5bb7",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[1].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-sets-luna-viii:recommendation.artifactRecommendations[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[1].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-sets-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Another teammate can hold Noblesse Oblige."
+      ],
+      "conditionsSha256": "cca1e4b66fb6f0cb610d29d639d6d45af6db635d44dadefc2285448c6c97eecf",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-sets-luna-viii:recommendation.artifactRecommendations[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[2].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-sets-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "The team triggers Stellar-Conduct or Superconduct and another teammate can hold Noblesse Oblige."
+      ],
+      "conditionsSha256": "8d2569659c9fe82e6684264b76b29f4ac69ddf3a747999f5dd0806bb9c325d59",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[3].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-sets-luna-viii:recommendation.artifactRecommendations[3].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[3].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-sets-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "The team deals Dendro or Bloom-related damage."
+      ],
+      "conditionsSha256": "8ed696a94c34b5678ca16d6c642bddcb951a1789b8c759648bdc9680f9818636",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[4].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-sets-luna-viii:recommendation.artifactRecommendations[4].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[4].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-sets-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "The team values EM and can accept weaker shielding and healing."
+      ],
+      "conditionsSha256": "fb711f92ff0c03b081221db05fc071ca9cd4c9d82641d736810fbb11abe841e8",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[5].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-sets-luna-viii:recommendation.artifactRecommendations[5].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[5].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-sets-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-sets-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Diona uses Favonius Warbow."
+      ],
+      "conditionsSha256": "2e8a9bfa79fe8d6e465b7db567ca29a8e64935267a4f49b7f734f48a551b439f",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "mainStatSlot": "circlet",
+      "manualClaimPath": "recommendation.mainStats.circlet[2].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-stats-luna-viii:recommendation.mainStats.circlet[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.circlet[2].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Diona uses Favonius Warbow."
+      ],
+      "conditionsSha256": "2e8a9bfa79fe8d6e465b7db567ca29a8e64935267a4f49b7f734f48a551b439f",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[2].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-artifact-stats-luna-viii:recommendation.substats[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[2].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "weapon-recommendation",
+      "conditions": [
+        "The team benefits from its buffs and can tolerate variable passive uptime."
+      ],
+      "conditionsSha256": "818dcf6666e628b29f98999c873ccbb76048fd20bd29b011537573255aaa0242",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.weaponRecommendations[2].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-weapons-luna-viii:recommendation.weaponRecommendations[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].weaponRecommendations[2].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-weapons-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-weapons-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "weapon-recommendation",
+      "conditions": [
+        "The weapon is already owned and maximizing Diona's HP is valuable."
+      ],
+      "conditionsSha256": "25373ca2161b55d6e4778b68167bb9af98686fd4ff33474a5f0a6e6390fb9fdc",
+      "consumedBySlice": false,
+      "descriptiveInventory": "ordinary-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.weaponRecommendations[3].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-weapons-luna-viii:recommendation.weaponRecommendations[3].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].weaponRecommendations[3].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-weapons-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-weapons-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "weapon-recommendation",
+      "conditions": [
+        "The team values Cryo batterying or Diona can appear twice per rotation."
+      ],
+      "conditionsSha256": "0e9c01546ec5f030715c0e238dfbf3bba904f943d70c0b828c77f0ae25edfb29",
+      "consumedBySlice": false,
+      "descriptiveInventory": "er-deferred-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.weaponRecommendations[1].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-weapons-luna-viii:recommendation.weaponRecommendations[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].weaponRecommendations[1].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-weapons-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-weapons-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "weapon-recommendation",
+      "conditions": [
+        "Maximizing shield strength and healing is more important than team energy."
+      ],
+      "conditionsSha256": "08103e8077a944df71baaea7bac53b4e74a63fec31bfa156f87118121efc2e8a",
+      "consumedBySlice": false,
+      "descriptiveInventory": "er-deferred-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.weaponRecommendations[4].conditions",
+      "occurrenceId": "kqm:character_guide:diona-support-weapons-luna-viii:recommendation.weaponRecommendations[4].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].weaponRecommendations[4].conditions",
+      "repositoryRecordId": "kqm:character-guide:diona-support-weapons-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "diona-support-weapons-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "er-target",
+      "conditions": [
+        "C6 Diona uses Sacrificial Bow."
+      ],
+      "conditionsSha256": "542cf31d64a4d9867e7ea95d528b685e8a9988c08d0ae8849c2313d6f32afe0d",
+      "consumedBySlice": false,
+      "descriptiveInventory": "er-deferred-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "targets[0].conditions",
+      "occurrenceId": "kqm:energy_guidance:c6-diona-mavuika-citlali-bennett-er:targets[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "targets[0].conditions",
+      "repositoryRecordId": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "c6-diona-mavuika-citlali-bennett-er",
+      "structuralEnergyDimension": "structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "er-target",
+      "conditions": [
+        "C6 Diona uses Favonius Warbow."
+      ],
+      "conditionsSha256": "2c075917377f23944bf13dfc483e93284a7c8982a9df884948df1ec79aa11691",
+      "consumedBySlice": false,
+      "descriptiveInventory": "er-deferred-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "targets[1].conditions",
+      "occurrenceId": "kqm:energy_guidance:c6-diona-mavuika-citlali-bennett-er:targets[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "targets[1].conditions",
+      "repositoryRecordId": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "c6-diona-mavuika-citlali-bennett-er",
+      "structuralEnergyDimension": "structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "er-target",
+      "conditions": [
+        "C6 Diona uses another Bow."
+      ],
+      "conditionsSha256": "ac190a482d19a46c151dad35df4184c61ab89c28df35240a6c30b2cc525a2e9e",
+      "consumedBySlice": false,
+      "descriptiveInventory": "er-deferred-holdout",
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "targets[2].conditions",
+      "occurrenceId": "kqm:energy_guidance:c6-diona-mavuika-citlali-bennett-er:targets[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "targets[2].conditions",
+      "repositoryRecordId": "kqm:energy-guidance:c6-diona-mavuika-citlali-bennett-er",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "c6-diona-mavuika-citlali-bennett-er",
+      "structuralEnergyDimension": "structural-er"
+    }
+  ],
+  "issues": [],
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "Do not interpret this slice as a Diona guide, artifact assignment, build, team recommendation, or ranking.",
+    "Do not choose among Song of Days Past, Noblesse Oblige, Instructor, or Scroll from these applicability cells.",
+    "Do not infer a typed predicate, request binding, or new energy classification for any of the fifteen holdouts or eight empty condition arrays.",
+    "Do not combine the three independently applicable payloads into a coherent or compatible team build.",
+    "Do not use this report as a generator, optimizer, formula, rotation, damage, DPS, ideal-roll, or ER result."
+  ],
+  "publicationStatus": "withheld-unreviewed-source-slice",
+  "rawInputBoundary": {
+    "byteAndParsedObjectClosure": true,
+    "canonicalObjectSha256ByPath": {
+      "scripts/guide-factory/data/knowledge/repository.json": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+      "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json": "9fdf13be944b44710850cfba841ed02c7f4429fa5dd9348d00d52cb2078bc671",
+      "scripts/guide-factory/data/source-snapshots/manual-index.json": "c669b925cdbbf3b591bcac66f4e7ec42332f98dc5e1a37be128662fa40504630",
+      "scripts/guide-factory/sources/registry.json": "2974828169ee2a7290bdcb8108b30db5beabf8ea3a0eb879878fe468044501a8"
+    },
+    "exactPathSet": true,
+    "sourceFileCount": 4,
+    "status": "accepted"
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "diona-source-local-support-slice",
+  "rotationComputationExecuted": false,
+  "schemaVersion": 1,
+  "selectedOccurrences": [
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "diona",
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Diona uses a support build in this team."
+      ],
+      "conditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe",
+      "energyClassificationAuthoredBySlice": true,
+      "manualClaimPath": "members[0].artifactRecommendations[0].conditions",
+      "memberIndex": 0,
+      "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "song_of_days_past",
+            "type": "4pc"
+          },
+          {
+            "setId": "noblesse_oblige",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "payloadSha256": "4e839978e28d338288feea3678928a73c9bd8de3a64a2abac115e2b1b16c1716",
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+        "type": "unresolved-context"
+      },
+      "predicateSha256": "6caad253478d8cc5937e8cb6ab4b2620b53002f71e2eb067a38c74729db7c7ab",
+      "repositoryParity": "exact",
+      "repositoryPath": "members[0].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+    },
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "citlali",
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Citlali uses a support build in this team."
+      ],
+      "conditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9",
+      "energyClassificationAuthoredBySlice": true,
+      "manualClaimPath": "members[2].artifactRecommendations[0].conditions",
+      "memberIndex": 2,
+      "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "scroll_of_the_hero_of_cinder_city",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "payloadSha256": "850ca8732700319db2ceb56502180d0b6067c9e1d11c5b69bb04be1024d5e056",
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+        "type": "unresolved-context"
+      },
+      "predicateSha256": "9c3bfbcc46cebc2bfad3efdd75318f5d5c3fc0f2a2407b5ef9f5fdc2ee0a6755",
+      "repositoryParity": "exact",
+      "repositoryPath": "members[2].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+    },
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "bennett",
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Bennett uses a support build in this team."
+      ],
+      "conditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e",
+      "energyClassificationAuthoredBySlice": true,
+      "manualClaimPath": "members[3].artifactRecommendations[0].conditions",
+      "memberIndex": 3,
+      "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "noblesse_oblige",
+            "type": "4pc"
+          },
+          {
+            "setId": "instructor",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "payloadSha256": "88398bdd4d438dc83a1342900b2bcedcf0fef2fb5095b3ecedaf424c7a767e43",
+      "predicate": {
+        "category": "gameplay-role",
+        "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+        "type": "unresolved-context"
+      },
+      "predicateSha256": "94c49920ce9193d0e758720e598307ce38c57bb1d7e1d0ce482fd1ef1463737a",
+      "repositoryParity": "exact",
+      "repositoryPath": "members[3].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+    }
+  ],
+  "sliceId": "kqm-diona-source-local-support-slice-luna-viii",
+  "sourceBoundary": {
+    "emptyConditionArrayCount": 8,
+    "erDeferredHoldoutInventoryCount": 5,
+    "extractionMethod": "agent-assisted",
+    "holdoutOccurrenceCount": 15,
+    "nonemptyConditionArrayCount": 18,
+    "ordinaryHoldoutInventoryCount": 10,
+    "pageUrl": "https://keqingmains.com/q/diona-quickguide/",
+    "promotionEligible": false,
+    "rawRecordCount": 5,
+    "rawRecordIds": [
+      "c6-diona-mavuika-citlali-bennett-er",
+      "c6-diona-mavuika-citlali-bennett-forward-melt",
+      "diona-support-artifact-sets-luna-viii",
+      "diona-support-artifact-stats-luna-viii",
+      "diona-support-weapons-luna-viii"
+    ],
+    "repositoryParity": "exact",
+    "reviewStatus": "unreviewed",
+    "samePageLineage": true,
+    "selectedAndHoldoutsCloseAllNonemptyDionaConditions": true,
+    "selectedClaimsAndTeamShareExactSourceRecord": true,
+    "selectedOccurrenceCount": 3,
+    "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+    "sourceId": "kqm",
+    "sourceRegistryIngestionMode": "manual-observation",
+    "sourceRegistryPermission": "unknown",
+    "sourceRegistryStatus": "active",
+    "sourceVersion": "Luna VIII",
+    "status": "accepted",
+    "totalConditionArrayCount": 26
+  },
+  "sourceLocalSlice": {
+    "assembledBuildCount": 0,
+    "buildComposition": false,
+    "cautions": [
+      "The three selected occurrences remain agent-assisted and unreviewed source observations.",
+      "Applicable-under-supplied-context means only that an explicit exact-team, exact-character request fact satisfies one pinned gameplay-role predicate.",
+      "Each support-role fact is supplied independently for Diona, Citlali, and Bennett; the source condition text and recommendation metadata do not establish that runtime fact.",
+      "The generic claim adapter's recommendationId and scope are structural locators for the exact team-member arrays, not source-authored recommendation labels.",
+      "The fifteen nonempty holdouts are descriptive inventory only: ten ordinary and five ER-deferred; this slice consumes or classifies none of them.",
+      "Not-energy-deferred is occurrence-scoped only to the three selected support-role conditions and does not provide an ER requirement or prove ER adequacy."
+    ],
+    "classification": "descriptive-source-local-condition-applicability-slice",
+    "comparisonStatus": "comparable",
+    "compositionPolicy": {
+      "arbitraryEnglishParsingAllowed": false,
+      "conditionTruthEstablishedFromRecommendationMetadata": false,
+      "energyPrerequisitesAcceptedInSlice": false,
+      "omittedRequestFacts": "unknown",
+      "presetOverlapEvaluation": "not-evaluated",
+      "requestContextEvaluationOwner": "guide-request-context-core",
+      "requestContextMayReplaceExactRosterFacts": false,
+      "requestFactsMustBeExactTeamAndCharacterScoped": true,
+      "requestProjectionsPreservedVerbatim": true,
+      "sourceCellsPreservedVerbatim": true,
+      "sourcePredicateEvaluationOwner": "source-conditioned-guide-packet-core",
+      "teamTemplateEvaluation": "not-evaluated",
+      "verboseSourcePacketAdapterMetadataExposed": false
+    },
+    "conditionControls": [
+      {
+        "catalogIndex": 0,
+        "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "artifact-recommendation",
+          "energyClassification": "not-energy-deferred",
+          "manualClaimPath": "members[0].artifactRecommendations[0].conditions",
+          "manualPath": "records[4].members[0].artifactRecommendations[0].conditions",
+          "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+          "payloadSha256": "4e839978e28d338288feea3678928a73c9bd8de3a64a2abac115e2b1b16c1716",
+          "repositoryJsonPath": "records[240].members[0].artifactRecommendations[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+          "sourceConditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "6caad253478d8cc5937e8cb6ab4b2620b53002f71e2eb067a38c74729db7c7ab",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "characterId": "diona",
+              "roleId": "support",
+              "type": "intended-role-is"
+            },
+            "sourcePredicateLeafSha256": "6caad253478d8cc5937e8cb6ab4b2620b53002f71e2eb067a38c74729db7c7ab",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      },
+      {
+        "catalogIndex": 1,
+        "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "artifact-recommendation",
+          "energyClassification": "not-energy-deferred",
+          "manualClaimPath": "members[2].artifactRecommendations[0].conditions",
+          "manualPath": "records[4].members[2].artifactRecommendations[0].conditions",
+          "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+          "payloadSha256": "850ca8732700319db2ceb56502180d0b6067c9e1d11c5b69bb04be1024d5e056",
+          "repositoryJsonPath": "records[240].members[2].artifactRecommendations[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+          "sourceConditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "9c3bfbcc46cebc2bfad3efdd75318f5d5c3fc0f2a2407b5ef9f5fdc2ee0a6755",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "characterId": "citlali",
+              "roleId": "support",
+              "type": "intended-role-is"
+            },
+            "sourcePredicateLeafSha256": "9c3bfbcc46cebc2bfad3efdd75318f5d5c3fc0f2a2407b5ef9f5fdc2ee0a6755",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      },
+      {
+        "catalogIndex": 2,
+        "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "artifact-recommendation",
+          "energyClassification": "not-energy-deferred",
+          "manualClaimPath": "members[3].artifactRecommendations[0].conditions",
+          "manualPath": "records[4].members[3].artifactRecommendations[0].conditions",
+          "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+          "payloadSha256": "88398bdd4d438dc83a1342900b2bcedcf0fef2fb5095b3ecedaf424c7a767e43",
+          "repositoryJsonPath": "records[240].members[3].artifactRecommendations[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+          "sourceConditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "94c49920ce9193d0e758720e598307ce38c57bb1d7e1d0ce482fd1ef1463737a",
+          "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "characterId": "bennett",
+              "roleId": "support",
+              "type": "intended-role-is"
+            },
+            "sourcePredicateLeafSha256": "94c49920ce9193d0e758720e598307ce38c57bb1d7e1d0ce482fd1ef1463737a",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      }
+    ],
+    "damage": false,
+    "damageComputationExecuted": false,
+    "energyRecoveryComputationExecuted": false,
+    "ER": false,
+    "exactTeamControls": [
+      {
+        "exhaustiveness": "non-exhaustive",
+        "intent": "example",
+        "label": "C6 Diona - Mavuika - Citlali - Bennett",
+        "memberCharacterIds": [
+          "diona",
+          "mavuika",
+          "citlali",
+          "bennett"
+        ],
+        "packetIndex": 0,
+        "rankingClaim": "none",
+        "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+        "sourceId": "kqm",
+        "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt",
+        "teamRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+      }
+    ],
+    "formulas": false,
+    "generatedFrom": [
+      {
+        "path": "scripts/guide-factory/data/knowledge/repository.json",
+        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+        "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+        "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      },
+      {
+        "path": "scripts/guide-factory/sources/registry.json",
+        "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      },
+      {
+        "path": "scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts",
+        "sha256": "845132a9a921385e744455fc3f7df0883f9c3ca528a4b04e336323b25dac7877"
+      },
+      {
+        "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
+        "sha256": "3c4ab5faa936688f3a5cb6bc7ae7edce152db8fe1828dc8c3f763020ee9bf833"
+      },
+      {
+        "path": "scripts/guide-factory/src/guideRequestContext.ts",
+        "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+      },
+      {
+        "path": "scripts/guide-factory/src/io.ts",
+        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      },
+      {
+        "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+        "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+      },
+      {
+        "path": "scripts/guide-factory/src/paths.ts",
+        "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      },
+      {
+        "path": "scripts/guide-factory/src/schemas.ts",
+        "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      },
+      {
+        "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+        "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+      },
+      {
+        "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+        "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+      }
+    ],
+    "generatorExecuted": false,
+    "issues": [],
+    "optimizerExecuted": false,
+    "playerFacingRecommendations": false,
+    "prohibitedInterpretations": [
+      "Do not interpret this slice as a Diona guide, artifact assignment, build, team recommendation, or ranking.",
+      "Do not choose among Song of Days Past, Noblesse Oblige, Instructor, or Scroll from these applicability cells.",
+      "Do not infer a typed predicate, request binding, or new energy classification for any of the fifteen holdouts or eight empty condition arrays.",
+      "Do not combine the three independently applicable payloads into a coherent or compatible team build.",
+      "Do not use this report as a generator, optimizer, formula, rotation, damage, DPS, ideal-roll, or ER result."
+    ],
+    "publicationStatus": "withheld-experimental-source-slice",
+    "ranking": false,
+    "recommendationCompositionExecuted": false,
+    "reportType": "source-local-condition-slice-report",
+    "requestContextReport": {
+      "axesMultipliedIntoBuilds": false,
+      "baselineEquipmentUsed": false,
+      "buildComposition": false,
+      "claimRules": [
+        {
+          "bindings": [
+            {
+              "requestPredicate": {
+                "characterId": "diona",
+                "roleId": "support",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "6caad253478d8cc5937e8cb6ab4b2620b53002f71e2eb067a38c74729db7c7ab",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+          "sourceConditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe",
+          "sourcePredicateSha256": "6caad253478d8cc5937e8cb6ab4b2620b53002f71e2eb067a38c74729db7c7ab"
+        },
+        {
+          "bindings": [
+            {
+              "requestPredicate": {
+                "characterId": "citlali",
+                "roleId": "support",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "9c3bfbcc46cebc2bfad3efdd75318f5d5c3fc0f2a2407b5ef9f5fdc2ee0a6755",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+          "sourceConditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9",
+          "sourcePredicateSha256": "9c3bfbcc46cebc2bfad3efdd75318f5d5c3fc0f2a2407b5ef9f5fdc2ee0a6755"
+        },
+        {
+          "bindings": [
+            {
+              "requestPredicate": {
+                "characterId": "bennett",
+                "roleId": "support",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "94c49920ce9193d0e758720e598307ce38c57bb1d7e1d0ce482fd1ef1463737a",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+          "sourceConditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e",
+          "sourcePredicateSha256": "94c49920ce9193d0e758720e598307ce38c57bb1d7e1d0ce482fd1ef1463737a"
+        }
+      ],
+      "classification": "request-account-context-refinement-overlay",
+      "comparisonStatus": "comparable",
+      "context": {
+        "requestFactsByTeamRecordId": {
+          "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt": {
+            "characterFactsById": {
+              "bennett": {
+                "intendedRole": "support"
+              },
+              "citlali": {
+                "intendedRole": "support"
+              },
+              "diona": {
+                "intendedRole": "support"
+              }
+            }
+          }
+        }
+      },
+      "contextProjectionExecuted": true,
+      "damage": false,
+      "damageComputationExecuted": false,
+      "energyRecoveryInputsUsed": false,
+      "ER": false,
+      "factProvenance": {
+        "acquisitionPreference": "request",
+        "intendedRole": "request",
+        "optimizationGoal": "request",
+        "passiveExecutionAssumptions": "request-assumption",
+        "weaponInventory": "account"
+      },
+      "formulas": false,
+      "generatorExecuted": false,
+      "issues": [],
+      "optimality": false,
+      "optimizerExecuted": false,
+      "playerFacingRecommendations": false,
+      "policyBoundary": {
+        "missingWeaponInCompleteInventory": "false",
+        "missingWeaponInIncompleteInventory": "unknown",
+        "omittedFacts": "unknown",
+        "requestContextMayResolveOnlyMappedUnresolvedContext": true,
+        "requestContextMaySatisfyExactSourceTeamFacts": false,
+        "sourceControlPreserved": true
+      },
+      "projectionId": "kqm-diona-source-local-support-slice-luna-viii:request-context",
+      "publicationStatus": "withheld-experimental-context",
+      "ranking": false,
+      "reportType": "guide-request-context-applicability",
+      "rotations": false,
+      "schemaVersion": 1,
+      "sourceCellsMutated": false,
+      "sourceControl": {
+        "claimCellCount": 3,
+        "comparisonStatus": "comparable",
+        "experimentId": "kqm-diona-source-local-support-slice-luna-viii",
+        "packetCount": 1,
+        "reportType": "source-conditioned-guide-packet-report",
+        "sourceClaimCount": 3
+      },
+      "summary": {
+        "assembledBuildCount": 0,
+        "claimCellCount": 3,
+        "deferredEnergyCellCount": 0,
+        "inapplicableCellCount": 0,
+        "matchedCellCount": 3,
+        "packetCount": 1,
+        "sourceClaimCount": 3,
+        "unresolvedCellCount": 0,
+        "withheldCellCount": 0
+      },
+      "supportsAccountAdvice": false,
+      "supportsGuideClaims": false,
+      "supportsSourceAuthorization": false,
+      "teamProjections": [
+        {
+          "claimProjections": [
+            {
+              "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+              "contextApplicability": "applicable-under-supplied-context",
+              "reason": "Request intended role matches support.",
+              "requestContextBindings": [
+                {
+                  "predicateRows": [
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "diona",
+                        "teamRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+                      },
+                      "predicatePath": "requestPredicate",
+                      "predicateType": "intended-role-is",
+                      "reason": "Request intended role matches support.",
+                      "result": "true"
+                    }
+                  ],
+                  "reason": "Request intended role matches support.",
+                  "requestPredicate": {
+                    "characterId": "diona",
+                    "roleId": "support",
+                    "type": "intended-role-is"
+                  },
+                  "result": "true",
+                  "sourceContextCategory": "gameplay-role",
+                  "sourcePredicatePath": "predicate"
+                }
+              ],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate",
+                    "predicateType": "unresolved-context",
+                    "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                    "result": "unknown",
+                    "structuredFact": "none-unresolved-context"
+                  }
+                ],
+                "predicateRowsSha256": "c2e73844777c7e67a4a707ca79cd75367f3c2f34c446cbf9ce3bf6455cb06852",
+                "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                "resolution": "unresolved-context",
+                "sourceConditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe"
+              }
+            },
+            {
+              "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+              "contextApplicability": "applicable-under-supplied-context",
+              "reason": "Request intended role matches support.",
+              "requestContextBindings": [
+                {
+                  "predicateRows": [
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "citlali",
+                        "teamRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+                      },
+                      "predicatePath": "requestPredicate",
+                      "predicateType": "intended-role-is",
+                      "reason": "Request intended role matches support.",
+                      "result": "true"
+                    }
+                  ],
+                  "reason": "Request intended role matches support.",
+                  "requestPredicate": {
+                    "characterId": "citlali",
+                    "roleId": "support",
+                    "type": "intended-role-is"
+                  },
+                  "result": "true",
+                  "sourceContextCategory": "gameplay-role",
+                  "sourcePredicatePath": "predicate"
+                }
+              ],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate",
+                    "predicateType": "unresolved-context",
+                    "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                    "result": "unknown",
+                    "structuredFact": "none-unresolved-context"
+                  }
+                ],
+                "predicateRowsSha256": "b3f4a789a70e38ca1aa53a1a17453fc926290694a5237235caad39537c179d09",
+                "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                "resolution": "unresolved-context",
+                "sourceConditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9"
+              }
+            },
+            {
+              "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+              "contextApplicability": "applicable-under-supplied-context",
+              "reason": "Request intended role matches support.",
+              "requestContextBindings": [
+                {
+                  "predicateRows": [
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "bennett",
+                        "teamRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+                      },
+                      "predicatePath": "requestPredicate",
+                      "predicateType": "intended-role-is",
+                      "reason": "Request intended role matches support.",
+                      "result": "true"
+                    }
+                  ],
+                  "reason": "Request intended role matches support.",
+                  "requestPredicate": {
+                    "characterId": "bennett",
+                    "roleId": "support",
+                    "type": "intended-role-is"
+                  },
+                  "result": "true",
+                  "sourceContextCategory": "gameplay-role",
+                  "sourcePredicatePath": "predicate"
+                }
+              ],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate",
+                    "predicateType": "unresolved-context",
+                    "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                    "result": "unknown",
+                    "structuredFact": "none-unresolved-context"
+                  }
+                ],
+                "predicateRowsSha256": "999730bb8e7c7963ec2edfe2f4b7a41a4db4b436d8455fe946bc2e8e6ba9752d",
+                "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                "resolution": "unresolved-context",
+                "sourceConditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e"
+              }
+            }
+          ],
+          "packetIndex": 0,
+          "teamRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+        }
+      ]
+    },
+    "rotations": false,
+    "schemaVersion": 1,
+    "sliceId": "kqm-diona-source-local-support-slice-luna-viii",
+    "sourceClaimCatalog": [
+      {
+        "catalogIndex": 0,
+        "characterId": "diona",
+        "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        "payload": {
+          "artifacts": [
+            {
+              "setId": "song_of_days_past",
+              "type": "4pc"
+            },
+            {
+              "setId": "noblesse_oblige",
+              "type": "4pc"
+            }
+          ],
+          "type": "artifact-group"
+        },
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": "recommended",
+          "grouping": "alternatives",
+          "label": null,
+          "ordering": "unranked",
+          "recommendationId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations",
+          "roles": [],
+          "scope": "team-member-artifact-sets",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+        "sourceConditions": [
+          "Diona uses a support build in this team."
+        ],
+        "sourceConditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe",
+        "sourceId": "kqm",
+        "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+      },
+      {
+        "catalogIndex": 1,
+        "characterId": "citlali",
+        "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        "payload": {
+          "artifacts": [
+            {
+              "setId": "scroll_of_the_hero_of_cinder_city",
+              "type": "4pc"
+            }
+          ],
+          "type": "artifact-group"
+        },
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": "recommended",
+          "grouping": "single",
+          "label": null,
+          "ordering": "unranked",
+          "recommendationId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations",
+          "roles": [],
+          "scope": "team-member-artifact-sets",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+        "sourceConditions": [
+          "Citlali uses a support build in this team."
+        ],
+        "sourceConditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9",
+        "sourceId": "kqm",
+        "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+      },
+      {
+        "catalogIndex": 2,
+        "characterId": "bennett",
+        "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+        "payload": {
+          "artifacts": [
+            {
+              "setId": "noblesse_oblige",
+              "type": "4pc"
+            },
+            {
+              "setId": "instructor",
+              "type": "4pc"
+            }
+          ],
+          "type": "artifact-group"
+        },
+        "predicate": {
+          "category": "gameplay-role",
+          "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": "recommended",
+          "grouping": "alternatives",
+          "label": null,
+          "ordering": "unranked",
+          "recommendationId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations",
+          "roles": [],
+          "scope": "team-member-artifact-sets",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
+        "sourceConditions": [
+          "Bennett uses a support build in this team."
+        ],
+        "sourceConditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e",
+        "sourceId": "kqm",
+        "sourceRecordId": "c6-diona-mavuika-citlali-bennett-forward-melt"
+      }
+    ],
+    "sourceClaimCells": [
+      {
+        "claimCells": [
+          {
+            "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "reason": "Diona's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "08f670b7ac533e6bc210b941362676ca19e7e9d3cf8b33e1d4398fb92161c2fe"
+          },
+          {
+            "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "reason": "Citlali's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "026768a7de22a1a5ec52ba1f5cc420fe147cc120dc19c94996ff8ad3c1cfa1d9"
+          },
+          {
+            "claimId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "reason": "Bennett's intended support role must be supplied explicitly for exact team kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt; source condition text is not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "8dd1603ab20802ef0f0f91ce3e1d46d0a15baa87eb7d3c4e57fb5bf6e932405e"
+          }
+        ],
+        "packetIndex": 0,
+        "teamRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+      }
+    ],
+    "sourceDocumentBoundary": {
+      "allClaimsAndTeamsShareExactSourceDocument": true,
+      "exactOccurrenceIds": [
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions"
+      ],
+      "exactTeamRecordIds": [
+        "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt"
+      ],
+      "pageUrl": "https://keqingmains.com/q/diona-quickguide/",
+      "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+      "sourceId": "kqm",
+      "sourceVersion": "Luna VIII",
+      "status": "accepted"
+    },
+    "summary": {
+      "applicableUnderSuppliedContextCount": 3,
+      "assembledBuildCount": 0,
+      "cellCount": 3,
+      "claimCount": 3,
+      "deferredEnergyCount": 0,
+      "effectiveInapplicableCount": 0,
+      "effectiveMatchedCount": 3,
+      "effectiveUnresolvedCount": 0,
+      "notApplicableUnderSuppliedContextCount": 0,
+      "sourceAlreadyMatchedCount": 0,
+      "sourceDefinitelyInapplicableCount": 0,
+      "sourceInapplicableCount": 0,
+      "sourceMatchedCount": 0,
+      "sourceUnresolvedCount": 3,
+      "stillUnresolvedCount": 0,
+      "teamCount": 1
+    },
+    "supportsBuildRecommendations": false,
+    "supportsDamageClaims": false,
+    "supportsEnergyRecoveryClaims": false,
+    "supportsGuideClaims": false,
+    "supportsRankClaims": false,
+    "supportsRotationClaims": false,
+    "supportsSourceAuthorization": false,
+    "supportsStatRecommendations": false,
+    "supportsTeamRecommendations": false
+  },
+  "summary": {
+    "assembledBuildCount": 0,
+    "contextApplicableCount": 3,
+    "effectiveInapplicableCount": 0,
+    "effectiveMatchedCount": 3,
+    "effectiveUnresolvedCount": 0,
+    "emptyConditionArrayCount": 8,
+    "erDeferredHoldoutInventoryCount": 5,
+    "holdoutBindingAuthoredCount": 0,
+    "holdoutConsumedCount": 0,
+    "holdoutEnergyClassificationAuthoredCount": 0,
+    "holdoutOccurrenceCount": 15,
+    "nonemptyConditionArrayCount": 18,
+    "ordinaryHoldoutInventoryCount": 10,
+    "selectedNotEnergyDeferredCount": 3,
+    "selectedOccurrenceCount": 3,
+    "selectedUniqueConditionArrayCount": 3,
+    "sourceAlreadyMatchedCount": 0,
+    "sourceCellCount": 3,
+    "sourceDefinitelyInapplicableCount": 0,
+    "sourceInapplicableCount": 0,
+    "sourceMatchedCount": 0,
+    "sourceTeamCount": 1,
+    "sourceUnresolvedCount": 3,
+    "totalConditionArrayCount": 26
+  },
+  "supportsBuildRecommendations": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "teamCompositionExecuted": false
+}

@@ -980,7 +980,7 @@ function crossLinkCoverage(
       row.displayStatus !== "typed-bound" ||
       !row.nonStructuralBindingCoverageEligible ||
       row.energyClassification !== "not-energy-deferred" ||
-      bindingEvidence?.kind !== "klee-source-local-typed-predicate-ast" ||
+      bindingEvidence?.kind !== "source-local-typed-predicate-ast" ||
       bindingEvidence.sliceId !== report.sliceId ||
       bindingEvidence.selectedOccurrenceId !== selected.occurrenceId ||
       bindingEvidence.selectedOccurrenceSha256 !== hashValue(selected) ||
@@ -988,7 +988,7 @@ function crossLinkCoverage(
       bindingEvidence.predicateAstSha256 !== selected.predicateSha256 ||
       bindingEvidence.payloadSha256 !== selected.payloadSha256 ||
       bindingEvidence.occurrenceControlSha256 !== hashValue(control) ||
-      energyEvidence?.kind !== "klee-source-local-not-energy-deferred" ||
+      energyEvidence?.kind !== "source-local-not-energy-deferred" ||
       energyEvidence.structuralErEvidencePresent ||
       energyEvidence.energyRelatedWorkDeferred ||
       energyEvidence.sliceId !== report.sliceId ||

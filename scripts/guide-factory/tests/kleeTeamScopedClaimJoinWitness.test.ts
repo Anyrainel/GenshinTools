@@ -107,7 +107,7 @@ describe("Klee team-scoped claim-join witness", () => {
       manualCoverage: {
         currentBoundaryAuthenticated: true,
         corpusOccurrenceCount: 142,
-        bindingOccurrenceCount: 53,
+        bindingOccurrenceCount: 56,
         kleeSourceLocalOccurrenceCount: 4,
         typedBindingMeansConditionTruth: false,
       },
@@ -136,7 +136,7 @@ describe("Klee team-scoped claim-join witness", () => {
         nonStructuralBindingCoverageEligible: true,
         energyClassification: "not-energy-deferred",
         bindingEvidence: {
-          kind: "klee-source-local-typed-predicate-ast",
+          kind: "source-local-typed-predicate-ast",
           selectedOccurrenceId: row.claimId,
         },
       });
@@ -349,7 +349,9 @@ describe("Klee team-scoped claim-join witness", () => {
     );
     const row = coverage.occurrences.find(
       ({ bindingEvidence }: any) =>
-        bindingEvidence?.kind === "klee-source-local-typed-predicate-ast",
+        bindingEvidence?.kind === "source-local-typed-predicate-ast" &&
+          bindingEvidence.sliceId ===
+            "kqm-klee-source-local-condition-slice-luna-iv",
     );
     if (!row) throw new Error("Expected Klee coverage row.");
     row.bindingEvidence.payloadSha256 = "0".repeat(64);

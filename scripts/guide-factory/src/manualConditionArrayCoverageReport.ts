@@ -11,6 +11,12 @@ import {
   type CurrentConditionEnergyEvidence,
 } from "./currentConditionBindingCatalog";
 import {
+  authenticateDionaSourceLocalSupportSliceReport,
+  DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS,
+  DIONA_SOURCE_LOCAL_SUPPORT_SLICE_SOURCE_FILE_PATHS,
+  type DionaSourceLocalSupportSliceReport,
+} from "./dionaSourceLocalSupportSlice";
+import {
   buildExactAuthoredEnergyDeferralCatalog,
   requireExactAuthoredEnergyDeferralMatches,
   type ExactAuthoredEnergyDeferralEntry,
@@ -210,8 +216,10 @@ export interface ManualConditionArrayCoverageReport {
     keqingEquipmentDurableMatchesCurrent: boolean;
     keqingRolePairDurableMatchesCurrent: boolean;
     kleeSourceLocalDurableMatchesCurrent: boolean;
+    dionaSourceLocalDurableMatchesCurrent: boolean;
     keqingEquipmentAtomicClaimCount: number;
     kleeSourceLocalOccurrenceCount: number;
+    dionaSourceLocalOccurrenceCount: number;
     exactTextAcknowledgementOccurrenceCount: number;
     typedBindingMeansConditionTruth: false;
   };
@@ -244,6 +252,8 @@ const KEQING_ROLE_PAIR_REPORT_PATH =
   "scripts/guide-factory/reports/keqing-source-scoped-role-pair-sample.json";
 const KLEE_SOURCE_LOCAL_REPORT_PATH =
   "scripts/guide-factory/reports/klee-source-local-condition-slice.json";
+const DIONA_SOURCE_LOCAL_REPORT_PATH =
+  "scripts/guide-factory/reports/diona-source-local-support-slice.json";
 
 export const MANUAL_CONDITION_COVERAGE_SNAPSHOT_PATHS = [
   "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
@@ -265,6 +275,7 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS = [
   KEQING_EQUIPMENT_REPORT_PATH,
   KEQING_ROLE_PAIR_REPORT_PATH,
   KLEE_SOURCE_LOCAL_REPORT_PATH,
+  DIONA_SOURCE_LOCAL_REPORT_PATH,
 ] as const;
 
 export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [
@@ -283,6 +294,7 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [
     ...KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
     ...KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_INPUT_PATHS,
     ...KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+    ...DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS,
   ]),
 ].sort(compareText);
 
@@ -329,9 +341,9 @@ const PROHIBITED_INTERPRETATIONS = [
 ];
 
 const EXPECTED_CURRENT_OCCURRENCES_SHA256 =
-  "95749dda3c8796fba03ef055f705f367fa9993b928b5088eb7aab3303cf11c20";
+  "c70b0f0b0927cd98fc380820702c387d14e19113820a001f4f7f0354e2cd236c";
 const EXPECTED_CURRENT_BINDING_CATALOG_SHA256 =
-  "79aa96c4aef6c31446cc3c222aed9ebac967e6256df7ae7faf0ae3ed3fc7b626";
+  "6ec04c872d8433940da97135a3e69eef2f66af046ef38ff577c634da4a3da544";
 
 export async function buildManualConditionArrayCoverageReport(
   input: BuildManualConditionArrayCoverageReportInput,
@@ -455,10 +467,10 @@ export function requireComparableManualConditionArrayCoverageReport(
     report.bindingBoundary.status === "authenticated" &&
     report.summary.nonStructuralBindingCoverage.occurrenceCount === 123 &&
     report.summary.nonStructuralBindingCoverage.typedBoundOccurrenceCount ===
-      50 &&
+      53 &&
     report.summary.nonStructuralBindingCoverage
       .exactTextAcknowledgedOccurrenceCount === 3 &&
-    report.summary.nonStructuralBindingCoverage.unboundOccurrenceCount === 70 &&
+    report.summary.nonStructuralBindingCoverage.unboundOccurrenceCount === 67 &&
     !report.arbitraryEnglishParsingAllowed &&
     !report.supportsSourceAuthorization &&
     !report.supportsGuideClaims &&
@@ -548,13 +560,15 @@ function authenticateComparableCurrentReportBoundary(
     {
       status: "authenticated",
       catalogReportSha256: EXPECTED_CURRENT_BINDING_CATALOG_SHA256,
-      occurrenceCount: 53,
+      occurrenceCount: 56,
       ittoAuthenticated: true,
       keqingEquipmentDurableMatchesCurrent: true,
       keqingRolePairDurableMatchesCurrent: true,
       kleeSourceLocalDurableMatchesCurrent: true,
+      dionaSourceLocalDurableMatchesCurrent: true,
       keqingEquipmentAtomicClaimCount: 42,
       kleeSourceLocalOccurrenceCount: 4,
+      dionaSourceLocalOccurrenceCount: 3,
       exactTextAcknowledgementOccurrenceCount: 3,
       typedBindingMeansConditionTruth: false,
     };
@@ -687,12 +701,12 @@ function energyEvidenceMatchesClassification(
       return (
         (evidence?.kind === "not-energy-deferred" &&
           !evidence.energyRelatedWorkDeferred) ||
-        (evidence?.kind === "klee-source-local-not-energy-deferred" &&
+        (evidence?.kind === "source-local-not-energy-deferred" &&
           !evidence.energyRelatedWorkDeferred &&
           !evidence.structuralErEvidencePresent &&
           evidence.selectedOccurrenceId === occurrence.occurrenceId &&
           occurrence.bindingEvidence?.kind ===
-            "klee-source-local-typed-predicate-ast" &&
+            "source-local-typed-predicate-ast" &&
           evidence.sliceId === occurrence.bindingEvidence.sliceId &&
           evidence.selectedOccurrenceSha256 ===
             occurrence.bindingEvidence.selectedOccurrenceSha256)
@@ -795,6 +809,41 @@ async function buildAuthenticatedBindingCatalog(
       }.`,
     );
   }
+  const dionaManual = requiredManualSnapshotInputContaining(
+    input.manualInputs,
+    "kqm",
+    "c6-diona-mavuika-citlali-bennett-forward-melt",
+  );
+  const dionaDurableReport = requiredJsonSourceObject(
+    input.sourceFiles,
+    DIONA_SOURCE_LOCAL_REPORT_PATH,
+  ) as DionaSourceLocalSupportSliceReport;
+  const dionaAuthentication =
+    authenticateDionaSourceLocalSupportSliceReport(dionaDurableReport, {
+      repositoryInput: input.repositoryInput,
+      manualSnapshotInput: dionaManual.snapshot,
+      manualIndexInput: input.manualIndexInput,
+      sourceRegistryInput: input.sourceRegistryInput,
+      sourceFiles: selectSourceFiles(
+        input.sourceFiles,
+        DIONA_SOURCE_LOCAL_SUPPORT_SLICE_SOURCE_FILE_PATHS,
+      ),
+      generatedFrom: selectGeneratedFrom(
+        generatedFrom,
+        DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS,
+      ),
+    });
+  if (!dionaAuthentication.authenticated) {
+    throw new Error(
+      `The checked-in Diona source-local report failed a fresh current rebuild: ${dionaAuthentication.reason}${
+        dionaAuthentication.issues.length > 0
+          ? ` (${dionaAuthentication.issues
+              .map(({ code, path: issuePath }) => `${code} at ${issuePath}`)
+              .join("; ")})`
+          : ""
+      }.`,
+    );
+  }
   return buildCurrentConditionBindingCatalog({
     ittoAuthentication,
     keqingEquipment: {
@@ -808,6 +857,10 @@ async function buildAuthenticatedBindingCatalog(
     kleeSourceLocal: {
       durableReport: kleeDurableReport,
       currentReport: kleeAuthentication.canonicalReport,
+    },
+    dionaSourceLocal: {
+      durableReport: dionaDurableReport,
+      currentReport: dionaAuthentication.canonicalReport,
     },
   });
 }
@@ -1158,13 +1211,13 @@ function validateExpectedCurrentCoverageBoundary(
       uniqueExactArrayCount: 89,
       stringOccurrenceCount: 159,
       uniqueStringCount: 97,
-      typedBoundOccurrenceCount: 50,
+      typedBoundOccurrenceCount: 53,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 73,
+      unboundOccurrenceCount: 70,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 72,
+      typedBoundStringOccurrenceCount: 75,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 84,
+      unboundStringOccurrenceCount: 81,
       invalidStringOccurrenceCount: 0,
     },
     nonStructuralBindingCoverage: {
@@ -1174,13 +1227,13 @@ function validateExpectedCurrentCoverageBoundary(
       uniqueExactArrayCount: 86,
       stringOccurrenceCount: 156,
       uniqueStringCount: 94,
-      typedBoundOccurrenceCount: 50,
+      typedBoundOccurrenceCount: 53,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 70,
+      unboundOccurrenceCount: 67,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 72,
+      typedBoundStringOccurrenceCount: 75,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 81,
+      unboundStringOccurrenceCount: 78,
       invalidStringOccurrenceCount: 0,
     },
     energyCoverage: {
@@ -1194,8 +1247,8 @@ function validateExpectedCurrentCoverageBoundary(
         12,
         11,
       ),
-      notEnergyDeferred: expectedArrayStatistics(47, 0, 47, 27, 69, 28),
-      energyUnclassified: expectedArrayStatistics(64, 0, 64, 50, 72, 55),
+      notEnergyDeferred: expectedArrayStatistics(50, 0, 50, 30, 72, 31),
+      energyUnclassified: expectedArrayStatistics(61, 0, 61, 47, 69, 52),
       unconditional: expectedArrayStatistics(16, 16, 0, 0, 0, 0),
       deferredDisplay: expectedArrayStatistics(15, 0, 15, 12, 18, 15),
     },
@@ -1203,14 +1256,14 @@ function validateExpectedCurrentCoverageBoundary(
       invalid: 0,
       unconditional: 16,
       "er-deferred": 15,
-      "typed-bound": 47,
+      "typed-bound": 50,
       "exact-text-acknowledged": 3,
-      "known-but-unbound": 61,
+      "known-but-unbound": 58,
     },
     nonStructuralUniqueBindingArrayCoverage: {
       uniqueExactArrayCount: 86,
-      typedOnlyCount: 28,
-      unboundOnlyCount: 57,
+      typedOnlyCount: 31,
+      unboundOnlyCount: 54,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     },
@@ -1235,8 +1288,8 @@ function validateExpectedCurrentBindingCatalogBoundary(
   catalog: CurrentConditionBindingCatalogReport,
 ): void {
   if (
-    catalog.summary.occurrenceCount !== 53 ||
-    catalog.summary.typedBindingCount !== 50 ||
+    catalog.summary.occurrenceCount !== 56 ||
+    catalog.summary.typedBindingCount !== 53 ||
     catalog.summary.ittoTypedBindingCount !== 15 ||
     catalog.summary.ittoDeferredEnergyPrerequisiteCount !== 3 ||
     catalog.summary.keqingEquipmentOccurrenceCount !== 31 ||
@@ -1244,7 +1297,10 @@ function validateExpectedCurrentBindingCatalogBoundary(
     catalog.summary.keqingVvAcknowledgedOccurrenceCount !== 3 ||
     catalog.summary.kleeSourceLocalOccurrenceCount !== 4 ||
     catalog.summary.kleeSourceLocalTypedBindingCount !== 4 ||
-    catalog.summary.kleeSourceLocalNotEnergyDeferredCount !== 4
+    catalog.summary.kleeSourceLocalNotEnergyDeferredCount !== 4 ||
+    catalog.summary.dionaSourceLocalOccurrenceCount !== 3 ||
+    catalog.summary.dionaSourceLocalTypedBindingCount !== 3 ||
+    catalog.summary.dionaSourceLocalNotEnergyDeferredCount !== 3
   ) {
     throw new Error("Authenticated condition-binding catalog totals drifted.");
   }
@@ -1555,10 +1611,14 @@ function bindingBoundary(
       catalog.authenticationBoundary.keqingRolePairDurableMatchesCurrent,
     kleeSourceLocalDurableMatchesCurrent:
       catalog.authenticationBoundary.kleeSourceLocalDurableMatchesCurrent,
+    dionaSourceLocalDurableMatchesCurrent:
+      catalog.authenticationBoundary.dionaSourceLocalDurableMatchesCurrent,
     keqingEquipmentAtomicClaimCount:
       catalog.summary.keqingEquipmentAtomicClaimCount,
     kleeSourceLocalOccurrenceCount:
       catalog.summary.kleeSourceLocalOccurrenceCount,
+    dionaSourceLocalOccurrenceCount:
+      catalog.summary.dionaSourceLocalOccurrenceCount,
     exactTextAcknowledgementOccurrenceCount:
       catalog.summary.keqingVvAcknowledgedOccurrenceCount,
     typedBindingMeansConditionTruth: false,
@@ -1604,8 +1664,10 @@ function failedReport(
       keqingEquipmentDurableMatchesCurrent: false,
       keqingRolePairDurableMatchesCurrent: false,
       kleeSourceLocalDurableMatchesCurrent: false,
+      dionaSourceLocalDurableMatchesCurrent: false,
       keqingEquipmentAtomicClaimCount: 0,
       kleeSourceLocalOccurrenceCount: 0,
+      dionaSourceLocalOccurrenceCount: 0,
       exactTextAcknowledgementOccurrenceCount: 0,
       typedBindingMeansConditionTruth: false,
     },

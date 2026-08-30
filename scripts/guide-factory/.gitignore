@@ -28,3 +28,4 @@ reports/*
 !reports/manual-condition-array-coverage.json
 !reports/klee-source-local-condition-slice.json
 !reports/klee-team-scoped-claim-join-witness.json
+!reports/diona-source-local-support-slice.json
