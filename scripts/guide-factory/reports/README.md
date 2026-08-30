@@ -6,6 +6,44 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-furina-xilonen-equipment-technical-computation.json`
+  authenticates exactly 64 declared non-self selected checkpoint inputs across
+  the checkpoint 37 trust root, generic checkpoint 38 core, selected artifact-
+  sheet generator and replay inputs, runtime data, calculator core, and
+  roster/equipment-relevant implementations. It explicitly claims neither an
+  exhaustive dependency closure nor a transitive module graph. The deliberately
+  excluded self paths are
+  `scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentTechnicalComputation.ts`,
+  `scripts/guide-factory/src/compute-keqing-ineffa-furina-xilonen-equipment-technical.ts`,
+  and
+  `scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json`.
+  The checkpoint 37 source-specific report and its nested generic
+  preflight remain the authenticated trust root. The source supports the exact
+  roster only; its rotation text is upstream input to an unreviewed wrapper-
+  authored translation, not a source-supported technical damage plan.
+  Equipment, investment, generated artifact stats, levels, talents, enemy
+  context, artifact budget, and formula mapping are not source facts. The
+  source evidence contract supports `roster` only and explicitly does not
+  support `damage_plan`, `selected_weapons`, `selected_artifact_sets`,
+  `investment`, or `artifact_stats`. After that source-specific gate, the exact
+  default environment creates the real `TeamBuild` instances; the generic core
+  audits distinct runtime identities without claiming a concrete class. The
+  default runtime completes 36 nodes, 144 generator calls with 144 distinct
+  runtime identities, and 364/364
+  node-local replays with internal interpreted/compiled agreement. The 364
+  deduplicated compositions contain 139 intact-endpoint matches and 225 cross-
+  endpoint recombinations, and all 36 bounded node references are cross-
+  endpoint recombinations. The complete-domain and intact-endpoint technical
+  references are `926093.666196721` and `914219.528685479`; the result
+  fingerprint is
+  `ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5`.
+  These are finite-table implementation observations, not source-backed
+  damage, DPS, rank, recommendation, gameplay, or optimality. Every source,
+  guide, team/equipment recommendation, rank, damage, DPS, gameplay,
+  optimality, promotion, and ER claim remains false. The report's final SHA-256
+  is `eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`,
+  and its final size is 2,011,250 bytes. This is durable report 35 and
+  globally integrated report 34.
 - `keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json`
   authenticates every byte hash in the 38-path declared non-self checkpoint
   input set. That set contains selected upstream/runtime dependencies for the
@@ -498,25 +536,30 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-three globally integrated reports in memory
+`validate.ts` rebuilds all thirty-four globally integrated reports in memory
 and rejects stale checked-in output. Checkpoint 35's thirty-second durable
 report remains outside that runner because ArtifactRatingDB is permission-
 mixed and consolidation-blocked. Checkpoint 36 adds durable report 33 and
 globally integrates it as report 32. Checkpoint 37 adds durable report 34 and
-globally integrates it as report 33. The completed boundary passes Guide
-Factory TypeScript, 67 test files with 598 tests, validation with 0 errors and 12
-existing warnings, application TypeScript, and dependency-boundary validation.
+globally integrates it as report 33. Checkpoint 38 adds durable report 35 and
+globally integrates it as report 34. Its final 2,011,250-byte report has
+SHA-256
+`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
+skip; validation has zero errors and the same 12 existing warnings.
 
 The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
 manual coverage remains 19 source files and 73 generated-from paths, and the
 Klee witness remains six source files, 76 generated-from paths, and 63 upstream
-bindings. Checkpoints 35 through 37 change none of those ledgers. Checkpoint 37
-produces no guide, team/equipment recommendation, rank, optimum, generator
-result, replay, damage, gameplay claim, ideal-stat allocation, or ER
-requirement. Checkpoint 38's bounded generator/replay execution remains the next
-unimplemented durable boundary. A transient technical run completed 144
-generator calls and 364 replays, but it is not a durable report and must not be
-described as checkpoint completion. Any durable result must distinguish intact
-four-character generator endpoints from synthetic cross-endpoint
-recombinations. The Diona ER report is historical and deliberately decoupled
-from unrelated knowledge-repository changes while ER work is deferred.
+bindings. Checkpoints 35 through 38 change none of those ledgers. Checkpoint 38
+executes the generator and replay runtime but produces no source, guide,
+team/equipment recommendation, rank, damage, DPS, gameplay, optimality,
+promotion, ideal-stat allocation, or ER claim. Its 139 intact-endpoint matches
+and 225 cross-endpoint recombinations remain separate provenance classes, and
+all 36 bounded node references are cross-endpoint. This is not a working guide
+factory or equipment recommendation. The next non-ER checkpoint should expose
+the 21 unique generated sheet hashes as an authenticated allocation catalog,
+test displayed-artifact round trips, and compare them with authority-labelled
+knowledge targets before a fail-closed publication gate. The Diona ER
+report is historical and deliberately decoupled from unrelated knowledge-
+repository changes while ER work is deferred.

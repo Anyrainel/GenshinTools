@@ -476,10 +476,53 @@ durable report has byte SHA-256
 `df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec`,
 is durable report 34 overall, and is globally integrated as report 33.
 
-The next bounded execution layer must preserve provenance between an intact
-four-character generator endpoint and a synthetic cross-endpoint recombination.
-A transient 144-generator/364-replay technical run demonstrates feasibility
-only; it is not durable checkpoint evidence and adds no knowledge claim.
+### Derived bounded full-team technical computations
+
+A bounded full-team technical computation is another derived report, not a new
+knowledge-record kind and not a source-backed build. It may consume a complete
+authenticated runtime preflight, but successful execution does not upgrade the
+preflight's source readiness, objective review, or gameplay applicability.
+
+Checkpoint 38's Keqing/Ineffa/Furina/Xilonen wrapper authenticates exactly 64
+declared non-self selected checkpoint paths spanning the checkpoint 37 trust
+root, generic checkpoint 38 core, selected artifact-sheet generator and replay
+inputs, runtime data, calculator core, and relevant calculator
+implementations. The source-specific producer, CLI, and report are excluded to
+avoid self-reference. This is explicitly a selected boundary rather than an
+exhaustive dependency closure, and it makes no transitive module-graph claim.
+
+The source team record supports the exact roster only. Its rotation text is
+upstream input to an unreviewed wrapper-authored formula translation, not a
+source-supported technical damage plan. Selected equipment, investment,
+generated artifact stats, formula counts and mappings, character levels,
+talents, enemy context, and artifact budget are not source facts. None of those
+derived values may be consolidated into source-authored fields.
+
+After the source-specific authentication gate, the exact default environment
+creates the real `TeamBuild` instances; the generic core audits distinct
+runtime identities without claiming a concrete class. The bounded run completes
+36 nodes, 144 generator invocations with 144 distinct runtime identities, and
+364 node-local replays. Canonical node-local sheet deduplication produces 139
+compositions matching at least one intact four-character endpoint and 225
+cross-endpoint recombinations. All 36 bounded node references are cross-
+endpoint recombinations. A recombination is evaluated by the replay runtime but
+must not be called generator-produced, while an intact endpoint must not be
+called source-authored.
+
+The complete-domain technical reference `926093.666196721`, intact-endpoint
+technical reference `914219.528685479`, and result fingerprint
+`ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5`
+are internal observations for this exact finite table and unreviewed objective.
+Direct/compiled agreement is an implementation consistency check. These facts
+do not support damage, DPS, rank, recommendation, gameplay, or optimality.
+
+The checkpoint 38 report is durable report 35 overall and globally integrated
+report 34. Its 2,011,250 bytes have SHA-256
+`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+Every source, guide, team/equipment recommendation, rank, damage,
+DPS, gameplay, optimality, promotion, and ER capability remains false. The next
+non-ER boundary is a generated-sheet/allocation evidence catalog and knowledge-
+target comparison, not a computed equipment rank.
 
 ## Energy-guidance records
 

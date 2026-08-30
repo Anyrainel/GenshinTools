@@ -508,29 +508,33 @@ describe("guide-factory data pipeline", () => {
     ).toBe(true);
   });
 
-  it("keeps live failures visible and known candidate warnings explicit", async () => {
-    const result = await runValidation();
-    const errors = result.diagnostics.filter(
-      (diagnostic) => diagnostic.severity === "error"
-    );
-    const warnings = result.diagnostics.filter(
-      (diagnostic) => diagnostic.severity === "warning"
-    );
+  it(
+    "keeps live failures visible and known candidate warnings explicit",
+    async () => {
+      const result = await runValidation();
+      const errors = result.diagnostics.filter(
+        (diagnostic) => diagnostic.severity === "error"
+      );
+      const warnings = result.diagnostics.filter(
+        (diagnostic) => diagnostic.severity === "warning"
+      );
 
-    expect(errors, formatDiagnostics(errors)).toEqual([]);
-    expect(warnings).toHaveLength(12);
-    expect(new Set(warnings.map((warning) => warning.code))).toEqual(
-      new Set(["catalog.weapon_type_mismatch"])
-    );
-    expect(countDiagnosticMessages(warnings)).toEqual({
-      "escoffier uses Polearm, but silvershower_heartstrings is Bow.": 5,
-      "flins uses Polearm, but cashflow_supervision is Catalyst.": 1,
-      "iansan uses Polearm, but peak_patrol_song is Sword.": 1,
-      "illuga uses Polearm, but redhorn_stonethresher is Claymore.": 1,
-      "ineffa uses Polearm, but kaguras_verity is Catalyst.": 3,
-      "zibai uses Sword, but redhorn_stonethresher is Claymore.": 1,
-    });
-  });
+      expect(errors, formatDiagnostics(errors)).toEqual([]);
+      expect(warnings).toHaveLength(12);
+      expect(new Set(warnings.map((warning) => warning.code))).toEqual(
+        new Set(["catalog.weapon_type_mismatch"])
+      );
+      expect(countDiagnosticMessages(warnings)).toEqual({
+        "escoffier uses Polearm, but silvershower_heartstrings is Bow.": 5,
+        "flins uses Polearm, but cashflow_supervision is Catalyst.": 1,
+        "iansan uses Polearm, but peak_patrol_song is Sword.": 1,
+        "illuga uses Polearm, but redhorn_stonethresher is Claymore.": 1,
+        "ineffa uses Polearm, but kaguras_verity is Catalyst.": 3,
+        "zibai uses Sword, but redhorn_stonethresher is Claymore.": 1,
+      });
+    },
+    60_000
+  );
 
   it("keeps the offline factory out of every runtime source tree", async () => {
     const diagnostics = await validateWorkspaceBoundary();

@@ -908,11 +908,77 @@ Factory TypeScript, 67 test files with 598 tests, validation with 0 errors and
 12 existing warnings, application TypeScript, and dependency-boundary
 validation.
 
-Checkpoint 38 is the next unimplemented durable computation boundary. A
-transient technical run completed 144 generators and 364 replays, but it is not
-durable evidence. Any durable bounded-execution result must distinguish intact
-four-character generator endpoints from synthetic cross-endpoint
-recombinations; neither provenance class is a source claim or recommendation.
+## Authenticated bounded full-team technical computation
+
+Checkpoint 38 adds a generic fail-closed bounded computation core and one
+source-specific Keqing/Ineffa/Furina/Xilonen wrapper. The generic core consumes
+a complete authenticated runtime preflight, checks generator and replay caps
+with decimal `bigint` arithmetic before bootstrap, audits a distinct runtime
+identity for every node/carry, deduplicates complete sheet dumps within each
+node, and enumerates only the complete node-local Cartesian product. Incomplete
+nodes do not produce node references, and an incomplete overall domain produces
+no global reference.
+
+The source-specific wrapper authenticates a 64-path declared non-self selected
+checkpoint set. It binds checkpoint 37's durable report and authentication
+surfaces, the generic checkpoint 38 core, selected generator/artifact-sheet and
+replay inputs, current runtime data, calculator core files, and the relevant
+artifact, character, and weapon implementations. The source-specific producer,
+CLI, and output report are deliberately excluded to avoid self-reference. This
+is not an exhaustive dependency closure and makes no transitive module-graph
+claim. Notably, `artifact2pc.ts` remains in the selected set because four-piece
+builds automatically apply their declared two-piece half-set.
+
+The checkpoint 37 report is the authenticated trust root. Its nested 36-node
+generic preflight must remain complete, with the same exact equipment
+resolutions, objective envelope, wrapper-owned runtime assumptions, and eight
+readiness blockers. The source supports the four-character roster only. The
+rotation text is merely upstream input to the unreviewed wrapper-authored
+formula translation, not source support for the resulting technical damage
+plan. Equipment, investment, generated artifact stats, formula mapping,
+levels, talents, enemy context, and artifact roll budget are not source facts.
+
+After source-specific authentication succeeds, the exact default environment
+creates the real `TeamBuild` instances. The generic core itself authenticates
+runtime-identity freshness rather than a concrete class. The real default
+environment completes:
+
+- 36 equipment nodes;
+- 144 generator calls and 144 distinct fresh runtime identities;
+- 364 deduplicated node-local compositions and 364 successful replays;
+- 139 compositions matching at least one intact four-character generator
+  endpoint and 225 cross-endpoint recombinations; and
+- interpreted/compiled agreement for every replay within the implementation's
+  absolute and relative tolerance.
+
+There is no cross-node sheet composition. All 36 node-local bounded technical
+references are cross-endpoint recombinations and therefore must not be called
+generator-produced. The complete-domain technical reference is
+`926093.666196721`; the best intact-endpoint technical reference is
+`914219.528685479`; and the exact result fingerprint is
+`ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5`.
+These values describe the exact finite table under an unreviewed objective. A
+deterministic fingerprint and direct/compiled agreement do not independently
+validate game damage or applicability.
+
+Checkpoint 38 is durable evidence 35 and global report 34. The checked-in
+2,011,250-byte report has SHA-256
+`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
+skip; validation has zero errors and the same 12 existing warnings. Generator
+and damage-computation execution are true only as operation facts. Source, guide,
+team/equipment recommendation, rank, damage, DPS, gameplay, optimality, ER, and
+promotion claims all remain false. This is neither a working guide factory nor
+an equipment recommendation.
+
+The next non-ER computation boundary is an authenticated generated-sheet and
+artifact-allocation evidence catalog. Checkpoint 38 has 259 node/character/
+sheet pool cells but only 21 globally unique sheet hashes; it deliberately
+omits the underlying sheet dumps and displayed artifact allocations. That
+catalog should reproduce all 144 captures, test sheet-to-artifact round trips,
+and compare reviewable stat shapes with authority-labelled knowledge targets
+before any publication authority gate. It must not infer ranks from the
+bounded references.
 
 ## Callable modules for later experiments
 
@@ -942,6 +1008,9 @@ recombinations; neither provenance class is a source claim or recommendation.
   `scripts/guide-factory/src/boundedLatticePolicy.ts`.
 - Full-team non-ER local marginals with fail-closed multi-endpoint ranges:
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
+- Bounded full-team node-local generator/replay execution with intact versus
+  cross-endpoint provenance:
+  `scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts`.
 - Isolated ArtifactRatingDB/KQM/local-marginal sign-only validation:
   `scripts/guide-factory/src/keqingArtifactRatingKqmMarginalValidationSlice.ts`.
 - One named source-scoped role binding without a global resolver:

@@ -71,6 +71,13 @@ import {
   type KeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport,
 } from "./keqingIneffaFurinaXilonenEquipmentRuntimePreflight";
 import {
+  buildKeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport,
+  KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_REPORT_PATH,
+  requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport,
+  type KeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport,
+} from "./keqingIneffaFurinaXilonenEquipmentTechnicalComputation";
+import {
   authenticateKleeSourceLocalConditionSliceReport,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
@@ -274,6 +281,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingLunarEquipmentEvidenceValidationInput,
     keqingIneffaFurinaXilonenEquipmentCandidateLatticeInput,
     keqingIneffaFurinaXilonenEquipmentRuntimePreflightInput,
+    keqingIneffaFurinaXilonenEquipmentTechnicalComputationInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
@@ -350,6 +358,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(
         KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_REPORT_PATH,
+      ),
+      readJson(
+        KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_REPORT_PATH,
       ),
       readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
@@ -1426,6 +1437,56 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-furina-xilonen-equipment-runtime-preflight",
           message:
             "The saved equipment runtime preflight does not match the fresh authenticated lattice, exact unreviewed source formula boundary, 14 occurrence resolutions, and 36 current TeamBuild materializations.",
+        });
+      }
+
+      const keqingIneffaFurinaXilonenEquipmentTechnicalComputationGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_INPUT_PATHS,
+        );
+      const expectedKeqingIneffaFurinaXilonenEquipmentTechnicalComputation =
+        await buildKeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport(
+          {
+            sourcePreflight:
+              expectedKeqingIneffaFurinaXilonenEquipmentRuntimePreflight,
+            inputFiles:
+              keqingIneffaFurinaXilonenEquipmentTechnicalComputationGeneratedFrom,
+          },
+        );
+      let keqingIneffaFurinaXilonenEquipmentTechnicalComputationAuthenticated =
+        true;
+      try {
+        requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport(
+          expectedKeqingIneffaFurinaXilonenEquipmentTechnicalComputation,
+        );
+      } catch (error) {
+        keqingIneffaFurinaXilonenEquipmentTechnicalComputationAuthenticated =
+          false;
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.incomplete_keqing_ineffa_furina_xilonen_equipment_technical_computation",
+          path: "reports.keqing-ineffa-furina-xilonen-equipment-technical-computation",
+          message:
+            error instanceof Error
+              ? error.message
+              : "The freshly rebuilt bounded equipment technical computation did not authenticate its selected inputs, source-specific authority boundary, complete finite execution, provenance, or withheld-claim surface.",
+        });
+      }
+      if (
+        keqingIneffaFurinaXilonenEquipmentTechnicalComputationAuthenticated &&
+        stableJson(
+          expectedKeqingIneffaFurinaXilonenEquipmentTechnicalComputation,
+        ) !==
+          stableJson(
+            keqingIneffaFurinaXilonenEquipmentTechnicalComputationInput as KeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport,
+          )
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_furina_xilonen_equipment_technical_computation",
+          path: "reports.keqing-ineffa-furina-xilonen-equipment-technical-computation",
+          message:
+            "The saved bounded equipment technical computation does not match the fresh authenticated 36-node, four-carry, node-local generator and replay execution under the same source-not-ready objective boundary.",
         });
       }
 

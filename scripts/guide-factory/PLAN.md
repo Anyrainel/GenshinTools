@@ -814,13 +814,61 @@ tests. Verification passes Guide Factory TypeScript, the 67-file/598-test CP37
 baseline, validation with 0 errors and 12 existing warnings, application
 TypeScript, and dependency-boundary validation.
 
-Checkpoint 38 is the next unimplemented durable non-ER gate: bounded execution
-of the existing generator and replay modules over the authenticated preflight.
-A transient technical run completed 144 generator calls and 364 replays, but it
-is not durable checkpoint evidence. The durable design must distinguish an
-intact four-character generator endpoint from a synthetic cross-endpoint
-recombination and must not convert either into source authorship,
-applicability, ranking, optimality, recommendation, or ER evidence.
+Checkpoint 38 completes that bounded execution gate. Its source-specific
+wrapper authenticates exactly 64 declared non-self selected checkpoint paths:
+the checkpoint 37 report and authentication surfaces, generic checkpoint 38
+core, selected artifact-sheet generator and replay inputs, runtime data,
+calculator core, and roster/equipment-relevant implementations. The source-
+specific producer, CLI, and output report are excluded to avoid self-reference.
+The set is explicitly selected rather than exhaustive and makes no transitive
+module-graph claim.
+
+The source authority stops at the exact four-character roster. The published
+rotation text is only upstream input to an unreviewed wrapper-authored
+translation; checkpoint 38 does not claim source support for its formula
+counts, mappings, or technical objective. Weapons, artifact sets, investment,
+generated artifact stats, levels, talents, enemy context, roll budget, and
+equipment compositions are also wrapper/runtime-authored. The exact eight
+checkpoint 37 readiness blockers remain active.
+
+After the source-specific authentication gate, the exact default environment
+creates the real `TeamBuild` instances. The generic core audits distinct
+runtime identities rather than claiming a concrete runtime type. The real
+default runtime completes 36 nodes, 144 generator invocations with 144 distinct
+runtime identities, and 364/364 node-local Cartesian replays with no cross-node
+sheet mixing. All
+replays pass the internal interpreted-versus-compiled agreement check. The 364
+deduplicated compositions contain 139 intact-endpoint matches and 225 cross-
+endpoint recombinations. Every node's bounded technical reference is a cross-
+endpoint recombination rather than one intact generator output.
+
+The complete-domain technical reference is `926093.666196721`; the best intact-
+endpoint technical reference under the same unreviewed objective is
+`914219.528685479`. The result fingerprint is
+`ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5`.
+These are internal finite-table observations, not source-backed damage, DPS,
+gameplay, rank, equipment recommendation, or global optimality.
+
+Checkpoint 38 adds durable report 35 and globally integrates it as report 34.
+The final 2,011,250-byte report has SHA-256
+`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+The complete 69-file Guide Factory suite passes 642 tests with one intentional
+opt-in skip, validation has zero errors and the same 12 existing warnings, and
+both application TypeScript and dependency validation pass. Generator and
+damage-computation execution are recorded as
+operations that ran, while every source, guide, team/equipment recommendation,
+rank, damage, DPS, gameplay, optimality, promotion, and ER claim remains false.
+This is not a working guide factory.
+
+The next non-ER checkpoint should first expose and authenticate the generated
+sheet/allocation evidence that checkpoint 38 hashes but does not serialize.
+The current report contains 259 node/character/sheet pool cells backed by only
+21 globally unique sheet hashes. Reproducing all 144 captures into a bounded
+content-addressed catalog, testing displayed-artifact round trips, and joining
+those stat shapes to authority-labelled knowledge targets will give a later
+publication gate falsifiable validation evidence. It must still fail closed
+rather than turning checkpoint 38's finite technical maxima into ranks or
+recommendations.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula
