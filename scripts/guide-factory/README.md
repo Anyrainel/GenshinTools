@@ -21,24 +21,26 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 36 completes a generic bounded equipment-candidate lattice and one
-source-specific wrapper for the exact Keqing/Ineffa/Furina/Xilonen Lunar-
-Charged roster. The wrapper authenticates nine direct inputs and retains nine
-source groups/lists containing 20 occurrences: 14 active axes, four fixture-
-scope holdouts, one C6 holdout under the C0 request, and one ER-derived
-artifact-choice holdout. Eight ordered weapon/artifact axes enumerate exactly
-`(3 x 2) x (1 x 1) x (3 x 2) x (1 x 1) = 36` nodes and 288 selection
-references. Source group order, ties, alternatives, and preset list positions
-are retained, while `sourceLocalRank` remains null because no source supplied a
-numeric rank. Every weapon/artifact pairing and cross-character composition is
-wrapper-authored; zero whole candidates are source-published and gameplay
-applicability remains unknown, including the retained Xilonen Scroll warning.
-The thirty-third durable report is globally integrated, raising the global set
-to 32. Enumeration is the only enabled capability: guide, team/equipment
-recommendation, rank, optimality, evaluation, generator, optimizer, damage,
-gameplay, and ER outputs all remain false. This is validation evidence, not an
-artifact assignment, assembled build, recommendation, rank, optimizer, damage,
-rotation, ER result, or working guide factory:
+Checkpoint 37 completes a generic, fail-closed lattice-to-runtime
+materialization preflight and one source-specific wrapper for the exact
+Keqing/Ineffa/Furina/Xilonen Lunar-Charged roster. The wrapper authenticates a
+38-path declared non-self checkpoint input set containing selected upstream/
+runtime dependencies for checkpoint 36's complete lattice and the exact
+11-line Keqing/Ineffa formula draft. The set excludes its producer, CLI, and
+report to avoid self-reference and is explicitly not an exhaustive or
+transitive module-graph claim. Fourteen active occurrences receive exact
+payload-and-equipment resolutions. Under explicit
+wrapper-owned level-90, C0, talents-10/10/10, enemy-110/resistance-0.1,
+roll-0.85/`8_6`, empty-options/null-aura/no-extra-buffs assumptions with all
+four carry IDs, all 36 nodes create fresh `TeamBuild` instances. The preflight
+performs 396 objective-formula and 180 unresolved-reference availability checks
+without evaluating damage. It retains the exact eight upstream readiness
+blockers, so all nodes are materialized but none is evaluator-ready. Durable
+report 34 is globally integrated as report 33. Generator, replay, damage,
+scoring, ranking, recommendation, gameplay, and ER execution remain zero. The
+runtime assumptions are wrapper inputs, not source facts. This is validation
+evidence, not an artifact assignment, assembled build, recommendation, rank,
+optimizer result, damage result, rotation, ER result, or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -600,8 +602,46 @@ rotation, ER result, or working guide factory:
     ER capabilities false.
 194. Pass Guide Factory TypeScript, 65 test files with 554 tests, validation
     with 0 errors and 12 existing warnings, application TypeScript, and
-    dependency-boundary validation. Leave 36-node materialization/preflight as
-    the next unimplemented non-ER gate.
+    dependency-boundary validation. At checkpoint 36, leave 36-node
+    materialization/preflight as the next unimplemented non-ER gate.
+195. Add a generic fail-closed lattice-to-runtime preflight that revalidates a
+    complete authenticated lattice and materializes each node through a fresh
+    existing-runtime `TeamBuild` without invoking a generator or replay.
+196. Authenticate the 38-path declared non-self checkpoint input set containing
+    selected upstream/runtime dependencies for the checkpoint 36
+    Keqing/Ineffa/Furina/Xilonen lattice and exact 11-line Keqing/Ineffa source-
+    rotation formula draft before runtime bootstrap. Exclude the producer, CLI,
+    and report to avoid self-reference; explicitly do not claim an exhaustive
+    or transitive module graph.
+197. Resolve all 14 active occurrences exactly, binding source payload hashes
+    to selected weapons/refinements or four-piece artifact sets, and reject
+    omissions, extras, duplicates, drift, missing registry entities, non-four-
+    piece artifacts, ER fields, and unknown input fields.
+198. Supply explicit wrapper-owned level-90, C0, talents-10/10/10,
+    enemy-110/resistance-0.1, roll-0.85/`8_6`, empty-options/null-aura/no-extra-
+    buffs assumptions with all four carry IDs; do not treat them as source
+    facts.
+199. Materialize 36/36 fresh `TeamBuild` instances and complete 396 objective-
+    formula plus 180 non-null unresolved-reference availability checks while
+    retaining serialized configs rather than runtime objects.
+200. Retain the formula draft's exact eight source-readiness blockers: one
+    translation-unreviewed, one partial-token-mapping, five unresolved-formula-
+    mapping, and one unresolved-source-token. Mark the result materialized but
+    evaluator-not-ready.
+201. Execute zero generator, replay, damage-evaluation, scoring, ranking,
+    recommendation, optimization, and ER calls. Preserve wrapper-established
+    source binding while recording that the generic core establishes none.
+202. Add durable report 34 and globally integrate it as report 33. Its byte
+    SHA-256 is
+    `df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec`
+    and its size is 555,200 bytes.
+203. Pass the focused generic-core/source-wrapper/pipeline suite with 3 files
+    and 53 tests, then pass Guide Factory TypeScript, the 67-file/598-test CP37
+    baseline, validation with 0 errors and 12 existing warnings, application
+    TypeScript, and dependency-boundary validation. Leave bounded generator/
+    replay execution as checkpoint 38's next unimplemented durable boundary; a
+    144-generator/364-replay transient proof is not durable checkpoint evidence
+    and must preserve intact-endpoint versus synthetic-recombination provenance.
 
 The first two active sources are already in this repository:
 
@@ -698,6 +738,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-keqing-artifact-rating-kqm-marginal-validation-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-ineffa-furina-xilonen-equipment-candidate-lattice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-furina-xilonen-equipment-runtime.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
@@ -729,7 +770,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty-two globally integrated durable reports in memory:
+It also rebuilds all thirty-three globally integrated durable reports in memory:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
@@ -747,7 +788,8 @@ slices, the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration, plus the authenticated
-Keqing/Ineffa/Furina/Xilonen source-backed equipment candidate lattice.
+Keqing/Ineffa/Furina/Xilonen source-backed equipment candidate lattice and its
+authenticated runtime materialization preflight.
 Stale evidence cannot pass.
 Checkpoint 35 adds a thirty-second durable report outside that global runner.
 Its isolated builder and tests authenticate five files and close
@@ -766,10 +808,24 @@ Guide Factory TypeScript, 65 test files with 554 tests, validation with 0 errors
 and 12 existing warnings, application TypeScript, and dependency-boundary
 validation.
 
-The next bounded non-ER experiment is 36-node materialization and technical
-preflight against existing computation modules. It is not implemented and may
-not reinterpret enumeration as a recommendation, rank, optimum, gameplay
-validation, or ER result. ER remains deferred.
+Checkpoint 37 adds durable report 34 and integrates it as global report 33. Its
+wrapper authenticates the declared non-self checkpoint input set containing
+38 selected upstream/runtime dependency paths for the lattice and exact formula
+draft. It excludes its producer, CLI, and report to avoid self-reference and
+explicitly makes no exhaustive or transitive module-graph claim. It resolves
+14 active occurrences and materializes 36/36 fresh `TeamBuild` instances under
+explicit wrapper-owned assumptions. It completes 396 objective-formula and 180
+unresolved-reference availability checks while retaining the exact eight
+upstream readiness blockers. Verification passes Guide Factory
+TypeScript, 67 test files with 598 tests, validation with 0 errors and 12
+existing warnings, application TypeScript, and dependency-boundary validation.
+
+The next bounded non-ER experiment is checkpoint 38's generator/replay
+execution. A transient run has technically completed 144 generator calls and
+364 replays, but no durable checkpoint 38 report exists. Any durable result must
+distinguish intact four-character generator endpoints from synthetic cross-
+endpoint recombinations and may not reinterpret either as a recommendation,
+rank, optimum, gameplay validation, or ER result. ER remains deferred.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level

@@ -6,6 +6,27 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json`
+  authenticates every byte hash in the 38-path declared non-self checkpoint
+  input set. That set contains selected upstream/runtime dependencies for the
+  checkpoint 36 lattice, the exact 11-line Keqing/Ineffa formula draft, and the
+  runtime surfaces exercised by this preflight. It excludes the producer, CLI,
+  and emitted report to avoid self-reference and explicitly makes no exhaustive
+  or transitive module-graph claim. Fourteen active occurrences have exact
+  payload-and-equipment resolutions. Under wrapper-owned level-90, C0,
+  talents-10/10/10, enemy-110/resistance-0.1, roll-0.85/`8_6`, empty-options/
+  null-aura/no-extra-buffs assumptions with all four carry IDs, 36/36 fresh
+  `TeamBuild` instances materialize. Those runtime assumptions are not source
+  facts. The report
+  records 396 objective-formula and 180 non-null unresolved-reference
+  availability checks while executing zero generator, replay, damage, scoring,
+  ranking, recommendation, optimization, or ER calls. The exact eight upstream
+  blockers remain: one `translation-unreviewed`, one `partial-token-mapping`,
+  five `unresolved-formula-mapping`, and one `unresolved-source-token`; all
+  nodes are materialized but none is evaluator-ready. The report is 555,200
+  bytes with SHA-256
+  `df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec`.
+  This is durable report 34 and globally integrated report 33.
 - `keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json`
   authenticates nine direct inputs for the exact published Lunar-Charged
   roster. It inventories nine source groups/lists and 20 occurrences: 14
@@ -477,21 +498,25 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-two globally integrated reports in memory and
-rejects stale checked-in output. Checkpoint 35's thirty-second durable report
-remains outside that runner because ArtifactRatingDB is permission-mixed and
-consolidation-blocked. Checkpoint 36 adds durable report 33 and globally
-integrates it as report 32. The completed boundary passes Guide Factory
-TypeScript, 65 test files with 554 tests, validation with 0 errors and 12
+`validate.ts` rebuilds all thirty-three globally integrated reports in memory
+and rejects stale checked-in output. Checkpoint 35's thirty-second durable
+report remains outside that runner because ArtifactRatingDB is permission-
+mixed and consolidation-blocked. Checkpoint 36 adds durable report 33 and
+globally integrates it as report 32. Checkpoint 37 adds durable report 34 and
+globally integrates it as report 33. The completed boundary passes Guide
+Factory TypeScript, 67 test files with 598 tests, validation with 0 errors and 12
 existing warnings, application TypeScript, and dependency-boundary validation.
 
 The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
 manual coverage remains 19 source files and 73 generated-from paths, and the
 Klee witness remains six source files, 76 generated-from paths, and 63 upstream
-bindings. Checkpoints 35 and 36 change none of those ledgers. Checkpoint 36
-produces no guide, team/equipment recommendation, rank, optimum, evaluation,
-generator result, optimization, damage, gameplay claim, ideal-stat allocation,
-or ER requirement. The next bounded non-ER experiment is 36-node
-materialization and technical preflight; it is not implemented. The Diona ER
-report is historical and deliberately decoupled from unrelated knowledge-
-repository changes while ER work is deferred.
+bindings. Checkpoints 35 through 37 change none of those ledgers. Checkpoint 37
+produces no guide, team/equipment recommendation, rank, optimum, generator
+result, replay, damage, gameplay claim, ideal-stat allocation, or ER
+requirement. Checkpoint 38's bounded generator/replay execution remains the next
+unimplemented durable boundary. A transient technical run completed 144
+generator calls and 364 replays, but it is not a durable report and must not be
+described as checkpoint completion. Any durable result must distinguish intact
+four-character generator endpoints from synthetic cross-endpoint
+recombinations. The Diona ER report is historical and deliberately decoupled
+from unrelated knowledge-repository changes while ER work is deferred.

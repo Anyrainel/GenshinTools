@@ -779,10 +779,48 @@ global report count to 32. Verification passes Guide Factory TypeScript, 65
 test files with 554 tests, validation with 0 errors and 12 existing warnings,
 application TypeScript, and dependency-boundary validation.
 
-The next bounded non-ER gate is materialization and technical preflight of the
-36 nodes against existing computation modules. It is not implemented. It must
-fail closed and must not convert enumeration into source authorship,
-applicability, ranking, optimality, or ER evidence.
+Checkpoint 37 completes that materialization and technical-preflight gate. A
+generic fail-closed core consumes a complete authenticated lattice, an exact
+objective envelope, exact occurrence resolutions, explicit runtime
+assumptions, and a caller-supplied fresh-`TeamBuild` materializer. The
+Keqing/Ineffa/Furina/Xilonen wrapper authenticates the declared non-self
+checkpoint input set containing 38 selected upstream/runtime dependency paths
+for checkpoint 36's lattice and the 11-line Keqing/Ineffa formula draft, then
+binds all 14 active occurrences to their exact payload hashes and selected
+equipment. The set excludes the producer, CLI, and emitted report to avoid
+self-reference; it explicitly makes no exhaustive or transitive module-graph
+claim.
+
+The wrapper supplies level 90, C0, talents 10/10/10, enemy level 110 with 0.1
+resistance, roll multiplier 0.85, budget `8_6`, empty options, null aura, no
+extra buffs, and all four carry IDs. These are technical runtime assumptions,
+not source-authored guide facts. ER thresholds and per-character constraints
+remain explicitly null.
+
+All 36 nodes materialize through fresh `TeamBuild` instances. The preflight
+performs 396 objective-formula availability checks and 180 non-null unresolved-
+reference availability checks without evaluating damage. It retains the exact
+eight upstream blockers—one `translation-unreviewed`, one
+`partial-token-mapping`, five `unresolved-formula-mapping`, and one
+`unresolved-source-token`—so the result is materialized but evaluator-not-ready.
+Generator, replay, damage, scoring, ranking, recommendation, optimization, and
+ER call counts remain zero.
+
+Checkpoint 37 adds durable report 34 and globally integrates it as report 33.
+The 555,200-byte report has byte SHA-256
+`df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec`.
+The focused generic-core/source-wrapper/pipeline suite passes 3 files with 53
+tests. Verification passes Guide Factory TypeScript, the 67-file/598-test CP37
+baseline, validation with 0 errors and 12 existing warnings, application
+TypeScript, and dependency-boundary validation.
+
+Checkpoint 38 is the next unimplemented durable non-ER gate: bounded execution
+of the existing generator and replay modules over the authenticated preflight.
+A transient technical run completed 144 generator calls and 364 replays, but it
+is not durable checkpoint evidence. The durable design must distinguish an
+intact four-character generator endpoint from a synthetic cross-endpoint
+recombination and must not convert either into source authorship,
+applicability, ranking, optimality, recommendation, or ER evidence.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

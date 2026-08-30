@@ -438,7 +438,48 @@ guide production, promotion, or ER requirements.
 
 The checkpoint 36 report is globally integrated as report 32 and is durable
 report 33 overall. Materialized team-build inputs and technical preflight are a
-separate future boundary; they cannot be inferred from lattice enumeration.
+separate boundary; they cannot be inferred from lattice enumeration.
+
+### Derived source-backed runtime materialization preflights
+
+A runtime materialization preflight is also a derived report, not a new
+knowledge-record kind. It may consume a complete authenticated lattice only
+with a caller-authenticated exact objective envelope, an exact closure over all
+active occurrence payloads and selected equipment, and explicit runtime
+assumptions. The generic core validates those inputs but does not establish
+source binding or interpret source prose; a source-specific wrapper must own
+that responsibility.
+
+Checkpoint 37's Keqing/Ineffa/Furina/Xilonen wrapper authenticates the declared
+non-self checkpoint input set containing selected upstream/runtime dependencies
+across 38 declared paths for the checkpoint 36 lattice and exact 11-line
+Keqing/Ineffa formula draft.
+The set excludes the producer, CLI, and emitted report to avoid self-reference;
+it explicitly makes no exhaustive or transitive module-graph claim. It resolves
+all 14 active occurrences, then supplies level-90, C0, talents-10/10/10,
+enemy-110/resistance-0.1, roll-0.85/`8_6`, empty-options, null-aura, no-extra-
+buffs runtime inputs with all four carry IDs. Those values are wrapper-owned
+technical assumptions. They are not source-authored character, enemy, rotation,
+or artifact-investment facts and must not be consolidated as such. ER
+thresholds and per-character constraints are null.
+
+All 36 nodes materialize through fresh existing-runtime `TeamBuild` instances.
+The report records 396 objective-formula and 180 non-null unresolved-reference
+availability checks, but availability is not formula evaluation. The exact
+eight upstream readiness blockers remain present: one translation-unreviewed,
+one partial-token-mapping, five unresolved-formula-mapping, and one unresolved-
+source-token. Consequently the report is materialized but evaluator-not-ready.
+
+The preflight produces no generator, replay, damage, score, rank,
+recommendation, gameplay, guide, promotion, or ER evidence. Its 555,200-byte
+durable report has byte SHA-256
+`df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec`,
+is durable report 34 overall, and is globally integrated as report 33.
+
+The next bounded execution layer must preserve provenance between an intact
+four-character generator endpoint and a synthetic cross-endpoint recombination.
+A transient 144-generator/364-replay technical run demonstrates feasibility
+only; it is not durable checkpoint evidence and adds no knowledge claim.
 
 ## Energy-guidance records
 

@@ -64,6 +64,13 @@ import {
   type KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
 } from "./keqingIneffaFurinaXilonenEquipmentCandidateLattice";
 import {
+  buildKeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport,
+  KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_REPORT_PATH,
+  requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport,
+  type KeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport,
+} from "./keqingIneffaFurinaXilonenEquipmentRuntimePreflight";
+import {
   authenticateKleeSourceLocalConditionSliceReport,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
@@ -266,6 +273,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingSourceScopedRolePairSampleInput,
     keqingLunarEquipmentEvidenceValidationInput,
     keqingIneffaFurinaXilonenEquipmentCandidateLatticeInput,
+    keqingIneffaFurinaXilonenEquipmentRuntimePreflightInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
@@ -339,6 +347,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH),
       readJson(
         KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
+      ),
+      readJson(
+        KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_REPORT_PATH,
       ),
       readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
@@ -1367,6 +1378,54 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-furina-xilonen-equipment-candidate-lattice",
           message:
             "The saved source-backed equipment lattice does not match the fresh nine-input source closure, 20-occurrence inventory, request conditions, and complete 36-node wrapper-authored product.",
+        });
+      }
+
+      const keqingIneffaFurinaXilonenEquipmentRuntimePreflightGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_INPUT_PATHS,
+        );
+      const expectedKeqingIneffaFurinaXilonenEquipmentRuntimePreflight =
+        await buildKeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport({
+          latticeReport:
+            expectedKeqingIneffaFurinaXilonenEquipmentCandidateLattice,
+          formulaDraft: expectedKeqingIneffaFormulaDraft,
+          inputFiles:
+            keqingIneffaFurinaXilonenEquipmentRuntimePreflightGeneratedFrom,
+        });
+      let keqingIneffaFurinaXilonenEquipmentRuntimePreflightAuthenticated =
+        true;
+      try {
+        requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport(
+          expectedKeqingIneffaFurinaXilonenEquipmentRuntimePreflight,
+        );
+      } catch (error) {
+        keqingIneffaFurinaXilonenEquipmentRuntimePreflightAuthenticated = false;
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.incomplete_keqing_ineffa_furina_xilonen_equipment_runtime_preflight",
+          path: "reports.keqing-ineffa-furina-xilonen-equipment-runtime-preflight",
+          message:
+            error instanceof Error
+              ? error.message
+              : "The freshly rebuilt equipment runtime preflight did not authenticate its upstream reports, exact resolutions, 36 materializations, formula coverage, or deferred evaluation boundary.",
+        });
+      }
+      if (
+        keqingIneffaFurinaXilonenEquipmentRuntimePreflightAuthenticated &&
+        stableJson(
+          expectedKeqingIneffaFurinaXilonenEquipmentRuntimePreflight,
+        ) !==
+          stableJson(
+            keqingIneffaFurinaXilonenEquipmentRuntimePreflightInput as KeqingIneffaFurinaXilonenEquipmentRuntimePreflightReport,
+          )
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_furina_xilonen_equipment_runtime_preflight",
+          path: "reports.keqing-ineffa-furina-xilonen-equipment-runtime-preflight",
+          message:
+            "The saved equipment runtime preflight does not match the fresh authenticated lattice, exact unreviewed source formula boundary, 14 occurrence resolutions, and 36 current TeamBuild materializations.",
         });
       }
 

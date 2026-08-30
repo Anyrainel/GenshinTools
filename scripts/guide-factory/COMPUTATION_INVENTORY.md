@@ -860,8 +860,59 @@ disabled.
 The report is durable evidence 33 and global report 32. Checkpoint 36 passes
 Guide Factory TypeScript, 65 test files with 554 tests, validation with 0 errors
 and 12 existing warnings, application TypeScript, and dependency-boundary
-validation. Materializing and preflighting the 36 nodes is the next
-unimplemented non-ER computation boundary.
+validation. At that checkpoint, materializing and preflighting the 36 nodes was
+the next unimplemented non-ER computation boundary.
+
+## Authenticated runtime materialization preflight
+
+Checkpoint 37 adds a generic lattice-to-runtime core and one source-specific
+Keqing/Ineffa/Furina/Xilonen wrapper. The wrapper authenticates the declared
+non-self checkpoint input set containing selected upstream/runtime dependencies
+across 38 declared paths for checkpoint 36's complete 36-node lattice and the
+exact 11-line Keqing/Ineffa formula draft. The set excludes the source-specific
+producer, CLI, and emitted report to avoid self-reference; it explicitly makes
+no exhaustive or transitive module-graph claim. The wrapper establishes
+caller-side source binding while the generic core records that it establishes
+no source binding itself.
+
+All 14 active lattice occurrences have one exact payload-and-equipment
+resolution. The core requires each node to select exactly one weapon and one
+four-piece artifact set per member and rejects missing, extra, duplicate,
+drifted, partial, non-four-piece, ER-bearing, or registry-unresolvable inputs.
+
+The wrapper supplies one explicit technical environment: all members at level
+90, C0, talents 10/10/10; enemy level 110 and resistance 0.1; roll multiplier
+0.85 and budget `8_6`; empty options, null aura, no extra buffs; and all four
+members as carry IDs. These values are wrapper-owned runtime assumptions, not
+source-authored guide facts. ER thresholds and per-character constraints are
+null.
+
+The core creates 36/36 fresh existing-runtime `TeamBuild` instances and checks
+exact order, investment, weapon, refinement, four-piece artifact set, hashes,
+and formula availability. It completes 396 objective checks (36 x 11) and 180
+non-null unresolved-reference checks (36 x 5). It evaluates no formula and
+executes zero generator, replay, damage, scoring, ranking, recommendation,
+optimization, or ER calls.
+
+The exact upstream readiness closure remains active: one
+`translation-unreviewed`, one `partial-token-mapping`, five
+`unresolved-formula-mapping`, and one `unresolved-source-token` blocker. Thus
+all nodes are runtime-ready and materialized, but zero are evaluator-ready.
+Runtime compatibility does not establish rotation order, buff timing, field
+time, hit counts, reaction ownership, gameplay applicability, or damage.
+
+The 555,200-byte report has byte SHA-256
+`df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec`.
+It is durable evidence 34 and global report 33. Checkpoint 37 passes Guide
+Factory TypeScript, 67 test files with 598 tests, validation with 0 errors and
+12 existing warnings, application TypeScript, and dependency-boundary
+validation.
+
+Checkpoint 38 is the next unimplemented durable computation boundary. A
+transient technical run completed 144 generators and 364 replays, but it is not
+durable evidence. Any durable bounded-execution result must distinguish intact
+four-character generator endpoints from synthetic cross-endpoint
+recombinations; neither provenance class is a source claim or recommendation.
 
 ## Callable modules for later experiments
 
