@@ -38,7 +38,7 @@ const LIVE_BUILD_PRESET =
 const KQM_EVIDENCE_REPORT =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 const EXPECTED_FULL_SHA256 =
-  "8b4d3671bbe80ddc8a76b108f3e3770704486bc1471e4d22c89a35d7a5b4effd";
+  "9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568";
 
 let INPUT: BuildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceInput;
 let REPORT: KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport;
@@ -113,7 +113,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
       resultFingerprintSha256:
         "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386",
       reportContentSha256:
-        "22fb1e97c2b7789c2b0ba80dc025bd115ded5000f05ac6725aeef98e97cf0010",
+        "a31e829893d30f8d6db129c3659674891d121b7e13c414ba2864d7f1f8a2bfd8",
     });
     expect(REPORT.comparisonBoundary).toMatchObject({
       occurrenceCount: 576,

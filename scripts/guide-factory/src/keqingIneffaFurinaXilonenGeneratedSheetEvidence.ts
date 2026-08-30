@@ -68,7 +68,7 @@ const EXPECTED_INPUT_FILE_SHA256: Readonly<Record<string, string>> = {
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json":
     "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822",
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json":
-    "dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263",
+    "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01",
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json":
     "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
   "scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts":
@@ -86,17 +86,17 @@ const DELIBERATELY_EXCLUDED_PRODUCER_PATHS = [
 ] as const;
 
 const EXPECTED_SOURCE_TECHNICAL_REPORT_SHA256 =
-  "dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263";
+  "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01";
 const EXPECTED_KNOWLEDGE_TARGET_CONTENT_SHA256 =
   "b35ba89aeec5f27033a49dc8487ec6911d45b8df9d0076af8e2af1183010fe99";
 const EXPECTED_GENERIC_RESULT_FINGERPRINT_SHA256 =
   "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386";
 const EXPECTED_GENERIC_REPORT_CONTENT_SHA256 =
-  "22fb1e97c2b7789c2b0ba80dc025bd115ded5000f05ac6725aeef98e97cf0010";
+  "a31e829893d30f8d6db129c3659674891d121b7e13c414ba2864d7f1f8a2bfd8";
 const EXPECTED_GENERIC_STABLE_FULL_REPORT_SHA256 =
-  "c2cdb64d5ce3718dd09abbc465785324584feab650e3f5def91d9f881a6978ff";
+  "7cd628e53882a304ad90969cf1ab729176008cc359634f3d2938e580e3607442";
 const EXPECTED_AUTHENTICATED_FULL_REPORT_SHA256 =
-  "8b4d3671bbe80ddc8a76b108f3e3770704486bc1471e4d22c89a35d7a5b4effd";
+  "9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568";
 const EXPECTED_STATE_COUNTS: ComparisonStateCounts = {
   "listed-condition-resolved": 816,
   "listed-condition-withheld": 48,

@@ -276,7 +276,7 @@
     },
     {
       "path": "src/lib/dmgcalc/utils.ts",
-      "sha256": "8b0745949a9a3fc9fe49485704e92a6752ba7af5130f1da37ecd17991c0a83ad"
+      "sha256": "0e79095bea4fd3e16d64e306f33701d7750e38eed672967517590eb585827bc6"
     },
     {
       "path": "src/lib/team-comp/generator/constrainedGreedy.ts",
@@ -14721,7 +14721,7 @@
       "objectiveEnvelopeSha256": "fd0ecbf13feb1a6ee73ea904196ae1d262f81530900c8ca4f8b78742c4e678f8",
       "preflightReportContentSha256": "2fcf002d2432b4d319479d9a8622850a166d9bc5d8913f2ebd6f6e4ec1868569",
       "preflightReportSha256": "9bad2d3209f74543c7b0e434ee25f6a1e91e2ae20c471a7bc0838ae91d886569",
-      "reportContentSha256": "85a3559e66a7637d4892101978ce25abbe5cefe271eff3d7a20b8ba6c318da89",
+      "reportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
       "resultFingerprintSha256": "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5",
       "runtimeAssumptionsSha256": "fa46720ec6063f0401d946312e511e5013b230cf04a55b496e040ccd22e43b41"
     },
@@ -15025,7 +15025,7 @@
       },
       {
         "path": "src/lib/dmgcalc/utils.ts",
-        "sha256": "8b0745949a9a3fc9fe49485704e92a6752ba7af5130f1da37ecd17991c0a83ad"
+        "sha256": "0e79095bea4fd3e16d64e306f33701d7750e38eed672967517590eb585827bc6"
       },
       {
         "path": "src/lib/team-comp/generator/constrainedGreedy.ts",
@@ -47810,8 +47810,8 @@
       "representativeSelectionPolicy": "first-node-then-enumerated-exact-objective-tie",
       "unreviewedTechnicalObjective": 926093.666196721
     },
-    "genericReportContentSha256": "85a3559e66a7637d4892101978ce25abbe5cefe271eff3d7a20b8ba6c318da89",
-    "genericStableFullReportSha256": "79278ba285e33f7b9fe6749f716bc60f460b0d7fce7eafe6f9df7d988962a711",
+    "genericReportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
+    "genericStableFullReportSha256": "9cf324261711a569ad84ef9ecf862fb5566015c4fb6f7379b3e1a80eaa0988d4",
     "intactGeneratorEndpointTechnicalReference": {
       "compositionId": "bounded-full-team-composition:9afd60d56a776f53fac347671b8085a7d6560906f2e4db2d0047ed50effa5627",
       "equivalentReferences": [
