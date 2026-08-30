@@ -991,10 +991,6 @@
   "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
       "path": "scripts/guide-factory/src/computationReplay.ts",
       "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
     },
@@ -1008,15 +1004,23 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
+      "sha256": "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+      "sha256": "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
-      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+      "sha256": "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -1176,6 +1180,71 @@
   ],
   "promotionEligible": false,
   "schemaVersion": 1,
+  "semanticScope": {
+    "acceptedAudit": {
+      "dependencies": [
+        {
+          "collectionPath": "/records",
+          "containerPath": "scripts/guide-factory/data/knowledge/repository.json",
+          "dependencyId": "knowledge-repository",
+          "keySchemaId": "knowledge-record-id-v1",
+          "projectionAdapterId": "keqing-ineffa-formula-repository-projection-v1",
+          "requiredKeys": [
+            "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+            "genshintools-presets:character-guide:keqing",
+            "genshintools-presets:character-guide:ineffa",
+            "genshintools-presets:character-guide:furina",
+            "genshintools-presets:character-guide:xilonen"
+          ],
+          "selectedEntries": [
+            {
+              "key": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+              "occurrenceCount": 1,
+              "payloadSha256": "c20f92c584bd1c6b9b084bcf43e29cccede2c4e62738f8336ad52e02e14ff0e6"
+            },
+            {
+              "key": "genshintools-presets:character-guide:keqing",
+              "occurrenceCount": 1,
+              "payloadSha256": "7037aa27f4b7d3d88c9f2ec56baa841cc0462ac9ef0088b37bb1849a3d5c253a"
+            },
+            {
+              "key": "genshintools-presets:character-guide:ineffa",
+              "occurrenceCount": 1,
+              "payloadSha256": "445078231acfe1817b69c096e0c777f419519a2c749143f9de94abb4a38d53af"
+            },
+            {
+              "key": "genshintools-presets:character-guide:furina",
+              "occurrenceCount": 1,
+              "payloadSha256": "4ecd205318c08e16146da15fb61c9bbfb02a2b48dcbbb1176994658bd4b05ed0"
+            },
+            {
+              "key": "genshintools-presets:character-guide:xilonen",
+              "occurrenceCount": 1,
+              "payloadSha256": "149b40fda05de7b027387155ab800746390b5e84d4b3f84dcbcc7739a18d4acf"
+            }
+          ],
+          "selectedKeySetSha256": "396975e402fa6fcdea7f1e4c9ad95c1d11d9dccd533d68c13af0c45186279b18",
+          "selectedPayloadSha256": "639cbaea0fa68d051279fd6c986f1ff46639ae7a24832a3c0019a65245537860"
+        }
+      ],
+      "parities": [],
+      "schemaVersion": 1,
+      "scopeId": "keqing-ineffa-formula-fixture-repository-v1",
+      "scopeProjectionSha256": "860ad7388a681147ab68e45b5730bcede1efc864a71667bd1f5497b6dbdd1c41",
+      "selector": {
+        "dependencyOrderPolicy": "declared",
+        "identityBinding": "dependency-container-collection-key-schema-projection-adapter",
+        "manifestSha256": "8b93f93844b29fae7483a16d484945fe1f4376dd1fb0d1a579d0f55b0197008b",
+        "mode": "exact-key-manifest",
+        "parityOrderPolicy": "declared",
+        "requiredKeyOrderPolicy": "declared"
+      },
+      "status": "accepted",
+      "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
+    },
+    "expectedManifestSha256": "8b93f93844b29fae7483a16d484945fe1f4376dd1fb0d1a579d0f55b0197008b",
+    "expectedScopeProjectionSha256": "860ad7388a681147ab68e45b5730bcede1efc864a71667bd1f5497b6dbdd1c41"
+  },
   "sourceRotation": {
     "assumptions": [
       "On subsequent rotations, the opening Furina Skill can be moved from the opening position to be performed together with her Burst."

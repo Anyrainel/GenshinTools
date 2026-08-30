@@ -164,10 +164,6 @@
   },
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
       "path": "scripts/guide-factory/src/artifactGenerationPreflight.ts",
       "sha256": "52e4125e3923f766927b353a1ed70a4690ffd013efd3d186c3cff1b0ae1046ff"
     },
@@ -189,15 +185,23 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
+      "sha256": "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+      "sha256": "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
-      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+      "sha256": "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
