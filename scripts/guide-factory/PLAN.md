@@ -1164,6 +1164,27 @@ compose this validated relationship with checkpoint 51's partial artifact
 profiles, but it must retain separate provenance and missing axes rather than
 presenting a complete build.
 
+Checkpoint 53 takes that bounded step. It authenticates the exact union of the
+checkpoint-51 and checkpoint-52 input closures plus both durable reports, then
+rebuilds both upstream inputs from those outer bytes. The supplied upstream
+objects must be exact projections before either report can fresh-authenticate.
+
+The deterministic join produces two partial validation candidates, one for
+each source investment predicate. The exact team leaves Noelle's investment
+unspecified, so neither predicate is evaluated and no branch is selected. Each
+candidate retains an exact clone of its artifact profile and projects the same
+unranked Gest applicability option separately; the upstream profile's weapon-
+missing field remains unchanged provenance. Gest, Husk, main stats, and substat
+allocation all remain unselected. This is one Guide Factory candidate-
+projection run, not an existing runtime-generator or optimizer run, and it
+produces no complete build, assignment, comparison, rank, damage, replay,
+ideal-stat, or ER result.
+
+The next non-ER work can test an offline-only exact normal-prefix representation
+or accumulate the missing refinement, teammate equipment, enemy, and complete
+fixture evidence. It must not convert these two partial candidates into a
+winner before those boundaries are resolved.
+
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,
 formula authoring, recommendation composition, or build composition.

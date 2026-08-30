@@ -346,6 +346,13 @@ import {
   NOELLE_HEXEREI_WEAPON_TEAM_SOURCE_BINDING_REPORT_PATH,
   type NoelleHexereiWeaponTeamSourceBindingReport,
 } from "./noelleHexereiWeaponTeamSourceBinding";
+import {
+  authenticateNoelleHexereiPartialEquipmentCompositionFromWorkspace,
+} from "./assemble-noelle-hexerei-partial-equipment-composition";
+import {
+  NOELLE_HEXEREI_PARTIAL_EQUIPMENT_COMPOSITION_REPORT_PATH,
+  type NoelleHexereiPartialEquipmentCompositionReport,
+} from "./noelleHexereiPartialEquipmentComposition";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1833,6 +1840,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle Hexerei weapon/team source binding failed fresh authentication: ${error.message}`
               : "The saved Noelle Hexerei weapon/team source binding failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleHexereiCompositionInput = await readJson(
+          NOELLE_HEXEREI_PARTIAL_EQUIPMENT_COMPOSITION_REPORT_PATH,
+        );
+        await authenticateNoelleHexereiPartialEquipmentCompositionFromWorkspace(
+          noelleHexereiCompositionInput as NoelleHexereiPartialEquipmentCompositionReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_hexerei_partial_equipment_composition",
+          path: "reports.noelle-hexerei-partial-equipment-composition",
+          message:
+            error instanceof Error
+              ? `The saved Noelle Hexerei partial-equipment composition failed fresh authentication: ${error.message}`
+              : "The saved Noelle Hexerei partial-equipment composition failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

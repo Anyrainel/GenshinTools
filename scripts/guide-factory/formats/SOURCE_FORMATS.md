@@ -400,6 +400,17 @@ quantitative comparison, rank, or recommendation. The upstream condition stays
 a holdout in its source-local slice; checkpoint 52 does not rewrite that
 classification.
 
+Checkpoint 53 adds no source observation, source condition, assignment, rank,
+or rewritten recommendation. Its two partial candidates are Guide Factory-
+authored projections over the existing checkpoint-51 profiles and checkpoint-
+52 exact-team binding. The source does not publish either whole composition and
+does not state which investment branch applies to the exact team.
+
+The projection must preserve every source-derived profile field unchanged,
+including guarded main-stat alternatives and the upstream weapon-missing
+boundary. Gest is carried in a separate derived applicability option; it is not
+written into the manual team member or consolidated selected-weapon field.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

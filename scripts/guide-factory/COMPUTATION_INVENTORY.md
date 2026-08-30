@@ -1475,6 +1475,24 @@ a refinement, assemble a build, or call a generator, optimizer, AutoTune,
 damage calculator, replay, ideal-stat allocator, or ER calculator. It is an
 authenticated input for later bounded composition, not an equipment search.
 
+## Request-parameterized partial-equipment composition seam
+
+`src/noelleHexereiPartialEquipmentComposition.ts` authenticates the exact union
+of the checkpoint-51 artifact-profile and checkpoint-52 weapon/team-binding
+boundaries. It reconstructs both upstream inputs from one outer raw closure,
+requires exact supplied-input projection parity, and fresh-authenticates both
+durable reports before joining them.
+
+The seam performs one deterministic branch-projection run and constructs two
+partial candidates. Each preserves an exact upstream artifact profile and adds
+the same exact-team Gest applicability option as a separate projection. The
+team's Noelle investment is unspecified, so neither source predicate is
+evaluated or selected. The embedded profile's original weapon-missing boundary
+is deliberately retained; the projection does not rewrite upstream evidence.
+All weapon, set, main-stat, and substat selections remain null. The existing
+runtime generator, optimizer, AutoTune, damage replay, ideal-stat allocator,
+and ER calculator are not invoked.
+
 ## Current blockers
 
 - The consolidated repository still has no accepted executable damage plan.

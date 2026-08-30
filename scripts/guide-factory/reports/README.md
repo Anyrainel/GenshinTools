@@ -418,6 +418,19 @@ Current durable pilot evidence:
   ranks, generator or optimizer runs, damage/replays, ideal-stat outputs, or ER
   computations. Its current 10,810-byte output has SHA-256
   `e0528e977ebf574b42e12f260880ec226c9591025a76e6ec78a2cdd02ced97b8`.
+- `noelle-hexerei-partial-equipment-composition.json` authenticates the exact
+  29-path union of the checkpoint-51 and checkpoint-52 boundaries plus both
+  durable reports and the new implementation. All eight JSON inputs require
+  byte/object parity, both supplied upstream inputs must equal exact outer-
+  closure projections, and both reports are fresh-authenticated before use. It
+  performs one deterministic authenticated branch projection and creates two
+  request-parameterized partial candidates. Each retains an exact artifact-
+  profile clone and separately projects the same applicable, unranked Gest
+  option; Noelle's team investment is unspecified, all equipment/stat choices
+  remain null, and the rejected formula-representation gate is preserved. The
+  existing runtime generator, optimizer, AutoTune, damage/replay, ideal-stat,
+  and ER paths execute zero times. Its current 34,701-byte output has SHA-256
+  `1cca0c987f0590aff79c7d1e215d298ec47fe139429d8958c295c08eadf7e99c`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -791,7 +804,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-nine globally integrated reports
+In full mode `validate.ts` rebuilds all fifty globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -844,6 +857,9 @@ permission-isolated report, this directory now contains 49 JSON reports.
 Checkpoint 52 adds the Noelle Hexerei weapon/team source binding as integrated
 report 49. Including checkpoint 35's permission-isolated report, this directory
 now contains 50 JSON reports.
+Checkpoint 53 adds the Noelle Hexerei partial-equipment composition as
+integrated report 50. Including checkpoint 35's permission-isolated report,
+this directory now contains 51 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

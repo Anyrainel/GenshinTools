@@ -899,6 +899,23 @@ selections, missing refinement, and missing quantitative performance remain
 missing. The binding alone cannot authorize a guide, build, recommendation,
 rank, weapon comparison, damage result, ideal-stat allocation, or ER result.
 
+### Derived request-parameterized partial equipment candidates
+
+A partial equipment candidate may join authenticated derived records only when
+the full upstream inputs can be reconstructed and fresh-authenticated. It is a
+Guide Factory projection, not a source-authored build or an accepted knowledge-
+record kind. Checkpoint 53 joins two investment-scoped artifact profiles with
+one exact-team weapon-applicability binding and retains both branches because
+the team record does not specify which investment predicate applies.
+
+The embedded profile remains unchanged, including its original missing-weapon
+boundary. The joined weapon is represented separately as an applicable,
+unranked option with missing refinement and quantitative performance. A
+candidate can exist while selected weapon, selected set, selected main stats,
+selected substat allocation, and complete build all remain absent. Candidate
+construction alone authorizes no recommendation, rank, comparison, damage,
+ideal-stat, or ER result.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

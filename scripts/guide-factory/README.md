@@ -21,17 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 52 authenticates one missing same-page Noelle source relationship
-without pretending that it is already a recommendation. It fresh-authenticates
-checkpoint 31's high-investment slice, retains the conditional Gest of the
-Mighty Wolf occurrence as an upstream holdout, and verifies exact manual-to-
-repository parity for that weapon observation and the published
-Noelle/Durin/Nicole/Xilonen Hexerei example. A narrow Guide Factory allowlist
-binds the source condition to that exact team as a validation target. The join
-is not source-authored, the team member row still has no weapon selection, and
-refinement and quantitative performance remain missing. This checkpoint emits
-zero candidates, builds, assignments, ranks, optimizer runs, damage replays,
-or ER results.
+Checkpoint 53 performs the first deterministic Noelle candidate projection
+from the authenticated repository, while keeping the output deliberately
+partial. It fresh-authenticates checkpoints 51 and 52 under one 29-file outer
+closure, then projects the lower- and high-investment artifact profiles with
+the exact-team Gest applicability target. The exact team supplies no Noelle
+investment, so neither branch is evaluated or selected. Both candidates retain
+Gest and 4pc Husk as unselected options, all main-stat and ordinal substat
+groups unchanged, and the rejected normal-prefix representation gate. This is
+Guide Factory-authored validation composition—not a source-authored build or
+runtime-generator result—and it executes no assignment, optimizer, damage,
+ideal-stat, or ER work.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -1011,6 +1011,33 @@ This is not a working guide factory or an equipment recommendation:
      or ER computations.
 309. Integrate the binding as global report 49 while withholding every guide,
      team, build, equipment, stat, damage, rotation, rank, and ER capability.
+310. Authenticate checkpoint 53 through the exact 29-path union of the two
+     upstream boundaries, their durable reports, and the new core and CLI;
+     require byte/object parity for all eight JSON inputs.
+311. Reconstruct the complete checkpoint-51 and checkpoint-52 inputs only from
+     that outer closure, require exact supplied-input projection parity, and
+     fresh-authenticate both durable reports before composition.
+312. Project the two authenticated investment profiles onto the one exact-team
+     Gest applicability target. Retain two request-parameterized branches
+     because the source team leaves Noelle's investment unspecified.
+313. Copy each upstream artifact profile exactly, including its still-missing
+     weapon boundary, guarded alternatives, null main-stat choices, null
+     substat allocation, and rejected formula-representation gate.
+314. Project Gest separately as one unique, unranked applicable option in each
+     branch while preserving null refinement, missing quantitative performance,
+     and null selected weapon.
+315. Retain 4pc Husk as one unique option projected into both branches, not a
+     selected set or runtime artifact assignment. Preserve six slot groups,
+     eight main-stat option groups, and six ordinal substat groups.
+316. Record one deterministic authenticated branch-projection run and two
+     partial candidates. Distinguish that construction from the existing
+     runtime generator, which executes zero times.
+317. Emit zero equipment assignments, selections, complete builds, ranks,
+     optimizer or AutoTune runs, damage computations, rotation replays,
+     ideal-stat allocations, or ER computations.
+318. Integrate the composition as global report 50 while withholding every
+     player-facing guide, team, build, equipment, stat, rank, damage, rotation,
+     ideal-stat, and ER authority.
 
 The first two active sources are already in this repository:
 
@@ -1211,6 +1238,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-circlet-substat-local-marginal-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-investment-artifact-profile-computation-admission.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-weapon-team-source-binding.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-partial-equipment-composition.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1234,7 +1262,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-nine globally integrated durable reports
+In full mode it rebuilds all fifty globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -2038,6 +2066,24 @@ only an applicability validation target for this exact team. It does not alter
 the upstream holdout, fill the team's empty weapon row, infer refinement,
 compare weapons, or create an equipment assignment. All generator, optimizer,
 AutoTune, damage, replay, ideal-stat, guide, rank, and ER outputs remain closed.
+
+Checkpoint 53 composes checkpoints 51 and 52 without weakening either boundary.
+Its 29-path closure contains both complete upstream input sets, both durable
+reports, and the new implementation. Eight JSON objects require byte/object
+parity, and the supplied upstream inputs must equal the exact projections rebuilt
+from the outer bytes before either durable report can fresh-authenticate.
+
+The result is two request-parameterized partial candidates: one lower-investment
+profile and one high-investment profile, each paired with the same exact team
+and applicable Gest option. The source team does not state Noelle's investment,
+so neither predicate is evaluated and the candidates are not compared. The
+embedded artifact profiles remain exact upstream clones; their original weapon-
+missing field remains provenance, while the applicable weapon option is a
+separate checkpoint-53 projection. Gest, Husk, main stats, and substats all
+remain unselected. Candidate construction is recorded as one deterministic
+branch projection, not as a run of the existing artifact generator. The
+checkpoint produces no complete build, assignment, optimization, damage,
+rotation, ideal-stat, or ER result.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated
