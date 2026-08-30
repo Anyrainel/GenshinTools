@@ -17,10 +17,14 @@ Current durable pilot evidence:
   source boundary has five nonempty and zero empty arrays: one selected plus
   four exact holdouts, all unconsumed, unbound, and energy-unclassified by the
   slice. The source remains agent-assisted, unreviewed, permission-unknown, and
-  promotion-ineligible. This standalone report is authenticated by `validate.ts`
-  but deliberately does not enter the current catalog or manual coverage. It
-  executes no build, candidate, assignment, composition, recommendation, rank,
-  generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
+  promotion-ineligible. Checkpoint 30 admits only the selected occurrence to the
+  catalog after pinning the exact literals, hashes, team/member/subject,
+  predicate, payload, recommendation metadata, and zero-request-binding
+  boundary. The character-wide Nod-Krai delegation, team artifact plan, Kokomi
+  second artifact row, and Columbina artifact row remain named unbound and
+  energy-unclassified holdouts. It executes no build, candidate, assignment,
+  composition, recommendation, rank, generator, optimizer, formula, rotation,
+  damage, ideal-roll, or ER work.
 - `diona-source-local-support-slice.json` authenticates three team-member
   artifact condition occurrences from the exact
   `kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt` record: Diona member
@@ -54,7 +58,7 @@ Current durable pilot evidence:
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
-  regenerated after Diona changes its declared manual-coverage input; its Klee
+  regenerated after Kokomi changes its declared manual-coverage input; its Klee
   claim and team-control boundary is unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
@@ -74,14 +78,17 @@ Current durable pilot evidence:
   repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
   unique exact ordered nonempty arrays,
   159 condition-string occurrences, and 97 unique strings. Binding and energy
-  are independent: all nonempty arrays contain 53 typed bindings, 3 exact-text
-  acknowledgements, and 70 unbound occurrences; excluding only three structural
-  ER rows leaves 123 occurrences: 53 typed, 3 acknowledged, and 67 unbound,
-  across 86 unique arrays. Those arrays contain 31 typed-only, 54 unbound-only,
+  are independent: all nonempty arrays contain 54 typed bindings, 3 exact-text
+  acknowledgements, and 69 unbound occurrences; excluding only three structural
+  ER rows leaves 123 occurrences: 54 typed, 3 acknowledged, and 66 unbound,
+  across 86 unique arrays. Those arrays contain 32 typed-only, 53 unbound-only,
   and one mixed acknowledged/unbound status set.
   The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
-  exact authored Diona/Furina rows; 50 typed rows are not energy-deferred and 61
-  nonempty rows remain energy-unclassified. Bindings are occurrence-, hash-,
+  exact authored Diona/Furina rows; 51 typed rows are not energy-deferred and 60
+  nonempty rows remain energy-unclassified. Display status is 51 typed, 57
+  known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional.
+  The report authenticates six wrapper families across 17 source files and 67
+  generated-from paths. Bindings are occurrence-, hash-,
   and subject-scoped: identical Viridescent Venerer text is acknowledged for
   Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
   Typed coverage does not establish predicate truth, and unclassified does not
@@ -377,6 +384,7 @@ Current durable pilot evidence:
   duration, and Favonius-cooldown assumptions are comparable.
 
 `validate.ts` rebuilds all twenty-nine reports in memory and rejects stale
-checked-in output. The Diona ER report is historical and deliberately
-decoupled from unrelated knowledge-repository changes while ER work is
-deferred.
+checked-in output. Checkpoint 30 adds no report; it regenerates manual coverage
+and the Klee witness after catalog admission. The Diona ER report is historical
+and deliberately decoupled from unrelated knowledge-repository changes while
+ER work is deferred.

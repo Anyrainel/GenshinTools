@@ -593,8 +593,9 @@ source cell matches directly, so the context projection is `source-already-
 matched` and carries zero request facts or bindings. The Kokomi snapshot closes
 five nonempty and zero empty condition arrays: one selected plus four exact
 holdouts. The slice consumes, binds, and energy-classifies none of those
-holdouts. It is authenticated by the validator but deliberately remains outside
-the current catalog and manual coverage.
+holdouts. Checkpoint 30 admits only that selected occurrence to the current
+catalog after source-specific authentication and extraction checks; the four
+holdouts remain outside.
 
 ## Manual condition-array coverage seam
 
@@ -607,52 +608,54 @@ the raw snapshot values before schema parsing and requires every `conditions`
 property to match one extracted path and ordered payload, so future or unknown
 condition-bearing fields fail closed.
 
-`src/currentConditionBindingCatalog.ts` overlays only five authenticated
+`src/currentConditionBindingCatalog.ts` overlays only six authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
 IDs, exact-text Keqing Viridescent Venerer acknowledgements, and the four Klee
-plus three Diona source-local typed bindings. Source-local catalog entries share
-the generic `source-local-typed-predicate-ast` and `source-local-not-energy-
-deferred` evidence labels, but wrapper authentication, extraction, occurrence
-identity, and `sliceId` remain source-specific. A binding is addressed by
-source, record kind, source record, schema path, ordered-array hash, and subject.
-Stale or non-comparable upstream reports, partial expansions, duplicate or
-conflicting keys, subject mismatches, or a durable source-local report that
-differs from its fresh source-specific rebuild make the inventory non-comparable
-rather than converting evidence to an unbound result.
+plus three Diona plus one Kokomi source-local typed bindings. Source-local
+catalog entries share the generic `source-local-typed-predicate-ast` and
+`source-local-not-energy-deferred` evidence labels, but wrapper authentication,
+extraction, occurrence identity, literals, hashes, and `sliceId` remain source-
+specific. A binding is addressed by source, record kind, source record, schema
+path, ordered-array hash, and subject. Stale or non-comparable upstream reports,
+partial expansions, duplicate or conflicting keys, subject mismatches, or a
+durable source-local report that differs from its fresh source-specific rebuild
+make the inventory non-comparable rather than converting evidence to an unbound
+result.
 
-The standalone Kokomi report is not a sixth catalog wrapper yet. Its selected
-occurrence therefore does not change any current catalog, coverage, unique-
-array, or energy total. A later integration must authenticate that exact report
-through a separate source-specific extraction path before reusing the generic
-source-local evidence kinds.
+A private normalized helper performs only the common selected-occurrence to
+source-claim to condition-control parity check and catalog-entry construction.
+Each wrapper must first validate its own page/version, raw closure, exact
+selected and holdout sets, team/member/subject identity, condition text and
+hash, predicate and hash, payload and hash, recommendation metadata, request-
+binding boundary, and capability flags. The helper is not a generic wrapper,
+extractor, schema adapter, or prose parser.
 
 The durable report keeps binding and energy as independent ledgers. Across all
-126 nonempty arrays, the current catalog contributes 56 entries: 53 typed and
-3 exact-text acknowledged. Binding coverage is therefore 53 typed, 3
-acknowledged, and 70 unbound. Excluding only the three structural ER arrays
-leaves 123 rows: 53 typed, 3 acknowledged, and 67 unbound, spanning 86 exact
-ordered arrays. Those arrays contain 31 typed-only sets, 54 unbound-only sets,
+126 nonempty arrays, the current catalog contributes 57 entries: 54 typed and
+3 exact-text acknowledged. Binding coverage is therefore 54 typed, 3
+acknowledged, and 69 unbound. Excluding only the three structural ER arrays
+leaves 123 rows: 54 typed, 3 acknowledged, and 66 unbound, spanning 86 exact
+ordered arrays. Those arrays contain 32 typed-only sets, 53 unbound-only sets,
 and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Fifty typed rows are explicitly not energy-deferred; 61
+deferred. Fifty-one typed rows are explicitly not energy-deferred; 60
 nonempty rows remain energy-unclassified; and 16 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
 
-If the next checkpoint admits only the exact authenticated Kokomi occurrence,
-the expected delta is catalog 57 = 54 typed + 3 acknowledged; non-structural
-coverage 123/54/3/66; unique arrays 32 typed-only + 53 unbound-only + 1 mixed;
-and energy 15 deferred + 51 not-energy-deferred + 60 nonempty unclassified + 16
-empty. Those are integration validation targets, not checkpoint 29 results.
+Display status is a separate projection over all 142 occurrences: 51 typed, 57
+known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional. Manual
+coverage authenticates six wrapper families across 17 source files and 67
+generated-from paths.
 
-The dependency direction remains acyclic. Diona raw inputs feed the
-authenticated Diona wrapper, then the 56-entry binding catalog, manual coverage,
-and the regenerated checkpoint 27 Klee witness. The validator follows that
-order. The generic source-local core and source-specific wrappers never import
-the downstream catalog, coverage report, or witness.
+The dependency direction remains acyclic. Authenticated source-specific Klee,
+Diona, and Kokomi wrappers feed the 57-entry binding catalog, then manual
+coverage and the regenerated checkpoint 27 Klee witness. The validator follows
+that order. The generic source-local core and source-specific wrappers never
+import the downstream catalog, coverage report, or witness.
 
 This seam runs no arbitrary-English parser, recommendation composer, generator,
 optimizer, formula, rotation, damage, ranking, ideal-roll, or ER calculation.
@@ -689,9 +692,16 @@ zero candidates. It runs no payload-axis expansion, choice selection,
 compatibility evaluation, cross-product, recommendation composition, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER calculation.
 Independent applicability is validation evidence, not a build or guide.
-After Diona catalog integration, the durable witness is regenerated against the
+After Kokomi catalog admission, the durable witness is regenerated against the
 updated coverage input. Its four Klee claims, positive team, negative control,
 and interpretation boundary remain unchanged.
+
+The next bounded non-ER experiment is a standalone Noelle request-context
+slice for a numeric source condition satisfied by C6 or Burst Talent level 10.
+It is not implemented yet. That slice must preserve the source OR, distinguish
+constellation from Talent-level facts, scope supplied facts to the exact
+request subject, and remain outside catalog integration until separately
+authenticated.
 
 ## Callable modules for later experiments
 
@@ -737,8 +747,8 @@ and interpretation boundary remain unchanged.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation, the integrated Klee and Diona
-  adapters, and the standalone Kokomi adapter:
+- Generic source-local condition evaluation and the integrated Klee, Diona, and
+  Kokomi adapters:
   `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`, and

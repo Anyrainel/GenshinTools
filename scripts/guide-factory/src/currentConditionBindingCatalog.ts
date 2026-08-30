@@ -8,9 +8,12 @@ import {
   type KeqingSourceScopedRolePairSampleReport,
 } from "./keqingSourceScopedRolePairSample";
 import type { KleeSourceLocalConditionSliceReport } from "./kleeSourceLocalConditionSlice";
+import type { KokomiSourceLocalArtifactSliceReport } from "./kokomiSourceLocalArtifactSlice";
+import type { SourceLocalConditionSliceReport } from "./sourceLocalConditionSlice";
 import type {
   SourceConditionedGuidePacketAuthentication,
   SourceConditionedGuidePacketReport,
+  SourceConditionedClaimPayload,
   SourceConditionPredicateAst,
 } from "./sourceConditionedGuidePacket";
 
@@ -128,6 +131,7 @@ export interface BuildCurrentConditionBindingCatalogInput {
   keqingRolePair: AuthenticatedCurrentReportPair<KeqingSourceScopedRolePairSampleReport>;
   kleeSourceLocal: AuthenticatedCurrentReportPair<KleeSourceLocalConditionSliceReport>;
   dionaSourceLocal: AuthenticatedCurrentReportPair<DionaSourceLocalSupportSliceReport>;
+  kokomiSourceLocal: AuthenticatedCurrentReportPair<KokomiSourceLocalArtifactSliceReport>;
 }
 
 export interface CurrentConditionBindingCatalogIssue {
@@ -154,6 +158,7 @@ export interface CurrentConditionBindingCatalogReport {
     keqingRolePairDurableMatchesCurrent: boolean;
     kleeSourceLocalDurableMatchesCurrent: boolean;
     dionaSourceLocalDurableMatchesCurrent: boolean;
+    kokomiSourceLocalDurableMatchesCurrent: boolean;
   };
   entries: CurrentConditionBindingCatalogEntry[];
   summary: {
@@ -181,6 +186,9 @@ export interface CurrentConditionBindingCatalogReport {
     dionaSourceLocalOccurrenceCount: number;
     dionaSourceLocalTypedBindingCount: number;
     dionaSourceLocalNotEnergyDeferredCount: number;
+    kokomiSourceLocalOccurrenceCount: number;
+    kokomiSourceLocalTypedBindingCount: number;
+    kokomiSourceLocalNotEnergyDeferredCount: number;
   };
   issues: CurrentConditionBindingCatalogIssue[];
 }
@@ -230,6 +238,85 @@ const DIONA_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCES = [
       "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
     characterId: "bennett",
     memberIndex: 3,
+  },
+] as const;
+const KOKOMI_SOURCE_LOCAL_SLICE_ID =
+  "kqm-kokomi-source-local-artifact-slice-luna-v";
+const KOKOMI_SOURCE_LOCAL_PAGE_URL =
+  "https://keqingmains.com/q/kokomi-quickguide/";
+const KOKOMI_SOURCE_LOCAL_SOURCE_VERSION = "Luna V";
+const KOKOMI_SOURCE_LOCAL_SNAPSHOT_PATH =
+  "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json";
+const KOKOMI_SOURCE_LOCAL_SOURCE_RECORD_ID =
+  "kokomi-ineffa-columbina-sucrose-lunar-charged-example";
+const KOKOMI_SOURCE_LOCAL_REPOSITORY_RECORD_ID =
+  "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example";
+const KOKOMI_SOURCE_LOCAL_RAW_RECORD_IDS = [
+  "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+  "kokomi-on-field-nod-krai-artifact-delegation-luna-v",
+] as const;
+const KOKOMI_SOURCE_LOCAL_SELECTED_OCCURRENCE_ID =
+  "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions";
+const KOKOMI_SOURCE_LOCAL_SELECTED_CONDITIONS = [
+  "For Kokomi in this exact Lunar-Charged example team.",
+] as const;
+const KOKOMI_SOURCE_LOCAL_SELECTED_CONDITIONS_SHA256 =
+  "a9c6d3b2681ecb2119368d210164542577464049656217eb1fcc296ff4fd2295";
+const KOKOMI_SOURCE_LOCAL_SELECTED_PREDICATE = {
+  type: "all",
+  predicates: [
+    {
+      type: "exact-team-roster-includes",
+      characterId: "sangonomiya_kokomi",
+    },
+    { type: "exact-team-roster-includes", characterId: "ineffa" },
+    { type: "exact-team-roster-includes", characterId: "columbina" },
+    { type: "exact-team-roster-includes", characterId: "sucrose" },
+  ],
+} as const satisfies SourceConditionPredicateAst;
+const KOKOMI_SOURCE_LOCAL_SELECTED_PREDICATE_SHA256 =
+  "2c60322cf3d1b6691dbde84bd5484364752c87bb18634bd9303fd6ec2e03dcda";
+const KOKOMI_SOURCE_LOCAL_SELECTED_PAYLOAD = {
+  type: "artifact-group",
+  artifacts: [{ type: "4pc", setId: "oceanhued_clam" }],
+} as const satisfies SourceConditionedClaimPayload;
+const KOKOMI_SOURCE_LOCAL_SELECTED_PAYLOAD_SHA256 =
+  "bfd412bb94e8e50e9deec6813ef5329eb71c656fdd1af64fc8b5a2243543e1a0";
+const KOKOMI_SOURCE_LOCAL_EXPECTED_RECOMMENDATION = {
+  recommendationId:
+    "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations",
+  scope: "team-member-artifact-sets",
+  roles: [],
+  ordering: "unranked",
+  label: null,
+  classification: "recommended",
+  grouping: "single",
+  sourceIndex: 0,
+} as const;
+const KOKOMI_SOURCE_LOCAL_EXPECTED_HOLDOUTS = [
+  {
+    occurrenceId:
+      "kqm:character_guide:kokomi-on-field-nod-krai-artifact-delegation-luna-v:recommendation.artifactRecommendations[0].conditions",
+    conditionsSha256:
+      "a2933a2e2f7adf74da82241024b08ef3cc933e97875a60ed24a995e23dff7300",
+  },
+  {
+    occurrenceId:
+      "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:artifactPlans[0].conditions",
+    conditionsSha256:
+      "2e7b7109ed56cdbdbe8106429ff4a37bf8a76c4af7a6a96c1f71f123fbc19320",
+  },
+  {
+    occurrenceId:
+      "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[1].conditions",
+    conditionsSha256:
+      "345334cc6648346f0746fcee75a300703ef38cbbf2c290e80d9e0bb3ddbf12e9",
+  },
+  {
+    occurrenceId:
+      "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[2].artifactRecommendations[0].conditions",
+    conditionsSha256:
+      "2b615a74c769bcf02abb64b35d64bf8baf94eefb23f5f9a6e3044b540184d50f",
   },
 ] as const;
 
@@ -305,12 +392,16 @@ export function buildCurrentConditionBindingCatalog(
   const dionaSourceLocalDurableMatchesCurrent = exactCurrentReportMatches(
     input.dionaSourceLocal,
   );
+  const kokomiSourceLocalDurableMatchesCurrent = exactCurrentReportMatches(
+    input.kokomiSourceLocal,
+  );
   const authenticationBoundary = {
     ittoAuthenticated,
     keqingEquipmentDurableMatchesCurrent,
     keqingRolePairDurableMatchesCurrent,
     kleeSourceLocalDurableMatchesCurrent,
     dionaSourceLocalDurableMatchesCurrent,
+    kokomiSourceLocalDurableMatchesCurrent,
   };
 
   if (!ittoAuthenticated) {
@@ -353,6 +444,14 @@ export function buildCurrentConditionBindingCatalog(
       "The durable Diona source-local report differs from the current rebuilt report.",
     );
   }
+  if (!kokomiSourceLocalDurableMatchesCurrent) {
+    addIssue(
+      issues,
+      "authentication.kokomi-source-local-stale",
+      "kokomiSourceLocal",
+      "The durable Kokomi source-local report differs from the current rebuilt report.",
+    );
+  }
   if (issues.length > 0) {
     return failedReport(authenticationBoundary, issues);
   }
@@ -372,6 +471,10 @@ export function buildCurrentConditionBindingCatalog(
       ),
       ...extractDionaSourceLocalEntries(
         input.dionaSourceLocal.currentReport,
+        issues,
+      ),
+      ...extractKokomiSourceLocalEntries(
+        input.kokomiSourceLocal.currentReport,
         issues,
       ),
     ];
@@ -1196,87 +1299,23 @@ function extractKleeSourceLocalEntries(
   for (const selected of report.selectedOccurrences) {
     const claim = claimById.get(selected.occurrenceId);
     const control = controlById.get(selected.occurrenceId);
-    const conditionsSha256 = sha256Text(stableJson(selected.conditions));
-    const predicateAstSha256 = sha256Text(stableJson(selected.predicate));
-    const payloadSha256 = sha256Text(stableJson(selected.payload));
-    const expectedOccurrenceId = buildCurrentConditionArrayOccurrenceId({
-      sourceId: "kqm",
-      recordKind: "character_guide",
-      sourceRecordId: selected.sourceRecordId,
-      manualClaimPath: selected.manualClaimPath,
-    });
-    if (
-      selected.occurrenceId !== expectedOccurrenceId ||
-      selected.conditions.length === 0 ||
-      selected.conditionsSha256 !== conditionsSha256 ||
-      selected.predicateSha256 !== predicateAstSha256 ||
-      selected.payloadSha256 !== payloadSha256 ||
-      selected.repositoryParity !== "exact" ||
-      selected.sliceDisposition !== "selected" ||
-      !selected.bindingAuthoredBySlice ||
-      selected.sliceBindingClassification !== "typed-bound" ||
-      !selected.energyClassificationAuthoredBySlice ||
-      selected.sliceEnergyClassification !== "not-energy-deferred" ||
-      claim == null ||
-      claim.sourceId !== "kqm" ||
-      claim.sourceRecordId !== selected.sourceRecordId ||
-      claim.sourceConditionsSha256 !== selected.conditionsSha256 ||
-      stableJson(claim.sourceConditions) !== stableJson(selected.conditions) ||
-      stableJson(claim.predicate) !== stableJson(selected.predicate) ||
-      control == null ||
-      control.occurrenceControl.occurrenceId !== selected.occurrenceId ||
-      control.occurrenceControl.sourceId !== "kqm" ||
-      control.occurrenceControl.sourceRecordId !== selected.sourceRecordId ||
-      control.occurrenceControl.manualClaimPath !== selected.manualClaimPath ||
-      control.occurrenceControl.sourceConditionsSha256 !==
-        selected.conditionsSha256 ||
-      control.occurrenceControl.sourcePredicateSha256 !==
-        selected.predicateSha256 ||
-      control.occurrenceControl.payloadSha256 !== selected.payloadSha256 ||
-      control.occurrenceControl.repositoryParity !== "exact" ||
-      control.occurrenceControl.sliceDisposition !== "selected" ||
-      control.occurrenceControl.energyClassification !== "not-energy-deferred"
-    ) {
-      addIssue(
-        issues,
-        "klee-source-local.conflicting-occurrence-evidence",
-        `kleeSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
-        "The selected occurrence, source claim, condition control, predicate, payload, and exact source identity do not agree.",
-      );
-      continue;
-    }
-
-    const selectedOccurrenceSha256 = sha256Text(stableJson(selected));
-    entries.push(
-      makeEntry({
+    const entry = buildSourceLocalCatalogEntry(
+      {
+        diagnosticCode: "klee-source-local.conflicting-occurrence-evidence",
+        diagnosticPath: `kleeSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+        diagnosticMessage:
+          "The selected occurrence, source claim, condition control, predicate, payload, and exact source identity do not agree.",
+        sliceId: report.sliceId,
         sourceId: "kqm",
         recordKind: "character_guide",
-        sourceRecordId: selected.sourceRecordId,
-        manualClaimPath: selected.manualClaimPath,
         subject: "klee",
-        orderedConditions: selected.conditions,
-        bindingClassification: "typed-bound",
-        energyClassification: "not-energy-deferred",
-        bindingEvidence: {
-          kind: "source-local-typed-predicate-ast",
-          sliceId: report.sliceId,
-          selectedOccurrenceId: selected.occurrenceId,
-          selectedOccurrenceSha256,
-          predicateAst: structuredClone(selected.predicate),
-          predicateAstSha256,
-          payloadSha256,
-          occurrenceControlSha256: sha256Text(stableJson(control)),
-        },
-        energyEvidence: {
-          kind: "source-local-not-energy-deferred",
-          structuralErEvidencePresent: false,
-          energyRelatedWorkDeferred: false,
-          sliceId: report.sliceId,
-          selectedOccurrenceId: selected.occurrenceId,
-          selectedOccurrenceSha256,
-        },
-      }),
+        selected,
+        claim,
+        control,
+      },
+      issues,
     );
+    if (entry) entries.push(entry);
   }
   return entries;
 }
@@ -1499,18 +1538,8 @@ function extractDionaSourceLocalEntries(
     );
     const claim = claimById.get(selected.occurrenceId);
     const control = controlById.get(selected.occurrenceId);
-    const conditionsSha256 = sha256Text(stableJson(selected.conditions));
-    const predicateAstSha256 = sha256Text(stableJson(selected.predicate));
-    const payloadSha256 = sha256Text(stableJson(selected.payload));
-    const expectedOccurrenceId = buildCurrentConditionArrayOccurrenceId({
-      sourceId: "kqm",
-      recordKind: "team",
-      sourceRecordId: selected.sourceRecordId,
-      manualClaimPath: selected.manualClaimPath,
-    });
     if (
       expected == null ||
-      selected.occurrenceId !== expectedOccurrenceId ||
       selected.characterId !== expected.characterId ||
       selected.memberIndex !== expected.memberIndex ||
       selected.sourceRecordId !== DIONA_SOURCE_LOCAL_SOURCE_RECORD_ID ||
@@ -1518,43 +1547,7 @@ function extractDionaSourceLocalEntries(
       selected.manualClaimPath !==
         `members[${expected.memberIndex}].artifactRecommendations[0].conditions` ||
       selected.repositoryPath !== selected.manualClaimPath ||
-      selected.claimAxis !== "artifact-recommendation" ||
-      selected.conditions.length === 0 ||
-      selected.conditionsSha256 !== conditionsSha256 ||
-      selected.predicateSha256 !== predicateAstSha256 ||
-      selected.payloadSha256 !== payloadSha256 ||
-      selected.repositoryParity !== "exact" ||
-      selected.sliceDisposition !== "selected" ||
-      !selected.bindingAuthoredBySlice ||
-      selected.sliceBindingClassification !== "typed-bound" ||
-      !selected.energyClassificationAuthoredBySlice ||
-      selected.sliceEnergyClassification !== "not-energy-deferred" ||
-      claim == null ||
-      claim.claimId !== selected.occurrenceId ||
-      claim.sourceId !== "kqm" ||
-      claim.sourceRecordId !== selected.sourceRecordId ||
-      claim.repositoryRecordId !== selected.repositoryRecordId ||
-      claim.characterId !== selected.characterId ||
-      claim.sourceConditionsSha256 !== selected.conditionsSha256 ||
-      stableJson(claim.sourceConditions) !== stableJson(selected.conditions) ||
-      stableJson(claim.predicate) !== stableJson(selected.predicate) ||
-      stableJson(claim.payload) !== stableJson(selected.payload) ||
-      control == null ||
-      control.claimId !== selected.occurrenceId ||
-      control.occurrenceControl.occurrenceId !== selected.occurrenceId ||
-      control.occurrenceControl.sourceId !== "kqm" ||
-      control.occurrenceControl.sourceRecordId !== selected.sourceRecordId ||
-      control.occurrenceControl.repositoryRecordId !==
-        selected.repositoryRecordId ||
-      control.occurrenceControl.manualClaimPath !== selected.manualClaimPath ||
-      control.occurrenceControl.sourceConditionsSha256 !==
-        selected.conditionsSha256 ||
-      control.occurrenceControl.sourcePredicateSha256 !==
-        selected.predicateSha256 ||
-      control.occurrenceControl.payloadSha256 !== selected.payloadSha256 ||
-      control.occurrenceControl.repositoryParity !== "exact" ||
-      control.occurrenceControl.sliceDisposition !== "selected" ||
-      control.occurrenceControl.energyClassification !== "not-energy-deferred"
+      selected.claimAxis !== "artifact-recommendation"
     ) {
       addIssue(
         issues,
@@ -1565,39 +1558,335 @@ function extractDionaSourceLocalEntries(
       continue;
     }
 
-    const selectedOccurrenceSha256 = sha256Text(stableJson(selected));
-    entries.push(
-      makeEntry({
+    const entry = buildSourceLocalCatalogEntry(
+      {
+        diagnosticCode: "diona-source-local.conflicting-occurrence-evidence",
+        diagnosticPath: `dionaSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+        diagnosticMessage:
+          "The selected occurrence, character/member identity, source claim, condition control, predicate, payload, and exact source identity do not agree.",
+        sliceId: report.sliceId,
         sourceId: "kqm",
         recordKind: "team",
-        sourceRecordId: selected.sourceRecordId,
-        manualClaimPath: selected.manualClaimPath,
         subject: selected.characterId,
-        orderedConditions: selected.conditions,
-        bindingClassification: "typed-bound",
-        energyClassification: "not-energy-deferred",
-        bindingEvidence: {
-          kind: "source-local-typed-predicate-ast",
-          sliceId: report.sliceId,
-          selectedOccurrenceId: selected.occurrenceId,
-          selectedOccurrenceSha256,
-          predicateAst: structuredClone(selected.predicate),
-          predicateAstSha256,
-          payloadSha256,
-          occurrenceControlSha256: sha256Text(stableJson(control)),
-        },
-        energyEvidence: {
-          kind: "source-local-not-energy-deferred",
-          structuralErEvidencePresent: false,
-          energyRelatedWorkDeferred: false,
-          sliceId: report.sliceId,
-          selectedOccurrenceId: selected.occurrenceId,
-          selectedOccurrenceSha256,
-        },
-      }),
+        selected,
+        claim,
+        control,
+      },
+      issues,
     );
+    if (entry) entries.push(entry);
   }
   return entries;
+}
+
+function extractKokomiSourceLocalEntries(
+  report: KokomiSourceLocalArtifactSliceReport,
+  issues: CurrentConditionBindingCatalogIssue[],
+): CurrentConditionBindingCatalogEntry[] {
+  const sourceLocalSlice = report.sourceLocalSlice;
+  if (
+    report.comparisonStatus !== "comparable" ||
+    report.reportType !== "kokomi-source-local-artifact-slice" ||
+    report.classification !==
+      "authenticated-source-local-condition-binding-slice" ||
+    report.publicationStatus !== "withheld-unreviewed-source-slice" ||
+    report.sliceId !== KOKOMI_SOURCE_LOCAL_SLICE_ID ||
+    report.issues.length !== 0 ||
+    sourceLocalSlice == null ||
+    sourceLocalSlice.comparisonStatus !== "comparable"
+  ) {
+    addIssue(
+      issues,
+      "kokomi-source-local.non-comparable",
+      "kokomiSourceLocal.currentReport",
+      "The Kokomi source-local report is not the expected comparable authenticated slice.",
+    );
+    return [];
+  }
+  if (
+    report.arbitraryEnglishParsingAllowed !== false ||
+    report.supportsSourceAuthorization !== false ||
+    report.supportsGuideClaims !== false ||
+    report.supportsTeamRecommendations !== false ||
+    report.supportsBuildRecommendations !== false ||
+    report.supportsEquipmentRecommendations !== false ||
+    report.supportsStatRecommendations !== false ||
+    report.supportsRankClaims !== false ||
+    report.supportsDamageClaims !== false ||
+    report.supportsRotationClaims !== false ||
+    report.supportsEnergyRecoveryClaims !== false ||
+    report.conditionTruthEstablishedFromRecommendationMetadata !== false ||
+    report.recommendationCompositionExecuted !== false ||
+    report.generatorExecuted !== false ||
+    report.optimizerExecuted !== false ||
+    report.artifactAssignmentExecuted !== false ||
+    report.teamCompositionExecuted !== false ||
+    report.buildCompositionExecuted !== false ||
+    report.damageComputationExecuted !== false ||
+    report.rotationComputationExecuted !== false ||
+    report.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.supportsSourceAuthorization !== false ||
+    sourceLocalSlice.supportsGuideClaims !== false ||
+    sourceLocalSlice.supportsTeamRecommendations !== false ||
+    sourceLocalSlice.supportsBuildRecommendations !== false ||
+    sourceLocalSlice.supportsStatRecommendations !== false ||
+    sourceLocalSlice.supportsRankClaims !== false ||
+    sourceLocalSlice.supportsDamageClaims !== false ||
+    sourceLocalSlice.supportsRotationClaims !== false ||
+    sourceLocalSlice.supportsEnergyRecoveryClaims !== false ||
+    sourceLocalSlice.playerFacingRecommendations !== false ||
+    sourceLocalSlice.ranking !== false ||
+    sourceLocalSlice.buildComposition !== false ||
+    sourceLocalSlice.damage !== false ||
+    sourceLocalSlice.formulas !== false ||
+    sourceLocalSlice.rotations !== false ||
+    sourceLocalSlice.ER !== false ||
+    sourceLocalSlice.recommendationCompositionExecuted !== false ||
+    sourceLocalSlice.generatorExecuted !== false ||
+    sourceLocalSlice.optimizerExecuted !== false ||
+    sourceLocalSlice.damageComputationExecuted !== false ||
+    sourceLocalSlice.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.assembledBuildCount !== 0 ||
+    sourceLocalSlice.issues.length !== 0 ||
+    sourceLocalSlice.sliceId !== report.sliceId ||
+    report.rawInputBoundary.status !== "accepted" ||
+    !report.rawInputBoundary.exactPathSet ||
+    !report.rawInputBoundary.byteAndParsedObjectClosure ||
+    report.rawInputBoundary.sourceFileCount !== 4 ||
+    sourceLocalSlice.sourceDocumentBoundary.status !== "accepted" ||
+    sourceLocalSlice.sourceDocumentBoundary.sourceId !== "kqm" ||
+    sourceLocalSlice.sourceDocumentBoundary.pageUrl !==
+      KOKOMI_SOURCE_LOCAL_PAGE_URL ||
+    sourceLocalSlice.sourceDocumentBoundary.sourceVersion !==
+      KOKOMI_SOURCE_LOCAL_SOURCE_VERSION ||
+    sourceLocalSlice.sourceDocumentBoundary.snapshotPath !==
+      KOKOMI_SOURCE_LOCAL_SNAPSHOT_PATH ||
+    sourceLocalSlice.sourceDocumentBoundary.exactOccurrenceIds.length !== 1 ||
+    sourceLocalSlice.sourceDocumentBoundary.exactTeamRecordIds.length !== 1 ||
+    sourceLocalSlice.sourceDocumentBoundary.exactTeamRecordIds[0] !==
+      KOKOMI_SOURCE_LOCAL_REPOSITORY_RECORD_ID ||
+    !sourceLocalSlice.sourceDocumentBoundary
+      .allClaimsAndTeamsShareExactSourceDocument ||
+    report.sourceBoundary.status !== "accepted" ||
+    report.sourceBoundary.sourceId !== "kqm" ||
+    report.sourceBoundary.pageUrl !== KOKOMI_SOURCE_LOCAL_PAGE_URL ||
+    report.sourceBoundary.sourceVersion !== KOKOMI_SOURCE_LOCAL_SOURCE_VERSION ||
+    report.sourceBoundary.snapshotPath !== KOKOMI_SOURCE_LOCAL_SNAPSHOT_PATH ||
+    stableJson([...report.sourceBoundary.rawRecordIds].sort()) !==
+      stableJson([...KOKOMI_SOURCE_LOCAL_RAW_RECORD_IDS].sort()) ||
+    report.sourceBoundary.repositoryParity !== "exact" ||
+    !report.sourceBoundary.selectedAndHoldoutsCloseAllNonemptyKokomiConditions ||
+    !report.sourceBoundary.samePageLineage ||
+    !report.sourceBoundary.selectedClaimsAndTeamShareExactSourceRecord ||
+    report.sourceBoundary.rawRecordCount !== 2 ||
+    report.sourceBoundary.totalConditionArrayCount !== 5 ||
+    report.sourceBoundary.nonemptyConditionArrayCount !== 5 ||
+    report.sourceBoundary.emptyConditionArrayCount !== 0 ||
+    report.sourceBoundary.selectedOccurrenceCount !== 1 ||
+    report.sourceBoundary.holdoutOccurrenceCount !== 4 ||
+    report.sourceBoundary.extractionMethod !== "agent-assisted" ||
+    report.sourceBoundary.reviewStatus !== "unreviewed" ||
+    report.sourceBoundary.sourceRegistryStatus !== "active" ||
+    report.sourceBoundary.sourceRegistryIngestionMode !==
+      "manual-observation" ||
+    report.sourceBoundary.sourceRegistryPermission !== "unknown" ||
+    report.sourceBoundary.promotionEligible !== false ||
+    report.selectedOccurrences.length !== 1 ||
+    report.holdoutOccurrences.length !== 4 ||
+    report.summary.totalConditionArrayCount !== 5 ||
+    report.summary.nonemptyConditionArrayCount !== 5 ||
+    report.summary.emptyConditionArrayCount !== 0 ||
+    report.summary.selectedOccurrenceCount !== 1 ||
+    report.summary.selectedUniqueConditionArrayCount !== 1 ||
+    report.summary.selectedNotEnergyDeferredCount !== 1 ||
+    report.summary.holdoutOccurrenceCount !== 4 ||
+    report.summary.holdoutConsumedCount !== 0 ||
+    report.summary.holdoutBindingAuthoredCount !== 0 ||
+    report.summary.holdoutEnergyClassificationAuthoredCount !== 0 ||
+    report.summary.sourceTeamCount !== 1 ||
+    report.summary.sourceCellCount !== 1 ||
+    report.summary.sourceMatchedCount !== 1 ||
+    report.summary.sourceInapplicableCount !== 0 ||
+    report.summary.sourceUnresolvedCount !== 0 ||
+    report.summary.contextApplicableCount !== 0 ||
+    report.summary.sourceAlreadyMatchedCount !== 1 ||
+    report.summary.sourceDefinitelyInapplicableCount !== 0 ||
+    report.summary.effectiveMatchedCount !== 1 ||
+    report.summary.effectiveInapplicableCount !== 0 ||
+    report.summary.effectiveUnresolvedCount !== 0 ||
+    report.summary.assembledBuildCount !== 0 ||
+    sourceLocalSlice.summary.claimCount !== 1 ||
+    sourceLocalSlice.summary.teamCount !== 1 ||
+    sourceLocalSlice.summary.cellCount !== 1 ||
+    sourceLocalSlice.summary.sourceMatchedCount !== 1 ||
+    sourceLocalSlice.summary.sourceInapplicableCount !== 0 ||
+    sourceLocalSlice.summary.sourceUnresolvedCount !== 0 ||
+    sourceLocalSlice.summary.applicableUnderSuppliedContextCount !== 0 ||
+    sourceLocalSlice.summary.sourceAlreadyMatchedCount !== 1 ||
+    sourceLocalSlice.summary.sourceDefinitelyInapplicableCount !== 0 ||
+    sourceLocalSlice.summary.effectiveMatchedCount !== 1 ||
+    sourceLocalSlice.summary.effectiveInapplicableCount !== 0 ||
+    sourceLocalSlice.summary.effectiveUnresolvedCount !== 0 ||
+    sourceLocalSlice.summary.deferredEnergyCount !== 0 ||
+    sourceLocalSlice.summary.assembledBuildCount !== 0
+  ) {
+    addIssue(
+      issues,
+      "kokomi-source-local.partial-or-capability-crossing-evidence",
+      "kokomiSourceLocal.currentReport",
+      "The Kokomi checkpoint lost its exact one-selected/four-holdout boundary or crossed a prohibited computation boundary.",
+    );
+    return [];
+  }
+
+  const actualSelectedIds = report.selectedOccurrences.map(
+    ({ occurrenceId }) => occurrenceId,
+  );
+  if (
+    stableJson(actualSelectedIds) !==
+      stableJson([KOKOMI_SOURCE_LOCAL_SELECTED_OCCURRENCE_ID]) ||
+    stableJson(sourceLocalSlice.sourceDocumentBoundary.exactOccurrenceIds) !==
+      stableJson([KOKOMI_SOURCE_LOCAL_SELECTED_OCCURRENCE_ID])
+  ) {
+    addIssue(
+      issues,
+      "kokomi-source-local.selected-occurrence-scope-drift",
+      "kokomiSourceLocal.currentReport.selectedOccurrences",
+      "The Kokomi typed slice must remain limited to the one exact team-member artifact occurrence.",
+    );
+    return [];
+  }
+
+  const expectedHoldoutById = new Map<
+    string,
+    (typeof KOKOMI_SOURCE_LOCAL_EXPECTED_HOLDOUTS)[number]
+  >(
+    KOKOMI_SOURCE_LOCAL_EXPECTED_HOLDOUTS.map((holdout) => [
+      holdout.occurrenceId,
+      holdout,
+    ]),
+  );
+  const holdoutIds = report.holdoutOccurrences.map(
+    ({ occurrenceId }) => occurrenceId,
+  );
+  if (
+    new Set(holdoutIds).size !== 4 ||
+    holdoutIds.some((occurrenceId) => actualSelectedIds.includes(occurrenceId)) ||
+    stableJson([...holdoutIds].sort()) !==
+      stableJson(
+        KOKOMI_SOURCE_LOCAL_EXPECTED_HOLDOUTS.map(
+          ({ occurrenceId }) => occurrenceId,
+        ).sort(),
+      ) ||
+    report.holdoutOccurrences.some((holdout) => {
+      const expected = expectedHoldoutById.get(holdout.occurrenceId);
+      return (
+        expected == null ||
+        holdout.conditions.length === 0 ||
+        holdout.conditionsSha256 !== expected.conditionsSha256 ||
+        holdout.conditionsSha256 !== sha256Text(stableJson(holdout.conditions)) ||
+        holdout.structuralEnergyDimension !== "not-structural-er" ||
+        holdout.repositoryParity !== "exact" ||
+        holdout.sliceDisposition !== "holdout" ||
+        holdout.consumedBySlice ||
+        holdout.bindingAuthoredBySlice ||
+        holdout.energyClassificationAuthoredBySlice
+      );
+    })
+  ) {
+    addIssue(
+      issues,
+      "kokomi-source-local.selected-holdout-partition-drift",
+      "kokomiSourceLocal.currentReport.holdoutOccurrences",
+      "The exact selected and four holdout occurrences must remain unique, disjoint, unconsumed, and unauthored by the slice.",
+    );
+    return [];
+  }
+
+  const claimById = exactSingleRowsById(
+    sourceLocalSlice.sourceClaimCatalog,
+    ({ claimId }) => claimId,
+    "kokomi-source-local.duplicate-source-claim",
+    "kokomiSourceLocal.currentReport.sourceLocalSlice.sourceClaimCatalog",
+    issues,
+  );
+  const controlById = exactSingleRowsById(
+    sourceLocalSlice.conditionControls,
+    ({ claimId }) => claimId,
+    "kokomi-source-local.duplicate-condition-control",
+    "kokomiSourceLocal.currentReport.sourceLocalSlice.conditionControls",
+    issues,
+  );
+  if (issues.length > 0) return [];
+  if (claimById.size !== 1 || controlById.size !== 1) {
+    addIssue(
+      issues,
+      "kokomi-source-local.partial-or-capability-crossing-evidence",
+      "kokomiSourceLocal.currentReport.sourceLocalSlice",
+      "The Kokomi source-local slice must expose exactly one source claim and one condition control.",
+    );
+    return [];
+  }
+
+  const selected = report.selectedOccurrences[0]!;
+  const claim = claimById.get(selected.occurrenceId);
+  const control = controlById.get(selected.occurrenceId);
+  if (
+    selected.occurrenceId !== KOKOMI_SOURCE_LOCAL_SELECTED_OCCURRENCE_ID ||
+    selected.characterId !== "sangonomiya_kokomi" ||
+    selected.memberIndex !== 0 ||
+    selected.sourceRecordId !== KOKOMI_SOURCE_LOCAL_SOURCE_RECORD_ID ||
+    selected.repositoryRecordId !==
+      KOKOMI_SOURCE_LOCAL_REPOSITORY_RECORD_ID ||
+    selected.manualClaimPath !==
+      "members[0].artifactRecommendations[0].conditions" ||
+    selected.repositoryPath !== selected.manualClaimPath ||
+    selected.claimAxis !== "artifact-recommendation" ||
+    stableJson(selected.conditions) !==
+      stableJson(KOKOMI_SOURCE_LOCAL_SELECTED_CONDITIONS) ||
+    selected.conditionsSha256 !==
+      KOKOMI_SOURCE_LOCAL_SELECTED_CONDITIONS_SHA256 ||
+    stableJson(selected.predicate) !==
+      stableJson(KOKOMI_SOURCE_LOCAL_SELECTED_PREDICATE) ||
+    selected.predicateSha256 !==
+      KOKOMI_SOURCE_LOCAL_SELECTED_PREDICATE_SHA256 ||
+    stableJson(selected.payload) !==
+      stableJson(KOKOMI_SOURCE_LOCAL_SELECTED_PAYLOAD) ||
+    selected.payloadSha256 !== KOKOMI_SOURCE_LOCAL_SELECTED_PAYLOAD_SHA256 ||
+    claim == null ||
+    claim.catalogIndex !== 0 ||
+    stableJson(claim.recommendation) !==
+      stableJson(KOKOMI_SOURCE_LOCAL_EXPECTED_RECOMMENDATION) ||
+    control == null ||
+    control.catalogIndex !== 0 ||
+    control.requestBindings.length !== 0
+  ) {
+    addIssue(
+      issues,
+      "kokomi-source-local.conflicting-occurrence-evidence",
+      `kokomiSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+      "The selected Kokomi occurrence drifted from its exact literal condition, ordered roster predicate, artifact payload, source metadata, or zero-request-binding boundary.",
+    );
+    return [];
+  }
+
+  const entry = buildSourceLocalCatalogEntry(
+    {
+      diagnosticCode: "kokomi-source-local.conflicting-occurrence-evidence",
+      diagnosticPath: `kokomiSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+      diagnosticMessage:
+        "The selected occurrence, source claim, condition control, predicate, payload, and exact source identity do not agree.",
+      sliceId: report.sliceId,
+      sourceId: "kqm",
+      recordKind: "team",
+      subject: "sangonomiya_kokomi",
+      selected,
+      claim,
+      control,
+    },
+    issues,
+  );
+  return entry ? [entry] : [];
 }
 
 function exactSingleRowsById<T>(
@@ -1622,6 +1911,136 @@ function exactSingleRowsById<T>(
     }
   }
   return result;
+}
+
+interface SourceLocalSelectedOccurrenceForCatalog {
+  occurrenceId: string;
+  sourceRecordId: string;
+  repositoryRecordId: string;
+  manualClaimPath: string;
+  claimAxis: string;
+  conditions: string[];
+  conditionsSha256: string;
+  payload: SourceConditionedClaimPayload;
+  payloadSha256: string;
+  predicate: SourceConditionPredicateAst;
+  predicateSha256: string;
+  repositoryParity: "exact";
+  sliceDisposition: "selected";
+  bindingAuthoredBySlice: true;
+  sliceBindingClassification: "typed-bound";
+  energyClassificationAuthoredBySlice: true;
+  sliceEnergyClassification: "not-energy-deferred";
+}
+
+function buildSourceLocalCatalogEntry(
+  input: {
+    diagnosticCode: string;
+    diagnosticPath: string;
+    diagnosticMessage: string;
+    sliceId: string;
+    sourceId: string;
+    recordKind: "character_guide" | "team";
+    subject: string;
+    selected: SourceLocalSelectedOccurrenceForCatalog;
+    claim:
+      | SourceLocalConditionSliceReport["sourceClaimCatalog"][number]
+      | undefined;
+    control:
+      | SourceLocalConditionSliceReport["conditionControls"][number]
+      | undefined;
+  },
+  issues: CurrentConditionBindingCatalogIssue[],
+): CurrentConditionBindingCatalogEntry | null {
+  const { selected, claim, control } = input;
+  const conditionsSha256 = sha256Text(stableJson(selected.conditions));
+  const predicateAstSha256 = sha256Text(stableJson(selected.predicate));
+  const payloadSha256 = sha256Text(stableJson(selected.payload));
+  const expectedOccurrenceId = buildCurrentConditionArrayOccurrenceId({
+    sourceId: input.sourceId,
+    recordKind: input.recordKind,
+    sourceRecordId: selected.sourceRecordId,
+    manualClaimPath: selected.manualClaimPath,
+  });
+  if (
+    selected.occurrenceId !== expectedOccurrenceId ||
+    selected.conditions.length === 0 ||
+    selected.conditionsSha256 !== conditionsSha256 ||
+    selected.predicateSha256 !== predicateAstSha256 ||
+    selected.payloadSha256 !== payloadSha256 ||
+    selected.repositoryParity !== "exact" ||
+    selected.sliceDisposition !== "selected" ||
+    !selected.bindingAuthoredBySlice ||
+    selected.sliceBindingClassification !== "typed-bound" ||
+    !selected.energyClassificationAuthoredBySlice ||
+    selected.sliceEnergyClassification !== "not-energy-deferred" ||
+    claim == null ||
+    claim.claimId !== selected.occurrenceId ||
+    claim.sourceId !== input.sourceId ||
+    claim.sourceRecordId !== selected.sourceRecordId ||
+    claim.repositoryRecordId !== selected.repositoryRecordId ||
+    claim.characterId !== input.subject ||
+    claim.sourceConditionsSha256 !== selected.conditionsSha256 ||
+    stableJson(claim.sourceConditions) !== stableJson(selected.conditions) ||
+    stableJson(claim.predicate) !== stableJson(selected.predicate) ||
+    stableJson(claim.payload) !== stableJson(selected.payload) ||
+    control == null ||
+    control.claimId !== selected.occurrenceId ||
+    control.catalogIndex !== claim.catalogIndex ||
+    control.occurrenceControl.occurrenceId !== selected.occurrenceId ||
+    control.occurrenceControl.sourceId !== input.sourceId ||
+    control.occurrenceControl.sourceRecordId !== selected.sourceRecordId ||
+    control.occurrenceControl.repositoryRecordId !==
+      selected.repositoryRecordId ||
+    control.occurrenceControl.manualClaimPath !== selected.manualClaimPath ||
+    control.occurrenceControl.claimAxis !== selected.claimAxis ||
+    control.occurrenceControl.sourceConditionsSha256 !==
+      selected.conditionsSha256 ||
+    control.occurrenceControl.sourcePredicateSha256 !==
+      selected.predicateSha256 ||
+    control.occurrenceControl.payloadSha256 !== selected.payloadSha256 ||
+    control.occurrenceControl.repositoryParity !== "exact" ||
+    control.occurrenceControl.sliceDisposition !== "selected" ||
+    control.occurrenceControl.energyClassification !== "not-energy-deferred"
+  ) {
+    addIssue(
+      issues,
+      input.diagnosticCode,
+      input.diagnosticPath,
+      input.diagnosticMessage,
+    );
+    return null;
+  }
+
+  const selectedOccurrenceSha256 = sha256Text(stableJson(selected));
+  return makeEntry({
+    sourceId: input.sourceId,
+    recordKind: input.recordKind,
+    sourceRecordId: selected.sourceRecordId,
+    manualClaimPath: selected.manualClaimPath,
+    subject: input.subject,
+    orderedConditions: selected.conditions,
+    bindingClassification: "typed-bound",
+    energyClassification: "not-energy-deferred",
+    bindingEvidence: {
+      kind: "source-local-typed-predicate-ast",
+      sliceId: input.sliceId,
+      selectedOccurrenceId: selected.occurrenceId,
+      selectedOccurrenceSha256,
+      predicateAst: structuredClone(selected.predicate),
+      predicateAstSha256,
+      payloadSha256,
+      occurrenceControlSha256: sha256Text(stableJson(control)),
+    },
+    energyEvidence: {
+      kind: "source-local-not-energy-deferred",
+      structuralErEvidencePresent: false,
+      energyRelatedWorkDeferred: false,
+      sliceId: input.sliceId,
+      selectedOccurrenceId: selected.occurrenceId,
+      selectedOccurrenceSha256,
+    },
+  });
 }
 
 function makeEntry(input: {
@@ -1730,12 +2149,12 @@ function validateCombinedEntries(
       );
     }
   }
-  if (entries.length !== 56) {
+  if (entries.length !== 57) {
     addIssue(
       issues,
       "catalog.occurrence-count-drift",
       "entries",
-      `Expected 56 authenticated current bindings, found ${entries.length}.`,
+      `Expected 57 authenticated current bindings, found ${entries.length}.`,
     );
   }
 }
@@ -1763,6 +2182,11 @@ function summarize(
     ({ bindingEvidence }) =>
       bindingEvidence.kind === "source-local-typed-predicate-ast" &&
       bindingEvidence.sliceId === DIONA_SOURCE_LOCAL_SLICE_ID,
+  );
+  const kokomiEntries = entries.filter(
+    ({ bindingEvidence }) =>
+      bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+      bindingEvidence.sliceId === KOKOMI_SOURCE_LOCAL_SLICE_ID,
   );
   return {
     occurrenceCount: entries.length,
@@ -1823,6 +2247,14 @@ function summarize(
       ({ typedBinding }) => typedBinding,
     ).length,
     dionaSourceLocalNotEnergyDeferredCount: dionaEntries.filter(
+      ({ energyClassification }) =>
+        energyClassification === "not-energy-deferred",
+    ).length,
+    kokomiSourceLocalOccurrenceCount: kokomiEntries.length,
+    kokomiSourceLocalTypedBindingCount: kokomiEntries.filter(
+      ({ typedBinding }) => typedBinding,
+    ).length,
+    kokomiSourceLocalNotEnergyDeferredCount: kokomiEntries.filter(
       ({ energyClassification }) =>
         energyClassification === "not-energy-deferred",
     ).length,

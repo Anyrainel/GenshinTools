@@ -141,6 +141,12 @@ comparative performance, rank, suitability, account advice, or a player-facing
 recommendation, and independently evaluated contexts must not be multiplied
 into one build.
 
+The next planned standalone request-context slice will test a Noelle numeric
+condition expressed as C6 or Burst Talent level 10. It is not implemented yet.
+That experiment must preserve the source OR structure, keep constellation and
+Talent-level facts distinct, and scope every supplied numeric fact to the exact
+request subject.
+
 ### Derived source-local condition slices
 
 A source-local slice may compose typed source-condition evaluation with strict
@@ -179,7 +185,7 @@ three and 15 nonempty holdouts are exact and disjoint. Ten holdouts are ordinary
 descriptive inventory and five are ER-deferred descriptive inventory. The slice
 consumes, binds, or energy-classifies none of them.
 
-The standalone Kokomi Luna V adapter selects exactly member 0's first artifact
+The Kokomi Luna V adapter selects exactly member 0's first artifact
 condition from the exact Kokomi/Ineffa/Columbina/Sucrose team record. It
 preserves one 4pc Ocean-Hued Clam payload with source classification
 `recommended` and ordering `unranked`. The pinned ordered roster conjunction is
@@ -202,11 +208,17 @@ identity, extraction contract, and `sliceId`. The current generic labels are
 generic labels do not authorize a generic source extractor or cross-source
 predicate inference.
 
-Authentication and catalog admission are separate gates. The current Kokomi
-slice is authenticated standalone but is not a current catalog input. Its
-source classification, source order, matched predicate, and occurrence-scoped
-not-energy-deferred statement therefore do not change catalog or coverage until
-a later source-specific integration explicitly admits that exact occurrence.
+Authentication and catalog admission are separate gates. Checkpoint 30 admits
+only the already authenticated Kokomi selected occurrence. It pins the exact
+source literals, hashes, team/member/subject identity, ordered roster predicate,
+Ocean-Hued Clam payload, `recommended`/`unranked` metadata, and zero request-
+binding boundary. The four exact Kokomi holdouts remain unbound and energy-
+unclassified.
+
+A private normalized helper may perform only repeated selected-occurrence,
+source-claim, and condition-control parity plus catalog-entry construction after
+source-specific wrapper checks pass. It must not become a generic wrapper,
+schema adapter, extractor, or prose parser.
 
 ### Derived condition-array coverage
 
@@ -246,17 +258,16 @@ its fresh authenticated rebuild. They must not parse arbitrary English, infer
 a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
-The current authenticated catalog contains 56 entries: 53 typed bindings and 3
-exact-text acknowledgements. The non-structural coverage partition is 123 rows:
-53 typed, 3 acknowledged, and 67 unbound. Its 86 unique ordered arrays contain
-31 typed-only, 54 unbound-only, and one mixed acknowledged/unbound set. The
-independent energy ledger remains 15 deferred, 50 explicitly not energy-
-deferred, 61 nonempty unclassified, and 16 empty unconditional arrays.
-Those checkpoint 28 totals remain current after the standalone Kokomi report.
-The next integration target, not a current result, is 57 catalog entries = 54
-typed + 3 acknowledged; non-structural coverage 123/54/3/66; unique arrays 32
-typed-only + 53 unbound-only + 1 mixed; and energy 15 deferred + 51 not-energy-
-deferred + 60 nonempty unclassified + 16 empty.
+The current authenticated catalog contains 57 entries: 54 typed bindings and 3
+exact-text acknowledgements. Full nonempty binding coverage is 54 typed, 3
+acknowledged, and 69 unbound. The non-structural partition is 123 rows: 54
+typed, 3 acknowledged, and 66 unbound. Its 86 unique ordered arrays contain 32
+typed-only, 53 unbound-only, and one mixed acknowledged/unbound set. The
+independent energy ledger is 15 deferred, 51 explicitly not energy-deferred, 60
+nonempty unclassified, and 16 empty unconditional arrays. Display status is 51
+typed, 57 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+unconditional. Coverage authenticates six wrapper families across 17 source
+files and 67 generated-from paths.
 
 ### Derived condition-resolved flat claim joins
 

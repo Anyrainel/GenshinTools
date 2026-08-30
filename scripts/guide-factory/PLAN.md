@@ -550,15 +550,44 @@ only + 1 mixed, and energy 15 deferred + 50 not-energy-deferred + 61 nonempty
 unclassified + 16 empty. The slice executes no build, candidate, assignment,
 composition, recommendation, rank, optimizer, damage, rotation, or ER work.
 
-The next checkpoint should separately integrate only this exact authenticated
-Kokomi occurrence under the generic source-local catalog evidence kinds. The
-expected accepted delta is catalog 57 = 54 typed + 3 acknowledged;
-non-structural coverage 123/54/3/66; unique arrays 32 typed-only + 53 unbound-
-only + 1 mixed; and energy 15 deferred + 51 not-energy-deferred + 60 nonempty
-unclassified + 16 empty. Then regenerate manual coverage and the checkpoint 27
-Klee witness in dependency order. Human review of the Itto, Keqing, Klee,
-Diona, and Kokomi bindings and source classifications remains a prerequisite
-for publication, formula authoring, recommendation composition, or build
+Checkpoint 30 completes that separate admission. It accepts only checkpoint
+29's authenticated member-0 Ocean-Hued Clam occurrence under the generic
+source-local catalog evidence kinds. Kokomi, Klee, and Diona retain separate
+wrapper authentication and extraction. A private normalized helper may perform
+only the repeated selected-occurrence-to-source-claim-to-condition-control
+cross-link and catalog-entry construction after the wrapper-specific checks;
+it is not a generic wrapper, extractor, or prose parser.
+
+The Kokomi admission pins the exact page/version, team and member-0 subject,
+source condition and hash, ordered four-member roster conjunction and hash,
+Ocean-Hued Clam payload and hash, `recommended` classification, `unranked`
+ordering, and zero request bindings. The four named holdouts remain outside the
+catalog: the character-wide Nod-Krai delegation condition, team artifact-plan
+condition, Kokomi member-0 second artifact condition, and Columbina member-2
+artifact condition. They stay unbound and energy-unclassified.
+
+The authenticated catalog is now 57 = 54 typed + 3 acknowledged. Full nonempty
+coverage is 54/3/69; non-structural coverage is 123/54/3/66; unique arrays are
+32 typed-only + 53 unbound-only + 1 mixed; and energy is 15 deferred + 51 not-
+energy-deferred + 60 nonempty unclassified + 16 empty. Display status remains a
+separate projection: 51 typed + 57 known-but-unbound + 15 ER-deferred + 3
+acknowledged + 16 unconditional. Manual coverage authenticates six wrapper
+families over 17 source files and 67 generated-from paths.
+
+Checkpoint 30 adds no durable report, so the count remains 29. Manual coverage
+and the checkpoint 27 Klee witness are regenerated; the latter's four Klee
+claims, positive fixture, negative control, and interpretation boundary remain
+unchanged. No assignment, recommendation, build, rank, optimizer, damage,
+rotation, or ER work is authorized.
+
+The next bounded non-ER gate should be a standalone Noelle numeric request-
+context slice for a source condition satisfied by C6 or Burst Talent level 10.
+That slice is not implemented yet. Its representation must preserve the source
+OR structure, distinguish constellation from Talent-level facts, scope supplied
+facts to the exact request subject, and remain outside catalog integration until
+separately authenticated. Human review of the Itto, Keqing, Klee, Diona, and
+Kokomi bindings and source classifications remains a prerequisite for
+publication, formula authoring, recommendation composition, or build
 composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete

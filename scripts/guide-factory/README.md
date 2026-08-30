@@ -21,19 +21,19 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 29 authenticates a standalone Kokomi Luna V source-local artifact
-slice. It selects exactly Kokomi member 0's first artifact condition from the
-exact Kokomi/Ineffa/Columbina/Sucrose Lunar-Charged team and preserves one 4pc
-Ocean-Hued Clam payload, source-classified `recommended` but explicitly
-`unranked`. The exact ordered roster conjunction is source-matched, so the
-context result is `source-already-matched` with zero request facts or bindings.
-All five snapshot condition arrays are nonempty: one is selected and the other
-four remain untouched holdouts. The slice is authenticated by the validator but
-deliberately does not enter the catalog or coverage yet, so checkpoint 28's
-56-entry catalog, 123/53/3/67 non-structural coverage, and 15/50/61/16 energy
-partition remain unchanged. This is source-local applicability evidence, not an
-artifact assignment, build, candidate, recommendation, composition, rank,
-optimizer, damage, rotation, ER result, or working guide factory:
+Checkpoint 30 admits only checkpoint 29's authenticated Kokomi Ocean-Hued Clam
+occurrence into the generic source-local catalog evidence. Kokomi, Klee, and
+Diona keep separate wrapper authentication and extraction; a private normalized
+helper performs only the repeated selected-occurrence, source-claim, and
+condition-control cross-link after those source-specific checks pass. Every
+Kokomi literal, hash, team/member/subject identity, ordered roster predicate,
+4pc Ocean-Hued Clam payload, `recommended`/`unranked` metadata field, and zero-
+request-binding boundary remains pinned. The four named Kokomi holdouts stay
+unbound and energy-unclassified. The catalog is now 57 entries, and non-
+structural coverage is 123/54/3/66. This checkpoint adds no durable report and
+keeps the report count at 29. It is authenticated catalog admission, not an
+artifact assignment, build, recommendation, rank, damage, rotation, ER result,
+or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -420,6 +420,32 @@ optimizer, damage, rotation, ER result, or working guide factory:
 135. Keep ER deferred; the expected post-integration energy partition is 15
     deferred, 51 explicitly not energy-deferred, 60 nonempty unclassified, and
     16 empty arrays.
+136. Admit only the already authenticated checkpoint 29 Kokomi occurrence into
+    the generic source-local catalog evidence kinds.
+137. Keep Kokomi, Klee, and Diona wrapper authentication, extraction, exact
+    literals, hashes, identities, and `sliceId` scopes source-specific; add no
+    generic wrapper or prose parser.
+138. Permit one private normalized helper to perform only the repeated selected-
+    occurrence-to-claim-to-control cross-link and catalog-entry construction
+    after every wrapper-specific invariant passes.
+139. Pin the Kokomi page/version, exact team and member 0 subject, selected text
+    and hashes, ordered four-member roster predicate, Ocean-Hued Clam payload,
+    `recommended`/`unranked` metadata, and zero request bindings.
+140. Retain all four named Kokomi holdouts as unbound and energy-unclassified;
+    catalog admission must not consume, bind, or classify them.
+141. Refresh the catalog to 57 = 54 typed + 3 acknowledged; full nonempty
+    coverage to 54/3/69; and non-structural coverage to 123/54/3/66.
+142. Refresh unique non-structural arrays to 32 typed-only, 53 unbound-only, and
+    1 mixed, while energy becomes 15 deferred, 51 explicitly not deferred, 60
+    nonempty unclassified, and 16 empty.
+143. Preserve display status as 51 typed, 57 known-but-unbound, 15 ER-deferred,
+    3 acknowledged, and 16 unconditional occurrences.
+144. Authenticate six wrapper families across 17 source files and 67 generated-
+    from paths, then regenerate the downstream checkpoint 27 Klee witness
+    without changing its four-claim semantics.
+145. Add no durable report and execute no assignment, recommendation, build,
+    rank, optimizer, damage, rotation, or ER work; the next standalone slice is
+    a Noelle C6-or-Burst-10 numeric request-context experiment.
 
 The first two active sources are already in this repository:
 
@@ -555,8 +581,8 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-Klee and Diona integrated source-local condition slices, the standalone Kokomi
-source-local artifact slice, the exact manual condition-array coverage
+Klee, Diona, and Kokomi catalog-integrated source-local condition slices, the
+exact manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration.
 Stale evidence cannot pass.
@@ -645,36 +671,43 @@ source-ordered payload groups, not choices or assignments. The snapshot closes
 nonempty rows remain descriptive holdouts, split into 10 ordinary and 5 ER-
 deferred rows. The slice consumes, binds, and energy-classifies none of them.
 
-The standalone Kokomi adapter selects only member 0's first artifact condition
+The Kokomi adapter selects only member 0's first artifact condition
 from the exact Kokomi/Ineffa/Columbina/Sucrose source team. It retains a single
 4pc Ocean-Hued Clam payload with source classification `recommended` and source
 ordering `unranked`. The exact ordered roster conjunction is already matched by
 the source team, so the context projection is `source-already-matched` and
 contains no request facts or bindings. All five Kokomi condition arrays are
 nonempty; the other four are exact holdouts and receive no slice-authored
-binding or energy classification. This report is authenticated by the validator
-but remains outside the current catalog and coverage.
+binding or energy classification. Checkpoint 30 admits only the selected
+occurrence into the generic source-local catalog evidence after repeating every
+Kokomi-specific literal, hash, identity, predicate, payload, recommendation-
+metadata, and zero-request-binding check. A private normalized helper performs
+only the repeated selected-to-claim-to-control cross-link and entry construction
+after those checks; it is not a generic wrapper or parser.
 
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
 and matches all 142 to their consolidated copies. Sixteen arrays are
-unconditional. Across the 126 nonempty arrays, 53 are typed-bound, 3 are exact-
-text acknowledged, and 70 are unbound. Excluding only structural ER leaves 123
-binding-coverage rows: 53 typed, 3 acknowledged, and 67 unbound. The 86 unique
-non-structural arrays split into 31 typed-only, 54 unbound-only, and one mixed
+unconditional. Across the 126 nonempty arrays, 54 are typed-bound, 3 are exact-
+text acknowledged, and 69 are unbound. Excluding only structural ER leaves 123
+binding-coverage rows: 54 typed, 3 acknowledged, and 66 unbound. The 86 unique
+non-structural arrays split into 32 typed-only, 53 unbound-only, and one mixed
 acknowledged/unbound set. The separate
 energy ledger still defers 3 structural ER arrays, 3 typed Itto prerequisites,
-and 9 exact authored Diona/Furina rows; 50 rows are explicitly not energy-
-deferred and 61 nonempty rows remain energy-unclassified. The authenticated
+and 9 exact authored Diona/Furina rows; 51 rows are explicitly not energy-
+deferred and 60 nonempty rows remain energy-unclassified. Display status is 51
+typed, 57 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+unconditional. The authenticated
 catalog deliberately binds only exact source occurrences. Its reusable evidence
 labels are `source-local-typed-predicate-ast` and `source-local-not-energy-
 deferred`, while each wrapper, fresh authentication, extraction path, and
 `sliceId` remains source-specific. The shared
 Viridescent Venerer text remains acknowledged for Jean, Kaedehara Kazuha, and
-Sucrose but unbound for Sayu and Xianyun. The validator follows one exact DAG:
-Diona raw inputs, authenticated Diona wrapper, 56-entry catalog, manual
-coverage, then the regenerated Klee witness. Neither catalog nor coverage feeds
-back into a source-local slice. These reports measure validation work. They do
+Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates six
+wrapper families across 17 source files and 67 generated-from paths. The
+validator rebuilds the 57-entry catalog and coverage before regenerating the
+Klee witness. Neither catalog nor coverage feeds back into a source-local slice.
+These reports measure validation work. They do
 not prove a condition is satisfied, presume an unclassified row is non-ER, or
 establish that a preserved payload is a correct recommendation.
 

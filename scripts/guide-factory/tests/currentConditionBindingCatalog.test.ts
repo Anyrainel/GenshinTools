@@ -22,13 +22,17 @@ import {
   type KleeSourceLocalConditionSliceReport,
 } from "../src/kleeSourceLocalConditionSlice";
 import {
+  KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH,
+  type KokomiSourceLocalArtifactSliceReport,
+} from "../src/kokomiSourceLocalArtifactSlice";
+import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
 } from "../src/paths";
 import type { SourceConditionedGuidePacketReport } from "../src/sourceConditionedGuidePacket";
 
 describe("authenticated current condition-binding catalog", () => {
-  it("builds the deterministic 56-occurrence catalog with exact current coverage", async () => {
+  it("builds the deterministic 57-occurrence catalog with exact current coverage", async () => {
     const fixture = await loadFixture();
     const before = structuredClone(fixture);
     const report = buildCurrentConditionBindingCatalog(fixture);
@@ -38,32 +42,32 @@ describe("authenticated current condition-binding catalog", () => {
     expect(fixture).toEqual(before);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.issues).toEqual([]);
-    expect(report.entries).toHaveLength(56);
+    expect(report.entries).toHaveLength(57);
     expect(report.entries.map(({ occurrenceKey }) => occurrenceKey)).toEqual(
       [...report.entries.map(({ occurrenceKey }) => occurrenceKey)].sort(),
     );
     expect(
       new Set(report.entries.map(({ occurrenceId }) => occurrenceId)).size,
-    ).toBe(56);
+    ).toBe(57);
     expect(
       new Set(report.entries.map(({ occurrenceKey }) => occurrenceKey)).size,
-    ).toBe(56);
+    ).toBe(57);
     expect(report.summary).toEqual({
-      occurrenceCount: 56,
+      occurrenceCount: 57,
       bindingClassificationCounts: {
-        "typed-bound": 53,
+        "typed-bound": 54,
         "exact-text-acknowledged": 3,
         unbound: 0,
         invalid: 0,
       },
       energyClassificationCounts: {
         "energy-unclassified": 3,
-        "not-energy-deferred": 50,
+        "not-energy-deferred": 51,
         "structural-er": 0,
         "deferred-energy-prerequisite": 3,
         "exact-authored-energy-related-deferral": 0,
       },
-      typedBindingCount: 53,
+      typedBindingCount: 54,
       ittoOccurrenceCount: 15,
       ittoTypedBindingCount: 15,
       ittoDeferredEnergyPrerequisiteCount: 3,
@@ -78,6 +82,9 @@ describe("authenticated current condition-binding catalog", () => {
       dionaSourceLocalOccurrenceCount: 3,
       dionaSourceLocalTypedBindingCount: 3,
       dionaSourceLocalNotEnergyDeferredCount: 3,
+      kokomiSourceLocalOccurrenceCount: 1,
+      kokomiSourceLocalTypedBindingCount: 1,
+      kokomiSourceLocalNotEnergyDeferredCount: 1,
     });
     expect(report).toMatchObject({
       supportsGuideClaims: false,
@@ -93,6 +100,7 @@ describe("authenticated current condition-binding catalog", () => {
         keqingRolePairDurableMatchesCurrent: true,
         kleeSourceLocalDurableMatchesCurrent: true,
         dionaSourceLocalDurableMatchesCurrent: true,
+        kokomiSourceLocalDurableMatchesCurrent: true,
       },
     });
     for (const entry of report.entries) {
@@ -371,6 +379,76 @@ describe("authenticated current condition-binding catalog", () => {
     ).toBe(true);
   });
 
+  it("binds only the exact Kokomi team artifact condition without assigning equipment", async () => {
+    const fixture = await loadFixture();
+    const report = requireComparableCurrentConditionBindingCatalog(
+      buildCurrentConditionBindingCatalog(fixture),
+    );
+    const kokomiEntries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-kokomi-source-local-artifact-slice-luna-v",
+    );
+
+    expect(kokomiEntries).toHaveLength(1);
+    const entry = kokomiEntries[0]!;
+    const selected =
+      fixture.kokomiSourceLocal.currentReport.selectedOccurrences[0]!;
+    expect(entry).toMatchObject({
+      occurrenceId:
+        "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+      recordKind: "team",
+      sourceRecordId:
+        "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      manualClaimPath:
+        "members[0].artifactRecommendations[0].conditions",
+      subject: "sangonomiya_kokomi",
+      orderedConditions: [
+        "For Kokomi in this exact Lunar-Charged example team.",
+      ],
+      bindingClassification: "typed-bound",
+      energyClassification: "not-energy-deferred",
+      bindingEvidence: {
+        kind: "source-local-typed-predicate-ast",
+        sliceId: "kqm-kokomi-source-local-artifact-slice-luna-v",
+        selectedOccurrenceId: selected.occurrenceId,
+        selectedOccurrenceSha256: sha256Text(stableJson(selected)),
+        predicateAstSha256:
+          "2c60322cf3d1b6691dbde84bd5484364752c87bb18634bd9303fd6ec2e03dcda",
+        payloadSha256:
+          "bfd412bb94e8e50e9deec6813ef5329eb71c656fdd1af64fc8b5a2243543e1a0",
+      },
+      energyEvidence: {
+        kind: "source-local-not-energy-deferred",
+        structuralErEvidencePresent: false,
+        energyRelatedWorkDeferred: false,
+        sliceId: "kqm-kokomi-source-local-artifact-slice-luna-v",
+        selectedOccurrenceId: selected.occurrenceId,
+        selectedOccurrenceSha256: sha256Text(stableJson(selected)),
+      },
+    });
+    expect(
+      entry.bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        entry.bindingEvidence.predicateAst,
+    ).toEqual({
+      type: "all",
+      predicates: [
+        {
+          type: "exact-team-roster-includes",
+          characterId: "sangonomiya_kokomi",
+        },
+        { type: "exact-team-roster-includes", characterId: "ineffa" },
+        { type: "exact-team-roster-includes", characterId: "columbina" },
+        { type: "exact-team-roster-includes", characterId: "sucrose" },
+      ],
+    });
+    expect(entry.bindingEvidence).not.toHaveProperty("payload");
+    expect(report.supportsEquipmentRecommendations).toBe(false);
+    expect(report.supportsTeamRecommendations).toBe(false);
+    expect(report.supportsEnergyRecoveryClaims).toBe(false);
+  });
+
   it("fails closed on unauthenticated, stale, partial, duplicate, conflicting, or leaked evidence", async () => {
     const base = await loadFixture();
 
@@ -604,6 +682,190 @@ describe("authenticated current condition-binding catalog", () => {
       conflictingDionaClaim,
       "diona-source-local.conflicting-occurrence-evidence",
     );
+
+    const staleKokomi = structuredClone(base);
+    const staleKokomiDurable = structuredClone(
+      staleKokomi.kokomiSourceLocal.durableReport,
+    ) as KokomiSourceLocalArtifactSliceReport;
+    staleKokomiDurable.selectedOccurrences.pop();
+    staleKokomi.kokomiSourceLocal.durableReport = staleKokomiDurable;
+    expectFailure(staleKokomi, "authentication.kokomi-source-local-stale");
+
+    const partialKokomi = structuredClone(base);
+    partialKokomi.kokomiSourceLocal.currentReport.selectedOccurrences.pop();
+    partialKokomi.kokomiSourceLocal.durableReport = structuredClone(
+      partialKokomi.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      partialKokomi,
+      "kokomi-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const capabilityCrossingKokomi = structuredClone(base);
+    capabilityCrossingKokomi.kokomiSourceLocal.currentReport.artifactAssignmentExecuted =
+      true as false;
+    capabilityCrossingKokomi.kokomiSourceLocal.durableReport = structuredClone(
+      capabilityCrossingKokomi.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      capabilityCrossingKokomi,
+      "kokomi-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const collidingKokomiSlice = structuredClone(base);
+    const nestedCollidingKokomi = collidingKokomiSlice.kokomiSourceLocal
+      .currentReport.sourceLocalSlice;
+    if (!nestedCollidingKokomi) {
+      throw new Error("Missing nested Kokomi slice collision fixture.");
+    }
+    nestedCollidingKokomi.sliceId =
+      "kqm-diona-source-local-support-slice-luna-viii";
+    collidingKokomiSlice.kokomiSourceLocal.durableReport = structuredClone(
+      collidingKokomiSlice.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      collidingKokomiSlice,
+      "kokomi-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const leakedKokomiHoldout = structuredClone(base);
+    const kokomiHoldout =
+      leakedKokomiHoldout.kokomiSourceLocal.currentReport.holdoutOccurrences[0];
+    if (!kokomiHoldout) throw new Error("Missing Kokomi holdout fixture.");
+    kokomiHoldout.consumedBySlice = true as false;
+    leakedKokomiHoldout.kokomiSourceLocal.durableReport = structuredClone(
+      leakedKokomiHoldout.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      leakedKokomiHoldout,
+      "kokomi-source-local.selected-holdout-partition-drift",
+    );
+
+    const authoredKokomiHoldout = structuredClone(base);
+    authoredKokomiHoldout.kokomiSourceLocal.currentReport.holdoutOccurrences[0]!.energyClassificationAuthoredBySlice =
+      true as false;
+    authoredKokomiHoldout.kokomiSourceLocal.durableReport = structuredClone(
+      authoredKokomiHoldout.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      authoredKokomiHoldout,
+      "kokomi-source-local.selected-holdout-partition-drift",
+    );
+
+    const overlappingKokomiHoldout = structuredClone(base);
+    overlappingKokomiHoldout.kokomiSourceLocal.currentReport.holdoutOccurrences[1]!.occurrenceId =
+      overlappingKokomiHoldout.kokomiSourceLocal.currentReport
+        .holdoutOccurrences[0]!.occurrenceId;
+    overlappingKokomiHoldout.kokomiSourceLocal.durableReport = structuredClone(
+      overlappingKokomiHoldout.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      overlappingKokomiHoldout,
+      "kokomi-source-local.selected-holdout-partition-drift",
+    );
+
+    const kokomiMemberDrift = structuredClone(base);
+    kokomiMemberDrift.kokomiSourceLocal.currentReport.selectedOccurrences[0]!.memberIndex =
+      2 as 0;
+    kokomiMemberDrift.kokomiSourceLocal.durableReport = structuredClone(
+      kokomiMemberDrift.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      kokomiMemberDrift,
+      "kokomi-source-local.conflicting-occurrence-evidence",
+    );
+
+    const duplicateKokomiClaim = structuredClone(base);
+    const duplicateClaimSlice = duplicateKokomiClaim.kokomiSourceLocal
+      .currentReport.sourceLocalSlice;
+    if (!duplicateClaimSlice) {
+      throw new Error("Missing nested Kokomi source-claim fixture.");
+    }
+    duplicateClaimSlice.sourceClaimCatalog.push(
+      structuredClone(duplicateClaimSlice.sourceClaimCatalog[0]!),
+    );
+    duplicateKokomiClaim.kokomiSourceLocal.durableReport = structuredClone(
+      duplicateKokomiClaim.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      duplicateKokomiClaim,
+      "kokomi-source-local.duplicate-source-claim",
+    );
+
+    const duplicateKokomiControl = structuredClone(base);
+    const duplicateControlSlice = duplicateKokomiControl.kokomiSourceLocal
+      .currentReport.sourceLocalSlice;
+    if (!duplicateControlSlice) {
+      throw new Error("Missing nested Kokomi condition-control fixture.");
+    }
+    duplicateControlSlice.conditionControls.push(
+      structuredClone(duplicateControlSlice.conditionControls[0]!),
+    );
+    duplicateKokomiControl.kokomiSourceLocal.durableReport = structuredClone(
+      duplicateKokomiControl.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      duplicateKokomiControl,
+      "kokomi-source-local.duplicate-condition-control",
+    );
+
+    const boundKokomiRequest = structuredClone(base);
+    const kokomiControl = boundKokomiRequest.kokomiSourceLocal.currentReport
+      .sourceLocalSlice?.conditionControls[0];
+    const dionaRequestBinding = boundKokomiRequest.dionaSourceLocal.currentReport
+      .sourceLocalSlice?.conditionControls[0]?.requestBindings[0];
+    if (!kokomiControl || !dionaRequestBinding) {
+      throw new Error("Missing request-binding fixtures.");
+    }
+    kokomiControl.requestBindings.push(structuredClone(dionaRequestBinding));
+    boundKokomiRequest.kokomiSourceLocal.durableReport = structuredClone(
+      boundKokomiRequest.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      boundKokomiRequest,
+      "kokomi-source-local.conflicting-occurrence-evidence",
+    );
+
+    const conflictingKokomiClaim = structuredClone(base);
+    const conflictingClaim = conflictingKokomiClaim.kokomiSourceLocal
+      .currentReport.sourceLocalSlice?.sourceClaimCatalog[0];
+    if (!conflictingClaim) {
+      throw new Error("Missing conflicting Kokomi claim fixture.");
+    }
+    conflictingClaim.characterId = "sucrose";
+    conflictingKokomiClaim.kokomiSourceLocal.durableReport = structuredClone(
+      conflictingKokomiClaim.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      conflictingKokomiClaim,
+      "kokomi-source-local.conflicting-occurrence-evidence",
+    );
+
+    const forgedKokomiPredicate = structuredClone(base);
+    const forgedSelected =
+      forgedKokomiPredicate.kokomiSourceLocal.currentReport
+        .selectedOccurrences[0]!;
+    const forgedSlice = forgedKokomiPredicate.kokomiSourceLocal.currentReport
+      .sourceLocalSlice;
+    if (!forgedSlice) throw new Error("Missing forged Kokomi slice fixture.");
+    const forgedPredicate = {
+      type: "exact-team-roster-includes" as const,
+      characterId: "sangonomiya_kokomi",
+    };
+    const forgedPredicateSha256 = sha256Text(stableJson(forgedPredicate));
+    forgedSelected.predicate = structuredClone(forgedPredicate);
+    forgedSelected.predicateSha256 = forgedPredicateSha256;
+    forgedSlice.sourceClaimCatalog[0]!.predicate =
+      structuredClone(forgedPredicate);
+    forgedSlice.conditionControls[0]!.occurrenceControl.sourcePredicateSha256 =
+      forgedPredicateSha256;
+    forgedKokomiPredicate.kokomiSourceLocal.durableReport = structuredClone(
+      forgedKokomiPredicate.kokomiSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedKokomiPredicate,
+      "kokomi-source-local.conflicting-occurrence-evidence",
+    );
   });
 });
 
@@ -623,6 +885,9 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
   const dionaSourceLocal = (await readJson(
     DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH,
   )) as DionaSourceLocalSupportSliceReport;
+  const kokomiSourceLocal = (await readJson(
+    KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH,
+  )) as KokomiSourceLocalArtifactSliceReport;
   return {
     ittoAuthentication: {
       authenticated: true,
@@ -643,6 +908,10 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
     dionaSourceLocal: {
       durableReport: structuredClone(dionaSourceLocal),
       currentReport: structuredClone(dionaSourceLocal),
+    },
+    kokomiSourceLocal: {
+      durableReport: structuredClone(kokomiSourceLocal),
+      currentReport: structuredClone(kokomiSourceLocal),
     },
   };
 }

@@ -86,8 +86,12 @@
       "sha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4"
     },
     {
+      "path": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
+      "sha256": "613a511796b0f040e26274f481c7c165c15591ef2b52e673cc297833f263d278"
+    },
+    {
       "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
-      "sha256": "ed3c4add84c0ba01376648efc96f420bd94ae5b4d0eff45a87173954b1b55e28"
+      "sha256": "38551ef320012e42c6dd2c85812ee95efb1d14cd473fc277bdfac9e1f4527011"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -118,12 +122,16 @@
       "sha256": "62ee0986bafc248e22d7b8c01ce03768e3df049ac60f850d3abe396367fb8c84"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts",
+      "sha256": "fb6be8d4f7a7960b56ecd729f448d20cf7dac491a76fbccfcc0977cc177fb1a1"
+    },
+    {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "a4aa9404849f911ac6112b9db099899e82cb33f0480649a24d66a6749df956c3"
+      "sha256": "02aafd8338b6e0ad8ceec8ddd0c21cf5080b30fa2933164bea23ac03295e7447"
     },
     {
       "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
@@ -166,12 +174,16 @@
       "sha256": "d380b1042889fa7935d3caf2e611a64397102c222f5766352e7f777d6b19cfe1"
     },
     {
+      "path": "scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts",
+      "sha256": "077f2b12165328e6868dc84f47fc1506c9f5d566f4e9df0f009c19fde9208b73"
+    },
+    {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
       "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "db24c13e02111068511099f3c4bfa8cb7cf19aa7af02cd76d6a0f42a47745d99"
+      "sha256": "167e25821861137a77b31fd96fd4b53adf39ed16b9b69b0185d61ce2df937bf0"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -2318,11 +2330,11 @@
       "sourceTeamCount": 2
     },
     "manualCoverage": {
-      "bindingOccurrenceCount": 56,
+      "bindingOccurrenceCount": 57,
       "corpusOccurrenceCount": 142,
       "currentBoundaryAuthenticated": true,
-      "durableReportCanonicalObjectSha256": "ed3c4add84c0ba01376648efc96f420bd94ae5b4d0eff45a87173954b1b55e28",
-      "durableReportFileSha256": "ed3c4add84c0ba01376648efc96f420bd94ae5b4d0eff45a87173954b1b55e28",
+      "durableReportCanonicalObjectSha256": "38551ef320012e42c6dd2c85812ee95efb1d14cd473fc277bdfac9e1f4527011",
+      "durableReportFileSha256": "38551ef320012e42c6dd2c85812ee95efb1d14cd473fc277bdfac9e1f4527011",
       "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
       "kleeSourceLocalOccurrenceCount": 4,
       "typedBindingMeansConditionTruth": false
