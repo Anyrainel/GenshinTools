@@ -371,6 +371,28 @@ Current durable pilot evidence:
   ideal-roll, optimizer, generator, AutoTune, and ER capability false. Its
   current 45,453-byte output has SHA-256
   `2ce22c321d9194b4c6875e449918832e90e208b48403b5e5764fa0eab4a744d4`.
+- `xiao-ffxx-circlet-substat-local-marginal-diagnostic.json`
+  authenticates checkpoint 49 through the exact 127-file raw-byte closure and
+  fifteen JSON byte/object pairs. It declares the inherited 80-path replay-
+  runtime set and zero additions; a focused AST test separately proves that
+  set import-closed/reachable and checks direct checkpoint-50 imports against
+  the authenticated boundary. Six fresh no-Circlet controls reproduce checkpoint
+  48's exact totals and eight-active/three-inactive Xianyun traces before the
+  report admits twelve CR/CD Circlet baselines and thirty-six one-current-
+  average-roll CR/CD/ATK% probes. All 54 direct/compiled replays agree. The
+  output retains 36 local deltas, six same-weapon CR-minus-CD baseline deltas,
+  and twelve same-Circlet five-star source-group validation pairs. Those pairs
+  split CR 2 aligned/4 counterexamples/0 ties and CD 3/3/0, or 5/7/0 overall.
+  Mixed-Circlet, perturbed cross-weapon, within-group, and cross-rarity pairs
+  remain empty; checkpoint 49's four counterexamples are immutable non-
+  objective holdouts. Candidate/source-group provenance remains outside
+  technical node identity and source-group membership constructs only the
+  twelve baseline validation pairs. The source stat rows remain guarded-unresolved and no
+  threshold, Circlet/substat choice, legal roll allocation, rank, winner,
+  recommendation, guide, damage/gameplay claim, generator, optimizer,
+  AutoTune, ideal-roll, or ER result is produced. Its current 266,139-byte
+  output has SHA-256
+  `e562a388eb22ff78a469d4f6be26491e37a48bfdd04760df207cd3bb84341c03`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -744,7 +766,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-six globally integrated reports
+In full mode `validate.ts` rebuilds all forty-seven globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -788,6 +810,9 @@ now contains 46 JSON reports.
 Checkpoint 49 adds the Xiao FFXX five-star source-group validation diagnostic
 as integrated report 46. Including checkpoint 35's permission-isolated report,
 this directory now contains 47 JSON reports.
+Checkpoint 50 adds the Xiao FFXX guarded Circlet/substat local-marginal
+diagnostic as integrated report 47. Including checkpoint 35's permission-
+isolated report, this directory now contains 48 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

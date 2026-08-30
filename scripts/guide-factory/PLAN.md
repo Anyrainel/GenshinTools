@@ -1084,10 +1084,49 @@ identities remain separate.
 
 The result is a review target, not proof that the source is wrong, the
 calculator is correct, or the computed relation should become a guide order.
-The next non-ER boundary may introduce guarded Circlet/substat variants while
-preserving these counterexamples as validation cases. Only after those variants
-survive the same fail-closed process should any broader optimizer composition
-begin. A discrepancy remains a review input, not a player-facing winner.
+Checkpoint 50 introduces guarded Circlet/substat variants while preserving
+these counterexamples as validation cases. A discrepancy remains a review
+input, not a player-facing winner.
+
+Checkpoint 50 authenticates 127 exact raw-byte inputs and fifteen JSON
+byte/object pairs: checkpoint 49's complete boundary, its durable report, and
+the new core and CLI. Its report declares the inherited 80-path replay-runtime
+set and zero additions; a separate AST test proves that set is import-closed and
+reachable and checks every direct checkpoint-50 import against the authenticated
+boundary. It also fresh-authenticates the checkpoint-45
+guarded source rows, checkpoint-46 candidates, and checkpoint-42 calculator-
+default team assumptions plus formula counts used to reconstruct the private
+checkpoint-47 fixture.
+
+Six fresh no-Circlet controls reproduce checkpoint 48's exact totals and
+eight-active/three-inactive Xianyun traces before any variant is admitted. The
+experiment then evaluates twelve CR/CD Circlet baselines and thirty-six
+one-current-average-roll CR/CD/ATK% probes. All 54 replays agree between the
+direct and compiled paths. The 48-node lattice has no total-roll budget, filler
+stat policy, or selected placement; inherited `rollMultiplier` and
+`substatBudget` metadata do not construct its explicit sheets.
+
+The report retains thirty-six local one-step deltas, six same-weapon CR-minus-
+CD baseline deltas, and twelve same-Circlet five-star source-group validation
+pairs. Those pairs split CR 2 aligned/4 counterexamples/0 ties and CD 3/3/0,
+for 5/7/0 overall. It executes no mixed-Circlet or perturbed cross-weapon,
+within-group, or cross-rarity comparison. Checkpoint 49's four exact
+counterexamples remain immutable non-objective holdouts.
+
+Technical lattice-node identity retains checkpoint 46's inherited candidate
+identity and missing-axis policy, while excluding checkpoint-50 guard-
+resolution/publication fields and separate candidate provenance. Source-group
+membership remains authentication/provenance input and constructs only the
+twelve baseline validation pairs; it does not alter replay totals or technical
+node identity.
+
+The source CR/CD and ATK% rows remain guarded-unresolved. Three CD-Circlet
+baselines are below 70% CR in the wrapper frame, but the source does not define
+that frame or the tolerance for near 1:2. No threshold is applied and no
+Circlet, substat, slot, roll allocation, weapon order, guide, or gameplay claim
+is produced. A later allocation checkpoint requires owner decisions about the
+CR/1:2 frame, legal artifact-quality budget, and filler-stat domain; broader
+source and validation work may continue independently.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,
@@ -1121,6 +1160,15 @@ process have been explicitly accepted.
 - source licensing or permission is unclear before systematic extraction.
 
 Current owner-review target:
+
+- For Xiao's guarded Circlet/substat rows, should the 70% CR and near-1:2
+  checks use panel stats, pre-Marechaussee combat stats, or max-stack combat
+  stats, and what numeric tolerance should define near?
+- What legal artifact-quality policy should bound an offline allocation
+  experiment: total useful rolls, per-piece initial/substat constraints, and
+  roll-value distribution?
+- May non-listed non-ER filler stats enter the allocator, or must the candidate
+  domain remain exactly the source-listed CR, CD, and ATK% tail?
 
 - Does each action-to-formula mapping in
   `reports/furina-neuvillette-formula-plan-draft.json` correctly translate the

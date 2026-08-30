@@ -21,15 +21,16 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 49 uses checkpoint 48's six technically eligible Xiao FFXX
-observations for one validation-only source-group diagnostic. It
-fresh-authenticates the entire execution gate, then exhaustively relates the
-three rank-group-1 five-star candidates to the two rank-group-2 candidates.
-Their observed ranges overlap: two of six pairs align with the source order,
-four are counterexamples under the incomplete wrapper fixture, and none are
-floating-tolerance ties. Those rows are review targets, not a weapon ranking,
-source correction, calculator-correctness claim, damage recommendation, or
-guide result. Deathmatch remains authenticated but cross-rarity-incomparable,
+Checkpoint 50 reconstructs checkpoint 48's private Xiao FFXX wrapper fixture,
+proves that six fresh no-Circlet controls reproduce its exact totals and
+Xianyun activation traces, then executes a guarded Circlet/substat sensitivity
+lattice. Twelve CR/CD Circlet baselines and thirty-six one-average-roll probes
+produce 54 direct/compiled-agreeing replays in total. The twelve same-Circlet
+five-star source-group pairs split 5 source-order alignments, 7
+counterexamples, and 0 tolerance ties; the CR and CD strata are retained
+separately. The KQM stat rows remain guarded-unresolved, so this is not a
+Circlet choice, stat priority, legal roll allocation, weapon rank, damage
+recommendation, or guide result. Deathmatch remains cross-rarity-incomparable,
 and ER remains deferred.
 
 This is not a working guide factory or an equipment recommendation:
@@ -927,6 +928,44 @@ This is not a working guide factory or an equipment recommendation:
      winners, selections, player-facing damage claims, source corrections,
      complete builds, Circlet/substat choices, optimizer, generator, AutoTune,
      ideal-roll, rotation, gameplay, DPS, and ER outputs.
+285. Byte-authenticate checkpoint 50's exact 127-path closure: checkpoint 49's
+     complete 124 inputs, the durable checkpoint-49 report, and the new core
+     and CLI. Require byte/parsed-object parity for all fifteen JSON inputs and
+     declare the same inherited 80-path replay-runtime set with zero declared
+     additions. Independently test that the set is import-closed and reachable,
+     and that every direct checkpoint-50 implementation import is authenticated.
+286. Fresh-authenticate checkpoint 49 and, independently, the checkpoint-45
+     guarded source rows, checkpoint-46 candidates, and checkpoint-42
+     calculator-default team assumptions plus formula counts before
+     reconstructing the private checkpoint-47 wrapper fixture.
+287. Execute six no-Circlet reconstruction controls before admitting any new
+     lattice node. Require exact checkpoint-48 totals, interpreted/compiled
+     agreement, and the eight-active/three-inactive Xianyun plunge trace.
+288. Pin the CR/CD Circlet row and the CR/CD plus ATK% offensive-tail rows
+     exactly, but retain `guarded-unresolved`, leave source applicability
+     unestablished, and preserve the source's deliberately omitted ER need.
+289. Materialize twelve CR/CD Circlet baselines and thirty-six independent
+     one-average-roll CR/CD/ATK% probes from current runtime constants. Treat
+     `rollMultiplier` and `substatBudget` as inherited wrapper metadata, not as
+     inputs to these explicit sheets.
+290. Require all 54 checkpoint-50 replays to preserve direct/compiled
+     agreement and the exact Xianyun trace. Keep the six reconstruction
+     controls outside the 48-node experimental lattice.
+291. Emit thirty-six parent-to-child local deltas and legal non-conflicting
+     placement domains without scalar weights, global priorities, a selected
+     slot, a total-roll budget, filler stats, or a legal artifact allocation.
+292. Restrict additional comparisons to six same-weapon CR-minus-CD baseline
+     deltas and twelve same-Circlet, unperturbed five-star cross-group pairs.
+     Execute zero mixed-Circlet, perturbed cross-weapon, within-group, or
+     Deathmatch-to-five-star comparisons.
+293. Preserve the computed cross-group split of CR 2/4/0, CD 3/3/0, and total
+     5/7/0 aligned/counterexample/tolerance-tie rows as validation targets.
+     Retain checkpoint 49's four counterexamples as immutable non-objective
+     holdouts.
+294. Integrate the diagnostic as global report 47. Preserve zero selections,
+     ranks, winners, recommendations, complete builds, guide claims,
+     generator, optimizer, AutoTune, ideal-roll allocation, gameplay,
+     rotation, DPS, and ER outputs.
 
 The first two active sources are already in this repository:
 
@@ -1124,6 +1163,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-grouped-replay-representation-preflight.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-circlet-substat-local-marginal-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1147,7 +1187,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-six globally integrated durable reports
+In full mode it rebuilds all forty-seven globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1169,6 +1209,7 @@ contract, the authenticated six-candidate condition-free branch domain, its
 authenticated grouped-versus-unit-expanded replay representation preflight,
 the authenticated unit-expanded candidate execution gate,
 the authenticated five-star source-group validation diagnostic,
+the authenticated guarded Circlet/substat local-marginal diagnostic,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
@@ -1511,6 +1552,49 @@ observation with zero cross-rarity pairs and no relative position. Checkpoint
 49 makes zero additional replay calls and supports no player-facing damage,
 guide, equipment, build, stat, winner, selection, source-correction, gameplay,
 ideal-roll, or ER claim.
+
+Checkpoint 50 extends that authenticated boundary without promoting its source
+order or computed counterexamples into an objective. Its 127 raw-byte inputs
+are checkpoint 49's complete 124-path closure, the durable checkpoint-49
+report, and the checkpoint-50 core and CLI; fifteen JSON values require
+byte/object parity. The report declares the same 80 replay-runtime paths
+inherited from checkpoint 47 and zero additions. Separately, the focused AST
+test proves that declared set is first-party-import-closed and reachable and
+that every direct checkpoint-50 implementation import is in the authenticated
+boundary; this graph result is test evidence, not a self-authenticated report
+field.
+
+Because checkpoint 47's fixture builder is private, checkpoint 50 reconstructs
+the C0 level-90, 10-10-10 FFXX fixture from freshly authenticated checkpoint-46
+candidates plus checkpoint-42 calculator-default team assumptions and formula
+counts. Before adding a Circlet it runs six independent controls. Every control reproduces checkpoint 48's unit-
+expanded total and exact eight-active/three-inactive Xianyun trace. Only then
+does it admit twelve CR/CD Circlet baselines and thirty-six one-current-average-
+roll probes in CR, CD, or ATK%. All 54 fresh replays agree between the direct
+and compiled paths. The inherited `rollMultiplier` and `substatBudget` remain
+wrapper metadata and do not construct the explicit sheets.
+
+The result retains thirty-six same-weapon, same-Circlet one-step deltas, six
+same-weapon CR-minus-CD baseline deltas, and twelve unperturbed five-star
+cross-group pairs stratified by identical Circlet. The cross-group rows split
+CR 2 aligned/4 counterexamples/0 ties and CD 3/3/0, or 5/7/0 overall.
+Checkpoint 49's four counterexamples remain immutable non-objective holdouts.
+No mixed-Circlet or perturbed cross-weapon pair, within-group relation, or
+Deathmatch-to-five-star comparison is produced.
+
+The three source stat rows remain `guarded-unresolved`. In this wrapper frame,
+three CD-Circlet baselines are below 70% CR, but the source does not define the
+reference frame for that threshold or a tolerance for "near 1:2". The report
+therefore applies neither condition and produces no Circlet/substat selection,
+rank, winner, legal roll allocation, complete build, guide, damage/gameplay
+claim, optimizer, generator, AutoTune, ideal-roll result, or ER result.
+
+Technical lattice-node hashes retain checkpoint 46's candidate identity,
+including its inherited present/missing-axis policy. They exclude checkpoint
+50's guard-resolution and publication-claim fields, the separate candidate-
+provenance hash, and source rank. Source-group membership remains bound through
+authentication/provenance and constructs only the twelve baseline validation
+pairs; it cannot change a lattice total or technical node identity.
 
 The manual condition-array inventory then broadens that validation boundary to
 eight guide-selected external snapshots. The ninth indexed snapshot is the

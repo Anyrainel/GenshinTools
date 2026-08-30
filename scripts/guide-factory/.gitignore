@@ -45,3 +45,4 @@ reports/*
 !reports/xiao-ffxx-grouped-replay-representation-preflight.json
 !reports/xiao-ffxx-unit-expanded-execution-gate.json
 !reports/xiao-ffxx-five-star-source-group-validation-diagnostic.json
+!reports/xiao-ffxx-circlet-substat-local-marginal-diagnostic.json

@@ -588,6 +588,52 @@ Deathmatch remains an authenticated excluded observation. The output is a set
 of validation targets, not source ground truth, a computed correction, a
 weapon rank, a damage recommendation, or a guide result.
 
+### Derived guarded local-marginal diagnostics
+
+A guarded local-marginal diagnostic is another derived report, not a new
+knowledge-record kind. It may admit source-listed stat keys as an experimental
+domain only after the exact source occurrences, item/group identities,
+conditions, and unresolved disposition are authenticated. Experimental
+admission cannot change `guarded-unresolved` into source applicability, a
+choice, a priority, or a recommendation.
+
+When the computation reconstructs a private upstream fixture, independent
+controls must reproduce its authenticated numeric result and activation trace
+before any variant is admitted. Control executions remain outside the lattice
+node count. Explicit main-stat and one-roll sheets must distinguish current
+runtime constants from source-authored values and must say whether inherited
+allocator metadata such as roll multiplier or budget participates.
+
+Each one-roll marginal binds exactly one parent and one child with the same
+candidate and main-stat context. A legal non-conflicting placement domain may
+be recorded, but no slot or feasible allocation exists until one is selected
+under an explicit artifact-quality policy. Local deltas cannot be aggregated
+into scalar weights or a global stat order without a separately reviewed
+objective and allocation method.
+
+Checkpoint 50 applies this shape to the Xiao FFXX candidate domain. It
+authenticates 127 raw-byte inputs and fifteen JSON byte/object pairs, executes
+six no-Circlet reconstruction controls plus twelve CR/CD baselines and
+thirty-six one-average-roll probes, and requires direct/compiled agreement plus
+the exact Xianyun trace for all 54 replays. The 48 lattice nodes produce 36
+local deltas, six same-weapon Circlet deltas, and twelve same-Circlet five-star
+source-group validation pairs. Mixed-Circlet, perturbed cross-weapon, within-
+group, and cross-rarity comparisons are absent.
+
+The report's raw boundary declares the inherited 80-path replay-runtime set;
+a focused AST test, rather than the report core, proves import closure and
+reachability. Technical node identity retains the inherited checkpoint-46
+candidate identity and missing-axis policy but excludes checkpoint-50 guard-
+resolution/publication fields and the separate candidate-provenance hash.
+Source-group membership remains authentication/provenance input and constructs
+only the baseline validation pairs, not replay totals or technical nodes.
+
+The cross-group rows split 5 aligned, 7 counterexamples, and 0 tolerance ties;
+the CR and CD strata remain separate. The KQM 70% CR and near-1:2 conditions
+remain unresolved because their reference frame and tolerance are undefined.
+The output is not a stat priority, Circlet choice, legal roll allocation,
+weapon order, build, damage/gameplay claim, or guide result. ER is not used.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

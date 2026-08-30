@@ -892,6 +892,51 @@ accepted diagnostic supports no player-facing damage, guide, team, equipment,
 build, stat, winner, selection, gameplay, rotation, DPS, ideal-roll, generator,
 optimizer, AutoTune, or ER result.
 
+## Xiao guarded Circlet/substat local-marginal diagnostic seam
+
+`src/xiaoFfxxCircletSubstatLocalMarginalDiagnostic.ts` authenticates checkpoint
+49 through its complete 124-path closure and adds the durable report plus its
+own core/CLI for 127 raw-byte inputs and fifteen JSON byte/object parity checks.
+The report declares the same inherited 80 replay-runtime paths and zero
+additions. A focused AST test separately proves that set is first-party-import-
+closed and reachable and checks every direct checkpoint-50 implementation
+import against the authenticated boundary. It also independently fresh-authenticates the exact
+checkpoint-45 guarded stat rows, checkpoint-46 candidate domain, and
+checkpoint-42 calculator-default team assumptions plus formula counts used to
+reconstruct the wrapper fixture.
+
+The seam executes six no-Circlet controls before admitting any variant. Each
+control reproduces checkpoint 48's exact unit-expanded total and
+eight-active/three-inactive Xianyun trace. It then executes twelve level-20
+five-star CR/CD Circlet baselines and thirty-six one-current-average-roll CR,
+CD, or ATK% probes. All 54 replays pass direct/compiled agreement. The inherited
+`rollMultiplier` and `substatBudget` are recorded but do not construct the
+explicit artifact sheets.
+
+Every probe is a same-weapon, same-Circlet one-step neighbor. Its legal
+non-conflicting placement domain is retained, but no slot, roll budget, filler
+stat, or legal allocation is chosen. Six same-weapon CR-minus-CD baseline
+deltas and twelve same-Circlet, unperturbed five-star cross-group validation
+pairs are also retained. The latter split CR 2 aligned/4 counterexamples/0
+ties and CD 3/3/0, or 5/7/0 overall. Mixed-Circlet, perturbed cross-weapon,
+within-group, and Deathmatch-to-five-star comparisons remain empty.
+
+The exact KQM CR/CD and ATK% rows remain guarded-unresolved, with source
+applicability unestablished. Three CD-Circlet baselines fall below 70% CR in
+the wrapper's post-team-stat frame, but no threshold or near-1:2 tolerance is
+applied. The
+seam produces no Circlet/substat choice, scalar weight, priority, rank, winner,
+complete build, guide, damage/gameplay claim, generator, optimizer, AutoTune,
+ideal-roll allocation, or ER result. Checkpoint 49's four counterexamples are
+immutable validation holdouts, not an objective to minimize.
+
+Node hashes retain the inherited checkpoint-46 candidate identity and its
+present/missing-axis policy. They exclude checkpoint-50 guard-resolution and
+publication-claim fields plus the separate candidate-provenance hash. Source-
+group membership remains authentication/provenance input and constructs only
+the twelve baseline validation pairs; it does not alter replay totals or node
+identity.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -1345,6 +1390,8 @@ should use the expanded repository for a second character/team slice.
   `scripts/guide-factory/src/xiaoFfxxUnitExpandedExecutionGate.ts`.
 - Authenticated five-star source-group validation-only diagnostic:
   `scripts/guide-factory/src/xiaoFfxxFiveStarSourceGroupValidationDiagnostic.ts`.
+- Authenticated guarded Circlet/substat local-marginal diagnostic:
+  `scripts/guide-factory/src/xiaoFfxxCircletSubstatLocalMarginalDiagnostic.ts`.
 - Bounded full-team node-local generator/replay execution with intact versus
   cross-endpoint provenance:
   `scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts`.
@@ -1383,12 +1430,14 @@ should use the expanded repository for a second character/team slice.
   boundaries:
   `scripts/guide-factory/src/kleeTeamScopedClaimJoinWitness.ts`.
 
-The technical and sensitivity probes invoke only `runGenerator` and its
-immediate calculation dependencies. The bounded joint seam now composes
+The earlier generator technical and sensitivity probes invoke only
+`runGenerator` and its immediate calculation dependencies. The bounded joint
+seam now composes
 `runGenerator` with the dual-path replay, but only over carry-derived,
-node-local stat sheets. The comparison, owned-inventory optimization, AutoTune,
-and investment analyzers remain inventoried rather than composed into the
-factory.
+node-local stat sheets. The Xiao checkpoint-50 seam instead uses only the
+authenticated unit-expanded replay path and explicit StatSheets. The
+comparison, owned-inventory optimization, AutoTune, and investment analyzers
+remain inventoried rather than composed into the factory.
 
 ## Current blockers
 
@@ -1450,6 +1499,10 @@ factory.
   roll exchange. Its objective still has eight readiness blockers and omits
   reaction lines, so it cannot yet produce credible scalar weights or an ideal
   allocation.
+- The Xiao checkpoint-50 probes are likewise additive local neighbors, not a
+  legal artifact allocation. A bounded allocator still needs an owner-defined
+  CR/1:2 reference frame and tolerance, artifact-quality and total-roll policy,
+  and decision on whether non-listed non-ER filler stats may enter the domain.
 - The repository now has three source-scoped role observations, but neither the
   one-member Furina healer slice nor the two unreviewed Keqing positive lists
   define a global role catalog. The Keqing pair seam deliberately exercises

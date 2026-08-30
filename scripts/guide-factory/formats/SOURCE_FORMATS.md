@@ -355,6 +355,21 @@ targets. They do not prove a source error, calculator correctness, or a
 replacement weapon order. Tied group membership is not rewritten as exact
 damage equality, and Deathmatch remains unranked and cross-rarity-incomparable.
 
+Checkpoint 50 also adds no source record, condition result, stat value, rank,
+or rewritten recommendation. It pins the exact guarded CR/CD Circlet and
+CR/CD/ATK% offensive-tail rows, but their source status remains
+`guarded-unresolved`; no source-applicability determination is made. Level-20
+main-stat values, current average-roll values, the reconstructed fixture,
+placement domains, wrapper-frame CRIT observations, local deltas, and
+same-Circlet validation pairs are Guide Factory-derived fields only.
+
+Neither a wrapper-frame observation below 70% CR nor distance from 1:2 may be
+written back as a satisfied or violated KQM condition. The page does not define
+the CR reference frame or a numeric tolerance for "near." Checkpoint 50's
+5-aligned/7-counterexample/0-tie validation split likewise cannot rewrite the
+source weapon groups. Its four inherited checkpoint-49 counterexamples remain
+immutable review holdouts, not source corrections or an optimization target.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

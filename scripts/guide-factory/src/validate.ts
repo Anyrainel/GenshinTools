@@ -325,6 +325,13 @@ import {
   XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_SOURCE_FILE_PATHS,
   type XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport,
 } from "./xiaoFfxxFiveStarSourceGroupValidationDiagnostic";
+import {
+  authenticateXiaoFfxxCircletSubstatLocalMarginalDiagnostic,
+  XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_INPUT_PATHS,
+  XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_REPORT_PATH,
+  XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_SOURCE_FILE_PATHS,
+  type XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport,
+} from "./xiaoFfxxCircletSubstatLocalMarginalDiagnostic";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -427,6 +434,8 @@ export async function runValidation(
     xiaoFfxxUnitExpandedExecutionGateSourceFiles,
     xiaoFfxxFiveStarSourceGroupValidationDiagnosticInput,
     xiaoFfxxFiveStarSourceGroupValidationDiagnosticSourceFiles,
+    xiaoFfxxCircletSubstatLocalMarginalDiagnosticInput,
+    xiaoFfxxCircletSubstatLocalMarginalDiagnosticSourceFiles,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -689,6 +698,19 @@ export async function runValidation(
       ),
       Promise.all(
         XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            bytesBase64: (
+              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+            ).toString("base64"),
+          }),
+        ),
+      ),
+      readJson(
+        XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_REPORT_PATH,
+      ),
+      Promise.all(
+        XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_SOURCE_FILE_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
@@ -1702,6 +1724,62 @@ export async function runValidation(
             "canonical-inputs-rejected"
               ? "The Xiao FFXX five-star source-group diagnostic could not fresh-authenticate checkpoint 48, its exact 124-file byte closure, or the bounded validation-only comparison policy."
               : "The saved Xiao FFXX five-star source-group diagnostic does not match the exact six-pair 2-aligned/4-counterexample/0-tie result, overlapping envelopes, and excluded Deathmatch boundary.",
+        });
+      }
+      const xiaoFfxxCircletSubstatLocalMarginalDiagnosticGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_INPUT_PATHS,
+        );
+      const xiaoFfxxCircletSubstatLocalMarginalDiagnosticAuthentication =
+        await authenticateXiaoFfxxCircletSubstatLocalMarginalDiagnostic(
+          xiaoFfxxCircletSubstatLocalMarginalDiagnosticInput as XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport,
+          {
+            repositoryInput: expectedKnowledge,
+            xiaoManualSnapshotInput: xiaoManualInput.snapshot,
+            xiaoRotationFixtureSnapshotInput:
+              xiaoFormulaFixtureManualInput.snapshot,
+            genshinToolsSnapshotInput: genshinTools.data,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoSourceLocalDurableReportInput:
+              xiaoSourceLocalConditionSliceInput,
+            applicableClaimDurableReportInput:
+              xiaoFfxxApplicableClaimProjectionInput,
+            partialCandidateDurableReportInput:
+              xiaoFfxxPartialArtifactCandidateInput,
+            branchSourceDurableReportInput:
+              xiaoNonErEquipmentBranchSourceSliceInput,
+            branchCandidateDurableReportInput:
+              xiaoFfxxNonErConditionFreeBranchCandidateInput,
+            formulaCountDurableReportInput: xiaoFormulaCountParityInput,
+            groupedReplayDurableReportInput:
+              xiaoFfxxGroupedReplayRepresentationPreflightInput,
+            unitExpandedDurableReportInput:
+              xiaoFfxxUnitExpandedExecutionGateInput,
+            fiveStarSourceGroupDurableReportInput:
+              xiaoFfxxFiveStarSourceGroupValidationDiagnosticInput,
+            sourceFiles:
+              xiaoFfxxCircletSubstatLocalMarginalDiagnosticSourceFiles,
+            generatedFrom:
+              xiaoFfxxCircletSubstatLocalMarginalDiagnosticGeneratedFrom,
+          },
+        );
+      if (
+        !xiaoFfxxCircletSubstatLocalMarginalDiagnosticAuthentication.authenticated
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFfxxCircletSubstatLocalMarginalDiagnosticAuthentication.reason ===
+            "canonical-inputs-rejected"
+              ? "pipeline.rejected_xiao_ffxx_circlet_substat_local_marginal_diagnostic"
+              : "pipeline.stale_xiao_ffxx_circlet_substat_local_marginal_diagnostic",
+          path: "reports.xiao-ffxx-circlet-substat-local-marginal-diagnostic",
+          message:
+            xiaoFfxxCircletSubstatLocalMarginalDiagnosticAuthentication.reason ===
+            "canonical-inputs-rejected"
+              ? "The Xiao FFXX Circlet/substat local-marginal diagnostic could not fresh-authenticate checkpoint 49, its exact 127-file byte closure, the guarded checkpoint-45 source rows, or the reconstructed replay fixture."
+              : "The saved Xiao FFXX Circlet/substat local-marginal diagnostic does not match the six reconstruction controls, twelve Circlet baselines, thirty-six one-roll probes, fifty-four agreed replays, 5-aligned/7-counterexample/0-tie same-Circlet validation split, and zero-selection boundary.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =
