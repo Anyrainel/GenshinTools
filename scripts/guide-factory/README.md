@@ -21,17 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 47 is the first authenticated computation-backed evaluation of the
-six Xiao FFXX branch candidates, and it fails closed on a real calculator
-representation problem. Under one explicit Guide Factory-owned C0/R1-or-R5
-fixture, all six grouped `2 x Skill + 11 x High Plunge` replays disagree between
-the interpreted and compiled calculator paths because Xianyun's eight-use buff
-is stack-limited per execution unit. Expanding the same counts into thirteen
-unit lines restores dual-path agreement for all six candidates and preserves
-the grouped interpreted total, but does not validate a gameplay rotation or
-the fixture assumptions. The durable output is therefore authenticated and
-expectedly `not-comparable`: it emits no rank, winner, recommendation, damage
-claim, complete build, ideal-roll allocation, rotation claim, or ER result.
+Checkpoint 48 isolates the safe part of checkpoint 47's failed computation as
+an authenticated execution gate. It fresh-authenticates the complete
+checkpoint-47 preflight, independently expands the wrapper-owned positive
+integer formula counts into thirteen contiguous execution-unit lines, and
+requires exact equality with the upstream unit plan. Six candidate observations
+become eligible for a later same-fixture technical comparison only after each
+preserves grouped interpreted damage, passes unit-expanded interpreted/compiled
+agreement, and retains the exact Xianyun eight-use activation trace. The gate
+performs no comparison, pairwise delta, sorting by damage, rank, winner,
+recommendation, damage claim, complete build, ideal-roll allocation, rotation
+claim, or ER work.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -869,6 +869,36 @@ This is not a working guide factory or an equipment recommendation:
      rejections, six unit-expanded agreements, zero comparable or ranked
      candidates, and no winner, recommendation, guide, damage-comparison,
      rotation, ideal-roll, or ER claim.
+269. Byte-authenticate checkpoint 48's exact 121-path closure: checkpoint 47's
+     complete 118 inputs, the durable checkpoint-47 report, and the new core
+     and CLI. Require byte/parsed-object parity for the twelve checkpoint-47
+     JSON inputs plus its durable report.
+270. Fresh-authenticate checkpoint 47, recursively rerunning its checkpoint-42
+     and checkpoint-46 boundaries and its grouped, raw-capture, unit-expanded,
+     and rejected-sheet computations. Do not duplicate or weaken the private
+     fixture builder.
+271. Independently expand only positive safe-integer counted lines, in authored
+     contiguous line order and under an explicit total-line bound. Preserve
+     character, formula, reaction, and on-field fields and require exact stable
+     equality with checkpoint 47's authenticated thirteen-line unit plan.
+272. Admit one technical observation only when unit-expanded interpreted and
+     compiled totals agree, grouped interpreted and unit-expanded interpreted
+     totals remain invariant, the Xianyun activation sequence is exactly eight
+     active plus three inactive plunges, and candidate/view/refinement identity
+     is unchanged.
+273. Sort the six admitted observations only by technical candidate ID. Keep
+     checkpoint 46's three source groups and six membership edges in a separate
+     provenance projection; source ranks, rarity, tied membership, and report
+     order must not alter technical eligibility or identity.
+274. Mark all six observations eligible for a later same-fixture technical
+     comparison while recording comparison execution as not performed. Execute
+     zero pairwise comparisons, damage sorting, rank derivations, winners, or
+     selections in this gate.
+275. Integrate the gate as global report 45. Preserve zero complete builds,
+     recommendations, player-facing damage claims, rotation claims, optimizer,
+     generator, AutoTune, ideal-roll, or ER output, and record that checkpoint
+     48 makes no additional calculator replay beyond the freshly rebuilt
+     checkpoint-47 evidence.
 
 The first two active sources are already in this repository:
 
@@ -990,6 +1020,17 @@ validate a rotation, timing, or fixture quality. The authenticated result is
 therefore intentionally non-comparable and creates no rank, winner,
 recommendation, or player-facing damage claim.
 
+Checkpoint 48 accepts only the normalized part of that evidence. Its 121-path
+closure adds the durable checkpoint-47 report and the new gate implementation
+to checkpoint 47's complete boundary; thirteen JSON objects require raw-byte
+parity. The gate independently expands the two counted lines into the exact
+thirteen authenticated execution units, then admits all six observations only
+after the unit-expanded calculator agreement, grouped-direct invariance, and
+eight-active/three-inactive Xianyun trace pass. It makes no new calculator
+replay and performs no comparison. The observations are merely eligible for a
+later same-fixture technical comparison, remain serialized by technical ID,
+and retain source groups only in a separate provenance projection.
+
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
 Source-specific capture contracts live beside `sources/registry.json`.
@@ -1053,6 +1094,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-non-er-condition-free-branch-candidate-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-grouped-replay-representation-preflight.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1076,7 +1118,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-four globally integrated durable reports
+In full mode it rebuilds all forty-five globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1096,6 +1138,7 @@ condition slices, the authenticated two-view Xiao FFXX applicable-claim
 projection, its authenticated one-candidate/two-binding partial artifact
 contract, the authenticated six-candidate condition-free branch domain, its
 authenticated grouped-versus-unit-expanded replay representation preflight,
+the authenticated unit-expanded candidate execution gate,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
@@ -1402,6 +1445,26 @@ differently. The source fixture's twelve-plunge plan is not cross-joined because
 it explicitly assumes no external buffs. The report authenticates this
 representation discrepancy as a reason to withhold comparison; it does not
 turn the six totals or their serialization order into a damage claim or rank.
+
+Checkpoint 48 is a downstream execution gate rather than another fixture. It
+fresh-authenticates the checkpoint-47 report through all 118 upstream paths and
+adds only that durable report plus its own core and CLI, for 121 exact raw-byte
+inputs and thirteen JSON byte/object pairs. Its Xiao-specific normalizer accepts
+only positive safe-integer counts whose total is exactly bounded to the current
+thirteen-line plan. It preserves contiguous authored order and every character,
+formula, reaction, and on-field field, then requires exact equality with the
+fresh upstream unit-expanded plan.
+
+Each of the six candidate observations must independently retain grouped-
+direct/unit-direct invariance, unit direct/compiled agreement, and the exact
+Xianyun activation trace before receiving technical-comparison eligibility.
+Eligibility is not comparison: checkpoint 48 computes no pairwise relation,
+delta, damage order, source-rank alignment, winner, or selection. Observations
+are sorted only by technical candidate ID. The three source groups and six
+membership edges remain a separate provenance projection and cannot affect the
+gate identity. Checkpoint 48 makes zero additional calculator replay calls and
+inherits no authority for gameplay, damage, guide, build, stat, ideal-roll, or
+ER claims.
 
 The manual condition-array inventory then broadens that validation boundary to
 eight guide-selected external snapshots. The ninth indexed snapshot is the

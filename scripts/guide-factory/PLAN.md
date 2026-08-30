@@ -1046,14 +1046,33 @@ outcome is intentionally non-comparable and emits no rank, winner,
 recommendation, player-facing damage claim, rotation claim, ideal-roll result,
 or ER result.
 
-The next non-ER boundary should first isolate representation normalization as
-its own candidate execution gate. It may unit-expand count-only lines under an
-explicit wrapper-authored order, but must prove direct-total invariance and
-dual-path agreement per candidate, preserve every fixture assumption, and
-report technical observations without sorting or selecting them. Only after
-that gate is credible should the experiment add Circlet/substat variants or
-compare computed observations with authenticated source groups. A discrepancy
-must remain a validation target, not a player-facing winner.
+Checkpoint 48 isolates that representation normalization as its own candidate
+execution gate. Its 121 exact raw-byte paths are checkpoint 47's complete 118-
+path boundary plus the durable checkpoint-47 report and the checkpoint-48 core
+and CLI; all thirteen JSON inputs require byte/object parity. Fresh
+checkpoint-47 authentication recursively reruns the grouped attempts, raw
+dual-path captures, unit-expanded agreements, and rejected Flower/Plume probe.
+Checkpoint 48 itself makes zero additional calculator replay calls.
+
+The Xiao-specific normalizer accepts only positive safe-integer counts under
+the exact thirteen-line bound. It preserves authored contiguous order plus
+character, formula, reaction, and on-field fields and must reproduce the
+upstream unit plan exactly. Six technical-ID-sorted observations become
+eligible only after grouped-direct/unit-direct invariance, unit direct/compiled
+agreement, and the eight-active/three-inactive Xianyun trace are all preserved.
+The three source groups and six membership edges remain provenance outside
+technical identity. Comparison execution is explicitly not performed, so the
+gate creates no pairwise relation, damage order, rank, winner, recommendation,
+or player-facing damage claim.
+
+The next non-ER boundary should compare those six eligible observations with
+the two ranked five-star source groups while keeping Deathmatch cross-rarity-
+incomparable. It should report group overlap and every counterexample as
+validation targets under the exact incomplete wrapper fixture, without treating
+source order as ground truth or computed damage as a correction. Only after
+that discrepancy report is credible should the experiment introduce guarded
+Circlet/substat variants. A discrepancy must remain a review input, not a
+player-facing winner.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

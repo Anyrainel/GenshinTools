@@ -532,6 +532,38 @@ withheld from the externally buffed FFXX fixture. The report therefore has zero
 comparable or ranked candidates and supports no guide, build, stat, rotation,
 damage, ideal-roll, or ER claim.
 
+### Derived unit-expanded execution gates
+
+A unit-expanded execution gate may project a freshly authenticated
+representation preflight into candidate-level technical eligibility. The gate
+must not duplicate a private fixture or trust a saved accepted label: it must
+fresh-authenticate the upstream report through its complete raw boundary and
+independently reproduce the normalized execution-unit plan.
+
+Normalization must be explicitly scoped. Positive safe-integer counts,
+maximum expansion size, contiguous authored line order, and preservation of
+character/formula/reaction/on-field fields are part of the identity. Exact
+equality with the upstream unit plan is required. This shape does not establish
+that fractional, ranged, optional, timing-sensitive, or arbitrary future count
+representations may be expanded the same way.
+
+Eligibility and comparison are separate states. A candidate may become
+eligible only after normalized interpreted/compiled agreement and grouped-
+interpreted/normalized-interpreted invariance pass under one exact fixture.
+The gate may preserve source-group membership in a separate provenance
+projection, but source rank, rarity, tied membership, and source order cannot
+affect technical identity or serialization. Until a downstream report actually
+executes a comparison, pairwise count, rank count, winner count, and selection
+count remain zero.
+
+Checkpoint 48 applies this shape to checkpoint 47. It authenticates 121 raw-
+byte inputs and thirteen JSON byte/object pairs, reproduces the exact thirteen
+execution units, and admits six technical-ID-sorted observations. It records
+three provenance groups and six membership edges, makes no additional
+calculator replay, and marks comparison execution not performed. The result
+supports no damage, guide, build, stat, rotation, ideal-roll, optimizer,
+generator, AutoTune, or ER claim.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

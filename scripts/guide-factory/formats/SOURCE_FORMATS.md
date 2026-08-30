@@ -330,6 +330,20 @@ derived computation evidence. None may be written back as KQM formula order,
 source damage, source ranking, a recommended weapon, or a reusable source
 rotation.
 
+Checkpoint 48 adds no source record, source field, or computed correction. Its
+count expansion operates on checkpoint 42's calculator-default formula IDs and
+counts in checkpoint 47's wrapper-authored order. The resulting normalized
+plan, eligibility flags, numeric observations, and execution hashes are Guide
+Factory-derived fields only.
+
+The two ranked five-star groups and unranked Deathmatch group may be copied into
+the checkpoint-48 report solely as a separate provenance projection. Their
+rank, rarity, tied membership, source classifications, occurrence locators, and
+candidate edges must not enter technical identity or be rewritten based on the
+computed totals. Checkpoint 48 performs no source-group comparison; future
+overlap or discrepancy output must remain a derived validation target and must
+not mutate the KQM snapshot or consolidated recommendation rows.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

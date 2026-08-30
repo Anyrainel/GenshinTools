@@ -832,6 +832,37 @@ exact set equality. This protects the report from silently omitting a new
 runtime dependency while still distinguishing the complete runtime category
 from the broader upstream/report implementation closure.
 
+## Xiao FFXX unit-expanded execution gate seam
+
+`src/xiaoFfxxUnitExpandedExecutionGate.ts` is a downstream normalization gate,
+not a second calculator fixture. It fresh-authenticates checkpoint 47 through
+the complete 118-path upstream closure, so the grouped rejections, raw dual-
+path captures, unit-expanded agreements, and rejected-sheet probe are rerun
+before projection. Its own exact boundary adds only the durable checkpoint-47
+report plus the new core and CLI, for 121 raw-byte inputs and thirteen JSON
+byte/object parity checks.
+
+The normalizer is intentionally Xiao/checkpoint-47-specific. It accepts only
+positive safe-integer counts under the exact thirteen-unit bound, expands each
+source line contiguously in the wrapper-authored order, preserves character,
+formula, reaction, and on-field fields, and requires exact stable equality with
+checkpoint 47's authenticated unit plan. It is not a generic claim that every
+calculator count may be expanded safely.
+
+Each candidate passes the gate only when its unit-expanded interpreted and
+compiled totals agree, its grouped interpreted total is invariant under
+expansion, and Xianyun's activation trace remains eight active then three
+inactive plunge units. Six observations receive eligibility for a future
+same-fixture technical comparison and remain ordered by technical candidate ID.
+The two ranked five-star groups and unranked Deathmatch group are retained only
+as six membership edges in a separate provenance projection.
+
+Checkpoint 48 performs no pairwise comparison, delta, damage sort, source-rank
+alignment, selection, or additional calculator replay. Its accepted gate
+status therefore supplies a computation precondition, not a guide result or a
+ranking. Damage, gameplay, rotation, build, stat, ideal-roll, optimizer,
+generator, AutoTune, and ER claims all remain false.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -1281,6 +1312,8 @@ should use the expanded repository for a second character/team slice.
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
 - Authenticated grouped-versus-unit-expanded replay representation diagnostic:
   `scripts/guide-factory/src/xiaoFfxxGroupedReplayRepresentationPreflight.ts`.
+- Authenticated unit-expanded candidate execution-eligibility gate:
+  `scripts/guide-factory/src/xiaoFfxxUnitExpandedExecutionGate.ts`.
 - Bounded full-team node-local generator/replay execution with intact versus
   cross-endpoint provenance:
   `scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts`.

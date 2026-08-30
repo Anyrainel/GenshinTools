@@ -340,6 +340,22 @@ Current durable pilot evidence:
   builds, damage-comparison claims, rotation claims, ideal-roll results, or ER
   results. Its current 50,180-byte output has SHA-256
   `d32b45449ff4e3e2f423c13f3d693d08910b6a2aeaaf04b7a846d4b44db7e79b`.
+- `xiao-ffxx-unit-expanded-execution-gate.json` authenticates the exact
+  121-file raw-byte closure formed by checkpoint 47's complete 118 inputs, the
+  durable checkpoint-47 report, and the checkpoint-48 core and CLI. Thirteen
+  JSON inputs require byte/object parity before checkpoint 47 is freshly
+  rebuilt. A bounded Xiao-specific policy independently expands the two counted
+  lines into thirteen contiguous unit lines and requires exact equality with
+  the authenticated upstream plan. All six technical-ID-sorted observations
+  preserve grouped interpreted damage, pass unit-expanded interpreted/compiled
+  agreement, and retain Xianyun's eight-active/three-inactive activation trace.
+  The two ranked five-star groups and unranked Deathmatch group remain three
+  provenance-only groups with six membership edges. The gate makes zero
+  additional calculator replay calls and executes zero comparisons, pairwise
+  deltas, damage sorts, ranks, winners, or selections. It supports no guide,
+  build, stat, damage, rotation, ideal-roll, optimizer, generator, AutoTune, or
+  ER claim. Its current 40,834-byte output has SHA-256
+  `1932888712ff16a7008167f540c4d284029fe828c3cd129e096a4cfda32309d9`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -713,7 +729,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-four globally integrated reports
+In full mode `validate.ts` rebuilds all forty-five globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -751,6 +767,9 @@ this directory now contains 44 JSON reports.
 Checkpoint 47 adds the Xiao FFXX grouped-replay representation preflight as
 integrated report 44. Including checkpoint 35's permission-isolated report,
 this directory now contains 45 JSON reports.
+Checkpoint 48 adds the Xiao FFXX unit-expanded execution gate as integrated
+report 45. Including checkpoint 35's permission-isolated report, this directory
+now contains 46 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163
