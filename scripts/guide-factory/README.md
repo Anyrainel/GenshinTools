@@ -21,17 +21,16 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 48 isolates the safe part of checkpoint 47's failed computation as
-an authenticated execution gate. It fresh-authenticates the complete
-checkpoint-47 preflight, independently expands the wrapper-owned positive
-integer formula counts into thirteen contiguous execution-unit lines, and
-requires exact equality with the upstream unit plan. Six candidate observations
-become eligible for a later same-fixture technical comparison only after each
-preserves grouped interpreted damage, passes unit-expanded interpreted/compiled
-agreement, and retains the exact Xianyun eight-use activation trace. The gate
-performs no comparison, pairwise delta, sorting by damage, rank, winner,
-recommendation, damage claim, complete build, ideal-roll allocation, rotation
-claim, or ER work.
+Checkpoint 49 uses checkpoint 48's six technically eligible Xiao FFXX
+observations for one validation-only source-group diagnostic. It
+fresh-authenticates the entire execution gate, then exhaustively relates the
+three rank-group-1 five-star candidates to the two rank-group-2 candidates.
+Their observed ranges overlap: two of six pairs align with the source order,
+four are counterexamples under the incomplete wrapper fixture, and none are
+floating-tolerance ties. Those rows are review targets, not a weapon ranking,
+source correction, calculator-correctness claim, damage recommendation, or
+guide result. Deathmatch remains authenticated but cross-rarity-incomparable,
+and ER remains deferred.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -899,6 +898,35 @@ This is not a working guide factory or an equipment recommendation:
      generator, AutoTune, ideal-roll, or ER output, and record that checkpoint
      48 makes no additional calculator replay beyond the freshly rebuilt
      checkpoint-47 evidence.
+276. Byte-authenticate checkpoint 49's exact 124-path closure: checkpoint 48's
+     complete 121 inputs, the durable checkpoint-48 report, and the new core
+     and CLI. Require byte/parsed-object parity for all fourteen JSON inputs.
+277. Fresh-authenticate checkpoint 48 and consume only its canonical six
+     technical observations and separate three-group provenance projection.
+     Execute no additional calculator replay.
+278. Admit exactly the two tied five-star source groups with ranks 1 and 2 and
+     cardinalities three and two. Retain the single unranked Deathmatch
+     observation as an explicit cross-rarity exclusion.
+279. Compare checkpoint 48's unit-expanded direct totals using larger numeric
+     value and only an absolute `1e-9` / relative `1e-12` floating-point
+     equality envelope. Do not interpret that envelope as gameplay relevance.
+280. Enumerate the complete three-by-two cross-group product in technical-ID
+     order. Emit two source-order-aligned rows, four counterexample rows, and
+     zero tolerance-equivalent rows as validation targets only.
+281. Compute each source group's observed range and their overlap without
+     averaging, aggregating, damage-sorting, or producing a pairwise relation
+     among members of a tied source group. Group extrema are used only for the
+     envelope.
+282. Exclude Deathmatch from every pair and assign it no relative position,
+     cross-rarity rank, winner flag, or recommendation.
+283. Hash technical observations independently from source validation targets,
+     then hash the joined pair/envelope diagnostic separately. Source rank may
+     affect only the validation-target and diagnostic identities, never the
+     authenticated damage values.
+284. Integrate the diagnostic as global report 46. Preserve zero factory ranks,
+     winners, selections, player-facing damage claims, source corrections,
+     complete builds, Circlet/substat choices, optimizer, generator, AutoTune,
+     ideal-roll, rotation, gameplay, DPS, and ER outputs.
 
 The first two active sources are already in this repository:
 
@@ -1095,6 +1123,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-grouped-replay-representation-preflight.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1118,7 +1147,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-five globally integrated durable reports
+In full mode it rebuilds all forty-six globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1139,6 +1168,7 @@ projection, its authenticated one-candidate/two-binding partial artifact
 contract, the authenticated six-candidate condition-free branch domain, its
 authenticated grouped-versus-unit-expanded replay representation preflight,
 the authenticated unit-expanded candidate execution gate,
+the authenticated five-star source-group validation diagnostic,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
@@ -1465,6 +1495,22 @@ membership edges remain a separate provenance projection and cannot affect the
 gate identity. Checkpoint 48 makes zero additional calculator replay calls and
 inherits no authority for gameplay, damage, guide, build, stat, ideal-roll, or
 ER claims.
+
+Checkpoint 49 fresh-authenticates that complete gate and joins only the two
+ranked five-star source groups to their five technical observations. It
+enumerates all six rank-1-versus-rank-2 pairs under a floating-point equality
+envelope and records two source-order alignments plus four counterexamples. The
+two observed group ranges overlap. Per-group extrema are computed for that
+envelope, but no average, group score, within-group pairwise relation, damage
+sort, or factory rank is computed.
+
+The pair rows are validation targets only. They do not establish that the
+source is wrong, that the calculator is correct, or that the computed order
+should replace the source order. Deathmatch remains an authenticated excluded
+observation with zero cross-rarity pairs and no relative position. Checkpoint
+49 makes zero additional replay calls and supports no player-facing damage,
+guide, equipment, build, stat, winner, selection, source-correction, gameplay,
+ideal-roll, or ER claim.
 
 The manual condition-array inventory then broadens that validation boundary to
 eight guide-selected external snapshots. The ninth indexed snapshot is the

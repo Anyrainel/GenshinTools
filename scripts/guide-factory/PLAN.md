@@ -1065,14 +1065,29 @@ technical identity. Comparison execution is explicitly not performed, so the
 gate creates no pairwise relation, damage order, rank, winner, recommendation,
 or player-facing damage claim.
 
-The next non-ER boundary should compare those six eligible observations with
-the two ranked five-star source groups while keeping Deathmatch cross-rarity-
-incomparable. It should report group overlap and every counterexample as
-validation targets under the exact incomplete wrapper fixture, without treating
-source order as ground truth or computed damage as a correction. Only after
-that discrepancy report is credible should the experiment introduce guarded
-Circlet/substat variants. A discrepancy must remain a review input, not a
-player-facing winner.
+Checkpoint 49 compares those six eligible observations with the two ranked
+five-star source groups while keeping Deathmatch cross-rarity-incomparable. Its
+124 exact raw-byte inputs and fourteen JSON byte/object pairs include the
+complete checkpoint-48 boundary, durable report, and checkpoint-49 core/CLI.
+Fresh checkpoint-48 authentication recursively rebuilds the calculator
+evidence; checkpoint 49 makes zero additional replay calls.
+
+The validation diagnostic enumerates the complete three-by-two cross-group
+product using checkpoint 48's unit-expanded direct total and a floating-point
+equality envelope. The observed group ranges overlap. Two pairs align with the
+source order, four are counterexamples under the fixture, and none are
+tolerance-equivalent. Source ties are not treated as exact damage equality.
+Per-group extrema are computed for the envelope, but no within-group pairwise
+relation, member rank, or aggregate score is produced, and Deathmatch enters
+zero pairs. Technical observation, source target, and joined diagnostic
+identities remain separate.
+
+The result is a review target, not proof that the source is wrong, the
+calculator is correct, or the computed relation should become a guide order.
+The next non-ER boundary may introduce guarded Circlet/substat variants while
+preserving these counterexamples as validation cases. Only after those variants
+survive the same fail-closed process should any broader optimizer composition
+begin. A discrepancy remains a review input, not a player-facing winner.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

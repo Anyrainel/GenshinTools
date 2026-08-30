@@ -863,6 +863,35 @@ status therefore supplies a computation precondition, not a guide result or a
 ranking. Damage, gameplay, rotation, build, stat, ideal-roll, optimizer,
 generator, AutoTune, and ER claims all remain false.
 
+## Xiao five-star source-group validation diagnostic seam
+
+`src/xiaoFfxxFiveStarSourceGroupValidationDiagnostic.ts` fresh-authenticates
+checkpoint 48 through its complete 121-path closure, then adds the durable gate
+and its own core/CLI for 124 raw-byte inputs and fourteen JSON byte/object
+parity checks. It uses only the six canonical technical observations and the
+separate source-group provenance projection. No new calculator replay occurs.
+
+The diagnostic admits exactly the tied three-member rank-1 and two-member
+rank-2 five-star groups. It enumerates their complete six-pair cross-product in
+technical identity order and relates the unit-expanded direct totals with an
+absolute `1e-9` / relative `1e-12` floating-point envelope. That tolerance is
+serialization hygiene, not a gameplay threshold. The observed group ranges
+overlap; two pairs align with source order, four are counterexamples, and none
+are tolerance-equivalent.
+
+Per-group extrema are computed for the overlap envelope, but no average, group
+score, damage sort, within-group pairwise relation, or factory rank is
+produced. Tied source membership is not interpreted as equal damage. The single
+Deathmatch observation remains authenticated but excluded from all cross-rarity
+pairs and receives no relative position.
+
+Technical observation identity, source validation-target identity, and joined
+diagnostic identity are separate. Pair rows explicitly deny source-error,
+calculator-correctness, computed-correction, and recommendation claims. The
+accepted diagnostic supports no player-facing damage, guide, team, equipment,
+build, stat, winner, selection, gameplay, rotation, DPS, ideal-roll, generator,
+optimizer, AutoTune, or ER result.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -1314,6 +1343,8 @@ should use the expanded repository for a second character/team slice.
   `scripts/guide-factory/src/xiaoFfxxGroupedReplayRepresentationPreflight.ts`.
 - Authenticated unit-expanded candidate execution-eligibility gate:
   `scripts/guide-factory/src/xiaoFfxxUnitExpandedExecutionGate.ts`.
+- Authenticated five-star source-group validation-only diagnostic:
+  `scripts/guide-factory/src/xiaoFfxxFiveStarSourceGroupValidationDiagnostic.ts`.
 - Bounded full-team node-local generator/replay execution with intact versus
   cross-endpoint provenance:
   `scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts`.

@@ -344,6 +344,17 @@ computed totals. Checkpoint 48 performs no source-group comparison; future
 overlap or discrepancy output must remain a derived validation target and must
 not mutate the KQM snapshot or consolidated recommendation rows.
 
+Checkpoint 49 adds no source record, rank, correction, or rewritten
+recommendation. It copies the two five-star ordinal groups only into an
+authenticated validation-target projection, then joins them to checkpoint 48's
+separately authenticated numeric observations. Source rank cannot alter those
+observations.
+
+Observed range overlap and cross-group counterexamples are derived review
+targets. They do not prove a source error, calculator correctness, or a
+replacement weapon order. Tied group membership is not rewritten as exact
+damage equality, and Deathmatch remains unranked and cross-rarity-incomparable.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

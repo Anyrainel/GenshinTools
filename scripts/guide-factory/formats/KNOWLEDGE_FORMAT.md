@@ -564,6 +564,30 @@ calculator replay, and marks comparison execution not performed. The result
 supports no damage, guide, build, stat, rotation, ideal-roll, optimizer,
 generator, AutoTune, or ER claim.
 
+### Derived source-group validation diagnostics
+
+A source-group validation diagnostic may join authenticated technical
+observations to ordinal source groups only after both projections are preserved
+separately. Technical observation identity must not contain source rank. Source
+rank may enter the validation-target and joined diagnostic identities because
+it defines the tested relation, but it cannot change the authenticated numeric
+observation.
+
+Cross-group enumeration must be exhaustive and deterministic. Tied membership
+inside one ordinal source group does not imply equal computed values, so it
+must not create within-group ranks or equality failures unless the source
+explicitly makes that stronger claim. Cross-rarity relations remain excluded
+without authenticated source ordering. Floating tolerance must be labelled as
+numeric equivalence rather than gameplay significance.
+
+Checkpoint 49 applies this shape to checkpoint 48. It authenticates 124 raw-
+byte inputs and fourteen JSON byte/object pairs, compares the complete three-
+by-two five-star group cross-product, and records overlapping observed ranges,
+two source-order alignments, four counterexamples, and zero tolerance ties.
+Deathmatch remains an authenticated excluded observation. The output is a set
+of validation targets, not source ground truth, a computed correction, a
+weapon rank, a damage recommendation, or a guide result.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

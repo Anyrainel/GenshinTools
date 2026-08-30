@@ -1,0 +1,974 @@
+{
+  "autoTuneExecuted": false,
+  "calculatorCorrectnessClaimed": false,
+  "cautions": [
+    "This diagnostic compares source-group validation targets for one authenticated Xiao FFXX fixture only.",
+    "The pair outcomes test whether checkpoint 48 technical totals reproduce a source-authored between-group ordering; they do not rank weapons or establish player-facing damage claims.",
+    "Source membersTied means co-membership in one source tier only. Envelope extrema are computed, but no member-to-member equality, ordering, or rank is produced.",
+    "Deathmatch remains authenticated as a four-star observation but is excluded from every five-star pair and all cross-rarity comparison.",
+    "The group envelopes overlap, so this fixture cannot reproduce the source grouping as a strict numeric partition.",
+    "Circlet, substats, gameplay timing, and Energy Recharge remain absent and deferred."
+  ],
+  "circletSelectionExecuted": false,
+  "classification": "authenticated-bounded-source-group-validation-target-diagnostic",
+  "comparisonExecutionStatus": "performed-validation-target-only",
+  "comparisonPolicy": {
+    "absoluteTolerance": 1e-9,
+    "allowedDifferenceFormula": "max(absoluteTolerance, relativeTolerance * max(1, abs(rankOne), abs(rankTwo)))",
+    "direction": "rank-one-minus-rank-two",
+    "expectedPairCount": 6,
+    "finiteInputsRequired": true,
+    "gameplaySignificanceThresholdApplied": false,
+    "metric": "unit-expanded-direct-total-damage",
+    "pairEnumeration": "technical-id-ordered-exhaustive-cartesian-3x2",
+    "policyId": "finite-absolute-relative-tolerance-v1",
+    "relativeTolerance": 1e-12,
+    "strictAboveToleranceMeansAligned": true,
+    "strictBelowNegativeToleranceMeansCounterexample": true,
+    "withinInclusiveToleranceMeansTie": true
+  },
+  "comparisons": [
+    {
+      "absoluteDifference": 67980.283579882,
+      "allowedDifference": 4.47332147751224e-7,
+      "calculatorCorrectnessClaimed": false,
+      "comparisonId": "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo::source-rank-1-v-2::guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+      "comparisonSha256": "36f90eb15823e77e001a1aaf0212e21dff5064052d1bd15a967f46d0da927d7d",
+      "computedCorrectionClaimed": false,
+      "factoryRank": null,
+      "outcome": "source-order-counterexample",
+      "rankOneCandidateId": "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo",
+      "rankOneMinusRankTwo": -67980.283579882,
+      "rankOneSourceGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+      "rankOneSourceRankGroup": 1,
+      "rankOneTechnicalEvidenceSha256": "34e6190e0df98e4598355e055b4b296a63f0e8b0c62a03bd2eee198a69cb8439",
+      "rankOneUnitExpandedDirectTotalDamage": 379351.864171342,
+      "rankOneUpstreamObservationSha256": "ddc100f171b1ba1fefe99227147c2b166113a08bd8a6e831604bffcf0e348db8",
+      "rankTwoCandidateId": "guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+      "rankTwoSourceGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+      "rankTwoSourceRankGroup": 2,
+      "rankTwoTechnicalEvidenceSha256": "f71775b288029a07ce64a80430a72f2472b27ba86d13da7fc8696a51a166e613",
+      "rankTwoUnitExpandedDirectTotalDamage": 447332.147751224,
+      "rankTwoUpstreamObservationSha256": "cbe2cd46e45b2a05ec7ebee496390110db21ac076dd3097a0032b7130b3b62cd",
+      "recommendation": false,
+      "recommendationClaimed": false,
+      "sourceErrorClaimed": false,
+      "sourceOrderAligned": false,
+      "sourceOrderCounterexample": true,
+      "validationTargetOnly": true,
+      "winner": false,
+      "withinToleranceTie": false
+    },
+    {
+      "absoluteDifference": 36195.0731835,
+      "allowedDifference": 4.15546937354842e-7,
+      "calculatorCorrectnessClaimed": false,
+      "comparisonId": "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo::source-rank-1-v-2::guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+      "comparisonSha256": "0d1cfa58a09ddd598b7aaf21bbed20c38d70e3e6d0360f6e42d2d55abb4ba671",
+      "computedCorrectionClaimed": false,
+      "factoryRank": null,
+      "outcome": "source-order-counterexample",
+      "rankOneCandidateId": "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo",
+      "rankOneMinusRankTwo": -36195.0731835,
+      "rankOneSourceGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+      "rankOneSourceRankGroup": 1,
+      "rankOneTechnicalEvidenceSha256": "34e6190e0df98e4598355e055b4b296a63f0e8b0c62a03bd2eee198a69cb8439",
+      "rankOneUnitExpandedDirectTotalDamage": 379351.864171342,
+      "rankOneUpstreamObservationSha256": "ddc100f171b1ba1fefe99227147c2b166113a08bd8a6e831604bffcf0e348db8",
+      "rankTwoCandidateId": "guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+      "rankTwoSourceGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+      "rankTwoSourceRankGroup": 2,
+      "rankTwoTechnicalEvidenceSha256": "77016a1db2451f5300cf1e790a8921ffa4fdf75df7b27903e8bf58db36aa83c8",
+      "rankTwoUnitExpandedDirectTotalDamage": 415546.937354842,
+      "rankTwoUpstreamObservationSha256": "68c77a745c3e3518c70d6fd8bff4a7b926e1d9771e6df3c7fa70805071522f6c",
+      "recommendation": false,
+      "recommendationClaimed": false,
+      "sourceErrorClaimed": false,
+      "sourceOrderAligned": false,
+      "sourceOrderCounterexample": true,
+      "validationTargetOnly": true,
+      "winner": false,
+      "withinToleranceTie": false
+    },
+    {
+      "absoluteDifference": 37605.679292792,
+      "allowedDifference": 4.47332147751224e-7,
+      "calculatorCorrectnessClaimed": false,
+      "comparisonId": "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo::source-rank-1-v-2::guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+      "comparisonSha256": "48bc2cf239d7c4599b79f5117b06c09231b42884b3a21b4710aeaaff9cd9c667",
+      "computedCorrectionClaimed": false,
+      "factoryRank": null,
+      "outcome": "source-order-counterexample",
+      "rankOneCandidateId": "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo",
+      "rankOneMinusRankTwo": -37605.679292792,
+      "rankOneSourceGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+      "rankOneSourceRankGroup": 1,
+      "rankOneTechnicalEvidenceSha256": "8b5c1d97c78bd4e8b50c148cee339e53379a928c1eb0ff460859f05377cbd3d5",
+      "rankOneUnitExpandedDirectTotalDamage": 409726.468458432,
+      "rankOneUpstreamObservationSha256": "3015d67a0903b907f2115d3224e110fd43b39dbb0b08195cc48a25520c891b17",
+      "rankTwoCandidateId": "guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+      "rankTwoSourceGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+      "rankTwoSourceRankGroup": 2,
+      "rankTwoTechnicalEvidenceSha256": "f71775b288029a07ce64a80430a72f2472b27ba86d13da7fc8696a51a166e613",
+      "rankTwoUnitExpandedDirectTotalDamage": 447332.147751224,
+      "rankTwoUpstreamObservationSha256": "cbe2cd46e45b2a05ec7ebee496390110db21ac076dd3097a0032b7130b3b62cd",
+      "recommendation": false,
+      "recommendationClaimed": false,
+      "sourceErrorClaimed": false,
+      "sourceOrderAligned": false,
+      "sourceOrderCounterexample": true,
+      "validationTargetOnly": true,
+      "winner": false,
+      "withinToleranceTie": false
+    },
+    {
+      "absoluteDifference": 5820.46889641002,
+      "allowedDifference": 4.15546937354842e-7,
+      "calculatorCorrectnessClaimed": false,
+      "comparisonId": "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo::source-rank-1-v-2::guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+      "comparisonSha256": "518c6772f6b3522647ffc39a1997f565d47acbedf87c1c44e07d4c10ef670678",
+      "computedCorrectionClaimed": false,
+      "factoryRank": null,
+      "outcome": "source-order-counterexample",
+      "rankOneCandidateId": "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo",
+      "rankOneMinusRankTwo": -5820.46889641002,
+      "rankOneSourceGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+      "rankOneSourceRankGroup": 1,
+      "rankOneTechnicalEvidenceSha256": "8b5c1d97c78bd4e8b50c148cee339e53379a928c1eb0ff460859f05377cbd3d5",
+      "rankOneUnitExpandedDirectTotalDamage": 409726.468458432,
+      "rankOneUpstreamObservationSha256": "3015d67a0903b907f2115d3224e110fd43b39dbb0b08195cc48a25520c891b17",
+      "rankTwoCandidateId": "guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+      "rankTwoSourceGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+      "rankTwoSourceRankGroup": 2,
+      "rankTwoTechnicalEvidenceSha256": "77016a1db2451f5300cf1e790a8921ffa4fdf75df7b27903e8bf58db36aa83c8",
+      "rankTwoUnitExpandedDirectTotalDamage": 415546.937354842,
+      "rankTwoUpstreamObservationSha256": "68c77a745c3e3518c70d6fd8bff4a7b926e1d9771e6df3c7fa70805071522f6c",
+      "recommendation": false,
+      "recommendationClaimed": false,
+      "sourceErrorClaimed": false,
+      "sourceOrderAligned": false,
+      "sourceOrderCounterexample": true,
+      "validationTargetOnly": true,
+      "winner": false,
+      "withinToleranceTie": false
+    },
+    {
+      "absoluteDifference": 51219.288330754,
+      "allowedDifference": 4.98551436081978e-7,
+      "calculatorCorrectnessClaimed": false,
+      "comparisonId": "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo::source-rank-1-v-2::guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+      "comparisonSha256": "c30962a8d2a89e073a296b6678b2b8081ee708e6d7b2f2c96eb88950760dc056",
+      "computedCorrectionClaimed": false,
+      "factoryRank": null,
+      "outcome": "source-order-aligned",
+      "rankOneCandidateId": "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo",
+      "rankOneMinusRankTwo": 51219.288330754,
+      "rankOneSourceGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+      "rankOneSourceRankGroup": 1,
+      "rankOneTechnicalEvidenceSha256": "1615fc6762be86ce68026a82e0121e5450d335459487b9bc10f22428fd335982",
+      "rankOneUnitExpandedDirectTotalDamage": 498551.436081978,
+      "rankOneUpstreamObservationSha256": "93f9398407d40eda5e63acb0fcccde47d475ce2c7e60861b7f22a54b13111ecd",
+      "rankTwoCandidateId": "guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+      "rankTwoSourceGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+      "rankTwoSourceRankGroup": 2,
+      "rankTwoTechnicalEvidenceSha256": "f71775b288029a07ce64a80430a72f2472b27ba86d13da7fc8696a51a166e613",
+      "rankTwoUnitExpandedDirectTotalDamage": 447332.147751224,
+      "rankTwoUpstreamObservationSha256": "cbe2cd46e45b2a05ec7ebee496390110db21ac076dd3097a0032b7130b3b62cd",
+      "recommendation": false,
+      "recommendationClaimed": false,
+      "sourceErrorClaimed": false,
+      "sourceOrderAligned": true,
+      "sourceOrderCounterexample": false,
+      "validationTargetOnly": true,
+      "winner": false,
+      "withinToleranceTie": false
+    },
+    {
+      "absoluteDifference": 83004.498727136,
+      "allowedDifference": 4.98551436081978e-7,
+      "calculatorCorrectnessClaimed": false,
+      "comparisonId": "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo::source-rank-1-v-2::guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+      "comparisonSha256": "07e7cc789aec9361fa977fe754b8dc7f42731f1afcff70d1fd21bb7d4beaf2b3",
+      "computedCorrectionClaimed": false,
+      "factoryRank": null,
+      "outcome": "source-order-aligned",
+      "rankOneCandidateId": "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo",
+      "rankOneMinusRankTwo": 83004.498727136,
+      "rankOneSourceGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+      "rankOneSourceRankGroup": 1,
+      "rankOneTechnicalEvidenceSha256": "1615fc6762be86ce68026a82e0121e5450d335459487b9bc10f22428fd335982",
+      "rankOneUnitExpandedDirectTotalDamage": 498551.436081978,
+      "rankOneUpstreamObservationSha256": "93f9398407d40eda5e63acb0fcccde47d475ce2c7e60861b7f22a54b13111ecd",
+      "rankTwoCandidateId": "guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+      "rankTwoSourceGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+      "rankTwoSourceRankGroup": 2,
+      "rankTwoTechnicalEvidenceSha256": "77016a1db2451f5300cf1e790a8921ffa4fdf75df7b27903e8bf58db36aa83c8",
+      "rankTwoUnitExpandedDirectTotalDamage": 415546.937354842,
+      "rankTwoUpstreamObservationSha256": "68c77a745c3e3518c70d6fd8bff4a7b926e1d9771e6df3c7fa70805071522f6c",
+      "recommendation": false,
+      "recommendationClaimed": false,
+      "sourceErrorClaimed": false,
+      "sourceOrderAligned": true,
+      "sourceOrderCounterexample": false,
+      "validationTargetOnly": true,
+      "winner": false,
+      "withinToleranceTie": false
+    }
+  ],
+  "computedCorrectionClaimed": false,
+  "crossRarityComparisonExecuted": false,
+  "diagnosticComparisonExecuted": true,
+  "diagnosticId": "guide-factory-xiao-ffxx-five-star-source-group-validation-diagnostic-version-5-5",
+  "diagnosticStatus": "counterexamples-observed-validation-target-only",
+  "energyRecoveryComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "envelopeDiagnostic": {
+    "classification": "overlapping-source-group-envelopes",
+    "envelopeDiagnosticSha256": "9e4d11d1a628244aa93417b4062a289e1450f9dff9e72f918fcf710f273b6234",
+    "envelopesOverlap": true,
+    "metric": "unit-expanded-direct-total-damage",
+    "overlapLowerBound": 415546.937354842,
+    "overlapUpperBound": 447332.147751224,
+    "overlapWidth": 31785.210396382,
+    "rankOneMaximum": 498551.436081978,
+    "rankOneMinimum": 379351.864171342,
+    "rankTwoMaximum": 447332.147751224,
+    "rankTwoMinimum": 415546.937354842,
+    "strictNumericPartitionReproduced": false,
+    "validationTargetOnly": true
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
+      "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+      "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json",
+      "sha256": "4aff3efdff86353b811e5b6f67a1dd4e864b6bf7bb1df5e986f084ae9c0456c7"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-ffxx-applicable-claim-projection-contract.json",
+      "sha256": "92a6cd2eda00891477189387686e57142c8ab10d540edeff4d795b0ee58e07d0"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-ffxx-grouped-replay-representation-preflight.json",
+      "sha256": "d32b45449ff4e3e2f423c13f3d693d08910b6a2aeaaf04b7a846d4b44db7e79b"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json",
+      "sha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-ffxx-partial-artifact-candidate-contract.json",
+      "sha256": "71d82d02188d1575fe5a78890b193816e33c06c327ff3f6ce64887c066abcecd"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-ffxx-unit-expanded-execution-gate.json",
+      "sha256": "1932888712ff16a7008167f540c4d284029fe828c3cd129e096a4cfda32309d9"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-formula-count-parity.json",
+      "sha256": "eaf5c72b1861fc107b32d99af8d3485a5ff3d584bec31acd733c85e9a419ce6c"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-non-er-equipment-branch-source-slice.json",
+      "sha256": "97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
+      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-applicable-claim-projection-contract.ts",
+      "sha256": "a6de6bc73bd4455451b8c4855d1d75a49d8d15ea5e38a56aa492b52d18e7b29b"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts",
+      "sha256": "ba2c44d6e8bb922675804cc5abc78486b3347bc5f3d0e981708b7264dca6044c"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-grouped-replay-representation-preflight.ts",
+      "sha256": "ae8ddcd4453cf968be196fc9be9735ed5b4448c8baadb6d7e36c6e574500690a"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-non-er-condition-free-branch-candidate-contract.ts",
+      "sha256": "7205e5ab49c4625ccd76e865f9a6b3688e54f46e435629bb90a912ce2f0fab75"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-partial-artifact-candidate-contract.ts",
+      "sha256": "f2656fbff553dc368a51f235b84077b00fffb843ecb075e2314feaf2c6957bad"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts",
+      "sha256": "382ff736dbce0c2de3f40b4e5b1f89a53a65fba5ef4a38e135126774a46ba9b7"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts",
+      "sha256": "829b08ad5514db3c0d8a14c5fc0989fd4002949ec7052d6b841b6d3f57b87e77"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-non-er-equipment-branch-source-slice.ts",
+      "sha256": "7da70e35a3ac12b799db41f7c1d75b29a0448016d683db0202ca8ab75112937f"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts",
+      "sha256": "0c49d53ebee045fed9db34d3b388a2f60536a19614ae66516fb1b782f46cf7ad"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "deb828ad940076d03eead279cb36bf9a90c990870adba251ce5d49da460e8d6c"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "edfffb459c3bbc02bd2a11db7783dbc3a5629cc46d65b1e022c8d12e775b540c"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "ff726c4a924699036c76dff453639be615016a7196cb25b449846efe9c44aeab"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxApplicableClaimProjectionContract.ts",
+      "sha256": "3b75fb31d9dc0003344d44febd4d1c325447d2508f44c8fad61ff4c73d24c3bd"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxFiveStarSourceGroupValidationDiagnostic.ts",
+      "sha256": "4805c261753e417fa84faddab9d061bb6b7fe6728bd75ed69437c34e9ae9f6b2"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxGroupedReplayRepresentationPreflight.ts",
+      "sha256": "cb344b4825ac84b08c0df18bb2b3fb478a2e6fcc86327323a2e93cb4452d1f95"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxNonErConditionFreeBranchCandidateContract.ts",
+      "sha256": "79dde0e864ecd0d3fac1cea9dd13f42ee2023bd03c724ccb7eeb86742365c6b2"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxPartialArtifactCandidateContract.ts",
+      "sha256": "a384b29ef4e68243ac2b2cf0394f900145148f009726bf80b0deeec8d9d8929f"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxUnitExpandedExecutionGate.ts",
+      "sha256": "1fcb0713d2da24e3f2df16fc2c0fca32daca94e97589662cabb64a02bda9af07"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFormulaCountParity.ts",
+      "sha256": "96cb943a9ed4796ca0f8d0da66163454f3936a14c2a6f56efda9337e56f1c9bf"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFormulaCountParityScope.ts",
+      "sha256": "4227337b523708797713dab5f911f2e69be2c3c8f67457bc9f3cfe1f450c02d0"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoNonErEquipmentBranchSourceSlice.ts",
+      "sha256": "ea0351191374e4139ba326ccc788a11e064ba245e09de83b776c5c72aea7e177"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSlice.ts",
+      "sha256": "abbdeb882797909059e1407bf14826f5c53034e6a721a748ae6b0f6a27964d70"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSliceScope.ts",
+      "sha256": "9f5b90e8ee5a99acea0c0d4c927dee419f80d42843ba95bbec69efa171ff2252"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/constants.ts",
+      "sha256": "3e076788dfac5447d5d59456dc23d47c8d7fe5827795264b2d1dc20bde532c08"
+    },
+    {
+      "path": "src/data/enums.ts",
+      "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
+    },
+    {
+      "path": "src/data/game/artifact_stat.json",
+      "sha256": "b2b6fcee736e7be28228f70a9d7624bc80bfce809c7a450377b46f0eef103f67"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_beta_stats.json.gz",
+      "sha256": "86ac685730311d4ee68da96ba815b6c30b2f02534cd046c66a936ddb98ac4a14"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/i18n-app.ts",
+      "sha256": "b96d4d06b9b23dfc57a2cf21de840c48edfdfb7f1833fc3e456ac93c74a2190e"
+    },
+    {
+      "path": "src/data/i18n-beta.ts",
+      "sha256": "f26c7d1c125db0ae93c541ea550e7d190b04e2833baddd1fc5eb81b17a411a4c"
+    },
+    {
+      "path": "src/data/i18n-game.ts",
+      "sha256": "002f857afe89ce51d74f250e1959b81bdafe1f05bd8235e4477518ba64360e7c"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/artifact/scoring/constants.ts",
+      "sha256": "a1fbd7d200971276e96e61b3ad405112f592fe538250c75ac18b06256db1ad91"
+    },
+    {
+      "path": "src/lib/artifact/scoring/utils.ts",
+      "sha256": "7f8adecffa41ad02e21e7f64cac859845d89080b0446f5d2c142e547f0620e6a"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/comboBuffOverrides.ts",
+      "sha256": "623c65023bd11f572eca9e04d7158b70ce237504041992c21058b88504d7a342"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/damageFormula.ts",
+      "sha256": "12284b73d51deae51e6b99d6e79ae75cbeb25b06daf5155ba6e256fe01336764"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/dynamicBuffEval.ts",
+      "sha256": "35ef36d58b6ab297f2065b89da191ee8516fb1d9e77dfd5f4a660b80cab9df11"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/expr.ts",
+      "sha256": "1f408cc800ab5f3493ffba9e54e51350cbed13939f7d5c1e60749b22be91616c"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/exprStatSheet.ts",
+      "sha256": "3569cfb82143c617f9f39f71ccc48472b8747eaeccea941129a4811834951370"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/fieldState.ts",
+      "sha256": "5f962130bde4c9a8520bfa9d680a2a7974b020a0e520242353360e1b4dbaae5f"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/formulaCompiler.ts",
+      "sha256": "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/formulaEval.ts",
+      "sha256": "440a0096660c2b30b2879c25f5d49496877f7e75cc75a214163ffb27185d3402"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/marginalGain.ts",
+      "sha256": "394f7791aa1df123ea8c75d89b02903f3972cf4daa088eb6a83395892d868413"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/stackRank.ts",
+      "sha256": "653a4b3df480af79f4b9ee95dc019f1b6d91506e7384153d11a5a04036a514f6"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/statBuff.ts",
+      "sha256": "b4afe113ab9ed6f815819334beef97979f2acd731559266ea18c128135668a41"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/statSheet.ts",
+      "sha256": "1239c11fe3774ef46c8bafaf9ee1354debca3eab34b4e105bb802477ad4cee10"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuffLedger.ts",
+      "sha256": "25e3d3efc48ad2a6446c77d7ad01a2607326962c8dd0af5a247621c4931a1578"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamExprStatSheet.ts",
+      "sha256": "550b12859436569a4c2f426d2f088e8350123a8ab7490f2e88d9525369ba9c82"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamResonance.ts",
+      "sha256": "9a393d567ba2ec7947e1bb84106f23fd7b1a6f8a068465f4f75636f7932e52f4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamStatSheet.ts",
+      "sha256": "c6e274a95ba207883e81a159e09927bc5666ea5d0a55f88a995de3ea072e43e6"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact2pc.ts",
+      "sha256": "7000a8bd41d193e11a58b1a77b7846ecde1441503cccfbe429c2beca10fe5b77"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Fontaine.ts",
+      "sha256": "7302a8c04e6d0e6b654a8f13948b782c384a06670376ba87a87224ba6b890397"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Inazuma.ts",
+      "sha256": "9c03416c3f25c78b3b3d1a70ab2ae0a2eedce9ba65b02183a3207089bc340813"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Liyue.ts",
+      "sha256": "a39c7931327180a51dd33025016122c58bbaec75882dec05980f31f1adfbc792"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Mondstadt.ts",
+      "sha256": "62421a3ee438bdf7ec9958f9c0802accd91acd2a77f6317fbab56fb4a0b94ff9"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Natlan.ts",
+      "sha256": "2a187b0f913209f84cfbcb32772b6b41db1a7d3a3b6263b01255f28641be7fb1"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4NodKrai.ts",
+      "sha256": "34813f75211021f76756e94f5f64e30280ae091dd1b81819a83fd6b798ba5d52"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4None.ts",
+      "sha256": "e77a3463c64b9e9bbb5475488094b45b291501446543713ae332cb73471f157d"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Snezhnaya.ts",
+      "sha256": "ec63f6248d74cdfcdd841b7f08e78adf8b2322be8339137d8a19698cd816d8df"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Sumeru.ts",
+      "sha256": "9acae4fbcdb550071d66437d1dc66bb2643b7164c609bdc3ff1407ebb8afd941"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Inazuma.ts",
+      "sha256": "16778887d05d77f314891562c3726d5b4af78e111e341e11e1dda62327bfc83d"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Mondstadt.ts",
+      "sha256": "8fe1fc3c24e2102d6f7d2ebddd7af0397cc527dd4617f84fa9c2ae85355c8ecf"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5None.ts",
+      "sha256": "16f22040330dfe31513f91ac66add8e6dd4305319d5c2e0505277ff6258b4b17"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Snezhnaya.ts",
+      "sha256": "50e441e6e7ed1f68fb181169d14bbf973c98dd9b867a64c5a8cffc3237ee4a73"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Sumeru.ts",
+      "sha256": "dff50e5e3609c021b1ec4c2b5c68f91e0aaf5a90e46974012141ef4194a4b450"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/helpers.ts",
+      "sha256": "ba17f4585ad579ac9a1dbe14a49387cd1bea23409b343254e1764ef54bec1b08"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon3.ts",
+      "sha256": "95e183f1ea64ceeeb3dbee7c596893c49f52b0d3debd25f4eba5af7953f9d7cd"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Bow.ts",
+      "sha256": "f4d9987dea9804a0501b7d4e22b8dbb3abc04e253d6e0709c2693fd537702fb2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Catalyst.ts",
+      "sha256": "8b7e33219745ae25e612fe94ff9d0a840378d66db88edf4b071f7302a528dae4"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Claymore.ts",
+      "sha256": "89873a9c23b2d9ca2ddd6b615ad9c3e8a39e9d439dbad6309f2cd6083415b993"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Polearm.ts",
+      "sha256": "5b92aca3e98a267d5cdd71d6c3816624aa0ba2afa74fbbc3c304222e006f98c4"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Sword.ts",
+      "sha256": "e57306601e6b105fee72b1183383f916f48c2f5cd175e3f503b10c8df24aec79"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Bow.ts",
+      "sha256": "9d6d265cf45349b30e70f26d09ab4c71b2361318404565046f7e28963f8765d7"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Catalyst.ts",
+      "sha256": "bcfc2551417b05d3a7eef261ba1db59bbffc774adc934965aeec672bff2c2efa"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Claymore.ts",
+      "sha256": "90a814b10c5f5b4d52a9fd4b5ea65d7712de92adcd098fb41b7770c41f41ade0"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    },
+    {
+      "path": "src/lib/dmgcalc/utils.ts",
+      "sha256": "0e79095bea4fd3e16d64e306f33701d7750e38eed672967517590eb585827bc6"
+    }
+  ],
+  "generatorExecuted": false,
+  "groupAverageComputed": false,
+  "groupScoreComputed": false,
+  "idealRollAllocationExecuted": false,
+  "identityBoundary": {
+    "aggregateDiagnosticSha256": "cd070d5763acc3323317e05d412e423cdcd1cc7c3db82d005b61972567cb1f8d",
+    "comparedFiveStarTechnicalEvidenceSha256": "c2cda22ebd6a62d0194e504db5d01d03da3c6cad279839a46943fcf68c6815a6",
+    "deathmatchExcludedFromCrossGroupPairs": true,
+    "diagnosticResultBindsTechnicalEvidenceAndSourceTarget": true,
+    "diagnosticResultSha256": "dbbf1ebb8b22479ac7b2e040582befbe380f1de46440d8117be179389c57902d",
+    "sourceRankCannotAlterTechnicalEvidenceValues": true,
+    "sourceRankIncludedInDiagnosticJoinIdentity": true,
+    "sourceRankIncludedInSourceTargetIdentity": true,
+    "sourceTargetIdentityExcludesTechnicalTotals": true,
+    "sourceTargetSha256": "60eac8725ff1c8a9845dbf52937ae6e681defc8cee198675bc1bce46ee666d4b",
+    "technicalEvidenceIdentityExcludesSourceGroups": true,
+    "technicalEvidenceSha256": "118143b487b525a52d529b24cb98d8eea9c31992574de965ac3ee76d727247cd",
+    "upstreamCanonicalObjectSha256": "1932888712ff16a7008167f540c4d284029fe828c3cd129e096a4cfda32309d9"
+  },
+  "issues": [],
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "Do not turn aligned or counterexample pairs into weapon ranks, winners, recommendations, or a complete guide.",
+    "Do not infer equality, ordering, or interchangeability among members of the same source group.",
+    "Do not compare Deathmatch with the five-star candidates from this report.",
+    "Do not publish these technical totals as rotation damage, DPS, gameplay truth, or Energy Recharge advice."
+  ],
+  "publicationStatus": "withheld-not-a-guide-or-ranking",
+  "rankingExecuted": false,
+  "rawInputBoundary": {
+    "allDeclaredGeneratedFromHashesAuthenticatedFromBytes": true,
+    "authenticatedJsonInputParityCount": 14,
+    "combinedJsonInputByteAndParsedObjectParity": true,
+    "exactGeneratedFromPathSet": true,
+    "exactSourceFilePathSet": true,
+    "generatedFromCount": 124,
+    "sourceFileCount": 124,
+    "status": "accepted"
+  },
+  "recommendationClaimed": false,
+  "recommendationCompositionExecuted": false,
+  "reportType": "xiao-ffxx-five-star-source-group-validation-diagnostic",
+  "schemaVersion": 1,
+  "sourceErrorClaimed": false,
+  "sourceGroupValidationTargetProduced": true,
+  "sourceTargetBoundary": {
+    "deathmatchExclusion": {
+      "authenticatedTechnicalObservation": true,
+      "branchGroupId": "xiao-ffxx:four-star-unranked-deathmatch",
+      "candidateId": "guide-factory:xiao-ffxx:partial-non-er:deathmatch:mh-atk-anemo",
+      "crossRarityComparisonExecuted": false,
+      "excludedFromAllPairs": true,
+      "excludedFromFiveStarGroups": true,
+      "factoryRank": null,
+      "relativePosition": null,
+      "sourceOrdering": "unranked",
+      "sourceRankGroup": null
+    },
+    "expectedCrossGroupPairCount": 6,
+    "expectedRelation": "every-rank-one-member-above-every-rank-two-member",
+    "groups": [
+      {
+        "branchGroupId": "xiao-ffxx:five-star-source-rank-group-1",
+        "candidateIds": [
+          "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo",
+          "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo",
+          "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo"
+        ],
+        "membersTied": true,
+        "membersTiedMeansSourceCoMembershipOnly": true,
+        "sourceGroupSha256": "65247f1953443f32c5341dc6ed807809fafdd157eae942372e4102e41949850e",
+        "sourceOccurrenceId": "kqm:character_guide:xiao-five-star-weapon-tiers-version-5-5:recommendation.weaponRecommendations[0].conditions",
+        "sourceOrdering": "ranked-groups",
+        "sourceRankGroup": 1,
+        "withinGroupNumericEqualityAsserted": false,
+        "withinGroupRankingProduced": false
+      },
+      {
+        "branchGroupId": "xiao-ffxx:five-star-source-rank-group-2",
+        "candidateIds": [
+          "guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+          "guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo"
+        ],
+        "membersTied": true,
+        "membersTiedMeansSourceCoMembershipOnly": true,
+        "sourceGroupSha256": "f34ab041b934495bc413e3770b0c29113e04c5772f3d609f5202430711b7bb04",
+        "sourceOccurrenceId": "kqm:character_guide:xiao-five-star-weapon-tiers-version-5-5:recommendation.weaponRecommendations[1].conditions",
+        "sourceOrdering": "ranked-groups",
+        "sourceRankGroup": 2,
+        "withinGroupNumericEqualityAsserted": false,
+        "withinGroupRankingProduced": false
+      }
+    ],
+    "membersTiedMeansSourceCoMembershipOnly": true,
+    "numericTotalsExcludedFromSourceTargetIdentity": true,
+    "sourceGroupCount": 2,
+    "sourceMembershipEdgeCount": 5,
+    "sourceTargetIndependentOfTechnicalTotals": true,
+    "sourceTargetSha256": "60eac8725ff1c8a9845dbf52937ae6e681defc8cee198675bc1bce46ee666d4b",
+    "targetKind": "source-authored-five-star-rank-group-ordering",
+    "validationTargetOnly": true,
+    "withinGroupEnvelopeExtremaComputed": true,
+    "withinGroupNumericEqualityAsserted": false,
+    "withinGroupPairwiseRelationCount": 0,
+    "withinGroupPairwiseRelationExecuted": false,
+    "withinGroupRankingProduced": false
+  },
+  "substatSelectionExecuted": false,
+  "summary": {
+    "authenticatedCandidateCount": 6,
+    "completeBuildCount": 0,
+    "crossRarityComparisonCount": 0,
+    "deathmatchAuthenticatedExcludedCount": 1,
+    "energyRecoveryComputationCount": 0,
+    "exhaustiveCrossGroupPairCount": 6,
+    "fiveStarCandidateCount": 5,
+    "overlappingEnvelopeCount": 1,
+    "rankedCandidateCount": 0,
+    "recommendationCount": 0,
+    "sourceGroupCount": 2,
+    "sourceMembershipEdgeCount": 5,
+    "sourceOrderAlignedPairCount": 2,
+    "sourceOrderCounterexamplePairCount": 4,
+    "winnerCount": 0,
+    "withinGroupPairwiseRelationCount": 0,
+    "withinToleranceTiePairCount": 0
+  },
+  "supportsBuildRecommendations": false,
+  "supportsDamageClaims": false,
+  "supportsDamageComparisonClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGameplayClaims": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRecommendationClaims": false,
+  "supportsRotationClaims": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "supportsWinnerClaims": false,
+  "technicalEvidenceBoundary": {
+    "authenticatedExcludedFourStarCandidateCount": 1,
+    "candidateCount": 6,
+    "comparedFiveStarTechnicalEvidenceSha256": "c2cda22ebd6a62d0194e504db5d01d03da3c6cad279839a46943fcf68c6815a6",
+    "evidenceOrigin": "fresh-authenticated-checkpoint-48-unit-expanded-direct-total",
+    "fiveStarCandidateCount": 5,
+    "observations": [
+      {
+        "candidateId": "guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
+        "candidateIdentitySha256": "499a04a953c2b9382697f12cb97f862d0db5e3a9ec4d97b6a53f86c5ede06cca",
+        "comparisonEligible": false,
+        "refinement": 1,
+        "technicalEvidenceSha256": "f71775b288029a07ce64a80430a72f2472b27ba86d13da7fc8696a51a166e613",
+        "technicalObservationEligible": true,
+        "unitExpandedDirectTotalDamage": 447332.147751224,
+        "upstreamObservationSha256": "cbe2cd46e45b2a05ec7ebee496390110db21ac076dd3097a0032b7130b3b62cd",
+        "weaponId": "calamity_queller"
+      },
+      {
+        "candidateId": "guide-factory:xiao-ffxx:partial-non-er:deathmatch:mh-atk-anemo",
+        "candidateIdentitySha256": "0836ff03f2a8ad390461326e93b0e42d8b606c77eba709be420754fb9eece479",
+        "comparisonEligible": false,
+        "refinement": 5,
+        "technicalEvidenceSha256": "55c282766cd00a6879cd6c2821a06751afe3cfb8c7b229cb9e2bddf658901a89",
+        "technicalObservationEligible": true,
+        "unitExpandedDirectTotalDamage": 362037.839347444,
+        "upstreamObservationSha256": "85b45490bd7d82cce08f89080d88613b327d3bb6d4285bd91dcc8cb68697755d",
+        "weaponId": "deathmatch"
+      },
+      {
+        "candidateId": "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo",
+        "candidateIdentitySha256": "3f7e93efb8040a8c5562dcb64f6b7563f427869ad13ca470d9e12ecd43ca9863",
+        "comparisonEligible": false,
+        "refinement": 1,
+        "technicalEvidenceSha256": "34e6190e0df98e4598355e055b4b296a63f0e8b0c62a03bd2eee198a69cb8439",
+        "technicalObservationEligible": true,
+        "unitExpandedDirectTotalDamage": 379351.864171342,
+        "upstreamObservationSha256": "ddc100f171b1ba1fefe99227147c2b166113a08bd8a6e831604bffcf0e348db8",
+        "weaponId": "lumidouce_elegy"
+      },
+      {
+        "candidateId": "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo",
+        "candidateIdentitySha256": "3f9fc7a1382a1cd433fb894d2bb2c2fc1a13c9751ad44c5a7648953cac88695f",
+        "comparisonEligible": false,
+        "refinement": 1,
+        "technicalEvidenceSha256": "8b5c1d97c78bd4e8b50c148cee339e53379a928c1eb0ff460859f05377cbd3d5",
+        "technicalObservationEligible": true,
+        "unitExpandedDirectTotalDamage": 409726.468458432,
+        "upstreamObservationSha256": "3015d67a0903b907f2115d3224e110fd43b39dbb0b08195cc48a25520c891b17",
+        "weaponId": "primordial_jade_wingedspear"
+      },
+      {
+        "candidateId": "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo",
+        "candidateIdentitySha256": "fc24fa993cb6de7b2a1f5e1bda5f60ebc9f0cf3e3ca69d838958d48dff83d483",
+        "comparisonEligible": false,
+        "refinement": 1,
+        "technicalEvidenceSha256": "1615fc6762be86ce68026a82e0121e5450d335459487b9bc10f22428fd335982",
+        "technicalObservationEligible": true,
+        "unitExpandedDirectTotalDamage": 498551.436081978,
+        "upstreamObservationSha256": "93f9398407d40eda5e63acb0fcccde47d475ce2c7e60861b7f22a54b13111ecd",
+        "weaponId": "staff_of_homa"
+      },
+      {
+        "candidateId": "guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
+        "candidateIdentitySha256": "b9b68ec9797ab2c1b39bafb29fc323740c7928ead417abba62998d0a0a6a8cd9",
+        "comparisonEligible": false,
+        "refinement": 1,
+        "technicalEvidenceSha256": "77016a1db2451f5300cf1e790a8921ffa4fdf75df7b27903e8bf58db36aa83c8",
+        "technicalObservationEligible": true,
+        "unitExpandedDirectTotalDamage": 415546.937354842,
+        "upstreamObservationSha256": "68c77a745c3e3518c70d6fd8bff4a7b926e1d9771e6df3c7fa70805071522f6c",
+        "weaponId": "vortex_vanquisher"
+      }
+    ],
+    "sourceRanksExcludedFromTechnicalEvidenceIdentity": true,
+    "technicalEvidenceIndependentOfSourceMembership": true,
+    "technicalEvidenceSha256": "118143b487b525a52d529b24cb98d8eea9c31992574de965ac3ee76d727247cd"
+  },
+  "upstreamBoundary": {
+    "authenticatedTechnicalObservationCount": 6,
+    "checkpoint49AdditionalReplayCount": 0,
+    "checkpoint49ReplayExecuted": false,
+    "durableReportCanonicalObjectSha256": "1932888712ff16a7008167f540c4d284029fe828c3cd129e096a4cfda32309d9",
+    "durableReportFileSha256": "1932888712ff16a7008167f540c4d284029fe828c3cd129e096a4cfda32309d9",
+    "durableReportPath": "scripts/guide-factory/reports/xiao-ffxx-unit-expanded-execution-gate.json",
+    "freshlyAuthenticated": true,
+    "upstreamComparisonExecuted": false,
+    "upstreamInputCount": 121,
+    "upstreamRankedCandidateCount": 0,
+    "upstreamRecommendationCount": 0,
+    "upstreamWinnerCount": 0
+  },
+  "validationStatus": "accepted-as-validation-target-only",
+  "winnerSelectionExecuted": false,
+  "withinGroupEnvelopeExtremaComputed": true,
+  "withinGroupPairwiseRelationExecuted": false
+}

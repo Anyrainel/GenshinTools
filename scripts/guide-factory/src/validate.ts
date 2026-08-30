@@ -318,6 +318,13 @@ import {
   XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_SOURCE_FILE_PATHS,
   type XiaoFfxxUnitExpandedExecutionGateReport,
 } from "./xiaoFfxxUnitExpandedExecutionGate";
+import {
+  authenticateXiaoFfxxFiveStarSourceGroupValidationDiagnostic,
+  XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS,
+  XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_REPORT_PATH,
+  XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_SOURCE_FILE_PATHS,
+  type XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport,
+} from "./xiaoFfxxFiveStarSourceGroupValidationDiagnostic";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -418,6 +425,8 @@ export async function runValidation(
     xiaoFfxxGroupedReplayRepresentationPreflightSourceFiles,
     xiaoFfxxUnitExpandedExecutionGateInput,
     xiaoFfxxUnitExpandedExecutionGateSourceFiles,
+    xiaoFfxxFiveStarSourceGroupValidationDiagnosticInput,
+    xiaoFfxxFiveStarSourceGroupValidationDiagnosticSourceFiles,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -667,6 +676,19 @@ export async function runValidation(
       readJson(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_REPORT_PATH),
       Promise.all(
         XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            bytesBase64: (
+              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+            ).toString("base64"),
+          }),
+        ),
+      ),
+      readJson(
+        XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_REPORT_PATH,
+      ),
+      Promise.all(
+        XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_SOURCE_FILE_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
@@ -1626,6 +1648,60 @@ export async function runValidation(
             "canonical-inputs-rejected"
               ? "The Xiao FFXX unit-expanded execution gate could not fresh-authenticate checkpoint 47, its exact 121-file byte closure, or the bounded normalization policy."
               : "The saved Xiao FFXX unit-expanded execution gate does not match the exact thirteen-unit plan, six technically eligible observations, separate three-group provenance projection, and zero-comparison boundary.",
+        });
+      }
+      const xiaoFfxxFiveStarSourceGroupValidationDiagnosticGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS,
+        );
+      const xiaoFfxxFiveStarSourceGroupValidationDiagnosticAuthentication =
+        await authenticateXiaoFfxxFiveStarSourceGroupValidationDiagnostic(
+          xiaoFfxxFiveStarSourceGroupValidationDiagnosticInput as XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport,
+          {
+            repositoryInput: expectedKnowledge,
+            xiaoManualSnapshotInput: xiaoManualInput.snapshot,
+            xiaoRotationFixtureSnapshotInput:
+              xiaoFormulaFixtureManualInput.snapshot,
+            genshinToolsSnapshotInput: genshinTools.data,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoSourceLocalDurableReportInput:
+              xiaoSourceLocalConditionSliceInput,
+            applicableClaimDurableReportInput:
+              xiaoFfxxApplicableClaimProjectionInput,
+            partialCandidateDurableReportInput:
+              xiaoFfxxPartialArtifactCandidateInput,
+            branchSourceDurableReportInput:
+              xiaoNonErEquipmentBranchSourceSliceInput,
+            branchCandidateDurableReportInput:
+              xiaoFfxxNonErConditionFreeBranchCandidateInput,
+            formulaCountDurableReportInput: xiaoFormulaCountParityInput,
+            groupedReplayDurableReportInput:
+              xiaoFfxxGroupedReplayRepresentationPreflightInput,
+            unitExpandedDurableReportInput:
+              xiaoFfxxUnitExpandedExecutionGateInput,
+            sourceFiles:
+              xiaoFfxxFiveStarSourceGroupValidationDiagnosticSourceFiles,
+            generatedFrom:
+              xiaoFfxxFiveStarSourceGroupValidationDiagnosticGeneratedFrom,
+          },
+        );
+      if (
+        !xiaoFfxxFiveStarSourceGroupValidationDiagnosticAuthentication.authenticated
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFfxxFiveStarSourceGroupValidationDiagnosticAuthentication.reason ===
+            "canonical-inputs-rejected"
+              ? "pipeline.rejected_xiao_ffxx_five_star_source_group_validation_diagnostic"
+              : "pipeline.stale_xiao_ffxx_five_star_source_group_validation_diagnostic",
+          path: "reports.xiao-ffxx-five-star-source-group-validation-diagnostic",
+          message:
+            xiaoFfxxFiveStarSourceGroupValidationDiagnosticAuthentication.reason ===
+            "canonical-inputs-rejected"
+              ? "The Xiao FFXX five-star source-group diagnostic could not fresh-authenticate checkpoint 48, its exact 124-file byte closure, or the bounded validation-only comparison policy."
+              : "The saved Xiao FFXX five-star source-group diagnostic does not match the exact six-pair 2-aligned/4-counterexample/0-tie result, overlapping envelopes, and excluded Deathmatch boundary.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

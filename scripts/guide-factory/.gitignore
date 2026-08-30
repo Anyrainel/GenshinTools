@@ -44,3 +44,4 @@ reports/*
 !reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json
 !reports/xiao-ffxx-grouped-replay-representation-preflight.json
 !reports/xiao-ffxx-unit-expanded-execution-gate.json
+!reports/xiao-ffxx-five-star-source-group-validation-diagnostic.json
