@@ -10,6 +10,7 @@ import {
 import type { KleeSourceLocalConditionSliceReport } from "./kleeSourceLocalConditionSlice";
 import type { KokomiSourceLocalArtifactSliceReport } from "./kokomiSourceLocalArtifactSlice";
 import type { NoelleSourceLocalHighInvestmentSliceReport } from "./noelleSourceLocalHighInvestmentSlice";
+import type { NoelleSourceLocalLowerInvestmentSliceReport } from "./noelleSourceLocalLowerInvestmentSlice";
 import type {
   SourceLocalConditionRequestPredicateAst,
   SourceLocalConditionSliceReport,
@@ -137,6 +138,7 @@ export interface BuildCurrentConditionBindingCatalogInput {
   dionaSourceLocal: AuthenticatedCurrentReportPair<DionaSourceLocalSupportSliceReport>;
   kokomiSourceLocal: AuthenticatedCurrentReportPair<KokomiSourceLocalArtifactSliceReport>;
   noelleSourceLocal: AuthenticatedCurrentReportPair<NoelleSourceLocalHighInvestmentSliceReport>;
+  noelleSourceLocalLowerInvestment: AuthenticatedCurrentReportPair<NoelleSourceLocalLowerInvestmentSliceReport>;
 }
 
 export interface CurrentConditionBindingCatalogIssue {
@@ -165,6 +167,7 @@ export interface CurrentConditionBindingCatalogReport {
     dionaSourceLocalDurableMatchesCurrent: boolean;
     kokomiSourceLocalDurableMatchesCurrent: boolean;
     noelleSourceLocalDurableMatchesCurrent: boolean;
+    noelleSourceLocalLowerInvestmentDurableMatchesCurrent: boolean;
   };
   entries: CurrentConditionBindingCatalogEntry[];
   summary: {
@@ -198,6 +201,9 @@ export interface CurrentConditionBindingCatalogReport {
     noelleSourceLocalOccurrenceCount: number;
     noelleSourceLocalTypedBindingCount: number;
     noelleSourceLocalNotEnergyDeferredCount: number;
+    noelleSourceLocalLowerInvestmentOccurrenceCount: number;
+    noelleSourceLocalLowerInvestmentTypedBindingCount: number;
+    noelleSourceLocalLowerInvestmentNotEnergyDeferredCount: number;
   };
   issues: CurrentConditionBindingCatalogIssue[];
 }
@@ -539,6 +545,202 @@ const NOELLE_SOURCE_LOCAL_EXPECTED_EMPTY = {
     "3f126ff92f47f4c8e265c8608382a699310c2f3e33ae5af42c55353a63036c05",
 } as const;
 
+const NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID =
+  "kqm-noelle-source-local-lower-investment-slice-luna-viii";
+const NOELLE_SOURCE_LOCAL_LOWER_REPORT_SHA256 =
+  "4a7cf77b892a07b9ed5804c0e1f2aa2440300635c47d97bc46b90e002dfdae3a";
+const NOELLE_SOURCE_LOCAL_LOWER_OUTER_CAPABILITY_SHA256 =
+  "ca480c4b6fe037cab10e95068150de1bcf8068ab21a3563f39aba0e2e0fb3dc7";
+const NOELLE_SOURCE_LOCAL_LOWER_NESTED_CAPABILITY_SHA256 =
+  "cdb6843672c40a7368d80599693361c7cdea142c1fb5375b1adab399a613efbc";
+const NOELLE_SOURCE_LOCAL_LOWER_GENERATED_FROM_SHA256 =
+  "35a30591a568fa8ca9e2a81caedc50b35a3836dafd39da9dfb2ffb50853e2b5a";
+const NOELLE_SOURCE_LOCAL_LOWER_RAW_INPUT_BOUNDARY_SHA256 =
+  "3401c39d4b62ae7f24b39222907fbce19085160960d7dec591e36e02139dc2f7";
+const NOELLE_SOURCE_LOCAL_LOWER_COMPOSITION_POLICY_SHA256 =
+  "86c4d35478d2aa167b5476a93bdf56ddfcf89324115d3b88374e4115f67cb7c6";
+const NOELLE_SOURCE_LOCAL_LOWER_REQUEST_CONTEXT_REPORT_SHA256 =
+  "8bf4744c92bdd9af0fcb7247d1a0c48dbfb26ef77f2436f7fcfebda96abd010a";
+const NOELLE_SOURCE_LOCAL_LOWER_SOURCE_BOUNDARY_SHA256 =
+  "7eb0de173d7135a47415853d526b03a846dc200e15be3588f612c76977ab255d";
+const NOELLE_SOURCE_LOCAL_LOWER_NUMERIC_BOUNDARY_SHA256 =
+  "478794eafbba676eaec080c346cab85eded86a6f7a6d985e02ef384243791421";
+const NOELLE_SOURCE_LOCAL_LOWER_SUMMARY_SHA256 =
+  "d8ea3933b254c6f07e1259ad67f0bbb0150562de84bd073147df8a4f3583fe5b";
+const NOELLE_SOURCE_LOCAL_LOWER_FULL_SLICE_SHA256 =
+  "5fa806adf9c2e5bb0c22819dfec945da3d551b37762796712822bb3313b2e3d0";
+const NOELLE_SOURCE_LOCAL_LOWER_DOCUMENT_BOUNDARY_SHA256 =
+  "0b5b62899d8828bda2929d1be9b482574acc2ae9bac786e90b3908287d4c4e59";
+const NOELLE_SOURCE_LOCAL_LOWER_TEAM_CONTROL_SHA256 =
+  "7fe73a9a0de94f70a079174961ca7ce04301ffd1b61e88d358bde4b62e745ba8";
+const NOELLE_SOURCE_LOCAL_LOWER_SOURCE_RECORD_ID =
+  "noelle-c0-c5-talent-9-artifact-stats-luna-viii";
+const NOELLE_SOURCE_LOCAL_LOWER_REPOSITORY_RECORD_ID =
+  "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii";
+const NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS = [
+  "Noelle is C0–C5 and her Burst Talent is Level 9.",
+] as const;
+const NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS_SHA256 =
+  "6da7375f731b4225cc74ace0f54f350efdcbf7f2cad0655fcab7490d54875436";
+const NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE = {
+  type: "all",
+  predicates: [
+    {
+      type: "constellation-at-most",
+      characterId: "noelle",
+      threshold: 5,
+    },
+    {
+      type: "talent-level-is",
+      characterId: "noelle",
+      talent: "burst",
+      threshold: 9,
+    },
+  ],
+} as const satisfies SourceLocalConditionRequestPredicateAst;
+const NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE_SHA256 =
+  "a5b526ea3852b0e661f06a96c1bcec5062af2bc2580bffc0b1677a7a0546c868";
+const NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_RECOMMENDATION = {
+  recommendationId: "c0-c5-talent-9-artifact-stats",
+  label: "C0–C5 and Burst Talent Level 9 artifact stats",
+  scope: "artifact-stats",
+  roles: ["dps"],
+  ordering: null,
+  classification: null,
+  grouping: null,
+  sourceIndex: 0,
+} as const;
+const NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_SELECTED_OCCURRENCES = [
+  {
+    occurrenceId:
+      "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+    manualClaimPath: "recommendation.mainStats.sands[0].conditions",
+    repositoryPath: "recommendations[0].mainStats.sands[0].conditions",
+    mainStatSlot: "sands",
+    payload: {
+      type: "main-stat",
+      slot: "sands",
+      statIds: ["atk%"],
+      target: null,
+      priority: null,
+    },
+    payloadSha256:
+      "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+    selectedObjectSha256:
+      "29afd775823c76fe8ee9dc65c42f00c189ae6abe249120535ada73d787e6de29",
+    claimObjectSha256:
+      "cb9681ed6107856f1c69c103cf78bff706bfab59e096a44112a094cf5c2513b9",
+    controlObjectSha256:
+      "9d508dcc4d84494c302ca55d5347f7e8423e608852ca82219052441aa897c700",
+  },
+  {
+    occurrenceId:
+      "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+    manualClaimPath: "recommendation.mainStats.goblet[0].conditions",
+    repositoryPath: "recommendations[0].mainStats.goblet[0].conditions",
+    mainStatSlot: "goblet",
+    payload: {
+      type: "main-stat",
+      slot: "goblet",
+      statIds: ["geo%"],
+      target: null,
+      priority: null,
+    },
+    payloadSha256:
+      "27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a",
+    selectedObjectSha256:
+      "52adce2ae461c8eb9f83b5439955bd8e38614cfa967b8fb9ea90d6c89a1c9a43",
+    claimObjectSha256:
+      "43c46d38139f7473ccbf15d11b531330e43ac0bc8deb66fef25085f54b82a630",
+    controlObjectSha256:
+      "c2dc6327df358239f1f84e496746b641434eadbee33c39b515c989bedf3f162f",
+  },
+  {
+    occurrenceId:
+      "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+    manualClaimPath: "recommendation.mainStats.circlet[0].conditions",
+    repositoryPath: "recommendations[0].mainStats.circlet[0].conditions",
+    mainStatSlot: "circlet",
+    payload: {
+      type: "main-stat",
+      slot: "circlet",
+      statIds: ["cr", "cd"],
+      target: null,
+      priority: null,
+    },
+    payloadSha256:
+      "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+    selectedObjectSha256:
+      "482793074db59dae8038a9d511fc795750a7a5c133f186a636682cb438c412b6",
+    claimObjectSha256:
+      "31b99be2bddc0737d508a59f515902fef9b3bc77bf6395a73e6a695a34c17496",
+    controlObjectSha256:
+      "97b79d6d3f204c6041ee02e67bcd672d76126199962a2e14a05b2e0e654c838d",
+  },
+] as const;
+const NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_HOLDOUTS = [
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+    "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+    "021c3131fb1c11a18395c4ef5599b642869e004b115bb48eea7001f75c80c745",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+    "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+    "0c72399ce8b3f24fd4d37a1fcd8795438c95fd92918a40fa32cb09dafccfc944",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+    "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+    "09b0fdce4c33ba007a04c6ae4aac9846b94a20ed77efd34e5cca5ffb71bb0db2",
+  ],
+  [
+    "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.substats[0].conditions",
+    "25653d703f7c6fc7863846ee96926f944835256820cf3ab86738761bfc0bc675",
+    "4d88cd0bb5f6b0a5ec72e0636d1efffbff9016d1e123cde0460083fd971ce5f5",
+  ],
+  [
+    "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.substats[1].conditions",
+    "25653d703f7c6fc7863846ee96926f944835256820cf3ab86738761bfc0bc675",
+    "4ee089dadb55d1354b247e78a97842ef54f29a640273c5c7070f195ec365330a",
+  ],
+  [
+    "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.substats[2].conditions",
+    "25653d703f7c6fc7863846ee96926f944835256820cf3ab86738761bfc0bc675",
+    "9adedeaeeaaa20d48e1a873b9f298a04861edfd8d741020b466eae0eb7f33682",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[1].conditions",
+    "7444217b95d562ae6cffb22b51e7c6ef6da6891851967415925d6713c254e2c6",
+    "4f19172dd1394d8d652e55d884574c5ccdd6b3843b33a23734e3a6598093077b",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[1].conditions",
+    "778b1c674223e02b4b58c3903c6ac809f5bab52e2c216e93003320fd1657f748",
+    "c87b11f59b07c0d187b6790cbc67fd59665b13f501def82f34b450fdcae74871",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.substats[0].conditions",
+    "2dd077d3312b7d4e833de6e6269283f80373dda48bf20a5099878325c980018d",
+    "c1d8e5700711577021d22ac4e86cee840f7d132350b700074eb57fd951780549",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.substats[1].conditions",
+    "2dd077d3312b7d4e833de6e6269283f80373dda48bf20a5099878325c980018d",
+    "a5dad12f662b269df282ced46013b63678e402c88546ce70c330c81285eeeb03",
+  ],
+  [
+    "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.substats[2].conditions",
+    "2dd077d3312b7d4e833de6e6269283f80373dda48bf20a5099878325c980018d",
+    "ebe8274c4adb5dea8c4d3ffcdd1594594f8a17690db3478c60a5904b8088c904",
+  ],
+  [
+    "kqm:character_guide:noelle-hexerei-gest-luna-viii:recommendation.weaponRecommendations[0].conditions",
+    "f27375a8ce8833cc0326a17c94f52c71ed4f44a72868e15d087390b864e490cf",
+    "03fdf057141aff7029b31fbaf178e958c7bfd23fac0c809e02b6b5b70f412faa",
+  ],
+] as const;
+
 const KEQING_SHRED_SOURCE_MEMBER_INDEX: Readonly<Record<string, number>> = {
   kaedehara_kazuha: 0,
   sucrose: 1,
@@ -617,6 +819,8 @@ export function buildCurrentConditionBindingCatalog(
   const noelleSourceLocalDurableMatchesCurrent = exactCurrentReportMatches(
     input.noelleSourceLocal,
   );
+  const noelleSourceLocalLowerInvestmentDurableMatchesCurrent =
+    exactCurrentReportMatches(input.noelleSourceLocalLowerInvestment);
   const authenticationBoundary = {
     ittoAuthenticated,
     keqingEquipmentDurableMatchesCurrent,
@@ -625,6 +829,7 @@ export function buildCurrentConditionBindingCatalog(
     dionaSourceLocalDurableMatchesCurrent,
     kokomiSourceLocalDurableMatchesCurrent,
     noelleSourceLocalDurableMatchesCurrent,
+    noelleSourceLocalLowerInvestmentDurableMatchesCurrent,
   };
 
   if (!ittoAuthenticated) {
@@ -683,12 +888,34 @@ export function buildCurrentConditionBindingCatalog(
       "The durable Noelle source-local report differs from the current rebuilt report.",
     );
   }
+  if (!noelleSourceLocalLowerInvestmentDurableMatchesCurrent) {
+    addIssue(
+      issues,
+      "authentication.noelle-source-local-lower-investment-stale",
+      "noelleSourceLocalLowerInvestment",
+      "The durable lower-investment Noelle source-local report differs from the current rebuilt report.",
+    );
+  }
   if (issues.length > 0) {
     return failedReport(authenticationBoundary, issues);
   }
 
   try {
     const ittoReport = authenticatedIttoReport(input.ittoAuthentication);
+    const noelleHighInvestmentEntries = extractNoelleSourceLocalEntries(
+      input.noelleSourceLocal.currentReport,
+      issues,
+    );
+    const noelleLowerInvestmentEntries =
+      extractNoelleSourceLocalLowerInvestmentEntries(
+        input.noelleSourceLocalLowerInvestment.currentReport,
+        issues,
+      );
+    validateNoelleInvestmentSliceSeparation(
+      noelleHighInvestmentEntries,
+      noelleLowerInvestmentEntries,
+      issues,
+    );
     const entries = [
       ...extractIttoEntries(ittoReport, issues),
       ...extractKeqingEquipmentEntries(
@@ -708,10 +935,8 @@ export function buildCurrentConditionBindingCatalog(
         input.kokomiSourceLocal.currentReport,
         issues,
       ),
-      ...extractNoelleSourceLocalEntries(
-        input.noelleSourceLocal.currentReport,
-        issues,
-      ),
+      ...noelleHighInvestmentEntries,
+      ...noelleLowerInvestmentEntries,
     ];
     validateCombinedEntries(entries, issues);
     if (issues.length > 0) {
@@ -2552,6 +2777,715 @@ function extractNoelleSourceLocalEntries(
   return entries;
 }
 
+function extractNoelleSourceLocalLowerInvestmentEntries(
+  report: NoelleSourceLocalLowerInvestmentSliceReport,
+  issues: CurrentConditionBindingCatalogIssue[],
+): CurrentConditionBindingCatalogEntry[] {
+  const sourceLocalSlice = report.sourceLocalSlice;
+  const requestContextReport = sourceLocalSlice?.requestContextReport ?? null;
+  if (
+    report.comparisonStatus !== "comparable" ||
+    report.reportType !== "noelle-source-local-lower-investment-slice" ||
+    report.classification !==
+      "authenticated-source-local-condition-binding-slice" ||
+    report.publicationStatus !== "withheld-unreviewed-source-slice" ||
+    report.sliceId !== NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID ||
+    report.issues.length !== 0 ||
+    sourceLocalSlice == null ||
+    sourceLocalSlice.comparisonStatus !== "comparable" ||
+    requestContextReport == null ||
+    requestContextReport.comparisonStatus !== "comparable"
+  ) {
+    addIssue(
+      issues,
+      "noelle-source-local-lower-investment.non-comparable",
+      "noelleSourceLocalLowerInvestment.currentReport",
+      "The lower-investment Noelle source-local report is not the expected comparable authenticated numeric slice.",
+    );
+    return [];
+  }
+
+  const expectedSelectedIds =
+    NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_SELECTED_OCCURRENCES.map(
+      ({ occurrenceId }) => occurrenceId,
+    );
+  if (
+    sha256Text(stableJson(report)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_REPORT_SHA256 ||
+    sha256Text(stableJson(noelleLowerOuterCapabilityBoundary(report))) !==
+      NOELLE_SOURCE_LOCAL_LOWER_OUTER_CAPABILITY_SHA256 ||
+    sha256Text(
+      stableJson(noelleLowerNestedCapabilityBoundary(sourceLocalSlice)),
+    ) !== NOELLE_SOURCE_LOCAL_LOWER_NESTED_CAPABILITY_SHA256 ||
+    sha256Text(stableJson(report.generatedFrom)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_GENERATED_FROM_SHA256 ||
+    !hasExactNoelleSnapshotHash(report.generatedFrom) ||
+    !hasExactNoelleSnapshotHash(sourceLocalSlice.generatedFrom) ||
+    sha256Text(stableJson(report.rawInputBoundary)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_RAW_INPUT_BOUNDARY_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice.compositionPolicy)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_COMPOSITION_POLICY_SHA256 ||
+    sha256Text(stableJson(requestContextReport)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_REQUEST_CONTEXT_REPORT_SHA256 ||
+    sha256Text(stableJson(report.sourceBoundary)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_SOURCE_BOUNDARY_SHA256 ||
+    sha256Text(stableJson(report.numericEvaluationBoundary)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_NUMERIC_BOUNDARY_SHA256 ||
+    sha256Text(stableJson(report.summary)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_SUMMARY_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_FULL_SLICE_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice.sourceDocumentBoundary)) !==
+      NOELLE_SOURCE_LOCAL_LOWER_DOCUMENT_BOUNDARY_SHA256 ||
+    sourceLocalSlice.exactTeamControls.length !== 1 ||
+    sha256Text(stableJson(sourceLocalSlice.exactTeamControls[0])) !==
+      NOELLE_SOURCE_LOCAL_LOWER_TEAM_CONTROL_SHA256 ||
+    report.arbitraryEnglishParsingAllowed !== false ||
+    report.supportsSourceAuthorization !== false ||
+    report.supportsGuideClaims !== false ||
+    report.supportsTeamRecommendations !== false ||
+    report.supportsBuildRecommendations !== false ||
+    report.supportsEquipmentRecommendations !== false ||
+    report.supportsStatRecommendations !== false ||
+    report.supportsRankClaims !== false ||
+    report.supportsDamageClaims !== false ||
+    report.supportsRotationClaims !== false ||
+    report.supportsEnergyRecoveryClaims !== false ||
+    report.conditionTruthEstablishedFromRecommendationMetadata !== false ||
+    report.recommendationCompositionExecuted !== false ||
+    report.candidateGenerationExecuted !== false ||
+    report.generatorExecuted !== false ||
+    report.optimizerExecuted !== false ||
+    report.artifactAssignmentExecuted !== false ||
+    report.equipmentAssignmentExecuted !== false ||
+    report.teamCompositionExecuted !== false ||
+    report.buildCompositionExecuted !== false ||
+    report.damageComputationExecuted !== false ||
+    report.rotationComputationExecuted !== false ||
+    report.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.supportsSourceAuthorization !== false ||
+    sourceLocalSlice.supportsGuideClaims !== false ||
+    sourceLocalSlice.supportsTeamRecommendations !== false ||
+    sourceLocalSlice.supportsBuildRecommendations !== false ||
+    sourceLocalSlice.supportsStatRecommendations !== false ||
+    sourceLocalSlice.supportsRankClaims !== false ||
+    sourceLocalSlice.supportsDamageClaims !== false ||
+    sourceLocalSlice.supportsRotationClaims !== false ||
+    sourceLocalSlice.supportsEnergyRecoveryClaims !== false ||
+    sourceLocalSlice.playerFacingRecommendations !== false ||
+    sourceLocalSlice.ranking !== false ||
+    sourceLocalSlice.buildComposition !== false ||
+    sourceLocalSlice.damage !== false ||
+    sourceLocalSlice.formulas !== false ||
+    sourceLocalSlice.rotations !== false ||
+    sourceLocalSlice.ER !== false ||
+    sourceLocalSlice.recommendationCompositionExecuted !== false ||
+    sourceLocalSlice.generatorExecuted !== false ||
+    sourceLocalSlice.optimizerExecuted !== false ||
+    sourceLocalSlice.damageComputationExecuted !== false ||
+    sourceLocalSlice.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.assembledBuildCount !== 0 ||
+    sourceLocalSlice.issues.length !== 0 ||
+    sourceLocalSlice.sliceId !== report.sliceId ||
+    report.rawInputBoundary.status !== "accepted" ||
+    !report.rawInputBoundary.exactPathSet ||
+    !report.rawInputBoundary.byteAndParsedObjectClosure ||
+    report.rawInputBoundary.sourceFileCount !== 4 ||
+    sourceLocalSlice.sourceDocumentBoundary.status !== "accepted" ||
+    sourceLocalSlice.sourceDocumentBoundary.sourceId !== "kqm" ||
+    sourceLocalSlice.sourceDocumentBoundary.pageUrl !==
+      NOELLE_SOURCE_LOCAL_PAGE_URL ||
+    sourceLocalSlice.sourceDocumentBoundary.sourceVersion !==
+      NOELLE_SOURCE_LOCAL_SOURCE_VERSION ||
+    sourceLocalSlice.sourceDocumentBoundary.snapshotPath !==
+      NOELLE_SOURCE_LOCAL_SNAPSHOT_PATH ||
+    stableJson(sourceLocalSlice.sourceDocumentBoundary.exactOccurrenceIds) !==
+      stableJson(expectedSelectedIds) ||
+    stableJson(sourceLocalSlice.sourceDocumentBoundary.exactTeamRecordIds) !==
+      stableJson([NOELLE_SOURCE_LOCAL_TEAM_RECORD_ID]) ||
+    !sourceLocalSlice.sourceDocumentBoundary
+      .allClaimsAndTeamsShareExactSourceDocument ||
+    report.sourceBoundary.status !== "accepted" ||
+    report.sourceBoundary.sourceId !== "kqm" ||
+    report.sourceBoundary.pageUrl !== NOELLE_SOURCE_LOCAL_PAGE_URL ||
+    report.sourceBoundary.sourceVersion !== NOELLE_SOURCE_LOCAL_SOURCE_VERSION ||
+    report.sourceBoundary.snapshotPath !== NOELLE_SOURCE_LOCAL_SNAPSHOT_PATH ||
+    stableJson([...report.sourceBoundary.rawRecordIds].sort()) !==
+      stableJson([...NOELLE_SOURCE_LOCAL_RAW_RECORD_IDS].sort()) ||
+    report.sourceBoundary.rawRecordCount !== 5 ||
+    report.sourceBoundary.totalConditionArrayCount !== 16 ||
+    report.sourceBoundary.nonemptyConditionArrayCount !== 15 ||
+    report.sourceBoundary.emptyConditionArrayCount !== 1 ||
+    report.sourceBoundary.selectedOccurrenceCount !== 3 ||
+    report.sourceBoundary.holdoutOccurrenceCount !== 12 ||
+    !report.sourceBoundary.selectedAndHoldoutsCloseAllNonemptyNoelleConditions ||
+    !report.sourceBoundary.emptyOccurrenceClosureExact ||
+    report.sourceBoundary.repositoryParity !== "exact" ||
+    !report.sourceBoundary.samePageLineage ||
+    !report.sourceBoundary.guideAndTeamShareExactSourceDocument ||
+    !report.sourceBoundary.crossRecordJoinOwnedByWrapper ||
+    report.sourceBoundary.sourceAuthoredCrossRecordJoin !== false ||
+    report.sourceBoundary.extractionMethod !== "agent-assisted" ||
+    report.sourceBoundary.reviewStatus !== "unreviewed" ||
+    report.sourceBoundary.sourceRegistryStatus !== "active" ||
+    report.sourceBoundary.sourceRegistryIngestionMode !== "manual-observation" ||
+    report.sourceBoundary.sourceRegistryPermission !== "unknown" ||
+    report.sourceBoundary.promotionEligible !== false ||
+    stableJson(report.numericEvaluationBoundary) !==
+      stableJson({
+        sourcePredicateAstPreserved: true,
+        sourceTalentLevelsEvaluated: false,
+        requestOverlayOwnsNumericEvaluation: true,
+        constellationDerivedTalentBehavior: false,
+        requestPredicateSha256:
+          NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE_SHA256,
+      }) ||
+    report.selectedOccurrences.length !== 3 ||
+    report.holdoutOccurrences.length !== 12 ||
+    report.emptyOccurrences.length !== 1 ||
+    report.summary.totalConditionArrayCount !== 16 ||
+    report.summary.nonemptyConditionArrayCount !== 15 ||
+    report.summary.emptyConditionArrayCount !== 1 ||
+    report.summary.selectedOccurrenceCount !== 3 ||
+    report.summary.selectedUniqueConditionArrayCount !== 1 ||
+    report.summary.holdoutOccurrenceCount !== 12 ||
+    report.summary.sourceTeamCount !== 1 ||
+    report.summary.sourceCellCount !== 3 ||
+    report.summary.sourceMatchedCount !== 0 ||
+    report.summary.sourceInapplicableCount !== 0 ||
+    report.summary.sourceUnresolvedCount !== 3 ||
+    report.summary.contextApplicableCount !== 3 ||
+    report.summary.sourceAlreadyMatchedCount !== 0 ||
+    report.summary.sourceDefinitelyInapplicableCount !== 0 ||
+    report.summary.effectiveMatchedCount !== 3 ||
+    report.summary.effectiveInapplicableCount !== 0 ||
+    report.summary.effectiveUnresolvedCount !== 0 ||
+    report.summary.selectedNotEnergyDeferredCount !== 3 ||
+    report.summary.holdoutConsumedCount !== 0 ||
+    report.summary.holdoutBindingAuthoredCount !== 0 ||
+    report.summary.holdoutEnergyClassificationAuthoredCount !== 0 ||
+    report.summary.emptyConsumedCount !== 0 ||
+    report.summary.candidateCount !== 0 ||
+    report.summary.equipmentAssignmentCount !== 0 ||
+    report.summary.optimizationCount !== 0 ||
+    report.summary.assembledBuildCount !== 0 ||
+    sourceLocalSlice.summary.claimCount !== 3 ||
+    sourceLocalSlice.summary.teamCount !== 1 ||
+    sourceLocalSlice.summary.cellCount !== 3 ||
+    sourceLocalSlice.summary.sourceMatchedCount !== 0 ||
+    sourceLocalSlice.summary.sourceInapplicableCount !== 0 ||
+    sourceLocalSlice.summary.sourceUnresolvedCount !== 3 ||
+    sourceLocalSlice.summary.applicableUnderSuppliedContextCount !== 3 ||
+    sourceLocalSlice.summary.notApplicableUnderSuppliedContextCount !== 0 ||
+    sourceLocalSlice.summary.stillUnresolvedCount !== 0 ||
+    sourceLocalSlice.summary.sourceAlreadyMatchedCount !== 0 ||
+    sourceLocalSlice.summary.sourceDefinitelyInapplicableCount !== 0 ||
+    sourceLocalSlice.summary.effectiveMatchedCount !== 3 ||
+    sourceLocalSlice.summary.effectiveInapplicableCount !== 0 ||
+    sourceLocalSlice.summary.effectiveUnresolvedCount !== 0 ||
+    sourceLocalSlice.summary.deferredEnergyCount !== 0 ||
+    sourceLocalSlice.summary.assembledBuildCount !== 0 ||
+    !matchesExactNoelleLowerInvestmentRequestProjection(
+      sourceLocalSlice,
+      expectedSelectedIds,
+    )
+  ) {
+    addIssue(
+      issues,
+      "noelle-source-local-lower-investment.partial-or-capability-crossing-evidence",
+      "noelleSourceLocalLowerInvestment.currentReport",
+      "The lower-investment Noelle checkpoint lost its exact fully hashed three-selected/twelve-holdout/one-empty numeric boundary or crossed a prohibited computation capability.",
+    );
+    return [];
+  }
+
+  const selectedIds = report.selectedOccurrences.map(
+    ({ occurrenceId }) => occurrenceId,
+  );
+  const expectedHoldoutById = new Map<
+    string,
+    { occurrenceId: string; conditionsSha256: string; objectSha256: string }
+  >(
+    NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_HOLDOUTS.map(
+      ([occurrenceId, conditionsSha256, objectSha256]) => [
+        occurrenceId,
+        { occurrenceId, conditionsSha256, objectSha256 },
+      ],
+    ),
+  );
+  const holdoutIds = report.holdoutOccurrences.map(
+    ({ occurrenceId }) => occurrenceId,
+  );
+  const empty = report.emptyOccurrences[0];
+  if (
+    new Set(selectedIds).size !== 3 ||
+    stableJson(selectedIds) !== stableJson(expectedSelectedIds) ||
+    new Set(holdoutIds).size !== 12 ||
+    holdoutIds.some((occurrenceId) => selectedIds.includes(occurrenceId)) ||
+    stableJson([...holdoutIds].sort()) !==
+      stableJson([...expectedHoldoutById.keys()].sort()) ||
+    report.holdoutOccurrences.some((holdout) => {
+      const expected = expectedHoldoutById.get(holdout.occurrenceId);
+      return (
+        expected == null ||
+        holdout.occurrenceId !==
+          `kqm:character_guide:${holdout.sourceRecordId}:${holdout.manualClaimPath}` ||
+        holdout.repositoryRecordId !==
+          `kqm:character-guide:${holdout.sourceRecordId}` ||
+        holdout.repositoryPath !==
+          holdout.manualClaimPath.replace(
+            /^recommendation\./,
+            "recommendations[0].",
+          ) ||
+        holdout.claimAxis !== expectedNoelleClaimAxis(holdout.manualClaimPath) ||
+        holdout.mainStatSlot !==
+          expectedNoelleMainStatSlot(holdout.manualClaimPath) ||
+        holdout.conditions.length === 0 ||
+        holdout.conditionsSha256 !== expected.conditionsSha256 ||
+        holdout.conditionsSha256 !== sha256Text(stableJson(holdout.conditions)) ||
+        sha256Text(stableJson(holdout)) !== expected.objectSha256 ||
+        holdout.structuralEnergyDimension !== "not-structural-er" ||
+        holdout.repositoryParity !== "exact" ||
+        holdout.sliceDisposition !== "holdout" ||
+        holdout.consumedBySlice ||
+        holdout.bindingAuthoredBySlice ||
+        holdout.energyClassificationAuthoredBySlice
+      );
+    }) ||
+    empty == null ||
+    empty.occurrenceId !== NOELLE_SOURCE_LOCAL_EXPECTED_EMPTY.occurrenceId ||
+    empty.occurrenceId !==
+      `kqm:character_guide:${empty.sourceRecordId}:${empty.manualClaimPath}` ||
+    empty.repositoryRecordId !== `kqm:character-guide:${empty.sourceRecordId}` ||
+    empty.repositoryPath !==
+      empty.manualClaimPath.replace(
+        /^recommendation\./,
+        "recommendations[0].",
+      ) ||
+    empty.claimAxis !== "artifact-recommendation" ||
+    empty.conditions.length !== 0 ||
+    empty.conditionsSha256 !== NOELLE_SOURCE_LOCAL_EXPECTED_EMPTY.conditionsSha256 ||
+    empty.conditionsSha256 !== sha256Text(stableJson(empty.conditions)) ||
+    sha256Text(stableJson(empty)) !== NOELLE_SOURCE_LOCAL_EXPECTED_EMPTY.objectSha256 ||
+    empty.repositoryParity !== "exact" ||
+    empty.sliceDisposition !== "empty-unconditional" ||
+    empty.consumedBySlice ||
+    empty.bindingAuthoredBySlice ||
+    empty.energyClassificationAuthoredBySlice
+  ) {
+    addIssue(
+      issues,
+      "noelle-source-local-lower-investment.selected-holdout-empty-partition-drift",
+      "noelleSourceLocalLowerInvestment.currentReport.holdoutOccurrences",
+      "The exact lower-investment selected, twelve nonempty holdout, and one empty Noelle occurrences must remain unique, disjoint, unconsumed, and unauthored outside the selected slice.",
+    );
+    return [];
+  }
+
+  const claimById = exactSingleRowsById(
+    sourceLocalSlice.sourceClaimCatalog,
+    ({ claimId }) => claimId,
+    "noelle-source-local-lower-investment.duplicate-source-claim",
+    "noelleSourceLocalLowerInvestment.currentReport.sourceLocalSlice.sourceClaimCatalog",
+    issues,
+  );
+  const controlById = exactSingleRowsById(
+    sourceLocalSlice.conditionControls,
+    ({ claimId }) => claimId,
+    "noelle-source-local-lower-investment.duplicate-condition-control",
+    "noelleSourceLocalLowerInvestment.currentReport.sourceLocalSlice.conditionControls",
+    issues,
+  );
+  if (issues.length > 0) return [];
+  if (claimById.size !== 3 || controlById.size !== 3) {
+    addIssue(
+      issues,
+      "noelle-source-local-lower-investment.partial-or-capability-crossing-evidence",
+      "noelleSourceLocalLowerInvestment.currentReport.sourceLocalSlice",
+      "The lower-investment Noelle slice must expose exactly three source claims and three condition controls.",
+    );
+    return [];
+  }
+
+  const selectedById = new Map(
+    report.selectedOccurrences.map((selected) => [
+      selected.occurrenceId,
+      selected,
+    ]),
+  );
+  const entries: CurrentConditionBindingCatalogEntry[] = [];
+  for (const [catalogIndex, expected] of
+    NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_SELECTED_OCCURRENCES.entries()) {
+    const selected = selectedById.get(expected.occurrenceId);
+    const claim = claimById.get(expected.occurrenceId);
+    const control = controlById.get(expected.occurrenceId);
+    const requestBinding = control?.requestBindings[0];
+    if (
+      selected == null ||
+      selected.characterId !== "noelle" ||
+      selected.sourceRecordId !==
+        NOELLE_SOURCE_LOCAL_LOWER_SOURCE_RECORD_ID ||
+      selected.repositoryRecordId !==
+        NOELLE_SOURCE_LOCAL_LOWER_REPOSITORY_RECORD_ID ||
+      selected.manualClaimPath !== expected.manualClaimPath ||
+      selected.repositoryPath !== expected.repositoryPath ||
+      selected.claimAxis !== "main-stat" ||
+      selected.mainStatSlot !== expected.mainStatSlot ||
+      stableJson(selected.conditions) !==
+        stableJson(NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS) ||
+      selected.conditionsSha256 !==
+        NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS_SHA256 ||
+      stableJson(selected.predicate) !==
+        stableJson(NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE) ||
+      selected.predicateSha256 !==
+        NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE_SHA256 ||
+      selected.sourcePredicateLeafSha256 !==
+        NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE_SHA256 ||
+      stableJson(selected.requestPredicate) !==
+        stableJson(NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE) ||
+      selected.requestPredicateSha256 !==
+        NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE_SHA256 ||
+      stableJson(selected.payload) !== stableJson(expected.payload) ||
+      selected.payloadSha256 !== expected.payloadSha256 ||
+      sha256Text(stableJson(selected)) !== expected.selectedObjectSha256 ||
+      claim == null ||
+      sha256Text(stableJson(claim)) !== expected.claimObjectSha256 ||
+      claim.catalogIndex !== catalogIndex ||
+      stableJson(claim.recommendation) !==
+        stableJson(NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_RECOMMENDATION) ||
+      control == null ||
+      sha256Text(stableJson(control)) !== expected.controlObjectSha256 ||
+      control.catalogIndex !== catalogIndex ||
+      control.requestBindings.length !== 1 ||
+      requestBinding == null ||
+      requestBinding.sourcePredicatePath !== "predicate" ||
+      requestBinding.sourcePredicateLeafSha256 !==
+        NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE_SHA256 ||
+      stableJson(requestBinding.requestPredicate) !==
+        stableJson(NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE)
+    ) {
+      addIssue(
+        issues,
+        "noelle-source-local-lower-investment.conflicting-occurrence-evidence",
+        `noelleSourceLocalLowerInvestment.currentReport.selectedOccurrences.${expected.occurrenceId}`,
+        "The selected lower-investment Noelle occurrence drifted from its exact literal, payload, unresolved source predicate, numeric request predicate, recommendation metadata, or request-binding boundary.",
+      );
+      return [];
+    }
+
+    // The normalized helper runs only after the lower-investment report has
+    // independently passed every source-specific identity and hash boundary.
+    const entry = buildSourceLocalCatalogEntry(
+      {
+        diagnosticCode:
+          "noelle-source-local-lower-investment.conflicting-occurrence-evidence",
+        diagnosticPath: `noelleSourceLocalLowerInvestment.currentReport.selectedOccurrences.${expected.occurrenceId}`,
+        diagnosticMessage:
+          "The selected lower-investment occurrence, source claim, condition control, source predicate, payload, and exact source identity do not agree.",
+        sliceId: report.sliceId,
+        sourceId: "kqm",
+        recordKind: "character_guide",
+        subject: "noelle",
+        selected,
+        claim,
+        control,
+      },
+      issues,
+    );
+    if (entry) entries.push(entry);
+  }
+  return entries;
+}
+
+function noelleLowerOuterCapabilityBoundary(
+  report: NoelleSourceLocalLowerInvestmentSliceReport,
+): Record<string, boolean> {
+  return {
+    arbitraryEnglishParsingAllowed: report.arbitraryEnglishParsingAllowed,
+    supportsSourceAuthorization: report.supportsSourceAuthorization,
+    supportsGuideClaims: report.supportsGuideClaims,
+    supportsTeamRecommendations: report.supportsTeamRecommendations,
+    supportsBuildRecommendations: report.supportsBuildRecommendations,
+    supportsEquipmentRecommendations: report.supportsEquipmentRecommendations,
+    supportsStatRecommendations: report.supportsStatRecommendations,
+    supportsRankClaims: report.supportsRankClaims,
+    supportsDamageClaims: report.supportsDamageClaims,
+    supportsRotationClaims: report.supportsRotationClaims,
+    supportsEnergyRecoveryClaims: report.supportsEnergyRecoveryClaims,
+    conditionTruthEstablishedFromRecommendationMetadata:
+      report.conditionTruthEstablishedFromRecommendationMetadata,
+    recommendationCompositionExecuted:
+      report.recommendationCompositionExecuted,
+    candidateGenerationExecuted: report.candidateGenerationExecuted,
+    generatorExecuted: report.generatorExecuted,
+    optimizerExecuted: report.optimizerExecuted,
+    artifactAssignmentExecuted: report.artifactAssignmentExecuted,
+    equipmentAssignmentExecuted: report.equipmentAssignmentExecuted,
+    teamCompositionExecuted: report.teamCompositionExecuted,
+    buildCompositionExecuted: report.buildCompositionExecuted,
+    damageComputationExecuted: report.damageComputationExecuted,
+    rotationComputationExecuted: report.rotationComputationExecuted,
+    energyRecoveryComputationExecuted: report.energyRecoveryComputationExecuted,
+  };
+}
+
+function noelleLowerNestedCapabilityBoundary(
+  slice: SourceLocalConditionSliceReport,
+): Record<string, boolean | number> {
+  return {
+    supportsSourceAuthorization: slice.supportsSourceAuthorization,
+    supportsGuideClaims: slice.supportsGuideClaims,
+    supportsTeamRecommendations: slice.supportsTeamRecommendations,
+    supportsBuildRecommendations: slice.supportsBuildRecommendations,
+    supportsStatRecommendations: slice.supportsStatRecommendations,
+    supportsRankClaims: slice.supportsRankClaims,
+    supportsDamageClaims: slice.supportsDamageClaims,
+    supportsRotationClaims: slice.supportsRotationClaims,
+    supportsEnergyRecoveryClaims: slice.supportsEnergyRecoveryClaims,
+    playerFacingRecommendations: slice.playerFacingRecommendations,
+    ranking: slice.ranking,
+    buildComposition: slice.buildComposition,
+    damage: slice.damage,
+    formulas: slice.formulas,
+    rotations: slice.rotations,
+    ER: slice.ER,
+    recommendationCompositionExecuted: slice.recommendationCompositionExecuted,
+    generatorExecuted: slice.generatorExecuted,
+    optimizerExecuted: slice.optimizerExecuted,
+    damageComputationExecuted: slice.damageComputationExecuted,
+    energyRecoveryComputationExecuted: slice.energyRecoveryComputationExecuted,
+    assembledBuildCount: slice.assembledBuildCount,
+  };
+}
+
+function matchesExactNoelleLowerInvestmentRequestProjection(
+  sourceLocalSlice: SourceLocalConditionSliceReport,
+  expectedSelectedIds: readonly string[],
+): boolean {
+  const report = sourceLocalSlice.requestContextReport;
+  const teamProjection = report?.teamProjections[0];
+  const sourceCellPacket = sourceLocalSlice.sourceClaimCells[0];
+  const exactScope = {
+    teamRecordId: NOELLE_SOURCE_LOCAL_TEAM_RECORD_ID,
+    characterId: "noelle",
+    accountSnapshotId: null,
+  };
+  if (
+    report == null ||
+    report.reportType !== "guide-request-context-applicability" ||
+    report.projectionId !==
+      `${NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID}:request-context` ||
+    report.classification !== "request-account-context-refinement-overlay" ||
+    report.publicationStatus !== "withheld-experimental-context" ||
+    report.issues.length !== 0 ||
+    report.contextProjectionExecuted !== true ||
+    report.sourceCellsMutated !== false ||
+    report.supportsSourceAuthorization !== false ||
+    report.supportsGuideClaims !== false ||
+    report.supportsAccountAdvice !== false ||
+    report.playerFacingRecommendations !== false ||
+    report.ranking !== false ||
+    report.optimality !== false ||
+    report.buildComposition !== false ||
+    report.damage !== false ||
+    report.formulas !== false ||
+    report.rotations !== false ||
+    report.ER !== false ||
+    report.baselineEquipmentUsed !== false ||
+    report.axesMultipliedIntoBuilds !== false ||
+    report.generatorExecuted !== false ||
+    report.optimizerExecuted !== false ||
+    report.damageComputationExecuted !== false ||
+    report.energyRecoveryInputsUsed !== false ||
+    stableJson(report.policyBoundary) !==
+      stableJson({
+        sourceControlPreserved: true,
+        requestContextMayResolveOnlyMappedUnresolvedContext: true,
+        requestContextMaySatisfyExactSourceTeamFacts: false,
+        omittedFacts: "unknown",
+        missingWeaponInCompleteInventory: "false",
+        missingWeaponInIncompleteInventory: "unknown",
+      }) ||
+    stableJson(report.context) !==
+      stableJson({
+        requestFactsByTeamRecordId: {
+          [NOELLE_SOURCE_LOCAL_TEAM_RECORD_ID]: {
+            characterFactsById: {
+              noelle: {
+                constellation: 5,
+                talentLevels: { burst: 9 },
+              },
+            },
+          },
+        },
+      }) ||
+    report.factProvenance.constellation !== "request" ||
+    report.factProvenance.talentLevels !== "request" ||
+    report.claimRules.length !== 3 ||
+    !expectedSelectedIds.every((claimId) => {
+      const matchingRules = report.claimRules.filter(
+        (rule) => rule.claimId === claimId,
+      );
+      const rule = matchingRules[0];
+      const binding = rule?.bindings[0];
+      return (
+        matchingRules.length === 1 &&
+        rule?.sourceConditionsSha256 ===
+          NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS_SHA256 &&
+        rule.sourcePredicateSha256 ===
+          NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE_SHA256 &&
+        rule.bindings.length === 1 &&
+        binding?.sourcePredicatePath === "predicate" &&
+        binding.sourcePredicateLeafSha256 ===
+          NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE_SHA256 &&
+        stableJson(binding.requestPredicate) ===
+          stableJson(NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE)
+      );
+    }) ||
+    report.summary.matchedCellCount !== 3 ||
+    report.summary.inapplicableCellCount !== 0 ||
+    report.summary.unresolvedCellCount !== 0 ||
+    report.summary.deferredEnergyCellCount !== 0 ||
+    report.summary.assembledBuildCount !== 0 ||
+    report.sourceControl.experimentId !==
+      NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID ||
+    report.sourceControl.comparisonStatus !== "comparable" ||
+    report.sourceControl.reportType !==
+      "source-conditioned-guide-packet-report" ||
+    report.sourceControl.sourceClaimCount !== 3 ||
+    report.sourceControl.claimCellCount !== 3 ||
+    report.sourceControl.packetCount !== 1 ||
+    report.teamProjections.length !== 1 ||
+    teamProjection == null ||
+    teamProjection.teamRecordId !== NOELLE_SOURCE_LOCAL_TEAM_RECORD_ID ||
+    stableJson(teamProjection.claimProjections.map(({ claimId }) => claimId)) !==
+      stableJson(expectedSelectedIds) ||
+    sourceLocalSlice.sourceClaimCells.length !== 1 ||
+    sourceCellPacket == null ||
+    sourceCellPacket.teamRecordId !== NOELLE_SOURCE_LOCAL_TEAM_RECORD_ID ||
+    stableJson(sourceCellPacket.claimCells.map(({ claimId }) => claimId)) !==
+      stableJson(expectedSelectedIds)
+  ) {
+    return false;
+  }
+
+  return (
+    sourceCellPacket.claimCells.every(
+      ({ resolution, sourceConditionsSha256, predicateRows }) =>
+        resolution === "unresolved-context" &&
+        sourceConditionsSha256 ===
+          NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS_SHA256 &&
+        stableJson(predicateRows) ===
+          stableJson([
+            {
+              predicatePath: "predicate",
+              predicateType: "unresolved-context",
+              reason: NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE.reason,
+              result: "unknown",
+              structuredFact: "none-unresolved-context",
+            },
+          ]),
+    ) &&
+    teamProjection.claimProjections.every((projection) => {
+      const binding = projection.requestContextBindings[0];
+      const constellationRow = binding?.predicateRows[0];
+      const burstRow = binding?.predicateRows[1];
+      return (
+        projection.resolution === "matched" &&
+        projection.contextApplicability ===
+          "applicable-under-supplied-context" &&
+        projection.sourceControl.resolution === "unresolved-context" &&
+        projection.sourceControl.sourceConditionsSha256 ===
+          NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS_SHA256 &&
+        stableJson(projection.sourceControl.predicateRows) ===
+          stableJson([
+            {
+              predicatePath: "predicate",
+              predicateType: "unresolved-context",
+              reason: NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE.reason,
+              result: "unknown",
+              structuredFact: "none-unresolved-context",
+            },
+          ]) &&
+        projection.requestContextBindings.length === 1 &&
+        binding?.sourcePredicatePath === "predicate" &&
+        binding.sourceContextCategory === "investment-threshold" &&
+        binding.result === "true" &&
+        stableJson(binding.requestPredicate) ===
+          stableJson(NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE) &&
+        binding.predicateRows.length === 2 &&
+        constellationRow?.predicatePath ===
+          "requestPredicate.predicates[0]" &&
+        constellationRow.predicateType === "constellation-at-most" &&
+        constellationRow.result === "true" &&
+        constellationRow.factProvenance === "request" &&
+        stableJson(constellationRow.factScope) === stableJson(exactScope) &&
+        burstRow?.predicatePath === "requestPredicate.predicates[1]" &&
+        burstRow.predicateType === "talent-level-is" &&
+        burstRow.result === "true" &&
+        burstRow.factProvenance === "request" &&
+        stableJson(burstRow.factScope) === stableJson(exactScope)
+      );
+    })
+  );
+}
+
+function validateNoelleInvestmentSliceSeparation(
+  highInvestmentEntries: readonly CurrentConditionBindingCatalogEntry[],
+  lowerInvestmentEntries: readonly CurrentConditionBindingCatalogEntry[],
+  issues: CurrentConditionBindingCatalogIssue[],
+): void {
+  const highIds = new Set(highInvestmentEntries.map(({ occurrenceId }) => occurrenceId));
+  const highKeys = new Set(highInvestmentEntries.map(({ occurrenceKey }) => occurrenceKey));
+  const highSelectedIds = new Set<string>(
+    NOELLE_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCES.map(
+      ({ occurrenceId }) => occurrenceId,
+    ),
+  );
+  const lowerSelectedIds = new Set<string>(
+    NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_SELECTED_OCCURRENCES.map(
+      ({ occurrenceId }) => occurrenceId,
+    ),
+  );
+  const gobletAndCircletPayloadCollisionIsExpected =
+    NOELLE_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCES[1].payloadSha256 ===
+      NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_SELECTED_OCCURRENCES[1]
+        .payloadSha256 &&
+    NOELLE_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCES[2].payloadSha256 ===
+      NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_SELECTED_OCCURRENCES[2].payloadSha256;
+  if (
+    highInvestmentEntries.length !== 3 ||
+    lowerInvestmentEntries.length !== 3 ||
+    highInvestmentEntries.some(({ occurrenceId }) =>
+      lowerSelectedIds.has(occurrenceId),
+    ) ||
+    lowerInvestmentEntries.some(
+      ({ occurrenceId, occurrenceKey, conditionsSha256, bindingEvidence }) =>
+        highIds.has(occurrenceId) ||
+        highKeys.has(occurrenceKey) ||
+        highSelectedIds.has(occurrenceId) ||
+        conditionsSha256 !==
+          NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS_SHA256 ||
+        bindingEvidence.kind !== "source-local-typed-predicate-ast" ||
+        bindingEvidence.sliceId !== NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID,
+    ) ||
+    NOELLE_SOURCE_LOCAL_SOURCE_PREDICATE_SHA256 !==
+      "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a" ||
+    stableJson(NOELLE_SOURCE_LOCAL_SELECTED_CONDITIONS) ===
+      stableJson(NOELLE_SOURCE_LOCAL_LOWER_SELECTED_CONDITIONS) ||
+    stableJson(NOELLE_SOURCE_LOCAL_REQUEST_PREDICATE) ===
+      stableJson(NOELLE_SOURCE_LOCAL_LOWER_REQUEST_PREDICATE) ||
+    !gobletAndCircletPayloadCollisionIsExpected
+  ) {
+    addIssue(
+      issues,
+      "noelle-source-local.investment-slice-alias-or-collision",
+      "noelleSourceLocalLowerInvestment",
+      "The high- and lower-investment Noelle slices must remain occurrence-disjoint even where their source predicate or payload hashes intentionally match.",
+    );
+  }
+}
+
 function matchesExactNoelleRequestProjection(
   sourceLocalSlice: SourceLocalConditionSliceReport,
   expectedSelectedIds: readonly string[],
@@ -3009,12 +3943,12 @@ function validateCombinedEntries(
       );
     }
   }
-  if (entries.length !== 60) {
+  if (entries.length !== 63) {
     addIssue(
       issues,
       "catalog.occurrence-count-drift",
       "entries",
-      `Expected 60 authenticated current bindings, found ${entries.length}.`,
+      `Expected 63 authenticated current bindings, found ${entries.length}.`,
     );
   }
 }
@@ -3052,6 +3986,11 @@ function summarize(
     ({ bindingEvidence }) =>
       bindingEvidence.kind === "source-local-typed-predicate-ast" &&
       bindingEvidence.sliceId === NOELLE_SOURCE_LOCAL_SLICE_ID,
+  );
+  const noelleLowerInvestmentEntries = entries.filter(
+    ({ bindingEvidence }) =>
+      bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+      bindingEvidence.sliceId === NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID,
   );
   return {
     occurrenceCount: entries.length,
@@ -3131,6 +4070,16 @@ function summarize(
       ({ energyClassification }) =>
         energyClassification === "not-energy-deferred",
     ).length,
+    noelleSourceLocalLowerInvestmentOccurrenceCount:
+      noelleLowerInvestmentEntries.length,
+    noelleSourceLocalLowerInvestmentTypedBindingCount:
+      noelleLowerInvestmentEntries.filter(({ typedBinding }) => typedBinding)
+        .length,
+    noelleSourceLocalLowerInvestmentNotEnergyDeferredCount:
+      noelleLowerInvestmentEntries.filter(
+        ({ energyClassification }) =>
+          energyClassification === "not-energy-deferred",
+      ).length,
   };
 }
 

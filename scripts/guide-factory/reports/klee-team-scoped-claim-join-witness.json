@@ -91,11 +91,15 @@
     },
     {
       "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
-      "sha256": "37dd01c30f7a1f0c6f129858f59b991949ce834aef1c83853e3f7172f559efc3"
+      "sha256": "f16aaf080e0145b1beb0ea0aaa0a96879379596ba371887b928115ccfcb4dccb"
     },
     {
       "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
       "sha256": "216620321056c6c7ece4129f6d33705ee977d23b8f31c72cff86e6f7315b8f09"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json",
+      "sha256": "4a7cf77b892a07b9ed5804c0e1f2aa2440300635c47d97bc46b90e002dfdae3a"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -134,12 +138,16 @@
       "sha256": "53d57a733ff4416aa077330605e667a5b90370893051a6833f6a86ca6d496589"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-noelle-source-local-lower-investment-slice.ts",
+      "sha256": "e8871e88f5986f983e4fd07017f54b53e36378ba37b03eb4dc1af412cf66d8b1"
+    },
+    {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "117653152d7b65aa8e6d862a2ad433a0e12ee273e9fce3be621cd3f852510ef7"
+      "sha256": "48c96e91e5ec265e5dd9010e8fd4a5138db574df3ef8a8bf03f3e3a9fcdcbd4f"
     },
     {
       "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
@@ -191,7 +199,7 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "acd9fff5b2ca3e16dfd16ef0c0fd5a15a64f9d25a150d5fc09b12829eb431859"
+      "sha256": "5ca7298797fe3eb3df186613e95d793f61fa0345c7fad763f75bcbe758c1bdb5"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -200,6 +208,10 @@
     {
       "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
       "sha256": "84056e869782be1de61119584f088a94225829165e76a67b853fe023a6d01c2a"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleSourceLocalLowerInvestmentSlice.ts",
+      "sha256": "80e6179d5b68a03eb61f007f64b5f48bd02a76a33f2078e98e440409146d2e2b"
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
@@ -2342,11 +2354,11 @@
       "sourceTeamCount": 2
     },
     "manualCoverage": {
-      "bindingOccurrenceCount": 60,
+      "bindingOccurrenceCount": 63,
       "corpusOccurrenceCount": 142,
       "currentBoundaryAuthenticated": true,
-      "durableReportCanonicalObjectSha256": "37dd01c30f7a1f0c6f129858f59b991949ce834aef1c83853e3f7172f559efc3",
-      "durableReportFileSha256": "37dd01c30f7a1f0c6f129858f59b991949ce834aef1c83853e3f7172f559efc3",
+      "durableReportCanonicalObjectSha256": "f16aaf080e0145b1beb0ea0aaa0a96879379596ba371887b928115ccfcb4dccb",
+      "durableReportFileSha256": "f16aaf080e0145b1beb0ea0aaa0a96879379596ba371887b928115ccfcb4dccb",
       "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
       "kleeSourceLocalOccurrenceCount": 4,
       "typedBindingMeansConditionTruth": false

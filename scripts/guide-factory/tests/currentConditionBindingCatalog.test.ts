@@ -30,13 +30,17 @@ import {
   type NoelleSourceLocalHighInvestmentSliceReport,
 } from "../src/noelleSourceLocalHighInvestmentSlice";
 import {
+  NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_REPORT_PATH,
+  type NoelleSourceLocalLowerInvestmentSliceReport,
+} from "../src/noelleSourceLocalLowerInvestmentSlice";
+import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
 } from "../src/paths";
 import type { SourceConditionedGuidePacketReport } from "../src/sourceConditionedGuidePacket";
 
 describe("authenticated current condition-binding catalog", () => {
-  it("builds the deterministic 60-occurrence catalog with exact current coverage", async () => {
+  it("builds the deterministic 63-occurrence catalog with exact current coverage", async () => {
     const fixture = await loadFixture();
     const before = structuredClone(fixture);
     const report = buildCurrentConditionBindingCatalog(fixture);
@@ -46,32 +50,32 @@ describe("authenticated current condition-binding catalog", () => {
     expect(fixture).toEqual(before);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.issues).toEqual([]);
-    expect(report.entries).toHaveLength(60);
+    expect(report.entries).toHaveLength(63);
     expect(report.entries.map(({ occurrenceKey }) => occurrenceKey)).toEqual(
       [...report.entries.map(({ occurrenceKey }) => occurrenceKey)].sort(),
     );
     expect(
       new Set(report.entries.map(({ occurrenceId }) => occurrenceId)).size,
-    ).toBe(60);
+    ).toBe(63);
     expect(
       new Set(report.entries.map(({ occurrenceKey }) => occurrenceKey)).size,
-    ).toBe(60);
+    ).toBe(63);
     expect(report.summary).toEqual({
-      occurrenceCount: 60,
+      occurrenceCount: 63,
       bindingClassificationCounts: {
-        "typed-bound": 57,
+        "typed-bound": 60,
         "exact-text-acknowledged": 3,
         unbound: 0,
         invalid: 0,
       },
       energyClassificationCounts: {
         "energy-unclassified": 3,
-        "not-energy-deferred": 54,
+        "not-energy-deferred": 57,
         "structural-er": 0,
         "deferred-energy-prerequisite": 3,
         "exact-authored-energy-related-deferral": 0,
       },
-      typedBindingCount: 57,
+      typedBindingCount: 60,
       ittoOccurrenceCount: 15,
       ittoTypedBindingCount: 15,
       ittoDeferredEnergyPrerequisiteCount: 3,
@@ -92,6 +96,9 @@ describe("authenticated current condition-binding catalog", () => {
       noelleSourceLocalOccurrenceCount: 3,
       noelleSourceLocalTypedBindingCount: 3,
       noelleSourceLocalNotEnergyDeferredCount: 3,
+      noelleSourceLocalLowerInvestmentOccurrenceCount: 3,
+      noelleSourceLocalLowerInvestmentTypedBindingCount: 3,
+      noelleSourceLocalLowerInvestmentNotEnergyDeferredCount: 3,
     });
     expect(report).toMatchObject({
       supportsGuideClaims: false,
@@ -109,6 +116,7 @@ describe("authenticated current condition-binding catalog", () => {
         dionaSourceLocalDurableMatchesCurrent: true,
         kokomiSourceLocalDurableMatchesCurrent: true,
         noelleSourceLocalDurableMatchesCurrent: true,
+        noelleSourceLocalLowerInvestmentDurableMatchesCurrent: true,
       },
     });
     for (const entry of report.entries) {
@@ -507,7 +515,11 @@ describe("authenticated current condition-binding catalog", () => {
     expect(
       report.entries.some(({ occurrenceId }) =>
         fixture.noelleSourceLocal.currentReport.holdoutOccurrences.some(
-          (holdout) => holdout.occurrenceId === occurrenceId,
+          (holdout) =>
+            holdout.occurrenceId === occurrenceId &&
+            !fixture.noelleSourceLocalLowerInvestment.currentReport.selectedOccurrences.some(
+              (selected) => selected.occurrenceId === holdout.occurrenceId,
+            ),
         ),
       ),
     ).toBe(false);
@@ -519,6 +531,325 @@ describe("authenticated current condition-binding catalog", () => {
             ?.occurrenceId,
       ),
     ).toBe(false);
+  });
+
+  it("admits exactly the authenticated lower-investment Noelle main-stat slice without aliasing the high-investment slice", async () => {
+    const fixture = await loadFixture();
+    const report = requireComparableCurrentConditionBindingCatalog(
+      buildCurrentConditionBindingCatalog(fixture),
+    );
+    const lowerEntries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-noelle-source-local-lower-investment-slice-luna-viii",
+    );
+    const highEntries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-noelle-source-local-high-investment-slice-luna-viii",
+    );
+    const lowerSelected =
+      fixture.noelleSourceLocalLowerInvestment.currentReport
+        .selectedOccurrences;
+
+    expect(lowerEntries).toHaveLength(3);
+    expect(lowerEntries.map((entry) => sha256Text(stableJson(entry)))).toEqual([
+      "883cb35b1dd8737799217aef780944d32aa781f98af22ce55032908b222b08d8",
+      "05e71e643ea4f8b29dbfe541800da01da6138a63af858c8974ca64019ebc33a5",
+      "30c89c0b5a5036f4ebf3611aba37ab41c93567bcce27a4b0944838f34afb5dd0",
+    ]);
+    expect(
+      lowerEntries.map(({ manualClaimPath }) => manualClaimPath).sort(),
+    ).toEqual([
+      "recommendation.mainStats.circlet[0].conditions",
+      "recommendation.mainStats.goblet[0].conditions",
+      "recommendation.mainStats.sands[0].conditions",
+    ]);
+    expect(
+      lowerEntries.every((entry) => {
+        const selected = lowerSelected.find(
+          ({ occurrenceId }) => occurrenceId === entry.occurrenceId,
+        );
+        return (
+          selected != null &&
+          entry.sourceRecordId ===
+            "noelle-c0-c5-talent-9-artifact-stats-luna-viii" &&
+          entry.subject === "noelle" &&
+          stableJson(entry.orderedConditions) ===
+            stableJson([
+              "Noelle is C0–C5 and her Burst Talent is Level 9.",
+            ]) &&
+          entry.conditionsSha256 ===
+            "6da7375f731b4225cc74ace0f54f350efdcbf7f2cad0655fcab7490d54875436" &&
+          entry.bindingEvidence.kind ===
+            "source-local-typed-predicate-ast" &&
+          entry.bindingEvidence.selectedOccurrenceSha256 ===
+            sha256Text(stableJson(selected)) &&
+          stableJson(entry.bindingEvidence.predicateAst) ===
+            stableJson({
+              type: "unresolved-context",
+              category: "investment-threshold",
+              reason:
+                "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+            }) &&
+          entry.energyEvidence?.kind ===
+            "source-local-not-energy-deferred" &&
+          entry.energyEvidence.sliceId ===
+            "kqm-noelle-source-local-lower-investment-slice-luna-viii"
+        );
+      }),
+    ).toBe(true);
+
+    const lowerSlice =
+      fixture.noelleSourceLocalLowerInvestment.currentReport.sourceLocalSlice;
+    const requestReport = lowerSlice?.requestContextReport;
+    const projection = requestReport?.teamProjections[0];
+    expect(requestReport?.context).toEqual({
+      requestFactsByTeamRecordId: {
+        "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii": {
+          characterFactsById: {
+            noelle: {
+              constellation: 5,
+              talentLevels: { burst: 9 },
+            },
+          },
+        },
+      },
+    });
+    expect(
+      projection?.claimProjections.every((claimProjection) => {
+        const binding = claimProjection.requestContextBindings[0];
+        return (
+          claimProjection.resolution === "matched" &&
+          claimProjection.contextApplicability ===
+            "applicable-under-supplied-context" &&
+          binding?.result === "true" &&
+          stableJson(binding.requestPredicate) ===
+            stableJson({
+              type: "all",
+              predicates: [
+                {
+                  type: "constellation-at-most",
+                  characterId: "noelle",
+                  threshold: 5,
+                },
+                {
+                  type: "talent-level-is",
+                  characterId: "noelle",
+                  talent: "burst",
+                  threshold: 9,
+                },
+              ],
+            }) &&
+          stableJson(
+            binding.predicateRows.map(
+              ({ predicateType, result, factProvenance, factScope }) => ({
+                predicateType,
+                result,
+                factProvenance,
+                factScope,
+              }),
+            ),
+          ) ===
+            stableJson([
+              {
+                predicateType: "constellation-at-most",
+                result: "true",
+                factProvenance: "request",
+                factScope: {
+                  teamRecordId:
+                    "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+                  characterId: "noelle",
+                  accountSnapshotId: null,
+                },
+              },
+              {
+                predicateType: "talent-level-is",
+                result: "true",
+                factProvenance: "request",
+                factScope: {
+                  teamRecordId:
+                    "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+                  characterId: "noelle",
+                  accountSnapshotId: null,
+                },
+              },
+            ])
+        );
+      }),
+    ).toBe(true);
+
+    const lowerSliceEntryIds = new Set(
+      lowerEntries.map(({ occurrenceId }) => occurrenceId),
+    );
+    expect(
+      fixture.noelleSourceLocalLowerInvestment.currentReport.holdoutOccurrences.some(
+        ({ occurrenceId }) => lowerSliceEntryIds.has(occurrenceId),
+      ),
+    ).toBe(false);
+    expect(
+      lowerSliceEntryIds.has(
+        fixture.noelleSourceLocalLowerInvestment.currentReport
+          .emptyOccurrences[0]!.occurrenceId,
+      ),
+    ).toBe(false);
+    expect(
+      highEntries.some(({ occurrenceId }) => lowerSliceEntryIds.has(occurrenceId)),
+    ).toBe(false);
+    expect(
+      highEntries[1]?.bindingEvidence.kind ===
+        "source-local-typed-predicate-ast" &&
+        lowerEntries[1]?.bindingEvidence.kind ===
+          "source-local-typed-predicate-ast" &&
+        highEntries[1].bindingEvidence.payloadSha256 ===
+          lowerEntries[1].bindingEvidence.payloadSha256,
+    ).toBe(true);
+    expect(
+      highEntries[0]?.bindingEvidence.kind ===
+        "source-local-typed-predicate-ast" &&
+        lowerEntries[0]?.bindingEvidence.kind ===
+          "source-local-typed-predicate-ast" &&
+        highEntries[0].bindingEvidence.payloadSha256 ===
+          lowerEntries[0].bindingEvidence.payloadSha256,
+    ).toBe(true);
+  });
+
+  it("fails closed on every lower-investment Noelle authentication boundary and collision attempt", async () => {
+    const base = await loadFixture();
+    const expectedCode =
+      "noelle-source-local-lower-investment.partial-or-capability-crossing-evidence";
+    const expectForgedFailure = (
+      mutate: (report: NoelleSourceLocalLowerInvestmentSliceReport) => void,
+      code = expectedCode,
+    ): void => {
+      const forged = structuredClone(base);
+      mutate(forged.noelleSourceLocalLowerInvestment.currentReport);
+      forged.noelleSourceLocalLowerInvestment.durableReport = structuredClone(
+        forged.noelleSourceLocalLowerInvestment.currentReport,
+      );
+      expectFailure(forged, code);
+    };
+
+    const stale = structuredClone(base);
+    const staleDurable = structuredClone(
+      stale.noelleSourceLocalLowerInvestment.durableReport,
+    ) as NoelleSourceLocalLowerInvestmentSliceReport;
+    staleDurable.selectedOccurrences.pop();
+    stale.noelleSourceLocalLowerInvestment.durableReport = staleDurable;
+    expectFailure(
+      stale,
+      "authentication.noelle-source-local-lower-investment-stale",
+    );
+
+    expectForgedFailure((report) => {
+      report.supportsGuideClaims = true as false;
+    });
+    expectForgedFailure((report) => {
+      report.generatedFrom[0]!.sha256 = "0".repeat(64);
+    });
+    expectForgedFailure((report) => {
+      report.rawInputBoundary.canonicalObjectSha256ByPath[
+        "scripts/guide-factory/data/knowledge/repository.json"
+      ] = "0".repeat(64);
+    });
+    expectForgedFailure((report) => {
+      if (!report.sourceLocalSlice) throw new Error("Missing lower slice.");
+      report.sourceLocalSlice.compositionPolicy.sourceCellsPreservedVerbatim =
+        false as true;
+    });
+    expectForgedFailure((report) => {
+      const request = report.sourceLocalSlice?.requestContextReport;
+      if (!request) throw new Error("Missing lower request report.");
+      request.summary.matchedCellCount = 2;
+    });
+    expectForgedFailure((report) => {
+      report.sourceBoundary.pageUrl =
+        "https://example.invalid/noelle-lower" as typeof report.sourceBoundary.pageUrl;
+    });
+    expectForgedFailure((report) => {
+      report.numericEvaluationBoundary.sourceTalentLevelsEvaluated =
+        true as false;
+    });
+    expectForgedFailure((report) => {
+      report.summary.effectiveMatchedCount = 2;
+    });
+    expectForgedFailure((report) => {
+      if (!report.sourceLocalSlice) throw new Error("Missing lower slice.");
+      report.sourceLocalSlice.generatedFrom[0]!.sha256 = "0".repeat(64);
+    });
+    expectForgedFailure((report) => {
+      if (!report.sourceLocalSlice) throw new Error("Missing lower slice.");
+      report.sourceLocalSlice.sourceDocumentBoundary.pageUrl =
+        "https://example.invalid/noelle-lower";
+    });
+    expectForgedFailure((report) => {
+      if (!report.sourceLocalSlice) throw new Error("Missing lower slice.");
+      report.sourceLocalSlice.exactTeamControls[0]!.label = "Forged team";
+    });
+    expectForgedFailure((report) => {
+      report.cautions[0] = "Forged full-report-only field.";
+    });
+
+    expectForgedFailure((report) => {
+      const selected = report.selectedOccurrences[0]!;
+      const forgedConditions = ["Forged but internally rehashed lower condition."];
+      const forgedHash = sha256Text(stableJson(forgedConditions));
+      selected.conditions = forgedConditions;
+      selected.conditionsSha256 = forgedHash;
+      const slice = report.sourceLocalSlice;
+      if (!slice) throw new Error("Missing lower slice.");
+      const claim = slice.sourceClaimCatalog[0]!;
+      claim.sourceConditions = forgedConditions;
+      claim.sourceConditionsSha256 = forgedHash;
+      const control = slice.conditionControls[0]!;
+      control.occurrenceControl.sourceConditionsSha256 = forgedHash;
+    });
+    expectForgedFailure((report) => {
+      const context = report.sourceLocalSlice?.requestContextReport?.context
+        .requestFactsByTeamRecordId?.[
+        "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+      ]?.characterFactsById?.noelle;
+      if (!context) throw new Error("Missing lower request fact.");
+      context.constellation = 4;
+    });
+    expectForgedFailure((report) => {
+      const row = report.sourceLocalSlice?.requestContextReport
+        ?.teamProjections[0]?.claimProjections[0]?.requestContextBindings[0]
+        ?.predicateRows[0];
+      if (!row) throw new Error("Missing lower fact scope.");
+      row.factScope.teamRecordId = "kqm:team:forged-noelle-team";
+    });
+    expectForgedFailure((report) => {
+      const projection = report.sourceLocalSlice?.requestContextReport
+        ?.teamProjections[0]?.claimProjections[0];
+      if (!projection) throw new Error("Missing lower output projection.");
+      projection.resolution = "inapplicable";
+    });
+    expectForgedFailure((report) => {
+      report.holdoutOccurrences[3]!.bindingAuthoredBySlice = true as false;
+    });
+
+    const collision = structuredClone(base);
+    collision.noelleSourceLocalLowerInvestment.currentReport.selectedOccurrences[1] =
+      structuredClone(
+        collision.noelleSourceLocal.currentReport.selectedOccurrences[1]!,
+      ) as NoelleSourceLocalLowerInvestmentSliceReport["selectedOccurrences"][number];
+    const lowerSlice =
+      collision.noelleSourceLocalLowerInvestment.currentReport.sourceLocalSlice;
+    const highSlice = collision.noelleSourceLocal.currentReport.sourceLocalSlice;
+    if (!lowerSlice || !highSlice) throw new Error("Missing Noelle slices.");
+    lowerSlice.sourceClaimCatalog[1] = structuredClone(
+      highSlice.sourceClaimCatalog[1]!,
+    );
+    lowerSlice.conditionControls[1] = structuredClone(
+      highSlice.conditionControls[1]!,
+    );
+    collision.noelleSourceLocalLowerInvestment.durableReport = structuredClone(
+      collision.noelleSourceLocalLowerInvestment.currentReport,
+    );
+    expectFailure(collision, expectedCode);
   });
 
   it("fails closed on unauthenticated, stale, partial, duplicate, conflicting, or leaked evidence", async () => {
@@ -1232,6 +1563,9 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
   const noelleSourceLocal = (await readJson(
     NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_REPORT_PATH,
   )) as NoelleSourceLocalHighInvestmentSliceReport;
+  const noelleSourceLocalLowerInvestment = (await readJson(
+    NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_REPORT_PATH,
+  )) as NoelleSourceLocalLowerInvestmentSliceReport;
   return {
     ittoAuthentication: {
       authenticated: true,
@@ -1260,6 +1594,10 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
     noelleSourceLocal: {
       durableReport: structuredClone(noelleSourceLocal),
       currentReport: structuredClone(noelleSourceLocal),
+    },
+    noelleSourceLocalLowerInvestment: {
+      durableReport: structuredClone(noelleSourceLocalLowerInvestment),
+      currentReport: structuredClone(noelleSourceLocalLowerInvestment),
     },
   };
 }

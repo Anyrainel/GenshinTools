@@ -648,9 +648,9 @@ nonempty holdouts, and one empty occurrence. No substat row is selected. The
 holdouts and empty row are unconsumed and receive no slice-authored binding or
 energy classification. Its report authenticates four raw inputs and 13
 generated-from paths and creates zero candidates, equipment assignments,
-optimizations, or assembled builds. It remains standalone and does not enter
-the current condition-binding catalog. The new report brings the durable total
-to 31.
+optimizations, or assembled builds. Its source-local report remains standalone;
+checkpoint 34 separately admits only the three selected occurrences downstream
+after fresh source-specific authentication. The report total remains 31.
 
 ## Manual condition-array coverage seam
 
@@ -663,10 +663,11 @@ the raw snapshot values before schema parsing and requires every `conditions`
 property to match one extracted path and ordered payload, so future or unknown
 condition-bearing fields fail closed.
 
-`src/currentConditionBindingCatalog.ts` overlays only seven authenticated
+`src/currentConditionBindingCatalog.ts` overlays only eight authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
 IDs, exact-text Keqing Viridescent Venerer acknowledgements, and the four Klee
-plus three Diona plus one Kokomi plus three Noelle source-local typed bindings.
+plus three Diona plus one Kokomi plus three high-investment and three lower-
+investment Noelle source-local typed bindings.
 Source-local catalog entries share the generic
 `source-local-typed-predicate-ast` and
 `source-local-not-energy-deferred` evidence labels, but wrapper authentication,
@@ -687,24 +688,24 @@ binding boundary, and capability flags. The helper is not a generic wrapper,
 extractor, schema adapter, or prose parser.
 
 The durable report keeps binding and energy as independent ledgers. Across all
-126 nonempty arrays, the current catalog contributes 60 entries: 57 typed and
-3 exact-text acknowledged. Binding coverage is therefore 57 typed, 3
-acknowledged, and 66 unbound. Excluding only the three structural ER arrays
-leaves 123 rows: 57 typed, 3 acknowledged, and 63 unbound, spanning 86 exact
-ordered arrays. Those arrays contain 33 typed-only sets, 52 unbound-only sets,
+126 nonempty arrays, the current catalog contributes 63 entries: 60 typed and
+3 exact-text acknowledged. Binding coverage is therefore 60 typed, 3
+acknowledged, and 63 unbound. Excluding only the three structural ER arrays
+leaves 123 rows: 60 typed, 3 acknowledged, and 60 unbound, spanning 86 exact
+ordered arrays. Those arrays contain 34 typed-only sets, 51 unbound-only sets,
 and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Fifty-four typed rows are explicitly not energy-deferred; 57
+deferred. Fifty-seven typed rows are explicitly not energy-deferred; 54
 nonempty rows remain energy-unclassified; and 16 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
 
-Display status is a separate projection over all 142 occurrences: 54 typed, 54
+Display status is a separate projection over all 142 occurrences: 57 typed, 51
 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional. Manual
-coverage authenticates seven wrapper families across 18 source files and 70
+coverage authenticates eight wrapper families across 19 source files and 73
 generated-from paths.
 
 The Noelle catalog path first requires the durable report to equal a fresh
@@ -713,15 +714,15 @@ numeric request projection, three selected occurrences, 12 holdouts, one empty
 row, and disabled capability boundary. Only the selected three become typed and
 not energy-deferred; the holdouts and empty row receive no new state.
 
-Checkpoint 33 does not add the lower-investment wrapper to this path. Its three
-selected rows remain catalog-unbound and energy-unclassified, so catalog 60,
-the 57/3/63 non-structural partition, 33/52/1 unique-array partition,
-15/54/57/16 energy ledger, 54/54/15/3/16 display projection, seven wrapper
-families, 18 source files, and 70 generated-from paths remain exactly
-checkpoint 32.
+Checkpoint 34 separately adds only the lower-investment slice's three selected
+rows to this path after durable/current equality and the full lower-specific
+authentication boundary. The 12 holdouts and one empty row remain outside the
+catalog. The resulting catalog is 63; the non-structural partition is 60/3/60,
+the unique-array partition is 34/51/1, the energy ledger is 15/57/54/16, and
+the display projection is 57/51/15/3/16.
 
 The dependency direction remains acyclic. Authenticated source-specific Klee,
-Diona, Kokomi, and high-investment Noelle wrappers feed the 60-entry binding
+Diona, Kokomi, and both Noelle wrappers feed the 63-entry binding
 catalog, then manual coverage and the regenerated checkpoint 27 Klee witness.
 The validator follows that order. The generic source-local core and source-
 specific wrappers never import the downstream catalog, coverage report, or
@@ -769,10 +770,22 @@ for hash/dependency changes only and update the checkpoint 32 catalog's
 four Klee claims, positive team, negative control, and interpretation boundary
 remain unchanged.
 
-The completed checkpoint 33 verification passes TypeScript, 62 test files with
-461 tests, and validation with 0 errors and 12 existing warnings. The next
-bounded non-ER gate is a separate catalog admission for only the three exact
-lower-investment occurrences. It is not implemented yet.
+Checkpoint 34 regenerates manual coverage and the witness after the separate
+lower-investment catalog admission. Manual coverage authenticates 19 source
+files and 73 generated-from paths. The witness authenticates six source files,
+76 generated-from paths, and 63 upstream bindings while preserving the same
+four Klee claims, positive team, negative control, zero consumption of 11 Klee
+holdouts, and interpretation boundary.
+
+The completed checkpoint 34 verification passes TypeScript, 62 test files with
+464 tests, and validation with 0 errors and 12 existing warnings. The durable
+report total remains 31. The next bounded non-ER gate is an isolated Keqing
+triangulation across ArtifactRatingDB's source-native heuristic coefficients,
+attributed KQM build evidence, and the existing full-team local-marginal
+diagnostic. It is not complete. The ArtifactRatingDB pilot must retain its mixed
+permission posture, blocked consolidation state, and isolation from the shared
+registry and consolidated repository; unlike evidence must not be averaged
+into a single weight or recommendation.
 
 ## Callable modules for later experiments
 
@@ -818,9 +831,8 @@ lower-investment occurrences. It is not implemented yet.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation; the catalog-integrated Klee,
-  Diona, Kokomi, and high-investment Noelle adapters; and the standalone lower-
-  investment Noelle adapter:
+- Generic source-local condition evaluation and the catalog-integrated Klee,
+  Diona, Kokomi, high-investment Noelle, and lower-investment Noelle adapters:
   `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`,
@@ -906,7 +918,7 @@ factory.
   disagreements still need broader attributed evidence before role-based roster
   expansion is safe.
 - Source guide applicability remains attributed prose in repository records.
-  The exact inventory now identifies 63 non-structural occurrences as unbound;
+  The exact inventory now identifies 60 non-structural occurrences as unbound;
   it does not parse them or presume they are non-ER. Nine are exact authored
   energy deferrals and the remaining 54 are energy-unclassified. The Keqing,
   Itto, Klee, Diona, Kokomi, and Noelle source-specific wrappers pin exact text
@@ -917,9 +929,9 @@ factory.
   comparisons. The high-investment Noelle slice applies its numeric subset only
   to three exact occurrences; checkpoint 32 admits those three while its 12
   nonempty holdouts receive no binding or energy state. The lower-investment
-  slice independently authenticates three former holdouts under C5 and Burst
-  Talent 9 request facts, but checkpoint 33 does not catalog-admit them; they
-  remain unbound and energy-unclassified in manual coverage.
+  slice independently authenticates three occurrences under C5 and Burst
+  Talent 9 request facts; checkpoint 34 separately admits only those three while
+  its 12 nonempty holdouts and one empty occurrence remain outside the catalog.
   High Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
   shield uptime, Bond clearance, CRIT overcap, artifact quality, comparative
   thresholds, gameplay, and omitted-energy inputs remain explicitly unresolved

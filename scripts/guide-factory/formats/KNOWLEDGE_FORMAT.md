@@ -277,6 +277,15 @@ catalog. Their typed and not-energy-deferred classifications exist only inside
 the standalone slice; manual coverage continues to classify those exact rows as
 unbound and energy-unclassified. Any later admission requires a separate gate.
 
+Checkpoint 34 supplies that separate gate. It requires exact durable/current
+lower-investment report equality and repeats the lower wrapper's source,
+identity, numeric-request, payload, recommendation-metadata, claim/control,
+3/12/1 partition, and disabled-capability checks before normalized entry
+construction. Only the three selected main-stat occurrences are admitted. All
+12 nonempty holdouts and the one empty occurrence remain outside the catalog.
+The high- and lower-investment Noelle branches remain occurrence-disjoint even
+where payload or unresolved source-predicate hashes coincide.
+
 A private normalized helper may perform only repeated selected-occurrence,
 source-claim, and condition-control parity plus catalog-entry construction after
 source-specific wrapper checks pass. It must not become a generic wrapper,
@@ -320,17 +329,16 @@ its fresh authenticated rebuild. They must not parse arbitrary English, infer
 a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
-The current authenticated catalog contains 60 entries: 57 typed bindings and 3
-exact-text acknowledgements. Full nonempty binding coverage is 57 typed, 3
-acknowledged, and 66 unbound. The non-structural partition is 123 rows: 57
-typed, 3 acknowledged, and 63 unbound. Its 86 unique ordered arrays contain 33
-typed-only, 52 unbound-only, and one mixed acknowledged/unbound set. The
-independent energy ledger is 15 deferred, 54 explicitly not energy-deferred, 57
-nonempty unclassified, and 16 empty unconditional arrays. Display status is 54
-typed, 54 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
-unconditional. Coverage authenticates seven wrapper families across 18 source
-files and 70 generated-from paths. Checkpoint 33's standalone lower-investment
-slice changes none of these counts.
+The current authenticated catalog contains 63 entries: 60 typed bindings and 3
+exact-text acknowledgements. Full nonempty binding coverage is 60 typed, 3
+acknowledged, and 63 unbound. The non-structural partition is 123 rows: 60
+typed, 3 acknowledged, and 60 unbound. Its 86 unique ordered arrays contain 34
+typed-only, 51 unbound-only, and one mixed acknowledged/unbound set. The
+independent energy ledger is 15 deferred, 57 explicitly not energy-deferred, 54
+nonempty unclassified, and 16 empty unconditional arrays. Display status is 57
+typed, 51 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+unconditional. Coverage authenticates eight wrapper families across 19 source
+files and 73 generated-from paths.
 
 ### Derived condition-resolved flat claim joins
 
@@ -358,7 +366,9 @@ Marechaussee Hunter claim source-definitely-inapplicable, so it produces no
 positive witness. None of the 11 Klee holdouts is consumed.
 When upstream coverage changes, the durable Klee witness must be regenerated
 and reauthenticated; a broader catalog does not add claims to that exact
-witness.
+witness. At checkpoint 34 the witness authenticates six source files, 76
+generated-from paths, and 63 upstream bindings while retaining the same four
+claims, positive team, negative control, and holdout exclusions.
 
 ## Energy-guidance records
 

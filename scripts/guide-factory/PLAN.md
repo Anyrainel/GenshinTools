@@ -684,8 +684,47 @@ and the Klee witness retain their established semantics. Verification passes
 TypeScript, 62 test files with 461 tests, and validation with 0 errors and 12
 existing warnings.
 
-The next non-ER gate should be a separate catalog admission for only the three
-exact lower-investment occurrences. It is not implemented yet.
+Checkpoint 34 completes that separate catalog admission. The catalog first
+requires the durable lower-investment Noelle report to equal a fresh source-
+specific rebuild, then repeats its exact page/version, raw-input closure,
+guide/team/subject identities, source and request predicates, independently
+scoped C5 and Burst Talent 9 facts, three payloads, recommendation metadata,
+source-claim and condition-control cross-links, 3/12/1 partition, and disabled
+capabilities. Only after those checks pass may the private normalized helper
+construct the three entries.
+
+Only the ATK% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet
+occurrences are admitted. The 12 named nonempty holdouts and one empty
+occurrence remain outside the catalog and receive no new binding or energy
+classification. The high- and lower-investment branches remain occurrence-
+disjoint even when a payload hash or their unresolved source-predicate hash is
+the same.
+
+The authenticated catalog is now 63 = 60 typed + 3 acknowledged. Full nonempty
+coverage is 60/3/63, including 82/3/74 condition-string occurrences. The 123
+non-structural rows are 60/3/60, including 82/3/71 strings, while the 86 unique
+arrays split 34 typed-only, 51 unbound-only, and one acknowledged/unbound mixed
+set. Energy is 15 deferred, 57 explicitly not deferred, 54 nonempty
+unclassified, and 16 empty; display is 57 typed, 51 known-but-unbound, 15 ER-
+deferred, 3 acknowledged, and 16 unconditional.
+
+Manual coverage authenticates eight wrapper families through 19 source files
+and 73 generated-from paths. The regenerated Klee witness authenticates six
+source files, 76 generated-from paths, and 63 upstream bindings while retaining
+the same four claims, positive team, negative control, 11-holdout exclusion,
+and interpretation boundary. No durable report is added, so the total remains
+31. Verification passes TypeScript, 62 test files with 464 tests, and validation
+with 0 errors and 12 existing warnings.
+
+Checkpoint 34 adds no application or Worker integration and makes no guide,
+recommendation, assignment, rank, optimization, damage, rotation, ideal-roll,
+or ER claim. The next bounded non-ER gate is an isolated Keqing triangulation
+across the ArtifactRatingDB source-native heuristic coefficients, attributed
+KQM build evidence, and the existing full-team local-marginal diagnostic. That
+triangulation is not complete. ArtifactRatingDB must remain outside the shared
+registry and consolidation pipeline with its mixed permission posture and
+blocked consolidation state until permission review is resolved; the three
+evidence types must not be averaged into a single weight or recommendation.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

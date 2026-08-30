@@ -29,12 +29,14 @@ Current durable pilot evidence:
   rows, 12 nonempty holdouts, and 1 empty array; no substat is selected, and all
   holdout/empty rows remain unconsumed with no slice-authored binding or energy
   classification. The report authenticates 4 raw inputs and 13 generated-from
-  paths. It is standalone: its selected rows remain catalog-unbound and energy-
-  unclassified in manual coverage, whose checkpoint 32 counts remain unchanged.
-  The source remains agent-assisted, unreviewed, permission-unknown, and
-  promotion-ineligible. It creates zero candidates, equipment assignments,
-  optimizations, or builds and performs no guide, recommendation, ranking,
-  formula, damage, rotation, ideal-roll, or ER work.
+  paths. Its source-local authentication remains standalone. Checkpoint 34
+  separately admits only its three selected occurrences after exact durable/
+  current equality and repeated lower-specific source, request, payload,
+  partition, and disabled-capability checks. All 12 holdouts and the empty row
+  remain outside the catalog. The source remains agent-assisted, unreviewed,
+  permission-unknown, and promotion-ineligible. It creates zero candidates,
+  equipment assignments, optimizations, or builds and performs no guide,
+  recommendation, ranking, formula, damage, rotation, ideal-roll, or ER work.
 - `noelle-source-local-high-investment-slice.json` authenticates slice
   `kqm-noelle-source-local-high-investment-slice-luna-viii` against the exact
   KQM Noelle snapshot SHA-256
@@ -113,9 +115,10 @@ Current durable pilot evidence:
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
-  regenerated after checkpoint 33's generic predicate additions refresh its
-  authenticated manual-coverage dependency. This is a hash-only dependency
-  change; its Klee claim and team-control boundary is unchanged.
+  regenerated after checkpoint 34's lower-investment catalog admission updates
+  its authenticated manual-coverage dependency. It authenticates six source
+  files, 76 generated-from paths, and 63 upstream bindings. Its four Klee
+  claims, team controls, and holdout boundary remain unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -134,16 +137,16 @@ Current durable pilot evidence:
   repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
   unique exact ordered nonempty arrays,
   159 condition-string occurrences, and 97 unique strings. Binding and energy
-  are independent: all nonempty arrays contain 57 typed bindings, 3 exact-text
-  acknowledgements, and 66 unbound occurrences; excluding only three structural
-  ER rows leaves 123 occurrences: 57 typed, 3 acknowledged, and 63 unbound,
-  across 86 unique arrays. Those arrays contain 33 typed-only, 52 unbound-only,
+  are independent: all nonempty arrays contain 60 typed bindings, 3 exact-text
+  acknowledgements, and 63 unbound occurrences; excluding only three structural
+  ER rows leaves 123 occurrences: 60 typed, 3 acknowledged, and 60 unbound,
+  across 86 unique arrays. Those arrays contain 34 typed-only, 51 unbound-only,
   and one mixed acknowledged/unbound status set.
   The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
-  exact authored Diona/Furina rows; 54 typed rows are not energy-deferred and 57
-  nonempty rows remain energy-unclassified. Display status is 54 typed, 54
+  exact authored Diona/Furina rows; 57 typed rows are not energy-deferred and 54
+  nonempty rows remain energy-unclassified. Display status is 57 typed, 51
   known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional.
-  The report authenticates seven wrapper families across 18 source files and 70
+  The report authenticates eight wrapper families across 19 source files and 73
   generated-from paths. Bindings are occurrence-, hash-,
   and subject-scoped: identical Viridescent Venerer text is acknowledged for
   Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
@@ -440,13 +443,19 @@ Current durable pilot evidence:
   duration, and Favonius-cooldown assumptions are comparable.
 
 `validate.ts` rebuilds all thirty-one reports in memory and rejects stale
-checked-in output. Checkpoint 33 adds the standalone lower-investment Noelle
-report but does not catalog-admit its three selected occurrences. Seven existing
-reports regenerate only because the generic predicate vocabulary changes
-authenticated hashes or dependencies; the checkpoint 32 catalog's
-`generatedFrom` pin changes without changing its 60 entries or any manual-
-coverage ledger. The Klee witness retains its four-claim semantics. The
-completed suite passes TypeScript, 62 test files with 461 tests, and validation
-with 0 errors and 12 existing warnings. The Diona ER report is historical and
+checked-in output. Checkpoint 34 adds no report; it separately admits only the
+three authenticated lower-investment Noelle selected occurrences, leaving the
+durable total at 31 and the 12 holdouts plus one empty row outside the catalog.
+The resulting catalog is 63 = 60 typed + 3 acknowledged. Manual coverage uses
+19 source files and 73 generated-from paths; the regenerated Klee witness uses
+six source files and 76 generated-from paths and authenticates 63 upstream
+bindings. Its four claims, positive fixture, negative control, and holdout
+exclusions remain unchanged. The completed suite passes TypeScript, 62 test
+files with 464 tests, and validation with 0 errors and 12 existing warnings.
+No application, guide, recommendation, optimization, damage, rotation, or ER
+output is produced. The next ArtifactRatingDB×KQM×local-marginal Keqing
+triangulation is not complete and must keep the ArtifactRatingDB pilot outside
+the shared registry and consolidation pipeline while its permission posture is
+mixed and consolidation remains blocked. The Diona ER report is historical and
 deliberately decoupled from unrelated knowledge-repository changes while ER
 work is deferred.

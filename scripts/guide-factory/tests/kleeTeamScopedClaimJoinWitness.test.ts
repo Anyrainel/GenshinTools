@@ -107,7 +107,7 @@ describe("Klee team-scoped claim-join witness", () => {
       manualCoverage: {
         currentBoundaryAuthenticated: true,
         corpusOccurrenceCount: 142,
-        bindingOccurrenceCount: 60,
+        bindingOccurrenceCount: 63,
         kleeSourceLocalOccurrenceCount: 4,
         typedBindingMeansConditionTruth: false,
       },

@@ -21,21 +21,22 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 33 adds a standalone Noelle lower-investment numeric request-context
-slice. The generic vocabulary now represents `constellation-at-most` and
-`talent-level-is` with three-valued evaluation. The source-specific slice keeps
-the source `investment-threshold` unresolved, then tests exactly three C0-C5/
-Burst-Talent-9 main-stat occurrences under a conjunction of constellation at
-most 5 and Burst Talent exactly 9, with independent C5 and Burst Talent 9
-request facts. It authenticates
-12 nonempty holdouts, one empty occurrence, four raw input files, and 13 input
-paths while selecting no substats. The new report brings the durable total to
-31, but the slice is not catalog-admitted: catalog 60 = 57 typed + 3
-acknowledged and manual coverage's seven wrapper families, 18 source files, 70
-generated-from paths, and all binding/energy ledgers remain exactly checkpoint
-32. This is occurrence-scoped validation evidence, not an artifact assignment,
-assembled build, recommendation, rank, optimizer, damage, rotation, ER result,
-or working guide factory:
+Checkpoint 34 separately admits only the three already authenticated Noelle
+lower-investment main-stat occurrences to the current condition-binding
+catalog. The exact lower slice remains 3 selected + 12 nonempty holdouts + 1
+empty occurrence; every holdout remains outside the catalog. Catalog admission
+requires exact durable/current report equality and repeats the complete Noelle-
+specific source, request, payload, partition, and disabled-capability boundary
+before the private normalized entry helper runs. The catalog is now 63 = 60
+typed + 3 acknowledged. Full binding coverage is 60/3/63, non-structural
+coverage is 60/3/60, unique non-structural arrays are 34/51/1, energy is
+15/57/54/16, and display is 57/51/15/3/16. Manual coverage authenticates eight
+wrapper families through 19 source files and 73 generated-from paths; the Klee
+witness authenticates six source files, 76 generated-from paths, and 63
+upstream bindings without changing its four-claim semantics. The durable report
+total remains 31. This is occurrence-scoped validation evidence, not an
+artifact assignment, assembled build, recommendation, rank, optimizer, damage,
+rotation, ER result, or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -523,6 +524,31 @@ or working guide factory:
     the checkpoint 32 catalog `generatedFrom` pin without changing entries or
     semantics, and leave lower-slice catalog admission as a separate,
     unimplemented next gate. ER remains deferred.
+171. Make lower-investment Noelle catalog integration a separate authenticated
+    checkpoint with exact durable/current report equality.
+172. Repeat the lower slice's page/version, raw closure, guide/team/subject,
+    source and request predicates, request facts, three payloads, recommendation
+    metadata, claim/control cross-links, and disabled capabilities before entry
+    construction.
+173. Admit only the three selected ATK% Sands, Geo DMG Bonus Goblet, and CRIT
+    Rate/CRIT DMG Circlet occurrences; retain all 12 nonempty holdouts and the
+    one empty occurrence outside the catalog.
+174. Keep the high- and lower-investment Noelle admissions occurrence-disjoint
+    even where payload or unresolved source-predicate hashes coincide.
+175. Refresh catalog to 63 = 60 typed + 3 acknowledged; full coverage to
+    60/3/63; non-structural coverage to 60/3/60; unique arrays to 34/51/1;
+    energy to 15/57/54/16; and display to 57/51/15/3/16.
+176. Authenticate eight wrapper families through 19 manual-coverage source
+    files and 73 generated-from paths, then regenerate the Klee witness through
+    six source files, 76 generated-from paths, and 63 upstream bindings without
+    changing its four claims or controls.
+177. Add no durable report, leaving the total at 31; pass TypeScript, 62 test
+    files with 464 tests, and validation with 0 errors and 12 existing warnings.
+178. Add no application, guide, assignment, recommendation, optimization,
+    damage, rotation, ideal-roll, or ER output. Keep the next
+    ArtifactRatingDB×KQM×local-marginal Keqing triangulation isolated from
+    shared registry and consolidation while permission review remains open; it
+    is not implemented by this checkpoint.
 
 The first two active sources are already in this repository:
 
@@ -660,14 +686,22 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-Klee, Diona, Kokomi, and high-investment Noelle catalog-integrated source-local
-condition slices, the standalone lower-investment Noelle slice, the exact
+Klee, Diona, Kokomi, and both Noelle catalog-integrated source-local condition
+slices, the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration.
 Stale evidence cannot pass.
-The checkpoint 33 verification passes TypeScript, 62 test files with 461 tests,
+The checkpoint 34 verification passes TypeScript, 62 test files with 464 tests,
 and validation with 0 errors and 12 existing warnings.
+
+The next bounded non-ER experiment is an isolated Keqing triangulation across
+ArtifactRatingDB's source-native heuristic coefficients, attributed KQM build
+evidence, and the existing full-team local-marginal diagnostic. It is not
+complete. ArtifactRatingDB remains outside the shared registry and consolidated
+repository with mixed permission posture and consolidation blocked pending
+review; the evidence types must not be averaged into a guide weight or
+recommendation.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
@@ -801,7 +835,7 @@ then may the private normalized helper perform the repeated selected-to-claim-
 to-control cross-link and entry construction. The 12 holdouts and one empty row
 remain outside the catalog.
 
-The standalone Noelle lower-investment adapter selects the parallel C0-C5 and
+The Noelle lower-investment adapter selects the parallel C0-C5 and
 Burst-Talent-9 main-stat occurrences: ATK% Sands, Geo DMG Bonus Goblet, and CRIT
 Rate/CRIT DMG Circlet. The source predicate remains unresolved. Only the
 wrapper-owned `all(constellation <= 5, burst talent == 9)` request predicate is
@@ -814,35 +848,42 @@ holdout or empty row is consumed, bound, or energy-classified by the slice. The
 report authenticates four raw files and 13 generated-from paths and creates no
 candidate, assignment, optimization, or assembled build.
 
+Checkpoint 34 separately admits only those three selected lower-investment
+occurrences. It first requires exact durable/current report equality and repeats
+the lower slice's source, request, payload, recommendation-metadata, 3/12/1
+partition, and disabled-capability checks. High- and lower-investment
+occurrences remain disjoint even where payload or unresolved source-predicate
+hashes coincide. Only after those checks may the private normalized helper
+construct entries. All 12 holdouts and the empty occurrence remain outside the
+catalog.
+
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
 and matches all 142 to their consolidated copies. Sixteen arrays are
-unconditional. Across the 126 nonempty arrays, 57 are typed-bound, 3 are exact-
-text acknowledged, and 66 are unbound. Excluding only structural ER leaves 123
-binding-coverage rows: 57 typed, 3 acknowledged, and 63 unbound. The 86 unique
-non-structural arrays split into 33 typed-only, 52 unbound-only, and one mixed
+unconditional. Across the 126 nonempty arrays, 60 are typed-bound, 3 are exact-
+text acknowledged, and 63 are unbound. Excluding only structural ER leaves 123
+binding-coverage rows: 60 typed, 3 acknowledged, and 60 unbound. The 86 unique
+non-structural arrays split into 34 typed-only, 51 unbound-only, and one mixed
 acknowledged/unbound set. The separate
 energy ledger still defers 3 structural ER arrays, 3 typed Itto prerequisites,
-and 9 exact authored Diona/Furina rows; 54 rows are explicitly not energy-
-deferred and 57 nonempty rows remain energy-unclassified. Display status is 54
-typed, 54 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+and 9 exact authored Diona/Furina rows; 57 rows are explicitly not energy-
+deferred and 54 nonempty rows remain energy-unclassified. Display status is 57
+typed, 51 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
 unconditional. The authenticated
 catalog deliberately binds only exact source occurrences. Its reusable evidence
 labels are `source-local-typed-predicate-ast` and `source-local-not-energy-
 deferred`, while each wrapper, fresh authentication, extraction path, and
 `sliceId` remains source-specific. The shared
 Viridescent Venerer text remains acknowledged for Jean, Kaedehara Kazuha, and
-Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates seven
-wrapper families across 18 source files and 70 generated-from paths. The
-validator rebuilds the 60-entry catalog and coverage before regenerating the
+Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates eight
+wrapper families across 19 source files and 73 generated-from paths. The
+validator rebuilds the 63-entry catalog and coverage before regenerating the
 Klee witness. Neither catalog nor coverage feeds back into a source-local slice.
 The high-investment Noelle admission binds only checkpoint 31's three selected
 occurrences; its 12 holdouts and one empty row retain their exclusion boundary.
-Checkpoint 33's three lower-investment selected occurrences are typed and not
-energy-deferred only inside their standalone slice. Because that slice is not
-catalog-admitted, those exact rows remain unbound and energy-unclassified in
-manual coverage, and every checkpoint 32 catalog and coverage count remains
-unchanged.
+Checkpoint 34 independently binds checkpoint 33's three lower-investment
+selected occurrences while retaining its separate 12-holdout and one-empty-row
+exclusion boundary.
 These reports measure validation work. They do
 not prove a condition is satisfied, presume an unclassified row is non-ER, or
 establish that a preserved payload is a correct recommendation.
@@ -864,6 +905,12 @@ reports and update the checkpoint 32 catalog's authenticated `generatedFrom`
 pin only; catalog entries, coverage ledgers, and Klee witness semantics do not
 change. The four Klee claims, two team controls, and interpretation boundary
 remain the same.
+Checkpoint 34 regenerates manual coverage and this witness after the separate
+lower-investment catalog admission. The witness still authenticates six source
+files and the same four cross-linked Klee occurrences; its generated-from
+boundary is 76 paths and its upstream binding count is 63. Its claims, positive
+fixture, negative control, holdout exclusions, and interpretation boundary do
+not change.
 
 ## Data flow
 
