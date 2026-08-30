@@ -132,8 +132,8 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
     );
     expect(harness.bootstrapCalls).toBe(1);
     expect(report).toMatchObject({
-      generatorOptimizationExecuted: false,
-      generatorDamageObjectiveEvaluated: false,
+      generatorOptimizationExecuted: null,
+      generatorDamageObjectiveEvaluated: null,
       damageReplayExecuted: false,
       damageReplayCalls: 0,
       rankingProduced: false,
@@ -235,9 +235,30 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
     ).not.toThrow();
   });
 
-  it("rejects an uncharacterized generator mode before bootstrap", async () => {
+  it("does not let an injected environment spoof the default generator mode", async () => {
     const harness = buildHarness();
-    harness.environment.generatorOptimizationMode = "unknown" as never;
+    Object.assign(harness.environment, {
+      generatorOptimizationMode: "damage-objective-driven-artifact-generator",
+    });
+
+    const report = await runBoundedFullTeamGeneratedSheetEvidence(
+      buildInput(),
+      harness.environment,
+    );
+
+    expect(report.validationStatus).toBe("completed-generated-sheet-evidence");
+    expect(report.execution.generatorOptimizationMode).toBe(
+      "injected-generator-not-characterized",
+    );
+    expect(report.generatorOptimizationExecuted).toBeNull();
+    expect(report.generatorDamageObjectiveEvaluated).toBeNull();
+    expect(harness.bootstrapCalls).toBe(1);
+    expect(harness.generatorCalls).toHaveLength(4);
+  });
+
+  it("authenticates a withheld report for a blank environment ID", async () => {
+    const harness = buildHarness();
+    harness.environment.environmentId = " ";
 
     const report = await runBoundedFullTeamGeneratedSheetEvidence(
       buildInput(),
@@ -246,10 +267,15 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
 
     expect(report.validationStatus).toBe("withheld-invalid-input");
     expect(report.issues.map(({ code }) => code)).toContain(
-      "input.invalid_generator_optimization_mode",
+      "input.invalid_environment_id",
     );
+    expect(report.generatorOptimizationExecuted).toBeNull();
+    expect(report.generatorDamageObjectiveEvaluated).toBeNull();
     expect(harness.bootstrapCalls).toBe(0);
     expect(harness.generatorCalls).toEqual([]);
+    expect(() =>
+      requireAuthenticatedBoundedFullTeamGeneratedSheetEvidenceReport(report),
+    ).not.toThrow();
   });
 
   it.each([
@@ -472,7 +498,6 @@ function buildHarness(options: {
   const runtimeIdentities: object[] = [];
   const environment: BoundedFullTeamGeneratedSheetEvidenceEnvironment = {
     environmentId: "synthetic-generated-sheet-evidence-v1",
-    generatorOptimizationMode: "injected-generator-not-characterized",
     async bootstrap() {
       bootstrapCalls += 1;
     },
