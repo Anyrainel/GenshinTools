@@ -1212,6 +1212,31 @@ weapon refinement and complete teammate equipment, and state the enemy and
 static-buff assumptions. A successful static total still does not establish
 rotation duration, buff-window feasibility, DPS, or ER.
 
+Checkpoint 55 begins that composition but changes course after an empirical
+failure of the first design. A preliminary one-witness-per-branch grid hid a
+Sands-sign reversal between C0/Q9 and C5/Q9 under the same static fixture. The
+durable experiment therefore becomes a 48-cell technical response surface over
+six entered investment witnesses, ATK%/DEF% Sands, CR/CD Circlets, and Gest
+R1/R5. Entered request talents and runtime-effective C3/C5 talent levels remain
+separate facts. Branch-local Sands are source-listed observations; the opposite
+Sands is a labelled Guide Factory counterfactual. Every cell uses a fresh exact-
+team build, explicit teammate/options/enemy assumptions, a complete applicable-
+buff trace, the exact 5/5/3 projection, and agreeing direct/compiled paths.
+
+The response surface builds 72 pairs that each change exactly one equipment
+axis. C0/Q9 and C5/Q9 retain opposite signs for source-listed ATK% Sands; C0/Q10
+and the other high-branch witnesses likewise expose a cross-witness sign change
+for source-listed DEF% Sands. No branch average or source-expected ordering is
+computed. The result therefore acts as a validation target against premature
+branch-wide guide rules, not as a Sands recommendation. The main-stat-only
+sheet is not a legal complete artifact build, Gest/Husk/Geo-resonance coverage
+is static runtime state, and teammate equipment/options remain source-missing.
+
+The next non-ER step can add one-average-roll CR/CD/ATK%/DEF% local probes only
+on source-aligned cells, while preserving witness-local results and testing at
+least support-option or Husk-stack sensitivity. It must not manufacture scalar
+weights or ideal allocations from the response surface.
+
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,
 formula authoring, recommendation composition, or build composition.

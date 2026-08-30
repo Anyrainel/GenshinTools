@@ -447,6 +447,18 @@ Current durable pilot evidence:
   authority partitions are pinned. Its current byte size and SHA-256 are
   recorded in `CHECKPOINT-54.md`. Its current 28,943-byte output has SHA-256
   `f262914f0fe5bc9dbc4a81b473201734176d89e993c76a4cc159938c03fed660`.
+- `noelle-hexerei-equipment-response-surface.json` binds its exact 112-path
+  byte/hash closure to the current workspace, fresh-authenticates checkpoint
+  54 and 53, and executes a complete 48-cell Noelle technical surface over six
+  entered investment witnesses, ATK%/DEF% Sands, CR/CD Circlets, and Gest
+  R1/R5. Every fresh cell verifies entered-source-predicate membership,
+  runtime Auto/Burst talent evidence, exact Gest/Husk/Geo buff values, tagged
+  Geo-Normal damage-bonus observation, formula restoration, and direct/compiled
+  agreement. Its 72 exact one-axis edges preserve Sands-sign changes inside
+  both source branches without averaging or selecting them. It emits no guide,
+  build, rank, team-total, DPS, optimizer, ideal-stat, or ER claim. Its current
+  568,103-byte output has SHA-256
+  `4dd0fc6e7e8e065d824445110d78a3f10a61053383008f2185bd9f999e9ad225`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -820,7 +832,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all fifty-one globally integrated reports
+In full mode `validate.ts` rebuilds all fifty-two globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -879,6 +891,9 @@ this directory now contains 51 JSON reports.
 Checkpoint 54 adds the Noelle exact Normal-prefix formula projection as
 integrated report 51. Including checkpoint 35's permission-isolated report,
 this directory now contains 52 JSON reports.
+Checkpoint 55 adds the Noelle Hexerei equipment response surface as integrated
+report 52. Including checkpoint 35's permission-isolated report, this directory
+now contains 53 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

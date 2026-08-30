@@ -360,6 +360,13 @@ import {
   NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH,
   type NoelleNormalPrefixFormulaProjectionReport,
 } from "./noelleNormalPrefixFormulaProjection";
+import {
+  authenticateNoelleHexereiEquipmentResponseSurfaceFromWorkspace,
+} from "./assemble-noelle-hexerei-equipment-response-surface";
+import {
+  NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_REPORT_PATH,
+  type NoelleHexereiEquipmentResponseSurfaceReport,
+} from "./noelleHexereiEquipmentResponseSurface";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1885,6 +1892,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle exact Normal-prefix formula projection failed fresh authentication: ${error.message}`
               : "The saved Noelle exact Normal-prefix formula projection failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleHexereiEquipmentResponseSurfaceInput = await readJson(
+          NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_REPORT_PATH,
+        );
+        await authenticateNoelleHexereiEquipmentResponseSurfaceFromWorkspace(
+          noelleHexereiEquipmentResponseSurfaceInput as NoelleHexereiEquipmentResponseSurfaceReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_hexerei_equipment_response_surface",
+          path: "reports.noelle-hexerei-equipment-response-surface",
+          message:
+            error instanceof Error
+              ? `The saved Noelle Hexerei equipment response surface failed fresh authentication: ${error.message}`
+              : "The saved Noelle Hexerei equipment response surface failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =
