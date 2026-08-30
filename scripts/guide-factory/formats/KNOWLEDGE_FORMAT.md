@@ -518,11 +518,39 @@ do not support damage, DPS, rank, recommendation, gameplay, or optimality.
 
 The checkpoint 38 report is durable report 35 overall and globally integrated
 report 34. Its 2,011,250 bytes have SHA-256
-`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
+`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
 Every source, guide, team/equipment recommendation, rank, damage,
-DPS, gameplay, optimality, promotion, and ER capability remains false. The next
-non-ER boundary is a generated-sheet/allocation evidence catalog and knowledge-
-target comparison, not a computed equipment rank.
+DPS, gameplay, optimality, promotion, and ER capability remains false.
+
+### Derived generated-sheet evidence
+
+A generated-sheet evidence catalog is derived review material, not a new
+knowledge-record kind. Checkpoint 39 re-runs checkpoint 38's exact bounded
+domain and retains generated sheets and stable displayed allocations under the
+exact node/carry/character occurrence that produced them. Content-addressing a
+sheet does not permit targets from one occurrence to leak into another
+occurrence that happens to share the same sheet.
+
+The checkpoint contains 144 fresh captures, 576 occurrence contexts, 21 unique
+sheets, and 23 displayed allocations. Displayed artifacts round-trip through
+`StatSheet.fromArtifacts` within an explicit two-decimal rounding envelope.
+Rounded values do not authenticate exact roll tiers or counts, so those fields
+remain unknown.
+
+Its 4,608 non-ER membership rows compare three main stats and five unique
+positive displayed substats with 17 authority-labelled targets. Condition
+status, baseline-context uncertainty, non-exhaustive absence, conflicting
+targets, partial source order, and zero-match targets are retained as evidence.
+They do not become correctness verdicts, scalar weights, ranks, or
+recommendations. ER values remain deferral provenance only.
+
+The checkpoint 39 report is durable report 36 overall and globally integrated
+report 35. Its 17,496,526 bytes have SHA-256
+`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
+promotion, and ER capability remains false. The next non-ER boundary is a
+cached coordinate-policy comparison against the complete 36-node table, not a
+computed equipment rank.
 
 ## Energy-guidance records
 

@@ -851,7 +851,7 @@ gameplay, rank, equipment recommendation, or global optimality.
 
 Checkpoint 38 adds durable report 35 and globally integrates it as report 34.
 The final 2,011,250-byte report has SHA-256
-`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
+`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
 The complete 69-file Guide Factory suite passes 642 tests with one intentional
 opt-in skip, validation has zero errors and the same 12 existing warnings, and
 both application TypeScript and dependency validation pass. Generator and
@@ -860,15 +860,42 @@ operations that ran, while every source, guide, team/equipment recommendation,
 rank, damage, DPS, gameplay, optimality, promotion, and ER claim remains false.
 This is not a working guide factory.
 
-The next non-ER checkpoint should first expose and authenticate the generated
-sheet/allocation evidence that checkpoint 38 hashes but does not serialize.
-The current report contains 259 node/character/sheet pool cells backed by only
-21 globally unique sheet hashes. Reproducing all 144 captures into a bounded
-content-addressed catalog, testing displayed-artifact round trips, and joining
-those stat shapes to authority-labelled knowledge targets will give a later
-publication gate falsifiable validation evidence. It must still fail closed
-rather than turning checkpoint 38's finite technical maxima into ranks or
-recommendations.
+Checkpoint 39 exposes and authenticates that generated-sheet/allocation
+evidence. It re-runs the exact 36-node/four-carry domain, retains 144 fresh
+captures and 576 node/carry/character occurrences, and content-addresses 21
+unique sheets with 23 stable displayed allocations. Every allocation round-
+trips through `StatSheet.fromArtifacts` within the declared two-decimal display
+envelope; rounded values do not reveal exact roll tiers or roll counts.
+
+Exactly 4,608 non-ER occurrence rows compare three artifact main stats and five
+unique positive displayed substats against 17 authority-labelled knowledge
+targets. Applicability and matching target IDs survive the display-state
+precedence rule. The resulting 816 resolved, 48 condition-withheld, 2,202
+baseline-context-unknown, and 1,542 non-exhaustively unlisted rows are review
+observations, not agreement scores or correctness verdicts. The exact-team
+Keqing EM target's zero matches remain visible rather than being erased.
+
+The source-specific wrapper authenticates eight selected non-self inputs before
+execution and the exact generic/full payloads after execution. Those paths are
+not an exhaustive transitive runtime closure, and the deterministic report is
+replayable evidence rather than execution attestation. The real default runner
+records generator-internal objective optimization as executed, but checkpoint
+39 performs no separate damage replay, optimizer call, rank, recommendation,
+or guide production. All ER values and post-ER priority claims are retained
+only as deferral provenance.
+
+Checkpoint 39 adds durable report 36 and globally integrates it as report 35.
+The 17,496,526-byte report has SHA-256
+`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
+promotion, and ER claim remains false.
+
+The next non-ER checkpoint should use checkpoint 38's already complete cached
+36-node table to compare a single best-neighbor pass, iterative best
+improvement, an explicitly declared first-improvement coordinate order, and the
+exhaustive bounded-table reference. It must execute zero new generator, replay,
+or damage-evaluator calls and report policy sensitivity without promoting any
+finite-table node to a recommendation.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

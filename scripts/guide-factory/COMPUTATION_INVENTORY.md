@@ -963,7 +963,7 @@ validate game damage or applicability.
 
 Checkpoint 38 is durable evidence 35 and global report 34. The checked-in
 2,011,250-byte report has SHA-256
-`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
+`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings. Generator
 and damage-computation execution are true only as operation facts. Source, guide,
@@ -971,14 +971,50 @@ team/equipment recommendation, rank, damage, DPS, gameplay, optimality, ER, and
 promotion claims all remain false. This is neither a working guide factory nor
 an equipment recommendation.
 
-The next non-ER computation boundary is an authenticated generated-sheet and
-artifact-allocation evidence catalog. Checkpoint 38 has 259 node/character/
-sheet pool cells but only 21 globally unique sheet hashes; it deliberately
-omits the underlying sheet dumps and displayed artifact allocations. That
-catalog should reproduce all 144 captures, test sheet-to-artifact round trips,
-and compare reviewable stat shapes with authority-labelled knowledge targets
-before any publication authority gate. It must not infer ranks from the
-bounded references.
+## Authenticated generated-sheet and displayed-allocation evidence
+
+Checkpoint 39 adds a generic capture core and a source-specific wrapper around
+the exact checkpoint-38 runtime domain. Before executing the real default
+runner, the wrapper authenticates eight selected non-self inputs: the durable
+checkpoint-38 computation, checkpoint-36 lattice, equipment-evidence report,
+consolidated repository, GenshinTools snapshot, live artifact preset, generic
+capture core, and source-specific target builder. This set is not an exhaustive
+or transitive runtime dependency closure. After execution, the wrapper binds
+the exact generic result and full report payload.
+
+The real default run retains 144 fresh captures across 36 nodes and four carry
+IDs, producing 576 node/carry/character occurrence contexts. It content-
+addresses 21 unique generated sheets and 23 stable displayed allocations; two
+sheets map to two displayed allocations. Each allocation round-trips through
+`StatSheet.fromArtifacts` within the declared display-rounding envelope. Exact
+substat roll tiers and counts are not recoverable from rounded display values,
+so they remain null.
+
+Each occurrence contributes three main-stat and five unique positive non-ER
+substat membership rows. The resulting 4,608 rows join to 17 authority-labelled
+targets through the exact node/carry/character occurrence rather than a global
+sheet ID. Their display states total 816 resolved, 48 condition-withheld, 2,202
+baseline-context-unknown, and 1,542 non-exhaustively unlisted. The report keeps
+all applicable/matching target IDs, 3,858 target match edges, 864 source
+partial-order observations, conflicts, and zero-match targets. None becomes a
+weight, rank, recommendation, correctness verdict, or exhaustive absence.
+
+Checkpoint 39 executes zero separate damage replays, downstream optimizer
+calls, ranks, recommendations, or guide production. Generator-internal
+objective optimization is recorded only as an operation fact for the real
+default environment. ER main stats, substats, floors, and post-ER priority
+claims are retained only as deferral provenance.
+
+Checkpoint 39 is durable evidence 36 and global report 35. The checked-in
+17,496,526-byte report has SHA-256
+`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+Guide, recommendation, rank, scalar-weight, damage, gameplay, optimality, ER,
+and promotion claims all remain false.
+
+The next non-ER computation boundary is a cached coordinate-policy audit over
+checkpoint 38's complete 36-node table. It should compare one-shot neighbor,
+iterative best-improvement, explicitly ordered first-improvement, and exhaustive
+table-reference outcomes with no new generator, replay, or evaluator calls.
 
 ## Callable modules for later experiments
 

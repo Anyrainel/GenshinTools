@@ -21,26 +21,23 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 38 completes one authenticated, bounded full-team technical
-computation for the exact Keqing/Ineffa/Furina/Xilonen Lunar-Charged roster. A
-source-specific wrapper authenticates a 64-path declared non-self selected
-checkpoint set spanning checkpoint 37's trust root, the generic checkpoint 38
-core, selected generator/artifact-sheet/replay inputs, and the relevant current
-calculator implementations. The set excludes its producer, CLI, and report to
-avoid self-reference and explicitly makes no exhaustive or transitive module-
-graph claim. The real default runtime executes four fresh carry generators for
-each of 36 equipment nodes, deduplicates sheets within each node, and completes
-all 364 node-local Cartesian replays. The resulting domain contains 139
-compositions matching an intact generator endpoint and 225 cross-endpoint
-recombinations; all 36 node-local bounded technical references are cross-
-endpoint recombinations. Interpreted and compiled calculation agree internally
-for every replay. The source supports the roster only. Its rotation text is an
-upstream input to an unreviewed wrapper-authored translation, not a source-
-supported technical damage plan; equipment, investment, generated artifact
-stats, and runtime assumptions are also not source facts. Durable report 35 is
-globally integrated as report 34. Every source, guide, rank, recommendation,
-damage, DPS, gameplay, optimality, promotion, and ER claim remains false. This
-is not a working guide factory or an equipment recommendation:
+Checkpoint 39 adds an authenticated generated-sheet and displayed-allocation
+evidence catalog for the exact checkpoint-38 Keqing/Ineffa/Furina/Xilonen
+domain. The default runtime re-runs all 36 equipment nodes and four carry
+generators per node, retaining 144 fresh captures, 576 node/carry/character
+occurrences, 21 globally unique sheets, and 23 stable displayed allocations.
+Every allocation round-trips through `StatSheet.fromArtifacts` within the
+declared display-rounding envelope. Its 4,608 non-ER occurrence rows are joined
+to 17 authority-labelled GenshinTools/KQM knowledge targets without treating
+presence, absence, source order, or condition status as correctness, weights,
+or ranks. Exact-roll tiers remain unknown, and all ER values are retained only
+as deferral provenance. The wrapper authenticates eight selected non-self
+inputs plus the exact post-execution generic and full report payloads; this is
+not an exhaustive transitive runtime closure or an execution attestation.
+Durable report 36 is globally integrated as report 35. Every guide, rank,
+recommendation, scalar-weight, damage, DPS, gameplay, optimality, promotion,
+and ER claim remains false. This is not a working guide factory or an equipment
+recommendation:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -674,9 +671,34 @@ is not a working guide factory or an equipment recommendation:
      talents, enemy context, roll budget, and objective mapping to the wrappers.
 211. Add durable report 35 and globally integrate it as report 34. Its final
      2,011,250-byte output has SHA-256
-     `dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`;
+     `955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`;
      no source, guide, team/equipment recommendation, rank, damage, DPS,
      gameplay, optimality, promotion, or ER capability is enabled.
+212. Add a generic capture core that retains content-addressed generated
+     sheets, stable displayed allocations, occurrence-scoped identities, and
+     display-round-trip evidence without reconstructing exact roll tiers.
+213. Authenticate eight selected non-self checkpoint inputs before execution,
+     then bind the exact generic result and full source-specific report after
+     execution. Record real default generator/objective execution separately
+     from injected or zero-attempt environments.
+214. Re-run 36 nodes and four carries per node, retaining 144 fresh captures,
+     576 node/carry/character occurrences, 21 unique sheets, 23 displayed
+     allocations, and two sheets with two distinct displayed allocations.
+215. Project exactly eight non-ER membership rows per occurrence—three artifact
+     main stats and five unique positive displayed substats—for 4,608 rows.
+     Preserve all applicable and matching target IDs before selecting a
+     non-judgmental display state.
+216. Compare those rows with 17 authority-labelled targets. Retain 816 resolved,
+     48 condition-withheld, 2,202 baseline-context-unknown, and 1,542
+     non-exhaustively unlisted rows, plus 864 source partial-order observations,
+     without deriving weights, ranks, or recommendations.
+217. Keep ER main stats, substats, floors, and post-ER source priorities outside
+     the comparison domain. Record them only as explicit deferral provenance.
+218. Add durable report 36 and globally integrate it as report 35. Its
+     17,496,526-byte output has SHA-256
+     `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`;
+     no guide, recommendation, rank, scalar-weight, damage, gameplay,
+     optimality, promotion, or ER capability is enabled.
 
 The first two active sources are already in this repository:
 
@@ -806,7 +828,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty-four globally integrated durable reports in memory:
+It also rebuilds all thirty-five globally integrated durable reports in memory:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
@@ -826,7 +848,8 @@ inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration, plus the authenticated
 Keqing/Ineffa/Furina/Xilonen source-backed equipment candidate lattice, its
 authenticated runtime materialization preflight, and its authenticated bounded
-full-team technical computation.
+full-team technical computation, followed by its authenticated generated-sheet
+and displayed-allocation evidence catalog.
 Stale evidence cannot pass.
 Checkpoint 35 adds a thirty-second durable report outside that global runner.
 Its isolated builder and tests authenticate five files and close
@@ -866,16 +889,30 @@ recombinations; all 36 bounded node references are cross-endpoint. The exact
 technical maxima and direct/compiled agreement remain internal observations
 under an unreviewed wrapper-authored translation. The final 2,011,250-byte
 report has SHA-256
-`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
+`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings.
 
-The next non-ER checkpoint is an authenticated generated-sheet and displayed-
-artifact evidence catalog, not an equipment rank or recommendation. Checkpoint
-38 retains 259 node/character/sheet pool cells but only their hashes, covering
-21 globally unique sheets. The source supports the roster only, and every
-guide, damage, DPS, gameplay, optimality, promotion, and ER capability remains
-false. ER remains deferred.
+Checkpoint 39 adds durable report 36 and integrates it as global report 35. It
+re-runs the exact 36-node/four-carry domain and retains all 144 captures as 576
+occurrence-scoped character sheets. The content-addressed catalog contains 21
+unique sheets and 23 stable displayed allocations; every allocation round-
+trips within the declared two-decimal display envelope. Its 4,608 non-ER rows
+compare main-stat and positive displayed-substat membership with 17 authority-
+labelled targets while preserving condition status, baseline-context
+uncertainty, non-exhaustive absence, conflicts, and zero-match targets. The
+17,496,526-byte report has SHA-256
+`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+It derives no roll tiers, weights, ranks, recommendations, or correctness
+verdicts. Generator-internal objective optimization is merely recorded as an
+operation fact, and ER remains deferred.
+
+The next non-ER checkpoint audits cached coordinate-selection policies against
+checkpoint 38's complete 36-node table. It compares an exact one-shot neighbor
+pass, iterative best improvement, explicitly ordered first improvement, and
+the exhaustive bounded-table reference with zero new generator, replay, or
+damage-evaluator calls. This is a policy-sensitivity experiment, not an
+equipment recommendation.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level

@@ -78,6 +78,13 @@ import {
   type KeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport,
 } from "./keqingIneffaFurinaXilonenEquipmentTechnicalComputation";
 import {
+  buildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH,
+  requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport,
+  type KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport,
+} from "./keqingIneffaFurinaXilonenGeneratedSheetEvidence";
+import {
   authenticateKleeSourceLocalConditionSliceReport,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
@@ -282,6 +289,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaFurinaXilonenEquipmentCandidateLatticeInput,
     keqingIneffaFurinaXilonenEquipmentRuntimePreflightInput,
     keqingIneffaFurinaXilonenEquipmentTechnicalComputationInput,
+    keqingIneffaFurinaXilonenGeneratedSheetEvidenceInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
@@ -361,6 +369,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(
         KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_REPORT_PATH,
+      ),
+      readJson(
+        KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH,
       ),
       readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
@@ -1487,6 +1498,62 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-furina-xilonen-equipment-technical-computation",
           message:
             "The saved bounded equipment technical computation does not match the fresh authenticated 36-node, four-carry, node-local generator and replay execution under the same source-not-ready objective boundary.",
+        });
+      }
+
+      let expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence:
+        | KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport
+        | null = null;
+      let keqingIneffaFurinaXilonenGeneratedSheetEvidenceAuthenticated = false;
+      try {
+        const keqingIneffaFurinaXilonenGeneratedSheetEvidenceGeneratedFrom =
+          await hashRelativePaths(
+            KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_INPUT_PATHS,
+          );
+        expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence =
+          await buildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport({
+            sourceTechnicalReport:
+              expectedKeqingIneffaFurinaXilonenEquipmentTechnicalComputation,
+            knowledgeTargetInput: {
+              equipmentLatticeReport:
+                expectedKeqingIneffaFurinaXilonenEquipmentCandidateLattice,
+              repository: expectedKnowledge,
+              genshinToolsSnapshot: expectedGenshinTools,
+              liveBuildPreset: liveBuildPresetInput,
+              evidenceReport: expectedKeqingLunarEquipmentEvidenceValidation,
+            },
+            inputFiles:
+              keqingIneffaFurinaXilonenGeneratedSheetEvidenceGeneratedFrom,
+          });
+        requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
+          expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence,
+        );
+        keqingIneffaFurinaXilonenGeneratedSheetEvidenceAuthenticated = true;
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.incomplete_keqing_ineffa_furina_xilonen_generated_sheet_evidence",
+          path: "reports.keqing-ineffa-furina-xilonen-generated-sheet-evidence",
+          message:
+            error instanceof Error
+              ? error.message
+              : "The freshly rebuilt generated-sheet evidence did not authenticate its selected inputs, nested CP38 reports, exact 144-capture output, occurrence-scoped target joins, or withheld-claim boundary.",
+        });
+      }
+      if (
+        keqingIneffaFurinaXilonenGeneratedSheetEvidenceAuthenticated &&
+        expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence !== null &&
+        stableJson(expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence) !==
+          stableJson(
+            keqingIneffaFurinaXilonenGeneratedSheetEvidenceInput as KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport,
+          )
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_furina_xilonen_generated_sheet_evidence",
+          path: "reports.keqing-ineffa-furina-xilonen-generated-sheet-evidence",
+          message:
+            "The saved generated-sheet evidence does not match the fresh authenticated CP36 lattice, CP37 materializations, CP38 technical domain, exact eight-input hash set, 144 generator captures, occurrence-scoped source targets, or deferred-ER provenance boundary.",
         });
       }
 

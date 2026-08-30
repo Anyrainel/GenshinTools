@@ -6,6 +6,27 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-furina-xilonen-generated-sheet-evidence.json` re-runs the
+  exact checkpoint-38 36-node/four-carry domain and retains 144 fresh generator
+  captures as 576 node/carry/character occurrences. Its content-addressed
+  catalog contains 21 unique generated sheets and 23 stable displayed artifact
+  allocations; every allocation reconstructs its sheet within the declared
+  two-decimal display envelope. Exact roll tiers and counts remain unknown. The
+  source-specific wrapper authenticates eight selected non-self inputs before
+  execution and the exact generic/full payloads afterward. Those paths are not
+  an exhaustive transitive runtime closure, and deterministic replay evidence
+  is not execution attestation. Exactly 4,608 non-ER main-stat/positive-substat
+  rows are joined through their occurrence scope to 17 authority-labelled
+  GenshinTools/KQM targets. The report retains 816 resolved, 48 condition-
+  withheld, 2,202 baseline-context-unknown, and 1,542 non-exhaustively unlisted
+  display states, all matching/applicable target IDs, 3,858 match edges, 864
+  source partial-order observations, conflicts, and zero-match targets. It
+  performs no separate replay or optimizer call and derives no weights, ranks,
+  recommendations, correctness verdicts, roll allocations, or ER claims. Its
+  final SHA-256 is
+  `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`,
+  and its final size is 17,496,526 bytes. This is durable report 36 and
+  globally integrated report 35.
 - `keqing-ineffa-furina-xilonen-equipment-technical-computation.json`
   authenticates exactly 64 declared non-self selected checkpoint inputs across
   the checkpoint 37 trust root, generic checkpoint 38 core, selected artifact-
@@ -41,7 +62,7 @@ Current durable pilot evidence:
   damage, DPS, rank, recommendation, gameplay, or optimality. Every source,
   guide, team/equipment recommendation, rank, damage, DPS, gameplay,
   optimality, promotion, and ER claim remains false. The report's final SHA-256
-  is `dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`,
+  is `955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`,
   and its final size is 2,011,250 bytes. This is durable report 35 and
   globally integrated report 34.
 - `keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json`
@@ -536,7 +557,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-four globally integrated reports in memory
+`validate.ts` rebuilds all thirty-five globally integrated reports in memory
 and rejects stale checked-in output. Checkpoint 35's thirty-second durable
 report remains outside that runner because ArtifactRatingDB is permission-
 mixed and consolidation-blocked. Checkpoint 36 adds durable report 33 and
@@ -544,22 +565,28 @@ globally integrates it as report 32. Checkpoint 37 adds durable report 34 and
 globally integrates it as report 33. Checkpoint 38 adds durable report 35 and
 globally integrates it as report 34. Its final 2,011,250-byte report has
 SHA-256
-`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
+`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+Checkpoint 39 adds durable report 36 and globally integrates it as report 35.
+Its final 17,496,526-byte report has SHA-256
+`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings.
 
 The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
 manual coverage remains 19 source files and 73 generated-from paths, and the
 Klee witness remains six source files, 76 generated-from paths, and 63 upstream
-bindings. Checkpoints 35 through 38 change none of those ledgers. Checkpoint 38
+bindings. Checkpoints 35 through 39 change none of those ledgers. Checkpoint 38
 executes the generator and replay runtime but produces no source, guide,
 team/equipment recommendation, rank, damage, DPS, gameplay, optimality,
 promotion, ideal-stat allocation, or ER claim. Its 139 intact-endpoint matches
 and 225 cross-endpoint recombinations remain separate provenance classes, and
 all 36 bounded node references are cross-endpoint. This is not a working guide
-factory or equipment recommendation. The next non-ER checkpoint should expose
-the 21 unique generated sheet hashes as an authenticated allocation catalog,
-test displayed-artifact round trips, and compare them with authority-labelled
-knowledge targets before a fail-closed publication gate. The Diona ER
-report is historical and deliberately decoupled from unrelated knowledge-
-repository changes while ER work is deferred.
+factory or equipment recommendation. Checkpoint 39 exposes the 21 unique sheets
+and 23 displayed allocations, tests their display-round trips, and compares
+4,608 occurrence-scoped non-ER membership rows with authority-labelled targets
+without producing ranks, weights, correctness verdicts, or exact roll counts.
+The next non-ER checkpoint audits one-shot, iterative best-improvement, and
+declared first-improvement policies against the cached exhaustive 36-node table
+with no new generator, replay, or evaluator calls. The Diona ER report is
+historical and deliberately decoupled from unrelated knowledge-repository
+changes while ER work is deferred.

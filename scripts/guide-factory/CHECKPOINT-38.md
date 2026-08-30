@@ -168,7 +168,7 @@ recombination must never be called generator-produced.
 The checked-in report is
 `keqing-ineffa-furina-xilonen-equipment-technical-computation.json`. Its final
 byte SHA-256 is
-`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263` and its
+`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01` and its
 final size is 2,011,250 bytes. It is durable report 35 overall and
 globally integrated report 34.
 
@@ -180,6 +180,9 @@ sequence check. An adversarial canonical-JSON test and direct authentication
 of the checked-in nested report cover the correction. The 36-node domain,
 objectives, provenance counts, and result fingerprint are unchanged; only the
 declared generic-core byte hash and dependent report seals were refreshed.
+The later calculator correction to `src/lib/dmgcalc/utils.ts` likewise changed
+the selected input bytes without changing any checkpoint-38 output fact; the
+SHA-256 above is the report seal after that second provenance refresh.
 
 Final focused verification covers 45 passing tests and one intentional opt-in
 skip across the generic and source-specific files. The full Guide Factory suite
