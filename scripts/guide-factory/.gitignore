@@ -27,3 +27,4 @@ reports/*
 !reports/itto-request-context-applicability.json
 !reports/manual-condition-array-coverage.json
 !reports/klee-source-local-condition-slice.json
+!reports/klee-team-scoped-claim-join-witness.json

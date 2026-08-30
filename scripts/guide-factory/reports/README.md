@@ -6,6 +6,22 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
+  Klee source-local slice, requires the current manual condition-coverage
+  boundary to remain authenticated, then cross-links their same four exact
+  occurrence identities into one flat positive
+  witness for the exact Klee/Furina/Albedo/Xilonen source team. Three on-field
+  main-stat claims are applicable under explicit team-scoped Guide Factory role
+  facts; the Furina-conditioned 4pc Marechaussee Hunter claim is already source-
+  matched. The four independently applicable claims come from two source
+  records, and CR/CD remains one unchosen payload group. The exact
+  Klee/Chevreuse/Durin/Fischl control retains the three role claims as
+  applicable but keeps Marechaussee Hunter source-definitely-inapplicable, so
+  no positive control witness is constructed. The join is Guide Factory-
+  authored rather than source-authored and consumes zero of the 11 Klee
+  holdouts. It expands no payload axis and executes no compatibility check,
+  build, candidate, cross-product, selection, recommendation, rank, generator,
+  optimizer, formula, rotation, damage, ideal-roll, or ER work.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -326,7 +342,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-six reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-seven reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

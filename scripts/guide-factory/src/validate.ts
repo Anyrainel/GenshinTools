@@ -57,6 +57,13 @@ import {
   type KleeSourceLocalConditionSliceReport,
 } from "./kleeSourceLocalConditionSlice";
 import {
+  authenticateKleeTeamScopedClaimJoinWitnessReport,
+  KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_INPUT_PATHS,
+  KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_REPORT_PATH,
+  KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_SOURCE_FILE_PATHS,
+  type KleeTeamScopedClaimJoinWitnessReport,
+} from "./kleeTeamScopedClaimJoinWitness";
+import {
   buildKeqingLunarSourceConditionedCandidateLatticeReport,
   KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
 } from "./keqingLunarSourceConditionedCandidateLattice";
@@ -230,6 +237,8 @@ export async function runValidation(): Promise<ValidationRunResult> {
     manualConditionArrayCoverageInput,
     manualConditionArrayCoverageSourceFiles,
     kleeSourceLocalConditionSliceInput,
+    kleeTeamScopedClaimJoinWitnessInput,
+    kleeTeamScopedClaimJoinWitnessSourceFiles,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -304,6 +313,18 @@ export async function runValidation(): Promise<ValidationRunResult> {
         ),
       ),
       readJson(KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH),
+      readJson(KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_REPORT_PATH),
+      Promise.all(
+        KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
     ]);
 
   diagnostics.push(...validateSourceRegistry(registryInput));
@@ -824,7 +845,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
           code: "pipeline.non_comparable_manual_condition_array_coverage",
           path: "reports.manual-condition-array-coverage",
           message:
-            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its three current wrapper boundaries.",
+            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its four current wrapper families.",
         });
       } else if (
         stableJson(expectedManualConditionArrayCoverage) !==
@@ -836,6 +857,41 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.manual-condition-array-coverage",
           message:
             "The saved manual condition-array coverage does not match the seven indexed source snapshots, exact repository paths, authenticated condition bindings, and current input hashes.",
+        });
+      }
+
+      const kleeTeamScopedClaimJoinGeneratedFrom = await hashRelativePaths(
+        KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_INPUT_PATHS,
+      );
+      const kleeTeamScopedClaimJoinAuthentication =
+        authenticateKleeTeamScopedClaimJoinWitnessReport(
+          kleeTeamScopedClaimJoinWitnessInput as KleeTeamScopedClaimJoinWitnessReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: kleeManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            kleeDurableReportInput: kleeSourceLocalConditionSliceInput,
+            manualCoverageDurableReportInput:
+              manualConditionArrayCoverageInput,
+            sourceFiles: kleeTeamScopedClaimJoinWitnessSourceFiles,
+            generatedFrom: kleeTeamScopedClaimJoinGeneratedFrom,
+          },
+        );
+      if (!kleeTeamScopedClaimJoinAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            kleeTeamScopedClaimJoinAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_klee_team_scoped_claim_join_witness"
+              : "pipeline.stale_klee_team_scoped_claim_join_witness",
+          path: "reports.klee-team-scoped-claim-join-witness",
+          message:
+            kleeTeamScopedClaimJoinAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The Klee team-scoped claim-join witness could not authenticate its source slice, current binding coverage, exact positive team, or negative roster control."
+              : "The saved Klee team-scoped claim-join witness does not match the current authenticated four-claim applicability evidence and zero-composition boundary.",
         });
       }
 

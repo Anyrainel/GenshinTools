@@ -474,13 +474,35 @@ deferred, 47 are explicitly not energy-deferred, 64 nonempty rows remain energy-
 unclassified, and 16 empty arrays are unconditional. No unbound row is presumed
 non-ER, and the slice composes no recommendation or build.
 
-The next bounded non-ER gate should select another exact source-local slice from
-the 70 unbound occurrences and author only predicates supported by existing
-exact roster or request facts. Nine of those rows are exact authored energy
-deferrals; the other 61 remain energy-unclassified. Preserve comparative,
-quality, timing, and gameplay conditions as holdouts, and do not infer
-predicates from repeated English or condition frequency. Human review of the
-Itto, Keqing, and Klee bindings and their source classifications remains a
+Checkpoint 27 proves one narrower downstream operation over that authenticated
+evidence. It fresh-authenticates the Klee source-local slice, requires the
+current manual coverage boundary to remain authenticated, then cross-links the
+same four exact occurrences into one flat positive witness for the exact
+Klee/Furina/Albedo/Xilonen source team. The three
+on-field-role main-stat claims are applicable under explicit team-scoped Guide
+Factory role facts; the Furina-conditioned Marechaussee Hunter claim is already
+matched by the source roster. All four remain independent claims from two
+source records, and CR/CD stays one unchosen payload group.
+
+The exact Klee/Chevreuse/Durin/Fischl team is a negative control. Its three role
+claims remain applicable under the separately scoped request fact, but its
+roster makes the Marechaussee Hunter claim source-definitely-inapplicable, so no
+positive witness is constructed. The join is Guide Factory-authored and does
+not become a source-authored build, compatibility result, candidate, cross-
+product, choice, recommendation, rank, generator, optimizer, or guide. It
+consumes zero of the 11 Klee holdouts and changes no binding-coverage or energy
+classification.
+
+The next bounded non-ER gate should reuse the source-local slice boundary for
+the Diona, Citlali, and Bennett support-artifact recommendations carried by the
+same exact C6 Diona/Mavuika/Citlali/Bennett source team record. Keep each
+character's artifact group and alternatives intact, scope every support-role
+fact to that exact team and character, retain the other 15 nonempty Diona
+condition occurrences as explicit holdouts, and preserve the eight empty arrays
+as unconditional source closure. Do not infer artifact ordering, compatibility,
+a multi-character build, or a recommendation from same-record proximity. ER-
+sensitive Diona rows remain deferred. Human review of the Itto, Keqing, Klee,
+and future Diona bindings and their source classifications remains a
 prerequisite for publication, formula authoring, recommendation composition, or
 build composition.
 

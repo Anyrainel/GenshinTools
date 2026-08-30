@@ -611,6 +611,38 @@ This seam runs no arbitrary-English parser, recommendation composer, generator,
 optimizer, formula, rotation, damage, ranking, ideal-roll, or ER calculation.
 Its output is an authenticated validation backlog, not a guide.
 
+## Flat team-scoped claim-join witness seam
+
+`src/kleeTeamScopedClaimJoinWitness.ts` consumes the authenticated Klee source-
+local slice and authenticated manual condition coverage through a one-way
+dependency boundary. It fresh-authenticates the durable Klee slice from raw
+inputs, requires the current coverage report to remain comparable, and cross-
+links exactly the same four occurrence identities, source claims, source cells,
+request projections, selected-occurrence controls, and coverage rows. Any raw-
+input, upstream-report, path, hash, subject, roster, resolution, or payload
+drift makes the witness non-comparable.
+
+The one positive witness is a flat set for the exact
+Klee/Furina/Albedo/Xilonen source team. Three on-field main-stat claims are
+applicable under explicit team-scoped Klee role facts, while the 4pc
+Marechaussee Hunter claim is source-matched by Furina's roster presence. The
+four independent claims come from two source records. CR/CD remains one
+unchosen payload group; the seam neither expands it nor evaluates the joint
+compatibility, completeness, effectiveness, or optimality of any payloads.
+
+The exact Klee/Chevreuse/Durin/Fischl team is retained as a separation control.
+Its three role claims are applicable under a separately scoped role fact, but
+the Furina-conditioned Marechaussee Hunter claim remains source-definitely-
+inapplicable, so the control cannot produce a positive witness. The cross-record
+join and role fixtures are explicitly Guide Factory-authored rather than KQM-
+authored.
+
+The seam consumes zero of the 11 Klee holdouts and produces zero builds and
+zero candidates. It runs no payload-axis expansion, choice selection,
+compatibility evaluation, cross-product, recommendation composition, ranking,
+generator, optimizer, formula, rotation, damage, ideal-roll, or ER calculation.
+Independent applicability is validation evidence, not a build or guide.
+
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
@@ -663,6 +695,9 @@ Its output is an authenticated validation backlog, not a guide.
   `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,
   `scripts/guide-factory/src/currentConditionBindingCatalog.ts`, and
   `scripts/guide-factory/src/manualConditionArrayCoverageReport.ts`.
+- Authenticated flat same-team Klee claim-join witness over those two upstream
+  boundaries:
+  `scripts/guide-factory/src/kleeTeamScopedClaimJoinWitness.ts`.
 
 The technical and sensitivity probes invoke only `runGenerator` and its
 immediate calculation dependencies. The bounded joint seam now composes

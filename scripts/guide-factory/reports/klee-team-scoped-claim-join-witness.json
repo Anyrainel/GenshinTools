@@ -1,0 +1,2321 @@
+{
+  "arbitraryEnglishParsingAllowed": false,
+  "assembledBuildCount": 0,
+  "authorshipBoundary": {
+    "crossRecordJoinAuthoredBy": "guide-factory",
+    "recommendationMetadataUsedAsConditionTruth": false,
+    "requestProjectionsPreservedVerbatim": true,
+    "requestRoleFactsAuthoredBy": "guide-factory-explicit-fixture",
+    "sourceAuthoredBuild": false,
+    "sourceAuthoredCrossRecordJoin": false,
+    "sourceAuthoredCrossRecordOrdering": false,
+    "sourceCellsPreservedVerbatim": true,
+    "sourceTeamAndClaimEvidencePreservedFromAuthenticatedSlice": true
+  },
+  "candidateCount": 0,
+  "cautions": [
+    "This witness retains four independently applicable source claims under one exact team fixture; it does not establish that their payloads form a compatible, complete, effective, or optimal build.",
+    "The Klee role facts are explicit Guide Factory request fixtures scoped to one exact team and Klee; recommendation role metadata is not condition truth.",
+    "The source records remain agent-assisted and unreviewed, and the cross-record evidence join is authored by Guide Factory rather than by KQM.",
+    "CR and CD remain one unchosen source payload group. No alternative was selected and no payload axis was expanded.",
+    "Eleven other Klee condition occurrences remain holdouts and provide no input to this witness."
+  ],
+  "choiceSelectionExecuted": false,
+  "classification": "authenticated-descriptive-independent-applicability-witness",
+  "comparisonStatus": "comparable",
+  "conditionTruthEstablishedFromRecommendationMetadata": false,
+  "crossProductExecuted": false,
+  "damageComputationExecuted": false,
+  "energyRecoveryComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
+      "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
+      "sha256": "fae5786414382cb0809b2c30887c58fefa4dcce98e9a287c503297ca37f704e6"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
+      "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+      "sha256": "8356b3b952d7e034b0a569ae003d91923c470775a35e37df095c0ec0f4008037"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+      "sha256": "cf2acb8697a87480e388932032626be857b9ed5e8edfbe4b8cd8aa93bd03ab71"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+      "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+    },
+    {
+      "path": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
+      "sha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
+      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-source-scoped-role-pair-sample.json",
+      "sha256": "d401236b0bade4d068f61843ec85676ba740a3fb09c4729d38b24b66c241a465"
+    },
+    {
+      "path": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
+      "sha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4"
+    },
+    {
+      "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
+      "sha256": "afa64a5431d13ee812a59bbf9420c460e4198f63cf03775ee19705bb64fac945"
+    },
+    {
+      "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
+      "sha256": "27d4bef6b93a09489e3d0b4433672f39cee5369ecb9b71c76935c350a3339eca"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
+      "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts",
+      "sha256": "6425c34209b4ae70b90f212be0a3b78a460169d99bb71b9afcd65f3396edf7ad"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts",
+      "sha256": "a65da927710accb1ba1a468a1ae4fe721fe1eb39ea1b6ac32ee4700138f2fa27"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts",
+      "sha256": "62ee0986bafc248e22d7b8c01ce03768e3df049ac60f850d3abe396367fb8c84"
+    },
+    {
+      "path": "scripts/guide-factory/src/catalogs.ts",
+      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+    },
+    {
+      "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
+      "sha256": "96bded91bfe177d754e4cbe4c43c0b47d5dd076ad72b0959fe7156bc18b7fcf2"
+    },
+    {
+      "path": "scripts/guide-factory/src/exactAuthoredEnergyDeferralCatalog.ts",
+      "sha256": "0c2b01ec3bb1afb515235460fb1fcfefc8020ad2fc0e7950f1637c98187fa9b8"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+    },
+    {
+      "path": "scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts",
+      "sha256": "ee938b350c82a37f5723523e25a6e82ba19b439d9af549cece3388b29ab049fc"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/ittoSourceConditionedGuidePacket.ts",
+      "sha256": "a2c48222112053ee76c4e75b7e09d4ca5025095b3bba5520c52a52623e442a49"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
+      "sha256": "fd4c38adc0e5a4ab26bb9917a68dc97dabdd9aa865f1de6e964610a797732740"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
+      "sha256": "42358c4974cb31ac49d856fa594c43dcaa27ff632836cebeeefda1873fe2a6f8"
+    },
+    {
+      "path": "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
+      "sha256": "8755b3cc1329f1d8ffe9816768bb2589240ed68e9d3d5583bfe883311931e7ad"
+    },
+    {
+      "path": "scripts/guide-factory/src/kleeTeamScopedClaimJoinWitness.ts",
+      "sha256": "e325ddafb0aaccb222db3703e8acdeb76d8676f8670e7462c314feb54a62925f"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
+      "sha256": "049a7a76232cf31f7cd5be6670dd8925eaa7f196cd20548bd123103dfec15d06"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualSnapshots.ts",
+      "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/rosterCatalogReference.ts",
+      "sha256": "65fc634143a777823008196abd6cb6b977ac4fd8383f02f919382d35eee43aba"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceBaselineInvestmentComparison.ts",
+      "sha256": "767efb72ee08d41402303d0238d221d5ae04f8cad7d190deb0b517326e0c5fb5"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceScopedRolePairSample.ts",
+      "sha256": "8bc0ab46262fae11f0cf29a348f4e25e2d67dd0e82555c20de5dfaa55ae3df9e"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceScopedRoleSample.ts",
+      "sha256": "ade2007a2ca2e705971d5b232d3f37f3ebd8d8a2a250093a98fb82615120b6ab"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
+      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
+      "sha256": "c085ac93bf752b5c9e98a0419874d7177f8dee6309de020604da92c56e8d2924"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
+      "sha256": "bad1d04f242eae911998ae902f3fd210f1fe27838e724ff24080f6639c2563fa"
+    },
+    {
+      "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
+      "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/constants.ts",
+      "sha256": "3e076788dfac5447d5d59456dc23d47c8d7fe5827795264b2d1dc20bde532c08"
+    },
+    {
+      "path": "src/data/enums.ts",
+      "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/types.ts",
+      "sha256": "bdd204ea6ca5d18a3541de9667993a868c089da066bcc4deaa72af3426ac3e81"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/team-comp/analyzer/weaponChoice.ts",
+      "sha256": "297995b86d74d30422dcbc8948acd13a19401ff7c872435ccb28dd84aaac95f4"
+    }
+  ],
+  "generatorExecuted": false,
+  "issues": [],
+  "jointOptimalityEvaluated": false,
+  "negativeControl": {
+    "applicableUnderSuppliedContextClaimIds": [
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions"
+    ],
+    "claimControls": [
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 1,
+          "sourceControlPreserved": true,
+          "sourceResolution": "unresolved-context"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+        "conditionControl": {
+          "catalogIndex": 0,
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "occurrenceControl": {
+            "claimAxis": "main-stat",
+            "energyClassification": "not-energy-deferred",
+            "mainStatSlot": "circlet",
+            "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+            "manualPath": "records[0].recommendation.mainStats.circlet[0].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+            "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+            "repositoryJsonPath": "records[222].recommendations[0].mainStats.circlet[0].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+          },
+          "requestBindings": [
+            {
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+              "sourcePredicatePath": "predicate"
+            }
+          ]
+        },
+        "conditionControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
+            "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+            "predicateAst": {
+              "category": "gameplay-role",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "type": "unresolved-context"
+            },
+            "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+            "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+            "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "mainStatSlot": "circlet",
+          "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+          "manualPath": "records[0].recommendation.mainStats.circlet[0].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[222].recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "60f24857be4e443598743e14619c0d64fb112d78decc554061fc8bbd6bdfa40a",
+        "factoryDisposition": "negative-control-applicable-only",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "contextApplicability": "applicable-under-supplied-context",
+          "reason": "Request intended role matches on-field-dps.",
+          "requestContextBindings": [
+            {
+              "predicateRows": [
+                {
+                  "factProvenance": "request",
+                  "factScope": {
+                    "accountSnapshotId": null,
+                    "characterId": "klee",
+                    "teamRecordId": "kqm:team:klee-chevreuse-durin-fischl-overload-example-luna-iv"
+                  },
+                  "predicatePath": "requestPredicate",
+                  "predicateType": "intended-role-is",
+                  "reason": "Request intended role matches on-field-dps.",
+                  "result": "true"
+                }
+              ],
+              "reason": "Request intended role matches on-field-dps.",
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "result": "true",
+              "sourceContextCategory": "gameplay-role",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "predicateRowsSha256": "2eee05636489ffcd7166eb14fecd161b40309b03a895a40c24d28de7f35c659f",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+          }
+        },
+        "requestProjectionSha256": "1d4c661f198c53548387abaa773dcc7604226e17ea4828160a7f8ccf6fe43b92",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "energyClassificationAuthoredBySlice": true,
+          "mainStatSlot": "circlet",
+          "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "circlet",
+            "statIds": [
+              "cr",
+              "cd"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "predicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+        },
+        "sourceCellSha256": "e05fa37e9091c08a86c50ee7dcdafe492666076759b83534990d4f820036f8ed",
+        "sourceClaim": {
+          "catalogIndex": 0,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "circlet",
+            "statIds": [
+              "cr",
+              "cd"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "recommendation": {
+            "classification": null,
+            "grouping": null,
+            "label": "General on-field artifact stats, excluding ER",
+            "ordering": null,
+            "recommendationId": "on-field-artifact-stats",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-stats",
+            "sourceIndex": 0
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sourceConditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "sourceClaimSha256": "45637f514bf057c3c3a3d46687d7e0052b68e3db5b924e0db9b61564c845cb43"
+      },
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 1,
+          "sourceControlPreserved": true,
+          "sourceResolution": "unresolved-context"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+        "conditionControl": {
+          "catalogIndex": 1,
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "occurrenceControl": {
+            "claimAxis": "main-stat",
+            "energyClassification": "not-energy-deferred",
+            "mainStatSlot": "goblet",
+            "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+            "manualPath": "records[0].recommendation.mainStats.goblet[0].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+            "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+            "repositoryJsonPath": "records[222].recommendations[0].mainStats.goblet[0].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+          },
+          "requestBindings": [
+            {
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+              "sourcePredicatePath": "predicate"
+            }
+          ]
+        },
+        "conditionControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
+            "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+            "predicateAst": {
+              "category": "gameplay-role",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "type": "unresolved-context"
+            },
+            "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+            "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+            "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+          "manualPath": "records[0].recommendation.mainStats.goblet[0].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[222].recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "0590e80a650bfc6736b41858c3a7955c9d559ffd8263371d055a086f360b0b5d",
+        "factoryDisposition": "negative-control-applicable-only",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "contextApplicability": "applicable-under-supplied-context",
+          "reason": "Request intended role matches on-field-dps.",
+          "requestContextBindings": [
+            {
+              "predicateRows": [
+                {
+                  "factProvenance": "request",
+                  "factScope": {
+                    "accountSnapshotId": null,
+                    "characterId": "klee",
+                    "teamRecordId": "kqm:team:klee-chevreuse-durin-fischl-overload-example-luna-iv"
+                  },
+                  "predicatePath": "requestPredicate",
+                  "predicateType": "intended-role-is",
+                  "reason": "Request intended role matches on-field-dps.",
+                  "result": "true"
+                }
+              ],
+              "reason": "Request intended role matches on-field-dps.",
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "result": "true",
+              "sourceContextCategory": "gameplay-role",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "predicateRowsSha256": "2eee05636489ffcd7166eb14fecd161b40309b03a895a40c24d28de7f35c659f",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+          }
+        },
+        "requestProjectionSha256": "7978d86adb5fe1937247a3ff90380f52ec62e4e02f9c342112c8e4aa7a686547",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "energyClassificationAuthoredBySlice": true,
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "goblet",
+            "statIds": [
+              "pyro%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "predicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+        },
+        "sourceCellSha256": "4649fa3ba79791ad40aa7e8ad61950631a7626dae35a17bf28dc7be61776b4d6",
+        "sourceClaim": {
+          "catalogIndex": 1,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "goblet",
+            "statIds": [
+              "pyro%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "recommendation": {
+            "classification": null,
+            "grouping": null,
+            "label": "General on-field artifact stats, excluding ER",
+            "ordering": null,
+            "recommendationId": "on-field-artifact-stats",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-stats",
+            "sourceIndex": 0
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sourceConditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "sourceClaimSha256": "ca638e21e2c6722b08b6f230c5af86db0f9899079223b3dbb7018d8082a87774"
+      },
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 1,
+          "sourceControlPreserved": true,
+          "sourceResolution": "unresolved-context"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+        "conditionControl": {
+          "catalogIndex": 2,
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "occurrenceControl": {
+            "claimAxis": "main-stat",
+            "energyClassification": "not-energy-deferred",
+            "mainStatSlot": "sands",
+            "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+            "manualPath": "records[0].recommendation.mainStats.sands[0].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+            "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+            "repositoryJsonPath": "records[222].recommendations[0].mainStats.sands[0].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+          },
+          "requestBindings": [
+            {
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+              "sourcePredicatePath": "predicate"
+            }
+          ]
+        },
+        "conditionControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
+            "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+            "predicateAst": {
+              "category": "gameplay-role",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "type": "unresolved-context"
+            },
+            "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+            "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+            "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "mainStatSlot": "sands",
+          "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+          "manualPath": "records[0].recommendation.mainStats.sands[0].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[222].recommendations[0].mainStats.sands[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.sands[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "6200d9cac58a99e2286a73093636dbf40d7e4bba58de0b4ddbef6c649e7df58b",
+        "factoryDisposition": "negative-control-applicable-only",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "contextApplicability": "applicable-under-supplied-context",
+          "reason": "Request intended role matches on-field-dps.",
+          "requestContextBindings": [
+            {
+              "predicateRows": [
+                {
+                  "factProvenance": "request",
+                  "factScope": {
+                    "accountSnapshotId": null,
+                    "characterId": "klee",
+                    "teamRecordId": "kqm:team:klee-chevreuse-durin-fischl-overload-example-luna-iv"
+                  },
+                  "predicatePath": "requestPredicate",
+                  "predicateType": "intended-role-is",
+                  "reason": "Request intended role matches on-field-dps.",
+                  "result": "true"
+                }
+              ],
+              "reason": "Request intended role matches on-field-dps.",
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "result": "true",
+              "sourceContextCategory": "gameplay-role",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "predicateRowsSha256": "2eee05636489ffcd7166eb14fecd161b40309b03a895a40c24d28de7f35c659f",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+          }
+        },
+        "requestProjectionSha256": "1cb9421d9370ce0afbfce1ebb236d35cc3cf776b058cb75c678fb79d1b0a7b61",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "energyClassificationAuthoredBySlice": true,
+          "mainStatSlot": "sands",
+          "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "sands",
+            "statIds": [
+              "atk%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "predicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.sands[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+        },
+        "sourceCellSha256": "45c48db0ed5cc4383c4f2ec6f930a89c5039e2c5c416a0d675b61c1a3d59c629",
+        "sourceClaim": {
+          "catalogIndex": 2,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "sands",
+            "statIds": [
+              "atk%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "recommendation": {
+            "classification": null,
+            "grouping": null,
+            "label": "General on-field artifact stats, excluding ER",
+            "ordering": null,
+            "recommendationId": "on-field-artifact-stats",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-stats",
+            "sourceIndex": 0
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sourceConditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "sourceClaimSha256": "40442447be4def3ef767092f0d4b6167736a9a86341e590d983f4ee953c25b2d"
+      },
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "source-definitely-inapplicable",
+          "effectiveResolution": "inapplicable",
+          "requestContextBindingCount": 0,
+          "sourceControlPreserved": true,
+          "sourceResolution": "inapplicable"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+        "conditionControl": {
+          "catalogIndex": 3,
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "occurrenceControl": {
+            "claimAxis": "artifact-recommendation",
+            "energyClassification": "not-energy-deferred",
+            "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+            "manualPath": "records[1].recommendation.artifactRecommendations[2].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+            "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+            "repositoryJsonPath": "records[223].recommendations[0].artifactRecommendations[2].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+            "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+          },
+          "requestBindings": []
+        },
+        "conditionControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
+            "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+            "predicateAst": {
+              "characterId": "furina",
+              "type": "exact-team-roster-includes"
+            },
+            "predicateAstSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+            "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions:feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "claimAxis": "artifact-recommendation",
+          "conditions": [
+            "Klee is used in a Furina team."
+          ],
+          "conditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+            "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+          "manualPath": "records[1].recommendation.artifactRecommendations[2].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[223].recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "98cf0354e99f09358f57b36ebb1b9893d637164bc35757215353131d7f66671c",
+        "factoryDisposition": "negative-control-source-definitely-inapplicable",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "contextApplicability": "source-definitely-inapplicable",
+          "reason": "Exact source-team roster does not include furina.",
+          "requestContextBindings": [],
+          "resolution": "inapplicable",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "exact-team-roster-includes",
+                "reason": "Exact source-team roster does not include furina.",
+                "result": "false",
+                "structuredFact": "exact-source-team-roster"
+              }
+            ],
+            "predicateRowsSha256": "bcf59e6525db386f525b5d8a98fff39616a110225b0d1ceaba4186a129e60907",
+            "reason": "Exact source-team roster does not include furina.",
+            "resolution": "inapplicable",
+            "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092"
+          }
+        },
+        "requestProjectionSha256": "1fa0791de5fc6888401006ff972b7a65e029c7809abad393aacf31a344f83343",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "artifact-recommendation",
+          "conditions": [
+            "Klee is used in a Furina team."
+          ],
+          "conditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "energyClassificationAuthoredBySlice": true,
+          "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "payload": {
+            "artifacts": [
+              {
+                "setId": "marechaussee_hunter",
+                "type": "4pc"
+              }
+            ],
+            "type": "artifact-group"
+          },
+          "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+          "predicate": {
+            "characterId": "furina",
+            "type": "exact-team-roster-includes"
+          },
+          "predicateSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        },
+        "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster does not include furina.",
+              "result": "false",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "reason": "Exact source-team roster does not include furina.",
+          "resolution": "inapplicable",
+          "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092"
+        },
+        "sourceCellSha256": "389a50dc42e63ab00346d72a8aef5d1f0029a71937c0acaa5a57ce52091b99ea",
+        "sourceClaim": {
+          "catalogIndex": 3,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "payload": {
+            "artifacts": [
+              {
+                "setId": "marechaussee_hunter",
+                "type": "4pc"
+              }
+            ],
+            "type": "artifact-group"
+          },
+          "predicate": {
+            "characterId": "furina",
+            "type": "exact-team-roster-includes"
+          },
+          "recommendation": {
+            "classification": "conditional",
+            "grouping": "single",
+            "label": "General and contextual on-field 4pc artifact sets",
+            "ordering": "unranked",
+            "recommendationId": "on-field-contextual-artifact-sets",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-sets",
+            "sourceIndex": 2
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+          "sourceConditions": [
+            "Klee is used in a Furina team."
+          ],
+          "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        },
+        "sourceClaimSha256": "9e71a64ea35c18a1bdb0bd247493be526771c9a6369428cacabcae0a2acce86d"
+      }
+    ],
+    "claimIds": [
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
+    ],
+    "controlKind": "exact-overload-team-roster-separation-control",
+    "positiveWitnessConstructed": false,
+    "rosterConditionedClaimExcludedFromWitness": true,
+    "sourceDefinitelyInapplicableClaimIds": [
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
+    ],
+    "team": {
+      "exhaustiveness": "non-exhaustive",
+      "intent": "example",
+      "label": "Klee — Chevreuse — Durin — Fischl",
+      "memberCharacterIds": [
+        "klee",
+        "chevreuse",
+        "durin",
+        "fischl"
+      ],
+      "packetIndex": 0,
+      "rankingClaim": "unordered",
+      "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+      "sourceId": "kqm",
+      "sourceRecordId": "klee-chevreuse-durin-fischl-overload-example-luna-iv",
+      "teamRecordId": "kqm:team:klee-chevreuse-durin-fischl-overload-example-luna-iv"
+    },
+    "teamSha256": "2da398ec2b4ea659be8b5998426dac56f43da7724eba17472ff439bb349e4c68"
+  },
+  "optimizerExecuted": false,
+  "payloadAxisExpansionExecuted": false,
+  "payloadCompatibilityEvaluated": false,
+  "playerFacingRecommendations": false,
+  "positiveWitness": {
+    "claimIds": [
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
+    ],
+    "claims": [
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 1,
+          "sourceControlPreserved": true,
+          "sourceResolution": "unresolved-context"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+        "conditionControl": {
+          "catalogIndex": 0,
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "occurrenceControl": {
+            "claimAxis": "main-stat",
+            "energyClassification": "not-energy-deferred",
+            "mainStatSlot": "circlet",
+            "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+            "manualPath": "records[0].recommendation.mainStats.circlet[0].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+            "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+            "repositoryJsonPath": "records[222].recommendations[0].mainStats.circlet[0].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+          },
+          "requestBindings": [
+            {
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+              "sourcePredicatePath": "predicate"
+            }
+          ]
+        },
+        "conditionControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "cd5525a67241cede5301e32f7da77a37c911ae1f0243788f5402391ce6956cbe",
+            "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+            "predicateAst": {
+              "category": "gameplay-role",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "type": "unresolved-context"
+            },
+            "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+            "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+            "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "mainStatSlot": "circlet",
+          "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+          "manualPath": "records[0].recommendation.mainStats.circlet[0].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[222].recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "60f24857be4e443598743e14619c0d64fb112d78decc554061fc8bbd6bdfa40a",
+        "factoryDisposition": "positive-independent-applicability-witness-member",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "contextApplicability": "applicable-under-supplied-context",
+          "reason": "Request intended role matches on-field-dps.",
+          "requestContextBindings": [
+            {
+              "predicateRows": [
+                {
+                  "factProvenance": "request",
+                  "factScope": {
+                    "accountSnapshotId": null,
+                    "characterId": "klee",
+                    "teamRecordId": "kqm:team:klee-furina-albedo-xilonen-example-luna-iv"
+                  },
+                  "predicatePath": "requestPredicate",
+                  "predicateType": "intended-role-is",
+                  "reason": "Request intended role matches on-field-dps.",
+                  "result": "true"
+                }
+              ],
+              "reason": "Request intended role matches on-field-dps.",
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "result": "true",
+              "sourceContextCategory": "gameplay-role",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "predicateRowsSha256": "2eee05636489ffcd7166eb14fecd161b40309b03a895a40c24d28de7f35c659f",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+          }
+        },
+        "requestProjectionSha256": "a711ecb461437437aa909b43e81f83b267d28f9fec2841b403b485dc29d61589",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "energyClassificationAuthoredBySlice": true,
+          "mainStatSlot": "circlet",
+          "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "circlet",
+            "statIds": [
+              "cr",
+              "cd"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "predicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "selectedOccurrenceSha256": "563a97314bd6cfc256e5422038621567be3a32c2569c28653430cb668a792d4a",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+        },
+        "sourceCellSha256": "e05fa37e9091c08a86c50ee7dcdafe492666076759b83534990d4f820036f8ed",
+        "sourceClaim": {
+          "catalogIndex": 0,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "circlet",
+            "statIds": [
+              "cr",
+              "cd"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "recommendation": {
+            "classification": null,
+            "grouping": null,
+            "label": "General on-field artifact stats, excluding ER",
+            "ordering": null,
+            "recommendationId": "on-field-artifact-stats",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-stats",
+            "sourceIndex": 0
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sourceConditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "sourceClaimSha256": "45637f514bf057c3c3a3d46687d7e0052b68e3db5b924e0db9b61564c845cb43"
+      },
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 1,
+          "sourceControlPreserved": true,
+          "sourceResolution": "unresolved-context"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+        "conditionControl": {
+          "catalogIndex": 1,
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "occurrenceControl": {
+            "claimAxis": "main-stat",
+            "energyClassification": "not-energy-deferred",
+            "mainStatSlot": "goblet",
+            "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+            "manualPath": "records[0].recommendation.mainStats.goblet[0].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+            "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+            "repositoryJsonPath": "records[222].recommendations[0].mainStats.goblet[0].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+          },
+          "requestBindings": [
+            {
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+              "sourcePredicatePath": "predicate"
+            }
+          ]
+        },
+        "conditionControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "22bf052dcb35565416d43f04564104836888ca50bb8e3fba404e6fcaa083179e",
+            "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+            "predicateAst": {
+              "category": "gameplay-role",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "type": "unresolved-context"
+            },
+            "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+            "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+            "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+          "manualPath": "records[0].recommendation.mainStats.goblet[0].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[222].recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "0590e80a650bfc6736b41858c3a7955c9d559ffd8263371d055a086f360b0b5d",
+        "factoryDisposition": "positive-independent-applicability-witness-member",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "contextApplicability": "applicable-under-supplied-context",
+          "reason": "Request intended role matches on-field-dps.",
+          "requestContextBindings": [
+            {
+              "predicateRows": [
+                {
+                  "factProvenance": "request",
+                  "factScope": {
+                    "accountSnapshotId": null,
+                    "characterId": "klee",
+                    "teamRecordId": "kqm:team:klee-furina-albedo-xilonen-example-luna-iv"
+                  },
+                  "predicatePath": "requestPredicate",
+                  "predicateType": "intended-role-is",
+                  "reason": "Request intended role matches on-field-dps.",
+                  "result": "true"
+                }
+              ],
+              "reason": "Request intended role matches on-field-dps.",
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "result": "true",
+              "sourceContextCategory": "gameplay-role",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "predicateRowsSha256": "2eee05636489ffcd7166eb14fecd161b40309b03a895a40c24d28de7f35c659f",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+          }
+        },
+        "requestProjectionSha256": "fc92ae85f5f53fb22ce780c0ebe24ff85d2f965890048b09f2e4463fad5f80da",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "energyClassificationAuthoredBySlice": true,
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "goblet",
+            "statIds": [
+              "pyro%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "predicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "selectedOccurrenceSha256": "b50318d7d3b9b522a86b781df68f4efc3a3a45dda95fef112b54aa6ec75428c0",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+        },
+        "sourceCellSha256": "4649fa3ba79791ad40aa7e8ad61950631a7626dae35a17bf28dc7be61776b4d6",
+        "sourceClaim": {
+          "catalogIndex": 1,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "goblet",
+            "statIds": [
+              "pyro%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "recommendation": {
+            "classification": null,
+            "grouping": null,
+            "label": "General on-field artifact stats, excluding ER",
+            "ordering": null,
+            "recommendationId": "on-field-artifact-stats",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-stats",
+            "sourceIndex": 0
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sourceConditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "sourceClaimSha256": "ca638e21e2c6722b08b6f230c5af86db0f9899079223b3dbb7018d8082a87774"
+      },
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 1,
+          "sourceControlPreserved": true,
+          "sourceResolution": "unresolved-context"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+        "conditionControl": {
+          "catalogIndex": 2,
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "occurrenceControl": {
+            "claimAxis": "main-stat",
+            "energyClassification": "not-energy-deferred",
+            "mainStatSlot": "sands",
+            "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+            "manualPath": "records[0].recommendation.mainStats.sands[0].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+            "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+            "repositoryJsonPath": "records[222].recommendations[0].mainStats.sands[0].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+          },
+          "requestBindings": [
+            {
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "sourcePredicateLeafSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+              "sourcePredicatePath": "predicate"
+            }
+          ]
+        },
+        "conditionControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "0a021861bf588eb2d0255180952a9a3ef9652a70cd4592257f813e9fcf1eb343",
+            "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+            "predicateAst": {
+              "category": "gameplay-role",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "type": "unresolved-context"
+            },
+            "predicateAstSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+            "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions:96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+            "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "mainStatSlot": "sands",
+          "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+          "manualPath": "records[0].recommendation.mainStats.sands[0].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[222].recommendations[0].mainStats.sands[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.sands[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "6200d9cac58a99e2286a73093636dbf40d7e4bba58de0b4ddbef6c649e7df58b",
+        "factoryDisposition": "positive-independent-applicability-witness-member",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "contextApplicability": "applicable-under-supplied-context",
+          "reason": "Request intended role matches on-field-dps.",
+          "requestContextBindings": [
+            {
+              "predicateRows": [
+                {
+                  "factProvenance": "request",
+                  "factScope": {
+                    "accountSnapshotId": null,
+                    "characterId": "klee",
+                    "teamRecordId": "kqm:team:klee-furina-albedo-xilonen-example-luna-iv"
+                  },
+                  "predicatePath": "requestPredicate",
+                  "predicateType": "intended-role-is",
+                  "reason": "Request intended role matches on-field-dps.",
+                  "result": "true"
+                }
+              ],
+              "reason": "Request intended role matches on-field-dps.",
+              "requestPredicate": {
+                "characterId": "klee",
+                "roleId": "on-field-dps",
+                "type": "intended-role-is"
+              },
+              "result": "true",
+              "sourceContextCategory": "gameplay-role",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "predicateRowsSha256": "2eee05636489ffcd7166eb14fecd161b40309b03a895a40c24d28de7f35c659f",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+          }
+        },
+        "requestProjectionSha256": "078c0164277c0e8df845da1e57cb6bc1b086799ae7807ebca829c4a37de9307e",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "main-stat",
+          "conditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "conditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "energyClassificationAuthoredBySlice": true,
+          "mainStatSlot": "sands",
+          "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "sands",
+            "statIds": [
+              "atk%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "predicateSha256": "f0d875cc0e2446c08438b042a72870ce2abe32a0badd5ce6aac3a12787571322",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].mainStats.sands[0].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "selectedOccurrenceSha256": "40e1c284251b39f5a7ebe6c0cdc1c0ce6e9a59fe84c85bc2cb3ce11d05f2a65e",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900"
+        },
+        "sourceCellSha256": "45c48db0ed5cc4383c4f2ec6f930a89c5039e2c5c416a0d675b61c1a3d59c629",
+        "sourceClaim": {
+          "catalogIndex": 2,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+          "payload": {
+            "priority": null,
+            "slot": "sands",
+            "statIds": [
+              "atk%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "predicate": {
+            "category": "gameplay-role",
+            "reason": "Klee's intended on-field DPS role must be supplied explicitly per exact source team; recommendation roles are source metadata, not runtime role evidence.",
+            "type": "unresolved-context"
+          },
+          "recommendation": {
+            "classification": null,
+            "grouping": null,
+            "label": "General on-field artifact stats, excluding ER",
+            "ordering": null,
+            "recommendationId": "on-field-artifact-stats",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-stats",
+            "sourceIndex": 0
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
+          "sourceConditions": [
+            "Klee is used as an on-field DPS."
+          ],
+          "sourceConditionsSha256": "96d033ed6175b014f87697f126ede158cd83aa84a9ccd85981eb5b0c1001d900",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-artifact-stats-luna-iv"
+        },
+        "sourceClaimSha256": "40442447be4def3ef767092f0d4b6167736a9a86341e590d983f4ee953c25b2d"
+      },
+      {
+        "applicabilityProvenance": {
+          "contextApplicability": "source-already-matched",
+          "effectiveResolution": "matched",
+          "requestContextBindingCount": 0,
+          "sourceControlPreserved": true,
+          "sourceResolution": "matched"
+        },
+        "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+        "conditionControl": {
+          "catalogIndex": 3,
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "occurrenceControl": {
+            "claimAxis": "artifact-recommendation",
+            "energyClassification": "not-energy-deferred",
+            "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+            "manualPath": "records[1].recommendation.artifactRecommendations[2].conditions",
+            "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+            "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+            "repositoryJsonPath": "records[223].recommendations[0].artifactRecommendations[2].conditions",
+            "repositoryParity": "exact",
+            "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+            "sliceDisposition": "selected",
+            "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+            "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+            "sourceId": "kqm",
+            "sourcePredicateSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+            "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+          },
+          "requestBindings": []
+        },
+        "conditionControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
+        "coverageOccurrence": {
+          "bindingClassification": "typed-bound",
+          "bindingCoverageEligible": true,
+          "bindingEvidence": {
+            "kind": "klee-source-local-typed-predicate-ast",
+            "occurrenceControlSha256": "d9a55bf6b5447609b7f001b91590f5a91d64228daa4761cf0ff17c282043c495",
+            "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+            "predicateAst": {
+              "characterId": "furina",
+              "type": "exact-team-roster-includes"
+            },
+            "predicateAstSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+            "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv"
+          },
+          "bindingOccurrenceKey": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions:feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "claimAxis": "artifact-recommendation",
+          "conditions": [
+            "Klee is used in a Furina team."
+          ],
+          "conditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "displayStatus": "typed-bound",
+          "energyClassification": "not-energy-deferred",
+          "energyEvidence": {
+            "energyRelatedWorkDeferred": false,
+            "kind": "klee-source-local-not-energy-deferred",
+            "selectedOccurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+            "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+            "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+            "structuralErEvidencePresent": false
+          },
+          "extraction": {
+            "method": "agent-assisted",
+            "reviewStatus": "unreviewed"
+          },
+          "issues": [],
+          "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+          "manualPath": "records[1].recommendation.artifactRecommendations[2].conditions",
+          "nonStructuralBindingCoverageEligible": true,
+          "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "recordKind": "character_guide",
+          "repositoryJsonPath": "records[223].recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv",
+          "structuralEnergyDimension": "not-structural-er",
+          "subject": "klee"
+        },
+        "coverageOccurrenceSha256": "98cf0354e99f09358f57b36ebb1b9893d637164bc35757215353131d7f66671c",
+        "factoryDisposition": "positive-independent-applicability-witness-member",
+        "requestProjection": {
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "contextApplicability": "source-already-matched",
+          "reason": "Exact source-team roster includes furina.",
+          "requestContextBindings": [],
+          "resolution": "matched",
+          "sourceControl": {
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "exact-team-roster-includes",
+                "reason": "Exact source-team roster includes furina.",
+                "result": "true",
+                "structuredFact": "exact-source-team-roster"
+              }
+            ],
+            "predicateRowsSha256": "9a6160fedb48649f87c0b1dfdea57b8c2b1799a64c54be01f12bb92cb7cc05fe",
+            "reason": "Exact source-team roster includes furina.",
+            "resolution": "matched",
+            "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092"
+          }
+        },
+        "requestProjectionSha256": "dc77bc41ce7043ee864211c1c0ad679127d3edd76247bb0718cc3b3b90f13bd1",
+        "selectedOccurrence": {
+          "bindingAuthoredBySlice": true,
+          "claimAxis": "artifact-recommendation",
+          "conditions": [
+            "Klee is used in a Furina team."
+          ],
+          "conditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "energyClassificationAuthoredBySlice": true,
+          "manualClaimPath": "recommendation.artifactRecommendations[2].conditions",
+          "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "payload": {
+            "artifacts": [
+              {
+                "setId": "marechaussee_hunter",
+                "type": "4pc"
+              }
+            ],
+            "type": "artifact-group"
+          },
+          "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+          "predicate": {
+            "characterId": "furina",
+            "type": "exact-team-roster-includes"
+          },
+          "predicateSha256": "6a35240db1d34f67ba061d7a80020bd15d5e41117305dccd00f5e3b6ee128c3c",
+          "repositoryParity": "exact",
+          "repositoryPath": "recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+          "sliceBindingClassification": "typed-bound",
+          "sliceDisposition": "selected",
+          "sliceEnergyClassification": "not-energy-deferred",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        },
+        "selectedOccurrenceSha256": "9be987f7ed82a2786054e29bcdc922e733f6cb5f81448605fe8680d7396963e6",
+        "sourceCell": {
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes furina.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "reason": "Exact source-team roster includes furina.",
+          "resolution": "matched",
+          "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092"
+        },
+        "sourceCellSha256": "c5f15a4b01917acd03ba42b081d2234e72f3814f3aecf292f442bd4e3bcf3179",
+        "sourceClaim": {
+          "catalogIndex": 3,
+          "characterId": "klee",
+          "claimId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
+          "payload": {
+            "artifacts": [
+              {
+                "setId": "marechaussee_hunter",
+                "type": "4pc"
+              }
+            ],
+            "type": "artifact-group"
+          },
+          "predicate": {
+            "characterId": "furina",
+            "type": "exact-team-roster-includes"
+          },
+          "recommendation": {
+            "classification": "conditional",
+            "grouping": "single",
+            "label": "General and contextual on-field 4pc artifact sets",
+            "ordering": "unranked",
+            "recommendationId": "on-field-contextual-artifact-sets",
+            "roles": [
+              "dps"
+            ],
+            "scope": "artifact-sets",
+            "sourceIndex": 2
+          },
+          "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
+          "sourceConditions": [
+            "Klee is used in a Furina team."
+          ],
+          "sourceConditionsSha256": "feb2ecd578fdfa80c453e6507a69e41c32422d5d0fdd7ef7e965573235595092",
+          "sourceId": "kqm",
+          "sourceRecordId": "klee-on-field-contextual-artifact-sets-luna-iv"
+        },
+        "sourceClaimSha256": "9e71a64ea35c18a1bdb0bd247493be526771c9a6369428cacabcae0a2acce86d"
+      }
+    ],
+    "completenessEstablished": false,
+    "crCdPreservedAsOneUnchosenPayloadGroup": true,
+    "independentlyApplicableClaimCount": 4,
+    "jointPayloadCompatibilityEstablished": false,
+    "optimalityEstablished": false,
+    "requestContextResolvedClaimCount": 3,
+    "sourceAlreadyMatchedClaimCount": 1,
+    "sourceRecordIds": [
+      "klee-on-field-artifact-stats-luna-iv",
+      "klee-on-field-contextual-artifact-sets-luna-iv"
+    ],
+    "team": {
+      "exhaustiveness": "non-exhaustive",
+      "intent": "example",
+      "label": "Klee — Furina — Albedo — Xilonen",
+      "memberCharacterIds": [
+        "klee",
+        "furina",
+        "albedo",
+        "xilonen"
+      ],
+      "packetIndex": 1,
+      "rankingClaim": "unordered",
+      "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
+      "sourceId": "kqm",
+      "sourceRecordId": "klee-furina-albedo-xilonen-example-luna-iv",
+      "teamRecordId": "kqm:team:klee-furina-albedo-xilonen-example-luna-iv"
+    },
+    "teamSha256": "dc875561def899f430a4f6c60a8916a957b1619dc457dd655cf430205ba04235",
+    "witnessKind": "flat-same-team-independent-applicability-evidence-set"
+  },
+  "prohibitedInterpretations": [
+    "Do not interpret the flat positive witness as a build, ranking, recommendation, compatibility claim, guide, or source-authored cross-record statement.",
+    "Do not use typed-bound coverage as proof that a condition is true; source cells and exact request-context projections remain the applicability evidence.",
+    "Do not use request context to replace exact source-team roster facts or to change the Overload Marechaussee claim from source-definitely-inapplicable.",
+    "Do not infer weapon, substat, ER, rotation, damage, generator, optimizer, or player-facing advice from this report."
+  ],
+  "publicationStatus": "withheld-unreviewed-factory-evidence-join",
+  "rankingExecuted": false,
+  "rawInputBoundary": {
+    "byteAndParsedObjectClosure": true,
+    "exactPathSet": true,
+    "sourceFileCount": 6,
+    "status": "accepted"
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "klee-team-scoped-condition-resolved-claim-join-witness",
+  "rotationComputationExecuted": false,
+  "sameTeamIndependentApplicabilityJoinExecuted": true,
+  "schemaVersion": 1,
+  "selectedAndHoldoutBoundary": {
+    "holdoutOccurrenceCount": 11,
+    "holdoutOccurrenceIds": [
+      "kqm:character_guide:klee-c2-off-field-support-equipment-luna-iv:recommendation.artifactRecommendations[0].conditions",
+      "kqm:character_guide:klee-c2-off-field-support-equipment-luna-iv:recommendation.weaponRecommendations[0].conditions",
+      "kqm:character_guide:klee-generalist-best-five-star-weapon-luna-iv:recommendation.weaponRecommendations[0].conditions",
+      "kqm:character_guide:klee-generalist-best-four-star-weapon-luna-iv:recommendation.weaponRecommendations[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[1].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.substats[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.substats[1].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[0].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[1].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[3].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[4].conditions"
+    ],
+    "holdoutOccurrencesSha256": "2eaa5901d0761a205aaced7d56584250f33eb285b9e17b3d152b4e5dc781fdbb",
+    "holdoutsConsumedByWitness": 0,
+    "selectedAndHoldoutsCloseAllKleeConditions": true,
+    "selectedOccurrenceIds": [
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
+    ],
+    "selectedOccurrencesSha256": "b9bc27909c6c8b7712e5bf703b0a6c6c781e88f3cfba5b3a6d26596649a0c183"
+  },
+  "summary": {
+    "assembledBuildCount": 0,
+    "candidateCount": 0,
+    "crossLinkedCoverageOccurrenceCount": 4,
+    "negativeControlApplicableClaimCount": 3,
+    "negativeControlInapplicableClaimCount": 1,
+    "negativeControlTeamCount": 1,
+    "positiveClaimCount": 4,
+    "positiveSourceRecordCount": 2,
+    "positiveWitnessCount": 1
+  },
+  "supportsBuildRecommendations": false,
+  "supportsCompatibilityClaims": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "typedBindingTreatedAsApplicabilityTruth": false,
+  "upstreamBoundary": {
+    "dag": [
+      "raw-klee-records",
+      "authenticated-klee-source-local-slice",
+      "current-condition-binding-catalog",
+      "authenticated-manual-condition-coverage",
+      "klee-team-scoped-claim-join-witness"
+    ],
+    "exactCrossLinkedOccurrenceCount": 4,
+    "exactCrossLinkedOccurrenceIds": [
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
+      "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
+    ],
+    "klee": {
+      "durableReportCanonicalObjectSha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4",
+      "durableReportFileSha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4",
+      "durableReportPath": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
+      "freshlyAuthenticated": true,
+      "holdoutOccurrenceCount": 11,
+      "selectedOccurrenceCount": 4,
+      "sliceId": "kqm-klee-source-local-condition-slice-luna-iv",
+      "sourceTeamCount": 2
+    },
+    "manualCoverage": {
+      "bindingOccurrenceCount": 53,
+      "corpusOccurrenceCount": 142,
+      "currentBoundaryAuthenticated": true,
+      "durableReportCanonicalObjectSha256": "afa64a5431d13ee812a59bbf9420c460e4198f63cf03775ee19705bb64fac945",
+      "durableReportFileSha256": "afa64a5431d13ee812a59bbf9420c460e4198f63cf03775ee19705bb64fac945",
+      "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
+      "kleeSourceLocalOccurrenceCount": 4,
+      "typedBindingMeansConditionTruth": false
+    },
+    "status": "accepted"
+  },
+  "witnessId": "kqm-klee-furina-team-scoped-condition-resolved-claim-join-luna-iv"
+}

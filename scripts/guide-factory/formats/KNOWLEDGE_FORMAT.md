@@ -212,6 +212,31 @@ its fresh authenticated rebuild. They must not parse arbitrary English, infer
 a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
+### Derived condition-resolved flat claim joins
+
+A downstream witness may collect independently applicable claims under one
+exact team only after authenticating the source-local condition slice and
+condition-coverage boundary that identify them. Every retained claim must keep
+its exact source record, payload group, source cell, request projection,
+selected-occurrence control, coverage row, and authorship provenance. The join
+must also retain a negative exact-team control when an otherwise shared claim
+set contains a source-definitely-inapplicable roster condition.
+
+Such a witness is a flat applicability evidence set, not a build. It must not
+expand payload axes, select among alternatives, evaluate payload
+compatibility, create a Cartesian product, infer completeness, or derive a
+rank, recommendation, generator input, optimizer input, formula plan, damage
+result, ideal-roll target, or ER requirement. Source-authored claims and teams
+do not make a cross-record join source-authored; the wrapper must state its own
+authorship explicitly.
+
+The current Klee witness retains four independently applicable claims from two
+source records for the exact Klee/Furina/Albedo/Xilonen source team. CR/CD stays
+one unchosen payload group. The exact Klee/Chevreuse/Durin/Fischl control keeps
+the three role claims applicable but leaves the Furina-conditioned
+Marechaussee Hunter claim source-definitely-inapplicable, so it produces no
+positive witness. None of the 11 Klee holdouts is consumed.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER
@@ -235,7 +260,7 @@ V1 does not define:
 
 - cross-source consensus;
 - a universal character build;
-- a team-specific join to character-wide build advice;
+- a team-specific build composed from character-wide advice;
 - source confidence scores;
 - rotation feasibility or DPS;
 - ER adequacy;

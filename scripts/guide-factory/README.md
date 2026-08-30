@@ -21,18 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 26 adds a reusable source-local condition slice and exercises it on
-four exact Klee occurrences across two same-page teams. The eight source cells
-contain 1 matched, 1 inapplicable, and 6 unresolved results; explicit team-
-scoped Klee role facts make the effective partition 7 matched and 1
-inapplicable without replacing the exact-roster control. The other 11 Klee
-occurrences are exact holdouts and receive no classification from the slice.
-The downstream catalog now contains 50 typed bindings and 3 exact-text
-acknowledgements, leaving 70 of 123 non-structural occurrences unbound. Energy
-remains independent: 15 rows are deferred, 47 are explicitly not energy-
-deferred, and 64 remain energy-unclassified. This is validation evidence, not
-condition truth, source authority, a recommendation, or a working guide
-factory:
+Checkpoint 27 cross-links the authenticated Klee source-local slice and manual
+condition coverage into one flat, team-scoped applicability witness. For the
+exact Klee/Furina/Albedo/Xilonen source team, three on-field main-stat claims
+and the Furina-conditioned Marechaussee Hunter claim are independently
+applicable; the four claims come from two source records. The exact
+Klee/Chevreuse/Durin/Fischl control retains the three role claims as applicable
+but keeps Marechaussee Hunter source-definitely-inapplicable, so it produces no
+positive witness. This is a Guide Factory-authored evidence join, not a source-
+authored build, candidate, cross-product, compatibility result, recommendation,
+rank, optimizer, generator, or working guide factory. It consumes zero of the
+11 Klee holdouts, and ER remains deferred:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -342,6 +341,25 @@ factory:
 109. Preserve an acyclic dependency direction from raw Klee evidence to the
     source-local slice, then the current catalog, then condition coverage; ER
     remains deferred.
+110. Authenticate both the durable Klee slice and manual condition coverage
+    against current inputs before cross-linking the same four exact occurrence
+    identities across both reports.
+111. Retain one flat positive witness for the exact
+    Klee/Furina/Albedo/Xilonen team: four independently applicable claims from
+    two source records, with CR/CD preserved as one unchosen payload group.
+112. Attribute the cross-record evidence join and explicit per-team role facts
+    to Guide Factory while preserving the source cells, request projections,
+    source-team record, and unreviewed source status verbatim.
+113. Use the exact Klee/Chevreuse/Durin/Fischl team as a negative control: its
+    three role claims remain applicable, but its source roster excludes the
+    Furina-conditioned Marechaussee Hunter claim and therefore withholds a
+    positive witness.
+114. Expand no payload axis and execute no choice selection, compatibility
+    evaluation, build assembly, candidate construction, cross-product,
+    recommendation, ranking, generator, optimizer, formula, damage, or ER work.
+115. Consume zero of the 11 Klee holdouts; the next source-local extension is a
+    same-record Diona/Citlali/Bennett support-artifact slice, with ER still
+    deferred.
 
 The first two active sources are already in this repository:
 
@@ -443,6 +461,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
@@ -459,7 +478,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-six durable reports in memory: corpus inventory,
+It also rebuilds all twenty-seven durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -472,7 +491,8 @@ composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
 Klee source-local condition slice, the exact manual condition-array coverage
-inventory, and historical ER calibration.
+inventory, the authenticated flat Klee team-scoped claim-join witness, and
+historical ER calibration.
 Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
@@ -564,6 +584,18 @@ rebuilt downstream of that catalog; neither layer feeds back into the Klee
 slice. These reports measure validation work. They do not prove a condition is
 satisfied, presume an unclassified row is non-ER, or establish that a preserved
 payload is a correct recommendation.
+
+The Klee team-scoped claim-join witness then consumes both authenticated
+boundaries without changing either one. For the exact
+Klee/Furina/Albedo/Xilonen team, it retains one flat set containing the three
+applicable on-field main-stat claims and the source-matched 4pc Marechaussee
+Hunter claim. CR/CD remains one unchosen source payload group. The exact
+Klee/Chevreuse/Durin/Fischl control retains the same three role claims as
+applicable but excludes Marechaussee Hunter because the source roster does not
+contain Furina. The join is Guide Factory-authored, consumes none of the 11
+holdouts, and performs no payload expansion, compatibility evaluation, build or
+candidate construction, cross-product, selection, recommendation, ranking,
+generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
 
 ## Data flow
 
