@@ -21,16 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 51 moves the experiment from Xiao to Noelle and composes source
-knowledge before attempting damage. It fresh-authenticates the lower- and
-high-investment Noelle slices, verifies four exact manual/consolidated records,
-and materializes two partial artifact profiles with one shared 4pc Husk row,
-eight unselected main-stat options, and six newly source-bound ordinal substat
-groups. The exact source rotation needs `N3D` and `N2` prefixes, but the current
-calculator exposes only an inseparable four-hit `noelle-na` aggregate. The
-representation gate therefore rejects replay and emits zero numeric results.
-This is not a complete build, stat weight, weapon choice, team rank, damage
-recommendation, or guide result, and ER remains deferred.
+Checkpoint 52 authenticates one missing same-page Noelle source relationship
+without pretending that it is already a recommendation. It fresh-authenticates
+checkpoint 31's high-investment slice, retains the conditional Gest of the
+Mighty Wolf occurrence as an upstream holdout, and verifies exact manual-to-
+repository parity for that weapon observation and the published
+Noelle/Durin/Nicole/Xilonen Hexerei example. A narrow Guide Factory allowlist
+binds the source condition to that exact team as a validation target. The join
+is not source-authored, the team member row still has no weapon selection, and
+refinement and quantitative performance remain missing. This checkpoint emits
+zero candidates, builds, assignments, ranks, optimizer runs, damage replays,
+or ER results.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -990,6 +991,26 @@ This is not a working guide factory or an equipment recommendation:
 302. Integrate the admission as global report 48 while retaining it as a
      validation target rather than a guide, recommendation, rotation claim,
      or correctness verdict.
+303. Authenticate checkpoint 52 through one exact 16-text-file/hash closure
+     and five JSON byte/object pairs, including the durable high-investment
+     Noelle slice and the checkpoint core and CLI.
+304. Fresh-authenticate the high-investment slice and require the Gest
+     occurrence to remain a non-ER holdout with no upstream-authored binding.
+305. Require exact manual/consolidated parity for the conditional Gest record
+     and the Noelle/Durin/Nicole/Xilonen example, including source references,
+     candidate status, and promotion ineligibility.
+306. Author one explicit allowlisted join from the exact source condition
+     `Noelle is played in a Hexerei team.` to the exact source section heading.
+     Keep the join exact-team-only and prohibit arbitrary English parsing.
+307. Preserve the source boundary: the team member row has no weapon choice,
+     the consolidated selection is null, and refinement and quantitative
+     performance are missing rather than defaulted.
+308. Emit one hashed applicability validation target and zero equipment
+     assignments, candidates, complete builds, selections, ranks, generator or
+     optimizer runs, damage computations, rotation replays, ideal-stat outputs,
+     or ER computations.
+309. Integrate the binding as global report 49 while withholding every guide,
+     team, build, equipment, stat, damage, rotation, rank, and ER capability.
 
 The first two active sources are already in this repository:
 
@@ -1189,6 +1210,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-circlet-substat-local-marginal-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-investment-artifact-profile-computation-admission.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-weapon-team-source-binding.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1212,7 +1234,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-eight globally integrated durable reports
+In full mode it rebuilds all forty-nine globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -2000,6 +2022,22 @@ exactly representable. Checkpoint 51 therefore rejects replay instead of using
 an approximation and emits no damage number. Weapons, enemy context, formula
 counts, complete artifact assignments, and ER remain missing rather than
 defaulted.
+
+Checkpoint 52 returns to the conditional Gest occurrence that checkpoint 31
+correctly retained as a holdout. Its 16-file outer closure includes that
+complete upstream input boundary, the durable high-investment report, and the
+new core and CLI; all five JSON inputs require byte/object parity. The upstream
+report is reconstructed and fresh-authenticated before the occurrence can be
+used.
+
+The source's conditional Gest observation and its exact
+Noelle/Durin/Nicole/Xilonen Hexerei example are separate records on the same
+page. Checkpoint 52 requires exact normalized consolidation for both, then
+authors one exact condition-and-heading allowlist join. That join establishes
+only an applicability validation target for this exact team. It does not alter
+the upstream holdout, fill the team's empty weapon row, infer refinement,
+compare weapons, or create an equipment assignment. All generator, optimizer,
+AutoTune, damage, replay, ideal-stat, guide, rank, and ER outputs remain closed.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

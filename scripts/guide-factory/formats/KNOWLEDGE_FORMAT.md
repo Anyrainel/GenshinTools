@@ -883,6 +883,22 @@ representation admission and no numeric result. A missing weapon, ER target,
 formula count, enemy scenario, or complete artifact assignment remains
 missing; none may be synthesized as a default.
 
+### Derived same-source exact-team applicability bindings
+
+A cross-record applicability binding is derived validation material, not a
+source-authored team assignment or a new accepted knowledge-record kind.
+Checkpoint 52 requires exact manual/consolidated parity for one conditional
+Noelle weapon observation and one exact same-page Hexerei team, after fresh-
+authenticating the upstream slice that retained the weapon condition as a
+holdout.
+
+The binding uses an explicit source-condition and source-heading allowlist. It
+may validate only the named exact team and cannot generalize through arbitrary
+English parsing. Empty team-member equipment fields, null consolidated
+selections, missing refinement, and missing quantitative performance remain
+missing. The binding alone cannot authorize a guide, build, recommendation,
+rank, weapon comparison, damage result, ideal-stat allocation, or ER result.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

@@ -339,6 +339,13 @@ import {
   NOELLE_INVESTMENT_ARTIFACT_PROFILE_COMPUTATION_ADMISSION_REPORT_PATH,
   type NoelleInvestmentArtifactProfileComputationAdmissionReport,
 } from "./noelleInvestmentArtifactProfileComputationAdmission";
+import {
+  authenticateNoelleHexereiWeaponTeamSourceBindingFromWorkspace,
+} from "./assemble-noelle-hexerei-weapon-team-source-binding";
+import {
+  NOELLE_HEXEREI_WEAPON_TEAM_SOURCE_BINDING_REPORT_PATH,
+  type NoelleHexereiWeaponTeamSourceBindingReport,
+} from "./noelleHexereiWeaponTeamSourceBinding";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1807,6 +1814,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle investment artifact-profile admission failed fresh authentication: ${error.message}`
               : "The saved Noelle investment artifact-profile admission failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleHexereiBindingInput = await readJson(
+          NOELLE_HEXEREI_WEAPON_TEAM_SOURCE_BINDING_REPORT_PATH,
+        );
+        await authenticateNoelleHexereiWeaponTeamSourceBindingFromWorkspace(
+          noelleHexereiBindingInput as NoelleHexereiWeaponTeamSourceBindingReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_hexerei_weapon_team_source_binding",
+          path: "reports.noelle-hexerei-weapon-team-source-binding",
+          message:
+            error instanceof Error
+              ? `The saved Noelle Hexerei weapon/team source binding failed fresh authentication: ${error.message}`
+              : "The saved Noelle Hexerei weapon/team source binding failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

@@ -387,6 +387,19 @@ guards. The `N3D`/`N2` token counts and rejected calculator representation are
 derived validation evidence; neither may be written back as KQM formula
 counts, rotation damage, or a source correction.
 
+Checkpoint 52 adds no source record or rewritten Noelle recommendation. It
+requires exact parity for the existing conditional Gest observation and exact
+Noelle/Durin/Nicole/Xilonen Hexerei example before authoring a separate Guide
+Factory validation binding. The weapon condition and team section heading are
+source-authored; their cross-record join is not.
+
+The join is an exact allowlist for this one team, not a reusable interpretation
+of “Hexerei team.” It does not fill the source team's empty weapon array or the
+consolidated member's null selection, and it cannot supply a refinement,
+quantitative comparison, rank, or recommendation. The upstream condition stays
+a holdout in its source-local slice; checkpoint 52 does not rewrite that
+classification.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

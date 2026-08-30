@@ -1146,6 +1146,24 @@ The next non-ER work should either add an exact prefix-capable representation
 as an explicit calculator improvement or select another source/team slice that
 is already exactly representable; it must not silently approximate this one.
 
+Checkpoint 52 resolves one narrower knowledge-composition gap before candidate
+assembly. It authenticates the exact conditional Gest of the Mighty Wolf
+observation and the exact Noelle/Durin/Nicole/Xilonen Hexerei example as two
+separate records from the same source page. Checkpoint 31 is rebuilt and fresh-
+authenticated first; its Gest occurrence must remain an unconsumed, unbound,
+non-ER holdout.
+
+The new seam then applies one explicit condition-and-heading allowlist to create
+an exact-team applicability validation target. This is a Guide Factory-authored
+cross-record join, not a source-authored weapon assignment or a general
+Hexerei-condition parser. The team row remains empty, the repository selection
+remains null, and refinement and quantitative performance remain missing. No
+candidate, build, assignment, selection, rank, generator, optimizer, damage,
+replay, ideal-stat, or ER result is produced. The next non-ER checkpoint may
+compose this validated relationship with checkpoint 51's partial artifact
+profiles, but it must retain separate provenance and missing axes rather than
+presenting a complete build.
+
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,
 formula authoring, recommendation composition, or build composition.

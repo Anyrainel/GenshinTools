@@ -1459,6 +1459,22 @@ returns no numeric result rather than substituting `13/4`, rounding counts, or
 dropping the cancel token. This is representation preflight, not execution of
 the damage runtime.
 
+## Exact-team weapon applicability binding seam
+
+`src/noelleHexereiWeaponTeamSourceBinding.ts` composes no runtime calculation.
+It authenticates one exact outer text/hash closure and five JSON byte/object
+pairs, then reconstructs checkpoint 31 from that closure and requires its
+conditional Gest occurrence to remain a non-ER holdout. It separately verifies
+exact manual/consolidated parity for the Gest character-guide record and the
+Noelle/Durin/Nicole/Xilonen example-team record.
+
+The seam authors one exact condition-and-heading allowlist join and hashes the
+resulting validation target. It deliberately has no generic natural-language
+condition parser. The join does not write a weapon into the team member, choose
+a refinement, assemble a build, or call a generator, optimizer, AutoTune,
+damage calculator, replay, ideal-stat allocator, or ER calculator. It is an
+authenticated input for later bounded composition, not an equipment search.
+
 ## Current blockers
 
 - The consolidated repository still has no accepted executable damage plan.

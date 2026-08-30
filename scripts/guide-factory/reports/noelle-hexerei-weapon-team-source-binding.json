@@ -1,0 +1,245 @@
+{
+  "artifactAssignmentExecuted": false,
+  "autoTuneExecuted": false,
+  "binding": {
+    "applicabilityClassification": "applicable-under-source-section-classification",
+    "arbitraryEnglishParsingAllowed": false,
+    "bindingMethod": "cp52-exact-condition-and-heading-allowlist",
+    "bindingSha256": "7312bd3cac0724d73c0f3265132ecffaeed834d63c95aa4196463e19b998adee",
+    "characterId": "noelle",
+    "derivedEquipmentRecommendationCreated": false,
+    "equipmentAssignmentCreated": false,
+    "exactTeamRepositoryRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+    "guideFactoryAuthoredCrossRecordJoin": true,
+    "rankDerived": false,
+    "scope": "exact-team-only",
+    "selectionExecuted": false,
+    "sourceAuthoredCondition": true,
+    "sourceAuthoredCrossRecordJoin": false,
+    "sourceAuthoredTeamSectionClassification": true,
+    "sourceCondition": "Noelle is played in a Hexerei team.",
+    "sourceSectionHeading": "Teams > Hexerei Teams > Example Teams > Noelle — Durin — Nicole — Xilonen",
+    "teamAssignmentAuthoredBySource": false,
+    "validationTargetCreated": true,
+    "weaponId": "gest_of_the_mighty_wolf"
+  },
+  "bindingId": "noelle-hexerei-gest-exact-team-source-binding-v1",
+  "buildCompositionExecuted": false,
+  "candidateGenerationExecuted": false,
+  "cautions": [
+    "The Gest and exact-team records are agent-assisted, unreviewed source observations retained as a validation target only.",
+    "Applicable-under-source-section-classification is a Guide Factory allowlisted join between two records on one source page, not a source-authored team weapon assignment.",
+    "The exact team member row contains no weapon recommendation, and neither source record supplies a refinement assumption or quantitative comparison.",
+    "Repository candidate is an ingestion status; checkpoint 52 generates zero equipment or build candidates."
+  ],
+  "classification": "authenticated-same-source-cross-record-applicability-binding",
+  "damageComputationExecuted": false,
+  "energyRecoveryComputationExecuted": false,
+  "equipmentAssignmentExecuted": false,
+  "exactTeam": {
+    "exhaustiveness": "non-exhaustive",
+    "intent": "example",
+    "label": "Noelle — Durin — Nicole — Xilonen",
+    "locatorHeading": "Teams > Hexerei Teams > Example Teams > Noelle — Durin — Nicole — Xilonen",
+    "noelleConsolidatedSelectedWeapon": null,
+    "noelleSourceMemberWeaponRecommendationCount": 0,
+    "noelleSourceMemberWeaponRecommendations": [],
+    "orderedCharacterIds": [
+      "noelle",
+      "durin",
+      "nicole",
+      "xilonen"
+    ],
+    "rankingClaim": "none",
+    "repositoryRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+    "sourceRecordId": "noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+    "teamMemberWeaponAndRefinementStatus": "missing-not-zero"
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+      "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
+      "sha256": "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-hexerei-weapon-team-source-binding.ts",
+      "sha256": "f3441d1d5c1b577933af1894415c3ecc69c988f308ad9cd0cabec71ce20fb906"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts",
+      "sha256": "53d57a733ff4416aa077330605e667a5b90370893051a6833f6a86ca6d496589"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "deb828ad940076d03eead279cb36bf9a90c990870adba251ce5d49da460e8d6c"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "edfffb459c3bbc02bd2a11db7783dbc3a5629cc46d65b1e022c8d12e775b540c"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleHexereiWeaponTeamSourceBinding.ts",
+      "sha256": "a42c9242dead3a3d4f8094e89877f18bade002c42cc1fc5bb61b9c883b4eae3b"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
+      "sha256": "84056e869782be1de61119584f088a94225829165e76a67b853fe023a6d01c2a"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "ff726c4a924699036c76dff453639be615016a7196cb25b449846efe9c44aeab"
+    }
+  ],
+  "generatorExecuted": false,
+  "idealStatAllocationExecuted": false,
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "Do not publish this binding as a Noelle guide, team recommendation, equipment recommendation, or build.",
+    "Do not claim that the source assigned Gest of the Mighty Wolf to the exact team member row.",
+    "Do not infer a refinement, weapon rank, selection, comparison winner, or quantitative performance.",
+    "Do not generalize this exact-team validation target to other Hexerei teams or arbitrary teams.",
+    "Do not infer damage, rotation feasibility, DPS, ideal stats, or an Energy Recharge requirement."
+  ],
+  "publicationStatus": "withheld-unreviewed-source-binding",
+  "rankingExecuted": false,
+  "rawInputBoundary": {
+    "allGeneratedFromHashesAuthenticatedFromText": true,
+    "exactGeneratedFromPathSet": true,
+    "exactSourceFilePathSet": true,
+    "generatedFromCount": 16,
+    "jsonByteAndParsedObjectParity": true,
+    "jsonInputCount": 5,
+    "sourceFileCount": 16,
+    "status": "accepted"
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "noelle-hexerei-weapon-team-source-binding",
+  "rotationReplayExecuted": false,
+  "schemaVersion": 1,
+  "selectionExecuted": false,
+  "sourceParityBoundary": {
+    "consolidatedRecordCount": 2,
+    "manualRecordCount": 2,
+    "records": [
+      {
+        "kind": "character_guide",
+        "manualRecordSha256": "cc303b82e147a8220675f5e9865868273251e5c68cdad3f88b20a9cbddb73ff8",
+        "payloadParity": "exact-normalized-consolidation",
+        "promotionEligible": false,
+        "repositoryRecordId": "kqm:character-guide:noelle-hexerei-gest-luna-viii",
+        "repositoryRecordSha256": "bd2d5011230d9348402402ea5b7bee8ec75d4ecd91f7895f6899ef8ffb20f2fe",
+        "repositoryStatus": "candidate",
+        "sourceRecordId": "noelle-hexerei-gest-luna-viii",
+        "sourceRefParity": "exact"
+      },
+      {
+        "kind": "team",
+        "manualRecordSha256": "35c67b57276cafba29250e7416e8ab7efb3b49540b0609621e5a056e146ce9c7",
+        "payloadParity": "exact-normalized-consolidation",
+        "promotionEligible": false,
+        "repositoryRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+        "repositoryRecordSha256": "f797ff46aff29917c60d50e7e7ebc1abb2fc0dbdd1983752a90df20eb8c7aa79",
+        "repositoryStatus": "candidate",
+        "sourceRecordId": "noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+        "sourceRefParity": "exact"
+      }
+    ],
+    "sameSourceDocument": true,
+    "sourceId": "kqm",
+    "sourceUrl": "https://keqingmains.com/q/noelle-quickguide/",
+    "sourceVersion": "Luna VIII",
+    "status": "exact"
+  },
+  "summary": {
+    "assembledBuildCount": 0,
+    "candidateCount": 0,
+    "damageComputationCount": 0,
+    "derivedRankCount": 0,
+    "energyRecoveryComputationCount": 0,
+    "equipmentAssignmentCount": 0,
+    "exactTeamCount": 1,
+    "generatorRunCount": 0,
+    "localBindingCount": 1,
+    "optimizerRunCount": 0,
+    "rotationReplayCount": 0,
+    "selectionCount": 0,
+    "sourceRecordCount": 2,
+    "upstreamHoldoutOccurrenceCount": 1
+  },
+  "supportsBuildRecommendations": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsIdealStatAllocation": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "teamCompositionExecuted": false,
+  "upstreamBoundary": {
+    "bindingAuthoredByUpstreamSlice": false,
+    "conditionsSha256": "f27375a8ce8833cc0326a17c94f52c71ed4f44a72868e15d087390b864e490cf",
+    "consumedByUpstreamSlice": false,
+    "durableReportCanonicalObjectSha256": "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5",
+    "durableReportFileSha256": "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5",
+    "durableReportPath": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
+    "energyClassificationAuthoredByUpstreamSlice": false,
+    "freshlyAuthenticated": true,
+    "occurrenceDisposition": "holdout",
+    "occurrenceId": "kqm:character_guide:noelle-hexerei-gest-luna-viii:recommendation.weaponRecommendations[0].conditions",
+    "status": "accepted",
+    "structuralEnergyDimension": "not-structural-er",
+    "upstreamInputCount": 13
+  },
+  "validationStatus": "authenticated-validation-target",
+  "weaponAssignmentExecuted": false,
+  "weaponObservation": {
+    "grouping": "single",
+    "quantitativePerformanceStatus": "missing-not-zero",
+    "recommendationId": "hexerei-gest",
+    "refinement": null,
+    "refinementStatus": "missing-not-zero",
+    "repositoryRecordId": "kqm:character-guide:noelle-hexerei-gest-luna-viii",
+    "sourceClassification": "conditional",
+    "sourceConditions": [
+      "Noelle is played in a Hexerei team."
+    ],
+    "sourceConditionStatus": "guarded-source-observation",
+    "sourceRecordId": "noelle-hexerei-gest-luna-viii",
+    "weaponId": "gest_of_the_mighty_wolf",
+    "weaponOrdering": "unranked"
+  }
+}
