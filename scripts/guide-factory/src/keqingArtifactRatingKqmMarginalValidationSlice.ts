@@ -12,6 +12,13 @@ import {
   KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_ID,
 } from "./keqingIneffaTeamStatMarginalDiagnostic";
 import type { KeqingLunarEquipmentEvidenceValidationReport } from "./keqingLunarEquipmentEvidenceValidation";
+import {
+  KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION,
+  requireKeqingArtifactRatingKqmMarginalScope,
+  type AuthenticatedKeqingArtifactRatingKqmMarginalScope,
+  type KeqingArtifactRatingKqmEquipmentClaimProjection,
+  type KeqingArtifactRatingKqmMarginalProjection,
+} from "./keqingArtifactRatingKqmMarginalScope";
 import { REPOSITORY_ROOT } from "./paths";
 import type {
   KnowledgeRecord,
@@ -51,34 +58,8 @@ export const KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_INPUT_PATHS = [
   KEQING_ARTIFACT_RATING_KQM_EQUIPMENT_REPORT_RELATIVE_PATH,
 ] as const;
 
-const EXPECTED_INPUT_FILE_SHA256 = {
-  [KEQING_ARTIFACT_RATING_SNAPSHOT_RELATIVE_PATH]:
-    "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e",
-  [KEQING_ARTIFACT_RATING_KNOWLEDGE_REPOSITORY_RELATIVE_PATH]:
-    "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-  [KEQING_ARTIFACT_RATING_MARGINAL_REPORT_RELATIVE_PATH]:
-    "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
-  [KEQING_ARTIFACT_RATING_KQM_RAW_SNAPSHOT_RELATIVE_PATH]:
-    "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
-  [KEQING_ARTIFACT_RATING_KQM_EQUIPMENT_REPORT_RELATIVE_PATH]:
-    "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
-} as const;
-
-const EXPECTED_PARSED_PAYLOAD_SHA256 = {
-  artifactRatingSnapshot:
-    "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
-  repository:
-    "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-  marginalReport:
-    "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
-  kqmRawSnapshot:
-    "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
-  kqmEquipmentReport:
-    "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
-} as const;
-
 const EXPECTED_AUTHENTICATED_REPORT_SHA256 =
-  "7a8cad0397e02fc5d80c9afb894a3ea8c14c6845b13341ca4574cfd25294372b";
+  "2aa7b9863804ecaed27533feb205a94a9e6505d403ea09e01f6008fd21f7511a";
 
 const KQM_GUIDE_ID =
   "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i";
@@ -235,9 +216,24 @@ export type KeqingArtifactRatingKqmMarginalValidationIssue = {
   message: string;
 };
 
-export type HashedGuideFactoryInput = {
-  path: string;
-  sha256: string;
+export type KeqingArtifactRatingKqmMarginalSemanticScopeAudit = {
+  status: "accepted";
+  trust: "authenticated-current-input-rebuild-and-pinned-expectation";
+  scopeId: string;
+  manifestSha256: string;
+  scopeProjectionSha256: string;
+  dependencies: Array<{
+    dependencyId: string;
+    selectedCount: number;
+    selectedKeySetSha256: string;
+    selectedPayloadSha256: string;
+  }>;
+  parity: {
+    configuredCount: number;
+    exactCount: number;
+    parityIdsSha256: string;
+    normalizedPairsSha256: string;
+  };
 };
 
 export type BuildKeqingArtifactRatingKqmMarginalValidationSliceInput = {
@@ -246,7 +242,6 @@ export type BuildKeqingArtifactRatingKqmMarginalValidationSliceInput = {
   marginalReport: KeqingIneffaTeamStatMarginalDiagnosticReport;
   kqmRawSnapshot: ManualObservationSnapshot;
   kqmEquipmentReport: KeqingLunarEquipmentEvidenceValidationReport;
-  inputFiles: HashedGuideFactoryInput[];
 };
 
 type DeferredEnergyOccurrence = {
@@ -259,7 +254,7 @@ type DeferredEnergyOccurrence = {
 };
 
 export type KeqingArtifactRatingKqmMarginalValidationSliceReport = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   classification: "keqing-artifact-rating-kqm-local-marginal-isolated-validation-slice";
   sliceId: typeof KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_ID;
   validationStatus: "authenticated-isolated-observation" | "not-authenticated";
@@ -283,28 +278,10 @@ export type KeqingArtifactRatingKqmMarginalValidationSliceReport = {
   energyRecoveryInputsUsed: false;
   candidateGenerationExecuted: false;
   optimizationExecuted: false;
-  generatedFrom: HashedGuideFactoryInput[];
-  inputBoundary: {
-    expectedFileCount: 5;
-    observedFileCount: number;
-    exactPathSet: boolean;
-    files: Array<{
-      path: string;
-      expectedSha256: string;
-      observedSha256: string | null;
-      occurrenceCount: number;
-      matches: boolean;
-    }>;
-    parsedPayloadSha256: {
-      artifactRatingSnapshot: string;
-      repository: string;
-      marginalReport: string;
-      kqmRawSnapshot: string;
-      kqmEquipmentReport: string;
-    };
-    expectedParsedPayloadSha256: typeof EXPECTED_PARSED_PAYLOAD_SHA256;
-    parsedPayloadsMatch: boolean;
-    authentication: "accepted" | "rejected";
+  semanticScope: {
+    expectedManifestSha256: string;
+    expectedScopeProjectionSha256: string;
+    acceptedAudit: KeqingArtifactRatingKqmMarginalSemanticScopeAudit;
   };
   artifactRatingDbBoundary: {
     authentication: "accepted" | "rejected";
@@ -344,11 +321,9 @@ export type KeqingArtifactRatingKqmMarginalValidationSliceReport = {
     authentication: "accepted" | "rejected";
     rawSourceBoundary: {
       authentication: "accepted" | "rejected";
-      sourceId: string;
-      capturedAt: string;
-      pageUrl: string;
-      sourceVersion: string | null;
-      snapshotRecordCount: number;
+      sourceRecordId: typeof KQM_GUIDE_SOURCE_RECORD_ID;
+      locator: ManualCharacterGuide["locator"];
+      selectedRecordCount: 1;
       defaultRecordOccurrenceCount: number;
       defaultRecordSha256: string | null;
       expectedDefaultRecordSha256: typeof EXPECTED_KQM_RAW_RECORD_SHA256;
@@ -491,30 +466,32 @@ type IssueCollector = (
 export function buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
   input: BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
 ): KeqingArtifactRatingKqmMarginalValidationSliceReport {
+  const semanticScope = requireKeqingArtifactRatingKqmMarginalScope(input);
   const issues: KeqingArtifactRatingKqmMarginalValidationIssue[] = [];
   const require: IssueCollector = (condition, code, message) => {
     if (!condition) issues.push({ code, message });
   };
 
-  const inputBoundary = buildInputBoundary(input, require);
   const artifactRatingDbBoundary = buildArtifactRatingBoundary(
-    input.artifactRatingSnapshot,
+    semanticScope.artifactRating,
     require,
   );
   const kqmBoundary = buildKqmBoundary(
-    input.repository,
-    input.kqmRawSnapshot,
-    input.kqmEquipmentReport,
+    semanticScope.kqm,
+    semanticScope.equipment,
     require,
   );
-  const marginalBoundary = buildMarginalBoundary(input.marginalReport, require);
+  const marginalBoundary = buildMarginalBoundary(
+    semanticScope.marginal,
+    require,
+  );
 
   const authenticated = issues.length === 0;
   const rows = authenticated
     ? buildRows(
-        input.artifactRatingSnapshot,
-        input.repository,
-        input.marginalReport,
+        semanticScope.artifactRating.record,
+        semanticScope.kqm.guide,
+        semanticScope.marginal.diagnostic.keqingStats,
       )
     : [];
   const summary = summarizeRows(
@@ -523,7 +500,7 @@ export function buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
   );
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     classification:
       "keqing-artifact-rating-kqm-local-marginal-isolated-validation-slice",
     sliceId: KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_ID,
@@ -550,13 +527,13 @@ export function buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
     energyRecoveryInputsUsed: false,
     candidateGenerationExecuted: false,
     optimizationExecuted: false,
-    generatedFrom: inputBoundary.files.flatMap(
-      ({ path: inputPath, observedSha256 }) =>
-        observedSha256 == null
-          ? []
-          : [{ path: inputPath, sha256: observedSha256 }],
-    ),
-    inputBoundary,
+    semanticScope: {
+      expectedManifestSha256:
+        KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION.manifestSha256,
+      expectedScopeProjectionSha256:
+        KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION.scopeProjectionSha256,
+      acceptedAudit: compactSemanticScopeAudit(semanticScope.audit),
+    },
     artifactRatingDbBoundary,
     kqmBoundary,
     marginalBoundary,
@@ -641,13 +618,18 @@ export function requireAuthenticatedKeqingArtifactRatingKqmMarginalValidationSli
     report.summary.producedGuideCount === 0 &&
     report.summary.producedStatWeightCount === 0 &&
     report.summary.producedEnergyRequirementCount === 0;
-  const expectedGeneratedFrom = Object.entries(
-    EXPECTED_INPUT_FILE_SHA256,
-  ).map(([inputPath, sha256]) => ({ path: inputPath, sha256 }));
-  const provenanceSafety =
-    report.inputBoundary.exactPathSet &&
-    report.inputBoundary.parsedPayloadsMatch &&
-    stableJson(report.generatedFrom) === stableJson(expectedGeneratedFrom);
+  const semanticScopeSafety =
+    report.semanticScope.expectedManifestSha256 ===
+      KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION.manifestSha256 &&
+    report.semanticScope.expectedScopeProjectionSha256 ===
+      KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION.scopeProjectionSha256 &&
+    report.semanticScope.acceptedAudit.status === "accepted" &&
+    report.semanticScope.acceptedAudit.trust ===
+      "authenticated-current-input-rebuild-and-pinned-expectation" &&
+    report.semanticScope.acceptedAudit.manifestSha256 ===
+      KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION.manifestSha256 &&
+    report.semanticScope.acceptedAudit.scopeProjectionSha256 ===
+      KEQING_ARTIFACT_RATING_KQM_SCOPE_EXPECTATION.scopeProjectionSha256;
   const equipmentCapabilities =
     report.kqmBoundary.equipmentEvidenceBoundary.capabilityBoundary;
   const kqmEvidenceSafety =
@@ -685,7 +667,6 @@ export function requireAuthenticatedKeqingArtifactRatingKqmMarginalValidationSli
     completeReportSafety &&
     report.validationStatus === "authenticated-isolated-observation" &&
     report.issues.length === 0 &&
-    report.inputBoundary.authentication === "accepted" &&
     report.artifactRatingDbBoundary.authentication === "accepted" &&
     report.kqmBoundary.authentication === "accepted" &&
     report.kqmBoundary.rawSourceBoundary.authentication === "accepted" &&
@@ -695,7 +676,7 @@ export function requireAuthenticatedKeqingArtifactRatingKqmMarginalValidationSli
     report.rows.length === 10 &&
     rowSafety &&
     summarySafety &&
-    provenanceSafety &&
+    semanticScopeSafety &&
     kqmEvidenceSafety &&
     !report.supportsGuideClaims &&
     !report.supportsBuildRecommendations &&
@@ -728,76 +709,66 @@ export function requireAuthenticatedKeqingArtifactRatingKqmMarginalValidationSli
   );
 }
 
-function buildInputBoundary(
-  input: BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-  require: IssueCollector,
-): KeqingArtifactRatingKqmMarginalValidationSliceReport["inputBoundary"] {
-  const expectedPaths = Object.keys(EXPECTED_INPUT_FILE_SHA256);
-  const files = expectedPaths.map((expectedPath) => {
-    const occurrences = input.inputFiles.filter(
-      ({ path: observedPath }) => observedPath === expectedPath,
-    );
-    const observedSha256 = occurrences[0]?.sha256 ?? null;
-    const expectedSha256 =
-      EXPECTED_INPUT_FILE_SHA256[
-        expectedPath as keyof typeof EXPECTED_INPUT_FILE_SHA256
-      ];
-    return {
-      path: expectedPath,
-      expectedSha256,
-      observedSha256,
-      occurrenceCount: occurrences.length,
-      matches:
-        occurrences.length === 1 && observedSha256 === expectedSha256,
-    };
-  });
-  const exactPathSet =
-    input.inputFiles.length === expectedPaths.length &&
-    files.every(({ matches }) => matches);
-  require(
-    exactPathSet,
-    "input.file-boundary-drift",
-    "The slice requires exactly the pinned ArtifactRatingDB snapshot, knowledge repository, and marginal report file hashes.",
-  );
-
-  const parsedPayloadSha256 = {
-    artifactRatingSnapshot: sha256Text(stableJson(input.artifactRatingSnapshot)),
-    repository: sha256Text(stableJson(input.repository)),
-    marginalReport: sha256Text(stableJson(input.marginalReport)),
-    kqmRawSnapshot: sha256Text(stableJson(input.kqmRawSnapshot)),
-    kqmEquipmentReport: sha256Text(stableJson(input.kqmEquipmentReport)),
-  };
-  const parsedPayloadsMatch =
-    stableJson(parsedPayloadSha256) ===
-    stableJson(EXPECTED_PARSED_PAYLOAD_SHA256);
-  require(
-    parsedPayloadsMatch,
-    "input.parsed-payload-drift",
-    "At least one parsed input no longer matches its independently pinned payload digest.",
-  );
-
+function compactSemanticScopeAudit(
+  audit: AuthenticatedKeqingArtifactRatingKqmMarginalScope["audit"],
+): KeqingArtifactRatingKqmMarginalSemanticScopeAudit {
   return {
-    expectedFileCount: 5,
-    observedFileCount: input.inputFiles.length,
-    exactPathSet,
-    files,
-    parsedPayloadSha256,
-    expectedParsedPayloadSha256: { ...EXPECTED_PARSED_PAYLOAD_SHA256 },
-    parsedPayloadsMatch,
-    authentication:
-      exactPathSet && parsedPayloadsMatch ? "accepted" : "rejected",
+    status: audit.status,
+    trust: audit.trust,
+    scopeId: audit.scopeId,
+    manifestSha256: audit.selector.manifestSha256,
+    scopeProjectionSha256: audit.scopeProjectionSha256,
+    dependencies: audit.dependencies.map(
+      ({
+        dependencyId,
+        selectedEntries,
+        selectedKeySetSha256,
+        selectedPayloadSha256,
+      }) => ({
+        dependencyId,
+        selectedCount: selectedEntries.length,
+        selectedKeySetSha256,
+        selectedPayloadSha256,
+      }),
+    ),
+    parity: {
+      configuredCount: audit.parities.length,
+      exactCount: audit.parities.filter(({ status }) => status === "exact")
+        .length,
+      parityIdsSha256: sha256Text(
+        stableJson(audit.parities.map(({ parityId }) => parityId)),
+      ),
+      normalizedPairsSha256: sha256Text(
+        stableJson(
+          audit.parities.map(
+            ({
+              parityId,
+              leftNormalizedSha256,
+              rightNormalizedSha256,
+              status,
+            }) => ({
+              parityId,
+              leftNormalizedSha256,
+              rightNormalizedSha256,
+              status,
+            }),
+          ),
+        ),
+      ),
+    },
   };
 }
 
 function buildArtifactRatingBoundary(
-  snapshot: ArtifactRatingModelSnapshot,
+  artifactRating: AuthenticatedKeqingArtifactRatingKqmMarginalScope["artifactRating"],
   require: IssueCollector,
 ): KeqingArtifactRatingKqmMarginalValidationSliceReport["artifactRatingDbBoundary"] {
-  const records = snapshot.records.filter(
-    ({ sourceRecordId }) =>
-      sourceRecordId === ARTIFACT_RATING_DB_KEQING_SOURCE_RECORD_ID,
-  );
-  const record = records.length === 1 ? records[0] : null;
+  const snapshot = artifactRating.envelope;
+  const record = artifactRating.record;
+  const records =
+    record.sourceRecordId === ARTIFACT_RATING_DB_KEQING_SOURCE_RECORD_ID
+      ? [record]
+      : [];
   const recordSha256 = record ? sha256Text(stableJson(record)) : null;
   const recomputedRawModelSha256 = record
     ? sha256Text(stableJson(record.rawModel))
@@ -931,29 +902,21 @@ function buildArtifactRatingBoundary(
 }
 
 function buildKqmBoundary(
-  repository: KnowledgeRepository,
-  rawSnapshot: ManualObservationSnapshot,
-  equipmentReport: KeqingLunarEquipmentEvidenceValidationReport,
+  kqm: AuthenticatedKeqingArtifactRatingKqmMarginalScope["kqm"],
+  equipment: AuthenticatedKeqingArtifactRatingKqmMarginalScope["equipment"],
   require: IssueCollector,
 ): KeqingArtifactRatingKqmMarginalValidationSliceReport["kqmBoundary"] {
-  const guides = repository.records.filter(
-    (record): record is KnowledgeCharacterGuide =>
-      record.kind === "character_guide" && record.id === KQM_GUIDE_ID,
-  );
-  const teams = repository.records.filter(
-    (record): record is KnowledgeTeam =>
-      record.kind === "team" && record.id === KQM_TEAM_ID,
-  );
-  const guide = guides.length === 1 ? guides[0] : null;
-  const team = teams.length === 1 ? teams[0] : null;
+  const guide = kqm.guide;
+  const team = kqm.team;
+  const guides = guide.id === KQM_GUIDE_ID ? [guide] : [];
+  const teams = team.id === KQM_TEAM_ID ? [team] : [];
   const recommendation =
     guide?.recommendations?.length === 1 ? guide.recommendations[0] : null;
-  const rawRecords = rawSnapshot.records.filter(
-    (record): record is ManualCharacterGuide =>
-      record.kind === "character_guide" &&
-      record.sourceRecordId === KQM_GUIDE_SOURCE_RECORD_ID,
-  );
-  const rawRecord = rawRecords.length === 1 ? rawRecords[0] : null;
+  const rawRecord = kqm.rawGuide;
+  const rawRecords =
+    rawRecord.sourceRecordId === KQM_GUIDE_SOURCE_RECORD_ID
+      ? [rawRecord]
+      : [];
   const rawRecordSha256 = rawRecord
     ? sha256Text(stableJson(rawRecord))
     : null;
@@ -964,32 +927,19 @@ function buildKqmBoundary(
       ? "exact"
       : "drifted";
   const rawSourceMatches =
-    rawSnapshot.sourceId === "kqm" &&
-    rawSnapshot.capturedAt === "2026-08-29" &&
-    rawSnapshot.page.url === "https://keqingmains.com/q/keqing-quickguide/" &&
-    rawSnapshot.page.sourceVersion === "Luna I" &&
-    rawSnapshot.records.length === 24 &&
     rawRecords.length === 1 &&
     rawRecordSha256 === EXPECTED_KQM_RAW_RECORD_SHA256 &&
     recommendationParityWithRepository === "exact";
 
-  const equipmentSourceRecord = equipmentReport.sourceBoundary.records.find(
-    ({ sourceRecordId }) => sourceRecordId === KQM_GUIDE_SOURCE_RECORD_ID,
-  );
-  const equipmentTeam = equipmentReport.publishedTeamBoundary.targets.find(
-    ({ teamRecordId }) => teamRecordId === KQM_TEAM_ID,
-  );
-  const defaultEquipmentClaims = equipmentReport.claims.filter(
-    ({ sourceRecordId }) => sourceRecordId === KQM_GUIDE_SOURCE_RECORD_ID,
-  );
+  const equipmentSourceRecord = equipment.sourceRecord;
+  const equipmentTeam = equipment.exactTeam;
+  const defaultEquipmentClaims = equipment.claims;
   const equipmentClaimsProjection = defaultEquipmentClaims.map((claim) => ({
     claimId: claim.claimId,
     sourceClaim: claim.sourceClaim,
     sourceConditions: claim.sourceConditions,
     allSourceConditionsMappedExactly: claim.allSourceConditionsMappedExactly,
-    teamResolution: claim.teamResolutions.find(
-      ({ teamRecordId }) => teamRecordId === KQM_TEAM_ID,
-    ),
+    teamResolution: claim.teamResolution,
   }));
   const equipmentSourceRecordProjectionSha256 = equipmentSourceRecord
     ? sha256Text(stableJson(equipmentSourceRecord))
@@ -998,7 +948,7 @@ function buildKqmBoundary(
     ? sha256Text(stableJson(equipmentTeam))
     : null;
   const equipmentMainStatCoverageSha256 = sha256Text(
-    stableJson(equipmentReport.baselineComparison.defaultMainStatCoverage),
+    stableJson(equipment.defaultMainStatCoverage),
   );
   const equipmentClaimsProjectionSha256 = sha256Text(
     stableJson(equipmentClaimsProjection),
@@ -1011,20 +961,21 @@ function buildKqmBoundary(
     ({ teamResolution }) =>
       teamResolution?.resolution === "withheld-unresolved-source-condition",
   ).length;
+  const equipmentCapabilities = equipment.capabilityBoundary;
   const equipmentCapabilitiesMatch =
-    equipmentReport.supportsGuideClaims === false &&
-    equipmentReport.supportsEquipmentRecommendations === false &&
-    equipmentReport.supportsStatRecommendations === false &&
-    equipmentReport.supportsRankClaims === false &&
-    equipmentReport.supportsConditionApplicabilityClaims === false &&
-    equipmentReport.supportsDamageClaims === false &&
-    equipmentReport.supportsEnergyRecoveryClaims === false &&
-    equipmentReport.candidateGenerationInput === false &&
-    equipmentReport.candidateGenerationExecuted === false &&
-    equipmentReport.damageOrRankingComputationExecuted === false &&
-    equipmentReport.energyRecoveryInputsUsed === false;
+    equipmentCapabilities.supportsGuideClaims === false &&
+    equipmentCapabilities.supportsEquipmentRecommendations === false &&
+    equipmentCapabilities.supportsStatRecommendations === false &&
+    equipmentCapabilities.supportsRankClaims === false &&
+    equipmentCapabilities.supportsConditionApplicabilityClaims === false &&
+    equipmentCapabilities.supportsDamageClaims === false &&
+    equipmentCapabilities.supportsEnergyRecoveryClaims === false &&
+    equipmentCapabilities.candidateGenerationInput === false &&
+    equipmentCapabilities.candidateGenerationExecuted === false &&
+    equipmentCapabilities.damageOrRankingComputationExecuted === false &&
+    equipmentCapabilities.energyRecoveryInputsUsed === false;
   const equipmentEvidenceMatches =
-    equipmentReport.validationStatus === "comparable" &&
+    equipmentCapabilities.validationStatus === "comparable" &&
     equipmentSourceRecordProjectionSha256 ===
       EXPECTED_KQM_EQUIPMENT_SOURCE_RECORD_PROJECTION_SHA256 &&
     equipmentTeamProjectionSha256 ===
@@ -1120,11 +1071,9 @@ function buildKqmBoundary(
         : "rejected",
     rawSourceBoundary: {
       authentication: rawSourceMatches ? "accepted" : "rejected",
-      sourceId: rawSnapshot.sourceId,
-      capturedAt: rawSnapshot.capturedAt,
-      pageUrl: rawSnapshot.page.url,
-      sourceVersion: rawSnapshot.page.sourceVersion ?? null,
-      snapshotRecordCount: rawSnapshot.records.length,
+      sourceRecordId: KQM_GUIDE_SOURCE_RECORD_ID,
+      locator: { ...rawRecord.locator },
+      selectedRecordCount: 1,
       defaultRecordOccurrenceCount: rawRecords.length,
       defaultRecordSha256: rawRecordSha256,
       expectedDefaultRecordSha256: EXPECTED_KQM_RAW_RECORD_SHA256,
@@ -1132,7 +1081,7 @@ function buildKqmBoundary(
     },
     equipmentEvidenceBoundary: {
       authentication: equipmentEvidenceMatches ? "accepted" : "rejected",
-      validationStatus: equipmentReport.validationStatus,
+      validationStatus: equipmentCapabilities.validationStatus,
       sourceRecordProjectionSha256:
         equipmentSourceRecordProjectionSha256,
       expectedSourceRecordProjectionSha256:
@@ -1150,23 +1099,25 @@ function buildKqmBoundary(
       exactTeamMatchedClaimCount,
       exactTeamUnresolvedClaimCount,
       capabilityBoundary: {
-        supportsGuideClaims: equipmentReport.supportsGuideClaims,
+        supportsGuideClaims: equipmentCapabilities.supportsGuideClaims,
         supportsEquipmentRecommendations:
-          equipmentReport.supportsEquipmentRecommendations,
+          equipmentCapabilities.supportsEquipmentRecommendations,
         supportsStatRecommendations:
-          equipmentReport.supportsStatRecommendations,
-        supportsRankClaims: equipmentReport.supportsRankClaims,
+          equipmentCapabilities.supportsStatRecommendations,
+        supportsRankClaims: equipmentCapabilities.supportsRankClaims,
         supportsConditionApplicabilityClaims:
-          equipmentReport.supportsConditionApplicabilityClaims,
-        supportsDamageClaims: equipmentReport.supportsDamageClaims,
+          equipmentCapabilities.supportsConditionApplicabilityClaims,
+        supportsDamageClaims: equipmentCapabilities.supportsDamageClaims,
         supportsEnergyRecoveryClaims:
-          equipmentReport.supportsEnergyRecoveryClaims,
-        candidateGenerationInput: equipmentReport.candidateGenerationInput,
+          equipmentCapabilities.supportsEnergyRecoveryClaims,
+        candidateGenerationInput:
+          equipmentCapabilities.candidateGenerationInput,
         candidateGenerationExecuted:
-          equipmentReport.candidateGenerationExecuted,
+          equipmentCapabilities.candidateGenerationExecuted,
         damageOrRankingComputationExecuted:
-          equipmentReport.damageOrRankingComputationExecuted,
-        energyRecoveryInputsUsed: equipmentReport.energyRecoveryInputsUsed,
+          equipmentCapabilities.damageOrRankingComputationExecuted,
+        energyRecoveryInputsUsed:
+          equipmentCapabilities.energyRecoveryInputsUsed,
       },
     },
     guideRecordId: KQM_GUIDE_ID,
@@ -1208,21 +1159,21 @@ function buildKqmBoundary(
 }
 
 function buildMarginalBoundary(
-  report: KeqingIneffaTeamStatMarginalDiagnosticReport,
+  report: KeqingArtifactRatingKqmMarginalProjection,
   require: IssueCollector,
 ): KeqingArtifactRatingKqmMarginalValidationSliceReport["marginalBoundary"] {
-  const diagnostic = report.marginalDiagnostic;
-  const endpoints = report.capture.runs.map((run) => ({
+  const diagnostic = report.diagnostic;
+  const endpoints = report.endpoints.map((run) => ({
     carryCharacterId: run.carryCharacterId,
     endpointId: run.endpointId,
   }));
   const exactFourEndpointDomain =
-    report.capture.runs.every(({ outcome }) => outcome === "captured") &&
+    report.endpoints.every(({ outcome }) => outcome === "captured") &&
     stableJson(endpoints) === stableJson(EXPECTED_ENDPOINTS) &&
-    report.capture.domainValidation.exactUniqueCarrySetObserved &&
-    report.capture.domainValidation.exactRunCountObserved &&
-    report.capture.domainValidation.exactGeneratorInvocationCountObserved &&
-    report.capture.domainValidation.sequentialConcurrencyObserved;
+    report.domainValidation.exactUniqueCarrySetObserved &&
+    report.domainValidation.exactRunCountObserved &&
+    report.domainValidation.exactGeneratorInvocationCountObserved &&
+    report.domainValidation.sequentialConcurrencyObserved;
   const marginalStatDomain =
     diagnostic?.statDomain.stats.map(({ stat }) => stat) ?? [];
   const exactNineStatDomain =
@@ -1231,19 +1182,19 @@ function buildMarginalBoundary(
     diagnostic?.execution.statCountPerCharacter === 9 &&
     diagnostic.statDomain.energyRecoveryExcluded === true;
   const capturedReactionFormulaLineCounts =
-    report.capture.domainValidation.observedReactionFormulaLineCounts.map(
+    report.domainValidation.observedReactionFormulaLineCounts.map(
       ({ count }) => count,
     );
   const objectiveLines = diagnostic?.technicalObjective.combo.lines ?? [];
   const reactionFree =
-    report.technicalObjectiveProvenance.reactionLineCount === 0 &&
+    report.objectiveProvenance.reactionLineCount === 0 &&
     capturedReactionFormulaLineCounts.length === 4 &&
     capturedReactionFormulaLineCounts.every((count) => count === 0) &&
     objectiveLines.length === 11 &&
     objectiveLines.every(({ reaction }) => reaction == null) &&
     diagnostic?.technicalObjective.formulaBuffOverrides == null &&
     diagnostic?.technicalObjective.extraBuffs.length === 0;
-  const readiness = report.technicalObjectiveProvenance.readiness;
+  const readiness = report.objectiveProvenance.readiness;
   const readinessSha256 = sha256Text(stableJson(readiness));
   const readinessMatches =
     readiness.readyForDamageReplay === false &&
@@ -1256,34 +1207,32 @@ function buildMarginalBoundary(
     ? sha256Text(stableJson(diagnostic.technicalObjective))
     : sha256Text(stableJson(null));
   const captureDomainSha256 = sha256Text(
-    stableJson(report.capture.domainValidation),
+    stableJson(report.domainValidation),
   );
-  const keqingStats = diagnostic?.crossEndpointSummary?.characters.find(
-    ({ characterId }) => characterId === "keqing",
-  )?.stats;
+  const keqingStats = diagnostic.keqingStats;
   const keqingStatsSha256 = keqingStats
     ? sha256Text(stableJson(keqingStats))
     : null;
   const statOutcomesMatch =
     keqingStats != null && expectedKeqingStatOutcomesMatch(keqingStats);
   const outerSafetyMatches =
-    report.supportsGuideClaims === false &&
-    report.supportsStatRecommendations === false &&
-    report.supportsScalarStatWeights === false &&
-    report.supportsIdealStatAllocation === false &&
-    report.supportsOptimalityClaims === false &&
-    report.supportsEnergyRequirements === false;
+    report.capabilities.supportsGuideClaims === false &&
+    report.capabilities.supportsStatRecommendations === false &&
+    report.capabilities.supportsScalarStatWeights === false &&
+    report.capabilities.supportsIdealStatAllocation === false &&
+    report.capabilities.supportsOptimalityClaims === false &&
+    report.capabilities.supportsEnergyRequirements === false;
   const marginalCoreMatches =
     report.comparisonStatus === "comparable" &&
     diagnostic?.comparisonStatus === "comparable" &&
     diagnostic.diagnosticId ===
       KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_ID &&
-    report.fixedCandidate.candidateId ===
+    report.fixedCandidateId ===
       KEQING_INEFFA_TEAM_STAT_MARGINAL_CANDIDATE_ID &&
-    report.technicalObjectiveProvenance.sourceTeamRecordId === KQM_TEAM_ID &&
-    report.technicalObjectiveProvenance.formulaLineCount === 11 &&
-    report.technicalObjectiveProvenance.reviewStatus === "unreviewed" &&
-    report.technicalObjectiveProvenance.explicitFormulaBuffOverrides == null &&
+    report.objectiveProvenance.sourceTeamRecordId === KQM_TEAM_ID &&
+    report.objectiveProvenance.formulaLineCount === 11 &&
+    report.objectiveProvenance.reviewStatus === "unreviewed" &&
+    report.objectiveProvenance.explicitFormulaBuffOverrides == null &&
     diagnostic.execution.endpointCount === 4 &&
     diagnostic.execution.characterCountPerEndpoint === 4 &&
     diagnostic.execution.plannedReplayCount === 148 &&
@@ -1349,10 +1298,10 @@ function buildMarginalBoundary(
     plannedReplayCount: diagnostic?.execution.plannedReplayCount ?? 0,
     observedReplayCount: diagnostic?.execution.observedReplayCount ?? 0,
     reactionFormulaLineCount:
-      report.technicalObjectiveProvenance.reactionLineCount,
+      report.objectiveProvenance.reactionLineCount,
     capturedReactionFormulaLineCounts,
     reactionDomain: reactionFree ? "reaction-free" : "drifted",
-    formulaLineCount: report.technicalObjectiveProvenance.formulaLineCount,
+    formulaLineCount: report.objectiveProvenance.formulaLineCount,
     formulaBuffOverrides:
       diagnostic?.technicalObjective.formulaBuffOverrides ?? null,
     readiness: {
@@ -1383,24 +1332,12 @@ function buildMarginalBoundary(
 }
 
 function buildRows(
-  snapshot: ArtifactRatingModelSnapshot,
-  repository: KnowledgeRepository,
-  marginalReport: KeqingIneffaTeamStatMarginalDiagnosticReport,
+  record: ArtifactRatingModelSnapshot["records"][number],
+  guide: KnowledgeCharacterGuide,
+  keqingStats: TeamStatMarginalCrossEndpointStatObservation[],
 ): KeqingArtifactRatingKqmMarginalValidationRow[] {
-  const record = snapshot.records.find(
-    ({ sourceRecordId }) =>
-      sourceRecordId === ARTIFACT_RATING_DB_KEQING_SOURCE_RECORD_ID,
-  );
-  const guide = repository.records.find(
-    (candidate): candidate is KnowledgeCharacterGuide =>
-      candidate.kind === "character_guide" && candidate.id === KQM_GUIDE_ID,
-  );
   const recommendation = guide?.recommendations?.[0];
-  const keqingStats =
-    marginalReport.marginalDiagnostic?.crossEndpointSummary?.characters.find(
-      ({ characterId }) => characterId === "keqing",
-    )?.stats ?? [];
-  if (!record || !recommendation) return [];
+  if (!recommendation) return [];
 
   const specs: Array<{
     statId: ComparedStat;

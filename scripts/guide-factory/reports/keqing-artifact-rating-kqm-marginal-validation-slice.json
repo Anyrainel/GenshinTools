@@ -74,87 +74,7 @@
   "classification": "keqing-artifact-rating-kqm-local-marginal-isolated-validation-slice",
   "energyRecoveryInputsUsed": false,
   "energyRequirementsProduced": false,
-  "generatedFrom": [
-    {
-      "path": "scripts/guide-factory/data/source-snapshots/artifact-rating-db-keqing.json",
-      "sha256": "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e"
-    },
-    {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
-      "path": "scripts/guide-factory/reports/keqing-ineffa-team-stat-marginal-diagnostic.json",
-      "sha256": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205"
-    },
-    {
-      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
-      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
-    },
-    {
-      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
-    }
-  ],
   "guideProduced": false,
-  "inputBoundary": {
-    "authentication": "accepted",
-    "exactPathSet": true,
-    "expectedFileCount": 5,
-    "expectedParsedPayloadSha256": {
-      "artifactRatingSnapshot": "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
-      "kqmEquipmentReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
-      "kqmRawSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
-      "marginalReport": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
-      "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    "files": [
-      {
-        "expectedSha256": "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e",
-        "matches": true,
-        "observedSha256": "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e",
-        "occurrenceCount": 1,
-        "path": "scripts/guide-factory/data/source-snapshots/artifact-rating-db-keqing.json"
-      },
-      {
-        "expectedSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-        "matches": true,
-        "observedSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-        "occurrenceCount": 1,
-        "path": "scripts/guide-factory/data/knowledge/repository.json"
-      },
-      {
-        "expectedSha256": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
-        "matches": true,
-        "observedSha256": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
-        "occurrenceCount": 1,
-        "path": "scripts/guide-factory/reports/keqing-ineffa-team-stat-marginal-diagnostic.json"
-      },
-      {
-        "expectedSha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
-        "matches": true,
-        "observedSha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
-        "occurrenceCount": 1,
-        "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"
-      },
-      {
-        "expectedSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
-        "matches": true,
-        "observedSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
-        "occurrenceCount": 1,
-        "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json"
-      }
-    ],
-    "observedFileCount": 5,
-    "parsedPayloadSha256": {
-      "artifactRatingSnapshot": "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
-      "kqmEquipmentReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
-      "kqmRawSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
-      "marginalReport": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
-      "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    "parsedPayloadsMatch": true
-  },
   "issues": [],
   "kqmBoundary": {
     "authentication": "accepted",
@@ -226,15 +146,16 @@
     "guideState": "candidate",
     "rawSourceBoundary": {
       "authentication": "accepted",
-      "capturedAt": "2026-08-29",
       "defaultRecordOccurrenceCount": 1,
       "defaultRecordSha256": "f3e479a9fcc59d1d0bc09f03fd5cb9cd7894be2a259bb3edb331fe8555a5399b",
       "expectedDefaultRecordSha256": "f3e479a9fcc59d1d0bc09f03fd5cb9cd7894be2a259bb3edb331fe8555a5399b",
-      "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+      "locator": {
+        "heading": "Lunar-Charged > Artifact Stats",
+        "url": "https://keqingmains.com/q/keqing-quickguide/"
+      },
       "recommendationParityWithRepository": "exact",
-      "snapshotRecordCount": 24,
-      "sourceId": "kqm",
-      "sourceVersion": "Luna I"
+      "selectedRecordCount": 1,
+      "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i"
     },
     "recommendationSha256": "c099954041a609348ca055c43bc96490c763517ccdc259e412acb4386daf77ea",
     "sourceAuthoredCrossRecordJoin": false,
@@ -705,7 +626,86 @@
       "statId": "electro%"
     }
   ],
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "semanticScope": {
+    "acceptedAudit": {
+      "dependencies": [
+        {
+          "dependencyId": "artifact-rating-envelope",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "1c7320dc73a876c0effc14fb5173b356aeb12af0b7e2a237e40763320bd0227b",
+          "selectedPayloadSha256": "db2147b019d1c17613a3bfe1cc42a8671e14556c0c44cd89c3ac2388f1dee41a"
+        },
+        {
+          "dependencyId": "artifact-rating-avatar",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "6f042db94f438498d568417801a844f2c50c1dc51c797c35dff78f3b46aecd33",
+          "selectedPayloadSha256": "1835a7f674c082583277f0c084e57c47a99c9478d8c206e468912071909745fc"
+        },
+        {
+          "dependencyId": "kqm-repository-records",
+          "selectedCount": 2,
+          "selectedKeySetSha256": "cb0bb47c1569ba6e2d235ce02341e0e710789af876686f7556f6c79753ebbf20",
+          "selectedPayloadSha256": "a35ad6f248b49a6a99d9a61a8178ef25f742f6e2c593846c67893c3deb9d3c78"
+        },
+        {
+          "dependencyId": "kqm-raw-default-stat-guide",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "16a5d522da8e60599218f421e3c2c86278a4e927d87197fcb062f6f60a8638f3",
+          "selectedPayloadSha256": "c71d73a13b4a3c7092b237a58f9873adaea524dea61a083cf1c0ee80d42141d0"
+        },
+        {
+          "dependencyId": "keqing-marginal-selected-evidence",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "569a5389754569cacc2ec7956e1291ec91186b24a6077050cd5244b5274d4fa9",
+          "selectedPayloadSha256": "28f7254b422e6e4caba34b1813b77035d7108f8c0775e1b8377864d1998d74bf"
+        },
+        {
+          "dependencyId": "keqing-equipment-capability-boundary",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "d172dbc4e09974ca1dbead24b65dd241e9490a1257fac71c8a8106bcfb4df3fe",
+          "selectedPayloadSha256": "5cf8b2f2d2a8744dfac6ef1742a9fbe90c8acf36522dea482c06cd53d2b35099"
+        },
+        {
+          "dependencyId": "keqing-equipment-default-source-record",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "b8d1aa6c1d552277b91daf08d5eab5e13e225502ae53d63639e670debcc13713",
+          "selectedPayloadSha256": "fbc64b7c77e6db6e7607f2b818c312feab8a259f3c41b9e4a869ec81a7b96fa3"
+        },
+        {
+          "dependencyId": "keqing-equipment-exact-team",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "f95838f12780553cbc012918feabf88edf104d59f292f6c8f50ab61e1c594ed4",
+          "selectedPayloadSha256": "89f986eb47be688b5865efab2b5ac054a732ffc81f88535f2a45b63de5cf2d3c"
+        },
+        {
+          "dependencyId": "keqing-equipment-default-main-stat-coverage",
+          "selectedCount": 1,
+          "selectedKeySetSha256": "58b05d09a0b9d7541b9b7a18586a120b620849168278d096c086bbaaf973551d",
+          "selectedPayloadSha256": "dad66ce24afd5b5c111c3b7bccd4bf493dab4a56753b666a02b167a2d850845b"
+        },
+        {
+          "dependencyId": "keqing-equipment-default-claims",
+          "selectedCount": 8,
+          "selectedKeySetSha256": "dfe3a12d4dfe59bf4ba531479a9e7de473f25611a40923505b9b128c234ab4e7",
+          "selectedPayloadSha256": "98feb7d6a942fe1dd8a44b3e9c13e26f149bc529cca86990470ff165c37b580f"
+        }
+      ],
+      "manifestSha256": "d6e18e6301ad570896bb98e2459f05a5f14b51dbbe70527656540b74ed703791",
+      "parity": {
+        "configuredCount": 1,
+        "exactCount": 1,
+        "normalizedPairsSha256": "c64334110ea9d0e785b4fa40aae4b01e85eac03e2441b6dac50550e47f89ba1f",
+        "parityIdsSha256": "2591f7374c80f29f04174bec57b7bcff46b79138071d6c2c582b21e45e6945de"
+      },
+      "scopeId": "keqing-artifact-rating-kqm-marginal-validation-v1",
+      "scopeProjectionSha256": "cb7fbdee52519e41a450f031b956529b2f69ecf0cd6afd96baaf5e24d1a66e57",
+      "status": "accepted",
+      "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
+    },
+    "expectedManifestSha256": "d6e18e6301ad570896bb98e2459f05a5f14b51dbbe70527656540b74ed703791",
+    "expectedScopeProjectionSha256": "cb7fbdee52519e41a450f031b956529b2f69ecf0cd6afd96baaf5e24d1a66e57"
+  },
   "sliceId": "artifact-rating-db-kqm-keqing-four-endpoint-local-marginal-v1",
   "statWeightsProduced": false,
   "summary": {

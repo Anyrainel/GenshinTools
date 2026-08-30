@@ -2,12 +2,11 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { ArtifactRatingModelSnapshot } from "../src/artifactRatingModel";
 import { formatKeqingArtifactRatingKqmMarginalValidationSliceSummary } from "../src/assemble-keqing-artifact-rating-kqm-marginal-validation-slice";
-import { readJson, sha256File, sha256Text, stableJson } from "../src/io";
+import { readJson, sha256Text, stableJson } from "../src/io";
 import {
   buildKeqingArtifactRatingKqmMarginalValidationSliceReport,
   KEQING_ARTIFACT_RATING_KNOWLEDGE_REPOSITORY_RELATIVE_PATH,
   KEQING_ARTIFACT_RATING_KQM_EQUIPMENT_REPORT_RELATIVE_PATH,
-  KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_INPUT_PATHS,
   KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_REPORT_PATH,
   KEQING_ARTIFACT_RATING_KQM_RAW_SNAPSHOT_RELATIVE_PATH,
   KEQING_ARTIFACT_RATING_MARGINAL_REPORT_RELATIVE_PATH,
@@ -33,12 +32,11 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
       "authenticated-isolated-observation",
     );
     expect(report.issues).toEqual([]);
-    expect(report.inputBoundary).toMatchObject({
-      expectedFileCount: 5,
-      observedFileCount: 5,
-      exactPathSet: true,
-      parsedPayloadsMatch: true,
-      authentication: "accepted",
+    expect(report.semanticScope).toMatchObject({
+      acceptedAudit: {
+        status: "accepted",
+        trust: "authenticated-current-input-rebuild-and-pinned-expectation",
+      },
     });
     expect(report.artifactRatingDbBoundary).toMatchObject({
       authentication: "accepted",
@@ -99,11 +97,13 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
       authentication: "accepted",
       rawSourceBoundary: {
         authentication: "accepted",
-        sourceId: "kqm",
-        capturedAt: "2026-08-29",
-        pageUrl: "https://keqingmains.com/q/keqing-quickguide/",
-        sourceVersion: "Luna I",
-        snapshotRecordCount: 24,
+        sourceRecordId:
+          "keqing-lunar-charged-default-artifact-stats-luna-i",
+        locator: {
+          url: "https://keqingmains.com/q/keqing-quickguide/",
+          heading: "Lunar-Charged > Artifact Stats",
+        },
+        selectedRecordCount: 1,
         defaultRecordOccurrenceCount: 1,
         recommendationParityWithRepository: "exact",
       },
@@ -331,50 +331,15 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
     expect(stableJson(durable)).toBe(stableJson(expected));
   });
 
-  it.each([
-    [
-      "missing input",
-      (input: ReturnType<typeof mutable>) => {
-        input.inputFiles.pop();
-      },
-    ],
-    [
-      "extra input",
-      (input: ReturnType<typeof mutable>) => {
-        input.inputFiles.push({
-          path: "scripts/guide-factory/reports/forged.json",
-          sha256: "0".repeat(64),
-        });
-      },
-    ],
-    [
-      "duplicate input",
-      (input: ReturnType<typeof mutable>) => {
-        input.inputFiles.push(structuredClone(input.inputFiles[0]));
-      },
-    ],
-    [
-      "input hash",
-      (input: ReturnType<typeof mutable>) => {
-        input.inputFiles[0].sha256 = "0".repeat(64);
-      },
-    ],
-  ])("rejects %s provenance drift", async (_label, mutate) => {
-    const input = mutable(await fixture());
-    mutate(input);
-    const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      input as BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-    );
-    expectRejected(report, "input.file-boundary-drift");
-  });
-
   it("write guard rejects post-build provenance and interpretive-safety mutation", async () => {
     const original = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
       await fixture(),
     );
     const mutations = [
       (report: ReturnType<typeof mutable>) => {
-        report.generatedFrom = [];
+        report.semanticScope.acceptedAudit.scopeProjectionSha256 = "0".repeat(
+          64,
+        );
       },
       (report: ReturnType<typeof mutable>) => {
         report.summary.promotedRowCount = 1;
@@ -429,16 +394,7 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
     record.rawModel.weight.AttackAddedRatio = 0.66;
     record.normalizedModel.coefficients.AttackAddedRatio.coefficient = 0.66;
     record.rawModelSha256 = sha256Text(stableJson(record.rawModel));
-    input.inputFiles.find(
-      ({ path: inputPath }: { path: string }) =>
-        inputPath === KEQING_ARTIFACT_RATING_SNAPSHOT_RELATIVE_PATH,
-    ).sha256 = sha256Text(stableJson(input.artifactRatingSnapshot));
-
-    const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      input as BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-    );
-    expectRejected(report, "artifact-rating-db.record-drift");
-    expect(report.rows).toEqual([]);
+    expectScopeRejected(input);
   });
 
   it.each([
@@ -479,13 +435,10 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
       },
       "artifact-rating-db.energy-drift",
     ],
-  ])("rejects %s drift", async (_label, mutate, expectedIssue) => {
+  ])("rejects %s drift", async (_label, mutate) => {
     const input = mutable(await fixture());
     mutate(input);
-    const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      input as BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-    );
-    expectRejected(report, expectedIssue);
+    expectScopeRejected(input);
   });
 
   it.each([
@@ -548,13 +501,10 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
       },
       "kqm.equipment-evidence-drift",
     ],
-  ])("rejects %s drift", async (_label, mutate, expectedIssue) => {
+  ])("rejects %s drift", async (_label, mutate) => {
     const input = mutable(await fixture());
     mutate(input);
-    const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      input as BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-    );
-    expectRejected(report, expectedIssue);
+    expectScopeRejected(input);
   });
 
   it("rejects local-marginal sign drift even when a caller supplies the old file hash", async () => {
@@ -575,10 +525,7 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
       "carry-xilonen",
     ];
 
-    const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      input as BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-    );
-    expectRejected(report, "marginal.keqing-stat-outcome-drift");
+    expectScopeRejected(input);
   });
 
   it.each([
@@ -620,25 +567,20 @@ describe("Keqing ArtifactRatingDB x KQM x local-marginal isolated validation", (
       },
       "marginal.keqing-stat-outcome-drift",
     ],
-  ])("rejects %s drift", async (_label, mutate, expectedIssue) => {
+  ])("rejects %s drift", async (_label, mutate) => {
     const input = mutable(await fixture());
     mutate(input);
-    const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      input as BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
-    );
-    expectRejected(report, expectedIssue);
+    expectScopeRejected(input);
   });
 });
 
 async function fixture(): Promise<BuildKeqingArtifactRatingKqmMarginalValidationSliceInput> {
-  const dataPaths = KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_INPUT_PATHS;
   const [
     artifactRatingSnapshot,
     repository,
     marginalReport,
     kqmRawSnapshot,
     kqmEquipmentReport,
-    inputFiles,
   ] = await Promise.all([
       readJson(
         path.join(
@@ -670,12 +612,6 @@ async function fixture(): Promise<BuildKeqingArtifactRatingKqmMarginalValidation
           KEQING_ARTIFACT_RATING_KQM_EQUIPMENT_REPORT_RELATIVE_PATH,
         ),
       ),
-      Promise.all(
-        dataPaths.map(async (relativePath) => ({
-          path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
-        })),
-      ),
     ]);
   return {
     artifactRatingSnapshot:
@@ -686,7 +622,6 @@ async function fixture(): Promise<BuildKeqingArtifactRatingKqmMarginalValidation
     kqmRawSnapshot: kqmRawSnapshot as ManualObservationSnapshot,
     kqmEquipmentReport:
       kqmEquipmentReport as KeqingLunarEquipmentEvidenceValidationReport,
-    inputFiles,
   };
 }
 
@@ -694,18 +629,12 @@ function mutable<T>(input: T): any {
   return structuredClone(input);
 }
 
-function expectRejected(
-  report: ReturnType<
-    typeof buildKeqingArtifactRatingKqmMarginalValidationSliceReport
-  >,
-  expectedIssue: string,
+function expectScopeRejected(
+  input: BuildKeqingArtifactRatingKqmMarginalValidationSliceInput,
 ): void {
-  expect(report.validationStatus).toBe("not-authenticated");
-  expect(report.issues.map(({ code }) => code)).toContain(expectedIssue);
-  expect(report.rows).toEqual([]);
   expect(() =>
-    requireAuthenticatedKeqingArtifactRatingKqmMarginalValidationSliceReport(
-      report,
+    buildKeqingArtifactRatingKqmMarginalValidationSliceReport(
+      input,
     ),
-  ).toThrow("Refusing to write");
+  ).toThrow("semantic scope authentication failed");
 }

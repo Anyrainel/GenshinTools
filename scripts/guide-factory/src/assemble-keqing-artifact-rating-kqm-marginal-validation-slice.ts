@@ -1,12 +1,11 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ArtifactRatingModelSnapshot } from "./artifactRatingModel";
-import { readJson, sha256File, writeJson } from "./io";
+import { readJson, writeJson } from "./io";
 import {
   buildKeqingArtifactRatingKqmMarginalValidationSliceReport,
   KEQING_ARTIFACT_RATING_KNOWLEDGE_REPOSITORY_RELATIVE_PATH,
   KEQING_ARTIFACT_RATING_KQM_EQUIPMENT_REPORT_RELATIVE_PATH,
-  KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_INPUT_PATHS,
   KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_REPORT_PATH,
   KEQING_ARTIFACT_RATING_KQM_RAW_SNAPSHOT_RELATIVE_PATH,
   KEQING_ARTIFACT_RATING_MARGINAL_REPORT_RELATIVE_PATH,
@@ -40,14 +39,12 @@ export function formatKeqingArtifactRatingKqmMarginalValidationSliceSummary(
 }
 
 export async function runKeqingArtifactRatingKqmMarginalValidationSliceCli(): Promise<void> {
-  const dataPaths = KEQING_ARTIFACT_RATING_KQM_MARGINAL_SLICE_INPUT_PATHS;
   const [
     artifactRatingSnapshot,
     repository,
     marginalReport,
     kqmRawSnapshot,
     kqmEquipmentReport,
-    inputFiles,
   ] = await Promise.all([
       readJson(
         path.join(
@@ -79,12 +76,6 @@ export async function runKeqingArtifactRatingKqmMarginalValidationSliceCli(): Pr
           KEQING_ARTIFACT_RATING_KQM_EQUIPMENT_REPORT_RELATIVE_PATH,
         ),
       ),
-      Promise.all(
-        dataPaths.map(async (relativePath) => ({
-          path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
-        })),
-      ),
     ]);
   const report = buildKeqingArtifactRatingKqmMarginalValidationSliceReport({
     artifactRatingSnapshot:
@@ -95,7 +86,6 @@ export async function runKeqingArtifactRatingKqmMarginalValidationSliceCli(): Pr
     kqmRawSnapshot: kqmRawSnapshot as ManualObservationSnapshot,
     kqmEquipmentReport:
       kqmEquipmentReport as KeqingLunarEquipmentEvidenceValidationReport,
-    inputFiles,
   });
   requireAuthenticatedKeqingArtifactRatingKqmMarginalValidationSliceReport(
     report,
