@@ -21,17 +21,18 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 55 composes the exact Noelle Normal-prefix adapter with the
-authenticated Hexerei team/equipment candidates in a 48-cell offline equipment
-response surface. Six threshold-relevant investment witnesses are crossed with
-ATK%/DEF% Sands, CR/CD Circlets, and Gest R1/R5 while all source selections stay
-null. Every cell gets a fresh exact-team `TeamBuild`, applicable-buff trace,
-scoped 5/5/3 projection, and agreeing direct/compiled evaluation. Both source
-branches show cross-witness Sands-sign changes, so the report deliberately
-computes no branch average or branch-wide result. Teammate gear/options, full
-Gest/Husk stacks, enemy context, and main-stat-only sheets remain explicit
-technical assumptions. This is not a guide, build score, recommendation,
-rotation/DPS result, or ER result.
+Checkpoint 56 adds one current-average-roll CR/CD/ATK%/DEF% neighbors to the
+source-aligned cells from checkpoint 55 and tests them across both Circlets,
+Gest R1/R5, Nicole's two Theosis targeting modes, and four/zero Husk Curiosity
+stacks. Its 96 baselines and 384 probes all use fresh exact-team `TeamBuild`
+instances, the scoped 5/5/3 projection, and agreeing direct/compiled paths.
+The durable report keeps 20 exact artifact sheets and 96 exact applied-buff
+traces in authenticated catalogs. Of 288 adjacent source-order checks, 242
+align and 46 are counterexamples; 72 sensitivity summaries split 58/10/4
+between aligned, counterexample, and context-dependent. Those mixed results are
+validation evidence, not a stat order or a verdict on the source. The report
+selects nothing, averages no branch, computes no scalar weight or ideal
+allocation, and performs no rotation, team-total, DPS, timing, or ER work.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -1082,6 +1083,29 @@ This is not a working guide factory or an equipment recommendation:
      the high branch's guarded DEF alternatives unevaluated. Integrate the
      response surface as global report 52 with zero source assignments, source
      rotation/team-total computations, optimizer/AutoTune runs, or ER work.
+332. Authenticate checkpoint 56 through an exact 116-path workspace-bound
+     byte/hash closure, including checkpoint 55's complete boundary and durable
+     report, the reusable point evaluator, the new core and CLI, and the same
+     80-path first-party calculator runtime graph.
+333. Restrict the experiment to each witness's source-listed Sands, then execute
+     96 baselines and 384 independent one-current-average-roll CR/CD/ATK%/DEF%
+     neighbors over both Circlets, Gest R1/R5, Nicole all-team/Hexerei-only
+     Theosis modes, and Husk four/zero Curiosity stacks.
+334. Retain 20 exact artifact sheets and 96 exact applicable-buff traces in
+     content-addressed catalogs. Require all 480 compact cells to resolve both
+     references and reconstruct their full evaluator hashes exactly.
+335. Derive 384 parent-local marginals and 480 single-axis Nicole/Husk
+     sensitivity edges. Compare only the three adjacent source priority-group
+     relations per branch; never order CR against CD or manufacture scalar
+     weights, selected placements, or branch averages.
+336. Preserve the observed 242 aligned and 46 counterexample relation checks,
+     plus 58 aligned-across-grid, 10 counterexample-across-grid, and 4
+     context-dependent robustness rows, as validation evidence rather than a
+     verdict on the source or calculator.
+337. Reproduce all 24 source-aligned checkpoint-55 default-context cells
+     exactly and integrate the diagnostic as global report 53. Keep every
+     guide, build, stat, rank, optimizer/AutoTune, ideal-allocation, rotation,
+     team-total, DPS, timing, and ER capability withheld.
 
 The first two active sources are already in this repository:
 
@@ -1285,6 +1309,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-partial-equipment-composition.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-normal-prefix-formula-projection.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-equipment-response-surface.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-local-stat-priority-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1308,7 +1333,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all fifty-two globally integrated durable reports
+In full mode it rebuilds all fifty-three globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1334,6 +1359,7 @@ the authenticated guarded Circlet/substat local-marginal diagnostic,
 the authenticated Noelle investment artifact-profile representation admission,
 the authenticated Noelle exact Normal-prefix formula-count projection probe,
 the authenticated Noelle Hexerei 48-cell equipment response surface,
+the authenticated Noelle Hexerei 480-cell local stat-priority diagnostic,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and

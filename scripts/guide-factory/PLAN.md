@@ -1232,10 +1232,44 @@ branch-wide guide rules, not as a Sands recommendation. The main-stat-only
 sheet is not a legal complete artifact build, Gest/Husk/Geo-resonance coverage
 is static runtime state, and teammate equipment/options remain source-missing.
 
-The next non-ER step can add one-average-roll CR/CD/ATK%/DEF% local probes only
-on source-aligned cells, while preserving witness-local results and testing at
-least support-option or Husk-stack sensitivity. It must not manufacture scalar
-weights or ideal allocations from the response surface.
+Checkpoint 56 takes that bounded step. Its exact 116-path outer closure adds
+the checkpoint-55 durable report, a reusable technical-point evaluator, and the
+new core/CLI while retaining the same authenticated 80-path calculator runtime
+closure. Checkpoint 55 is freshly rebuilt, and all 24 source-aligned cells under
+its default all-Theosis/four-Husk-stack context reproduce exactly before the
+new lattice is admitted.
+
+The diagnostic executes 96 source-aligned baselines and 384 independent one-
+current-average-roll CR/CD/ATK%/DEF% neighbors over both source-listed Circlets,
+Gest R1/R5, Nicole all-team/Hexerei-only Theosis modes, and Husk four/zero
+Curiosity stacks. All 480 fresh cells agree between direct and compiled paths,
+restore the exact 5/5/3 projection, and construct no ER constraint. Twenty
+artifact sheets and 96 exact applicable-buff traces are retained in deduplicated
+catalogs; every compact cell resolves both references and reconstructs the
+original evaluator hash exactly. Husk zero retains the four-piece configuration
+and its two-piece DEF half-set while removing only the Curiosity buff; 480
+matched no-Husk control builds verify the +30% DEF base-sheet differential.
+Nicole's base Kenosis remains present in both targeting modes, and the
+Hexerei-only mode retains an exactly authenticated faction-restricted P1
+registration rather than silently omitting the uplift.
+
+The 384 parent-local marginals feed only the three adjacent source-group
+relations per branch. CR and CD remain an unordered shared group. The 288
+context-local checks contain 242 aligned and 46 counterexample outcomes with no
+tolerance ties. The 72 summaries across Nicole/Husk states contain 58 aligned-
+across-grid, 10 counterexample-across-grid, and 4 context-dependent rows. In
+particular, the lower branch's ATK%-over-DEF% relation splits 16/16 across its
+two entered-investment witnesses. This is useful evidence against collapsing a
+source branch or a support context into one unconditional scalar weight; it is
+not proof that the source or calculator is wrong.
+
+The next non-ER step should consume this mixed evidence through a fail-closed,
+request-conditioned admission gate rather than majority-vote it. Entered
+investment facts should resolve exactly one partial checkpoint-53 candidate,
+and each adjacent priority relation should remain withheld if any of its tested
+contexts is counterexample or inconclusive. Such a gate may expose why a
+partial candidate remains blocked, but it must not fill the still-null Circlet,
+refinement, artifact placement, legal roll allocation, timing, or ER fields.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

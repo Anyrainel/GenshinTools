@@ -459,6 +459,22 @@ Current durable pilot evidence:
   build, rank, team-total, DPS, optimizer, ideal-stat, or ER claim. Its current
   568,103-byte output has SHA-256
   `4dd0fc6e7e8e065d824445110d78a3f10a61053383008f2185bd9f999e9ad225`.
+- `noelle-hexerei-local-stat-priority-diagnostic.json` binds an exact
+  workspace-matching 116-path closure, fresh-authenticates checkpoint 55, and
+  exactly reproduces its 24 source-aligned default-context cells before
+  admitting any new comparison. It executes 96 baselines and 384 independent
+  one-current-average-roll neighbors over CR, CD, ATK%, and DEF%, with both
+  source-listed Circlets, Gest R1/R5, Nicole all-team/Hexerei-only Theosis, and
+  Husk four/zero Curiosity stacks. Twenty artifact sheets and 96 exact applied-
+  buff traces form content-addressed catalogs covering all 480 cells. The 384
+  local marginals feed 288 adjacent source-group checks: 242 align, 46 are
+  counterexamples, and none are tolerance-inconclusive. Seventy-two
+  sensitivity summaries split 58 aligned-across-grid, 10 counterexample-
+  across-grid, and 4 context-dependent. These are fixture-local validation
+  observations, not source verdicts, stat weights, selected priorities,
+  complete builds, guides, rotation/DPS claims, or ER results. Its current
+  4,546,387-byte output has SHA-256
+  `08e39caf80afea209f563882ba29430bdb2229824addd5c9f9cb0013a0d420cc`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -832,7 +848,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all fifty-two globally integrated reports
+In full mode `validate.ts` rebuilds all fifty-three globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -894,6 +910,9 @@ this directory now contains 52 JSON reports.
 Checkpoint 55 adds the Noelle Hexerei equipment response surface as integrated
 report 52. Including checkpoint 35's permission-isolated report, this directory
 now contains 53 JSON reports.
+Checkpoint 56 adds the Noelle Hexerei local stat-priority diagnostic as
+integrated report 53. Including checkpoint 35's permission-isolated report,
+this directory now contains 54 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

@@ -51,3 +51,4 @@ reports/*
 !reports/noelle-hexerei-partial-equipment-composition.json
 !reports/noelle-normal-prefix-formula-projection.json
 !reports/noelle-hexerei-equipment-response-surface.json
+!reports/noelle-hexerei-local-stat-priority-diagnostic.json

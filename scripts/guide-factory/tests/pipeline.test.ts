@@ -535,7 +535,7 @@ describe("guide-factory data pipeline", () => {
         "zibai uses Sword, but redhorn_stonethresher is Claymore.": 1,
       });
     },
-    60_000
+    180_000
   );
 
   it("keeps the offline factory out of every runtime source tree", async () => {

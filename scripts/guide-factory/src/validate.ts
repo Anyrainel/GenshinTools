@@ -367,6 +367,13 @@ import {
   NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_REPORT_PATH,
   type NoelleHexereiEquipmentResponseSurfaceReport,
 } from "./noelleHexereiEquipmentResponseSurface";
+import {
+  authenticateNoelleHexereiLocalStatPriorityDiagnosticFromWorkspace,
+} from "./assemble-noelle-hexerei-local-stat-priority-diagnostic";
+import {
+  NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_REPORT_PATH,
+  type NoelleHexereiLocalStatPriorityDiagnosticReport,
+} from "./noelleHexereiLocalStatPriorityDiagnostic";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1911,6 +1918,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle Hexerei equipment response surface failed fresh authentication: ${error.message}`
               : "The saved Noelle Hexerei equipment response surface failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleHexereiLocalStatPriorityDiagnosticInput = await readJson(
+          NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_REPORT_PATH,
+        );
+        await authenticateNoelleHexereiLocalStatPriorityDiagnosticFromWorkspace(
+          noelleHexereiLocalStatPriorityDiagnosticInput as NoelleHexereiLocalStatPriorityDiagnosticReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_hexerei_local_stat_priority_diagnostic",
+          path: "reports.noelle-hexerei-local-stat-priority-diagnostic",
+          message:
+            error instanceof Error
+              ? `The saved Noelle Hexerei local stat-priority diagnostic failed fresh authentication: ${error.message}`
+              : "The saved Noelle Hexerei local stat-priority diagnostic failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =
