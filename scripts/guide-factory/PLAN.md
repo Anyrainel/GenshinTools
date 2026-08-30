@@ -639,8 +639,53 @@ consumption, and interpretation boundary remain unchanged. No assignment,
 recommendation, build, rank, optimizer, damage, rotation, or ER work is
 authorized.
 
-The next non-ER gate should be a separate standalone experiment for Noelle's
-lower-investment branch. It is not implemented yet.
+Checkpoint 33 completes that standalone lower-investment experiment. The
+generic request-context and source-local ASTs add `constellation-at-most` and
+`talent-level-is`. Omitted exact-team, exact-character facts remain unknown;
+the former is true at or below its threshold and false above it, while the
+latter is true only for exact equality and false for another supplied value.
+The existing three-valued `all` operator is false if any child is false, true
+only if every child is true, and unknown otherwise. Constellation remains C0-C6,
+Talent levels remain positive named-Talent integers, request provenance/scope
+is preserved, and constellation never derives a Talent level.
+
+The standalone `src/noelleSourceLocalLowerInvestmentSlice.ts` and durable
+`reports/noelle-source-local-lower-investment-slice.json` authenticate the same
+Luna VIII snapshot and select exactly the ATK% Sands, Geo DMG Bonus Goblet, and
+CRIT Rate/CRIT DMG Circlet occurrences from
+`kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii`. Their
+shared exact condition is represented only by the wrapper-owned
+`all(constellation <= 5, burst talent == 9)` request predicate. Independent C5
+and Burst Talent 9 facts scoped to the exact
+Noelle/Durin/Nicole/Xilonen source team make all three source-unresolved cells
+applicable and effectively matched. The source evaluator still does not
+evaluate Talent levels, and the team join remains wrapper-owned rather than
+source-authored.
+
+The exact boundary remains 16 arrays: three selected main-stat rows, 12
+nonempty holdouts, and one empty array. No substat is selected. Holdouts and the
+empty occurrence are unconsumed and receive no slice-authored binding or energy
+classification. Four raw input files and 13 generated-from paths are
+authenticated. The slice produces zero candidates, equipment assignments,
+optimizations, and assembled builds and makes no recommendation, guide, rank,
+formula, damage, rotation, ideal-roll, or ER claim.
+
+Checkpoint 33 adds the thirty-first durable report but does not admit the lower
+slice to the catalog. Catalog 60 = 57 typed + 3 acknowledged; full nonempty
+coverage 57/3/66; non-structural coverage 57/3/63; unique arrays 33/52/1;
+energy 15/54/57/16; display 54/54/15/3/16; and seven wrapper families over 18
+source files and 70 generated-from paths all remain exactly checkpoint 32. The
+three lower rows remain catalog-unbound and energy-unclassified.
+
+The generic predicate additions regenerate seven existing durable reports for
+authenticated hash/dependency changes only. The checkpoint 32 catalog's
+`generatedFrom` pin changes, but its entries and ledgers do not; manual coverage
+and the Klee witness retain their established semantics. Verification passes
+TypeScript, 62 test files with 461 tests, and validation with 0 errors and 12
+existing warnings.
+
+The next non-ER gate should be a separate catalog admission for only the three
+exact lower-investment occurrences. It is not implemented yet.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

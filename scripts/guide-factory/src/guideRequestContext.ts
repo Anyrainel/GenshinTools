@@ -59,7 +59,18 @@ export type GuideRequestContextPredicateAst =
       threshold: number;
     }
   | {
+      type: "constellation-at-most";
+      characterId: string;
+      threshold: number;
+    }
+  | {
       type: "talent-level-at-least";
+      characterId: string;
+      talent: "auto" | "skill" | "burst";
+      threshold: number;
+    }
+  | {
+      type: "talent-level-is";
       characterId: string;
       talent: "auto" | "skill" | "burst";
       threshold: number;
@@ -477,6 +488,16 @@ function evaluateRequestAtom(
       predicate.characterId,
     );
   }
+  if (predicate.type === "constellation-at-most") {
+    return compareOptionalNumericRequestFact(
+      teamFacts?.characterFactsById?.[predicate.characterId]?.constellation,
+      predicate.threshold,
+      "constellation",
+      teamRecordId,
+      predicate.characterId,
+      "at-most",
+    );
+  }
   if (predicate.type === "talent-level-at-least") {
     return compareOptionalNumericRequestFact(
       teamFacts?.characterFactsById?.[predicate.characterId]?.talentLevels?.[
@@ -486,6 +507,18 @@ function evaluateRequestAtom(
       `${predicate.talent} talent level`,
       teamRecordId,
       predicate.characterId,
+    );
+  }
+  if (predicate.type === "talent-level-is") {
+    return compareOptionalNumericRequestFact(
+      teamFacts?.characterFactsById?.[predicate.characterId]?.talentLevels?.[
+        predicate.talent
+      ],
+      predicate.threshold,
+      `${predicate.talent} talent level`,
+      teamRecordId,
+      predicate.characterId,
+      "is",
     );
   }
   if (predicate.type === "acquisition-preference-is") {
@@ -612,6 +645,7 @@ function compareOptionalNumericRequestFact(
   label: string,
   teamRecordId: string,
   characterId: string,
+  comparison: "at-least" | "at-most" | "is" = "at-least",
 ): {
   result: "true" | "false" | "unknown";
   factProvenance: "request";
@@ -626,14 +660,29 @@ function compareOptionalNumericRequestFact(
       reason: `Request ${label} was omitted.`,
     };
   }
+  const matches =
+    comparison === "at-most"
+      ? actual <= threshold
+      : comparison === "is"
+        ? actual === threshold
+        : actual >= threshold;
+  const reason =
+    comparison === "at-most"
+      ? matches
+        ? `Request ${label} ${actual} is at or below threshold ${threshold}.`
+        : `Request ${label} ${actual} is above threshold ${threshold}.`
+      : comparison === "is"
+        ? matches
+          ? `Request ${label} ${actual} equals ${threshold}.`
+          : `Request ${label} ${actual} does not equal ${threshold}.`
+        : matches
+          ? `Request ${label} ${actual} meets threshold ${threshold}.`
+          : `Request ${label} ${actual} is below threshold ${threshold}.`;
   return {
-    result: actual >= threshold ? "true" : "false",
+    result: matches ? "true" : "false",
     factProvenance: "request",
     factScope: { teamRecordId, characterId, accountSnapshotId: null },
-    reason:
-      actual >= threshold
-        ? `Request ${label} ${actual} meets threshold ${threshold}.`
-        : `Request ${label} ${actual} is below threshold ${threshold}.`,
+    reason,
   };
 }
 
@@ -1000,7 +1049,9 @@ function validateRequestPredicate(
   }
   if (
     predicate.type === "constellation-at-least" ||
-    predicate.type === "talent-level-at-least"
+    predicate.type === "constellation-at-most" ||
+    predicate.type === "talent-level-at-least" ||
+    predicate.type === "talent-level-is"
   ) {
     if (
       typeof predicate.characterId !== "string" ||
@@ -1015,7 +1066,8 @@ function validateRequestPredicate(
     const validThreshold =
       typeof predicate.threshold === "number" &&
       Number.isSafeInteger(predicate.threshold) &&
-      (predicate.type === "constellation-at-least"
+      (predicate.type === "constellation-at-least" ||
+        predicate.type === "constellation-at-most"
         ? predicate.threshold >= 0 && predicate.threshold <= 6
         : predicate.threshold > 0);
     if (!validThreshold) {
@@ -1023,13 +1075,15 @@ function validateRequestPredicate(
         code: "request-context.invalid-numeric-predicate-threshold",
         path: `${path}.threshold`,
         message:
-          predicate.type === "constellation-at-least"
+          predicate.type === "constellation-at-least" ||
+          predicate.type === "constellation-at-most"
             ? "Constellation thresholds must be safe integers from 0 through 6."
             : "Talent-level thresholds must be positive safe integers.",
       });
     }
     if (
-      predicate.type === "talent-level-at-least" &&
+      (predicate.type === "talent-level-at-least" ||
+        predicate.type === "talent-level-is") &&
       predicate.talent !== "auto" &&
       predicate.talent !== "skill" &&
       predicate.talent !== "burst"

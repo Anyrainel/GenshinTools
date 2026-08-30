@@ -366,6 +366,121 @@ describe("guide request/account context applicability", () => {
     ]);
   });
 
+  it("evaluates lower-investment constellation-and-talent facts with false-dominant three-valued semantics", () => {
+    const lowerInvestmentRule = rule(PREFERENCE_CLAIM, "predicate", {
+      type: "all",
+      predicates: [
+        {
+          type: "constellation-at-most",
+          characterId: ITTO,
+          threshold: 5,
+        },
+        {
+          type: "talent-level-is",
+          characterId: ITTO,
+          talent: "burst",
+          threshold: 9,
+        },
+      ],
+    });
+    const cases = [
+      { facts: {}, result: "unknown" },
+      { facts: { constellation: 5 }, result: "unknown" },
+      { facts: { talentLevels: { burst: 9 } }, result: "unknown" },
+      {
+        facts: { constellation: 5, talentLevels: { burst: 9 } },
+        result: "true",
+      },
+      {
+        facts: { constellation: 6, talentLevels: { burst: 9 } },
+        result: "false",
+      },
+      {
+        facts: { constellation: 5, talentLevels: { burst: 10 } },
+        result: "false",
+      },
+      { facts: { constellation: 6 }, result: "false" },
+      { facts: { talentLevels: { burst: 10 } }, result: "false" },
+    ] as const;
+
+    for (const { facts, result } of cases) {
+      const report = project(
+        {
+          requestFactsByTeamRecordId: {
+            [TEAM_A]: { characterFactsById: { [ITTO]: facts } },
+          },
+        },
+        [lowerInvestmentRule],
+      );
+      expect(report.comparisonStatus).toBe("comparable");
+      expect(
+        cell(report, PREFERENCE_CLAIM).requestContextBindings[0]?.result,
+      ).toBe(result);
+    }
+
+    const c5Only = project(
+      {
+        requestFactsByTeamRecordId: {
+          [TEAM_A]: { characterFactsById: { [ITTO]: { constellation: 5 } } },
+        },
+      },
+      [lowerInvestmentRule],
+    );
+    expect(
+      cell(c5Only, PREFERENCE_CLAIM).requestContextBindings[0]?.predicateRows,
+    ).toEqual([
+      expect.objectContaining({
+        predicateType: "constellation-at-most",
+        result: "true",
+        factProvenance: "request",
+        factScope: {
+          teamRecordId: TEAM_A,
+          characterId: ITTO,
+          accountSnapshotId: null,
+        },
+      }),
+      expect.objectContaining({
+        predicateType: "talent-level-is",
+        result: "unknown",
+        factProvenance: "request",
+        factScope: {
+          teamRecordId: TEAM_A,
+          characterId: ITTO,
+          accountSnapshotId: null,
+        },
+      }),
+    ]);
+  });
+
+  it("accepts both valid constellation-at-most boundary thresholds", () => {
+    for (const { threshold, constellation, result } of [
+      { threshold: 0, constellation: 0, result: "true" },
+      { threshold: 0, constellation: 1, result: "false" },
+      { threshold: 6, constellation: 6, result: "true" },
+    ] as const) {
+      const report = project(
+        {
+          requestFactsByTeamRecordId: {
+            [TEAM_A]: {
+              characterFactsById: { [ITTO]: { constellation } },
+            },
+          },
+        },
+        [
+          rule(PREFERENCE_CLAIM, "predicate", {
+            type: "constellation-at-most",
+            characterId: ITTO,
+            threshold,
+          }),
+        ],
+      );
+      expect(report.comparisonStatus).toBe("comparable");
+      expect(
+        cell(report, PREFERENCE_CLAIM).requestContextBindings[0]?.result,
+      ).toBe(result);
+    }
+  });
+
   it("fails closed for invalid numeric request facts and thresholds", () => {
     const validPredicate = {
       type: "constellation-at-least",
@@ -402,6 +517,65 @@ describe("guide request/account context applicability", () => {
         threshold: 0,
       }),
     ]);
+    const invalidAtMostThreshold = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "constellation-at-most",
+        characterId: ITTO,
+        threshold: 7,
+      } as never),
+    ]);
+    const invalidTalentLevelIs = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "talent-level-is",
+        characterId: ITTO,
+        talent: "burst",
+        threshold: 0,
+      } as never),
+    ]);
+    const fractionalAtMostThreshold = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "constellation-at-most",
+        characterId: ITTO,
+        threshold: 5.5,
+      } as never),
+    ]);
+    const malformedTalentLevelIs = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "talent-level-is",
+        characterId: ITTO,
+        talent: "charged",
+        threshold: 9,
+      } as never),
+    ]);
+    const negativeAtMostThreshold = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "constellation-at-most",
+        characterId: ITTO,
+        threshold: -1,
+      } as never),
+    ]);
+    const unsafeAtMostThreshold = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "constellation-at-most",
+        characterId: ITTO,
+        threshold: Number.MAX_SAFE_INTEGER + 1,
+      } as never),
+    ]);
+    const unsafeTalentLevelIs = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "talent-level-is",
+        characterId: ITTO,
+        talent: "burst",
+        threshold: Number.MAX_SAFE_INTEGER + 1,
+      } as never),
+    ]);
+    const malformedAtMost = () =>
+      project({}, [
+        rule(PREFERENCE_CLAIM, "predicate", {
+          type: "constellation-at-most",
+          threshold: 5,
+        } as never),
+      ]);
 
     expect(invalidConstellation).toMatchObject({
       comparisonStatus: "not-comparable",
@@ -430,6 +604,81 @@ describe("guide request/account context applicability", () => {
         }),
       ]),
     );
+    expect(invalidAtMostThreshold.comparisonStatus).toBe("not-comparable");
+    expect(invalidAtMostThreshold.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-numeric-predicate-threshold",
+        }),
+      ]),
+    );
+    expect(invalidTalentLevelIs.comparisonStatus).toBe("not-comparable");
+    expect(invalidTalentLevelIs.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-numeric-predicate-threshold",
+        }),
+      ]),
+    );
+    expect(fractionalAtMostThreshold.comparisonStatus).toBe("not-comparable");
+    expect(fractionalAtMostThreshold.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-numeric-predicate-threshold",
+        }),
+      ]),
+    );
+    expect(malformedTalentLevelIs.comparisonStatus).toBe("not-comparable");
+    expect(malformedTalentLevelIs.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-talent-predicate-kind",
+        }),
+      ]),
+    );
+    for (const report of [
+      negativeAtMostThreshold,
+      unsafeAtMostThreshold,
+      unsafeTalentLevelIs,
+    ]) {
+      expect(report.comparisonStatus).toBe("not-comparable");
+      expect(report.issues).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            code: "request-context.invalid-numeric-predicate-threshold",
+          }),
+        ]),
+      );
+    }
+    expect(malformedAtMost).not.toThrow();
+    expect(malformedAtMost().comparisonStatus).toBe("not-comparable");
+  });
+
+  it("fails closed without throwing for unknown and non-record predicates", () => {
+    const cases = [
+      {
+        predicate: { type: "unknown-json-predicate" },
+        code: "request-context.unsupported-predicate",
+      },
+      {
+        predicate: null,
+        code: "request-context.invalid-predicate",
+      },
+    ] as const;
+
+    for (const { predicate, code } of cases) {
+      const build = () =>
+        project({}, [
+          rule(PREFERENCE_CLAIM, "predicate", predicate as never),
+        ]);
+      expect(build).not.toThrow();
+      const report = build();
+      expect(report.comparisonStatus).toBe("not-comparable");
+      expect(report.teamProjections).toEqual([]);
+      expect(report.issues).toEqual(
+        expect.arrayContaining([expect.objectContaining({ code })]),
+      );
+    }
   });
 
   it("parses only bounded integer constellation and positive safe-integer talent facts", () => {

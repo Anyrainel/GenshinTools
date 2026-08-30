@@ -525,10 +525,14 @@ inventory. Account facts also retain an explicit snapshot identity.
 The request vocabulary also supports exact-team, exact-character numeric facts
 for constellation and named Auto, Skill, or Burst Talent levels. Constellation
 facts and thresholds are safe integers from 0 through 6; Talent facts and
-thresholds are positive safe integers. `all` and `any` retain three-valued
-semantics: omitted branches are unknown, and no constellation fact derives a
-Talent level. These values have request provenance, not verified account-
-investment provenance.
+thresholds are positive safe integers. In addition to lower-bound predicates,
+`constellation-at-most` is unknown when its fact is omitted, true at or below
+its threshold, and false above it; `talent-level-is` is unknown when its named
+fact is omitted, true for exact equality, and false for another supplied level.
+`all` and `any` retain three-valued semantics: `all` is false if any child is
+false, true only if every child is true, and unknown otherwise. No
+constellation fact derives a Talent level. These values have request provenance,
+not verified account-investment provenance.
 
 The Itto adapter uses a strict synthetic fixture with three independent
 contexts. Its two-key control gate requires the checked-in checkpoint 23 report
@@ -629,6 +633,25 @@ assembled builds. Checkpoint 32 admits only the three selected occurrences to
 the current condition-binding catalog after a separate source-specific
 authentication gate; the 12 holdouts and empty occurrence remain outside.
 
+The standalone `src/noelleSourceLocalLowerInvestmentSlice.ts` selects the three
+parallel C0-C5/Burst-Talent-9 main-stat occurrences: ATK% Sands, Geo DMG Bonus
+Goblet, and CRIT Rate/CRIT DMG Circlet. The source predicate remains one
+unresolved `investment-threshold` leaf. The wrapper-owned request mapping is
+`all(constellation <= 5, burst talent == 9)`; independent C5 and Burst Talent 9
+request facts scoped to the exact Noelle/Durin/Nicole/Xilonen team and Noelle
+subject make all three effective cells matched while all three source cells
+remain unresolved. Source Talent-level evaluation stays false, and the cross-
+record team validation is not source-authored applicability.
+
+The lower slice also closes the exact 16-array boundary as three selected, 12
+nonempty holdouts, and one empty occurrence. No substat row is selected. The
+holdouts and empty row are unconsumed and receive no slice-authored binding or
+energy classification. Its report authenticates four raw inputs and 13
+generated-from paths and creates zero candidates, equipment assignments,
+optimizations, or assembled builds. It remains standalone and does not enter
+the current condition-binding catalog. The new report brings the durable total
+to 31.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -690,11 +713,19 @@ numeric request projection, three selected occurrences, 12 holdouts, one empty
 row, and disabled capability boundary. Only the selected three become typed and
 not energy-deferred; the holdouts and empty row receive no new state.
 
+Checkpoint 33 does not add the lower-investment wrapper to this path. Its three
+selected rows remain catalog-unbound and energy-unclassified, so catalog 60,
+the 57/3/63 non-structural partition, 33/52/1 unique-array partition,
+15/54/57/16 energy ledger, 54/54/15/3/16 display projection, seven wrapper
+families, 18 source files, and 70 generated-from paths remain exactly
+checkpoint 32.
+
 The dependency direction remains acyclic. Authenticated source-specific Klee,
-Diona, Kokomi, and Noelle wrappers feed the 60-entry binding catalog, then manual
-coverage and the regenerated checkpoint 27 Klee witness. The validator follows
-that order. The generic source-local core and source-specific wrappers never
-import the downstream catalog, coverage report, or witness.
+Diona, Kokomi, and high-investment Noelle wrappers feed the 60-entry binding
+catalog, then manual coverage and the regenerated checkpoint 27 Klee witness.
+The validator follows that order. The generic source-local core and source-
+specific wrappers never import the downstream catalog, coverage report, or
+witness.
 
 This seam runs no arbitrary-English parser, recommendation composer, generator,
 optimizer, formula, rotation, damage, ranking, ideal-roll, or ER calculation.
@@ -731,12 +762,17 @@ zero candidates. It runs no payload-axis expansion, choice selection,
 compatibility evaluation, cross-product, recommendation composition, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER calculation.
 Independent applicability is validation evidence, not a build or guide.
-After the Noelle catalog admission, the durable witness is regenerated against
-the refreshed manual-coverage input. Its four Klee claims, positive team,
-negative control, and interpretation boundary remain unchanged.
+Checkpoint 33 regenerates the durable witness against hash-refreshed manual
+coverage. The generic predicate additions regenerate seven existing reports
+for hash/dependency changes only and update the checkpoint 32 catalog's
+`generatedFrom` pin without changing catalog entries or ledgers. The witness's
+four Klee claims, positive team, negative control, and interpretation boundary
+remain unchanged.
 
-The next bounded non-ER gate is a separate standalone experiment for Noelle's
-lower-investment branch. It is not implemented yet.
+The completed checkpoint 33 verification passes TypeScript, 62 test files with
+461 tests, and validation with 0 errors and 12 existing warnings. The next
+bounded non-ER gate is a separate catalog admission for only the three exact
+lower-investment occurrences. It is not implemented yet.
 
 ## Callable modules for later experiments
 
@@ -782,13 +818,15 @@ lower-investment branch. It is not implemented yet.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation and the catalog-integrated Klee,
-  Diona, Kokomi, and Noelle adapters:
+- Generic source-local condition evaluation; the catalog-integrated Klee,
+  Diona, Kokomi, and high-investment Noelle adapters; and the standalone lower-
+  investment Noelle adapter:
   `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`,
-  `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`, and
-  `scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts`, and
-  `scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts`.
+  `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`,
+  `scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts`,
+  `scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts`, and
+  `scripts/guide-factory/src/noelleSourceLocalLowerInvestmentSlice.ts`.
 - Exact manual condition extraction, repository parity, and authenticated
   current-wrapper coverage:
   `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,
@@ -873,12 +911,15 @@ factory.
   energy deferrals and the remaining 54 are energy-unclassified. The Keqing,
   Itto, Klee, Diona, Kokomi, and Noelle source-specific wrappers pin exact text
   to typed predicates and can resolve only their authored facts; they are not a
-  global
-  parser. The shared request-context vocabulary covers bounded role, goal,
+  global parser. The shared request-context vocabulary covers bounded role, goal,
   weapon-ownership/passive, preference, constellation, and named Talent-level
-  facts. The Noelle slice applies the numeric subset only to three exact
-  occurrences; checkpoint 32 admits those three while its 12 nonempty holdouts
-  receive no binding or energy state.
+  facts, including lower-bound, constellation-at-most, and exact named-Talent
+  comparisons. The high-investment Noelle slice applies its numeric subset only
+  to three exact occurrences; checkpoint 32 admits those three while its 12
+  nonempty holdouts receive no binding or energy state. The lower-investment
+  slice independently authenticates three former holdouts under C5 and Burst
+  Talent 9 request facts, but checkpoint 33 does not catalog-admit them; they
+  remain unbound and energy-unclassified in manual coverage.
   High Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
   shield uptime, Bond clearance, CRIT overcap, artifact quality, comparative
   thresholds, gameplay, and omitted-energy inputs remain explicitly unresolved

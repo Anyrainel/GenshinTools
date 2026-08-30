@@ -67,7 +67,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
-      "sha256": "309a0282bef6632f069db2615fb94283454c4b55bae125a410fe4eaccbf32cf7"
+      "sha256": "7baefa3861d45923285681670b54b65e4ff7414f31eaa23fad5818388718123a"
     },
     {
       "path": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
@@ -83,19 +83,19 @@
     },
     {
       "path": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
-      "sha256": "e8e5b6706919967818e646830e31f0c308c7ff0f477ecd8067df838b460ebb0d"
+      "sha256": "9408182751961006b33e1fcee04fe5a545b458d215dd47f2727bea1e85a1319f"
     },
     {
       "path": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
-      "sha256": "90d7d8cea2f1f20c38dd471cf610408fee04c117d9bda8a514870b8daf30d237"
+      "sha256": "b8ad619fdb9b2488a49773e654e6b8d71fef171f6df141d2c2550c42affd0b3d"
     },
     {
       "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
-      "sha256": "228a5b4fc82e5ea5913e5fdb57e44c78a721c254db6021cfee961237ce56c741"
+      "sha256": "37dd01c30f7a1f0c6f129858f59b991949ce834aef1c83853e3f7172f559efc3"
     },
     {
       "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
-      "sha256": "27e6466b8637f8609e5c901dba1316304c25f1f70b85d11decaedf5ec7390d15"
+      "sha256": "216620321056c6c7ece4129f6d33705ee977d23b8f31c72cff86e6f7315b8f09"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -139,7 +139,7 @@
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "921b107fb16f065e87fd9bd3223475eefe49f0967d567a4085d8fbb55af409d4"
+      "sha256": "117653152d7b65aa8e6d862a2ad433a0e12ee273e9fce3be621cd3f852510ef7"
     },
     {
       "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
@@ -151,7 +151,7 @@
     },
     {
       "path": "scripts/guide-factory/src/guideRequestContext.ts",
-      "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
+      "sha256": "deb828ad940076d03eead279cb36bf9a90c990870adba251ce5d49da460e8d6c"
     },
     {
       "path": "scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts",
@@ -223,7 +223,7 @@
     },
     {
       "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
-      "sha256": "05d57d50945ad9c6d170b6ad83fb08e33ea9d84f159065fedc6bee9154e22c13"
+      "sha256": "ff726c4a924699036c76dff453639be615016a7196cb25b449846efe9c44aeab"
     },
     {
       "path": "scripts/guide-factory/src/sourceScopedRolePairSample.ts",
@@ -2332,8 +2332,8 @@
       "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
     ],
     "klee": {
-      "durableReportCanonicalObjectSha256": "e8e5b6706919967818e646830e31f0c308c7ff0f477ecd8067df838b460ebb0d",
-      "durableReportFileSha256": "e8e5b6706919967818e646830e31f0c308c7ff0f477ecd8067df838b460ebb0d",
+      "durableReportCanonicalObjectSha256": "9408182751961006b33e1fcee04fe5a545b458d215dd47f2727bea1e85a1319f",
+      "durableReportFileSha256": "9408182751961006b33e1fcee04fe5a545b458d215dd47f2727bea1e85a1319f",
       "durableReportPath": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
       "freshlyAuthenticated": true,
       "holdoutOccurrenceCount": 11,
@@ -2345,8 +2345,8 @@
       "bindingOccurrenceCount": 60,
       "corpusOccurrenceCount": 142,
       "currentBoundaryAuthenticated": true,
-      "durableReportCanonicalObjectSha256": "228a5b4fc82e5ea5913e5fdb57e44c78a721c254db6021cfee961237ce56c741",
-      "durableReportFileSha256": "228a5b4fc82e5ea5913e5fdb57e44c78a721c254db6021cfee961237ce56c741",
+      "durableReportCanonicalObjectSha256": "37dd01c30f7a1f0c6f129858f59b991949ce834aef1c83853e3f7172f559efc3",
+      "durableReportFileSha256": "37dd01c30f7a1f0c6f129858f59b991949ce834aef1c83853e3f7172f559efc3",
       "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
       "kleeSourceLocalOccurrenceCount": 4,
       "typedBindingMeansConditionTruth": false

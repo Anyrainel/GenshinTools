@@ -6,6 +6,35 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `noelle-source-local-lower-investment-slice.json` authenticates slice
+  `kqm-noelle-source-local-lower-investment-slice-luna-viii` against the exact
+  KQM Noelle snapshot SHA-256
+  `d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0`.
+  It selects exactly three C0-C5/Burst-Talent-9 main-stat occurrences with
+  condition hash
+  `6da7375f731b4225cc74ace0f54f350efdcbf7f2cad0655fcab7490d54875436`:
+  ATK% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet, with payload
+  hashes `917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24`,
+  `27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a`,
+  and `d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603`.
+  The source predicate remains one unresolved `investment-threshold`; only the
+  wrapper-owned
+  `all(constellation-at-most(Noelle, 5), talent-level-is(Noelle, burst, 9))`
+  predicate evaluates
+  independent C5 and Burst Talent 9 request facts scoped to the exact
+  Noelle/Durin/Nicole/Xilonen team and Noelle subject. All three source cells
+  remain unresolved while all three request projections become applicable and
+  effectively matched. Source Talent evaluation stays false, and constellation
+  derives no Talent level. The exact 16-array boundary is 3 selected main-stat
+  rows, 12 nonempty holdouts, and 1 empty array; no substat is selected, and all
+  holdout/empty rows remain unconsumed with no slice-authored binding or energy
+  classification. The report authenticates 4 raw inputs and 13 generated-from
+  paths. It is standalone: its selected rows remain catalog-unbound and energy-
+  unclassified in manual coverage, whose checkpoint 32 counts remain unchanged.
+  The source remains agent-assisted, unreviewed, permission-unknown, and
+  promotion-ineligible. It creates zero candidates, equipment assignments,
+  optimizations, or builds and performs no guide, recommendation, ranking,
+  formula, damage, rotation, ideal-roll, or ER work.
 - `noelle-source-local-high-investment-slice.json` authenticates slice
   `kqm-noelle-source-local-high-investment-slice-luna-viii` against the exact
   KQM Noelle snapshot SHA-256
@@ -84,8 +113,9 @@ Current durable pilot evidence:
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
-  regenerated after the Noelle catalog admission changes its authenticated
-  manual-coverage input; its Klee claim and team-control boundary is unchanged.
+  regenerated after checkpoint 33's generic predicate additions refresh its
+  authenticated manual-coverage dependency. This is a hash-only dependency
+  change; its Klee claim and team-control boundary is unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -409,11 +439,14 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty reports in memory and rejects stale checked-in
-output. Checkpoint 32 adds no report; it admits only the three authenticated
-Noelle selected occurrences, then regenerates manual coverage and the Klee
-witness without changing the witness's four-claim semantics. The completed
-suite passes TypeScript, 61 test files with 449 tests, and validation with 0
-errors and 12 existing warnings. The Diona ER report is historical and
+`validate.ts` rebuilds all thirty-one reports in memory and rejects stale
+checked-in output. Checkpoint 33 adds the standalone lower-investment Noelle
+report but does not catalog-admit its three selected occurrences. Seven existing
+reports regenerate only because the generic predicate vocabulary changes
+authenticated hashes or dependencies; the checkpoint 32 catalog's
+`generatedFrom` pin changes without changing its 60 entries or any manual-
+coverage ledger. The Klee witness retains its four-claim semantics. The
+completed suite passes TypeScript, 62 test files with 461 tests, and validation
+with 0 errors and 12 existing warnings. The Diona ER report is historical and
 deliberately decoupled from unrelated knowledge-repository changes while ER
 work is deferred.

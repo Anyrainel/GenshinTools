@@ -4,6 +4,7 @@ import {
   authenticateSourceLocalConditionSliceReport,
   buildSourceLocalConditionSliceReport,
   type SourceLocalConditionClaimInput,
+  type SourceLocalConditionRequestPredicateAst,
   type SourceLocalConditionSliceInput,
   type SourceLocalConditionSliceReport,
 } from "../src/sourceLocalConditionSlice";
@@ -105,6 +106,83 @@ describe("source-local condition slice", () => {
     expect(sourceCell(report, "claim:circlet", OVERLOAD_TEAM).resolution).toBe(
       "unresolved-context",
     );
+  });
+
+  it("passes lower-investment numeric predicates through the source-local adapter with exact request scope", () => {
+    const input = fixture();
+    const lowerInvestmentPredicate = {
+      type: "all",
+      predicates: [
+        {
+          type: "constellation-at-most",
+          characterId: KLEE,
+          threshold: 5,
+        },
+        {
+          type: "talent-level-is",
+          characterId: KLEE,
+          talent: "burst",
+          threshold: 9,
+        },
+      ],
+    } satisfies SourceLocalConditionRequestPredicateAst;
+    for (const claim of input.claims.slice(0, 3)) {
+      claim.requestBindings[0]!.requestPredicate = structuredClone(
+        lowerInvestmentPredicate,
+      );
+    }
+    input.requestContext = {
+      requestFactsByTeamRecordId: {
+        [OVERLOAD_TEAM]: {
+          characterFactsById: {
+            [KLEE]: { constellation: 5, talentLevels: { burst: 9 } },
+          },
+        },
+        [FURINA_TEAM]: {
+          characterFactsById: {
+            [KLEE]: { constellation: 5, talentLevels: { burst: 9 } },
+          },
+        },
+      },
+    };
+
+    const report = buildSourceLocalConditionSliceReport(input);
+    expect(report.comparisonStatus).toBe("comparable");
+    expect(report.issues).toEqual([]);
+    expect(
+      projection(report, "claim:circlet", OVERLOAD_TEAM)
+        .requestContextBindings[0],
+    ).toMatchObject({
+      requestPredicate: lowerInvestmentPredicate,
+      result: "true",
+      predicateRows: [
+        {
+          predicateType: "constellation-at-most",
+          result: "true",
+          factProvenance: "request",
+          factScope: {
+            teamRecordId: OVERLOAD_TEAM,
+            characterId: KLEE,
+            accountSnapshotId: null,
+          },
+        },
+        {
+          predicateType: "talent-level-is",
+          result: "true",
+          factProvenance: "request",
+          factScope: {
+            teamRecordId: OVERLOAD_TEAM,
+            characterId: KLEE,
+            accountSnapshotId: null,
+          },
+        },
+      ],
+    });
+    expect(report.requestContextReport?.context).toEqual(input.requestContext);
+    expect(report.requestContextReport?.factProvenance).toMatchObject({
+      constellation: "request",
+      talentLevels: "request",
+    });
   });
 
   it("keeps omitted request facts unknown and scopes supplied facts independently by team", () => {
@@ -408,6 +486,59 @@ describe("source-local condition slice", () => {
       ]),
     });
 
+    const invalidExactTalentInput = fixture();
+    invalidExactTalentInput.claims[0]!.requestBindings[0]!.requestPredicate = {
+      type: "talent-level-is",
+      characterId: KLEE,
+      talent: "burst",
+      threshold: 0,
+    };
+    expect(
+      buildSourceLocalConditionSliceReport(invalidExactTalentInput),
+    ).toMatchObject({
+      comparisonStatus: "not-comparable",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "source-local-slice.invalid-numeric-character-request-predicate",
+        }),
+      ]),
+    });
+
+    const invalidAtMostThresholdInput = fixture();
+    invalidAtMostThresholdInput.claims[0]!.requestBindings[0]!.requestPredicate =
+      {
+        type: "constellation-at-most",
+        characterId: KLEE,
+        threshold: -1,
+      };
+    expect(
+      buildSourceLocalConditionSliceReport(invalidAtMostThresholdInput),
+    ).toMatchObject({
+      comparisonStatus: "not-comparable",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "source-local-slice.invalid-numeric-character-request-predicate",
+        }),
+      ]),
+    });
+
+    const wrongCharacterInput = fixture();
+    wrongCharacterInput.claims[0]!.requestBindings[0]!.requestPredicate = {
+      type: "constellation-at-most",
+      characterId: "not-klee",
+      threshold: 5,
+    };
+    expect(
+      buildSourceLocalConditionSliceReport(wrongCharacterInput),
+    ).toMatchObject({
+      comparisonStatus: "not-comparable",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "source-local-slice.invalid-numeric-character-request-predicate",
+        }),
+      ]),
+    });
+
     const missingCharacterInput = fixture();
     missingCharacterInput.claims[0]!.requestBindings[0]!.requestPredicate = {
       type: "constellation-at-least",
@@ -420,6 +551,52 @@ describe("source-local condition slice", () => {
       buildSourceLocalConditionSliceReport(missingCharacterInput)
         .comparisonStatus,
     ).toBe("not-comparable");
+
+    const malformedCompositeInput = fixture();
+    malformedCompositeInput.claims[0]!.requestBindings[0]!.requestPredicate = {
+      type: "all",
+      predicates: "not-an-array",
+    } as never;
+    expect(() =>
+      buildSourceLocalConditionSliceReport(malformedCompositeInput),
+    ).not.toThrow();
+    expect(
+      buildSourceLocalConditionSliceReport(malformedCompositeInput),
+    ).toMatchObject({
+      comparisonStatus: "not-comparable",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "source-local-slice.empty-request-predicate",
+        }),
+      ]),
+    });
+  });
+
+  it("fails closed without throwing for unknown and non-record source-local predicates", () => {
+    const cases = [
+      {
+        predicate: { type: "unknown-json-predicate" },
+        code: "source-local-slice.unsupported-request-predicate",
+      },
+      {
+        predicate: null,
+        code: "source-local-slice.invalid-request-predicate",
+      },
+    ] as const;
+
+    for (const { predicate, code } of cases) {
+      const input = fixture();
+      input.claims[0]!.requestBindings[0]!.requestPredicate = predicate as never;
+      const build = () => buildSourceLocalConditionSliceReport(input);
+      expect(build).not.toThrow();
+      const report = build();
+      expect(report.comparisonStatus).toBe("not-comparable");
+      expect(report.sourceClaimCells).toEqual([]);
+      expect(report.requestContextReport).toBeNull();
+      expect(report.issues).toEqual(
+        expect.arrayContaining([expect.objectContaining({ code })]),
+      );
+    }
   });
 
   it("authenticates only the exact canonical rebuilt report", () => {

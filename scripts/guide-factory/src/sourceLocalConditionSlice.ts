@@ -64,7 +64,18 @@ export type SourceLocalConditionRequestPredicateAst =
       threshold: number;
     }
   | {
+      type: "constellation-at-most";
+      characterId: string;
+      threshold: number;
+    }
+  | {
       type: "talent-level-at-least";
+      characterId: string;
+      talent: "auto" | "skill" | "burst";
+      threshold: number;
+    }
+  | {
+      type: "talent-level-is";
       characterId: string;
       talent: "auto" | "skill" | "burst";
       threshold: number;
@@ -925,18 +936,30 @@ function validateRequestBindings(
 }
 
 function validateLocalRequestPredicate(
-  predicate: SourceLocalConditionRequestPredicateAst,
+  predicate: unknown,
   claimCharacterId: string,
   path: string,
   issues: SourceConditionedGuidePacketIssue[],
 ): void {
+  if (!isRecord(predicate) || typeof predicate.type !== "string") {
+    issues.push({
+      code: "source-local-slice.invalid-request-predicate",
+      path,
+      message: "Request bindings require a supported typed predicate.",
+    });
+    return;
+  }
   if (predicate.type === "all" || predicate.type === "any") {
-    if (predicate.predicates.length === 0) {
+    if (
+      !Array.isArray(predicate.predicates) ||
+      predicate.predicates.length === 0
+    ) {
       issues.push({
         code: "source-local-slice.empty-request-predicate",
         path: `${path}.predicates`,
         message: "Composite request predicates require at least one child.",
       });
+      return;
     }
     predicate.predicates.forEach((child, index) =>
       validateLocalRequestPredicate(
@@ -948,18 +971,21 @@ function validateLocalRequestPredicate(
     );
     return;
   }
-  if (
+  const constellationPredicate =
     predicate.type === "constellation-at-least" ||
-    predicate.type === "talent-level-at-least"
-  ) {
+    predicate.type === "constellation-at-most";
+  const talentPredicate =
+    predicate.type === "talent-level-at-least" ||
+    predicate.type === "talent-level-is";
+  if (constellationPredicate || talentPredicate) {
     const validThreshold =
       typeof predicate.threshold === "number" &&
       Number.isSafeInteger(predicate.threshold) &&
-      (predicate.type === "constellation-at-least"
+      (constellationPredicate
         ? predicate.threshold >= 0 && predicate.threshold <= 6
         : predicate.threshold > 0);
     const validTalent =
-      predicate.type !== "talent-level-at-least" ||
+      !talentPredicate ||
       predicate.talent === "auto" ||
       predicate.talent === "skill" ||
       predicate.talent === "burst";
@@ -979,12 +1005,23 @@ function validateLocalRequestPredicate(
     }
     return;
   }
-  const operand =
-    predicate.type === "intended-role-is"
-      ? predicate.roleId
-      : predicate.goalId;
   if (
+    predicate.type !== "intended-role-is" &&
+    predicate.type !== "optimization-goal-is"
+  ) {
+    issues.push({
+      code: "source-local-slice.unsupported-request-predicate",
+      path: `${path}.type`,
+      message: `Unsupported source-local request predicate ${predicate.type}.`,
+    });
+    return;
+  }
+  const operand =
+    predicate.type === "intended-role-is" ? predicate.roleId : predicate.goalId;
+  if (
+    typeof predicate.characterId !== "string" ||
     predicate.characterId.length === 0 ||
+    typeof operand !== "string" ||
     operand.length === 0 ||
     predicate.characterId !== claimCharacterId
   ) {

@@ -21,17 +21,19 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 32 admits only checkpoint 31's three already authenticated Noelle
-high-investment main-stat occurrences into the current condition-binding
-catalog. The source-specific path rechecks the exact Luna VIII snapshot, guide
-and team identities, shared C6-or-Burst-Talent-10+ condition and hashes,
-independent DEF% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet
-payloads, numeric request projection, 12 holdouts, one empty occurrence, and
-disabled capability boundary before a private normalized helper constructs the
-three entries. The catalog is now 60 = 57 typed + 3 acknowledged; manual
-coverage authenticates seven wrapper families across 18 source files and 70
-generated-from paths. Checkpoint 32 adds no report, so the durable total remains
-30. This is occurrence-scoped validation evidence, not an artifact assignment,
+Checkpoint 33 adds a standalone Noelle lower-investment numeric request-context
+slice. The generic vocabulary now represents `constellation-at-most` and
+`talent-level-is` with three-valued evaluation. The source-specific slice keeps
+the source `investment-threshold` unresolved, then tests exactly three C0-C5/
+Burst-Talent-9 main-stat occurrences under a conjunction of constellation at
+most 5 and Burst Talent exactly 9, with independent C5 and Burst Talent 9
+request facts. It authenticates
+12 nonempty holdouts, one empty occurrence, four raw input files, and 13 input
+paths while selecting no substats. The new report brings the durable total to
+31, but the slice is not catalog-admitted: catalog 60 = 57 typed + 3
+acknowledged and manual coverage's seven wrapper families, 18 source files, 70
+generated-from paths, and all binding/energy ledgers remain exactly checkpoint
+32. This is occurrence-scoped validation evidence, not an artifact assignment,
 assembled build, recommendation, rank, optimizer, damage, rotation, ER result,
 or working guide factory:
 
@@ -497,6 +499,30 @@ or working guide factory:
 163. Add no durable report and execute no assignment, recommendation, build,
     rank, optimizer, damage, rotation, or ER work; keep the lower-investment
     Noelle branch as a separate, unimplemented next experiment.
+164. Add generic `constellation-at-most` and `talent-level-is` request
+    predicates with exact-team, exact-character request provenance and strict
+    three-valued evaluation.
+165. Authenticate exactly three lower-investment Noelle main-stat occurrences:
+    ATK% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet under the
+    shared C0-C5-and-Burst-Talent-9 condition.
+166. Evaluate only the wrapper-owned
+    `all(constellation <= 5, burst talent == 9)` mapping with independent C5 and
+    Burst Talent 9 request facts; keep all three source cells unresolved and all
+    three effective cells matched.
+167. Close the same Noelle boundary at 16 arrays: three selected main-stat rows,
+    12 nonempty holdouts including every substat row, and one empty occurrence,
+    with zero holdout consumption or slice-authored holdout binding/energy
+    classification.
+168. Authenticate four raw files and 13 generated-from paths in the standalone
+    lower-investment report, bringing the durable report total to 31 while
+    producing zero candidates, assignments, optimizations, or builds.
+169. Keep the lower-investment slice outside the catalog. Preserve checkpoint
+    32 catalog 60, all binding/energy/display ledgers, seven wrapper families,
+    18 source files, and 70 catalog-coverage generated-from paths exactly.
+170. Regenerate seven existing reports for hash/dependency changes only; update
+    the checkpoint 32 catalog `generatedFrom` pin without changing entries or
+    semantics, and leave lower-slice catalog admission as a separate,
+    unimplemented next gate. ER remains deferred.
 
 The first two active sources are already in this repository:
 
@@ -603,6 +629,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-lower-investment-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
@@ -621,7 +648,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty durable reports in memory: corpus inventory,
+It also rebuilds all thirty-one durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -633,11 +660,14 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-Klee, Diona, Kokomi, and Noelle catalog-integrated source-local condition
-slices, the exact manual condition-array coverage
+Klee, Diona, Kokomi, and high-investment Noelle catalog-integrated source-local
+condition slices, the standalone lower-investment Noelle slice, the exact
+manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration.
 Stale evidence cannot pass.
+The checkpoint 33 verification passes TypeScript, 62 test files with 461 tests,
+and validation with 0 errors and 12 existing warnings.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
@@ -737,6 +767,16 @@ metadata, and zero-request-binding check. A private normalized helper performs
 only the repeated selected-to-claim-to-control cross-link and entry construction
 after those checks; it is not a generic wrapper or parser.
 
+The generic numeric request vocabulary now includes `constellation-at-most`
+and `talent-level-is` alongside the existing lower-bound predicates. An omitted
+fact is unknown; `constellation-at-most` is true when the supplied exact-team,
+exact-character value is at or below its threshold and false when it is above,
+while `talent-level-is` is true only for exact equality and false for another
+supplied level. Under `all`, any false child makes the result false, every child
+must be true for a true result, and the remaining cases are unknown. Request
+provenance and scope remain explicit, and constellation never derives a Talent
+level.
+
 The Noelle high-investment adapter selects three exact main-stat
 occurrences from the C6-or-Burst-Talent-10+ guide branch: DEF% Sands, Geo DMG
 Bonus Goblet, and CRIT Rate/CRIT DMG Circlet. The source predicate remains one
@@ -761,6 +801,19 @@ then may the private normalized helper perform the repeated selected-to-claim-
 to-control cross-link and entry construction. The 12 holdouts and one empty row
 remain outside the catalog.
 
+The standalone Noelle lower-investment adapter selects the parallel C0-C5 and
+Burst-Talent-9 main-stat occurrences: ATK% Sands, Geo DMG Bonus Goblet, and CRIT
+Rate/CRIT DMG Circlet. The source predicate remains unresolved. Only the
+wrapper-owned `all(constellation <= 5, burst talent == 9)` request predicate is
+evaluated, using independent C5 and Burst Talent 9 facts scoped to the exact
+Noelle/Durin/Nicole/Xilonen team and Noelle subject. All three source cells stay
+unresolved while all three context projections become applicable and
+effectively matched. The same exact 16-array boundary closes as three selected,
+12 nonempty holdouts, and one empty occurrence; no substat is selected, and no
+holdout or empty row is consumed, bound, or energy-classified by the slice. The
+report authenticates four raw files and 13 generated-from paths and creates no
+candidate, assignment, optimization, or assembled build.
+
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
 and matches all 142 to their consolidated copies. Sixteen arrays are
@@ -783,8 +836,13 @@ Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates seven
 wrapper families across 18 source files and 70 generated-from paths. The
 validator rebuilds the 60-entry catalog and coverage before regenerating the
 Klee witness. Neither catalog nor coverage feeds back into a source-local slice.
-The Noelle admission binds only the three selected occurrences; its 12
-holdouts and one empty row retain their checkpoint 31 exclusion boundary.
+The high-investment Noelle admission binds only checkpoint 31's three selected
+occurrences; its 12 holdouts and one empty row retain their exclusion boundary.
+Checkpoint 33's three lower-investment selected occurrences are typed and not
+energy-deferred only inside their standalone slice. Because that slice is not
+catalog-admitted, those exact rows remain unbound and energy-unclassified in
+manual coverage, and every checkpoint 32 catalog and coverage count remains
+unchanged.
 These reports measure validation work. They do
 not prove a condition is satisfied, presume an unclassified row is non-ER, or
 establish that a preserved payload is a correct recommendation.
@@ -800,10 +858,12 @@ contain Furina. The join is Guide Factory-authored, consumes none of the 11
 holdouts, and performs no payload expansion, compatibility evaluation, build or
 candidate construction, cross-product, selection, recommendation, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
-Its durable report is regenerated because manual coverage is a declared input;
-the Noelle catalog admission changes only that downstream coverage dependency.
-The four Klee claims, two team controls, and interpretation boundary do not
-change.
+Its durable report is regenerated because manual coverage is a declared input.
+Checkpoint 33's generic predicate additions refresh hashes in seven existing
+reports and update the checkpoint 32 catalog's authenticated `generatedFrom`
+pin only; catalog entries, coverage ledgers, and Klee witness semantics do not
+change. The four Klee claims, two team controls, and interpretation boundary
+remain the same.
 
 ## Data flow
 
