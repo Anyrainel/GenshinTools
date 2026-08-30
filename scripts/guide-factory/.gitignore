@@ -39,3 +39,4 @@ reports/*
 !reports/xiao-source-local-condition-slice.json
 !reports/xiao-formula-count-parity.json
 !reports/xiao-ffxx-applicable-claim-projection-contract.json
+!reports/xiao-ffxx-partial-artifact-candidate-contract.json

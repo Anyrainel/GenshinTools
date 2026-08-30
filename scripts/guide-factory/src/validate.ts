@@ -283,6 +283,13 @@ import {
   XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_SOURCE_FILE_PATHS,
   type XiaoFfxxApplicableClaimProjectionContractReport,
 } from "./xiaoFfxxApplicableClaimProjectionContract";
+import {
+  authenticateXiaoFfxxPartialArtifactCandidateContract,
+  XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_INPUT_PATHS,
+  XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_REPORT_PATH,
+  XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_SOURCE_FILE_PATHS,
+  type XiaoFfxxPartialArtifactCandidateContractReport,
+} from "./xiaoFfxxPartialArtifactCandidateContract";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -371,6 +378,8 @@ export async function runValidation(
     xiaoSourceLocalConditionSliceSnapshotText,
     xiaoFfxxApplicableClaimProjectionInput,
     xiaoFfxxApplicableClaimProjectionSourceFiles,
+    xiaoFfxxPartialArtifactCandidateInput,
+    xiaoFfxxPartialArtifactCandidateSourceFiles,
     xiaoFormulaCountParityInput,
     xiaoFormulaCountParitySourceFiles,
   ] =
@@ -547,6 +556,18 @@ export async function runValidation(
       readJson(XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_REPORT_PATH),
       Promise.all(
         XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
+      readJson(XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_REPORT_PATH),
+      Promise.all(
+        XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_SOURCE_FILE_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
@@ -1270,6 +1291,42 @@ export async function runValidation(
             "canonical-inputs-not-comparable"
               ? "The Xiao FFXX applicable-claim projection could not fresh-authenticate the exact source-local report, preserve its 3/14/4 partition, or reproduce the source-only 2-match and explicit-C6 3-match views."
               : "The saved Xiao FFXX applicable-claim projection does not match the current authenticated source cells, exact request-context projection, provenance-preserving payload groups, and zero-candidate/zero-build boundary.",
+        });
+      }
+      const xiaoFfxxPartialArtifactCandidateGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_INPUT_PATHS,
+        );
+      const xiaoFfxxPartialArtifactCandidateAuthentication =
+        authenticateXiaoFfxxPartialArtifactCandidateContract(
+          xiaoFfxxPartialArtifactCandidateInput as XiaoFfxxPartialArtifactCandidateContractReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: xiaoManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoSourceLocalDurableReportInput:
+              xiaoSourceLocalConditionSliceInput,
+            applicableClaimDurableReportInput:
+              xiaoFfxxApplicableClaimProjectionInput,
+            sourceFiles: xiaoFfxxPartialArtifactCandidateSourceFiles,
+            generatedFrom: xiaoFfxxPartialArtifactCandidateGeneratedFrom,
+          },
+        );
+      if (!xiaoFfxxPartialArtifactCandidateAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFfxxPartialArtifactCandidateAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_xiao_ffxx_partial_artifact_candidate"
+              : "pipeline.stale_xiao_ffxx_partial_artifact_candidate",
+          path: "reports.xiao-ffxx-partial-artifact-candidate-contract",
+          message:
+            xiaoFfxxPartialArtifactCandidateAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The Xiao FFXX partial artifact candidate could not fresh-authenticate the applicable-claim projection, preserve its two views and 3/14/4 partition, or reproduce the one-candidate/two-binding completeness boundary."
+              : "The saved Xiao FFXX partial artifact candidate does not match the current singleton artifact-set/Goblet join, exact source/request provenance bindings, four explicit missing axes, and zero-complete-build boundary.",
         });
       }
       const xiaoFormulaFixtureManualInput =

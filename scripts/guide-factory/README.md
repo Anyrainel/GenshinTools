@@ -21,16 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 43 consumes the authenticated checkpoint-42 Xiao condition slice
-through two exact applicability views. The source-only FFXX view matches the
-Marechaussee Hunter and Xianyun-conditioned Anemo Goblet occurrences and leaves
-the C6 occurrence unresolved. The exact-request view adds only one wrapper-
-owned FFXX/Xiao-C6 fact, matches all three occurrences, and groups the two
-Anemo Goblet occurrences into one payload identity while preserving both
-provenance chains. The grouping is deduplication, not voting or ranking. No
-candidate, build, equipment choice, team rank, damage evaluation, ideal-roll
-allocation, rotation optimization, or ER calculation is performed. This is
-not a working guide factory or an equipment recommendation:
+Checkpoint 44 performs the first authenticated evidence-to-candidate
+transition. It joins the checkpoint-43 Marechaussee Hunter and Anemo Goblet
+payloads into exactly one Guide Factory-authored partial technical candidate
+for Xiao in the exact FFXX team. The source-only and explicit-C6 views become
+two provenance bindings to the same candidate, not two candidates. A fixed
+six-axis ledger marks artifact set and Goblet present while weapon, Sands,
+Circlet, and substats remain missing without defaults. The candidate is
+incomplete, unranked, compatibility-unevaluated, and not materializable by the
+guide or generator schemas. No complete build, recommendation, damage result,
+ideal-roll allocation, rotation optimization, or ER calculation is performed.
+This is not a working guide factory or an equipment recommendation:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -768,6 +769,25 @@ not a working guide factory or an equipment recommendation:
      builds; retain all fourteen nonempty holdouts and four empty arrays as
      unconsumed and keep every recommendation, compatibility, generator,
      optimizer, formula, damage, rotation, ideal-roll, and ER capability false.
+241. Byte-authenticate twenty exact declared inputs and fresh-authenticate the
+     checkpoint-43 applicable-claim projection before constructing any partial
+     candidate.
+242. Join only the authenticated Marechaussee Hunter and Anemo Goblet singleton
+     payloads into one Guide Factory-authored partial technical candidate; do
+     not attribute the whole composition to KQM.
+243. Bind the source-only and exact FFXX/Xiao-C6 evidence views to the same
+     candidate identity. Preserve the C6 source-unresolved/request-resolved
+     lineage and deny any second candidate, vote, corroboration, or rank.
+244. Use an explicit six-axis completeness ledger: artifact set and Goblet are
+     present; weapon, Sands, Circlet, and substats are missing-not-admitted with
+     no defaults. ER remains excluded and deferred outside the denominator.
+245. Recompute technical-combination, candidate-identity, upstream-view,
+     occurrence-evidence, and view-binding hashes; fail closed with zero output
+     on any raw, semantic, provenance, axis, count, or capability drift.
+246. Integrate the result as global report 41 with one partial candidate, two
+     provenance bindings, zero complete candidates, zero builds, zero
+     recommendations, and no generator, optimizer, formula, damage, rotation,
+     ideal-roll, rank, compatibility, or ER claim.
 
 The first two active sources are already in this repository:
 
@@ -848,6 +868,11 @@ occurrence. The exact-request view resolves only that C6 occurrence and groups
 the duplicate Anemo Goblet payload by technical identity while retaining both
 reasons. It assembles zero candidates and zero builds.
 
+Checkpoint 44 joins those two payload axes into one Guide Factory-authored
+partial technical candidate. Source-only and explicit-C6 are separate evidence
+bindings to the same identity. Weapon, Sands, Circlet, and substats remain
+missing, so the result is neither a complete build nor a recommendation.
+
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
 Source-specific capture contracts live beside `sources/registry.json`.
@@ -906,6 +931,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-lower-investment-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-applicable-claim-projection-contract.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-partial-artifact-candidate-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
@@ -930,7 +956,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty globally integrated durable reports
+In full mode it rebuilds all forty-one globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -947,7 +973,8 @@ comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
 Klee, Diona, Kokomi, both Noelle, and Xiao catalog-integrated source-local
 condition slices, the authenticated two-view Xiao FFXX applicable-claim
-projection, the exact
+projection, its authenticated one-candidate/two-binding partial artifact
+contract, the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration, plus the authenticated
@@ -1209,6 +1236,12 @@ the source-only and FFXX/Xiao-C6 request
 views, and deduplicates repeated payload identity without voting, ranking, or
 composition. All fourteen holdouts and four empty arrays remain outside the
 projection.
+
+Checkpoint 44 fresh-authenticates that projection across a twenty-file byte
+closure, then performs one deterministic singleton-axis join. Its six-axis
+ledger admits only artifact set and Goblet; four axes remain missing without
+defaults. The result has one partial candidate, two provenance bindings, and
+zero complete candidates or builds.
 
 The manual condition-array inventory then broadens that validation boundary to
 eight guide-selected external snapshots. The ninth indexed snapshot is the

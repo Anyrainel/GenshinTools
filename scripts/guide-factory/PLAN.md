@@ -986,11 +986,23 @@ the newly applicable C6 Anemo occurrence deduplicates into the existing Anemo
 payload group. Both reasons remain attached, and the deduplication supplies no
 vote, corroboration, rank, candidate, build, or compatibility result.
 
-The next non-ER experiment is a bounded partial-candidate seam over only those
-two authenticated axes. It must keep missing weapon, sands, circlet, substat,
-formula, rotation, and optimization inputs explicit rather than filling them
-from nearby prose or presets. Its output remains a technical candidate until
-domain review and an accepted promotion policy say otherwise.
+Checkpoint 44 performs that bounded composition. It byte-authenticates twenty
+exact inputs, fresh-authenticates checkpoint 43, and joins only the singleton
+Marechaussee Hunter and Anemo Goblet payloads. One canonical partial candidate
+has two evidence bindings: source-only and exact FFXX/Xiao-C6. A fixed six-axis
+ledger keeps weapon, Sands, Circlet, and substats explicitly missing. The join
+is Guide Factory-authored, incomplete, unranked, compatibility-unevaluated, and
+not materializable by the guide or generator schemas.
+
+The next non-ER source slice should add real branch information before another
+composition. The scoped domain is thirteen occurrences from exactly three Xiao
+records: nine weapon groups containing fourteen weapon IDs, ATK% Sands, one
+CR/CD Circlet group, and two offensive-tail substat groups. Four occurrences
+are source-unconditional; the immediate weapon domain is two ranked 5-star tied
+groups plus unranked Deathmatch, for three groups and six leaves. Six other
+weapon groups, the Circlet selection, and the incomplete substat tail must
+remain guarded or deferred. The source slice will not yet join those records to
+FFXX or turn their order into a cross-rarity ranking.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

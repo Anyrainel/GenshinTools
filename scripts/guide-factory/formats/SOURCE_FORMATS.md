@@ -290,6 +290,12 @@ slice before exposing a source-only FFXX view and a separate wrapper-C6 request
 view. The wrapper-owned constellation fact remains outside the source record,
 and equal Anemo Goblet payloads retain their distinct source-condition reasons.
 
+Checkpoint 44 likewise adds no source record. It joins only the two
+checkpoint-43 singleton payload identities into a Guide Factory-authored
+partial technical candidate. The source-only and wrapper-C6 views remain
+separate evidence bindings, and weapon, Sands, Circlet, and substats remain
+unadmitted rather than being copied from nearby Xiao records.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

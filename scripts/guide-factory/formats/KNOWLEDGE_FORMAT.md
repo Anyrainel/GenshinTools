@@ -420,6 +420,30 @@ creates no Cartesian product, compatibility result, candidate, complete build,
 recommendation, generator input, optimizer input, formula plan, damage result,
 ideal-roll target, or ER requirement.
 
+### Derived authenticated partial technical candidates
+
+A partial technical candidate may join authenticated singleton axes only under
+an explicit Guide Factory authorship boundary. Its identity must cover the
+exact team and character, ordered present payloads, and a fixed present/missing
+axis policy. View- or request-specific facts belong to provenance bindings and
+must not alter technical identity unless they actually introduce a different
+payload.
+
+Every required but unadmitted build axis must remain explicitly missing without
+a default. A partial candidate cannot be serialized as a complete guide
+recommendation or runtime generator candidate by fabricating those fields.
+Source-authored observations do not make the cross-record whole composition
+source-authored, recommended, compatible, complete, ranked, or optimal.
+
+Checkpoint 44 uses a six-axis vocabulary and joins only the authenticated Xiao
+FFXX Marechaussee Hunter and Anemo Goblet singleton payloads. Weapon, Sands,
+Circlet, and substats remain missing. The source-only and explicit-C6 views are
+two provenance bindings to one Guide Factory-authored partial identity. The C6
+reason adds no second payload or candidate. ER remains excluded and deferred,
+and no choice selection, Cartesian enumeration, compatibility evaluation,
+generator, optimizer, formula, damage, rotation, or ideal-roll computation is
+performed.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

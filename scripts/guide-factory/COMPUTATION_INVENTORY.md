@@ -714,6 +714,35 @@ deduplication only. It emits zero candidates and zero builds and enables no
 guide, recommendation, compatibility, selection, generator, optimizer,
 formula, damage, rotation, ideal-roll, or ER capability.
 
+## Xiao FFXX partial artifact candidate seam
+
+`src/xiaoFfxxPartialArtifactCandidateContract.ts` is the first authenticated
+evidence-to-candidate consumer. It byte-authenticates twenty exact declared
+inputs, requires parsed-object parity for six JSON inputs, and fresh-
+authenticates the complete checkpoint-43 projection before consuming either
+payload.
+
+The seam uses a fixed ordered vocabulary of weapon, artifact set, Sands,
+Goblet, Circlet, and substats. It composes only the authenticated singleton 4pc
+Marechaussee Hunter and Anemo Goblet axes. Weapon, Sands, Circlet, and substats
+remain `missing-not-admitted-no-default`; no current-preset or nearby-source
+fallback is allowed. ER is excluded and deferred outside the completeness
+denominator.
+
+Exactly one Guide Factory-authored partial technical candidate is produced.
+The source-only and exact FFXX/Xiao-C6 views are two evidence bindings to that
+same technical and candidate identity. Each binding retains the complete
+occurrence-evidence hashes and applicability states. The C6 source cell remains
+unresolved and only the exact request projection is matched; the extra reason
+adds no payload, second candidate, vote, corroboration, confidence, or rank.
+
+This is a deterministic singleton-axis join, not a choice search. Cross-axis
+composition and partial-candidate construction execute, but Cartesian
+enumeration, choice selection, compatibility evaluation, recommendation
+composition, generator, optimizer, formula, damage, rotation, ideal-roll, and
+ER work do not. The result is incomplete and cannot be materialized as a guide
+recommendation or runtime artifact-generation candidate.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
