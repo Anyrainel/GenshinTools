@@ -305,6 +305,23 @@ Current durable pilot evidence:
   or builds. No generator, optimizer, formula, damage, rotation, ideal-roll, or
   ER computation runs. Its 44,129-byte output has SHA-256
   `97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51`.
+- `xiao-ffxx-non-er-condition-free-branch-candidate-contract.json`
+  byte-authenticates the exact 27-file union of checkpoints 44 and 45, both
+  durable upstream reports, and its own implementation boundary. Eight JSON
+  inputs require byte/parsed-object parity, and both direct upstreams are
+  fresh-authenticated before use. The exact `1 x 6 x 1` product produces six
+  partial candidates across three preserved source weapon groups and twelve
+  inherited view-evidence bindings. Weapon, 4pc Marechaussee Hunter, ATK%
+  Sands, and Anemo DMG Bonus Goblet are present; guarded Circlet and substat
+  axes remain missing. Only weapon and Sands are newly admitted empty-condition
+  rows; artifact set and Goblet retain inherited team-conditioned provenance.
+  All nine guarded source observations stay withheld.
+  Source group ranks and request facts remain outside technical identity, no
+  cross-rarity or factory rank is created, and zero complete candidates,
+  builds, recommendations, or winners are emitted. No compatibility,
+  generator, optimizer, formula, damage, rotation, ideal-roll, or ER
+  computation runs. Its current 64,466-byte output has SHA-256
+  `d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -678,7 +695,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-two globally integrated reports
+In full mode `validate.ts` rebuilds all forty-three globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -710,6 +727,9 @@ now contains 42 JSON reports.
 Checkpoint 45 adds the Xiao non-ER equipment branch source slice as integrated
 report 42. Including checkpoint 35's permission-isolated report, this directory
 now contains 43 JSON reports.
+Checkpoint 46 adds the Xiao FFXX condition-free branch candidate domain as
+integrated report 43. Including checkpoint 35's permission-isolated report,
+this directory now contains 44 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

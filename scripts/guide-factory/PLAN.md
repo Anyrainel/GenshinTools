@@ -1006,13 +1006,28 @@ turn their order into a cross-rarity ranking. It is global report 42; its
 44,129-byte output has SHA-256
 `97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51`.
 
-The next non-ER boundary should attempt the smallest genuine branch
-composition: combine checkpoint 44 with only checkpoint 45's authenticated
-source-condition-free weapon and Sands domain. It must retain group-level
-five-star ranking, tied membership, Deathmatch's unranked and cross-rarity-
-incomparable status, and explicit missing/guarded Circlet and substat axes. The
-experiment should report every intermediate candidate and discrepancy before
-using any generator or objective.
+Checkpoint 46 performs that smallest genuine branch composition. It
+fresh-authenticates checkpoints 44 and 45, then enumerates exactly
+`1 partial parent x 6 condition-free weapon leaves x 1 ATK% Sands = 6`
+Guide Factory-authored partial candidates. Three source groups retain their
+original boundaries: two ranked five-star tied groups and one unranked
+four-star Deathmatch group, with no cross-rarity ordering. Each candidate has
+four present axes and two guarded missing axes. The two checkpoint-44 views
+remain twelve evidence bindings rather than twelve candidates, and all nine
+guarded checkpoint-45 observations remain withheld. This is branch
+construction, not selection, compatibility evaluation, a complete build, or a
+recommendation.
+Only the newly admitted weapon and Sands rows have empty source conditions;
+the inherited artifact-set and Goblet payloads retain their team-conditioned
+checkpoint-44 provenance.
+
+The next non-ER boundary should materialize only the minimum explicit
+Guide Factory-owned Circlet and substat assumptions required by one existing
+offline computation seam. It should retain those assumptions as candidate-
+local variants, report every materialization or evaluation failure, and compare
+the resulting technical observations with authenticated source groups and the
+existing Xiao formula-count mismatch. It must not emit a player-facing winner
+until the formula-count plan and objective are independently credible.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

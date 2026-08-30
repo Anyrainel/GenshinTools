@@ -769,6 +769,33 @@ candidate enumeration, choice selection, compatibility evaluation, generator,
 optimizer, formula, damage, rotation, ideal-roll, or ER computation and emits
 zero candidates and zero builds.
 
+## Xiao FFXX condition-free branch candidate seam
+
+`src/xiaoFfxxNonErConditionFreeBranchCandidateContract.ts` is the first
+authenticated genuine branch enumerator. It fresh-authenticates checkpoint
+44's one partial parent and checkpoint 45's source domain, then computes the
+bounded product `1 parent x 6 admitted weapon leaves x 1 Sands = 6 partial
+candidates`.
+
+The six candidates remain grouped as three tied five-star rank-1 members, two
+tied five-star rank-2 members, and one unranked Deathmatch member. Source ranks
+live in branch-group and candidate-provenance projections, not technical or
+candidate identity. The flat serialization order is not a rank and no cross-
+rarity order exists. Both checkpoint-44 views bind to each candidate, producing
+twelve provenance bindings without multiplying the six technical identities.
+
+Every candidate has weapon, artifact set, Sands, and Goblet present. Circlet
+and substats remain guarded missing axes, so all six are partial and none can be
+used as a runtime artifact-generation candidate. Six guarded weapon groups,
+the guarded Circlet group, and two incomplete substat priorities remain wholly
+withheld. The seam executes bounded Cartesian enumeration, cross-axis
+composition, and partial-candidate construction only. It performs no condition
+evaluation, selection, compatibility test, recommendation composition,
+generator, optimizer, formula, damage, rotation, ideal-roll, or ER work.
+The source-condition-free label is scoped to the newly admitted weapon and
+Sands rows. The inherited artifact-set and Goblet axes retain their
+team-conditioned checkpoint-44 view provenance.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields

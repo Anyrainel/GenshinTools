@@ -41,3 +41,4 @@ reports/*
 !reports/xiao-ffxx-applicable-claim-projection-contract.json
 !reports/xiao-ffxx-partial-artifact-candidate-contract.json
 !reports/xiao-non-er-equipment-branch-source-slice.json
+!reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json

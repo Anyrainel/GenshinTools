@@ -305,6 +305,13 @@ priorities, and targets are preserved. The adapter's labels for condition-free
 versus guarded/deferred handling are Guide Factory-authored interpretation
 boundaries, not new KQM fields or evidence that a guard is satisfied.
 
+Checkpoint 46 adds no source record or source-format field. It combines only
+checkpoint 45's four empty-condition observations with checkpoint 44's partial
+candidate under a Guide Factory-authored `1 x 6 x 1` enumeration boundary. Its
+candidate IDs, technical/provenance hashes, missing-axis policies, and inherited
+view bindings are derived report fields. They must never be written back as KQM
+authorship, source ranking, source compatibility, or a complete source build.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

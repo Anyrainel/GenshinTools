@@ -297,6 +297,13 @@ import {
   XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_SOURCE_FILE_PATHS,
   type XiaoFfxxPartialArtifactCandidateContractReport,
 } from "./xiaoFfxxPartialArtifactCandidateContract";
+import {
+  authenticateXiaoFfxxNonErConditionFreeBranchCandidateContract,
+  XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_INPUT_PATHS,
+  XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_REPORT_PATH,
+  XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_SOURCE_FILE_PATHS,
+  type XiaoFfxxNonErConditionFreeBranchCandidateContractReport,
+} from "./xiaoFfxxNonErConditionFreeBranchCandidateContract";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -389,6 +396,8 @@ export async function runValidation(
     xiaoFfxxApplicableClaimProjectionSourceFiles,
     xiaoFfxxPartialArtifactCandidateInput,
     xiaoFfxxPartialArtifactCandidateSourceFiles,
+    xiaoFfxxNonErConditionFreeBranchCandidateInput,
+    xiaoFfxxNonErConditionFreeBranchCandidateSourceFiles,
     xiaoFormulaCountParityInput,
     xiaoFormulaCountParitySourceFiles,
   ] =
@@ -589,6 +598,20 @@ export async function runValidation(
       readJson(XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_REPORT_PATH),
       Promise.all(
         XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
+      readJson(
+        XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_REPORT_PATH,
+      ),
+      Promise.all(
+        XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_SOURCE_FILE_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
@@ -1382,6 +1405,51 @@ export async function runValidation(
             "canonical-inputs-not-comparable"
               ? "The Xiao FFXX partial artifact candidate could not fresh-authenticate the applicable-claim projection, preserve its two views and 3/14/4 partition, or reproduce the one-candidate/two-binding completeness boundary."
               : "The saved Xiao FFXX partial artifact candidate does not match the current singleton artifact-set/Goblet join, exact source/request provenance bindings, four explicit missing axes, and zero-complete-build boundary.",
+        });
+      }
+      const xiaoFfxxNonErConditionFreeBranchCandidateGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_INPUT_PATHS,
+        );
+      const xiaoFfxxNonErConditionFreeBranchCandidateAuthentication =
+        authenticateXiaoFfxxNonErConditionFreeBranchCandidateContract(
+          xiaoFfxxNonErConditionFreeBranchCandidateInput as XiaoFfxxNonErConditionFreeBranchCandidateContractReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: xiaoManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoSourceLocalDurableReportInput:
+              xiaoSourceLocalConditionSliceInput,
+            applicableClaimDurableReportInput:
+              xiaoFfxxApplicableClaimProjectionInput,
+            partialCandidateDurableReportInput:
+              xiaoFfxxPartialArtifactCandidateInput,
+            branchSourceDurableReportInput:
+              xiaoNonErEquipmentBranchSourceSliceInput,
+            sourceFiles:
+              xiaoFfxxNonErConditionFreeBranchCandidateSourceFiles,
+            generatedFrom:
+              xiaoFfxxNonErConditionFreeBranchCandidateGeneratedFrom,
+          },
+        );
+      if (
+        !xiaoFfxxNonErConditionFreeBranchCandidateAuthentication.authenticated
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFfxxNonErConditionFreeBranchCandidateAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_xiao_ffxx_non_er_condition_free_branch_candidates"
+              : "pipeline.stale_xiao_ffxx_non_er_condition_free_branch_candidates",
+          path:
+            "reports.xiao-ffxx-non-er-condition-free-branch-candidate-contract",
+          message:
+            xiaoFfxxNonErConditionFreeBranchCandidateAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The Xiao FFXX non-ER branch candidate contract could not fresh-authenticate checkpoints 44 and 45 or preserve its exact 1 x 6 x 1 partial-candidate domain."
+              : "The saved Xiao FFXX non-ER branch candidate contract does not match the authenticated condition-free weapon/Sands expansion, rank boundaries, guarded omissions, provenance bindings, and zero-complete-build boundary.",
         });
       }
       const xiaoFormulaFixtureManualInput =

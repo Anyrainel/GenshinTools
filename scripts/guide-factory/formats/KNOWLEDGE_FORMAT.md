@@ -468,6 +468,35 @@ positions, recommendation, formula, damage, ideal-roll allocation, or ER
 result. The offensive-tail rows remain incomplete while the source's leading
 ER term is deferred.
 
+### Derived authenticated condition-free branch candidates
+
+A condition-free branch candidate domain may combine one authenticated partial
+candidate with source-condition-free leaves from an authenticated source branch
+domain. The product bounds and admitted occurrence identities must be explicit,
+and every generated object must retain Guide Factory authorship. Empty source
+condition arrays are an admission rule only; they do not prove compatibility,
+universal applicability, relative strength, or a recommendation.
+
+Technical identity contains only the actual equipment/stat payloads and the
+explicit missing-axis policy. Source ranks, tied membership, classifications,
+occurrence identities, and request-view bindings belong to separate provenance
+hashes. A source group rank cannot become an individual rank, serialization
+order cannot become a rank, and separately ranked rarity classes cannot be
+merged without an evaluated objective.
+
+Checkpoint 46 applies this shape to checkpoint 44's one Xiao FFXX partial
+candidate and checkpoint 45's six condition-free weapon leaves plus ATK% Sands.
+The exact `1 x 6 x 1` product yields six partial candidates across three source
+groups and twelve inherited view-evidence bindings. Every candidate contains a
+weapon, 4pc Marechaussee Hunter, ATK% Sands, and Anemo DMG Bonus Goblet. Circlet
+and substats remain guarded missing axes, all nine guarded source observations
+remain withheld, and no candidate is complete or materializable as a guide or
+runtime generator input. The report performs no selection, compatibility,
+formula, damage, optimizer, ideal-roll, rotation, or ER computation.
+The empty-condition admission label applies only to the new weapon and Sands
+branches. Marechaussee Hunter and the Goblet remain explicitly team-conditioned
+inherited payloads.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report
