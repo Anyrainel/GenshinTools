@@ -3,8 +3,10 @@ import {
   buildKeqingIneffaFormulaDraftReport,
   buildKeqingIneffaSourceBackedEquipmentScenario,
   KEQING_INEFFA_EXTERNAL_TEAM_ID,
+  KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS,
   KEQING_INEFFA_SOURCE_ROTATION_ID,
 } from "../src/keqingIneffaFormulaDraft";
+import { materializeSourceBackedEquipmentScenario } from "../src/sourceBackedEquipmentScenario";
 import { readJson } from "../src/io";
 import { KNOWLEDGE_REPOSITORY_PATH } from "../src/paths";
 import { KnowledgeRepositorySchema } from "../src/schemas";
@@ -19,7 +21,38 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
       buildKeqingIneffaSourceBackedEquipmentScenario(repository);
     const second =
       buildKeqingIneffaSourceBackedEquipmentScenario(repository);
+    const preMigrationOracle = materializeSourceBackedEquipmentScenario(
+      repository,
+      KEQING_INEFFA_EXTERNAL_TEAM_ID,
+      [
+        {
+          characterId: "keqing",
+          characterGuideId: "genshintools-presets:character-guide:keqing",
+          weaponId: "mistsplitter_reforged",
+          buildSourceRecordId: "1WswsAu",
+        },
+        {
+          characterId: "ineffa",
+          characterGuideId: "genshintools-presets:character-guide:ineffa",
+          weaponId: "fractured_halo",
+          buildSourceRecordId: "FeFiQU8",
+        },
+        {
+          characterId: "furina",
+          characterGuideId: "genshintools-presets:character-guide:furina",
+          weaponId: "splendor_of_tranquil_waters",
+          buildSourceRecordId: "BQAI0BO",
+        },
+        {
+          characterId: "xilonen",
+          characterGuideId: "genshintools-presets:character-guide:xilonen",
+          weaponId: "peak_patrol_song",
+          buildSourceRecordId: "Dbt0Wkm",
+        },
+      ],
+    );
 
+    expect(first).toEqual(preMigrationOracle);
     expect(second).toEqual(first);
     expect(second).not.toBe(first);
     expect(second.team).not.toBe(first.team);
@@ -63,6 +96,17 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
       classification: "calculator-default-draft",
       supportsGuideClaims: false,
       promotionEligible: false,
+      semanticScope: {
+        expectedManifestSha256:
+          "8b93f93844b29fae7483a16d484945fe1f4376dd1fb0d1a579d0f55b0197008b",
+        expectedScopeProjectionSha256:
+          "860ad7388a681147ab68e45b5730bcede1efc864a71667bd1f5497b6dbdd1c41",
+        acceptedAudit: {
+          status: "accepted",
+          trust: "authenticated-current-input-rebuild-and-pinned-expectation",
+          scopeId: "keqing-ineffa-formula-fixture-repository-v1",
+        },
+      },
       sourceTeamRecordId: KEQING_INEFFA_EXTERNAL_TEAM_ID,
       equipmentFixture: {
         classification: "source-backed-equipment-fixture",
@@ -82,6 +126,12 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
       authoredTranslation: { reviewStatus: "unreviewed" },
     });
     expect(report.equipmentFixture.evidence).toHaveLength(4);
+    expect(KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS).not.toContain(
+      "scripts/guide-factory/data/knowledge/repository.json",
+    );
+    expect(KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS).toContain(
+      "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+    );
     expect(
       report.equipmentFixture.evidence.map(
         ({ characterId, weaponId, buildSourceRecordId }) => ({
@@ -279,7 +329,7 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
     team.rotations[0].notation = "changed source rotation";
     await expect(
       buildKeqingIneffaFormulaDraftReport(changedRotation, [])
-    ).rejects.toThrow("source rotation evidence changed");
+    ).rejects.toThrow("semantic scope authentication failed");
 
     const changedFootnote = structuredClone(repository);
     const footnoteTeam = changedFootnote.records.find(
@@ -291,7 +341,7 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
     footnoteTeam.rotations[0].assumptions[0] = "changed source footnote";
     await expect(
       buildKeqingIneffaFormulaDraftReport(changedFootnote, [])
-    ).rejects.toThrow("source rotation evidence changed");
+    ).rejects.toThrow("semantic scope authentication failed");
 
     const newlyUnresolved = structuredClone(repository);
     const unresolvedTeam = newlyUnresolved.records.find(
@@ -303,7 +353,7 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
     unresolvedTeam.rotations[0].unresolvedSegments.push("new ambiguity");
     await expect(
       buildKeqingIneffaFormulaDraftReport(newlyUnresolved, [])
-    ).rejects.toThrow("source rotation evidence changed");
+    ).rejects.toThrow("semantic scope authentication failed");
 
     const incompatibleBuild = structuredClone(repository);
     const guide = incompatibleBuild.records.find(
@@ -319,6 +369,6 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
     build.minConstellation = 6;
     await expect(
       buildKeqingIneffaFormulaDraftReport(incompatibleBuild, [])
-    ).rejects.toThrow("requires constellation 6");
+    ).rejects.toThrow("semantic scope authentication failed");
   });
 });

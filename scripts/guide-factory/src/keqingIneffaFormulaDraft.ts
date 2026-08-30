@@ -8,7 +8,7 @@ import {
   type SourceFormulaCountClaimLine,
 } from "./formulaPlanDraft";
 import {
-  materializeSourceBackedEquipmentScenario,
+  materializeSourceBackedEquipmentScenarioFromSelectedEvidence,
   type SourceBackedEquipmentScenario,
   type SourceBackedEquipmentSelection,
 } from "./sourceBackedEquipmentScenario";
@@ -18,17 +18,24 @@ import {
   type SourceAbsentFormulaMapping,
   type UnresolvedFormulaMapping,
 } from "./formulaPlanReadiness";
+import {
+  KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION,
+  requireKeqingIneffaFormulaSemanticScope,
+  type KeqingIneffaFormulaSemanticScope,
+} from "./keqingIneffaFormulaSemanticScope";
+import type { ScopedSemanticDependencyAcceptedAudit } from "./scopedSemanticDependency";
 import type { KnowledgeRepository } from "./schemas";
 
 export const KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS = [
   "scripts/guide-factory/src/computationReplay.ts",
   "scripts/guide-factory/src/formulaPlanDraft.ts",
   "scripts/guide-factory/src/formulaPlanReadiness.ts",
+  "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+  "scripts/guide-factory/src/scopedSemanticDependency.ts",
   "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
   "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
-  "scripts/guide-factory/data/knowledge/repository.json",
   "src/data/game/character_stats.json",
   "src/data/game/weapon_stats.json",
   "src/data/charInfo.ts",
@@ -79,6 +86,11 @@ export interface KeqingIneffaFormulaDraftReport
   status: "needs-domain-review";
   promotionEligible: false;
   generatedFrom: Array<{ path: string; sha256: string }>;
+  semanticScope: {
+    expectedManifestSha256: string;
+    expectedScopeProjectionSha256: string;
+    acceptedAudit: ScopedSemanticDependencyAcceptedAudit;
+  };
   validationTargets: Array<{
     recordId: string;
     supports: Array<
@@ -360,10 +372,71 @@ const SOURCE_ABSENT_MAPPINGS: SourceAbsentFormulaMapping[] = [
 export function buildKeqingIneffaSourceBackedEquipmentScenario(
   repository: KnowledgeRepository,
 ): SourceBackedEquipmentScenario {
-  return materializeSourceBackedEquipmentScenario(
-    repository,
-    KEQING_INEFFA_EXTERNAL_TEAM_ID,
-    EQUIPMENT_SELECTIONS,
+  const semanticScope = requireKeqingIneffaFormulaSemanticScope(repository);
+  return buildSourceBackedEquipmentScenarioFromScope(semanticScope);
+}
+
+function buildSourceBackedEquipmentScenarioFromScope(
+  semanticScope: KeqingIneffaFormulaSemanticScope,
+): SourceBackedEquipmentScenario {
+  const sourceTeam = semanticScope.team;
+  const evidence: SourceBackedEquipmentScenario["evidence"] = [];
+  for (const member of sourceTeam.members) {
+    const selection = EQUIPMENT_SELECTIONS.find(
+      ({ characterId }) => characterId === member.characterId,
+    );
+    if (!selection) {
+      throw new Error(
+        `Equipment scenario ${KEQING_INEFFA_EXTERNAL_TEAM_ID}: missing selection for ${member.characterId}.`,
+      );
+    }
+    const guide = semanticScope.guides.find(
+      ({ id }) => id === selection.characterGuideId,
+    );
+    if (!guide || guide.characterId !== member.characterId) {
+      throw new Error(
+        `Equipment scenario ${KEQING_INEFFA_EXTERNAL_TEAM_ID}: authenticated guide ${selection.characterGuideId} does not belong to ${member.characterId}.`,
+      );
+    }
+    evidence.push({
+      characterId: member.characterId,
+      characterGuideId: guide.id,
+      guideStatus: guide.status,
+      guideSourceRefs: guide.sourceRefs.map((reference) => ({
+        sourceId: reference.sourceId,
+        sourceRecordId: reference.sourceRecordId,
+        locator: { ...reference.locator },
+      })),
+      weaponId: guide.selectedWeapon.weaponId,
+      weaponOrderIndex: guide.selectedWeapon.orderIndex,
+      buildSourceRecordId: guide.selectedBuild.sourceRecordId,
+      build: {
+        visible: guide.selectedBuild.visible,
+        ...(guide.selectedBuild.minConstellation == null
+          ? {}
+          : { minConstellation: guide.selectedBuild.minConstellation }),
+        artifact: guide.selectedBuild.artifact,
+      },
+    });
+  }
+
+  const teamCharacterIds = sourceTeam.members.map(
+    ({ characterId }) => characterId,
+  );
+  const missingTeamMembers = EQUIPMENT_SELECTIONS.filter(
+    ({ characterId }) => !teamCharacterIds.includes(characterId),
+  );
+  if (missingTeamMembers.length > 0) {
+    throw new Error(
+      `Equipment scenario ${KEQING_INEFFA_EXTERNAL_TEAM_ID}: selections contain characters outside the team (${missingTeamMembers
+        .map(({ characterId }) => characterId)
+        .join(", ")}).`,
+    );
+  }
+
+  return materializeSourceBackedEquipmentScenarioFromSelectedEvidence(
+    sourceTeam,
+    evidence,
   );
 }
 
@@ -371,8 +444,8 @@ export async function buildKeqingIneffaFormulaDraftReport(
   repository: KnowledgeRepository,
   generatedFrom: Array<{ path: string; sha256: string }>
 ): Promise<KeqingIneffaFormulaDraftReport> {
-  const scenario =
-    buildKeqingIneffaSourceBackedEquipmentScenario(repository);
+  const semanticScope = requireKeqingIneffaFormulaSemanticScope(repository);
+  const scenario = buildSourceBackedEquipmentScenarioFromScope(semanticScope);
   const sourceRotation = requiredRotation(
     scenario.team,
     KEQING_INEFFA_SOURCE_ROTATION_ID
@@ -445,6 +518,13 @@ export async function buildKeqingIneffaFormulaDraftReport(
     fixtureId: "keqing-ineffa-source-rotation-comparison-v1",
     status: "needs-domain-review",
     promotionEligible: false,
+    semanticScope: {
+      expectedManifestSha256:
+        KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.manifestSha256,
+      expectedScopeProjectionSha256:
+        KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.scopeProjectionSha256,
+      acceptedAudit: semanticScope.audit,
+    },
     generatedFrom: generatedFrom
       .map((file) => ({ ...file }))
       .sort((left, right) => left.path.localeCompare(right.path)),

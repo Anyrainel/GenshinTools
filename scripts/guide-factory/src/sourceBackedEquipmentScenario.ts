@@ -109,7 +109,7 @@ export function materializeSourceBackedEquipmentScenario(
     selections,
   );
   const evidence: SourceBackedEquipmentEvidence[] = [];
-  const materializedMembers = team.members.map((member) => {
+  for (const member of team.members) {
     const selection = selectionByCharacter.get(member.characterId);
     if (!selection) {
       throw new Error(
@@ -149,16 +149,109 @@ export function materializeSourceBackedEquipmentScenario(
         artifact: cloneArtifact(artifact),
       },
     });
-    return {
-      ...member,
-      selectedWeapon: { weaponId: selection.weaponId },
-      selectedArtifact: artifact,
-    };
-  });
+  }
 
+  return materializeSourceBackedEquipmentScenarioFromSelectedEvidence(
+    team,
+    evidence,
+  );
+}
+
+/**
+ * Materialize an exact source team from an already selected, attributable
+ * equipment-evidence DTO. This is the narrow handoff used after a caller has
+ * independently authenticated its source projection; it never requires a
+ * fabricated repository or placeholder records.
+ */
+export function materializeSourceBackedEquipmentScenarioFromSelectedEvidence(
+  sourceTeam: KnowledgeTeam,
+  selectedEvidence: readonly SourceBackedEquipmentEvidence[],
+): SourceBackedEquipmentScenario {
+  const team = KnowledgeTeamSchema.parse(sourceTeam);
+  if (team.status === "baseline") {
+    throw new Error(
+      `Equipment scenario ${team.id}: source team must be external rather than baseline.`,
+    );
+  }
+  if (team.status === "rejected") {
+    throw new Error(
+      `Equipment scenario ${team.id}: rejected source teams cannot be materialized.`,
+    );
+  }
+  const teamCharacterIds = team.members.map(({ characterId }) => characterId);
+  if (new Set(teamCharacterIds).size !== teamCharacterIds.length) {
+    throw new Error(
+      `Equipment scenario ${team.id}: exact team characters must be unique.`,
+    );
+  }
+  for (const member of team.members) {
+    const existingFields = [
+      member.selectedWeapon == null ? null : "selectedWeapon",
+      member.selectedArtifact == null ? null : "selectedArtifact",
+    ].filter((field): field is string => field != null);
+    if (existingFields.length > 0) {
+      throw new Error(
+        `Equipment scenario ${team.id}: source team member ${member.characterId} already has ${existingFields.join(" and ")}; refusing to overwrite source-backed equipment provenance.`,
+      );
+    }
+  }
+
+  const evidenceByCharacter = new Map<string, SourceBackedEquipmentEvidence>();
+  for (const row of selectedEvidence) {
+    requireNonEmpty("equipment evidence character ID", row.characterId);
+    requireNonEmpty(
+      "equipment evidence character guide ID",
+      row.characterGuideId,
+    );
+    requireNonEmpty("equipment evidence weapon ID", row.weaponId);
+    requireNonEmpty(
+      "equipment evidence build source record ID",
+      row.buildSourceRecordId,
+    );
+    if (evidenceByCharacter.has(row.characterId)) {
+      throw new Error(
+        `Equipment scenario ${team.id}: duplicate selected evidence for ${row.characterId}.`,
+      );
+    }
+    evidenceByCharacter.set(row.characterId, row);
+  }
+  const teamCharacters = new Set(teamCharacterIds);
+  const extra = [...evidenceByCharacter.keys()]
+    .filter((characterId) => !teamCharacters.has(characterId))
+    .sort(compareText);
+  const missing = teamCharacterIds
+    .filter((characterId) => !evidenceByCharacter.has(characterId))
+    .sort(compareText);
+  if (extra.length > 0 || missing.length > 0) {
+    throw new Error(
+      `Equipment scenario ${team.id}: selected evidence must match the exact team (missing: ${missing.join(", ") || "none"}; extra: ${extra.join(", ") || "none"}).`,
+    );
+  }
+
+  const evidence = teamCharacterIds.map((characterId) => {
+    const row = evidenceByCharacter.get(characterId);
+    if (!row) {
+      throw new Error(
+        `Equipment scenario ${team.id}: missing selected evidence for ${characterId}.`,
+      );
+    }
+    return cloneSourceBackedEquipmentEvidence(row);
+  });
   const materializedTeam = KnowledgeTeamSchema.parse({
     ...team,
-    members: materializedMembers,
+    members: team.members.map((member) => {
+      const row = evidenceByCharacter.get(member.characterId);
+      if (!row) {
+        throw new Error(
+          `Equipment scenario ${team.id}: missing selected evidence for ${member.characterId}.`,
+        );
+      }
+      return {
+        ...member,
+        selectedWeapon: { weaponId: row.weaponId },
+        selectedArtifact: cloneArtifact(row.build.artifact),
+      };
+    }),
   });
 
   return {
@@ -301,6 +394,27 @@ function cloneSourceReference(reference: SourceReference): SourceReference {
     sourceId: reference.sourceId,
     sourceRecordId: reference.sourceRecordId,
     locator: { ...reference.locator },
+  };
+}
+
+function cloneSourceBackedEquipmentEvidence(
+  evidence: SourceBackedEquipmentEvidence,
+): SourceBackedEquipmentEvidence {
+  return {
+    characterId: evidence.characterId,
+    characterGuideId: evidence.characterGuideId,
+    guideStatus: evidence.guideStatus,
+    guideSourceRefs: evidence.guideSourceRefs.map(cloneSourceReference),
+    weaponId: evidence.weaponId,
+    weaponOrderIndex: evidence.weaponOrderIndex,
+    buildSourceRecordId: evidence.buildSourceRecordId,
+    build: {
+      visible: evidence.build.visible,
+      ...(evidence.build.minConstellation == null
+        ? {}
+        : { minConstellation: evidence.build.minConstellation }),
+      artifact: cloneArtifact(evidence.build.artifact),
+    },
   };
 }
 
