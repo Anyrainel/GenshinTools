@@ -284,6 +284,12 @@ the fixture's source-document metadata and declared-file hashes without
 claiming transitive runtime-code closure; its aggregate consumer independently
 rebuilds the raw fixture/preset semantic scope.
 
+Checkpoint 43 does not change either Xiao source snapshot. Its downstream
+projection fresh-authenticates the exact raw guide snapshot and checkpoint-42
+slice before exposing a source-only FFXX view and a separate wrapper-C6 request
+view. The wrapper-owned constellation fact remains outside the source record,
+and equal Anemo Goblet payloads retain their distinct source-condition reasons.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

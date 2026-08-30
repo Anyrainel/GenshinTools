@@ -1,0 +1,861 @@
+{
+  "applicabilityProjectionExecuted": true,
+  "arbitraryEnglishParsingAllowed": false,
+  "assembledBuildCount": 0,
+  "authorshipBoundary": {
+    "requestFact": {
+      "characterId": "xiao",
+      "constellation": 6,
+      "provenance": "request",
+      "teamRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+    },
+    "requestFactAuthoredBy": "guide-factory-explicit-fixture",
+    "requestProjectionsPreservedVerbatim": true,
+    "sourceAuthoredRequestFact": false,
+    "sourceCellsPreservedVerbatim": true,
+    "team": {
+      "exhaustiveness": "non-exhaustive",
+      "intent": "prescriptive",
+      "label": "Xiao — Xianyun — Furina — Faruzan (FFXX)",
+      "memberCharacterIds": [
+        "xiao",
+        "xianyun",
+        "furina",
+        "faruzan"
+      ],
+      "packetIndex": 0,
+      "rankingClaim": "none",
+      "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-xianyun-furina-faruzan-ffxx-version-5-5",
+      "teamRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+    },
+    "teamSha256": "e1fd7685c28a3804097ef328c0d15d4b19e9da17a5d9628e19c0b96e34c20a09"
+  },
+  "candidateCount": 0,
+  "candidateGenerationExecuted": false,
+  "cautions": [
+    "This contract projects which of three authenticated source occurrences are applicable in two exact evidence views; it does not recommend or select either payload.",
+    "Grouping identical payloads is canonical identity deduplication only. Two conditions yielding the same Anemo Goblet payload are not two votes and do not increase rank or confidence.",
+    "The source-only view keeps Xiao C6 unresolved. The second view resolves it only through one exact Guide Factory-owned FFXX-and-Xiao request fact that is not attributed to KQM.",
+    "Marechaussee Hunter and an Anemo DMG Bonus Goblet are separate projected axes. Their compatibility, completeness, performance, and joint use are not evaluated.",
+    "Fourteen nonempty holdouts and four empty arrays remain unconsumed."
+  ],
+  "choiceSelectionExecuted": false,
+  "classification": "authenticated-descriptive-applicable-claim-projection",
+  "comparisonStatus": "comparable",
+  "contractId": "kqm-xiao-ffxx-applicable-claim-projection-version-5-5",
+  "crossAxisCompositionExecuted": false,
+  "damageComputationExecuted": false,
+  "energyRecoveryComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "formulaInputsUsed": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+      "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
+      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-ffxx-applicable-claim-projection-contract.ts",
+      "sha256": "a6de6bc73bd4455451b8c4855d1d75a49d8d15ea5e38a56aa492b52d18e7b29b"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts",
+      "sha256": "0c49d53ebee045fed9db34d3b388a2f60536a19614ae66516fb1b782f46cf7ad"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "deb828ad940076d03eead279cb36bf9a90c990870adba251ce5d49da460e8d6c"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "edfffb459c3bbc02bd2a11db7783dbc3a5629cc46d65b1e022c8d12e775b540c"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "ff726c4a924699036c76dff453639be615016a7196cb25b449846efe9c44aeab"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFfxxApplicableClaimProjectionContract.ts",
+      "sha256": "3b75fb31d9dc0003344d44febd4d1c325447d2508f44c8fad61ff4c73d24c3bd"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSlice.ts",
+      "sha256": "abbdeb882797909059e1407bf14826f5c53034e6a721a748ae6b0f6a27964d70"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSliceScope.ts",
+      "sha256": "9f5b90e8ee5a99acea0c0d4c927dee419f80d42843ba95bbec69efa171ff2252"
+    }
+  ],
+  "generatorExecuted": false,
+  "issues": [],
+  "occurrenceEvidence": [
+    {
+      "applicabilityProvenance": {
+        "contextApplicability": "source-already-matched",
+        "effectiveResolution": "matched",
+        "requestContextBindingCount": 0,
+        "sourceControlPreserved": true,
+        "sourceResolution": "matched"
+      },
+      "conditionControl": {
+        "catalogIndex": 0,
+        "claimId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "artifact-recommendation",
+          "energyClassification": "not-energy-deferred",
+          "manualClaimPath": "recommendation.artifactRecommendations[0].conditions",
+          "manualPath": "records[2].recommendation.artifactRecommendations[0].conditions",
+          "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+          "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+          "repositoryJsonPath": "records[231].recommendations[0].artifactRecommendations[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sourceConditionsSha256": "9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "ab21f048d451a2d095ab8958d1fd36defabcea358cb758c1d8fb7d8d32163031",
+          "sourceRecordId": "xiao-mh-artifact-branch-version-5-5"
+        },
+        "requestBindings": []
+      },
+      "conditionControlSha256": "68db45b02b15a2e41a2be5c57d7320101d901058976b264186fd1a76596f067a",
+      "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+      "requestProjection": {
+        "claimId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "contextApplicability": "source-already-matched",
+        "reason": "Exact source-team roster includes xianyun.",
+        "requestContextBindings": [],
+        "resolution": "matched",
+        "sourceControl": {
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes xianyun.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "predicateRowsSha256": "cb60a8f409afc492bf61f7a720414bdb52a1d13310a7cacdd379d82c177284b3",
+          "reason": "Exact source-team roster includes xianyun.",
+          "resolution": "matched",
+          "sourceConditionsSha256": "9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b"
+        }
+      },
+      "requestProjectionSha256": "34d19cada6d55fb6e3b51516f98816c79ee8d46ba9bb99c189c9a88dd36ba23b",
+      "selectedOccurrence": {
+        "bindingAuthoredBySlice": true,
+        "claimAxis": "artifact-recommendation",
+        "conditions": [
+          "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
+        ],
+        "conditionsSha256": "9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b",
+        "energyClassificationAuthoredBySlice": true,
+        "manualClaimPath": "recommendation.artifactRecommendations[0].conditions",
+        "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "payload": {
+          "artifacts": [
+            {
+              "setId": "marechaussee_hunter",
+              "type": "4pc"
+            }
+          ],
+          "type": "artifact-group"
+        },
+        "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+        "predicate": {
+          "characterId": "xianyun",
+          "type": "exact-team-roster-includes"
+        },
+        "predicateSha256": "ab21f048d451a2d095ab8958d1fd36defabcea358cb758c1d8fb7d8d32163031",
+        "repositoryParity": "exact",
+        "repositoryPath": "recommendations[0].artifactRecommendations[0].conditions",
+        "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+        "requestPredicate": null,
+        "requestPredicateSha256": null,
+        "sliceBindingClassification": "typed-bound",
+        "sliceDisposition": "selected",
+        "sliceEnergyClassification": "not-energy-deferred",
+        "sourceRecordId": "xiao-mh-artifact-branch-version-5-5"
+      },
+      "selectedOccurrenceSha256": "c46898b21fce01efac4a40290121229853a4cf5d14529f9c6db7e36b45a11551",
+      "sourceCell": {
+        "claimId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "predicateRows": [
+          {
+            "predicatePath": "predicate",
+            "predicateType": "exact-team-roster-includes",
+            "reason": "Exact source-team roster includes xianyun.",
+            "result": "true",
+            "structuredFact": "exact-source-team-roster"
+          }
+        ],
+        "reason": "Exact source-team roster includes xianyun.",
+        "resolution": "matched",
+        "sourceConditionsSha256": "9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b"
+      },
+      "sourceCellSha256": "23b591c3dd359b0e8c3b0f30173b27e3b3f48b319c84fdaa7697a86c507d4a3e",
+      "sourceClaim": {
+        "catalogIndex": 0,
+        "characterId": "xiao",
+        "claimId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "payload": {
+          "artifacts": [
+            {
+              "setId": "marechaussee_hunter",
+              "type": "4pc"
+            }
+          ],
+          "type": "artifact-group"
+        },
+        "predicate": {
+          "characterId": "xianyun",
+          "type": "exact-team-roster-includes"
+        },
+        "recommendation": {
+          "classification": "conditional",
+          "grouping": "single",
+          "label": "Marechaussee Hunter Xianyun and FFXX branch",
+          "ordering": "unranked",
+          "recommendationId": "mh-xianyun-ffxx-branch",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-sets",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+        "sourceConditions": [
+          "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
+        ],
+        "sourceConditionsSha256": "9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b",
+        "sourceId": "kqm",
+        "sourceRecordId": "xiao-mh-artifact-branch-version-5-5"
+      },
+      "sourceClaimSha256": "f3a06383da54355bb383c1ddceb60031311e5727896332612978277cb81795c8"
+    },
+    {
+      "applicabilityProvenance": {
+        "contextApplicability": "source-already-matched",
+        "effectiveResolution": "matched",
+        "requestContextBindingCount": 0,
+        "sourceControlPreserved": true,
+        "sourceResolution": "matched"
+      },
+      "conditionControl": {
+        "catalogIndex": 1,
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "occurrenceControl": {
+          "claimAxis": "main-stat",
+          "energyClassification": "not-energy-deferred",
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[3].conditions",
+          "manualPath": "records[0].recommendation.mainStats.goblet[3].conditions",
+          "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+          "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+          "repositoryJsonPath": "records[232].recommendations[0].mainStats.goblet[3].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sourceConditionsSha256": "6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "ab21f048d451a2d095ab8958d1fd36defabcea358cb758c1d8fb7d8d32163031",
+          "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+        },
+        "requestBindings": []
+      },
+      "conditionControlSha256": "17b7046a895e2e5a997dd0a6d6a1f029d75357b380036bef1ccd986ddd5571d8",
+      "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+      "requestProjection": {
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "contextApplicability": "source-already-matched",
+        "reason": "Exact source-team roster includes xianyun.",
+        "requestContextBindings": [],
+        "resolution": "matched",
+        "sourceControl": {
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "exact-team-roster-includes",
+              "reason": "Exact source-team roster includes xianyun.",
+              "result": "true",
+              "structuredFact": "exact-source-team-roster"
+            }
+          ],
+          "predicateRowsSha256": "cb60a8f409afc492bf61f7a720414bdb52a1d13310a7cacdd379d82c177284b3",
+          "reason": "Exact source-team roster includes xianyun.",
+          "resolution": "matched",
+          "sourceConditionsSha256": "6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366"
+        }
+      },
+      "requestProjectionSha256": "2c82d94d5182cdba8bb3c4a81a94b1d45b9f3b33e661372dfca1a1387650f6fa",
+      "selectedOccurrence": {
+        "bindingAuthoredBySlice": true,
+        "claimAxis": "main-stat",
+        "conditions": [
+          "Xianyun is in Xiao's team."
+        ],
+        "conditionsSha256": "6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366",
+        "energyClassificationAuthoredBySlice": true,
+        "mainStatSlot": "goblet",
+        "manualClaimPath": "recommendation.mainStats.goblet[3].conditions",
+        "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "goblet",
+          "statIds": [
+            "anemo%"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+        "predicate": {
+          "characterId": "xianyun",
+          "type": "exact-team-roster-includes"
+        },
+        "predicateSha256": "ab21f048d451a2d095ab8958d1fd36defabcea358cb758c1d8fb7d8d32163031",
+        "repositoryParity": "exact",
+        "repositoryPath": "recommendations[0].mainStats.goblet[3].conditions",
+        "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+        "requestPredicate": null,
+        "requestPredicateSha256": null,
+        "sliceBindingClassification": "typed-bound",
+        "sliceDisposition": "selected",
+        "sliceEnergyClassification": "not-energy-deferred",
+        "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+      },
+      "selectedOccurrenceSha256": "048871163248ab8a70bc38f0ebcb4188470ed1ff5dcdaa3b6d2bfc1ac80d4531",
+      "sourceCell": {
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "predicateRows": [
+          {
+            "predicatePath": "predicate",
+            "predicateType": "exact-team-roster-includes",
+            "reason": "Exact source-team roster includes xianyun.",
+            "result": "true",
+            "structuredFact": "exact-source-team-roster"
+          }
+        ],
+        "reason": "Exact source-team roster includes xianyun.",
+        "resolution": "matched",
+        "sourceConditionsSha256": "6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366"
+      },
+      "sourceCellSha256": "84d4dc8982ff1c20de2ccece2664a44f4392a2b3cbf24f70ce39fc3ee96478b9",
+      "sourceClaim": {
+        "catalogIndex": 1,
+        "characterId": "xiao",
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "goblet",
+          "statIds": [
+            "anemo%"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "predicate": {
+          "characterId": "xianyun",
+          "type": "exact-team-roster-includes"
+        },
+        "recommendation": {
+          "classification": null,
+          "grouping": null,
+          "label": "Offensive artifact stats with energy terms deferred",
+          "ordering": null,
+          "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "sourceIndex": 3
+        },
+        "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+        "sourceConditions": [
+          "Xianyun is in Xiao's team."
+        ],
+        "sourceConditionsSha256": "6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366",
+        "sourceId": "kqm",
+        "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+      },
+      "sourceClaimSha256": "7df7650e957d48d22ff046f298960c150c1bb60b7dbecd30c0611e988ede22e3"
+    },
+    {
+      "applicabilityProvenance": {
+        "contextApplicability": "applicable-under-supplied-context",
+        "effectiveResolution": "matched",
+        "requestContextBindingCount": 1,
+        "sourceControlPreserved": true,
+        "sourceResolution": "unresolved-context"
+      },
+      "conditionControl": {
+        "catalogIndex": 2,
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "occurrenceControl": {
+          "claimAxis": "main-stat",
+          "energyClassification": "not-energy-deferred",
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[4].conditions",
+          "manualPath": "records[0].recommendation.mainStats.goblet[4].conditions",
+          "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+          "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+          "repositoryJsonPath": "records[232].recommendations[0].mainStats.goblet[4].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sourceConditionsSha256": "dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "86f2940f7c7e84766cda73b411849a509ed5994bf65f62a4b8b8205c1bdd36a3",
+          "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "characterId": "xiao",
+              "threshold": 6,
+              "type": "constellation-at-least"
+            },
+            "sourcePredicateLeafSha256": "86f2940f7c7e84766cda73b411849a509ed5994bf65f62a4b8b8205c1bdd36a3",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      },
+      "conditionControlSha256": "5b10191ca84d5e14f8ff041160ac55996b8b9537bb74afd374bfc6999930298d",
+      "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+      "requestProjection": {
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "contextApplicability": "applicable-under-supplied-context",
+        "reason": "Request constellation 6 meets threshold 6.",
+        "requestContextBindings": [
+          {
+            "predicateRows": [
+              {
+                "factProvenance": "request",
+                "factScope": {
+                  "accountSnapshotId": null,
+                  "characterId": "xiao",
+                  "teamRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+                },
+                "predicatePath": "requestPredicate",
+                "predicateType": "constellation-at-least",
+                "reason": "Request constellation 6 meets threshold 6.",
+                "result": "true"
+              }
+            ],
+            "reason": "Request constellation 6 meets threshold 6.",
+            "requestPredicate": {
+              "characterId": "xiao",
+              "threshold": 6,
+              "type": "constellation-at-least"
+            },
+            "result": "true",
+            "sourceContextCategory": "investment-threshold",
+            "sourcePredicatePath": "predicate"
+          }
+        ],
+        "resolution": "matched",
+        "sourceControl": {
+          "predicateRows": [
+            {
+              "predicatePath": "predicate",
+              "predicateType": "unresolved-context",
+              "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+              "result": "unknown",
+              "structuredFact": "none-unresolved-context"
+            }
+          ],
+          "predicateRowsSha256": "ad9ed6004856812b81e46e64fd2cb59287231793c4e32583eb7f9e97dbf181a9",
+          "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+          "resolution": "unresolved-context",
+          "sourceConditionsSha256": "dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a"
+        }
+      },
+      "requestProjectionSha256": "509f8b6de92edd168fb15f190ac85261dc983061e2e5c037656a9c5e80fb5afd",
+      "selectedOccurrence": {
+        "bindingAuthoredBySlice": true,
+        "claimAxis": "main-stat",
+        "conditions": [
+          "Xiao is C6."
+        ],
+        "conditionsSha256": "dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a",
+        "energyClassificationAuthoredBySlice": true,
+        "mainStatSlot": "goblet",
+        "manualClaimPath": "recommendation.mainStats.goblet[4].conditions",
+        "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "goblet",
+          "statIds": [
+            "anemo%"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+        "predicate": {
+          "category": "investment-threshold",
+          "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+          "type": "unresolved-context"
+        },
+        "predicateSha256": "86f2940f7c7e84766cda73b411849a509ed5994bf65f62a4b8b8205c1bdd36a3",
+        "repositoryParity": "exact",
+        "repositoryPath": "recommendations[0].mainStats.goblet[4].conditions",
+        "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+        "requestPredicate": {
+          "characterId": "xiao",
+          "threshold": 6,
+          "type": "constellation-at-least"
+        },
+        "requestPredicateSha256": "9b4c77774f501a23c58014d4256b4a22e7c29bd610d44f4a63cd2043ede8c2f7",
+        "sliceBindingClassification": "typed-bound",
+        "sliceDisposition": "selected",
+        "sliceEnergyClassification": "not-energy-deferred",
+        "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+      },
+      "selectedOccurrenceSha256": "1994639390ec2bf81953c4828a54e05e7830ecb70b7e7011920b881cceb75f51",
+      "sourceCell": {
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "predicateRows": [
+          {
+            "predicatePath": "predicate",
+            "predicateType": "unresolved-context",
+            "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+            "result": "unknown",
+            "structuredFact": "none-unresolved-context"
+          }
+        ],
+        "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+        "resolution": "unresolved-context",
+        "sourceConditionsSha256": "dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a"
+      },
+      "sourceCellSha256": "e5f54b96ca56536895db4ba9bd8890cc2d37530ecf39593c5d027a3d044e4003",
+      "sourceClaim": {
+        "catalogIndex": 2,
+        "characterId": "xiao",
+        "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "goblet",
+          "statIds": [
+            "anemo%"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "predicate": {
+          "category": "investment-threshold",
+          "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": null,
+          "grouping": null,
+          "label": "Offensive artifact stats with energy terms deferred",
+          "ordering": null,
+          "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "sourceIndex": 4
+        },
+        "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+        "sourceConditions": [
+          "Xiao is C6."
+        ],
+        "sourceConditionsSha256": "dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a",
+        "sourceId": "kqm",
+        "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+      },
+      "sourceClaimSha256": "6a6c450cd8d51dba26112f66b1e45595b86701c14ce3218d508428d6e49216c8"
+    }
+  ],
+  "optimizerExecuted": false,
+  "partitionBoundary": {
+    "emptyConsumedCount": 0,
+    "emptyOccurrenceCount": 4,
+    "emptyOccurrenceIds": [
+      "kqm:character_guide:xiao-five-star-weapon-tiers-version-5-5:recommendation.weaponRecommendations[0].conditions",
+      "kqm:character_guide:xiao-five-star-weapon-tiers-version-5-5:recommendation.weaponRecommendations[1].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.sands[0].conditions",
+      "kqm:character_guide:xiao-unranked-four-star-weapons-version-5-5:recommendation.weaponRecommendations[1].conditions"
+    ],
+    "emptyOccurrencesSha256": "d4115bcd7c7cd0ddeaf3a71c5021217a473e566730d6e250cd562e46cee0780c",
+    "holdoutConsumedCount": 0,
+    "holdoutOccurrenceCount": 14,
+    "holdoutOccurrenceIds": [
+      "kqm:character_guide:xiao-five-star-weapon-tiers-version-5-5:recommendation.weaponRecommendations[2].conditions",
+      "kqm:character_guide:xiao-lno-artifact-branch-c0-c5-version-5-5:recommendation.artifactRecommendations[0].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.circlet[0].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[0].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[1].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[2].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.substats[0].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.substats[1].conditions",
+      "kqm:character_guide:xiao-unranked-four-star-weapons-version-5-5:recommendation.weaponRecommendations[0].conditions",
+      "kqm:character_guide:xiao-unranked-four-star-weapons-version-5-5:recommendation.weaponRecommendations[2].conditions",
+      "kqm:character_guide:xiao-unranked-four-star-weapons-version-5-5:recommendation.weaponRecommendations[3].conditions",
+      "kqm:character_guide:xiao-unranked-four-star-weapons-version-5-5:recommendation.weaponRecommendations[4].conditions",
+      "kqm:character_guide:xiao-unranked-four-star-weapons-version-5-5:recommendation.weaponRecommendations[5].conditions",
+      "kqm:character_guide:xiao-vha-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions"
+    ],
+    "holdoutOccurrencesSha256": "f7bc7bd49d05dcd4f41eba373d6ac9b0e711d911371ae10cca394a986ca41642",
+    "selectedHoldoutEmptyDisjoint": true,
+    "selectedOccurrenceCount": 3,
+    "selectedOccurrenceIds": [
+      "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+      "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions"
+    ],
+    "selectedOccurrencesSha256": "4dd8a1e1b32f81fc365f9ea81a0b2f33434e314a5b6cadb453820e5b61bde0f6"
+  },
+  "payloadCompatibilityEvaluated": false,
+  "payloadIdentityDeduplicationExecuted": true,
+  "payloadIdentityPolicy": {
+    "deduplicationPurpose": "canonical-payload-representation-only",
+    "keyFields": [
+      "claimAxis",
+      "mainStatSlot",
+      "payloadSha256"
+    ],
+    "occurrenceProvenancePreserved": true,
+    "payloadGroupOrder": "canonical-technical-only",
+    "repeatedPayloadAffectsRank": false,
+    "repeatedPayloadEstablishesCorroboration": false
+  },
+  "playerFacingRecommendations": false,
+  "prohibitedInterpretations": [
+    "Do not interpret either view or payload group as a build, candidate, recommendation, rank, guide, or source-authored cross-record composition.",
+    "Do not treat repeated payload identity as corroboration, ordering, preference, or stronger evidence.",
+    "Do not infer that Xiao is C6 from the source team or apply the wrapper-owned C6 fact outside the exact FFXX-and-Xiao request scope.",
+    "Do not infer weapon, substat, ideal-roll, formula-count, damage, rotation, DPS, optimization, or Energy Recharge results."
+  ],
+  "publicationStatus": "withheld-unreviewed-factory-projection",
+  "rawInputBoundary": {
+    "allDeclaredGeneratedFromHashesAuthenticatedFromBytes": true,
+    "exactGeneratedFromPathSet": true,
+    "exactSourceFilePathSet": true,
+    "generatedFromCount": 17,
+    "sourceFileByteClosureAndJsonObjectParity": true,
+    "sourceFileCount": 17,
+    "status": "accepted"
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "xiao-ffxx-applicable-claim-projection-contract",
+  "rotationComputationExecuted": false,
+  "schemaVersion": 1,
+  "summary": {
+    "assembledBuildCount": 0,
+    "candidateCount": 0,
+    "duplicatedPayloadOccurrenceCount": 2,
+    "emptyConsumedCount": 0,
+    "evidenceOccurrenceCount": 3,
+    "holdoutConsumedCount": 0,
+    "requestResolvedOccurrenceCount": 1,
+    "requestViewMatchedOccurrenceCount": 3,
+    "requestViewPayloadGroupCount": 2,
+    "sourceOnlyMatchedOccurrenceCount": 2,
+    "sourceOnlyPayloadGroupCount": 2,
+    "sourceOnlyUnresolvedOccurrenceCount": 1
+  },
+  "supportsBuildRecommendations": false,
+  "supportsCompatibilityClaims": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsFormulaClaims": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "upstreamBoundary": {
+    "durableReportCanonicalObjectSha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
+    "durableReportFileSha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
+    "durableReportPath": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
+    "effectiveMatchedCount": 3,
+    "emptyOccurrenceCount": 4,
+    "freshlyAuthenticated": true,
+    "holdoutOccurrenceCount": 14,
+    "selectedOccurrenceCount": 3,
+    "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
+    "sourceMatchedCount": 2,
+    "sourceUnresolvedCount": 1,
+    "status": "accepted"
+  },
+  "views": {
+    "exactFfxxPlusWrapperC6": {
+      "matchedOccurrenceCount": 3,
+      "matchedOccurrenceIds": [
+        "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions"
+      ],
+      "payloadGroupCount": 2,
+      "payloadGroups": [
+        {
+          "affectsRank": false,
+          "claimAxis": "artifact-recommendation",
+          "contributingOccurrenceIds": [
+            "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions"
+          ],
+          "establishesCorroboration": false,
+          "mainStatSlot": null,
+          "occurrenceMultiplicity": 1,
+          "payload": {
+            "artifacts": [
+              {
+                "setId": "marechaussee_hunter",
+                "type": "4pc"
+              }
+            ],
+            "type": "artifact-group"
+          },
+          "payloadIdentityKey": "{\n  \"claimAxis\": \"artifact-recommendation\",\n  \"mainStatSlot\": null,\n  \"payloadSha256\": \"3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb\"\n}\n",
+          "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+          "repeatedPayloadIdentity": false
+        },
+        {
+          "affectsRank": false,
+          "claimAxis": "main-stat",
+          "contributingOccurrenceIds": [
+            "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+            "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions"
+          ],
+          "establishesCorroboration": false,
+          "mainStatSlot": "goblet",
+          "occurrenceMultiplicity": 2,
+          "payload": {
+            "priority": null,
+            "slot": "goblet",
+            "statIds": [
+              "anemo%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadIdentityKey": "{\n  \"claimAxis\": \"main-stat\",\n  \"mainStatSlot\": \"goblet\",\n  \"payloadSha256\": \"091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1\"\n}\n",
+          "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+          "repeatedPayloadIdentity": true
+        }
+      ],
+      "requestContextUsed": true,
+      "requestFactCount": 1,
+      "requestResolvedOccurrenceIds": [
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions"
+      ],
+      "sourceAlreadyMatchedOccurrenceIds": [
+        "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions"
+      ],
+      "unresolvedOccurrenceCount": 0,
+      "unresolvedOccurrenceIds": [],
+      "viewId": "exact-ffxx-plus-wrapper-c6"
+    },
+    "sourceOnly": {
+      "matchedOccurrenceCount": 2,
+      "matchedOccurrenceIds": [
+        "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions"
+      ],
+      "payloadGroupCount": 2,
+      "payloadGroups": [
+        {
+          "affectsRank": false,
+          "claimAxis": "artifact-recommendation",
+          "contributingOccurrenceIds": [
+            "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions"
+          ],
+          "establishesCorroboration": false,
+          "mainStatSlot": null,
+          "occurrenceMultiplicity": 1,
+          "payload": {
+            "artifacts": [
+              {
+                "setId": "marechaussee_hunter",
+                "type": "4pc"
+              }
+            ],
+            "type": "artifact-group"
+          },
+          "payloadIdentityKey": "{\n  \"claimAxis\": \"artifact-recommendation\",\n  \"mainStatSlot\": null,\n  \"payloadSha256\": \"3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb\"\n}\n",
+          "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+          "repeatedPayloadIdentity": false
+        },
+        {
+          "affectsRank": false,
+          "claimAxis": "main-stat",
+          "contributingOccurrenceIds": [
+            "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions"
+          ],
+          "establishesCorroboration": false,
+          "mainStatSlot": "goblet",
+          "occurrenceMultiplicity": 1,
+          "payload": {
+            "priority": null,
+            "slot": "goblet",
+            "statIds": [
+              "anemo%"
+            ],
+            "target": null,
+            "type": "main-stat"
+          },
+          "payloadIdentityKey": "{\n  \"claimAxis\": \"main-stat\",\n  \"mainStatSlot\": \"goblet\",\n  \"payloadSha256\": \"091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1\"\n}\n",
+          "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+          "repeatedPayloadIdentity": false
+        }
+      ],
+      "requestContextUsed": false,
+      "requestFactCount": 0,
+      "requestResolvedOccurrenceIds": [],
+      "sourceAlreadyMatchedOccurrenceIds": [
+        "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions"
+      ],
+      "unresolvedOccurrenceCount": 1,
+      "unresolvedOccurrenceIds": [
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions"
+      ],
+      "viewId": "source-only-ffxx"
+    }
+  }
+}

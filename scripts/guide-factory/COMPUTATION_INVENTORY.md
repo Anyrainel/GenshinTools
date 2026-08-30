@@ -685,6 +685,35 @@ holdout or empty row, reads no rotation, excludes the separate rotation fixture,
 and executes no build composition, candidate generation, equipment assignment,
 formula, damage, ideal-roll, rotation, or ER computation.
 
+## Xiao FFXX applicable-claim projection seam
+
+`src/xiaoFfxxApplicableClaimProjectionContract.ts` is a source-specific
+downstream consumer of the authenticated Xiao slice. It authenticates the
+complete seventeen-file declared input set by exact bytes and hashes. It also
+requires parsed-object parity for the repository, Xiao snapshot, manual index,
+source registry, and durable upstream report, then independently fresh-
+authenticates that upstream report through its own eleven-path boundary.
+
+The projection emits two views of the same three occurrences. The source-only
+FFXX view contains two source matches and one unresolved C6 occurrence. The
+exact-request view adds the sole wrapper-owned FFXX/Xiao-C6 fact and resolves
+only that occurrence. Every row preserves and hashes its selected occurrence,
+source claim, condition control, source cell, and request projection. Its
+applicability provenance is preserved explicitly and is derivable from those
+authenticated objects; it is not described as a separate hash.
+
+The two Anemo Goblet rows share a canonical payload identity keyed by claim
+axis, main-stat slot, and payload hash. Both occurrence IDs remain attached;
+their multiplicity does not establish corroboration or affect rank. The
+Marechaussee Hunter and Goblet axes are not composed or compatibility-tested.
+The 3 selected / 14 holdout / 4 empty partitions remain disjoint and no
+holdout or empty occurrence is consumed.
+
+This seam executes applicability projection and payload-identity
+deduplication only. It emits zero candidates and zero builds and enables no
+guide, recommendation, compatibility, selection, generator, optimizer,
+formula, damage, rotation, ideal-roll, or ER capability.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields

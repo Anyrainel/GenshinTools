@@ -271,6 +271,17 @@ Current durable pilot evidence:
   generator, optimizer, damage, ideal-roll, or ER work. Its 68,775-byte report
   has SHA-256
   `2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353`.
+- `xiao-ffxx-applicable-claim-projection-contract.json` fresh-authenticates the
+  Xiao slice from seventeen exact byte-authenticated declared input files; its
+  five JSON inputs also require parsed-object parity.
+  Its source-only FFXX view preserves two source matches and one unresolved C6
+  occurrence. Its exact-request view adds only one wrapper-owned FFXX/Xiao-C6
+  fact, matches all three occurrences, and groups the two identical Anemo
+  Goblet occurrences into one payload identity while retaining both provenance
+  chains. Payload multiplicity establishes no corroboration or rank. The
+  report consumes none of the fourteen holdouts or four empty arrays and emits
+  zero candidates and zero builds. Its 41,394-byte output has SHA-256
+  `92a6cd2eda00891477189387686e57142c8ab10d540edeff4d795b0ee58e07d0`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -644,7 +655,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all thirty-nine globally integrated reports
+In full mode `validate.ts` rebuilds all forty globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -667,6 +678,9 @@ Its final 71,373-byte report has SHA-256
 Checkpoint 42 adds the Xiao source-local and formula-count witnesses to the
 global runner, bringing it to 39 integrated reports. Including checkpoint 35's
 permission-isolated report, this directory contains 40 JSON reports.
+Checkpoint 43 adds the Xiao FFXX applicable-claim projection as integrated
+report 40. Including checkpoint 35's permission-isolated report, this directory
+now contains 41 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

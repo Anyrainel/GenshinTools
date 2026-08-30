@@ -42,3 +42,16 @@ preserve one publisher-native build as one observation. It should retain:
 The adapter must first write and validate a source-shaped snapshot. It must not
 write consolidated knowledge directly, and it must not turn route order or UI
 layout into recommendation order.
+
+## Permission-request pilot
+
+A read-only triage on 2026-08-30 identified the site's pre-C6 Faruzan support
+material as a useful first permission target because the current local preset
+is weighted toward C6+ Faruzan. No application payload, authored
+recommendation, record hash, or semantic slice was retained.
+
+If reuse is authorized, the first adapter experiment should capture exactly
+one publisher-native Faruzan record, preserve its alternative artifact purposes
+without manufacturing an order, and omit its ER-oriented branch from the
+current non-ER computation track. It must not infer a team, weapon, stat plan,
+or FFXX linkage that the captured record does not state.

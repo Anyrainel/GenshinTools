@@ -26,6 +26,11 @@ registry entry, is active, uses the manual-observation V1 contract, and does not
 require permission. A blocked or permission-required source remains outside the
 manual index and consolidated repository.
 
+A read-only Crimson Witch probe found a pre-C6 Faruzan artifact branch that
+could broaden the current baseline if reuse is authorized. No application
+payload or recommendation content was retained. Permission or a documented
+reusable feed remains a prerequisite to any adapter or snapshot.
+
 ## 2. Consolidate without erasing disagreement
 
 - Normalize names to repository IDs without fuzzy matching.
@@ -968,6 +973,24 @@ closure. The derived aggregate rebuilds the raw fixture/preset semantic scope
 instead of trusting the saved witness's accepted label. Global condition
 evidence retains the exact two source matches, one source-unresolved C6 cell,
 and its exact FFXX/Xiao request-context resolution.
+
+Checkpoint 43 adds the first downstream applicability projection for that
+slice. It byte-authenticates all seventeen exact declared input paths; the five
+JSON inputs include the durable checkpoint-42 report and also require parsed-
+object parity. The source-only FFXX view keeps two
+matches and one unresolved C6 occurrence; the exact-request view resolves only
+that occurrence through the sole wrapper-owned FFXX/Xiao-C6 fact. Source-only
+has two payload groups because Marechaussee Hunter and the one applicable Anemo
+Goblet occurrence are different axes. The request view stays at two because
+the newly applicable C6 Anemo occurrence deduplicates into the existing Anemo
+payload group. Both reasons remain attached, and the deduplication supplies no
+vote, corroboration, rank, candidate, build, or compatibility result.
+
+The next non-ER experiment is a bounded partial-candidate seam over only those
+two authenticated axes. It must keep missing weapon, sands, circlet, substat,
+formula, rotation, and optimization inputs explicit rather than filling them
+from nearby prose or presets. Its output remains a technical candidate until
+domain review and an accepted promotion policy say otherwise.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

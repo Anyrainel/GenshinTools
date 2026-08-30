@@ -396,6 +396,30 @@ Checkpoint 42 regenerates the same witness after Xiao's three independent
 catalog admissions. Its semantics stay fixed while the authentication boundary
 becomes six source files, 85 generated-from paths, and 66 upstream bindings.
 
+### Derived source-specific applicable-claim projections
+
+An applicable-claim projection may expose multiple exact evidence views over
+one authenticated source-local slice. It must fresh-authenticate that slice,
+retain the complete selected/holdout/empty partition, and preserve source facts
+separately from wrapper- or request-owned facts. A request-resolved occurrence
+must name its exact team, character, predicate, provenance, and source-
+unresolved state; it cannot retroactively become source-authored.
+
+Payload identity deduplication may group equal payloads only under explicit
+technical identity fields. Every contributing occurrence and its different
+applicability reason must remain visible. Multiplicity cannot become a vote,
+corroboration, confidence, preference, or rank signal.
+
+Checkpoint 43 applies this shape only to the three authenticated Xiao FFXX
+occurrences. The source-only view is 2 matched / 1 unresolved; the exact FFXX
+plus wrapper-C6 view is 3 matched / 0 unresolved. Source-only has one
+Marechaussee Hunter group and one Anemo Goblet group. The request view remains
+at two groups because its newly applicable C6 Anemo occurrence shares the
+existing Anemo payload identity; both reasons remain visible. The projection
+creates no Cartesian product, compatibility result, candidate, complete build,
+recommendation, generator input, optimizer input, formula plan, damage result,
+ideal-roll target, or ER requirement.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

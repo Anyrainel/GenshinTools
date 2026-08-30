@@ -38,3 +38,4 @@ reports/*
 !reports/kokomi-source-local-artifact-slice.json
 !reports/xiao-source-local-condition-slice.json
 !reports/xiao-formula-count-parity.json
+!reports/xiao-ffxx-applicable-claim-projection-contract.json

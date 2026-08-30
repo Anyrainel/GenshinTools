@@ -276,6 +276,13 @@ import {
   XIAO_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
   type XiaoSourceLocalConditionSliceReport,
 } from "./xiaoSourceLocalConditionSlice";
+import {
+  authenticateXiaoFfxxApplicableClaimProjectionContract,
+  XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_INPUT_PATHS,
+  XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_REPORT_PATH,
+  XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_SOURCE_FILE_PATHS,
+  type XiaoFfxxApplicableClaimProjectionContractReport,
+} from "./xiaoFfxxApplicableClaimProjectionContract";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -362,6 +369,8 @@ export async function runValidation(
     kleeTeamScopedClaimJoinWitnessSourceFiles,
     xiaoSourceLocalConditionSliceInput,
     xiaoSourceLocalConditionSliceSnapshotText,
+    xiaoFfxxApplicableClaimProjectionInput,
+    xiaoFfxxApplicableClaimProjectionSourceFiles,
     xiaoFormulaCountParityInput,
     xiaoFormulaCountParitySourceFiles,
   ] =
@@ -534,6 +543,18 @@ export async function runValidation(
           "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
         ),
         "utf8",
+      ),
+      readJson(XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_REPORT_PATH),
+      Promise.all(
+        XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
       ),
       readJson(XIAO_FORMULA_COUNT_PARITY_REPORT_PATH),
       Promise.all(
@@ -1216,6 +1237,39 @@ export async function runValidation(
             "canonical-inputs-not-comparable"
               ? "The freshly rebuilt Xiao source-local condition slice could not authenticate its exact Version 5.5 source snapshot, FFXX roster, three selected bindings, fourteen holdouts, or four empty arrays."
               : "The saved Xiao source-local condition slice does not match the current raw source, consolidated records, scoped request projection, exact three-claim binding boundary, and input hashes.",
+        });
+      }
+      const xiaoFfxxApplicableClaimProjectionGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_INPUT_PATHS,
+        );
+      const xiaoFfxxApplicableClaimProjectionAuthentication =
+        authenticateXiaoFfxxApplicableClaimProjectionContract(
+          xiaoFfxxApplicableClaimProjectionInput as XiaoFfxxApplicableClaimProjectionContractReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: xiaoManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoDurableReportInput: xiaoSourceLocalConditionSliceInput,
+            sourceFiles: xiaoFfxxApplicableClaimProjectionSourceFiles,
+            generatedFrom: xiaoFfxxApplicableClaimProjectionGeneratedFrom,
+          },
+        );
+      if (!xiaoFfxxApplicableClaimProjectionAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFfxxApplicableClaimProjectionAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_xiao_ffxx_applicable_claim_projection"
+              : "pipeline.stale_xiao_ffxx_applicable_claim_projection",
+          path: "reports.xiao-ffxx-applicable-claim-projection-contract",
+          message:
+            xiaoFfxxApplicableClaimProjectionAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The Xiao FFXX applicable-claim projection could not fresh-authenticate the exact source-local report, preserve its 3/14/4 partition, or reproduce the source-only 2-match and explicit-C6 3-match views."
+              : "The saved Xiao FFXX applicable-claim projection does not match the current authenticated source cells, exact request-context projection, provenance-preserving payload groups, and zero-candidate/zero-build boundary.",
         });
       }
       const xiaoFormulaFixtureManualInput =
