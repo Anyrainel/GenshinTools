@@ -296,6 +296,15 @@ partial technical candidate. The source-only and wrapper-C6 views remain
 separate evidence bindings, and weapon, Sands, Circlet, and substats remain
 unadmitted rather than being copied from nearby Xiao records.
 
+Checkpoint 45 also leaves the raw and consolidated source formats unchanged.
+It projects thirteen exact existing observations from the five-star weapon,
+four-star weapon, and offensive-stat records. Ranked five-star groups retain
+their tied membership; four-star positions remain unranked provenance and do
+not create a cross-rarity order. Exact conditions, classifications, stat
+priorities, and targets are preserved. The adapter's labels for condition-free
+versus guarded/deferred handling are Guide Factory-authored interpretation
+boundaries, not new KQM fields or evidence that a guard is satisfied.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

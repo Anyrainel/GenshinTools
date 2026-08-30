@@ -293,6 +293,18 @@ Current durable pilot evidence:
   ranks and runs no generator, optimizer, formula, damage, rotation, or ER
   computation. Its 24,839-byte output has SHA-256
   `71d82d02188d1575fe5a78890b193816e33c06c327ff3f6ce64887c066abcecd`.
+- `xiao-non-er-equipment-branch-source-slice.json` byte-authenticates eighteen
+  exact declared inputs, requires parsed-object parity for five JSON inputs,
+  and fresh-authenticates checkpoint 42 through its complete eleven-path
+  boundary. It preserves thirteen source recommendation observations: three
+  ranked five-star tied groups, six unranked four-star options, ATK% Sands, a
+  guarded CR/CD Circlet group, and two guarded offensive-tail substat rows.
+  Four observations are source-condition-free and nine remain guarded across
+  eight unique condition arrays. It defines no cross-rarity order, selects no
+  weapon or Circlet, and emits zero Guide Factory recommendations, candidates,
+  or builds. No generator, optimizer, formula, damage, rotation, ideal-roll, or
+  ER computation runs. Its 44,129-byte output has SHA-256
+  `97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -666,7 +678,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-one globally integrated reports
+In full mode `validate.ts` rebuilds all forty-two globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -695,6 +707,9 @@ now contains 41 JSON reports.
 Checkpoint 44 adds the Xiao FFXX partial artifact candidate as integrated
 report 41. Including checkpoint 35's permission-isolated report, this directory
 now contains 42 JSON reports.
+Checkpoint 45 adds the Xiao non-ER equipment branch source slice as integrated
+report 42. Including checkpoint 35's permission-isolated report, this directory
+now contains 43 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

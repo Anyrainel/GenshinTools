@@ -994,15 +994,25 @@ ledger keeps weapon, Sands, Circlet, and substats explicitly missing. The join
 is Guide Factory-authored, incomplete, unranked, compatibility-unevaluated, and
 not materializable by the guide or generator schemas.
 
-The next non-ER source slice should add real branch information before another
-composition. The scoped domain is thirteen occurrences from exactly three Xiao
-records: nine weapon groups containing fourteen weapon IDs, ATK% Sands, one
-CR/CD Circlet group, and two offensive-tail substat groups. Four occurrences
-are source-unconditional; the immediate weapon domain is two ranked 5-star tied
-groups plus unranked Deathmatch, for three groups and six leaves. Six other
-weapon groups, the Circlet selection, and the incomplete substat tail must
-remain guarded or deferred. The source slice will not yet join those records to
-FFXX or turn their order into a cross-rarity ranking.
+Checkpoint 45 adds that real branch information without composing it. Its
+eighteen-file closure authenticates thirteen occurrences from exactly three
+Xiao records: nine weapon groups containing fourteen weapon IDs, ATK% Sands,
+one CR/CD Circlet group, and two offensive-tail substat groups. Four occurrences
+are source-condition-free; the immediate weapon domain is two ranked 5-star
+tied groups plus unranked Deathmatch, for three groups and six leaves. Six other
+weapon groups, the Circlet selection, and the incomplete substat tail remain
+guarded or deferred. The source slice does not join those records to FFXX or
+turn their order into a cross-rarity ranking. It is global report 42; its
+44,129-byte output has SHA-256
+`97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51`.
+
+The next non-ER boundary should attempt the smallest genuine branch
+composition: combine checkpoint 44 with only checkpoint 45's authenticated
+source-condition-free weapon and Sands domain. It must retain group-level
+five-star ranking, tied membership, Deathmatch's unranked and cross-rarity-
+incomparable status, and explicit missing/guarded Circlet and substat axes. The
+experiment should report every intermediate candidate and discrepancy before
+using any generator or objective.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

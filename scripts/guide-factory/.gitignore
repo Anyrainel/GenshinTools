@@ -40,3 +40,4 @@ reports/*
 !reports/xiao-formula-count-parity.json
 !reports/xiao-ffxx-applicable-claim-projection-contract.json
 !reports/xiao-ffxx-partial-artifact-candidate-contract.json
+!reports/xiao-non-er-equipment-branch-source-slice.json

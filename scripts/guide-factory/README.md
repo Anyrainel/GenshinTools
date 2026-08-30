@@ -21,16 +21,15 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 44 performs the first authenticated evidence-to-candidate
-transition. It joins the checkpoint-43 Marechaussee Hunter and Anemo Goblet
-payloads into exactly one Guide Factory-authored partial technical candidate
-for Xiao in the exact FFXX team. The source-only and explicit-C6 views become
-two provenance bindings to the same candidate, not two candidates. A fixed
-six-axis ledger marks artifact set and Goblet present while weapon, Sands,
-Circlet, and substats remain missing without defaults. The candidate is
-incomplete, unranked, compatibility-unevaluated, and not materializable by the
-guide or generator schemas. No complete build, recommendation, damage result,
-ideal-roll allocation, rotation optimization, or ER calculation is performed.
+Checkpoint 45 expands the authenticated Xiao source repository before another
+composition. It preserves thirteen non-ER equipment/stat observations from
+three records: three ranked five-star tied weapon groups, six explicitly
+unranked four-star options, ATK% Sands, one guarded CR/CD Circlet choice, and
+two guarded offensive-tail substat priorities. Four rows are source-condition-
+free and nine remain guarded; the source slice joins none of them to FFXX or
+the checkpoint-44 partial candidate. It creates no candidate, complete build,
+recommendation, damage result, ideal-roll allocation, rotation optimization,
+or ER calculation.
 This is not a working guide factory or an equipment recommendation:
 
 1. Register potential sources and their permitted ingestion mode.
@@ -788,6 +787,25 @@ This is not a working guide factory or an equipment recommendation:
      provenance bindings, zero complete candidates, zero builds, zero
      recommendations, and no generator, optimizer, formula, damage, rotation,
      ideal-roll, rank, compatibility, or ER claim.
+247. Byte-authenticate the exact eighteen-file Xiao non-ER branch-source
+     closure, require parsed-object parity for all five JSON inputs, and fresh-
+     authenticate checkpoint 42 before projecting any source row.
+248. Preserve the five-star weapon record as three ranked tied groups with
+     eight leaves. Keep the first two groups source-condition-free and the
+     available-only third group guarded; never turn tied members into ranks.
+249. Preserve all six four-star weapon rows as unranked single options. Treat
+     source positions as provenance only, retain five exact guards, and define
+     no order between a four-star option and a five-star group.
+250. Preserve ATK% Sands as source-condition-free, CR/CD Circlet as one guarded
+     two-choice group, and the two shared-guard offensive-tail substat rows as
+     distinct priorities rather than a complete stat-priority plan.
+251. Fail closed on any record membership, source order, tied membership,
+     unranked marker, classification, condition, priority, target, input hash,
+     upstream partition, or disabled-capability drift.
+252. Integrate the source slice as global report 42 with 13 observations, 9
+     weapon groups, 14 weapon leaves, 2 main-stat groups, 2 substat-priority
+     groups, and zero candidates, builds, Guide Factory recommendations,
+     formula, damage, rotation, optimization, ideal-roll, or ER outputs.
 
 The first two active sources are already in this repository:
 
@@ -873,6 +891,16 @@ partial technical candidate. Source-only and explicit-C6 are separate evidence
 bindings to the same identity. Weapon, Sands, Circlet, and substats remain
 missing, so the result is neither a complete build nor a recommendation.
 
+Checkpoint 45 returns to the broader Xiao repository before extending that
+candidate. It authenticates thirteen exact source rows across the five-star
+weapon, four-star weapon, and offensive-stat records. Five-star membership and
+ranked tied groups remain intact; all six four-star rows remain unranked and
+have no cross-rarity order. Only the first two five-star groups, Deathmatch,
+and ATK% Sands are source-condition-free. The other weapon rows, the CR/CD
+Circlet choice, and both incomplete offensive-tail substat priorities retain
+their guards and are not selected. The slice emits zero candidates and zero
+builds.
+
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
 Source-specific capture contracts live beside `sources/registry.json`.
@@ -932,6 +960,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-applicable-claim-projection-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-partial-artifact-candidate-contract.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-non-er-equipment-branch-source-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
@@ -956,7 +985,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-one globally integrated durable reports
+In full mode it rebuilds all forty-two globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1242,6 +1271,16 @@ closure, then performs one deterministic singleton-axis join. Its six-axis
 ledger admits only artifact set and Goblet; four axes remain missing without
 defaults. The result has one partial candidate, two provenance bindings, and
 zero complete candidates or builds.
+
+Checkpoint 45 independently authenticates the three Xiao records needed for a
+real non-ER branch domain. Its thirteen source observations contain three
+ranked five-star tied groups, six unranked four-star options, one unconditional
+Sands group, one guarded Circlet group, and two guarded offensive-tail substat
+rows. Only four observations have empty source conditions. The report preserves
+all guards, source classifications, group membership, group ordering, and
+substat priorities without selecting a weapon or Circlet, composing a build,
+or inferring a complete stat order. It consumes no checkpoint-43 request fact,
+checkpoint-44 candidate, formula witness, rotation, or ER input.
 
 The manual condition-array inventory then broadens that validation boundary to
 eight guide-selected external snapshots. The ninth indexed snapshot is the

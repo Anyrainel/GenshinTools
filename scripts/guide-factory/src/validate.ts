@@ -277,6 +277,13 @@ import {
   type XiaoSourceLocalConditionSliceReport,
 } from "./xiaoSourceLocalConditionSlice";
 import {
+  authenticateXiaoNonErEquipmentBranchSourceSliceReport,
+  XIAO_NON_ER_EQUIPMENT_BRANCH_SOURCE_SLICE_INPUT_PATHS,
+  XIAO_NON_ER_EQUIPMENT_BRANCH_SOURCE_SLICE_REPORT_PATH,
+  XIAO_NON_ER_EQUIPMENT_BRANCH_SOURCE_SLICE_SOURCE_FILE_PATHS,
+  type XiaoNonErEquipmentBranchSourceSliceReport,
+} from "./xiaoNonErEquipmentBranchSourceSlice";
+import {
   authenticateXiaoFfxxApplicableClaimProjectionContract,
   XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_INPUT_PATHS,
   XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_REPORT_PATH,
@@ -376,6 +383,8 @@ export async function runValidation(
     kleeTeamScopedClaimJoinWitnessSourceFiles,
     xiaoSourceLocalConditionSliceInput,
     xiaoSourceLocalConditionSliceSnapshotText,
+    xiaoNonErEquipmentBranchSourceSliceInput,
+    xiaoNonErEquipmentBranchSourceSliceSourceFiles,
     xiaoFfxxApplicableClaimProjectionInput,
     xiaoFfxxApplicableClaimProjectionSourceFiles,
     xiaoFfxxPartialArtifactCandidateInput,
@@ -552,6 +561,18 @@ export async function runValidation(
           "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
         ),
         "utf8",
+      ),
+      readJson(XIAO_NON_ER_EQUIPMENT_BRANCH_SOURCE_SLICE_REPORT_PATH),
+      Promise.all(
+        XIAO_NON_ER_EQUIPMENT_BRANCH_SOURCE_SLICE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
       ),
       readJson(XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_REPORT_PATH),
       Promise.all(
@@ -1258,6 +1279,40 @@ export async function runValidation(
             "canonical-inputs-not-comparable"
               ? "The freshly rebuilt Xiao source-local condition slice could not authenticate its exact Version 5.5 source snapshot, FFXX roster, three selected bindings, fourteen holdouts, or four empty arrays."
               : "The saved Xiao source-local condition slice does not match the current raw source, consolidated records, scoped request projection, exact three-claim binding boundary, and input hashes.",
+        });
+      }
+      const xiaoNonErEquipmentBranchSourceSliceGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_NON_ER_EQUIPMENT_BRANCH_SOURCE_SLICE_INPUT_PATHS,
+        );
+      const xiaoNonErEquipmentBranchSourceSliceAuthentication =
+        authenticateXiaoNonErEquipmentBranchSourceSliceReport(
+          xiaoNonErEquipmentBranchSourceSliceInput as XiaoNonErEquipmentBranchSourceSliceReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: xiaoManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoSourceLocalDurableReportInput:
+              xiaoSourceLocalConditionSliceInput,
+            sourceFiles: xiaoNonErEquipmentBranchSourceSliceSourceFiles,
+            generatedFrom: xiaoNonErEquipmentBranchSourceSliceGeneratedFrom,
+          },
+        );
+      if (!xiaoNonErEquipmentBranchSourceSliceAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoNonErEquipmentBranchSourceSliceAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_xiao_non_er_equipment_branch_source_slice"
+              : "pipeline.stale_xiao_non_er_equipment_branch_source_slice",
+          path: "reports.xiao-non-er-equipment-branch-source-slice",
+          message:
+            xiaoNonErEquipmentBranchSourceSliceAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The Xiao non-ER equipment branch source slice could not fresh-authenticate checkpoint 42 or preserve its exact 13-row ranked/tied/unranked/stat/guard boundary."
+              : "The saved Xiao non-ER equipment branch source slice does not match the current authenticated source groups, guarded rows, disabled capabilities, and zero-candidate/zero-build boundary.",
         });
       }
       const xiaoFfxxApplicableClaimProjectionGeneratedFrom =

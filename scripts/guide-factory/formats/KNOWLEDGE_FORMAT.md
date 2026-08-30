@@ -444,6 +444,30 @@ and no choice selection, Cartesian enumeration, compatibility evaluation,
 generator, optimizer, formula, damage, rotation, or ideal-roll computation is
 performed.
 
+### Derived authenticated source branch domains
+
+A source branch domain preserves possible source rows before deciding which
+ones are applicable or composable. Source array order may be exposed as a rank
+only when the source record explicitly declares ranked groups. Members of one
+tied group remain tied. An unranked record may retain source positions for
+provenance, but those positions are not ordinal ranks. Separate rarity classes
+remain incomparable unless an authenticated source or later computation
+defines a cross-class objective.
+
+Empty conditions identify source-condition-free observations, not universally
+best choices. Nonempty conditions remain guarded until an exact fact adapter or
+computation evaluates them. A guarded multi-stat row is one unresolved choice
+group rather than several independently recommended leaves. Shared condition
+text does not merge distinct payloads or priorities.
+
+Checkpoint 45 applies this shape to thirteen Xiao observations. It contains
+three ranked five-star tied groups, six unranked four-star options, ATK% Sands,
+one guarded CR/CD Circlet group, and two guarded offensive-tail substat rows.
+It emits no candidate, build, ranking beyond the source's three five-star group
+positions, recommendation, formula, damage, ideal-roll allocation, or ER
+result. The offensive-tail rows remain incomplete while the source's leading
+ER term is deferred.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

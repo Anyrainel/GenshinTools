@@ -743,6 +743,32 @@ composition, generator, optimizer, formula, damage, rotation, ideal-roll, and
 ER work do not. The result is incomplete and cannot be materialized as a guide
 recommendation or runtime artifact-generation candidate.
 
+## Xiao non-ER equipment branch source seam
+
+`src/xiaoNonErEquipmentBranchSourceSlice.ts` authenticates a source-only
+branch domain before another composition is allowed. Its exact eighteen-file
+closure includes checkpoint 42's complete eleven-path boundary plus the
+repository, manual index, source registry, durable checkpoint-42 report, and
+this seam's core, CLI, and path resolver. Five JSON inputs require byte/parsed-object parity,
+and checkpoint 42 is fresh-authenticated rather than trusted as a saved
+summary.
+
+The seam reconstructs thirteen exact source items from the manual snapshot and
+consolidated repository. It preserves three ranked five-star tied groups, six
+unranked four-star singles, ATK% Sands, a CR/CD Circlet choice, and two
+offensive-tail substat priorities. Four occurrences have empty conditions;
+nine remain guarded across eight unique condition arrays. The first two five-
+star groups and Deathmatch form a three-group, six-leaf source-condition-free
+weapon domain. The third five-star group and five other four-star rows remain
+guarded. No order is introduced across rarity classes.
+
+The Circlet choice remains candidate-stat-dependent, and the substat rows stay
+an incomplete offensive tail while ER is deferred. This seam performs source
+projection only: it executes no applicability resolution, cross-record join,
+candidate enumeration, choice selection, compatibility evaluation, generator,
+optimizer, formula, damage, rotation, ideal-roll, or ER computation and emits
+zero candidates and zero builds.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
