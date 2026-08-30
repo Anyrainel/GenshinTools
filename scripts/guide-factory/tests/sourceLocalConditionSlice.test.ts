@@ -368,6 +368,60 @@ describe("source-local condition slice", () => {
     );
   });
 
+  it("fails closed rather than throwing for malformed numeric facts and predicates", () => {
+    const invalidFactInput = fixture();
+    invalidFactInput.requestContext = {
+      requestFactsByTeamRecordId: {
+        [OVERLOAD_TEAM]: {
+          characterFactsById: {
+            [KLEE]: { constellation: 7 },
+          },
+        },
+      },
+    };
+    expect(
+      buildSourceLocalConditionSliceReport(invalidFactInput),
+    ).toMatchObject({
+      comparisonStatus: "not-comparable",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "source-local-slice.invalid-constellation-fact",
+        }),
+      ]),
+    });
+
+    const invalidThresholdInput = fixture();
+    invalidThresholdInput.claims[0]!.requestBindings[0]!.requestPredicate = {
+      type: "talent-level-at-least",
+      characterId: KLEE,
+      talent: "burst",
+      threshold: 0,
+    };
+    expect(
+      buildSourceLocalConditionSliceReport(invalidThresholdInput),
+    ).toMatchObject({
+      comparisonStatus: "not-comparable",
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "source-local-slice.invalid-numeric-character-request-predicate",
+        }),
+      ]),
+    });
+
+    const missingCharacterInput = fixture();
+    missingCharacterInput.claims[0]!.requestBindings[0]!.requestPredicate = {
+      type: "constellation-at-least",
+      threshold: 6,
+    } as never;
+    expect(() =>
+      buildSourceLocalConditionSliceReport(missingCharacterInput),
+    ).not.toThrow();
+    expect(
+      buildSourceLocalConditionSliceReport(missingCharacterInput)
+        .comparisonStatus,
+    ).toBe("not-comparable");
+  });
+
   it("authenticates only the exact canonical rebuilt report", () => {
     const input = fixture();
     const report = buildSourceLocalConditionSliceReport(input);

@@ -220,11 +220,11 @@
     },
     {
       "path": "scripts/guide-factory/src/guideRequestContext.ts",
-      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+      "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
     },
     {
       "path": "scripts/guide-factory/src/guideRequestContextSchema.ts",
-      "sha256": "fa19fed88096d5e9082a69770ac1a2d4054f89d4636918c9e989a12ceb28d060"
+      "sha256": "819dc59f36d708dcf0ca5fb19fd0ca3359c326bb0516fbd8edeb32f1182158dc"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
@@ -506,9 +506,11 @@
       "ER": false,
       "factProvenance": {
         "acquisitionPreference": "request",
+        "constellation": "request",
         "intendedRole": "request",
         "optimizationGoal": "request",
         "passiveExecutionAssumptions": "request-assumption",
+        "talentLevels": "request",
         "weaponInventory": "account"
       },
       "formulas": false,
@@ -2583,9 +2585,11 @@
       "ER": false,
       "factProvenance": {
         "acquisitionPreference": "request",
+        "constellation": "request",
         "intendedRole": "request",
         "optimizationGoal": "request",
         "passiveExecutionAssumptions": "request-assumption",
+        "talentLevels": "request",
         "weaponInventory": "account"
       },
       "formulas": false,
@@ -4645,9 +4649,11 @@
       "ER": false,
       "factProvenance": {
         "acquisitionPreference": "request",
+        "constellation": "request",
         "intendedRole": "request",
         "optimizationGoal": "request",
         "passiveExecutionAssumptions": "request-assumption",
+        "talentLevels": "request",
         "weaponInventory": "account"
       },
       "formulas": false,

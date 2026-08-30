@@ -19,6 +19,12 @@ export type GuideRequestContext = {
             {
               intendedRole?: string;
               optimizationGoal?: string;
+              constellation?: number;
+              talentLevels?: {
+                auto?: number;
+                skill?: number;
+                burst?: number;
+              };
             }
           >
         >;
@@ -47,6 +53,17 @@ export type GuideRequestContextPredicateAst =
     }
   | { type: "intended-role-is"; characterId: string; roleId: string }
   | { type: "optimization-goal-is"; characterId: string; goalId: string }
+  | {
+      type: "constellation-at-least";
+      characterId: string;
+      threshold: number;
+    }
+  | {
+      type: "talent-level-at-least";
+      characterId: string;
+      talent: "auto" | "skill" | "burst";
+      threshold: number;
+    }
   | { type: "acquisition-preference-is"; preferenceId: string }
   | { type: "weapon-inventory-includes"; weaponId: string }
   | {
@@ -150,6 +167,8 @@ export type GuideRequestContextApplicabilityReport = {
   factProvenance: {
     intendedRole: "request";
     optimizationGoal: "request";
+    constellation: "request";
+    talentLevels: "request";
     acquisitionPreference: "request";
     passiveExecutionAssumptions: "request-assumption";
     weaponInventory: "account";
@@ -235,6 +254,8 @@ const POLICY_BOUNDARY = {
 const FACT_PROVENANCE = {
   intendedRole: "request",
   optimizationGoal: "request",
+  constellation: "request",
+  talentLevels: "request",
   acquisitionPreference: "request",
   passiveExecutionAssumptions: "request-assumption",
   weaponInventory: "account",
@@ -447,6 +468,26 @@ function evaluateRequestAtom(
       predicate.characterId,
     );
   }
+  if (predicate.type === "constellation-at-least") {
+    return compareOptionalNumericRequestFact(
+      teamFacts?.characterFactsById?.[predicate.characterId]?.constellation,
+      predicate.threshold,
+      "constellation",
+      teamRecordId,
+      predicate.characterId,
+    );
+  }
+  if (predicate.type === "talent-level-at-least") {
+    return compareOptionalNumericRequestFact(
+      teamFacts?.characterFactsById?.[predicate.characterId]?.talentLevels?.[
+        predicate.talent
+      ],
+      predicate.threshold,
+      `${predicate.talent} talent level`,
+      teamRecordId,
+      predicate.characterId,
+    );
+  }
   if (predicate.type === "acquisition-preference-is") {
     return compareOptionalRequestFact(
       teamFacts?.acquisitionPreference,
@@ -562,6 +603,37 @@ function compareOptionalRequestFact(
       actual === expected
         ? `Request ${label} matches ${expected}.`
         : `Request ${label} is ${actual}, not ${expected}.`,
+  };
+}
+
+function compareOptionalNumericRequestFact(
+  actual: number | undefined,
+  threshold: number,
+  label: string,
+  teamRecordId: string,
+  characterId: string,
+): {
+  result: "true" | "false" | "unknown";
+  factProvenance: "request";
+  factScope: GuideRequestContextPredicateRow["factScope"];
+  reason: string;
+} {
+  if (actual == null) {
+    return {
+      result: "unknown",
+      factProvenance: "request",
+      factScope: { teamRecordId, characterId, accountSnapshotId: null },
+      reason: `Request ${label} was omitted.`,
+    };
+  }
+  return {
+    result: actual >= threshold ? "true" : "false",
+    factProvenance: "request",
+    factScope: { teamRecordId, characterId, accountSnapshotId: null },
+    reason:
+      actual >= threshold
+        ? `Request ${label} ${actual} meets threshold ${threshold}.`
+        : `Request ${label} ${actual} is below threshold ${threshold}.`,
   };
 }
 
@@ -815,6 +887,45 @@ function validateContext(
           });
         }
       }
+      if (
+        characterFacts.constellation != null &&
+        (!Number.isSafeInteger(characterFacts.constellation) ||
+          characterFacts.constellation < 0 ||
+          characterFacts.constellation > 6)
+      ) {
+        issues.push({
+          code: "request-context.invalid-constellation-fact",
+          path: `${characterPath}.constellation`,
+          message: "Constellation facts must be safe integers from 0 through 6.",
+        });
+      }
+      if (
+        characterFacts.talentLevels != null &&
+        !isRecord(characterFacts.talentLevels)
+      ) {
+        issues.push({
+          code: "request-context.invalid-talent-levels-fact",
+          path: `${characterPath}.talentLevels`,
+          message: "Talent-level facts must be an object keyed by auto, skill, or burst.",
+        });
+      } else if (isRecord(characterFacts.talentLevels)) {
+        for (const [talent, level] of Object.entries(
+          characterFacts.talentLevels,
+        )) {
+          if (
+            (talent !== "auto" && talent !== "skill" && talent !== "burst") ||
+            !Number.isSafeInteger(level) ||
+            (level as number) <= 0
+          ) {
+            issues.push({
+              code: "request-context.invalid-talent-level-fact",
+              path: `${characterPath}.talentLevels.${talent}`,
+              message:
+                "Talent levels require only auto, skill, or burst keys with positive safe-integer values.",
+            });
+          }
+        }
+      }
     }
     for (const [assumptionId, value] of Object.entries(
       teamFacts.passiveExecutionAssumptions ?? {},
@@ -885,6 +996,50 @@ function validateRequestPredicate(
     predicate.predicates.forEach((child, index) =>
       validateRequestPredicate(child, `${path}.predicates[${index}]`, issues),
     );
+    return;
+  }
+  if (
+    predicate.type === "constellation-at-least" ||
+    predicate.type === "talent-level-at-least"
+  ) {
+    if (
+      typeof predicate.characterId !== "string" ||
+      predicate.characterId.length === 0
+    ) {
+      issues.push({
+        code: "request-context.invalid-predicate-character",
+        path: `${path}.characterId`,
+        message: "Numeric character predicates require a character ID.",
+      });
+    }
+    const validThreshold =
+      typeof predicate.threshold === "number" &&
+      Number.isSafeInteger(predicate.threshold) &&
+      (predicate.type === "constellation-at-least"
+        ? predicate.threshold >= 0 && predicate.threshold <= 6
+        : predicate.threshold > 0);
+    if (!validThreshold) {
+      issues.push({
+        code: "request-context.invalid-numeric-predicate-threshold",
+        path: `${path}.threshold`,
+        message:
+          predicate.type === "constellation-at-least"
+            ? "Constellation thresholds must be safe integers from 0 through 6."
+            : "Talent-level thresholds must be positive safe integers.",
+      });
+    }
+    if (
+      predicate.type === "talent-level-at-least" &&
+      predicate.talent !== "auto" &&
+      predicate.talent !== "skill" &&
+      predicate.talent !== "burst"
+    ) {
+      issues.push({
+        code: "request-context.invalid-talent-predicate-kind",
+        path: `${path}.talent`,
+        message: "Talent-level predicates must name auto, skill, or burst.",
+      });
+    }
     return;
   }
   const fields: Readonly<Record<string, string>> = {
@@ -964,9 +1119,12 @@ function canonicalContext(context: GuideRequestContext): GuideRequestContext {
                   ...(teamFacts.characterFactsById
                     ? {
                         characterFactsById: Object.fromEntries(
-                          Object.entries(teamFacts.characterFactsById).sort(
-                            ([left], [right]) => left.localeCompare(right),
-                          ),
+                          Object.entries(teamFacts.characterFactsById)
+                            .sort(([left], [right]) => left.localeCompare(right))
+                            .map(([characterId, characterFacts]) => [
+                              characterId,
+                              canonicalCharacterFacts(characterFacts),
+                            ]),
                         ),
                       }
                     : {}),
@@ -1007,6 +1165,40 @@ function canonicalContext(context: GuideRequestContext): GuideRequestContext {
           },
         }
       : {}),
+  };
+}
+
+function canonicalCharacterFacts(
+  facts: NonNullable<
+    NonNullable<
+      GuideRequestContext["requestFactsByTeamRecordId"]
+    >[string]["characterFactsById"]
+  >[string],
+): typeof facts {
+  const talentLevels: unknown = facts.talentLevels;
+  return {
+    ...(facts.intendedRole == null
+      ? {}
+      : { intendedRole: facts.intendedRole }),
+    ...(facts.optimizationGoal == null
+      ? {}
+      : { optimizationGoal: facts.optimizationGoal }),
+    ...(facts.constellation == null
+      ? {}
+      : { constellation: facts.constellation }),
+    ...(talentLevels == null
+      ? {}
+      : {
+          talentLevels: isRecord(talentLevels)
+            ? Object.fromEntries(
+                Object.entries(talentLevels).sort(([left], [right]) =>
+                  left.localeCompare(right),
+                ),
+              )
+            : (structuredClone(talentLevels) as NonNullable<
+                typeof facts.talentLevels
+              >),
+        }),
   };
 }
 

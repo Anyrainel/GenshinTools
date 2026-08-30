@@ -67,7 +67,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
-      "sha256": "c1901906e1cf6d4147999d799787ab0fb012c644e90a75a66e908cabdba29366"
+      "sha256": "309a0282bef6632f069db2615fb94283454c4b55bae125a410fe4eaccbf32cf7"
     },
     {
       "path": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
@@ -83,15 +83,15 @@
     },
     {
       "path": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
-      "sha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4"
+      "sha256": "e8e5b6706919967818e646830e31f0c308c7ff0f477ecd8067df838b460ebb0d"
     },
     {
       "path": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
-      "sha256": "613a511796b0f040e26274f481c7c165c15591ef2b52e673cc297833f263d278"
+      "sha256": "90d7d8cea2f1f20c38dd471cf610408fee04c117d9bda8a514870b8daf30d237"
     },
     {
       "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
-      "sha256": "38551ef320012e42c6dd2c85812ee95efb1d14cd473fc277bdfac9e1f4527011"
+      "sha256": "051bc53e0594f4a574e4615e76a1aa0528635080eb689ec9e600b80dc418cb1f"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -143,7 +143,7 @@
     },
     {
       "path": "scripts/guide-factory/src/guideRequestContext.ts",
-      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+      "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
     },
     {
       "path": "scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts",
@@ -211,7 +211,7 @@
     },
     {
       "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
-      "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+      "sha256": "05d57d50945ad9c6d170b6ad83fb08e33ea9d84f159065fedc6bee9154e22c13"
     },
     {
       "path": "scripts/guide-factory/src/sourceScopedRolePairSample.ts",
@@ -2320,8 +2320,8 @@
       "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions"
     ],
     "klee": {
-      "durableReportCanonicalObjectSha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4",
-      "durableReportFileSha256": "db8f24bc8b2f904cc61dee66595b7a4be6cb1df26fcc8d26b2bec185b1e19fe4",
+      "durableReportCanonicalObjectSha256": "e8e5b6706919967818e646830e31f0c308c7ff0f477ecd8067df838b460ebb0d",
+      "durableReportFileSha256": "e8e5b6706919967818e646830e31f0c308c7ff0f477ecd8067df838b460ebb0d",
       "durableReportPath": "scripts/guide-factory/reports/klee-source-local-condition-slice.json",
       "freshlyAuthenticated": true,
       "holdoutOccurrenceCount": 11,
@@ -2333,8 +2333,8 @@
       "bindingOccurrenceCount": 57,
       "corpusOccurrenceCount": 142,
       "currentBoundaryAuthenticated": true,
-      "durableReportCanonicalObjectSha256": "38551ef320012e42c6dd2c85812ee95efb1d14cd473fc277bdfac9e1f4527011",
-      "durableReportFileSha256": "38551ef320012e42c6dd2c85812ee95efb1d14cd473fc277bdfac9e1f4527011",
+      "durableReportCanonicalObjectSha256": "051bc53e0594f4a574e4615e76a1aa0528635080eb689ec9e600b80dc418cb1f",
+      "durableReportFileSha256": "051bc53e0594f4a574e4615e76a1aa0528635080eb689ec9e600b80dc418cb1f",
       "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
       "kleeSourceLocalOccurrenceCount": 4,
       "typedBindingMeansConditionTruth": false

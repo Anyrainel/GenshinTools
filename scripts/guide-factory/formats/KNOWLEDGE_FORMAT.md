@@ -122,9 +122,12 @@ advice must remain deferred unless a first-class coupled shape is added.
 
 Request and account context is experiment input, not source knowledge. A strict
 context fixture may state team-scoped character intent, optimization goals,
-acquisition preferences, explicit execution assumptions, and bounded account-
-inventory facts. It must not contain source claim IDs, requested resolutions,
-recommendation fields, or source-condition prose.
+character constellation, named Auto/Skill/Burst Talent levels, acquisition
+preferences, explicit execution assumptions, and bounded account-inventory
+facts. Constellation and Talent levels are request facts scoped to an exact
+team and character, not verified account investment. It must not contain source
+claim IDs, requested resolutions, recommendation fields, or source-condition
+prose.
 
 A source-specific wrapper owns the mapping from an exact source-condition leaf
 to a typed context query. The mapping pins the condition-array, full-predicate,
@@ -134,6 +137,14 @@ prerequisite. Omitted request facts remain unknown. A missing inventory item is
 false only when the corresponding inventory domain is explicitly complete, and
 account facts must retain their snapshot identity.
 
+Constellation facts and thresholds must be safe integers from 0 through 6.
+Talent facts and thresholds must be positive safe integers and name `auto`,
+`skill`, or `burst`. Numeric predicates retain three-valued `all`/`any`
+semantics: one false OR branch with the other omitted remains unknown, both
+supplied below threshold are false, and either branch meeting its threshold is
+true. Constellation and Talent facts remain independent; one never derives the
+other.
+
 Derived context applicability must preserve the original source resolution and
 provenance separately. `applicable-under-supplied-context` means only that the
 supplied facts satisfy the mapped condition. It is not source authorization,
@@ -141,11 +152,15 @@ comparative performance, rank, suitability, account advice, or a player-facing
 recommendation, and independently evaluated contexts must not be multiplied
 into one build.
 
-The next planned standalone request-context slice will test a Noelle numeric
-condition expressed as C6 or Burst Talent level 10. It is not implemented yet.
-That experiment must preserve the source OR structure, keep constellation and
-Talent-level facts distinct, and scope every supplied numeric fact to the exact
-request subject.
+The standalone Noelle Luna VIII high-investment slice authenticates the source
+condition `Noelle is C6 or her Burst Talent is Level 10 or higher.` for three
+exact main-stat occurrences. The source predicate remains unresolved and keeps
+Talent evaluation disabled. Only the wrapper-owned request mapping evaluates
+`any(constellation >= 6, burst talent >= 10)`. Its durable exact-team context
+supplies Noelle C6 and omits Burst Talent level, so the three source-unresolved
+cells become applicable while the omitted branch remains unknown. This proves
+typed context applicability only, not source authorization, account investment,
+stat correctness, or a recommendation.
 
 ### Derived source-local condition slices
 
@@ -194,6 +209,16 @@ request fact or binding. All five Kokomi condition arrays are nonempty: one is
 selected and four are exact holdouts. The slice consumes, binds, or energy-
 classifies none of the holdouts.
 
+The standalone Noelle Luna VIII adapter selects exactly three occurrences from
+the high-investment main-stat branch: DEF% Sands, Geo DMG Bonus Goblet, and CRIT
+Rate/CRIT DMG Circlet. The exact 16-array boundary closes as three selected, 12
+nonempty holdouts, and one empty occurrence. It projects the independent claims
+over the exact Noelle/Durin/Nicole/Xilonen source team with a C6 request fact.
+All three source cells remain unresolved; all three context projections become
+applicable and effectively matched. Holdouts and the empty occurrence receive
+no slice-authored binding or energy classification. The adapter creates zero
+candidates, equipment assignments, optimizations, or assembled builds.
+
 A durable source-local report is downstream evidence only when it equals a
 fresh authenticated rebuild from the exact raw inputs. Dependency direction
 must stay acyclic: raw source inputs feed the source-local slice, an
@@ -214,6 +239,11 @@ source literals, hashes, team/member/subject identity, ordered roster predicate,
 Ocean-Hued Clam payload, `recommended`/`unranked` metadata, and zero request-
 binding boundary. The four exact Kokomi holdouts remain unbound and energy-
 unclassified.
+
+Checkpoint 31 does not admit the standalone Noelle slice. Its three selected
+occurrences therefore remain unbound and energy-unclassified in current manual
+coverage, and the 57-entry catalog, six wrapper families, and all checkpoint 30
+coverage partitions remain unchanged.
 
 A private normalized helper may perform only repeated selected-occurrence,
 source-claim, and condition-control parity plus catalog-entry construction after

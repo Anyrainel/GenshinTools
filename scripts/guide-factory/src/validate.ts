@@ -78,6 +78,13 @@ import {
   type KokomiSourceLocalArtifactSliceReport,
 } from "./kokomiSourceLocalArtifactSlice";
 import {
+  authenticateNoelleSourceLocalHighInvestmentSliceReport,
+  NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS,
+  NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_REPORT_PATH,
+  NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_SOURCE_FILE_PATHS,
+  type NoelleSourceLocalHighInvestmentSliceReport,
+} from "./noelleSourceLocalHighInvestmentSlice";
+import {
   buildKeqingLunarSourceConditionedCandidateLatticeReport,
   KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
 } from "./keqingLunarSourceConditionedCandidateLattice";
@@ -254,6 +261,8 @@ export async function runValidation(): Promise<ValidationRunResult> {
     dionaSourceLocalSupportSliceInput,
     kokomiSourceLocalArtifactSliceInput,
     kokomiSourceLocalArtifactSliceSourceFiles,
+    noelleSourceLocalHighInvestmentSliceInput,
+    noelleSourceLocalHighInvestmentSliceSourceFiles,
     kleeTeamScopedClaimJoinWitnessInput,
     kleeTeamScopedClaimJoinWitnessSourceFiles,
   ] =
@@ -334,6 +343,18 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH),
       Promise.all(
         KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
+      readJson(NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_REPORT_PATH),
+      Promise.all(
+        NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_SOURCE_FILE_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
@@ -926,6 +947,42 @@ export async function runValidation(): Promise<ValidationRunResult> {
             "canonical-inputs-not-comparable"
               ? "The freshly rebuilt Kokomi source-local artifact slice could not authenticate its exact source snapshot, repository team, ordered roster predicate, selected artifact payload, or holdout boundary."
               : "The saved Kokomi source-local artifact slice does not match the current raw source, consolidated records, exact one-claim roster binding, zero-request-binding boundary, and input hashes.",
+        });
+      }
+      const noelleSourceLocalGeneratedFrom = await hashRelativePaths(
+        NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS,
+      );
+      const noelleManualInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      );
+      const noelleSourceLocalAuthentication =
+        authenticateNoelleSourceLocalHighInvestmentSliceReport(
+          noelleSourceLocalHighInvestmentSliceInput as NoelleSourceLocalHighInvestmentSliceReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: noelleManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            sourceFiles: noelleSourceLocalHighInvestmentSliceSourceFiles,
+            generatedFrom: noelleSourceLocalGeneratedFrom,
+          },
+        );
+      if (!noelleSourceLocalAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            noelleSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_noelle_source_local_high_investment_slice"
+              : "pipeline.stale_noelle_source_local_high_investment_slice",
+          path: "reports.noelle-source-local-high-investment-slice",
+          message:
+            noelleSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The freshly rebuilt Noelle source-local high-investment slice could not authenticate its exact source snapshot, guide/team cross-record boundary, three main-stat payloads, numeric request predicate, twelve holdouts, or one empty array."
+              : "The saved Noelle source-local high-investment slice does not match the current raw source, consolidated records, exact three-claim numeric request projection, holdout/empty closure, and input hashes.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

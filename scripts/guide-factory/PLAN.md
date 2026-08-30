@@ -580,15 +580,47 @@ claims, positive fixture, negative control, and interpretation boundary remain
 unchanged. No assignment, recommendation, build, rank, optimizer, damage,
 rotation, or ER work is authorized.
 
-The next bounded non-ER gate should be a standalone Noelle numeric request-
-context slice for a source condition satisfied by C6 or Burst Talent level 10.
-That slice is not implemented yet. Its representation must preserve the source
-OR structure, distinguish constellation from Talent-level facts, scope supplied
-facts to the exact request subject, and remain outside catalog integration until
-separately authenticated. Human review of the Itto, Keqing, Klee, Diona, and
-Kokomi bindings and source classifications remains a prerequisite for
-publication, formula authoring, recommendation composition, or build
-composition.
+Checkpoint 31 completes that standalone Noelle experiment. The source-specific
+wrapper authenticates the Luna VIII snapshot at
+`d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0`
+and selects exactly three high-investment main-stat occurrences from
+`kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii`: DEF%
+Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet. All share condition
+hash `92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4`
+but retain independent payload identities.
+
+The three claims are projected over the exact
+`kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii` source team.
+Their source predicate remains one unresolved `investment-threshold` leaf;
+source Talent-level evaluation stays false. The wrapper maps only that pinned
+leaf to `any(constellation >= 6, burst talent >= 10)`. Constellation and Talent
+levels remain independent request facts scoped to the exact team and Noelle
+subject. The durable context supplies C6 and omits Burst Talent level, so all
+three source-unresolved cells become applicable and effectively matched while
+the omitted branch remains unknown. This does not derive a Talent level from
+constellation or make the wrapper-owned cross-record join source-authored.
+
+The Noelle source boundary closes 16 arrays as three selected, 12 nonempty
+holdouts, and one empty array. The holdouts and empty occurrence are unconsumed
+and receive no slice-authored binding or energy classification. The slice
+produces zero candidates, equipment assignments, optimizations, and assembled
+builds. It makes no recommendation, rank, formula, damage, rotation, ideal-roll,
+or ER claim.
+
+Checkpoint 31 adds the thirtieth durable report but remains outside the current
+catalog. Catalog 57 = 54 typed + 3 acknowledged, non-structural coverage
+54/3/66, unique arrays 32/53/1, energy 15/51/60/16, and six catalog wrapper
+families over 17 source files and 67 generated-from paths remain unchanged.
+The shared request-context change regenerates affected Itto, Klee, Diona, and
+Kokomi reports, manual coverage, and the Klee witness without changing their
+established semantics.
+
+The next non-ER gate should separately admit only the three exact authenticated
+Noelle occurrences to the catalog. A later standalone experiment should then
+model the lower-investment Noelle branch. Neither gate is implemented yet.
+Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
+source classifications remains a prerequisite for publication, formula
+authoring, recommendation composition, or build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

@@ -6,6 +6,7 @@ import {
   type GuideRequestContextApplicabilityReport,
   type GuideRequestContextPredicateAst,
 } from "../src/guideRequestContext";
+import { GuideRequestContextSchema } from "../src/guideRequestContextSchema";
 import { sha256Text, stableJson } from "../src/io";
 import {
   buildSourceConditionedGuidePacketReport,
@@ -247,6 +248,212 @@ describe("guide request/account context applicability", () => {
     expect(cell(inapplicable, PREFERENCE_CLAIM).resolution).toBe(
       "inapplicable",
     );
+  });
+
+  it("evaluates constellation-or-talent thresholds with exact three-valued semantics", () => {
+    const numericRule = rule(PREFERENCE_CLAIM, "predicate", {
+      type: "any",
+      predicates: [
+        {
+          type: "constellation-at-least",
+          characterId: ITTO,
+          threshold: 6,
+        },
+        {
+          type: "talent-level-at-least",
+          characterId: ITTO,
+          talent: "burst",
+          threshold: 10,
+        },
+      ],
+    });
+    const cases = [
+      { facts: {}, result: "unknown" },
+      { facts: { constellation: 5 }, result: "unknown" },
+      { facts: { talentLevels: { burst: 9 } }, result: "unknown" },
+      {
+        facts: { constellation: 5, talentLevels: { burst: 9 } },
+        result: "false",
+      },
+      { facts: { constellation: 6 }, result: "true" },
+      { facts: { talentLevels: { burst: 10 } }, result: "true" },
+      {
+        facts: { constellation: 6, talentLevels: { burst: 9 } },
+        result: "true",
+      },
+      {
+        facts: { constellation: 5, talentLevels: { burst: 10 } },
+        result: "true",
+      },
+    ] as const;
+
+    for (const { facts, result } of cases) {
+      const report = project(
+        {
+          requestFactsByTeamRecordId: {
+            [TEAM_A]: { characterFactsById: { [ITTO]: facts } },
+          },
+        },
+        [numericRule],
+      );
+      expect(report.comparisonStatus).toBe("comparable");
+      expect(
+        cell(report, PREFERENCE_CLAIM).requestContextBindings[0]?.result,
+      ).toBe(result);
+    }
+
+    const falseReport = project(
+      {
+        requestFactsByTeamRecordId: {
+          [TEAM_A]: {
+            characterFactsById: {
+              [ITTO]: { constellation: 5, talentLevels: { burst: 9 } },
+            },
+          },
+        },
+      },
+      [numericRule],
+    );
+    expect(falseReport.context).toEqual({
+      requestFactsByTeamRecordId: {
+        [TEAM_A]: {
+          characterFactsById: {
+            [ITTO]: { constellation: 5, talentLevels: { burst: 9 } },
+          },
+        },
+      },
+    });
+    expect(falseReport.factProvenance).toMatchObject({
+      constellation: "request",
+      talentLevels: "request",
+    });
+    expect(falseReport.sourceControl).toMatchObject({
+      reportType: "source-conditioned-guide-packet-report",
+    });
+    expect(sourceFixture().policyBoundary.talentLevelsEvaluated).toBe(false);
+
+    const c6Only = project(
+      {
+        requestFactsByTeamRecordId: {
+          [TEAM_A]: {
+            characterFactsById: { [ITTO]: { constellation: 6 } },
+          },
+        },
+      },
+      [numericRule],
+    );
+    const rows = cell(c6Only, PREFERENCE_CLAIM).requestContextBindings[0]
+      ?.predicateRows;
+    expect(rows).toEqual([
+      expect.objectContaining({
+        predicateType: "constellation-at-least",
+        result: "true",
+        factScope: {
+          teamRecordId: TEAM_A,
+          characterId: ITTO,
+          accountSnapshotId: null,
+        },
+      }),
+      expect.objectContaining({
+        predicateType: "talent-level-at-least",
+        result: "unknown",
+        factScope: {
+          teamRecordId: TEAM_A,
+          characterId: ITTO,
+          accountSnapshotId: null,
+        },
+      }),
+    ]);
+  });
+
+  it("fails closed for invalid numeric request facts and thresholds", () => {
+    const validPredicate = {
+      type: "constellation-at-least",
+      characterId: ITTO,
+      threshold: 6,
+    } as const;
+    const invalidConstellation = project(
+      {
+        requestFactsByTeamRecordId: {
+          [TEAM_A]: {
+            characterFactsById: { [ITTO]: { constellation: 7 } },
+          },
+        },
+      },
+      [rule(PREFERENCE_CLAIM, "predicate", validPredicate)],
+    );
+    const invalidTalent = project(
+      {
+        requestFactsByTeamRecordId: {
+          [TEAM_A]: {
+            characterFactsById: {
+              [ITTO]: { talentLevels: { burst: 0 } },
+            },
+          },
+        },
+      },
+      [rule(PREFERENCE_CLAIM, "predicate", validPredicate)],
+    );
+    const invalidThreshold = project({}, [
+      rule(PREFERENCE_CLAIM, "predicate", {
+        type: "talent-level-at-least",
+        characterId: ITTO,
+        talent: "burst",
+        threshold: 0,
+      }),
+    ]);
+
+    expect(invalidConstellation).toMatchObject({
+      comparisonStatus: "not-comparable",
+      teamProjections: [],
+    });
+    expect(invalidConstellation.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-constellation-fact",
+        }),
+      ]),
+    );
+    expect(invalidTalent.comparisonStatus).toBe("not-comparable");
+    expect(invalidTalent.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-talent-level-fact",
+        }),
+      ]),
+    );
+    expect(invalidThreshold.comparisonStatus).toBe("not-comparable");
+    expect(invalidThreshold.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "request-context.invalid-numeric-predicate-threshold",
+        }),
+      ]),
+    );
+  });
+
+  it("parses only bounded integer constellation and positive safe-integer talent facts", () => {
+    const context = (characterFacts: Record<string, unknown>) => ({
+      requestFactsByTeamRecordId: {
+        [TEAM_A]: { characterFactsById: { [ITTO]: characterFacts } },
+      },
+    });
+    expect(
+      GuideRequestContextSchema.safeParse(
+        context({ constellation: 6, talentLevels: { burst: 10 } }),
+      ).success,
+    ).toBe(true);
+    for (const invalid of [
+      { constellation: 7 },
+      { constellation: 5.5 },
+      { talentLevels: { burst: 0 } },
+      { talentLevels: { skill: 9.5 } },
+      { talentLevels: { charged: 10 } },
+    ]) {
+      expect(GuideRequestContextSchema.safeParse(context(invalid)).success).toBe(
+        false,
+      );
+    }
   });
 
   it("never lets request context satisfy an exact-team source fact", () => {

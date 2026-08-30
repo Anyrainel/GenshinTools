@@ -42,7 +42,7 @@
     },
     {
       "path": "scripts/guide-factory/src/guideRequestContext.ts",
-      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+      "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
@@ -66,7 +66,7 @@
     },
     {
       "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
-      "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+      "sha256": "05d57d50945ad9c6d170b6ad83fb08e33ea9d84f159065fedc6bee9154e22c13"
     }
   ],
   "generatorExecuted": false,
@@ -712,7 +712,7 @@
       },
       {
         "path": "scripts/guide-factory/src/guideRequestContext.ts",
-        "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+        "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
       },
       {
         "path": "scripts/guide-factory/src/io.ts",
@@ -736,7 +736,7 @@
       },
       {
         "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
-        "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+        "sha256": "05d57d50945ad9c6d170b6ad83fb08e33ea9d84f159065fedc6bee9154e22c13"
       }
     ],
     "generatorExecuted": false,
@@ -834,9 +834,11 @@
       "ER": false,
       "factProvenance": {
         "acquisitionPreference": "request",
+        "constellation": "request",
         "intendedRole": "request",
         "optimizationGoal": "request",
         "passiveExecutionAssumptions": "request-assumption",
+        "talentLevels": "request",
         "weaponInventory": "account"
       },
       "formulas": false,

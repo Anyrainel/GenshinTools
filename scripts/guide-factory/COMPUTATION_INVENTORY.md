@@ -522,6 +522,14 @@ member. Weapon inventory is account-scoped and distinguishes complete from
 incomplete coverage, so an absent weapon is false only in a declared complete
 inventory. Account facts also retain an explicit snapshot identity.
 
+The request vocabulary also supports exact-team, exact-character numeric facts
+for constellation and named Auto, Skill, or Burst Talent levels. Constellation
+facts and thresholds are safe integers from 0 through 6; Talent facts and
+thresholds are positive safe integers. `all` and `any` retain three-valued
+semantics: omitted branches are unknown, and no constellation fact derives a
+Talent level. These values have request provenance, not verified account-
+investment provenance.
+
 The Itto adapter uses a strict synthetic fixture with three independent
 contexts. Its two-key control gate requires the checked-in checkpoint 23 report
 to match a fresh canonical rebuild, then projects each context over all 45
@@ -597,6 +605,28 @@ holdouts. Checkpoint 30 admits only that selected occurrence to the current
 catalog after source-specific authentication and extraction checks; the four
 holdouts remain outside.
 
+The standalone `src/noelleSourceLocalHighInvestmentSlice.ts` selects three
+exact main-stat occurrences from the KQM Noelle Luna VIII high-investment
+branch: DEF% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet. All
+three retain condition-array SHA-256
+`92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4`
+and independent payload hashes. They are projected over the exact
+`kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii` source team.
+
+The source predicate remains one unresolved `investment-threshold` leaf and
+the source evaluator retains `talentLevelsEvaluated: false`. Only the wrapper-
+owned request mapping evaluates `any(constellation >= 6, burst talent >= 10)`.
+The durable context supplies Noelle C6 and omits Burst Talent level, making all
+three cells applicable and effectively matched while the omitted branch stays
+unknown. The wrapper does not infer Talent behavior from constellation, parse
+source prose, or make its cross-record join source-authored.
+
+The exact Noelle boundary contains 16 arrays: three selected, 12 nonempty
+holdouts, and one empty occurrence. Holdouts and the empty occurrence remain
+unconsumed and receive no slice-authored binding or energy classification. The
+slice creates zero candidates, equipment assignments, optimizations, and
+assembled builds. It remains outside the current condition-binding catalog.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -651,6 +681,10 @@ known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional. Manual
 coverage authenticates six wrapper families across 17 source files and 67
 generated-from paths.
 
+The standalone Noelle slice does not add a catalog entry or wrapper family.
+Its three selected occurrences remain unbound and energy-unclassified in this
+manual-coverage ledger, so every count above remains unchanged.
+
 The dependency direction remains acyclic. Authenticated source-specific Klee,
 Diona, and Kokomi wrappers feed the 57-entry binding catalog, then manual
 coverage and the regenerated checkpoint 27 Klee witness. The validator follows
@@ -692,16 +726,14 @@ zero candidates. It runs no payload-axis expansion, choice selection,
 compatibility evaluation, cross-product, recommendation composition, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER calculation.
 Independent applicability is validation evidence, not a build or guide.
-After Kokomi catalog admission, the durable witness is regenerated against the
-updated coverage input. Its four Klee claims, positive team, negative control,
-and interpretation boundary remain unchanged.
+After the shared numeric request-context vocabulary is added for the Noelle
+slice, the durable witness is regenerated against the refreshed Klee and manual-
+coverage inputs. Its four Klee claims, positive team, negative control, and
+interpretation boundary remain unchanged.
 
-The next bounded non-ER experiment is a standalone Noelle request-context
-slice for a numeric source condition satisfied by C6 or Burst Talent level 10.
-It is not implemented yet. That slice must preserve the source OR, distinguish
-constellation from Talent-level facts, scope supplied facts to the exact
-request subject, and remain outside catalog integration until separately
-authenticated.
+The next bounded non-ER gate is a separate catalog admission for only the three
+exact authenticated Noelle occurrences. A later standalone experiment should
+model the lower-investment Noelle branch. Neither gate is implemented yet.
 
 ## Callable modules for later experiments
 
@@ -747,12 +779,13 @@ authenticated.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation and the integrated Klee, Diona, and
-  Kokomi adapters:
+- Generic source-local condition evaluation, the catalog-integrated Klee,
+  Diona, and Kokomi adapters, and the standalone Noelle adapter:
   `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`, and
-  `scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts`.
+  `scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts`, and
+  `scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts`.
 - Exact manual condition extraction, repository parity, and authenticated
   current-wrapper coverage:
   `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,
@@ -832,15 +865,17 @@ factory.
   disagreements still need broader attributed evidence before role-based roster
   expansion is safe.
 - Source guide applicability remains attributed prose in repository records.
-  The exact inventory now identifies 70 non-structural occurrences as unbound;
+  The exact inventory now identifies 66 non-structural occurrences as unbound;
   it does not parse them or presume they are non-ER. Nine are exact authored
-  energy deferrals and the remaining 61 are energy-unclassified. The Keqing,
-  Itto, and Klee source-specific wrappers pin exact text to typed predicates and
-  can resolve only their authored facts; they are not a global parser. The Itto
-  request-context adapter resolves a bounded role, goal, weapon-ownership/
-  passive, and preference vocabulary. The reusable source-local core can carry
-  equally narrow source-specific bindings, but the Klee slice classifies only
-  four exact occurrences and gives its 11 holdouts no binding or energy state.
+  energy deferrals and the remaining 57 are energy-unclassified. The Keqing,
+  Itto, Klee, Diona, and Kokomi source-specific wrappers pin exact text to typed
+  predicates and can resolve only their authored facts; they are not a global
+  parser. The shared request-context vocabulary covers bounded role, goal,
+  weapon-ownership/passive, preference, constellation, and named Talent-level
+  facts. The standalone Noelle slice applies the numeric subset only to three
+  exact occurrences and gives its 12 nonempty holdouts no binding or energy
+  state; those three selected occurrences remain unbound in the current catalog
+  ledger.
   High Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
   shield uptime, Bond clearance, CRIT overcap, artifact quality, comparative
   thresholds, gameplay, and omitted-energy inputs remain explicitly unresolved

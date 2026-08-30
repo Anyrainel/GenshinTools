@@ -1,0 +1,1439 @@
+{
+  "arbitraryEnglishParsingAllowed": false,
+  "artifactAssignmentExecuted": false,
+  "buildCompositionExecuted": false,
+  "candidateGenerationExecuted": false,
+  "cautions": [
+    "The selected occurrence remains an agent-assisted and unreviewed source observation.",
+    "The source predicate remains unresolved; only the request overlay evaluates explicit Noelle constellation or Burst Talent facts.",
+    "The selected high-investment main-stat cells are preserved independently and are not assembled into a build.",
+    "The twelve nonempty holdouts and one empty array are authenticated inventory only and remain unconsumed.",
+    "No constellation-derived Talent behavior is inferred; supplied constellation and Talent levels are independent facts.",
+    "Not-energy-deferred is occurrence-scoped only and does not provide an ER requirement or prove ER adequacy."
+  ],
+  "classification": "authenticated-source-local-condition-binding-slice",
+  "comparisonStatus": "comparable",
+  "conditionTruthEstablishedFromRecommendationMetadata": false,
+  "damageComputationExecuted": false,
+  "emptyOccurrences": [
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [],
+      "conditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-general-husk-luna-viii:recommendation.artifactRecommendations[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-general-husk-luna-viii",
+      "sliceDisposition": "empty-unconditional",
+      "sourceRecordId": "noelle-general-husk-luna-viii"
+    }
+  ],
+  "energyRecoveryComputationExecuted": false,
+  "equipmentAssignmentExecuted": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+      "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts",
+      "sha256": "53d57a733ff4416aa077330605e667a5b90370893051a6833f6a86ca6d496589"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
+      "sha256": "84056e869782be1de61119584f088a94225829165e76a67b853fe023a6d01c2a"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "05d57d50945ad9c6d170b6ad83fb08e33ea9d84f159065fedc6bee9154e22c13"
+    }
+  ],
+  "generatorExecuted": false,
+  "holdoutOccurrences": [
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C0–C5 and her Burst Talent is Level 9."
+      ],
+      "conditionsSha256": "6da7375f731b4225cc74ace0f54f350efdcbf7f2cad0655fcab7490d54875436",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "mainStatSlot": "circlet",
+      "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.circlet[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C0–C5 and her Burst Talent is Level 9."
+      ],
+      "conditionsSha256": "6da7375f731b4225cc74ace0f54f350efdcbf7f2cad0655fcab7490d54875436",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "mainStatSlot": "goblet",
+      "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.goblet[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C0–C5 and her Burst Talent is Level 9."
+      ],
+      "conditionsSha256": "6da7375f731b4225cc74ace0f54f350efdcbf7f2cad0655fcab7490d54875436",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "mainStatSlot": "sands",
+      "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.sands[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Noelle is C0–C5 and her Burst Talent is Level 9; this priority covers offensive stats only."
+      ],
+      "conditionsSha256": "25653d703f7c6fc7863846ee96926f944835256820cf3ab86738761bfc0bc675",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.substats[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Noelle is C0–C5 and her Burst Talent is Level 9; this priority covers offensive stats only."
+      ],
+      "conditionsSha256": "25653d703f7c6fc7863846ee96926f944835256820cf3ab86738761bfc0bc675",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[1].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.substats[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[1].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Noelle is C0–C5 and her Burst Talent is Level 9; this priority covers offensive stats only."
+      ],
+      "conditionsSha256": "25653d703f7c6fc7863846ee96926f944835256820cf3ab86738761bfc0bc675",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[2].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.substats[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[2].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher.",
+        "Noelle uses Redhorn Stonethresher, and the build falls within the rare circumstances where a DEF% Circlet can be optimal."
+      ],
+      "conditionsSha256": "7444217b95d562ae6cffb22b51e7c6ef6da6891851967415925d6713c254e2c6",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "mainStatSlot": "circlet",
+      "manualClaimPath": "recommendation.mainStats.circlet[1].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.circlet[1].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher.",
+        "The team provides a large amount of DMG Bonus."
+      ],
+      "conditionsSha256": "778b1c674223e02b4b58c3903c6ac809f5bab52e2c216e93003320fd1657f748",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "mainStatSlot": "goblet",
+      "manualClaimPath": "recommendation.mainStats.goblet[1].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.goblet[1].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher; this priority covers offensive stats only."
+      ],
+      "conditionsSha256": "2dd077d3312b7d4e833de6e6269283f80373dda48bf20a5099878325c980018d",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.substats[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher; this priority covers offensive stats only."
+      ],
+      "conditionsSha256": "2dd077d3312b7d4e833de6e6269283f80373dda48bf20a5099878325c980018d",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[1].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.substats[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[1].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "substat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher; this priority covers offensive stats only."
+      ],
+      "conditionsSha256": "2dd077d3312b7d4e833de6e6269283f80373dda48bf20a5099878325c980018d",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.substats[2].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.substats[2].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].substats[2].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "weapon-recommendation",
+      "conditions": [
+        "Noelle is played in a Hexerei team."
+      ],
+      "conditionsSha256": "f27375a8ce8833cc0326a17c94f52c71ed4f44a72868e15d087390b864e490cf",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.weaponRecommendations[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-hexerei-gest-luna-viii:recommendation.weaponRecommendations[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].weaponRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-hexerei-gest-luna-viii",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "noelle-hexerei-gest-luna-viii",
+      "structuralEnergyDimension": "not-structural-er"
+    }
+  ],
+  "issues": [],
+  "numericEvaluationBoundary": {
+    "constellationDerivedTalentBehavior": false,
+    "requestOverlayOwnsNumericEvaluation": true,
+    "requestPredicateSha256": "b93bfd12ebefae9aaae8434d4d316315a78fe6081698a73dd0ee047bcbbbc596",
+    "sourcePredicateAstPreserved": true,
+    "sourceTalentLevelsEvaluated": false
+  },
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "Do not interpret this slice as a Noelle guide, artifact assignment, build, team recommendation, candidate set, or ranking.",
+    "Do not combine the three independently preserved main-stat payloads into a build or optimize among them.",
+    "Do not infer a typed predicate, request binding, or energy classification for any holdout or empty occurrence.",
+    "Do not derive Talent levels from constellation or treat source recommendation metadata as numeric evidence.",
+    "Do not use this report as a generator, optimizer, formula, rotation, damage, DPS, ideal-roll, or ER result."
+  ],
+  "publicationStatus": "withheld-unreviewed-source-slice",
+  "rawInputBoundary": {
+    "byteAndParsedObjectClosure": true,
+    "canonicalObjectSha256ByPath": {
+      "scripts/guide-factory/data/knowledge/repository.json": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+      "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json": "cc72deae3b61ce592b1fb47808c3ec7c568036b9d9683bac3f8de91b5428c5e5",
+      "scripts/guide-factory/data/source-snapshots/manual-index.json": "c669b925cdbbf3b591bcac66f4e7ec42332f98dc5e1a37be128662fa40504630",
+      "scripts/guide-factory/sources/registry.json": "2974828169ee2a7290bdcb8108b30db5beabf8ea3a0eb879878fe468044501a8"
+    },
+    "exactPathSet": true,
+    "sourceFileCount": 4,
+    "status": "accepted"
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "noelle-source-local-high-investment-slice",
+  "rotationComputationExecuted": false,
+  "schemaVersion": 1,
+  "selectedOccurrences": [
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "noelle",
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher."
+      ],
+      "conditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+      "energyClassificationAuthoredBySlice": true,
+      "mainStatSlot": "sands",
+      "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+      "payload": {
+        "priority": null,
+        "slot": "sands",
+        "statIds": [
+          "def%"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "payloadSha256": "804a06075305e59b97c800d1a8ba0fdfff51f9f5cbe37862d3f574721b38d53e",
+      "predicate": {
+        "category": "investment-threshold",
+        "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+        "type": "unresolved-context"
+      },
+      "predicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.sands[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "requestPredicate": {
+        "predicates": [
+          {
+            "characterId": "noelle",
+            "threshold": 6,
+            "type": "constellation-at-least"
+          },
+          {
+            "characterId": "noelle",
+            "talent": "burst",
+            "threshold": 10,
+            "type": "talent-level-at-least"
+          }
+        ],
+        "type": "any"
+      },
+      "requestPredicateSha256": "b93bfd12ebefae9aaae8434d4d316315a78fe6081698a73dd0ee047bcbbbc596",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+    },
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "noelle",
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher."
+      ],
+      "conditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+      "energyClassificationAuthoredBySlice": true,
+      "mainStatSlot": "goblet",
+      "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+      "payload": {
+        "priority": null,
+        "slot": "goblet",
+        "statIds": [
+          "geo%"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "payloadSha256": "27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a",
+      "predicate": {
+        "category": "investment-threshold",
+        "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+        "type": "unresolved-context"
+      },
+      "predicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.goblet[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "requestPredicate": {
+        "predicates": [
+          {
+            "characterId": "noelle",
+            "threshold": 6,
+            "type": "constellation-at-least"
+          },
+          {
+            "characterId": "noelle",
+            "talent": "burst",
+            "threshold": 10,
+            "type": "talent-level-at-least"
+          }
+        ],
+        "type": "any"
+      },
+      "requestPredicateSha256": "b93bfd12ebefae9aaae8434d4d316315a78fe6081698a73dd0ee047bcbbbc596",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+    },
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "noelle",
+      "claimAxis": "main-stat",
+      "conditions": [
+        "Noelle is C6 or her Burst Talent is Level 10 or higher."
+      ],
+      "conditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+      "energyClassificationAuthoredBySlice": true,
+      "mainStatSlot": "circlet",
+      "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+      "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+      "payload": {
+        "priority": null,
+        "slot": "circlet",
+        "statIds": [
+          "cr",
+          "cd"
+        ],
+        "target": null,
+        "type": "main-stat"
+      },
+      "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+      "predicate": {
+        "category": "investment-threshold",
+        "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+        "type": "unresolved-context"
+      },
+      "predicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].mainStats.circlet[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "requestPredicate": {
+        "predicates": [
+          {
+            "characterId": "noelle",
+            "threshold": 6,
+            "type": "constellation-at-least"
+          },
+          {
+            "characterId": "noelle",
+            "talent": "burst",
+            "threshold": 10,
+            "type": "talent-level-at-least"
+          }
+        ],
+        "type": "any"
+      },
+      "requestPredicateSha256": "b93bfd12ebefae9aaae8434d4d316315a78fe6081698a73dd0ee047bcbbbc596",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+      "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+    }
+  ],
+  "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii",
+  "sourceBoundary": {
+    "crossRecordJoinOwnedByWrapper": true,
+    "emptyConditionArrayCount": 1,
+    "emptyOccurrenceClosureExact": true,
+    "extractionMethod": "agent-assisted",
+    "guideAndTeamShareExactSourceDocument": true,
+    "holdoutOccurrenceCount": 12,
+    "nonemptyConditionArrayCount": 15,
+    "pageUrl": "https://keqingmains.com/q/noelle-quickguide/",
+    "promotionEligible": false,
+    "rawRecordCount": 5,
+    "rawRecordIds": [
+      "noelle-c0-c5-talent-9-artifact-stats-luna-viii",
+      "noelle-c6-or-talent-10-artifact-stats-luna-viii",
+      "noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+      "noelle-general-husk-luna-viii",
+      "noelle-hexerei-gest-luna-viii"
+    ],
+    "repositoryParity": "exact",
+    "reviewStatus": "unreviewed",
+    "samePageLineage": true,
+    "selectedAndHoldoutsCloseAllNonemptyNoelleConditions": true,
+    "selectedOccurrenceCount": 3,
+    "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+    "sourceAuthoredCrossRecordJoin": false,
+    "sourceId": "kqm",
+    "sourceRegistryIngestionMode": "manual-observation",
+    "sourceRegistryPermission": "unknown",
+    "sourceRegistryStatus": "active",
+    "sourceVersion": "Luna VIII",
+    "status": "accepted",
+    "totalConditionArrayCount": 16
+  },
+  "sourceLocalSlice": {
+    "assembledBuildCount": 0,
+    "buildComposition": false,
+    "cautions": [
+      "The selected occurrence remains an agent-assisted and unreviewed source observation.",
+      "The source predicate remains unresolved; only the request overlay evaluates explicit Noelle constellation or Burst Talent facts.",
+      "The selected high-investment main-stat cells are preserved independently and are not assembled into a build.",
+      "The twelve nonempty holdouts and one empty array are authenticated inventory only and remain unconsumed.",
+      "No constellation-derived Talent behavior is inferred; supplied constellation and Talent levels are independent facts.",
+      "Not-energy-deferred is occurrence-scoped only and does not provide an ER requirement or prove ER adequacy."
+    ],
+    "classification": "descriptive-source-local-condition-applicability-slice",
+    "comparisonStatus": "comparable",
+    "compositionPolicy": {
+      "arbitraryEnglishParsingAllowed": false,
+      "conditionTruthEstablishedFromRecommendationMetadata": false,
+      "energyPrerequisitesAcceptedInSlice": false,
+      "omittedRequestFacts": "unknown",
+      "presetOverlapEvaluation": "not-evaluated",
+      "requestContextEvaluationOwner": "guide-request-context-core",
+      "requestContextMayReplaceExactRosterFacts": false,
+      "requestFactsMustBeExactTeamAndCharacterScoped": true,
+      "requestProjectionsPreservedVerbatim": true,
+      "sourceCellsPreservedVerbatim": true,
+      "sourcePredicateEvaluationOwner": "source-conditioned-guide-packet-core",
+      "teamTemplateEvaluation": "not-evaluated",
+      "verboseSourcePacketAdapterMetadataExposed": false
+    },
+    "conditionControls": [
+      {
+        "catalogIndex": 0,
+        "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "main-stat",
+          "energyClassification": "not-energy-deferred",
+          "mainStatSlot": "sands",
+          "manualClaimPath": "recommendation.mainStats.sands[0].conditions",
+          "manualPath": "records[3].recommendation.mainStats.sands[0].conditions",
+          "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+          "payloadSha256": "804a06075305e59b97c800d1a8ba0fdfff51f9f5cbe37862d3f574721b38d53e",
+          "repositoryJsonPath": "records[226].recommendations[0].mainStats.sands[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+          "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+          "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "predicates": [
+                {
+                  "characterId": "noelle",
+                  "threshold": 6,
+                  "type": "constellation-at-least"
+                },
+                {
+                  "characterId": "noelle",
+                  "talent": "burst",
+                  "threshold": 10,
+                  "type": "talent-level-at-least"
+                }
+              ],
+              "type": "any"
+            },
+            "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      },
+      {
+        "catalogIndex": 1,
+        "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "main-stat",
+          "energyClassification": "not-energy-deferred",
+          "mainStatSlot": "goblet",
+          "manualClaimPath": "recommendation.mainStats.goblet[0].conditions",
+          "manualPath": "records[3].recommendation.mainStats.goblet[0].conditions",
+          "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+          "payloadSha256": "27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a",
+          "repositoryJsonPath": "records[226].recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+          "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+          "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "predicates": [
+                {
+                  "characterId": "noelle",
+                  "threshold": 6,
+                  "type": "constellation-at-least"
+                },
+                {
+                  "characterId": "noelle",
+                  "talent": "burst",
+                  "threshold": 10,
+                  "type": "talent-level-at-least"
+                }
+              ],
+              "type": "any"
+            },
+            "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      },
+      {
+        "catalogIndex": 2,
+        "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "main-stat",
+          "energyClassification": "not-energy-deferred",
+          "mainStatSlot": "circlet",
+          "manualClaimPath": "recommendation.mainStats.circlet[0].conditions",
+          "manualPath": "records[3].recommendation.mainStats.circlet[0].conditions",
+          "occurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+          "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+          "repositoryJsonPath": "records[226].recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+          "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+          "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+        },
+        "requestBindings": [
+          {
+            "requestPredicate": {
+              "predicates": [
+                {
+                  "characterId": "noelle",
+                  "threshold": 6,
+                  "type": "constellation-at-least"
+                },
+                {
+                  "characterId": "noelle",
+                  "talent": "burst",
+                  "threshold": 10,
+                  "type": "talent-level-at-least"
+                }
+              ],
+              "type": "any"
+            },
+            "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+            "sourcePredicatePath": "predicate"
+          }
+        ]
+      }
+    ],
+    "damage": false,
+    "damageComputationExecuted": false,
+    "energyRecoveryComputationExecuted": false,
+    "ER": false,
+    "exactTeamControls": [
+      {
+        "exhaustiveness": "non-exhaustive",
+        "intent": "example",
+        "label": "Noelle — Durin — Nicole — Xilonen",
+        "memberCharacterIds": [
+          "noelle",
+          "durin",
+          "nicole",
+          "xilonen"
+        ],
+        "packetIndex": 0,
+        "rankingClaim": "none",
+        "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+        "sourceId": "kqm",
+        "sourceRecordId": "noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+      }
+    ],
+    "formulas": false,
+    "generatedFrom": [
+      {
+        "path": "scripts/guide-factory/data/knowledge/repository.json",
+        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+        "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+        "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      },
+      {
+        "path": "scripts/guide-factory/sources/registry.json",
+        "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      },
+      {
+        "path": "scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts",
+        "sha256": "53d57a733ff4416aa077330605e667a5b90370893051a6833f6a86ca6d496589"
+      },
+      {
+        "path": "scripts/guide-factory/src/guideRequestContext.ts",
+        "sha256": "9eb7df95471edfa5ed1f98f2fda60c7d2b895f195a070539a45f7b967b1d525e"
+      },
+      {
+        "path": "scripts/guide-factory/src/io.ts",
+        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      },
+      {
+        "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+        "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+      },
+      {
+        "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
+        "sha256": "84056e869782be1de61119584f088a94225829165e76a67b853fe023a6d01c2a"
+      },
+      {
+        "path": "scripts/guide-factory/src/paths.ts",
+        "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      },
+      {
+        "path": "scripts/guide-factory/src/schemas.ts",
+        "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      },
+      {
+        "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+        "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+      },
+      {
+        "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+        "sha256": "05d57d50945ad9c6d170b6ad83fb08e33ea9d84f159065fedc6bee9154e22c13"
+      }
+    ],
+    "generatorExecuted": false,
+    "issues": [],
+    "optimizerExecuted": false,
+    "playerFacingRecommendations": false,
+    "prohibitedInterpretations": [
+      "Do not interpret this slice as a Noelle guide, artifact assignment, build, team recommendation, candidate set, or ranking.",
+      "Do not combine the three independently preserved main-stat payloads into a build or optimize among them.",
+      "Do not infer a typed predicate, request binding, or energy classification for any holdout or empty occurrence.",
+      "Do not derive Talent levels from constellation or treat source recommendation metadata as numeric evidence.",
+      "Do not use this report as a generator, optimizer, formula, rotation, damage, DPS, ideal-roll, or ER result."
+    ],
+    "publicationStatus": "withheld-experimental-source-slice",
+    "ranking": false,
+    "recommendationCompositionExecuted": false,
+    "reportType": "source-local-condition-slice-report",
+    "requestContextReport": {
+      "axesMultipliedIntoBuilds": false,
+      "baselineEquipmentUsed": false,
+      "buildComposition": false,
+      "claimRules": [
+        {
+          "bindings": [
+            {
+              "requestPredicate": {
+                "predicates": [
+                  {
+                    "characterId": "noelle",
+                    "threshold": 6,
+                    "type": "constellation-at-least"
+                  },
+                  {
+                    "characterId": "noelle",
+                    "talent": "burst",
+                    "threshold": 10,
+                    "type": "talent-level-at-least"
+                  }
+                ],
+                "type": "any"
+              },
+              "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+          "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+          "sourcePredicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a"
+        },
+        {
+          "bindings": [
+            {
+              "requestPredicate": {
+                "predicates": [
+                  {
+                    "characterId": "noelle",
+                    "threshold": 6,
+                    "type": "constellation-at-least"
+                  },
+                  {
+                    "characterId": "noelle",
+                    "talent": "burst",
+                    "threshold": 10,
+                    "type": "talent-level-at-least"
+                  }
+                ],
+                "type": "any"
+              },
+              "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+          "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+          "sourcePredicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a"
+        },
+        {
+          "bindings": [
+            {
+              "requestPredicate": {
+                "predicates": [
+                  {
+                    "characterId": "noelle",
+                    "threshold": 6,
+                    "type": "constellation-at-least"
+                  },
+                  {
+                    "characterId": "noelle",
+                    "talent": "burst",
+                    "threshold": 10,
+                    "type": "talent-level-at-least"
+                  }
+                ],
+                "type": "any"
+              },
+              "sourcePredicateLeafSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+              "sourcePredicatePath": "predicate"
+            }
+          ],
+          "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+          "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+          "sourcePredicateSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a"
+        }
+      ],
+      "classification": "request-account-context-refinement-overlay",
+      "comparisonStatus": "comparable",
+      "context": {
+        "requestFactsByTeamRecordId": {
+          "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii": {
+            "characterFactsById": {
+              "noelle": {
+                "constellation": 6
+              }
+            }
+          }
+        }
+      },
+      "contextProjectionExecuted": true,
+      "damage": false,
+      "damageComputationExecuted": false,
+      "energyRecoveryInputsUsed": false,
+      "ER": false,
+      "factProvenance": {
+        "acquisitionPreference": "request",
+        "constellation": "request",
+        "intendedRole": "request",
+        "optimizationGoal": "request",
+        "passiveExecutionAssumptions": "request-assumption",
+        "talentLevels": "request",
+        "weaponInventory": "account"
+      },
+      "formulas": false,
+      "generatorExecuted": false,
+      "issues": [],
+      "optimality": false,
+      "optimizerExecuted": false,
+      "playerFacingRecommendations": false,
+      "policyBoundary": {
+        "missingWeaponInCompleteInventory": "false",
+        "missingWeaponInIncompleteInventory": "unknown",
+        "omittedFacts": "unknown",
+        "requestContextMayResolveOnlyMappedUnresolvedContext": true,
+        "requestContextMaySatisfyExactSourceTeamFacts": false,
+        "sourceControlPreserved": true
+      },
+      "projectionId": "kqm-noelle-source-local-high-investment-slice-luna-viii:request-context",
+      "publicationStatus": "withheld-experimental-context",
+      "ranking": false,
+      "reportType": "guide-request-context-applicability",
+      "rotations": false,
+      "schemaVersion": 1,
+      "sourceCellsMutated": false,
+      "sourceControl": {
+        "claimCellCount": 3,
+        "comparisonStatus": "comparable",
+        "experimentId": "kqm-noelle-source-local-high-investment-slice-luna-viii",
+        "packetCount": 1,
+        "reportType": "source-conditioned-guide-packet-report",
+        "sourceClaimCount": 3
+      },
+      "summary": {
+        "assembledBuildCount": 0,
+        "claimCellCount": 3,
+        "deferredEnergyCellCount": 0,
+        "inapplicableCellCount": 0,
+        "matchedCellCount": 3,
+        "packetCount": 1,
+        "sourceClaimCount": 3,
+        "unresolvedCellCount": 0,
+        "withheldCellCount": 0
+      },
+      "supportsAccountAdvice": false,
+      "supportsGuideClaims": false,
+      "supportsSourceAuthorization": false,
+      "teamProjections": [
+        {
+          "claimProjections": [
+            {
+              "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+              "contextApplicability": "applicable-under-supplied-context",
+              "reason": "Request constellation 6 meets threshold 6.",
+              "requestContextBindings": [
+                {
+                  "predicateRows": [
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "noelle",
+                        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+                      },
+                      "predicatePath": "requestPredicate.predicates[0]",
+                      "predicateType": "constellation-at-least",
+                      "reason": "Request constellation 6 meets threshold 6.",
+                      "result": "true"
+                    },
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "noelle",
+                        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+                      },
+                      "predicatePath": "requestPredicate.predicates[1]",
+                      "predicateType": "talent-level-at-least",
+                      "reason": "Request burst talent level was omitted.",
+                      "result": "unknown"
+                    }
+                  ],
+                  "reason": "Request constellation 6 meets threshold 6.",
+                  "requestPredicate": {
+                    "predicates": [
+                      {
+                        "characterId": "noelle",
+                        "threshold": 6,
+                        "type": "constellation-at-least"
+                      },
+                      {
+                        "characterId": "noelle",
+                        "talent": "burst",
+                        "threshold": 10,
+                        "type": "talent-level-at-least"
+                      }
+                    ],
+                    "type": "any"
+                  },
+                  "result": "true",
+                  "sourceContextCategory": "investment-threshold",
+                  "sourcePredicatePath": "predicate"
+                }
+              ],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate",
+                    "predicateType": "unresolved-context",
+                    "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                    "result": "unknown",
+                    "structuredFact": "none-unresolved-context"
+                  }
+                ],
+                "predicateRowsSha256": "3a0ac5760fbef68e6a37aa9b70e05664de8a803559d76123028e5528c196dfa4",
+                "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                "resolution": "unresolved-context",
+                "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4"
+              }
+            },
+            {
+              "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+              "contextApplicability": "applicable-under-supplied-context",
+              "reason": "Request constellation 6 meets threshold 6.",
+              "requestContextBindings": [
+                {
+                  "predicateRows": [
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "noelle",
+                        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+                      },
+                      "predicatePath": "requestPredicate.predicates[0]",
+                      "predicateType": "constellation-at-least",
+                      "reason": "Request constellation 6 meets threshold 6.",
+                      "result": "true"
+                    },
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "noelle",
+                        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+                      },
+                      "predicatePath": "requestPredicate.predicates[1]",
+                      "predicateType": "talent-level-at-least",
+                      "reason": "Request burst talent level was omitted.",
+                      "result": "unknown"
+                    }
+                  ],
+                  "reason": "Request constellation 6 meets threshold 6.",
+                  "requestPredicate": {
+                    "predicates": [
+                      {
+                        "characterId": "noelle",
+                        "threshold": 6,
+                        "type": "constellation-at-least"
+                      },
+                      {
+                        "characterId": "noelle",
+                        "talent": "burst",
+                        "threshold": 10,
+                        "type": "talent-level-at-least"
+                      }
+                    ],
+                    "type": "any"
+                  },
+                  "result": "true",
+                  "sourceContextCategory": "investment-threshold",
+                  "sourcePredicatePath": "predicate"
+                }
+              ],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate",
+                    "predicateType": "unresolved-context",
+                    "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                    "result": "unknown",
+                    "structuredFact": "none-unresolved-context"
+                  }
+                ],
+                "predicateRowsSha256": "3a0ac5760fbef68e6a37aa9b70e05664de8a803559d76123028e5528c196dfa4",
+                "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                "resolution": "unresolved-context",
+                "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4"
+              }
+            },
+            {
+              "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+              "contextApplicability": "applicable-under-supplied-context",
+              "reason": "Request constellation 6 meets threshold 6.",
+              "requestContextBindings": [
+                {
+                  "predicateRows": [
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "noelle",
+                        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+                      },
+                      "predicatePath": "requestPredicate.predicates[0]",
+                      "predicateType": "constellation-at-least",
+                      "reason": "Request constellation 6 meets threshold 6.",
+                      "result": "true"
+                    },
+                    {
+                      "factProvenance": "request",
+                      "factScope": {
+                        "accountSnapshotId": null,
+                        "characterId": "noelle",
+                        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+                      },
+                      "predicatePath": "requestPredicate.predicates[1]",
+                      "predicateType": "talent-level-at-least",
+                      "reason": "Request burst talent level was omitted.",
+                      "result": "unknown"
+                    }
+                  ],
+                  "reason": "Request constellation 6 meets threshold 6.",
+                  "requestPredicate": {
+                    "predicates": [
+                      {
+                        "characterId": "noelle",
+                        "threshold": 6,
+                        "type": "constellation-at-least"
+                      },
+                      {
+                        "characterId": "noelle",
+                        "talent": "burst",
+                        "threshold": 10,
+                        "type": "talent-level-at-least"
+                      }
+                    ],
+                    "type": "any"
+                  },
+                  "result": "true",
+                  "sourceContextCategory": "investment-threshold",
+                  "sourcePredicatePath": "predicate"
+                }
+              ],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate",
+                    "predicateType": "unresolved-context",
+                    "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                    "result": "unknown",
+                    "structuredFact": "none-unresolved-context"
+                  }
+                ],
+                "predicateRowsSha256": "3a0ac5760fbef68e6a37aa9b70e05664de8a803559d76123028e5528c196dfa4",
+                "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                "resolution": "unresolved-context",
+                "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4"
+              }
+            }
+          ],
+          "packetIndex": 0,
+          "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+        }
+      ]
+    },
+    "rotations": false,
+    "schemaVersion": 1,
+    "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii",
+    "sourceClaimCatalog": [
+      {
+        "catalogIndex": 0,
+        "characterId": "noelle",
+        "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "sands",
+          "statIds": [
+            "def%"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "predicate": {
+          "category": "investment-threshold",
+          "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": null,
+          "grouping": null,
+          "label": "C6 or Burst Talent Level 10+ artifact stats",
+          "ordering": null,
+          "recommendationId": "c6-or-talent-10-artifact-stats",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+        "sourceConditions": [
+          "Noelle is C6 or her Burst Talent is Level 10 or higher."
+        ],
+        "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+        "sourceId": "kqm",
+        "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+      },
+      {
+        "catalogIndex": 1,
+        "characterId": "noelle",
+        "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "goblet",
+          "statIds": [
+            "geo%"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "predicate": {
+          "category": "investment-threshold",
+          "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": null,
+          "grouping": null,
+          "label": "C6 or Burst Talent Level 10+ artifact stats",
+          "ordering": null,
+          "recommendationId": "c6-or-talent-10-artifact-stats",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+        "sourceConditions": [
+          "Noelle is C6 or her Burst Talent is Level 10 or higher."
+        ],
+        "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+        "sourceId": "kqm",
+        "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+      },
+      {
+        "catalogIndex": 2,
+        "characterId": "noelle",
+        "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+        "payload": {
+          "priority": null,
+          "slot": "circlet",
+          "statIds": [
+            "cr",
+            "cd"
+          ],
+          "target": null,
+          "type": "main-stat"
+        },
+        "predicate": {
+          "category": "investment-threshold",
+          "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+          "type": "unresolved-context"
+        },
+        "recommendation": {
+          "classification": null,
+          "grouping": null,
+          "label": "C6 or Burst Talent Level 10+ artifact stats",
+          "ordering": null,
+          "recommendationId": "c6-or-talent-10-artifact-stats",
+          "roles": [
+            "dps"
+          ],
+          "scope": "artifact-stats",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:character-guide:noelle-c6-or-talent-10-artifact-stats-luna-viii",
+        "sourceConditions": [
+          "Noelle is C6 or her Burst Talent is Level 10 or higher."
+        ],
+        "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
+        "sourceId": "kqm",
+        "sourceRecordId": "noelle-c6-or-talent-10-artifact-stats-luna-viii"
+      }
+    ],
+    "sourceClaimCells": [
+      {
+        "claimCells": [
+          {
+            "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4"
+          },
+          {
+            "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4"
+          },
+          {
+            "claimId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate",
+                "predicateType": "unresolved-context",
+                "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+                "result": "unknown",
+                "structuredFact": "none-unresolved-context"
+              }
+            ],
+            "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+            "resolution": "unresolved-context",
+            "sourceConditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4"
+          }
+        ],
+        "packetIndex": 0,
+        "teamRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+      }
+    ],
+    "sourceDocumentBoundary": {
+      "allClaimsAndTeamsShareExactSourceDocument": true,
+      "exactOccurrenceIds": [
+        "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+        "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+        "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions"
+      ],
+      "exactTeamRecordIds": [
+        "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+      ],
+      "pageUrl": "https://keqingmains.com/q/noelle-quickguide/",
+      "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+      "sourceId": "kqm",
+      "sourceVersion": "Luna VIII",
+      "status": "accepted"
+    },
+    "summary": {
+      "applicableUnderSuppliedContextCount": 3,
+      "assembledBuildCount": 0,
+      "cellCount": 3,
+      "claimCount": 3,
+      "deferredEnergyCount": 0,
+      "effectiveInapplicableCount": 0,
+      "effectiveMatchedCount": 3,
+      "effectiveUnresolvedCount": 0,
+      "notApplicableUnderSuppliedContextCount": 0,
+      "sourceAlreadyMatchedCount": 0,
+      "sourceDefinitelyInapplicableCount": 0,
+      "sourceInapplicableCount": 0,
+      "sourceMatchedCount": 0,
+      "sourceUnresolvedCount": 3,
+      "stillUnresolvedCount": 0,
+      "teamCount": 1
+    },
+    "supportsBuildRecommendations": false,
+    "supportsDamageClaims": false,
+    "supportsEnergyRecoveryClaims": false,
+    "supportsGuideClaims": false,
+    "supportsRankClaims": false,
+    "supportsRotationClaims": false,
+    "supportsSourceAuthorization": false,
+    "supportsStatRecommendations": false,
+    "supportsTeamRecommendations": false
+  },
+  "summary": {
+    "assembledBuildCount": 0,
+    "candidateCount": 0,
+    "contextApplicableCount": 3,
+    "effectiveInapplicableCount": 0,
+    "effectiveMatchedCount": 3,
+    "effectiveUnresolvedCount": 0,
+    "emptyConditionArrayCount": 1,
+    "emptyConsumedCount": 0,
+    "equipmentAssignmentCount": 0,
+    "holdoutBindingAuthoredCount": 0,
+    "holdoutConsumedCount": 0,
+    "holdoutEnergyClassificationAuthoredCount": 0,
+    "holdoutOccurrenceCount": 12,
+    "nonemptyConditionArrayCount": 15,
+    "optimizationCount": 0,
+    "selectedNotEnergyDeferredCount": 3,
+    "selectedOccurrenceCount": 3,
+    "selectedUniqueConditionArrayCount": 1,
+    "sourceAlreadyMatchedCount": 0,
+    "sourceCellCount": 3,
+    "sourceDefinitelyInapplicableCount": 0,
+    "sourceInapplicableCount": 0,
+    "sourceMatchedCount": 0,
+    "sourceTeamCount": 1,
+    "sourceUnresolvedCount": 3,
+    "totalConditionArrayCount": 16
+  },
+  "supportsBuildRecommendations": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "teamCompositionExecuted": false
+}

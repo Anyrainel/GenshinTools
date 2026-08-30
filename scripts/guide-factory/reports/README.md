@@ -6,6 +6,30 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `noelle-source-local-high-investment-slice.json` authenticates slice
+  `kqm-noelle-source-local-high-investment-slice-luna-viii` against the exact
+  KQM Noelle snapshot SHA-256
+  `d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0`.
+  It selects three high-investment main-stat occurrences with shared condition
+  hash `92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4`:
+  DEF% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet, with payload
+  hashes `804a06075305e59b97c800d1a8ba0fdfff51f9f5cbe37862d3f574721b38d53e`,
+  `27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a`,
+  and `d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603`.
+  It projects them independently over the exact
+  Noelle/Durin/Nicole/Xilonen source team. The source AST remains one unresolved
+  `investment-threshold` leaf with `talentLevelsEvaluated: false`; only the
+  request overlay evaluates the pinned
+  `any(constellation >= 6, burst talent >= 10)` predicate. The durable C6
+  context makes all three cells applicable while the omitted Burst Talent fact
+  remains unknown, with no constellation-derived Talent behavior. Its exact
+  16-array source boundary is 3 selected, 12 nonempty holdouts, and 1 empty
+  array. Holdouts and the empty array remain unconsumed and receive no slice-
+  authored binding or energy classifications. It creates zero candidates,
+  equipment assignments, optimizations, or builds and performs no
+  recommendation, ranking, damage, rotation, or ER work. It is not admitted to
+  the current condition-binding catalog; current manual coverage continues to
+  classify the three occurrences as unbound and energy-unclassified.
 - `kokomi-source-local-artifact-slice.json` authenticates one exact team-member
   artifact condition from the KQM Kokomi Luna V snapshot. The selected path is
   `members[0].artifactRecommendations[0].conditions` on the exact
@@ -58,8 +82,9 @@ Current durable pilot evidence:
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
-  regenerated after Kokomi changes its declared manual-coverage input; its Klee
-  claim and team-control boundary is unchanged.
+  regenerated after the shared numeric request-context vocabulary refreshes its
+  source-local and manual-coverage inputs; its Klee claim and team-control
+  boundary is unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -383,8 +408,11 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-nine reports in memory and rejects stale
-checked-in output. Checkpoint 30 adds no report; it regenerates manual coverage
-and the Klee witness after catalog admission. The Diona ER report is historical
+`validate.ts` rebuilds all thirty reports in memory and rejects stale checked-in
+output. Checkpoint 31 adds only the standalone Noelle source-local report; it
+regenerates the affected Itto, Klee, Diona, and Kokomi reports, manual coverage,
+and the Klee witness without changing the checkpoint-30 catalog or energy
+ledgers. The completed suite passes TypeScript, 61 test files with 446 tests,
+and validation with 0 errors and 12 warnings. The Diona ER report is historical
 and deliberately decoupled from unrelated knowledge-repository changes while
 ER work is deferred.

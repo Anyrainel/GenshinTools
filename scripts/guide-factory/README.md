@@ -21,19 +21,20 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 30 admits only checkpoint 29's authenticated Kokomi Ocean-Hued Clam
-occurrence into the generic source-local catalog evidence. Kokomi, Klee, and
-Diona keep separate wrapper authentication and extraction; a private normalized
-helper performs only the repeated selected-occurrence, source-claim, and
-condition-control cross-link after those source-specific checks pass. Every
-Kokomi literal, hash, team/member/subject identity, ordered roster predicate,
-4pc Ocean-Hued Clam payload, `recommended`/`unranked` metadata field, and zero-
-request-binding boundary remains pinned. The four named Kokomi holdouts stay
-unbound and energy-unclassified. The catalog is now 57 entries, and non-
-structural coverage is 123/54/3/66. This checkpoint adds no durable report and
-keeps the report count at 29. It is authenticated catalog admission, not an
-artifact assignment, build, recommendation, rank, damage, rotation, ER result,
-or working guide factory:
+Checkpoint 31 authenticates a standalone Noelle high-investment numeric request-
+context slice. It selects the exact DEF% Sands, Geo DMG Bonus Goblet, and CRIT
+Rate/CRIT DMG Circlet occurrences under one shared C6-or-Burst-Talent-10+
+condition, then projects them over the exact Noelle/Durin/Nicole/Xilonen source
+team. All three source cells remain unresolved until an independently supplied,
+team-and-character-scoped C6 request fact satisfies the pinned
+`any(constellation >= 6, burst talent >= 10)` predicate. The source evaluator
+still does not evaluate Talent levels, and constellation does not derive one.
+The exact 16-array boundary is three selected, 12 nonempty holdouts, and one
+empty array. This adds the thirtieth durable report but no catalog entry: the
+57-entry catalog and all checkpoint 30 coverage ledgers remain unchanged. It is
+typed applicability validation, not an artifact assignment, assembled build,
+recommendation, rank, optimizer, damage, rotation, ER result, or working guide
+factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -446,6 +447,34 @@ or working guide factory:
 145. Add no durable report and execute no assignment, recommendation, build,
     rank, optimizer, damage, rotation, or ER work; the next standalone slice is
     a Noelle C6-or-Burst-10 numeric request-context experiment.
+146. Extend strict request context with independently supplied, exact-team and
+    exact-character constellation and named Talent-level facts while preserving
+    omitted facts as unknown.
+147. Keep constellation within C0-C6, require positive integer Talent levels,
+    and preserve exact three-valued `any` behavior for threshold predicates.
+148. Authenticate exactly three high-investment Noelle main-stat occurrences:
+    DEF% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet under the
+    shared condition hash.
+149. Project those three independent claims over the exact
+    Noelle/Durin/Nicole/Xilonen source team with a C6 request fact; retain the
+    omitted Burst Talent fact as unknown.
+150. Preserve all three source results as unresolved while the request overlay
+    makes all three applicable and effectively matched; source Talent-level
+    evaluation remains disabled.
+151. Close the Noelle boundary at 16 arrays: three selected, 12 nonempty
+    holdouts, and one empty occurrence, with zero holdout consumption or slice-
+    authored holdout binding/energy classification.
+152. Keep the Noelle slice outside the current catalog. Preserve catalog 57,
+    non-structural coverage 54/3/66, unique arrays 32/53/1, energy
+    15/51/60/16, and six wrapper families over 17 source files and 67 paths.
+153. Regenerate the affected Itto, Klee, Diona, and Kokomi reports, manual
+    coverage, and the Klee witness after the shared numeric request-context
+    vocabulary changes, without changing their established semantics.
+154. Add one durable Noelle report for a total of 30 while producing zero
+    candidates, equipment assignments, optimizations, or assembled builds and
+    executing no recommendation, rank, damage, rotation, or ER work.
+155. Keep catalog admission for only these three exact Noelle occurrences and a
+    later lower-investment branch experiment as separate, unimplemented gates.
 
 The first two active sources are already in this repository:
 
@@ -551,6 +580,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
@@ -569,7 +599,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-nine durable reports in memory: corpus inventory,
+It also rebuilds all thirty durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -582,7 +612,8 @@ composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
 Klee, Diona, and Kokomi catalog-integrated source-local condition slices, the
-exact manual condition-array coverage
+standalone Noelle high-investment numeric source-local slice, the exact manual
+condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration.
 Stale evidence cannot pass.
@@ -685,6 +716,21 @@ metadata, and zero-request-binding check. A private normalized helper performs
 only the repeated selected-to-claim-to-control cross-link and entry construction
 after those checks; it is not a generic wrapper or parser.
 
+The standalone Noelle high-investment adapter selects three exact main-stat
+occurrences from the C6-or-Burst-Talent-10+ guide branch: DEF% Sands, Geo DMG
+Bonus Goblet, and CRIT Rate/CRIT DMG Circlet. The source predicate remains one
+unresolved `investment-threshold` leaf. A wrapper-owned mapping preserves the
+source OR as `any(constellation >= 6, burst talent >= 10)`, with both values as
+independent request facts scoped to the exact Noelle/Durin/Nicole/Xilonen team
+and Noelle subject. The durable fixture supplies C6 only, so all three cells are
+applicable while the omitted Burst Talent fact stays unknown. Source Talent-
+level evaluation remains false, and no Talent level is derived from
+constellation. The exact Noelle boundary contains 16 arrays: three selected, 12
+nonempty holdouts, and one empty array. The holdouts and empty occurrence are
+unconsumed and receive no slice-authored binding or energy classification.
+This standalone slice creates zero candidates, equipment assignments,
+optimizations, or assembled builds.
+
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
 and matches all 142 to their consolidated copies. Sixteen arrays are
@@ -707,6 +753,8 @@ Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates six
 wrapper families across 17 source files and 67 generated-from paths. The
 validator rebuilds the 57-entry catalog and coverage before regenerating the
 Klee witness. Neither catalog nor coverage feeds back into a source-local slice.
+The standalone Noelle classifications do not enter the catalog: its selected
+occurrences remain unbound and energy-unclassified in current manual coverage.
 These reports measure validation work. They do
 not prove a condition is satisfied, presume an unclassified row is non-ER, or
 establish that a preserved payload is a correct recommendation.
@@ -723,8 +771,9 @@ holdouts, and performs no payload expansion, compatibility evaluation, build or
 candidate construction, cross-product, selection, recommendation, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
 Its durable report is regenerated because manual coverage is a declared input;
-the four Klee claims, two team controls, and interpretation boundary do not
-change.
+the shared numeric request-context change also refreshes the authenticated
+source-local dependency chain. The four Klee claims, two team controls, and
+interpretation boundary do not change.
 
 ## Data flow
 

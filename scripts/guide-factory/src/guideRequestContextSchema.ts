@@ -5,6 +5,15 @@ const CharacterRequestFactsSchema = z
   .object({
     intendedRole: z.string().min(1).optional(),
     optimizationGoal: z.string().min(1).optional(),
+    constellation: z.number().int().min(0).max(6).safe().optional(),
+    talentLevels: z
+      .object({
+        auto: z.number().int().positive().safe().optional(),
+        skill: z.number().int().positive().safe().optional(),
+        burst: z.number().int().positive().safe().optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 

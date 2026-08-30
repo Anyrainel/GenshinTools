@@ -29,6 +29,12 @@ export type SourceLocalConditionRequestContext = {
             {
               intendedRole?: string;
               optimizationGoal?: string;
+              constellation?: number;
+              talentLevels?: {
+                auto?: number;
+                skill?: number;
+                burst?: number;
+              };
             }
           >
         >;
@@ -51,6 +57,17 @@ export type SourceLocalConditionRequestPredicateAst =
       type: "optimization-goal-is";
       characterId: string;
       goalId: string;
+    }
+  | {
+      type: "constellation-at-least";
+      characterId: string;
+      threshold: number;
+    }
+  | {
+      type: "talent-level-at-least";
+      characterId: string;
+      talent: "auto" | "skill" | "burst";
+      threshold: number;
     };
 
 export type SourceLocalConditionRequestBinding = {
@@ -931,6 +948,37 @@ function validateLocalRequestPredicate(
     );
     return;
   }
+  if (
+    predicate.type === "constellation-at-least" ||
+    predicate.type === "talent-level-at-least"
+  ) {
+    const validThreshold =
+      typeof predicate.threshold === "number" &&
+      Number.isSafeInteger(predicate.threshold) &&
+      (predicate.type === "constellation-at-least"
+        ? predicate.threshold >= 0 && predicate.threshold <= 6
+        : predicate.threshold > 0);
+    const validTalent =
+      predicate.type !== "talent-level-at-least" ||
+      predicate.talent === "auto" ||
+      predicate.talent === "skill" ||
+      predicate.talent === "burst";
+    if (
+      typeof predicate.characterId !== "string" ||
+      predicate.characterId.length === 0 ||
+      predicate.characterId !== claimCharacterId ||
+      !validThreshold ||
+      !validTalent
+    ) {
+      issues.push({
+        code: "source-local-slice.invalid-numeric-character-request-predicate",
+        path,
+        message:
+          "Numeric bindings require an exact selected-claim character, a valid constellation/talent threshold, and an explicit talent kind.",
+      });
+    }
+    return;
+  }
   const operand =
     predicate.type === "intended-role-is"
       ? predicate.roleId
@@ -991,6 +1039,42 @@ function validateRequestContext(
           path,
           message: "Supplied role and goal facts must be non-empty strings.",
         });
+      }
+      if (
+        facts.constellation != null &&
+        (!Number.isSafeInteger(facts.constellation) ||
+          facts.constellation < 0 ||
+          facts.constellation > 6)
+      ) {
+        issues.push({
+          code: "source-local-slice.invalid-constellation-fact",
+          path: `${path}.constellation`,
+          message: "Constellation facts must be safe integers from 0 through 6.",
+        });
+      }
+      const talentLevels: unknown = facts.talentLevels;
+      if (talentLevels != null && !isRecord(talentLevels)) {
+        issues.push({
+          code: "source-local-slice.invalid-talent-levels-fact",
+          path: `${path}.talentLevels`,
+          message: "Talent levels must be an object keyed by auto, skill, or burst.",
+        });
+      } else if (isRecord(talentLevels)) {
+        for (const [talent, level] of Object.entries(talentLevels)) {
+          if (
+            (talent !== "auto" && talent !== "skill" && talent !== "burst") ||
+            typeof level !== "number" ||
+            !Number.isSafeInteger(level) ||
+            level <= 0
+          ) {
+            issues.push({
+              code: "source-local-slice.invalid-talent-level-fact",
+              path: `${path}.talentLevels.${talent}`,
+              message:
+                "Talent levels require only auto, skill, or burst keys with positive safe-integer values.",
+            });
+          }
+        }
       }
     }
   }
@@ -1242,15 +1326,52 @@ function canonicalRequestContext(
             ...(teamFacts.characterFactsById
               ? {
                   characterFactsById: Object.fromEntries(
-                    Object.entries(teamFacts.characterFactsById).sort(
-                      ([left], [right]) => left.localeCompare(right),
-                    ),
+                    Object.entries(teamFacts.characterFactsById)
+                      .sort(([left], [right]) => left.localeCompare(right))
+                      .map(([characterId, characterFacts]) => [
+                        characterId,
+                        canonicalLocalCharacterFacts(characterFacts),
+                      ]),
                   ),
                 }
               : {}),
           },
         ]),
     ),
+  };
+}
+
+function canonicalLocalCharacterFacts(
+  facts: NonNullable<
+    NonNullable<
+      SourceLocalConditionRequestContext["requestFactsByTeamRecordId"]
+    >[string]["characterFactsById"]
+  >[string],
+): typeof facts {
+  const talentLevels: unknown = facts.talentLevels;
+  return {
+    ...(facts.intendedRole == null
+      ? {}
+      : { intendedRole: facts.intendedRole }),
+    ...(facts.optimizationGoal == null
+      ? {}
+      : { optimizationGoal: facts.optimizationGoal }),
+    ...(facts.constellation == null
+      ? {}
+      : { constellation: facts.constellation }),
+    ...(talentLevels == null
+      ? {}
+      : {
+          talentLevels: isRecord(talentLevels)
+            ? Object.fromEntries(
+                Object.entries(talentLevels).sort(([left], [right]) =>
+                  left.localeCompare(right),
+                ),
+              )
+            : (structuredClone(talentLevels) as NonNullable<
+                typeof facts.talentLevels
+              >),
+        }),
   };
 }
 
@@ -1277,6 +1398,10 @@ function flattenCountEntries(
       ] as [string, number],
     ),
   ];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function dedupeIssues(
