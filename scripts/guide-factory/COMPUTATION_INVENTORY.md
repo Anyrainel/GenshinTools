@@ -815,10 +815,53 @@ consolidation state keep it outside the shared registry, consolidated
 repository, condition catalog, global validator, application, and Worker.
 
 Checkpoint 35 passes Guide Factory TypeScript, 63 test files with 487 tests,
-application TypeScript, and dependency-boundary validation. The next bounded
-non-ER gate is a generic, source-backed four-character equipment candidate
-lattice. It is not implemented and must not reinterpret this sign-only seam as
-weight, priority, recommendation, or context-equivalence evidence.
+application TypeScript, and dependency-boundary validation. At that checkpoint,
+the next bounded non-ER gate was a generic source-backed four-character
+equipment candidate lattice; it was required not to reinterpret this sign-only
+seam as weight, priority, recommendation, or context-equivalence evidence.
+
+## Authenticated source-backed equipment lattice
+
+Checkpoint 36 adds a generic finite-product core and one source-specific
+Keqing/Ineffa/Furina/Xilonen wrapper. The core, committed separately as
+`3e6982a1`, validates exact four-member/eight-axis structure, source-local
+group metadata, bounded count arithmetic, deterministic node IDs, domain
+membership, and complete Cartesian coverage. It does not authenticate source
+claims or evaluate equipment.
+
+The wrapper authenticates nine direct files spanning the consolidated
+repository, raw and normalized source snapshots, source registry/index, live
+build preset, prior equipment evidence, and weapon/artifact coverage. It
+retains nine groups/lists with 20 occurrences: 14 active, four fixture-scope
+holdouts, one C6 investment holdout, and one ER-derived artifact-choice
+holdout. Active preset builds project artifact identity only; their main-stat,
+substat, and ER-weight fields do not enter the lattice.
+
+The eight active domains have cardinalities `3, 2, 1, 1, 3, 2, 1, 1`. Their
+complete product contains 36 nodes and 288 references. KQM group ordering, the
+two-member tie, the later alternative, conditional artifact alternatives, and
+preset list indexes are retained. `sourceLocalRank` is null throughout because
+none of these source records supplies a numeric rank value.
+
+Exact-team facts, the R5 request map, and a named request assumption resolve
+the three structural Keqing conditions separately. These resolutions do not
+establish gameplay applicability. Preset team applicability is unknown, and
+the KQM warning about Xilonen generally being unable to activate Scroll for
+Hydro remains attached.
+
+The roster and active member occurrences are source-backed, but every
+weapon/artifact pairing and cross-character composition is wrapper-authored.
+There are zero source-published whole candidates and zero gameplay-validated
+candidates. The module performs enumeration only. Team/equipment
+recommendations, optimality, rank, evaluation, candidate generation,
+optimization, damage, guide production, gameplay validation, and ER all remain
+disabled.
+
+The report is durable evidence 33 and global report 32. Checkpoint 36 passes
+Guide Factory TypeScript, 65 test files with 554 tests, validation with 0 errors
+and 12 existing warnings, application TypeScript, and dependency-boundary
+validation. Materializing and preflighting the 36 nodes is the next
+unimplemented non-ER computation boundary.
 
 ## Callable modules for later experiments
 

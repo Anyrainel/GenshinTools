@@ -397,6 +397,49 @@ durable report, not a new knowledge-record kind. Mixed permission and blocked
 consolidation keep it outside the shared registry, repository, condition
 catalog, global validator, and application.
 
+### Derived source-backed equipment candidate lattices
+
+A source-backed equipment lattice is a derived report, not a knowledge-record
+kind and not a recommendation. Its generic core may validate and enumerate a
+finite product only after a source-specific wrapper has authenticated every
+record, group/list, occurrence, request assumption, and search-coverage
+reference used to form the axes. Failed source-specific authentication must
+withhold the core call rather than enumerate and discard candidates afterward.
+
+Checkpoint 36 authenticates nine direct inputs for the exact
+Keqing/Ineffa/Furina/Xilonen roster. Its inventory contains nine groups/lists
+and 20 occurrences: 14 active, four fixture-scope holdouts, one C6 holdout
+under the C0 request, and one ER-derived holdout. Only equipment identities are
+projected; source build main-stat and substat weights are not part of the
+lattice payload.
+
+The generic input contains exactly four members and eight ordered weapon/
+artifact axes. The current domain cardinalities are `3, 2, 1, 1, 3, 2, 1, 1`,
+so the bounded product contains 36 nodes and 288 references. Source ordering,
+ties, alternatives, conditions, and preset list positions remain local
+metadata. A source list position or ranked-group index must not be copied into
+`sourceLocalRank`; that field stays null unless the source supplies an explicit
+numeric rank.
+
+Structural condition resolution and gameplay applicability are separate. The
+exact roster may satisfy a roster condition, a request refinement map may
+satisfy equal refinement, and an explicit request assumption may satisfy a
+scenario condition without validating gameplay. Preset team applicability is
+unknown. Source warnings, including the Xilonen Scroll activation warning,
+remain provenance-bound.
+
+Source backing also stops at the authenticated member axes. The source does
+not thereby author a weapon/artifact pair, a cross-character composition, or a
+whole team-equipment candidate. Checkpoint 36 therefore records zero source-
+published whole candidates and marks every composition as wrapper-authored.
+Enumeration does not support team/equipment recommendations, rank, optimality,
+evaluation, candidate generation, optimization, damage, gameplay validation,
+guide production, promotion, or ER requirements.
+
+The checkpoint 36 report is globally integrated as report 32 and is durable
+report 33 overall. Materialized team-build inputs and technical preflight are a
+separate future boundary; they cannot be inferred from lattice enumeration.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

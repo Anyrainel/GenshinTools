@@ -57,6 +57,13 @@ import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
 } from "./keqingLunarEquipmentEvidenceValidation";
 import {
+  buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
+  KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
+  requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
+  type KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
+} from "./keqingIneffaFurinaXilonenEquipmentCandidateLattice";
+import {
   authenticateKleeSourceLocalConditionSliceReport,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
   KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
@@ -198,6 +205,7 @@ import {
   KnowledgeRepositorySchema,
   LegacyTeamSnapshotSchema,
   ManualObservationSnapshotSchema,
+  ManualSnapshotIndexSchema,
   SourceRegistrySchema,
 } from "./schemas";
 import type { SourceConditionedGuidePacketReport } from "./sourceConditionedGuidePacket";
@@ -257,6 +265,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     furinaSourceScopedRoleSampleInput,
     keqingSourceScopedRolePairSampleInput,
     keqingLunarEquipmentEvidenceValidationInput,
+    keqingIneffaFurinaXilonenEquipmentCandidateLatticeInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
@@ -328,6 +337,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       readJson(FURINA_SOURCE_SCOPED_ROLE_SAMPLE_REPORT_PATH),
       readJson(KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH),
       readJson(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH),
+      readJson(
+        KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
+      ),
       readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
       ),
@@ -1287,6 +1299,74 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-lunar-equipment-evidence-validation",
           message:
             "The saved Keqing Lunar equipment-evidence validation does not match the exact source records, published team facts, baseline build, and read-only search-coverage boundary.",
+        });
+      }
+
+      const keqingIneffaFurinaXilonenEquipmentCandidateLatticeGeneratedFrom =
+        await hashRelativePaths(
+          KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
+        );
+      const keqingLatticeKqmManualInput =
+        requiredManualSnapshotInputContaining(
+          manualInputs,
+          "kqm",
+          "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+        );
+      const liveBuildPresetInput = await readJson(
+        path.join(
+          REPOSITORY_ROOT,
+          KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS[5],
+        ),
+      );
+      const expectedKeqingIneffaFurinaXilonenEquipmentCandidateLattice =
+        buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport({
+          repository: expectedKnowledge,
+          kqmSnapshot: ManualObservationSnapshotSchema.parse(
+            keqingLatticeKqmManualInput.snapshot,
+          ),
+          genshinToolsSnapshot: expectedGenshinTools,
+          manualIndex: ManualSnapshotIndexSchema.parse(manualIndexInput),
+          sourceRegistry: registry.data,
+          liveBuildPreset: liveBuildPresetInput,
+          evidenceReport: expectedKeqingLunarEquipmentEvidenceValidation,
+          weaponCoverageReport: expectedWeaponChoiceSearchCoverage,
+          artifactCoverageReport: expectedArtifactChoiceSearchCoverage,
+          inputFiles:
+            keqingIneffaFurinaXilonenEquipmentCandidateLatticeGeneratedFrom,
+        });
+      let keqingIneffaFurinaXilonenEquipmentCandidateLatticeAuthenticated =
+        true;
+      try {
+        requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport(
+          expectedKeqingIneffaFurinaXilonenEquipmentCandidateLattice,
+        );
+      } catch (error) {
+        keqingIneffaFurinaXilonenEquipmentCandidateLatticeAuthenticated = false;
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.incomplete_keqing_ineffa_furina_xilonen_equipment_candidate_lattice",
+          path: "reports.keqing-ineffa-furina-xilonen-equipment-candidate-lattice",
+          message:
+            error instanceof Error
+              ? error.message
+              : "The freshly rebuilt source-backed equipment lattice did not authenticate its source, request, holdout, provenance, or complete Cartesian boundary.",
+        });
+      }
+      if (
+        keqingIneffaFurinaXilonenEquipmentCandidateLatticeAuthenticated &&
+        stableJson(
+          expectedKeqingIneffaFurinaXilonenEquipmentCandidateLattice,
+        ) !==
+          stableJson(
+            keqingIneffaFurinaXilonenEquipmentCandidateLatticeInput as KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
+          )
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_furina_xilonen_equipment_candidate_lattice",
+          path: "reports.keqing-ineffa-furina-xilonen-equipment-candidate-lattice",
+          message:
+            "The saved source-backed equipment lattice does not match the fresh nine-input source closure, 20-occurrence inventory, request conditions, and complete 36-node wrapper-authored product.",
         });
       }
 

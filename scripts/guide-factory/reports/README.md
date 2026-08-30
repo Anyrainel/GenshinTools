@@ -6,6 +6,22 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json`
+  authenticates nine direct inputs for the exact published Lunar-Charged
+  roster. It inventories nine source groups/lists and 20 occurrences: 14
+  active, four fixture-scope holdouts, one Xilonen C6 holdout under the C0
+  request, and one Furina ER-derived artifact-choice holdout. Eight ordered
+  axes enumerate `(3 x 2) x (1 x 1) x (3 x 2) x (1 x 1) = 36` nodes with 288
+  references. Source ordering, the KQM tie and alternative, conditional
+  artifacts, and preset list positions are retained, but every
+  `sourceLocalRank` is null because no explicit numeric rank was sourced.
+  Weapon/artifact pairings and cross-character compositions are wrapper-
+  authored; zero whole candidates are source-published and applicability stays
+  unknown, including the retained Xilonen Scroll warning. Enumeration is the
+  only enabled capability. Guide, team/equipment recommendation, rank,
+  optimality, evaluation, generator, optimizer, damage, gameplay, and ER
+  outputs are false. This is durable report 33 and globally integrated report
+  32.
 - `keqing-artifact-rating-kqm-marginal-validation-slice.json` authenticates an
   isolated five-file closure over the ArtifactRatingDB Keqing snapshot, the
   consolidated repository, the existing Keqing/Ineffa local-marginal report,
@@ -461,20 +477,21 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-one globally integrated reports in memory and
-rejects stale checked-in output. Checkpoint 35 adds the thirty-second durable
-report through a deliberately separate authenticated builder and CLI. It does
-not add ArtifactRatingDB to the global validator, because the source remains
-permission-mixed and consolidation-blocked. The completed checkpoint passes
-Guide Factory TypeScript, 63 test files with 487 tests, application TypeScript,
-and dependency-boundary validation.
+`validate.ts` rebuilds all thirty-two globally integrated reports in memory and
+rejects stale checked-in output. Checkpoint 35's thirty-second durable report
+remains outside that runner because ArtifactRatingDB is permission-mixed and
+consolidation-blocked. Checkpoint 36 adds durable report 33 and globally
+integrates it as report 32. The completed boundary passes Guide Factory
+TypeScript, 65 test files with 554 tests, validation with 0 errors and 12
+existing warnings, application TypeScript, and dependency-boundary validation.
 
 The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
 manual coverage remains 19 source files and 73 generated-from paths, and the
 Klee witness remains six source files, 76 generated-from paths, and 63 upstream
-bindings. Checkpoint 35 changes none of those ledgers. It produces no guide,
-rank, scalar weight, promotion, recommendation, optimization, damage, rotation,
-ideal-stat allocation, or ER requirement. The next bounded non-ER experiment
-is a generic, source-backed four-character equipment candidate lattice; it is
-not implemented. The Diona ER report is historical and deliberately decoupled
-from unrelated knowledge-repository changes while ER work is deferred.
+bindings. Checkpoints 35 and 36 change none of those ledgers. Checkpoint 36
+produces no guide, team/equipment recommendation, rank, optimum, evaluation,
+generator result, optimization, damage, gameplay claim, ideal-stat allocation,
+or ER requirement. The next bounded non-ER experiment is 36-node
+materialization and technical preflight; it is not implemented. The Diona ER
+report is historical and deliberately decoupled from unrelated knowledge-
+repository changes while ER work is deferred.

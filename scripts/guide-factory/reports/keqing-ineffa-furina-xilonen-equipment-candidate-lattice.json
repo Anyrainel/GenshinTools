@@ -1,0 +1,3672 @@
+{
+  "candidateEnumerationExecuted": true,
+  "candidateEvaluationExecuted": false,
+  "candidateGeneratorExecuted": false,
+  "cautions": [
+    "Every whole-team weapon/artifact combination is wrapper-authored from separately attributed member axes; no source published a whole candidate.",
+    "Active preset occurrences are enumerated experiment inputs, not claims that those choices apply to this team.",
+    "The Keqing conditional artifact axis is structurally admitted only under an explicit request assumption; reaction ownership and gameplay applicability remain unvalidated.",
+    "Xilonen generally cannot activate Scroll for Hydro in the stated setup because of the Crystallize interaction; the source presents pause-menu booking only as a niche exception",
+    "Only artifact identity is projected. Sands, goblet, circlet, substat weights, and all ER-related stat fields in active preset builds are not consumed."
+  ],
+  "classification": "keqing-ineffa-furina-xilonen-source-backed-equipment-candidate-lattice",
+  "damageComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
+      "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+      "sha256": "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
+      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
+    },
+    {
+      "path": "scripts/guide-factory/reports/weapon-choice-search-coverage.json",
+      "sha256": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b"
+    },
+    {
+      "path": "scripts/guide-factory/reports/artifact-choice-search-coverage.json",
+      "sha256": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6"
+    }
+  ],
+  "guideProduced": false,
+  "inputBoundary": {
+    "authentication": "accepted",
+    "byteHashesMatch": true,
+    "exactPathSet": true,
+    "expectedFileCount": 9,
+    "files": [
+      {
+        "expectedSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+        "matches": true,
+        "observedSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+        "path": "scripts/guide-factory/data/knowledge/repository.json"
+      },
+      {
+        "expectedSha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
+        "matches": true,
+        "observedSha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
+        "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"
+      },
+      {
+        "expectedSha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9",
+        "matches": true,
+        "observedSha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9",
+        "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json"
+      },
+      {
+        "expectedSha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010",
+        "matches": true,
+        "observedSha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010",
+        "path": "scripts/guide-factory/data/source-snapshots/manual-index.json"
+      },
+      {
+        "expectedSha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2",
+        "matches": true,
+        "observedSha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2",
+        "path": "scripts/guide-factory/sources/registry.json"
+      },
+      {
+        "expectedSha256": "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04",
+        "matches": true,
+        "observedSha256": "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04",
+        "path": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
+      },
+      {
+        "expectedSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+        "matches": true,
+        "observedSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+        "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json"
+      },
+      {
+        "expectedSha256": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b",
+        "matches": true,
+        "observedSha256": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b",
+        "path": "scripts/guide-factory/reports/weapon-choice-search-coverage.json"
+      },
+      {
+        "expectedSha256": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6",
+        "matches": true,
+        "observedSha256": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6",
+        "path": "scripts/guide-factory/reports/artifact-choice-search-coverage.json"
+      }
+    ],
+    "observedFileCount": 9,
+    "parsedPayloadSha256": {
+      "artifactCoverageReport": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6",
+      "evidenceReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+      "genshinToolsSnapshot": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9",
+      "kqmSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
+      "liveBuildPreset": "849483499dd387399af2492bfc8faa2b126a84e588f76b6e4f8ecb64bab0dc94",
+      "manualIndex": "c669b925cdbbf3b591bcac66f4e7ec42332f98dc5e1a37be128662fa40504630",
+      "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+      "sourceRegistry": "2974828169ee2a7290bdcb8108b30db5beabf8ea3a0eb879878fe468044501a8",
+      "weaponCoverageReport": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b"
+    },
+    "parsedPayloadsMatch": true
+  },
+  "inventoryBoundary": {
+    "activeOccurrenceCount": 14,
+    "erStatWeightsProjected": false,
+    "excludedDeferredEnergyCount": 1,
+    "excludedInvestmentCount": 1,
+    "excludedNotFirstScopeCount": 4,
+    "groupOrListCount": 9,
+    "occurrenceCount": 20,
+    "occurrences": [
+      {
+        "characterId": "keqing",
+        "equipmentId": "lions_roar",
+        "equipmentKind": "weapon",
+        "groupId": "kqm-keqing-weapon-group-0",
+        "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+        "reason": "Exact KQM tied group member; request supplies R5.",
+        "sourceGroupIndex": 0,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "keqing",
+        "equipmentId": "the_black_sword",
+        "equipmentKind": "weapon",
+        "groupId": "kqm-keqing-weapon-group-0",
+        "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+        "reason": "Exact KQM tied group member; request supplies R5.",
+        "sourceGroupIndex": 0,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 1,
+        "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "keqing",
+        "equipmentId": "wolffang",
+        "equipmentKind": "weapon",
+        "groupId": "kqm-keqing-weapon-group-1",
+        "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+        "reason": "Exact KQM second ranked group member; request supplies R5.",
+        "sourceGroupIndex": 1,
+        "sourceListIndex": 1,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "keqing",
+        "equipmentId": "4pc:thundering_fury",
+        "equipmentKind": "artifact",
+        "groupId": "kqm-keqing-artifact-group-0",
+        "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+        "reason": "Conditional source alternative admitted under the explicit request assumption only.",
+        "sourceGroupIndex": 0,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "keqing",
+        "equipmentId": "4pc:gilded_dreams",
+        "equipmentKind": "artifact",
+        "groupId": "kqm-keqing-artifact-group-0",
+        "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+        "reason": "Conditional source alternative admitted under the explicit request assumption only.",
+        "sourceGroupIndex": 0,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 1,
+        "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "furina",
+        "equipmentId": "freedomsworn",
+        "equipmentKind": "weapon",
+        "groupId": "preset-furina-weapon-list",
+        "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+        "reason": "Preset weapon list entry selected at R1; list index is not a rank.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "furina",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "furina",
+        "equipmentId": "key_of_khajnisut",
+        "equipmentKind": "weapon",
+        "groupId": "preset-furina-weapon-list",
+        "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+        "reason": "Preset weapon list entry selected at R1; list index is not a rank.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 1,
+        "sourceMemberIndex": 1,
+        "sourceRecordId": "furina",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "furina",
+        "equipmentId": "splendor_of_tranquil_waters",
+        "equipmentKind": "weapon",
+        "groupId": "preset-furina-weapon-list",
+        "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+        "reason": "Preset weapon list entry selected at R1; list index is not a rank.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 2,
+        "sourceMemberIndex": 2,
+        "sourceRecordId": "furina",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "furina",
+        "equipmentId": "4pc:golden_troupe",
+        "equipmentKind": "artifact",
+        "groupId": "preset-furina-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+        "reason": "Visible preset build identity projected without stat weights.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "BQAI0BO",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "furina",
+        "equipmentId": "4pc:tenacity_of_the_millelith",
+        "equipmentKind": "artifact",
+        "groupId": "preset-furina-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+        "reason": "Visible preset build identity projected without stat weights.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 1,
+        "sourceMemberIndex": 1,
+        "sourceRecordId": "BQA4H1m",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "furina",
+        "equipmentId": "2pc+2pc:er-20+er-20",
+        "equipmentKind": "artifact",
+        "groupId": "preset-furina-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:furina:build:BOfjRIm",
+        "reason": "Artifact-choice identity is explicitly ER-derived and deferred from CP36.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 2,
+        "sourceMemberIndex": 2,
+        "sourceRecordId": "BOfjRIm",
+        "status": "excluded-deferred-energy"
+      },
+      {
+        "characterId": "ineffa",
+        "equipmentId": "fractured_halo",
+        "equipmentKind": "weapon",
+        "groupId": "preset-ineffa-weapon-list",
+        "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+        "reason": "Singleton preset weapon list entry selected at R1.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "ineffa",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "ineffa",
+        "equipmentId": "4pc:aubade_of_morningstar_and_moon",
+        "equipmentKind": "artifact",
+        "groupId": "preset-ineffa-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+        "reason": "First preset build is the bounded fixture scope.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "FeFiQU8",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "ineffa",
+        "equipmentId": "4pc:silken_moons_serenade",
+        "equipmentKind": "artifact",
+        "groupId": "preset-ineffa-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFi2JG",
+        "reason": "Outside the bounded first-build fixture scope; no suitability judgment.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 1,
+        "sourceMemberIndex": 1,
+        "sourceRecordId": "FeFi2JG",
+        "status": "excluded-not-first-preset-build-scope"
+      },
+      {
+        "characterId": "ineffa",
+        "equipmentId": "4pc:gilded_dreams",
+        "equipmentKind": "artifact",
+        "groupId": "preset-ineffa-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFbxRe",
+        "reason": "Outside the bounded first-build fixture scope; no suitability judgment.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 2,
+        "sourceMemberIndex": 2,
+        "sourceRecordId": "FeFbxRe",
+        "status": "excluded-not-first-preset-build-scope"
+      },
+      {
+        "characterId": "ineffa",
+        "equipmentId": "4pc:tenacity_of_the_millelith",
+        "equipmentKind": "artifact",
+        "groupId": "preset-ineffa-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFQVGG",
+        "reason": "Outside the bounded first-build fixture scope; no suitability judgment.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 3,
+        "sourceMemberIndex": 3,
+        "sourceRecordId": "FeFQVGG",
+        "status": "excluded-not-first-preset-build-scope"
+      },
+      {
+        "characterId": "xilonen",
+        "equipmentId": "peak_patrol_song",
+        "equipmentKind": "weapon",
+        "groupId": "preset-xilonen-weapon-list",
+        "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+        "reason": "Singleton preset weapon list entry selected at R1.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "xilonen",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "xilonen",
+        "equipmentId": "4pc:scroll_of_the_hero_of_cinder_city",
+        "equipmentKind": "artifact",
+        "groupId": "preset-xilonen-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+        "reason": "First preset build identity; team applicability remains unknown.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 0,
+        "sourceMemberIndex": 0,
+        "sourceRecordId": "Dbt0Wkm",
+        "status": "active-experiment-axis"
+      },
+      {
+        "characterId": "xilonen",
+        "equipmentId": "4pc:instructor",
+        "equipmentKind": "artifact",
+        "groupId": "preset-xilonen-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbspw5m",
+        "reason": "Outside the bounded first-build fixture scope; no suitability judgment.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 1,
+        "sourceMemberIndex": 1,
+        "sourceRecordId": "Dbspw5m",
+        "status": "excluded-not-first-preset-build-scope"
+      },
+      {
+        "characterId": "xilonen",
+        "equipmentId": "4pc:obsidian_codex",
+        "equipmentKind": "artifact",
+        "groupId": "preset-xilonen-build-list",
+        "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0reG",
+        "reason": "Source build requires C6 while the exact request is C0.",
+        "sourceGroupIndex": null,
+        "sourceListIndex": 2,
+        "sourceMemberIndex": 2,
+        "sourceRecordId": "Dbt0reG",
+        "status": "excluded-investment-mismatch"
+      }
+    ]
+  },
+  "issues": [],
+  "lattice": {
+    "capabilities": {
+      "damage": false,
+      "energyRecovery": false,
+      "enumeration": true,
+      "equipmentRecommendationClaims": false,
+      "evaluation": false,
+      "guideClaims": false,
+      "rankClaims": false,
+      "sourceClaims": false
+    },
+    "classification": "source-backed-equipment-candidate-lattice",
+    "comparisonStatus": "comparable",
+    "inputBoundary": {
+      "activeAxisCount": 8,
+      "axisCount": 8,
+      "evaluationAssumptionsSha256": "bde04fb60d578072542e7cb84518b91e128ab873caba646b4d6d899ec19c9c31",
+      "memberCount": 4,
+      "occurrenceCount": 14,
+      "requestAssumptionsSha256": "1835e3b5b9838d2242fc2637ea50f98fa3d589f8b508aa62a11ab1a0f502ce5b",
+      "sourceAuthenticationOwner": "source-specific-wrapper",
+      "sourceAuthenticationPerformedByCore": false
+    },
+    "issues": [],
+    "lattice": {
+      "activeAxisCount": 8,
+      "axisCount": 8,
+      "axisOrder": [
+        "member:keqing:weapon",
+        "member:keqing:artifact",
+        "member:ineffa:weapon",
+        "member:ineffa:artifact",
+        "member:furina:weapon",
+        "member:furina:artifact",
+        "member:xilonen:weapon",
+        "member:xilonen:artifact"
+      ],
+      "combinationCount": "36",
+      "compositionPolicy": "wrapper-authored-cartesian-product-of-source-backed-axis-occurrences",
+      "domains": [
+        {
+          "axisId": "member:keqing:weapon",
+          "characterId": "keqing",
+          "equipmentKind": "weapon",
+          "groupIds": [
+            "kqm-keqing-weapon-group-0",
+            "kqm-keqing-weapon-group-1"
+          ],
+          "occurrenceCount": 3,
+          "occurrenceIds": [
+            "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+            "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+            "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0"
+          ],
+          "teamMemberId": "member:keqing"
+        },
+        {
+          "axisId": "member:keqing:artifact",
+          "characterId": "keqing",
+          "equipmentKind": "artifact",
+          "groupIds": [
+            "kqm-keqing-artifact-group-0"
+          ],
+          "occurrenceCount": 2,
+          "occurrenceIds": [
+            "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+            "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+          ],
+          "teamMemberId": "member:keqing"
+        },
+        {
+          "axisId": "member:ineffa:weapon",
+          "characterId": "ineffa",
+          "equipmentKind": "weapon",
+          "groupIds": [
+            "preset-ineffa-weapon-list"
+          ],
+          "occurrenceCount": 1,
+          "occurrenceIds": [
+            "genshintools-presets:character-guide:ineffa:weapon-order:0"
+          ],
+          "teamMemberId": "member:ineffa"
+        },
+        {
+          "axisId": "member:ineffa:artifact",
+          "characterId": "ineffa",
+          "equipmentKind": "artifact",
+          "groupIds": [
+            "preset-ineffa-build-list"
+          ],
+          "occurrenceCount": 1,
+          "occurrenceIds": [
+            "genshintools-presets:character-guide:ineffa:build:FeFiQU8"
+          ],
+          "teamMemberId": "member:ineffa"
+        },
+        {
+          "axisId": "member:furina:weapon",
+          "characterId": "furina",
+          "equipmentKind": "weapon",
+          "groupIds": [
+            "preset-furina-weapon-list"
+          ],
+          "occurrenceCount": 3,
+          "occurrenceIds": [
+            "genshintools-presets:character-guide:furina:weapon-order:0",
+            "genshintools-presets:character-guide:furina:weapon-order:1",
+            "genshintools-presets:character-guide:furina:weapon-order:2"
+          ],
+          "teamMemberId": "member:furina"
+        },
+        {
+          "axisId": "member:furina:artifact",
+          "characterId": "furina",
+          "equipmentKind": "artifact",
+          "groupIds": [
+            "preset-furina-build-list"
+          ],
+          "occurrenceCount": 2,
+          "occurrenceIds": [
+            "genshintools-presets:character-guide:furina:build:BQAI0BO",
+            "genshintools-presets:character-guide:furina:build:BQA4H1m"
+          ],
+          "teamMemberId": "member:furina"
+        },
+        {
+          "axisId": "member:xilonen:weapon",
+          "characterId": "xilonen",
+          "equipmentKind": "weapon",
+          "groupIds": [
+            "preset-xilonen-weapon-list"
+          ],
+          "occurrenceCount": 1,
+          "occurrenceIds": [
+            "genshintools-presets:character-guide:xilonen:weapon-order:0"
+          ],
+          "teamMemberId": "member:xilonen"
+        },
+        {
+          "axisId": "member:xilonen:artifact",
+          "characterId": "xilonen",
+          "equipmentKind": "artifact",
+          "groupIds": [
+            "preset-xilonen-build-list"
+          ],
+          "occurrenceCount": 1,
+          "occurrenceIds": [
+            "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm"
+          ],
+          "teamMemberId": "member:xilonen"
+        }
+      ],
+      "groups": [
+        {
+          "characterId": "keqing",
+          "classification": "recommended",
+          "equipmentKind": "weapon",
+          "groupId": "kqm-keqing-weapon-group-0",
+          "groupIndex": 0,
+          "grouping": "tied",
+          "occurrences": [
+            {
+              "alternativeIndex": null,
+              "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "matched-by-exact-team-and-supplied-request",
+                "equipmentId": "lions_roar",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 5,
+                "sourceConditionResolution": "withheld-unresolved-source-condition",
+                "sourceOrderingSemantics": "ranked-groups-with-tie",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": 0
+            },
+            {
+              "alternativeIndex": null,
+              "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 1,
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "matched-by-exact-team-and-supplied-request",
+                "equipmentId": "the_black_sword",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 5,
+                "sourceConditionResolution": "withheld-unresolved-source-condition",
+                "sourceOrderingSemantics": "ranked-groups-with-tie",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": 1
+            }
+          ],
+          "provenance": {
+            "recommendationId": "lunar-charged-equal-refinement-four-star-ranking",
+            "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+            "sourceId": "kqm",
+            "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i"
+          },
+          "recommendationOrdering": "ranked-groups",
+          "sourceConditions": [
+            "Keqing is used in a Lunar-Charged team.",
+            "The compared weapons have equal Refinement."
+          ],
+          "sourceConditionsSha256": "499be7a6584ddfe6d6af1f5036890bccd16bde917308c672185d183cd91e68fd",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:keqing"
+        },
+        {
+          "characterId": "keqing",
+          "classification": "alternative",
+          "equipmentKind": "weapon",
+          "groupId": "kqm-keqing-weapon-group-1",
+          "groupIndex": 1,
+          "grouping": "single",
+          "occurrences": [
+            {
+              "alternativeIndex": null,
+              "claimId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "matched-by-exact-team-and-supplied-request",
+                "equipmentId": "wolffang",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 5,
+                "sourceConditionResolution": "withheld-unresolved-source-condition",
+                "sourceOrderingSemantics": "ranked-groups-with-tie",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "lunar-charged-equal-refinement-four-star-ranking",
+            "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+            "sourceId": "kqm",
+            "sourceRecordId": "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i"
+          },
+          "recommendationOrdering": "ranked-groups",
+          "sourceConditions": [
+            "Keqing is used in a Lunar-Charged team.",
+            "The compared weapons have equal Refinement."
+          ],
+          "sourceConditionsSha256": "499be7a6584ddfe6d6af1f5036890bccd16bde917308c672185d183cd91e68fd",
+          "sourceListIndex": 1,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:keqing"
+        },
+        {
+          "characterId": "keqing",
+          "classification": "conditional",
+          "equipmentKind": "artifact",
+          "groupId": "kqm-keqing-artifact-group-0",
+          "groupIndex": 0,
+          "grouping": "alternatives",
+          "occurrences": [
+            {
+              "alternativeIndex": 0,
+              "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "payload": {
+                "artifactType": "4pc",
+                "effectiveConditionResolution": "matched-by-exact-team-and-supplied-request",
+                "equipmentId": "4pc:thundering_fury",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": null,
+                "sourceConditionResolution": "withheld-unresolved-source-condition",
+                "sourceOrderingSemantics": "unranked-alternatives",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            },
+            {
+              "alternativeIndex": 1,
+              "claimId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 1,
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "payload": {
+                "artifactType": "4pc",
+                "effectiveConditionResolution": "matched-by-exact-team-and-supplied-request",
+                "equipmentId": "4pc:gilded_dreams",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": null,
+                "sourceConditionResolution": "withheld-unresolved-source-condition",
+                "sourceOrderingSemantics": "unranked-alternatives",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "lunar-charged-top-contributor-artifact-options",
+            "repositoryRecordId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i",
+            "sourceId": "kqm",
+            "sourceRecordId": "keqing-lunar-charged-top-contributor-artifact-options-luna-i"
+          },
+          "recommendationOrdering": "unranked",
+          "sourceConditions": [
+            "Keqing is used in a Lunar-Charged team.",
+            "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set."
+          ],
+          "sourceConditionsSha256": "dbb0c2f1fb0a4a6ed0b901ea01abc7b13b8c846d5a200cb7ecfcf3247494598a",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:keqing"
+        },
+        {
+          "characterId": "ineffa",
+          "classification": null,
+          "equipmentKind": "weapon",
+          "groupId": "preset-ineffa-weapon-list",
+          "groupIndex": 0,
+          "grouping": "single",
+          "occurrences": [
+            {
+              "alternativeIndex": null,
+              "claimId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "fractured_halo",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 1,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-list-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "weaponOrder",
+            "repositoryRecordId": "genshintools-presets:character-guide:ineffa",
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "ineffa"
+          },
+          "recommendationOrdering": null,
+          "sourceConditions": [],
+          "sourceConditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:ineffa"
+        },
+        {
+          "characterId": "ineffa",
+          "classification": null,
+          "equipmentKind": "artifact",
+          "groupId": "preset-ineffa-build-list",
+          "groupIndex": 0,
+          "grouping": "single",
+          "occurrences": [
+            {
+              "alternativeIndex": null,
+              "claimId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "payload": {
+                "artifactType": "4pc",
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "4pc:aubade_of_morningstar_and_moon",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": null,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-build-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "builds",
+            "repositoryRecordId": "genshintools-presets:character-guide:ineffa",
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "ineffa"
+          },
+          "recommendationOrdering": null,
+          "sourceConditions": [],
+          "sourceConditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:ineffa"
+        },
+        {
+          "characterId": "furina",
+          "classification": null,
+          "equipmentKind": "weapon",
+          "groupId": "preset-furina-weapon-list",
+          "groupIndex": 0,
+          "grouping": "alternatives",
+          "occurrences": [
+            {
+              "alternativeIndex": 0,
+              "claimId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "freedomsworn",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 1,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-list-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            },
+            {
+              "alternativeIndex": 1,
+              "claimId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 1,
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "key_of_khajnisut",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 1,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-list-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            },
+            {
+              "alternativeIndex": 2,
+              "claimId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 2,
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "splendor_of_tranquil_waters",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 1,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-list-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "weaponOrder",
+            "repositoryRecordId": "genshintools-presets:character-guide:furina",
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "furina"
+          },
+          "recommendationOrdering": null,
+          "sourceConditions": [],
+          "sourceConditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:furina"
+        },
+        {
+          "characterId": "furina",
+          "classification": null,
+          "equipmentKind": "artifact",
+          "groupId": "preset-furina-build-list",
+          "groupIndex": 0,
+          "grouping": "alternatives",
+          "occurrences": [
+            {
+              "alternativeIndex": 0,
+              "claimId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "payload": {
+                "artifactType": "4pc",
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "4pc:golden_troupe",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": null,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-build-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            },
+            {
+              "alternativeIndex": 1,
+              "claimId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 1,
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "payload": {
+                "artifactType": "4pc",
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "4pc:tenacity_of_the_millelith",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": null,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-build-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "builds",
+            "repositoryRecordId": "genshintools-presets:character-guide:furina",
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "furina"
+          },
+          "recommendationOrdering": null,
+          "sourceConditions": [],
+          "sourceConditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:furina"
+        },
+        {
+          "characterId": "xilonen",
+          "classification": null,
+          "equipmentKind": "weapon",
+          "groupId": "preset-xilonen-weapon-list",
+          "groupIndex": 0,
+          "grouping": "single",
+          "occurrences": [
+            {
+              "alternativeIndex": null,
+              "claimId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "payload": {
+                "artifactType": null,
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "peak_patrol_song",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": 1,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-list-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "weaponOrder",
+            "repositoryRecordId": "genshintools-presets:character-guide:xilonen",
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "xilonen"
+          },
+          "recommendationOrdering": null,
+          "sourceConditions": [],
+          "sourceConditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:xilonen"
+        },
+        {
+          "characterId": "xilonen",
+          "classification": null,
+          "equipmentKind": "artifact",
+          "groupId": "preset-xilonen-build-list",
+          "groupIndex": 0,
+          "grouping": "single",
+          "occurrences": [
+            {
+              "alternativeIndex": null,
+              "claimId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "energyDerivation": "not-er-derived",
+              "listIndex": 0,
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "payload": {
+                "artifactType": "4pc",
+                "effectiveConditionResolution": "not-evaluated",
+                "equipmentId": "4pc:scroll_of_the_hero_of_cinder_city",
+                "gameplayApplicability": "unknown-not-validated",
+                "requestedRefinement": null,
+                "sourceConditionResolution": "no-source-team-condition",
+                "sourceOrderingSemantics": "preset-build-index-not-rank",
+                "sourcePublishedWholeCandidate": false,
+                "sourceRefinement": null
+              },
+              "tieIndex": null
+            }
+          ],
+          "provenance": {
+            "recommendationId": "builds",
+            "repositoryRecordId": "genshintools-presets:character-guide:xilonen",
+            "sourceId": "genshintools-presets",
+            "sourceRecordId": "xilonen"
+          },
+          "recommendationOrdering": null,
+          "sourceConditions": [],
+          "sourceConditionsSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "sourceListIndex": 0,
+          "sourceLocalRank": null,
+          "teamMemberId": "member:xilonen"
+        }
+      ],
+      "memberCount": 4,
+      "nodeIdBinding": "ordered-occurrence-ids-plus-request-and-evaluation-assumptions",
+      "nodes": [
+        {
+          "nodeId": "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:fe589a7952c68e85b8b4826195e0a13e1467e82638c1e95701063b5e685417ec",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:47880464ff26bdd0c88e7c3bb951d193805a626794231c158a319665e12f10a2",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:0",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:1",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQAI0BO",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        },
+        {
+          "nodeId": "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6",
+          "selections": [
+            {
+              "axisId": "member:keqing:weapon",
+              "characterId": "keqing",
+              "equipmentKind": "weapon",
+              "groupId": "kqm-keqing-weapon-group-1",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:keqing:artifact",
+              "characterId": "keqing",
+              "equipmentKind": "artifact",
+              "groupId": "kqm-keqing-artifact-group-0",
+              "occurrenceId": "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1",
+              "teamMemberId": "member:keqing"
+            },
+            {
+              "axisId": "member:ineffa:weapon",
+              "characterId": "ineffa",
+              "equipmentKind": "weapon",
+              "groupId": "preset-ineffa-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:weapon-order:0",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:ineffa:artifact",
+              "characterId": "ineffa",
+              "equipmentKind": "artifact",
+              "groupId": "preset-ineffa-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
+              "teamMemberId": "member:ineffa"
+            },
+            {
+              "axisId": "member:furina:weapon",
+              "characterId": "furina",
+              "equipmentKind": "weapon",
+              "groupId": "preset-furina-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:weapon-order:2",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:furina:artifact",
+              "characterId": "furina",
+              "equipmentKind": "artifact",
+              "groupId": "preset-furina-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:furina:build:BQA4H1m",
+              "teamMemberId": "member:furina"
+            },
+            {
+              "axisId": "member:xilonen:weapon",
+              "characterId": "xilonen",
+              "equipmentKind": "weapon",
+              "groupId": "preset-xilonen-weapon-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:weapon-order:0",
+              "teamMemberId": "member:xilonen"
+            },
+            {
+              "axisId": "member:xilonen:artifact",
+              "characterId": "xilonen",
+              "equipmentKind": "artifact",
+              "groupId": "preset-xilonen-build-list",
+              "occurrenceId": "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
+              "teamMemberId": "member:xilonen"
+            }
+          ]
+        }
+      ],
+      "orderingPolicy": "authenticated-axis-and-source-list-order-only-no-derived-global-order",
+      "sourcePublishedWholeCandidateCount": 0
+    },
+    "preflight": {
+      "calculatedCombinationCount": "36",
+      "countArithmetic": "bigint-decimal",
+      "countMatchesExpected": true,
+      "expectedCombinationCount": "36",
+      "maximumCombinationCount": "36",
+      "withinMaximum": true
+    },
+    "schemaVersion": 1
+  },
+  "latticeId": "keqing-ineffa-furina-xilonen-source-backed-equipment-lattice-v1",
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "guide",
+    "recommendation",
+    "rank",
+    "winner",
+    "score",
+    "damage-result",
+    "optimizer-result",
+    "gameplay-applicability",
+    "energy-requirement"
+  ],
+  "promotionEligible": false,
+  "rankingProduced": false,
+  "recommendationProduced": false,
+  "requestBoundary": {
+    "allSourceTeamEquipmentNull": true,
+    "conditionResolutions": {
+      "equalRefinementCondition": {
+        "effectiveResolution": "matched-by-exact-team-and-supplied-request",
+        "exactSourceCondition": "The compared weapons have equal Refinement.",
+        "requestRefinement": 5,
+        "sourceResolution": "withheld-unresolved-source-condition"
+      },
+      "lunarChargedRosterCondition": {
+        "exactSourceCondition": "Keqing is used in a Lunar-Charged team.",
+        "resolution": "matched-by-exact-team-facts"
+      },
+      "topContributorCondition": {
+        "assumptionId": "assume-keqing-top-lunar-contributor-without-crit-rate-set-v1",
+        "effectiveResolution": "matched-by-exact-team-and-supplied-request",
+        "exactSourceCondition": "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set.",
+        "sourceResolution": "withheld-unresolved-source-condition"
+      }
+    },
+    "constellationByCharacter": {
+      "furina": 0,
+      "ineffa": 0,
+      "keqing": 0,
+      "xilonen": 0
+    },
+    "exactRoster": [
+      "keqing",
+      "ineffa",
+      "furina",
+      "xilonen"
+    ],
+    "gameplayApplicability": "unknown-not-validated",
+    "presetTeamApplicability": "unknown-not-evaluated",
+    "requestedWeaponRefinementByCharacter": {
+      "furina": 1,
+      "ineffa": 1,
+      "keqing": 5,
+      "xilonen": 1
+    },
+    "requestId": "keqing-lunar-c0-r5-four-star-team-equipment-enumeration-v1",
+    "scenarioAssumption": {
+      "assumptionId": "assume-keqing-top-lunar-contributor-without-crit-rate-set-v1",
+      "exactSourceCondition": "Keqing is the team's top Lunar-Charged contributor without using a CRIT Rate artifact set.",
+      "gameplayValidated": false,
+      "provenance": "wrapper-supplied-request-assumption"
+    },
+    "sourceTeamArtifactPlanCount": 0,
+    "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "xilonenScrollWarning": "Xilonen generally cannot activate Scroll for Hydro in the stated setup because of the Crystallize interaction; the source presents pause-menu booking only as a niche exception"
+  },
+  "schemaVersion": 1,
+  "sourceBacking": {
+    "activeAxisOccurrencesAllSourceBacked": true,
+    "compositionOwner": "source-specific-wrapper",
+    "exactRosterSourceBacked": true,
+    "gameplayValidated": false,
+    "sourceAuthoredCrossCharacterComposition": false,
+    "sourceAuthoredWithinCharacterWeaponArtifactPairing": false,
+    "sourceGroupsAndListsRetained": true,
+    "sourcePublishedWholeTeamEquipment": false,
+    "wholeCandidateCount": 0
+  },
+  "sourceBoundary": {
+    "coverage": {
+      "exactObservationClosure": true,
+      "expectedArtifactObservationCount": 12,
+      "expectedWeaponObservationCount": 8,
+      "matchedArtifactObservationCount": 12,
+      "matchedWeaponObservationCount": 8
+    },
+    "genshinTools": {
+      "characterIds": [
+        "ineffa",
+        "furina",
+        "xilonen"
+      ],
+      "liveRevisionHashMatches": true,
+      "liveSnapshotParity": true,
+      "snapshotRepositoryParity": true
+    },
+    "kqm": {
+      "evidenceClaimIds": [
+        "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+        "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+        "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+        "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+        "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+      ],
+      "evidenceParity": true,
+      "rawRecordCount": 24,
+      "rawRepositoryParity": true,
+      "selectedRecordIds": [
+        "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+        "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
+        "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i"
+      ]
+    },
+    "manualIndex": {
+      "exactEntryPresent": true,
+      "exactKeqingEntryCount": 1
+    },
+    "registry": {
+      "genshinToolsPolicyMatches": true,
+      "kqmPolicyMatches": true,
+      "repositoryRegistryHashMatches": true
+    }
+  },
+  "summary": {
+    "activeGroupCount": 9,
+    "activeOccurrenceCount": 14,
+    "axisCount": 8,
+    "candidateNodeCount": 36,
+    "candidateReferenceCount": 288,
+    "gameplayValidatedCandidateCount": 0,
+    "memberCount": 4,
+    "sourcePublishedWholeCandidateCount": 0
+  },
+  "supportsDamageClaims": false,
+  "supportsEnergyRequirements": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGameplayApplicabilityClaims": false,
+  "supportsGuideClaims": false,
+  "supportsOptimality": false,
+  "supportsRankClaims": false,
+  "supportsTeamRecommendations": false,
+  "validationStatus": "authenticated-enumeration-only"
+}

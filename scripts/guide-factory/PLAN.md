@@ -746,10 +746,43 @@ promotion, recommendation, candidate, optimizer, ideal-stat, and ER outputs all
 remain false. Verification passes Guide Factory TypeScript, 63 test files with
 487 tests, application TypeScript, and dependency-boundary validation.
 
-The next bounded non-ER gate is a generic, source-backed four-character
-equipment candidate lattice. It is not implemented. It must preserve source
-scope and alternative groups without converting the sign-only checkpoint 35
-evidence into a weight, ordering, recommendation, or cross-product.
+Checkpoint 36 completes that bounded source-backed equipment candidate lattice.
+The generic core, added in `3e6982a1`, owns only exact four-member/eight-axis
+shape checks, bounded Cartesian enumeration, deterministic identity binding,
+and completeness validation. The source-specific
+Keqing/Ineffa/Furina/Xilonen wrapper owns all source authentication.
+
+Its exact nine-input closure retains nine source groups/lists and 20
+occurrences: 14 active, four outside the bounded first-build fixture scope, one
+Xilonen C6 build withheld by the C0 request, and one Furina ER-derived artifact
+choice held out while ER work remains deferred. Only equipment identity is
+projected; preset main-stat and substat weights are not consumed.
+
+The eight axes form `(3 x 2) x (1 x 1) x (3 x 2) x (1 x 1)`, producing exactly
+36 nodes and 288 selection references. KQM ranked-group ordering, its tie and
+alternative structure, conditional artifacts, and preset list positions are
+retained without inventing numeric rank values: every `sourceLocalRank` is
+null. The roster structurally resolves the Lunar-Charged condition, the R5
+request map structurally resolves equal refinement, and an explicit request
+assumption structurally resolves the top-contributor condition. Gameplay
+applicability remains unknown.
+
+Sources do not author the within-character weapon/artifact pairings or any
+cross-character composition. All 36 whole candidates are wrapper-authored,
+zero are source-published, and the Xilonen Scroll warning remains attached.
+Enumeration is the only enabled capability; guide, team/equipment
+recommendation, rank, optimality, evaluation, generator, optimizer, damage,
+gameplay-validation, promotion, and ER outputs remain false.
+
+The checkpoint adds durable report 33 and globally integrates it, raising the
+global report count to 32. Verification passes Guide Factory TypeScript, 65
+test files with 554 tests, validation with 0 errors and 12 existing warnings,
+application TypeScript, and dependency-boundary validation.
+
+The next bounded non-ER gate is materialization and technical preflight of the
+36 nodes against existing computation modules. It is not implemented. It must
+fail closed and must not convert enumeration into source authorship,
+applicability, ranking, optimality, or ER evidence.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

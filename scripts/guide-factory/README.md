@@ -21,27 +21,24 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 35 completes an isolated Keqing comparison across the
-ArtifactRatingDB source-native heuristic coefficients, attributed KQM
-equipment/stat observations, and the existing four-endpoint local stat-
-marginal diagnostic. Its five-file boundary authenticates the ArtifactRatingDB
-snapshot, consolidated repository, marginal report, raw KQM snapshot, and
-Keqing equipment-evidence report. Raw KQM/repository parity and the equipment
-report's exact-team, default-main-stat, and eight-claim projections (seven
-team-matched and one secondary condition unresolved) must all close before the
-wrapper emits ten sign-only rows: four source-nonzero/local-
-positive, four source-zero/local-zero, one Elemental Mastery objective gap, and
-one Electro DMG Bonus source-only row. Two `SPRatioBase` occurrences remain
-deferred and the marginal objective retains eight readiness blockers.
-Coefficient magnitudes, KQM priority ordering, and cross-source context
-comparability are not claimed. All guide, rank, scalar-weight, promotion, and
-ER outputs remain false. The thirty-second durable report stays outside the
-shared registry, consolidation, condition catalog, global validator, and
-application bundle because ArtifactRatingDB's permission posture is mixed and
-consolidation remains blocked. The checkpoint 34 catalog and coverage ledgers
-remain unchanged. This is validation evidence, not an artifact assignment,
-assembled build, recommendation, rank, optimizer, damage, rotation, ER result,
-or working guide factory:
+Checkpoint 36 completes a generic bounded equipment-candidate lattice and one
+source-specific wrapper for the exact Keqing/Ineffa/Furina/Xilonen Lunar-
+Charged roster. The wrapper authenticates nine direct inputs and retains nine
+source groups/lists containing 20 occurrences: 14 active axes, four fixture-
+scope holdouts, one C6 holdout under the C0 request, and one ER-derived
+artifact-choice holdout. Eight ordered weapon/artifact axes enumerate exactly
+`(3 x 2) x (1 x 1) x (3 x 2) x (1 x 1) = 36` nodes and 288 selection
+references. Source group order, ties, alternatives, and preset list positions
+are retained, while `sourceLocalRank` remains null because no source supplied a
+numeric rank. Every weapon/artifact pairing and cross-character composition is
+wrapper-authored; zero whole candidates are source-published and gameplay
+applicability remains unknown, including the retained Xilonen Scroll warning.
+The thirty-third durable report is globally integrated, raising the global set
+to 32. Enumeration is the only enabled capability: guide, team/equipment
+recommendation, rank, optimality, evaluation, generator, optimizer, damage,
+gameplay, and ER outputs all remain false. This is validation evidence, not an
+artifact assignment, assembled build, recommendation, rank, optimizer, damage,
+rotation, ER result, or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -579,6 +576,32 @@ or working guide factory:
     TypeScript, and dependency-boundary validation. Leave a generic non-ER,
     source-backed four-character equipment candidate lattice as the next
     unimplemented gate.
+187. Add the generic bounded source-backed equipment-lattice core in commit
+    `3e6982a1`, with exact four-member/eight-axis shape validation, bounded
+    Cartesian enumeration, deterministic node identities, and no source-
+    authentication authority of its own.
+188. Authenticate nine direct inputs for the exact
+    Keqing/Ineffa/Furina/Xilonen roster before invoking the generic core.
+189. Inventory nine source groups/lists and 20 occurrences: 14 active, four
+    fixture-scope holdouts, one C6 holdout under a C0 request, and one ER-
+    derived artifact-choice holdout.
+190. Retain source group order, the KQM tie and alternative structure, and
+    preset list positions while leaving every `sourceLocalRank` null rather
+    than deriving numeric ranks from source order.
+191. Enumerate eight axes as `(3 x 2) x (1 x 1) x (3 x 2) x (1 x 1)` for
+    exactly 36 nodes and 288 references; refuse to call the core when source-
+    specific authentication fails.
+192. Mark every within-character weapon/artifact pairing and cross-character
+    composition as wrapper-authored, with zero source-published whole
+    candidates and unknown gameplay applicability, including Xilonen Scroll.
+193. Globally integrate the thirty-third durable report, raising the global
+    runner to 32 reports while leaving all guide, team/equipment recommendation,
+    rank, optimality, evaluation, generator, optimizer, damage, gameplay, and
+    ER capabilities false.
+194. Pass Guide Factory TypeScript, 65 test files with 554 tests, validation
+    with 0 errors and 12 existing warnings, application TypeScript, and
+    dependency-boundary validation. Leave 36-node materialization/preflight as
+    the next unimplemented non-ER gate.
 
 The first two active sources are already in this repository:
 
@@ -674,6 +697,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-keqing-artifact-rating-kqm-marginal-validation-slice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-ineffa-furina-xilonen-equipment-candidate-lattice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
@@ -705,7 +729,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty-one globally integrated durable reports in memory:
+It also rebuilds all thirty-two globally integrated durable reports in memory:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
@@ -722,7 +746,8 @@ Klee, Diona, Kokomi, and both Noelle catalog-integrated source-local condition
 slices, the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
-historical ER calibration.
+historical ER calibration, plus the authenticated
+Keqing/Ineffa/Furina/Xilonen source-backed equipment candidate lattice.
 Stale evidence cannot pass.
 Checkpoint 35 adds a thirty-second durable report outside that global runner.
 Its isolated builder and tests authenticate five files and close
@@ -732,11 +757,19 @@ blocked source to shared infrastructure. The completed checkpoint passes Guide
 Factory TypeScript, 63 test files with 487 tests, application TypeScript, and
 dependency-boundary validation.
 
-The next bounded non-ER experiment is a generic, source-backed four-character
-equipment candidate lattice. It is not implemented. It must preserve source
-scope and alternatives without converting checkpoint 35's sign-only rows into
-weights, priority ordering, context equivalence, or recommendations. ER remains
-deferred.
+Checkpoint 36 adds the thirty-third durable report and integrates it into the
+global runner. Its nine-input wrapper retains 20 source occurrences over nine
+groups/lists, admits 14 into eight axes, and enumerates exactly 36 nodes with
+288 references. Source-local numeric ranks remain null, all whole compositions
+are wrapper-authored, and applicability stays unknown. Verification passes
+Guide Factory TypeScript, 65 test files with 554 tests, validation with 0 errors
+and 12 existing warnings, application TypeScript, and dependency-boundary
+validation.
+
+The next bounded non-ER experiment is 36-node materialization and technical
+preflight against existing computation modules. It is not implemented and may
+not reinterpret enumeration as a recommendation, rank, optimum, gameplay
+validation, or ER result. ER remains deferred.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
