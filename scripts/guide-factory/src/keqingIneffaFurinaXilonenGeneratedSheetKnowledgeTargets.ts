@@ -96,7 +96,7 @@ const EXPECTED_KQM_CLAIM_IDS = [
 // accidental corruption, but only this independent expectation authenticates
 // the current target catalog content.
 const EXPECTED_AUTHENTICATED_CONTENT_SHA256 =
-  "7b2d4ac1fc557bcedeb731713526a7bcb20541d511d9af3a4f2f57995e1d9aec";
+  "b35ba89aeec5f27033a49dc8487ec6911d45b8df9d0076af8e2af1183010fe99";
 
 type Issue = { code: string; path: string; message: string };
 type ArtifactChoice =
@@ -278,7 +278,7 @@ export type KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport = {
   damageComputationExecuted: false;
   gameplayEvaluationExecuted: false;
   optimalityClaimed: false;
-  energyRecoveryInputsUsed: false;
+  energyRecoveryInputsConsumedForDeferralProvenance: true;
   energyRecoveryCapability: false;
   supportsGuideClaims: false;
   supportsRecommendationClaims: false;
@@ -421,7 +421,7 @@ export function buildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets(
     damageComputationExecuted: false,
     gameplayEvaluationExecuted: false,
     optimalityClaimed: false,
-    energyRecoveryInputsUsed: false,
+    energyRecoveryInputsConsumedForDeferralProvenance: true,
     energyRecoveryCapability: false,
     supportsGuideClaims: false,
     supportsRecommendationClaims: false,
@@ -479,7 +479,7 @@ export function requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowl
     !report.damageComputationExecuted &&
     !report.gameplayEvaluationExecuted &&
     !report.optimalityClaimed &&
-    !report.energyRecoveryInputsUsed &&
+    report.energyRecoveryInputsConsumedForDeferralProvenance &&
     !report.energyRecoveryCapability &&
     !report.supportsGuideClaims &&
     !report.supportsRecommendationClaims &&

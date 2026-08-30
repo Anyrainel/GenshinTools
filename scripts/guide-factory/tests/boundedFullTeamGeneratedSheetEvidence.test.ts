@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import type { MainStat, Slot, SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type { ArtifactData } from "@/data/types";
@@ -115,6 +115,7 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
     );
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.execution).toMatchObject({
+      generatorOptimizationMode: "injected-generator-not-characterized",
       scheduling: "sequential",
       hardMaximumGeneratorResultEmissionsPerInvocation: "64",
       bootstrapCalls: 1,
@@ -130,18 +131,15 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
       })),
     );
     expect(harness.bootstrapCalls).toBe(1);
-    expect(harness.forbidden.damageReplay).not.toHaveBeenCalled();
-    expect(harness.forbidden.rank).not.toHaveBeenCalled();
-    expect(harness.forbidden.recommend).not.toHaveBeenCalled();
-    expect(harness.forbidden.optimizer).not.toHaveBeenCalled();
-    expect(harness.forbidden.energyRecovery).not.toHaveBeenCalled();
     expect(report).toMatchObject({
+      generatorOptimizationExecuted: false,
+      generatorDamageObjectiveEvaluated: false,
       damageReplayExecuted: false,
       damageReplayCalls: 0,
       rankingProduced: false,
       recommendationProduced: false,
-      optimizerExecuted: false,
-      optimizerCalls: 0,
+      downstreamOptimizerExecuted: false,
+      downstreamOptimizerCalls: 0,
       energyRecoveryInterpreted: false,
       energyRecoveryCalls: 0,
     });
@@ -237,6 +235,23 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
     ).not.toThrow();
   });
 
+  it("rejects an uncharacterized generator mode before bootstrap", async () => {
+    const harness = buildHarness();
+    harness.environment.generatorOptimizationMode = "unknown" as never;
+
+    const report = await runBoundedFullTeamGeneratedSheetEvidence(
+      buildInput(),
+      harness.environment,
+    );
+
+    expect(report.validationStatus).toBe("withheld-invalid-input");
+    expect(report.issues.map(({ code }) => code)).toContain(
+      "input.invalid_generator_optimization_mode",
+    );
+    expect(harness.bootstrapCalls).toBe(0);
+    expect(harness.generatorCalls).toEqual([]);
+  });
+
   it.each([
     ["config", "generator.config_mismatch"],
     ["progress", "reconciliation.cp38_progress_mismatch"],
@@ -316,6 +331,19 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
     ).toThrow(/incomplete, inconsistent, or mutated/);
   });
 
+  it("rejects resealed generator and downstream optimizer execution drift", async () => {
+    const report = await runBoundedFullTeamGeneratedSheetEvidence(
+      buildInput(),
+      buildHarness().environment,
+    );
+    report.generatorOptimizationExecuted = true;
+    report.downstreamOptimizerExecuted = true as false;
+    resealGeneratedSheetReport(report);
+    expect(() =>
+      requireAuthenticatedBoundedFullTeamGeneratedSheetEvidenceReport(report),
+    ).toThrow(/incomplete, inconsistent, or mutated/);
+  });
+
   it("rejects content mutation with a stale self-digest", async () => {
     const report = await runBoundedFullTeamGeneratedSheetEvidence(
       buildInput(),
@@ -376,13 +404,21 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
       );
       expect(report.nodes).toHaveLength(36);
       expect(report.execution).toMatchObject({
+        generatorOptimizationMode:
+          "damage-objective-driven-artifact-generator",
         observedGeneratorInvocations: 144,
         freshRuntimeIdentityCount: 144,
         capturedGeneratorResultCount: 144,
         observedCharacterSheetAllocationCount: 576,
         damageReplayPermitted: false,
-        optimizerPermitted: false,
+        downstreamOptimizerPermitted: false,
         energyRecoveryInterpretationPermitted: false,
+      });
+      expect(report).toMatchObject({
+        generatorOptimizationExecuted: true,
+        generatorDamageObjectiveEvaluated: true,
+        downstreamOptimizerExecuted: false,
+        downstreamOptimizerCalls: 0,
       });
       expect(report.issues).toEqual([]);
       expect(report.relationshipSummary).toEqual({
@@ -396,7 +432,7 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
         resultFingerprintSha256:
           "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386",
         reportContentSha256:
-          "cc239d7523061b047b337e1fd36bd96edc9ff826a48763b8313d4d1f9fc8b804",
+          "0510351135877d48ba5af2a57656ea007c1594f326b0d5ac38343583e18f6348",
       });
       expect(
         report.nodes.every((node) =>
@@ -434,16 +470,9 @@ function buildHarness(options: {
   let bootstrapCalls = 0;
   const generatorCalls: Array<{ nodeId: string; carryCharacterId: string }> = [];
   const runtimeIdentities: object[] = [];
-  const forbidden = {
-    damageReplay: vi.fn(),
-    rank: vi.fn(),
-    recommend: vi.fn(),
-    optimizer: vi.fn(),
-    energyRecovery: vi.fn(),
-  };
-  const environment: BoundedFullTeamGeneratedSheetEvidenceEnvironment &
-    typeof forbidden = {
+  const environment: BoundedFullTeamGeneratedSheetEvidenceEnvironment = {
     environmentId: "synthetic-generated-sheet-evidence-v1",
+    generatorOptimizationMode: "injected-generator-not-characterized",
     async bootstrap() {
       bootstrapCalls += 1;
     },
@@ -470,12 +499,10 @@ function buildHarness(options: {
         results: syntheticResults(request.carryCharacterId, fault),
       };
     },
-    ...forbidden,
   };
   return {
     environment,
     generatorCalls,
-    forbidden,
     get bootstrapCalls() {
       return bootstrapCalls;
     },

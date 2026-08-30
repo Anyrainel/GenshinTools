@@ -253,7 +253,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
       damageComputationExecuted: false,
       gameplayEvaluationExecuted: false,
       optimalityClaimed: false,
-      energyRecoveryInputsUsed: false,
+      energyRecoveryInputsConsumedForDeferralProvenance: true,
       energyRecoveryCapability: false,
       supportsGuideClaims: false,
       supportsRecommendationClaims: false,
@@ -465,6 +465,14 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
         report: KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport,
       ) => {
         report.energyRecoveryCapability = true as false;
+      },
+    ],
+    [
+      "ER deferral provenance",
+      (
+        report: KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport,
+      ) => {
+        report.energyRecoveryInputsConsumedForDeferralProvenance = false as true;
       },
     ],
     [

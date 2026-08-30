@@ -232,6 +232,9 @@ export type BoundedFullTeamGeneratedSheetGeneratorInvocation = {
 
 export type BoundedFullTeamGeneratedSheetEvidenceEnvironment = {
   environmentId: string;
+  generatorOptimizationMode:
+    | "damage-objective-driven-artifact-generator"
+    | "injected-generator-not-characterized";
   bootstrap: () => Promise<void>;
   createGeneratorInvocation: (
     request: BoundedFullTeamEquipmentGeneratorRequest,
@@ -262,13 +265,15 @@ export type BoundedFullTeamGeneratedSheetEvidenceReport = {
     energyRecoveryClaims: false;
   };
   generatorExecuted: boolean;
+  generatorOptimizationExecuted: boolean;
+  generatorDamageObjectiveEvaluated: boolean;
   damageReplayExecuted: false;
   damageReplayCalls: 0;
   rankingProduced: false;
   recommendationProduced: false;
   guideProduced: false;
-  optimizerExecuted: false;
-  optimizerCalls: 0;
+  downstreamOptimizerExecuted: false;
+  downstreamOptimizerCalls: 0;
   energyRecoveryInterpreted: false;
   energyRecoveryCalls: 0;
   supportsGuideClaims: false;
@@ -297,6 +302,9 @@ export type BoundedFullTeamGeneratedSheetEvidenceReport = {
   };
   execution: {
     environmentId: string;
+    generatorOptimizationMode:
+      | "damage-objective-driven-artifact-generator"
+      | "injected-generator-not-characterized";
     scheduling: "sequential";
     hardMaximumGeneratorResultEmissionsPerInvocation: "64";
     freshRuntimeIdentityPerGeneratorInvocation: true;
@@ -304,7 +312,7 @@ export type BoundedFullTeamGeneratedSheetEvidenceReport = {
     damageReplayPermitted: false;
     rankingPermitted: false;
     recommendationPermitted: false;
-    optimizerPermitted: false;
+    downstreamOptimizerPermitted: false;
     energyRecoveryInterpretationPermitted: false;
     bootstrapCalls: number;
     observedGeneratorInvocations: number;
@@ -355,6 +363,7 @@ class GeneratedSheetEvidenceFailure extends Error {
 
 const DEFAULT_ENVIRONMENT: BoundedFullTeamGeneratedSheetEvidenceEnvironment = {
   environmentId: "existing-generator-sheet-evidence-runtime-v1",
+  generatorOptimizationMode: "damage-objective-driven-artifact-generator",
   bootstrap: bootstrapGuideFactoryComputation,
   createGeneratorInvocation(request) {
     const teamBuild = new TeamBuild(
@@ -399,7 +408,7 @@ export async function runBoundedFullTeamGeneratedSheetEvidence(
     return finalizeReport(
       emptyReport(
         input,
-        environment.environmentId,
+        environment,
         context,
         "withheld-invalid-input",
         inputIssues,
@@ -415,7 +424,7 @@ export async function runBoundedFullTeamGeneratedSheetEvidence(
     return finalizeReport(
       emptyReport(
         input,
-        environment.environmentId,
+        environment,
         context,
         "withheld-bootstrap-failure",
         [
@@ -643,8 +652,16 @@ export async function runBoundedFullTeamGeneratedSheetEvidence(
         : "withheld-inconsistent-evidence",
     comparisonStatus: allComparable ? "comparable" : "not-comparable",
     generatorExecuted: observedGeneratorInvocations > 0,
+    generatorOptimizationExecuted:
+      environment.generatorOptimizationMode ===
+        "damage-objective-driven-artifact-generator" &&
+      observedGeneratorInvocations > 0,
+    generatorDamageObjectiveEvaluated:
+      environment.generatorOptimizationMode ===
+        "damage-objective-driven-artifact-generator" &&
+      observedGeneratorInvocations > 0,
     execution: {
-      ...fixedExecution(environment.environmentId),
+      ...fixedExecution(environment),
       bootstrapCalls,
       observedGeneratorInvocations,
       freshRuntimeIdentityCount: runtimeIdentities.size,
@@ -686,6 +703,21 @@ function validateInput(
         "input",
         "environment.environmentId",
         "Generated-sheet environment ID must be nonblank.",
+      ),
+    );
+  }
+  if (
+    environment.generatorOptimizationMode !==
+      "damage-objective-driven-artifact-generator" &&
+    environment.generatorOptimizationMode !==
+      "injected-generator-not-characterized"
+  ) {
+    issues.push(
+      makeIssue(
+        "input.invalid_generator_optimization_mode",
+        "input",
+        "environment.generatorOptimizationMode",
+        "The generator optimization mode must be an explicit supported value.",
       ),
     );
   }
@@ -1371,7 +1403,7 @@ function summarizeRelationships(
 
 function emptyReport(
   input: BoundedFullTeamGeneratedSheetEvidenceInput,
-  environmentId: string,
+  environment: BoundedFullTeamGeneratedSheetEvidenceEnvironment,
   context: InputContext,
   status: "withheld-invalid-input" | "withheld-bootstrap-failure",
   issues: GeneratedSheetEvidenceIssue[],
@@ -1381,8 +1413,10 @@ function emptyReport(
     validationStatus: status,
     comparisonStatus: "not-comparable",
     generatorExecuted: false,
+    generatorOptimizationExecuted: false,
+    generatorDamageObjectiveEvaluated: false,
     execution: {
-      ...fixedExecution(environmentId),
+      ...fixedExecution(environment),
       bootstrapCalls: 0,
       observedGeneratorInvocations: 0,
       freshRuntimeIdentityCount: 0,
@@ -1415,13 +1449,15 @@ function reportHeader(
   | "schemaVersion"
   | "classification"
   | "capabilities"
+  | "generatorOptimizationExecuted"
+  | "generatorDamageObjectiveEvaluated"
   | "damageReplayExecuted"
   | "damageReplayCalls"
   | "rankingProduced"
   | "recommendationProduced"
   | "guideProduced"
-  | "optimizerExecuted"
-  | "optimizerCalls"
+  | "downstreamOptimizerExecuted"
+  | "downstreamOptimizerCalls"
   | "energyRecoveryInterpreted"
   | "energyRecoveryCalls"
   | "supportsGuideClaims"
@@ -1438,13 +1474,15 @@ function reportHeader(
     schemaVersion: 1,
     classification: "bounded-full-team-generated-sheet-evidence",
     capabilities: fixedCapabilities(),
+    generatorOptimizationExecuted: false,
+    generatorDamageObjectiveEvaluated: false,
     damageReplayExecuted: false,
     damageReplayCalls: 0,
     rankingProduced: false,
     recommendationProduced: false,
     guideProduced: false,
-    optimizerExecuted: false,
-    optimizerCalls: 0,
+    downstreamOptimizerExecuted: false,
+    downstreamOptimizerCalls: 0,
     energyRecoveryInterpreted: false,
     energyRecoveryCalls: 0,
     supportsGuideClaims: false,
@@ -1476,7 +1514,7 @@ function fixedCapabilities(): BoundedFullTeamGeneratedSheetEvidenceReport["capab
 }
 
 function fixedExecution(
-  environmentId: string,
+  environment: BoundedFullTeamGeneratedSheetEvidenceEnvironment,
 ): Omit<
   BoundedFullTeamGeneratedSheetEvidenceReport["execution"],
   | "bootstrapCalls"
@@ -1486,7 +1524,8 @@ function fixedExecution(
   | "observedCharacterSheetAllocationCount"
 > {
   return {
-    environmentId,
+    environmentId: environment.environmentId,
+    generatorOptimizationMode: environment.generatorOptimizationMode,
     scheduling: "sequential",
     hardMaximumGeneratorResultEmissionsPerInvocation: "64",
     freshRuntimeIdentityPerGeneratorInvocation: true,
@@ -1494,7 +1533,7 @@ function fixedExecution(
     damageReplayPermitted: false,
     rankingPermitted: false,
     recommendationPermitted: false,
-    optimizerPermitted: false,
+    downstreamOptimizerPermitted: false,
     energyRecoveryInterpretationPermitted: false,
   };
 }
@@ -1508,7 +1547,8 @@ function fixedCautions(): string[] {
     "StatSheet.fromArtifacts reconstruction uses displayed two-decimal substats. Per-stat differences are accepted only inside a derived half-unit display-rounding envelope plus floating-point tolerance.",
     "One StatSheet may correspond to multiple stable artifact allocations; the catalog preserves every occurrence and the one-to-many relationship.",
     "Incidental ER keys and values remain uninterpreted bytes/data. No ER threshold, requirement, floor, sequence, or recommendation is computed.",
-    "This phase performs zero damage replay, ranking, recommendation, guide production, downstream optimizer calls, and ER interpretation calls.",
+    "The default runtime directly reruns the existing damage-objective-driven artifact generator, including its generator-internal optimization. Injected generators remain explicitly uncharacterized.",
+    "This phase performs zero separate damage replay, ranking, recommendation, guide production, downstream optimizer calls, and ER interpretation calls.",
   ];
 }
 
@@ -1574,8 +1614,8 @@ function reportSemanticsHold(
     report.rankingProduced ||
     report.recommendationProduced ||
     report.guideProduced ||
-    report.optimizerExecuted ||
-    report.optimizerCalls !== 0 ||
+    report.downstreamOptimizerExecuted ||
+    report.downstreamOptimizerCalls !== 0 ||
     report.energyRecoveryInterpreted ||
     report.energyRecoveryCalls !== 0 ||
     report.supportsGuideClaims ||
@@ -1593,7 +1633,7 @@ function reportSemanticsHold(
     report.execution.damageReplayPermitted ||
     report.execution.rankingPermitted ||
     report.execution.recommendationPermitted ||
-    report.execution.optimizerPermitted ||
+    report.execution.downstreamOptimizerPermitted ||
     report.execution.energyRecoveryInterpretationPermitted ||
     report.authentication.technicalReportSha256 !==
       report.inputBoundary.technicalReportSha256 ||
@@ -1614,12 +1654,24 @@ function reportSemanticsHold(
     return false;
   }
   const generatedFromValid = generatedFromSemanticsHold(report.generatedFrom);
+  const generatorOptimizationModeValid =
+    report.execution.generatorOptimizationMode ===
+      "damage-objective-driven-artifact-generator" ||
+    report.execution.generatorOptimizationMode ===
+      "injected-generator-not-characterized";
   const invalidGeneratedFromIssueCount = report.issues.filter(
     ({ code }) => code === "input.invalid_generated_from",
   ).length;
+  const invalidGeneratorOptimizationModeIssueCount = report.issues.filter(
+    ({ code }) => code === "input.invalid_generator_optimization_mode",
+  ).length;
   if (
     (generatedFromValid && invalidGeneratedFromIssueCount !== 0) ||
-    (!generatedFromValid && invalidGeneratedFromIssueCount !== 1)
+    (!generatedFromValid && invalidGeneratedFromIssueCount !== 1) ||
+    (generatorOptimizationModeValid &&
+      invalidGeneratorOptimizationModeIssueCount !== 0) ||
+    (!generatorOptimizationModeValid &&
+      invalidGeneratorOptimizationModeIssueCount !== 1)
   ) {
     return false;
   }
@@ -1630,6 +1682,8 @@ function reportSemanticsHold(
     return (
       report.comparisonStatus === "not-comparable" &&
       !report.generatorExecuted &&
+      !report.generatorOptimizationExecuted &&
+      !report.generatorDamageObjectiveEvaluated &&
       report.execution.bootstrapCalls === 0 &&
       report.execution.observedGeneratorInvocations === 0 &&
       report.execution.freshRuntimeIdentityCount === 0 &&
@@ -1642,11 +1696,14 @@ function reportSemanticsHold(
       report.authentication.resultFingerprintSha256 === null
     );
   }
-  if (!generatedFromValid) return false;
+  if (!generatedFromValid || !generatorOptimizationModeValid) return false;
   const nodeIds = report.inputBoundary.nodeIds;
   const characterIds = report.inputBoundary.teamCharacterIds;
   const carries = report.inputBoundary.carryCharacterIds;
   const planned = BigInt(nodeIds.length) * BigInt(carries.length);
+  const damageDrivenGenerator =
+    report.execution.generatorOptimizationMode ===
+    "damage-objective-driven-artifact-generator";
   if (
     !report.inputBoundary.technicalReportAuthenticated ||
     !report.inputBoundary.technicalReportComplete ||
@@ -1669,7 +1726,11 @@ function reportSemanticsHold(
     report.execution.freshRuntimeIdentityCount > Number(planned) ||
     report.nodes.length !== nodeIds.length ||
     !sameStrings(report.nodes.map(({ nodeId }) => nodeId), nodeIds) ||
-    report.generatorExecuted !== (planned > 0n)
+    report.generatorExecuted !== (planned > 0n) ||
+    report.generatorOptimizationExecuted !==
+      (damageDrivenGenerator && planned > 0n) ||
+    report.generatorDamageObjectiveEvaluated !==
+      (damageDrivenGenerator && planned > 0n)
   ) {
     return false;
   }
