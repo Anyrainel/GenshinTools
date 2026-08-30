@@ -23,6 +23,7 @@ reports/*
 !reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json
 !reports/keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json
 !reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json
+!reports/keqing-ineffa-furina-xilonen-generated-sheet-evidence.json
 !reports/keqing-lunar-source-conditioned-candidate-lattice.json
 !reports/keqing-lunar-cross-record-composition-contract.json
 !reports/keqing-lunar-cross-record-technical-matrix.json
