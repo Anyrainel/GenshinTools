@@ -444,13 +444,14 @@ const DEFAULT_ENVIRONMENT: BoundedFullTeamEquipmentTechnicalComputationEnvironme
         supportsGuideClaims: false,
         notes: [
           "Bounded full-team equipment computation under a possibly unreviewed technical objective only.",
+          "The cited knowledge record supports the roster only. Its rotation text is an upstream input to a wrapper-authored, unreviewed formula translation; it does not contain a source-authored damage plan.",
           "Equipment selections and investment assumptions are authored by the authenticated runtime wrappers; they are not asserted as facts supported by the source team record.",
         ],
         sourceRefs: [
           {
             kind: "knowledge_record",
             recordId: request.sourceTeamRecordId,
-            supports: ["roster", "damage_plan"],
+            supports: ["roster"],
           },
         ],
       },
