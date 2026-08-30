@@ -374,6 +374,13 @@ import {
   NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_REPORT_PATH,
   type NoelleHexereiLocalStatPriorityDiagnosticReport,
 } from "./noelleHexereiLocalStatPriorityDiagnostic";
+import {
+  authenticateNoelleHexereiRequestConditionedCandidateAdmissionFromWorkspace,
+} from "./assemble-noelle-hexerei-request-conditioned-candidate-admission";
+import {
+  NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_REPORT_PATH,
+  type NoelleHexereiRequestConditionedCandidateAdmissionReport,
+} from "./noelleHexereiRequestConditionedCandidateAdmission";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1937,6 +1944,27 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle Hexerei local stat-priority diagnostic failed fresh authentication: ${error.message}`
               : "The saved Noelle Hexerei local stat-priority diagnostic failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleHexereiRequestConditionedCandidateAdmissionInput =
+          await readJson(
+            NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_REPORT_PATH,
+          );
+        await authenticateNoelleHexereiRequestConditionedCandidateAdmissionFromWorkspace(
+          noelleHexereiRequestConditionedCandidateAdmissionInput as NoelleHexereiRequestConditionedCandidateAdmissionReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_hexerei_request_conditioned_candidate_admission",
+          path:
+            "reports.noelle-hexerei-request-conditioned-candidate-admission",
+          message:
+            error instanceof Error
+              ? `The saved Noelle Hexerei request-conditioned candidate admission failed fresh authentication: ${error.message}`
+              : "The saved Noelle Hexerei request-conditioned candidate admission failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

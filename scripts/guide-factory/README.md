@@ -21,18 +21,19 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 56 adds one current-average-roll CR/CD/ATK%/DEF% neighbors to the
-source-aligned cells from checkpoint 55 and tests them across both Circlets,
-Gest R1/R5, Nicole's two Theosis targeting modes, and four/zero Husk Curiosity
-stacks. Its 96 baselines and 384 probes all use fresh exact-team `TeamBuild`
-instances, the scoped 5/5/3 projection, and agreeing direct/compiled paths.
-The durable report keeps 20 exact artifact sheets and 96 exact applied-buff
-traces in authenticated catalogs. Of 288 adjacent source-order checks, 242
-align and 46 are counterexamples; 72 sensitivity summaries split 58/10/4
-between aligned, counterexample, and context-dependent. Those mixed results are
-validation evidence, not a stat order or a verdict on the source. The report
-selects nothing, averages no branch, computes no scalar weight or ideal
-allocation, and performs no rotation, team-total, DPS, timing, or ER work.
+Checkpoint 57 resolves six exact entered-investment requests to the two
+authenticated checkpoint-53 partial candidates, using entered constellation
+and talent facts rather than runtime-effective talent levels. It then applies a
+fail-closed gate to each request's three adjacent source stat relations. Every
+gate must retain all 16 checkpoint-56 Circlet/refinement/Nicole/Husk contexts
+and all four matching robustness rows; 15/16 is not enough and no majority vote
+or average is permitted. The current result admits 12 local relations and
+withholds 6 with counterexamples while consuming all 288 raw diagnostics and
+72 robustness rows exactly once. The original source groups and complete CP53
+candidate objects remain unchanged. This is request-conditioned partial
+validation only: nothing is selected or ranked, no total stat order or scalar
+weight is synthesized, and rotation, team-total, DPS, timing, and ER work stay
+deferred.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -1106,6 +1107,22 @@ This is not a working guide factory or an equipment recommendation:
      exactly and integrate the diagnostic as global report 53. Keep every
      guide, build, stat, rank, optimizer/AutoTune, ideal-allocation, rotation,
      team-total, DPS, timing, and ER capability withheld.
+338. Authenticate checkpoint 57 through an exact 119-path workspace-bound
+     byte/hash closure containing the complete checkpoint-56 closure, its
+     durable report, and the new core/CLI.
+339. Resolve six exact entered-investment requests to exactly one preserved
+     checkpoint-53 partial candidate by evaluating the authenticated predicate
+     ASTs against entered facts only; keep runtime-effective talents separate.
+340. Gate all 18 request-local adjacent source relations with the complete
+     16-context raw diagnostic grid and four matching robustness rows per
+     relation, rejecting any coverage loss or duplicate evidence.
+341. Admit only unanimous 16/16 local alignment, preserve all 46
+     counterexamples across the six withheld relations, and forbid majority
+     voting, averaging, total-order synthesis, or source-validation claims.
+342. Consume all 288 checkpoint-56 diagnostics and 72 robustness rows exactly
+     once, preserve the complete checkpoint-53 candidates unchanged, and emit
+     zero selections, rankings, optimizer runs, damage, rotation, ideal-stat,
+     or ER results.
 
 The first two active sources are already in this repository:
 
@@ -1310,6 +1327,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-normal-prefix-formula-projection.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-equipment-response-surface.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-local-stat-priority-diagnostic.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-request-conditioned-candidate-admission.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1333,7 +1351,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all fifty-three globally integrated durable reports
+In full mode it rebuilds all fifty-four globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1359,7 +1377,8 @@ the authenticated guarded Circlet/substat local-marginal diagnostic,
 the authenticated Noelle investment artifact-profile representation admission,
 the authenticated Noelle exact Normal-prefix formula-count projection probe,
 the authenticated Noelle Hexerei 48-cell equipment response surface,
-the authenticated Noelle Hexerei 480-cell local stat-priority diagnostic,
+ the authenticated Noelle Hexerei 480-cell local stat-priority diagnostic,
+ the authenticated Noelle Hexerei six-request partial-candidate admission,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and

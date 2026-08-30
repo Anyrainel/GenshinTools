@@ -1263,13 +1263,36 @@ two entered-investment witnesses. This is useful evidence against collapsing a
 source branch or a support context into one unconditional scalar weight; it is
 not proof that the source or calculator is wrong.
 
-The next non-ER step should consume this mixed evidence through a fail-closed,
-request-conditioned admission gate rather than majority-vote it. Entered
-investment facts should resolve exactly one partial checkpoint-53 candidate,
-and each adjacent priority relation should remain withheld if any of its tested
-contexts is counterexample or inconclusive. Such a gate may expose why a
-partial candidate remains blocked, but it must not fill the still-null Circlet,
-refinement, artifact placement, legal roll allocation, timing, or ER fields.
+Checkpoint 57 consumes that mixed evidence through a fail-closed, request-
+conditioned admission gate. Its exact 119-path byte closure contains the whole
+checkpoint-56 boundary, the checkpoint-56 durable report, and the new core/CLI.
+Both checkpoint 53 and checkpoint 56 are reconstructed and freshly
+authenticated before any request can resolve or any relation can be admitted.
+
+Six exact entered-investment requests resolve to exactly one of the two
+checkpoint-53 partial candidates by evaluating the authenticated predicate ASTs
+against entered facts only. Runtime-effective talents remain separate evidence:
+C5/Q9 stays in the lower profile despite runtime-effective Q12, while C6/Q9
+enters the high profile because the entered constellation satisfies that source
+predicate. Every envelope preserves the complete checkpoint-53 candidate,
+including its unspecified team investment, null selections, guarded
+alternatives, and incomplete-build boundary.
+
+Each request's three adjacent source relations consumes the exact 16-context
+checkpoint-56 raw grid and four matching robustness rows. Twelve relations are
+locally admitted at 16/16 alignment; six are withheld with counterexamples.
+All 288 raw diagnostics and 72 robustness rows are consumed exactly once. No
+majority vote, average, CR-versus-CD order, scalar weight, total order, source
+validation, or recommendation is created. Weapon refinement/performance,
+guarded main-stat alternatives, legal allocation, source review, rotation,
+team total, timing, and ER remain unresolved.
+
+The next non-ER step should test a generic draft-guide projection over these
+request-conditioned envelopes. It should serialize only evidence-backed fields,
+retain field-level blockers and provenance, and expose the difference between
+the two all-relations-admitted requests and the four partially withheld ones.
+It must remain an offline validation artifact rather than a published guide,
+and it must not manufacture the still-null equipment choices or stat weights.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

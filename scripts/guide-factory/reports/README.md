@@ -475,6 +475,20 @@ Current durable pilot evidence:
   complete builds, guides, rotation/DPS claims, or ER results. Its current
   4,546,387-byte output has SHA-256
   `08e39caf80afea209f563882ba29430bdb2229824addd5c9f9cb0013a0d420cc`.
+- `noelle-hexerei-request-conditioned-candidate-admission.json` binds an exact
+  119-path workspace byte/hash closure and fresh-authenticates both checkpoint
+  53 and checkpoint 56. Six exact entered-investment requests resolve to one of
+  the two preserved CP53 partial candidates by evaluating typed source
+  predicates against entered facts only; C5/Q9 therefore remains lower-profile
+  despite runtime-effective Q12. Eighteen adjacent source-relation gates each
+  require all 16 raw Circlet/refinement/Nicole/Husk contexts and four matching
+  robustness rows. Twelve relations are locally admitted and six are withheld
+  with counterexamples; all 288 diagnostics and 72 robustness rows are consumed
+  exactly once. The report preserves the original source groups and full CP53
+  candidates without filling null selections. It performs no ranking,
+  optimizer, damage, rotation, total-stat-order, ideal-allocation, or ER work.
+  Its current 663,723-byte output has SHA-256
+  `a0fa6a720da5ee14b6723db28d538b9588d78ef2d3b552d3db0641a14d6bbdb6`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -848,7 +862,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all fifty-three globally integrated reports
+In full mode `validate.ts` rebuilds all fifty-four globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -913,6 +927,9 @@ now contains 53 JSON reports.
 Checkpoint 56 adds the Noelle Hexerei local stat-priority diagnostic as
 integrated report 53. Including checkpoint 35's permission-isolated report,
 this directory now contains 54 JSON reports.
+Checkpoint 57 adds the Noelle Hexerei request-conditioned candidate admission as
+integrated report 54. Including checkpoint 35's permission-isolated report,
+this directory now contains 55 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

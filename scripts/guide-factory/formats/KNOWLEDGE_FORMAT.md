@@ -916,6 +916,31 @@ selected substat allocation, and complete build all remain absent. Candidate
 construction alone authorizes no recommendation, rank, comparison, damage,
 ideal-stat, or ER result.
 
+### Derived request-conditioned validation envelopes
+
+A request-conditioned validation envelope is a derived control-flow artifact,
+not a source record, build, or recommendation. Checkpoint 57 evaluates a
+partial candidate's authenticated request-predicate AST against exact entered
+facts and requires exactly one matching candidate. Entered constellation and
+talent levels remain distinct from runtime-effective talent evidence; effective
+talents cannot silently change source-branch applicability.
+
+The envelope preserves the complete partial candidate unchanged, then adds a
+separate local-relation admission overlay. Each adjacent source priority
+relation must retain its full declared computation grid. For the current Noelle
+fixture that means 16 raw Circlet/refinement/Nicole/Husk diagnostics and four
+matching robustness rows per relation. Coverage loss or duplicated evidence is
+an authentication failure. A relation is locally admitted only when every raw
+outcome aligns; counterexamples and tolerance-inconclusive outcomes fail closed
+without majority voting or averaging.
+
+Local admission does not rewrite the source groups, order stats inside a shared
+group, synthesize a total order or scalar weights, validate the source
+universally, or fill missing equipment fields. All request, candidate, evidence,
+relation, envelope, and aggregate identities remain content-addressed. The
+aggregate identity must commit to both authenticated upstream reports and the
+complete technical request, not merely to the derived rows.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER
