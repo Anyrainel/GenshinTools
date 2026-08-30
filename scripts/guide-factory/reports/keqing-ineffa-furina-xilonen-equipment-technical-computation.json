@@ -44,7 +44,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json",
-      "sha256": "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec"
+      "sha256": "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b"
     },
     {
       "path": "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts",
@@ -60,7 +60,7 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentRuntimePreflight.ts",
-      "sha256": "7e5fb4112a159af757ed7d2bc23f345dac6dda4f5c9e32bd06ffad402048d7ae"
+      "sha256": "9095bc051441d6beb784a4a0c71ed7246e9d71769eb92e874fc2d9c53209eace"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts",
@@ -341,7 +341,7 @@
     "nestedGenericPreflightComplete": true,
     "observedFileCount": 64,
     "sourcePreflightByteHashMatches": true,
-    "sourcePreflightReportSha256": "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec",
+    "sourcePreflightReportSha256": "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b",
     "sourceSpecificPreflightFullDigestAuthenticated": true,
     "transitiveModuleGraphClaimed": false
   },
@@ -409,16 +409,12 @@
     "damageReplayExecuted": false,
     "generatedFrom": [
       {
-        "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-      },
-      {
         "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-        "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
+        "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
       },
       {
         "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
-        "sha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822"
+        "sha256": "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6"
       },
       {
         "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -434,15 +430,23 @@
       },
       {
         "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-        "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
+        "sha256": "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072"
+      },
+      {
+        "path": "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+        "sha256": "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9"
       },
       {
         "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentCandidateLattice.ts",
-        "sha256": "67752798b719c0e62971a2448218197a5f7979dc38e3f1a2a5116a7d92527f45"
+        "sha256": "37353a9d2481607a1a2eb293ac7a445827019cfaf3618ea41469d1d0e04533a8"
       },
       {
         "path": "scripts/guide-factory/src/schemas.ts",
-        "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+        "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+      },
+      {
+        "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+        "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
       },
       {
         "path": "scripts/guide-factory/src/sourceBackedEquipmentCandidateLattice.ts",
@@ -454,7 +458,7 @@
       },
       {
         "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
-        "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+        "sha256": "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42"
       },
       {
         "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -14629,14 +14633,14 @@
       ],
       "dependencySetClassification": "authenticated-declared-non-self-checkpoint-inputs",
       "exactPathSet": true,
-      "expectedFileCount": 38,
+      "expectedFileCount": 39,
       "formulaDraftDigestMatches": true,
-      "formulaDraftReportSha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
+      "formulaDraftReportSha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
       "formulaDraftSemanticClosure": true,
       "latticeFullDigestAuthenticated": true,
       "latticeReportDigestMatches": true,
-      "latticeReportSha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822",
-      "observedFileCount": 38,
+      "latticeReportSha256": "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6",
+      "observedFileCount": 39,
       "transitiveModuleGraphClaimed": false,
       "upstreamByteHashesMatch": true
     },
@@ -14721,7 +14725,7 @@
       "objectiveEnvelopeSha256": "fd0ecbf13feb1a6ee73ea904196ae1d262f81530900c8ca4f8b78742c4e678f8",
       "preflightReportContentSha256": "2fcf002d2432b4d319479d9a8622850a166d9bc5d8913f2ebd6f6e4ec1868569",
       "preflightReportSha256": "9bad2d3209f74543c7b0e434ee25f6a1e91e2ae20c471a7bc0838ae91d886569",
-      "reportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
+      "reportContentSha256": "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
       "resultFingerprintSha256": "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5",
       "runtimeAssumptionsSha256": "fa46720ec6063f0401d946312e511e5013b230cf04a55b496e040ccd22e43b41"
     },
@@ -14793,7 +14797,7 @@
     "generatedFrom": [
       {
         "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json",
-        "sha256": "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec"
+        "sha256": "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b"
       },
       {
         "path": "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts",
@@ -14809,7 +14813,7 @@
       },
       {
         "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentRuntimePreflight.ts",
-        "sha256": "7e5fb4112a159af757ed7d2bc23f345dac6dda4f5c9e32bd06ffad402048d7ae"
+        "sha256": "9095bc051441d6beb784a4a0c71ed7246e9d71769eb92e874fc2d9c53209eace"
       },
       {
         "path": "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts",
@@ -47810,8 +47814,8 @@
       "representativeSelectionPolicy": "first-node-then-enumerated-exact-objective-tie",
       "unreviewedTechnicalObjective": 926093.666196721
     },
-    "genericReportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
-    "genericStableFullReportSha256": "9cf324261711a569ad84ef9ecf862fb5566015c4fb6f7379b3e1a80eaa0988d4",
+    "genericReportContentSha256": "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
+    "genericStableFullReportSha256": "d2c460e59f55216ec0ff9914f106284d41eee817f65d77f7a241202c7dacf0ed",
     "intactGeneratorEndpointTechnicalReference": {
       "compositionId": "bounded-full-team-composition:9afd60d56a776f53fac347671b8085a7d6560906f2e4db2d0047ed50effa5627",
       "equivalentReferences": [

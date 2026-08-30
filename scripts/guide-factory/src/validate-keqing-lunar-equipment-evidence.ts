@@ -14,7 +14,11 @@ import {
   REPOSITORY_ROOT,
   SOURCE_REGISTRY_PATH,
 } from "./paths";
-import { KnowledgeRepositorySchema } from "./schemas";
+import {
+  KnowledgeRepositorySchema,
+  ManualSnapshotIndexSchema,
+  SourceRegistrySchema,
+} from "./schemas";
 
 export function formatKeqingLunarEquipmentEvidenceValidationSummary(
   report: KeqingLunarEquipmentEvidenceValidationReport,
@@ -39,6 +43,67 @@ export function formatKeqingLunarEquipmentEvidenceValidationSummary(
   );
 }
 
+export function assertKeqingLunarEquipmentEvidenceValidationReportIsSafeToWrite(
+  report: KeqingLunarEquipmentEvidenceValidationReport,
+): void {
+  const unsafeCapabilities = [
+    report.supportsGuideClaims,
+    report.supportsEquipmentRecommendations,
+    report.supportsStatRecommendations,
+    report.supportsRankClaims,
+    report.supportsConditionApplicabilityClaims,
+    report.supportsDamageClaims,
+    report.supportsEnergyRecoveryClaims,
+    report.candidateGenerationInput,
+    report.candidateGenerationExecuted,
+    report.damageOrRankingComputationExecuted,
+    report.energyRecoveryInputsUsed,
+  ].some((enabled) => enabled !== false);
+  const unsafeSourceConditions =
+    !report.sourceConditionBoundary.allSourceConditionsMappedExactly ||
+    !report.sourceConditionBoundary
+      .buildGameplayAndRefinementConditionsRemainUnresolved ||
+    !report.sourceConditionBoundary
+      .allowedRosterKnownFalseConjunctTeamsMatchExpectation ||
+    report.sourceConditionBoundary
+      .unexpectedGameplayBuildOrRefinementResolutionCount !== 0 ||
+    report.claims.some(
+      ({ allSourceConditionsMappedExactly }) =>
+        !allSourceConditionsMappedExactly,
+    );
+  const unsafeSearchCoverage =
+    !report.searchCoverageBoundary
+      .allEquipmentClaimsHaveExactlyOneCoverageReference ||
+    !report.searchCoverageBoundary.allWeaponIdsInReleasedCandidateDomain ||
+    !report.searchCoverageBoundary.allWeaponNativeTypesCompatible ||
+    report.searchCoverageBoundary.sourceRefinementInferenceCount !== 0 ||
+    report.searchCoverageBoundary.sourceRefinementsInferred;
+  const unauthenticatedScope =
+    report.semanticScope.status !== "accepted" ||
+    report.semanticScope.trust !==
+      "authenticated-current-input-rebuild-and-pinned-expectation";
+
+  if (
+    report.validationStatus !== "comparable" ||
+    unsafeCapabilities ||
+    unsafeSourceConditions ||
+    unsafeSearchCoverage ||
+    unauthenticatedScope
+  ) {
+    throw new Error(
+      "Refusing to write a non-comparable, unauthenticated, capability-crossing, or interpretively unsafe Keqing Lunar equipment evidence validation report.",
+    );
+  }
+}
+
+export async function writeKeqingLunarEquipmentEvidenceValidationReport(
+  report: KeqingLunarEquipmentEvidenceValidationReport,
+  outputPath = KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
+): Promise<void> {
+  assertKeqingLunarEquipmentEvidenceValidationReportIsSafeToWrite(report);
+  await writeJson(outputPath, report);
+}
+
 export async function runKeqingLunarEquipmentEvidenceValidationCli(): Promise<void> {
   const [repositoryInput, manualIndexInput, sourceRegistryInput, generatedFrom] =
     await Promise.all([
@@ -54,19 +119,19 @@ export async function runKeqingLunarEquipmentEvidenceValidationCli(): Promise<vo
         ),
       ),
     ]);
+  const manualIndex = ManualSnapshotIndexSchema.parse(manualIndexInput);
+  const sourceRegistry = SourceRegistrySchema.parse(sourceRegistryInput);
   const manualInputs = await loadManualSnapshotInputs(
-    manualIndexInput,
-    sourceRegistryInput,
+    manualIndex,
+    sourceRegistry,
   );
   const report = buildKeqingLunarEquipmentEvidenceValidationReport(
     KnowledgeRepositorySchema.parse(repositoryInput),
     manualInputs,
+    { manualIndex, sourceRegistry },
     generatedFrom,
   );
-  await writeJson(
-    KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
-    report,
-  );
+  await writeKeqingLunarEquipmentEvidenceValidationReport(report);
   console.log(formatKeqingLunarEquipmentEvidenceValidationSummary(report));
 }
 

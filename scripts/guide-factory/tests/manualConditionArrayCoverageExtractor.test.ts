@@ -36,7 +36,7 @@ beforeAll(async () => {
 });
 
 describe("manual condition-array extraction", () => {
-  it("exhaustively extracts the seven indexed snapshots and 64 records", () => {
+  it("exhaustively extracts the nine indexed snapshots and 72 records", () => {
     expect(core.extraction.snapshots).toEqual([
       {
         path: "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
@@ -80,21 +80,33 @@ describe("manual condition-array extraction", () => {
         recordCount: 5,
         occurrenceCount: 16,
       },
+      {
+        path: "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+        sourceId: "kqm",
+        recordCount: 7,
+        occurrenceCount: 21,
+      },
+      {
+        path: "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json",
+        sourceId: "kqm",
+        recordCount: 1,
+        occurrenceCount: 0,
+      },
     ]);
     expect(core.extraction.summary).toEqual({
-      snapshotCount: 7,
-      manualRecordCount: 64,
-      occurrenceCount: 142,
-      emptyCount: 16,
-      nonemptyCount: 126,
-      uniqueOrderedArrayCount: 89,
-      stringOccurrenceCount: 159,
-      uniqueStringCount: 97,
+      snapshotCount: 9,
+      manualRecordCount: 72,
+      occurrenceCount: 163,
+      emptyCount: 20,
+      nonemptyCount: 143,
+      uniqueOrderedArrayCount: 105,
+      stringOccurrenceCount: 177,
+      uniqueStringCount: 114,
       byClaimAxis: {
-        "weapon-recommendation": 36,
-        "artifact-recommendation": 37,
-        "main-stat": 34,
-        substat: 20,
+        "weapon-recommendation": 45,
+        "artifact-recommendation": 40,
+        "main-stat": 41,
+        substat: 22,
         "er-target": 3,
         "artifact-plan": 1,
         "character-role-member": 11,
@@ -108,12 +120,12 @@ describe("manual condition-array extraction", () => {
         uniqueStringCount: 3,
       },
       notStructuralEnergy: {
-        occurrenceCount: 139,
-        emptyCount: 16,
-        nonemptyCount: 123,
-        uniqueOrderedArrayCount: 86,
-        stringOccurrenceCount: 156,
-        uniqueStringCount: 94,
+        occurrenceCount: 160,
+        emptyCount: 20,
+        nonemptyCount: 140,
+        uniqueOrderedArrayCount: 102,
+        stringOccurrenceCount: 174,
+        uniqueStringCount: 111,
       },
     });
   });
@@ -160,7 +172,7 @@ describe("manual condition-array extraction", () => {
     expect(
       new Set(core.extraction.occurrences.map(({ occurrenceId }) => occurrenceId))
         .size,
-    ).toBe(142);
+    ).toBe(163);
     expect(
       core.extraction.occurrences.find(
         ({ occurrenceId }) =>
@@ -261,7 +273,7 @@ describe("manual condition-array extraction", () => {
     expect(changed?.conditions).toEqual(duplicated);
     expect(changed?.conditionsSha256).toBe(sha256Text(stableJson(duplicated)));
     expect(changed?.conditionsSha256).not.toBe(target.conditionsSha256);
-    expect(extraction.summary.stringOccurrenceCount).toBe(160);
+    expect(extraction.summary.stringOccurrenceCount).toBe(178);
 
     const reversed = {
       ...target,
@@ -433,14 +445,14 @@ describe("manual condition-array extraction", () => {
 });
 
 describe("manual condition-array repository parity", () => {
-  it("maps all 142 occurrences to exact ordered arrays in the consolidated repository", () => {
+  it("maps all 163 occurrences to exact ordered arrays in the consolidated repository", () => {
     expect(core.repositoryParity).toMatchObject({
       status: "exact",
-      occurrenceCount: 142,
-      exactMatchCount: 142,
+      occurrenceCount: 163,
+      exactMatchCount: 163,
       mismatchCount: 0,
       statusCounts: {
-        exact: 142,
+        exact: 163,
         "missing-record": 0,
         "ambiguous-record": 0,
         "source-reference-mismatch": 0,
@@ -449,7 +461,7 @@ describe("manual condition-array repository parity", () => {
         "ordered-array-mismatch": 0,
       },
     });
-    expect(core.repositoryParity.rows).toHaveLength(142);
+    expect(core.repositoryParity.rows).toHaveLength(163);
     for (const row of core.repositoryParity.rows) {
       const occurrence = core.extraction.occurrences.find(
         ({ occurrenceId }) => occurrenceId === row.occurrenceId,

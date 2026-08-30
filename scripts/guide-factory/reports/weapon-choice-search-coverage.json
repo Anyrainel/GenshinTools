@@ -148,11 +148,11 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -22043,6 +22043,688 @@
         "outcome": "in-released-candidate-domain",
         "releasedResourceAvailable": true,
         "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "default",
+      "conditions": [],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "primordial_jade_wingedspear",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "default",
+      "conditions": [],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:1",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "staff_of_homa",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 1
+    },
+    {
+      "characterId": "xiao",
+      "classification": "default",
+      "conditions": [],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:2",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "lumidouce_elegy",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 2
+    },
+    {
+      "characterId": "xiao",
+      "classification": "alternative",
+      "conditions": [],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:1:0",
+      "recommendationGroupIndex": 1,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "vortex_vanquisher",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "alternative",
+      "conditions": [],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:1:1",
+      "recommendationGroupIndex": 1,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "calamity_queller",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 1
+    },
+    {
+      "characterId": "xiao",
+      "classification": "available-only",
+      "conditions": [
+        "Use these source Tier 3 options when already owned and they are the best available option; the source does not recommend pulling them specifically for Xiao."
+      ],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:0",
+      "recommendationGroupIndex": 2,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "staff_of_the_scarlet_sands",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "available-only",
+      "conditions": [
+        "Use these source Tier 3 options when already owned and they are the best available option; the source does not recommend pulling them specifically for Xiao."
+      ],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:1",
+      "recommendationGroupIndex": 2,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "engulfing_lightning",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 1
+    },
+    {
+      "characterId": "xiao",
+      "classification": "available-only",
+      "conditions": [
+        "Use these source Tier 3 options when already owned and they are the best available option; the source does not recommend pulling them specifically for Xiao."
+      ],
+      "grouping": "tied",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:2",
+      "recommendationGroupIndex": 2,
+      "recommendationId": "five-star-weapon-tiers",
+      "recommendationLabel": "Source-grouped five-star weapon tiers",
+      "recommendationOrdering": "ranked-groups",
+      "recordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "weaponId": "skyward_spine",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          1,
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 5,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 2
+    },
+    {
+      "characterId": "xiao",
+      "classification": "conditional",
+      "conditions": [
+        "The team contains enough Liyue characters and the weapon has sufficient Refinement for its team-dependent passive."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:0:0",
+      "recommendationGroupIndex": 0,
+      "recommendationId": "unranked-four-star-weapons",
+      "recommendationLabel": "Source-listed four-star weapon options",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "weaponId": "lithic_spear",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "alternative",
+      "conditions": [],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:1:0",
+      "recommendationGroupIndex": 1,
+      "recommendationId": "unranked-four-star-weapons",
+      "recommendationLabel": "Source-listed four-star weapon options",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "weaponId": "deathmatch",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "conditional",
+      "conditions": [
+        "Xiao can receive healing to build the passive, and the rotation can accommodate its second-rotation and Skill-or-Burst timing constraints."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:2:0",
+      "recommendationGroupIndex": 2,
+      "recommendationId": "unranked-four-star-weapons",
+      "recommendationLabel": "Source-listed four-star weapon options",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "weaponId": "prospectors_drill",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "conditional",
+      "conditions": [
+        "Xiao can defeat opponents to activate the passive; the source notes that it is often inactive against a single opponent or high-HP opponents."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:3:0",
+      "recommendationGroupIndex": 3,
+      "recommendationId": "unranked-four-star-weapons",
+      "recommendationLabel": "Source-listed four-star weapon options",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "weaponId": "blackcliff_pole",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "conditional",
+      "conditions": [
+        "Favonius Lance is at least Refinement 3; this observation does not infer an Energy Recharge target."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:4:0",
+      "recommendationGroupIndex": 4,
+      "recommendationId": "unranked-four-star-weapons",
+      "recommendationLabel": "Source-listed four-star weapon options",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "weaponId": "favonius_lance",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
+        "weaponStatsAvailable": true
+      },
+      "weaponIndex": 0
+    },
+    {
+      "characterId": "xiao",
+      "classification": "conditional",
+      "conditions": [
+        "The team lets Xiao trigger Swirl consistently enough to maintain the weapon passive."
+      ],
+      "grouping": "single",
+      "nativeTypeCompatibility": {
+        "characterWeaponType": "Polearm",
+        "outcome": "compatible",
+        "weaponTypeFromStats": "Polearm"
+      },
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:5:0",
+      "recommendationGroupIndex": 5,
+      "recommendationId": "unranked-four-star-weapons",
+      "recommendationLabel": "Source-listed four-star weapon options",
+      "recommendationOrdering": "unranked",
+      "recordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "recordStatus": "candidate",
+      "refinementCoverage": {
+        "outcome": "unspecified"
+      },
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "weaponId": "missive_windspear",
+      "weaponIdDomain": {
+        "betaOnly": false,
+        "candidateRefinements": [
+          5
+        ],
+        "outcome": "in-released-candidate-domain",
+        "releasedResourceAvailable": true,
+        "resolvedPolicyRarity": 4,
         "weaponStatsAvailable": true
       },
       "weaponIndex": 0
@@ -53310,16 +53992,16 @@
   },
   "summary": {
     "all": {
-      "total": 1012
+      "total": 1026
     },
     "bySourceKind": {
-      "characterGuideRecommendations": 45,
+      "characterGuideRecommendations": 59,
       "guideWeaponOrder": 127,
       "teamMemberRecommendations": 0,
       "teamSelectedWeapons": 840
     },
     "nativeTypeCompatibility": {
-      "compatible": 1000,
+      "compatible": 1014,
       "mismatched": 12,
       "unknown": 0
     },
@@ -53331,7 +54013,7 @@
       },
       "exactCandidate": 0,
       "excludedByPolicy": 0,
-      "unspecified": 1012
+      "unspecified": 1026
     },
     "weaponIdDomain": {
       "byFailureReason": {
@@ -53341,7 +54023,7 @@
         "unexpected-policy-omission": 0
       },
       "excludedFromReleasedCandidateDomain": 0,
-      "inReleasedCandidateDomain": 1012
+      "inReleasedCandidateDomain": 1026
     }
   },
   "supportsGuideClaims": false

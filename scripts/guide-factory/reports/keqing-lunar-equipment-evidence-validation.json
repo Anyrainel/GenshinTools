@@ -4322,28 +4322,16 @@
   "energyRecoveryInputsUsed": false,
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
-      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
-      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
-    },
-    {
-      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
-    },
-    {
-      "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
-    },
-    {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
       "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
     },
     {
+      "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceScope.ts",
+      "sha256": "462633f766e2821850988ca3ef772920a91319ea0ac8283aea19e000b59183dd"
+    },
+    {
       "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
-      "sha256": "fd4c38adc0e5a4ab26bb9917a68dc97dabdd9aa865f1de6e964610a797732740"
+      "sha256": "546148f2da695cfea544a7c9eab71a89e23251af680f64d7187ae91770de003d"
     },
     {
       "path": "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
@@ -4351,11 +4339,11 @@
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
-      "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+      "sha256": "22604bf0be12069384b288b0dbd20c701b371004b23ba0311a22109de5834149"
     },
     {
-      "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -4376,10 +4364,6 @@
     {
       "path": "src/data/enums.ts",
       "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
-    },
-    {
-      "path": "src/data/game/character_stats.json",
-      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
     },
     {
       "path": "src/data/game/weapon_stats.json",
@@ -4556,6 +4540,69 @@
     "sourceRefinementsInferred": false,
     "weaponClaimCount": 21
   },
+  "semanticScope": {
+    "dependencies": [
+      {
+        "dependencyId": "kqm-keqing-manual-guides",
+        "selectedCount": 17,
+        "selectedKeySetSha256": "bf23f78579873888dd02f582bdec13be2ea5de83ab7c53da6c19ac0125cdf639",
+        "selectedPayloadSha256": "762dd949000096744ba768f3a28bb0226dcc6562733423066c0ddc27c6a42b71"
+      },
+      {
+        "dependencyId": "kqm-keqing-repository-guides",
+        "selectedCount": 17,
+        "selectedKeySetSha256": "961ad1b792ef0af38229c97f68c14e12b3ebf758487ea523434eb32bf3d79d92",
+        "selectedPayloadSha256": "e5a89a28cae710ebaf7e1799746f8a0455e95d4b452a976c8ddb59c3e3cc629d"
+      },
+      {
+        "dependencyId": "genshintools-keqing-baseline-guide",
+        "selectedCount": 1,
+        "selectedKeySetSha256": "33ed9f9de6e49891712af55b5b33740efe2aa3594cf2303f9dbf696d7b5eeba8",
+        "selectedPayloadSha256": "38cffb640d16d320c01d2b4946951496e866ecb9e7792b09abdc75339598443a"
+      },
+      {
+        "dependencyId": "kqm-keqing-lunar-target-teams",
+        "selectedCount": 4,
+        "selectedKeySetSha256": "523a9b52ed4b6c460cee1fda41ee2999e98a04a53e4616a0f067cd39bbb92c22",
+        "selectedPayloadSha256": "69df959386172f71b105426394dae8709d9fc839e921cf57df267129f3c7dd31"
+      },
+      {
+        "dependencyId": "kqm-keqing-snapshot-envelope",
+        "selectedCount": 1,
+        "selectedKeySetSha256": "7c2ddf7beb002e7af9669bd26b5081acacc70ce8082628d28e99cbe098369564",
+        "selectedPayloadSha256": "5304235aeacad3a1686148c3f814c1e7a4376da4316dfc280ccadbbcfc4fc756"
+      },
+      {
+        "dependencyId": "manual-snapshot-index-entry",
+        "selectedCount": 1,
+        "selectedKeySetSha256": "d31824527a0381e7154cd952ad2f452d2c097397bedcb4e8d9e709deb6aa25cd",
+        "selectedPayloadSha256": "9cdc121819f682fa10c3e5d19df04bef40b5ef06b798243a2d9bbdb207051109"
+      },
+      {
+        "dependencyId": "kqm-source-registry-entry",
+        "selectedCount": 1,
+        "selectedKeySetSha256": "4e48e2de2f60f39ba8be83ab4b7793317629000b0bdce3e2e16fab8cd453b9ff",
+        "selectedPayloadSha256": "a948d113431183fd971243c2c9b7deac375a365554d0993bfa8ae95557715db8"
+      },
+      {
+        "dependencyId": "keqing-lunar-character-facts",
+        "selectedCount": 9,
+        "selectedKeySetSha256": "60e7e0d0ad62f264d61e2c55f649649d06e7b85da57f3d8e4cb748494d48675e",
+        "selectedPayloadSha256": "afd7aa24eb9e1875302f25d3e861c7a21df838f5b502dce03085d98f6aaea79c"
+      }
+    ],
+    "manifestSha256": "a2a0dd00c300182512e654fb106cac4e12eac0c83daf6ccf4650116853241ae4",
+    "parity": {
+      "configuredCount": 17,
+      "exactCount": 17,
+      "normalizedPairsSha256": "9a32ff65d1eacbcd7520576bfc9e676b5f31edc68a4c0c3d018a82197ee55939",
+      "parityIdsSha256": "9a1fc55846bb4e26a2b7715e5927f70b44a685ee456962dff5ba35ebe49db4c0"
+    },
+    "scopeId": "keqing-lunar-equipment-evidence-v1",
+    "scopeProjectionSha256": "23f13c9ca714e7d25f01199a629e280b2baa833a77272f57511bc3b423bd935f",
+    "status": "accepted",
+    "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
+  },
   "sourceBoundary": {
     "allExtractionStatesMatch": true,
     "allManualPayloadsMatch": true,
@@ -4581,7 +4628,7 @@
       "title": "Keqing Quick Guide",
       "url": "https://keqingmains.com/q/keqing-quickguide/"
     },
-    "observedSnapshotRecordCount": 24,
+    "observedParticipatingRecordCount": 17,
     "pageMatchesExpectation": true,
     "records": [
       {

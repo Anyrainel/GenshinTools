@@ -133,12 +133,12 @@ runtime derives positive substats from successful four-piece evaluations and
 may append a smaller set in a real analyzer run.
 
 The report accounts for every artifact-choice field on current non-rejected
-character-guide and team records: 1,072 occurrences in total. Of 188 guide
+character-guide and team records: 1,075 occurrences in total. Of 188 guide
 builds, 167 are initially enumerated, 14 are conditionally representable, and
 7 are not representable by the current grammar. Of 840 team-member selected
 artifacts, 820 are initially enumerated, 7 are conditional, and 13 are not
-representable. Of 42 character-guide and team-member recommendation
-occurrences, 34 are initially enumerated and 8 are not representable. Two more
+representable. Of 45 character-guide and team-member recommendation
+occurrences, 37 are initially enumerated and 8 are not representable. Two more
 occurrences are the assignments in one coupled Kokomi/Columbina artifact plan;
 both are initially enumerated individually. The 28 failures are 19 Instructor
 occurrences, 2 Exile occurrences, 5 two-piece combinations absent from the
@@ -169,16 +169,16 @@ weapon/refinement pairs:
 | 4-star | 139 | R5 | 139 |
 | 5-star | 73 | R1 and R5 | 146 |
 
-The consolidated repository has 1,012 non-ER weapon occurrences: 127 entries
-in character-guide weapon orders, 840 selected exact-team weapons, and 45
-character-guide recommendation entries. The last group includes the Itto
-source slice's four contextual weapons. There are no team-member weapon
-recommendations yet.
+The consolidated repository has 1,026 non-ER weapon occurrences: 127 entries
+in character-guide weapon orders, 840 selected exact-team weapons, and 59
+character-guide recommendation entries. The last group includes the Itto source
+slice's four contextual weapons and Xiao's 14 choices. There are no team-member
+weapon recommendations yet.
 
-All 1,012 weapon IDs occur in the global released candidate domain. Refinement
-is a separate axis: none of the 1,012 observations supplies one, so the report
-has 0 exact candidate pairs and 1,012 unspecified refinements. Native type is
-also separate: 1,000 observations are compatible and 12 are mismatched. Every
+All 1,026 weapon IDs occur in the global released candidate domain. Refinement
+is a separate axis: none of the 1,026 observations supplies one, so the report
+has 0 exact candidate pairs and 1,026 unspecified refinements. Native type is
+also separate: 1,014 observations are compatible and 12 are mismatched. Every
 mismatch is a selected weapon from the legacy candidate source; baseline and
 KQM records have none.
 
@@ -657,11 +657,18 @@ after fresh source-specific authentication. The report total remains 31.
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
 defined by the manual snapshot schema. It retains each ordered array at its
 exact source and repository path, preserves duplicates, and proves one-to-one
-parity for all 142 current occurrences. The repository is a consolidation
+parity for all 163 current guide-selected occurrences across eight snapshots
+and 71 records. The ninth indexed snapshot is the separate Xiao rotation
+fixture and contributes no condition array. The repository is a consolidation
 target, not a second evidence corpus. An independent recursive audit runs on
 the raw snapshot values before schema parsing and requires every `conditions`
 property to match one extracted path and ordered payload, so future or unknown
 condition-bearing fields fail closed.
+
+Indexed manual snapshots also pass a source-policy gate before parsing: their
+source must have exactly one active registry entry, use the manual-observation
+V1 mode and format, and not require permission. Crimson Witch is currently
+blocked and permission-required, so it cannot enter this seam.
 
 `src/currentConditionBindingCatalog.ts` overlays only eight authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
@@ -687,25 +694,25 @@ hash, predicate and hash, payload and hash, recommendation metadata, request-
 binding boundary, and capability flags. The helper is not a generic wrapper,
 extractor, schema adapter, or prose parser.
 
-The durable report keeps binding and energy as independent ledgers. Across all
-126 nonempty arrays, the current catalog contributes 63 entries: 60 typed and
-3 exact-text acknowledged. Binding coverage is therefore 60 typed, 3
-acknowledged, and 63 unbound. Excluding only the three structural ER arrays
-leaves 123 rows: 60 typed, 3 acknowledged, and 60 unbound, spanning 86 exact
-ordered arrays. Those arrays contain 34 typed-only sets, 51 unbound-only sets,
-and one mixed acknowledged/unbound Viridescent Venerer set.
+The durable report keeps binding and energy as independent ledgers. Across 20
+empty and 143 nonempty arrays, the current catalog contributes 63 entries: 60
+typed and 3 exact-text acknowledged. Nonempty binding coverage is therefore 60
+typed, 3 acknowledged, and 80 unbound. Excluding only the three structural ER
+arrays leaves 140 rows: 60 typed, 3 acknowledged, and 77 unbound, spanning 102
+exact ordered arrays. Those arrays contain 34 typed-only sets, 67 unbound-only
+sets, and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Fifty-seven typed rows are explicitly not energy-deferred; 54
-nonempty rows remain energy-unclassified; and 16 empty arrays are
+deferred. Fifty-seven typed rows are explicitly not energy-deferred; 71
+nonempty rows remain energy-unclassified; and 20 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
 
-Display status is a separate projection over all 142 occurrences: 57 typed, 51
-known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional. Manual
-coverage authenticates eight wrapper families across 19 source files and 73
+Display status is a separate projection over all 163 occurrences: 57 typed, 68
+known-but-unbound, 15 ER-deferred, 3 acknowledged, and 20 unconditional. Manual
+coverage authenticates eight wrapper families across 19 source files and 77
 generated-from paths.
 
 The Noelle catalog path first requires the durable report to equal a fresh
@@ -962,8 +969,8 @@ deterministic fingerprint and direct/compiled agreement do not independently
 validate game damage or applicability.
 
 Checkpoint 38 is durable evidence 35 and global report 34. The checked-in
-2,011,250-byte report has SHA-256
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+2,011,434-byte report has SHA-256
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings. Generator
 and damage-computation execution are true only as operation facts. Source, guide,
@@ -975,12 +982,13 @@ an equipment recommendation.
 
 Checkpoint 39 adds a generic capture core and a source-specific wrapper around
 the exact checkpoint-38 runtime domain. Before executing the real default
-runner, the wrapper authenticates eight selected non-self inputs: the durable
-checkpoint-38 computation, checkpoint-36 lattice, equipment-evidence report,
-consolidated repository, GenshinTools snapshot, live artifact preset, generic
-capture core, and source-specific target builder. This set is not an exhaustive
-or transitive runtime dependency closure. After execution, the wrapper binds
-the exact generic result and full report payload.
+runner, the wrapper authenticates five selected non-self inputs: the durable
+checkpoint-38 computation, generic capture core, source-specific target builder,
+semantic target-scope builder, and scoped-semantic dependency implementation.
+The semantic scope binds 11 exact dependencies and 26 normalized source/
+consolidated parities without treating unrelated repository drift as relevant.
+This set is not an exhaustive or transitive runtime dependency closure. After
+execution, the wrapper binds the exact generic result and full report payload.
 
 The real default run retains 144 fresh captures across 36 nodes and four carry
 IDs, producing 576 node/carry/character occurrence contexts. It content-
@@ -1006,8 +1014,8 @@ default environment. ER main stats, substats, floors, and post-ER priority
 claims are retained only as deferral provenance.
 
 Checkpoint 39 is durable evidence 36 and global report 35. The checked-in
-17,496,526-byte report has SHA-256
-`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+17,499,104-byte report has SHA-256
+`d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`.
 Guide, recommendation, rank, scalar-weight, damage, gameplay, optimality, ER,
 and promotion claims all remain false.
 
@@ -1037,14 +1045,29 @@ the policy table.
 
 Checkpoint 40 is durable evidence 37 and global report 36. The checked-in
 2,029,334-byte report has SHA-256
-`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+`a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`.
 Guide, recommendation, rank, scalar-weight, damage, gameplay, global-
 optimality, ER, and promotion claims all remain false.
 
-The next non-ER computation boundary is an all-start/all-order robustness
-census over the same cached table: 36 best-improvement starts and 3,456
-effective declared orders, summarized through endpoint partitions, histograms,
-digests, and representative traces rather than 124,416 embedded traces.
+## Authenticated cached-policy robustness census
+
+Checkpoint 41 authenticates checkpoint 40 plus the cached-policy and census
+implementations, then projects only the ordered 36-node table, declared order,
+direction, and tolerance. One-shot and best improvement run from all 36 starts;
+declared first improvement runs over all 864 structurally effective orders for
+31,104 traces. Best improvement has 24/12 terminal basins. Declared order has
+18,576/12,528 terminal outcomes, 13 start partitions, 96 all-start path
+families, and paths of at most seven moves.
+
+The default census reports 31,177 cached-policy calls and zero fresh generator,
+evaluator, replay, downstream-optimizer, recommendation, rank, or ER calls. It
+reads upstream ER-deferral provenance only for authentication and projects no
+ER value. Checkpoint 41 is durable evidence 38 and global report 37. Its
+71,373-byte report has SHA-256
+`c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`.
+Guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+optimality, ER, and promotion claims all remain false. The next non-ER boundary
+should use the expanded repository for a second character/team slice.
 
 ## Callable modules for later experiments
 
@@ -1072,6 +1095,8 @@ digests, and representative traces rather than 124,416 embedded traces.
   `scripts/guide-factory/src/boundedJointArtifactExperiment.ts`.
 - Cached finite-lattice reference, coordinate, and beam traces:
   `scripts/guide-factory/src/boundedLatticePolicy.ts`.
+- All-start/all-order cached-policy census and compact path partitions:
+  `scripts/guide-factory/src/boundedLatticePolicyCensus.ts`.
 - Full-team non-ER local marginals with fail-closed multi-endpoint ranges:
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
 - Bounded full-team node-local generator/replay execution with intact versus
@@ -1155,7 +1180,7 @@ factory.
   current analyzer varies one character at a time and has no joint artifact-set
   assignment search. Individual candidate coverage must not be reported as
   coupled-plan coverage.
-- The current knowledge records do not specify refinements for any of the 1,012
+- The current knowledge records do not specify refinements for any of the 1,026
   non-ER weapon occurrences. The preflight now states one comparison policy
   explicitly, but that convention remains an experiment input rather than a
   source fact.

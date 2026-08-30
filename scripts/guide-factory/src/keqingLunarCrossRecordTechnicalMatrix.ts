@@ -24,6 +24,17 @@ import {
   type KeqingIneffaFormulaDraftReport,
 } from "./keqingIneffaFormulaDraft";
 import {
+  authenticateKeqingIneffaFormulaSemanticScope,
+  KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION,
+} from "./keqingIneffaFormulaSemanticScope";
+import {
+  authenticateKeqingLunarCrossRecordTechnicalMatrixScope,
+  KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPOSITORY_TARGETS,
+  KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_SCOPE_EXPECTATION,
+  requireKeqingLunarCrossRecordTechnicalMatrixScope,
+  type KeqingLunarCrossRecordTechnicalMatrixRepositoryTargetProjection,
+} from "./keqingLunarCrossRecordTechnicalMatrixScope";
+import {
   authenticateKeqingLunarCrossRecordCompositionContract,
   buildKeqingLunarCrossRecordCompositionContractReport,
   KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_INPUT_PATHS,
@@ -50,6 +61,7 @@ import {
  */
 export const KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_INPUT_PATHS = [
   "scripts/guide-factory/src/keqingLunarCrossRecordTechnicalMatrix.ts",
+  "scripts/guide-factory/src/keqingLunarCrossRecordTechnicalMatrixScope.ts",
   "scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts",
   "scripts/guide-factory/src/artifactGenerationTechnicalProbe.ts",
   ...new Set([
@@ -94,27 +106,6 @@ const EXPECTED_KEQING_STAT_TARGET = {
   sourcePriorityGroups: [["cr", "cd"], ["atk%"], ["em"]],
 } as const;
 
-const EXPECTED_TEAMMATE_BUILD_BOUNDARY = [
-  {
-    characterId: "ineffa",
-    characterGuideId: "genshintools-presets:character-guide:ineffa",
-    buildSourceRecordId: "FeFiQU8",
-    artifactSetId: "aubade_of_morningstar_and_moon",
-  },
-  {
-    characterId: "furina",
-    characterGuideId: "genshintools-presets:character-guide:furina",
-    buildSourceRecordId: "BQAI0BO",
-    artifactSetId: "golden_troupe",
-  },
-  {
-    characterId: "xilonen",
-    characterGuideId: "genshintools-presets:character-guide:xilonen",
-    buildSourceRecordId: "Dbt0Wkm",
-    artifactSetId: "scroll_of_the_hero_of_cinder_city",
-  },
-] as const;
-
 type CarryCharacterId = (typeof CARRY_CHARACTER_IDS)[number];
 type CompositionId = (typeof EXPECTED_COMPOSITION_IDS)[number];
 type CompletedCandidateObservation = Extract<
@@ -123,8 +114,6 @@ type CompletedCandidateObservation = Extract<
 >;
 type ValidationTargetComparison =
   CompletedCandidateObservation["validationTargetComparisons"][number];
-type CharacterGuide = Extract<KnowledgeRecord, { kind: "character_guide" }>;
-
 export type KeqingLunarCrossRecordTechnicalMatrixIssue = {
   code: string;
   path: string;
@@ -188,7 +177,20 @@ export type KeqingLunarCrossRecordTechnicalMatrixReport = {
   inputBoundary: {
     candidateLatticeSha256: string;
     formulaDraftSha256: string;
-    repositorySha256: string;
+    repositorySemanticScopes: {
+      formulaFixture: {
+        expectedScopeId: string;
+        expectedManifestSha256: string;
+        authenticatedScopeProjectionSha256: string | null;
+        authenticatedAgainstFormulaDraft: boolean;
+      };
+      teammateValidationTargets: {
+        expectedScopeId: string;
+        expectedManifestSha256: string;
+        authenticatedScopeProjectionSha256: string | null;
+        authenticated: boolean;
+      };
+    };
     canonicalContractSha256: string;
     serializedContractSha256: string;
     canonicalContractStatus: "comparable" | "not-comparable";
@@ -341,6 +343,9 @@ export function isCompleteKeqingLunarCrossRecordTechnicalMatrixReport(
   report: KeqingLunarCrossRecordTechnicalMatrixReport,
 ): boolean {
   const matrix = report.matrix;
+  const formulaScope = report.inputBoundary.repositorySemanticScopes.formulaFixture;
+  const teammateScope =
+    report.inputBoundary.repositorySemanticScopes.teammateValidationTargets;
   return (
     report.matrixStatus === "comparable" &&
     matrix?.status === "complete-structurally" &&
@@ -363,6 +368,20 @@ export function isCompleteKeqingLunarCrossRecordTechnicalMatrixReport(
     report.executionAudit.maximumConcurrentGeneratorInvocationCount === 1 &&
     report.executionAudit.trustedValidatorRuntimeCallCount === 8 &&
     report.executionAudit.structurallyCompletedNodeCount === 8 &&
+    formulaScope.expectedScopeId ===
+      KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.scopeId &&
+    formulaScope.expectedManifestSha256 ===
+      KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.manifestSha256 &&
+    formulaScope.authenticatedScopeProjectionSha256 ===
+      KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.scopeProjectionSha256 &&
+    formulaScope.authenticatedAgainstFormulaDraft === true &&
+    teammateScope.expectedScopeId ===
+      KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_SCOPE_EXPECTATION.scopeId &&
+    teammateScope.expectedManifestSha256 ===
+      KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_SCOPE_EXPECTATION.manifestSha256 &&
+    teammateScope.authenticatedScopeProjectionSha256 ===
+      KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_SCOPE_EXPECTATION.scopeProjectionSha256 &&
+    teammateScope.authenticated === true &&
     report.issues.length === 0
   );
 }
@@ -449,6 +468,49 @@ export function prepareKeqingLunarCrossRecordTechnicalMatrix(
   }
   issues.push(...validateInputHashBindings(input));
 
+  const repositoryResult = KnowledgeRepositorySchema.safeParse(input.repository);
+  if (!repositoryResult.success) {
+    issues.push({
+      code: "input.repository_invalid",
+      path: "input.repository",
+      message: "The consolidated knowledge repository is invalid.",
+    });
+  }
+  const repositorySemanticScope = repositoryResult.success
+    ? authenticateKeqingIneffaFormulaSemanticScope(repositoryResult.data)
+    : null;
+  const repositorySemanticScopeAuthenticatedAgainstFormulaDraft =
+    repositorySemanticScope?.status === "accepted" &&
+    input.formulaDraft.semanticScope.expectedManifestSha256 ===
+      KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.manifestSha256 &&
+    input.formulaDraft.semanticScope.expectedScopeProjectionSha256 ===
+      KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.scopeProjectionSha256 &&
+    stableJson(input.formulaDraft.semanticScope.acceptedAudit) ===
+      stableJson(repositorySemanticScope.audit);
+  if (!repositorySemanticScopeAuthenticatedAgainstFormulaDraft) {
+    issues.push({
+      code: "input.repository_semantic_scope_binding_failed",
+      path: "inputBoundary.repositorySemanticScopes.formulaFixture",
+      message:
+        "The current repository's authenticated Keqing-Ineffa semantic projection does not match the formula draft's accepted semantic-scope audit.",
+    });
+  }
+  const teammateRepositorySemanticScope = repositoryResult.success
+    ? authenticateKeqingLunarCrossRecordTechnicalMatrixScope(
+        repositoryResult.data,
+      )
+    : null;
+  const teammateRepositorySemanticScopeAuthenticated =
+    teammateRepositorySemanticScope?.status === "accepted";
+  if (!teammateRepositorySemanticScopeAuthenticated) {
+    issues.push({
+      code: "input.teammate_repository_semantic_scope_authentication_failed",
+      path: "inputBoundary.repositorySemanticScopes.teammateValidationTargets",
+      message:
+        "The current repository does not authenticate the exact three teammate build projections consumed by this matrix.",
+    });
+  }
+
   const canonicalContract =
     buildKeqingLunarCrossRecordCompositionContractReport(
       input.candidateLattice,
@@ -460,6 +522,14 @@ export function prepareKeqingLunarCrossRecordTechnicalMatrix(
     canonicalContract,
     formulaDraftGeneratedFromMatchesSuppliedCurrentBytes,
     false,
+    repositorySemanticScope?.status === "accepted"
+      ? repositorySemanticScope.audit.scopeProjectionSha256
+      : null,
+    repositorySemanticScopeAuthenticatedAgainstFormulaDraft,
+    teammateRepositorySemanticScope?.status === "accepted"
+      ? teammateRepositorySemanticScope.audit.scopeProjectionSha256
+      : null,
+    teammateRepositorySemanticScopeAuthenticated,
   );
   if (canonicalContract.contractStatus !== "comparable") {
     issues.push(
@@ -493,14 +563,6 @@ export function prepareKeqingLunarCrossRecordTechnicalMatrix(
     });
   }
 
-  const repositoryResult = KnowledgeRepositorySchema.safeParse(input.repository);
-  if (!repositoryResult.success) {
-    issues.push({
-      code: "input.repository_invalid",
-      path: "inputBoundary.repository",
-      message: "The consolidated knowledge repository is invalid.",
-    });
-  }
   if (issues.length > 0 || !authentication.authenticated || !repositoryResult.success) {
     return {
       ready: false,
@@ -518,6 +580,14 @@ export function prepareKeqingLunarCrossRecordTechnicalMatrix(
     authenticatedContract,
     formulaDraftGeneratedFromMatchesSuppliedCurrentBytes,
     true,
+    repositorySemanticScope?.status === "accepted"
+      ? repositorySemanticScope.audit.scopeProjectionSha256
+      : null,
+    repositorySemanticScopeAuthenticatedAgainstFormulaDraft,
+    teammateRepositorySemanticScope?.status === "accepted"
+      ? teammateRepositorySemanticScope.audit.scopeProjectionSha256
+      : null,
+    teammateRepositorySemanticScopeAuthenticated,
   );
   if (
     authenticatedContract.compositions.length !== 2 ||
@@ -568,7 +638,8 @@ export function prepareKeqingLunarCrossRecordTechnicalMatrix(
       ),
     );
     teammateTargets = buildTeammateRepositoryTargets(
-      repositoryResult.data,
+      requireKeqingLunarCrossRecordTechnicalMatrixScope(repositoryResult.data)
+        .repositoryTargets,
       authenticatedContract,
     );
   } catch (error) {
@@ -995,12 +1066,6 @@ function validateInputHashBindings(
     issuePath: string;
   }> = [
     {
-      entries: input.formulaDraftGeneratedFrom,
-      path: "scripts/guide-factory/data/knowledge/repository.json",
-      value: input.repository,
-      issuePath: "inputBoundary.repository",
-    },
-    {
       entries: input.contractGeneratedFrom,
       path: "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
       value: input.formulaDraft,
@@ -1011,12 +1076,6 @@ function validateInputHashBindings(
       path: "scripts/guide-factory/reports/keqing-lunar-source-conditioned-candidate-lattice.json",
       value: input.candidateLattice,
       issuePath: "inputBoundary.candidateLattice",
-    },
-    {
-      entries: input.generatedFrom,
-      path: "scripts/guide-factory/data/knowledge/repository.json",
-      value: input.repository,
-      issuePath: "generatedFrom.repository",
     },
     {
       entries: input.generatedFrom,
@@ -1097,11 +1156,35 @@ function buildInputBoundary(
   canonicalContract: KeqingLunarCrossRecordCompositionContractReport,
   formulaDraftGeneratedFromMatchesSuppliedCurrentBytes: boolean,
   serializedContractAuthenticatedAgainstRebuild: boolean,
+  repositorySemanticScopeProjectionSha256: string | null,
+  repositorySemanticScopeAuthenticatedAgainstFormulaDraft: boolean,
+  teammateRepositorySemanticScopeProjectionSha256: string | null,
+  teammateRepositorySemanticScopeAuthenticated: boolean,
 ): KeqingLunarCrossRecordTechnicalMatrixReport["inputBoundary"] {
   return {
     candidateLatticeSha256: sha256Text(stableJson(input.candidateLattice)),
     formulaDraftSha256: sha256Text(stableJson(input.formulaDraft)),
-    repositorySha256: sha256Text(stableJson(input.repository)),
+    repositorySemanticScopes: {
+      formulaFixture: {
+        expectedScopeId:
+          KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.scopeId,
+        expectedManifestSha256:
+          KEQING_INEFFA_FORMULA_SEMANTIC_SCOPE_EXPECTATION.manifestSha256,
+        authenticatedScopeProjectionSha256:
+          repositorySemanticScopeProjectionSha256,
+        authenticatedAgainstFormulaDraft:
+          repositorySemanticScopeAuthenticatedAgainstFormulaDraft,
+      },
+      teammateValidationTargets: {
+        expectedScopeId:
+          KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_SCOPE_EXPECTATION.scopeId,
+        expectedManifestSha256:
+          KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_SCOPE_EXPECTATION.manifestSha256,
+        authenticatedScopeProjectionSha256:
+          teammateRepositorySemanticScopeProjectionSha256,
+        authenticated: teammateRepositorySemanticScopeAuthenticated,
+      },
+    },
     canonicalContractSha256: sha256Text(stableJson(canonicalContract)),
     serializedContractSha256: sha256Text(stableJson(input.serializedContract)),
     canonicalContractStatus: canonicalContract.contractStatus,
@@ -1631,7 +1714,7 @@ function resolveStatClaim(
 }
 
 function buildTeammateRepositoryTargets(
-  repository: KnowledgeRepository,
+  repositoryTargets: readonly KeqingLunarCrossRecordTechnicalMatrixRepositoryTargetProjection[],
   contract: KeqingLunarCrossRecordCompositionContractReport,
 ): ArtifactGenerationRepositoryBuildValidationTarget[] {
   const ledger = contract.originLedger;
@@ -1648,54 +1731,50 @@ function buildTeammateRepositoryTargets(
   );
   if (
     stableJson(observedBoundary) !==
-    stableJson(EXPECTED_TEAMMATE_BUILD_BOUNDARY)
+    stableJson(KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPOSITORY_TARGETS)
   ) {
     throw new Error(
       "Canonical teammate equipment changed from the three exact repository-build targets.",
     );
   }
-  return EXPECTED_TEAMMATE_BUILD_BOUNDARY.map((boundary) =>
-    buildRepositoryTarget(repository, boundary),
-  );
+  if (
+    stableJson(
+      repositoryTargets.map(
+        ({
+          characterId,
+          characterGuideId,
+          buildSourceRecordId,
+          artifact,
+        }) => ({
+          characterId,
+          characterGuideId,
+          buildSourceRecordId,
+          artifactSetId: artifact.setId,
+        }),
+      ),
+    ) !==
+    stableJson(KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_REPOSITORY_TARGETS)
+  ) {
+    throw new Error(
+      "Authenticated teammate repository targets changed from the exact matrix boundary.",
+    );
+  }
+  return repositoryTargets.map(buildRepositoryTarget);
 }
 
 function buildRepositoryTarget(
-  repository: KnowledgeRepository,
-  boundary: (typeof EXPECTED_TEAMMATE_BUILD_BOUNDARY)[number],
+  projection: KeqingLunarCrossRecordTechnicalMatrixRepositoryTargetProjection,
 ): ArtifactGenerationRepositoryBuildValidationTarget {
-  const guides = repository.records.filter(
-    (record): record is CharacterGuide =>
-      record.kind === "character_guide" &&
-      record.id === boundary.characterGuideId,
-  );
-  if (guides.length !== 1 || guides[0].characterId !== boundary.characterId) {
-    throw new Error(
-      `Expected one exact repository guide ${boundary.characterGuideId} for ${boundary.characterId}.`,
-    );
-  }
-  const builds = guides[0].builds.filter(
-    ({ sourceRecordId }) => sourceRecordId === boundary.buildSourceRecordId,
-  );
-  if (
-    builds.length !== 1 ||
-    builds[0].artifact.type !== "4pc" ||
-    builds[0].artifact.setId !== boundary.artifactSetId
-  ) {
-    throw new Error(
-      `Expected one exact ${boundary.characterId}/${boundary.artifactSetId} repository build ${boundary.buildSourceRecordId}.`,
-    );
-  }
-  const build = builds[0];
   const target: ArtifactGenerationRepositoryBuildValidationTarget = {
     kind: "repository-build",
-    characterId: boundary.characterId,
-    characterGuideId: boundary.characterGuideId,
-    buildSourceRecordId: boundary.buildSourceRecordId,
-    artifactSetId: boundary.artifactSetId,
-    sands: build.sands.map(({ stat }) => stat) as MainStat[],
-    goblet: build.goblet.map(({ stat }) => stat) as MainStat[],
-    circlet: build.circlet.map(({ stat }) => stat) as MainStat[],
-    substats: build.substats.map(({ stat }) => stat) as SubStat[],
+    characterId: projection.characterId,
+    characterGuideId: projection.characterGuideId,
+    buildSourceRecordId: projection.buildSourceRecordId,
+    artifactSetId: projection.artifact.setId,
+    sands: [...projection.sands] as MainStat[],
+    goblet: [...projection.goblet] as MainStat[],
+    circlet: [...projection.circlet] as MainStat[],
+    substats: [...projection.substats] as SubStat[],
   };
   if (
     target.sands.length === 0 ||
@@ -1704,7 +1783,7 @@ function buildRepositoryTarget(
     target.substats.length === 0
   ) {
     throw new Error(
-      `Repository target ${boundary.characterId}/${boundary.buildSourceRecordId} has incomplete stat observations.`,
+      `Repository target ${projection.characterId}/${projection.buildSourceRecordId} has incomplete stat observations.`,
     );
   }
   return target;
@@ -1921,7 +2000,8 @@ function validatePreparedEnvelope(
     };
   }
   const expectedRepositoryTargets = buildTeammateRepositoryTargets(
-    prepared.repository,
+    requireKeqingLunarCrossRecordTechnicalMatrixScope(prepared.repository)
+      .repositoryTargets,
     prepared.canonicalContract,
   );
   for (const candidate of prepared.candidates) {

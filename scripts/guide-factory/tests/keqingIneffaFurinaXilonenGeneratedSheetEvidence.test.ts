@@ -1,7 +1,12 @@
 import fs from "node:fs";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
-import { formatKeqingIneffaFurinaXilonenGeneratedSheetEvidenceSummary } from "../src/compute-keqing-ineffa-furina-xilonen-generated-sheet-evidence";
+import {
+  formatKeqingIneffaFurinaXilonenGeneratedSheetEvidenceSummary,
+  writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport,
+} from "../src/compute-keqing-ineffa-furina-xilonen-generated-sheet-evidence";
 import { sha256File, sha256Text, stableJson } from "../src/io";
 import type { KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport } from "../src/keqingIneffaFurinaXilonenEquipmentCandidateLattice";
 import type { KeqingLunarEquipmentEvidenceValidationReport } from "../src/keqingLunarEquipmentEvidenceValidation";
@@ -38,7 +43,7 @@ const LIVE_BUILD_PRESET =
 const KQM_EVIDENCE_REPORT =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 const EXPECTED_FULL_SHA256 =
-  "9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568";
+  "d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a";
 
 let INPUT: BuildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceInput;
 let REPORT: KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport;
@@ -63,8 +68,8 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
       transitiveRuntimeDependenciesAuthenticatedBeforeExecution: false,
       selectedInputsAuthenticatedBeforeExecution: true,
       postExecutionGenericOutputAuthenticationRequired: true,
-      expectedFileCount: 8,
-      observedFileCount: 8,
+      expectedFileCount: 5,
+      observedFileCount: 5,
       exactPathSet: true,
       allByteHashesWellFormed: true,
       allDeclaredFileHashesMatch: true,
@@ -113,7 +118,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
       resultFingerprintSha256:
         "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386",
       reportContentSha256:
-        "a31e829893d30f8d6db129c3659674891d121b7e13c414ba2864d7f1f8a2bfd8",
+        "dfb21991f2f0d8f83aa9d0896a8752c288bcf5286f2f0e767f742bbca57d5b76",
     });
     expect(REPORT.comparisonBoundary).toMatchObject({
       occurrenceCount: 576,
@@ -315,6 +320,9 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
     ["authenticated CP38 report mutation", mutateSourceReport],
     ["unreviewed KQM authority mutation", mutateKqmReviewState],
   ])("withholds before runtime for %s", async (_label, mutate) => {
+    expect(REPORT.validationStatus, stableJson(REPORT.issues)).toBe(
+      "authenticated-completed-occurrence-evidence-source-not-ready",
+    );
     const input = structuredClone(INPUT);
     mutate(input);
     let runtimeCalls = 0;
@@ -339,6 +347,63 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
     });
     expect(report.comparisonBoundary.everyNodeComparisonRowCount).toBe(0);
     expect(runtimeCalls).toBe(0);
+  });
+
+  it("is invariant to unrelated knowledge-carrier and live-weapon drift", async () => {
+    const input = structuredClone(INPUT);
+    input.knowledgeTargetInput.repository.schemaVersion = 2 as 1;
+    const unrelatedRepositoryRecord =
+      input.knowledgeTargetInput.repository.records.find(
+        ({ id }) =>
+          !id.startsWith("genshintools-presets:character-guide:") &&
+          !id.includes("keqing-lunar-charged") &&
+          !id.includes("furina-post-er-substats"),
+      );
+    unrelatedRepositoryRecord?.unknowns.push(
+      "Unrelated carrier drift outside the CP39 semantic scope.",
+    );
+    input.knowledgeTargetInput.genshinToolsSnapshot.capturedAt = "2099-12-31";
+    input.knowledgeTargetInput.genshinToolsSnapshot.sourceRevision.files.push({
+      path: "unrelated-preset-source.json",
+      sha256: "b".repeat(64),
+    });
+    const live = input.knowledgeTargetInput.liveBuildPreset as {
+      characterWeapons?: Record<string, string[]>;
+    };
+    live.characterWeapons = { unrelated: ["not-selected"] };
+    input.knowledgeTargetInput.evidenceReport.generatedFrom.push({
+      path: "unrelated-evidence-source.json",
+      sha256: "c".repeat(64),
+    });
+    const unrelatedOccurrence =
+      input.knowledgeTargetInput.equipmentLatticeReport.inventoryBoundary.occurrences.find(
+        ({ occurrenceId }) =>
+          !REPORT.knowledgeTargets?.targets.some(
+            (target) =>
+              target.kind === "preset-build" &&
+              target.activeArtifactOccurrenceId === occurrenceId,
+          ),
+      );
+    if (unrelatedOccurrence) {
+      unrelatedOccurrence.equipmentId = "4pc:unselected";
+    }
+
+    let runtimeCalls = 0;
+    const report =
+      await buildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
+        input,
+        {
+          async runGeneratedSheetEvidence() {
+            runtimeCalls += 1;
+            if (!REPORT.generatedSheetEvidence) {
+              throw new Error("Missing canonical generic evidence.");
+            }
+            return structuredClone(REPORT.generatedSheetEvidence);
+          },
+        },
+      );
+    expect(runtimeCalls).toBe(1);
+    expect(report).toEqual(REPORT);
   });
 
   it("withholds all target comparisons when the generic capture is mutated", async () => {
@@ -396,6 +461,36 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
     expect(
       formatKeqingIneffaFurinaXilonenGeneratedSheetEvidenceSummary(durable),
     ).toContain("ER values are retained only as deferred provenance");
+  });
+
+  it("never overwrites a durable checkpoint with rejected evidence", async () => {
+    const temporaryDirectory = await mkdtemp(
+      path.join(os.tmpdir(), "guide-factory-generated-sheet-evidence-"),
+    );
+    const outputPath = path.join(temporaryDirectory, "durable-report.json");
+    const sentinel = "trusted checkpoint\n";
+    try {
+      await writeFile(outputPath, sentinel, "utf8");
+      const rejected = structuredClone(REPORT);
+      rejected.capabilities.rankClaims = true as false;
+      await expect(
+        writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
+          rejected,
+          outputPath,
+        ),
+      ).rejects.toThrow(/Refusing unauthenticated or mutated/);
+      expect(await readFile(outputPath, "utf8")).toBe(sentinel);
+
+      await writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
+        REPORT,
+        outputPath,
+      );
+      expect(
+        sha256Text(stableJson(JSON.parse(await readFile(outputPath, "utf8")))),
+      ).toBe(EXPECTED_FULL_SHA256);
+    } finally {
+      await rm(temporaryDirectory, { recursive: true, force: true });
+    }
   });
 });
 

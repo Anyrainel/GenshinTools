@@ -6,6 +6,26 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-furina-xilonen-cached-policy-robustness-census.json`
+  authenticates the exact checkpoint-40 cached-policy audit plus the selected
+  census and cached-policy implementation bytes before running any census
+  work. It projects only the ordered 36-node cached technical table, declared
+  order, direction, and tolerance. All 36 starts are covered by one-shot and
+  best-improvement policies; all 864 structurally effective declared orders
+  are covered across all 36 starts for 31,104 declared-order traces and 31,177
+  total reported cached policy calls. Best improvement has two terminal basins
+  with 24 and 12 starts. Declared-order behavior has 13 distinct start
+  partitions, 96 distinct all-start path families, and paths from zero through
+  seven moves. The report authenticates checkpoint-40 review and ER-deferral
+  provenance but projects neither occurrence diagnostics, prior policy traces,
+  nor ER values into the census. The default environment performs zero
+  generator, replay, downstream-optimizer, recommendation, rank, or ER calls.
+  The technical objective remains unreviewed with all eight source-readiness
+  blockers, so guide, rank, recommendation, damage, gameplay, optimality,
+  promotion, and ER capabilities remain false. The report's final SHA-256 is
+  `c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`,
+  and its final size is 71,373 bytes. This is durable report 38 and globally
+  integrated report 37.
 - `keqing-ineffa-furina-xilonen-cached-policy-audit.json` authenticates the
   exact checkpoint-38 technical table, checkpoint-39 occurrence evidence, and
   cached-policy implementation, then retains only a compact projection. Four
@@ -21,7 +41,7 @@ Current durable pilot evidence:
   policy table. Only the default environment attests zero fresh forbidden
   downstream calls; injected callback counts and ER influence are unknown. The
   report's final SHA-256 is
-  `b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`,
+  `a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`,
   and its final size is 2,029,334 bytes. This is durable report 37 and globally
   integrated report 36. It supports no guide, rank, recommendation, damage,
   gameplay, global-optimality, promotion, or ER claim.
@@ -31,10 +51,12 @@ Current durable pilot evidence:
   catalog contains 21 unique generated sheets and 23 stable displayed artifact
   allocations; every allocation reconstructs its sheet within the declared
   two-decimal display envelope. Exact roll tiers and counts remain unknown. The
-  source-specific wrapper authenticates eight selected non-self inputs before
-  execution and the exact generic/full payloads afterward. Those paths are not
-  an exhaustive transitive runtime closure, and deterministic replay evidence
-  is not execution attestation. Exactly 4,608 non-ER main-stat/positive-substat
+  source-specific wrapper authenticates five selected non-self inputs before
+  execution, including a semantic target scope that binds only relevant
+  repository, source, and preset projections, and authenticates the exact
+  generic/full payloads afterward. Those paths are not an exhaustive transitive
+  runtime closure, and deterministic replay evidence is not execution
+  attestation. Exactly 4,608 non-ER main-stat/positive-substat
   rows are joined through their occurrence scope to 17 authority-labelled
   GenshinTools/KQM targets. The report retains 816 resolved, 48 condition-
   withheld, 2,202 baseline-context-unknown, and 1,542 non-exhaustively unlisted
@@ -43,8 +65,8 @@ Current durable pilot evidence:
   performs no separate replay or optimizer call and derives no weights, ranks,
   recommendations, correctness verdicts, roll allocations, or ER claims. Its
   final SHA-256 is
-  `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`,
-  and its final size is 17,496,526 bytes. This is durable report 36 and
+  `d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`,
+  and its final size is 17,499,104 bytes. This is durable report 36 and
   globally integrated report 35.
 - `keqing-ineffa-furina-xilonen-equipment-technical-computation.json`
   authenticates exactly 64 declared non-self selected checkpoint inputs across
@@ -81,8 +103,8 @@ Current durable pilot evidence:
   damage, DPS, rank, recommendation, gameplay, or optimality. Every source,
   guide, team/equipment recommendation, rank, damage, DPS, gameplay,
   optimality, promotion, and ER claim remains false. The report's final SHA-256
-  is `955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`,
-  and its final size is 2,011,250 bytes. This is durable report 35 and
+  is `c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`,
+  and its final size is 2,011,434 bytes. This is durable report 35 and
   globally integrated report 34.
 - `keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json`
   authenticates every byte hash in the 38-path declared non-self checkpoint
@@ -249,10 +271,11 @@ Current durable pilot evidence:
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
-  regenerated after checkpoint 34's lower-investment catalog admission updates
-  its authenticated manual-coverage dependency. It authenticates six source
-  files, 76 generated-from paths, and 63 upstream bindings. Its four Klee
-  claims, team controls, and holdout boundary remain unchanged.
+  regenerated whenever its authenticated manual-coverage dependency changes;
+  the current Xiao/manual-source refresh leaves its Klee semantics unchanged.
+  It authenticates six source files, 81 generated-from paths, and 63 upstream
+  bindings. Its four Klee claims, team controls, and holdout boundary remain
+  unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -265,29 +288,33 @@ Current durable pilot evidence:
   durable report to equal a fresh canonical rebuild. All recommendation,
   composition, build, rank, generator, optimizer, formula, rotation, damage,
   ideal-roll, and ER capabilities remain disabled.
-- `manual-condition-array-coverage.json` authenticates all 142 structured
-  condition-array occurrences from seven indexed KQM manual snapshots and
-  proves exact raw-path extraction closure and parity with the consolidated
-  repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
-  unique exact ordered nonempty arrays,
-  159 condition-string occurrences, and 97 unique strings. Binding and energy
+- `manual-condition-array-coverage.json` authenticates all 163 structured
+  condition-array occurrences from eight guide-selected KQM snapshots and 71
+  records, and proves exact raw-path extraction closure and parity with the
+  consolidated repository. The ninth indexed snapshot is the separate Xiao
+  rotation fixture and contributes no condition array. Indexed snapshots fail
+  closed unless their source is uniquely registered, active, uses the manual-
+  observation V1 contract, and does not require permission; blocked Crimson
+  Witch therefore remains outside this corpus. The corpus contains 20
+  empty arrays, 143 nonempty arrays, 105 unique exact ordered nonempty arrays,
+  177 condition-string occurrences, and 114 unique strings. Binding and energy
   are independent: all nonempty arrays contain 60 typed bindings, 3 exact-text
-  acknowledgements, and 63 unbound occurrences; excluding only three structural
-  ER rows leaves 123 occurrences: 60 typed, 3 acknowledged, and 60 unbound,
-  across 86 unique arrays. Those arrays contain 34 typed-only, 51 unbound-only,
-  and one mixed acknowledged/unbound status set.
-  The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
-  exact authored Diona/Furina rows; 57 typed rows are not energy-deferred and 54
-  nonempty rows remain energy-unclassified. Display status is 57 typed, 51
-  known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional.
-  The report authenticates eight wrapper families across 19 source files and 73
-  generated-from paths. Bindings are occurrence-, hash-,
+  acknowledgements, and 80 unbound occurrences; excluding only three structural
+  ER rows leaves 140 occurrences: 60 typed, 3 acknowledged, and 77 unbound,
+  across 102 unique arrays. Those arrays contain 34 typed-only, 67 unbound-only,
+  and one mixed acknowledged/unbound status set. The energy ledger defers 3
+  structural rows, 3 typed Itto prerequisites, and 9 exact authored
+  Diona/Furina rows; 57 typed rows are not energy-deferred, 71 nonempty rows
+  remain energy-unclassified, and 20 are unconditional. Display status is 57
+  typed, 68 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 20
+  unconditional. The report authenticates eight wrapper families across 19
+  source files and 77 generated-from paths. Bindings are occurrence-, hash-,
   and subject-scoped: identical Viridescent Venerer text is acknowledged for
   Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
   Typed coverage does not establish predicate truth, and unclassified does not
   mean non-ER. The report parses no arbitrary prose, composes no choices, and
   executes no guide, generator, optimizer, formula, rotation, damage, ideal-
-  roll, or ER work. All 64 source records remain agent-assisted and unreviewed,
+  roll, or ER work. All 71 covered source records remain agent-assisted and unreviewed,
   so publication stays withheld.
 - `itto-request-context-applicability.json` authenticates both the checked-in
   Itto source packet and a fresh canonical rebuild, then overlays three strict,
@@ -330,17 +357,17 @@ Current durable pilot evidence:
   source-validation claim.
 - `character-guide-input-coverage.json` projects contributing non-ER guide
   inputs across 125 guide-domain-eligible characters at C0 through C6: 875
-  compact rows backed by 3,104 group-level observations. Aloy and the Anemo,
+  compact rows backed by 3,126 group-level observations. Aloy and the Anemo,
   Electro, Geo, and Hydro Traveler forms are the exact five characters with no
   contributing guide input. That absence is not an unsupported-character
   verdict, and constellation-unspecified evidence is not universal evidence.
-  Of 900 exact-team member investments, 898 are constellation-unspecified; C6
-  Diona is exact and C2+ Xilonen is one lower-bounded case. All 64 upstream KQM
-  manual records remain unreviewed; 63 non-energy records contribute
-  provenance or coverage, while
-  the energy-guidance record contributes no observation. The repository
+  Of 904 exact-team member investments, 902 are constellation-unspecified; C6
+  Diona is exact and C2+ Xilonen is one lower-bounded case. All 72 indexed KQM
+  records remain unreviewed; 70 guide records contribute provenance or coverage,
+  while the energy-guidance and rotation-fixture records contribute no guide
+  observation. The repository
   currently contributes zero repository-authored `damagePlans`. The report
-  links all 1,012 weapon and 1,072 artifact policy observations to their exact
+  links all 1,026 weapon and 1,075 artifact policy observations to their exact
   search-coverage classifications. Linkage is not a positive representability
   or compatibility result: 28 linked artifact outcomes are explicitly not
   representable, and 12 linked weapon outcomes have native type mismatches.
@@ -355,7 +382,11 @@ Current durable pilot evidence:
 - `keqing-lunar-cross-record-technical-matrix.json` authenticates the two
   checkpoint-18 compositions, translates each into one exact Keqing composed-
   source target plus three repository teammate targets, and prevalidates both
-  candidates before generation. It then makes exactly eight fresh sequential
+  candidates before generation. Two pinned repository semantic projections
+  bind the formula fixture and every teammate guide/build identity, four-piece
+  artifact, and ordered stat array that the matrix consumes. Relevant drift or
+  duplicate selected evidence fails closed, while unrelated corpus additions
+  do not invalidate this computation. It then makes exactly eight fresh sequential
   calls: Marechaussee Hunter and the one-Nod-Krai Night of the Sky's Unveiling
   branch under each of the four carry seeds. All eight current cells complete
   structurally. From each generator result, the report retains only artifact
@@ -521,31 +552,34 @@ Current durable pilot evidence:
   plan's eight blockers keep the reviewed-experiment gate closed. It runs no
   generator, damage calculation, ranking, or energy calculation.
 - `weapon-choice-search-coverage.json` mirrors the private analyzer's small
-  candidate policy against released data and audits 1,012 non-ER weapon
-  occurrences on three independent axes. All 1,012 IDs are in the 236-weapon
-  released domain, all 1,012 refinements are unspecified, and 1,000 choices match
+  candidate policy against released data and audits 1,026 non-ER weapon
+  occurrences on three independent axes. All 1,026 IDs are in the 236-weapon
+  released domain, all 1,026 refinements are unspecified, and 1,014 choices match
   the character's native weapon type while 12 legacy selections do not. The
   report does not equate ID membership with exact refinement coverage or
   runtime success. Three historical ER weapon conditions are inventoried but
   not analyzed.
 - `artifact-choice-search-coverage.json` calls the current analyzer candidate
-  builders and classifies all 1,072 artifact-choice fields on non-rejected
+  builders and classifies all 1,075 artifact-choice fields on non-rejected
   guide and team records against its released search grammar. The grammar
   contains 43 initial four-piece keys and at most 14 conditionally discovered
-  two-piece pairs. Of those occurrences, 1,023 are initially enumerated, 21
+  two-piece pairs. Of those occurrences, 1,026 are initially enumerated, 21
   are conditionally representable, and 28 are not representable by the current
   grammar. Two of the initially enumerated occurrences are assignments in one
   coupled plan; they are audited individually, not jointly optimized. It runs
   no generation, damage, score, rank, or winner logic and does not support
   guide claims.
 - `knowledge-corpus-inventory.json` describes explicit record, evidence-field,
-  source, and character presence across the consolidated repository. It emits
-  no quality score, source vote, average, recommendation, or rank. ER guidance
-  remains visible only in kind/status totals while ER is deferred.
+  source, and character presence across the consolidated repository. The
+  current 402 records contain 191 baseline and 211 candidate entries: 164
+  character guides, 3 roles, 1 energy guidance, 1 rotation fixture, 226 exact
+  teams, and 7 templates. It emits no quality score, source vote, average,
+  recommendation, or rank. ER guidance remains visible only in kind/status
+  totals while ER is deferred.
 - `team-template-coverage.json` compares external templates and exact manual
   teams with exact baseline rosters. It emits present, uncovered, or explicitly
   role-unresolved results and no quality score, rank, or winner. The current
-  result has 3 present, 1 role-unresolved, and 3 uncovered templates, plus 3
+  result has 3 present, 1 role-unresolved, and 3 uncovered templates, plus 4
   present and 12 uncovered exact external teams. Exact-team outcomes are
   character-roster-only, preserve member investment scopes, and explicitly do
   not evaluate investment. Keqing Lunar-Charged is
@@ -576,28 +610,33 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-six globally integrated reports in memory
-and rejects stale checked-in output. Checkpoint 35's thirty-second durable
-report remains outside that runner because ArtifactRatingDB is permission-
-mixed and consolidation-blocked. Checkpoint 36 adds durable report 33 and
+In full mode `validate.ts` rebuilds all thirty-seven globally integrated reports
+in memory and rejects stale checked-in output. `--defer-er` skips only the
+historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
+thirty-second durable report remains outside that runner because
+ArtifactRatingDB has mixed permission and blocked consolidation. Checkpoint 36
+adds durable report 33 and
 globally integrates it as report 32. Checkpoint 37 adds durable report 34 and
 globally integrates it as report 33. Checkpoint 38 adds durable report 35 and
-globally integrates it as report 34. Its final 2,011,250-byte report has
+globally integrates it as report 34. Its current 2,011,434-byte report has
 SHA-256
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 Checkpoint 39 adds durable report 36 and globally integrates it as report 35.
-Its final 17,496,526-byte report has SHA-256
-`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+Its current 17,499,104-byte report has SHA-256
+`d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`.
 Checkpoint 40 adds durable report 37 and globally integrates it as report 36.
 Its final 2,029,334-byte report has SHA-256
-`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
-The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
-skip; validation has zero errors and the same 12 existing warnings.
+`a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`.
+Checkpoint 41 adds durable report 38 and globally integrates it as report 37.
+Its final 71,373-byte report has SHA-256
+`c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`.
 
-The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
-manual coverage remains 19 source files and 73 generated-from paths, and the
-Klee witness remains six source files, 76 generated-from paths, and 63 upstream
-bindings. Checkpoints 35 through 40 change none of those ledgers. Checkpoint 38
+The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged.
+The Xiao refresh expands current manual coverage to 8 guide snapshots, 71
+records, 163 condition arrays, 19 source files, and 77 generated-from paths; the
+Klee witness now authenticates six source files, 81 generated-from paths, and 63
+upstream bindings. These provenance and unbound-coverage changes do not add a
+catalog entry. Checkpoint 38
 executes the generator and replay runtime but produces no source, guide,
 team/equipment recommendation, rank, damage, DPS, gameplay, optimality,
 promotion, ideal-stat allocation, or ER claim. Its 139 intact-endpoint matches
@@ -609,8 +648,11 @@ and 23 displayed allocations, tests their display-round trips, and compares
 without producing ranks, weights, correctness verdicts, or exact roll counts.
 Checkpoint 40 shows that one-shot, iterative best-improvement, and declared
 first-improvement policies can terminate at three different nodes from the same
-start, while making no fresh runtime evaluation. The next non-ER checkpoint
-should summarize all 36 starts and all 3,456 effective declared orders through
-compact partitions and witness traces. The Diona ER report is historical and
-deliberately decoupled from unrelated knowledge-repository changes while ER
-work is deferred.
+start, while making no fresh runtime evaluation. Checkpoint 41 covers all 36
+starts and all 864 structurally effective declared orders through 31,104 traces,
+compact partitions, digests, and witness paths. It records 24/12 best-
+improvement basins and 18,576/12,528 declared-order terminal outcomes without
+fresh runtime evaluation. The next non-ER boundary should use the expanded
+repository for a second character/team slice. The Diona ER report is historical
+and deliberately decoupled from unrelated knowledge-repository changes while
+ER work is deferred.

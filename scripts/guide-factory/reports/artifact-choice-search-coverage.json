@@ -3,7 +3,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
@@ -11,7 +11,7 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -14785,6 +14785,110 @@
           },
           "sourceId": "kqm",
           "sourceRecordId": "noelle-general-husk-luna-viii"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "long_nights_oath",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "xiao",
+      "classification": "recommended",
+      "conditions": [
+        "Xiao can perform consistent uninterrupted High Plunges and is evaluated with the source's four-stack baseline.",
+        "The source calls this best-in-slot in Bennett teams and competitive in Xianyun teams."
+      ],
+      "grouping": "single",
+      "maxConstellation": 5,
+      "observationId": "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5:recommendation:lno-consistent-plunge-c0-c5-branch:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Long Night's Oath consistent-plunge branch for non-C6 Xiao",
+      "recordId": "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "lno-consistent-plunge-c0-c5-branch",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Recommended Artifact Sets > 4pc Long Night's Oath",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-lno-artifact-branch-c0-c5-version-5-5"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "marechaussee_hunter",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "xiao",
+      "classification": "conditional",
+      "conditions": [
+        "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5:recommendation:mh-xianyun-ffxx-branch:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Marechaussee Hunter Xianyun and FFXX branch",
+      "recordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "mh-xianyun-ffxx-branch",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Recommended Artifact Sets > 4pc Marechaussee Hunter",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-mh-artifact-branch-version-5-5"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "vermillion_hereafter",
+        "type": "4pc"
+      },
+      "artifactIndex": 0,
+      "characterId": "xiao",
+      "classification": "recommended",
+      "conditions": [
+        "The scenario has fewer external buffs and more AoE, where the source says Vermillion Hereafter performs best."
+      ],
+      "grouping": "single",
+      "observationId": "kqm:character-guide:xiao-vha-artifact-branch-version-5-5:recommendation:vha-lower-buff-aoe-branch:0:0",
+      "outcome": "enumerated-initially",
+      "recommendationGroupIndex": 0,
+      "recommendationLabel": "Vermillion Hereafter lower-buff and AoE branch",
+      "recordId": "kqm:character-guide:xiao-vha-artifact-branch-version-5-5",
+      "recordStatus": "candidate",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "character-guide-recommendation",
+      "sourceRecordId": "vha-lower-buff-aoe-branch",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Artifacts > Recommended Artifact Sets > 4pc Vermillion Hereafter",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-vha-artifact-branch-version-5-5"
         }
       ]
     },
@@ -30895,9 +30999,9 @@
   "summary": {
     "all": {
       "conditionallyRepresentable": 21,
-      "enumeratedInitially": 1023,
+      "enumeratedInitially": 1026,
       "notRepresentable": 28,
-      "total": 1072
+      "total": 1075
     },
     "byFailureReason": {
       "beta-only-artifact": 0,
@@ -30919,9 +31023,9 @@
     },
     "recommendations": {
       "conditionallyRepresentable": 0,
-      "enumeratedInitially": 34,
+      "enumeratedInitially": 37,
       "notRepresentable": 8,
-      "total": 42
+      "total": 45
     },
     "teamArtifactPlanAssignments": {
       "conditionallyRepresentable": 0,

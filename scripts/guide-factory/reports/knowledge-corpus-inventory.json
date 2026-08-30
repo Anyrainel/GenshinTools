@@ -637,8 +637,10 @@
       },
       "characterId": "faruzan",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 1,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 8,
@@ -646,7 +648,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -719,7 +721,7 @@
       },
       "characterId": "furina",
       "externalEditorial": {
-        "recordCount": 20,
+        "recordCount": 21,
         "sourceIds": [
           "kqm"
         ]
@@ -2135,7 +2137,7 @@
       },
       "characterId": "xianyun",
       "externalEditorial": {
-        "recordCount": 1,
+        "recordCount": 2,
         "sourceIds": [
           "kqm"
         ]
@@ -2157,8 +2159,10 @@
       },
       "characterId": "xiao",
       "externalEditorial": {
-        "recordCount": 0,
-        "sourceIds": []
+        "recordCount": 7,
+        "sourceIds": [
+          "kqm"
+        ]
       },
       "other": {
         "recordCount": 4,
@@ -2166,7 +2170,7 @@
           "legacy-team-research"
         ]
       },
-      "presence": "baseline-only"
+      "presence": "both"
     },
     {
       "baseline": {
@@ -2412,7 +2416,7 @@
   "classification": "descriptive-inventory",
   "definitions": {
     "characterPresence": "Character presence is derived only from character-guide subjects, exact-team members, explicit character selectors in team templates, and named members in source-scoped character-role records. Element, role, and any selectors are not expanded.",
-    "erExclusion": "Energy-guidance records remain visible in kind and status totals, but their targets, weapon conditions, rotations, and character associations do not contribute to evidence or character-presence counts.",
+    "erExclusion": "Energy-guidance and rotation-fixture records remain visible in kind and status totals, but their targets, source-token counts, weapon conditions, rotations, and character associations do not contribute to evidence or character-presence counts.",
     "evidenceCounts": "recordsWith fields count records containing at least one explicit value; occurrence fields count each stored ID, choice object, stat group, or rotation entry without deduplication. Artifact occurrences include every coupled-plan assignment as a separate stored choice while preserving the plan in the repository.",
     "exactTeams": "An exact team is a record of kind team, whose schema names exactly four characters. A team template is counted separately and is never expanded into exact teams.",
     "externalEditorial": "External editorial presence means an attributed source whose registry kind is editorial or structured-editorial. Baseline presence means record status baseline; other records are reported separately.",
@@ -2422,15 +2426,15 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
     },
     {
       "path": "scripts/guide-factory/src/corpusInventory.ts",
-      "sha256": "dace5325dbc67ab1cdda996513eba53d194ef4e0731a311e50843c9814c52ed4"
+      "sha256": "b6c905a98736c0211e710def20f3f8a0e7a086a6cf302e9350564a0e9d374c76"
     }
   ],
   "prohibitedInterpretations": [
@@ -2447,6 +2451,7 @@
         "character_guide": 120,
         "character_role": 0,
         "energy_guidance": 0,
+        "rotation_fixture": 0,
         "team": 71,
         "team_template": 0
       },
@@ -2480,37 +2485,38 @@
     },
     {
       "byKind": {
-        "character_guide": 38,
+        "character_guide": 44,
         "character_role": 3,
         "energy_guidance": 1,
-        "team": 15,
+        "rotation_fixture": 1,
+        "team": 16,
         "team_template": 7
       },
       "byStatus": {
         "accepted": 0,
         "baseline": 0,
-        "candidate": 64,
+        "candidate": 72,
         "contested": 0,
         "rejected": 0
       },
       "evidence": {
-        "artifactChoiceOccurrences": 44,
-        "exactTeamRecords": 15,
-        "exactTeamRecordsWithRotations": 12,
-        "exactTeamRotationEntries": 16,
-        "mainStatGroups": 34,
-        "mainStatIdOccurrences": 42,
-        "recordsWithArtifacts": 15,
-        "recordsWithMainStats": 8,
-        "recordsWithSubstats": 7,
-        "recordsWithWeapons": 18,
-        "substatGroups": 20,
-        "substatIdOccurrences": 26,
+        "artifactChoiceOccurrences": 47,
+        "exactTeamRecords": 16,
+        "exactTeamRecordsWithRotations": 13,
+        "exactTeamRotationEntries": 18,
+        "mainStatGroups": 41,
+        "mainStatIdOccurrences": 51,
+        "recordsWithArtifacts": 18,
+        "recordsWithMainStats": 9,
+        "recordsWithSubstats": 8,
+        "recordsWithWeapons": 20,
+        "substatGroups": 22,
+        "substatIdOccurrences": 29,
         "teamTemplateRecords": 7,
-        "weaponIdOccurrences": 45
+        "weaponIdOccurrences": 59
       },
       "ingestionMode": "manual-observation",
-      "records": 64,
+      "records": 72,
       "sourceId": "kqm",
       "sourceKind": "editorial"
     },
@@ -2519,6 +2525,7 @@
         "character_guide": 0,
         "character_role": 0,
         "energy_guidance": 0,
+        "rotation_fixture": 0,
         "team": 139,
         "team_template": 0
       },
@@ -2554,36 +2561,37 @@
   "supportsGuideClaims": false,
   "totals": {
     "byKind": {
-      "character_guide": 158,
+      "character_guide": 164,
       "character_role": 3,
       "energy_guidance": 1,
-      "team": 225,
+      "rotation_fixture": 1,
+      "team": 226,
       "team_template": 7
     },
     "byStatus": {
       "accepted": 0,
       "baseline": 191,
-      "candidate": 203,
+      "candidate": 211,
       "contested": 0,
       "rejected": 0
     },
     "evidence": {
-      "artifactChoiceOccurrences": 1072,
-      "exactTeamRecords": 225,
-      "exactTeamRecordsWithRotations": 12,
-      "exactTeamRotationEntries": 16,
-      "mainStatGroups": 746,
-      "mainStatIdOccurrences": 754,
-      "recordsWithArtifacts": 345,
-      "recordsWithMainStats": 128,
-      "recordsWithSubstats": 127,
-      "recordsWithWeapons": 337,
-      "substatGroups": 610,
-      "substatIdOccurrences": 616,
+      "artifactChoiceOccurrences": 1075,
+      "exactTeamRecords": 226,
+      "exactTeamRecordsWithRotations": 13,
+      "exactTeamRotationEntries": 18,
+      "mainStatGroups": 753,
+      "mainStatIdOccurrences": 763,
+      "recordsWithArtifacts": 348,
+      "recordsWithMainStats": 129,
+      "recordsWithSubstats": 128,
+      "recordsWithWeapons": 339,
+      "substatGroups": 612,
+      "substatIdOccurrences": 619,
       "teamTemplateRecords": 7,
-      "weaponIdOccurrences": 1012
+      "weaponIdOccurrences": 1026
     },
-    "records": 394,
-    "sourceAttributedRecords": 394
+    "records": 402,
+    "sourceAttributedRecords": 402
   }
 }

@@ -582,12 +582,37 @@ const ManualEnergyGuidanceRecordSchema = z
   })
   .strict();
 
+export const SourceFormulaCountSchema = z
+  .object({
+    sourceToken: IdSchema,
+    label: z.string().min(1),
+    count: z.number().int().positive(),
+  })
+  .strict();
+
+const SourceFormulaCountsSchema = z.array(SourceFormulaCountSchema).min(1);
+
+export const ManualRotationFixtureRecordSchema = z
+  .object({
+    kind: z.literal("rotation_fixture"),
+    sourceRecordId: IdSchema,
+    locator: SourceLocatorSchema,
+    supportingLocators: z.array(SourceLocatorSchema).default([]),
+    extraction: ManualExtractionSchema,
+    characterId: IdSchema,
+    rotation: RotationObservationSchema,
+    formulaCounts: SourceFormulaCountsSchema,
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
 export const ManualObservationRecordSchema = z.discriminatedUnion("kind", [
   ManualCharacterGuideRecordSchema,
   ManualCharacterRoleRecordSchema,
   ManualTeamRecordSchema,
   ManualTeamTemplateRecordSchema,
   ManualEnergyGuidanceRecordSchema,
+  ManualRotationFixtureRecordSchema,
 ]);
 
 export const ManualObservationSnapshotSchema = z
@@ -880,6 +905,20 @@ export const KnowledgeEnergyGuidanceSchema = z
   })
   .strict();
 
+export const KnowledgeRotationFixtureSchema = z
+  .object({
+    id: IdSchema,
+    kind: z.literal("rotation_fixture"),
+    status: KnowledgeStatusSchema,
+    promotionEligible: z.boolean().optional(),
+    characterId: IdSchema,
+    rotation: RotationObservationSchema,
+    formulaCounts: SourceFormulaCountsSchema,
+    sourceRefs: z.array(SourceReferenceSchema).min(1),
+    unknowns: UnknownsSchema,
+  })
+  .strict();
+
 export const KnowledgeCharacterGuideSchema = z
   .object({
     id: IdSchema,
@@ -901,6 +940,7 @@ export const KnowledgeRecordSchema = z.discriminatedUnion("kind", [
   KnowledgeCharacterRoleSchema,
   KnowledgeCharacterGuideSchema,
   KnowledgeEnergyGuidanceSchema,
+  KnowledgeRotationFixtureSchema,
 ]);
 
 export const KnowledgeRepositorySchema = z

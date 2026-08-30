@@ -14,6 +14,7 @@ const RECORD_KINDS = [
   "character_guide",
   "character_role",
   "energy_guidance",
+  "rotation_fixture",
   "team",
   "team_template",
 ] as const;
@@ -209,7 +210,7 @@ export function buildKnowledgeCorpusInventoryReport(
       externalEditorial:
         "External editorial presence means an attributed source whose registry kind is editorial or structured-editorial. Baseline presence means record status baseline; other records are reported separately.",
       erExclusion:
-        "Energy-guidance records remain visible in kind and status totals, but their targets, weapon conditions, rotations, and character associations do not contribute to evidence or character-presence counts.",
+        "Energy-guidance and rotation-fixture records remain visible in kind and status totals, but their targets, source-token counts, weapon conditions, rotations, and character associations do not contribute to evidence or character-presence counts.",
     },
     prohibitedInterpretations: [
       "quality-score",
@@ -237,6 +238,7 @@ function emptyRecordCounts(): CorpusInventoryRecordCounts {
       character_guide: 0,
       character_role: 0,
       energy_guidance: 0,
+      rotation_fixture: 0,
       team: 0,
       team_template: 0,
     },
@@ -305,6 +307,7 @@ function addRecord(
 
 function observeEvidence(record: KnowledgeRecord): EvidenceObservation {
   if (record.kind === "energy_guidance") return emptyEvidenceObservation();
+  if (record.kind === "rotation_fixture") return emptyEvidenceObservation();
   if (record.kind === "character_role") return emptyEvidenceObservation();
   if (record.kind === "team_template") {
     return {
@@ -437,7 +440,12 @@ function addCharacterPresence(
   attributedSourceIds: string[],
   manifests: ReadonlyMap<string, SourceRegistry["sources"][number]>,
 ): void {
-  if (record.kind === "energy_guidance") return;
+  if (
+    record.kind === "energy_guidance" ||
+    record.kind === "rotation_fixture"
+  ) {
+    return;
+  }
   const characterIds = explicitCharacterIds(record);
   if (characterIds.length === 0) return;
 

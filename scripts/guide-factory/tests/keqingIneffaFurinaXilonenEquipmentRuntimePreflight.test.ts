@@ -16,7 +16,7 @@ import { REPOSITORY_ROOT } from "../src/paths";
 import type { SourceBackedEquipmentRuntimePreflightEnvironment } from "../src/sourceBackedEquipmentRuntimePreflight";
 
 const EXPECTED_REPORT_SHA256 =
-  "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec";
+  "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b";
 
 describe("Keqing/Ineffa/Furina/Xilonen equipment runtime preflight", () => {
   it("authenticates both upstream reports and materializes all 36 nodes without evaluating them", async () => {

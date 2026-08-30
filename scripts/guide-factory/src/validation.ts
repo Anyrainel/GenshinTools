@@ -321,6 +321,28 @@ export function validateManualObservationSnapshot(
       continue;
     }
 
+    if (record.kind === "rotation_fixture") {
+      validateCharacterId(
+        record.characterId,
+        `${recordPath}.characterId`,
+        catalogs,
+        "warning",
+        diagnostics
+      );
+      validateRotationObservation(
+        record.rotation,
+        `${recordPath}.rotation`,
+        diagnostics
+      );
+      checkDuplicateValues(
+        record.formulaCounts.map(({ sourceToken }) => sourceToken),
+        `${recordPath}.formulaCounts`,
+        "rotation_fixture.duplicate_source_token",
+        diagnostics
+      );
+      continue;
+    }
+
     if (record.kind === "energy_guidance") {
       validateCharacterId(
         record.characterId,
@@ -970,7 +992,9 @@ function validateManualSnapshotSourceRegistryEntry(
         ? "provenance.manual_source_missing"
         : problem.kind === "duplicate"
           ? "provenance.manual_source_registry_duplicate"
-          : "provenance.manual_source_format_mismatch",
+          : problem.kind === "not-permitted"
+            ? "provenance.manual_source_ingestion_not_permitted"
+            : "provenance.manual_source_format_mismatch",
     path: sourcePath,
     message: problem.message,
   });
@@ -1169,6 +1193,37 @@ function validateKnowledgeRecord(
     catalogSeverity,
     diagnostics
   );
+  if (record.kind === "rotation_fixture") {
+    if (record.status !== "candidate") {
+      diagnostics.push({
+        severity: "error",
+        code: "rotation_fixture.invalid_status",
+        path: `${recordPath}.status`,
+        message: "A source-authored rotation fixture must remain a candidate.",
+      });
+    }
+    if (record.promotionEligible !== false) {
+      diagnostics.push({
+        severity: "error",
+        code: "rotation_fixture.promotion_eligible",
+        path: `${recordPath}.promotionEligible`,
+        message:
+          "A source-authored rotation fixture must be explicitly promotion-ineligible.",
+      });
+    }
+    validateRotationObservation(
+      record.rotation,
+      `${recordPath}.rotation`,
+      diagnostics
+    );
+    checkDuplicateValues(
+      record.formulaCounts.map(({ sourceToken }) => sourceToken),
+      `${recordPath}.formulaCounts`,
+      "rotation_fixture.duplicate_source_token",
+      diagnostics
+    );
+    return;
+  }
   if (record.kind === "energy_guidance") {
     for (const [index, characterId] of [
       ...record.teamContext.requiredCharacterIds,

@@ -76,24 +76,24 @@ describe("weapon-choice candidate-policy coverage", () => {
         },
       },
       summary: {
-        all: { total: 1012 },
+        all: { total: 1026 },
         bySourceKind: {
           guideWeaponOrder: 127,
           teamSelectedWeapons: 840,
-          characterGuideRecommendations: 45,
+          characterGuideRecommendations: 59,
           teamMemberRecommendations: 0,
         },
         weaponIdDomain: {
-          inReleasedCandidateDomain: 1012,
+          inReleasedCandidateDomain: 1026,
           excludedFromReleasedCandidateDomain: 0,
         },
         refinementCoverage: {
           exactCandidate: 0,
-          unspecified: 1012,
+          unspecified: 1026,
           excludedByPolicy: 0,
         },
         nativeTypeCompatibility: {
-          compatible: 1000,
+          compatible: 1014,
           mismatched: 12,
           unknown: 0,
         },

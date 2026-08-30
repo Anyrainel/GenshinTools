@@ -1,8 +1,8 @@
 # Consolidated Knowledge Format V1
 
 The consolidated format is a union of exact-team, team-template,
-character-role, character-guide, and energy-guidance records. It does not merge
-assertions from different sources.
+character-role, character-guide, energy-guidance, and source-authored
+rotation-fixture records. It does not merge assertions from different sources.
 
 Every record has:
 
@@ -11,6 +11,15 @@ Every record has:
 - explicit promotion eligibility for external manual observations;
 - one or more source references;
 - explicit unknowns.
+
+An indexed manual observation may consolidate only when its source has exactly
+one registry entry, is active, uses `manual-observation` with
+`manual-observation-v1`, and is not `permission-required`. Missing, duplicate,
+planned, blocked, permission-required, or format-mismatched sources fail closed;
+collection validation reports the permission case as
+`provenance.manual_source_ingestion_not_permitted`. This gate authorizes the
+configured ingestion path only. It does not make the source authoritative or
+make an unreviewed record promotion-eligible.
 
 ## Team records
 
@@ -49,6 +58,16 @@ An optional formula-count damage plan contains positive counts for formulas
 owned by members of the team. Formula IDs are structurally validated in this
 checkpoint; engine availability and gameplay feasibility are deferred until an
 exact calculation variant exists.
+
+## Rotation-fixture records
+
+A rotation fixture preserves one source-authored character rotation plus
+positive exact counts under source-local action tokens. Consolidation keeps the
+rotation, token labels, counts, source references, and unknowns one-to-one. It
+does not map those tokens to calculator formula IDs, join equipment, infer ER,
+or attach the fixture to a team. These records must remain `candidate` with
+`promotionEligible: false`; a later comparison may observe a mismatch but
+cannot promote either side into rotation truth.
 
 ## Team-template records
 
@@ -330,15 +349,18 @@ a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
 The current authenticated catalog contains 63 entries: 60 typed bindings and 3
-exact-text acknowledgements. Full nonempty binding coverage is 60 typed, 3
-acknowledged, and 63 unbound. The non-structural partition is 123 rows: 60
-typed, 3 acknowledged, and 60 unbound. Its 86 unique ordered arrays contain 34
-typed-only, 51 unbound-only, and one mixed acknowledged/unbound set. The
-independent energy ledger is 15 deferred, 57 explicitly not energy-deferred, 54
-nonempty unclassified, and 16 empty unconditional arrays. Display status is 57
-typed, 51 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
-unconditional. Coverage authenticates eight wrapper families across 19 source
-files and 73 generated-from paths.
+exact-text acknowledgements. The guide-selected corpus contains 163 arrays from
+8 snapshots and 71 records: 20 empty and 143 nonempty. Full nonempty binding
+coverage is 60 typed, 3 acknowledged, and 80 unbound. The non-structural
+partition is 140 rows: 60 typed, 3 acknowledged, and 77 unbound. Its 102 unique
+ordered arrays contain 34 typed-only, 67 unbound-only, and one mixed
+acknowledged/unbound set. The independent energy ledger is 15 deferred, 57
+explicitly not energy-deferred, 71 nonempty unclassified, and 20 empty
+unconditional arrays. Display status is 57 typed, 68 known-but-unbound, 15 ER-
+deferred, 3 acknowledged, and 20 unconditional. Coverage authenticates eight
+wrapper families across 19 source files and 77 generated-from paths. The ninth
+indexed snapshot is the separate Xiao rotation fixture and contributes no
+condition array.
 
 ### Derived condition-resolved flat claim joins
 
@@ -517,8 +539,8 @@ Direct/compiled agreement is an implementation consistency check. These facts
 do not support damage, DPS, rank, recommendation, gameplay, or optimality.
 
 The checkpoint 38 report is durable report 35 overall and globally integrated
-report 34. Its 2,011,250 bytes have SHA-256
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+report 34. Its 2,011,434 bytes have SHA-256
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 Every source, guide, team/equipment recommendation, rank, damage,
 DPS, gameplay, optimality, promotion, and ER capability remains false.
 
@@ -545,8 +567,8 @@ They do not become correctness verdicts, scalar weights, ranks, or
 recommendations. ER values remain deferral provenance only.
 
 The checkpoint 39 report is durable report 36 overall and globally integrated
-report 35. Its 17,496,526 bytes have SHA-256
-`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+report 35. Its 17,499,104 bytes have SHA-256
+`d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`.
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
 promotion, and ER capability remains false.
 
@@ -573,11 +595,27 @@ counts and ER influence.
 
 The checkpoint 40 report is durable report 37 overall and globally integrated
 report 36. Its 2,029,334 bytes have SHA-256
-`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+`a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`.
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, global-
-optimality, promotion, and ER capability remains false. The next non-ER
-boundary is a compact all-start/all-order robustness census over the same
-cached table, not a computed equipment rank.
+optimality, promotion, and ER capability remains false.
+
+Checkpoint 41's robustness census is another derived cached-policy audit. It
+authenticates checkpoint 40 plus the cached-policy and census implementations,
+then runs one-shot and best improvement from all 36 starts and declared first
+improvement over all 864 structurally effective orders. Its 31,104 declared-
+order traces retain only compact endpoint partitions, digests, and witnesses:
+best improvement has 24/12 terminal basins, declared order has
+18,576/12,528 terminal outcomes, and the paths collapse to 13 start partitions
+and 96 all-start families with a seven-move maximum.
+
+No source row, review diagnostic, or ER value becomes an objective or policy
+filter. The default run records zero fresh generator, evaluator, replay,
+downstream-optimizer, recommendation, rank, or ER calls. The checkpoint 41
+report is durable report 38 overall and globally integrated report 37. Its
+71,373 bytes have SHA-256
+`c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`.
+Every guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+optimality, promotion, and ER capability remains false.
 
 ## Energy-guidance records
 
@@ -609,8 +647,10 @@ V1 does not define:
 - computed equipment rankings;
 - cross-source publication eligibility.
 
-Formula-count drafts and coverage reports are derived review evidence, not
-additional knowledge-record kinds. A calculator-default formula draft cannot
+Derived formula-count drafts and coverage reports are review evidence, not
+additional knowledge-record kinds. This is distinct from a source-authored
+`rotation_fixture`, which preserves only the source's own tokens and counts and
+still supplies no calculator mapping. A calculator-default formula draft cannot
 be placed in a team's `damagePlans` until its counts and assumptions have been
 reviewed as an authored validation target.
 

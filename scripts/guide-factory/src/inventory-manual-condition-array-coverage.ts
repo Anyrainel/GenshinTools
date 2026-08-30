@@ -10,6 +10,7 @@ import {
   MANUAL_CONDITION_ARRAY_COVERAGE_REPORT_PATH,
   MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS,
   requireComparableManualConditionArrayCoverageReport,
+  selectManualConditionCoverageSnapshots,
   type ManualConditionArrayCoverageReport,
 } from "./manualConditionArrayCoverageReport";
 import { loadManualSnapshotInputs } from "./manualSnapshots";
@@ -81,9 +82,8 @@ export async function runManualConditionArrayCoverageCli(): Promise<void> {
       ),
     ),
   ]);
-  const manualInputs = await loadManualSnapshotInputs(
-    manualIndexInput,
-    sourceRegistryInput,
+  const manualInputs = selectManualConditionCoverageSnapshots(
+    await loadManualSnapshotInputs(manualIndexInput, sourceRegistryInput),
   );
   const report = await buildManualConditionArrayCoverageReport({
     repositoryInput,

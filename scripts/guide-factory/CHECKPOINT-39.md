@@ -12,20 +12,22 @@ claim, gameplay validation, global optimum, publication candidate, or ER result.
 
 ## Authentication boundary
 
-The source-specific wrapper authenticates exactly eight selected, non-self
+The source-specific wrapper authenticates exactly five selected, non-self
 checkpoint inputs before invoking the generic capture core:
 
 - `scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json`;
-- `scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json`;
-- `scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json`;
-- `scripts/guide-factory/data/knowledge/repository.json`;
-- `scripts/guide-factory/data/source-snapshots/genshintools-presets.json`;
-- `src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json`;
 - `scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts`; and
-- `scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts`.
+- `scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts`;
+- `scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope.ts`; and
+- `scripts/guide-factory/src/scopedSemanticDependency.ts`.
+
+The semantic target scope authenticates 11 exact dependencies through selected
+record and preset projections, including 26 normalized source/consolidated
+parities. Unrelated repository, source-capture metadata, and preset drift do
+not invalidate the checkpoint, while relevant target drift fails closed.
 
 The producing wrapper, CLI, and output report are deliberately excluded to
-avoid self-reference. The eight paths are a selected checkpoint boundary, not
+avoid self-reference. The five paths are a selected checkpoint boundary, not
 an exhaustive transitive generator, `StatSheet`, or runtime dependency closure.
 The wrapper authenticates the exact generic result and full report after
 execution, so runtime drift cannot silently produce a different accepted
@@ -36,7 +38,7 @@ The checked-in CLI and global validator use the default real runner.
 After the intervening calculator correction, checkpoint 38 was resealed against
 the committed `src/lib/dmgcalc/utils.ts` bytes. Its output facts and result
 fingerprint remain unchanged. The current checkpoint 38 report SHA-256 is
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 
 ## Captured sheet and allocation domain
 
@@ -125,14 +127,14 @@ unreviewed.
 The checked-in report is
 `keqing-ineffa-furina-xilonen-generated-sheet-evidence.json`. Its current byte
 SHA-256 is
-`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`
-and its size is 17,496,526 bytes. It is durable report 36 overall and globally
+`d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`
+and its size is 17,499,104 bytes. It is durable report 36 overall and globally
 integrated report 35.
 
-The next non-ER checkpoint should audit the existing one-option-at-a-time
-policy against checkpoint 38's already complete 36-node cached table. It should
-compare a single best-neighbor pass, iterative best-improvement, an explicitly
-ordered first-improvement policy, and the exhaustive bounded-table reference
-without new generator calls or damage replays. This can reveal interactions and
-order sensitivity in a real finite case without pretending that rounded CP39
-substats expose legal, exact-roll exchanges.
+Checkpoint 40 subsequently audits the existing one-option-at-a-time policy
+against checkpoint 38's already complete 36-node cached table. It compares a
+single best-neighbor pass, iterative best improvement, an explicitly ordered
+first-improvement policy, and the exhaustive bounded-table reference without
+new generator calls or damage replays. This reveals interactions and order
+sensitivity in a real finite case without pretending that rounded CP39 substats
+expose legal, exact-roll exchanges.

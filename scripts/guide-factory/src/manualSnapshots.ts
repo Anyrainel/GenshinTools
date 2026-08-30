@@ -22,7 +22,7 @@ export interface ManualSnapshotRoots {
 }
 
 export interface ManualSourceRegistryProblem {
-  kind: "missing" | "duplicate" | "incompatible";
+  kind: "missing" | "duplicate" | "not-permitted" | "incompatible";
   sourceId: string;
   message: string;
 }
@@ -90,6 +90,18 @@ export function manualSourceRegistryProblem(
   }
 
   const manifest = matches[0];
+  if (
+    manifest.status !== "active" ||
+    manifest.permission === "permission-required"
+  ) {
+    return {
+      kind: "not-permitted",
+      sourceId,
+      message:
+        `Manual snapshot source ${sourceId} must be active and must not require permission; ` +
+        `the registry declares status ${manifest.status} and permission ${manifest.permission}.`,
+    };
+  }
   if (
     manifest.ingestionMode !== "manual-observation" ||
     manifest.recordFormat !== "manual-observation-v1"

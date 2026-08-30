@@ -12,6 +12,10 @@ import {
   type ManualObservationSnapshot,
 } from "./schemas";
 import {
+  requireIttoSourceConditionedGuidePacketScope,
+  type IttoPresetRosterCoverageRow,
+} from "./ittoSourceConditionedGuidePacketScope";
+import {
   authenticateSourceConditionedGuidePacketReport,
   buildSourceConditionedGuidePacketReport,
   type GeneratedFromEntry,
@@ -59,12 +63,11 @@ export const ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS = [
   "scripts/guide-factory/src/io.ts",
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/sourceBaselineInvestmentComparison.ts",
+  "scripts/guide-factory/src/ittoSourceConditionedGuidePacketScope.ts",
+  "scripts/guide-factory/src/scopedSemanticDependency.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
   ...TEAM_ROSTER_CANDIDATE_DOMAIN_STATIC_DEPENDENCY_PATHS,
-  "scripts/guide-factory/data/knowledge/repository.json",
   "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
-  "scripts/guide-factory/data/source-snapshots/manual-index.json",
-  "scripts/guide-factory/sources/registry.json",
 ] as const;
 
 const EXPERIMENT_ID = "itto-source-conditioned-guide-packets-v1";
@@ -73,37 +76,14 @@ const PAGE_URL = "https://keqingmains.com/q/itto-quickguide/";
 const SOURCE_VERSION = "Version 5.6";
 const MANUAL_SNAPSHOT_PATH =
   "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json";
-const REPOSITORY_PATH =
-  "scripts/guide-factory/data/knowledge/repository.json";
-const MANUAL_INDEX_PATH =
-  "scripts/guide-factory/data/source-snapshots/manual-index.json";
-const SOURCE_REGISTRY_PATH = "scripts/guide-factory/sources/registry.json";
 const PINNED_SOURCE_REVISIONS: Readonly<
   Record<string, { fileSha256: string; canonicalObjectSha256: string }>
 > = {
-  [REPOSITORY_PATH]: {
-    fileSha256:
-      "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-    canonicalObjectSha256:
-      "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-  },
   [MANUAL_SNAPSHOT_PATH]: {
     fileSha256:
       "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be",
     canonicalObjectSha256:
       "0a0dd2a6329445634c24226f9f0b22601d5b4690e9f766f36332059958f4d154",
-  },
-  [MANUAL_INDEX_PATH]: {
-    fileSha256:
-      "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010",
-    canonicalObjectSha256:
-      "c669b925cdbbf3b591bcac66f4e7ec42332f98dc5e1a37be128662fa40504630",
-  },
-  [SOURCE_REGISTRY_PATH]: {
-    fileSha256:
-      "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2",
-    canonicalObjectSha256:
-      "2974828169ee2a7290bdcb8108b30db5beabf8ea3a0eb879878fe468044501a8",
   },
 };
 
@@ -440,29 +420,24 @@ async function prepareCanonicalInput(
   const manualIndex = ManualSnapshotIndexSchema.parse(input.manualIndexInput);
   const sourceRegistry = SourceRegistrySchema.parse(input.sourceRegistryInput);
   authenticateJsonObject(
-    repository,
-    REPOSITORY_PATH,
-    input.generatedFrom,
-  );
-  authenticateJsonObject(
     manualSnapshot,
     MANUAL_SNAPSHOT_PATH,
     input.generatedFrom,
   );
-  authenticateJsonObject(
+  const semanticScope = requireIttoSourceConditionedGuidePacketScope({
+    repository,
+    manualSnapshot,
     manualIndex,
-    MANUAL_INDEX_PATH,
-    input.generatedFrom,
-  );
-  authenticateJsonObject(
     sourceRegistry,
-    SOURCE_REGISTRY_PATH,
-    input.generatedFrom,
+  });
+  assertSourceBoundary(
+    manualSnapshot,
+    semanticScope.manualIndexEntry,
+    semanticScope.sourceRegistryEntry,
   );
-  assertSourceBoundary(manualSnapshot, manualIndex, sourceRegistry);
 
   const recordsById = new Map(
-    repository.records.map((record) => [record.id, record]),
+    semanticScope.repositoryRecords.map((record) => [record.id, record]),
   );
   const guides = GUIDE_RECORD_IDS.map((recordId) =>
     requiredGuide(recordsById, recordId),
@@ -472,7 +447,7 @@ async function prepareCanonicalInput(
     requiredTeam(recordsById, recordId),
   );
   const rawRecordsById = new Map(
-    manualSnapshot.records.map((record) => [record.sourceRecordId, record]),
+    semanticScope.rawRecords.map((record) => [record.sourceRecordId, record]),
   );
   authenticateSelectedRepositoryRecords(
     guides,
@@ -516,8 +491,9 @@ async function prepareCanonicalInput(
       packetIndex,
       holdout: requiredHoldout(holdoutsById, team.id),
       template,
-      repositoryTeams: repository.records.filter(
-        (record): record is TeamRecord => record.kind === "team",
+      presetRosterCoverage: requiredPresetRosterCoverage(
+        semanticScope.presetRosterCoverage,
+        team.id,
       ),
     }),
   );
@@ -613,8 +589,8 @@ function authenticateJsonObject(
 
 function assertSourceBoundary(
   snapshot: ManualObservationSnapshot,
-  manualIndex: ReturnType<typeof ManualSnapshotIndexSchema.parse>,
-  sourceRegistry: ReturnType<typeof SourceRegistrySchema.parse>,
+  manualIndexEntry: ReturnType<typeof ManualSnapshotIndexSchema.parse>["snapshots"][number],
+  sourceManifest: ReturnType<typeof SourceRegistrySchema.parse>["sources"][number],
 ): void {
   if (
     snapshot.sourceId !== SOURCE_ID ||
@@ -647,24 +623,20 @@ function assertSourceBoundary(
       "The Itto packet publication boundary expects seven unreviewed agent-assisted records.",
     );
   }
-  const indexMatches = manualIndex.snapshots.filter(
-    (entry) =>
-      entry.sourceId === SOURCE_ID && entry.path === MANUAL_SNAPSHOT_PATH,
-  );
-  if (indexMatches.length !== 1) {
+  if (
+    manualIndexEntry.sourceId !== SOURCE_ID ||
+    manualIndexEntry.path !== MANUAL_SNAPSHOT_PATH
+  ) {
     throw new Error(
       "The manual index must contain exactly one pinned Itto snapshot entry.",
     );
   }
-  const manifests = sourceRegistry.sources.filter(({ id }) => id === SOURCE_ID);
-  const manifest = manifests[0];
   if (
-    manifests.length !== 1 ||
-    !manifest ||
-    manifest.status !== "active" ||
-    manifest.permission !== "unknown" ||
-    manifest.ingestionMode !== "manual-observation" ||
-    manifest.recordFormat !== "manual-observation-v1"
+    sourceManifest.id !== SOURCE_ID ||
+    sourceManifest.status !== "active" ||
+    sourceManifest.permission !== "unknown" ||
+    sourceManifest.ingestionMode !== "manual-observation" ||
+    sourceManifest.recordFormat !== "manual-observation-v1"
   ) {
     throw new Error(
       "The KQM registry entry is missing or incompatible with manual observation ingestion.",
@@ -690,10 +662,7 @@ function buildSourceBoundary(
     repositoryRecordStatus: "candidate",
     promotionEligible: false,
     sourceHashes: [
-      REPOSITORY_PATH,
       MANUAL_SNAPSHOT_PATH,
-      MANUAL_INDEX_PATH,
-      SOURCE_REGISTRY_PATH,
     ]
       .map((relativePath) => ({
         path: relativePath,
@@ -1194,13 +1163,13 @@ function buildTeamPacket(input: {
   packetIndex: number;
   holdout: TeamRosterHoldoutOutcome;
   template: CandidateTemplateRecord;
-  repositoryTeams: readonly TeamRecord[];
+  presetRosterCoverage: IttoPresetRosterCoverageRow;
 }): SourceTeamPacketInput {
   const { team, rawTeam, packetIndex, holdout, template } = input;
   const rawMembersById = new Map(
     rawTeam.members.map((member) => [member.characterId, member]),
   );
-  const presetOverlap = buildPresetOverlap(team, input.repositoryTeams);
+  const presetOverlap = buildPresetOverlap(team, input.presetRosterCoverage);
   const shouldHavePreset = packetIndex === 2;
   if (
     presetOverlap.rosterStatus !== (shouldHavePreset ? "present" : "uncovered")
@@ -1273,17 +1242,20 @@ function buildTeamPacket(input: {
 
 function buildPresetOverlap(
   sourceTeam: TeamRecord,
-  repositoryTeams: readonly TeamRecord[],
+  presetRosterCoverage: IttoPresetRosterCoverageRow,
 ): SourceTeamPacketInput["presetOverlap"] {
   const sourceRosterKey = rosterKey(
     sourceTeam.members.map(({ characterId }) => characterId),
   );
-  const matches = repositoryTeams.filter(
-    (candidate) =>
-      candidate.id.startsWith("genshintools-presets:team:") &&
-      rosterKey(candidate.members.map(({ characterId }) => characterId)) ===
-        sourceRosterKey,
-  );
+  if (
+    presetRosterCoverage.teamRecordId !== sourceTeam.id ||
+    presetRosterCoverage.rosterKey !== sourceRosterKey
+  ) {
+    throw new Error(
+      `Authenticated preset coverage does not match ${sourceTeam.id}.`,
+    );
+  }
+  const matches = presetRosterCoverage.matchingPresetTeams;
   if (matches.length === 0) {
     return {
       rosterStatus: "uncovered",
@@ -1340,6 +1312,19 @@ function buildPresetOverlap(
   };
 }
 
+function requiredPresetRosterCoverage(
+  rows: readonly IttoPresetRosterCoverageRow[],
+  teamRecordId: string,
+): IttoPresetRosterCoverageRow {
+  const matches = rows.filter((row) => row.teamRecordId === teamRecordId);
+  if (matches.length !== 1 || !matches[0]) {
+    throw new Error(
+      `Authenticated Itto scope expected one preset coverage row for ${teamRecordId}.`,
+    );
+  }
+  return matches[0];
+}
+
 function rosterKey(characterIds: readonly string[]): string {
   return [...characterIds].sort((left, right) => left.localeCompare(right)).join("\0");
 }
@@ -1348,12 +1333,7 @@ function failedCanonicalInput(
   input: BuildIttoSourceConditionedGuidePacketInput,
   error: unknown,
 ): SourceConditionedGuidePacketInput {
-  const sourcePaths = new Set([
-    REPOSITORY_PATH,
-    MANUAL_SNAPSHOT_PATH,
-    MANUAL_INDEX_PATH,
-    SOURCE_REGISTRY_PATH,
-  ]);
+  const sourcePaths = new Set([MANUAL_SNAPSHOT_PATH]);
   return {
     experimentId: EXPERIMENT_ID,
     generatedFrom: input.generatedFrom,

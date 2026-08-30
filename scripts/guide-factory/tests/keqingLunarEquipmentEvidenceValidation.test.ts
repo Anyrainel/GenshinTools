@@ -1,4 +1,6 @@
 import characterStatsInput from "@/data/game/character_stats.json";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -9,6 +11,7 @@ import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
   KEQING_LUNAR_EQUIPMENT_SOURCE_CONDITIONS,
   type KeqingLunarEquipmentEvidenceClaim,
+  type KeqingLunarEquipmentEvidenceValidationReport,
 } from "../src/keqingLunarEquipmentEvidenceValidation";
 import {
   KEQING_ROLE_PAIR_PAGE_URL,
@@ -32,7 +35,12 @@ import {
   KnowledgeRepositorySchema,
   type ManualObservationSnapshot,
   ManualObservationSnapshotSchema,
+  type ManualSnapshotIndex,
+  ManualSnapshotIndexSchema,
+  type SourceRegistry,
+  SourceRegistrySchema,
 } from "../src/schemas";
+import { writeKeqingLunarEquipmentEvidenceValidationReport } from "../src/validate-keqing-lunar-equipment-evidence";
 
 describe("Keqing Lunar equipment evidence structural validation", () => {
   it("acknowledges exact roster conditions across four published teams without generating recommendations", async () => {
@@ -47,11 +55,13 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     const report = buildKeqingLunarEquipmentEvidenceValidationReport(
       fixture.repository,
       fixture.manualInputs,
+      fixture.authority,
       generatedFrom,
     );
     const repeated = buildKeqingLunarEquipmentEvidenceValidationReport(
       fixture.repository,
       fixture.manualInputs,
+      fixture.authority,
       generatedFrom,
     );
 
@@ -66,7 +76,7 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
       observedCapturedAt: "2026-08-29",
       pageMatchesExpectation: true,
       expectedParticipatingRecordCount: 17,
-      observedSnapshotRecordCount: 24,
+      observedParticipatingRecordCount: 17,
       allRecordsPresentExactlyOnce: true,
       allExtractionStatesMatch: true,
       allManualPayloadsMatch: true,
@@ -84,6 +94,50 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
         "KQM asks readers to link the original guide when using it as a content reference; this snapshot stores narrow paraphrased claims and source locators.",
     });
     expect(report.sourceBoundary.records).toHaveLength(17);
+    expect(report.semanticScope).toMatchObject({
+      status: "accepted",
+      trust: "authenticated-current-input-rebuild-and-pinned-expectation",
+      scopeId: "keqing-lunar-equipment-evidence-v1",
+      manifestSha256:
+        "a2a0dd00c300182512e654fb106cac4e12eac0c83daf6ccf4650116853241ae4",
+      scopeProjectionSha256:
+        "23f13c9ca714e7d25f01199a629e280b2baa833a77272f57511bc3b423bd935f",
+      parity: {
+        configuredCount: 17,
+        exactCount: 17,
+      },
+    });
+    expect(report.semanticScope).not.toHaveProperty("acceptedAudit");
+    expect(report.semanticScope.dependencies).toHaveLength(8);
+    expect(
+      report.semanticScope.dependencies.map(
+        ({ dependencyId, selectedCount }) => ({
+          dependencyId,
+          selectedCount,
+        }),
+      ),
+    ).toEqual([
+      { dependencyId: "kqm-keqing-manual-guides", selectedCount: 17 },
+      { dependencyId: "kqm-keqing-repository-guides", selectedCount: 17 },
+      { dependencyId: "genshintools-keqing-baseline-guide", selectedCount: 1 },
+      { dependencyId: "kqm-keqing-lunar-target-teams", selectedCount: 4 },
+      { dependencyId: "kqm-keqing-snapshot-envelope", selectedCount: 1 },
+      { dependencyId: "manual-snapshot-index-entry", selectedCount: 1 },
+      { dependencyId: "kqm-source-registry-entry", selectedCount: 1 },
+      { dependencyId: "keqing-lunar-character-facts", selectedCount: 9 },
+    ]);
+    expect(
+      report.generatedFrom.map(({ path: inputPath }) => inputPath),
+    ).not.toEqual(
+      expect.arrayContaining([
+        "scripts/guide-factory/data/knowledge/repository.json",
+        "scripts/guide-factory/data/source-snapshots/manual-index.json",
+        "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+        "scripts/guide-factory/sources/registry.json",
+        "scripts/guide-factory/src/schemas.ts",
+        "src/data/game/character_stats.json",
+      ]),
+    );
     expect(
       report.sourceBoundary.records.map(({ sourceRecordId }) => sourceRecordId),
     ).toEqual([...KEQING_LUNAR_EQUIPMENT_EVIDENCE_RECORD_SOURCE_IDS]);
@@ -518,6 +572,59 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     );
   });
 
+  it("refuses unsafe output without overwriting the existing durable checkpoint", async () => {
+    const fixture = await loadFixture();
+    const report = buildKeqingLunarEquipmentEvidenceValidationReport(
+      fixture.repository,
+      fixture.manualInputs,
+      fixture.authority,
+    );
+    const temporaryDirectory = await mkdtemp(
+      path.join(tmpdir(), "guide-factory-keqing-evidence-"),
+    );
+    const outputPath = path.join(temporaryDirectory, "durable-report.json");
+    const trustedCheckpoint = '{"checkpoint":"trusted"}\n';
+
+    try {
+      await writeKeqingLunarEquipmentEvidenceValidationReport(
+        report,
+        outputPath,
+      );
+      expect(JSON.parse(await readFile(outputPath, "utf8"))).toMatchObject({
+        validationStatus: "comparable",
+      });
+
+      const rejectedReports = [
+        mutateReport(report, (candidate) => {
+          candidate.validationStatus = "not-comparable";
+        }),
+        mutateReport(report, (candidate) => {
+          candidate.supportsEquipmentRecommendations = true;
+        }),
+        mutateReport(report, (candidate) => {
+          candidate.sourceConditionBoundary.buildGameplayAndRefinementConditionsRemainUnresolved =
+            false;
+        }),
+        mutateReport(report, (candidate) => {
+          candidate.searchCoverageBoundary.sourceRefinementsInferred = true;
+        }),
+      ];
+
+      for (const rejectedReport of rejectedReports) {
+        await writeFile(outputPath, trustedCheckpoint, "utf8");
+        await expect(
+          writeKeqingLunarEquipmentEvidenceValidationReport(
+            rejectedReport,
+            outputPath,
+          ),
+        ).rejects.toThrow(/Refusing to write/);
+        expect(await readFile(outputPath, "utf8")).toBe(trustedCheckpoint);
+      }
+    } finally {
+      await rm(temporaryDirectory, { recursive: true, force: true });
+    }
+  });
+
   it("fails closed on condition prose drift instead of parsing or inferring it", async () => {
     const fixture = await loadFixture();
     const repository = structuredClone(fixture.repository);
@@ -541,37 +648,13 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     if (!entry) throw new Error("Missing consolidated default Keqing Sands claim.");
     entry.conditions[0] = `${entry.conditions[0]} Drifted.`;
 
-    const report = buildKeqingLunarEquipmentEvidenceValidationReport(
-      repository,
-      manualInputs,
-    );
-
-    expect(report.validationStatus).toBe("not-comparable");
-    expect(report.sourceBoundary.allManualPayloadsMatch).toBe(false);
-    expect(report.sourceBoundary.allRepositoryRecommendationsMatchManual).toBe(
-      true,
-    );
-    expect(report.sourceConditionBoundary).toMatchObject({
-      allSourceConditionsMappedExactly: false,
-      mappedSourceConditionCount: 16,
-      unmappedSourceConditions: [
-        `${KEQING_LUNAR_EQUIPMENT_SOURCE_CONDITIONS.lunarCharged} Drifted.`,
-      ],
-    });
-    const sandsClaim = report.claims.find(
-      ({ claimId }) =>
-        claimId.endsWith(
-          "default-artifact-stats-luna-i:main-stat:sands:0",
-        ),
-    );
-    expect(sandsClaim?.allSourceConditionsMappedExactly).toBe(false);
-    expect(
-      sandsClaim?.teamResolutions.every(
-        ({ resolution, conditionAcknowledgements }) =>
-          resolution === "withheld-unresolved-source-condition" &&
-          conditionAcknowledgements[0]?.predicateId == null,
+    expect(() =>
+      buildKeqingLunarEquipmentEvidenceValidationReport(
+        repository,
+        manualInputs,
+        fixture.authority,
       ),
-    ).toBe(true);
+    ).toThrow(/semantic scope authentication failed/);
   });
 
   it("fails closed when consolidated unknowns or exact same-page source references drift", async () => {
@@ -588,30 +671,13 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
       (unknown) => unknown !== unknownGap,
     );
 
-    const unknownReport =
+    expect(() =>
       buildKeqingLunarEquipmentEvidenceValidationReport(
         unknownRepository,
         fixture.manualInputs,
-      );
-    const unknownRecord = unknownReport.sourceBoundary.records.find(
-      ({ sourceRecordId }) =>
-        sourceRecordId ===
-        "keqing-lunar-charged-other-five-star-crit-options-luna-i",
-    );
-    expect(unknownReport.validationStatus).toBe("not-comparable");
-    expect(unknownReport.sourceBoundary).toMatchObject({
-      allManualPayloadsMatch: true,
-      allRepositoryPayloadsMatch: false,
-      allRepositoryRecommendationsMatchManual: true,
-      allRepositoryStatesMatch: true,
-      allRepositoryPagesMatch: true,
-    });
-    expect(unknownRecord).toMatchObject({
-      manualPayloadMatchesExpectation: true,
-      repositoryPayloadMatchesExpectation: false,
-      repositoryRecommendationMatchesManual: true,
-      repositoryUsesExactPage: true,
-    });
+        fixture.authority,
+      ),
+    ).toThrow(/semantic scope authentication failed/);
 
     for (const mutateRef of [
       (guide: ReturnType<typeof requiredRepositoryGuide>) => {
@@ -633,74 +699,30 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
         "kqm:character-guide:keqing-lunar-charged-other-five-star-crit-options-luna-i",
       );
       mutateRef(guide);
-      const report = buildKeqingLunarEquipmentEvidenceValidationReport(
-        repository,
-        fixture.manualInputs,
-      );
-      const boundary = report.sourceBoundary.records.find(
-        ({ sourceRecordId }) =>
-          sourceRecordId ===
-          "keqing-lunar-charged-other-five-star-crit-options-luna-i",
-      );
-      expect(report.validationStatus).toBe("not-comparable");
-      expect(report.sourceBoundary).toMatchObject({
-        allManualPayloadsMatch: true,
-        allRepositoryPayloadsMatch: false,
-        allRepositoryRecommendationsMatchManual: true,
-        allRepositoryPagesMatch: true,
-      });
-      expect(boundary).toMatchObject({
-        repositoryPayloadMatchesExpectation: false,
-        repositoryRecommendationMatchesManual: true,
-        repositoryUsesExactPage: true,
-      });
+      expect(() =>
+        buildKeqingLunarEquipmentEvidenceValidationReport(
+          repository,
+          fixture.manualInputs,
+          fixture.authority,
+        ),
+      ).toThrow(/semantic scope authentication failed/);
     }
   });
 
-  it("keeps roster predicate truth separate from target metadata comparability", async () => {
+  it("rejects target metadata drift before deriving condition applicability", async () => {
     const fixture = await loadFixture();
     const repository = structuredClone(fixture.repository);
     const targetTeamId = KEQING_ROLE_PAIR_TARGET_TEAM_IDS[0];
     const target = requiredRepositoryTeam(repository, targetTeamId);
     target.status = "accepted";
 
-    const report = buildKeqingLunarEquipmentEvidenceValidationReport(
-      repository,
-      fixture.manualInputs,
-    );
-    const targetBoundary = report.publishedTeamBoundary.targets.find(
-      ({ teamRecordId }) => teamRecordId === targetTeamId,
-    );
-    const mistsplitter = findClaim(
-      report.claims,
-      "keqing-lunar-charged-general-mistsplitter-luna-i",
-      "weapon",
-      0,
-      0,
-    );
-    const targetResolution = mistsplitter.teamResolutions.find(
-      ({ teamRecordId }) => teamRecordId === targetTeamId,
-    );
-
-    expect(report.validationStatus).toBe("not-comparable");
-    expect(report.publishedTeamBoundary.allTargetsMatchExpectation).toBe(false);
-    expect(targetBoundary).toMatchObject({
-      sourceStatus: "accepted",
-      matchesExpectedBoundary: false,
-      containsKeqing: true,
-      recordsLunarCharged: true,
-      declaredLunarChargedFactsMatch: true,
-    });
-    expect(targetResolution).toMatchObject({
-      resolution: "matched-by-exact-team-facts",
-      conditionAcknowledgements: [
-        {
-          predicateId:
-            "roster-contains-keqing-and-declares-lunar-charged",
-          resolution: "matched-by-exact-team-facts",
-        },
-      ],
-    });
+    expect(() =>
+      buildKeqingLunarEquipmentEvidenceValidationReport(
+        repository,
+        fixture.manualInputs,
+        fixture.authority,
+      ),
+    ).toThrow(/semantic scope authentication failed/);
   });
 
   it("derives and gates gameplay/refinement safety from actual claim acknowledgements", async () => {
@@ -708,6 +730,7 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     const report = buildKeqingLunarEquipmentEvidenceValidationReport(
       fixture.repository,
       fixture.manualInputs,
+      fixture.authority,
     );
     const safety = deriveKeqingLunarEvidenceClaimSafety(report.claims);
     expect(safety).toEqual({
@@ -845,7 +868,7 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     ).toBe(false);
   });
 
-  it("detects candidate-state, baseline-payload, and released-region drift", async () => {
+  it("rejects candidate-state, baseline-payload, and released-region drift at the semantic boundary", async () => {
     const fixture = await loadFixture();
 
     const acceptedRepository = structuredClone(fixture.repository);
@@ -855,12 +878,13 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     );
     externalGuide.status = "accepted";
     externalGuide.promotionEligible = true;
-    const acceptedReport = buildKeqingLunarEquipmentEvidenceValidationReport(
-      acceptedRepository,
-      fixture.manualInputs,
-    );
-    expect(acceptedReport.validationStatus).toBe("not-comparable");
-    expect(acceptedReport.sourceBoundary.allRepositoryStatesMatch).toBe(false);
+    expect(() =>
+      buildKeqingLunarEquipmentEvidenceValidationReport(
+        acceptedRepository,
+        fixture.manualInputs,
+        fixture.authority,
+      ),
+    ).toThrow(/semantic scope authentication failed/);
 
     const baselineDriftRepository = structuredClone(fixture.repository);
     const baselineGuide = requiredRepositoryGuide(
@@ -872,41 +896,30 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     );
     if (!baselineBuild) throw new Error("Missing Keqing baseline build.");
     baselineBuild.substats[0].weight = 99;
-    const baselineDriftReport =
+    expect(() =>
       buildKeqingLunarEquipmentEvidenceValidationReport(
         baselineDriftRepository,
         fixture.manualInputs,
-      );
-    expect(baselineDriftReport.validationStatus).toBe("not-comparable");
-    expect(baselineDriftReport.baselineBoundary).toMatchObject({
-      buildPresentExactlyOnce: true,
-      buildPayloadMatchesExactly: false,
-      allChecksMatch: false,
-    });
+        fixture.authority,
+      ),
+    ).toThrow(/semantic scope authentication failed/);
 
-    const characterRegions = Object.fromEntries(
+    const characterFacts = Object.fromEntries(
       Object.entries(characterStatsInput).map(([characterId, stats]) => [
         characterId,
-        stats.region,
+        { region: stats.region, weaponType: stats.weaponType },
       ]),
     );
-    characterRegions.aino = "Mondstadt";
-    const regionDriftReport =
+    characterFacts.aino.region = "Mondstadt";
+    expect(() =>
       buildKeqingLunarEquipmentEvidenceValidationReport(
         fixture.repository,
         fixture.manualInputs,
+        fixture.authority,
         [],
-        { characterRegions },
-      );
-    expect(regionDriftReport.validationStatus).toBe("not-comparable");
-    expect(regionDriftReport.publishedTeamBoundary).toMatchObject({
-      allTargetsMatchExpectation: false,
-    });
-    expect(regionDriftReport.publishedTeamBoundary.targets[0]).toMatchObject({
-      nodKraiCharacterIds: ["ineffa"],
-      nodKraiCharacterCount: 1,
-      matchesExpectedBoundary: false,
-    });
+        { characterFacts },
+      ),
+    ).toThrow(/semantic scope authentication failed/);
   });
 
   it("allows unrelated future records in the same source snapshot", async () => {
@@ -927,12 +940,13 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     const report = buildKeqingLunarEquipmentEvidenceValidationReport(
       fixture.repository,
       manualInputs,
+      fixture.authority,
     );
 
     expect(report.validationStatus).toBe("comparable");
     expect(report.sourceBoundary).toMatchObject({
       expectedParticipatingRecordCount: 17,
-      observedSnapshotRecordCount: 25,
+      observedParticipatingRecordCount: 17,
       allRecordsPresentExactlyOnce: true,
       allManualPayloadsMatch: true,
     });
@@ -943,6 +957,10 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
 interface Fixture {
   repository: KnowledgeRepository;
   manualInputs: ManualSnapshotInput[];
+  authority: {
+    manualIndex: ManualSnapshotIndex;
+    sourceRegistry: SourceRegistry;
+  };
 }
 
 async function loadFixture(): Promise<Fixture> {
@@ -952,12 +970,12 @@ async function loadFixture(): Promise<Fixture> {
       readJson(MANUAL_SNAPSHOT_INDEX_PATH),
       readJson(SOURCE_REGISTRY_PATH),
     ]);
+  const manualIndex = ManualSnapshotIndexSchema.parse(manualIndexInput);
+  const sourceRegistry = SourceRegistrySchema.parse(sourceRegistryInput);
   return {
     repository: KnowledgeRepositorySchema.parse(repositoryInput),
-    manualInputs: await loadManualSnapshotInputs(
-      manualIndexInput,
-      sourceRegistryInput,
-    ),
+    manualInputs: await loadManualSnapshotInputs(manualIndex, sourceRegistry),
+    authority: { manualIndex, sourceRegistry },
   };
 }
 
@@ -1079,4 +1097,26 @@ function countResolutions(
     }
   }
   return counts;
+}
+
+type MutableRejectedReportProbe = {
+  validationStatus: "comparable" | "not-comparable";
+  supportsEquipmentRecommendations: boolean;
+  sourceConditionBoundary: {
+    buildGameplayAndRefinementConditionsRemainUnresolved: boolean;
+  };
+  searchCoverageBoundary: {
+    sourceRefinementsInferred: boolean;
+  };
+};
+
+function mutateReport(
+  report: KeqingLunarEquipmentEvidenceValidationReport,
+  mutate: (candidate: MutableRejectedReportProbe) => void,
+): KeqingLunarEquipmentEvidenceValidationReport {
+  const candidate = structuredClone(
+    report,
+  ) as unknown as MutableRejectedReportProbe;
+  mutate(candidate);
+  return candidate as unknown as KeqingLunarEquipmentEvidenceValidationReport;
 }

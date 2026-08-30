@@ -61,22 +61,16 @@ export const KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_INPUT_PATHS =
 ].sort((left, right) => left.localeCompare(right));
 
 const EXPECTED_INPUT_FILE_SHA256: Readonly<Record<string, string>> = {
-  "scripts/guide-factory/data/knowledge/repository.json":
-    "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-  "scripts/guide-factory/data/source-snapshots/genshintools-presets.json":
-    "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9",
-  "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json":
-    "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822",
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json":
-    "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01",
-  "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json":
-    "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+    "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063",
   "scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts":
     "1413d257e0f2f1ab97dd3c2b154a2c6b8bc83f883826ff757f0a60f7f2adcbb4",
   "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts":
-    "1c36397833dd0dd09c802e0db13e928b689dd4fca4d85475bceccd65bee9bd92",
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json":
-    "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04",
+    "e9243df1bceaf504dde7d844559d40b0a34ade5225e31a7ce7f9508dc6e214b5",
+  "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope.ts":
+    "2971bfdef09888c6e5406e24d618a07ff94024ab896da06fe3717c9b6933bf17",
+  "scripts/guide-factory/src/scopedSemanticDependency.ts":
+    "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619",
 };
 
 const DELIBERATELY_EXCLUDED_PRODUCER_PATHS = [
@@ -86,17 +80,17 @@ const DELIBERATELY_EXCLUDED_PRODUCER_PATHS = [
 ] as const;
 
 const EXPECTED_SOURCE_TECHNICAL_REPORT_SHA256 =
-  "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01";
+  "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063";
 const EXPECTED_KNOWLEDGE_TARGET_CONTENT_SHA256 =
-  "b35ba89aeec5f27033a49dc8487ec6911d45b8df9d0076af8e2af1183010fe99";
+  "3607aac1eceddbf22120a9cf838f21c6442647fa9fe54dbd0459aa1ca3199c48";
 const EXPECTED_GENERIC_RESULT_FINGERPRINT_SHA256 =
   "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386";
 const EXPECTED_GENERIC_REPORT_CONTENT_SHA256 =
-  "a31e829893d30f8d6db129c3659674891d121b7e13c414ba2864d7f1f8a2bfd8";
+  "dfb21991f2f0d8f83aa9d0896a8752c288bcf5286f2f0e767f742bbca57d5b76";
 const EXPECTED_GENERIC_STABLE_FULL_REPORT_SHA256 =
-  "7cd628e53882a304ad90969cf1ab729176008cc359634f3d2938e580e3607442";
+  "15a6cb0a4a7abcd22fd79e525472dfb2b995d950d77101c0a6cca458a1aff5d4";
 const EXPECTED_AUTHENTICATED_FULL_REPORT_SHA256 =
-  "9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568";
+  "d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a";
 const EXPECTED_STATE_COUNTS: ComparisonStateCounts = {
   "listed-condition-resolved": 816,
   "listed-condition-withheld": 48,
@@ -1415,7 +1409,10 @@ function completeReport(
     validationStatus:
       "authenticated-completed-occurrence-evidence-source-not-ready",
     issues: [],
-    sourceBoundary: fixedSourceBoundary(),
+    sourceBoundary: deriveSourceBoundary(
+      sourceTechnicalReport,
+      knowledgeTargets,
+    ),
     executionBoundary: {
       nodeCount: 36,
       carryCount: 4,
@@ -1574,6 +1571,59 @@ function fixedSourceBoundary(): KeqingIneffaFurinaXilonenGeneratedSheetEvidenceR
   };
 }
 
+function deriveSourceBoundary(
+  sourceTechnicalReport: KeqingIneffaFurinaXilonenEquipmentTechnicalComputationReport,
+  knowledgeTargets: KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport,
+): KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport["sourceBoundary"] {
+  const presetTargets = knowledgeTargets.targets.filter(
+    (target) => target.kind === "preset-build",
+  );
+  const kqmTargets = knowledgeTargets.targets.filter(
+    (target) => target.kind === "kqm-stat-claim",
+  );
+  const exactPresetAuthority = presetTargets.every(
+    ({ sourceAuthority, applicability }) =>
+      sourceAuthority.kind === "internal-baseline-adapter" &&
+      applicability === "baseline-team-applicability-unknown",
+  );
+  const exactKqmAuthority = kqmTargets.every(
+    ({ sourceReviewState }) =>
+      sourceReviewState.kind ===
+        "external-agent-assisted-unreviewed-extraction" &&
+      sourceReviewState.extractionMethod === "agent-assisted" &&
+      sourceReviewState.reviewStatus === "unreviewed" &&
+      !sourceReviewState.promotionEligible,
+  );
+  if (
+    !exactPresetAuthority ||
+    !exactKqmAuthority ||
+    knowledgeTargets.exclusions.furinaPostErSubstats === null
+  ) {
+    throw new Error(
+      "Authenticated knowledge targets unexpectedly lost their exact source boundary.",
+    );
+  }
+  return {
+    exactTeamRecordId: knowledgeTargets.exactTeam.teamRecordId,
+    exactCharacterIds: [...knowledgeTargets.exactTeam.characterIds],
+    sourceReadyForGuideClaims: knowledgeTargets.supportsGuideClaims,
+    sourceReadyForGameplayClaims: knowledgeTargets.supportsGameplayClaims,
+    sourceReadinessBlockerCount:
+      sourceTechnicalReport.sourceBoundary.sourceReadinessBlockerCount,
+    presetAuthority: "internal-baseline-adapter",
+    presetTeamApplicability: "unknown",
+    kqmAuthority: "agent-assisted-unreviewed-extraction",
+    kqmReviewStatus: "unreviewed",
+    kqmPromotionEligible: false,
+    artifactRatingDbConsumed:
+      knowledgeTargets.projectionBoundary.artifactRatingDbConsumed,
+    furinaPostErInterpretationExcluded:
+      knowledgeTargets.projectionBoundary.furinaPostErInterpretationExcluded,
+    sourcePublishedWholeCandidateCount:
+      sourceTechnicalReport.sourceBoundary.sourcePublishedWholeCandidateCount,
+  };
+}
+
 function fixedCapabilities(): KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport["capabilities"] {
   return {
     guideClaims: false,
@@ -1590,7 +1640,7 @@ function fixedCapabilities(): KeqingIneffaFurinaXilonenGeneratedSheetEvidenceRep
 function fixedCautions(): string[] {
   return [
     "The nested generic evidence reports generator captures using the existing damage-objective-driven artifact optimization. The default CLI reruns that runtime, but the deterministic report is replayable evidence and is not a non-replayable execution attestation.",
-    "Eight selected checkpoint inputs are authenticated before execution. They are not an exhaustive transitive generator, StatSheet, or runtime dependency closure; exact generic result and full-output digests authenticate the observed evidence after execution.",
+    "Five selected checkpoint inputs are authenticated before execution: the bounded CP38 report plus four implementation files. The growing knowledge carriers are authenticated through CP39's selected semantic scope instead of whole-file hashes. This is not an exhaustive transitive generator, StatSheet, or runtime dependency closure; exact generic result and full-output digests authenticate the observed evidence after execution.",
     "This wrapper performs no separate damage replay or downstream optimizer call.",
     "Every target observation is attached to one node/carry/character occurrence. No comparison is attached to a global generated sheet identity.",
     "Membership and source partial-order rows are observations only. Presence or absence is not a correctness judgment, score, weight, rank, recommendation, or guide claim.",

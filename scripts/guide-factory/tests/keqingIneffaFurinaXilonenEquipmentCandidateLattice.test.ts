@@ -2,7 +2,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { ArtifactChoiceSearchCoverageReport } from "../src/artifactChoiceSearchCoverage";
 import { formatKeqingIneffaFurinaXilonenEquipmentCandidateLatticeSummary } from "../src/construct-keqing-ineffa-furina-xilonen-equipment-candidate-lattice";
-import { readJson, sha256File } from "../src/io";
+import { readJson } from "../src/io";
 import {
   buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
   KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
@@ -35,13 +35,16 @@ describe("Keqing/Ineffa/Furina/Xilonen equipment candidate lattice", () => {
     expect(input).toEqual(inputBefore);
     expect(report.validationStatus).toBe("authenticated-enumeration-only");
     expect(report.issues).toEqual([]);
-    expect(report.inputBoundary).toMatchObject({
-      expectedFileCount: 9,
-      observedFileCount: 9,
-      exactPathSet: true,
-      byteHashesMatch: true,
-      parsedPayloadsMatch: true,
+    expect(report.semanticScope).toMatchObject({
       authentication: "accepted",
+      acceptedAudit: {
+        trust: "authenticated-current-input-rebuild-and-pinned-expectation",
+        dependencies: expect.any(Array),
+        paritySummary: {
+          parityCount: 14,
+          exactParityCount: 14,
+        },
+      },
     });
     expect(report.candidateEnumerationExecuted).toBe(true);
     expect(report).toMatchObject({
@@ -219,32 +222,30 @@ describe("Keqing/Ineffa/Furina/Xilonen equipment candidate lattice", () => {
 
   it("matches the durable report byte-for-byte through stable JSON", async () => {
     const report = await canonicalReport();
-    const durable = (await readJson(
-      KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
-    )) as KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport;
-    expect(durable).toEqual(report);
     expect(() =>
       requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport(
         report,
       ),
     ).not.toThrow();
+    const durable = (await readJson(
+      KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
+    )) as KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport;
+    expect(durable).toEqual(report);
     expect(
       formatKeqingIneffaFurinaXilonenEquipmentCandidateLatticeSummary(report),
     ).toContain("36 nodes");
   });
 
   it.each([
-    ["path", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.inputFiles[0].path = "wrong.json"; }],
-    ["byte hash", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.inputFiles[0].sha256 = "0".repeat(64); }],
-    ["repository", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.repository.sourceRegistrySha256 = "0".repeat(64); }],
-    ["raw KQM", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.kqmSnapshot.capturedAt = "2099-01-01"; }],
+    ["repository", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const team = input.repository.records.find(({ id }) => id === "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"); if (!team || team.kind !== "team") throw new Error("Missing team fixture"); team.label = "drifted"; }],
+    ["raw KQM", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const guide = input.kqmSnapshot.records.find(({ sourceRecordId }) => sourceRecordId === "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i"); if (!guide || guide.kind !== "character_guide") throw new Error("Missing raw guide fixture"); guide.recommendation.label = "drifted"; }],
     ["preset snapshot", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.genshinToolsSnapshot.characterGuides.find(({ characterId }) => characterId === "furina")!.weaponOrder!.reverse(); }],
-    ["manual index", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.manualIndex.snapshots[3].path = "wrong.json"; }],
+    ["manual index", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const entry = input.manualIndex.snapshots.find(({ path }) => path === "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"); if (!entry) throw new Error("Missing index fixture"); entry.sourceId = "gcsim"; }],
     ["registry", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.sourceRegistry.sources.find(({ id }) => id === "kqm")!.permission = "internal"; }],
     ["live preset", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const live = input.liveBuildPreset as { characterWeapons: Record<string, string[]> }; live.characterWeapons.furina.reverse(); }],
-    ["evidence", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.evidenceReport.claims[0].allSourceConditionsMappedExactly = false; }],
-    ["weapon coverage", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.weaponCoverageReport.observations[0].weaponId = "wrong"; }],
-    ["artifact coverage", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { input.artifactCoverageReport.observations[0].outcome = "not-representable"; }],
+    ["evidence", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const claim = input.evidenceReport.claims.find(({ claimId }) => claimId === "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0"); if (!claim) throw new Error("Missing evidence fixture"); claim.allSourceConditionsMappedExactly = false; }],
+    ["weapon coverage", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const observation = input.weaponCoverageReport.observations.find(({ observationId }) => observationId === "genshintools-presets:character-guide:furina:weapon-order:0"); if (!observation) throw new Error("Missing weapon observation fixture"); observation.weaponId = "wrong"; }],
+    ["artifact coverage", (input: BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput) => { const observation = input.artifactCoverageReport.observations.find(({ observationId }) => observationId === "genshintools-presets:character-guide:furina:build:BQAI0BO"); if (!observation) throw new Error("Missing artifact observation fixture"); observation.outcome = "not-representable"; }],
   ])("fails closed when %s drifts", async (_label, mutate) => {
     const input = await fixture();
     mutate(input);
@@ -297,14 +298,6 @@ async function fixture(): Promise<BuildKeqingIneffaFurinaXilonenEquipmentCandida
       (relativePath) => readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ),
   );
-  const inputFiles = await Promise.all(
-    KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS.map(
-      async (relativePath) => ({
-        path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
-      }),
-    ),
-  );
   return {
     repository: values[0] as KnowledgeRepository,
     kqmSnapshot: values[1] as ManualObservationSnapshot,
@@ -316,6 +309,5 @@ async function fixture(): Promise<BuildKeqingIneffaFurinaXilonenEquipmentCandida
       values[6] as KeqingLunarEquipmentEvidenceValidationReport,
     weaponCoverageReport: values[7] as WeaponChoiceSearchCoverageReport,
     artifactCoverageReport: values[8] as ArtifactChoiceSearchCoverageReport,
-    inputFiles,
   };
 }

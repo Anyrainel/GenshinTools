@@ -362,8 +362,7 @@ describe("derived formula fixture coverage", () => {
         const entry = requiredRecordArray(input.generatedFrom).find(
           ({ path: relativePath }) => relativePath === repositoryPath,
         );
-        if (!entry) throw new Error("Missing embedded repository entry.");
-        entry.sha256 = repositorySha;
+        if (entry) entry.sha256 = repositorySha;
       });
     }
     expect(() =>

@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "kqm",
+  "capturedAt": "2026-08-30",
+  "page": {
+    "title": "Xiao Guide: Adeptal Guide to Conquering Xiao",
+    "url": "https://keqingmains.com/xiao/",
+    "publisher": "KeqingMains",
+    "sourceVersion": "Version 5.5",
+    "attributionNote": "KQM asks readers to link the original guide when using it as a content reference; this snapshot stores narrow paraphrased claims and source locators."
+  },
+  "records": [
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Artifacts > Main Stats; Substats"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "recommendation": {
+        "id": "offensive-artifact-stats-with-energy-deferred",
+        "label": "Offensive artifact stats with energy terms deferred",
+        "scope": "artifact-stats",
+        "roles": ["dps"],
+        "mainStats": {
+          "sands": [
+            {
+              "statIds": ["atk%"],
+              "conditions": []
+            }
+          ],
+          "goblet": [
+            {
+              "statIds": ["anemo%", "atk%"],
+              "conditions": [
+                "For most Xiao builds, the source describes the difference as small enough that artifact substats can decide the choice."
+              ]
+            },
+            {
+              "statIds": ["anemo%"],
+              "conditions": [
+                "Xiao uses 4pc Vermillion Hereafter; Faruzan can make its advantage over an ATK% Goblet smaller."
+              ]
+            },
+            {
+              "statIds": ["anemo%"],
+              "conditions": [
+                "Xiao uses 4pc Long Night's Oath, except in a team that includes Furina but not Xianyun."
+              ]
+            },
+            {
+              "statIds": ["anemo%"],
+              "conditions": ["Xianyun is in Xiao's team."]
+            },
+            {
+              "statIds": ["anemo%"],
+              "conditions": ["Xiao is C6."]
+            }
+          ],
+          "circlet": [
+            {
+              "statIds": ["cr", "cd"],
+              "conditions": [
+                "Choose between CRIT Rate and CRIT DMG according to the weapon and artifact substats while maintaining at least 70% CRIT Rate."
+              ]
+            }
+          ]
+        },
+        "substats": [
+          {
+            "statIds": ["cr", "cd"],
+            "priority": 1,
+            "conditions": [
+              "This priority covers only the offensive tail after the source's deliberately omitted Energy Recharge need."
+            ],
+            "target": "At least 70% CRIT Rate, then further CRIT Rate and CRIT DMG balanced near a 1:2 ratio."
+          },
+          {
+            "statIds": ["atk%"],
+            "priority": 2,
+            "conditions": [
+              "This priority covers only the offensive tail after the source's deliberately omitted Energy Recharge need."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "the source's leading 20–40% Energy Recharge recommendation and Extra Energy Recharge tail are deliberately omitted while energy work is deferred",
+        "numeric stat weights",
+        "the exact build-dependent Goblet crossover",
+        "artifact-inventory-dependent tradeoffs",
+        "formula counts outside the separately captured source-authored rotation fixture"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "xiao-vha-artifact-branch-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Artifacts > Recommended Artifact Sets > 4pc Vermillion Hereafter"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "recommendation": {
+        "id": "vha-lower-buff-aoe-branch",
+        "label": "Vermillion Hereafter lower-buff and AoE branch",
+        "scope": "artifact-sets",
+        "roles": ["dps"],
+        "artifactOrdering": "unranked",
+        "artifactRecommendations": [
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "vermillion_hereafter" }
+            ],
+            "grouping": "single",
+            "classification": "recommended",
+            "conditions": [
+              "The scenario has fewer external buffs and more AoE, where the source says Vermillion Hereafter performs best."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "numeric artifact performance",
+        "the exact external-buff and enemy-count crossover",
+        "this narrow preference branch is not a negative claim about Vermillion Hereafter in other contexts",
+        "the effect of owned artifact quality outside the source's advice not to refarm a highly invested set"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "xiao-mh-artifact-branch-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Artifacts > Recommended Artifact Sets > 4pc Marechaussee Hunter"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "recommendation": {
+        "id": "mh-xianyun-ffxx-branch",
+        "label": "Marechaussee Hunter Xianyun and FFXX branch",
+        "scope": "artifact-sets",
+        "roles": ["dps"],
+        "artifactOrdering": "unranked",
+        "artifactRecommendations": [
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "marechaussee_hunter" }
+            ],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "numeric artifact performance",
+        "the Xianyun and Furina Constellation thresholds at which this becomes best-in-slot",
+        "the build-specific CRIT Rate overcap boundary",
+        "artifact-inventory-dependent tradeoffs"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "xiao-lno-artifact-branch-c0-c5-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Artifacts > Recommended Artifact Sets > 4pc Long Night's Oath"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "recommendation": {
+        "id": "lno-consistent-plunge-c0-c5-branch",
+        "label": "Long Night's Oath consistent-plunge branch for non-C6 Xiao",
+        "scope": "artifact-sets",
+        "maxConstellation": 5,
+        "roles": ["dps"],
+        "artifactOrdering": "unranked",
+        "artifactRecommendations": [
+          {
+            "artifacts": [
+              { "type": "4pc", "setId": "long_nights_oath" }
+            ],
+            "grouping": "single",
+            "classification": "recommended",
+            "conditions": [
+              "Xiao can perform consistent uninterrupted High Plunges and is evaluated with the source's four-stack baseline.",
+              "The source calls this best-in-slot in Bennett teams and competitive in Xianyun teams."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "numeric artifact performance",
+        "frame-perfect five-stack uptime",
+        "interruption and delayed-Plunge frequency",
+        "the source explicitly does not recommend this set for C6 Xiao because C6 shifts damage toward Elemental Skills"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Weapons > 5★ Polearms"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "recommendation": {
+        "id": "five-star-weapon-tiers",
+        "label": "Source-grouped five-star weapon tiers",
+        "scope": "weapons",
+        "roles": ["dps"],
+        "weaponOrdering": "ranked-groups",
+        "weaponRecommendations": [
+          {
+            "weaponIds": [
+              "primordial_jade_wingedspear",
+              "staff_of_homa",
+              "lumidouce_elegy"
+            ],
+            "grouping": "tied",
+            "classification": "default",
+            "conditions": []
+          },
+          {
+            "weaponIds": ["vortex_vanquisher", "calamity_queller"],
+            "grouping": "tied",
+            "classification": "alternative",
+            "conditions": []
+          },
+          {
+            "weaponIds": [
+              "staff_of_the_scarlet_sands",
+              "engulfing_lightning",
+              "skyward_spine"
+            ],
+            "grouping": "tied",
+            "classification": "available-only",
+            "conditions": [
+              "Use these source Tier 3 options when already owned and they are the best available option; the source does not recommend pulling them specifically for Xiao."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "numeric weapon gaps",
+        "refinement-specific comparisons",
+        "weapon-specific shield, HP, passive-stack, and team conditions cannot be attached to individual members of a tied V1 group",
+        "the Energy Recharge implications of Engulfing Lightning and Skyward Spine are not converted into an Energy Recharge target",
+        "artifact-dependent CRIT Rate compatibility"
+      ]
+    },
+    {
+      "kind": "character_guide",
+      "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Weapons > 4★ Polearms"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "recommendation": {
+        "id": "unranked-four-star-weapons",
+        "label": "Source-listed four-star weapon options",
+        "scope": "weapons",
+        "roles": ["dps"],
+        "weaponOrdering": "unranked",
+        "weaponRecommendations": [
+          {
+            "weaponIds": ["lithic_spear"],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "The team contains enough Liyue characters and the weapon has sufficient Refinement for its team-dependent passive."
+            ]
+          },
+          {
+            "weaponIds": ["deathmatch"],
+            "grouping": "single",
+            "classification": "alternative",
+            "conditions": []
+          },
+          {
+            "weaponIds": ["prospectors_drill"],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "Xiao can receive healing to build the passive, and the rotation can accommodate its second-rotation and Skill-or-Burst timing constraints."
+            ]
+          },
+          {
+            "weaponIds": ["blackcliff_pole"],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "Xiao can defeat opponents to activate the passive; the source notes that it is often inactive against a single opponent or high-HP opponents."
+            ]
+          },
+          {
+            "weaponIds": ["favonius_lance"],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "Favonius Lance is at least Refinement 3; this observation does not infer an Energy Recharge target."
+            ]
+          },
+          {
+            "weaponIds": ["missive_windspear"],
+            "grouping": "single",
+            "classification": "conditional",
+            "conditions": [
+              "The team lets Xiao trigger Swirl consistently enough to maintain the weapon passive."
+            ]
+          }
+        ]
+      },
+      "unknowns": [
+        "the source does not rank these six weapons against each other",
+        "numeric weapon gaps",
+        "refinement-specific comparisons beyond the stated Favonius Lance floor",
+        "rotation-specific passive uptime",
+        "the Energy Recharge benefit of Favonius Lance is deliberately not translated into a target"
+      ]
+    },
+    {
+      "kind": "team",
+      "sourceRecordId": "xiao-xianyun-furina-faruzan-ffxx-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Teams > Example Team Comps > Final Fantasy 20 (FFXX)"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "label": "Xiao — Xianyun — Furina — Faruzan (FFXX)",
+      "intent": "prescriptive",
+      "exhaustiveness": "non-exhaustive",
+      "rankingClaim": "none",
+      "members": [
+        {
+          "characterId": "xiao",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "xianyun",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "furina",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        },
+        {
+          "characterId": "faruzan",
+          "weaponRecommendations": [],
+          "artifactRecommendations": [],
+          "erTargets": []
+        }
+      ],
+      "rotations": [
+        {
+          "id": "c6-faruzan-setup",
+          "label": "KQM C6 Faruzan FFXX setup sequence",
+          "notation": "Faruzan Q > Furina EQ > Xianyun EPQ > Xiao EE Q",
+          "unresolvedSegments": [],
+          "assumptions": ["Faruzan is C6."]
+        },
+        {
+          "id": "non-c6-faruzan-setup",
+          "label": "KQM non-C6 Faruzan FFXX setup sequence",
+          "notation": "Faruzan EQ > Furina EQ > Xianyun EPQ > Faruzan CA > Xiao EE Q E",
+          "unresolvedSegments": [],
+          "assumptions": ["Faruzan is C0–C5."]
+        }
+      ],
+      "unknowns": [
+        "team member weapons, refinements, and artifact assignments",
+        "Xiao, Xianyun, and Furina Constellations",
+        "the source's C6 Faruzan statement is an efficacy and energy-management assumption rather than a team-membership minimum",
+        "Energy Recharge targets are deliberately omitted",
+        "rotation duration and Xiao's on-field attack string",
+        "enemy scenario",
+        "numeric team performance",
+        "rotation Constellation applicability remains source prose rather than a typed V1 predicate"
+      ]
+    }
+  ]
+}

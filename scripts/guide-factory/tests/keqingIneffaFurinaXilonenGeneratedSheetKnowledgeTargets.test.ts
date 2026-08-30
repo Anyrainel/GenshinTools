@@ -5,7 +5,7 @@ import {
   buildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets,
   computeKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsContentSha256,
   GENERATED_SHEET_KNOWLEDGE_TARGET_COMPARISON_VOCABULARY,
-  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SEMANTIC_INPUT_PATHS,
   requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets,
   type BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
   type KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport,
@@ -45,11 +45,25 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
       omittedPresetEnergyEntryCount: 5,
       excludedFurinaPostErClaimCount: 2,
     });
-    expect(report.generatedFrom.map(({ path }) => path)).toEqual(
-      KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS,
-    );
+    expect(report.generatedFrom).toEqual([]);
+    expect(report.semanticScope).toMatchObject({
+      authentication: "accepted",
+      acceptedAudit: {
+        dependencies: expect.any(Array),
+        paritySummary: { parityCount: 26, exactParityCount: 26 },
+      },
+    });
     expect(report.sourceBoundary).toMatchObject({
-      upstreamPayloadHashesMatch: true,
+      selectedRepositoryRecordCount: 7,
+      selectedPresetGuideCount: 4,
+      selectedPresetSnapshotEnvelopeCount: 1,
+      selectedLiveBuildCount: 5,
+      selectedLiveCharacterBuildArrayCount: 4,
+      selectedEvidenceClaimCount: 12,
+      selectedEvidenceSourceBoundaryRecordCount: 2,
+      selectedEvidenceCapabilityCount: 1,
+      selectedCp36ActiveArtifactCount: 5,
+      exactParityCount: 26,
       exactPresetAssociationCount: 5,
       exactKqmClaimAssociationCount: 12,
       exactAuthorityAndAssociationClosure: true,
@@ -324,16 +338,62 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
     ).toEqual(new Set(["genshintools-presets", "kqm"]));
   });
 
+  it("is stable under unrelated carrier metadata, records, live weapons, and CP36 report drift", async () => {
+    const canonicalInput = await fixture();
+    const expected =
+      buildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets(
+        canonicalInput,
+      );
+    const input = structuredClone(canonicalInput);
+
+    input.repository.schemaVersion = 2 as 1;
+    const unrelatedRepositoryRecord = input.repository.records.find(
+      ({ id }) =>
+        id !== "genshintools-presets:character-guide:keqing" &&
+        !id.includes("lunar-charged-default-artifact-stats") &&
+        !id.includes("lunar-charged-high-buff-goblet-stats") &&
+        !id.includes("furina-post-er-substats"),
+    );
+    unrelatedRepositoryRecord?.unknowns.push("unrelated CP39 carrier drift");
+    (
+      input.genshinToolsSnapshot as unknown as Record<string, unknown>
+    ).unrelatedCarrierMetadata = "ignored";
+
+    const live = input.liveBuildPreset as {
+      builds: Record<string, unknown>;
+      characterBuilds: Record<string, unknown>;
+      characterWeapons?: Record<string, unknown>;
+    };
+    live.builds.__cp39_unselected = {
+      id: "__cp39_unselected",
+      composition: "intentionally-unprojectable-unrelated-record",
+    };
+    live.characterBuilds.__cp39_unselected = ["__cp39_unselected"];
+    live.characterWeapons = { unrelated: ["not-selected"] };
+
+    const unrelatedClaim = input.evidenceReport.claims.find(
+      ({ sourceClaim }) =>
+        sourceClaim.kind === "weapon" || sourceClaim.kind === "artifact",
+    );
+    unrelatedClaim?.sourceConditions.push("unrelated CP39 evidence claim drift");
+    input.evidenceReport.generatedFrom.push({
+      path: "unrelated-carrier",
+      sha256: "f".repeat(64),
+    });
+    input.equipmentLatticeReport.summary.candidateNodeCount = 35;
+    const unrelatedOccurrence =
+      input.equipmentLatticeReport.inventoryBoundary.occurrences.find(
+        ({ occurrenceId }) =>
+          occurrenceId.endsWith(":artifact:0:1"),
+      );
+    if (unrelatedOccurrence) unrelatedOccurrence.equipmentId = "4pc:unselected";
+
+    expect(
+      buildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets(input),
+    ).toEqual(expected);
+  });
+
   it.each([
-    [
-      "CP36 lattice authentication",
-      (
-        input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
-      ) => {
-        input.equipmentLatticeReport.summary.candidateNodeCount = 35;
-      },
-      "upstream.equipment_lattice_not_authenticated",
-    ],
     [
       "repository duplicate",
       (
@@ -344,7 +404,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
         );
         if (record) input.repository.records.push(structuredClone(record));
       },
-      "repository.record_occurrence_count",
+      "semantic_scope.selection.required_key_duplicated",
     ],
     [
       "repository authority",
@@ -358,7 +418,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
         );
         if (record) record.sourceRefs[0]!.sourceId = "genshintools-presets";
       },
-      "repository.record_authority_mismatch",
+      "semantic_scope.authentication.scope_projection_mismatch",
     ],
     [
       "preset guide duplicate",
@@ -374,7 +434,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
           );
         }
       },
-      "preset_snapshot.guide_occurrence_count",
+      "semantic_scope.selection.required_key_duplicated",
     ],
     [
       "live build payload",
@@ -386,7 +446,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
         };
         live.builds.FeFiQU8!.sandsWeights[0]!.stat = "hp%";
       },
-      "upstream.liveBuildPreset_payload_hash_mismatch",
+      "semantic_scope.parity.normalized_payload_mismatch",
     ],
     [
       "evidence claim duplicate",
@@ -397,7 +457,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
           structuredClone(input.evidenceReport.claims[0]!),
         );
       },
-      "evidence.duplicate_claim_id",
+      "semantic_scope.selection.required_key_duplicated",
     ],
     [
       "evidence source review state",
@@ -411,16 +471,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet knowledge targets", () =>
         );
         if (boundary) boundary.reviewStatus = "reviewed";
       },
-      "evidence.source_review_state_mismatch",
-    ],
-    [
-      "repository schema",
-      (
-        input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
-      ) => {
-        input.repository.schemaVersion = 2 as 1;
-      },
-      "upstream.repository_schema_invalid",
+      "semantic_scope.authentication.scope_projection_mismatch",
     ],
   ])("fails closed on a %s mutation", async (_label, mutate, issueCode) => {
     const input = await fixture();
@@ -530,7 +581,7 @@ async function canonicalReport(): Promise<KeqingIneffaFurinaXilonenGeneratedShee
 
 async function fixture(): Promise<BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput> {
   const values = await Promise.all(
-    KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS.map(
+    KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SEMANTIC_INPUT_PATHS.map(
       (relativePath) => readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ),
   );

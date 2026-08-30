@@ -1,4 +1,5 @@
 import { sha256Text, stableJson } from "./io";
+import { KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS } from "./keqingIneffaFormulaDraft";
 import {
   KnowledgeRepositorySchema,
   ManualObservationSnapshotSchema,
@@ -55,37 +56,8 @@ const FURINA_FIXTURE_GENERATED_FROM = [
   "src/lib/dmgcalc/index.ts",
 ] as const;
 
-const KEQING_FIXTURE_GENERATED_FROM = [
-  REPOSITORY_PATH,
-  "scripts/guide-factory/src/computationReplay.ts",
-  "scripts/guide-factory/src/formulaPlanDraft.ts",
-  "scripts/guide-factory/src/formulaPlanReadiness.ts",
-  "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-  "scripts/guide-factory/src/schemas.ts",
-  "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
-  "scripts/guide-factory/src/teamMemberInvestment.ts",
-  "src/data/charInfo.ts",
-  "src/data/game/character_stats.json",
-  "src/data/game/weapon_stats.json",
-  "src/data/gameStatsLoader.ts",
-  "src/lib/dmgcalc/constants.ts",
-  "src/lib/dmgcalc/core/charBuild.ts",
-  "src/lib/dmgcalc/core/combo.ts",
-  "src/lib/dmgcalc/core/implModel.ts",
-  "src/lib/dmgcalc/core/registry.ts",
-  "src/lib/dmgcalc/core/teamBuild.ts",
-  "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
-  "src/lib/dmgcalc/core/teamMeta.ts",
-  "src/lib/dmgcalc/core/teamReaction.ts",
-  "src/lib/dmgcalc/impl/artifact4pc.ts",
-  "src/lib/dmgcalc/impl/character5Fontaine.ts",
-  "src/lib/dmgcalc/impl/character5Liyue.ts",
-  "src/lib/dmgcalc/impl/character5Natlan.ts",
-  "src/lib/dmgcalc/impl/character5NodKrai.ts",
-  "src/lib/dmgcalc/impl/weapon5Polearm.ts",
-  "src/lib/dmgcalc/impl/weapon5Sword.ts",
-  "src/lib/dmgcalc/index.ts",
-] as const;
+const KEQING_FIXTURE_GENERATED_FROM =
+  KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS;
 
 export const DERIVED_FORMULA_FIXTURE_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/derivedFormulaFixtureCoverage.ts",

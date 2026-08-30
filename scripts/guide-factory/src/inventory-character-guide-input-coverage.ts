@@ -6,6 +6,7 @@ import {
   buildReleasedGuideDomainCatalog,
   CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS,
   CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS,
+  selectCharacterGuideInputManualSnapshots,
 } from "./characterGuideInputCoverage";
 import { loadGameCatalogs } from "./catalogs";
 import { readJson, sha256File, writeJson } from "./io";
@@ -46,9 +47,8 @@ const [
   ),
 ]);
 
-const manualSnapshotInputs = await loadManualSnapshotInputs(
-  manualIndexInput,
-  sourceRegistryInput,
+const manualSnapshotInputs = selectCharacterGuideInputManualSnapshots(
+  await loadManualSnapshotInputs(manualIndexInput, sourceRegistryInput),
 );
 const sourceFiles = await Promise.all(
   CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS.map(

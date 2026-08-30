@@ -51,6 +51,16 @@ export function formatKeqingIneffaFurinaXilonenGeneratedSheetEvidenceSummary(
   );
 }
 
+export async function writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
+  report: KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport,
+  outputPath = KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH,
+): Promise<void> {
+  requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
+    report,
+  );
+  await writeJson(outputPath, report);
+}
+
 export async function runKeqingIneffaFurinaXilonenGeneratedSheetEvidenceCli(): Promise<void> {
   const readInput = (relativePath: string) =>
     readJson(path.join(REPOSITORY_ROOT, relativePath));
@@ -94,13 +104,7 @@ export async function runKeqingIneffaFurinaXilonenGeneratedSheetEvidenceCli(): P
       },
       inputFiles,
     });
-  requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(
-    report,
-  );
-  await writeJson(
-    KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH,
-    report,
-  );
+  await writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(report);
   console.log(
     formatKeqingIneffaFurinaXilonenGeneratedSheetEvidenceSummary(report),
   );

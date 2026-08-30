@@ -168,8 +168,8 @@ recombination must never be called generator-produced.
 The checked-in report is
 `keqing-ineffa-furina-xilonen-equipment-technical-computation.json`. Its final
 byte SHA-256 is
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01` and its
-final size is 2,011,250 bytes. It is durable report 35 overall and
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063` and its
+final size is 2,011,434 bytes. It is durable report 35 overall and
 globally integrated report 34.
 
 Downstream durable-consumer work exposed that the generic semantic guard had
@@ -191,16 +191,14 @@ intentional opt-in skip. The final checkpoint also passes Guide Factory
 TypeScript, global validation with zero errors and the same 12 existing
 warnings, application TypeScript, and dependency-boundary validation.
 
-## Next bounded non-ER checkpoint
+## Downstream bounded non-ER checkpoint
 
-The next checkpoint should expose an authenticated generated-sheet and
-artifact-allocation evidence catalog before adding a publication authority
+Checkpoint 39 subsequently exposes an authenticated generated-sheet and
+artifact-allocation evidence catalog without adding a publication authority
 gate. Checkpoint 38 retains 259 node/character/sheet pool cells backed by 21
-globally unique sheet hashes, but deliberately omits the underlying sheet dumps
-and displayed artifact allocations. Reproducing all 144 generator captures can
-test whether displayed artifacts reconstruct the sheets that were evaluated
-and can compare reviewable stat shapes with explicitly authority-labelled
-knowledge targets.
+globally unique sheet hashes, while checkpoint 39 reproduces all 144 generator
+captures, tests displayed-artifact reconstruction, and compares reviewable stat
+shapes with explicitly authority-labelled knowledge targets.
 
 It should not convert the finite technical maxima into equipment ranks or guide
 recommendations. ER remains deferred.

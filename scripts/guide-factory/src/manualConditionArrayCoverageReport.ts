@@ -70,7 +70,13 @@ import {
   type ManualSnapshotInput,
 } from "./manualSnapshots";
 import {
+  knowledgeRepositoryProjectionSha256,
+  projectKnowledgeRepository,
+} from "./repositoryProjection";
+import {
   KnowledgeRepositorySchema,
+  ManualSnapshotIndexSchema,
+  SourceRegistrySchema,
   type KnowledgeRepository,
 } from "./schemas";
 import type {
@@ -212,6 +218,12 @@ export interface ManualConditionArrayCoverageReport {
     exactPathSet: boolean;
     rawJsonObjectClosure: boolean;
     sourceFileCount: number;
+    repositoryProjectionKind: "manual-condition-coverage";
+    repositoryProjectionSha256: string | null;
+    repositoryProjectionRecordCount: number;
+    repositoryProjectionMatchesCurrentObject: boolean;
+    rotationFixtureRecordsExcluded: boolean;
+    nestedBindingReportsStillAuthenticateWholeRepository: true;
   };
   corpusBoundary: {
     authoritativeSource: "indexed-manual-observation-snapshots";
@@ -293,10 +305,74 @@ export const MANUAL_CONDITION_COVERAGE_SNAPSHOT_PATHS = [
   "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+  "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
 ] as const;
 
+/**
+ * Select only snapshots that can contain character-guide condition arrays.
+ * Validation-only manual corpora stay indexed without joining this report's
+ * raw-byte or extractor boundary.
+ */
+export function selectManualConditionCoverageSnapshots(
+  manualInputs: readonly ManualSnapshotInput[],
+): ManualSnapshotInput[] {
+  const inputsByPath = new Map<string, ManualSnapshotInput>();
+  for (const manualInput of manualInputs) {
+    const snapshotPath = manualInput.snapshotFile.path;
+    if (inputsByPath.has(snapshotPath)) {
+      throw new Error(
+        `Manual condition coverage repeats manual snapshot input ${snapshotPath}.`,
+      );
+    }
+    inputsByPath.set(snapshotPath, manualInput);
+  }
+  return MANUAL_CONDITION_COVERAGE_SNAPSHOT_PATHS.map((snapshotPath) => {
+    const input = inputsByPath.get(snapshotPath);
+    if (!input) {
+      throw new Error(
+        `Manual condition coverage is missing manual snapshot input ${snapshotPath}.`,
+      );
+    }
+    return input;
+  });
+}
+
+export function selectManualConditionCoverageIndex(
+  manualIndexInput: unknown,
+): ReturnType<typeof ManualSnapshotIndexSchema.parse> {
+  const manualIndex = ManualSnapshotIndexSchema.parse(manualIndexInput);
+  const entriesByPath = new Map(
+    manualIndex.snapshots.map((entry) => [entry.path, entry] as const),
+  );
+  return {
+    schemaVersion: 1,
+    snapshots: MANUAL_CONDITION_COVERAGE_SNAPSHOT_PATHS.map((snapshotPath) => {
+      const entry = entriesByPath.get(snapshotPath);
+      if (!entry) {
+        throw new Error(
+          `Manual condition coverage index is missing ${snapshotPath}.`,
+        );
+      }
+      return { ...entry };
+    }),
+  };
+}
+
+const EXPECTED_MANUAL_CONDITION_REPOSITORY_PROJECTION_SHA256 =
+  "232acf871b56d1543075fd2881d70a3cc432a29d3e4b9c3456d712b671ab1e13";
+
+export function requireCurrentManualConditionRepositoryProjection(
+  repositoryProjection: KnowledgeRepository,
+): void {
+  const observed = knowledgeRepositoryProjectionSha256(repositoryProjection);
+  if (observed !== EXPECTED_MANUAL_CONDITION_REPOSITORY_PROJECTION_SHA256) {
+    throw new Error(
+      `Manual-condition repository projection drifted: observed ${observed}.`,
+    );
+  }
+}
+
 export const MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS = [
-  REPOSITORY_PATH,
   MANUAL_INDEX_PATH,
   SOURCE_REGISTRY_PATH,
   ...MANUAL_CONDITION_COVERAGE_SNAPSHOT_PATHS,
@@ -311,8 +387,7 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS = [
   NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_REPORT_PATH,
 ] as const;
 
-export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [
-  ...new Set([
+export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [...new Set([
     "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
     "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
     "scripts/guide-factory/src/exactAuthoredEnergyDeferralCatalog.ts",
@@ -322,6 +397,7 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [
     "scripts/guide-factory/src/schemas.ts",
     "scripts/guide-factory/src/io.ts",
     "scripts/guide-factory/src/paths.ts",
+    "scripts/guide-factory/src/repositoryProjection.ts",
     ...MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS,
     ...ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS,
     ...KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
@@ -331,8 +407,9 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [
     ...KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS,
     ...NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS,
     ...NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_INPUT_PATHS,
-  ]),
-].sort(compareText);
+  ])]
+  .filter((inputPath) => inputPath !== REPOSITORY_PATH)
+  .sort(compareText);
 
 export const MANUAL_CONDITION_ARRAY_COVERAGE_REPORT_PATH = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -377,9 +454,9 @@ const PROHIBITED_INTERPRETATIONS = [
 ];
 
 const EXPECTED_CURRENT_OCCURRENCES_SHA256 =
-  "17f683c42c25974b578e28e6dbbcc5d31ec0eeb08ee8466aaddff0e0c005208d";
+  "dc12875108a9b7f3b33e6c50a47b637b303f4bcf7f42212523205ba9b799af6b";
 const EXPECTED_CURRENT_BINDING_CATALOG_SHA256 =
-  "2a2b73a930404cd9bb862a3b53b15001676a74bd72233d9689c0c732744b5aeb";
+  "9f7591dc808d6ddb680b56843efbe153c1cf951ca3c946ebf2ee9fff1f0fa2de";
 
 export async function buildManualConditionArrayCoverageReport(
   input: BuildManualConditionArrayCoverageReportInput,
@@ -387,15 +464,29 @@ export async function buildManualConditionArrayCoverageReport(
   let generatedFrom: GeneratedFromEntry[] = [];
   try {
     generatedFrom = validateGeneratedFrom(input.generatedFrom);
-    authenticateRawInputs(input, generatedFrom);
+    const manualInputs = selectManualConditionCoverageSnapshots(
+      input.manualInputs,
+    );
+    const scopedInput = { ...input, manualInputs };
+    authenticateRawInputs(scopedInput, generatedFrom);
     const repository = KnowledgeRepositorySchema.parse(input.repositoryInput);
+    const repositoryProjection = projectKnowledgeRepository(
+      repository,
+      "manual-condition-coverage",
+      manualInputs.map(({ snapshotFile }) => snapshotFile.path),
+    );
+    const repositoryProjectionSha256 =
+      knowledgeRepositoryProjectionSha256(repositoryProjection);
+    requireCurrentManualConditionRepositoryProjection(repositoryProjection);
     const core = buildManualConditionArrayCoverageCore({
-      manualIndexInput: input.manualIndexInput,
-      manualSnapshotInputs: input.manualInputs.map((manualInput) => ({
+      manualIndexInput: selectManualConditionCoverageIndex(
+        input.manualIndexInput,
+      ),
+      manualSnapshotInputs: manualInputs.map((manualInput) => ({
         path: manualInput.snapshotFile.path,
         snapshotInput: manualInput.snapshot,
       })),
-      repositoryInput: repository,
+      repositoryInput: repositoryProjection,
     });
     if (core.repositoryParity.status !== "exact") {
       throw new Error(
@@ -403,10 +494,25 @@ export async function buildManualConditionArrayCoverageReport(
       );
     }
 
+    const nestedRepositoryText = stableJson(repository);
+    const nestedInput = {
+      ...scopedInput,
+      sourceFiles: [
+        ...scopedInput.sourceFiles,
+        { path: REPOSITORY_PATH, text: nestedRepositoryText },
+      ],
+    };
+    const nestedGeneratedFrom = [
+      ...generatedFrom,
+      {
+        path: REPOSITORY_PATH,
+        sha256: sha256Text(nestedRepositoryText),
+      },
+    ].sort((left, right) => compareText(left.path, right.path));
     const bindingCatalog = await buildAuthenticatedBindingCatalog(
-      input,
+      nestedInput,
       repository,
-      generatedFrom,
+      nestedGeneratedFrom,
     );
     if (bindingCatalog.comparisonStatus !== "comparable") {
       throw new Error(
@@ -444,6 +550,12 @@ export async function buildManualConditionArrayCoverageReport(
         exactPathSet: true,
         rawJsonObjectClosure: true,
         sourceFileCount: input.sourceFiles.length,
+        repositoryProjectionKind: "manual-condition-coverage",
+        repositoryProjectionSha256,
+        repositoryProjectionRecordCount: repositoryProjection.records.length,
+        repositoryProjectionMatchesCurrentObject: true,
+        rotationFixtureRecordsExcluded: true,
+        nestedBindingReportsStillAuthenticateWholeRepository: true,
       },
       corpusBoundary: {
         authoritativeSource: "indexed-manual-observation-snapshots",
@@ -501,12 +613,12 @@ export function requireComparableManualConditionArrayCoverageReport(
     report.rawInputBoundary.status === "accepted" &&
     report.corpusBoundary.repositoryParityStatus === "exact" &&
     report.bindingBoundary.status === "authenticated" &&
-    report.summary.nonStructuralBindingCoverage.occurrenceCount === 123 &&
+    report.summary.nonStructuralBindingCoverage.occurrenceCount === 140 &&
     report.summary.nonStructuralBindingCoverage.typedBoundOccurrenceCount ===
       60 &&
     report.summary.nonStructuralBindingCoverage
       .exactTextAcknowledgedOccurrenceCount === 3 &&
-    report.summary.nonStructuralBindingCoverage.unboundOccurrenceCount === 60 &&
+    report.summary.nonStructuralBindingCoverage.unboundOccurrenceCount === 77 &&
     !report.arbitraryEnglishParsingAllowed &&
     !report.supportsSourceAuthorization &&
     !report.supportsGuideClaims &&
@@ -565,6 +677,14 @@ function authenticateComparableCurrentReportBoundary(
       rawJsonObjectClosure: true,
       sourceFileCount:
         MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS.length,
+      repositoryProjectionKind: "manual-condition-coverage",
+      repositoryProjectionSha256:
+        report.rawInputBoundary.repositoryProjectionSha256,
+      repositoryProjectionRecordCount:
+        report.rawInputBoundary.repositoryProjectionRecordCount,
+      repositoryProjectionMatchesCurrentObject: true,
+      rotationFixtureRecordsExcluded: true,
+      nestedBindingReportsStillAuthenticateWholeRepository: true,
     };
   if (
     stableJson(report.rawInputBoundary) !== stableJson(expectedRawBoundary)
@@ -576,14 +696,14 @@ function authenticateComparableCurrentReportBoundary(
     {
       authoritativeSource: "indexed-manual-observation-snapshots",
       consolidatedRepositoryCountedAsSecondCorpus: false,
-      snapshotCount: 7,
-      manualRecordCount: 64,
-      occurrenceCount: 142,
+      snapshotCount: 8,
+      manualRecordCount: 71,
+      occurrenceCount: 163,
       repositoryParityStatus: "exact",
-      repositoryExactMatchCount: 142,
+      repositoryExactMatchCount: 163,
       repositoryMismatchCount: 0,
-      extractionMethodCounts: { "agent-assisted": 142 },
-      reviewStatusCounts: { unreviewed: 142 },
+      extractionMethodCounts: { "agent-assisted": 163 },
+      reviewStatusCounts: { unreviewed: 163 },
       allCurrentRecordsAgentAssistedUnreviewed: true,
     };
   if (
@@ -802,6 +922,10 @@ async function buildAuthenticatedBindingCatalog(
     buildKeqingLunarEquipmentEvidenceValidationReport(
       repository,
       input.manualInputs,
+      {
+        manualIndex: ManualSnapshotIndexSchema.parse(input.manualIndexInput),
+        sourceRegistry: SourceRegistrySchema.parse(input.sourceRegistryInput),
+      },
       selectGeneratedFrom(
         generatedFrom,
         KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
@@ -1084,7 +1208,10 @@ function authenticateRawInputs(
     }
     sourceFiles.set(sourceFile.path, sourceFile.text);
   }
-  authenticateJsonObject(input.repositoryInput, REPOSITORY_PATH, sourceFiles);
+  // The direct condition extractor authenticates the canonical semantic
+  // projection built from repositoryInput. Repository bytes remain in this
+  // outer source set only because the still-unmigrated nested binding reports
+  // authenticate their historical whole-repository boundaries.
   authenticateJsonObject(input.manualIndexInput, MANUAL_INDEX_PATH, sourceFiles);
   authenticateJsonObject(
     input.sourceRegistryInput,
@@ -1357,43 +1484,43 @@ function validateExpectedCurrentCoverageBoundary(
   );
   const expected = {
     total: {
-      occurrenceCount: 142,
-      emptyCount: 16,
-      nonemptyCount: 126,
-      uniqueExactArrayCount: 89,
-      stringOccurrenceCount: 159,
-      uniqueStringCount: 97,
+      occurrenceCount: 163,
+      emptyCount: 20,
+      nonemptyCount: 143,
+      uniqueExactArrayCount: 105,
+      stringOccurrenceCount: 177,
+      uniqueStringCount: 114,
     },
     bindingCoverage: {
-      occurrenceCount: 126,
+      occurrenceCount: 143,
       emptyCount: 0,
-      nonemptyCount: 126,
-      uniqueExactArrayCount: 89,
-      stringOccurrenceCount: 159,
-      uniqueStringCount: 97,
+      nonemptyCount: 143,
+      uniqueExactArrayCount: 105,
+      stringOccurrenceCount: 177,
+      uniqueStringCount: 114,
       typedBoundOccurrenceCount: 60,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 63,
+      unboundOccurrenceCount: 80,
       invalidOccurrenceCount: 0,
       typedBoundStringOccurrenceCount: 82,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 74,
+      unboundStringOccurrenceCount: 92,
       invalidStringOccurrenceCount: 0,
     },
     nonStructuralBindingCoverage: {
-      occurrenceCount: 123,
+      occurrenceCount: 140,
       emptyCount: 0,
-      nonemptyCount: 123,
-      uniqueExactArrayCount: 86,
-      stringOccurrenceCount: 156,
-      uniqueStringCount: 94,
+      nonemptyCount: 140,
+      uniqueExactArrayCount: 102,
+      stringOccurrenceCount: 174,
+      uniqueStringCount: 111,
       typedBoundOccurrenceCount: 60,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 60,
+      unboundOccurrenceCount: 77,
       invalidOccurrenceCount: 0,
       typedBoundStringOccurrenceCount: 82,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 71,
+      unboundStringOccurrenceCount: 89,
       invalidStringOccurrenceCount: 0,
     },
     energyCoverage: {
@@ -1408,22 +1535,22 @@ function validateExpectedCurrentCoverageBoundary(
         11,
       ),
       notEnergyDeferred: expectedArrayStatistics(57, 0, 57, 33, 79, 34),
-      energyUnclassified: expectedArrayStatistics(54, 0, 54, 44, 62, 50),
-      unconditional: expectedArrayStatistics(16, 16, 0, 0, 0, 0),
+      energyUnclassified: expectedArrayStatistics(71, 0, 71, 60, 80, 67),
+      unconditional: expectedArrayStatistics(20, 20, 0, 0, 0, 0),
       deferredDisplay: expectedArrayStatistics(15, 0, 15, 12, 18, 15),
     },
     displayStatusCounts: {
       invalid: 0,
-      unconditional: 16,
+      unconditional: 20,
       "er-deferred": 15,
       "typed-bound": 57,
       "exact-text-acknowledged": 3,
-      "known-but-unbound": 51,
+      "known-but-unbound": 68,
     },
     nonStructuralUniqueBindingArrayCoverage: {
-      uniqueExactArrayCount: 86,
+      uniqueExactArrayCount: 102,
       typedOnlyCount: 34,
-      unboundOnlyCount: 51,
+      unboundOnlyCount: 67,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     },
@@ -1824,6 +1951,12 @@ function failedReport(
       exactPathSet: false,
       rawJsonObjectClosure: false,
       sourceFileCount: 0,
+      repositoryProjectionKind: "manual-condition-coverage",
+      repositoryProjectionSha256: null,
+      repositoryProjectionRecordCount: 0,
+      repositoryProjectionMatchesCurrentObject: false,
+      rotationFixtureRecordsExcluded: false,
+      nestedBindingReportsStillAuthenticateWholeRepository: true,
     },
     corpusBoundary: {
       authoritativeSource: "indexed-manual-observation-snapshots",

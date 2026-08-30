@@ -21,21 +21,21 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 40 audits three cached coordinate-selection policies against the
-exact checkpoint-38 36-node Keqing/Ineffa/Furina/Xilonen table. From the same
-source-first start, a one-shot best-neighbor pass stops at sequence 1,
-iterative best improvement reaches the bounded-table reference at sequence 7,
-and declared-order first improvement stops at the other local terminal,
-sequence 13. Their shortfalls from the finite-table reference are respectively
-`0.785708566169412%`, zero, and `0.531264473403165%`. The compact report binds
-checkpoint 38, checkpoint 39, and the cached-policy implementation while
-retaining 576 exact occurrence diagnostics without embedding either upstream
-report. Checkpoint-39 ER deferral provenance is authenticated, but no ER value
-is projected into the policy input or used by the default policies. Durable
-report 37 is globally integrated as report 36. Every guide, rank,
-recommendation, scalar-weight, damage, DPS, gameplay, global-optimality,
-promotion, and ER claim remains false. This is not a working guide factory or
-an equipment recommendation:
+Checkpoint 41 replaces checkpoint 40's one-start impression with an exhaustive
+cached-policy census over the same authenticated 36-node
+Keqing/Ineffa/Furina/Xilonen table. It covers all 36 starts and all 864
+structurally effective declared orders, producing 31,104 declared-order traces
+and 31,177 reported cached-policy calls. Best improvement has terminal basins
+of 24 and 12 starts. Declared-order first improvement terminates at the finite-
+table reference 18,576 times and the other local terminal 12,528 times, with 13
+start partitions, 96 all-start path families, and paths of at most seven moves.
+The report authenticates checkpoint 40 and its ER-deferral provenance, but
+projects neither review diagnostics nor ER values into the census and performs
+no fresh generator, evaluator, replay, downstream-optimizer, recommendation,
+rank, or ER call. Durable report 38 is globally integrated as report 37. Every
+guide, rank, recommendation, scalar-weight, damage, DPS, gameplay, global-
+optimality, promotion, and ER claim remains false. This is not a working guide
+factory or an equipment recommendation:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -667,18 +667,20 @@ an equipment recommendation:
      only as upstream input to an unreviewed wrapper-authored translation, and
      attribute equipment compositions, investment, artifact stats, levels,
      talents, enemy context, roll budget, and objective mapping to the wrappers.
-211. Add durable report 35 and globally integrate it as report 34. Its final
-     2,011,250-byte output has SHA-256
-     `955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`;
+211. Add durable report 35 and globally integrate it as report 34. Its current
+     2,011,434-byte output has SHA-256
+     `c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`;
      no source, guide, team/equipment recommendation, rank, damage, DPS,
      gameplay, optimality, promotion, or ER capability is enabled.
 212. Add a generic capture core that retains content-addressed generated
      sheets, stable displayed allocations, occurrence-scoped identities, and
      display-round-trip evidence without reconstructing exact roll tiers.
-213. Authenticate eight selected non-self checkpoint inputs before execution,
-     then bind the exact generic result and full source-specific report after
-     execution. Record real default generator/objective execution separately
-     from injected or zero-attempt environments.
+213. Authenticate five selected non-self checkpoint inputs before execution,
+     including a semantic target scope over 11 exact dependencies and 26
+     normalized source/consolidated parities, then bind the exact generic result
+     and full source-specific report after execution. Record real default
+     generator/objective execution separately from injected or zero-attempt
+     environments.
 214. Re-run 36 nodes and four carries per node, retaining 144 fresh captures,
      576 node/carry/character occurrences, 21 unique sheets, 23 displayed
      allocations, and two sheets with two distinct displayed allocations.
@@ -692,9 +694,9 @@ an equipment recommendation:
      without deriving weights, ranks, or recommendations.
 217. Keep ER main stats, substats, floors, and post-ER source priorities outside
      the comparison domain. Record them only as explicit deferral provenance.
-218. Add durable report 36 and globally integrate it as report 35. Its
-     17,496,526-byte output has SHA-256
-     `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`;
+218. Add durable report 36 and globally integrate it as report 35. Its current
+     17,499,104-byte output has SHA-256
+     `d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`;
      no guide, recommendation, rank, scalar-weight, damage, gameplay,
      optimality, promotion, or ER capability is enabled.
 219. Project checkpoint 38's exact complete 36-node table into four active
@@ -712,9 +714,24 @@ an equipment recommendation:
 223. Distinguish four trace-producing policy calls from guard-time default
      recomputation. Attest seven zero fresh-work seams only for the default
      environment; injected callbacks retain `null` counts and ER influence.
-224. Add durable report 37 and globally integrate it as report 36. Its
+224. Add durable report 37 and globally integrate it as report 36. Its current
      2,029,334-byte output has SHA-256
-     `b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`;
+     `a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`;
+     no guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+     optimality, promotion, or ER capability is enabled.
+225. Authenticate checkpoint 40 plus the cached-policy and census
+     implementations, project only the ordered 36-node cached table and policy
+     declarations, and exclude checkpoint-39 occurrence diagnostics and ER
+     values from the census input.
+226. Run one-shot and best improvement from all 36 starts and declared first
+     improvement over all 864 structurally effective orders, yielding 31,104
+     declared-order traces and two terminal basins without fresh evaluation.
+227. Retain the 24/12 best-improvement basin split, 18,576/12,528 declared-order
+     terminal split, 13 start partitions, 96 all-start path families, and
+     seven-move maximum only as cached-policy sensitivity evidence.
+228. Add durable report 38 and globally integrate it as report 37. Its current
+     71,373-byte output has SHA-256
+     `c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`;
      no guide, recommendation, rank, scalar-weight, damage, gameplay, global-
      optimality, promotion, or ER capability is enabled.
 
@@ -727,9 +744,11 @@ The legacy aggregate is deliberately retained as a candidate source. It lists
 several domains globally but has no per-team locator, so consolidation must not
 treat any row as verified external knowledge.
 
-The active external observations are narrow, linked snapshots of KQM's Diona,
-Furina, Itto, Keqing, Klee, Kokomi, and Noelle Quick Guides. Diona's historical
-ER pilot remains assumption-incomplete. Its separate source-local slice now
+The active external observations are narrow, linked snapshots of eight KQM
+guide pages: Diona, Furina, Itto, Keqing, Klee, Kokomi, Noelle, and Xiao. A
+separate ninth indexed snapshot preserves one Xiao rotation fixture without
+feeding it into guide or condition coverage. Diona's historical ER pilot
+remains assumption-incomplete. Its separate source-local slice now
 authenticates the Diona, Citlali, and Bennett support-artifact conditions from
 one exact same-record team without choosing or assigning their payloads. Furina
 adds conditional builds,
@@ -776,14 +795,26 @@ generalist claims within the 5-star and 4-star weapon classes, C2+ support
 equipment, and two Hexerei-era exact teams. `Klee Combo` remains unresolved in
 both rotations, and the C4+ quickswap playstyle remains a schema gap rather than
 an invented equipment record. All seven Klee records are unreviewed and omit ER
-targets. This is not a reusable KQM corpus adapter.
+targets. Xiao adds six character-guide records containing three conditional
+artifact branches, 14 weapon choices across source-ranked 5-star groups and an
+unranked 4-star list, plus the exact Xiao/Xianyun/Furina/Faruzan FFXX roster.
+The guide-selected snapshot deliberately omits its ER recommendation. The
+separate rotation fixture preserves source-local action counts without mapping
+them to calculator formulas or attaching them to the team. These remain
+unreviewed validation targets, not a reusable KQM corpus adapter.
 
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
 Source-specific capture contracts live beside `sources/registry.json`.
-Crimson Witch has a separate permission-gated source profile: its current app
-looks structurally adaptable, but no public recommendation-data contract or
-reuse grant has been established.
+Every indexed manual snapshot must resolve to exactly one active registry entry
+using the manual-observation V1 mode and format, and that entry must not require
+permission. The loader and collection validator fail closed before ingestion
+when this policy is not met.
+Crimson Witch is registered as `blocked`, `permission-blocked`, and
+`permission-required`: its current app looks structurally adaptable, but no
+public recommendation-data contract or reuse grant has been established. It is
+therefore excluded from the manual index and consolidated repository unless the
+registry's permission state changes.
 The archived gcsimactions repository is also permission-blocked: its
 community-contributed configurations have no established reuse grant and use a
 legacy APL language that requires explicit migration and renewed validation.
@@ -795,7 +826,7 @@ Run from the repository root:
 ```powershell
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/import-sources.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/consolidate.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate.ts --defer-er
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-knowledge-corpus.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-character-guide-input-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/compare-diona.ts
@@ -830,11 +861,16 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-lower-investment-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
 npx vitest run --config scripts/guide-factory/vitest.config.ts
 ```
+
+The documented validation command keeps ER work deferred and explicitly skips
+only the historical Diona comparison and ER-calibration regeneration. Running
+without `--defer-er` remains available when those two reports are intentionally
+being maintained; `replay-diona-er-calibration.ts` is likewise an opt-in
+historical-maintenance command rather than part of the current non-ER sequence.
 
 The Eula replay prints stable JSON to stdout and does not write or modify
 knowledge, preset, or production data. It is explicitly a structural calculator
@@ -846,7 +882,8 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty-six globally integrated durable reports in memory:
+In full mode it rebuilds all thirty-seven globally integrated durable reports
+in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
@@ -867,8 +904,9 @@ historical ER calibration, plus the authenticated
 Keqing/Ineffa/Furina/Xilonen source-backed equipment candidate lattice, its
 authenticated runtime materialization preflight, and its authenticated bounded
 full-team technical computation, followed by its authenticated generated-sheet
-and displayed-allocation evidence catalog, and the compact cached-policy audit
-derived from those two authenticated reports.
+and displayed-allocation evidence catalog, the compact cached-policy audit
+derived from those two authenticated reports, and the authenticated all-start/
+all-order cached-policy robustness census.
 Stale evidence cannot pass.
 Checkpoint 35 adds a thirty-second durable report outside that global runner.
 Its isolated builder and tests authenticate five files and close
@@ -906,9 +944,9 @@ generator calls and 364 node-local replays over 36 nodes. Of 364 deduplicated
 compositions, 139 match at least one intact endpoint and 225 are cross-endpoint
 recombinations; all 36 bounded node references are cross-endpoint. The exact
 technical maxima and direct/compiled agreement remain internal observations
-under an unreviewed wrapper-authored translation. The final 2,011,250-byte
+under an unreviewed wrapper-authored translation. The current 2,011,434-byte
 report has SHA-256
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings.
 
@@ -920,8 +958,8 @@ trips within the declared two-decimal display envelope. Its 4,608 non-ER rows
 compare main-stat and positive displayed-substat membership with 17 authority-
 labelled targets while preserving condition status, baseline-context
 uncertainty, non-exhaustive absence, conflicts, and zero-match targets. The
-17,496,526-byte report has SHA-256
-`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+17,499,104-byte report has SHA-256
+`d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`.
 It derives no roll tiers, weights, ranks, recommendations, or correctness
 verdicts. Generator-internal objective optimization is merely recorded as an
 operation fact, and ER remains deferred.
@@ -932,27 +970,34 @@ one-shot best-neighbor pass, iterative best improvement, and declared-order
 first improvement from source sequence 0. The paths terminate at sequences 1,
 7, and 13; only iterative best improvement reaches the finite-table reference.
 The 2,029,334-byte report has SHA-256
-`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+`a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`.
 Its checkpoint-39 diagnostics are occurrence-scoped and excluded from every
 policy decision. It authenticates ER-deferral provenance but projects no ER
 value into the policy input and performs no ER calculation.
 
-The next non-ER checkpoint audits robustness across all 36 cached starts and
-the complete 3,456 effective declared-order family for this exact domain. It
-should store reconstructible partitions, histograms, digests, and a small set
-of witness traces rather than all 124,416 traces. This remains a cached-policy
-sensitivity experiment, not an equipment recommendation.
+Checkpoint 41 completes that non-ER robustness census across all 36 cached
+starts and the 864 structurally effective orders represented by 3,456 syntactic
+declared orders. Its 31,104 declared-order traces divide 18,576/12,528 between
+the two local terminals, while best improvement divides its starts 24/12. The
+compact report retains 13 start partitions, 96 path families, reconstruction
+digests, and a few witnesses rather than every trace. Its 71,373-byte output has
+SHA-256
+`c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`.
+This remains a cached-policy sensitivity experiment, not an equipment
+recommendation. The next non-ER boundary leaves this cached Keqing case for a
+second character/team slice from the expanded repository.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
-C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
+C0-C6 investments, producing 875 compact rows backed by 3,126 group-level
 observations. Aloy and the Anemo, Electro, Geo, and Hydro Traveler forms are
-the exact five characters with no contributing guide input. Of 900 exact-team
-member investments, 898 are constellation-unspecified; C6 Diona is exact and
-C2+ Xilonen is one lower-bounded observation. All 64 KQM manual records remain
-unreviewed, and the repository currently supplies zero repository-authored
-`damagePlans`.
+the exact five characters with no contributing guide input. Of 904 exact-team
+member investments, 902 are constellation-unspecified; C6 Diona is exact and
+C2+ Xilonen is one lower-bounded observation. All 72 indexed KQM records remain
+unreviewed. The 70 contributing guide records supply provenance or coverage;
+the energy-guidance and rotation-fixture records supply no guide observation.
+The repository currently supplies zero repository-authored `damagePlans`.
 
-The inventory links all 1,012 weapon and 1,072 artifact policy observations to
+The inventory links all 1,026 weapon and 1,075 artifact policy observations to
 their exact search-coverage classifications. Linkage does not itself mean
 representable or compatible: the report retains 28 explicitly not-representable
 artifact outcomes and 12 native weapon-type mismatches. The per-observation
@@ -960,10 +1005,8 @@ outcome payload hash is reconstructible only with the pinned upstream coverage
 report. Missing evidence is not an unsupported verdict, and constellation-
 unspecified evidence is not universal evidence. Raw stat weights remain raw
 values rather than ordinal ranks; page and array position create no rank; and
-the one coupled artifact plan remains atomic. All 64 upstream KQM manual records
-remain unreviewed; 63 non-energy records contribute provenance or coverage,
-while the energy-guidance record contributes none. Structured ER targets,
-floors, rotations, and weapon conditions contribute no observations, although
+the one coupled artifact plan remains atomic. Structured ER targets, floors,
+rotations, and weapon conditions contribute no observations, although
 preserved unresolved free text may mention energy requirements. The ordinary
 `er` stat token remains part of the build-stat vocabulary. No recommendation,
 guide, rank, or damage claim is derived.
@@ -1098,17 +1141,20 @@ construct entries. All 12 holdouts and the empty occurrence remain outside the
 catalog.
 
 The manual condition-array inventory then broadens that validation boundary to
-all seven active external snapshots. It extracts 142 exact schema occurrences
-and matches all 142 to their consolidated copies. Sixteen arrays are
-unconditional. Across the 126 nonempty arrays, 60 are typed-bound, 3 are exact-
-text acknowledged, and 63 are unbound. Excluding only structural ER leaves 123
-binding-coverage rows: 60 typed, 3 acknowledged, and 60 unbound. The 86 unique
-non-structural arrays split into 34 typed-only, 51 unbound-only, and one mixed
-acknowledged/unbound set. The separate
-energy ledger still defers 3 structural ER arrays, 3 typed Itto prerequisites,
-and 9 exact authored Diona/Furina rows; 57 rows are explicitly not energy-
-deferred and 54 nonempty rows remain energy-unclassified. Display status is 57
-typed, 51 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+eight guide-selected external snapshots. The ninth indexed snapshot is the
+separate Xiao rotation fixture and contains no guide condition arrays. Coverage
+extracts 163 exact schema occurrences from 71 manual records and matches all
+163 to their consolidated copies: 20 arrays are unconditional and 143 are
+nonempty, with 105 unique exact arrays, 177 condition-string occurrences, and
+114 unique strings. Across the nonempty arrays, 60 are typed-bound, 3 are exact-
+text acknowledged, and 80 are unbound. Excluding three structural ER arrays
+leaves 140 non-structural rows: 60 typed, 3 acknowledged, and 77 unbound. The
+102 unique non-structural arrays split into 34 typed-only, 67 unbound-only, and
+one mixed acknowledged/unbound set. The separate energy ledger defers 3
+structural ER arrays, 3 typed Itto prerequisites, and 9 exact authored
+Diona/Furina rows; 57 rows are explicitly not energy-deferred, 71 nonempty rows
+remain energy-unclassified, and 20 are unconditional. Display status is 57
+typed, 68 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 20
 unconditional. The authenticated
 catalog deliberately binds only exact source occurrences. Its reusable evidence
 labels are `source-local-typed-predicate-ast` and `source-local-not-energy-
@@ -1116,7 +1162,7 @@ deferred`, while each wrapper, fresh authentication, extraction path, and
 `sliceId` remains source-specific. The shared
 Viridescent Venerer text remains acknowledged for Jean, Kaedehara Kazuha, and
 Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates eight
-wrapper families across 19 source files and 73 generated-from paths. The
+wrapper families across 19 source files and 77 generated-from paths. The
 validator rebuilds the 63-entry catalog and coverage before regenerating the
 Klee witness. Neither catalog nor coverage feeds back into a source-local slice.
 The high-investment Noelle admission binds only checkpoint 31's three selected
@@ -1148,7 +1194,7 @@ remain the same.
 Checkpoint 34 regenerates manual coverage and this witness after the separate
 lower-investment catalog admission. The witness still authenticates six source
 files and the same four cross-linked Klee occurrences; its generated-from
-boundary is 76 paths and its upstream binding count is 63. Its claims, positive
+boundary is now 81 paths and its upstream binding count is 63. Its claims, positive
 fixture, negative control, holdout exclusions, and interpretation boundary do
 not change.
 
@@ -1176,11 +1222,12 @@ repository preserves provenance and review status. Neither layer is allowed to
 turn a selected item into a ranking or infer constellations, refinements, ER,
 formula counts, or rotations that the source did not specify.
 
-The descriptive corpus inventory currently counts 394 unique records: 158
-character guides, 3 character-role observations, 225 exact teams, 7 team
-templates, and 1 historical energy record. Of those, 191 are baseline records
-and 203 are candidates. KQM contributes 64 records, including 15 exact teams
-and 16 explicit rotation entries. The inventory also reports explicit weapon,
+The descriptive corpus inventory currently counts 402 unique records: 164
+character guides, 3 character-role observations, 226 exact teams, 7 team
+templates, 1 historical energy record, and 1 source-authored rotation fixture.
+Of those, 191 are baseline records and 211 are candidates. KQM contributes 72
+records, including 16 exact teams and 18 explicit team-rotation entries. The
+inventory also reports explicit weapon,
 artifact, main-stat,
 substat, and rotation presence by generated source. These are coverage facts,
 not votes or recommendation confidence.
@@ -1209,10 +1256,11 @@ Itto Xilonen Double Geo, and Keqing Lunar-Charged. The Keqing template keeps
 `resistance-shred` as unresolved role constraints; it is still uncovered, not
 role-unresolved, because no baseline team contains the required Keqing–Ineffa
 core. The exact KQM Furina/Neuvillette/Kazuha/Xilonen,
-Klee/Furina/Albedo/Xilonen, and Itto/C2+ Xilonen/Gorou/Furina rosters each
-match a current preset by character IDs. Exact-team coverage explicitly does
-not evaluate investment, so the last overlap is not a C2 validation. The other
-twelve exact KQM teams, including both PHEC Itto examples, all four Keqing
+Klee/Furina/Albedo/Xilonen, Itto/C2+ Xilonen/Gorou/Furina, and
+Xiao/Xianyun/Furina/Faruzan rosters each match a current preset by character
+IDs. Exact-team coverage explicitly does not evaluate investment, so the Itto
+overlap is not a C2 validation. The other twelve exact KQM teams, including both
+PHEC Itto examples, all four Keqing
 examples, the
 Kokomi/Ineffa/Columbina/Sucrose example, the Noelle Hexerei example, and the
 Klee/Chevreuse/Durin/Fischl example, are uncovered. Source presence does not
@@ -1265,12 +1313,12 @@ keys and a maximum of 14 stat-derived two-piece pair keys. The latter is an
 upper bound: the runtime discovers a potentially smaller set only after
 successful four-piece evaluations.
 
-The report covers 1,072 non-rejected artifact-choice occurrences. Of 188 guide
+The report covers 1,075 non-rejected artifact-choice occurrences. Of 188 guide
 builds, 167 are initially enumerated, 14 are only conditionally representable,
 and 7 are not representable by the current grammar. Of 840 selected artifacts
 on team members, 820 are initially enumerated, 7 are conditional, and 13 are
-not representable. Of 42 character-guide and team-member recommendation
-occurrences, 34 are initially enumerated and 8 are not representable. Both
+not representable. Of 45 character-guide and team-member recommendation
+occurrences, 37 are initially enumerated and 8 are not representable. Both
 assignments in the Kokomi/Columbina coupled plan are initially enumerated as
 individual choices. That does not establish that the analyzer can search the
 coupled assignment jointly. The 28 failures comprise 19 Instructor occurrences,
@@ -1288,10 +1336,10 @@ released policy and hashes the runtime source and data inputs. The policy skips
 weapon/refinement pairs: 24 3-star pairs, 139 4-star pairs, and 146 pairs from
 73 5-star weapons.
 
-Across 1,012 non-ER weapon occurrences, all 1,012 IDs are present in that global
+Across 1,026 non-ER weapon occurrences, all 1,026 IDs are present in that global
 released domain. This is not exact candidate coverage: none of the source
-observations specifies a refinement, so all 1,012 remain explicit refinement
-gaps. Native weapon-type comparison finds 1,000 compatible choices and 12
+observations specifies a refinement, so all 1,026 remain explicit refinement
+gaps. Native weapon-type comparison finds 1,014 compatible choices and 12
 mismatches, all selected weapons from the legacy candidate source. Baseline and
 KQM observations have no type mismatch.
 
@@ -1302,7 +1350,7 @@ class rather than merely one invalid comparison row. The report records this
 boundary but does not run the analyzer, correct the legacy source, choose a
 refinement policy, rank weapons, or compute damage. Historical weapon
 conditions attached to three ER targets are inventoried only to prove that they
-were excluded from the 1,012 observations; their target values receive no
+were excluded from the 1,026 observations; their target values receive no
 analysis.
 
 The artifact-generation preflight makes the missing refinement convention

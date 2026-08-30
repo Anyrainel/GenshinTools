@@ -11,7 +11,7 @@
   },
   "cautions": [
     "The nested generic evidence reports generator captures using the existing damage-objective-driven artifact optimization. The default CLI reruns that runtime, but the deterministic report is replayable evidence and is not a non-replayable execution attestation.",
-    "Eight selected checkpoint inputs are authenticated before execution. They are not an exhaustive transitive generator, StatSheet, or runtime dependency closure; exact generic result and full-output digests authenticate the observed evidence after execution.",
+    "Five selected checkpoint inputs are authenticated before execution: the bounded CP38 report plus four implementation files. The growing knowledge carriers are authenticated through CP39's selected semantic scope instead of whole-file hashes. This is not an exhaustive transitive generator, StatSheet, or runtime dependency closure; exact generic result and full-output digests authenticate the observed evidence after execution.",
     "This wrapper performs no separate damage replay or downstream optimizer call.",
     "Every target observation is attached to one node/carry/character occurrence. No comparison is attached to a global generated sheet identity.",
     "Membership and source partial-order rows are observations only. Presence or absence is not a correctness judgment, score, weight, rank, recommendation, or guide claim.",
@@ -163,24 +163,8 @@
   },
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
-      "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
-      "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
-    },
-    {
-      "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
-      "sha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822"
-    },
-    {
       "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json",
-      "sha256": "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01"
-    },
-    {
-      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
+      "sha256": "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063"
     },
     {
       "path": "scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts",
@@ -188,11 +172,15 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts",
-      "sha256": "1c36397833dd0dd09c802e0db13e928b689dd4fca4d85475bceccd65bee9bd92"
+      "sha256": "e9243df1bceaf504dde7d844559d40b0a34ade5225e31a7ce7f9508dc6e214b5"
     },
     {
-      "path": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
-      "sha256": "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04"
+      "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope.ts",
+      "sha256": "2971bfdef09888c6e5406e24d618a07ff94024ab896da06fe3717c9b6933bf17"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     }
   ],
   "generatedSheetEvidence": {
@@ -7962,10 +7950,10 @@
     "authentication": {
       "preflightReportContentSha256": "2fcf002d2432b4d319479d9a8622850a166d9bc5d8913f2ebd6f6e4ec1868569",
       "preflightReportSha256": "9bad2d3209f74543c7b0e434ee25f6a1e91e2ae20c471a7bc0838ae91d886569",
-      "reportContentSha256": "a31e829893d30f8d6db129c3659674891d121b7e13c414ba2864d7f1f8a2bfd8",
+      "reportContentSha256": "dfb21991f2f0d8f83aa9d0896a8752c288bcf5286f2f0e767f742bbca57d5b76",
       "resultFingerprintSha256": "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386",
-      "technicalReportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
-      "technicalReportSha256": "9cf324261711a569ad84ef9ecf862fb5566015c4fb6f7379b3e1a80eaa0988d4"
+      "technicalReportContentSha256": "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
+      "technicalReportSha256": "d2c460e59f55216ec0ff9914f106284d41eee817f65d77f7a241202c7dacf0ed"
     },
     "capabilities": {
       "damageClaims": false,
@@ -8019,24 +8007,8 @@
     },
     "generatedFrom": [
       {
-        "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-      },
-      {
-        "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
-        "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
-      },
-      {
-        "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
-        "sha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822"
-      },
-      {
         "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json",
-        "sha256": "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01"
-      },
-      {
-        "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-        "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
+        "sha256": "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063"
       },
       {
         "path": "scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts",
@@ -8044,11 +8016,15 @@
       },
       {
         "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts",
-        "sha256": "1c36397833dd0dd09c802e0db13e928b689dd4fca4d85475bceccd65bee9bd92"
+        "sha256": "e9243df1bceaf504dde7d844559d40b0a34ade5225e31a7ce7f9508dc6e214b5"
       },
       {
-        "path": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
-        "sha256": "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04"
+        "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope.ts",
+        "sha256": "2971bfdef09888c6e5406e24d618a07ff94024ab896da06fe3717c9b6933bf17"
+      },
+      {
+        "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+        "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
       }
     ],
     "generatorDamageObjectiveEvaluated": true,
@@ -8115,8 +8091,8 @@
       ],
       "technicalReportAuthenticated": true,
       "technicalReportComplete": true,
-      "technicalReportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
-      "technicalReportSha256": "9cf324261711a569ad84ef9ecf862fb5566015c4fb6f7379b3e1a80eaa0988d4"
+      "technicalReportContentSha256": "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
+      "technicalReportSha256": "d2c460e59f55216ec0ff9914f106284d41eee817f65d77f7a241202c7dacf0ed"
     },
     "issues": [],
     "nodes": [
@@ -75522,7 +75498,7 @@
         "no-applicable-target"
       ]
     },
-    "contentSha256": "b35ba89aeec5f27033a49dc8487ec6911d45b8df9d0076af8e2af1183010fe99",
+    "contentSha256": "3607aac1eceddbf22120a9cf838f21c6442647fa9fe54dbd0459aa1ca3199c48",
     "damageComputationExecuted": false,
     "energyRecoveryCapability": false,
     "energyRecoveryInputsConsumedForDeferralProvenance": true,
@@ -75533,7 +75509,6 @@
         "furina",
         "xilonen"
       ],
-      "equipmentLatticeReportSha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822",
       "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
     },
     "exclusions": {
@@ -75551,28 +75526,7 @@
       }
     },
     "gameplayEvaluationExecuted": false,
-    "generatedFrom": [
-      {
-        "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
-        "sha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822"
-      },
-      {
-        "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-      },
-      {
-        "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
-        "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
-      },
-      {
-        "path": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
-        "sha256": "edbce81e2cb036cc07fe8f0dae08662e2ab75f3328b977849fb50e75478e7b04"
-      },
-      {
-        "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-        "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
-      }
-    ],
+    "generatedFrom": [],
     "guideProduced": false,
     "issues": [],
     "optimalityClaimed": false,
@@ -75591,15 +75545,104 @@
     "rankProduced": false,
     "recommendationProduced": false,
     "schemaVersion": 1,
+    "semanticScope": {
+      "acceptedAudit": {
+        "dependencies": [
+          {
+            "dependencyId": "cp39-repository-records",
+            "selectedEntryCount": 7,
+            "selectedKeySetSha256": "dea3719d9c3d151a07a81a1cf0e048e7df423cae474af026d378b9e3a01ed476",
+            "selectedPayloadSha256": "bd54afe2d2c9a05e3f92bbdb4c80534e03580161dbe54eae09a30755b9aac6b1"
+          },
+          {
+            "dependencyId": "cp39-repository-recommendation-entries",
+            "selectedEntryCount": 12,
+            "selectedKeySetSha256": "70526afea666e97df61a5edf2191b7e05f007b3547bbe7bdc68a3da08470016c",
+            "selectedPayloadSha256": "0481769258815906867e546145d2f57e729fd28a101dd7db4f99d9d07af26461"
+          },
+          {
+            "dependencyId": "cp39-preset-guides",
+            "selectedEntryCount": 4,
+            "selectedKeySetSha256": "054738b84ed32f07eb481df92ad9833dd896c707129cbd65bbcca529c6ad5a35",
+            "selectedPayloadSha256": "6ee9a2320d45ee128128b84bf0f0894b70354d8fb87f74cbf7a08b0c9f225719"
+          },
+          {
+            "dependencyId": "cp39-preset-snapshot-envelope",
+            "selectedEntryCount": 1,
+            "selectedKeySetSha256": "07d7a3ca2f057d593c806f8ff0b7d21a6add779f6b618dbb447e34af320d9d4d",
+            "selectedPayloadSha256": "5ce97c0b0a049fd42eccaab3faef9907b8983ac28b2a591c6484ac2e6d3cc54b"
+          },
+          {
+            "dependencyId": "cp39-preset-builds",
+            "selectedEntryCount": 5,
+            "selectedKeySetSha256": "0ae24453d67c0f6c4de3787fd801f7cdaecad75f993d7c3968c7c31995f65325",
+            "selectedPayloadSha256": "91d8321301e677d741f8ae3e33d39486c8e985dbceae722c64158dd29ecb9279"
+          },
+          {
+            "dependencyId": "cp39-live-builds",
+            "selectedEntryCount": 5,
+            "selectedKeySetSha256": "60cb209bb141b20157249cdaf948ce3b68558d6626f4a134b9d229b7ca3d6f6b",
+            "selectedPayloadSha256": "b745c0caacdf9d7e63eda5aa7402e8a890fabb5e86887f8225affcba3e618d93"
+          },
+          {
+            "dependencyId": "cp39-live-character-build-ids",
+            "selectedEntryCount": 4,
+            "selectedKeySetSha256": "1fb0e68cd904a7721494ce948796373ebb12a60509e45a1d442c4ba014b05ea7",
+            "selectedPayloadSha256": "362730b86e8a3b6aa43d34847b5f345882aaba80e62d8769496ff72f924aa253"
+          },
+          {
+            "dependencyId": "cp39-evidence-claims",
+            "selectedEntryCount": 12,
+            "selectedKeySetSha256": "76a8f8b0916040e7b2c94acc5685f388a00c9544c914fd8d9b76c363227aaa62",
+            "selectedPayloadSha256": "f4f33fb05fb77a8a4992b2472652d0210ac5cfb5e14104a5501175260a523b4d"
+          },
+          {
+            "dependencyId": "cp39-evidence-source-boundaries",
+            "selectedEntryCount": 2,
+            "selectedKeySetSha256": "0dd26357af9445a49089c8c3ca83185b6b9f43884ed3f4729257b9a8d9d0f28d",
+            "selectedPayloadSha256": "f8f4b967a997a27403a670a3cd48326aea824877ee787283e962f63a429b504e"
+          },
+          {
+            "dependencyId": "cp39-evidence-capability",
+            "selectedEntryCount": 1,
+            "selectedKeySetSha256": "0372ff0d59b10cb2556b23ef9b06028f1735a74367a4e595bdf1a047b714bb5b",
+            "selectedPayloadSha256": "da1036cd2c2262d0efe8c4fa7a7f94fd5072fff8f67d69bf3ed5e9ac95d5602f"
+          },
+          {
+            "dependencyId": "cp39-cp36-active-artifacts",
+            "selectedEntryCount": 5,
+            "selectedKeySetSha256": "83a87b0cdf5e1437831a7b7dc8d32991ea23eb8064dc3538a7a705fc33ce0515",
+            "selectedPayloadSha256": "2858aa2fde7a3513ff4ca951c241aaa4c92a3b54eca04c4a15773eb5f7c3560e"
+          }
+        ],
+        "manifestSha256": "d7c66a48751deffcbae499e5b67d4d3212c65a8fbd769c1b23bb15c3aa67f3cd",
+        "paritySummary": {
+          "exactParityCount": 26,
+          "normalizedPairDigestSha256": "d79b623569e979b4b814655ea7d01edb23e91f57733d6d801f24476bbaf610eb",
+          "parityCount": 26
+        },
+        "scopeId": "keqing-ineffa-furina-xilonen-generated-sheet-knowledge-targets-v1",
+        "scopeProjectionSha256": "610087fda9d902936ee55c8b8ea74ddc9247701aef19a47bdf1777bef5f331cf",
+        "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
+      },
+      "authentication": "accepted",
+      "expectedManifestSha256": "d7c66a48751deffcbae499e5b67d4d3212c65a8fbd769c1b23bb15c3aa67f3cd",
+      "expectedScopeProjectionSha256": "610087fda9d902936ee55c8b8ea74ddc9247701aef19a47bdf1777bef5f331cf"
+    },
     "sourceBoundary": {
-      "evidenceReportPayloadSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
       "exactAuthorityAndAssociationClosure": true,
       "exactKqmClaimAssociationCount": 12,
+      "exactParityCount": 26,
       "exactPresetAssociationCount": 5,
-      "genshinToolsSnapshotPayloadSha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9",
-      "liveBuildPresetPayloadSha256": "849483499dd387399af2492bfc8faa2b126a84e588f76b6e4f8ecb64bab0dc94",
-      "repositoryPayloadSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-      "upstreamPayloadHashesMatch": true
+      "selectedCp36ActiveArtifactCount": 5,
+      "selectedEvidenceCapabilityCount": 1,
+      "selectedEvidenceClaimCount": 12,
+      "selectedEvidenceSourceBoundaryRecordCount": 2,
+      "selectedLiveBuildCount": 5,
+      "selectedLiveCharacterBuildArrayCount": 4,
+      "selectedPresetGuideCount": 4,
+      "selectedPresetSnapshotEnvelopeCount": 1,
+      "selectedRepositoryRecordCount": 7
     },
     "summary": {
       "baselineContextUnknownTargetCount": 5,
@@ -338481,17 +338524,17 @@
     "dependencySetClassification": "authenticated-declared-non-self-selected-checkpoint-inputs",
     "dependencySetExhaustive": false,
     "exactPathSet": true,
-    "expectedFileCount": 8,
+    "expectedFileCount": 5,
     "knowledgeTargetsAuthenticated": true,
     "nestedGenericPreflightAuthenticated": true,
     "nestedGenericTechnicalReportAuthenticated": true,
     "nestedGenericTechnicalReportComplete": true,
-    "observedFileCount": 8,
+    "observedFileCount": 5,
     "postExecutionGenericOutputAuthenticationRequired": true,
     "selectedInputsAuthenticatedBeforeExecution": true,
     "sourceSpecificTechnicalReportAuthenticated": true,
     "sourceTechnicalReportPayloadHashMatches": true,
-    "sourceTechnicalReportPayloadSha256": "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01",
+    "sourceTechnicalReportPayloadSha256": "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063",
     "transitiveModuleGraphClaimed": false,
     "transitiveRuntimeDependenciesAuthenticatedBeforeExecution": false
   },
@@ -338561,7 +338604,7 @@
     "generatedFrom": [
       {
         "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json",
-        "sha256": "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec"
+        "sha256": "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b"
       },
       {
         "path": "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts",
@@ -338577,7 +338620,7 @@
       },
       {
         "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentRuntimePreflight.ts",
-        "sha256": "7e5fb4112a159af757ed7d2bc23f345dac6dda4f5c9e32bd06ffad402048d7ae"
+        "sha256": "9095bc051441d6beb784a4a0c71ed7246e9d71769eb92e874fc2d9c53209eace"
       },
       {
         "path": "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts",
@@ -338858,7 +338901,7 @@
       "nestedGenericPreflightComplete": true,
       "observedFileCount": 64,
       "sourcePreflightByteHashMatches": true,
-      "sourcePreflightReportSha256": "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec",
+      "sourcePreflightReportSha256": "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b",
       "sourceSpecificPreflightFullDigestAuthenticated": true,
       "transitiveModuleGraphClaimed": false
     },
@@ -338926,16 +338969,12 @@
       "damageReplayExecuted": false,
       "generatedFrom": [
         {
-          "path": "scripts/guide-factory/data/knowledge/repository.json",
-          "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-        },
-        {
           "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-          "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
+          "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
         },
         {
           "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
-          "sha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822"
+          "sha256": "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6"
         },
         {
           "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -338951,15 +338990,23 @@
         },
         {
           "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-          "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
+          "sha256": "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072"
+        },
+        {
+          "path": "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+          "sha256": "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9"
         },
         {
           "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentCandidateLattice.ts",
-          "sha256": "67752798b719c0e62971a2448218197a5f7979dc38e3f1a2a5116a7d92527f45"
+          "sha256": "37353a9d2481607a1a2eb293ac7a445827019cfaf3618ea41469d1d0e04533a8"
         },
         {
           "path": "scripts/guide-factory/src/schemas.ts",
-          "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+          "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+        },
+        {
+          "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+          "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
         },
         {
           "path": "scripts/guide-factory/src/sourceBackedEquipmentCandidateLattice.ts",
@@ -338971,7 +339018,7 @@
         },
         {
           "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
-          "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+          "sha256": "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42"
         },
         {
           "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -353146,14 +353193,14 @@
         ],
         "dependencySetClassification": "authenticated-declared-non-self-checkpoint-inputs",
         "exactPathSet": true,
-        "expectedFileCount": 38,
+        "expectedFileCount": 39,
         "formulaDraftDigestMatches": true,
-        "formulaDraftReportSha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
+        "formulaDraftReportSha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
         "formulaDraftSemanticClosure": true,
         "latticeFullDigestAuthenticated": true,
         "latticeReportDigestMatches": true,
-        "latticeReportSha256": "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822",
-        "observedFileCount": 38,
+        "latticeReportSha256": "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6",
+        "observedFileCount": 39,
         "transitiveModuleGraphClaimed": false,
         "upstreamByteHashesMatch": true
       },
@@ -353238,7 +353285,7 @@
         "objectiveEnvelopeSha256": "fd0ecbf13feb1a6ee73ea904196ae1d262f81530900c8ca4f8b78742c4e678f8",
         "preflightReportContentSha256": "2fcf002d2432b4d319479d9a8622850a166d9bc5d8913f2ebd6f6e4ec1868569",
         "preflightReportSha256": "9bad2d3209f74543c7b0e434ee25f6a1e91e2ae20c471a7bc0838ae91d886569",
-        "reportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
+        "reportContentSha256": "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
         "resultFingerprintSha256": "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5",
         "runtimeAssumptionsSha256": "fa46720ec6063f0401d946312e511e5013b230cf04a55b496e040ccd22e43b41"
       },
@@ -353310,7 +353357,7 @@
       "generatedFrom": [
         {
           "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-runtime-preflight.json",
-          "sha256": "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec"
+          "sha256": "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b"
         },
         {
           "path": "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts",
@@ -353326,7 +353373,7 @@
         },
         {
           "path": "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentRuntimePreflight.ts",
-          "sha256": "7e5fb4112a159af757ed7d2bc23f345dac6dda4f5c9e32bd06ffad402048d7ae"
+          "sha256": "9095bc051441d6beb784a4a0c71ed7246e9d71769eb92e874fc2d9c53209eace"
         },
         {
           "path": "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts",
@@ -386327,8 +386374,8 @@
         "representativeSelectionPolicy": "first-node-then-enumerated-exact-objective-tie",
         "unreviewedTechnicalObjective": 926093.666196721
       },
-      "genericReportContentSha256": "eab5ed82e03034e87ad76d993123ef45ef455a2ad98caedffb5e11443c92553b",
-      "genericStableFullReportSha256": "9cf324261711a569ad84ef9ecf862fb5566015c4fb6f7379b3e1a80eaa0988d4",
+      "genericReportContentSha256": "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
+      "genericStableFullReportSha256": "d2c460e59f55216ec0ff9914f106284d41eee817f65d77f7a241202c7dacf0ed",
       "intactGeneratorEndpointTechnicalReference": {
         "compositionId": "bounded-full-team-composition:9afd60d56a776f53fac347671b8085a7d6560906f2e4db2d0047ed50effa5627",
         "equivalentReferences": [

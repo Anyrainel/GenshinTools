@@ -33,9 +33,9 @@ const CP39_REPORT_PATH =
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-generated-sheet-evidence.json";
 const POLICY_SOURCE_PATH = "scripts/guide-factory/src/boundedLatticePolicy.ts";
 const EXPECTED_CP38_SHA256 =
-  "955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01";
+  "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063";
 const EXPECTED_CP39_SHA256 =
-  "9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568";
+  "d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a";
 const EXPECTED_POLICY_SOURCE_SHA256 =
   "73a9ee8f253686ec63fb841287953fe3fb342b491316b7915bb4299144266bbc";
 const EXPECTED_COMPACT_NODE_TABLE_SHA256 =
@@ -45,13 +45,13 @@ const EXPECTED_REVIEW_PROJECTION_SHA256 =
 const EXPECTED_POLICY_AUDIT_SHA256 =
   "159828178c5a42affc6d7d97c5092842fa8fab41b0fbb58ee8e55f626ec8b5a2";
 const EXPECTED_REPORT_CONTENT_SHA256 =
-  "5d6f5e912d8b85633a27828634e12af4cc18bb36f33b9f31f1a0890153ddc3d0";
+  "7e923f9aeeca1abc2d6bf1a96abc38dc4ae9579718c2c37bc073bd9ac60fe296";
 const EXPECTED_AUTHENTICATED_FULL_REPORT_SHA256 =
-  "b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935";
+  "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46";
 const EXPECTED_INJECTED_REPORT_CONTENT_SHA256 =
-  "b428f9d16793cc8d714bcc3510fb87f7132c6b01e1b5a5a4e0c95b233acae00f";
+  "ed41cf3970d36f204388af2c033a6a1396884000b59ae99327a3093c0d250bf2";
 const EXPECTED_INJECTED_AUTHENTICATED_FULL_REPORT_SHA256 =
-  "7d221ca06dfc2366851330f87bd76ed72fffeedc2bceff67a011ff319f335b2a";
+  "82608201d1299de9295ef35d99f430f907eefbd016d8cf344bd954e05e180682";
 
 const DIMENSIONS = [
   "member:keqing:weapon",
@@ -570,7 +570,9 @@ export function requireAuthenticatedKeqingIneffaFurinaXilonenCachedPolicyAuditRe
     !completeReportSemanticsHold(report)
   ) {
     throw new Error(
-      "Refusing unauthenticated or mutated Keqing/Ineffa/Furina/Xilonen cached-policy audit report.",
+      "Refusing unauthenticated or mutated Keqing/Ineffa/Furina/Xilonen " +
+        `cached-policy audit report (content ${report.authentication.reportContentSha256}, ` +
+        `full ${sha256Text(stableJson(report))}).`,
     );
   }
 }

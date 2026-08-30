@@ -1,0 +1,1121 @@
+{
+  "authentication": {
+    "censusInputProjectionSha256": "86fb2b9c41881840b348adc66dffa5d4f4a198a67ec6609363095af22793d294",
+    "censusPayloadSha256": "a98fd6d0c708be4f7b6974df0c2ae0021f693faa7577b9ee9ee517dccda5e986",
+    "reportContentSha256": "148493d115ac799579ce36a4a6f8b7947ef3d3bd7882b4110b2463091178955c"
+  },
+  "capabilities": {
+    "damageClaims": false,
+    "energyRecoveryClaims": false,
+    "gameplayClaims": false,
+    "guideClaims": false,
+    "optimalityClaims": false,
+    "rankClaims": false,
+    "recommendationClaims": false,
+    "scalarWeightClaims": false
+  },
+  "cautions": [
+    "This is an exhaustive cached-policy robustness census over the exact authenticated CP40 36-node bounded technical table: all 36 starts for one-shot and best-improvement policies and all 864 structurally effective declared orders across all 36 starts. It does not generate or evaluate new equipment.",
+    "The technical objective remains unreviewed and source-not-ready with eight retained blockers. The census establishes deterministic behavior only inside this finite cached table, not rotation validity, gameplay applicability, damage, DPS, equipment advice, or global optimality.",
+    "The default environment reports 31,177 cached policy calls and verifies zero generator, damage-replay, downstream-optimizer, recommendation, rank, and ER calls. Injected census builders are uninstrumented for those side effects and therefore retain null call attestations.",
+    "CP40 occurrence diagnostics and its prior four policy traces are authenticated provenance but are not projected into the census input. Review rows remain excluded from the objective and every policy filter.",
+    "CP40 ER-deferral provenance is authenticated. No ER value is projected into the census input, no ER value influences the default census, and no ER calculation is performed.",
+    "The declared input paths are a selected non-self checkpoint boundary, not an exhaustive dependency closure or transitive module-graph claim."
+  ],
+  "census": {
+    "bestImprovementAllStarts": {
+      "longestMoveCount": 3,
+      "moveCountHistogram": [
+        {
+          "moveCount": 0,
+          "traceCount": 2
+        },
+        {
+          "moveCount": 1,
+          "traceCount": 10
+        },
+        {
+          "moveCount": 2,
+          "traceCount": 16
+        },
+        {
+          "moveCount": 3,
+          "traceCount": 8
+        }
+      ],
+      "otherTerminalStartCount": 12,
+      "referenceTerminalStartCount": 24,
+      "terminalBasins": [
+        {
+          "startCount": 24,
+          "startNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ],
+          "startNodeIdsSha256": "19685077e06bb2698ee12ccce7108ac8e05532f17003f85905edb6316de8525f",
+          "terminalNodeId": "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+          "terminalTechnicalObjective": 926093.666196721
+        },
+        {
+          "startCount": 12,
+          "startNodeIds": [
+            "source-backed-equipment-node:fe589a7952c68e85b8b4826195e0a13e1467e82638c1e95701063b5e685417ec",
+            "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:47880464ff26bdd0c88e7c3bb951d193805a626794231c158a319665e12f10a2",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466"
+          ],
+          "startNodeIdsSha256": "488a598f75389ec83c714fd2aeecddd0453d9706a44c0215044e773298d37aaa",
+          "terminalNodeId": "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+          "terminalTechnicalObjective": 921173.659557781
+        }
+      ],
+      "traceCount": 36,
+      "traceSignaturesSha256": "0338fd4bf29b1122cf2ccee95f8c87aa8f4d1f576e96fd14a464f4399d33173c"
+    },
+    "censusPayloadSha256": "a98fd6d0c708be4f7b6974df0c2ae0021f693faa7577b9ee9ee517dccda5e986",
+    "classification": "cached-lattice-policy-robustness-census",
+    "declaredOrderFamily": {
+      "allStartPathFamiliesSha256": "83a1a9267c7adb0b2a9c2f98293a857179784a55c11b930d30dda0b9a780c1c7",
+      "allStartPathFamilyOrderCountHistogram": [
+        {
+          "orderCount": 9,
+          "pathFamilyCount": 96
+        }
+      ],
+      "distinctAllStartPathFamilyCount": 96,
+      "distinctReferenceTerminalBasinSizeCount": 10,
+      "distinctStartPartitionCount": 13,
+      "effectiveOrderCount": 864,
+      "longestMoveCount": 7,
+      "meanReferenceMinusTerminalTechnicalObjective": 1981.6693406841966,
+      "meanTerminalTechnicalObjective": 924111.9968560368,
+      "orderFamilySha256": "1aa53446b8ea6217a0e146fcd56cd873c4a251ed15292a28e85cd387b25d09bc",
+      "otherTerminalTraceCount": 12528,
+      "partitions": [
+        {
+          "firstOrderOrdinal": 0,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "e136742fc21825ab3dec8b7c62879c9a1b08f5b6ea70c73c2123358a9eccd3e5",
+          "otherTerminalStartCount": 21,
+          "partitionSha256": "fb9acc785fab87d079d61dcc724d864bd9e687ee98a1d8288432679e160d75fe",
+          "referenceTerminalStartCount": 15,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 36,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "9d3b26c580d509c8cb47a09d5395e68d098ef54489eeb9f1e5fa0f82c478a3bf",
+          "otherTerminalStartCount": 9,
+          "partitionSha256": "08a2dc847fe4ba073e7583dce52f5378c3d8eb050e6f6681f09a66ec57fece04",
+          "referenceTerminalStartCount": 27,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 72,
+          "orderCount": 72,
+          "orderOrdinalsSha256": "29098a1fd556842c08f8d7b44471549531a0f57c7b1a8d8640beafaa3ae51a4c",
+          "otherTerminalStartCount": 27,
+          "partitionSha256": "94db1ee79b211793c02b3011fe0fa7dfa8a97dc8006266dac7777d05421d4f57",
+          "referenceTerminalStartCount": 9,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 108,
+          "orderCount": 216,
+          "orderOrdinalsSha256": "34712f39c88d8d3b4e14d6a0d1b29648af7420dcfaad43258c9dea5f4b5ee880",
+          "otherTerminalStartCount": 18,
+          "partitionSha256": "6dd915cf19bacb9cd8f71291b178ab9ec3e1da21e85619e6dd802cf214630f11",
+          "referenceTerminalStartCount": 18,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 144,
+          "orderCount": 72,
+          "orderOrdinalsSha256": "b2d264ad7fe6a9da99c2cfc0fee07e11111ba3fdaabe824ec588232124b2f7ae",
+          "otherTerminalStartCount": 6,
+          "partitionSha256": "7801268a5f3cdac10ce3eb69943b02973a5b582f0090f7fe3bfac97c631f015a",
+          "referenceTerminalStartCount": 30,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:668f82d8e13e9849e19dc3bd07d3f75a18f53fd9e96d1f530c590e9a3f0542b5",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 216,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "e7b7710ce521a3cc06be92df9b7601e099ec68b94244bbb6facc130ac4549fa1",
+          "otherTerminalStartCount": 2,
+          "partitionSha256": "77bf66539b5ff853c5c8a51077babc0d01b5b0e56f0c27fdfdb1b38bfa32e031",
+          "referenceTerminalStartCount": 34,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:fe589a7952c68e85b8b4826195e0a13e1467e82638c1e95701063b5e685417ec",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:47880464ff26bdd0c88e7c3bb951d193805a626794231c158a319665e12f10a2",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 228,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "3ca109c51e38f270be176241b6128e9de93ca73423d507f86fd87bd4460ee192",
+          "otherTerminalStartCount": 4,
+          "partitionSha256": "8f766fb5106119ffeccf1e3ff4b793fe9f1109409722de9655df2fc1200b7355",
+          "referenceTerminalStartCount": 32,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:fe589a7952c68e85b8b4826195e0a13e1467e82638c1e95701063b5e685417ec",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 288,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "8e194dc12b812e2f606296c071ef4733e2ba39b7920d24a2c0380b288927ba83",
+          "otherTerminalStartCount": 6,
+          "partitionSha256": "ce9ee29e4dcdca3ab367d548bbce0ba84b30bbe20b7795033ba78d4eb7f47361",
+          "referenceTerminalStartCount": 30,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:fe589a7952c68e85b8b4826195e0a13e1467e82638c1e95701063b5e685417ec",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:47880464ff26bdd0c88e7c3bb951d193805a626794231c158a319665e12f10a2",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 300,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "e347dd61450511c8bb592830bb534a0d3a1ff008403a693e7d5f17b630afd019",
+          "otherTerminalStartCount": 12,
+          "partitionSha256": "eceaccffcc84b3a7a8545c52b5d354c4a3bd65231e020e79af1c3320bfb718e2",
+          "referenceTerminalStartCount": 24,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:fe589a7952c68e85b8b4826195e0a13e1467e82638c1e95701063b5e685417ec",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:d24a6178df45e9cbb54cbc92e2c3230d7667d334e0c77c4d1330de6463efc6a2",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 324,
+          "orderCount": 108,
+          "orderOrdinalsSha256": "1552b3156ec5e2ec9dd7e59def6b586294f020a29f60ab4522edbaef3ec2d596",
+          "otherTerminalStartCount": 12,
+          "partitionSha256": "19406293a0f2a876bb507ce2637f306a7cb3e19862ecf0b0b2c9c37cba1df8cc",
+          "referenceTerminalStartCount": 24,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:47880464ff26bdd0c88e7c3bb951d193805a626794231c158a319665e12f10a2",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 336,
+          "orderCount": 108,
+          "orderOrdinalsSha256": "58c5210fea536b5e3e9e36376ef113ab7df42a4b75f1f1e801d8898961b7ef3a",
+          "otherTerminalStartCount": 24,
+          "partitionSha256": "24d98aa197048f3809e94f8cc796aef5736c8bb8445d59617f8fdb270b088b68",
+          "referenceTerminalStartCount": 12,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 360,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "df480af2de6313fe16dff5d1acc10e815b9c681759e4e3f56fb7f24d3189e205",
+          "otherTerminalStartCount": 4,
+          "partitionSha256": "2519728cd5c90e34a7ff4cce7dfbfca15b1a118484be7717cdb51e45d3326b65",
+          "referenceTerminalStartCount": 32,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:61e88b302dfeea11a946a35607dc86851cc09cdfa4d8550986fa5dffeeb21f73",
+            "source-backed-equipment-node:47880464ff26bdd0c88e7c3bb951d193805a626794231c158a319665e12f10a2",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:acc2b35ebf3ce161f9f5b637a75cd2b0001f865a59bd5d62f9861dcaf3d14e5d",
+            "source-backed-equipment-node:c23735054d2d707afa9ddc06d81a4d86fad46db3b897a9c77e9967af31262234",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        },
+        {
+          "firstOrderOrdinal": 372,
+          "orderCount": 36,
+          "orderOrdinalsSha256": "e927b496ff1f749d0884d44c54c10426cf49d824c22759e648fa1889c2287df6",
+          "otherTerminalStartCount": 8,
+          "partitionSha256": "ca96efdf07f2e8f89b91d90e07a2133c6fbb47ae3ae5444b9fb0c132d3513e18",
+          "referenceTerminalStartCount": 28,
+          "referenceTerminalStartNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:34ad2d8a6c9fa66ccd4d5b8f809de6e4f03e65434c8d1f8ebcc1309cbb630cf7",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:6e38adcdf1c037bd54c88de35084b4a12c6517ea48d6fd057d1811eb1d3039d5",
+            "source-backed-equipment-node:ca1df6295d32a27718dc334c46e39c51d27e924abdab4c59be14b3c79d65b5ce",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:6cbbc215c77f9ec5540028cc0306226598e3c553a3bb26830797e3dff7c6026c",
+            "source-backed-equipment-node:42168bf1916b604d61370b152f5ed396d02fe612dc84883c587e1c16cb90aca6",
+            "source-backed-equipment-node:b5350847f7fed4bc0e840d906c18ab8e0c306b6dd35bcc6710bed87043861ac7",
+            "source-backed-equipment-node:2cda3140ffba2ccdad7423e1e79059a2907751246988404ff4a671b6c1d722c3",
+            "source-backed-equipment-node:d0a94b078d29b7be1534c70385ea2f244b19d29a89cc5c15b1722f5b8c5ae2e9",
+            "source-backed-equipment-node:64dd9bc38063cbde30a0ec49d05270ad4f474b794b25a00fb507a66141da3db5",
+            "source-backed-equipment-node:f401d91b4b85a03751f04ee9363c743087f2c21ff1e421a6341ad20e470329ac",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:de0788873c8c24e2f50dd53a60c988215173d4a769c80dc2d5f0961050f7a528",
+            "source-backed-equipment-node:3023bb8b6240d71c87bd79f45f2811b8c1f6b00c01ee5ed5f4675f47a7679a65",
+            "source-backed-equipment-node:ba3faffa4f80caa99c7c23d81e7dd6c6b321905c3913196e65b9c89aafab003c",
+            "source-backed-equipment-node:e1661ff1f1ed46d3b1790453b527964e6d911d077895b340ab4c7d146ca163d2",
+            "source-backed-equipment-node:9915655954754e096d1e84b84dc8e0a2a51ba59ea4e5936cf0c98e66fff59b39",
+            "source-backed-equipment-node:21635c3f1295ca258ffd7cfbda74bcc5a72ab3e735648c4dabc9063612018328",
+            "source-backed-equipment-node:9572f4f9235295d1a8315df36880b810d43fc3e47e169bf090972fec35818466",
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:64ae68bc84700f8c4297c273a129dc5d770d3b2d067c34e81a70ec98d7db5252",
+            "source-backed-equipment-node:aa36356c53bb4e68ec8c0ce8b46503377175745ab75a02242b29b058b256e3d4",
+            "source-backed-equipment-node:07d49ef97bfae1b0adb88c3e3f1bf6191fd03cfb32ef1ff59a157528764349e6"
+          ]
+        }
+      ],
+      "pathMoveCountHistogram": [
+        {
+          "moveCount": 0,
+          "traceCount": 1728
+        },
+        {
+          "moveCount": 1,
+          "traceCount": 5184
+        },
+        {
+          "moveCount": 2,
+          "traceCount": 7236
+        },
+        {
+          "moveCount": 3,
+          "traceCount": 7164
+        },
+        {
+          "moveCount": 4,
+          "traceCount": 5634
+        },
+        {
+          "moveCount": 5,
+          "traceCount": 3078
+        },
+        {
+          "moveCount": 6,
+          "traceCount": 954
+        },
+        {
+          "moveCount": 7,
+          "traceCount": 126
+        }
+      ],
+      "referenceTerminalBasinSizeHistogram": [
+        {
+          "orderCount": 72,
+          "referenceTerminalStartCount": 9
+        },
+        {
+          "orderCount": 108,
+          "referenceTerminalStartCount": 12
+        },
+        {
+          "orderCount": 36,
+          "referenceTerminalStartCount": 15
+        },
+        {
+          "orderCount": 216,
+          "referenceTerminalStartCount": 18
+        },
+        {
+          "orderCount": 144,
+          "referenceTerminalStartCount": 24
+        },
+        {
+          "orderCount": 36,
+          "referenceTerminalStartCount": 27
+        },
+        {
+          "orderCount": 36,
+          "referenceTerminalStartCount": 28
+        },
+        {
+          "orderCount": 108,
+          "referenceTerminalStartCount": 30
+        },
+        {
+          "orderCount": 72,
+          "referenceTerminalStartCount": 32
+        },
+        {
+          "orderCount": 36,
+          "referenceTerminalStartCount": 34
+        }
+      ],
+      "referenceTerminalTraceCount": 18576,
+      "structurallyEffectiveCandidateOrderProduct": 36,
+      "structurallyEffectiveDimensionOrderPermutationCount": 24,
+      "syntacticCandidateValuePermutationProduct": 144,
+      "syntacticDimensionOrderPermutationCount": 24,
+      "syntacticOrderCount": 3456,
+      "terminalOccurrenceCounts": [
+        {
+          "technicalObjective": 926093.666196721,
+          "terminalNodeId": "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+          "traceCount": 18576
+        },
+        {
+          "technicalObjective": 921173.659557781,
+          "terminalNodeId": "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+          "traceCount": 12528
+        }
+      ],
+      "traceCount": 31104,
+      "traceSignaturesSha256": "45a21703b88d5c2b71f314c01f5754a87e4b3dbde8e7b44ba7e7a9bc88875418",
+      "witnesses": [
+        {
+          "classification": "canonical-order",
+          "declaredOrder": [
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0"
+              ],
+              "dimension": "member:keqing:weapon"
+            },
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+              ],
+              "dimension": "member:keqing:artifact"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:weapon-order:0",
+                "genshintools-presets:character-guide:furina:weapon-order:1",
+                "genshintools-presets:character-guide:furina:weapon-order:2"
+              ],
+              "dimension": "member:furina:weapon"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:build:BQAI0BO",
+                "genshintools-presets:character-guide:furina:build:BQA4H1m"
+              ],
+              "dimension": "member:furina:artifact"
+            }
+          ],
+          "moveCount": 2,
+          "orderOrdinal": 0,
+          "orderSha256": "fa99c1788c07abacdd603d1ce72132056c32e49729d5bb2a9fd44476b7b467ae",
+          "otherTerminalBasinStartCount": 21,
+          "pathNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c"
+          ],
+          "referenceTerminalBasinStartCount": 15,
+          "startNodeId": "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+          "terminalNodeId": "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+          "terminalTechnicalObjective": 921173.659557781
+        },
+        {
+          "classification": "reverse-order",
+          "declaredOrder": [
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:build:BQAI0BO",
+                "genshintools-presets:character-guide:furina:build:BQA4H1m"
+              ],
+              "dimension": "member:furina:artifact"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:weapon-order:2",
+                "genshintools-presets:character-guide:furina:weapon-order:1",
+                "genshintools-presets:character-guide:furina:weapon-order:0"
+              ],
+              "dimension": "member:furina:weapon"
+            },
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+              ],
+              "dimension": "member:keqing:artifact"
+            },
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0"
+              ],
+              "dimension": "member:keqing:weapon"
+            }
+          ],
+          "moveCount": 2,
+          "orderOrdinal": 863,
+          "orderSha256": "457d1b3cc07e9d5a8bb68905b87af617cffd4f868fec22bad91af02213069a23",
+          "otherTerminalBasinStartCount": 24,
+          "pathNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4"
+          ],
+          "referenceTerminalBasinStartCount": 12,
+          "startNodeId": "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+          "terminalNodeId": "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+          "terminalTechnicalObjective": 926093.666196721
+        },
+        {
+          "classification": "longest-path",
+          "declaredOrder": [
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0"
+              ],
+              "dimension": "member:keqing:weapon"
+            },
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+              ],
+              "dimension": "member:keqing:artifact"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:weapon-order:1",
+                "genshintools-presets:character-guide:furina:weapon-order:2",
+                "genshintools-presets:character-guide:furina:weapon-order:0"
+              ],
+              "dimension": "member:furina:weapon"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:build:BQAI0BO",
+                "genshintools-presets:character-guide:furina:build:BQA4H1m"
+              ],
+              "dimension": "member:furina:artifact"
+            }
+          ],
+          "moveCount": 7,
+          "orderOrdinal": 15,
+          "orderSha256": "6fa5c785f6f0f038069b3b9df68deb41d2f7518c9734bf9148a9482e29d96803",
+          "otherTerminalBasinStartCount": 21,
+          "pathNodeIds": [
+            "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+            "source-backed-equipment-node:a7df9ff94d35a8e653f4f12193ba09dee00f3cb4c3c08277baa34d6ad07d2965",
+            "source-backed-equipment-node:10d119ad4ab559f876322b436d5cdc53b15b2c17b6e76ad3794778466781a97c",
+            "source-backed-equipment-node:ded0b381d7d2bf3adfb36b1b938e1a07595322208f2f9ea0bcbdfe5d505b1722",
+            "source-backed-equipment-node:7281422a1ea856ef2ccbd25a61d6410718a92cfc0909d7e3c653ce6828251fa0",
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c"
+          ],
+          "referenceTerminalBasinStartCount": 15,
+          "startNodeId": "source-backed-equipment-node:408462e4e747b84625458386a989c8077595ce3fe9333a09e614f71a4f9a2e85",
+          "terminalNodeId": "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+          "terminalTechnicalObjective": 921173.659557781
+        },
+        {
+          "classification": "minimum-reference-basin",
+          "declaredOrder": [
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0"
+              ],
+              "dimension": "member:keqing:weapon"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:weapon-order:0",
+                "genshintools-presets:character-guide:furina:weapon-order:1",
+                "genshintools-presets:character-guide:furina:weapon-order:2"
+              ],
+              "dimension": "member:furina:weapon"
+            },
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+              ],
+              "dimension": "member:keqing:artifact"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:build:BQAI0BO",
+                "genshintools-presets:character-guide:furina:build:BQA4H1m"
+              ],
+              "dimension": "member:furina:artifact"
+            }
+          ],
+          "moveCount": 2,
+          "orderOrdinal": 72,
+          "orderSha256": "3f4d40a64faf8996a380b06f3ed68c7bbb5c18e23099dd798b6663fe97131c1f",
+          "otherTerminalBasinStartCount": 27,
+          "pathNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c"
+          ],
+          "referenceTerminalBasinStartCount": 9,
+          "startNodeId": "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+          "terminalNodeId": "source-backed-equipment-node:36be772b60bf74afe06733117f83672c8418363193a32b9f4473ad87597ced2c",
+          "terminalTechnicalObjective": 921173.659557781
+        },
+        {
+          "classification": "maximum-reference-basin",
+          "declaredOrder": [
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+                "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+              ],
+              "dimension": "member:keqing:artifact"
+            },
+            {
+              "candidateValues": [
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+                "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0"
+              ],
+              "dimension": "member:keqing:weapon"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:weapon-order:0",
+                "genshintools-presets:character-guide:furina:weapon-order:1",
+                "genshintools-presets:character-guide:furina:weapon-order:2"
+              ],
+              "dimension": "member:furina:weapon"
+            },
+            {
+              "candidateValues": [
+                "genshintools-presets:character-guide:furina:build:BQAI0BO",
+                "genshintools-presets:character-guide:furina:build:BQA4H1m"
+              ],
+              "dimension": "member:furina:artifact"
+            }
+          ],
+          "moveCount": 2,
+          "orderOrdinal": 216,
+          "orderSha256": "7e1ef0e10a369a83999651790fdbbb19f672905bee3225452e1c016102e3cede",
+          "otherTerminalBasinStartCount": 2,
+          "pathNodeIds": [
+            "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+            "source-backed-equipment-node:b88c3bd70af80ab8e79579c344b1055d080b1f7e77727675cfc733303ef00a40",
+            "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4"
+          ],
+          "referenceTerminalBasinStartCount": 34,
+          "startNodeId": "source-backed-equipment-node:347d54f5c3fccd6025e214283eb4c8dfe7454ef37858df5b634a5996fc183237",
+          "terminalNodeId": "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4",
+          "terminalTechnicalObjective": 926093.666196721
+        }
+      ]
+    },
+    "direction": "maximize",
+    "evaluationSource": "cached-node-table-only",
+    "evaluatorCalls": 0,
+    "execution": {
+      "bestImprovementPolicyCalls": 36,
+      "damageReplayCalls": 0,
+      "declaredFirstImprovementPolicyCalls": 31104,
+      "downstreamOptimizerCalls": 0,
+      "energyRecoveryCalls": 0,
+      "generatorCalls": 0,
+      "oneShotPolicyCalls": 36,
+      "rankCalls": 0,
+      "recommendationCalls": 0,
+      "tableReferenceCalls": 1,
+      "totalPolicyCalls": 31177
+    },
+    "interpretation": "technical-policy-audit-only",
+    "nodeCount": 36,
+    "oneShotAllStarts": {
+      "moveCountHistogram": [
+        {
+          "moveCount": 0,
+          "traceCount": 2
+        },
+        {
+          "moveCount": 1,
+          "traceCount": 34
+        }
+      ],
+      "movedTraceCount": 34,
+      "resultAtLocalTerminalCount": 12,
+      "resultOutsideLocalTerminalsCount": 24,
+      "traceCount": 36,
+      "traceSignaturesSha256": "cd97374ac860914010331e6790ec893bf97c728af9ff836a801aa8feeadcccd3",
+      "unchangedTraceCount": 2
+    },
+    "schemaVersion": 1,
+    "startCount": 36,
+    "tableReference": {
+      "technicalObjective": 926093.666196721,
+      "terminalNodeId": "source-backed-equipment-node:bc32a7c4a0726e2eaea436a41c07c42615b3a40f1985d15fea36c63bb2414dd4"
+    },
+    "tolerance": {
+      "absolute": 1e-9,
+      "relative": 1e-12
+    }
+  },
+  "censusId": "keqing-ineffa-furina-xilonen-cached-policy-robustness-census-v1",
+  "censusInputBoundary": {
+    "censusInputProjectionSha256": "86fb2b9c41881840b348adc66dffa5d4f4a198a67ec6609363095af22793d294",
+    "cp40PolicyAuditProjectedIntoCensusInput": false,
+    "declaredFirstImprovementOrder": [
+      {
+        "candidateValues": [
+          "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:0",
+          "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:0:1",
+          "kqm:character-guide:keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i:weapon:1:0"
+        ],
+        "dimension": "member:keqing:weapon"
+      },
+      {
+        "candidateValues": [
+          "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
+          "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:1"
+        ],
+        "dimension": "member:keqing:artifact"
+      },
+      {
+        "candidateValues": [
+          "genshintools-presets:character-guide:furina:weapon-order:0",
+          "genshintools-presets:character-guide:furina:weapon-order:1",
+          "genshintools-presets:character-guide:furina:weapon-order:2"
+        ],
+        "dimension": "member:furina:weapon"
+      },
+      {
+        "candidateValues": [
+          "genshintools-presets:character-guide:furina:build:BQAI0BO",
+          "genshintools-presets:character-guide:furina:build:BQA4H1m"
+        ],
+        "dimension": "member:furina:artifact"
+      }
+    ],
+    "dimensions": [
+      "member:keqing:weapon",
+      "member:keqing:artifact",
+      "member:furina:weapon",
+      "member:furina:artifact"
+    ],
+    "direction": "maximize",
+    "energyRecoveryProvenanceReadForAuthentication": true,
+    "energyRecoveryValuesProjectedIntoCensusInput": false,
+    "evaluationSource": "authenticated-cached-cp40-node-table-only",
+    "exactCartesianClosure": true,
+    "exactNodeSequence": true,
+    "nodeCount": 36,
+    "reviewComparisonRowCount": 4608,
+    "reviewDiagnosticsProjectedIntoCensusInput": false,
+    "reviewOccurrenceCount": 576,
+    "reviewUsedAsPolicyFilter": false,
+    "reviewUsedForObjective": false,
+    "startCount": 36,
+    "technicalObjectiveTolerance": {
+      "absolute": 1e-9,
+      "relative": 1e-12
+    }
+  },
+  "classification": "keqing-ineffa-furina-xilonen-cached-policy-robustness-census",
+  "executionBoundary": {
+    "actualTotalPolicyCallsAttested": false,
+    "censusBuilderCalls": 1,
+    "censusProductionEnvironment": "default-cached-policy-robustness-census",
+    "censusReportedEvaluatorCalls": 0,
+    "censusReportedPolicyCalls": 31177,
+    "damageReplayCalls": 0,
+    "downstreamOptimizerCalls": 0,
+    "energyRecoveryCalls": 0,
+    "energyRecoveryValuesInfluencedCensus": false,
+    "forbiddenSeamCallCountsAttestation": "verified-zero-default-environment",
+    "generatorCalls": 0,
+    "outerGuardInvocationCountAttested": false,
+    "rankCalls": 0,
+    "recommendationCalls": 0,
+    "scheduling": "sequential"
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-cached-policy-audit.json",
+      "sha256": "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46"
+    },
+    {
+      "path": "scripts/guide-factory/src/boundedLatticePolicy.ts",
+      "sha256": "73a9ee8f253686ec63fb841287953fe3fb342b491316b7915bb4299144266bbc"
+    },
+    {
+      "path": "scripts/guide-factory/src/boundedLatticePolicyCensus.ts",
+      "sha256": "1770b7a9c061523742d39bc065e7194e1909087f99b48642eb931cd8c4fb754b"
+    }
+  ],
+  "guideProduced": false,
+  "issues": [],
+  "prohibitedInterpretations": [
+    "guide",
+    "recommendation",
+    "rank",
+    "scalar-weight",
+    "optimizer-result",
+    "damage-claim",
+    "dps-claim",
+    "gameplay-claim",
+    "global-optimum",
+    "equipment-optimum",
+    "energy-requirement",
+    "er-calculation",
+    "cp40-review-objective"
+  ],
+  "promotionEligible": false,
+  "rankProduced": false,
+  "recommendationProduced": false,
+  "scalarWeightProduced": false,
+  "schemaVersion": 1,
+  "sourceAuthentication": {
+    "allByteHashesWellFormed": true,
+    "allDeclaredFileHashesMatch": true,
+    "authentication": "accepted",
+    "censusSourceByteSha256": "1770b7a9c061523742d39bc065e7194e1909087f99b48642eb931cd8c4fb754b",
+    "censusSourceHashMatches": true,
+    "cp40ByteSha256": "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46",
+    "cp40CompactNodeTableSha256": "95dbf16cb035227488f77fa12673120505b058a7e81a2914adf848a293d37106",
+    "cp40FullGuardPassed": true,
+    "cp40PayloadHashMatches": true,
+    "cp40PayloadSha256": "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46",
+    "cp40PolicyAuditSha256": "159828178c5a42affc6d7d97c5092842fa8fab41b0fbb58ee8e55f626ec8b5a2",
+    "cp40ReviewProjectionSha256": "ea108239bcadd49bfcdbde1057b5caf476eeb2c168271f9c97f87ac8bc855d73",
+    "dependencySetClassification": "authenticated-declared-non-self-selected-checkpoint-inputs",
+    "dependencySetExhaustive": false,
+    "exactPathSet": true,
+    "expectedFileCount": 3,
+    "observedFileCount": 3,
+    "policySourceByteSha256": "73a9ee8f253686ec63fb841287953fe3fb342b491316b7915bb4299144266bbc",
+    "policySourceHashMatches": true,
+    "selectedInputsAuthenticatedBeforeCensusExecution": true,
+    "transitiveModuleGraphClaimed": false
+  },
+  "sourceBoundary": {
+    "exactCharacterIds": [
+      "keqing",
+      "ineffa",
+      "furina",
+      "xilonen"
+    ],
+    "exactTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "objectiveReviewStatus": "unreviewed",
+    "sourcePublishedWholeCandidateCount": 0,
+    "sourceReadinessBlockerCount": 8,
+    "sourceReadyForGameplayClaims": false,
+    "sourceReadyForGuideClaims": false
+  },
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsGameplayClaims": false,
+  "supportsGuideClaims": false,
+  "supportsOptimalityClaims": false,
+  "supportsRankClaims": false,
+  "supportsRecommendationClaims": false,
+  "validationStatus": "authenticated-completed-cached-policy-robustness-census-source-not-ready"
+}

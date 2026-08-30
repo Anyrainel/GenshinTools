@@ -6,6 +6,10 @@ import {
 } from "./artifactChoiceSearchCoverage";
 import type { ManualSnapshotInput } from "./manualSnapshots";
 import {
+  knowledgeRepositoryProjectionSha256,
+  projectKnowledgeRepository,
+} from "./repositoryProjection";
+import {
   compareEligibleCatalogWithCheckedInRosterReport,
   parseCheckedInRosterCatalogReference,
 } from "./rosterCatalogReference";
@@ -49,6 +53,8 @@ const SOURCE_REGISTRY_RELATIVE_PATH =
   "scripts/guide-factory/sources/registry.json";
 const MANUAL_INDEX_RELATIVE_PATH =
   "scripts/guide-factory/data/source-snapshots/manual-index.json";
+const KNOWLEDGE_REPOSITORY_RELATIVE_PATH =
+  "scripts/guide-factory/data/knowledge/repository.json";
 
 export const CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS = [
   SOURCE_REGISTRY_RELATIVE_PATH,
@@ -60,6 +66,7 @@ export const CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS = [
   "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
   "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+  "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
 ] as const;
 
 export const CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS = [
@@ -69,11 +76,11 @@ export const CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/io.ts",
   "scripts/guide-factory/src/manualSnapshots.ts",
   "scripts/guide-factory/src/paths.ts",
+  "scripts/guide-factory/src/repositoryProjection.ts",
   "scripts/guide-factory/src/rosterCatalogReference.ts",
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
-  "scripts/guide-factory/data/knowledge/repository.json",
   ...CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS,
   "scripts/guide-factory/reports/artifact-choice-search-coverage.json",
   "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -97,7 +104,41 @@ export const CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS = [
   "src/lib/team-comp/analyzer/weaponChoice.ts",
 ] as const;
 
+const CHARACTER_GUIDE_INPUT_COVERAGE_MANUAL_SNAPSHOT_PATHS =
+  CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS.filter(
+    (sourcePath) =>
+      sourcePath !== SOURCE_REGISTRY_RELATIVE_PATH &&
+      sourcePath !== MANUAL_INDEX_RELATIVE_PATH,
+  );
+
+/**
+ * Select the manual snapshots that can contribute character-guide inputs.
+ * Indexed validation-only corpora (for example rotation fixtures) remain
+ * available to consolidation without joining this report's byte boundary.
+ */
+export function selectCharacterGuideInputManualSnapshots(
+  manualSnapshotInputs: readonly ManualSnapshotInput[],
+): ManualSnapshotInput[] {
+  const inputsByPath = indexManualSnapshotInputs(
+    manualSnapshotInputs,
+    "Character-guide coverage",
+  );
+  return CHARACTER_GUIDE_INPUT_COVERAGE_MANUAL_SNAPSHOT_PATHS.map(
+    (snapshotPath) => {
+      const input = inputsByPath.get(snapshotPath);
+      if (!input) {
+        throw new Error(
+          `Character-guide coverage is missing manual snapshot input ${snapshotPath}.`,
+        );
+      }
+      return input;
+    },
+  );
+}
+
 const EXPECTED_RELEASED_CHARACTER_COUNT = 125;
+const EXPECTED_CHARACTER_GUIDE_INPUT_REPOSITORY_PROJECTION_SHA256 =
+  "cd64a0642f498b3746c29428ee9806f20acb7fae34a85aa4cd18d5ed524c8b54";
 
 export interface CharacterGuideInputCoverageSourceFile {
   path: string;
@@ -108,6 +149,10 @@ export type CharacterGuideInputCoverageAxis =
   (typeof CHARACTER_GUIDE_INPUT_COVERAGE_AXES)[number];
 export type CharacterGuideInputCoverageState =
   (typeof CHARACTER_GUIDE_INPUT_COVERAGE_STATES)[number];
+export type CharacterGuideInputKnowledgeRecord = Exclude<
+  KnowledgeRecord,
+  { kind: "energy_guidance" | "rotation_fixture" }
+>;
 
 export type ConstellationApplicability =
   | {
@@ -167,7 +212,7 @@ export interface CharacterGuideInputObservation {
 
 export interface CharacterGuideInputRecordContext {
   repositoryRecordId: string;
-  repositoryRecordKind: Exclude<KnowledgeRecord["kind"], "energy_guidance">;
+  repositoryRecordKind: CharacterGuideInputKnowledgeRecord["kind"];
   repositoryRecordStatus: Exclude<KnowledgeRecord["status"], "rejected">;
   promotionEligibility:
     | "explicitly-eligible"
@@ -227,10 +272,15 @@ export interface CharacterGuideInputCoverageReport {
       >;
     };
     repository: {
-      repositorySha256: string;
+      projectionKind: "character-guide-input";
+      repositoryProjectionSha256: string;
+      repositoryProjectionMatchesCurrentObject: true;
       nonRejectedRecordCount: number;
       rejectedRecordCount: number;
       rejectedRecordsContributedObservationCount: 0;
+      rotationFixtureRecordsExcluded: true;
+      energyGuidanceRecordsExcluded: true;
+      nestedSearchCoverageReportsStillAuthenticateWholeRepository: true;
       sourceRegistryFileSha256: string;
       sourceRegistrySha256MatchesRepository: true;
     };
@@ -372,31 +422,59 @@ export function buildReleasedGuideDomainCatalog(
   return catalog;
 }
 
+export function recordContributesCharacterGuideInputCoverage(
+  record: KnowledgeRecord,
+): record is CharacterGuideInputKnowledgeRecord {
+  return (
+    record.kind !== "energy_guidance" && record.kind !== "rotation_fixture"
+  );
+}
+
+export function requireCurrentCharacterGuideInputRepositoryProjection(
+  repositoryProjection: KnowledgeRepository,
+  expectedProjectionSha256 =
+    EXPECTED_CHARACTER_GUIDE_INPUT_REPOSITORY_PROJECTION_SHA256,
+): void {
+  const observed = knowledgeRepositoryProjectionSha256(repositoryProjection);
+  if (observed !== expectedProjectionSha256) {
+    throw new Error(
+      `Character-guide repository projection drifted: observed ${observed}.`,
+    );
+  }
+}
+
 /**
  * Inventory explicit, non-rejected guide inputs. This function classifies
  * stored source claims; it never executes conditions, formulas, ranking, or ER.
  */
 export function buildCharacterGuideInputCoverageReport(
   input: BuildCharacterGuideInputCoverageInput,
+  expectedRepositoryProjectionSha256?: string,
 ): CharacterGuideInputCoverageReport {
-  const repository = KnowledgeRepositorySchema.parse(input.repositoryInput);
+  const fullRepository = KnowledgeRepositorySchema.parse(input.repositoryInput);
   const generatedFrom = validateGeneratedFrom(input.generatedFrom);
+  const manualSnapshotInputs = selectCharacterGuideInputManualSnapshots(
+    input.manualSnapshotInputs,
+  );
+  const repository = projectKnowledgeRepository(
+    fullRepository,
+    "character-guide-input",
+    manualSnapshotInputs.map(({ snapshotFile }) => snapshotFile.path),
+  );
+  const repositoryProjectionSha256 =
+    knowledgeRepositoryProjectionSha256(repository);
+  requireCurrentCharacterGuideInputRepositoryProjection(
+    repository,
+    expectedRepositoryProjectionSha256,
+  );
+  const nestedRepositorySha256 = sha256Text(stableJson(fullRepository));
   const authenticatedSources = authenticateSourceFiles(
     input.sourceFiles,
     generatedFrom,
     input.sourceRegistryInput,
-    input.manualSnapshotInputs,
+    manualSnapshotInputs,
   );
   const sourceRegistry = authenticatedSources.sourceRegistry;
-  const repositoryFileSha256 = requiredGeneratedHash(
-    generatedFrom,
-    "scripts/guide-factory/data/knowledge/repository.json",
-  );
-  if (sha256Text(stableJson(repository)) !== repositoryFileSha256) {
-    throw new Error(
-      "Knowledge repository object does not match current repository report bytes.",
-    );
-  }
   const rosterReportFileSha256 = requiredGeneratedHash(
     generatedFrom,
     "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
@@ -432,7 +510,8 @@ export function buildCharacterGuideInputCoverageReport(
   const provenanceIdsByRecordId = new Map<string, string[]>();
   for (const record of repository.records.filter(
     (candidate) =>
-      candidate.status !== "rejected" && candidate.kind !== "energy_guidance",
+      candidate.status !== "rejected" &&
+      recordContributesCharacterGuideInputCoverage(candidate),
   )) {
     provenanceIdsByRecordId.set(
       record.id,
@@ -454,10 +533,11 @@ export function buildCharacterGuideInputCoverageReport(
     observeRecord(context, record, releasedIds);
   }
   const searchCoverage = authenticateSearchCoverageReports(
-    repository,
+    fullRepository,
     input.weaponChoiceSearchCoverageReportInput,
     input.artifactChoiceSearchCoverageReportInput,
     generatedFrom,
+    nestedRepositorySha256,
   );
   const representabilityLinkage = attachSearchGrammarRepresentability(
     context.observations,
@@ -473,14 +553,13 @@ export function buildCharacterGuideInputCoverageReport(
   const recordContexts = nonRejectedRecords
     .filter(
       (record) =>
-        record.kind !== "energy_guidance" && observedRecordIds.has(record.id),
+        recordContributesCharacterGuideInputCoverage(record) &&
+        observedRecordIds.has(record.id),
     )
     .map((record) => ({
       repositoryRecordId: record.id,
-      repositoryRecordKind: record.kind as Exclude<
-        KnowledgeRecord["kind"],
-        "energy_guidance"
-      >,
+      repositoryRecordKind:
+        record.kind as CharacterGuideInputKnowledgeRecord["kind"],
       repositoryRecordStatus: record.status as Exclude<
         KnowledgeRecord["status"],
         "rejected"
@@ -590,11 +669,16 @@ export function buildCharacterGuideInputCoverageReport(
         checkedInRosterReportComparison,
       },
       repository: {
-        repositorySha256: repositoryFileSha256,
+        projectionKind: "character-guide-input",
+        repositoryProjectionSha256,
+        repositoryProjectionMatchesCurrentObject: true,
         nonRejectedRecordCount: nonRejectedRecords.length,
         rejectedRecordCount:
           repository.records.length - nonRejectedRecords.length,
         rejectedRecordsContributedObservationCount: 0,
+        rotationFixtureRecordsExcluded: true,
+        energyGuidanceRecordsExcluded: true,
+        nestedSearchCoverageReportsStillAuthenticateWholeRepository: true,
         sourceRegistryFileSha256,
         sourceRegistrySha256MatchesRepository: true,
       },
@@ -723,35 +807,42 @@ function authenticateSourceFiles(
   const manualIndex = ManualSnapshotIndexSchema.parse(
     JSON.parse(manualIndexFile.text),
   );
+  const manualIndexByPath = new Map(
+    manualIndex.snapshots.map((entry) => [entry.path, entry] as const),
+  );
+  const coveredIndexEntries =
+    CHARACTER_GUIDE_INPUT_COVERAGE_MANUAL_SNAPSHOT_PATHS.map(
+      (snapshotPath) => {
+        const entry = manualIndexByPath.get(snapshotPath);
+        if (!entry) {
+          throw new Error(
+            `Character-guide coverage manual index is missing ${snapshotPath}.`,
+          );
+        }
+        return entry;
+      },
+    );
   const expectedSourceFilePaths = [
-    SOURCE_REGISTRY_RELATIVE_PATH,
-    MANUAL_INDEX_RELATIVE_PATH,
-    ...manualIndex.snapshots.map(({ path }) => path),
+    ...CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS,
   ].sort(compareText);
   const actualSourceFilePaths = [...filesByPath.keys()].sort(compareText);
   if (stableJson(actualSourceFilePaths) !== stableJson(expectedSourceFilePaths)) {
     throw new Error(
-      "Character-guide coverage source-file inputs do not match the authenticated manual index.",
+      "Character-guide coverage source-file inputs do not match its authenticated input boundary.",
     );
   }
 
-  const manualInputsByPath = new Map<string, ManualSnapshotInput>();
-  for (const manualInput of manualSnapshotInputs) {
-    const snapshotPath = manualInput.snapshotFile.path;
-    if (manualInputsByPath.has(snapshotPath)) {
-      throw new Error(
-        `Character-guide coverage repeats manual snapshot input ${snapshotPath}.`,
-      );
-    }
-    manualInputsByPath.set(snapshotPath, manualInput);
-  }
-  if (manualInputsByPath.size !== manualIndex.snapshots.length) {
+  const manualInputsByPath = indexManualSnapshotInputs(
+    manualSnapshotInputs,
+    "Character-guide coverage",
+  );
+  if (manualInputsByPath.size !== coveredIndexEntries.length) {
     throw new Error(
-      "Character-guide coverage manual snapshot inputs do not match the authenticated manual index.",
+      "Character-guide coverage manual snapshot inputs do not match its authenticated input boundary.",
     );
   }
 
-  const authenticatedManualInputs = manualIndex.snapshots.map((indexEntry) => {
+  const authenticatedManualInputs = coveredIndexEntries.map((indexEntry) => {
     const supplied = manualInputsByPath.get(indexEntry.path);
     const sourceFile = filesByPath.get(indexEntry.path);
     if (!supplied || !sourceFile) {
@@ -798,6 +889,21 @@ function authenticateSourceFiles(
     sourceRegistry,
     manualSnapshotInputs: authenticatedManualInputs,
   };
+}
+
+function indexManualSnapshotInputs(
+  manualSnapshotInputs: readonly ManualSnapshotInput[],
+  label: string,
+): Map<string, ManualSnapshotInput> {
+  const inputsByPath = new Map<string, ManualSnapshotInput>();
+  for (const manualInput of manualSnapshotInputs) {
+    const snapshotPath = manualInput.snapshotFile.path;
+    if (inputsByPath.has(snapshotPath)) {
+      throw new Error(`${label} repeats manual snapshot input ${snapshotPath}.`);
+    }
+    inputsByPath.set(snapshotPath, manualInput);
+  }
+  return inputsByPath;
 }
 
 function validateGeneratedFrom(
@@ -949,7 +1055,8 @@ function buildSourceProvenance(
   const byRecordId = new Map<string, string[]>();
   for (const record of repository.records.filter(
     (candidate) =>
-      candidate.status !== "rejected" && candidate.kind !== "energy_guidance",
+      candidate.status !== "rejected" &&
+      recordContributesCharacterGuideInputCoverage(candidate),
   )) {
     const groupedRefs = new Map<string, KnowledgeRecord["sourceRefs"]>();
     for (const ref of record.sourceRefs) {
@@ -1038,7 +1145,12 @@ function observeRecord(
   record: Exclude<KnowledgeRecord, { status: "rejected" }>,
   releasedIds: ReadonlySet<string>,
 ): void {
-  if (record.status === "rejected" || record.kind === "energy_guidance") return;
+  if (
+    record.status === "rejected" ||
+    !recordContributesCharacterGuideInputCoverage(record)
+  ) {
+    return;
+  }
   if (record.kind === "team") {
     observeTeam(context, record, releasedIds);
   } else if (record.kind === "team_template") {
@@ -1756,6 +1868,7 @@ function authenticateSearchCoverageReports(
   weaponInput: unknown,
   artifactInput: unknown,
   generatedFrom: readonly { path: string; sha256: string }[],
+  nestedRepositorySha256: string,
 ): {
   weapon: WeaponChoiceSearchCoverageReport;
   artifact: ArtifactChoiceSearchCoverageReport;
@@ -1791,12 +1904,14 @@ function authenticateSearchCoverageReports(
     generatedFrom,
     weaponPath,
     WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
+    nestedRepositorySha256,
   );
   assertCoverageGeneratedFromCurrent(
     artifact,
     generatedFrom,
     artifactPath,
     ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
+    nestedRepositorySha256,
   );
   const expectedWeapon = buildWeaponChoiceSearchCoverageReport(
     repository,
@@ -1850,6 +1965,7 @@ function assertCoverageGeneratedFromCurrent(
   current: readonly { path: string; sha256: string }[],
   reportPath: string,
   expectedInputPaths: readonly string[],
+  nestedRepositorySha256: string,
 ): void {
   const actualPaths = report.generatedFrom
     .map(({ path }) => path)
@@ -1859,7 +1975,10 @@ function assertCoverageGeneratedFromCurrent(
     throw new Error(`${reportPath} has an incomplete generatedFrom boundary.`);
   }
   for (const file of report.generatedFrom) {
-    const currentHash = requiredGeneratedHash(current, file.path);
+    const currentHash =
+      file.path === KNOWLEDGE_REPOSITORY_RELATIVE_PATH
+        ? nestedRepositorySha256
+        : requiredGeneratedHash(current, file.path);
     if (currentHash !== file.sha256) {
       throw new Error(
         `${reportPath} is stale against current ${file.path}.`,

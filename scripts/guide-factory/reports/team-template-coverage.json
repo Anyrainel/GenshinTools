@@ -776,12 +776,61 @@
         }
       ],
       "teamId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+    },
+    {
+      "investmentEvaluated": false,
+      "matchedBaselineTeamIds": [
+        "genshintools-presets:team:CX03obKWOJgK51-fWO"
+      ],
+      "memberInvestmentScopes": [
+        {
+          "characterId": "xiao",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 0
+        },
+        {
+          "characterId": "xianyun",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 1
+        },
+        {
+          "characterId": "furina",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 2
+        },
+        {
+          "characterId": "faruzan",
+          "investment": {
+            "status": "unspecified"
+          },
+          "memberIndex": 3
+        }
+      ],
+      "outcome": "present",
+      "outcomeBasis": "character-roster-only",
+      "sourceRefs": [
+        {
+          "locator": {
+            "heading": "Teams > Example Team Comps > Final Fantasy 20 (FFXX)",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+        }
+      ],
+      "teamId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
     }
   ],
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
@@ -789,7 +838,7 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",

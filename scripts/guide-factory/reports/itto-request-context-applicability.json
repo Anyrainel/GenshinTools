@@ -183,10 +183,6 @@
   "formulas": false,
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
       "path": "scripts/guide-factory/data/request-contexts/itto-diagnostic-contexts-v1.json",
       "sha256": "da3f73a23eea9cfd39a6c2f5233f4d2de625e9bcdf39d54dc287cdb23299b6c0"
     },
@@ -195,16 +191,8 @@
       "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
     },
     {
-      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
-    },
-    {
       "path": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
-      "sha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956"
-    },
-    {
-      "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      "sha256": "7bf108aa98f6858a1ad1eb4bd838571a7fde6aabad93962cc18aa9dd04a310ad"
     },
     {
       "path": "scripts/guide-factory/src/assemble-itto-request-context-applicability.ts",
@@ -236,7 +224,11 @@
     },
     {
       "path": "scripts/guide-factory/src/ittoSourceConditionedGuidePacket.ts",
-      "sha256": "a2c48222112053ee76c4e75b7e09d4ca5025095b3bba5520c52a52623e442a49"
+      "sha256": "93e9401b6155ec28bc9e49ad58718098b2a043c8ff49ab6797cb2d62bfe9c185"
+    },
+    {
+      "path": "scripts/guide-factory/src/ittoSourceConditionedGuidePacketScope.ts",
+      "sha256": "0a8724d79287820871a5fea54a2a9bdb109e1aeab83d286d435fd16d1c8bcb94"
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
@@ -244,7 +236,11 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     },
     {
       "path": "scripts/guide-factory/src/sourceBaselineInvestmentComparison.ts",
@@ -6558,18 +6554,18 @@
   "schemaVersion": 1,
   "sourceCellsMutated": false,
   "sourceControlBoundary": {
-    "canonicalReportSha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956",
+    "canonicalReportSha256": "7bf108aa98f6858a1ad1eb4bd838571a7fde6aabad93962cc18aa9dd04a310ad",
     "claimCatalogSha256": "9e49d1ce03cfdce0d332c830739cbf05efa0beb1bfb56884c1339df3394bb947",
     "conditionMapSha256": "e62bc61b41358ce6b82c8c9098d52e3e704f8f4b5fb7e0023939d08f9f0ddd30",
     "semanticContract": "accepted",
-    "serializedReportCanonicalObjectSha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956",
-    "serializedReportFileSha256": "d480cde04552f854279c0d33711f114ed38538646d8aa27985d2c050e10e7956",
+    "serializedReportCanonicalObjectSha256": "7bf108aa98f6858a1ad1eb4bd838571a7fde6aabad93962cc18aa9dd04a310ad",
+    "serializedReportFileSha256": "7bf108aa98f6858a1ad1eb4bd838571a7fde6aabad93962cc18aa9dd04a310ad",
     "serializedReportPath": "scripts/guide-factory/reports/itto-source-conditioned-guide-packets.json",
     "snapshotClosure": "accepted",
     "sourceCellsUsedAsImmutableControl": true,
     "status": "authenticated-canonical-control",
     "teamPacketsSha256": "77644c73f497f202c050344806c36c0390aa852e7fbd2f5279343f88673e0db7",
-    "upstreamGeneratedFromSha256": "e4d207421001cfddc4717d97606d985855279c0a2a59bfa3cd830d6058e5b07b"
+    "upstreamGeneratedFromSha256": "44adc777ec96fedf7260aa1ee2c1b9d3764ec634a6dca6c94e161684027fb300"
   },
   "summary": {
     "applicableUnderSuppliedContextCellCount": 21,

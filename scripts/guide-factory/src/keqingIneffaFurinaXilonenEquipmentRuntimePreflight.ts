@@ -52,11 +52,11 @@ export const KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_INPUT_PATH
 
 const EXPECTED_INPUT_FILE_SHA256 = {
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json":
-    "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822",
+    "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6",
   "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json":
-    "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
+    "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
   "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentCandidateLattice.ts":
-    "67752798b719c0e62971a2448218197a5f7979dc38e3f1a2a5116a7d92527f45",
+    "37353a9d2481607a1a2eb293ac7a445827019cfaf3618ea41469d1d0e04533a8",
   "scripts/guide-factory/src/sourceBackedEquipmentCandidateLattice.ts":
     "d098653f47fed1572dbb2e5ed596c0086b4ed18cf28e6d86f41037c8b966e5cf",
   "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts":
@@ -67,16 +67,18 @@ const EXPECTED_INPUT_FILE_SHA256 = {
     "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407",
   "scripts/guide-factory/src/formulaPlanReadiness.ts":
     "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922",
+  "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts":
+    "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9",
+  "scripts/guide-factory/src/scopedSemanticDependency.ts":
+    "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619",
   "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts":
-    "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd",
+    "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42",
   "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts":
-    "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c",
+    "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072",
   "scripts/guide-factory/src/schemas.ts":
-    "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec",
+    "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5",
   "scripts/guide-factory/src/teamMemberInvestment.ts":
     "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c",
-  "scripts/guide-factory/data/knowledge/repository.json":
-    "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
   "src/data/game/character_stats.json":
     "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f",
   "src/data/game/weapon_stats.json":
@@ -139,13 +141,13 @@ const DELIBERATELY_EXCLUDED_PRODUCER_PATHS = [
 ] as const;
 
 const EXPECTED_LATTICE_REPORT_SHA256 =
-  "ace0bb3068a9f84788b6f93d6f526b59cd485765f9bd74e16547bf7074bf0822";
+  "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6";
 const EXPECTED_FORMULA_DRAFT_REPORT_SHA256 =
-  "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57";
+  "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b";
 const EXPECTED_OBJECTIVE_LINES_SHA256 =
   "cb0f071bd5151936f010b3cbbcc6582233b0ae08f2aace0df654f2f58afe060a";
 const EXPECTED_AUTHENTICATED_REPORT_SHA256 =
-  "df5f8d938223063d82cee70cbaf57dd666d10b01b95743e3d84f9e433b9698ec";
+  "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b";
 
 const TEAM_RECORD_ID =
   "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example";

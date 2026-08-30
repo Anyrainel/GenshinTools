@@ -28,6 +28,14 @@
     {
       "sourceId": "kqm",
       "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json"
+    },
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json"
+    },
+    {
+      "sourceId": "kqm",
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json"
     }
   ]
 }

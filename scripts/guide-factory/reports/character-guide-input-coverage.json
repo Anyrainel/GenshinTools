@@ -50,22 +50,27 @@
       "expectedCharacterCount": 125
     },
     "repository": {
-      "nonRejectedRecordCount": 394,
+      "energyGuidanceRecordsExcluded": true,
+      "nestedSearchCoverageReportsStillAuthenticateWholeRepository": true,
+      "nonRejectedRecordCount": 400,
+      "projectionKind": "character-guide-input",
       "rejectedRecordCount": 0,
       "rejectedRecordsContributedObservationCount": 0,
-      "repositorySha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
-      "sourceRegistryFileSha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2",
+      "repositoryProjectionMatchesCurrentObject": true,
+      "repositoryProjectionSha256": "cd64a0642f498b3746c29428ee9806f20acb7fae34a85aa4cd18d5ed524c8b54",
+      "rotationFixtureRecordsExcluded": true,
+      "sourceRegistryFileSha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456",
       "sourceRegistrySha256MatchesRepository": true
     },
     "representability": {
       "allEquipmentPolicyObservationsLinked": true,
-      "artifactCoverageObservationCount": 1072,
-      "artifactCoveragePayloadSha256": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6",
-      "artifactCoverageReportSha256": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6",
-      "artifactLinkedPolicyObservationCount": 1072,
+      "artifactCoverageObservationCount": 1075,
+      "artifactCoveragePayloadSha256": "64c8b67f68ece73e186bb1b76aa5aec8bbf67a4657c05cde75eaccd79b219a1a",
+      "artifactCoverageReportSha256": "64c8b67f68ece73e186bb1b76aa5aec8bbf67a4657c05cde75eaccd79b219a1a",
+      "artifactLinkedPolicyObservationCount": 1075,
       "artifactOutcomeClassificationCounts": {
         "conditionally-representable": 21,
-        "enumerated-initially": 1023,
+        "enumerated-initially": 1026,
         "not-representable:non-five-star-filter": 21,
         "not-representable:tier-list-other-filter": 2,
         "not-representable:unmapped-dynamic-half-set-family": 5
@@ -74,12 +79,12 @@
       "scope": "existing-search-grammar-naming-policy-only",
       "suitabilityAssessed": false,
       "technicalGeneratorOrCalculatorRepresentabilityAssessed": false,
-      "weaponCoverageObservationCount": 1012,
-      "weaponCoveragePayloadSha256": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b",
-      "weaponCoverageReportSha256": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b",
-      "weaponLinkedPolicyObservationCount": 1012,
+      "weaponCoverageObservationCount": 1026,
+      "weaponCoveragePayloadSha256": "ec20b0fb8bec94bf6a5cbf8e68b0c5958dac67ae9072495b56a0929c6f806648",
+      "weaponCoverageReportSha256": "ec20b0fb8bec94bf6a5cbf8e68b0c5958dac67ae9072495b56a0929c6f806648",
+      "weaponLinkedPolicyObservationCount": 1026,
       "weaponOutcomeClassificationCounts": {
-        "in-released-candidate-domain|unspecified|compatible": 1000,
+        "in-released-candidate-domain|unspecified|compatible": 1014,
         "in-released-candidate-domain|unspecified|mismatched": 12
       }
     }
@@ -13065,15 +13070,15 @@
       "nonRejectedCharacterGuideRecordIds": [
         "genshintools-presets:character-guide:faruzan"
       ],
-      "observationCount": 45,
-      "observationIdsSha256": "2d9c5de7a6e273197f5bcdfccc953c5376c4da3c9717949489de22480d7d9440",
+      "observationCount": 46,
+      "observationIdsSha256": "906371d1f4040b1ebb19a244fd0101c29626f02950bf258b08fc66922833a4dc",
       "playableIdentityId": "faruzan",
       "rows": [
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13122,14 +13127,14 @@
             "only-explicitly-out-of-range",
             "not-observed"
           ],
-          "classificationBucketsSha256": "f7b6b3d8b9658c27f83c3dc2e46377e03475cf9a1eba473b362f2bc99279eddb",
+          "classificationBucketsSha256": "6eab4db76a5e8408554e95a8555987ed774b18c53bef8e564b8bce00c89640b0",
           "constellation": 0
         },
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13178,14 +13183,14 @@
             "only-explicitly-out-of-range",
             "not-observed"
           ],
-          "classificationBucketsSha256": "f7b6b3d8b9658c27f83c3dc2e46377e03475cf9a1eba473b362f2bc99279eddb",
+          "classificationBucketsSha256": "6eab4db76a5e8408554e95a8555987ed774b18c53bef8e564b8bce00c89640b0",
           "constellation": 1
         },
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13234,14 +13239,14 @@
             "only-explicitly-out-of-range",
             "not-observed"
           ],
-          "classificationBucketsSha256": "f7b6b3d8b9658c27f83c3dc2e46377e03475cf9a1eba473b362f2bc99279eddb",
+          "classificationBucketsSha256": "6eab4db76a5e8408554e95a8555987ed774b18c53bef8e564b8bce00c89640b0",
           "constellation": 2
         },
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13290,14 +13295,14 @@
             "only-explicitly-out-of-range",
             "not-observed"
           ],
-          "classificationBucketsSha256": "f7b6b3d8b9658c27f83c3dc2e46377e03475cf9a1eba473b362f2bc99279eddb",
+          "classificationBucketsSha256": "6eab4db76a5e8408554e95a8555987ed774b18c53bef8e564b8bce00c89640b0",
           "constellation": 3
         },
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13346,14 +13351,14 @@
             "only-explicitly-out-of-range",
             "not-observed"
           ],
-          "classificationBucketsSha256": "f7b6b3d8b9658c27f83c3dc2e46377e03475cf9a1eba473b362f2bc99279eddb",
+          "classificationBucketsSha256": "6eab4db76a5e8408554e95a8555987ed774b18c53bef8e564b8bce00c89640b0",
           "constellation": 4
         },
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13402,14 +13407,14 @@
             "only-explicitly-out-of-range",
             "not-observed"
           ],
-          "classificationBucketsSha256": "f7b6b3d8b9658c27f83c3dc2e46377e03475cf9a1eba473b362f2bc99279eddb",
+          "classificationBucketsSha256": "6eab4db76a5e8408554e95a8555987ed774b18c53bef8e564b8bce00c89640b0",
           "constellation": 5
         },
         {
           "axisCounts": [
             [
               0,
-              13,
+              14,
               0
             ],
             [
@@ -13458,7 +13463,7 @@
             "has-explicit-constellation-match",
             "not-observed"
           ],
-          "classificationBucketsSha256": "132f25b97824d0ca788cd4cbaf9787fecfb9e7592af50e0cd62b3891b1b24461",
+          "classificationBucketsSha256": "1d52d854944e75afd3ab8fcd988123115da393a093e629565be3040e1e6e6449",
           "constellation": 6
         }
       ]
@@ -14690,15 +14695,15 @@
         "kqm:character-guide:furina-post-er-substats-luna-ii",
         "kqm:character-guide:furina-pre-c2-artifact-main-stats-luna-ii"
       ],
-      "observationCount": 242,
-      "observationIdsSha256": "995bf27e4aa438bd35a734a9aaa51dc32b472034e79a71fa9606f07804ca380b",
+      "observationCount": 243,
+      "observationIdsSha256": "83ef54382aa356ec97f9a9e77fa0587f60d025e208e46c227089d0f3759f2256",
       "playableIdentityId": "furina",
       "rows": [
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -14747,14 +14752,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "0d17fead7cfb7460b0177bc013b0e384597a1476e3aa973174d6344cfe72c972",
+          "classificationBucketsSha256": "b462be5f7173adc6470664e7c558590969d9910d36d85c6c9229db03af6bc9ea",
           "constellation": 0
         },
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -14803,14 +14808,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "0d17fead7cfb7460b0177bc013b0e384597a1476e3aa973174d6344cfe72c972",
+          "classificationBucketsSha256": "b462be5f7173adc6470664e7c558590969d9910d36d85c6c9229db03af6bc9ea",
           "constellation": 1
         },
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -14859,14 +14864,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "2b0da7710ea2f5f82414c4964fcf9bb843b175e078a5f0dcc5a2cd2356c73f42",
+          "classificationBucketsSha256": "489c5cdd06f00d6dac5c131a9c9ceb8982635f6cc17cc8afa92a32c1f8a4ade9",
           "constellation": 2
         },
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -14915,14 +14920,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "2b0da7710ea2f5f82414c4964fcf9bb843b175e078a5f0dcc5a2cd2356c73f42",
+          "classificationBucketsSha256": "489c5cdd06f00d6dac5c131a9c9ceb8982635f6cc17cc8afa92a32c1f8a4ade9",
           "constellation": 3
         },
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -14971,14 +14976,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "2b0da7710ea2f5f82414c4964fcf9bb843b175e078a5f0dcc5a2cd2356c73f42",
+          "classificationBucketsSha256": "489c5cdd06f00d6dac5c131a9c9ceb8982635f6cc17cc8afa92a32c1f8a4ade9",
           "constellation": 4
         },
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -15027,14 +15032,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "2b0da7710ea2f5f82414c4964fcf9bb843b175e078a5f0dcc5a2cd2356c73f42",
+          "classificationBucketsSha256": "489c5cdd06f00d6dac5c131a9c9ceb8982635f6cc17cc8afa92a32c1f8a4ade9",
           "constellation": 5
         },
         {
           "axisCounts": [
             [
               0,
-              72,
+              73,
               0
             ],
             [
@@ -15083,7 +15088,7 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "93f57ddc481c4c3d1fb90f8bdb00b4c887d1e33cd8f76f0c8456eef51b59ca5c",
+          "classificationBucketsSha256": "1e22d1f8edd1bba26bd2708334d39b5d31561821dc41f22e629c6f2e1848ba2a",
           "constellation": 6
         }
       ]
@@ -45084,15 +45089,15 @@
       "nonRejectedCharacterGuideRecordIds": [
         "genshintools-presets:character-guide:xianyun"
       ],
-      "observationCount": 48,
-      "observationIdsSha256": "03125f5210931d11a32531793dcb78deb4cba9a6c8e5f15aa4b78282f7c215fd",
+      "observationCount": 49,
+      "observationIdsSha256": "b9de115dced13de13c07217a27eaed8973bdeb75ed7dd2f5986568ae35cdb73f",
       "playableIdentityId": "xianyun",
       "rows": [
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45141,14 +45146,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "35826f010c4a15ab71208eaa92505a85773c7a7d889db7bc87470150e5dc1bd6",
+          "classificationBucketsSha256": "31593bddfe819aec0fff9b2a82ab50e6844d5fe9329ecd225f6849b2f7756ab4",
           "constellation": 0
         },
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45197,14 +45202,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "35826f010c4a15ab71208eaa92505a85773c7a7d889db7bc87470150e5dc1bd6",
+          "classificationBucketsSha256": "31593bddfe819aec0fff9b2a82ab50e6844d5fe9329ecd225f6849b2f7756ab4",
           "constellation": 1
         },
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45253,14 +45258,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "35826f010c4a15ab71208eaa92505a85773c7a7d889db7bc87470150e5dc1bd6",
+          "classificationBucketsSha256": "31593bddfe819aec0fff9b2a82ab50e6844d5fe9329ecd225f6849b2f7756ab4",
           "constellation": 2
         },
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45309,14 +45314,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "35826f010c4a15ab71208eaa92505a85773c7a7d889db7bc87470150e5dc1bd6",
+          "classificationBucketsSha256": "31593bddfe819aec0fff9b2a82ab50e6844d5fe9329ecd225f6849b2f7756ab4",
           "constellation": 3
         },
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45365,14 +45370,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "35826f010c4a15ab71208eaa92505a85773c7a7d889db7bc87470150e5dc1bd6",
+          "classificationBucketsSha256": "31593bddfe819aec0fff9b2a82ab50e6844d5fe9329ecd225f6849b2f7756ab4",
           "constellation": 4
         },
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45421,14 +45426,14 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "35826f010c4a15ab71208eaa92505a85773c7a7d889db7bc87470150e5dc1bd6",
+          "classificationBucketsSha256": "31593bddfe819aec0fff9b2a82ab50e6844d5fe9329ecd225f6849b2f7756ab4",
           "constellation": 5
         },
         {
           "axisCounts": [
             [
               0,
-              12,
+              13,
               0
             ],
             [
@@ -45477,7 +45482,7 @@
             "has-explicit-constellation-match",
             "not-observed"
           ],
-          "classificationBucketsSha256": "00c2e6ad389c7f8b46eb69197279eeb4104524b5a50c01f4e7d14e4527083568",
+          "classificationBucketsSha256": "567eaa59a7b4c20a9f1b2552642d3d883eeaadcf4eb389a070bfd749c8274569",
           "constellation": 6
         }
       ]
@@ -45487,47 +45492,53 @@
       "elementId": "anemo",
       "hasNonRejectedCharacterGuideRecord": true,
       "nonRejectedCharacterGuideRecordIds": [
-        "genshintools-presets:character-guide:xiao"
+        "genshintools-presets:character-guide:xiao",
+        "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+        "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5",
+        "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+        "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+        "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+        "kqm:character-guide:xiao-vha-artifact-branch-version-5-5"
       ],
-      "observationCount": 26,
-      "observationIdsSha256": "9e92767c7d96805285152aa7b2104dad1c25e9f4ed5aed33b0cb3914b76241f8",
+      "observationCount": 48,
+      "observationIdsSha256": "6253cdb91faf2fd307c8357b2faade4eef80833da97106703790cc2cf6868419",
       "playableIdentityId": "xiao",
       "rows": [
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45541,49 +45552,49 @@
             "not-observed",
             "not-observed",
             "no-explicit-match-but-has-constellation-unspecified",
-            "no-explicit-match-but-has-constellation-unspecified",
+            "has-explicit-constellation-match",
             "no-explicit-match-but-has-constellation-unspecified",
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "2845c6f537f417f9c6ccc94506d4fcab55310e09497c04d44736df394c4aaffa",
           "constellation": 0
         },
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45597,49 +45608,49 @@
             "not-observed",
             "not-observed",
             "no-explicit-match-but-has-constellation-unspecified",
-            "no-explicit-match-but-has-constellation-unspecified",
+            "has-explicit-constellation-match",
             "no-explicit-match-but-has-constellation-unspecified",
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "2845c6f537f417f9c6ccc94506d4fcab55310e09497c04d44736df394c4aaffa",
           "constellation": 1
         },
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45653,49 +45664,49 @@
             "not-observed",
             "not-observed",
             "no-explicit-match-but-has-constellation-unspecified",
-            "no-explicit-match-but-has-constellation-unspecified",
+            "has-explicit-constellation-match",
             "no-explicit-match-but-has-constellation-unspecified",
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "2845c6f537f417f9c6ccc94506d4fcab55310e09497c04d44736df394c4aaffa",
           "constellation": 2
         },
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45709,49 +45720,49 @@
             "not-observed",
             "not-observed",
             "no-explicit-match-but-has-constellation-unspecified",
-            "no-explicit-match-but-has-constellation-unspecified",
+            "has-explicit-constellation-match",
             "no-explicit-match-but-has-constellation-unspecified",
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "2845c6f537f417f9c6ccc94506d4fcab55310e09497c04d44736df394c4aaffa",
           "constellation": 3
         },
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45765,49 +45776,49 @@
             "not-observed",
             "not-observed",
             "no-explicit-match-but-has-constellation-unspecified",
-            "no-explicit-match-but-has-constellation-unspecified",
+            "has-explicit-constellation-match",
             "no-explicit-match-but-has-constellation-unspecified",
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "2845c6f537f417f9c6ccc94506d4fcab55310e09497c04d44736df394c4aaffa",
           "constellation": 4
         },
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45821,49 +45832,49 @@
             "not-observed",
             "not-observed",
             "no-explicit-match-but-has-constellation-unspecified",
-            "no-explicit-match-but-has-constellation-unspecified",
+            "has-explicit-constellation-match",
             "no-explicit-match-but-has-constellation-unspecified",
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "2845c6f537f417f9c6ccc94506d4fcab55310e09497c04d44736df394c4aaffa",
           "constellation": 5
         },
         {
           "axisCounts": [
             [
               0,
-              5,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
-              0,
-              0
-            ],
-            [
-              0,
               6,
               0
             ],
             [
               0,
-              7,
+              0,
               0
             ],
             [
               0,
-              6,
+              0,
               0
             ],
             [
               0,
-              2,
+              15,
+              0
+            ],
+            [
+              0,
+              9,
+              1
+            ],
+            [
+              0,
+              13,
+              0
+            ],
+            [
+              0,
+              4,
               0
             ],
             [
@@ -45882,7 +45893,7 @@
             "no-explicit-match-but-has-constellation-unspecified",
             "not-observed"
           ],
-          "classificationBucketsSha256": "ed19acc35ae13abbbfc5ec80f4cbf685ceccf84c0f7c5c5b43690860b259d011",
+          "classificationBucketsSha256": "7cc0fc06d67fea18abc3637b78514f70c99aa93f9ba72bf9cffd3ee4b09fc262",
           "constellation": 6
         }
       ]
@@ -50750,12 +50761,8 @@
   ],
   "classification": "descriptive-source-input-inventory",
   "comparisonStatus": "comparable",
-  "coveragePayloadSha256": "7c79702756497c88a0641e8f61c13bd53dc91b899fa1e0b6b6c62e0da483ac62",
+  "coveragePayloadSha256": "8917db10899d995c595c261668c322b0923c54497c95ee4216284d65869bcd04",
   "generatedFrom": [
-    {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
       "sha256": "b5c942bc3520f81fd0da124ed724b3f1e0041ad8f56b31408c1e9c36f6688830"
@@ -50785,24 +50792,28 @@
       "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
     },
     {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+      "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+    },
+    {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
     },
     {
       "path": "scripts/guide-factory/reports/artifact-choice-search-coverage.json",
-      "sha256": "d3d300312cff0aa9bba86e565f179d4cdd4bb986d2819c50707915723749bcb6"
+      "sha256": "64c8b67f68ece73e186bb1b76aa5aec8bbf67a4657c05cde75eaccd79b219a1a"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "27d4bef6b93a09489e3d0b4433672f39cee5369ecb9b71c76935c350a3339eca"
+      "sha256": "12be18b24ca591f6aae97eaad6e9a9cbc89f202e699663e9eb92d791914b1ece"
     },
     {
       "path": "scripts/guide-factory/reports/weapon-choice-search-coverage.json",
-      "sha256": "8b62758676ef6333bd1e2af3b7d7e1be2a0c2ebd617fa5cd433f266a0b0f847b"
+      "sha256": "ec20b0fb8bec94bf6a5cbf8e68b0c5958dac67ae9072495b56a0929c6f806648"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
@@ -50814,11 +50825,11 @@
     },
     {
       "path": "scripts/guide-factory/src/characterGuideInputCoverage.ts",
-      "sha256": "9608eb68a65ed0a18471d1d885bed4c4867ce7d2468ce4b5ffffa30221eacb07"
+      "sha256": "cc041dd000ca830625c017eb39257726c4665d42dd2acbd602a16bf91ab88ded"
     },
     {
       "path": "scripts/guide-factory/src/inventory-character-guide-input-coverage.ts",
-      "sha256": "bbaf18f24dfb771f5e997d6a73798f81315603799ba0c9af13476f66703ddfd8"
+      "sha256": "618982a79603a4957130a9b5ae8d4c12b631902cadbd48d2491b29e1280937a3"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
@@ -50826,11 +50837,15 @@
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
-      "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+      "sha256": "22604bf0be12069384b288b0dbd20c701b371004b23ba0311a22109de5834149"
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
       "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/repositoryProjection.ts",
+      "sha256": "aa75c288adf8e9d8f640b4caa4a32a02a7a3739707d973a50d33ae44068d2eb0"
     },
     {
       "path": "scripts/guide-factory/src/rosterCatalogReference.ts",
@@ -50838,7 +50853,7 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -132189,6 +132204,1032 @@
       ]
     },
     {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "not-applicable",
+      "inputRepresentability": "directly-represented",
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:weapon:recommendation:five-star-weapon-tiers:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "default",
+        "groupIndex": 0,
+        "grouping": "tied",
+        "recommendationId": "five-star-weapon-tiers",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-grouped five-star weapon tiers",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "ranked-groups",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "lumidouce_elegy",
+          "primordial_jade_wingedspear",
+          "staff_of_homa"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:0"
+          },
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:1"
+          },
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:2"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:0",
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:1",
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:0:2"
+        ],
+        "policyOutcomePayloadSha256": "2e24354e07f00cc0e1c0c80f67167155bd13ef8cc33204caed955ed1daec505c",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": []
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "not-applicable",
+      "inputRepresentability": "directly-represented",
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:weapon:recommendation:five-star-weapon-tiers:group:1",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "alternative",
+        "groupIndex": 1,
+        "grouping": "tied",
+        "recommendationId": "five-star-weapon-tiers",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-grouped five-star weapon tiers",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "ranked-groups",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "calamity_queller",
+          "vortex_vanquisher"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:1:0"
+          },
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:1:1"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:1:0",
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:1:1"
+        ],
+        "policyOutcomePayloadSha256": "e36cc4178bbe00597123d570191e83912e6114c58619c40b4202f615cbc674d2",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": []
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:weapon:recommendation:five-star-weapon-tiers:group:2",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "available-only",
+        "groupIndex": 2,
+        "grouping": "tied",
+        "recommendationId": "five-star-weapon-tiers",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-grouped five-star weapon tiers",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "ranked-groups",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "engulfing_lightning",
+          "skyward_spine",
+          "staff_of_the_scarlet_sands"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:0"
+          },
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:1"
+          },
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:2"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:0",
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:1",
+          "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5:recommendation:five-star-weapon-tiers:weapon-group:2:2"
+        ],
+        "policyOutcomePayloadSha256": "0552a99a2ab41d20bd97f8790571431c611ade5e5dcfd3fffa32ffe931003815",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "Use these source Tier 3 options when already owned and they are the best available option; the source does not recommend pulling them specifically for Xiao."
+      ]
+    },
+    {
+      "axis": "artifact",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "maxConstellation": 5,
+            "minConstellation": 0,
+            "sourceMaxBoundPresent": true,
+            "sourceMinBoundPresent": false,
+            "state": "explicit-range"
+          },
+          "basis": "guide-recommendation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5:artifact:recommendation:lno-consistent-plunge-c0-c5-branch:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "artifacts": [
+          {
+            "setId": "long_nights_oath",
+            "type": "4pc"
+          }
+        ],
+        "classification": "recommended",
+        "groupIndex": 0,
+        "grouping": "single",
+        "recommendationId": "lno-consistent-plunge-c0-c5-branch",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Long Night's Oath consistent-plunge branch for non-C6 Xiao",
+        "recommendationScope": "artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-artifact-recommendation-group"
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "enumerated-initially",
+            "policyObservationId": "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5:recommendation:lno-consistent-plunge-c0-c5-branch:0:0"
+          }
+        ],
+        "policy": "artifact-choice-search-space",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5:recommendation:lno-consistent-plunge-c0-c5-branch:0:0"
+        ],
+        "policyOutcomePayloadSha256": "8ef31f80799fc79cdb5949fcce62eca2407ffc5e4f72fc9619486e3f8ebe1bca",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "The source calls this best-in-slot in Bennett teams and competitive in Xianyun teams.",
+        "Xiao can perform consistent uninterrupted High Plunges and is evaluated with the source's four-stack baseline."
+      ]
+    },
+    {
+      "axis": "artifact",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5:artifact:recommendation:mh-xianyun-ffxx-branch:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "artifacts": [
+          {
+            "setId": "marechaussee_hunter",
+            "type": "4pc"
+          }
+        ],
+        "classification": "conditional",
+        "groupIndex": 0,
+        "grouping": "single",
+        "recommendationId": "mh-xianyun-ffxx-branch",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Marechaussee Hunter Xianyun and FFXX branch",
+        "recommendationScope": "artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-artifact-recommendation-group"
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "enumerated-initially",
+            "policyObservationId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5:recommendation:mh-xianyun-ffxx-branch:0:0"
+          }
+        ],
+        "policy": "artifact-choice-search-space",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-mh-artifact-branch-version-5-5:recommendation:mh-xianyun-ffxx-branch:0:0"
+        ],
+        "policyOutcomePayloadSha256": "db9cd87592bf07f2303f71c1ff2f65f1238aa63088fc760a5be103e989e5ec66",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:circlet:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 0,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "circlet",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "cd",
+          "cr"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "Choose between CRIT Rate and CRIT DMG according to the weapon and artifact substats while maintaining at least 70% CRIT Rate."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:goblet:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 0,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "goblet",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "anemo%",
+          "atk%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "For most Xiao builds, the source describes the difference as small enough that artifact substats can decide the choice."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:goblet:group:1",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 1,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "goblet",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "anemo%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "Xiao uses 4pc Vermillion Hereafter; Faruzan can make its advantage over an ATK% Goblet smaller."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:goblet:group:2",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 2,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "goblet",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "anemo%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "Xiao uses 4pc Long Night's Oath, except in a team that includes Furina but not Xianyun."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:goblet:group:3",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 3,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "goblet",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "anemo%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "Xianyun is in Xiao's team."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:goblet:group:4",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 4,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "goblet",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "anemo%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "Xiao is C6."
+      ]
+    },
+    {
+      "axis": "main-stat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "not-applicable",
+      "inputRepresentability": "directly-represented",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:main-stat:recommendation:offensive-artifact-stats-with-energy-deferred:sands:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 0,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "slot": "sands",
+        "sourcePriorityStoredButNotUsedAsRank": null,
+        "sourceShape": "character-guide-main-stat-group",
+        "statIds": [
+          "atk%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": []
+    },
+    {
+      "axis": "substat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:substat:recommendation:offensive-artifact-stats-with-energy-deferred:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 0,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "sourcePriorityStoredButNotUsedAsRank": 1,
+        "sourceShape": "character-guide-substat-group",
+        "sourceTargetRead": false,
+        "statIds": [
+          "cd",
+          "cr"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "This priority covers only the offensive tail after the source's deliberately omitted Energy Recharge need."
+      ]
+    },
+    {
+      "axis": "substat",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5:substat:recommendation:offensive-artifact-stats-with-energy-deferred:group:1",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "groupIndex": 1,
+        "recommendationId": "offensive-artifact-stats-with-energy-deferred",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Offensive artifact stats with energy terms deferred",
+        "recommendationScope": "artifact-stats",
+        "roles": [
+          "dps"
+        ],
+        "sourcePriorityStoredButNotUsedAsRank": 2,
+        "sourceShape": "character-guide-substat-group",
+        "sourceTargetRead": false,
+        "statIds": [
+          "atk%"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": [
+        "This priority covers only the offensive tail after the source's deliberately omitted Energy Recharge need."
+      ]
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:weapon:recommendation:unranked-four-star-weapons:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "conditional",
+        "groupIndex": 0,
+        "grouping": "single",
+        "recommendationId": "unranked-four-star-weapons",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-listed four-star weapon options",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "lithic_spear"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:0:0"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:0:0"
+        ],
+        "policyOutcomePayloadSha256": "a7738495c77c6fb7ba02d2728c2b7d899973b4e340d914419db535e70a7040bf",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "The team contains enough Liyue characters and the weapon has sufficient Refinement for its team-dependent passive."
+      ]
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "not-applicable",
+      "inputRepresentability": "directly-represented",
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:weapon:recommendation:unranked-four-star-weapons:group:1",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "alternative",
+        "groupIndex": 1,
+        "grouping": "single",
+        "recommendationId": "unranked-four-star-weapons",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-listed four-star weapon options",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "deathmatch"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:1:0"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:1:0"
+        ],
+        "policyOutcomePayloadSha256": "eb601f69387a48c0b42e99d1fc047ff7bbb7a5e9b32682fe4a6157d97597ff95",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": []
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:weapon:recommendation:unranked-four-star-weapons:group:2",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "conditional",
+        "groupIndex": 2,
+        "grouping": "single",
+        "recommendationId": "unranked-four-star-weapons",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-listed four-star weapon options",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "prospectors_drill"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:2:0"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:2:0"
+        ],
+        "policyOutcomePayloadSha256": "a8677a9a7b7dc52cc2fd2b4358b1379134d96c13e87f645e5811e0b3847e53e1",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "Xiao can receive healing to build the passive, and the rotation can accommodate its second-rotation and Skill-or-Burst timing constraints."
+      ]
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:weapon:recommendation:unranked-four-star-weapons:group:3",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "conditional",
+        "groupIndex": 3,
+        "grouping": "single",
+        "recommendationId": "unranked-four-star-weapons",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-listed four-star weapon options",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "blackcliff_pole"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:3:0"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:3:0"
+        ],
+        "policyOutcomePayloadSha256": "845ff0347648e67d0583de2323877439fa532f53f9fddc28df577dec5baf3451",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "Xiao can defeat opponents to activate the passive; the source notes that it is often inactive against a single opponent or high-HP opponents."
+      ]
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:weapon:recommendation:unranked-four-star-weapons:group:4",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "conditional",
+        "groupIndex": 4,
+        "grouping": "single",
+        "recommendationId": "unranked-four-star-weapons",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-listed four-star weapon options",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "favonius_lance"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:4:0"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:4:0"
+        ],
+        "policyOutcomePayloadSha256": "b742713080030ef4a03739f43cf1305133fae564738ff709baa3513e19e20b48",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "Favonius Lance is at least Refinement 3; this observation does not infer an Energy Recharge target."
+      ]
+    },
+    {
+      "axis": "weapon",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:weapon:recommendation:unranked-four-star-weapons:group:5",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "classification": "conditional",
+        "groupIndex": 5,
+        "grouping": "single",
+        "recommendationId": "unranked-four-star-weapons",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Source-listed four-star weapon options",
+        "recommendationScope": "weapons",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-weapon-recommendation-group",
+        "weaponIds": [
+          "missive_windspear"
+        ]
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "in-released-candidate-domain|unspecified|compatible",
+            "policyObservationId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:5:0"
+          }
+        ],
+        "policy": "weapon-choice-candidate-policy",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5:recommendation:unranked-four-star-weapons:weapon-group:5:0"
+        ],
+        "policyOutcomePayloadSha256": "eb83182d6a2ba59a4df0f8772fa112aed75c34cc425da952a90256490fb81a3a",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "The team lets Xiao trigger Swirl consistently enough to maintain the weapon passive."
+      ]
+    },
+    {
+      "axis": "artifact",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "preserved-unresolved-source-conditions",
+      "inputRepresentability": "represented-with-unresolved-source-context",
+      "observationId": "kqm:character-guide:xiao-vha-artifact-branch-version-5-5:artifact:recommendation:vha-lower-buff-aoe-branch:group:0",
+      "payload": {
+        "arrayOrderUsedAsRank": false,
+        "artifacts": [
+          {
+            "setId": "vermillion_hereafter",
+            "type": "4pc"
+          }
+        ],
+        "classification": "recommended",
+        "groupIndex": 0,
+        "grouping": "single",
+        "recommendationId": "vha-lower-buff-aoe-branch",
+        "recommendationIndex": 0,
+        "recommendationLabel": "Vermillion Hereafter lower-buff and AoE branch",
+        "recommendationScope": "artifact-sets",
+        "roles": [
+          "dps"
+        ],
+        "sourceOrderingDeclaration": "unranked",
+        "sourceShape": "character-guide-artifact-recommendation-group"
+      },
+      "repositoryRecordId": "kqm:character-guide:xiao-vha-artifact-branch-version-5-5",
+      "searchGrammarRepresentability": {
+        "outcomeClassifications": [
+          {
+            "classification": "enumerated-initially",
+            "policyObservationId": "kqm:character-guide:xiao-vha-artifact-branch-version-5-5:recommendation:vha-lower-buff-aoe-branch:0:0"
+          }
+        ],
+        "policy": "artifact-choice-search-space",
+        "policyObservationIds": [
+          "kqm:character-guide:xiao-vha-artifact-branch-version-5-5:recommendation:vha-lower-buff-aoe-branch:0:0"
+        ],
+        "policyOutcomePayloadSha256": "9b95ac2035f26d2901e030da8452e37a7d90f62bc7c9a68f8709b26cc51d3131",
+        "rankingAssessed": false,
+        "state": "linked-existing-search-coverage",
+        "suitabilityAssessed": false
+      },
+      "sourceConditions": [
+        "The scenario has fewer external buffs and more AoE, where the source says Vermillion Hereafter performs best."
+      ]
+    },
+    {
       "axis": "source-scoped-role-member",
       "characterApplicabilities": [
         {
@@ -134504,6 +135545,83 @@
         ]
       },
       "repositoryRecordId": "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii",
+      "searchGrammarRepresentability": {
+        "state": "not-applicable"
+      },
+      "sourceConditions": []
+    },
+    {
+      "axis": "exact-team",
+      "characterApplicabilities": [
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "faruzan"
+        },
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "furina"
+        },
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xianyun"
+        },
+        {
+          "applicability": {
+            "state": "constellation-unspecified"
+          },
+          "basis": "source-has-no-constellation-bound",
+          "characterId": "xiao"
+        }
+      ],
+      "conditionResolution": "not-applicable",
+      "inputRepresentability": "directly-represented",
+      "observationId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5:exact-team",
+      "payload": {
+        "memberInvestmentStates": [
+          {
+            "characterId": "xiao",
+            "investment": {
+              "status": "unspecified"
+            }
+          },
+          {
+            "characterId": "xianyun",
+            "investment": {
+              "status": "unspecified"
+            }
+          },
+          {
+            "characterId": "furina",
+            "investment": {
+              "status": "unspecified"
+            }
+          },
+          {
+            "characterId": "faruzan",
+            "investment": {
+              "status": "unspecified"
+            }
+          }
+        ],
+        "rosterMayNotBeDetached": true,
+        "sourceShape": "atomic-exact-team",
+        "teamCharacterIds": [
+          "xiao",
+          "xianyun",
+          "furina",
+          "faruzan"
+        ]
+      },
+      "repositoryRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5",
       "searchGrammarRepresentability": {
         "state": "not-applicable"
       },
@@ -195114,6 +196232,60 @@
     },
     {
       "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:character-guide:xiao-five-star-weapon-tiers-version-5-5",
+      "repositoryRecordKind": "character_guide",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-five-star-weapon-tiers-version-5-5"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:character-guide:xiao-lno-artifact-branch-c0-c5-version-5-5",
+      "repositoryRecordKind": "character_guide",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-lno-artifact-branch-c0-c5-version-5-5"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
+      "repositoryRecordKind": "character_guide",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-mh-artifact-branch-version-5-5"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
+      "repositoryRecordKind": "character_guide",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-offensive-artifact-stats-version-5-5"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:character-guide:xiao-unranked-four-star-weapons-version-5-5",
+      "repositoryRecordKind": "character_guide",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-unranked-four-star-weapons-version-5-5"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:character-guide:xiao-vha-artifact-branch-version-5-5",
+      "repositoryRecordKind": "character_guide",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-vha-artifact-branch-version-5-5"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
       "repositoryRecordId": "kqm:character-role:furina-xilonen-healer-role-luna-ii",
       "repositoryRecordKind": "character_role",
       "repositoryRecordStatus": "candidate",
@@ -195335,6 +196507,15 @@
       "repositoryRecordStatus": "candidate",
       "sourceProvenanceIds": [
         "kqm:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+      ]
+    },
+    {
+      "promotionEligibility": "explicitly-ineligible",
+      "repositoryRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5",
+      "repositoryRecordKind": "team",
+      "repositoryRecordStatus": "candidate",
+      "sourceProvenanceIds": [
+        "kqm:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
       ]
     },
     {
@@ -201690,6 +202871,174 @@
       "locators": [
         {
           "locator": {
+            "heading": "Weapons > 5★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-five-star-weapon-tiers-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-five-star-weapon-tiers-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
+            "heading": "Artifacts > Recommended Artifact Sets > 4pc Long Night's Oath",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-lno-artifact-branch-c0-c5-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-lno-artifact-branch-c0-c5-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-lno-artifact-branch-c0-c5-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
+            "heading": "Artifacts > Recommended Artifact Sets > 4pc Marechaussee Hunter",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-mh-artifact-branch-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-mh-artifact-branch-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-mh-artifact-branch-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
+            "heading": "Artifacts > Main Stats; Substats",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-offensive-artifact-stats-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-offensive-artifact-stats-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
+            "heading": "Weapons > 4★ Polearms",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-unranked-four-star-weapons-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-unranked-four-star-weapons-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
+            "heading": "Artifacts > Recommended Artifact Sets > 4pc Vermillion Hereafter",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-vha-artifact-branch-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-vha-artifact-branch-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-vha-artifact-branch-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
+            "heading": "Teams > Example Team Comps > Final Fantasy 20 (FFXX)",
+            "url": "https://keqingmains.com/xiao/"
+          },
+          "sourceId": "kqm",
+          "sourceRecordId": "xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+        }
+      ],
+      "manualExtraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed",
+        "snapshotFile": {
+          "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+          "sha256": "a9ee3f998c1be07398122d035f450eb3f4e3143eb77a08cf3e9810a481427257"
+        },
+        "state": "matched-indexed-manual-record"
+      },
+      "provenanceId": "kqm:xiao-xianyun-furina-faruzan-ffxx-version-5-5",
+      "sourceId": "kqm",
+      "sourceRecordId": "xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+    },
+    {
+      "locators": [
+        {
+          "locator": {
             "file": "scripts/team_comps_research.json",
             "jsonPointer": "/teams/132"
           },
@@ -204282,7 +205631,7 @@
       "checkedAt": "2026-08-29",
       "homepage": "https://www.crimsonwitch.com/",
       "id": "crimson-witch",
-      "ingestionMode": "manual-observation",
+      "ingestionMode": "permission-blocked",
       "kind": "structured-editorial",
       "name": "Crimson Witch",
       "notes": [
@@ -204292,7 +205641,7 @@
       ],
       "permission": "permission-required",
       "recordFormat": "manual-observation-v1",
-      "status": "planned"
+      "status": "blocked"
     },
     {
       "checkedAt": "2026-08-28",
@@ -204404,24 +205753,24 @@
       "traveler_geo",
       "traveler_hydro"
     ],
-    "observationCount": 3104,
+    "observationCount": 3126,
     "observationCountsByAxis": {
-      "artifact": 1066,
-      "exact-team": 225,
+      "artifact": 1069,
+      "exact-team": 226,
       "formula": 0,
-      "main-stat": 598,
+      "main-stat": 605,
       "source-scoped-role-member": 11,
-      "substat": 208,
+      "substat": 210,
       "template-explicit-member": 11,
-      "weapon": 985
+      "weapon": 994
     },
-    "observationsWithUnresolvedSourceConditions": 123,
+    "observationsWithUnresolvedSourceConditions": 140,
     "ordinaryErStatTokenObservationCount": 187,
     "repositoryAuthoredDamagePlanObservationCount": 0,
     "rowStateCountsByAxis": {
       "artifact": {
-        "has-explicit-constellation-match": 41,
-        "no-explicit-match-but-has-constellation-unspecified": 799,
+        "has-explicit-constellation-match": 47,
+        "no-explicit-match-but-has-constellation-unspecified": 793,
         "not-observed": 35,
         "only-explicitly-out-of-range": 0
       },
@@ -204468,7 +205817,7 @@
         "only-explicitly-out-of-range": 0
       }
     },
-    "sourceProvenanceCount": 393
+    "sourceProvenanceCount": 400
   },
   "supportsDamageClaims": false,
   "supportsEnergyRecoveryClaims": false,

@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ArtifactChoiceSearchCoverageReport } from "./artifactChoiceSearchCoverage";
-import { readJson, sha256File, writeJson } from "./io";
+import { readJson, writeJson } from "./io";
 import {
   buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
   KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
@@ -42,14 +42,6 @@ export async function runKeqingIneffaFurinaXilonenEquipmentCandidateLatticeCli()
       (relativePath) => readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ),
   );
-  const inputFiles = await Promise.all(
-    KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS.map(
-      async (relativePath) => ({
-        path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
-      }),
-    ),
-  );
   const report =
     buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport({
       repository: values[0] as KnowledgeRepository,
@@ -62,7 +54,6 @@ export async function runKeqingIneffaFurinaXilonenEquipmentCandidateLatticeCli()
         values[6] as KeqingLunarEquipmentEvidenceValidationReport,
       weaponCoverageReport: values[7] as WeaponChoiceSearchCoverageReport,
       artifactCoverageReport: values[8] as ArtifactChoiceSearchCoverageReport,
-      inputFiles,
     });
   requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport(
     report,
@@ -82,4 +73,3 @@ if (
 ) {
   await runKeqingIneffaFurinaXilonenEquipmentCandidateLatticeCli();
 }
-

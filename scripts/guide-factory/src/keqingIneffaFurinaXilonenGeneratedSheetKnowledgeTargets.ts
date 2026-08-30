@@ -1,23 +1,36 @@
 import { sha256Text, stableJson } from "./io";
+import type { KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport } from "./keqingIneffaFurinaXilonenEquipmentCandidateLattice";
 import {
-  requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
-  type KeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
-} from "./keqingIneffaFurinaXilonenEquipmentCandidateLattice";
+  authenticateKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope,
+  compactKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScopeAudit,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_ASSOCIATIONS as EXPECTED_PRESET_ASSOCIATIONS,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_KQM_CLAIM_IDS as EXPECTED_KQM_CLAIM_IDS,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_KQM_STAT_RECORD_IDS as KQM_STAT_RECORD_IDS,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_PRESET_CHARACTER_IDS as EXACT_ROSTER,
+  KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION,
+  requireKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope,
+  type AuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope,
+  type CompactKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScopeAudit,
+} from "./keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope";
 import type { KeqingLunarEquipmentEvidenceValidationReport } from "./keqingLunarEquipmentEvidenceValidation";
 import {
-  GenshinToolsPresetSnapshotSchema,
-  KnowledgeRepositorySchema,
   type GenshinToolsPresetSnapshot,
   type KnowledgeRecord,
   type KnowledgeRepository,
 } from "./schemas";
 
-export const KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS = [
+export const KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SEMANTIC_INPUT_PATHS = [
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
   "scripts/guide-factory/data/knowledge/repository.json",
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
   "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
+] as const;
+
+export const KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS = [
+  "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts",
+  "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope.ts",
+  "scripts/guide-factory/src/scopedSemanticDependency.ts",
 ] as const;
 
 export const GENERATED_SHEET_KNOWLEDGE_TARGET_COMPARISON_VOCABULARY = [
@@ -33,70 +46,16 @@ export type GeneratedSheetKnowledgeTargetComparison =
 
 const EXACT_TEAM_RECORD_ID =
   "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example" as const;
-const EXACT_ROSTER = ["keqing", "ineffa", "furina", "xilonen"] as const;
 const PRESET_FILE =
   "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json" as const;
 const FURINA_POST_ER_RECORD_ID =
   "kqm:character-guide:furina-post-er-substats-luna-ii" as const;
 
-const EXPECTED_PRESET_ASSOCIATIONS = [
-  {
-    characterId: "keqing",
-    buildId: "1WswsAu",
-    occurrenceId:
-      "kqm:character-guide:keqing-lunar-charged-top-contributor-artifact-options-luna-i:artifact:0:0",
-  },
-  {
-    characterId: "ineffa",
-    buildId: "FeFiQU8",
-    occurrenceId:
-      "genshintools-presets:character-guide:ineffa:build:FeFiQU8",
-  },
-  {
-    characterId: "furina",
-    buildId: "BQAI0BO",
-    occurrenceId:
-      "genshintools-presets:character-guide:furina:build:BQAI0BO",
-  },
-  {
-    characterId: "furina",
-    buildId: "BQA4H1m",
-    occurrenceId:
-      "genshintools-presets:character-guide:furina:build:BQA4H1m",
-  },
-  {
-    characterId: "xilonen",
-    buildId: "Dbt0Wkm",
-    occurrenceId:
-      "genshintools-presets:character-guide:xilonen:build:Dbt0Wkm",
-  },
-] as const;
-
-const KQM_STAT_RECORD_IDS = [
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
-  "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i",
-] as const;
-
-const EXPECTED_KQM_CLAIM_IDS = [
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:sands:0",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:0",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:goblet:1",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:0",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:main-stat:circlet:1",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:0",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:1",
-  "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i:substat:2",
-  "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:sands:0",
-  "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:goblet:0",
-  "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:0",
-  "kqm:character-guide:keqing-lunar-charged-high-buff-goblet-stats-luna-i:main-stat:circlet:1",
-] as const;
-
 // This pins the exact source-specific projection. The self-digest also detects
 // accidental corruption, but only this independent expectation authenticates
 // the current target catalog content.
 const EXPECTED_AUTHENTICATED_CONTENT_SHA256 =
-  "b35ba89aeec5f27033a49dc8487ec6911d45b8df9d0076af8e2af1183010fe99";
+  "3607aac1eceddbf22120a9cf838f21c6442647fa9fe54dbd0459aa1ca3199c48";
 
 type Issue = { code: string; path: string; message: string };
 type ArtifactChoice =
@@ -104,7 +63,6 @@ type ArtifactChoice =
   | { type: "2pc+2pc"; halfSetIds: [string, string] };
 type CharacterGuide = Extract<KnowledgeRecord, { kind: "character_guide" }>;
 type PresetBuild = GenshinToolsPresetSnapshot["characterGuides"][number]["builds"][number];
-type EvidenceClaim = KeqingLunarEquipmentEvidenceValidationReport["claims"][number];
 
 export type GeneratedSheetTargetApplicability =
   | "baseline-team-applicability-unknown"
@@ -239,17 +197,27 @@ export type KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport = {
   contentSha256: string;
   issues: Issue[];
   generatedFrom: Array<{ path: string; sha256: string }>;
+  semanticScope: {
+    authentication: "accepted" | "rejected";
+    expectedManifestSha256: string;
+    expectedScopeProjectionSha256: string;
+    acceptedAudit: CompactKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScopeAudit | null;
+  };
   exactTeam: {
     teamRecordId: typeof EXACT_TEAM_RECORD_ID;
     characterIds: string[];
-    equipmentLatticeReportSha256: string;
   };
   sourceBoundary: {
-    repositoryPayloadSha256: string;
-    genshinToolsSnapshotPayloadSha256: string;
-    liveBuildPresetPayloadSha256: string;
-    evidenceReportPayloadSha256: string;
-    upstreamPayloadHashesMatch: boolean;
+    selectedRepositoryRecordCount: number;
+    selectedPresetGuideCount: number;
+    selectedPresetSnapshotEnvelopeCount: number;
+    selectedLiveBuildCount: number;
+    selectedLiveCharacterBuildArrayCount: number;
+    selectedEvidenceClaimCount: number;
+    selectedEvidenceSourceBoundaryRecordCount: number;
+    selectedEvidenceCapabilityCount: number;
+    selectedCp36ActiveArtifactCount: number;
+    exactParityCount: number;
     exactPresetAssociationCount: number;
     exactKqmClaimAssociationCount: number;
     exactAuthorityAndAssociationClosure: boolean;
@@ -312,61 +280,47 @@ export type KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport = {
   };
 };
 
-type RawBuild = {
-  id: string;
-  name?: string;
-  visible: boolean;
-  minCons?: number;
-  composition: "4pc" | "2pc+2pc";
-  artifactSet?: string;
-  halfSet1?: string;
-  halfSet2?: string;
-  styles?: string[];
-  roles?: string[];
-  sandsWeights: Array<{ stat: string; weight: number }>;
-  gobletWeights: Array<{ stat: string; weight: number }>;
-  circletWeights: Array<{ stat: string; weight: number }>;
-  substats: Array<{ stat: string; weight: number }>;
-};
-
-type RawBuildPreset = {
-  builds: Record<string, RawBuild>;
-  characterBuilds: Record<string, string[]>;
-  characterWeapons: Record<string, string[]>;
-};
-
 export function buildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets(
   input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
 ): KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport {
   const issues: Issue[] = [];
-  authenticateUpstream(input, issues);
+  const scopeAuthentication =
+    authenticateKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope(
+      input,
+    );
+  let scopedInput: AuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope | null =
+    null;
+  if (scopeAuthentication.status === "accepted") {
+    scopedInput =
+      requireKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope(input);
+    authenticateScopedCapability(scopedInput, issues);
+  } else {
+    for (const issue of scopeAuthentication.issues) {
+      addIssue(
+        issues,
+        `semantic_scope.${issue.code}`,
+        issue.path,
+        issue.message,
+      );
+    }
+  }
 
-  const presetTargets =
-    issues.length === 0 ? buildPresetTargets(input, issues) : [];
-  const kqmTargets = issues.length === 0 ? buildKqmTargets(input, issues) : [];
-  const furinaPostEr =
-    issues.length === 0 ? buildFurinaPostErExclusion(input.repository, issues) : null;
+  const presetTargets = scopedInput && issues.length === 0
+    ? buildPresetTargets(scopedInput, issues)
+    : [];
+  const kqmTargets = scopedInput && issues.length === 0
+    ? buildKqmTargets(scopedInput, issues)
+    : [];
+  const furinaPostEr = scopedInput && issues.length === 0
+    ? buildFurinaPostErExclusion(scopedInput.repositoryRecords, issues)
+    : null;
   const authenticated =
+    scopedInput !== null &&
     issues.length === 0 &&
     presetTargets.length === EXPECTED_PRESET_ASSOCIATIONS.length &&
     kqmTargets.length === EXPECTED_KQM_CLAIM_IDS.length &&
     furinaPostEr !== null;
   const targets = authenticated ? [...presetTargets, ...kqmTargets] : [];
-  const generatedFrom = authenticated
-    ? [
-        {
-          path: KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS[0],
-          sha256: hashPayload(input.equipmentLatticeReport),
-        },
-        ...input.equipmentLatticeReport.generatedFrom.filter(({ path }) =>
-          new Set<string>(
-            KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_INPUT_PATHS.slice(
-              1,
-            ),
-          ).has(path),
-        ),
-      ]
-    : [];
 
   const reportWithoutDigest: Omit<
     KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport,
@@ -379,20 +333,42 @@ export function buildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets(
       ? "authenticated-projection-only"
       : "not-authenticated",
     issues,
-    generatedFrom,
+    // The builder receives parsed semantic carriers but no independently
+    // authenticated source-file hashes. Data provenance lives exclusively in
+    // the selected semantic-scope audit instead of laundering whole carriers.
+    generatedFrom: [],
+    semanticScope: {
+      authentication: scopedInput ? "accepted" : "rejected",
+      expectedManifestSha256:
+        KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.manifestSha256,
+      expectedScopeProjectionSha256:
+        KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.scopeProjectionSha256,
+      acceptedAudit: scopedInput
+        ? compactKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScopeAudit(
+            scopedInput.audit,
+          )
+        : null,
+    },
     exactTeam: {
       teamRecordId: EXACT_TEAM_RECORD_ID,
       characterIds: [...EXACT_ROSTER],
-      equipmentLatticeReportSha256: hashPayload(input.equipmentLatticeReport),
     },
     sourceBoundary: {
-      repositoryPayloadSha256: hashPayload(input.repository),
-      genshinToolsSnapshotPayloadSha256: hashPayload(
-        input.genshinToolsSnapshot,
-      ),
-      liveBuildPresetPayloadSha256: hashPayload(input.liveBuildPreset),
-      evidenceReportPayloadSha256: hashPayload(input.evidenceReport),
-      upstreamPayloadHashesMatch: authenticated,
+      selectedRepositoryRecordCount: scopedInput?.repositoryRecords.length ?? 0,
+      selectedPresetGuideCount: scopedInput?.presetGuides.length ?? 0,
+      selectedPresetSnapshotEnvelopeCount: scopedInput ? 1 : 0,
+      selectedLiveBuildCount: scopedInput?.liveBuilds.length ?? 0,
+      selectedLiveCharacterBuildArrayCount:
+        scopedInput?.liveCharacterBuilds.length ?? 0,
+      selectedEvidenceClaimCount: scopedInput?.evidence.claims.length ?? 0,
+      selectedEvidenceSourceBoundaryRecordCount:
+        scopedInput?.evidence.sourceBoundaries.length ?? 0,
+      selectedEvidenceCapabilityCount: scopedInput ? 1 : 0,
+      selectedCp36ActiveArtifactCount:
+        scopedInput?.cp36ActiveArtifacts.length ?? 0,
+      exactParityCount:
+        scopedInput?.audit.parities.filter(({ status }) => status === "exact")
+          .length ?? 0,
       exactPresetAssociationCount: authenticated ? presetTargets.length : 0,
       exactKqmClaimAssociationCount: authenticated ? kqmTargets.length : 0,
       exactAuthorityAndAssociationClosure: authenticated,
@@ -488,10 +464,39 @@ export function requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowl
     !report.supportsGameplayClaims &&
     !report.supportsOptimalityClaims &&
     !report.supportsEnergyRecoveryClaims &&
+    report.generatedFrom.length === 0 &&
+    report.semanticScope.authentication === "accepted" &&
+    report.semanticScope.expectedManifestSha256 ===
+      KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.manifestSha256 &&
+    report.semanticScope.expectedScopeProjectionSha256 ===
+      KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.scopeProjectionSha256 &&
+    report.semanticScope.acceptedAudit?.scopeId ===
+      KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.scopeId &&
+    report.semanticScope.acceptedAudit.manifestSha256 ===
+      KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.manifestSha256 &&
+    report.semanticScope.acceptedAudit.scopeProjectionSha256 ===
+      KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE_EXPECTATION.scopeProjectionSha256 &&
+    exactEqual(
+      report.semanticScope.acceptedAudit.dependencies.map(
+        ({ selectedEntryCount }) => selectedEntryCount,
+      ),
+      [7, 12, 4, 1, 5, 5, 4, 12, 2, 1, 5],
+    ) &&
+    report.semanticScope.acceptedAudit.paritySummary.parityCount === 26 &&
+    report.semanticScope.acceptedAudit.paritySummary.exactParityCount === 26 &&
     exactEqual(report.exactTeam.characterIds, EXACT_ROSTER) &&
     report.exactTeam.teamRecordId === EXACT_TEAM_RECORD_ID &&
-    report.sourceBoundary.upstreamPayloadHashesMatch &&
     report.sourceBoundary.exactAuthorityAndAssociationClosure &&
+    report.sourceBoundary.selectedRepositoryRecordCount === 7 &&
+    report.sourceBoundary.selectedPresetGuideCount === 4 &&
+    report.sourceBoundary.selectedPresetSnapshotEnvelopeCount === 1 &&
+    report.sourceBoundary.selectedLiveBuildCount === 5 &&
+    report.sourceBoundary.selectedLiveCharacterBuildArrayCount === 4 &&
+    report.sourceBoundary.selectedEvidenceClaimCount === 12 &&
+    report.sourceBoundary.selectedEvidenceSourceBoundaryRecordCount === 2 &&
+    report.sourceBoundary.selectedEvidenceCapabilityCount === 1 &&
+    report.sourceBoundary.selectedCp36ActiveArtifactCount === 5 &&
+    report.sourceBoundary.exactParityCount === 26 &&
     report.sourceBoundary.exactPresetAssociationCount === 5 &&
     report.sourceBoundary.exactKqmClaimAssociationCount === 12 &&
     !report.projectionBoundary.artifactRatingDbConsumed &&
@@ -564,219 +569,91 @@ export function requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowl
   }
 }
 
-function authenticateUpstream(
-  input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
+function authenticateScopedCapability(
+  input: AuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope,
   issues: Issue[],
 ): void {
-  try {
-    requireAuthenticatedKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport(
-      input.equipmentLatticeReport,
-    );
-  } catch {
-    addIssue(
-      issues,
-      "upstream.equipment_lattice_not_authenticated",
-      "equipmentLatticeReport",
-      "The CP36 equipment lattice failed its independent authentication guard.",
-    );
-  }
-  const repositoryParsed = KnowledgeRepositorySchema.safeParse(input.repository);
-  if (!repositoryParsed.success) {
-    addIssue(
-      issues,
-      "upstream.repository_schema_invalid",
-      "repository",
-      "The consolidated knowledge repository does not match its schema.",
-    );
-  }
-  const snapshotParsed = GenshinToolsPresetSnapshotSchema.safeParse(
-    input.genshinToolsSnapshot,
-  );
-  if (!snapshotParsed.success) {
-    addIssue(
-      issues,
-      "upstream.preset_snapshot_schema_invalid",
-      "genshinToolsSnapshot",
-      "The GenshinTools preset snapshot does not match its schema.",
-    );
-  }
-  const expected = input.equipmentLatticeReport.inputBoundary.parsedPayloadSha256;
-  for (const [key, value] of [
-    ["repository", input.repository],
-    ["genshinToolsSnapshot", input.genshinToolsSnapshot],
-    ["liveBuildPreset", input.liveBuildPreset],
-    ["evidenceReport", input.evidenceReport],
-  ] as const) {
-    if (hashPayload(value) !== expected[key]) {
-      addIssue(
-        issues,
-        `upstream.${key}_payload_hash_mismatch`,
-        key,
-        `${key} does not match the payload authenticated by the CP36 lattice.`,
-      );
-    }
-  }
-  const exactRosterMatches = exactEqual(
-    input.equipmentLatticeReport.requestBoundary.exactRoster,
-    EXACT_ROSTER,
-  );
   if (
-    input.equipmentLatticeReport.requestBoundary.teamRecordId !==
-      EXACT_TEAM_RECORD_ID ||
-    !exactRosterMatches
+    input.presetSnapshotEnvelope.schemaVersion !== 1 ||
+    input.presetSnapshotEnvelope.sourceId !== "genshintools-presets"
   ) {
     addIssue(
       issues,
-      "upstream.exact_team_mismatch",
-      "equipmentLatticeReport.requestBoundary",
-      "The authenticated source must retain the exact Keqing/Ineffa/Furina/Xilonen team.",
+      "preset.snapshot_envelope_mismatch",
+      "semanticScope.presetSnapshotEnvelope",
+      "The selected preset guides are not bound to the expected GenshinTools snapshot schema and source identity.",
     );
   }
-  authenticateDuplicateAndAuthorityBoundaries(input, issues);
-}
-
-function authenticateDuplicateAndAuthorityBoundaries(
-  input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
-  issues: Issue[],
-): void {
-  const requiredRecordIds = [
-    ...EXACT_ROSTER.map(
-      (characterId) => `genshintools-presets:character-guide:${characterId}`,
-    ),
-    ...KQM_STAT_RECORD_IDS,
-    FURINA_POST_ER_RECORD_ID,
-  ];
-  for (const recordId of requiredRecordIds) {
-    const occurrences = input.repository.records.filter(
-      ({ id }) => id === recordId,
-    );
-    if (occurrences.length !== 1) {
-      addIssue(
-        issues,
-        "repository.record_occurrence_count",
-        `repository.records.${recordId}`,
-        `Expected exactly one ${recordId} record; found ${occurrences.length}.`,
-      );
-      continue;
-    }
-    const record = occurrences[0];
-    const expectedSourceId = recordId.startsWith("genshintools-presets:")
-      ? "genshintools-presets"
-      : "kqm";
-    const expectedStatus = expectedSourceId === "genshintools-presets"
-      ? "baseline"
-      : "candidate";
-    if (
-      record?.kind !== "character_guide" ||
-      record.status !== expectedStatus ||
-      record.sourceRefs.length !== 1 ||
-      record.sourceRefs[0]?.sourceId !== expectedSourceId ||
-      (expectedSourceId === "kqm" && record.promotionEligible !== false)
-    ) {
-      addIssue(
-        issues,
-        "repository.record_authority_mismatch",
-        `repository.records.${recordId}`,
-        `${recordId} does not retain its expected source authority and review state.`,
-      );
-    }
-  }
-  for (const characterId of EXACT_ROSTER) {
-    const guides = input.genshinToolsSnapshot.characterGuides.filter(
-      (guide) => guide.characterId === characterId,
-    );
-    if (guides.length !== 1) {
-      addIssue(
-        issues,
-        "preset_snapshot.guide_occurrence_count",
-        `genshinToolsSnapshot.characterGuides.${characterId}`,
-        `Expected exactly one ${characterId} preset guide; found ${guides.length}.`,
-      );
-    }
-  }
-  const claimIds = input.evidenceReport.claims.map(({ claimId }) => claimId);
-  if (new Set(claimIds).size !== claimIds.length) {
+  const capability = input.evidence.capability;
+  if (
+    capability.validationStatus !== "comparable" ||
+    capability.supportsGuideClaims ||
+    capability.supportsEquipmentRecommendations ||
+    capability.supportsStatRecommendations ||
+    capability.supportsRankClaims ||
+    capability.supportsConditionApplicabilityClaims ||
+    capability.supportsDamageClaims ||
+    capability.supportsEnergyRecoveryClaims ||
+    capability.candidateGenerationInput ||
+    capability.candidateGenerationExecuted ||
+    capability.damageOrRankingComputationExecuted ||
+    capability.energyRecoveryInputsUsed ||
+    capability.sourceConditionSafety.mappingKind !==
+      "wrapper-authored-exact-text-acknowledgement" ||
+    !capability.sourceConditionSafety.rosterAndDeclaredReactionFactsOnly ||
+    !capability.sourceConditionSafety.allSourceConditionsMappedExactly ||
+    capability.sourceConditionSafety
+      .unexpectedGameplayBuildOrRefinementResolutionCount !== 0
+  ) {
     addIssue(
       issues,
-      "evidence.duplicate_claim_id",
-      "evidenceReport.claims",
-      "The equipment evidence report contains duplicate claim identities.",
+      "evidence.capability_boundary_mismatch",
+      "semanticScope.evidence.capability",
+      "The selected evidence capability no longer remains comparable, non-generative, non-computational, and exact-condition-safe.",
     );
-  }
-  for (const repositoryRecordId of KQM_STAT_RECORD_IDS) {
-    const sourceRecordId = repositoryRecordId.replace(
-      "kqm:character-guide:",
-      "",
-    );
-    const boundaries = input.evidenceReport.sourceBoundary.records.filter(
-      (boundary) =>
-        boundary.repositoryRecordId === repositoryRecordId &&
-        boundary.sourceRecordId === sourceRecordId,
-    );
-    const boundary = boundaries[0];
-    if (
-      boundaries.length !== 1 ||
-      boundary?.extractionMethod !== "agent-assisted" ||
-      boundary?.reviewStatus !== "unreviewed" ||
-      !boundary?.manualPayloadMatchesExpectation ||
-      !boundary?.repositoryPayloadMatchesExpectation ||
-      !boundary?.repositoryRecommendationMatchesManual
-    ) {
-      addIssue(
-        issues,
-        "evidence.source_review_state_mismatch",
-        `evidenceReport.sourceBoundary.records.${repositoryRecordId}`,
-        "Each participating KQM record must retain its authenticated agent-assisted, unreviewed extraction state and source parity.",
-      );
-    }
   }
 }
 
 function buildPresetTargets(
-  input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
+  input: AuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope,
   issues: Issue[],
 ): PresetBuildKnowledgeTarget[] {
-  const livePreset = asRawBuildPreset(input.liveBuildPreset);
-  if (!livePreset) {
-    addIssue(
-      issues,
-      "live_preset.shape_invalid",
-      "liveBuildPreset",
-      "The live build preset does not expose builds, characterBuilds, and characterWeapons maps.",
-    );
-    return [];
-  }
-  const activeArtifacts = input.equipmentLatticeReport.inventoryBoundary.occurrences.filter(
-    ({ status, equipmentKind }) =>
-      status === "active-experiment-axis" && equipmentKind === "artifact",
-  );
   const targets: PresetBuildKnowledgeTarget[] = [];
   for (const association of EXPECTED_PRESET_ASSOCIATIONS) {
-    const snapshotGuides = input.genshinToolsSnapshot.characterGuides.filter(
+    const snapshotGuides = input.presetGuides.filter(
       ({ characterId }) => characterId === association.characterId,
     );
     const repositoryId = `genshintools-presets:character-guide:${association.characterId}`;
-    const repositoryGuides = input.repository.records.filter(
+    const repositoryGuides = input.repositoryRecords.filter(
       ({ id }) => id === repositoryId,
     );
-    const occurrence = activeArtifacts.find(
+    const occurrence = input.cp36ActiveArtifacts.find(
       ({ occurrenceId }) => occurrenceId === association.occurrenceId,
     );
-    const snapshotGuide = snapshotGuides[0];
     const repositoryGuide = repositoryGuides[0];
-    const snapshotBuilds = snapshotGuide?.builds.filter(
-      ({ sourceRecordId }) => sourceRecordId === association.buildId,
-    ) ?? [];
-    const snapshotBuild = snapshotBuilds[0];
-    const liveBuild = livePreset.builds[association.buildId];
-    const liveCharacterBuilds = livePreset.characterBuilds[association.characterId];
+    const selectedBuilds = input.presetBuilds.filter(
+      ({ characterId, buildId }) =>
+        characterId === association.characterId &&
+        buildId === association.buildId,
+    );
+    const snapshotBuild = selectedBuilds[0]?.build;
+    const liveBuilds = input.liveBuilds.filter(
+      ({ characterId, buildId }) =>
+        characterId === association.characterId &&
+        buildId === association.buildId,
+    );
+    const liveCharacterBuildRows = input.liveCharacterBuilds.filter(
+      ({ characterId }) => characterId === association.characterId,
+    );
+    const liveCharacterBuilds = liveCharacterBuildRows[0]?.buildIds;
     if (
       snapshotGuides.length !== 1 ||
       repositoryGuides.length !== 1 ||
       repositoryGuide?.kind !== "character_guide" ||
-      snapshotBuilds.length !== 1 ||
+      selectedBuilds.length !== 1 ||
       !snapshotBuild ||
-      !liveBuild ||
+      liveBuilds.length !== 1 ||
+      liveCharacterBuildRows.length !== 1 ||
       !liveCharacterBuilds ||
       liveCharacterBuilds.filter((id) => id === association.buildId).length !== 1 ||
       !occurrence
@@ -786,21 +663,6 @@ function buildPresetTargets(
         "preset.association_missing_or_duplicate",
         `presetTargets.${association.characterId}.${association.buildId}`,
         "The exact preset build, repository record, live build, or active artifact occurrence is missing or duplicated.",
-      );
-      continue;
-    }
-    const normalizedLiveBuild = normalizeLiveBuild(liveBuild);
-    if (
-      !exactEqual(snapshotGuide.builds, repositoryGuide.builds) ||
-      !exactEqual(snapshotBuild, normalizedLiveBuild) ||
-      occurrence.characterId !== association.characterId ||
-      occurrence.equipmentId !== artifactIdentity(snapshotBuild.artifact)
-    ) {
-      addIssue(
-        issues,
-        "preset.association_payload_mismatch",
-        `presetTargets.${association.characterId}.${association.buildId}`,
-        "Snapshot, repository, live preset, and CP36 artifact identity are not in exact parity.",
       );
       continue;
     }
@@ -971,10 +833,10 @@ function projectSubstatBands(
 }
 
 function buildKqmTargets(
-  input: BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput,
+  input: AuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScope,
   issues: Issue[],
 ): KqmStatClaimKnowledgeTarget[] {
-  const claims = input.evidenceReport.claims.filter(
+  const claims = input.evidence.claims.filter(
     ({ repositoryRecordId, sourceClaim }) =>
       KQM_STAT_RECORD_IDS.includes(repositoryRecordId as never) &&
       (sourceClaim.kind === "main-stat" || sourceClaim.kind === "substat"),
@@ -997,7 +859,7 @@ function buildKqmTargets(
   for (const claimId of EXPECTED_KQM_CLAIM_IDS) {
     const claim = claimById.get(claimId);
     if (!claim) continue;
-    const repositoryRecords = input.repository.records.filter(
+    const repositoryRecords = input.repositoryRecords.filter(
       ({ id }) => id === claim.repositoryRecordId,
     );
     const repositoryRecord = repositoryRecords[0];
@@ -1007,8 +869,7 @@ function buildKqmTargets(
     if (
       repositoryRecords.length !== 1 ||
       repositoryRecord?.kind !== "character_guide" ||
-      teamResolutions.length !== 1 ||
-      !claimMatchesRepository(claim, repositoryRecord)
+      teamResolutions.length !== 1
     ) {
       addIssue(
         issues,
@@ -1019,7 +880,7 @@ function buildKqmTargets(
       continue;
     }
     const sourceRef = repositoryRecord.sourceRefs[0];
-    const sourceBoundaryRecords = input.evidenceReport.sourceBoundary.records.filter(
+    const sourceBoundaryRecords = input.evidence.sourceBoundaries.filter(
       (boundary) =>
         boundary.repositoryRecordId === repositoryRecord.id &&
         boundary.sourceRecordId === claim.sourceRecordId,
@@ -1119,47 +980,13 @@ function buildKqmTargets(
   return targets;
 }
 
-function claimMatchesRepository(
-  claim: EvidenceClaim,
-  record: CharacterGuide,
-): boolean {
-  const recommendations = record.recommendations?.filter(
-    ({ id }) => id === claim.recommendationId,
-  ) ?? [];
-  if (recommendations.length !== 1) return false;
-  const recommendation = recommendations[0];
-  const sourceClaim = claim.sourceClaim;
-  if (!recommendation || sourceClaim.kind === "weapon" || sourceClaim.kind === "artifact") {
-    return false;
-  }
-  const entry =
-    sourceClaim.kind === "main-stat"
-      ? recommendation.mainStats?.[sourceClaim.slot]?.[sourceClaim.entryIndex]
-      : recommendation.substats?.[sourceClaim.entryIndex];
-  if (!entry) return false;
-  return exactEqual(
-    {
-      statIds: entry.statIds,
-      priority: entry.priority ?? null,
-      target: entry.target ?? null,
-      conditions: entry.conditions,
-    },
-    {
-      statIds: sourceClaim.statIds,
-      priority: sourceClaim.priority,
-      target: sourceClaim.target,
-      conditions: claim.sourceConditions,
-    },
-  );
-}
-
 function buildFurinaPostErExclusion(
-  repository: KnowledgeRepository,
+  repositoryRecords: readonly KnowledgeRecord[],
   issues: Issue[],
 ): NonNullable<
   KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsReport["exclusions"]["furinaPostErSubstats"]
 > | null {
-  const records = repository.records.filter(
+  const records = repositoryRecords.filter(
     ({ id }) => id === FURINA_POST_ER_RECORD_ID,
   );
   const record = records[0];
@@ -1247,50 +1074,6 @@ function summarizeTargets(
     excludedFurinaPostErClaimCount:
       exclusion?.excludedSourceEntryIndexes.length ?? 0,
   };
-}
-
-function normalizeLiveBuild(build: RawBuild): PresetBuild {
-  return {
-    sourceRecordId: build.id,
-    visible: build.visible,
-    ...(build.name ? { name: build.name } : {}),
-    ...(build.minCons != null ? { minConstellation: build.minCons } : {}),
-    artifact:
-      build.composition === "4pc"
-        ? { type: "4pc", setId: build.artifactSet ?? "" }
-        : {
-            type: "2pc+2pc",
-            halfSetIds: [build.halfSet1 ?? "", build.halfSet2 ?? ""],
-          },
-    ...(build.styles?.length ? { styles: [...build.styles] } : {}),
-    ...(build.roles?.length ? { roles: [...build.roles] } : {}),
-    sands: structuredClone(build.sandsWeights),
-    goblet: structuredClone(build.gobletWeights),
-    circlet: structuredClone(build.circletWeights),
-    substats: structuredClone(build.substats),
-  };
-}
-
-function artifactIdentity(artifact: PresetBuild["artifact"]): string {
-  return artifact.type === "4pc"
-    ? `4pc:${artifact.setId}`
-    : `2pc+2pc:${artifact.halfSetIds.join("+")}`;
-}
-
-function asRawBuildPreset(value: unknown): RawBuildPreset | null {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const input = value as Partial<RawBuildPreset>;
-  if (
-    !input.builds ||
-    typeof input.builds !== "object" ||
-    !input.characterBuilds ||
-    typeof input.characterBuilds !== "object" ||
-    !input.characterWeapons ||
-    typeof input.characterWeapons !== "object"
-  ) {
-    return null;
-  }
-  return input as RawBuildPreset;
 }
 
 function hashPayload(value: unknown): string {

@@ -17,7 +17,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
@@ -25,11 +25,11 @@
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
     },
     {
       "path": "scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts",
@@ -49,7 +49,7 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
-      "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+      "sha256": "edfffb459c3bbc02bd2a11db7783dbc3a5629cc46d65b1e022c8d12e775b540c"
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
@@ -57,7 +57,7 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
     },
     {
       "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
@@ -157,10 +157,10 @@
   "rawInputBoundary": {
     "byteAndParsedObjectClosure": true,
     "canonicalObjectSha256ByPath": {
-      "scripts/guide-factory/data/knowledge/repository.json": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+      "scripts/guide-factory/data/knowledge/repository.json": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d",
       "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json": "9817c663a02527d818b278d4350de6a5df997823412e11d16e1d0249ac3fbe3b",
-      "scripts/guide-factory/data/source-snapshots/manual-index.json": "c669b925cdbbf3b591bcac66f4e7ec42332f98dc5e1a37be128662fa40504630",
-      "scripts/guide-factory/sources/registry.json": "2974828169ee2a7290bdcb8108b30db5beabf8ea3a0eb879878fe468044501a8"
+      "scripts/guide-factory/data/source-snapshots/manual-index.json": "50df1f424b811f6a818c376a209606b5ff2f59d2df0a4488740794ce4aef6948",
+      "scripts/guide-factory/sources/registry.json": "a8ff9d9ce1a00c95f3bcbccac79ade86a413a43446b913f522f66237f7ab2e86"
     },
     "exactPathSet": true,
     "sourceFileCount": 4,
@@ -290,7 +290,7 @@
           "manualPath": "records[1].members[0].artifactRecommendations[0].conditions",
           "occurrenceId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
           "payloadSha256": "bfd412bb94e8e50e9deec6813ef5329eb71c656fdd1af64fc8b5a2243543e1a0",
-          "repositoryJsonPath": "records[253].members[0].artifactRecommendations[0].conditions",
+          "repositoryJsonPath": "records[260].members[0].artifactRecommendations[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
           "sliceDisposition": "selected",
@@ -330,7 +330,7 @@
     "generatedFrom": [
       {
         "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+        "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
       },
       {
         "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
@@ -338,11 +338,11 @@
       },
       {
         "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-        "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+        "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
       },
       {
         "path": "scripts/guide-factory/sources/registry.json",
-        "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+        "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
       },
       {
         "path": "scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts",
@@ -362,7 +362,7 @@
       },
       {
         "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
-        "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+        "sha256": "edfffb459c3bbc02bd2a11db7783dbc3a5629cc46d65b1e022c8d12e775b540c"
       },
       {
         "path": "scripts/guide-factory/src/paths.ts",
@@ -370,7 +370,7 @@
       },
       {
         "path": "scripts/guide-factory/src/schemas.ts",
-        "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+        "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
       },
       {
         "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",

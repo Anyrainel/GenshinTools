@@ -1,4 +1,7 @@
 import characterStatsInput from "@/data/game/character_stats.json";
+import weaponStatsInput from "@/data/game/weapon_stats.json";
+import { weapons } from "@/data/resources";
+import { betaWeapons } from "@/data/resources_beta";
 import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
   buildArtifactChoiceSearchCoverageReport,
@@ -10,9 +13,12 @@ import {
   KEQING_ROLE_PAIR_TARGET_TEAM_IDS,
 } from "./keqingSourceScopedRolePairSample";
 import {
-  requiredManualSnapshotInputContaining,
-  type ManualSnapshotInput,
-} from "./manualSnapshots";
+  authenticateKeqingLunarEquipmentScope,
+  KEQING_LUNAR_EQUIPMENT_SCOPE_SOURCE_RECORD_IDS,
+  type KeqingLunarEquipmentCharacterFact,
+  type KeqingLunarEquipmentScopeAuthority,
+} from "./keqingLunarEquipmentEvidenceScope";
+import type { ManualSnapshotInput } from "./manualSnapshots";
 import {
   type KnowledgeRecord,
   type KnowledgeRepository,
@@ -22,8 +28,12 @@ import {
 import {
   buildWeaponChoiceSearchCoverageReport,
   type WeaponChoiceSearchCoverageObservation,
+  type WeaponChoiceSearchCoveragePolicyInputs,
   WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
 } from "./weaponChoiceSearchCoverage";
+import type {
+  ScopedSemanticDependencyAcceptedAudit,
+} from "./scopedSemanticDependency";
 
 type KnowledgeCharacterGuide = Extract<
   KnowledgeRecord,
@@ -38,25 +48,8 @@ type GuideRecommendation = NonNullable<
   KnowledgeCharacterGuide["recommendations"]
 >[number];
 
-export const KEQING_LUNAR_EQUIPMENT_EVIDENCE_RECORD_SOURCE_IDS = [
-  "keqing-lunar-charged-default-artifact-stats-luna-i",
-  "keqing-lunar-charged-high-buff-goblet-stats-luna-i",
-  "keqing-lunar-charged-furina-marechaussee-hunter-luna-i",
-  "keqing-lunar-charged-notsu-contexts-luna-i",
-  "keqing-lunar-charged-traditional-artifact-options-luna-i",
-  "keqing-lunar-charged-top-contributor-artifact-options-luna-i",
-  "keqing-lunar-charged-general-mistsplitter-luna-i",
-  "keqing-lunar-charged-traditional-jade-cutter-ranking-luna-i",
-  "keqing-lunar-charged-exceptional-em-foliar-tie-luna-i",
-  "keqing-lunar-charged-shielded-summit-shaper-luna-i",
-  "keqing-lunar-charged-other-five-star-crit-options-luna-i",
-  "keqing-lunar-charged-r5-finale-healer-luna-i",
-  "keqing-lunar-charged-freedom-sworn-luna-i",
-  "keqing-lunar-charged-equal-refinement-four-star-ranking-luna-i",
-  "keqing-lunar-charged-full-shield-eshu-lions-roar-tie-luna-i",
-  "keqing-lunar-charged-harbinger-of-dawn-availability-luna-i",
-  "keqing-lunar-charged-low-rarity-fallbacks-luna-i",
-] as const;
+export const KEQING_LUNAR_EQUIPMENT_EVIDENCE_RECORD_SOURCE_IDS =
+  KEQING_LUNAR_EQUIPMENT_SCOPE_SOURCE_RECORD_IDS;
 
 type ParticipatingSourceRecordId =
   (typeof KEQING_LUNAR_EQUIPMENT_EVIDENCE_RECORD_SOURCE_IDS)[number];
@@ -258,6 +251,7 @@ export interface KeqingLunarEquipmentEvidenceValidationReport {
   damageOrRankingComputationExecuted: false;
   energyRecoveryInputsUsed: false;
   generatedFrom: Array<{ path: string; sha256: string }>;
+  semanticScope: KeqingLunarEquipmentSemanticScopeAudit;
   sourceBoundary: {
     sourceId: "kqm";
     expectedPage: typeof EXPECTED_PAGE;
@@ -266,7 +260,7 @@ export interface KeqingLunarEquipmentEvidenceValidationReport {
     observedCapturedAt: string;
     pageMatchesExpectation: boolean;
     expectedParticipatingRecordCount: 17;
-    observedSnapshotRecordCount: number;
+    observedParticipatingRecordCount: number;
     records: Array<{
       sourceRecordId: ParticipatingSourceRecordId;
       repositoryRecordId: string;
@@ -398,6 +392,26 @@ export interface KeqingLunarEquipmentEvidenceValidationReport {
   prohibitedInterpretations: string[];
 }
 
+export interface KeqingLunarEquipmentSemanticScopeAudit {
+  status: "accepted";
+  trust: "authenticated-current-input-rebuild-and-pinned-expectation";
+  scopeId: string;
+  manifestSha256: string;
+  scopeProjectionSha256: string;
+  dependencies: Array<{
+    dependencyId: string;
+    selectedCount: number;
+    selectedKeySetSha256: string;
+    selectedPayloadSha256: string;
+  }>;
+  parity: {
+    configuredCount: number;
+    exactCount: number;
+    parityIdsSha256: string;
+    normalizedPairsSha256: string;
+  };
+}
+
 interface BaselineMainStatCoverage {
   baselineStatIds: string[];
   sourceObservedStatIds: string[];
@@ -418,21 +432,27 @@ export interface KeqingLunarEvidenceClaimSafety {
   sourceRefinementsInferred: boolean;
 }
 
+const SEMANTICALLY_SCOPED_INPUT_PATHS = new Set([
+  "scripts/guide-factory/data/knowledge/repository.json",
+  "scripts/guide-factory/data/source-snapshots/manual-index.json",
+  "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+  "scripts/guide-factory/sources/registry.json",
+  "scripts/guide-factory/src/schemas.ts",
+  "src/data/game/character_stats.json",
+]);
+
 export const KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS = [
   ...new Set([
     "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
+    "scripts/guide-factory/src/keqingLunarEquipmentEvidenceScope.ts",
+    "scripts/guide-factory/src/scopedSemanticDependency.ts",
     "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
     "scripts/guide-factory/src/manualSnapshots.ts",
     "scripts/guide-factory/src/schemas.ts",
-    "scripts/guide-factory/data/source-snapshots/manual-index.json",
-    "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
-    "scripts/guide-factory/data/knowledge/repository.json",
-    "scripts/guide-factory/sources/registry.json",
-    "src/data/game/character_stats.json",
     ...ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
     ...WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
   ]),
-] as const;
+].filter((path) => !SEMANTICALLY_SCOPED_INPUT_PATHS.has(path));
 
 const EXPECTED_CAPTURED_AT = "2026-08-29" as const;
 const EXPECTED_PAGE = {
@@ -595,17 +615,41 @@ const EXPECTED_REPOSITORY_RECORD_PAYLOAD_SHA256: Record<
 };
 
 interface ValidationEnvironment {
-  characterRegions: Readonly<Record<string, string | undefined>>;
+  characterFacts: Readonly<
+    Record<string, KeqingLunarEquipmentCharacterFact | undefined>
+  >;
 }
 
+type ValidatorOnlyKnowledgeRecordCarrier = Pick<
+  KnowledgeRepository,
+  "records"
+>;
+
 const DEFAULT_ENVIRONMENT: ValidationEnvironment = {
-  characterRegions: Object.fromEntries(
+  characterFacts: Object.fromEntries(
     Object.entries(characterStatsInput).map(([characterId, stats]) => [
       characterId,
-      stats.region,
+      { region: stats.region, weaponType: stats.weaponType },
     ]),
   ),
 };
+
+const WEAPON_POLICY_INPUTS_WITHOUT_CHARACTER_TYPES = {
+  weaponStats: weaponStatsInput,
+  releasedWeaponResources: Object.fromEntries(
+    weapons.map(({ id, rarity }) => [id, { rarity }]),
+  ),
+  betaOnlyWeaponIds: new Set(
+    betaWeapons
+      .filter((betaWeapon) =>
+        weapons.every((releasedWeapon) => releasedWeapon.id !== betaWeapon.id),
+      )
+      .map(({ id }) => id),
+  ),
+} satisfies Omit<
+  WeaponChoiceSearchCoveragePolicyInputs,
+  "characterWeaponTypes"
+>;
 
 /**
  * Validate source-conditioned Keqing equipment evidence against four exact KQM
@@ -615,19 +659,31 @@ const DEFAULT_ENVIRONMENT: ValidationEnvironment = {
 export function buildKeqingLunarEquipmentEvidenceValidationReport(
   repository: KnowledgeRepository,
   manualInputs: readonly ManualSnapshotInput[],
+  authority: KeqingLunarEquipmentScopeAuthority,
   generatedFrom: Array<{ path: string; sha256: string }> = [],
   environment: ValidationEnvironment = DEFAULT_ENVIRONMENT,
 ): KeqingLunarEquipmentEvidenceValidationReport {
-  const manualInput = requiredManualSnapshotInputContaining(
+  const authenticatedScope = authenticateKeqingLunarEquipmentScope({
+    repository,
     manualInputs,
-    "kqm",
-    KEQING_LUNAR_EQUIPMENT_EVIDENCE_RECORD_SOURCE_IDS[0],
+    characterFacts: environment.characterFacts,
+    ...authority,
+  });
+  // The coverage builders currently consume only `records`. Keep this carrier
+  // intentionally free of unauthenticated whole-repository provenance fields.
+  const scopedRepository: ValidatorOnlyKnowledgeRecordCarrier = {
+    records: [...authenticatedScope.repositoryRecords],
+  };
+  const snapshot = ManualObservationSnapshotSchema.parse(
+    authenticatedScope.snapshot,
   );
-  const snapshot = ManualObservationSnapshotSchema.parse(manualInput.snapshot);
-  const sourceBoundary = buildSourceBoundary(repository, snapshot);
-  const baselineBoundary = buildBaselineBoundary(repository);
+  const scopedEnvironment: ValidationEnvironment = {
+    characterFacts: authenticatedScope.characterFacts,
+  };
+  const sourceBoundary = buildSourceBoundary(scopedRepository, snapshot);
+  const baselineBoundary = buildBaselineBoundary(scopedRepository);
   const targets = KEQING_ROLE_PAIR_TARGET_TEAM_IDS.map((teamRecordId) =>
-    buildTargetContext(repository, teamRecordId, environment),
+    buildTargetContext(scopedRepository, teamRecordId, scopedEnvironment),
   );
   const publishedTeamBoundary = {
     expectedTargetCount: 4 as const,
@@ -638,11 +694,26 @@ export function buildKeqingLunarEquipmentEvidenceValidationReport(
     targets,
   };
 
-  const artifactCoverage = buildArtifactChoiceSearchCoverageReport(repository);
-  const weaponCoverage = buildWeaponChoiceSearchCoverageReport(repository);
+  const artifactCoverage = buildArtifactChoiceSearchCoverageReport(
+    scopedRepository as KnowledgeRepository,
+  );
+  const weaponCoverage = buildWeaponChoiceSearchCoverageReport(
+    scopedRepository as KnowledgeRepository,
+    [],
+    {
+      policyInputs: {
+        ...WEAPON_POLICY_INPUTS_WITHOUT_CHARACTER_TYPES,
+        characterWeaponTypes: Object.fromEntries(
+          Object.entries(authenticatedScope.characterFacts).map(
+            ([characterId, fact]) => [characterId, fact?.weaponType],
+          ),
+        ),
+      },
+    },
+  );
   const claims = sourceBoundary.records.flatMap((boundary) => {
     const guide = requiredUniqueCharacterGuide(
-      repository,
+      scopedRepository,
       boundary.repositoryRecordId,
     );
     const recommendation = requiredSingleRecommendation(guide);
@@ -733,7 +804,7 @@ export function buildKeqingLunarEquipmentEvidenceValidationReport(
       claimSafety.sourceRefinementInferenceCount,
     sourceRefinementsInferred: claimSafety.sourceRefinementsInferred,
   };
-  const baselineComparison = buildBaselineComparison(repository, claims);
+  const baselineComparison = buildBaselineComparison(scopedRepository, claims);
 
   const validationStatus =
     sourceBoundary.pageMatchesExpectation &&
@@ -783,6 +854,7 @@ export function buildKeqingLunarEquipmentEvidenceValidationReport(
     generatedFrom: generatedFrom
       .map((entry) => ({ ...entry }))
       .sort((left, right) => compareText(left.path, right.path)),
+    semanticScope: compactSemanticScopeAudit(authenticatedScope.audit),
     sourceBoundary,
     baselineBoundary,
     publishedTeamBoundary,
@@ -814,8 +886,57 @@ export function buildKeqingLunarEquipmentEvidenceValidationReport(
   };
 }
 
+function compactSemanticScopeAudit(
+  audit: ScopedSemanticDependencyAcceptedAudit,
+): KeqingLunarEquipmentSemanticScopeAudit {
+  return {
+    status: audit.status,
+    trust: audit.trust,
+    scopeId: audit.scopeId,
+    manifestSha256: audit.selector.manifestSha256,
+    scopeProjectionSha256: audit.scopeProjectionSha256,
+    dependencies: audit.dependencies.map(
+      ({
+        dependencyId,
+        selectedEntries,
+        selectedKeySetSha256,
+        selectedPayloadSha256,
+      }) => ({
+        dependencyId,
+        selectedCount: selectedEntries.length,
+        selectedKeySetSha256,
+        selectedPayloadSha256,
+      }),
+    ),
+    parity: {
+      configuredCount: audit.parities.length,
+      exactCount: audit.parities.filter(({ status }) => status === "exact").length,
+      parityIdsSha256: sha256Text(
+        stableJson(audit.parities.map(({ parityId }) => parityId)),
+      ),
+      normalizedPairsSha256: sha256Text(
+        stableJson(
+          audit.parities.map(
+            ({
+              parityId,
+              leftNormalizedSha256,
+              rightNormalizedSha256,
+              status,
+            }) => ({
+              parityId,
+              leftNormalizedSha256,
+              rightNormalizedSha256,
+              status,
+            }),
+          ),
+        ),
+      ),
+    },
+  };
+}
+
 function buildSourceBoundary(
-  repository: KnowledgeRepository,
+  repository: ValidatorOnlyKnowledgeRecordCarrier,
   snapshot: ManualObservationSnapshot,
 ): KeqingLunarEquipmentEvidenceValidationReport["sourceBoundary"] {
   const records = KEQING_LUNAR_EQUIPMENT_EVIDENCE_RECORD_SOURCE_IDS.map(
@@ -893,7 +1014,7 @@ function buildSourceBoundary(
       snapshot.capturedAt === EXPECTED_CAPTURED_AT &&
       stableJson(snapshot.page) === stableJson(EXPECTED_PAGE),
     expectedParticipatingRecordCount: 17,
-    observedSnapshotRecordCount: snapshot.records.length,
+    observedParticipatingRecordCount: snapshot.records.length,
     records,
     allRecordsPresentExactlyOnce: records.every(
       ({ manualOccurrenceCount, repositoryOccurrenceCount }) =>
@@ -925,7 +1046,7 @@ function buildSourceBoundary(
 }
 
 function buildBaselineBoundary(
-  repository: KnowledgeRepository,
+  repository: ValidatorOnlyKnowledgeRecordCarrier,
 ): KeqingLunarEquipmentEvidenceValidationReport["baselineBoundary"] {
   const guides = repository.records.filter(
     (record): record is KnowledgeCharacterGuide =>
@@ -967,7 +1088,7 @@ function buildBaselineBoundary(
 }
 
 function buildBaselineComparison(
-  repository: KnowledgeRepository,
+  repository: ValidatorOnlyKnowledgeRecordCarrier,
   claims: readonly KeqingLunarEquipmentEvidenceClaim[],
 ): KeqingLunarEquipmentEvidenceValidationReport["baselineComparison"] {
   const baselineGuide = requiredUniqueCharacterGuide(
@@ -1208,7 +1329,7 @@ function uniqueSortedStrings(values: readonly string[]): string[] {
 }
 
 function buildTargetContext(
-  repository: KnowledgeRepository,
+  repository: ValidatorOnlyKnowledgeRecordCarrier,
   teamRecordId: string,
   environment: ValidationEnvironment,
 ): TargetTeamContext {
@@ -1224,7 +1345,8 @@ function buildTargetContext(
   const team = matches[0];
   const characterIds = team.members.map(({ characterId }) => characterId);
   const nodKraiCharacterIds = characterIds.filter(
-    (characterId) => environment.characterRegions[characterId] === "Nod-Krai",
+    (characterId) =>
+      environment.characterFacts[characterId]?.region === "Nod-Krai",
   );
   const expectedRoster = EXPECTED_TEAM_ROSTERS[teamRecordId];
   const expectedNodKraiRoster = EXPECTED_TEAM_NOD_KRAI_ROSTERS[teamRecordId];
@@ -1685,7 +1807,7 @@ function unresolvedPredicateReason(predicateId: ConditionPredicateId): string {
 }
 
 function requiredUniqueCharacterGuide(
-  repository: KnowledgeRepository,
+  repository: ValidatorOnlyKnowledgeRecordCarrier,
   guideId: string,
 ): KnowledgeCharacterGuide {
   const matches = repository.records.filter(

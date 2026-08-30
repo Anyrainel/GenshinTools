@@ -203,6 +203,28 @@ function consolidateManualRecord(
     };
   }
 
+  if (record.kind === "rotation_fixture") {
+    return {
+      id: recordId(
+        snapshot.sourceId,
+        "rotation-fixture",
+        record.sourceRecordId
+      ),
+      kind: "rotation_fixture",
+      status: "candidate",
+      promotionEligible: false,
+      characterId: record.characterId,
+      rotation: {
+        ...record.rotation,
+        unresolvedSegments: [...record.rotation.unresolvedSegments],
+        assumptions: [...record.rotation.assumptions],
+      },
+      formulaCounts: record.formulaCounts.map((count) => ({ ...count })),
+      sourceRefs,
+      unknowns,
+    };
+  }
+
   if (record.kind === "energy_guidance") {
     return {
       id: recordId(
@@ -443,7 +465,8 @@ function recordId(
     | "team-template"
     | "character-role"
     | "character-guide"
-    | "energy-guidance",
+    | "energy-guidance"
+    | "rotation-fixture",
   sourceRecordId: string
 ): string {
   return `${sourceId}:${kind}:${sourceRecordId}`;

@@ -64,6 +64,13 @@ import {
   type KeqingIneffaFurinaXilonenCachedPolicyAuditReport,
 } from "./keqingIneffaFurinaXilonenCachedPolicyAudit";
 import {
+  buildKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport,
+  KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_ROBUSTNESS_CENSUS_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_ROBUSTNESS_CENSUS_REPORT_PATH,
+  requireAuthenticatedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport,
+  type KeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport,
+} from "./keqingIneffaFurinaXilonenCachedPolicyRobustnessCensus";
+import {
   buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
   KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
   KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
@@ -263,7 +270,29 @@ export interface ValidationRunResult {
   warningCount: number;
 }
 
-export async function runValidation(): Promise<ValidationRunResult> {
+export interface ValidationRunOptions {
+  includeErReports?: boolean;
+}
+
+export function parseValidationCliArgs(
+  args: readonly string[],
+): ValidationRunOptions {
+  const unsupportedArgs = args.filter((arg) => arg !== "--defer-er");
+  if (unsupportedArgs.length > 0) {
+    throw new Error(
+      `Unsupported validation argument(s): ${unsupportedArgs.join(", ")}`,
+    );
+  }
+
+  return {
+    includeErReports: !args.includes("--defer-er"),
+  };
+}
+
+export async function runValidation(
+  options: ValidationRunOptions = {},
+): Promise<ValidationRunResult> {
+  const includeErReports = options.includeErReports ?? true;
   const diagnostics: ValidationDiagnostic[] = [];
   const catalogs = await loadGameCatalogs();
   const [
@@ -298,6 +327,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaFurinaXilonenEquipmentTechnicalComputationInput,
     keqingIneffaFurinaXilonenGeneratedSheetEvidenceInput,
     keqingIneffaFurinaXilonenCachedPolicyAuditInput,
+    keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
@@ -306,7 +336,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
     manualConditionArrayCoverageInput,
     manualConditionArrayCoverageSourceFiles,
     kleeSourceLocalConditionSliceInput,
+    kleeSourceLocalConditionSliceSourceFiles,
     dionaSourceLocalSupportSliceInput,
+    dionaSourceLocalSupportSliceSourceFiles,
     kokomiSourceLocalArtifactSliceInput,
     kokomiSourceLocalArtifactSliceSourceFiles,
     noelleSourceLocalHighInvestmentSliceInput,
@@ -385,6 +417,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
         KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_AUDIT_REPORT_PATH,
       ),
       readJson(
+        KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_ROBUSTNESS_CENSUS_REPORT_PATH,
+      ),
+      readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
       ),
       readJson(KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_REPORT_PATH),
@@ -404,7 +439,29 @@ export async function runValidation(): Promise<ValidationRunResult> {
         ),
       ),
       readJson(KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH),
+      Promise.all(
+        KLEE_SOURCE_LOCAL_CONDITION_SLICE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
       readJson(DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH),
+      Promise.all(
+        DIONA_SOURCE_LOCAL_SUPPORT_SLICE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
       readJson(KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH),
       Promise.all(
         KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_SOURCE_FILE_PATHS.map(
@@ -913,18 +970,12 @@ export async function runValidation(): Promise<ValidationRunResult> {
         "kqm",
         "klee-on-field-artifact-stats-luna-iv",
       );
-      const kleeSourceFilePathSet = new Set<string>(
-        KLEE_SOURCE_LOCAL_CONDITION_SLICE_SOURCE_FILE_PATHS,
-      );
-      const kleeSourceFiles = manualConditionArrayCoverageSourceFiles.filter(
-        ({ path: sourcePath }) => kleeSourceFilePathSet.has(sourcePath),
-      );
       const kleeCanonicalInput = {
         repositoryInput: expectedKnowledge,
         manualSnapshotInput: kleeManualInput.snapshot,
         manualIndexInput,
         sourceRegistryInput: registry.data,
-        sourceFiles: kleeSourceFiles,
+        sourceFiles: kleeSourceLocalConditionSliceSourceFiles,
         generatedFrom: kleeSourceLocalGeneratedFrom,
       };
       const kleeSourceLocalAuthentication =
@@ -956,12 +1007,6 @@ export async function runValidation(): Promise<ValidationRunResult> {
         "kqm",
         "c6-diona-mavuika-citlali-bennett-forward-melt",
       );
-      const dionaSourceFilePathSet = new Set<string>(
-        DIONA_SOURCE_LOCAL_SUPPORT_SLICE_SOURCE_FILE_PATHS,
-      );
-      const dionaSourceFiles = manualConditionArrayCoverageSourceFiles.filter(
-        ({ path: sourcePath }) => dionaSourceFilePathSet.has(sourcePath),
-      );
       const dionaSourceLocalAuthentication =
         authenticateDionaSourceLocalSupportSliceReport(
           dionaSourceLocalSupportSliceInput as DionaSourceLocalSupportSliceReport,
@@ -970,7 +1015,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
             manualSnapshotInput: dionaManualInput.snapshot,
             manualIndexInput,
             sourceRegistryInput: registry.data,
-            sourceFiles: dionaSourceFiles,
+            sourceFiles: dionaSourceLocalSupportSliceSourceFiles,
             generatedFrom: dionaSourceLocalGeneratedFrom,
           },
         );
@@ -1331,6 +1376,10 @@ export async function runValidation(): Promise<ValidationRunResult> {
         buildKeqingLunarEquipmentEvidenceValidationReport(
           expectedKnowledge,
           manualInputs,
+          {
+            manualIndex: ManualSnapshotIndexSchema.parse(manualIndexInput),
+            sourceRegistry: registry.data,
+          },
           keqingLunarEquipmentEvidenceValidationGeneratedFrom,
         );
       if (
@@ -1346,10 +1395,6 @@ export async function runValidation(): Promise<ValidationRunResult> {
         });
       }
 
-      const keqingIneffaFurinaXilonenEquipmentCandidateLatticeGeneratedFrom =
-        await hashRelativePaths(
-          KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
-        );
       const keqingLatticeKqmManualInput =
         requiredManualSnapshotInputContaining(
           manualInputs,
@@ -1375,8 +1420,6 @@ export async function runValidation(): Promise<ValidationRunResult> {
           evidenceReport: expectedKeqingLunarEquipmentEvidenceValidation,
           weaponCoverageReport: expectedWeaponChoiceSearchCoverage,
           artifactCoverageReport: expectedArtifactChoiceSearchCoverage,
-          inputFiles:
-            keqingIneffaFurinaXilonenEquipmentCandidateLatticeGeneratedFrom,
         });
       let keqingIneffaFurinaXilonenEquipmentCandidateLatticeAuthenticated =
         true;
@@ -1623,6 +1666,66 @@ export async function runValidation(): Promise<ValidationRunResult> {
         });
       }
 
+      let expectedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensus:
+        | KeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport
+        | null = null;
+      let keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusAuthenticated =
+        false;
+      try {
+        if (
+          !keqingIneffaFurinaXilonenCachedPolicyAuditAuthenticated ||
+          !expectedKeqingIneffaFurinaXilonenCachedPolicyAudit
+        ) {
+          throw new Error(
+            "The freshly rebuilt CP40 cached-policy audit is unavailable for the robustness census.",
+          );
+        }
+        const keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusGeneratedFrom =
+          await hashRelativePaths(
+            KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_ROBUSTNESS_CENSUS_INPUT_PATHS,
+          );
+        expectedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensus =
+          buildKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport({
+            cp40Report: expectedKeqingIneffaFurinaXilonenCachedPolicyAudit,
+            inputFiles:
+              keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusGeneratedFrom,
+          });
+        requireAuthenticatedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport(
+          expectedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensus,
+        );
+        keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusAuthenticated =
+          true;
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.incomplete_keqing_ineffa_furina_xilonen_cached_policy_robustness_census",
+          path: "reports.keqing-ineffa-furina-xilonen-cached-policy-robustness-census",
+          message:
+            error instanceof Error
+              ? error.message
+              : "The freshly rebuilt cached-policy robustness census did not authenticate its exact CP40/core inputs, complete 36-start and 864-order census, cached-only execution provenance, or withheld-claim and deferred-ER boundaries.",
+        });
+      }
+      if (
+        keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusAuthenticated &&
+        expectedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensus !==
+          null &&
+        stableJson(
+          expectedKeqingIneffaFurinaXilonenCachedPolicyRobustnessCensus,
+        ) !==
+          stableJson(
+            keqingIneffaFurinaXilonenCachedPolicyRobustnessCensusInput as KeqingIneffaFurinaXilonenCachedPolicyRobustnessCensusReport,
+          )
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_furina_xilonen_cached_policy_robustness_census",
+          path: "reports.keqing-ineffa-furina-xilonen-cached-policy-robustness-census",
+          message:
+            "The saved cached-policy robustness census does not match the fresh authenticated CP40 projection, exact three-input hash set, all 36 starts, all 864 effective declared orders, deterministic aggregate/witness digests, cached-only execution boundary, or deferred-ER provenance boundary.",
+        });
+      }
+
       const keqingLunarSourceConditionedCandidateLatticeGeneratedFrom =
         await hashRelativePaths(
           KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
@@ -1713,46 +1816,48 @@ export async function runValidation(): Promise<ValidationRunResult> {
         });
       }
 
-      const comparisonStaticGeneratedFrom = await hashRelativePaths(
-        DIONA_COMPARISON_INPUT_PATHS
-      );
-      const dionaInput = requiredManualSnapshotInputContaining(
-        manualInputs,
-        "kqm",
-        "diona-support-weapons-luna-viii"
-      );
-      const expectedComparison = buildDionaComparisonReport(
-        expectedKnowledge,
-        ManualObservationSnapshotSchema.parse(dionaInput.snapshot),
-        [...comparisonStaticGeneratedFrom, dionaInput.snapshotFile]
-      );
-      if (stableJson(expectedComparison) !== stableJson(comparisonInput)) {
-        diagnostics.push({
-          severity: "error",
-          code: "pipeline.stale_comparison_report",
-          path: "reports.kqm-diona-comparison",
-          message:
-            "The saved Diona comparison does not match current source and baseline inputs.",
-        });
-      }
+      if (includeErReports) {
+        const comparisonStaticGeneratedFrom = await hashRelativePaths(
+          DIONA_COMPARISON_INPUT_PATHS,
+        );
+        const dionaInput = requiredManualSnapshotInputContaining(
+          manualInputs,
+          "kqm",
+          "diona-support-weapons-luna-viii",
+        );
+        const expectedComparison = buildDionaComparisonReport(
+          expectedKnowledge,
+          ManualObservationSnapshotSchema.parse(dionaInput.snapshot),
+          [...comparisonStaticGeneratedFrom, dionaInput.snapshotFile],
+        );
+        if (stableJson(expectedComparison) !== stableJson(comparisonInput)) {
+          diagnostics.push({
+            severity: "error",
+            code: "pipeline.stale_comparison_report",
+            path: "reports.kqm-diona-comparison",
+            message:
+              "The saved Diona comparison does not match current source and baseline inputs.",
+          });
+        }
 
-      const erEngineInputs = await hashRelativePaths(
-        DIONA_ER_ENGINE_INPUT_PATHS
-      );
-      const expectedErCalibration = buildDionaErCalibrationReport(
-        expectedKnowledge,
-        erEngineInputs
-      );
-      if (
-        stableJson(expectedErCalibration) !== stableJson(erCalibrationInput)
-      ) {
-        diagnostics.push({
-          severity: "error",
-          code: "pipeline.stale_calibration_report",
-          path: "reports.kqm-diona-er-calibration",
-          message:
-            "The saved Diona ER calibration does not match current source and engine inputs.",
-        });
+        const erEngineInputs = await hashRelativePaths(
+          DIONA_ER_ENGINE_INPUT_PATHS,
+        );
+        const expectedErCalibration = buildDionaErCalibrationReport(
+          expectedKnowledge,
+          erEngineInputs,
+        );
+        if (
+          stableJson(expectedErCalibration) !== stableJson(erCalibrationInput)
+        ) {
+          diagnostics.push({
+            severity: "error",
+            code: "pipeline.stale_calibration_report",
+            path: "reports.kqm-diona-er-calibration",
+            message:
+              "The saved Diona ER calibration does not match current source and engine inputs.",
+          });
+        }
       }
     } catch (error) {
       diagnostics.push({
@@ -1793,12 +1898,18 @@ if (
   process.argv[1] &&
   path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
-  const result = await runValidation();
+  const options = parseValidationCliArgs(process.argv.slice(2));
+  const result = await runValidation(options);
   if (result.diagnostics.length > 0) {
     console.log(formatDiagnostics(result.diagnostics));
   }
   console.log(
     `Validation finished with ${result.errorCount} error(s) and ${result.warningCount} warning(s).`
   );
+  if (options.includeErReports === false) {
+    console.log(
+      "Diona comparison and ER-calibration regeneration were explicitly deferred.",
+    );
+  }
   if (result.errorCount > 0) process.exitCode = 1;
 }

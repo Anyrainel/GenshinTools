@@ -33,6 +33,15 @@ process-local full-payload hashes. The complete prepared plan is cloned before
 the first asynchronous step, so mutation of the caller's repository, formula,
 targets, nodes, or capability cannot alter later cells.
 
+Repository authentication is semantic rather than a whole-corpus byte pin.
+One pinned projection authenticates the exact formula-fixture team, weapons,
+and selected artifacts against the formula draft. A second projection
+authenticates the exact Ineffa, Furina, and Xilonen guide/build identities,
+four-piece artifacts, and ordered Sands, Goblet, Circlet, and substat arrays
+that become validation targets. Relevant drift or a duplicate selected record
+fails closed before execution, while an unrelated repository addition does not
+invalidate the matrix.
+
 Execution stops at the first failure. A report is comparable only after all
 eight calls, eight distinct team identities, eight runtime source validations,
 and eight structural observations complete. Partial node payloads and the

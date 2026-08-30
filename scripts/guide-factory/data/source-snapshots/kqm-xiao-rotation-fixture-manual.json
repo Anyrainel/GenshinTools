@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "kqm",
+  "capturedAt": "2026-08-30",
+  "page": {
+    "title": "Xiao Guide: Adeptal Guide to Conquering Xiao",
+    "url": "https://keqingmains.com/xiao/",
+    "publisher": "KeqingMains",
+    "sourceVersion": "Version 5.5",
+    "attributionNote": "KQM asks readers to link the original guide when using it as a content reference; this snapshot stores one narrow source-authored comparison fixture and its source locator."
+  },
+  "records": [
+    {
+      "kind": "rotation_fixture",
+      "sourceRecordId": "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+      "locator": {
+        "url": "https://keqingmains.com/xiao/",
+        "heading": "Weapons > Summary"
+      },
+      "supportingLocators": [],
+      "extraction": {
+        "method": "agent-assisted",
+        "reviewStatus": "unreviewed"
+      },
+      "characterId": "xiao",
+      "rotation": {
+        "id": "no-buff-eeq12hp",
+        "label": "KQM no-buff weapon-comparison rotation",
+        "notation": "EEQ12HP",
+        "unresolvedSegments": [],
+        "assumptions": [
+          "This is one Burst rotation used for a weapon-and-refinement damage comparison.",
+          "No external buffs are assumed.",
+          "Energy Recharge is not considered.",
+          "Xiao's Talent Levels are 10/10/10.",
+          "Twenty-five perfect artifact rolls are distributed optimally across ATK%, CRIT Rate, and CRIT DMG."
+        ]
+      },
+      "formulaCounts": [
+        {
+          "sourceToken": "E",
+          "label": "Elemental Skill",
+          "count": 2
+        },
+        {
+          "sourceToken": "HP",
+          "label": "High Plunge",
+          "count": 12
+        }
+      ],
+      "unknowns": [
+        "the chart's displayed damage values are not captured",
+        "weapon and Refinement are comparison axes rather than fixed fixture equipment",
+        "artifact set, main stats, enemy level, DEF, and RES assumptions",
+        "mapping source tokens to calculator formula IDs is a separate derived and reviewable step",
+        "Q is a non-damaging setup token retained in the notation and is not represented as a formula-count line"
+      ]
+    }
+  ]
+}

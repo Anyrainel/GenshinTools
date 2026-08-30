@@ -288,6 +288,53 @@ describe("Keqing Lunar cross-record technical matrix", () => {
         },
       }),
     ).toBe(false);
+    expect(
+      isCompleteKeqingLunarCrossRecordTechnicalMatrixReport({
+        ...report,
+        inputBoundary: {
+          ...report.inputBoundary,
+          repositorySemanticScopes: {
+            ...report.inputBoundary.repositorySemanticScopes,
+            formulaFixture: {
+              ...report.inputBoundary.repositorySemanticScopes.formulaFixture,
+              authenticatedAgainstFormulaDraft: false,
+            },
+          },
+        },
+      }),
+    ).toBe(false);
+    expect(
+      isCompleteKeqingLunarCrossRecordTechnicalMatrixReport({
+        ...report,
+        inputBoundary: {
+          ...report.inputBoundary,
+          repositorySemanticScopes: {
+            ...report.inputBoundary.repositorySemanticScopes,
+            teammateValidationTargets: {
+              ...report.inputBoundary.repositorySemanticScopes
+                .teammateValidationTargets,
+              authenticatedScopeProjectionSha256: null,
+            },
+          },
+        },
+      }),
+    ).toBe(false);
+    expect(
+      isCompleteKeqingLunarCrossRecordTechnicalMatrixReport({
+        ...report,
+        inputBoundary: {
+          ...report.inputBoundary,
+          repositorySemanticScopes: {
+            ...report.inputBoundary.repositorySemanticScopes,
+            teammateValidationTargets: {
+              ...report.inputBoundary.repositorySemanticScopes
+                .teammateValidationTargets,
+              expectedManifestSha256: "0".repeat(64),
+            },
+          },
+        },
+      }),
+    ).toBe(false);
     expect(report.matrix?.nodes).toHaveLength(8);
     expect(
       report.matrix?.nodes.every(
@@ -387,16 +434,24 @@ describe("Keqing Lunar cross-record technical matrix", () => {
             throw new Error("Missing Furina guide fixture.");
           }
           guide.status = guide.status === "accepted" ? "baseline" : "accepted";
-          bindSnapshotHash(
-            input.formulaDraftGeneratedFrom,
-            "scripts/guide-factory/data/knowledge/repository.json",
-            input.repository,
+        },
+      },
+      {
+        label: "teammate-repository-stat-target-drift",
+        mutate: (input) => {
+          const guide = input.repository.records.find(
+            (record) =>
+              record.kind === "character_guide" &&
+              record.id === "genshintools-presets:character-guide:furina",
           );
-          bindSnapshotHash(
-            input.generatedFrom,
-            "scripts/guide-factory/data/knowledge/repository.json",
-            input.repository,
+          if (!guide || guide.kind !== "character_guide") {
+            throw new Error("Missing Furina guide fixture.");
+          }
+          const build = guide.builds.find(
+            ({ sourceRecordId }) => sourceRecordId === "BQAI0BO",
           );
+          if (!build) throw new Error("Missing Furina BQAI0BO build fixture.");
+          build.sands[0].stat = "atk%";
         },
       },
     ];
@@ -422,6 +477,58 @@ describe("Keqing Lunar cross-record technical matrix", () => {
         .toBe(false);
       expect(report.issues.length, testCase.label).toBeGreaterThan(0);
     }
+  });
+
+  it("authenticates only the declared repository projection", async () => {
+    const baselineInput = await loadInput();
+    const baselinePrepared = requirePrepared(
+      prepareKeqingLunarCrossRecordTechnicalMatrix(baselineInput),
+    );
+    const unrelatedInput = await loadInput();
+    const unrelatedRecord = unrelatedInput.repository.records.find(
+      ({ id }) =>
+        ![
+          TARGET_TEAM_ID,
+          "genshintools-presets:character-guide:keqing",
+          "genshintools-presets:character-guide:ineffa",
+          "genshintools-presets:character-guide:furina",
+          "genshintools-presets:character-guide:xilonen",
+        ].includes(id),
+    );
+    if (!unrelatedRecord) throw new Error("Missing unrelated repository record.");
+    unrelatedRecord.status =
+      unrelatedRecord.status === "candidate" ? "accepted" : "candidate";
+    const unrelatedPrepared = requirePrepared(
+      prepareKeqingLunarCrossRecordTechnicalMatrix(unrelatedInput),
+    );
+
+    expect(
+      baselinePrepared.inputBoundary
+        .repositorySemanticScopes.formulaFixture
+        .authenticatedAgainstFormulaDraft,
+    ).toBe(true);
+    expect(
+      unrelatedPrepared.inputBoundary
+        .repositorySemanticScopes.formulaFixture
+        .authenticatedAgainstFormulaDraft,
+    ).toBe(true);
+    expect(
+      unrelatedPrepared.inputBoundary.repositorySemanticScopes.formulaFixture
+        .authenticatedScopeProjectionSha256,
+    ).toBe(
+      baselinePrepared.inputBoundary.repositorySemanticScopes.formulaFixture
+        .authenticatedScopeProjectionSha256,
+    );
+    expect(
+      unrelatedPrepared.inputBoundary.repositorySemanticScopes
+        .teammateValidationTargets,
+    ).toEqual(
+      baselinePrepared.inputBoundary.repositorySemanticScopes
+        .teammateValidationTargets,
+    );
+    expect(unrelatedPrepared.inputBoundary).not.toHaveProperty(
+      "repositorySha256",
+    );
   });
 
   it("rejects post-prepare payload mutation and forged or swapped capabilities with zero runs", async () => {

@@ -12,6 +12,7 @@ import {
   CHARACTER_GUIDE_INPUT_COVERAGE_AXES,
   CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS,
   CHARACTER_GUIDE_INPUT_COVERAGE_SOURCE_FILE_PATHS,
+  selectCharacterGuideInputManualSnapshots,
   type BuildCharacterGuideInputCoverageInput,
   type CharacterGuideInputCoverageAxis,
   type CharacterGuideInputCoverageReport,
@@ -36,6 +37,10 @@ import {
   SourceRegistrySchema,
   type KnowledgeRepository,
 } from "../src/schemas";
+import {
+  knowledgeRepositoryProjectionSha256,
+  projectKnowledgeRepository,
+} from "../src/repositoryProjection";
 import {
   buildWeaponChoiceSearchCoverageReport,
   type WeaponChoiceSearchCoverageReport,
@@ -101,7 +106,7 @@ describe("character-guide input coverage", () => {
   });
 
   it("keeps exact teams atomic and reconstructs every compact row bucket from the ledger", () => {
-    expect(report.summary.observationCountsByAxis["exact-team"]).toBe(225);
+    expect(report.summary.observationCountsByAxis["exact-team"]).toBe(226);
     const teamObservation = observation(
       "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:exact-team",
     );
@@ -452,17 +457,17 @@ describe("character-guide input coverage", () => {
     expect(plans[0].searchGrammarRepresentability.policyObservationIds).toHaveLength(2);
     expect(report.boundaries.representability).toMatchObject({
       allEquipmentPolicyObservationsLinked: true,
-      weaponCoverageObservationCount: 1012,
-      weaponLinkedPolicyObservationCount: 1012,
-      artifactCoverageObservationCount: 1072,
-      artifactLinkedPolicyObservationCount: 1072,
+      weaponCoverageObservationCount: 1026,
+      weaponLinkedPolicyObservationCount: 1026,
+      artifactCoverageObservationCount: 1075,
+      artifactLinkedPolicyObservationCount: 1075,
       weaponOutcomeClassificationCounts: {
-        "in-released-candidate-domain|unspecified|compatible": 1000,
+        "in-released-candidate-domain|unspecified|compatible": 1014,
         "in-released-candidate-domain|unspecified|mismatched": 12,
       },
       artifactOutcomeClassificationCounts: {
         "conditionally-representable": 21,
-        "enumerated-initially": 1023,
+        "enumerated-initially": 1026,
         "not-representable:non-five-star-filter": 21,
         "not-representable:tier-list-other-filter": 2,
         "not-representable:unmapped-dynamic-half-set-family": 5,
@@ -561,10 +566,10 @@ describe("character-guide input coverage", () => {
         count + ManualObservationSnapshotSchema.parse(input.snapshot).records.length,
       0,
     );
-    expect(upstreamKqmRecordCount).toBe(64);
+    expect(upstreamKqmRecordCount).toBe(72);
     expect(
       report.sourceProvenance.filter(({ sourceId }) => sourceId === "kqm"),
-    ).toHaveLength(63);
+    ).toHaveLength(70);
     expect(
       report.recordContexts.some(
         ({ repositoryRecordKind }) =>
@@ -901,7 +906,6 @@ function buildWithRepository(
   const changed = structuredClone(fixture) as Fixture;
   changed.repositoryInput = repository;
   const repositorySha256 = sha256Text(stableJson(repository));
-  replaceGeneratedHash(changed.generatedFrom, REPOSITORY_RELATIVE_PATH, repositorySha256);
   const weaponInput = changed.weaponChoiceSearchCoverageReportInput as {
     generatedFrom: Array<{ path: string; sha256: string }>;
   };
@@ -936,7 +940,18 @@ function buildWithRepository(
     ARTIFACT_REPORT_RELATIVE_PATH,
     sha256Text(stableJson(changed.artifactChoiceSearchCoverageReportInput)),
   );
-  return buildCharacterGuideInputCoverageReport(changed);
+  const manualSnapshotPaths = selectCharacterGuideInputManualSnapshots(
+    changed.manualSnapshotInputs,
+  ).map(({ snapshotFile }) => snapshotFile.path);
+  const repositoryProjection = projectKnowledgeRepository(
+    repository,
+    "character-guide-input",
+    manualSnapshotPaths,
+  );
+  return buildCharacterGuideInputCoverageReport(
+    changed,
+    knowledgeRepositoryProjectionSha256(repositoryProjection),
+  );
 }
 
 function replaceGeneratedHash(

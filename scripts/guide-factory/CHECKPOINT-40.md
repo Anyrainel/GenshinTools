@@ -91,16 +91,17 @@ that no ER-related field was read at all.
 
 The checked-in report is
 `keqing-ineffa-furina-xilonen-cached-policy-audit.json`. Its byte SHA-256 is
-`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`
+`a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`
 and its size is 2,029,334 bytes. It is durable report 37 overall and globally
 integrated report 36.
 
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
 promotion, and ER capability remains false.
 
-The next non-ER checkpoint should replace the single-start impression with a
-compact robustness census. It should run best improvement from all 36 cached
-starts and declared first improvement over the complete 3,456 effective order
-family for this exact `3 x 2 x 3 x 2` domain. The durable report should retain
-aggregates, partitions, digests, and a few witness traces rather than embedding
-all 124,416 full traces.
+Checkpoint 41 subsequently replaces the single-start impression with a compact
+robustness census. It runs best improvement from all 36 cached starts and
+declared first improvement over the 864 structurally effective orders
+represented by the 3,456 syntactic declared orders for this exact
+`3 x 2 x 3 x 2` domain. The report retains aggregates, partitions, digests, and
+a few witness traces for the resulting 31,104 all-start traces rather than
+embedding every full trace.

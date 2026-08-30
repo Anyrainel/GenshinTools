@@ -1148,19 +1148,19 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-      "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
+      "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
-      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
+      "sha256": "caeb40829cb09bc0f7ffa0000ef1bbef3378a7d11c0b06e6758da32a7c104b9c"
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
+      "sha256": "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
-      "sha256": "fd4c38adc0e5a4ab26bb9917a68dc97dabdd9aa865f1de6e964610a797732740"
+      "sha256": "546148f2da695cfea544a7c9eab71a89e23251af680f64d7187ae91770de003d"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarSourceConditionedCandidateLattice.ts",
@@ -1169,7 +1169,7 @@
   ],
   "inputBoundary": {
     "evidenceClaimCount": 42,
-    "evidenceReportSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+    "evidenceReportSha256": "caeb40829cb09bc0f7ffa0000ef1bbef3378a7d11c0b06e6758da32a7c104b9c",
     "evidenceValidationStatus": "comparable",
     "exactTeamIds": [
       "kqm:team:keqing-ineffa-aino-sucrose-lunar-charged-example",
@@ -1177,7 +1177,7 @@
       "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
       "kqm:team:keqing-ineffa-yelan-kazuha-lunar-charged-example"
     ],
-    "formulaDraftSha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
+    "formulaDraftSha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
     "formulaFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
     "formulaSourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
   },

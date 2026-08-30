@@ -21,6 +21,11 @@ Questions to learn from real data:
 - Which source formats remain stable enough for deterministic adapters?
 - Which sources need permission before systematic ingestion?
 
+Indexed manual snapshots now fail closed unless their source has exactly one
+registry entry, is active, uses the manual-observation V1 contract, and does not
+require permission. A blocked or permission-required source remains outside the
+manual index and consolidated repository.
+
 ## 2. Consolidate without erasing disagreement
 
 - Normalize names to repository IDs without fuzzy matching.
@@ -30,7 +35,9 @@ Questions to learn from real data:
   uncovered by the current GenshinTools baseline.
 - Require human review before a candidate becomes accepted knowledge.
 
-Seven KQM pages have been ingested but not human-reviewed. Together they forced
+Eight KQM guide pages have been ingested but not human-reviewed. A separate
+ninth indexed snapshot preserves one Xiao source-authored rotation fixture.
+Together they forced
 separate energy guidance, explicit unranked lists, alternatives versus tied
 ranks, bounded constellation applicability, exact teams versus four-slot team
 templates, example-team intent, source-defined role constraints, and coupled
@@ -47,6 +54,11 @@ The Klee Luna IV slice adds separate best-generalist claims by weapon rarity,
 contextual artifact sets, a C2+ support branch, and two exact teams. It leaves
 `Klee Combo` unresolved and records the missing C4+ standalone-playstyle shape
 as a schema gap.
+The Xiao Version 5.5 slice adds three conditional artifact branches, source-
+grouped 5-star weapons, an explicitly unranked 4-star list, and the exact FFXX
+team. Its guide snapshot deliberately omits ER advice, while the separate
+rotation fixture preserves source-local action counts without mapping them to
+calculator formulas or attaching them to a team.
 
 ## 3. Build validation tooling
 
@@ -67,26 +79,28 @@ buff uptime, ER adequacy, or source authority.
 
 Current progress: a durable corpus inventory now exposes record kinds, statuses,
 explicit evidence-field counts, source attribution, and explicit-only character
-presence across all 394 records. It excludes ER details from evidence and
+presence across all 402 records: 191 baseline and 211 candidate. It excludes ER
+details from evidence and
 character-presence counts while keeping the historical energy record visible in
 kind/status totals. These counts are descriptive coverage only.
 
 A second durable inventory projects the contributing non-ER guide inputs across
 all 125 guide-domain-eligible characters at every C0-C6 boundary. Its 875 rows
-are backed by 3,104 group-level observations. Exactly five characters have no
+are backed by 3,126 group-level observations. Exactly five characters have no
 contributing guide input: Aloy and the Anemo, Electro, Geo, and Hydro Traveler
 forms. This is missing evidence, not an unsupported-character verdict. Likewise,
 constellation-unspecified applicability is not broadened to all investments.
-Of 900 exact-team member investments, 898 remain constellation-unspecified;
+Of 904 exact-team member investments, 902 remain constellation-unspecified;
 C6 Diona is exact and C2+ Xilonen is one lower-bounded case.
 
-All 64 upstream KQM manual records remain unreviewed. The 63 non-energy records
-contribute provenance or coverage; the energy-guidance record contributes no
-observation. The repository currently has zero repository-authored
-`damagePlans`. The inventory links 1,012 weapon and 1,072 artifact policy
-observations to their existing search-coverage classifications. Linkage is not
-a positive representability result: 28 linked artifact outcomes are explicitly
-not representable, and 12 linked weapon outcomes have native type mismatches.
+All 72 indexed KQM records remain unreviewed. The 70 contributing guide records
+provide provenance or coverage; the energy-guidance and rotation-fixture
+records contribute no guide observation. The repository currently has zero
+repository-authored `damagePlans`. The inventory links 1,026 weapon and 1,075
+artifact policy observations to their existing search-coverage classifications.
+Linkage is not a positive representability result: 28 linked artifact outcomes
+are explicitly not representable, and 12 linked weapon outcomes have native
+type mismatches.
 Raw stat weights are not converted into ordinal priorities, page or array order
 does not create rank, and the one coupled artifact plan is kept atomic.
 Structured ER targets, floors, weapon conditions, energy-guidance records, and
@@ -157,8 +171,8 @@ coverage and a complete formula-classification ledger.
 Before ranking any artifact set, the current checkpoint measures whether the
 existing analyzer can name the choices already recorded in the repository. Its
 released grammar contains 43 initial four-piece choices and at most 14
-stat-derived two-piece pairs. Across 1,072 artifact-choice fields on
-non-rejected guide and team records, 1,023 are initially enumerated, 21 are
+stat-derived two-piece pairs. Across 1,075 artifact-choice fields on
+non-rejected guide and team records, 1,026 are initially enumerated, 21 are
 conditionally representable, and 28 are not representable by the current
 grammar. The failures include 19 Instructor and 2 Exile occurrences filtered
 out with all non-five-star sets, five choices whose half-set families are
@@ -172,9 +186,9 @@ individual candidate grammar; it does not prove joint-plan enumeration.
 
 The weapon candidate-policy audit now reports separate coverage axes for weapon
 ID, refinement specificity, and native weapon-type compatibility. Its released
-mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 1,012 non-ER
+mirror contains 236 weapon IDs and 309 weapon/refinement pairs. All 1,026 non-ER
 repository occurrences have an ID in that global domain, but none supplies a
-refinement; 1,000 match the character's native type and 12 legacy selections do
+refinement; 1,014 match the character's native type and 12 legacy selections do
 not. Because runtime derives the search type from the equipped seed weapon,
 those 12 mismatches can seed a wrong candidate class. This is a blocker, not a
 weapon ranking.
@@ -850,8 +864,8 @@ These are internal finite-table observations, not source-backed damage, DPS,
 gameplay, rank, equipment recommendation, or global optimality.
 
 Checkpoint 38 adds durable report 35 and globally integrates it as report 34.
-The final 2,011,250-byte report has SHA-256
-`955db5d62d01a72ca0ebf78cc84792d354e0bfc554097f7a0411fba08f230f01`.
+The current 2,011,434-byte report has SHA-256
+`c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 The complete 69-file Guide Factory suite passes 642 tests with one intentional
 opt-in skip, validation has zero errors and the same 12 existing warnings, and
 both application TypeScript and dependency validation pass. Generator and
@@ -875,18 +889,19 @@ baseline-context-unknown, and 1,542 non-exhaustively unlisted rows are review
 observations, not agreement scores or correctness verdicts. The exact-team
 Keqing EM target's zero matches remain visible rather than being erased.
 
-The source-specific wrapper authenticates eight selected non-self inputs before
-execution and the exact generic/full payloads after execution. Those paths are
-not an exhaustive transitive runtime closure, and the deterministic report is
-replayable evidence rather than execution attestation. The real default runner
-records generator-internal objective optimization as executed, but checkpoint
-39 performs no separate damage replay, optimizer call, rank, recommendation,
-or guide production. All ER values and post-ER priority claims are retained
-only as deferral provenance.
+The source-specific wrapper authenticates five selected non-self inputs before
+execution, including a semantic target scope over 11 exact dependencies and 26
+normalized source/consolidated parities, and the exact generic/full payloads
+after execution. Those paths are not an exhaustive transitive runtime closure,
+and the deterministic report is replayable evidence rather than execution
+attestation. The real default runner records generator-internal objective
+optimization as executed, but checkpoint 39 performs no separate damage replay,
+optimizer call, rank, recommendation, or guide production. All ER values and
+post-ER priority claims are retained only as deferral provenance.
 
 Checkpoint 39 adds durable report 36 and globally integrates it as report 35.
-The 17,496,526-byte report has SHA-256
-`9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+The current 17,499,104-byte report has SHA-256
+`d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a`.
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
 promotion, and ER claim remains false.
 
@@ -908,20 +923,34 @@ read for authentication, while no ER value is projected into the policy table.
 
 Checkpoint 40 adds durable report 37 and globally integrates it as report 36.
 The 2,029,334-byte report has SHA-256
-`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+`a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46`.
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, global-
 optimality, promotion, and ER claim remains false.
 
-The next non-ER checkpoint should measure start and order sensitivity rather
-than extrapolating from source sequence 0. It should run best improvement from
-all 36 starts and declared first improvement over all 3,456 effective orders,
-retaining compact endpoint partitions, histograms, reconstruction digests, and
-a few witness traces instead of all 124,416 full traces. No fresh generator,
-replay, evaluator, or ER work is needed.
+Checkpoint 41 measures start and order sensitivity rather than extrapolating
+from source sequence 0. It runs best improvement from all 36 starts and declared
+first improvement over all 864 structurally effective orders represented by
+3,456 syntactic declarations. The 31,104 declared-order traces split
+18,576/12,528 between the two local terminals; best improvement splits its
+starts 24/12. The report retains 13 start partitions, 96 all-start path
+families, reconstruction digests, and witness traces without fresh generator,
+replay, evaluator, or ER work. Checkpoint 41 is durable report 38 and global
+report 37; its 71,373-byte output has SHA-256
+`c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`.
+The next non-ER boundary should use the expanded repository for a second
+character/team slice instead of tuning this one cached Keqing objective.
 
-Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
-source classifications remains a prerequisite for publication, formula
-authoring, recommendation composition, or build composition.
+The Xiao refresh leaves the authenticated 63-entry condition catalog unchanged
+but expands manual coverage to 8 guide snapshots, 71 records, and 163 arrays.
+Twenty arrays are empty and 143 are nonempty; the non-structural ledger is 140
+rows with 60 typed, 3 acknowledged, and 77 unbound. Manual coverage now binds
+19 source files and 77 generated-from paths, while the regenerated Klee witness
+binds 6 source files, 81 generated-from paths, and the same 63 upstream catalog
+entries. These are validation-coverage changes, not recommendation evidence.
+
+Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
+bindings and source classifications remains a prerequisite for publication,
+formula authoring, recommendation composition, or build composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

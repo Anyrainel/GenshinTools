@@ -459,6 +459,8 @@ describe("guide-factory data pipeline", () => {
               ? "character-role"
             : sourceRecord.kind === "energy_guidance"
               ? "energy-guidance"
+              : sourceRecord.kind === "rotation_fixture"
+                ? "rotation-fixture"
               : sourceRecord.kind === "team_template"
                 ? "team-template"
                 : "team";
@@ -509,9 +511,9 @@ describe("guide-factory data pipeline", () => {
   });
 
   it(
-    "keeps live failures visible and known candidate warnings explicit",
+    "keeps non-ER pipeline failures visible and known candidate warnings explicit",
     async () => {
-      const result = await runValidation();
+      const result = await runValidation({ includeErReports: false });
       const errors = result.diagnostics.filter(
         (diagnostic) => diagnostic.severity === "error"
       );

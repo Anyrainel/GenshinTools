@@ -136,6 +136,14 @@ records unless the source explicitly binds them to a particular team and
 rotation. Rounded guide bands, formatted supporting-sheet cells, and raw
 calculation values remain separate fields.
 
+A `rotation_fixture` observation is allowed only when the source itself states
+a standalone rotation and positive exact action counts. Its `formulaCounts`
+retain source-local tokens, labels, and counts; they do not name calculator
+formula IDs. Mapping a token to a calculator formula remains a separate,
+reviewable derived step. Source-authored fixtures stay candidates with
+`promotionEligible: false` and cannot turn a calculator default or a translated
+notation guess into source evidence.
+
 An exact-team member may preserve an exact constellation, a minimum, a maximum,
 or both bounds. Exact and ranged shapes are mutually exclusive, and an absent
 side is never invented. Thus a source-stated `C2+` member uses only
@@ -173,12 +181,14 @@ the coupling. A plan is not a generic loadout, a global recommendation, or
 evidence that the current analyzer can optimize the assignments jointly.
 
 Active manual files are listed in `data/source-snapshots/manual-index.json`.
-The index is the reviewed corpus boundary; a filesystem glob is not. Loading
-fails on unsafe or noncanonical paths, missing indexed files, unindexed manual
-files, case-equivalent duplicates, source-ID mismatches, and duplicate
-publisher-local record IDs across active files. Files are consolidated in
-canonical path order, and multiple pages from one publisher share one grouped
-source revision.
+The index is the reviewed corpus boundary; a filesystem glob is not. An indexed
+publisher must have active registry status, must not require permission, and
+must use the manual-observation format and ingestion mode. Loading fails on
+unsafe or noncanonical paths, missing indexed files, unindexed manual files,
+case-equivalent duplicates, source-ID mismatches, duplicate publisher-local
+record IDs across active files, or a registry policy that does not permit active
+ingestion. Files are consolidated in canonical path order, and multiple pages
+from one publisher share one grouped source revision.
 
 Team archetypes use four explicit slots. A slot's `options` can accept named
 characters, one or more elements, source-defined role labels, or any character;
@@ -238,6 +248,27 @@ template's hard healer slot. It is neither a complete nor ranked healer list,
 adds no C0 applicability claim, and does not make that template globally
 role-resolvable.
 All records are unreviewed and promotion-ineligible.
+
+### KQM Xiao pilot
+
+The Xiao capture is split across two indexed snapshots from the visible
+`Version 5.5` guide. The guide-input snapshot stores seven narrow records:
+offensive artifact stats with ER deliberately deferred, separate Vermillion
+Hereafter, Marechaussee Hunter, and Long Night's Oath context branches, grouped
+five-star weapon tiers, an explicitly unranked four-star weapon list, and one
+exact Xiao/Xianyun/Furina/Faruzan team. A fixture-only snapshot stores the one
+source-authored no-buff `EEQ12HP` comparison fixture. This separation prevents
+formula-fixture byte changes from invalidating guide-input or condition-array
+reports that deliberately exclude rotation fixtures.
+
+Long Night's Oath is bounded to `maxConstellation: 5`; the source's explicit
+C6 exception is not generalized to the other artifact branches. The FFXX team
+retains separate setup strings for C6 and non-C6 Faruzan, but Faruzan receives
+no team-membership constellation floor. No ER target is captured. The
+standalone fixture preserves two `E` and twelve `HP` source tokens without
+claiming calculator formula IDs, damage values, equipment, or gameplay
+optimality. All eight records remain agent-assisted, unreviewed, and
+promotion-ineligible.
 
 ### KQM Itto pilot
 

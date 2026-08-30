@@ -433,11 +433,11 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-      "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
+      "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-source-conditioned-candidate-lattice.json",
-      "sha256": "1208721277e12f9483572f648ad01e40359c96dffc8ae1c37938dfd96d806d98"
+      "sha256": "8857d5c4d3ec592b665987fff590ee0ff70f341d77c0bc3f34c25f8dfbcca758"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarCrossRecordCompositionContract.ts",
@@ -448,9 +448,9 @@
   "guideFactoryAuthoredCompositionCount": 2,
   "inputBoundary": {
     "candidateLatticeClassification": "keqing-lunar-source-conditioned-candidate-lattice",
-    "candidateLatticeSha256": "1208721277e12f9483572f648ad01e40359c96dffc8ae1c37938dfd96d806d98",
+    "candidateLatticeSha256": "8857d5c4d3ec592b665987fff590ee0ff70f341d77c0bc3f34c25f8dfbcca758",
     "candidateLatticeStatus": "comparable",
-    "formulaDraftSha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57",
+    "formulaDraftSha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
     "formulaFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
     "formulaSourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
     "targetTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"

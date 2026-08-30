@@ -17,20 +17,8 @@
   "formulas": false,
   "generatedFrom": [
     {
-      "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-    },
-    {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
       "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
-    },
-    {
-      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
-    },
-    {
-      "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
     },
     {
       "path": "scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts",
@@ -46,11 +34,19 @@
     },
     {
       "path": "scripts/guide-factory/src/ittoSourceConditionedGuidePacket.ts",
-      "sha256": "a2c48222112053ee76c4e75b7e09d4ca5025095b3bba5520c52a52623e442a49"
+      "sha256": "93e9401b6155ec28bc9e49ad58718098b2a043c8ff49ab6797cb2d62bfe9c185"
+    },
+    {
+      "path": "scripts/guide-factory/src/ittoSourceConditionedGuidePacketScope.ts",
+      "sha256": "0a8724d79287820871a5fea54a2a9bdb109e1aeab83d286d435fd16d1c8bcb94"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     },
     {
       "path": "scripts/guide-factory/src/sourceBaselineInvestmentComparison.ts",
@@ -350,20 +346,8 @@
     "reviewStatus": "unreviewed",
     "sourceHashes": [
       {
-        "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
-      },
-      {
         "path": "scripts/guide-factory/data/source-snapshots/kqm-itto-manual.json",
         "sha256": "1c1c3efbac87c85fa0e00d38d71aaf5d229acc54a78c75966ec35201f1e837be"
-      },
-      {
-        "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-        "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
-      },
-      {
-        "path": "scripts/guide-factory/sources/registry.json",
-        "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
       }
     ],
     "sourceId": "kqm",

@@ -61,11 +61,11 @@ describe("manual condition-array coverage report", () => {
       sourceFileCount: 19,
     });
     expect(report.corpusBoundary).toMatchObject({
-      snapshotCount: 7,
-      manualRecordCount: 64,
-      occurrenceCount: 142,
+      snapshotCount: 8,
+      manualRecordCount: 71,
+      occurrenceCount: 163,
       repositoryParityStatus: "exact",
-      repositoryExactMatchCount: 142,
+      repositoryExactMatchCount: 163,
       repositoryMismatchCount: 0,
       allCurrentRecordsAgentAssistedUnreviewed: true,
     });
@@ -96,7 +96,7 @@ describe("manual condition-array coverage report", () => {
       ),
     ).not.toThrow();
     const generatedPaths = new Set(report.generatedFrom.map(({ path }) => path));
-    expect(report.generatedFrom).toHaveLength(73);
+    expect(report.generatedFrom).toHaveLength(77);
     expect(generatedPaths.size).toBe(report.generatedFrom.length);
     expect(generatedPaths).toContain(KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
@@ -213,49 +213,49 @@ describe("manual condition-array coverage report", () => {
 
   it("keeps occurrence, string, and unique-array denominators independent", () => {
     expect(report.summary.total).toEqual({
-      occurrenceCount: 142,
-      emptyCount: 16,
-      nonemptyCount: 126,
-      uniqueExactArrayCount: 89,
-      stringOccurrenceCount: 159,
-      uniqueStringCount: 97,
+      occurrenceCount: 163,
+      emptyCount: 20,
+      nonemptyCount: 143,
+      uniqueExactArrayCount: 105,
+      stringOccurrenceCount: 177,
+      uniqueStringCount: 114,
     });
     expect(report.summary.bindingCoverage).toEqual({
-      occurrenceCount: 126,
+      occurrenceCount: 143,
       emptyCount: 0,
-      nonemptyCount: 126,
-      uniqueExactArrayCount: 89,
-      stringOccurrenceCount: 159,
-      uniqueStringCount: 97,
+      nonemptyCount: 143,
+      uniqueExactArrayCount: 105,
+      stringOccurrenceCount: 177,
+      uniqueStringCount: 114,
       typedBoundOccurrenceCount: 60,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 63,
+      unboundOccurrenceCount: 80,
       invalidOccurrenceCount: 0,
       typedBoundStringOccurrenceCount: 82,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 74,
+      unboundStringOccurrenceCount: 92,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralBindingCoverage).toEqual({
-      occurrenceCount: 123,
+      occurrenceCount: 140,
       emptyCount: 0,
-      nonemptyCount: 123,
-      uniqueExactArrayCount: 86,
-      stringOccurrenceCount: 156,
-      uniqueStringCount: 94,
+      nonemptyCount: 140,
+      uniqueExactArrayCount: 102,
+      stringOccurrenceCount: 174,
+      uniqueStringCount: 111,
       typedBoundOccurrenceCount: 60,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 60,
+      unboundOccurrenceCount: 77,
       invalidOccurrenceCount: 0,
       typedBoundStringOccurrenceCount: 82,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 71,
+      unboundStringOccurrenceCount: 89,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralUniqueBindingArrayCoverage).toEqual({
-      uniqueExactArrayCount: 86,
+      uniqueExactArrayCount: 102,
       typedOnlyCount: 34,
-      unboundOnlyCount: 51,
+      unboundOnlyCount: 67,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     });
@@ -293,16 +293,16 @@ describe("manual condition-array coverage report", () => {
         uniqueStringCount: 34,
       },
       energyUnclassified: {
-        occurrenceCount: 54,
+        occurrenceCount: 71,
         emptyCount: 0,
-        nonemptyCount: 54,
-        uniqueExactArrayCount: 44,
-        stringOccurrenceCount: 62,
-        uniqueStringCount: 50,
+        nonemptyCount: 71,
+        uniqueExactArrayCount: 60,
+        stringOccurrenceCount: 80,
+        uniqueStringCount: 67,
       },
       unconditional: {
-        occurrenceCount: 16,
-        emptyCount: 16,
+        occurrenceCount: 20,
+        emptyCount: 20,
         nonemptyCount: 0,
         uniqueExactArrayCount: 0,
         stringOccurrenceCount: 0,
@@ -319,13 +319,13 @@ describe("manual condition-array coverage report", () => {
     });
     expect(report.summary.displayStatusCounts).toEqual({
       invalid: 0,
-      unconditional: 16,
+      unconditional: 20,
       "er-deferred": 15,
       "typed-bound": 57,
       "exact-text-acknowledged": 3,
-      "known-but-unbound": 51,
+      "known-but-unbound": 68,
     });
-    expect(report.nonStructuralUniqueBindingStatusSets).toHaveLength(86);
+    expect(report.nonStructuralUniqueBindingStatusSets).toHaveLength(102);
     expect(
       report.nonStructuralUniqueBindingStatusSets.every(
         (statusSet) =>

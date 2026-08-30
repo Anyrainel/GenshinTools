@@ -511,6 +511,8 @@ function extractRecordOccurrences(
     return;
   }
 
+  if (record.kind === "rotation_fixture") return;
+
   if (record.kind === "energy_guidance") {
     record.targets.forEach((target, targetIndex) => {
       addOccurrence(output, {
@@ -630,7 +632,7 @@ interface AddOccurrenceInput {
   sourceId: string;
   record: Exclude<
     ManualObservationSnapshot["records"][number],
-    { kind: "team_template" }
+    { kind: "team_template" | "rotation_fixture" }
   >;
   recordIndex: number;
   subject: string;
@@ -728,7 +730,7 @@ function repositoryRecordId(
   sourceId: string,
   record: Exclude<
     ManualObservationSnapshot["records"][number],
-    { kind: "team_template" }
+    { kind: "team_template" | "rotation_fixture" }
   >,
 ): string {
   const kind =

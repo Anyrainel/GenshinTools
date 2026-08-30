@@ -334,11 +334,11 @@
   ],
   "classification": "descriptive-derived-fixture-inventory",
   "comparisonStatus": "comparable",
-  "coveragePayloadSha256": "cf27c0a42c0827e7f527d778e120d74ffd36fa2bbcd65f642e5d5943d913147d",
+  "coveragePayloadSha256": "e957c13f142f477710743363b597832680e059d42a94f6a957bd6ef809bb57f4",
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
@@ -350,23 +350,23 @@
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
-      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
     },
     {
       "path": "scripts/guide-factory/reports/furina-neuvillette-formula-plan-draft.json",
-      "sha256": "63b70ce7a44c1d404a7efd3e7e00cad9bb7a658dfe5e886108d29308737d94b5"
+      "sha256": "6e5b2b1d82038378e0b371a633e794c53f8edffeab169d2fbf60fc0756382a77"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-      "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
+      "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "27d4bef6b93a09489e3d0b4433672f39cee5369ecb9b71c76935c350a3339eca"
+      "sha256": "12be18b24ca591f6aae97eaad6e9a9cbc89f202e699663e9eb92d791914b1ece"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
-      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -374,7 +374,7 @@
     },
     {
       "path": "scripts/guide-factory/src/derivedFormulaFixtureCoverage.ts",
-      "sha256": "172cdaa7660f6385c77636f2966bf2ce81a8db198f1dd1d57aef9f5c9643aa2f"
+      "sha256": "61baa77aa752e2010b28b674db535f064e3cd0a292edb04ce5da4ddb1958899f"
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
@@ -398,7 +398,11 @@
     },
     {
       "path": "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts",
-      "sha256": "28c421eb510a3ac3715b69239ce723d1cf27595b0b6a74246dc961aec0b2fb4c"
+      "sha256": "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072"
+    },
+    {
+      "path": "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts",
+      "sha256": "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9"
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
@@ -406,11 +410,15 @@
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
-      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
     },
     {
       "path": "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts",
-      "sha256": "843545e1ba4531b89942f6dc47e0e72e9a77a7575c5e7d8d63746b391fd40dfd"
+      "sha256": "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42"
     },
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
@@ -521,9 +529,9 @@
       "calculationTeamRecordId": "genshintools-presets:team:JQC4wxT0jJgK50gc0O",
       "fixtureId": "furina-neuvillette-source-rotation-comparison-v2",
       "fixtureReport": {
-        "generatedFromSha256": "f2e153295db81cb2e425bd08a4e69c49f49b9f5670d2fdcd58a4511525724471",
+        "generatedFromSha256": "9e1a76e398b712a06f3ca37caffb3114b5e055addfba4d8cd19ffb28f4c359ce",
         "path": "scripts/guide-factory/reports/furina-neuvillette-formula-plan-draft.json",
-        "sha256": "63b70ce7a44c1d404a7efd3e7e00cad9bb7a658dfe5e886108d29308737d94b5"
+        "sha256": "6e5b2b1d82038378e0b371a633e794c53f8edffeab169d2fbf60fc0756382a77"
       },
       "memberObservations": [
         {
@@ -656,9 +664,9 @@
       "calculationTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
       "fixtureId": "keqing-ineffa-source-rotation-comparison-v1",
       "fixtureReport": {
-        "generatedFromSha256": "61a22863d2ab0ff676cd950367213c967895b0722479c333a64b5d608b1395f0",
+        "generatedFromSha256": "a266a9829872397b128b88cc9051511d46ad3b21ed46dd2a6bd927adb506f6e9",
         "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-        "sha256": "6d13ca03fa8bae964382d8d93695ea6f8bbdfaf7d04e80e289ecefa50fb07e57"
+        "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
       },
       "memberObservations": [
         {

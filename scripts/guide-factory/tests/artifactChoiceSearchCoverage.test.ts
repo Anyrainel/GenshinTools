@@ -33,8 +33,8 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 13,
         },
         recommendations: {
-          total: 42,
-          enumeratedInitially: 34,
+          total: 45,
+          enumeratedInitially: 37,
           conditionallyRepresentable: 0,
           notRepresentable: 8,
         },
@@ -45,8 +45,8 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 0,
         },
         all: {
-          total: 1072,
-          enumeratedInitially: 1023,
+          total: 1075,
+          enumeratedInitially: 1026,
           conditionallyRepresentable: 21,
           notRepresentable: 28,
         },
