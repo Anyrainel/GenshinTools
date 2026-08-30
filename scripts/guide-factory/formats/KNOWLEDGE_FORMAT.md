@@ -518,7 +518,7 @@ do not support damage, DPS, rank, recommendation, gameplay, or optimality.
 
 The checkpoint 38 report is durable report 35 overall and globally integrated
 report 34. Its 2,011,250 bytes have SHA-256
-`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
 Every source, guide, team/equipment recommendation, rank, damage,
 DPS, gameplay, optimality, promotion, and ER capability remains false. The next
 non-ER boundary is a generated-sheet/allocation evidence catalog and knowledge-

@@ -267,6 +267,36 @@ describe("bounded full-team equipment technical computation", () => {
     expect(second).toEqual(first);
   });
 
+  it("authenticates canonical durable records without assigning meaning to record-key insertion order", async () => {
+    const fresh = await runBoundedFullTeamEquipmentTechnicalComputation(
+      buildComputationInput(),
+      buildHarness().environment,
+    );
+    const durable = JSON.parse(
+      stableJson(fresh),
+    ) as BoundedFullTeamEquipmentTechnicalComputationReport;
+
+    for (const node of durable.nodes) {
+      node.sheetPoolsByCharacter = reverseRecord(node.sheetPoolsByCharacter);
+      node.poolSizesByCharacter = reverseRecord(node.poolSizesByCharacter);
+      for (const composition of node.compositions) {
+        composition.sheetsByCharacter = reverseRecord(
+          composition.sheetsByCharacter,
+        );
+      }
+    }
+
+    expect(stableJson(durable)).toBe(stableJson(fresh));
+    expect(Object.keys(durable.nodes[0].sheetPoolsByCharacter)).toEqual(
+      [...CHARACTERS].sort().reverse(),
+    );
+    expect(() =>
+      requireAuthenticatedBoundedFullTeamEquipmentTechnicalComputationReport(
+        durable,
+      ),
+    ).not.toThrow();
+  });
+
   it.each([
     ["generator invocation", { maximumGeneratorInvocations: "7" }, "bounds.generator_cap_exceeded"],
     ["theoretical replay", { maximumCartesianReplays: "511" }, "bounds.theoretical_replay_cap_exceeded"],
@@ -1197,6 +1227,12 @@ function testQuantile(values: number[], percentile: number): number {
 
 function normalizeTestNumber(value: number): number {
   return Object.is(value, -0) ? 0 : Number(value.toPrecision(15));
+}
+
+function reverseRecord<Value>(
+  record: Record<string, Value>,
+): Record<string, Value> {
+  return Object.fromEntries(Object.entries(record).reverse());
 }
 
 function resealReport(

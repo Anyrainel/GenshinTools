@@ -48,7 +48,7 @@
     },
     {
       "path": "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts",
-      "sha256": "71b9746a2875e1c840c1ea2a2034743393bb6b6faf5d86c9d3fb087a99fc02ba"
+      "sha256": "29e33ede271813d2bb1ea4a07549377afdc36cd775a72325683191908244f600"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -14721,7 +14721,7 @@
       "objectiveEnvelopeSha256": "fd0ecbf13feb1a6ee73ea904196ae1d262f81530900c8ca4f8b78742c4e678f8",
       "preflightReportContentSha256": "2fcf002d2432b4d319479d9a8622850a166d9bc5d8913f2ebd6f6e4ec1868569",
       "preflightReportSha256": "9bad2d3209f74543c7b0e434ee25f6a1e91e2ae20c471a7bc0838ae91d886569",
-      "reportContentSha256": "e1e72dca04e793d5e704a6890922f0483e6cbba270f2da998c8e16b1b705ca90",
+      "reportContentSha256": "85a3559e66a7637d4892101978ce25abbe5cefe271eff3d7a20b8ba6c318da89",
       "resultFingerprintSha256": "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5",
       "runtimeAssumptionsSha256": "fa46720ec6063f0401d946312e511e5013b230cf04a55b496e040ccd22e43b41"
     },
@@ -14797,7 +14797,7 @@
       },
       {
         "path": "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts",
-        "sha256": "71b9746a2875e1c840c1ea2a2034743393bb6b6faf5d86c9d3fb087a99fc02ba"
+        "sha256": "29e33ede271813d2bb1ea4a07549377afdc36cd775a72325683191908244f600"
       },
       {
         "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -47810,8 +47810,8 @@
       "representativeSelectionPolicy": "first-node-then-enumerated-exact-objective-tie",
       "unreviewedTechnicalObjective": 926093.666196721
     },
-    "genericReportContentSha256": "e1e72dca04e793d5e704a6890922f0483e6cbba270f2da998c8e16b1b705ca90",
-    "genericStableFullReportSha256": "214c1c388591c786bf8e92b6b2ce8a0795633a982c9617c32a7a4e1559a860dd",
+    "genericReportContentSha256": "85a3559e66a7637d4892101978ce25abbe5cefe271eff3d7a20b8ba6c318da89",
+    "genericStableFullReportSha256": "79278ba285e33f7b9fe6749f716bc60f460b0d7fce7eafe6f9df7d988962a711",
     "intactGeneratorEndpointTechnicalReference": {
       "compositionId": "bounded-full-team-composition:9afd60d56a776f53fac347671b8085a7d6560906f2e4db2d0047ed50effa5627",
       "equivalentReferences": [

@@ -851,7 +851,7 @@ gameplay, rank, equipment recommendation, or global optimality.
 
 Checkpoint 38 adds durable report 35 and globally integrates it as report 34.
 The final 2,011,250-byte report has SHA-256
-`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
 The complete 69-file Guide Factory suite passes 642 tests with one intentional
 opt-in skip, validation has zero errors and the same 12 existing warnings, and
 both application TypeScript and dependency validation pass. Generator and

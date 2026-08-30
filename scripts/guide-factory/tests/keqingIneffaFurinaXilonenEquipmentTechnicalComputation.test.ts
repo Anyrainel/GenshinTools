@@ -146,9 +146,9 @@ describe("Keqing/Ineffa/Furina/Xilonen bounded equipment technical computation",
     });
     expect(REPORT.technicalReferenceSummary).toMatchObject({
       genericReportContentSha256:
-        "e1e72dca04e793d5e704a6890922f0483e6cbba270f2da998c8e16b1b705ca90",
+        "85a3559e66a7637d4892101978ce25abbe5cefe271eff3d7a20b8ba6c318da89",
       genericStableFullReportSha256:
-        "214c1c388591c786bf8e92b6b2ce8a0795633a982c9617c32a7a4e1559a860dd",
+        "79278ba285e33f7b9fe6749f716bc60f460b0d7fce7eafe6f9df7d988962a711",
       resultFingerprintSha256:
         "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5",
       objectiveObservationCount: 364,

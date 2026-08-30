@@ -168,16 +168,25 @@ recombination must never be called generator-produced.
 The checked-in report is
 `keqing-ineffa-furina-xilonen-equipment-technical-computation.json`. Its final
 byte SHA-256 is
-`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b` and its
+`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263` and its
 final size is 2,011,250 bytes. It is durable report 35 overall and
 globally integrated report 34.
 
-Final focused verification covers 44 passing tests and one intentional opt-in
+Downstream durable-consumer work exposed that the generic semantic guard had
+treated insertion order in three character-keyed JSON records as meaningful.
+The guard now compares those record key domains independently of insertion
+order while preserving every explicit array, node, carry, and composition
+sequence check. An adversarial canonical-JSON test and direct authentication
+of the checked-in nested report cover the correction. The 36-node domain,
+objectives, provenance counts, and result fingerprint are unchanged; only the
+declared generic-core byte hash and dependent report seals were refreshed.
+
+Final focused verification covers 45 passing tests and one intentional opt-in
 skip across the generic and source-specific files. The full Guide Factory suite
-passes 69 files with 642 passing tests and one intentional opt-in skip. The
-final checkpoint also passes Guide Factory TypeScript, global validation with
-zero errors and the same 12 existing warnings, application TypeScript, and
-dependency-boundary validation.
+at the initial checkpoint passed 69 files with 642 passing tests and one
+intentional opt-in skip. The final checkpoint also passes Guide Factory
+TypeScript, global validation with zero errors and the same 12 existing
+warnings, application TypeScript, and dependency-boundary validation.
 
 ## Next bounded non-ER checkpoint
 

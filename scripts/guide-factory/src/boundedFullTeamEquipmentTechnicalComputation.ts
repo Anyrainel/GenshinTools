@@ -2359,8 +2359,8 @@ function nodeSemanticsHold(
       node.generatorRuns.map(({ carryCharacterId }) => carryCharacterId),
       carryCharacterIds,
     ) ||
-    !sameStrings(Object.keys(node.sheetPoolsByCharacter), characterIds) ||
-    !sameStrings(Object.keys(node.poolSizesByCharacter), characterIds)
+    !sameStringDomain(Object.keys(node.sheetPoolsByCharacter), characterIds) ||
+    !sameStringDomain(Object.keys(node.poolSizesByCharacter), characterIds)
   ) {
     return false;
   }
@@ -2503,7 +2503,10 @@ function nodeSemanticsHold(
       composition.sequence !== compositionIndex ||
       !expectedSelection ||
       compositionIds.has(composition.compositionId) ||
-      !sameStrings(Object.keys(composition.sheetsByCharacter), characterIds) ||
+      !sameStringDomain(
+        Object.keys(composition.sheetsByCharacter),
+        characterIds,
+      ) ||
       characterIds.some(
         (characterId) =>
           composition.sheetsByCharacter[characterId].sheetId !==
@@ -2983,6 +2986,13 @@ function sameStrings(left: string[], right: string[]): boolean {
   return (
     left.length === right.length &&
     left.every((value, index) => value === right[index])
+  );
+}
+
+function sameStringDomain(left: string[], right: string[]): boolean {
+  return sameStrings(
+    [...left].sort(compareText),
+    [...right].sort(compareText),
   );
 }
 

@@ -113,7 +113,7 @@ const EXPECTED_INPUT_FILE_SHA256 = {
   "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts":
     "2602c8af1cf81bec68d824b2a51a2438e5a8945a437adc8c06f11c96dcca53b7",
   "scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts":
-    "71b9746a2875e1c840c1ea2a2034743393bb6b6faf5d86c9d3fb087a99fc02ba",
+    "29e33ede271813d2bb1ea4a07549377afdc36cd775a72325683191908244f600",
   "scripts/guide-factory/src/computationReplay.ts":
     "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff",
   "scripts/guide-factory/src/io.ts":
@@ -250,13 +250,13 @@ const EXPECTED_SOURCE_PREFLIGHT_REPORT_SHA256 =
 const EXPECTED_RESULT_FINGERPRINT_SHA256 =
   "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5";
 const EXPECTED_GENERIC_REPORT_CONTENT_SHA256 =
-  "e1e72dca04e793d5e704a6890922f0483e6cbba270f2da998c8e16b1b705ca90";
+  "85a3559e66a7637d4892101978ce25abbe5cefe271eff3d7a20b8ba6c318da89";
 const EXPECTED_GENERIC_STABLE_FULL_REPORT_SHA256 =
-  "214c1c388591c786bf8e92b6b2ce8a0795633a982c9617c32a7a4e1559a860dd";
+  "79278ba285e33f7b9fe6749f716bc60f460b0d7fce7eafe6f9df7d988962a711";
 const EXPECTED_BOUNDED_TECHNICAL_OBJECTIVE = 926_093.666_196_721;
 const EXPECTED_INTACT_TECHNICAL_OBJECTIVE = 914_219.528_685_479;
 const EXPECTED_AUTHENTICATED_REPORT_SHA256 =
-  "eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b";
+  "dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263";
 
 const TEAM_RECORD_ID =
   "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example";

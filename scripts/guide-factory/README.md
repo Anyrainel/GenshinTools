@@ -674,7 +674,7 @@ is not a working guide factory or an equipment recommendation:
      talents, enemy context, roll budget, and objective mapping to the wrappers.
 211. Add durable report 35 and globally integrate it as report 34. Its final
      2,011,250-byte output has SHA-256
-     `eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`;
+     `dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`;
      no source, guide, team/equipment recommendation, rank, damage, DPS,
      gameplay, optimality, promotion, or ER capability is enabled.
 
@@ -866,7 +866,7 @@ recombinations; all 36 bounded node references are cross-endpoint. The exact
 technical maxima and direct/compiled agreement remain internal observations
 under an unreviewed wrapper-authored translation. The final 2,011,250-byte
 report has SHA-256
-`eba5043b01e1381b1ae400e8cb4ea35da4a543f6266be7a331e30c8c3d99c03b`.
+`dedfd11d5d83f81c55846ea2ec2bf657ce8c18737138510b55f2279fdc920263`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings.
 
