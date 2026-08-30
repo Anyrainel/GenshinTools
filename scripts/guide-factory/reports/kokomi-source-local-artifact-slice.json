@@ -1,0 +1,692 @@
+{
+  "arbitraryEnglishParsingAllowed": false,
+  "artifactAssignmentExecuted": false,
+  "buildCompositionExecuted": false,
+  "cautions": [
+    "The selected occurrence remains an agent-assisted and unreviewed source observation.",
+    "Matched means only that the exact source roster contains every character named by the pinned conjunction.",
+    "The generic claim adapter's recommendationId and scope are structural locators for the exact team-member array, not source-authored recommendation labels.",
+    "The four nonempty holdouts are descriptive inventory only; this slice consumes, binds, or classifies none of them.",
+    "Not-energy-deferred is occurrence-scoped only to the selected artifact condition and does not provide an ER requirement or prove ER adequacy."
+  ],
+  "classification": "authenticated-source-local-condition-binding-slice",
+  "comparisonStatus": "comparable",
+  "conditionTruthEstablishedFromRecommendationMetadata": false,
+  "damageComputationExecuted": false,
+  "energyRecoveryComputationExecuted": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+      "sha256": "cf2acb8697a87480e388932032626be857b9ed5e8edfbe4b8cd8aa93bd03ab71"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts",
+      "sha256": "fb6be8d4f7a7960b56ecd729f448d20cf7dac491a76fbccfcc0977cc177fb1a1"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts",
+      "sha256": "077f2b12165328e6868dc84f47fc1506c9f5d566f4e9df0f009c19fde9208b73"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+    }
+  ],
+  "generatorExecuted": false,
+  "holdoutOccurrences": [
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Kokomi is played on-field in a team with Nod-Krai units.",
+        "Columbina is well-invested; Kokomi is selected to hold this support set so Columbina can equip an offensive set such as 4pc Aubade of Morningstar and Moon."
+      ],
+      "conditionsSha256": "a2933a2e2f7adf74da82241024b08ef3cc933e97875a60ed24a995e23dff7300",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "recommendation.artifactRecommendations[0].conditions",
+      "occurrenceId": "kqm:character_guide:kokomi-on-field-nod-krai-artifact-delegation-luna-v:recommendation.artifactRecommendations[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "recommendations[0].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:character-guide:kokomi-on-field-nod-krai-artifact-delegation-luna-v",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "kokomi-on-field-nod-krai-artifact-delegation-luna-v",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-plan",
+      "conditions": [
+        "Columbina is well-invested."
+      ],
+      "conditionsSha256": "2e7b7109ed56cdbdbe8106429ff4a37bf8a76c4af7a6a96c1f71f123fbc19320",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "artifactPlans[0].conditions",
+      "occurrenceId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:artifactPlans[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "artifactPlans[0].conditions",
+      "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Columbina is well-invested and Kokomi takes the team-support artifact set so Columbina can equip 4pc Aubade of Morningstar and Moon."
+      ],
+      "conditionsSha256": "345334cc6648346f0746fcee75a300703ef38cbbf2c290e80d9e0bb3ddbf12e9",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "members[0].artifactRecommendations[1].conditions",
+      "occurrenceId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[1].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "members[0].artifactRecommendations[1].conditions",
+      "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "structuralEnergyDimension": "not-structural-er"
+    },
+    {
+      "bindingAuthoredBySlice": false,
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "Columbina is well-invested and Kokomi holds 4pc Silken Moon's Serenade."
+      ],
+      "conditionsSha256": "2b615a74c769bcf02abb64b35d64bf8baf94eefb23f5f9a6e3044b540184d50f",
+      "consumedBySlice": false,
+      "energyClassificationAuthoredBySlice": false,
+      "manualClaimPath": "members[2].artifactRecommendations[0].conditions",
+      "occurrenceId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[2].artifactRecommendations[0].conditions",
+      "repositoryParity": "exact",
+      "repositoryPath": "members[2].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sliceDisposition": "holdout",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "structuralEnergyDimension": "not-structural-er"
+    }
+  ],
+  "issues": [],
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "Do not interpret this slice as a Kokomi guide, artifact assignment, build, team recommendation, or ranking.",
+    "Do not interpret the preserved 4pc Ocean-Hued Clam payload as an artifact assignment or a comparison against the four holdouts.",
+    "Do not infer a typed predicate, request binding, or new energy classification for any of the four holdouts.",
+    "Do not combine the selected payload with any holdout into a coherent or compatible team build.",
+    "Do not use this report as a generator, optimizer, formula, rotation, damage, DPS, ideal-roll, or ER result."
+  ],
+  "publicationStatus": "withheld-unreviewed-source-slice",
+  "rawInputBoundary": {
+    "byteAndParsedObjectClosure": true,
+    "canonicalObjectSha256ByPath": {
+      "scripts/guide-factory/data/knowledge/repository.json": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+      "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json": "9817c663a02527d818b278d4350de6a5df997823412e11d16e1d0249ac3fbe3b",
+      "scripts/guide-factory/data/source-snapshots/manual-index.json": "c669b925cdbbf3b591bcac66f4e7ec42332f98dc5e1a37be128662fa40504630",
+      "scripts/guide-factory/sources/registry.json": "2974828169ee2a7290bdcb8108b30db5beabf8ea3a0eb879878fe468044501a8"
+    },
+    "exactPathSet": true,
+    "sourceFileCount": 4,
+    "status": "accepted"
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "kokomi-source-local-artifact-slice",
+  "rotationComputationExecuted": false,
+  "schemaVersion": 1,
+  "selectedOccurrences": [
+    {
+      "bindingAuthoredBySlice": true,
+      "characterId": "sangonomiya_kokomi",
+      "claimAxis": "artifact-recommendation",
+      "conditions": [
+        "For Kokomi in this exact Lunar-Charged example team."
+      ],
+      "conditionsSha256": "a9c6d3b2681ecb2119368d210164542577464049656217eb1fcc296ff4fd2295",
+      "energyClassificationAuthoredBySlice": true,
+      "manualClaimPath": "members[0].artifactRecommendations[0].conditions",
+      "memberIndex": 0,
+      "occurrenceId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+      "payload": {
+        "artifacts": [
+          {
+            "setId": "oceanhued_clam",
+            "type": "4pc"
+          }
+        ],
+        "type": "artifact-group"
+      },
+      "payloadSha256": "bfd412bb94e8e50e9deec6813ef5329eb71c656fdd1af64fc8b5a2243543e1a0",
+      "predicate": {
+        "predicates": [
+          {
+            "characterId": "sangonomiya_kokomi",
+            "type": "exact-team-roster-includes"
+          },
+          {
+            "characterId": "ineffa",
+            "type": "exact-team-roster-includes"
+          },
+          {
+            "characterId": "columbina",
+            "type": "exact-team-roster-includes"
+          },
+          {
+            "characterId": "sucrose",
+            "type": "exact-team-roster-includes"
+          }
+        ],
+        "type": "all"
+      },
+      "predicateSha256": "2c60322cf3d1b6691dbde84bd5484364752c87bb18634bd9303fd6ec2e03dcda",
+      "repositoryParity": "exact",
+      "repositoryPath": "members[0].artifactRecommendations[0].conditions",
+      "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "sliceBindingClassification": "typed-bound",
+      "sliceDisposition": "selected",
+      "sliceEnergyClassification": "not-energy-deferred",
+      "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+    }
+  ],
+  "sliceId": "kqm-kokomi-source-local-artifact-slice-luna-v",
+  "sourceBoundary": {
+    "emptyConditionArrayCount": 0,
+    "extractionMethod": "agent-assisted",
+    "holdoutOccurrenceCount": 4,
+    "nonemptyConditionArrayCount": 5,
+    "pageUrl": "https://keqingmains.com/q/kokomi-quickguide/",
+    "promotionEligible": false,
+    "rawRecordCount": 2,
+    "rawRecordIds": [
+      "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      "kokomi-on-field-nod-krai-artifact-delegation-luna-v"
+    ],
+    "repositoryParity": "exact",
+    "reviewStatus": "unreviewed",
+    "samePageLineage": true,
+    "selectedAndHoldoutsCloseAllNonemptyKokomiConditions": true,
+    "selectedClaimsAndTeamShareExactSourceRecord": true,
+    "selectedOccurrenceCount": 1,
+    "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+    "sourceId": "kqm",
+    "sourceRegistryIngestionMode": "manual-observation",
+    "sourceRegistryPermission": "unknown",
+    "sourceRegistryStatus": "active",
+    "sourceVersion": "Luna V",
+    "status": "accepted",
+    "totalConditionArrayCount": 5
+  },
+  "sourceLocalSlice": {
+    "assembledBuildCount": 0,
+    "buildComposition": false,
+    "cautions": [
+      "The selected occurrence remains an agent-assisted and unreviewed source observation.",
+      "Matched means only that the exact source roster contains every character named by the pinned conjunction.",
+      "The generic claim adapter's recommendationId and scope are structural locators for the exact team-member array, not source-authored recommendation labels.",
+      "The four nonempty holdouts are descriptive inventory only; this slice consumes, binds, or classifies none of them.",
+      "Not-energy-deferred is occurrence-scoped only to the selected artifact condition and does not provide an ER requirement or prove ER adequacy."
+    ],
+    "classification": "descriptive-source-local-condition-applicability-slice",
+    "comparisonStatus": "comparable",
+    "compositionPolicy": {
+      "arbitraryEnglishParsingAllowed": false,
+      "conditionTruthEstablishedFromRecommendationMetadata": false,
+      "energyPrerequisitesAcceptedInSlice": false,
+      "omittedRequestFacts": "unknown",
+      "presetOverlapEvaluation": "not-evaluated",
+      "requestContextEvaluationOwner": "guide-request-context-core",
+      "requestContextMayReplaceExactRosterFacts": false,
+      "requestFactsMustBeExactTeamAndCharacterScoped": true,
+      "requestProjectionsPreservedVerbatim": true,
+      "sourceCellsPreservedVerbatim": true,
+      "sourcePredicateEvaluationOwner": "source-conditioned-guide-packet-core",
+      "teamTemplateEvaluation": "not-evaluated",
+      "verboseSourcePacketAdapterMetadataExposed": false
+    },
+    "conditionControls": [
+      {
+        "catalogIndex": 0,
+        "claimId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+        "occurrenceControl": {
+          "claimAxis": "artifact-recommendation",
+          "energyClassification": "not-energy-deferred",
+          "manualClaimPath": "members[0].artifactRecommendations[0].conditions",
+          "manualPath": "records[1].members[0].artifactRecommendations[0].conditions",
+          "occurrenceId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+          "payloadSha256": "bfd412bb94e8e50e9deec6813ef5329eb71c656fdd1af64fc8b5a2243543e1a0",
+          "repositoryJsonPath": "records[253].members[0].artifactRecommendations[0].conditions",
+          "repositoryParity": "exact",
+          "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+          "sliceDisposition": "selected",
+          "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+          "sourceConditionsSha256": "a9c6d3b2681ecb2119368d210164542577464049656217eb1fcc296ff4fd2295",
+          "sourceId": "kqm",
+          "sourcePredicateSha256": "2c60322cf3d1b6691dbde84bd5484364752c87bb18634bd9303fd6ec2e03dcda",
+          "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        },
+        "requestBindings": []
+      }
+    ],
+    "damage": false,
+    "damageComputationExecuted": false,
+    "energyRecoveryComputationExecuted": false,
+    "ER": false,
+    "exactTeamControls": [
+      {
+        "exhaustiveness": "non-exhaustive",
+        "intent": "example",
+        "label": "Kokomi — Ineffa — Columbina — Sucrose",
+        "memberCharacterIds": [
+          "sangonomiya_kokomi",
+          "ineffa",
+          "columbina",
+          "sucrose"
+        ],
+        "packetIndex": 0,
+        "rankingClaim": "none",
+        "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+        "sourceId": "kqm",
+        "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+        "teamRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+      }
+    ],
+    "formulas": false,
+    "generatedFrom": [
+      {
+        "path": "scripts/guide-factory/data/knowledge/repository.json",
+        "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+        "sha256": "cf2acb8697a87480e388932032626be857b9ed5e8edfbe4b8cd8aa93bd03ab71"
+      },
+      {
+        "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+        "sha256": "45515e3bb3ee7a68b217b2f3263a542f22d4a2e987eeba9003bb71a170ba6010"
+      },
+      {
+        "path": "scripts/guide-factory/sources/registry.json",
+        "sha256": "3b628e74cb1372b3c0773c75e214d7d4b90a7e064ee83c0c925940f315eddfe2"
+      },
+      {
+        "path": "scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts",
+        "sha256": "fb6be8d4f7a7960b56ecd729f448d20cf7dac491a76fbccfcc0977cc177fb1a1"
+      },
+      {
+        "path": "scripts/guide-factory/src/guideRequestContext.ts",
+        "sha256": "00e74e3df4d9e17312c53693c630a1cb2e5c92203b2b6ec015ed4b4bd67a66e3"
+      },
+      {
+        "path": "scripts/guide-factory/src/io.ts",
+        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      },
+      {
+        "path": "scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts",
+        "sha256": "077f2b12165328e6868dc84f47fc1506c9f5d566f4e9df0f009c19fde9208b73"
+      },
+      {
+        "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+        "sha256": "f802c804c0f1bc8315d7d3cbe6e9a3aa6517280822aac4b956d682bb9c70ba8c"
+      },
+      {
+        "path": "scripts/guide-factory/src/paths.ts",
+        "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      },
+      {
+        "path": "scripts/guide-factory/src/schemas.ts",
+        "sha256": "54a59cdc6fb268c1fe40645ed15a92b4c7019b01c83155221162ad192d4e13ec"
+      },
+      {
+        "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+        "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+      },
+      {
+        "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+        "sha256": "a0e78dde44e6cb7e3b0198ff24ef196a99a0347f7f3749d3a1656b096af71c51"
+      }
+    ],
+    "generatorExecuted": false,
+    "issues": [],
+    "optimizerExecuted": false,
+    "playerFacingRecommendations": false,
+    "prohibitedInterpretations": [
+      "Do not interpret this slice as a Kokomi guide, artifact assignment, build, team recommendation, or ranking.",
+      "Do not interpret the preserved 4pc Ocean-Hued Clam payload as an artifact assignment or a comparison against the four holdouts.",
+      "Do not infer a typed predicate, request binding, or new energy classification for any of the four holdouts.",
+      "Do not combine the selected payload with any holdout into a coherent or compatible team build.",
+      "Do not use this report as a generator, optimizer, formula, rotation, damage, DPS, ideal-roll, or ER result."
+    ],
+    "publicationStatus": "withheld-experimental-source-slice",
+    "ranking": false,
+    "recommendationCompositionExecuted": false,
+    "reportType": "source-local-condition-slice-report",
+    "requestContextReport": {
+      "axesMultipliedIntoBuilds": false,
+      "baselineEquipmentUsed": false,
+      "buildComposition": false,
+      "claimRules": [],
+      "classification": "request-account-context-refinement-overlay",
+      "comparisonStatus": "comparable",
+      "context": {},
+      "contextProjectionExecuted": true,
+      "damage": false,
+      "damageComputationExecuted": false,
+      "energyRecoveryInputsUsed": false,
+      "ER": false,
+      "factProvenance": {
+        "acquisitionPreference": "request",
+        "intendedRole": "request",
+        "optimizationGoal": "request",
+        "passiveExecutionAssumptions": "request-assumption",
+        "weaponInventory": "account"
+      },
+      "formulas": false,
+      "generatorExecuted": false,
+      "issues": [],
+      "optimality": false,
+      "optimizerExecuted": false,
+      "playerFacingRecommendations": false,
+      "policyBoundary": {
+        "missingWeaponInCompleteInventory": "false",
+        "missingWeaponInIncompleteInventory": "unknown",
+        "omittedFacts": "unknown",
+        "requestContextMayResolveOnlyMappedUnresolvedContext": true,
+        "requestContextMaySatisfyExactSourceTeamFacts": false,
+        "sourceControlPreserved": true
+      },
+      "projectionId": "kqm-kokomi-source-local-artifact-slice-luna-v:request-context",
+      "publicationStatus": "withheld-experimental-context",
+      "ranking": false,
+      "reportType": "guide-request-context-applicability",
+      "rotations": false,
+      "schemaVersion": 1,
+      "sourceCellsMutated": false,
+      "sourceControl": {
+        "claimCellCount": 1,
+        "comparisonStatus": "comparable",
+        "experimentId": "kqm-kokomi-source-local-artifact-slice-luna-v",
+        "packetCount": 1,
+        "reportType": "source-conditioned-guide-packet-report",
+        "sourceClaimCount": 1
+      },
+      "summary": {
+        "assembledBuildCount": 0,
+        "claimCellCount": 1,
+        "deferredEnergyCellCount": 0,
+        "inapplicableCellCount": 0,
+        "matchedCellCount": 1,
+        "packetCount": 1,
+        "sourceClaimCount": 1,
+        "unresolvedCellCount": 0,
+        "withheldCellCount": 0
+      },
+      "supportsAccountAdvice": false,
+      "supportsGuideClaims": false,
+      "supportsSourceAuthorization": false,
+      "teamProjections": [
+        {
+          "claimProjections": [
+            {
+              "claimId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+              "contextApplicability": "source-already-matched",
+              "reason": "Exact source-team roster includes sangonomiya_kokomi. Exact source-team roster includes ineffa. Exact source-team roster includes columbina. Exact source-team roster includes sucrose.",
+              "requestContextBindings": [],
+              "resolution": "matched",
+              "sourceControl": {
+                "predicateRows": [
+                  {
+                    "predicatePath": "predicate.predicates[0]",
+                    "predicateType": "exact-team-roster-includes",
+                    "reason": "Exact source-team roster includes sangonomiya_kokomi.",
+                    "result": "true",
+                    "structuredFact": "exact-source-team-roster"
+                  },
+                  {
+                    "predicatePath": "predicate.predicates[1]",
+                    "predicateType": "exact-team-roster-includes",
+                    "reason": "Exact source-team roster includes ineffa.",
+                    "result": "true",
+                    "structuredFact": "exact-source-team-roster"
+                  },
+                  {
+                    "predicatePath": "predicate.predicates[2]",
+                    "predicateType": "exact-team-roster-includes",
+                    "reason": "Exact source-team roster includes columbina.",
+                    "result": "true",
+                    "structuredFact": "exact-source-team-roster"
+                  },
+                  {
+                    "predicatePath": "predicate.predicates[3]",
+                    "predicateType": "exact-team-roster-includes",
+                    "reason": "Exact source-team roster includes sucrose.",
+                    "result": "true",
+                    "structuredFact": "exact-source-team-roster"
+                  }
+                ],
+                "predicateRowsSha256": "fcd51215e3fc943d2bce5252f45aed765c58ca976b6459ae423a9f3e522a9e42",
+                "reason": "Exact source-team roster includes sangonomiya_kokomi. Exact source-team roster includes ineffa. Exact source-team roster includes columbina. Exact source-team roster includes sucrose.",
+                "resolution": "matched",
+                "sourceConditionsSha256": "a9c6d3b2681ecb2119368d210164542577464049656217eb1fcc296ff4fd2295"
+              }
+            }
+          ],
+          "packetIndex": 0,
+          "teamRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+        }
+      ]
+    },
+    "rotations": false,
+    "schemaVersion": 1,
+    "sliceId": "kqm-kokomi-source-local-artifact-slice-luna-v",
+    "sourceClaimCatalog": [
+      {
+        "catalogIndex": 0,
+        "characterId": "sangonomiya_kokomi",
+        "claimId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+        "payload": {
+          "artifacts": [
+            {
+              "setId": "oceanhued_clam",
+              "type": "4pc"
+            }
+          ],
+          "type": "artifact-group"
+        },
+        "predicate": {
+          "predicates": [
+            {
+              "characterId": "sangonomiya_kokomi",
+              "type": "exact-team-roster-includes"
+            },
+            {
+              "characterId": "ineffa",
+              "type": "exact-team-roster-includes"
+            },
+            {
+              "characterId": "columbina",
+              "type": "exact-team-roster-includes"
+            },
+            {
+              "characterId": "sucrose",
+              "type": "exact-team-roster-includes"
+            }
+          ],
+          "type": "all"
+        },
+        "recommendation": {
+          "classification": "recommended",
+          "grouping": "single",
+          "label": null,
+          "ordering": "unranked",
+          "recommendationId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations",
+          "roles": [],
+          "scope": "team-member-artifact-sets",
+          "sourceIndex": 0
+        },
+        "repositoryRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+        "sourceConditions": [
+          "For Kokomi in this exact Lunar-Charged example team."
+        ],
+        "sourceConditionsSha256": "a9c6d3b2681ecb2119368d210164542577464049656217eb1fcc296ff4fd2295",
+        "sourceId": "kqm",
+        "sourceRecordId": "kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+      }
+    ],
+    "sourceClaimCells": [
+      {
+        "claimCells": [
+          {
+            "claimId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions",
+            "predicateRows": [
+              {
+                "predicatePath": "predicate.predicates[0]",
+                "predicateType": "exact-team-roster-includes",
+                "reason": "Exact source-team roster includes sangonomiya_kokomi.",
+                "result": "true",
+                "structuredFact": "exact-source-team-roster"
+              },
+              {
+                "predicatePath": "predicate.predicates[1]",
+                "predicateType": "exact-team-roster-includes",
+                "reason": "Exact source-team roster includes ineffa.",
+                "result": "true",
+                "structuredFact": "exact-source-team-roster"
+              },
+              {
+                "predicatePath": "predicate.predicates[2]",
+                "predicateType": "exact-team-roster-includes",
+                "reason": "Exact source-team roster includes columbina.",
+                "result": "true",
+                "structuredFact": "exact-source-team-roster"
+              },
+              {
+                "predicatePath": "predicate.predicates[3]",
+                "predicateType": "exact-team-roster-includes",
+                "reason": "Exact source-team roster includes sucrose.",
+                "result": "true",
+                "structuredFact": "exact-source-team-roster"
+              }
+            ],
+            "reason": "Exact source-team roster includes sangonomiya_kokomi. Exact source-team roster includes ineffa. Exact source-team roster includes columbina. Exact source-team roster includes sucrose.",
+            "resolution": "matched",
+            "sourceConditionsSha256": "a9c6d3b2681ecb2119368d210164542577464049656217eb1fcc296ff4fd2295"
+          }
+        ],
+        "packetIndex": 0,
+        "teamRecordId": "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+      }
+    ],
+    "sourceDocumentBoundary": {
+      "allClaimsAndTeamsShareExactSourceDocument": true,
+      "exactOccurrenceIds": [
+        "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example:members[0].artifactRecommendations[0].conditions"
+      ],
+      "exactTeamRecordIds": [
+        "kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example"
+      ],
+      "pageUrl": "https://keqingmains.com/q/kokomi-quickguide/",
+      "snapshotPath": "scripts/guide-factory/data/source-snapshots/kqm-kokomi-manual.json",
+      "sourceId": "kqm",
+      "sourceVersion": "Luna V",
+      "status": "accepted"
+    },
+    "summary": {
+      "applicableUnderSuppliedContextCount": 0,
+      "assembledBuildCount": 0,
+      "cellCount": 1,
+      "claimCount": 1,
+      "deferredEnergyCount": 0,
+      "effectiveInapplicableCount": 0,
+      "effectiveMatchedCount": 1,
+      "effectiveUnresolvedCount": 0,
+      "notApplicableUnderSuppliedContextCount": 0,
+      "sourceAlreadyMatchedCount": 1,
+      "sourceDefinitelyInapplicableCount": 0,
+      "sourceInapplicableCount": 0,
+      "sourceMatchedCount": 1,
+      "sourceUnresolvedCount": 0,
+      "stillUnresolvedCount": 0,
+      "teamCount": 1
+    },
+    "supportsBuildRecommendations": false,
+    "supportsDamageClaims": false,
+    "supportsEnergyRecoveryClaims": false,
+    "supportsGuideClaims": false,
+    "supportsRankClaims": false,
+    "supportsRotationClaims": false,
+    "supportsSourceAuthorization": false,
+    "supportsStatRecommendations": false,
+    "supportsTeamRecommendations": false
+  },
+  "summary": {
+    "assembledBuildCount": 0,
+    "contextApplicableCount": 0,
+    "effectiveInapplicableCount": 0,
+    "effectiveMatchedCount": 1,
+    "effectiveUnresolvedCount": 0,
+    "emptyConditionArrayCount": 0,
+    "holdoutBindingAuthoredCount": 0,
+    "holdoutConsumedCount": 0,
+    "holdoutEnergyClassificationAuthoredCount": 0,
+    "holdoutOccurrenceCount": 4,
+    "nonemptyConditionArrayCount": 5,
+    "selectedNotEnergyDeferredCount": 1,
+    "selectedOccurrenceCount": 1,
+    "selectedUniqueConditionArrayCount": 1,
+    "sourceAlreadyMatchedCount": 1,
+    "sourceCellCount": 1,
+    "sourceDefinitelyInapplicableCount": 0,
+    "sourceInapplicableCount": 0,
+    "sourceMatchedCount": 1,
+    "sourceTeamCount": 1,
+    "sourceUnresolvedCount": 0,
+    "totalConditionArrayCount": 5
+  },
+  "supportsBuildRecommendations": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "teamCompositionExecuted": false
+}

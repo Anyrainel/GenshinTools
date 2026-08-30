@@ -526,15 +526,40 @@ coverage dependency; its four Klee claims and interpretation boundary remain
 the same. No build, recommendation, composition, rank, optimizer, damage,
 rotation, or ER work is authorized.
 
-The next bounded non-ER gate is an authenticated Kokomi source-local slice for
-the exact Kokomi/Ineffa/Columbina/Sucrose team-member 4pc Ocean-Hued Clam
-condition. Select exactly that one occurrence, preserve the other four nonempty
-Kokomi occurrences as holdouts, and do not integrate the slice into the current
-binding catalog yet. The exact roster predicate can be source-decided, but a
-match is not an assignment, comparison, recommendation, or build. Human review
-of the Itto, Keqing, Klee, Diona, and future Kokomi bindings and source
-classifications remains a prerequisite for publication, formula authoring,
-recommendation composition, or build composition.
+Checkpoint 29 completes that standalone Kokomi slice. It authenticates the KQM
+Kokomi Luna V snapshot and selects exactly
+`members[0].artifactRecommendations[0].conditions` from
+`kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example`. The exact
+ordered roster is Sangonomiya Kokomi, Ineffa, Columbina, and Sucrose. Its pinned
+four-member conjunction is source-matched, so context applicability is
+`source-already-matched` with zero request facts, rules, or bindings.
+
+The selected payload remains the single 4pc Ocean-Hued Clam group. Its source
+classification is `recommended` and its source ordering is `unranked`; neither
+field becomes a computed rank, assignment, or comparison. The Kokomi source
+boundary closes at five nonempty and zero empty arrays. One occurrence is
+selected, and all four holdouts remain unconsumed, unbound, and energy-
+unclassified by the slice. The source remains agent-assisted, unreviewed,
+permission-unknown, promotion-ineligible evidence.
+
+Checkpoint 29 is authenticated directly by `validate.ts` but deliberately does
+not enter the current binding catalog or manual coverage. Checkpoint 28 totals
+therefore remain authoritative: catalog 56 = 53 typed + 3 acknowledged,
+non-structural coverage 123/53/3/67, unique arrays 31 typed-only + 54 unbound-
+only + 1 mixed, and energy 15 deferred + 50 not-energy-deferred + 61 nonempty
+unclassified + 16 empty. The slice executes no build, candidate, assignment,
+composition, recommendation, rank, optimizer, damage, rotation, or ER work.
+
+The next checkpoint should separately integrate only this exact authenticated
+Kokomi occurrence under the generic source-local catalog evidence kinds. The
+expected accepted delta is catalog 57 = 54 typed + 3 acknowledged;
+non-structural coverage 123/54/3/66; unique arrays 32 typed-only + 53 unbound-
+only + 1 mixed; and energy 15 deferred + 51 not-energy-deferred + 60 nonempty
+unclassified + 16 empty. Then regenerate manual coverage and the checkpoint 27
+Klee witness in dependency order. Human review of the Itto, Keqing, Klee,
+Diona, and Kokomi bindings and source classifications remains a prerequisite
+for publication, formula authoring, recommendation composition, or build
+composition.
 
 ER work is deferred. The Diona probe remains an assumption-incomplete
 historical fixture; unrelated repository growth no longer changes its input

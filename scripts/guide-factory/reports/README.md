@@ -6,6 +6,21 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `kokomi-source-local-artifact-slice.json` authenticates one exact team-member
+  artifact condition from the KQM Kokomi Luna V snapshot. The selected path is
+  `members[0].artifactRecommendations[0].conditions` on the exact
+  Kokomi/Ineffa/Columbina/Sucrose Lunar-Charged team record. Its ordered roster
+  conjunction is source-matched, so the context projection is `source-already-
+  matched` with zero request facts or bindings. The report preserves one 4pc
+  Ocean-Hued Clam payload with source classification `recommended` and source
+  ordering `unranked`; neither becomes a computed rank or assignment. The
+  source boundary has five nonempty and zero empty arrays: one selected plus
+  four exact holdouts, all unconsumed, unbound, and energy-unclassified by the
+  slice. The source remains agent-assisted, unreviewed, permission-unknown, and
+  promotion-ineligible. This standalone report is authenticated by `validate.ts`
+  but deliberately does not enter the current catalog or manual coverage. It
+  executes no build, candidate, assignment, composition, recommendation, rank,
+  generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
 - `diona-source-local-support-slice.json` authenticates three team-member
   artifact condition occurrences from the exact
   `kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt` record: Diona member
@@ -361,7 +376,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all twenty-eight reports in memory and rejects stale
+`validate.ts` rebuilds all twenty-nine reports in memory and rejects stale
 checked-in output. The Diona ER report is historical and deliberately
 decoupled from unrelated knowledge-repository changes while ER work is
 deferred.

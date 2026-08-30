@@ -581,6 +581,21 @@ arrays as 18 nonempty and 8 empty. Three are selected; 15 nonempty occurrences
 remain holdouts, descriptively inventoried as 10 ordinary and 5 ER-deferred.
 The slice consumes, binds, and energy-classifies zero holdouts.
 
+The standalone `src/kokomiSourceLocalArtifactSlice.ts` selects one exact
+team-member condition from the KQM Kokomi Luna V page. The team record is
+`kqm:team:kokomi-ineffa-columbina-sucrose-lunar-charged-example`, with exact
+ordered roster Sangonomiya Kokomi, Ineffa, Columbina, and Sucrose. The selected
+member-0 payload is one 4pc Ocean-Hued Clam group with source classification
+`recommended` and source ordering `unranked`.
+
+Its typed predicate is the ordered four-member exact-roster conjunction. The
+source cell matches directly, so the context projection is `source-already-
+matched` and carries zero request facts or bindings. The Kokomi snapshot closes
+five nonempty and zero empty condition arrays: one selected plus four exact
+holdouts. The slice consumes, binds, and energy-classifies none of those
+holdouts. It is authenticated by the validator but deliberately remains outside
+the current catalog and manual coverage.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -605,6 +620,12 @@ conflicting keys, subject mismatches, or a durable source-local report that
 differs from its fresh source-specific rebuild make the inventory non-comparable
 rather than converting evidence to an unbound result.
 
+The standalone Kokomi report is not a sixth catalog wrapper yet. Its selected
+occurrence therefore does not change any current catalog, coverage, unique-
+array, or energy total. A later integration must authenticate that exact report
+through a separate source-specific extraction path before reusing the generic
+source-local evidence kinds.
+
 The durable report keeps binding and energy as independent ledgers. Across all
 126 nonempty arrays, the current catalog contributes 56 entries: 53 typed and
 3 exact-text acknowledged. Binding coverage is therefore 53 typed, 3
@@ -620,6 +641,12 @@ nonempty rows remain energy-unclassified; and 16 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
+
+If the next checkpoint admits only the exact authenticated Kokomi occurrence,
+the expected delta is catalog 57 = 54 typed + 3 acknowledged; non-structural
+coverage 123/54/3/66; unique arrays 32 typed-only + 53 unbound-only + 1 mixed;
+and energy 15 deferred + 51 not-energy-deferred + 60 nonempty unclassified + 16
+empty. Those are integration validation targets, not checkpoint 29 results.
 
 The dependency direction remains acyclic. Diona raw inputs feed the
 authenticated Diona wrapper, then the 56-entry binding catalog, manual coverage,
@@ -710,11 +737,12 @@ and interpretation boundary remain unchanged.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation and the integrated Klee and Diona
-  adapters:
+- Generic source-local condition evaluation, the integrated Klee and Diona
+  adapters, and the standalone Kokomi adapter:
   `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
-  `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`, and
-  `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`.
+  `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`,
+  `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`, and
+  `scripts/guide-factory/src/kokomiSourceLocalArtifactSlice.ts`.
 - Exact manual condition extraction, repository parity, and authenticated
   current-wrapper coverage:
   `scripts/guide-factory/src/manualConditionArrayCoverage.ts`,

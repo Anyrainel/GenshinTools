@@ -179,6 +179,15 @@ three and 15 nonempty holdouts are exact and disjoint. Ten holdouts are ordinary
 descriptive inventory and five are ER-deferred descriptive inventory. The slice
 consumes, binds, or energy-classifies none of them.
 
+The standalone Kokomi Luna V adapter selects exactly member 0's first artifact
+condition from the exact Kokomi/Ineffa/Columbina/Sucrose team record. It
+preserves one 4pc Ocean-Hued Clam payload with source classification
+`recommended` and ordering `unranked`. The pinned ordered roster conjunction is
+source-matched, so context applicability is `source-already-matched` with no
+request fact or binding. All five Kokomi condition arrays are nonempty: one is
+selected and four are exact holdouts. The slice consumes, binds, or energy-
+classifies none of the holdouts.
+
 A durable source-local report is downstream evidence only when it equals a
 fresh authenticated rebuild from the exact raw inputs. Dependency direction
 must stay acyclic: raw source inputs feed the source-local slice, an
@@ -192,6 +201,12 @@ identity, extraction contract, and `sliceId`. The current generic labels are
 `source-local-typed-predicate-ast` and `source-local-not-energy-deferred`;
 generic labels do not authorize a generic source extractor or cross-source
 predicate inference.
+
+Authentication and catalog admission are separate gates. The current Kokomi
+slice is authenticated standalone but is not a current catalog input. Its
+source classification, source order, matched predicate, and occurrence-scoped
+not-energy-deferred statement therefore do not change catalog or coverage until
+a later source-specific integration explicitly admits that exact occurrence.
 
 ### Derived condition-array coverage
 
@@ -237,6 +252,11 @@ exact-text acknowledgements. The non-structural coverage partition is 123 rows:
 31 typed-only, 54 unbound-only, and one mixed acknowledged/unbound set. The
 independent energy ledger remains 15 deferred, 50 explicitly not energy-
 deferred, 61 nonempty unclassified, and 16 empty unconditional arrays.
+Those checkpoint 28 totals remain current after the standalone Kokomi report.
+The next integration target, not a current result, is 57 catalog entries = 54
+typed + 3 acknowledged; non-structural coverage 123/54/3/66; unique arrays 32
+typed-only + 53 unbound-only + 1 mixed; and energy 15 deferred + 51 not-energy-
+deferred + 60 nonempty unclassified + 16 empty.
 
 ### Derived condition-resolved flat claim joins
 

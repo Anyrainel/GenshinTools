@@ -71,6 +71,13 @@ import {
   type KleeTeamScopedClaimJoinWitnessReport,
 } from "./kleeTeamScopedClaimJoinWitness";
 import {
+  authenticateKokomiSourceLocalArtifactSliceReport,
+  KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS,
+  KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH,
+  KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_SOURCE_FILE_PATHS,
+  type KokomiSourceLocalArtifactSliceReport,
+} from "./kokomiSourceLocalArtifactSlice";
+import {
   buildKeqingLunarSourceConditionedCandidateLatticeReport,
   KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS,
 } from "./keqingLunarSourceConditionedCandidateLattice";
@@ -245,6 +252,8 @@ export async function runValidation(): Promise<ValidationRunResult> {
     manualConditionArrayCoverageSourceFiles,
     kleeSourceLocalConditionSliceInput,
     dionaSourceLocalSupportSliceInput,
+    kokomiSourceLocalArtifactSliceInput,
+    kokomiSourceLocalArtifactSliceSourceFiles,
     kleeTeamScopedClaimJoinWitnessInput,
     kleeTeamScopedClaimJoinWitnessSourceFiles,
   ] =
@@ -322,6 +331,18 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(KLEE_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH),
       readJson(DIONA_SOURCE_LOCAL_SUPPORT_SLICE_REPORT_PATH),
+      readJson(KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH),
+      Promise.all(
+        KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
       readJson(KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_REPORT_PATH),
       Promise.all(
         KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_SOURCE_FILE_PATHS.map(
@@ -869,6 +890,42 @@ export async function runValidation(): Promise<ValidationRunResult> {
             "canonical-inputs-not-comparable"
               ? "The freshly rebuilt Diona source-local support slice could not authenticate its exact source, repository, same-record team, support-role predicates, or holdout boundary."
               : "The saved Diona source-local support slice does not match the current raw source, consolidated records, exact typed bindings, scoped request projection, and input hashes.",
+        });
+      }
+      const kokomiSourceLocalGeneratedFrom = await hashRelativePaths(
+        KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS,
+      );
+      const kokomiManualInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "kokomi-ineffa-columbina-sucrose-lunar-charged-example",
+      );
+      const kokomiSourceLocalAuthentication =
+        authenticateKokomiSourceLocalArtifactSliceReport(
+          kokomiSourceLocalArtifactSliceInput as KokomiSourceLocalArtifactSliceReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: kokomiManualInput.snapshot,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            sourceFiles: kokomiSourceLocalArtifactSliceSourceFiles,
+            generatedFrom: kokomiSourceLocalGeneratedFrom,
+          },
+        );
+      if (!kokomiSourceLocalAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            kokomiSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_kokomi_source_local_artifact_slice"
+              : "pipeline.stale_kokomi_source_local_artifact_slice",
+          path: "reports.kokomi-source-local-artifact-slice",
+          message:
+            kokomiSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The freshly rebuilt Kokomi source-local artifact slice could not authenticate its exact source snapshot, repository team, ordered roster predicate, selected artifact payload, or holdout boundary."
+              : "The saved Kokomi source-local artifact slice does not match the current raw source, consolidated records, exact one-claim roster binding, zero-request-binding boundary, and input hashes.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

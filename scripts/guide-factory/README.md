@@ -21,18 +21,19 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 28 authenticates one same-record Diona source-local support slice for
-the exact C6 Diona/Mavuika/Citlali/Bennett team. Three team-member artifact
-conditions are source-unresolved until separately scoped support-role facts make
-the Diona, Citlali, and Bennett cells applicable. Their source payloads remain
-unchosen groups: Diona keeps Song of Days Past then Noblesse Oblige, Citlali
-keeps Scroll of the Hero of Cinder City, and Bennett keeps Noblesse Oblige then
-Instructor. The 26-array Diona boundary closes as 18 nonempty plus 8 empty;
-three rows are selected and the other 15 nonempty rows remain holdouts. The
-catalog now has 53 typed bindings plus 3 acknowledgements, leaving 67 of 123
-non-structural rows unbound. This is authenticated applicability and coverage
-evidence, not an artifact assignment, build, recommendation, composition,
-rank, optimizer, damage, rotation, ER result, or working guide factory:
+Checkpoint 29 authenticates a standalone Kokomi Luna V source-local artifact
+slice. It selects exactly Kokomi member 0's first artifact condition from the
+exact Kokomi/Ineffa/Columbina/Sucrose Lunar-Charged team and preserves one 4pc
+Ocean-Hued Clam payload, source-classified `recommended` but explicitly
+`unranked`. The exact ordered roster conjunction is source-matched, so the
+context result is `source-already-matched` with zero request facts or bindings.
+All five snapshot condition arrays are nonempty: one is selected and the other
+four remain untouched holdouts. The slice is authenticated by the validator but
+deliberately does not enter the catalog or coverage yet, so checkpoint 28's
+56-entry catalog, 123/53/3/67 non-structural coverage, and 15/50/61/16 energy
+partition remain unchanged. This is source-local applicability evidence, not an
+artifact assignment, build, candidate, recommendation, composition, rank,
+optimizer, damage, rotation, ER result, or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -389,6 +390,36 @@ rank, optimizer, damage, rotation, ER result, or working guide factory:
     rotation, or ER work.
 125. Use one exact-team Ocean-Hued Clam occurrence as the next bounded Kokomi
     source-local slice, with four holdouts and no catalog integration yet.
+126. Authenticate the Kokomi Luna V snapshot, consolidated repository, manual
+    index, and source registry through an exact raw-input boundary.
+127. Select only
+    `members[0].artifactRecommendations[0].conditions` from the exact
+    Kokomi/Ineffa/Columbina/Sucrose Lunar-Charged team record.
+128. Preserve 4pc Ocean-Hued Clam as one source-classified `recommended`,
+    `unranked` singleton payload without turning either field into a computed
+    rank or assignment.
+129. Resolve the exact ordered four-character roster conjunction from the
+    source team itself, yielding one source match and `source-already-matched`
+    context applicability with zero request facts or bindings.
+130. Close the Kokomi condition corpus at five nonempty and zero empty arrays:
+    one selected occurrence plus four exact holdouts, all unconsumed, unbound,
+    and energy-unclassified by this slice.
+131. Keep the standalone slice outside the current condition-binding catalog
+    and manual coverage, preserving checkpoint 28's catalog, coverage, unique-
+    array, and energy totals unchanged.
+132. Execute zero build or candidate construction, artifact assignment, team or
+    recommendation composition, ranking, generation, optimization, formula,
+    rotation, damage, ideal-roll, or ER work.
+133. Make catalog integration a separate checkpoint: accept only the exact
+    authenticated Kokomi occurrence under the generic source-local evidence
+    kinds, then regenerate coverage and the downstream Klee witness.
+134. Expect that separate integration, if its invariants hold, to produce a
+    57-entry catalog with 54 typed plus 3 acknowledged rows and non-structural
+    coverage 123/54/3/66, with 32 typed-only, 53 unbound-only, and one mixed
+    unique condition set.
+135. Keep ER deferred; the expected post-integration energy partition is 15
+    deferred, 51 explicitly not energy-deferred, 60 nonempty unclassified, and
+    16 empty arrays.
 
 The first two active sources are already in this repository:
 
@@ -493,6 +524,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-diona-er-calibration.ts
@@ -511,7 +543,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all twenty-eight durable reports in memory: corpus inventory,
+It also rebuilds all twenty-nine durable reports in memory: corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -523,9 +555,10 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-Klee and Diona source-local condition slices, the exact manual condition-array
-coverage inventory, the authenticated flat Klee team-scoped claim-join witness,
-and historical ER calibration.
+Klee and Diona integrated source-local condition slices, the standalone Kokomi
+source-local artifact slice, the exact manual condition-array coverage
+inventory, the authenticated flat Klee team-scoped claim-join witness, and
+historical ER calibration.
 Stale evidence cannot pass.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
@@ -611,6 +644,16 @@ source-ordered payload groups, not choices or assignments. The snapshot closes
 26 condition arrays: 18 nonempty and 8 empty. Three are selected; the other 15
 nonempty rows remain descriptive holdouts, split into 10 ordinary and 5 ER-
 deferred rows. The slice consumes, binds, and energy-classifies none of them.
+
+The standalone Kokomi adapter selects only member 0's first artifact condition
+from the exact Kokomi/Ineffa/Columbina/Sucrose source team. It retains a single
+4pc Ocean-Hued Clam payload with source classification `recommended` and source
+ordering `unranked`. The exact ordered roster conjunction is already matched by
+the source team, so the context projection is `source-already-matched` and
+contains no request facts or bindings. All five Kokomi condition arrays are
+nonempty; the other four are exact holdouts and receive no slice-authored
+binding or energy classification. This report is authenticated by the validator
+but remains outside the current catalog and coverage.
 
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
