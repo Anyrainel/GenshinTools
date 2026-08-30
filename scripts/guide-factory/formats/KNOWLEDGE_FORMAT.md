@@ -859,6 +859,30 @@ report is durable report 38 overall and globally integrated report 37. Its
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, global-
 optimality, promotion, and ER capability remains false.
 
+### Derived investment-sensitive artifact profiles
+
+A partial artifact profile is derived validation material, not a new accepted
+knowledge-record kind and not a character build. Checkpoint 51 joins only four
+fresh-authenticated Noelle source records after exact manual/consolidated
+parity: one condition-free artifact-set row, two investment-scoped artifact-
+stat rows, and one exact team/rotation row.
+
+The two resulting profiles retain their request predicates separately. The
+condition-free 4pc Husk row means only that its source condition array is
+empty; it does not establish universal applicability or a best set. Main-stat
+arrays remain unselected option groups. The six substat rows remain source
+ordinal groups with exact condition text, not scalar weights, roll budgets, or
+an ideal allocation. Additional DEF% Goblet/Circlet guards in the high-
+investment branch remain unresolved and cannot be satisfied by constellation
+or Burst Talent facts alone.
+
+The source rotation is validation evidence, but its `N3D` and `N2` tokens do
+not become formula counts. The current four-hit aggregate cannot represent the
+required prefixes exactly, so the derived record stores a rejected
+representation admission and no numeric result. A missing weapon, ER target,
+formula count, enemy scenario, or complete artifact assignment remains
+missing; none may be synthesized as a default.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

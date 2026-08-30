@@ -21,17 +21,16 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 50 reconstructs checkpoint 48's private Xiao FFXX wrapper fixture,
-proves that six fresh no-Circlet controls reproduce its exact totals and
-Xianyun activation traces, then executes a guarded Circlet/substat sensitivity
-lattice. Twelve CR/CD Circlet baselines and thirty-six one-average-roll probes
-produce 54 direct/compiled-agreeing replays in total. The twelve same-Circlet
-five-star source-group pairs split 5 source-order alignments, 7
-counterexamples, and 0 tolerance ties; the CR and CD strata are retained
-separately. The KQM stat rows remain guarded-unresolved, so this is not a
-Circlet choice, stat priority, legal roll allocation, weapon rank, damage
-recommendation, or guide result. Deathmatch remains cross-rarity-incomparable,
-and ER remains deferred.
+Checkpoint 51 moves the experiment from Xiao to Noelle and composes source
+knowledge before attempting damage. It fresh-authenticates the lower- and
+high-investment Noelle slices, verifies four exact manual/consolidated records,
+and materializes two partial artifact profiles with one shared 4pc Husk row,
+eight unselected main-stat options, and six newly source-bound ordinal substat
+groups. The exact source rotation needs `N3D` and `N2` prefixes, but the current
+calculator exposes only an inseparable four-hit `noelle-na` aggregate. The
+representation gate therefore rejects replay and emits zero numeric results.
+This is not a complete build, stat weight, weapon choice, team rank, damage
+recommendation, or guide result, and ER remains deferred.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -966,6 +965,31 @@ This is not a working guide factory or an equipment recommendation:
      ranks, winners, recommendations, complete builds, guide claims,
      generator, optimizer, AutoTune, ideal-roll allocation, gameplay,
      rotation, DPS, and ER outputs.
+295. Move to a second character and fresh-authenticate both Noelle investment
+     slices from one exact 23-text-file outer closure, including six JSON
+     byte/object pairs and the checkpoint core and CLI.
+296. Require exact manual-to-consolidated parity for the shared Husk row, the
+     lower- and high-investment artifact-stat rows, and the exact
+     Noelle/Durin/Nicole/Xilonen team while preserving candidate, unreviewed,
+     and promotion-ineligible status.
+297. Compose two partial Noelle artifact profiles only: one shared condition-
+     free 4pc Husk observation, eight unselected main-stat options, and six
+     exact source-conditioned ordinal substat groups. Do not convert the
+     groups into scalar weights or an allocation.
+298. Preserve the high-investment DEF% Goblet and Circlet alternatives with
+     their additional unresolved source guards; never select them from the
+     investment predicate alone.
+299. Parse the exact source rotation into three `N3D` and two `N2` occurrences
+     without inferring formula counts or discarding the dash-cancel token.
+300. Compare that required 5/5/3/0 normal-hit vector with the pinned current
+     calculator representation. Reject replay because every `noelle-na` count
+     necessarily includes N4 and the replay line has no part selector.
+301. Emit zero candidates, generated teams, assembled builds, assignments,
+     optimizer runs, damage replays, numeric results, ideal-roll outputs, or
+     ER computations from the rejected representation gate.
+302. Integrate the admission as global report 48 while retaining it as a
+     validation target rather than a guide, recommendation, rotation claim,
+     or correctness verdict.
 
 The first two active sources are already in this repository:
 
@@ -1164,6 +1188,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-circlet-substat-local-marginal-diagnostic.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-investment-artifact-profile-computation-admission.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1187,7 +1212,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-seven globally integrated durable reports
+In full mode it rebuilds all forty-eight globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1210,6 +1235,7 @@ authenticated grouped-versus-unit-expanded replay representation preflight,
 the authenticated unit-expanded candidate execution gate,
 the authenticated five-star source-group validation diagnostic,
 the authenticated guarded Circlet/substat local-marginal diagnostic,
+the authenticated Noelle investment artifact-profile representation admission,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
@@ -1948,6 +1974,32 @@ runtime outcome. This does not establish intended play or gameplay quality,
 and no independent gameplay-validation target is supplied. The durable report
 serializes no expanded candidate team, ranking, winner, recommendation, damage
 comparison, or ER input.
+
+Checkpoint 51 begins a separate Noelle path instead of extending the Xiao
+fixture. Its outer closure contains 23 exact UTF-8 text files and six JSON
+byte/object pairs. The lower- and high-investment source-local reports are
+rebuilt only from subsets of that outer closure and fresh-authenticated before
+their rows can be composed. The four participating manual records are also
+checked against their exact consolidated candidate records, including the
+team-member normalization and source-reference lineage.
+
+The output contains two partial artifact profiles, not builds. Both profiles
+retain the condition-free 4pc Husk observation without treating it as
+universally best. The lower branch retains ATK% / Geo DMG / CRIT main-stat
+groups; the high branch retains DEF% / Geo DMG / CRIT plus guarded DEF%
+Goblet/Circlet alternatives. Six source substat rows are newly bound by exact
+condition allowlists as ordinal groups. None becomes a scalar weight, selected
+allocation, or optimizer constraint.
+
+The exact source rotation contains three `N3D` and two `N2` occurrences, for a
+required normal-hit vector of N1=5, N2=5, N3=3, N4=0. The pinned calculator
+source exposes `noelle-na` only as a four-part aggregate, and both current
+evaluation paths multiply that entire entry by the replay count. Because any
+positive aggregate count necessarily adds N4, neither prefix nor the total is
+exactly representable. Checkpoint 51 therefore rejects replay instead of using
+an approximation and emits no damage number. Weapons, enemy context, formula
+counts, complete artifact assignments, and ER remain missing rather than
+defaulted.
 
 ER work is deferred. The Diona ER report remains an
 `assumption-incomplete` historical fixture and is decoupled from unrelated

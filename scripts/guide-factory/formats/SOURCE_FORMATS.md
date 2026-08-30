@@ -370,6 +370,23 @@ the CR reference frame or a numeric tolerance for "near." Checkpoint 50's
 source weapon groups. Its four inherited checkpoint-49 counterexamples remain
 immutable review holdouts, not source corrections or an optimization target.
 
+Checkpoint 51 likewise adds no source record or rewritten Noelle
+recommendation. It requires exact parity between the existing manual and
+consolidated Husk, lower-investment stat, high-investment stat, and exact-team
+records before composing any derived profile. The consolidated team's
+unspecified-investment/null-selection member shape is the normal V1
+consolidation of the manual record's explicitly empty equipment and ER arrays;
+it is not evidence that those choices are irrelevant.
+
+The wrapper authors an exact source-specific binding for six previously held-
+out substat condition arrays. This does not retroactively change the upstream
+slice catalog or classify those rows as numeric weights. The empty Husk
+condition remains source-condition-free, not universal. The high-investment
+DEF% Goblet/Circlet alternatives retain their additional unresolved source
+guards. The `N3D`/`N2` token counts and rejected calculator representation are
+derived validation evidence; neither may be written back as KQM formula
+counts, rotation damage, or a source correction.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

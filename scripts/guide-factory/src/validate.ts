@@ -332,6 +332,13 @@ import {
   XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_SOURCE_FILE_PATHS,
   type XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport,
 } from "./xiaoFfxxCircletSubstatLocalMarginalDiagnostic";
+import {
+  authenticateNoelleInvestmentArtifactProfileComputationAdmissionFromWorkspace,
+} from "./assemble-noelle-investment-artifact-profile-computation-admission";
+import {
+  NOELLE_INVESTMENT_ARTIFACT_PROFILE_COMPUTATION_ADMISSION_REPORT_PATH,
+  type NoelleInvestmentArtifactProfileComputationAdmissionReport,
+} from "./noelleInvestmentArtifactProfileComputationAdmission";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1780,6 +1787,26 @@ export async function runValidation(
             "canonical-inputs-rejected"
               ? "The Xiao FFXX Circlet/substat local-marginal diagnostic could not fresh-authenticate checkpoint 49, its exact 127-file byte closure, the guarded checkpoint-45 source rows, or the reconstructed replay fixture."
               : "The saved Xiao FFXX Circlet/substat local-marginal diagnostic does not match the six reconstruction controls, twelve Circlet baselines, thirty-six one-roll probes, fifty-four agreed replays, 5-aligned/7-counterexample/0-tie same-Circlet validation split, and zero-selection boundary.",
+        });
+      }
+      try {
+        const noelleAdmissionInput = await readJson(
+          NOELLE_INVESTMENT_ARTIFACT_PROFILE_COMPUTATION_ADMISSION_REPORT_PATH,
+        );
+        await authenticateNoelleInvestmentArtifactProfileComputationAdmissionFromWorkspace(
+          noelleAdmissionInput as NoelleInvestmentArtifactProfileComputationAdmissionReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_investment_artifact_profile_computation_admission",
+          path:
+            "reports.noelle-investment-artifact-profile-computation-admission",
+          message:
+            error instanceof Error
+              ? `The saved Noelle investment artifact-profile admission failed fresh authentication: ${error.message}`
+              : "The saved Noelle investment artifact-profile admission failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

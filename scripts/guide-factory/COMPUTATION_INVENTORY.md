@@ -1439,6 +1439,26 @@ authenticated unit-expanded replay path and explicit StatSheets. The
 comparison, owned-inventory optimization, AutoTune, and investment analyzers
 remain inventoried rather than composed into the factory.
 
+## Investment-sensitive artifact-profile admission seam
+
+`src/noelleInvestmentArtifactProfileComputationAdmission.ts` composes two
+fresh-authenticated Noelle source-local slices without importing the app
+calculator runtime. It requires one exact outer text/hash closure, JSON
+byte/object parity, manual/consolidated parity for four source records, and
+exact allowlists for the newly bound substat conditions. Its output contains
+two partial artifact profiles: shared 4pc Husk provenance, eight unselected
+main-stat options, and six ordinal substat groups. It creates no `StatSheet`,
+artifact assignment, weapon assignment, or complete build.
+
+The same seam inspects four pinned representation files as text evidence. The
+source rotation requires three `N3D` and two `N2` prefixes; the current
+`noelle-na` formula is one inseparable A1-A4 aggregate, and the replay adapter
+has no part selector. Because every positive aggregate count contributes N4,
+the required 5/5/3/0 vector fails exact admission. The seam rejects replay and
+returns no numeric result rather than substituting `13/4`, rounding counts, or
+dropping the cancel token. This is representation preflight, not execution of
+the damage runtime.
+
 ## Current blockers
 
 - The consolidated repository still has no accepted executable damage plan.

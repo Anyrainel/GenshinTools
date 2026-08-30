@@ -393,6 +393,19 @@ Current durable pilot evidence:
   AutoTune, ideal-roll, or ER result is produced. Its current 266,139-byte
   output has SHA-256
   `e562a388eb22ff78a469d4f6be26491e37a48bfdd04760df207cd3bb84341c03`.
+- `noelle-investment-artifact-profile-computation-admission.json`
+  authenticates the exact 23-text-file outer closure and six JSON byte/object
+  pairs, then fresh-authenticates both Noelle investment slices and exact
+  manual/consolidated parity for four source records. It composes two partial
+  profiles with one shared condition-free 4pc Husk observation, eight
+  unselected main-stat options, and six newly source-bound ordinal substat
+  groups. The exact source rotation requires three `N3D` and two `N2`
+  prefixes, but the pinned calculator representation exposes only an
+  inseparable four-hit `noelle-na` aggregate. Replay admission is rejected and
+  zero numeric results, candidates, builds, assignments, optimizer runs,
+  ideal-roll outputs, or ER computations are produced. Its current 27,746-byte
+  output has SHA-256
+  `c0cb9cbc89ff842ff2cbc42c890a91e44553e095b4454fbcb5360aacc6202e5e`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -766,7 +779,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-seven globally integrated reports
+In full mode `validate.ts` rebuilds all forty-eight globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -813,6 +826,9 @@ this directory now contains 47 JSON reports.
 Checkpoint 50 adds the Xiao FFXX guarded Circlet/substat local-marginal
 diagnostic as integrated report 47. Including checkpoint 35's permission-
 isolated report, this directory now contains 48 JSON reports.
+Checkpoint 51 adds the Noelle investment artifact-profile and computation-
+representation admission as integrated report 48. Including checkpoint 35's
+permission-isolated report, this directory now contains 49 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

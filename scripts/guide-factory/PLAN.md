@@ -1128,6 +1128,24 @@ is produced. A later allocation checkpoint requires owner decisions about the
 CR/1:2 frame, legal artifact-quality budget, and filler-stat domain; broader
 source and validation work may continue independently.
 
+Checkpoint 51 switches to Noelle to test whether the same repository can
+preserve investment-sensitive advice without collapsing it into one universal
+build. It authenticates a 23-text-file outer closure, six JSON byte/object
+pairs, both Noelle investment slices, and exact manual/consolidated parity for
+the Husk, lower-stat, high-stat, and exact-team records. It composes two partial
+artifact profiles with eight main-stat options and six ordinal substat groups,
+but selects nothing and does not turn source order into numeric weights.
+
+The checkpoint also tests the next computation gate before spending work on an
+approximation. The source rotation requires three `N3D` and two `N2` prefixes,
+while the current calculator exposes only an inseparable four-hit normal
+aggregate. The required 5/5/3/0 hit vector is therefore not representable by
+any nonnegative aggregate count. Replay, damage, candidate generation, build
+assembly, equipment optimization, ideal-roll allocation, and ER stay closed.
+The next non-ER work should either add an exact prefix-capable representation
+as an explicit calculator improvement or select another source/team slice that
+is already exactly representable; it must not silently approximate this one.
+
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,
 formula authoring, recommendation composition, or build composition.
