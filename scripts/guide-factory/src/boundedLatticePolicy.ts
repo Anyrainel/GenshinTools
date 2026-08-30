@@ -49,8 +49,7 @@ export type CachedCoordinateDescentStep = {
   selectedNextNodeId: string | null;
   selectedEquivalentNextNodeIds: string[];
   selectedRepresentativeTiePolicy:
-    | "lowest-node-id-among-tolerance-equivalent-best-values"
-    | null;
+    "lowest-node-id-among-tolerance-equivalent-best-values" | null;
 };
 
 export type CachedCoordinateDescentTrace = {
@@ -88,6 +87,158 @@ export type CachedCoordinateDescentTrace = {
     | {
         reason: "start-node-failure";
         nodeId: string;
+        failure: CachedLatticeFailure;
+      };
+};
+
+export type CachedOneShotBestNeighborPassInput = CachedCoordinateDescentInput;
+
+export type CachedOneShotBestNeighborPassTrace = {
+  schemaVersion: 1;
+  classification: "cached-lattice-one-shot-best-neighbor-pass-trace";
+  interpretation: "technical-policy-audit-only";
+  policy: "deterministic-one-shot-best-neighbor";
+  evaluationSource: "cached-node-table-only";
+  evaluatorCalls: 0;
+  maximumNeighborhoodPasses: 1;
+  completedNeighborhoodPasses: 0 | 1;
+  direction: TechnicalObjectiveDirection;
+  tolerance: TechnicalObjectiveTolerance;
+  startNodeId: string;
+  pathNodeIds: string[];
+  examinedNodeIds: string[];
+  neighborNodeIds: string[];
+  comparableNeighborNodeIds: string[];
+  failureNeighborNodeIds: string[];
+  improvingNeighborNodeIds: string[];
+  equivalentToStartNeighborNodeIds: string[];
+  selectedNextNodeId: string | null;
+  selectedEquivalentNextNodeIds: string[];
+  selectedRepresentativeTiePolicy:
+    "lowest-node-id-among-tolerance-equivalent-best-values" | null;
+  encounteredFailures: Array<{
+    nodeId: string;
+    failure: CachedLatticeFailure;
+  }>;
+  outcome:
+    | {
+        status: "moved";
+        reason: "strictly-improving-best-neighbor-selected";
+        fromNodeId: string;
+        fromTechnicalObjective: number;
+        toNodeId: string;
+        toTechnicalObjective: number;
+        bestObservedImprovingTechnicalObjective: number;
+      }
+    | {
+        status: "unchanged";
+        reason: "no-strictly-improving-comparable-neighbor";
+        nodeId: string;
+        technicalObjective: number;
+      }
+    | {
+        status: "withheld";
+        reason: "start-node-failure";
+        nodeId: string;
+        failure: CachedLatticeFailure;
+      }
+    | {
+        status: "withheld";
+        reason: "neighborhood-incomparable";
+        nodeId: string;
+        technicalObjective: number;
+        failureNeighborNodeIds: string[];
+      };
+};
+
+export type CachedDeclaredDimensionCandidateOrder = {
+  dimension: string;
+  candidateValues: readonly string[];
+};
+
+export type CachedDeclaredOrderFirstImprovementInput =
+  CachedCoordinateDescentInput & {
+    declaredOrder: readonly CachedDeclaredDimensionCandidateOrder[];
+  };
+
+export type CachedDeclaredOrderCandidate = {
+  orderIndex: number;
+  dimension: string;
+  candidateValue: string;
+  nodeId: string;
+};
+
+export type CachedDeclaredOrderCandidateCheck =
+  | (CachedDeclaredOrderCandidate & {
+      cachedStatus: "comparable";
+      technicalObjective: number;
+      toleranceEquivalentToCurrent: boolean;
+      strictlyImprovesCurrent: boolean;
+    })
+  | (CachedDeclaredOrderCandidate & {
+      cachedStatus: "failure";
+      technicalObjective: null;
+      toleranceEquivalentToCurrent: null;
+      strictlyImprovesCurrent: null;
+      failure: CachedLatticeFailure;
+    });
+
+export type CachedDeclaredOrderFirstImprovementStep = {
+  iteration: number;
+  currentNodeId: string;
+  currentTechnicalObjective: number;
+  orderedCandidates: CachedDeclaredOrderCandidate[];
+  checkedCandidates: CachedDeclaredOrderCandidateCheck[];
+  equivalentCheckedNodeIds: string[];
+  selectedNextNodeId: string | null;
+  selectedDimension: string | null;
+  selectedCandidateValue: string | null;
+  relevantFailureNodeId: string | null;
+};
+
+export type CachedDeclaredOrderFirstImprovementTrace = {
+  schemaVersion: 1;
+  classification: "cached-lattice-declared-order-first-improvement-trace";
+  interpretation: "technical-policy-audit-only";
+  policy: "deterministic-declared-order-first-improvement";
+  evaluationSource: "cached-node-table-only";
+  evaluatorCalls: 0;
+  candidateSelectionPolicy: "first-strict-improvement-in-declared-order";
+  toleranceTiePolicy: "declared-order-first";
+  direction: TechnicalObjectiveDirection;
+  tolerance: TechnicalObjectiveTolerance;
+  startNodeId: string;
+  declaredOrder: Array<{
+    dimension: string;
+    candidateValues: string[];
+  }>;
+  pathNodeIds: string[];
+  examinedNodeIds: string[];
+  steps: CachedDeclaredOrderFirstImprovementStep[];
+  encounteredFailures: Array<{
+    nodeId: string;
+    failure: CachedLatticeFailure;
+  }>;
+  terminal:
+    | {
+        status: "complete";
+        reason: "no-strictly-improving-declared-candidate";
+        nodeId: string;
+        technicalObjective: number;
+        equivalentCheckedNodeIds: string[];
+      }
+    | {
+        status: "withheld";
+        reason: "start-node-failure";
+        nodeId: string;
+        failure: CachedLatticeFailure;
+      }
+    | {
+        status: "withheld";
+        reason: "relevant-cached-candidate-failure";
+        nodeId: string;
+        technicalObjective: number;
+        failedCandidate: CachedDeclaredOrderCandidate;
         failure: CachedLatticeFailure;
       };
 };
@@ -172,7 +323,376 @@ type PreparedTable = {
   dimensions: string[];
   nodes: BoundedLatticeNode[];
   nodeById: Map<string, BoundedLatticeNode>;
+  nodeByCoordinateKey: Map<string, BoundedLatticeNode>;
+  candidateValuesByDimension: Map<string, string[]>;
 };
+
+/**
+ * Inspect exactly one complete coordinate neighborhood and select its best
+ * strict improvement. The selected node is never used as the start of another
+ * pass.
+ */
+export function runCachedOneShotBestNeighborPass(
+  input: CachedOneShotBestNeighborPassInput,
+): CachedOneShotBestNeighborPassTrace {
+  const table = prepareTable(input.table);
+  validateCartesianClosure(table);
+  validateDirection(input.direction);
+  validateTolerance(input.tolerance);
+  const start = requireNode(table, input.startNodeId);
+
+  if (start.cachedResult.status === "failure") {
+    return {
+      schemaVersion: 1,
+      classification: "cached-lattice-one-shot-best-neighbor-pass-trace",
+      interpretation: "technical-policy-audit-only",
+      policy: "deterministic-one-shot-best-neighbor",
+      evaluationSource: "cached-node-table-only",
+      evaluatorCalls: 0,
+      maximumNeighborhoodPasses: 1,
+      completedNeighborhoodPasses: 0,
+      direction: input.direction,
+      tolerance: { ...input.tolerance },
+      startNodeId: start.nodeId,
+      pathNodeIds: [start.nodeId],
+      examinedNodeIds: [start.nodeId],
+      neighborNodeIds: [],
+      comparableNeighborNodeIds: [],
+      failureNeighborNodeIds: [],
+      improvingNeighborNodeIds: [],
+      equivalentToStartNeighborNodeIds: [],
+      selectedNextNodeId: null,
+      selectedEquivalentNextNodeIds: [],
+      selectedRepresentativeTiePolicy: null,
+      encounteredFailures: [
+        { nodeId: start.nodeId, failure: start.cachedResult.failure },
+      ],
+      outcome: {
+        status: "withheld",
+        reason: "start-node-failure",
+        nodeId: start.nodeId,
+        failure: start.cachedResult.failure,
+      },
+    };
+  }
+
+  const startTechnicalObjective = start.cachedResult.technicalObjective;
+  const neighbors = completeCoordinateNeighbors(table, start);
+  const comparableNeighbors = neighbors.filter(
+    (
+      neighbor,
+    ): neighbor is BoundedLatticeNode & {
+      cachedResult: Extract<CachedLatticeResult, { status: "comparable" }>;
+    } => neighbor.cachedResult.status === "comparable",
+  );
+  const failureNeighbors = neighbors.filter(
+    (
+      neighbor,
+    ): neighbor is BoundedLatticeNode & {
+      cachedResult: Extract<CachedLatticeResult, { status: "failure" }>;
+    } => neighbor.cachedResult.status === "failure",
+  );
+  const improvingNeighbors = comparableNeighbors.filter((neighbor) =>
+    isStrictImprovement(
+      neighbor.cachedResult.technicalObjective,
+      startTechnicalObjective,
+      input.direction,
+      input.tolerance,
+    ),
+  );
+  const equivalentToStartNeighborNodeIds = comparableNeighbors
+    .filter((neighbor) =>
+      areToleranceEquivalent(
+        neighbor.cachedResult.technicalObjective,
+        startTechnicalObjective,
+        input.tolerance,
+      ),
+    )
+    .map(nodeIdOf);
+  const selectedGroup = selectBestComparableGroup(
+    improvingNeighbors,
+    input.direction,
+    input.tolerance,
+  );
+  const selected =
+    failureNeighbors.length === 0
+      ? (selectedGroup?.representative ?? null)
+      : null;
+  const encounteredFailures = new Map<string, CachedLatticeFailure>();
+  for (const neighbor of failureNeighbors) {
+    encounteredFailures.set(neighbor.nodeId, neighbor.cachedResult.failure);
+  }
+
+  const common = {
+    schemaVersion: 1 as const,
+    classification: "cached-lattice-one-shot-best-neighbor-pass-trace" as const,
+    interpretation: "technical-policy-audit-only" as const,
+    policy: "deterministic-one-shot-best-neighbor" as const,
+    evaluationSource: "cached-node-table-only" as const,
+    evaluatorCalls: 0 as const,
+    maximumNeighborhoodPasses: 1 as const,
+    completedNeighborhoodPasses: 1 as const,
+    direction: input.direction,
+    tolerance: { ...input.tolerance },
+    startNodeId: start.nodeId,
+    pathNodeIds: selected ? [start.nodeId, selected.nodeId] : [start.nodeId],
+    examinedNodeIds: [start.nodeId, ...neighbors.map(nodeIdOf)],
+    neighborNodeIds: neighbors.map(nodeIdOf),
+    comparableNeighborNodeIds: comparableNeighbors.map(nodeIdOf),
+    failureNeighborNodeIds: failureNeighbors.map(nodeIdOf),
+    improvingNeighborNodeIds: improvingNeighbors.map(nodeIdOf),
+    equivalentToStartNeighborNodeIds,
+    selectedNextNodeId: selected?.nodeId ?? null,
+    selectedEquivalentNextNodeIds: selected
+      ? (selectedGroup?.equivalentNodeIds ?? [])
+      : [],
+    selectedRepresentativeTiePolicy: selected
+      ? ("lowest-node-id-among-tolerance-equivalent-best-values" as const)
+      : null,
+    encounteredFailures: failureEntries(encounteredFailures),
+  };
+
+  if (failureNeighbors.length > 0) {
+    return {
+      ...common,
+      outcome: {
+        status: "withheld",
+        reason: "neighborhood-incomparable",
+        nodeId: start.nodeId,
+        technicalObjective: startTechnicalObjective,
+        failureNeighborNodeIds: failureNeighbors.map(nodeIdOf),
+      },
+    };
+  }
+  if (!selected || !selectedGroup) {
+    return {
+      ...common,
+      outcome: {
+        status: "unchanged",
+        reason: "no-strictly-improving-comparable-neighbor",
+        nodeId: start.nodeId,
+        technicalObjective: startTechnicalObjective,
+      },
+    };
+  }
+  return {
+    ...common,
+    outcome: {
+      status: "moved",
+      reason: "strictly-improving-best-neighbor-selected",
+      fromNodeId: start.nodeId,
+      fromTechnicalObjective: startTechnicalObjective,
+      toNodeId: selected.nodeId,
+      toTechnicalObjective: selected.cachedResult.technicalObjective,
+      bestObservedImprovingTechnicalObjective:
+        selectedGroup.bestObservedTechnicalObjective,
+    },
+  };
+}
+
+/**
+ * Repeatedly select the first strict improvement encountered in the declared
+ * dimension and candidate-value order. Each new node restarts that order.
+ */
+export function runCachedDeclaredOrderFirstImprovementCoordinateDescent(
+  input: CachedDeclaredOrderFirstImprovementInput,
+): CachedDeclaredOrderFirstImprovementTrace {
+  const table = prepareTable(input.table);
+  validateCartesianClosure(table);
+  validateDirection(input.direction);
+  validateTolerance(input.tolerance);
+  const declaredOrder = prepareDeclaredOrder(table, input.declaredOrder);
+  const start = requireNode(table, input.startNodeId);
+  const examinedNodeIds = [start.nodeId];
+  const examined = new Set(examinedNodeIds);
+  const encounteredFailures = new Map<string, CachedLatticeFailure>();
+  const common = {
+    schemaVersion: 1 as const,
+    classification:
+      "cached-lattice-declared-order-first-improvement-trace" as const,
+    interpretation: "technical-policy-audit-only" as const,
+    policy: "deterministic-declared-order-first-improvement" as const,
+    evaluationSource: "cached-node-table-only" as const,
+    evaluatorCalls: 0 as const,
+    candidateSelectionPolicy:
+      "first-strict-improvement-in-declared-order" as const,
+    toleranceTiePolicy: "declared-order-first" as const,
+    direction: input.direction,
+    tolerance: { ...input.tolerance },
+    startNodeId: start.nodeId,
+    declaredOrder: declaredOrder.map(({ dimension, candidateValues }) => ({
+      dimension,
+      candidateValues: [...candidateValues],
+    })),
+  };
+
+  if (start.cachedResult.status === "failure") {
+    encounteredFailures.set(start.nodeId, start.cachedResult.failure);
+    return {
+      ...common,
+      pathNodeIds: [start.nodeId],
+      examinedNodeIds,
+      steps: [],
+      encounteredFailures: failureEntries(encounteredFailures),
+      terminal: {
+        status: "withheld",
+        reason: "start-node-failure",
+        nodeId: start.nodeId,
+        failure: start.cachedResult.failure,
+      },
+    };
+  }
+
+  const pathNodeIds = [start.nodeId];
+  const steps: CachedDeclaredOrderFirstImprovementStep[] = [];
+  let current = start;
+
+  while (current.cachedResult.status === "comparable") {
+    const currentTechnicalObjective = current.cachedResult.technicalObjective;
+    const orderedCandidates = orderedCoordinateCandidates(
+      table,
+      current,
+      declaredOrder,
+    );
+    const checkedCandidates: CachedDeclaredOrderCandidateCheck[] = [];
+    let selected: {
+      descriptor: CachedDeclaredOrderCandidate;
+      node: BoundedLatticeNode & {
+        cachedResult: Extract<CachedLatticeResult, { status: "comparable" }>;
+      };
+    } | null = null;
+
+    for (const descriptor of orderedCandidates) {
+      const candidate = table.nodeById.get(descriptor.nodeId);
+      if (!candidate) {
+        throw new Error(
+          `Declared candidate ${descriptor.nodeId} disappeared from the prepared table.`,
+        );
+      }
+      if (!examined.has(candidate.nodeId)) {
+        examined.add(candidate.nodeId);
+        examinedNodeIds.push(candidate.nodeId);
+      }
+      if (candidate.cachedResult.status === "failure") {
+        encounteredFailures.set(
+          candidate.nodeId,
+          candidate.cachedResult.failure,
+        );
+        checkedCandidates.push({
+          ...descriptor,
+          cachedStatus: "failure",
+          technicalObjective: null,
+          toleranceEquivalentToCurrent: null,
+          strictlyImprovesCurrent: null,
+          failure: candidate.cachedResult.failure,
+        });
+        steps.push({
+          iteration: steps.length,
+          currentNodeId: current.nodeId,
+          currentTechnicalObjective,
+          orderedCandidates,
+          checkedCandidates,
+          equivalentCheckedNodeIds: checkedCandidates
+            .filter(
+              (check) =>
+                check.cachedStatus === "comparable" &&
+                check.toleranceEquivalentToCurrent,
+            )
+            .map(({ nodeId }) => nodeId),
+          selectedNextNodeId: null,
+          selectedDimension: null,
+          selectedCandidateValue: null,
+          relevantFailureNodeId: candidate.nodeId,
+        });
+        return {
+          ...common,
+          pathNodeIds,
+          examinedNodeIds,
+          steps,
+          encounteredFailures: failureEntries(encounteredFailures),
+          terminal: {
+            status: "withheld",
+            reason: "relevant-cached-candidate-failure",
+            nodeId: current.nodeId,
+            technicalObjective: currentTechnicalObjective,
+            failedCandidate: descriptor,
+            failure: candidate.cachedResult.failure,
+          },
+        };
+      }
+
+      const comparableCandidate = candidate as BoundedLatticeNode & {
+        cachedResult: Extract<CachedLatticeResult, { status: "comparable" }>;
+      };
+      const toleranceEquivalentToCurrent = areToleranceEquivalent(
+        comparableCandidate.cachedResult.technicalObjective,
+        currentTechnicalObjective,
+        input.tolerance,
+      );
+      const strictlyImprovesCurrent = isStrictImprovement(
+        comparableCandidate.cachedResult.technicalObjective,
+        currentTechnicalObjective,
+        input.direction,
+        input.tolerance,
+      );
+      checkedCandidates.push({
+        ...descriptor,
+        cachedStatus: "comparable",
+        technicalObjective: comparableCandidate.cachedResult.technicalObjective,
+        toleranceEquivalentToCurrent,
+        strictlyImprovesCurrent,
+      });
+      if (strictlyImprovesCurrent) {
+        selected = { descriptor, node: comparableCandidate };
+        break;
+      }
+    }
+
+    const equivalentCheckedNodeIds = checkedCandidates
+      .filter(
+        (check) =>
+          check.cachedStatus === "comparable" &&
+          check.toleranceEquivalentToCurrent,
+      )
+      .map(({ nodeId }) => nodeId);
+    steps.push({
+      iteration: steps.length,
+      currentNodeId: current.nodeId,
+      currentTechnicalObjective,
+      orderedCandidates,
+      checkedCandidates,
+      equivalentCheckedNodeIds,
+      selectedNextNodeId: selected?.node.nodeId ?? null,
+      selectedDimension: selected?.descriptor.dimension ?? null,
+      selectedCandidateValue: selected?.descriptor.candidateValue ?? null,
+      relevantFailureNodeId: null,
+    });
+
+    if (!selected) {
+      return {
+        ...common,
+        pathNodeIds,
+        examinedNodeIds,
+        steps,
+        encounteredFailures: failureEntries(encounteredFailures),
+        terminal: {
+          status: "complete",
+          reason: "no-strictly-improving-declared-candidate",
+          nodeId: current.nodeId,
+          technicalObjective: currentTechnicalObjective,
+          equivalentCheckedNodeIds,
+        },
+      };
+    }
+
+    current = selected.node;
+    pathNodeIds.push(current.nodeId);
+  }
+
+  throw new Error(
+    "Declared-order first improvement selected an incomparable cached result.",
+  );
+}
 
 /**
  * Run best-improvement coordinate descent using only values already present in
@@ -183,6 +703,7 @@ export function runCachedBestImprovementCoordinateDescent(
   input: CachedCoordinateDescentInput,
 ): CachedCoordinateDescentTrace {
   const table = prepareTable(input.table);
+  validateDirection(input.direction);
   validateTolerance(input.tolerance);
   const start = requireNode(table, input.startNodeId);
   const visitedNodeIds: string[] = [start.nodeId];
@@ -217,8 +738,7 @@ export function runCachedBestImprovementCoordinateDescent(
   let current = start;
 
   while (current.cachedResult.status === "comparable") {
-    const currentTechnicalObjective =
-      current.cachedResult.technicalObjective;
+    const currentTechnicalObjective = current.cachedResult.technicalObjective;
     const neighbors = coordinateNeighbors(table, current);
     for (const neighbor of neighbors) {
       if (!visited.has(neighbor.nodeId)) {
@@ -231,7 +751,9 @@ export function runCachedBestImprovementCoordinateDescent(
     }
 
     const comparableNeighbors = neighbors.filter(
-      (neighbor): neighbor is BoundedLatticeNode & {
+      (
+        neighbor,
+      ): neighbor is BoundedLatticeNode & {
         cachedResult: Extract<CachedLatticeResult, { status: "comparable" }>;
       } => neighbor.cachedResult.status === "comparable",
     );
@@ -281,7 +803,9 @@ export function runCachedBestImprovementCoordinateDescent(
       currentNodeId: current.nodeId,
       currentTechnicalObjective,
       neighborNodeIds: neighbors.map(({ nodeId }) => nodeId),
-      comparableNeighborNodeIds: comparableNeighbors.map(({ nodeId }) => nodeId),
+      comparableNeighborNodeIds: comparableNeighbors.map(
+        ({ nodeId }) => nodeId,
+      ),
       failureNeighborNodeIds,
       improvingNeighborNodeIds: improvingNeighbors.map(({ nodeId }) => nodeId),
       selectedNextNodeId: selected?.nodeId ?? null,
@@ -303,8 +827,7 @@ export function runCachedBestImprovementCoordinateDescent(
               failureNeighborNodeIds,
             }
           : {
-              reason:
-                "no-strictly-improving-comparable-neighbor" as const,
+              reason: "no-strictly-improving-comparable-neighbor" as const,
               nodeId: current.nodeId,
               technicalObjective: currentTechnicalObjective,
               equivalentNeighborNodeIds,
@@ -341,6 +864,7 @@ export function selectCachedTableBestComparableReference(
   tolerance: TechnicalObjectiveTolerance,
 ): CachedTableBestReference {
   const table = prepareTable(tableInput);
+  validateDirection(direction);
   validateTolerance(tolerance);
   const failureNodeIds = table.nodes
     .filter(({ cachedResult }) => cachedResult.status === "failure")
@@ -364,7 +888,9 @@ export function selectCachedTableBestComparableReference(
   }
   const selected = selectBestComparableGroup(
     table.nodes.filter(
-      (node): node is BoundedLatticeNode & {
+      (
+        node,
+      ): node is BoundedLatticeNode & {
         cachedResult: Extract<CachedLatticeResult, { status: "comparable" }>;
       } => node.cachedResult.status === "comparable",
     ),
@@ -386,8 +912,7 @@ export function selectCachedTableBestComparableReference(
     failureNodeIds: [],
     bestObservedTechnicalObjective: selected.bestObservedTechnicalObjective,
     nodeId: selected.representative.nodeId,
-    technicalObjective:
-      selected.representative.cachedResult.technicalObjective,
+    technicalObjective: selected.representative.cachedResult.technicalObjective,
     representative: {
       nodeId: selected.representative.nodeId,
       technicalObjective:
@@ -405,6 +930,7 @@ export function traceCachedBeamCoverage(
   input: CachedBeamCoverageInput,
 ): CachedBeamCoverageTrace {
   const table = prepareTable(input.table);
+  validateDirection(input.direction);
   validateTolerance(input.tolerance);
   if (!Number.isInteger(input.width) || input.width < 1) {
     throw new Error("Beam width must be a positive integer.");
@@ -424,7 +950,11 @@ export function traceCachedBeamCoverage(
   const frontierByDepth = [{ depth: 0, nodeIds: frontier.map(nodeIdOf) }];
   const levels: CachedBeamCoverageLevel[] = [];
 
-  for (let depth = 1; depth <= input.maxDepth && frontier.length > 0; depth += 1) {
+  for (
+    let depth = 1;
+    depth <= input.maxDepth && frontier.length > 0;
+    depth += 1
+  ) {
     const discoveredById = new Map<string, BoundedLatticeNode>();
     for (const parent of frontier) {
       for (const neighbor of coordinateNeighbors(table, parent)) {
@@ -442,7 +972,9 @@ export function traceCachedBeamCoverage(
       }
     }
     const comparable = discovered.filter(
-      (node): node is BoundedLatticeNode & {
+      (
+        node,
+      ): node is BoundedLatticeNode & {
         cachedResult: Extract<CachedLatticeResult, { status: "comparable" }>;
       } => node.cachedResult.status === "comparable",
     );
@@ -506,11 +1038,16 @@ function prepareTable(input: BoundedLatticeNodeTable): PreparedTable {
 
   const nodes = [...input.nodes];
   const nodeById = new Map<string, BoundedLatticeNode>();
-  const coordinateOwners = new Map<string, string>();
+  const nodeByCoordinateKey = new Map<string, BoundedLatticeNode>();
+  const candidateValueSetsByDimension = new Map<string, Set<string>>(
+    dimensions.map((dimension) => [dimension, new Set<string>()]),
+  );
   const sortedDimensions = [...dimensions].sort(compareStrings);
   for (const node of nodes) {
     if (node.nodeId.length === 0 || nodeById.has(node.nodeId)) {
-      throw new Error(`Bounded lattice nodeId must be non-empty and unique: ${node.nodeId}`);
+      throw new Error(
+        `Bounded lattice nodeId must be non-empty and unique: ${node.nodeId}`,
+      );
     }
     const coordinateKeys = Object.keys(node.coordinates).sort(compareStrings);
     if (
@@ -521,33 +1058,92 @@ function prepareTable(input: BoundedLatticeNodeTable): PreparedTable {
         `Node ${node.nodeId} coordinates must match the declared dimensions.`,
       );
     }
-    if (
-      node.cachedResult.status === "comparable" &&
-      !Number.isFinite(node.cachedResult.technicalObjective)
-    ) {
-      throw new Error(`Node ${node.nodeId} has a non-finite technical objective.`);
+    for (const dimension of dimensions) {
+      const candidateValue = node.coordinates[dimension];
+      if (typeof candidateValue !== "string" || candidateValue.length === 0) {
+        throw new Error(
+          `Node ${node.nodeId} coordinate ${dimension} must be a non-empty string.`,
+        );
+      }
+      candidateValueSetsByDimension.get(dimension)?.add(candidateValue);
     }
-    if (
-      node.cachedResult.status === "failure" &&
-      (node.cachedResult.failure.code.length === 0 ||
-        node.cachedResult.failure.message.length === 0)
-    ) {
-      throw new Error(`Node ${node.nodeId} has an invalid cached failure.`);
+    const cachedResult: unknown = node.cachedResult;
+    if (!isRecord(cachedResult)) {
+      throw new Error(`Node ${node.nodeId} has an invalid cached result.`);
     }
-    const coordinateKey = dimensions
-      .map((dimension) => JSON.stringify(node.coordinates[dimension]))
-      .join("\u0000");
-    const owner = coordinateOwners.get(coordinateKey);
-    if (owner) {
+    if (cachedResult.status === "comparable") {
+      if (
+        typeof cachedResult.technicalObjective !== "number" ||
+        !Number.isFinite(cachedResult.technicalObjective)
+      ) {
+        throw new Error(
+          `Node ${node.nodeId} has a non-finite technical objective.`,
+        );
+      }
+    } else if (cachedResult.status === "failure") {
+      if (
+        !isRecord(cachedResult.failure) ||
+        typeof cachedResult.failure.code !== "string" ||
+        cachedResult.failure.code.length === 0 ||
+        typeof cachedResult.failure.message !== "string" ||
+        cachedResult.failure.message.length === 0
+      ) {
+        throw new Error(`Node ${node.nodeId} has an invalid cached failure.`);
+      }
+    } else {
       throw new Error(
-        `Nodes ${owner} and ${node.nodeId} have duplicate coordinates.`,
+        `Node ${node.nodeId} has an invalid cached result status.`,
       );
     }
-    coordinateOwners.set(coordinateKey, node.nodeId);
+    const coordinateKey = coordinateKeyOf(dimensions, node.coordinates);
+    const owner = nodeByCoordinateKey.get(coordinateKey);
+    if (owner) {
+      throw new Error(
+        `Nodes ${owner.nodeId} and ${node.nodeId} have duplicate coordinates.`,
+      );
+    }
+    nodeByCoordinateKey.set(coordinateKey, node);
     nodeById.set(node.nodeId, node);
   }
   nodes.sort(compareNodeIds);
-  return { dimensions, nodes, nodeById };
+  const candidateValuesByDimension = new Map<string, string[]>();
+  for (const dimension of dimensions) {
+    candidateValuesByDimension.set(
+      dimension,
+      [...(candidateValueSetsByDimension.get(dimension) ?? [])].sort(
+        compareStrings,
+      ),
+    );
+  }
+  return {
+    dimensions,
+    nodes,
+    nodeById,
+    nodeByCoordinateKey,
+    candidateValuesByDimension,
+  };
+}
+
+function validateCartesianClosure(table: PreparedTable): void {
+  let expectedNodeCount = 1;
+  for (const dimension of table.dimensions) {
+    const candidateValueCount =
+      table.candidateValuesByDimension.get(dimension)?.length ?? 0;
+    if (
+      candidateValueCount === 0 ||
+      expectedNodeCount > Number.MAX_SAFE_INTEGER / candidateValueCount
+    ) {
+      throw new Error(
+        "Bounded lattice Cartesian node count must be a safe positive integer.",
+      );
+    }
+    expectedNodeCount *= candidateValueCount;
+  }
+  if (table.nodes.length !== expectedNodeCount) {
+    throw new Error(
+      `Bounded lattice is missing Cartesian coordinates: expected ${expectedNodeCount}, received ${table.nodes.length}.`,
+    );
+  }
 }
 
 function requireNode(table: PreparedTable, nodeId: string): BoundedLatticeNode {
@@ -579,6 +1175,138 @@ function coordinateNeighbors(
   });
 }
 
+function completeCoordinateNeighbors(
+  table: PreparedTable,
+  target: BoundedLatticeNode,
+): BoundedLatticeNode[] {
+  const neighbors = new Map<string, BoundedLatticeNode>();
+  for (const dimension of table.dimensions) {
+    const candidateValues = table.candidateValuesByDimension.get(dimension);
+    if (!candidateValues) {
+      throw new Error(`Missing candidate-value domain for ${dimension}.`);
+    }
+    for (const candidateValue of candidateValues) {
+      if (candidateValue === target.coordinates[dimension]) {
+        continue;
+      }
+      const coordinates = {
+        ...target.coordinates,
+        [dimension]: candidateValue,
+      };
+      const neighbor = table.nodeByCoordinateKey.get(
+        coordinateKeyOf(table.dimensions, coordinates),
+      );
+      if (!neighbor) {
+        throw new Error(
+          `Missing bounded lattice coordinate from node ${target.nodeId}: ${dimension}=${JSON.stringify(candidateValue)}.`,
+        );
+      }
+      neighbors.set(neighbor.nodeId, neighbor);
+    }
+  }
+  return [...neighbors.values()].sort(compareNodeIds);
+}
+
+function prepareDeclaredOrder(
+  table: PreparedTable,
+  input: readonly CachedDeclaredDimensionCandidateOrder[],
+): Array<{ dimension: string; candidateValues: string[] }> {
+  if (!Array.isArray(input) || input.length !== table.dimensions.length) {
+    throw new Error(
+      "Declared order must contain each bounded lattice dimension exactly once.",
+    );
+  }
+  const seenDimensions = new Set<string>();
+  const declaredOrder: Array<{
+    dimension: string;
+    candidateValues: string[];
+  }> = [];
+  for (const entry of input) {
+    if (
+      !entry ||
+      typeof entry.dimension !== "string" ||
+      !table.dimensions.includes(entry.dimension) ||
+      seenDimensions.has(entry.dimension)
+    ) {
+      throw new Error(
+        "Declared order must contain each bounded lattice dimension exactly once.",
+      );
+    }
+    if (!Array.isArray(entry.candidateValues)) {
+      throw new Error(
+        `Declared candidate order for ${entry.dimension} must be an array.`,
+      );
+    }
+    const candidateValues = [...entry.candidateValues];
+    if (
+      candidateValues.some(
+        (candidateValue) =>
+          typeof candidateValue !== "string" || candidateValue.length === 0,
+      ) ||
+      new Set(candidateValues).size !== candidateValues.length
+    ) {
+      throw new Error(
+        `Declared candidate order for ${entry.dimension} must contain unique non-empty strings.`,
+      );
+    }
+    const actualValues =
+      table.candidateValuesByDimension.get(entry.dimension) ?? [];
+    if (
+      candidateValues.length !== actualValues.length ||
+      actualValues.some(
+        (candidateValue) => !candidateValues.includes(candidateValue),
+      )
+    ) {
+      throw new Error(
+        `Declared candidate order for ${entry.dimension} must contain its exact table domain.`,
+      );
+    }
+    seenDimensions.add(entry.dimension);
+    declaredOrder.push({
+      dimension: entry.dimension,
+      candidateValues,
+    });
+  }
+  return declaredOrder;
+}
+
+function orderedCoordinateCandidates(
+  table: PreparedTable,
+  current: BoundedLatticeNode,
+  declaredOrder: readonly {
+    dimension: string;
+    candidateValues: readonly string[];
+  }[],
+): CachedDeclaredOrderCandidate[] {
+  const candidates: CachedDeclaredOrderCandidate[] = [];
+  for (const { dimension, candidateValues } of declaredOrder) {
+    for (const candidateValue of candidateValues) {
+      if (candidateValue === current.coordinates[dimension]) {
+        continue;
+      }
+      const coordinates = {
+        ...current.coordinates,
+        [dimension]: candidateValue,
+      };
+      const candidate = table.nodeByCoordinateKey.get(
+        coordinateKeyOf(table.dimensions, coordinates),
+      );
+      if (!candidate) {
+        throw new Error(
+          `Missing bounded lattice coordinate from node ${current.nodeId}: ${dimension}=${JSON.stringify(candidateValue)}.`,
+        );
+      }
+      candidates.push({
+        orderIndex: candidates.length,
+        dimension,
+        candidateValue,
+        nodeId: candidate.nodeId,
+      });
+    }
+  }
+  return candidates;
+}
+
 function isStrictImprovement(
   candidate: number,
   incumbent: number,
@@ -587,7 +1315,17 @@ function isStrictImprovement(
 ): boolean {
   const directedDifference =
     direction === "maximize" ? candidate - incumbent : incumbent - candidate;
-  return directedDifference > comparisonTolerance(candidate, incumbent, tolerance);
+  return (
+    directedDifference > comparisonTolerance(candidate, incumbent, tolerance)
+  );
+}
+
+function areToleranceEquivalent(
+  left: number,
+  right: number,
+  tolerance: TechnicalObjectiveTolerance,
+): boolean {
+  return Math.abs(left - right) <= comparisonTolerance(left, right, tolerance);
 }
 
 function selectBestComparableGroup<
@@ -608,7 +1346,9 @@ function selectBestComparableGroup<
   }
   const exactBestValue = nodes.reduce((best, node) => {
     const value = node.cachedResult.technicalObjective;
-    return direction === "maximize" ? Math.max(best, value) : Math.min(best, value);
+    return direction === "maximize"
+      ? Math.max(best, value)
+      : Math.min(best, value);
   }, nodes[0].cachedResult.technicalObjective);
   const equivalentNodes = nodes
     .filter(
@@ -682,6 +1422,27 @@ function validateTolerance(tolerance: TechnicalObjectiveTolerance): void {
   ) {
     throw new Error("Objective tolerances must be finite and non-negative.");
   }
+}
+
+function validateDirection(direction: TechnicalObjectiveDirection): void {
+  if (direction !== "maximize" && direction !== "minimize") {
+    throw new Error(
+      "Technical objective direction must be maximize or minimize.",
+    );
+  }
+}
+
+function coordinateKeyOf(
+  dimensions: readonly string[],
+  coordinates: Readonly<Record<string, string>>,
+): string {
+  return dimensions
+    .map((dimension) => JSON.stringify(coordinates[dimension]))
+    .join("\u0000");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function failureEntries(
