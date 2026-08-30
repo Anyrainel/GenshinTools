@@ -21,15 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 46 performs the first authenticated genuine branch enumeration. It
-combines checkpoint 44's one Xiao FFXX partial candidate with checkpoint 45's
-six source-condition-free weapon leaves and ATK% Sands singleton, producing the
-exact bounded product `1 x 6 x 1 = 6`. The result retains two ranked five-star
-tied groups and one unranked Deathmatch group with no cross-rarity order. Every
-candidate has weapon, artifact set, Sands, and Goblet present while guarded
-Circlet and incomplete substats remain missing. It creates zero complete
-builds, Guide Factory recommendations, winners, damage results, ideal-roll
-allocations, rotation optimizations, or ER calculations.
+Checkpoint 47 is the first authenticated computation-backed evaluation of the
+six Xiao FFXX branch candidates, and it fails closed on a real calculator
+representation problem. Under one explicit Guide Factory-owned C0/R1-or-R5
+fixture, all six grouped `2 x Skill + 11 x High Plunge` replays disagree between
+the interpreted and compiled calculator paths because Xianyun's eight-use buff
+is stack-limited per execution unit. Expanding the same counts into thirteen
+unit lines restores dual-path agreement for all six candidates and preserves
+the grouped interpreted total, but does not validate a gameplay rotation or
+the fixture assumptions. The durable output is therefore authenticated and
+expectedly `not-comparable`: it emits no rank, winner, recommendation, damage
+claim, complete build, ideal-roll allocation, rotation claim, or ER result.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -833,6 +835,40 @@ This is not a working guide factory or an equipment recommendation:
      three branch groups, twelve provenance bindings, zero complete candidates
      or builds, and no selection, compatibility, recommendation, generator,
      optimizer, formula, damage, rotation, ideal-roll, or ER output.
+261. Byte-authenticate the exact 118-path checkpoint-47 closure, including 80
+     static first-party replay-runtime files, both beta gzip archives, the two
+     durable upstream reports, and the checkpoint-47 core and CLI. Require
+     byte/parsed-object parity for all twelve JSON inputs and pin execution to
+     the non-beta branch.
+262. Fresh-authenticate checkpoints 42 and 46 before constructing the bounded
+     replay fixture. Execute only the source-only C0 FFXX view; keep the
+     wrapper-C6 provenance view excluded from candidate identity and execution.
+263. Materialize only explicit Guide Factory-owned assumptions: level 90,
+     C0, 10/10/10 talents, R1 five-star weapons, R5 Deathmatch, current
+     supporter equipment, fixed Flower/Plume values, ATK% Sands, Anemo Goblet,
+     no Circlet, no substats, and no ER input. Record the no-Flower/Plume
+     variant as a rejected witness rather than choosing it silently.
+264. Replay the calculator-default `2 x Skill + 11 x High Plunge` plan in both
+     grouped and thirteen-unit representations. Preserve reaction and on-field
+     fields exactly and withhold the source fixture's twelve-plunge plan because
+     its no-external-buffs context is not the FFXX context.
+265. Capture both raw calculator paths when the normal replay gate rejects all
+     six grouped candidates. Require all six unit-expanded replays to agree,
+     all six grouped interpreted totals to equal their expanded interpreted
+     totals, and all six grouped compiled totals to remain unequal to their
+     expanded counterparts.
+266. Diagnose the observed boundary as grouped-line versus execution-unit
+     treatment of Xianyun's eight-use stack-limited buff. Treat unit expansion
+     as an authenticated representation experiment, not proof of rotation
+     quality, buff timing, DPS, or universal calculator correctness.
+267. Hash fixture identity, every candidate observation, the complete
+     observation set, and the aggregate preflight separately. Fail closed on
+     any raw byte, JSON object, upstream report, beta-state, fixture, formula
+     line, refinement, activation, observation, count, or capability drift.
+268. Integrate the result as global report 44 with six grouped replay
+     rejections, six unit-expanded agreements, zero comparable or ranked
+     candidates, and no winner, recommendation, guide, damage-comparison,
+     rotation, ideal-roll, or ER claim.
 
 The first two active sources are already in this repository:
 
@@ -940,6 +976,20 @@ Only the newly admitted weapon and Sands rows are source-condition-free;
 Marechaussee Hunter and the Anemo Goblet retain checkpoint 44's team-conditioned
 applicability provenance.
 
+Checkpoint 47 tries the first bounded computation over those six candidates
+and preserves the failure it discovers. The exact 118-path raw-byte closure
+contains 80 static first-party replay-runtime files, including both binary beta
+archives; twelve JSON inputs also require byte/parsed-object parity. The run is
+pinned to non-beta data, fresh-authenticates checkpoints 42 and 46, and executes
+only the C0 source-only FFXX view under explicit wrapper-owned fixture values.
+All six grouped two-line replays are rejected because the interpreted and
+compiled paths apply Xianyun's eight-use stack-limited buff differently. The
+same counts expanded to thirteen unit lines agree on both paths and preserve
+the grouped interpreted total, but that representation agreement does not
+validate a rotation, timing, or fixture quality. The authenticated result is
+therefore intentionally non-comparable and creates no rank, winner,
+recommendation, or player-facing damage claim.
+
 Mobalytics is registered as permission-blocked after its current terms were
 reviewed. Technically accessible content is not automatically active knowledge.
 Source-specific capture contracts live beside `sources/registry.json`.
@@ -1002,6 +1052,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-non-er-equipment-branch-source-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-non-er-condition-free-branch-candidate-contract.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-grouped-replay-representation-preflight.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1025,7 +1076,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all forty-three globally integrated durable reports
+In full mode it rebuilds all forty-four globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1043,7 +1094,9 @@ authenticated request/account-context applicability projection, the exact
 Klee, Diona, Kokomi, both Noelle, and Xiao catalog-integrated source-local
 condition slices, the authenticated two-view Xiao FFXX applicable-claim
 projection, its authenticated one-candidate/two-binding partial artifact
-contract, the exact
+contract, the authenticated six-candidate condition-free branch domain, its
+authenticated grouped-versus-unit-expanded replay representation preflight,
+the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration, plus the authenticated
@@ -1329,6 +1382,26 @@ view-evidence bindings. Source ranks and request facts remain provenance rather
 than technical identity. All nine guarded rows stay withheld, and no candidate
 is selected, compatibility-tested, materialized as a build, sent to the
 generator, or evaluated for formula, damage, rotation, ideal-roll, or ER output.
+
+Checkpoint 47 then attempts a computation instead of assuming that the
+existing replay seam is suitable. Its exact 118-path closure authenticates raw
+bytes for both upstreams, the complete selected first-party runtime graph, and
+the implementation boundary; twelve JSON inputs require parsed-object parity.
+The fixture keeps the partial Circlet/substat state and uses only explicit
+wrapper-owned numeric assumptions. Omitting the universal Flower/Plume main
+stats is recorded as a rejected variant because it does not reproduce the
+pinned witness. Candidate execution is sorted by technical candidate identity,
+not by source rank.
+
+The grouped calculator-default plan preserves two Xiao Skill uses and eleven
+High Plunges in two formula lines. Every grouped replay fails direct/compiled
+agreement, while the same counts expanded into thirteen unit lines agree for
+all six weapons. Xianyun's stack-limited buff activates eight times in both
+representations, but the grouped compiled path treats its per-line coverage
+differently. The source fixture's twelve-plunge plan is not cross-joined because
+it explicitly assumes no external buffs. The report authenticates this
+representation discrepancy as a reason to withhold comparison; it does not
+turn the six totals or their serialization order into a damage claim or rank.
 
 The manual condition-array inventory then broadens that validation boundary to
 eight guide-selected external snapshots. The ninth indexed snapshot is the

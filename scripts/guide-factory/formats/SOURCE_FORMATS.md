@@ -312,6 +312,24 @@ candidate IDs, technical/provenance hashes, missing-axis policies, and inherited
 view bindings are derived report fields. They must never be written back as KQM
 authorship, source ranking, source compatibility, or a complete source build.
 
+Checkpoint 47 also leaves every source snapshot and consolidated record
+unchanged. It consumes checkpoint 42's formula IDs/counts and checkpoint 46's
+partial candidates, then adds only Guide Factory-authored execution order,
+reaction/on-field flags, investment/refinement values, combat options, artifact
+sheet materialization, and representation observations. The KQM team record
+supports roster provenance only in this computation, and the GenshinTools team
+record authenticates roster equality only; supporter equipment copied for
+calculator runnability is wrapper configuration rather than source-authored
+investment or a Xiao build.
+
+The source rotation's exact no-external-buffs assumption is authenticated only
+to explain why its twelve-plunge plan is withheld from the externally buffed
+FFXX fixture. The six grouped failures, six unit-expanded agreements, numeric
+totals, Xianyun activation traces, fixture hashes, and non-comparable status are
+derived computation evidence. None may be written back as KQM formula order,
+source damage, source ranking, a recommended weapon, or a reusable source
+rotation.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

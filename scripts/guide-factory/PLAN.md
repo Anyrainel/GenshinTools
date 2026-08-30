@@ -1021,13 +1021,39 @@ Only the newly admitted weapon and Sands rows have empty source conditions;
 the inherited artifact-set and Goblet payloads retain their team-conditioned
 checkpoint-44 provenance.
 
-The next non-ER boundary should materialize only the minimum explicit
-Guide Factory-owned Circlet and substat assumptions required by one existing
-offline computation seam. It should retain those assumptions as candidate-
-local variants, report every materialization or evaluation failure, and compare
-the resulting technical observations with authenticated source groups and the
-existing Xiao formula-count mismatch. It must not emit a player-facing winner
-until the formula-count plan and objective are independently credible.
+Checkpoint 47 attempts that computation and records why the first form is not
+safe. It authenticates 118 exact raw-byte inputs: 80 files in the current
+static first-party replay-runtime graph, both binary beta archives, twelve JSON
+byte/object pairs, the checkpoint-42 and checkpoint-46 durable reports, and its
+own implementation boundary. An AST-based test independently derives the
+runtime graph from static imports, re-exports, and literal dynamic imports and
+requires exact set equality. The run is pinned to non-beta data and executes
+only the C0 source-only FFXX view under explicit wrapper-owned investment,
+refinement, combat, formula-order, execution-flag, and artifact-sheet
+assumptions. Xiao's Circlet, substats, and authored ER sheet remain absent.
+
+For every weapon, the two-line `2 x Skill + 11 x High Plunge` representation is
+rejected because interpreted and compiled damage disagree. Expanding the same
+counts to thirteen unit lines restores dual-path agreement and preserves the
+grouped interpreted total. The report freshly executes one PJWS variant without
+the universal Flower/Plume main stats and rejects it because it does not
+reproduce the pinned fixture. Checkpoint 42 supplies only formula IDs/counts;
+checkpoint 47 owns line order, `reaction: null`, and `forceOnField: true`. The
+source twelve-plunge plan remains withheld because its exact upstream
+assumption says no external buffs. Candidate execution and observation hashes
+are ordered by technical candidate ID, never source rank. This authenticated
+outcome is intentionally non-comparable and emits no rank, winner,
+recommendation, player-facing damage claim, rotation claim, ideal-roll result,
+or ER result.
+
+The next non-ER boundary should first isolate representation normalization as
+its own candidate execution gate. It may unit-expand count-only lines under an
+explicit wrapper-authored order, but must prove direct-total invariance and
+dual-path agreement per candidate, preserve every fixture assumption, and
+report technical observations without sorting or selecting them. Only after
+that gate is credible should the experiment add Circlet/substat variants or
+compare computed observations with authenticated source groups. A discrepancy
+must remain a validation target, not a player-facing winner.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

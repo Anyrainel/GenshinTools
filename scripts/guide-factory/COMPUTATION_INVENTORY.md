@@ -796,6 +796,42 @@ The source-condition-free label is scoped to the newly admitted weapon and
 Sands rows. The inherited artifact-set and Goblet axes retain their
 team-conditioned checkpoint-44 view provenance.
 
+## Xiao FFXX grouped-replay representation preflight seam
+
+`src/xiaoFfxxGroupedReplayRepresentationPreflight.ts` is the first bounded
+composition of an authenticated source branch with the real damage replay. It
+does not assume that a successful calculator call makes the candidate domain
+comparable. It fresh-authenticates checkpoints 42 and 46, hashes an exact
+118-file raw-byte closure, requires byte/parsed-object parity for twelve JSON
+inputs, pins the non-beta branch, and executes six C0 FFXX candidates sorted by
+technical candidate ID rather than source rank.
+
+The fixture is Guide Factory-authored. Checkpoint 42 supplies only Xiao formula
+IDs and counts; checkpoint 47 owns their Skill-then-Plunge line order,
+`reaction: null`, and `forceOnField: true`. Supporter equipment is copied from
+the GenshinTools calculator fixture only for runnability, while character
+investment, refinements, combat options, Xiao's candidate equipment, and all
+numeric artifact-sheet values remain wrapper assumptions. Xiao's sheet includes
+the fixed Flower/Plume values plus ATK% Sands and Anemo Goblet, but no Circlet,
+substats, or authored ER entry. A separate freshly executed PJWS probe proves
+that omitting Flower/Plume does not reproduce the pinned witness.
+
+Every grouped `2 x Skill + 11 x High Plunge` replay is correctly rejected by
+the existing `replayTeamDamage()` dual-path gate. Raw capture shows that
+Xianyun's eight-use stack-limited buff produces different interpreted and
+compiled totals when counts are represented as two grouped lines. Expanding
+the same counts into thirteen unit lines produces six direct/compiled
+agreements and the same interpreted totals. This diagnoses a representation
+boundary; it does not validate rotation order, timing, buff duration, DPS,
+fixture quality, or a damage ranking. The preflight remains authenticated but
+`not-comparable`, with every selection and guide capability false.
+
+The focused test derives the current 80-file first-party runtime graph from
+TypeScript static imports, re-exports, and literal dynamic imports and requires
+exact set equality. This protects the report from silently omitting a new
+runtime dependency while still distinguishing the complete runtime category
+from the broader upstream/report implementation closure.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -1243,6 +1279,8 @@ should use the expanded repository for a second character/team slice.
   `scripts/guide-factory/src/boundedLatticePolicyCensus.ts`.
 - Full-team non-ER local marginals with fail-closed multi-endpoint ranges:
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
+- Authenticated grouped-versus-unit-expanded replay representation diagnostic:
+  `scripts/guide-factory/src/xiaoFfxxGroupedReplayRepresentationPreflight.ts`.
 - Bounded full-team node-local generator/replay execution with intact versus
   cross-endpoint provenance:
   `scripts/guide-factory/src/boundedFullTeamEquipmentTechnicalComputation.ts`.
@@ -1302,6 +1340,11 @@ factory.
 - Combat options, reactions, on-field overrides, enemy context, extra buffs,
   and stack-limited buff activations can change the result and must be explicit
   in a real validation fixture.
+- Formula counts are not execution units. The Xiao FFXX preflight demonstrates
+  that grouping eleven plunges into one line changes the compiled treatment of
+  Xianyun's eight-use buff even though interpreted damage is invariant. Any
+  factory replay must authenticate a representation-normalization policy before
+  comparing candidates.
 - Omitted talents default to 10/10/10, while weapon base stats are resolved at
   level 90. The replay therefore requires explicit talents and labels its
   weapon-level assumption in the fixture evidence.

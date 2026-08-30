@@ -497,6 +497,41 @@ The empty-condition admission label applies only to the new weapon and Sands
 branches. Marechaussee Hunter and the Goblet remain explicitly team-conditioned
 inherited payloads.
 
+### Derived authenticated replay-representation preflights
+
+A replay-representation preflight is a derived validation report, not a source
+record, build, or recommendation. It may materialize one authenticated partial
+candidate domain under explicit wrapper-owned calculator assumptions, but it
+must keep source facts, upstream calculator defaults, wrapper-authored formula
+order/flags, runtime materialization, and computed observations in separate
+provenance fields.
+
+Its raw boundary must hash the exact declared runtime and upstream inputs. When
+the report claims a static first-party runtime closure, a separate graph check
+must derive local value imports, re-exports, and literal dynamic imports and
+reject both missing and unreachable paths. Binary resources are authenticated
+as raw bytes rather than decoded text. Every parsed JSON object used by the
+builder must agree with the authenticated bytes for that path.
+
+Formula-count equality does not establish execution representation. Grouped
+counts, unit-expanded lines, action order, reactions, and on-field flags must
+be explicit. If interpreted and compiled calculator paths disagree for any
+candidate, the report may authenticate the discrepancy but must mark the domain
+non-comparable and emit no rank, winner, recommendation, or damage-comparison
+claim. A representation that restores dual-path agreement is still only a
+technical witness until its ordering, timing, and fixture assumptions have
+independent authority.
+
+Checkpoint 47 applies this shape to the six Xiao FFXX partial candidates. It
+authenticates 118 raw-byte inputs, executes only the source-only C0 view, and
+keeps the wrapper-C6 view outside execution identity. Six grouped replays fail
+dual-path agreement; six unit-expanded replays agree and preserve interpreted
+totals. Candidate observations are sorted and hashed by technical candidate ID,
+not source rank. The source's twelve-plunge/no-external-buffs plan remains
+withheld from the externally buffed FFXX fixture. The report therefore has zero
+comparable or ranked candidates and supports no guide, build, stat, rotation,
+damage, ideal-roll, or ER claim.
+
 ### Derived isolated sign-only evidence joins
 
 A permission-isolated source may participate in a standalone validation report

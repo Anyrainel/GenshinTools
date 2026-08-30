@@ -304,6 +304,13 @@ import {
   XIAO_FFXX_NON_ER_CONDITION_FREE_BRANCH_CANDIDATE_SOURCE_FILE_PATHS,
   type XiaoFfxxNonErConditionFreeBranchCandidateContractReport,
 } from "./xiaoFfxxNonErConditionFreeBranchCandidateContract";
+import {
+  authenticateXiaoFfxxGroupedReplayRepresentationPreflight,
+  XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS,
+  XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_REPORT_PATH,
+  XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_SOURCE_FILE_PATHS,
+  type XiaoFfxxGroupedReplayRepresentationPreflightReport,
+} from "./xiaoFfxxGroupedReplayRepresentationPreflight";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -400,6 +407,8 @@ export async function runValidation(
     xiaoFfxxNonErConditionFreeBranchCandidateSourceFiles,
     xiaoFormulaCountParityInput,
     xiaoFormulaCountParitySourceFiles,
+    xiaoFfxxGroupedReplayRepresentationPreflightInput,
+    xiaoFfxxGroupedReplayRepresentationPreflightSourceFiles,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -630,6 +639,19 @@ export async function runValidation(
               path.join(REPOSITORY_ROOT, relativePath),
               "utf8",
             ),
+          }),
+        ),
+      ),
+      readJson(
+        XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_REPORT_PATH,
+      ),
+      Promise.all(
+        XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            bytesBase64: (
+              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+            ).toString("base64"),
           }),
         ),
       ),
@@ -1488,6 +1510,54 @@ export async function runValidation(
             "canonical-inputs-not-comparable"
               ? "The Xiao formula-count witness could not authenticate its exact EEQ12HP fixture, FFXX calculator baseline, two unreviewed aliases, scoped inputs, or current calculator defaults."
               : "The saved Xiao formula-count witness does not match the current scoped source fixture, calculator baseline, exact 2-versus-2 match, 12-versus-11 mismatch, and withheld-use boundary.",
+        });
+      }
+      const xiaoFfxxGroupedReplayRepresentationPreflightGeneratedFrom =
+        await hashRelativePaths(
+          XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS,
+        );
+      const xiaoFfxxGroupedReplayRepresentationPreflightAuthentication =
+        await authenticateXiaoFfxxGroupedReplayRepresentationPreflight(
+          xiaoFfxxGroupedReplayRepresentationPreflightInput as XiaoFfxxGroupedReplayRepresentationPreflightReport,
+          {
+            repositoryInput: expectedKnowledge,
+            xiaoManualSnapshotInput: xiaoManualInput.snapshot,
+            xiaoRotationFixtureSnapshotInput:
+              xiaoFormulaFixtureManualInput.snapshot,
+            genshinToolsSnapshotInput: genshinTools.data,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            xiaoSourceLocalDurableReportInput:
+              xiaoSourceLocalConditionSliceInput,
+            applicableClaimDurableReportInput:
+              xiaoFfxxApplicableClaimProjectionInput,
+            partialCandidateDurableReportInput:
+              xiaoFfxxPartialArtifactCandidateInput,
+            branchSourceDurableReportInput:
+              xiaoNonErEquipmentBranchSourceSliceInput,
+            branchCandidateDurableReportInput:
+              xiaoFfxxNonErConditionFreeBranchCandidateInput,
+            formulaCountDurableReportInput: xiaoFormulaCountParityInput,
+            sourceFiles:
+              xiaoFfxxGroupedReplayRepresentationPreflightSourceFiles,
+            generatedFrom:
+              xiaoFfxxGroupedReplayRepresentationPreflightGeneratedFrom,
+          },
+        );
+      if (!xiaoFfxxGroupedReplayRepresentationPreflightAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFfxxGroupedReplayRepresentationPreflightAuthentication.reason ===
+            "canonical-inputs-rejected"
+              ? "pipeline.rejected_xiao_ffxx_grouped_replay_representation_preflight"
+              : "pipeline.stale_xiao_ffxx_grouped_replay_representation_preflight",
+          path: "reports.xiao-ffxx-grouped-replay-representation-preflight",
+          message:
+            xiaoFfxxGroupedReplayRepresentationPreflightAuthentication.reason ===
+            "canonical-inputs-rejected"
+              ? "The Xiao FFXX grouped-replay representation preflight could not fresh-authenticate checkpoints 42 and 46, its exact 118-file byte closure, or the bounded six-candidate replay fixture."
+              : "The saved Xiao FFXX grouped-replay representation preflight does not match the current six grouped replay rejections, six unit-expanded agreements, explicit non-comparable boundary, and zero-rank/zero-recommendation outcome.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

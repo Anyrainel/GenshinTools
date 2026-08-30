@@ -322,6 +322,24 @@ Current durable pilot evidence:
   generator, optimizer, formula, damage, rotation, ideal-roll, or ER
   computation runs. Its current 64,466-byte output has SHA-256
   `d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e`.
+- `xiao-ffxx-grouped-replay-representation-preflight.json` authenticates the
+  exact 118-file raw-byte closure for the first Xiao branch computation. The
+  closure includes 80 files in the current static first-party replay-runtime
+  graph, both beta gzip archives, twelve JSON byte/object parity checks, both
+  durable upstream reports, and the checkpoint implementation. It fresh-
+  authenticates checkpoints 42 and 46, executes only the C0 source-only FFXX
+  view, and sorts execution by technical candidate ID rather than source rank.
+  All six grouped `2 x Skill + 11 x High Plunge` replays fail interpreted/
+  compiled agreement; all six thirteen-unit expansions agree and retain the
+  grouped interpreted totals. A separate freshly executed PJWS probe rejects
+  omitting universal Flower/Plume main stats. Checkpoint 42 owns only formula
+  IDs/counts, while line order and execution flags are checkpoint-47 wrapper
+  assumptions. The source twelve-plunge plan remains withheld because its
+  authenticated context assumes no external buffs. The result is intentionally
+  non-comparable and emits zero ranks, winners, recommendations, complete
+  builds, damage-comparison claims, rotation claims, ideal-roll results, or ER
+  results. Its current 50,180-byte output has SHA-256
+  `d32b45449ff4e3e2f423c13f3d693d08910b6a2aeaaf04b7a846d4b44db7e79b`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -695,7 +713,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all forty-three globally integrated reports
+In full mode `validate.ts` rebuilds all forty-four globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -730,6 +748,9 @@ now contains 43 JSON reports.
 Checkpoint 46 adds the Xiao FFXX condition-free branch candidate domain as
 integrated report 43. Including checkpoint 35's permission-isolated report,
 this directory now contains 44 JSON reports.
+Checkpoint 47 adds the Xiao FFXX grouped-replay representation preflight as
+integrated report 44. Including checkpoint 35's permission-isolated report,
+this directory now contains 45 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163
