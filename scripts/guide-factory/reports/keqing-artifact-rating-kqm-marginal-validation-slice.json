@@ -85,7 +85,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-team-stat-marginal-diagnostic.json",
-      "sha256": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5"
+      "sha256": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
@@ -105,7 +105,7 @@
       "artifactRatingSnapshot": "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
       "kqmEquipmentReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
       "kqmRawSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
-      "marginalReport": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+      "marginalReport": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
       "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     "files": [
@@ -124,9 +124,9 @@
         "path": "scripts/guide-factory/data/knowledge/repository.json"
       },
       {
-        "expectedSha256": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+        "expectedSha256": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
         "matches": true,
-        "observedSha256": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+        "observedSha256": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
         "occurrenceCount": 1,
         "path": "scripts/guide-factory/reports/keqing-ineffa-team-stat-marginal-diagnostic.json"
       },
@@ -150,7 +150,7 @@
       "artifactRatingSnapshot": "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
       "kqmEquipmentReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
       "kqmRawSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
-      "marginalReport": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+      "marginalReport": "043f97e8003cc2b923d1fe7eb47cf5ff72e50c1842b175d237dea9d12a607205",
       "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
     },
     "parsedPayloadsMatch": true

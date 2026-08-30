@@ -156,7 +156,7 @@
     },
     {
       "path": "scripts/guide-factory/src/boundedLatticePolicy.ts",
-      "sha256": "8a2a91be99543e620737bcf5fb2ccb551af4cac4c064cb4dc8292b45d61068f3"
+      "sha256": "73a9ee8f253686ec63fb841287953fe3fb342b491316b7915bb4299144266bbc"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -5269,7 +5269,7 @@
       },
       {
         "path": "scripts/guide-factory/src/boundedLatticePolicy.ts",
-        "sha256": "8a2a91be99543e620737bcf5fb2ccb551af4cac4c064cb4dc8292b45d61068f3"
+        "sha256": "73a9ee8f253686ec63fb841287953fe3fb342b491316b7915bb4299144266bbc"
       },
       {
         "path": "scripts/guide-factory/src/computationReplay.ts",
