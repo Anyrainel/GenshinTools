@@ -21,19 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 57 resolves six exact entered-investment requests to the two
-authenticated checkpoint-53 partial candidates, using entered constellation
-and talent facts rather than runtime-effective talent levels. It then applies a
-fail-closed gate to each request's three adjacent source stat relations. Every
-gate must retain all 16 checkpoint-56 Circlet/refinement/Nicole/Husk contexts
-and all four matching robustness rows; 15/16 is not enough and no majority vote
-or average is permitted. The current result admits 12 local relations and
-withholds 6 with counterexamples while consuming all 288 raw diagnostics and
-72 robustness rows exactly once. The original source groups and complete CP53
-candidate objects remain unchanged. This is request-conditioned partial
-validation only: nothing is selected or ranked, no total stat order or scalar
-weight is synthesized, and rotation, team-total, DPS, timing, and ER work stay
-deferred.
+Checkpoint 58 projects checkpoint 57's six authenticated request envelopes into
+a generic, blocker-aware character-guide draft format. Two packets have all
+three request-local relations admitted and four retain counterexamples, but all
+six remain incomplete and publication-withheld. Across 200 explicit field
+states, the projection preserves the exact team, entered and runtime-effective
+talents as separate facts, Gest and 4pc Husk observations, every main-stat
+option and guard, the original unordered source groups, and all 18 relation
+overlays. Thirty-six selections stay null and 128 deterministic blockers state
+what still prevents a guide. Nothing is selected or ranked, no total stat order
+or scalar weight is synthesized, and rotation, team-total, DPS, timing, and ER
+work stay deferred.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -1123,6 +1121,19 @@ This is not a working guide factory or an equipment recommendation:
      once, preserve the complete checkpoint-53 candidates unchanged, and emit
      zero selections, rankings, optimizer runs, damage, rotation, ideal-stat,
      or ER results.
+343. Authenticate checkpoint 58 through an exact 123-path workspace byte/hash
+     closure that includes the durable checkpoint-57 report and the generic
+     packet schema, then fresh-authenticate checkpoint 57 before projection.
+344. Serialize exactly six request-scoped offline draft packets through a closed
+     field-state machine, retaining entered/runtime talent separation, source
+     observations, guards, missing values, and relation overlays by exact JSON
+     pointer and content hash.
+345. Keep all six packets incomplete and publication-withheld through 128
+     deterministic field-linked blockers: 19 common blockers per packet, eight
+     unresolved-guard additions, and six counterexample-relation additions.
+346. Preserve all 36 null selections without inventing a sole-option default,
+     rank, scalar weight, legal allocation, optimizer result, damage, rotation,
+     team total, or Energy Recharge value.
 
 The first two active sources are already in this repository:
 
@@ -1328,6 +1339,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-equipment-response-surface.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-local-stat-priority-diagnostic.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-request-conditioned-candidate-admission.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-guide-draft-projection.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1351,7 +1363,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all fifty-four globally integrated durable reports
+In full mode it rebuilds all fifty-five globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-

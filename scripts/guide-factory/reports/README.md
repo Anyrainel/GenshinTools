@@ -489,6 +489,18 @@ Current durable pilot evidence:
   optimizer, damage, rotation, total-stat-order, ideal-allocation, or ER work.
   Its current 663,723-byte output has SHA-256
   `a0fa6a720da5ee14b6723db28d538b9588d78ef2d3b552d3db0641a14d6bbdb6`.
+- `noelle-hexerei-guide-draft-projection.json` fresh-authenticates checkpoint
+  57 from an exact 123-path byte/hash closure, then projects its six request
+  envelopes through the generic closed field-state format. The result contains
+  200 fields, 206 exact upstream provenance references, 36 null selections,
+  eight guarded alternatives, 12 locally admitted relation overlays, six
+  counterexample-withheld overlays, and 128 deterministic field-linked
+  blockers. Two packets have all three local relations admitted and four are
+  partial, but all six remain incomplete and publication-withheld. The report
+  performs no selection, ranking, optimizer, AutoTune, damage, rotation,
+  team-total, ideal-allocation, scalar-weight, or ER work. Its current
+  916,583-byte output has SHA-256
+  `088f52d4396d56f56c02737ad7342e6e7c32381b6dbd308616bac0bf01b43c56`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -930,6 +942,11 @@ this directory now contains 54 JSON reports.
 Checkpoint 57 adds the Noelle Hexerei request-conditioned candidate admission as
 integrated report 54. Including checkpoint 35's permission-isolated report,
 this directory now contains 55 JSON reports.
+Checkpoint 58 adds the Noelle Hexerei blocker-aware guide-draft projection as
+integrated report 55. Including checkpoint 35's permission-isolated report,
+this directory now contains 56 JSON reports. Its six packets contain 200 exact
+field states and 128 field-linked blockers; all remain publication-withheld and
+Energy Recharge remains deferred.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

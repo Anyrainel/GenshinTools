@@ -381,6 +381,13 @@ import {
   NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_REPORT_PATH,
   type NoelleHexereiRequestConditionedCandidateAdmissionReport,
 } from "./noelleHexereiRequestConditionedCandidateAdmission";
+import {
+  authenticateNoelleHexereiGuideDraftProjectionFromWorkspace,
+} from "./assemble-noelle-hexerei-guide-draft-projection";
+import {
+  NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_REPORT_PATH,
+  type NoelleHexereiGuideDraftProjectionReport,
+} from "./noelleHexereiGuideDraftProjection";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1965,6 +1972,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle Hexerei request-conditioned candidate admission failed fresh authentication: ${error.message}`
               : "The saved Noelle Hexerei request-conditioned candidate admission failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleHexereiGuideDraftProjectionInput = await readJson(
+          NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_REPORT_PATH,
+        );
+        await authenticateNoelleHexereiGuideDraftProjectionFromWorkspace(
+          noelleHexereiGuideDraftProjectionInput as NoelleHexereiGuideDraftProjectionReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_hexerei_guide_draft_projection",
+          path: "reports.noelle-hexerei-guide-draft-projection",
+          message:
+            error instanceof Error
+              ? `The saved Noelle Hexerei guide-draft projection failed fresh authentication: ${error.message}`
+              : "The saved Noelle Hexerei guide-draft projection failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

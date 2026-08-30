@@ -1287,12 +1287,28 @@ validation, or recommendation is created. Weapon refinement/performance,
 guarded main-stat alternatives, legal allocation, source review, rotation,
 team total, timing, and ER remain unresolved.
 
-The next non-ER step should test a generic draft-guide projection over these
-request-conditioned envelopes. It should serialize only evidence-backed fields,
-retain field-level blockers and provenance, and expose the difference between
-the two all-relations-admitted requests and the four partially withheld ones.
-It must remain an offline validation artifact rather than a published guide,
-and it must not manufacture the still-null equipment choices or stat weights.
+Checkpoint 58 implements that generic draft seam. Its 123-path closure includes
+the durable checkpoint-57 report, the closed packet-state implementation, and
+the Noelle projector/CLI. Checkpoint 57 is freshly authenticated before six
+packets are constructed. Each of 200 fields points to an exact upstream object
+and value, retains its state and content hash, and links any publication blocker
+back to that exact field hash.
+
+The packets preserve 36 null selections, eight guarded alternatives, twelve
+locally admitted relation overlays, and six counterexample-withheld overlays.
+They contain 128 deterministic blockers: 19 common blockers per packet, plus
+the eight unresolved guards and six withheld relations. Two packets have all
+three local relations admitted and four are partial, but all six independently
+remain incomplete and publication-withheld. No sole option becomes a default,
+and no rank, weight, allocation, optimization, damage, rotation, team total, or
+ER result is created.
+
+The next non-ER step should test portability instead of deepening the Noelle
+fixture again. Inventory the existing authenticated Itto, Xiao, Klee, Kokomi,
+Diona, and Keqing slices against the generic field-state contract, identify
+which one can produce a second-character packet without inventing missing
+facts, and make every unsupported field an explicit blocker. That inventory
+must distinguish a format gap from a source-data gap and a computation gap.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

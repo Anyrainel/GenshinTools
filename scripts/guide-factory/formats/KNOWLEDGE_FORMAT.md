@@ -941,6 +941,57 @@ relation, envelope, and aggregate identities remain content-addressed. The
 aggregate identity must commit to both authenticated upstream reports and the
 complete technical request, not merely to the derived rows.
 
+### Evidence-backed character guide draft packets
+
+An evidence-backed character guide draft packet is an offline interchange and
+validation artifact. It is not a knowledge-record kind, a character guide, or a
+publication candidate. Its purpose is to expose exactly what an authenticated
+request-conditioned candidate currently says, what local computation admitted,
+and what still prevents a credible guide.
+
+Every projected field uses a closed, discriminated state:
+
+- `preserved-evidence` copies one exact upstream observation without treating it
+  as selected or recommended;
+- `preserved-blocking-evidence` copies an exact upstream value that independently
+  prevents publication, such as `unreviewed`, `unspecified`, or `false`;
+- `locally-admitted-relation` preserves an exact request-local unanimous ordinal
+  overlay without turning it into a universal priority or total order;
+- `withheld-counterexample` and `withheld-inconclusive` preserve the complete
+  upstream relation while keeping its projected value null;
+- `guarded-unresolved-alternative` preserves an option and its conditions while
+  keeping the option unselected;
+- `unselected` keeps an explicit null selection and links it to the exact option
+  fields that remain available;
+- `missing-not-zero`, `not-computed`, and `deferred-missing-not-zero` distinguish
+  absent inputs, work that did not run, and intentionally postponed work.
+
+Each field has an exact JSON pointer into its authenticated upstream report, an
+upstream object identity and canonical hash, an exact source-value hash, a
+field hash, and zero or more deterministic blocker IDs. Every blocker points
+back to the exact field path and hash. Packets fail authentication on an orphan,
+duplicate, unknown, or tampered field/blocker link. The packet root separately
+binds the upstream report, envelope, candidate, and profile identities.
+
+Standalone validation also requires a trusted projector policy captured from a
+canonical reconstruction, never derived from the packet being checked. That
+policy binds the complete container/array/field-tree shape and every canonical
+field hash, state, blocker code, and option link. The packet stores closed codes
+rather than unauthenticated explanatory prose, so rehashing a label cannot turn
+a guarded, missing, or withheld value into a recommendation claim.
+
+Projection completeness, local-relation status, and final-guide readiness are
+independent. A packet can have a complete observation projection and all local
+relations admitted while still being an incomplete, publication-withheld draft.
+Serialization order is never rank. Null is never rewritten as a default option,
+zero, R1, R5, or a sole-option selection.
+
+The current Noelle checkpoint preserves six request packets, their exact team,
+Gest and 4pc Husk observations, main-stat choices and guards, original substat
+groups, and eighteen CP57 relation overlays. It selects nothing and computes no
+damage, rotation, team total, ideal allocation, scalar weights, or Energy
+Recharge.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER
