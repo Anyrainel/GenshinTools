@@ -1502,10 +1502,10 @@ export const i18nUiData = {
       en: "Rolls Count",
       zh: "词条数",
     },
-    stellarAttachHits: { en: "Stellar hits", zh: "星烁附着" },
+    stellarAttachHits: { en: "Polestar applications", zh: "极星附着" },
     stellarAttachHitsTip: {
-      en: "Attach hits recorded each 3s (1–12), scaling Stellar-Conduct and Stellar Swirl base DMG. Coeff from the datamined Stellar-Conduct table (1.45× at 1 hit → 2.0× at 12).",
-      zh: "每 3 秒记录的附着次数（1–12），影响星超导与星扩散的反应基础伤害。系数取自星超导解包表（1 次 1.45×，12 次 2.0×）。",
+      en: "Applications recorded by the Polestar Field every 4s (1–12). They determine its Cryo/Electro DMG Bonus and the direct Stellar-Conduct coefficient (1.45× at 1 hit → 2.0× at 12). Direct Stellar Swirl always uses 1.0×.",
+      zh: "极星辉域每 4 秒记录的附着次数（1–12），决定辉域的冰、雷元素伤害加成与星超导直伤系数（1 次 1.45×，12 次 2.0×）。星扩散直伤系数恒为 1.0×。",
     },
     emptyOptMsg: {
       en: "Press Run Optimization to find the best artifact loadout.",

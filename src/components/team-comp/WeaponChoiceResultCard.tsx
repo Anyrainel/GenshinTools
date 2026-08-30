@@ -31,8 +31,8 @@ import {
 import type { ArtifactSetConfig } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DEFAULT_CALC_CONTEXT } from "@/lib/dmgcalc/constants";
+import type { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import type { CalcContext } from "@/lib/dmgcalc/types";
-import { teamHasStellarEnabler } from "@/lib/dmgcalc/utils";
 import type { WeaponChoiceProgress } from "@/lib/team-comp/analyzer/weaponChoice";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type {
@@ -177,6 +177,7 @@ interface WeaponChoiceResultCardProps {
   characters: (string | null)[];
   weapons: (string | null)[];
   artifacts: (ArtifactSetConfig | null)[];
+  teamMeta: TeamMeta;
   onTeamCompChange: (comp: TeamComp) => void;
   onSetupConfigChange: (
     updater:
@@ -709,6 +710,7 @@ export function WeaponChoiceResultCard({
   characters,
   weapons,
   artifacts,
+  teamMeta,
   onTeamCompChange,
   onSetupConfigChange,
   setChoiceResult,
@@ -725,7 +727,7 @@ export function WeaponChoiceResultCard({
 }: WeaponChoiceResultCardProps) {
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const ctx = setupConfig.damage?.calcContext ?? {};
-  const hasStellar = teamHasStellarEnabler(characters);
+  const hasStellarConduct = teamMeta.hasReaction("stellarConduct");
 
   const patchCtx = useCallback(
     (patch: Partial<CalcContext>) => {
@@ -825,7 +827,7 @@ export function WeaponChoiceResultCard({
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
-          {hasStellar && (
+          {hasStellarConduct && (
             <StellarDirectCoeffInput
               stellarAttachHits={ctx.stellarAttachHits}
               stellarDirectCoeff={ctx.stellarDirectCoeff}

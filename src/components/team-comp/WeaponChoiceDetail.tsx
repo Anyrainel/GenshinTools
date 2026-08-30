@@ -619,6 +619,7 @@ export function WeaponChoiceDetail({
           characters={characters}
           weapons={weapons}
           artifacts={artifacts}
+          teamMeta={teamBuild.teamMeta}
           onTeamCompChange={(comp) => updateTeamComp(comp.id, comp)}
           onSetupConfigChange={updateSetupConfig}
           setChoiceResult={persistChoiceResult}

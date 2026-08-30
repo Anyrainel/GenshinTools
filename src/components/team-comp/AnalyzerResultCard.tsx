@@ -10,8 +10,8 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DEFAULT_CALC_CONTEXT } from "@/lib/dmgcalc/constants";
+import type { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import type { CalcContext } from "@/lib/dmgcalc/types";
-import { teamHasStellarEnabler } from "@/lib/dmgcalc/utils";
 import type {
   AnalyzerCharConfig,
   AnalyzerResult,
@@ -37,6 +37,7 @@ interface AnalyzerResultCardProps {
   calcContext: Partial<CalcContext>;
   onCalcContextChange: (patch: Partial<CalcContext>) => void;
   charConfigs: AnalyzerCharConfig[];
+  teamMeta: TeamMeta;
   isComputing: boolean;
   result: AnalyzerResult | null;
   progress: { overallProgress: number; phase: string } | null;
@@ -49,6 +50,7 @@ export function AnalyzerResultCard({
   calcContext,
   onCalcContextChange,
   charConfigs,
+  teamMeta,
   isComputing,
   result,
   progress,
@@ -72,7 +74,7 @@ export function AnalyzerResultCard({
   );
 
   const charIds = charConfigs.map((c) => c.charId);
-  const hasStellar = teamHasStellarEnabler(charIds);
+  const hasStellarConduct = teamMeta.hasReaction("stellarConduct");
 
   return (
     <Card className={CARD_CLS}>
@@ -110,7 +112,7 @@ export function AnalyzerResultCard({
             onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
             t={t}
           />
-          {hasStellar && (
+          {hasStellarConduct && (
             <StellarDirectCoeffInput
               stellarAttachHits={ctx.stellarAttachHits}
               stellarDirectCoeff={ctx.stellarDirectCoeff}

@@ -1331,18 +1331,10 @@ class TravelerCryo extends CharacterBase {
         ]
       : undefined;
 
-    // P4 重击·冰凝: always Cryo, +140% ATK, and reclassified as Stellar Glimmer
-    // reaction DMG while a Radiance state is active.
-    const freezingIceBonus = [
-      new ScalingBuff(
-        cbs(this, "P4", ["charge"]),
-        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        [],
-        "atk",
-        "baseDmg",
-        1.4
-      ),
-    ];
+    // P4 重击·冰凝: each strike adds 140% ATK to its raw talent
+    // multiplier, and is reclassified as Stellar Glimmer reaction DMG while a
+    // Radiance state is active.
+    const freezingIceMultiplierBonus = 1.4;
     const freezingIceFormula = (mult: number) =>
       this.rState === "stellarSwirl"
         ? new StellarDirectFormula(mult, {
@@ -1425,12 +1417,14 @@ class TravelerCryo extends CharacterBase {
         when: this.hasStellarGlimmer,
         parts: [
           {
-            formula: freezingIceFormula(this.param("A", 6)),
-            bespokeBuffs: freezingIceBonus,
+            formula: freezingIceFormula(
+              this.param("A", 6) + freezingIceMultiplierBonus
+            ),
           },
           {
-            formula: freezingIceFormula(this.param("A", 7)),
-            bespokeBuffs: freezingIceBonus,
+            formula: freezingIceFormula(
+              this.param("A", 7) + freezingIceMultiplierBonus
+            ),
           },
         ],
       },

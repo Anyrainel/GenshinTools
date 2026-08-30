@@ -9,7 +9,6 @@ import {
   STELLAR_DIRECT_COEFF_DEFAULT,
   STELLAR_DIRECT_COEFF_MAX,
   STELLAR_DIRECT_COEFF_MIN,
-  STELLAR_ENABLERS,
 } from "./constants";
 import type { CalcContext, DamageTag, DamageTagFilter } from "./types";
 
@@ -89,21 +88,6 @@ export function resolveStellarDirectCoeff(ctx: CalcContext): number {
  */
 export function resolvePolestarElementDmgBonus(ctx: CalcContext): number {
   return 0.28 + resolveStellarAttachHits(ctx) * 0.01;
-}
-
-/**
- * True when the party contains a Stellar enabler for any stellar reaction, i.e.
- * `StellarDirectFormula` damage can appear and `stellarAttachHits` is meaningful.
- * Element pairing is not re-checked here — every Radiance option is already gated
- * on `teamMeta.hasReaction(...)`, so this only drives control visibility and must
- * cover Stellar Swirl teams (Odette, Vesna) as well as Stellar-Conduct ones.
- */
-export function teamHasStellarEnabler(
-  charIds: readonly (string | null | undefined)[]
-): boolean {
-  return Object.values(STELLAR_ENABLERS).some((enablers) =>
-    enablers.some((id) => charIds.includes(id))
-  );
 }
 
 /** Extract the 4pc set ID, or null if not a 4pc config. */

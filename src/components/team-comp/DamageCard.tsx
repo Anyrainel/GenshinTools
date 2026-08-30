@@ -59,7 +59,6 @@ import type {
   DisplayPart,
   DisplayResult,
 } from "@/lib/dmgcalc/types";
-import { teamHasStellarEnabler } from "@/lib/dmgcalc/utils";
 import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
 import { toStatSheets } from "@/lib/team-comp/teamConfigUtils";
@@ -1691,7 +1690,8 @@ export function DamageCard({
   };
 
   const hasActiveFormula = comboLines?.some((l) => l.count > 0);
-  const hasStellar = teamHasStellarEnabler(characters);
+  const hasStellarConduct =
+    teamBuild?.teamMeta.hasReaction("stellarConduct") ?? false;
 
   // DPS calculator state (per-session)
   const [dpsSeconds, setDpsSeconds] = useSessionState("dpsSeconds", "");
@@ -1817,7 +1817,7 @@ export function DamageCard({
         <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
-            {hasStellar && <StellarDirectCoeffFields {...ctxProps} />}
+            {hasStellarConduct && <StellarDirectCoeffFields {...ctxProps} />}
           </div>
           {currentDisplayResult && teamBuild ? (
             formulaMode === "single" && resolvedFormula ? (
@@ -1906,7 +1906,7 @@ export function DamageCard({
 
             <div className={CONTROLS_CLS}>
               <EnemyFields {...ctxProps} />
-              {hasStellar && <StellarDirectCoeffFields {...ctxProps} />}
+              {hasStellarConduct && <StellarDirectCoeffFields {...ctxProps} />}
               <div className="flex items-center gap-0.5 md:gap-1">
                 <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
                 <Select
@@ -2289,7 +2289,7 @@ export function DamageCard({
           />
           <div className={CONTROLS_CLS}>
             <EnemyFields {...ctxProps} />
-            {hasStellar && <StellarDirectCoeffFields {...ctxProps} />}
+            {hasStellarConduct && <StellarDirectCoeffFields {...ctxProps} />}
             <RollQualityFields {...ctxProps} />
             <ActionButton
               onClick={handleGenerate}

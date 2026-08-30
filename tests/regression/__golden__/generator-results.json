@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-08-24T00:48:59.846Z",
+  "generatedAt": "2026-08-30T06:48:52.354Z",
   "teams": {
     "YU06qLrWu1q46mwZ0O": {
       "teamName": "sandrone / odette / yae_miko / sucrose",
@@ -86448,7 +86448,7 @@
           "minCr": 0.5
         }
       },
-      "damage": 14704349.8441,
+      "damage": 15730649.6158,
       "comboResult": {
         "lineDamages": [
           {
@@ -86460,8 +86460,8 @@
             "total": 178941.0144
           },
           {
-            "perHit": 568917.4398,
-            "total": 1137834.8796
+            "perHit": 1082067.3256,
+            "total": 2164134.6513
           },
           {
             "perHit": 77800.2642,
@@ -86580,7 +86580,7 @@
             "total": 116349.8537
           }
         ],
-        "totalDamage": 14704349.8441
+        "totalDamage": 15730649.6158
       },
       "artifacts": {
         "traveler_cryo": {
@@ -86826,7 +86826,7 @@
         }
       },
       "display": {
-        "totalDamage": 14704349.8441,
+        "totalDamage": 15730649.6158,
         "partsByFormula": {
           "traveler_cryo.traveler-cryo-normal": [
             {
@@ -86862,11 +86862,11 @@
           ],
           "traveler_cryo.traveler-cryo-charge-freezing": [
             {
-              "damage": 274682.4845,
+              "damage": 531257.4274,
               "template": "stellarDirect"
             },
             {
-              "damage": 294234.9553,
+              "damage": 550809.8982,
               "template": "stellarDirect"
             }
           ],
@@ -87723,20 +87723,6 @@
               }
             ],
             "providerCharId": "traveler_cryo"
-          },
-          {
-            "source": {
-              "type": "character",
-              "id": "traveler_cryo",
-              "origin": "P4"
-            },
-            "entries": [
-              {
-                "key": "baseDmg",
-                "value": 5217.5108
-              }
-            ],
-            "providerCharId": "traveler_cryo"
           }
         ],
         "detailStats": {
@@ -87945,31 +87931,31 @@
         },
         "marginalGains": {
           "traveler_cryo": {
-            "atk": 0.0012,
-            "atk%": 0.0032,
-            "em": 0.0021,
-            "cr": 0.0012,
-            "cd": 0.0051
+            "atk": 0.0014,
+            "atk%": 0.0037,
+            "em": 0.0027,
+            "cr": 0.0013,
+            "cd": 0.0059
           },
           "odette": {
-            "atk": 0.0027,
-            "atk%": 0.0089,
-            "em": 0.0066,
-            "cr": 0.0017,
-            "cd": 0.0093
+            "atk": 0.0026,
+            "atk%": 0.0083,
+            "em": 0.0061,
+            "cr": 0.0015,
+            "cd": 0.0087
           },
           "alyosha": {
             "atk": 0.0003,
-            "atk%": 0.0009,
-            "er": 0.0004,
-            "cr": 0.0015,
-            "cd": 0.0014
+            "atk%": 0.0008,
+            "er": 0.0003,
+            "cr": 0.0014,
+            "cd": 0.0013
           },
           "xilonen": {
-            "def": 0.0004,
-            "def%": 0.0011,
-            "cr": 0.001,
-            "cd": 0.0014
+            "def": 0.0003,
+            "def%": 0.001,
+            "cr": 0.0009,
+            "cd": 0.0013
           }
         },
         "levelUpGains": {}

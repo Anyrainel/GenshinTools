@@ -521,6 +521,7 @@ export function InvestmentDetail({
             }));
           }}
           charConfigs={charConfigs}
+          teamMeta={teamBuild.teamMeta}
           isComputing={isComputing}
           result={result}
           progress={progress}
