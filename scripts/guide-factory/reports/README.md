@@ -27,9 +27,11 @@ Current durable pilot evidence:
   array. Holdouts and the empty array remain unconsumed and receive no slice-
   authored binding or energy classifications. It creates zero candidates,
   equipment assignments, optimizations, or builds and performs no
-  recommendation, ranking, damage, rotation, or ER work. It is not admitted to
-  the current condition-binding catalog; current manual coverage continues to
-  classify the three occurrences as unbound and energy-unclassified.
+  recommendation, ranking, damage, rotation, or ER work. Checkpoint 32 admits
+  only the three selected occurrences to the current condition-binding catalog
+  after exact durable/current authentication and Noelle-specific source,
+  numeric-request, payload, partition, and capability checks. The 12 holdouts
+  and one empty row remain outside the catalog.
 - `kokomi-source-local-artifact-slice.json` authenticates one exact team-member
   artifact condition from the KQM Kokomi Luna V snapshot. The selected path is
   `members[0].artifactRecommendations[0].conditions` on the exact
@@ -82,9 +84,8 @@ Current durable pilot evidence:
   holdouts. It expands no payload axis and executes no compatibility check,
   build, candidate, cross-product, selection, recommendation, rank, generator,
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
-  regenerated after the shared numeric request-context vocabulary refreshes its
-  source-local and manual-coverage inputs; its Klee claim and team-control
-  boundary is unchanged.
+  regenerated after the Noelle catalog admission changes its authenticated
+  manual-coverage input; its Klee claim and team-control boundary is unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
   local condition-slice adapter over four exact Klee Luna IV occurrences and
   two exact source teams. Three on-field-role main-stat rows and one Furina-
@@ -103,16 +104,16 @@ Current durable pilot evidence:
   repository. The corpus contains 16 empty arrays, 126 nonempty arrays, 89
   unique exact ordered nonempty arrays,
   159 condition-string occurrences, and 97 unique strings. Binding and energy
-  are independent: all nonempty arrays contain 54 typed bindings, 3 exact-text
-  acknowledgements, and 69 unbound occurrences; excluding only three structural
-  ER rows leaves 123 occurrences: 54 typed, 3 acknowledged, and 66 unbound,
-  across 86 unique arrays. Those arrays contain 32 typed-only, 53 unbound-only,
+  are independent: all nonempty arrays contain 57 typed bindings, 3 exact-text
+  acknowledgements, and 66 unbound occurrences; excluding only three structural
+  ER rows leaves 123 occurrences: 57 typed, 3 acknowledged, and 63 unbound,
+  across 86 unique arrays. Those arrays contain 33 typed-only, 52 unbound-only,
   and one mixed acknowledged/unbound status set.
   The energy ledger defers 3 structural rows, 3 typed Itto prerequisites, and 9
-  exact authored Diona/Furina rows; 51 typed rows are not energy-deferred and 60
-  nonempty rows remain energy-unclassified. Display status is 51 typed, 57
+  exact authored Diona/Furina rows; 54 typed rows are not energy-deferred and 57
+  nonempty rows remain energy-unclassified. Display status is 54 typed, 54
   known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional.
-  The report authenticates six wrapper families across 17 source files and 67
+  The report authenticates seven wrapper families across 18 source files and 70
   generated-from paths. Bindings are occurrence-, hash-,
   and subject-scoped: identical Viridescent Venerer text is acknowledged for
   Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
@@ -409,10 +410,10 @@ Current durable pilot evidence:
   duration, and Favonius-cooldown assumptions are comparable.
 
 `validate.ts` rebuilds all thirty reports in memory and rejects stale checked-in
-output. Checkpoint 31 adds only the standalone Noelle source-local report; it
-regenerates the affected Itto, Klee, Diona, and Kokomi reports, manual coverage,
-and the Klee witness without changing the checkpoint-30 catalog or energy
-ledgers. The completed suite passes TypeScript, 61 test files with 446 tests,
-and validation with 0 errors and 12 warnings. The Diona ER report is historical
-and deliberately decoupled from unrelated knowledge-repository changes while
-ER work is deferred.
+output. Checkpoint 32 adds no report; it admits only the three authenticated
+Noelle selected occurrences, then regenerates manual coverage and the Klee
+witness without changing the witness's four-claim semantics. The completed
+suite passes TypeScript, 61 test files with 449 tests, and validation with 0
+errors and 12 existing warnings. The Diona ER report is historical and
+deliberately decoupled from unrelated knowledge-repository changes while ER
+work is deferred.

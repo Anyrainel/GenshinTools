@@ -26,13 +26,17 @@ import {
   type KokomiSourceLocalArtifactSliceReport,
 } from "../src/kokomiSourceLocalArtifactSlice";
 import {
+  NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_REPORT_PATH,
+  type NoelleSourceLocalHighInvestmentSliceReport,
+} from "../src/noelleSourceLocalHighInvestmentSlice";
+import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
 } from "../src/paths";
 import type { SourceConditionedGuidePacketReport } from "../src/sourceConditionedGuidePacket";
 
 describe("authenticated current condition-binding catalog", () => {
-  it("builds the deterministic 57-occurrence catalog with exact current coverage", async () => {
+  it("builds the deterministic 60-occurrence catalog with exact current coverage", async () => {
     const fixture = await loadFixture();
     const before = structuredClone(fixture);
     const report = buildCurrentConditionBindingCatalog(fixture);
@@ -42,32 +46,32 @@ describe("authenticated current condition-binding catalog", () => {
     expect(fixture).toEqual(before);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.issues).toEqual([]);
-    expect(report.entries).toHaveLength(57);
+    expect(report.entries).toHaveLength(60);
     expect(report.entries.map(({ occurrenceKey }) => occurrenceKey)).toEqual(
       [...report.entries.map(({ occurrenceKey }) => occurrenceKey)].sort(),
     );
     expect(
       new Set(report.entries.map(({ occurrenceId }) => occurrenceId)).size,
-    ).toBe(57);
+    ).toBe(60);
     expect(
       new Set(report.entries.map(({ occurrenceKey }) => occurrenceKey)).size,
-    ).toBe(57);
+    ).toBe(60);
     expect(report.summary).toEqual({
-      occurrenceCount: 57,
+      occurrenceCount: 60,
       bindingClassificationCounts: {
-        "typed-bound": 54,
+        "typed-bound": 57,
         "exact-text-acknowledged": 3,
         unbound: 0,
         invalid: 0,
       },
       energyClassificationCounts: {
         "energy-unclassified": 3,
-        "not-energy-deferred": 51,
+        "not-energy-deferred": 54,
         "structural-er": 0,
         "deferred-energy-prerequisite": 3,
         "exact-authored-energy-related-deferral": 0,
       },
-      typedBindingCount: 54,
+      typedBindingCount: 57,
       ittoOccurrenceCount: 15,
       ittoTypedBindingCount: 15,
       ittoDeferredEnergyPrerequisiteCount: 3,
@@ -85,6 +89,9 @@ describe("authenticated current condition-binding catalog", () => {
       kokomiSourceLocalOccurrenceCount: 1,
       kokomiSourceLocalTypedBindingCount: 1,
       kokomiSourceLocalNotEnergyDeferredCount: 1,
+      noelleSourceLocalOccurrenceCount: 3,
+      noelleSourceLocalTypedBindingCount: 3,
+      noelleSourceLocalNotEnergyDeferredCount: 3,
     });
     expect(report).toMatchObject({
       supportsGuideClaims: false,
@@ -101,6 +108,7 @@ describe("authenticated current condition-binding catalog", () => {
         kleeSourceLocalDurableMatchesCurrent: true,
         dionaSourceLocalDurableMatchesCurrent: true,
         kokomiSourceLocalDurableMatchesCurrent: true,
+        noelleSourceLocalDurableMatchesCurrent: true,
       },
     });
     for (const entry of report.entries) {
@@ -447,6 +455,70 @@ describe("authenticated current condition-binding catalog", () => {
     expect(report.supportsEquipmentRecommendations).toBe(false);
     expect(report.supportsTeamRecommendations).toBe(false);
     expect(report.supportsEnergyRecoveryClaims).toBe(false);
+  });
+
+  it("binds only the three authenticated Noelle high-investment main-stat occurrences", async () => {
+    const fixture = await loadFixture();
+    const report = requireComparableCurrentConditionBindingCatalog(
+      buildCurrentConditionBindingCatalog(fixture),
+    );
+    const noelleEntries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-noelle-source-local-high-investment-slice-luna-viii",
+    );
+
+    expect(noelleEntries).toHaveLength(3);
+    expect(noelleEntries.map(({ manualClaimPath }) => manualClaimPath).sort()).toEqual([
+      "recommendation.mainStats.circlet[0].conditions",
+      "recommendation.mainStats.goblet[0].conditions",
+      "recommendation.mainStats.sands[0].conditions",
+    ]);
+    expect(
+      noelleEntries.every((entry) => {
+        const selected =
+          fixture.noelleSourceLocal.currentReport.selectedOccurrences.find(
+            ({ occurrenceId }) => occurrenceId === entry.occurrenceId,
+          );
+        return (
+          selected != null &&
+          entry.recordKind === "character_guide" &&
+          entry.subject === "noelle" &&
+          entry.orderedConditions[0] ===
+            "Noelle is C6 or her Burst Talent is Level 10 or higher." &&
+          entry.bindingClassification === "typed-bound" &&
+          entry.energyClassification === "not-energy-deferred" &&
+          entry.bindingEvidence.kind ===
+            "source-local-typed-predicate-ast" &&
+          entry.bindingEvidence.selectedOccurrenceSha256 ===
+            sha256Text(stableJson(selected)) &&
+          entry.bindingEvidence.predicateAstSha256 ===
+            "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a" &&
+          entry.bindingEvidence.payloadSha256 === selected.payloadSha256 &&
+          entry.energyEvidence?.kind ===
+            "source-local-not-energy-deferred" &&
+          entry.energyEvidence.selectedOccurrenceSha256 ===
+            entry.bindingEvidence.selectedOccurrenceSha256 &&
+          !entry.energyEvidence.energyRelatedWorkDeferred
+        );
+      }),
+    ).toBe(true);
+    expect(
+      report.entries.some(({ occurrenceId }) =>
+        fixture.noelleSourceLocal.currentReport.holdoutOccurrences.some(
+          (holdout) => holdout.occurrenceId === occurrenceId,
+        ),
+      ),
+    ).toBe(false);
+    expect(
+      report.entries.some(
+        ({ occurrenceId }) =>
+          occurrenceId ===
+          fixture.noelleSourceLocal.currentReport.emptyOccurrences[0]
+            ?.occurrenceId,
+      ),
+    ).toBe(false);
   });
 
   it("fails closed on unauthenticated, stale, partial, duplicate, conflicting, or leaked evidence", async () => {
@@ -866,6 +938,275 @@ describe("authenticated current condition-binding catalog", () => {
       forgedKokomiPredicate,
       "kokomi-source-local.conflicting-occurrence-evidence",
     );
+
+    const staleNoelle = structuredClone(base);
+    const staleNoelleDurable = structuredClone(
+      staleNoelle.noelleSourceLocal.durableReport,
+    ) as NoelleSourceLocalHighInvestmentSliceReport;
+    staleNoelleDurable.selectedOccurrences.pop();
+    staleNoelle.noelleSourceLocal.durableReport = staleNoelleDurable;
+    expectFailure(staleNoelle, "authentication.noelle-source-local-stale");
+
+    const capabilityCrossingNoelle = structuredClone(base);
+    capabilityCrossingNoelle.noelleSourceLocal.currentReport.candidateGenerationExecuted =
+      true as false;
+    capabilityCrossingNoelle.noelleSourceLocal.durableReport = structuredClone(
+      capabilityCrossingNoelle.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      capabilityCrossingNoelle,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoelleIdentity = structuredClone(base);
+    forgedNoelleIdentity.noelleSourceLocal.currentReport.sourceBoundary.pageUrl =
+      "https://example.invalid/noelle" as typeof forgedNoelleIdentity.noelleSourceLocal.currentReport.sourceBoundary.pageUrl;
+    const forgedIdentitySlice =
+      forgedNoelleIdentity.noelleSourceLocal.currentReport.sourceLocalSlice;
+    if (!forgedIdentitySlice) throw new Error("Missing Noelle slice fixture.");
+    forgedIdentitySlice.sourceDocumentBoundary.pageUrl =
+      "https://example.invalid/noelle";
+    forgedNoelleIdentity.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleIdentity.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleIdentity,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoelleGeneratedFrom = structuredClone(base);
+    for (const generatedFrom of [
+      forgedNoelleGeneratedFrom.noelleSourceLocal.currentReport.generatedFrom,
+      forgedNoelleGeneratedFrom.noelleSourceLocal.currentReport.sourceLocalSlice
+        ?.generatedFrom,
+    ]) {
+      const codeEntry = generatedFrom?.find(
+        ({ path }) =>
+          path ===
+          "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
+      );
+      if (!codeEntry) throw new Error("Missing Noelle generatedFrom fixture.");
+      codeEntry.sha256 = "f".repeat(64);
+    }
+    forgedNoelleGeneratedFrom.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleGeneratedFrom.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleGeneratedFrom,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoelleRawObjectClosure = structuredClone(base);
+    forgedNoelleRawObjectClosure.noelleSourceLocal.currentReport.rawInputBoundary.canonicalObjectSha256ByPath[
+      "scripts/guide-factory/data/knowledge/repository.json"
+    ] = "e".repeat(64);
+    forgedNoelleRawObjectClosure.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleRawObjectClosure.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleRawObjectClosure,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoellePredicate = structuredClone(base);
+    const forgedPredicateReport =
+      forgedNoellePredicate.noelleSourceLocal.currentReport;
+    const forgedRequestPredicate = {
+      type: "any" as const,
+      predicates: [
+        {
+          type: "constellation-at-least" as const,
+          characterId: "noelle",
+          threshold: 5,
+        },
+        {
+          type: "talent-level-at-least" as const,
+          characterId: "noelle",
+          talent: "burst" as const,
+          threshold: 10,
+        },
+      ],
+    };
+    const forgedRequestPredicateSha256 = sha256Text(
+      stableJson(forgedRequestPredicate),
+    );
+    forgedPredicateReport.numericEvaluationBoundary.requestPredicateSha256 =
+      forgedRequestPredicateSha256;
+    for (const selected of forgedPredicateReport.selectedOccurrences) {
+      selected.requestPredicate = structuredClone(forgedRequestPredicate);
+      selected.requestPredicateSha256 = forgedRequestPredicateSha256;
+    }
+    const forgedPredicateSlice = forgedPredicateReport.sourceLocalSlice;
+    if (!forgedPredicateSlice?.requestContextReport) {
+      throw new Error("Missing Noelle request projection fixture.");
+    }
+    for (const control of forgedPredicateSlice.conditionControls) {
+      control.requestBindings[0]!.requestPredicate = structuredClone(
+        forgedRequestPredicate,
+      );
+    }
+    for (const rule of forgedPredicateSlice.requestContextReport.claimRules) {
+      rule.bindings[0]!.requestPredicate = structuredClone(
+        forgedRequestPredicate,
+      );
+    }
+    for (const projection of forgedPredicateSlice.requestContextReport
+      .teamProjections[0]!.claimProjections) {
+      projection.requestContextBindings[0]!.requestPredicate = structuredClone(
+        forgedRequestPredicate,
+      );
+    }
+    forgedNoellePredicate.noelleSourceLocal.durableReport = structuredClone(
+      forgedPredicateReport,
+    );
+    expectFailure(
+      forgedNoellePredicate,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoelleRequestFact = structuredClone(base);
+    const forgedFactContext = forgedNoelleRequestFact.noelleSourceLocal
+      .currentReport.sourceLocalSlice?.requestContextReport?.context
+      .requestFactsByTeamRecordId?.[
+      "kqm:team:noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+    ]?.characterFactsById?.noelle;
+    if (!forgedFactContext) throw new Error("Missing Noelle request fact.");
+    forgedFactContext.constellation = 5;
+    forgedNoelleRequestFact.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleRequestFact.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleRequestFact,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoelleFactScope = structuredClone(base);
+    const forgedScopeRow = forgedNoelleFactScope.noelleSourceLocal.currentReport
+      .sourceLocalSlice?.requestContextReport?.teamProjections[0]
+      ?.claimProjections[0]?.requestContextBindings[0]?.predicateRows[0];
+    if (!forgedScopeRow?.factScope) {
+      throw new Error("Missing Noelle request fact scope.");
+    }
+    forgedScopeRow.factScope.teamRecordId = "kqm:team:forged-noelle-team";
+    forgedNoelleFactScope.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleFactScope.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleFactScope,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const forgedNoelleResolution = structuredClone(base);
+    const forgedResolutionSlice =
+      forgedNoelleResolution.noelleSourceLocal.currentReport.sourceLocalSlice;
+    if (!forgedResolutionSlice) {
+      throw new Error("Missing Noelle resolution fixture.");
+    }
+    forgedResolutionSlice.summary.sourceUnresolvedCount = 2;
+    forgedResolutionSlice.summary.effectiveMatchedCount = 2;
+    forgedNoelleResolution.noelleSourceLocal.currentReport.summary.sourceUnresolvedCount =
+      2;
+    forgedNoelleResolution.noelleSourceLocal.currentReport.summary.effectiveMatchedCount =
+      2;
+    forgedNoelleResolution.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleResolution.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleResolution,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
+
+    const overlappingNoelleHoldout = structuredClone(base);
+    overlappingNoelleHoldout.noelleSourceLocal.currentReport.holdoutOccurrences[0]!.occurrenceId =
+      overlappingNoelleHoldout.noelleSourceLocal.currentReport
+        .selectedOccurrences[0]!.occurrenceId;
+    overlappingNoelleHoldout.noelleSourceLocal.durableReport = structuredClone(
+      overlappingNoelleHoldout.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      overlappingNoelleHoldout,
+      "noelle-source-local.selected-holdout-empty-partition-drift",
+    );
+
+    const forgedNoelleControlPath = structuredClone(base);
+    const forgedControl = forgedNoelleControlPath.noelleSourceLocal.currentReport
+      .sourceLocalSlice?.conditionControls[0];
+    if (!forgedControl) throw new Error("Missing Noelle control fixture.");
+    forgedControl.occurrenceControl.manualPath =
+      "records[999].recommendation.mainStats.sands[0].conditions";
+    forgedNoelleControlPath.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleControlPath.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleControlPath,
+      "noelle-source-local.conflicting-occurrence-evidence",
+    );
+
+    const forgedNoelleHoldoutPath = structuredClone(base);
+    forgedNoelleHoldoutPath.noelleSourceLocal.currentReport.holdoutOccurrences[0]!.repositoryPath =
+      "recommendations[0].mainStats.sands[999].conditions";
+    forgedNoelleHoldoutPath.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleHoldoutPath.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleHoldoutPath,
+      "noelle-source-local.selected-holdout-empty-partition-drift",
+    );
+
+    const forgedNoelleHoldoutEnergyMetadata = structuredClone(base);
+    forgedNoelleHoldoutEnergyMetadata.noelleSourceLocal.currentReport.holdoutOccurrences[0]!.structuralEnergyDimension =
+      "structural-er" as "not-structural-er";
+    forgedNoelleHoldoutEnergyMetadata.noelleSourceLocal.durableReport =
+      structuredClone(
+        forgedNoelleHoldoutEnergyMetadata.noelleSourceLocal.currentReport,
+      );
+    expectFailure(
+      forgedNoelleHoldoutEnergyMetadata,
+      "noelle-source-local.selected-holdout-empty-partition-drift",
+    );
+
+    const forgedNoelleEmptyIdentity = structuredClone(base);
+    forgedNoelleEmptyIdentity.noelleSourceLocal.currentReport.emptyOccurrences[0]!.sourceRecordId =
+      "forged-empty-record";
+    forgedNoelleEmptyIdentity.noelleSourceLocal.durableReport = structuredClone(
+      forgedNoelleEmptyIdentity.noelleSourceLocal.currentReport,
+    );
+    expectFailure(
+      forgedNoelleEmptyIdentity,
+      "noelle-source-local.selected-holdout-empty-partition-drift",
+    );
+
+    const forgedNoelleLiteral = structuredClone(base);
+    const literalReport = forgedNoelleLiteral.noelleSourceLocal.currentReport;
+    const literalSlice = literalReport.sourceLocalSlice;
+    const literalSelected = literalReport.selectedOccurrences[0];
+    if (!literalSlice || !literalSelected) {
+      throw new Error("Missing Noelle literal fixture.");
+    }
+    const forgedConditions = ["Forged but internally rehashed Noelle condition."];
+    const forgedConditionsSha256 = sha256Text(stableJson(forgedConditions));
+    literalSelected.conditions = forgedConditions;
+    literalSelected.conditionsSha256 = forgedConditionsSha256;
+    literalSlice.sourceClaimCatalog[0]!.sourceConditions = forgedConditions;
+    literalSlice.sourceClaimCatalog[0]!.sourceConditionsSha256 =
+      forgedConditionsSha256;
+    literalSlice.conditionControls[0]!.occurrenceControl.sourceConditionsSha256 =
+      forgedConditionsSha256;
+    literalSlice.sourceClaimCells[0]!.claimCells[0]!.sourceConditionsSha256 =
+      forgedConditionsSha256;
+    literalSlice.requestContextReport!.claimRules.find(
+      ({ claimId }) => claimId === literalSelected.occurrenceId,
+    )!.sourceConditionsSha256 = forgedConditionsSha256;
+    literalSlice.requestContextReport!.teamProjections[0]!.claimProjections.find(
+      ({ claimId }) => claimId === literalSelected.occurrenceId,
+    )!.sourceControl.sourceConditionsSha256 = forgedConditionsSha256;
+    forgedNoelleLiteral.noelleSourceLocal.durableReport = structuredClone(
+      literalReport,
+    );
+    expectFailure(
+      forgedNoelleLiteral,
+      "noelle-source-local.partial-or-capability-crossing-evidence",
+    );
   });
 });
 
@@ -888,6 +1229,9 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
   const kokomiSourceLocal = (await readJson(
     KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_REPORT_PATH,
   )) as KokomiSourceLocalArtifactSliceReport;
+  const noelleSourceLocal = (await readJson(
+    NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_REPORT_PATH,
+  )) as NoelleSourceLocalHighInvestmentSliceReport;
   return {
     ittoAuthentication: {
       authenticated: true,
@@ -912,6 +1256,10 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
     kokomiSourceLocal: {
       durableReport: structuredClone(kokomiSourceLocal),
       currentReport: structuredClone(kokomiSourceLocal),
+    },
+    noelleSourceLocal: {
+      durableReport: structuredClone(noelleSourceLocal),
+      currentReport: structuredClone(noelleSourceLocal),
     },
   };
 }

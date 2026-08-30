@@ -625,7 +625,9 @@ The exact Noelle boundary contains 16 arrays: three selected, 12 nonempty
 holdouts, and one empty occurrence. Holdouts and the empty occurrence remain
 unconsumed and receive no slice-authored binding or energy classification. The
 slice creates zero candidates, equipment assignments, optimizations, and
-assembled builds. It remains outside the current condition-binding catalog.
+assembled builds. Checkpoint 32 admits only the three selected occurrences to
+the current condition-binding catalog after a separate source-specific
+authentication gate; the 12 holdouts and empty occurrence remain outside.
 
 ## Manual condition-array coverage seam
 
@@ -638,11 +640,12 @@ the raw snapshot values before schema parsing and requires every `conditions`
 property to match one extracted path and ordered payload, so future or unknown
 condition-bearing fields fail closed.
 
-`src/currentConditionBindingCatalog.ts` overlays only six authenticated
+`src/currentConditionBindingCatalog.ts` overlays only seven authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
 IDs, exact-text Keqing Viridescent Venerer acknowledgements, and the four Klee
-plus three Diona plus one Kokomi source-local typed bindings. Source-local
-catalog entries share the generic `source-local-typed-predicate-ast` and
+plus three Diona plus one Kokomi plus three Noelle source-local typed bindings.
+Source-local catalog entries share the generic
+`source-local-typed-predicate-ast` and
 `source-local-not-energy-deferred` evidence labels, but wrapper authentication,
 extraction, occurrence identity, literals, hashes, and `sliceId` remain source-
 specific. A binding is addressed by source, record kind, source record, schema
@@ -661,32 +664,34 @@ binding boundary, and capability flags. The helper is not a generic wrapper,
 extractor, schema adapter, or prose parser.
 
 The durable report keeps binding and energy as independent ledgers. Across all
-126 nonempty arrays, the current catalog contributes 57 entries: 54 typed and
-3 exact-text acknowledged. Binding coverage is therefore 54 typed, 3
-acknowledged, and 69 unbound. Excluding only the three structural ER arrays
-leaves 123 rows: 54 typed, 3 acknowledged, and 66 unbound, spanning 86 exact
-ordered arrays. Those arrays contain 32 typed-only sets, 53 unbound-only sets,
+126 nonempty arrays, the current catalog contributes 60 entries: 57 typed and
+3 exact-text acknowledged. Binding coverage is therefore 57 typed, 3
+acknowledged, and 66 unbound. Excluding only the three structural ER arrays
+leaves 123 rows: 57 typed, 3 acknowledged, and 63 unbound, spanning 86 exact
+ordered arrays. Those arrays contain 33 typed-only sets, 52 unbound-only sets,
 and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Fifty-one typed rows are explicitly not energy-deferred; 60
+deferred. Fifty-four typed rows are explicitly not energy-deferred; 57
 nonempty rows remain energy-unclassified; and 16 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
 
-Display status is a separate projection over all 142 occurrences: 51 typed, 57
+Display status is a separate projection over all 142 occurrences: 54 typed, 54
 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16 unconditional. Manual
-coverage authenticates six wrapper families across 17 source files and 67
+coverage authenticates seven wrapper families across 18 source files and 70
 generated-from paths.
 
-The standalone Noelle slice does not add a catalog entry or wrapper family.
-Its three selected occurrences remain unbound and energy-unclassified in this
-manual-coverage ledger, so every count above remains unchanged.
+The Noelle catalog path first requires the durable report to equal a fresh
+source-specific rebuild, then authenticates the exact source identities,
+numeric request projection, three selected occurrences, 12 holdouts, one empty
+row, and disabled capability boundary. Only the selected three become typed and
+not energy-deferred; the holdouts and empty row receive no new state.
 
 The dependency direction remains acyclic. Authenticated source-specific Klee,
-Diona, and Kokomi wrappers feed the 57-entry binding catalog, then manual
+Diona, Kokomi, and Noelle wrappers feed the 60-entry binding catalog, then manual
 coverage and the regenerated checkpoint 27 Klee witness. The validator follows
 that order. The generic source-local core and source-specific wrappers never
 import the downstream catalog, coverage report, or witness.
@@ -726,14 +731,12 @@ zero candidates. It runs no payload-axis expansion, choice selection,
 compatibility evaluation, cross-product, recommendation composition, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER calculation.
 Independent applicability is validation evidence, not a build or guide.
-After the shared numeric request-context vocabulary is added for the Noelle
-slice, the durable witness is regenerated against the refreshed Klee and manual-
-coverage inputs. Its four Klee claims, positive team, negative control, and
-interpretation boundary remain unchanged.
+After the Noelle catalog admission, the durable witness is regenerated against
+the refreshed manual-coverage input. Its four Klee claims, positive team,
+negative control, and interpretation boundary remain unchanged.
 
-The next bounded non-ER gate is a separate catalog admission for only the three
-exact authenticated Noelle occurrences. A later standalone experiment should
-model the lower-investment Noelle branch. Neither gate is implemented yet.
+The next bounded non-ER gate is a separate standalone experiment for Noelle's
+lower-investment branch. It is not implemented yet.
 
 ## Callable modules for later experiments
 
@@ -779,8 +782,8 @@ model the lower-investment Noelle branch. Neither gate is implemented yet.
 - Generic typed request/account applicability and the bounded Itto adapter:
   `scripts/guide-factory/src/guideRequestContext.ts` and
   `scripts/guide-factory/src/ittoRequestContextApplicability.ts`.
-- Generic source-local condition evaluation, the catalog-integrated Klee,
-  Diona, and Kokomi adapters, and the standalone Noelle adapter:
+- Generic source-local condition evaluation and the catalog-integrated Klee,
+  Diona, Kokomi, and Noelle adapters:
   `scripts/guide-factory/src/sourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts`,
   `scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts`, and
@@ -865,17 +868,17 @@ factory.
   disagreements still need broader attributed evidence before role-based roster
   expansion is safe.
 - Source guide applicability remains attributed prose in repository records.
-  The exact inventory now identifies 66 non-structural occurrences as unbound;
+  The exact inventory now identifies 63 non-structural occurrences as unbound;
   it does not parse them or presume they are non-ER. Nine are exact authored
-  energy deferrals and the remaining 57 are energy-unclassified. The Keqing,
-  Itto, Klee, Diona, and Kokomi source-specific wrappers pin exact text to typed
-  predicates and can resolve only their authored facts; they are not a global
+  energy deferrals and the remaining 54 are energy-unclassified. The Keqing,
+  Itto, Klee, Diona, Kokomi, and Noelle source-specific wrappers pin exact text
+  to typed predicates and can resolve only their authored facts; they are not a
+  global
   parser. The shared request-context vocabulary covers bounded role, goal,
   weapon-ownership/passive, preference, constellation, and named Talent-level
-  facts. The standalone Noelle slice applies the numeric subset only to three
-  exact occurrences and gives its 12 nonempty holdouts no binding or energy
-  state; those three selected occurrences remain unbound in the current catalog
-  ledger.
+  facts. The Noelle slice applies the numeric subset only to three exact
+  occurrences; checkpoint 32 admits those three while its 12 nonempty holdouts
+  receive no binding or energy state.
   High Base ATK, DMG Bonus, exceptional EM, contribution ownership, refinement,
   shield uptime, Bond clearance, CRIT overcap, artifact quality, comparative
   thresholds, gameplay, and omitted-energy inputs remain explicitly unresolved

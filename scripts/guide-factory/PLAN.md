@@ -615,9 +615,33 @@ The shared request-context change regenerates affected Itto, Klee, Diona, and
 Kokomi reports, manual coverage, and the Klee witness without changing their
 established semantics.
 
-The next non-ER gate should separately admit only the three exact authenticated
-Noelle occurrences to the catalog. A later standalone experiment should then
-model the lower-investment Noelle branch. Neither gate is implemented yet.
+Checkpoint 32 completes that separate admission. It requires exact equality
+between the durable Noelle report and a fresh source-specific rebuild, then
+rechecks the pinned source and repository identities, shared source and request
+predicates, three independent payloads, exact C6 request projection, 3/12/1
+selected/holdout/empty partition, and disabled capability boundary. Only after
+those checks may the private normalized selected-to-claim-to-control helper
+construct entries for the three selected occurrences. The 12 holdouts and one
+empty occurrence remain outside the catalog.
+
+The authenticated catalog is now 60 = 57 typed + 3 acknowledged. Full nonempty
+coverage is 57/3/66; non-structural coverage is 123/57/3/63; unique arrays are
+33 typed-only + 52 unbound-only + 1 mixed; and energy is 15 deferred + 54 not-
+energy-deferred + 57 nonempty unclassified + 16 empty. Display status is 54
+typed + 54 known-but-unbound + 15 ER-deferred + 3 acknowledged + 16
+unconditional. Manual coverage authenticates seven wrapper families over 18
+source files and 70 generated-from paths.
+
+Checkpoint 32 adds no durable report, so the total remains 30. Manual coverage
+and the checkpoint 27 Klee witness are regenerated in that order; the witness's
+four Klee claims, positive fixture, Overload negative control, zero-holdout
+consumption, and interpretation boundary remain unchanged. No assignment,
+recommendation, build, rank, optimizer, damage, rotation, or ER work is
+authorized.
+
+The next non-ER gate should be a separate standalone experiment for Noelle's
+lower-investment branch. It is not implemented yet.
+
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula
 authoring, recommendation composition, or build composition.

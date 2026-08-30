@@ -1,7 +1,7 @@
 {
   "arbitraryEnglishParsingAllowed": false,
   "bindingBoundary": {
-    "catalogReportSha256": "8c2cb635569a8d89e5e274757c2e0b412b7b9d99ccf925e76993c5c905d31827",
+    "catalogReportSha256": "b50471aebef0b9d0b25839e3e7da4fc9a8ac039c4db934028933b7124bf8641e",
     "dionaSourceLocalDurableMatchesCurrent": true,
     "dionaSourceLocalOccurrenceCount": 3,
     "exactTextAcknowledgementOccurrenceCount": 3,
@@ -13,7 +13,9 @@
     "kleeSourceLocalOccurrenceCount": 4,
     "kokomiSourceLocalDurableMatchesCurrent": true,
     "kokomiSourceLocalOccurrenceCount": 1,
-    "occurrenceCount": 57,
+    "noelleSourceLocalDurableMatchesCurrent": true,
+    "noelleSourceLocalOccurrenceCount": 3,
+    "occurrenceCount": 60,
     "status": "authenticated",
     "typedBindingMeansConditionTruth": false
   },
@@ -109,6 +111,10 @@
       "sha256": "90d7d8cea2f1f20c38dd471cf610408fee04c117d9bda8a514870b8daf30d237"
     },
     {
+      "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
+      "sha256": "27e6466b8637f8609e5c901dba1316304c25f1f70b85d11decaedf5ec7390d15"
+    },
+    {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
       "sha256": "27d4bef6b93a09489e3d0b4433672f39cee5369ecb9b71c76935c350a3339eca"
     },
@@ -137,12 +143,16 @@
       "sha256": "fb6be8d4f7a7960b56ecd729f448d20cf7dac491a76fbccfcc0977cc177fb1a1"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts",
+      "sha256": "53d57a733ff4416aa077330605e667a5b90370893051a6833f6a86ca6d496589"
+    },
+    {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "02aafd8338b6e0ad8ceec8ddd0c21cf5080b30fa2933164bea23ac03295e7447"
+      "sha256": "921b107fb16f065e87fd9bd3223475eefe49f0967d567a4085d8fbb55af409d4"
     },
     {
       "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
@@ -190,11 +200,15 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "167e25821861137a77b31fd96fd4b53adf39ed16b9b69b0185d61ce2df937bf0"
+      "sha256": "acd9fff5b2ca3e16dfd16ef0c0fd5a15a64f9d25a150d5fc09b12829eb431859"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
       "sha256": "5dc8150acef3cc02b046f8e7cdf259d7fdf1a447465329e81389cbe5e8889080"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
+      "sha256": "84056e869782be1de61119584f088a94225829165e76a67b853fe023a6d01c2a"
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
@@ -983,7 +997,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Noelle is C6 or her Burst Talent is Level 10 or higher."
@@ -6083,18 +6097,38 @@
       "subject": "noelle"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "e474f9f978da5fde9e750c6702e87968a76c6b78c606dd43395552899f5417b2",
+        "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+        "predicateAst": {
+          "category": "investment-threshold",
+          "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+        "selectedOccurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+        "selectedOccurrenceSha256": "9afd7187adad4a9ea1bf8e2ef3971fe650cb1ce2657c82e3a195e175771c9829",
+        "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions:92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
       "claimAxis": "main-stat",
       "conditions": [
         "Noelle is C6 or her Burst Talent is Level 10 or higher."
       ],
       "conditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
+        "selectedOccurrenceSha256": "9afd7187adad4a9ea1bf8e2ef3971fe650cb1ce2657c82e3a195e175771c9829",
+        "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -6152,18 +6186,38 @@
       "subject": "noelle"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "c1f6163303261847941bf381693c17b8f2a4b0ba5c29520be87b56a4446b1f3a",
+        "payloadSha256": "27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a",
+        "predicateAst": {
+          "category": "investment-threshold",
+          "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+        "selectedOccurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+        "selectedOccurrenceSha256": "a32a578a42e7d22f141e9a90a4255e361c968c9043d159ff9a2de9ec4b64fc95",
+        "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions:92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
       "claimAxis": "main-stat",
       "conditions": [
         "Noelle is C6 or her Burst Talent is Level 10 or higher."
       ],
       "conditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
+        "selectedOccurrenceSha256": "a32a578a42e7d22f141e9a90a4255e361c968c9043d159ff9a2de9ec4b64fc95",
+        "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -6221,18 +6275,38 @@
       "subject": "noelle"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "e6bb4067ded3b1a9e6fcdad4f0629cd919d8d34a1a139f7eac1b31ea041f5049",
+        "payloadSha256": "804a06075305e59b97c800d1a8ba0fdfff51f9f5cbe37862d3f574721b38d53e",
+        "predicateAst": {
+          "category": "investment-threshold",
+          "reason": "Noelle's constellation and Burst Talent level are not facts authored by the exact source team roster and must be supplied independently by the request context.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a",
+        "selectedOccurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+        "selectedOccurrenceSha256": "665f593660b1c644c0711a4fa95de5dbc2074a144fd9100648fbc43563463f0b",
+        "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions:92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
       "claimAxis": "main-stat",
       "conditions": [
         "Noelle is C6 or her Burst Talent is Level 10 or higher."
       ],
       "conditionsSha256": "92f5c76c15a1f1ce2d172a8ac6a669ee17a26c3bb7749770379d3deed39d0cf4",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:noelle-c6-or-talent-10-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
+        "selectedOccurrenceSha256": "665f593660b1c644c0711a4fa95de5dbc2074a144fd9100648fbc43563463f0b",
+        "sliceId": "kqm-noelle-source-local-high-investment-slice-luna-viii",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -7294,7 +7368,7 @@
   "rawInputBoundary": {
     "exactPathSet": true,
     "rawJsonObjectClosure": true,
-    "sourceFileCount": 17,
+    "sourceFileCount": 18,
     "status": "accepted"
   },
   "recommendationCompositionExecuted": false,
@@ -7310,10 +7384,10 @@
       "nonemptyCount": 126,
       "occurrenceCount": 126,
       "stringOccurrenceCount": 159,
-      "typedBoundOccurrenceCount": 54,
-      "typedBoundStringOccurrenceCount": 76,
-      "unboundOccurrenceCount": 69,
-      "unboundStringOccurrenceCount": 80,
+      "typedBoundOccurrenceCount": 57,
+      "typedBoundStringOccurrenceCount": 79,
+      "unboundOccurrenceCount": 66,
+      "unboundStringOccurrenceCount": 77,
       "uniqueExactArrayCount": 89,
       "uniqueStringCount": 97
     },
@@ -7324,12 +7398,12 @@
         "erDeferredCount": 12,
         "exactTextAcknowledgedCount": 0,
         "groupId": "character_guide",
-        "knownButUnboundCount": 60,
+        "knownButUnboundCount": 57,
         "nonemptyCount": 110,
         "nonStructuralBindingCoverageConditionCount": 110,
         "occurrenceCount": 120,
         "stringOccurrenceCount": 143,
-        "typedBoundCount": 50,
+        "typedBoundCount": 53,
         "unconditionalCount": 10,
         "uniqueExactArrayCount": 77,
         "uniqueStringCount": 85
@@ -7406,12 +7480,12 @@
         "erDeferredCount": 15,
         "exactTextAcknowledgedCount": 3,
         "groupId": "kqm",
-        "knownButUnboundCount": 69,
+        "knownButUnboundCount": 66,
         "nonemptyCount": 126,
         "nonStructuralBindingCoverageConditionCount": 123,
         "occurrenceCount": 142,
         "stringOccurrenceCount": 159,
-        "typedBoundCount": 54,
+        "typedBoundCount": 57,
         "unconditionalCount": 16,
         "uniqueExactArrayCount": 89,
         "uniqueStringCount": 97
@@ -7616,12 +7690,12 @@
         "erDeferredCount": 0,
         "exactTextAcknowledgedCount": 0,
         "groupId": "noelle",
-        "knownButUnboundCount": 15,
+        "knownButUnboundCount": 12,
         "nonemptyCount": 15,
         "nonStructuralBindingCoverageConditionCount": 15,
         "occurrenceCount": 16,
         "stringOccurrenceCount": 17,
-        "typedBoundCount": 0,
+        "typedBoundCount": 3,
         "unconditionalCount": 1,
         "uniqueExactArrayCount": 7,
         "uniqueStringCount": 7
@@ -7759,8 +7833,8 @@
       "er-deferred": 15,
       "exact-text-acknowledged": 3,
       "invalid": 0,
-      "known-but-unbound": 57,
-      "typed-bound": 51,
+      "known-but-unbound": 54,
+      "typed-bound": 54,
       "unconditional": 16
     },
     "energyCoverage": {
@@ -7782,10 +7856,10 @@
       },
       "energyUnclassified": {
         "emptyCount": 0,
-        "nonemptyCount": 60,
-        "occurrenceCount": 60,
-        "stringOccurrenceCount": 68,
-        "uniqueExactArrayCount": 46,
+        "nonemptyCount": 57,
+        "occurrenceCount": 57,
+        "stringOccurrenceCount": 65,
+        "uniqueExactArrayCount": 45,
         "uniqueStringCount": 51
       },
       "exactAuthoredEnergyRelatedDeferral": {
@@ -7798,11 +7872,11 @@
       },
       "notEnergyDeferred": {
         "emptyCount": 0,
-        "nonemptyCount": 51,
-        "occurrenceCount": 51,
-        "stringOccurrenceCount": 73,
-        "uniqueExactArrayCount": 31,
-        "uniqueStringCount": 32
+        "nonemptyCount": 54,
+        "occurrenceCount": 54,
+        "stringOccurrenceCount": 76,
+        "uniqueExactArrayCount": 32,
+        "uniqueStringCount": 33
       },
       "structuralEr": {
         "emptyCount": 0,
@@ -7830,18 +7904,18 @@
       "nonemptyCount": 123,
       "occurrenceCount": 123,
       "stringOccurrenceCount": 156,
-      "typedBoundOccurrenceCount": 54,
-      "typedBoundStringOccurrenceCount": 76,
-      "unboundOccurrenceCount": 66,
-      "unboundStringOccurrenceCount": 77,
+      "typedBoundOccurrenceCount": 57,
+      "typedBoundStringOccurrenceCount": 79,
+      "unboundOccurrenceCount": 63,
+      "unboundStringOccurrenceCount": 74,
       "uniqueExactArrayCount": 86,
       "uniqueStringCount": 94
     },
     "nonStructuralUniqueBindingArrayCoverage": {
       "mixedAcknowledgedAndUnboundCount": 1,
       "otherMixedCount": 0,
-      "typedOnlyCount": 32,
-      "unboundOnlyCount": 53,
+      "typedOnlyCount": 33,
+      "unboundOnlyCount": 52,
       "uniqueExactArrayCount": 86
     },
     "total": {

@@ -152,7 +152,7 @@ comparative performance, rank, suitability, account advice, or a player-facing
 recommendation, and independently evaluated contexts must not be multiplied
 into one build.
 
-The standalone Noelle Luna VIII high-investment slice authenticates the source
+The Noelle Luna VIII high-investment slice authenticates the source
 condition `Noelle is C6 or her Burst Talent is Level 10 or higher.` for three
 exact main-stat occurrences. The source predicate remains unresolved and keeps
 Talent evaluation disabled. Only the wrapper-owned request mapping evaluates
@@ -209,7 +209,7 @@ request fact or binding. All five Kokomi condition arrays are nonempty: one is
 selected and four are exact holdouts. The slice consumes, binds, or energy-
 classifies none of the holdouts.
 
-The standalone Noelle Luna VIII adapter selects exactly three occurrences from
+The Noelle Luna VIII adapter selects exactly three occurrences from
 the high-investment main-stat branch: DEF% Sands, Geo DMG Bonus Goblet, and CRIT
 Rate/CRIT DMG Circlet. The exact 16-array boundary closes as three selected, 12
 nonempty holdouts, and one empty occurrence. It projects the independent claims
@@ -240,10 +240,13 @@ Ocean-Hued Clam payload, `recommended`/`unranked` metadata, and zero request-
 binding boundary. The four exact Kokomi holdouts remain unbound and energy-
 unclassified.
 
-Checkpoint 31 does not admit the standalone Noelle slice. Its three selected
-occurrences therefore remain unbound and energy-unclassified in current manual
-coverage, and the 57-entry catalog, six wrapper families, and all checkpoint 30
-coverage partitions remain unchanged.
+Checkpoint 32 separately admits only the three checkpoint 31 Noelle selected
+occurrences. Admission requires exact durable/current report equality and
+repeats the source identities, shared source and request predicates, three
+payloads, numeric request projection, 3/12/1 selected/holdout/empty partition,
+and disabled capability boundary before normalized entry construction. The 12
+holdouts and one empty occurrence remain outside the catalog and receive no new
+binding or energy classification.
 
 A private normalized helper may perform only repeated selected-occurrence,
 source-claim, and condition-control parity plus catalog-entry construction after
@@ -288,16 +291,16 @@ its fresh authenticated rebuild. They must not parse arbitrary English, infer
 a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
-The current authenticated catalog contains 57 entries: 54 typed bindings and 3
-exact-text acknowledgements. Full nonempty binding coverage is 54 typed, 3
-acknowledged, and 69 unbound. The non-structural partition is 123 rows: 54
-typed, 3 acknowledged, and 66 unbound. Its 86 unique ordered arrays contain 32
-typed-only, 53 unbound-only, and one mixed acknowledged/unbound set. The
-independent energy ledger is 15 deferred, 51 explicitly not energy-deferred, 60
-nonempty unclassified, and 16 empty unconditional arrays. Display status is 51
-typed, 57 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
-unconditional. Coverage authenticates six wrapper families across 17 source
-files and 67 generated-from paths.
+The current authenticated catalog contains 60 entries: 57 typed bindings and 3
+exact-text acknowledgements. Full nonempty binding coverage is 57 typed, 3
+acknowledged, and 66 unbound. The non-structural partition is 123 rows: 57
+typed, 3 acknowledged, and 63 unbound. Its 86 unique ordered arrays contain 33
+typed-only, 52 unbound-only, and one mixed acknowledged/unbound set. The
+independent energy ledger is 15 deferred, 54 explicitly not energy-deferred, 57
+nonempty unclassified, and 16 empty unconditional arrays. Display status is 54
+typed, 54 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+unconditional. Coverage authenticates seven wrapper families across 18 source
+files and 70 generated-from paths.
 
 ### Derived condition-resolved flat claim joins
 

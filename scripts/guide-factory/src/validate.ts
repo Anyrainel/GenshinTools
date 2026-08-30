@@ -1010,7 +1010,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
           code: "pipeline.non_comparable_manual_condition_array_coverage",
           path: "reports.manual-condition-array-coverage",
           message:
-            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its six current wrapper families.",
+            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its seven current wrapper families.",
         });
       } else if (
         stableJson(expectedManualConditionArrayCoverage) !==

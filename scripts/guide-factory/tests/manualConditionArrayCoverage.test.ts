@@ -26,6 +26,7 @@ import { readJson } from "../src/io";
 import { KLEE_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS } from "../src/kleeSourceLocalConditionSlice";
 import { DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS } from "../src/dionaSourceLocalSupportSlice";
 import { KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS } from "../src/kokomiSourceLocalArtifactSlice";
+import { NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS } from "../src/noelleSourceLocalHighInvestmentSlice";
 
 const KEQING_EQUIPMENT_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
@@ -35,6 +36,8 @@ const DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/diona-source-local-support-slice.json";
 const KOKOMI_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json";
+const NOELLE_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
+  "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json";
 
 describe("manual condition-array coverage report", () => {
   let input: BuildManualConditionArrayCoverageReportInput;
@@ -52,7 +55,7 @@ describe("manual condition-array coverage report", () => {
       status: "accepted",
       exactPathSet: true,
       rawJsonObjectClosure: true,
-      sourceFileCount: 17,
+      sourceFileCount: 18,
     });
     expect(report.corpusBoundary).toMatchObject({
       snapshotCount: 7,
@@ -65,17 +68,19 @@ describe("manual condition-array coverage report", () => {
     });
     expect(report.bindingBoundary).toMatchObject({
       status: "authenticated",
-      occurrenceCount: 57,
+      occurrenceCount: 60,
       ittoAuthenticated: true,
       keqingEquipmentDurableMatchesCurrent: true,
       keqingRolePairDurableMatchesCurrent: true,
       kleeSourceLocalDurableMatchesCurrent: true,
       dionaSourceLocalDurableMatchesCurrent: true,
       kokomiSourceLocalDurableMatchesCurrent: true,
+      noelleSourceLocalDurableMatchesCurrent: true,
       keqingEquipmentAtomicClaimCount: 42,
       kleeSourceLocalOccurrenceCount: 4,
       dionaSourceLocalOccurrenceCount: 3,
       kokomiSourceLocalOccurrenceCount: 1,
+      noelleSourceLocalOccurrenceCount: 3,
       exactTextAcknowledgementOccurrenceCount: 3,
       typedBindingMeansConditionTruth: false,
     });
@@ -86,11 +91,12 @@ describe("manual condition-array coverage report", () => {
       ),
     ).not.toThrow();
     const generatedPaths = new Set(report.generatedFrom.map(({ path }) => path));
-    expect(report.generatedFrom).toHaveLength(67);
+    expect(report.generatedFrom).toHaveLength(70);
     expect(generatedPaths.size).toBe(report.generatedFrom.length);
     expect(generatedPaths).toContain(KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(KOKOMI_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
+    expect(generatedPaths).toContain(NOELLE_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(
       "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
     );
@@ -104,6 +110,9 @@ describe("manual condition-array coverage report", () => {
       "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
     );
     expect(KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS).not.toContain(
+      "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
+    );
+    expect(NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS).not.toContain(
       "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
     );
   });
@@ -207,13 +216,13 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 89,
       stringOccurrenceCount: 159,
       uniqueStringCount: 97,
-      typedBoundOccurrenceCount: 54,
+      typedBoundOccurrenceCount: 57,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 69,
+      unboundOccurrenceCount: 66,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 76,
+      typedBoundStringOccurrenceCount: 79,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 80,
+      unboundStringOccurrenceCount: 77,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralBindingCoverage).toEqual({
@@ -223,19 +232,19 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 86,
       stringOccurrenceCount: 156,
       uniqueStringCount: 94,
-      typedBoundOccurrenceCount: 54,
+      typedBoundOccurrenceCount: 57,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 66,
+      unboundOccurrenceCount: 63,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 76,
+      typedBoundStringOccurrenceCount: 79,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 77,
+      unboundStringOccurrenceCount: 74,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralUniqueBindingArrayCoverage).toEqual({
       uniqueExactArrayCount: 86,
-      typedOnlyCount: 32,
-      unboundOnlyCount: 53,
+      typedOnlyCount: 33,
+      unboundOnlyCount: 52,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     });
@@ -265,19 +274,19 @@ describe("manual condition-array coverage report", () => {
         uniqueStringCount: 11,
       },
       notEnergyDeferred: {
-        occurrenceCount: 51,
+        occurrenceCount: 54,
         emptyCount: 0,
-        nonemptyCount: 51,
-        uniqueExactArrayCount: 31,
-        stringOccurrenceCount: 73,
-        uniqueStringCount: 32,
+        nonemptyCount: 54,
+        uniqueExactArrayCount: 32,
+        stringOccurrenceCount: 76,
+        uniqueStringCount: 33,
       },
       energyUnclassified: {
-        occurrenceCount: 60,
+        occurrenceCount: 57,
         emptyCount: 0,
-        nonemptyCount: 60,
-        uniqueExactArrayCount: 46,
-        stringOccurrenceCount: 68,
+        nonemptyCount: 57,
+        uniqueExactArrayCount: 45,
+        stringOccurrenceCount: 65,
         uniqueStringCount: 51,
       },
       unconditional: {
@@ -301,9 +310,9 @@ describe("manual condition-array coverage report", () => {
       invalid: 0,
       unconditional: 16,
       "er-deferred": 15,
-      "typed-bound": 51,
+      "typed-bound": 54,
       "exact-text-acknowledged": 3,
-      "known-but-unbound": 57,
+      "known-but-unbound": 54,
     });
     expect(report.nonStructuralUniqueBindingStatusSets).toHaveLength(86);
     expect(
@@ -454,7 +463,7 @@ describe("manual condition-array coverage report", () => {
         ({ energyClassification }) =>
           energyClassification === "not-energy-deferred",
       ),
-    ).toHaveLength(51);
+    ).toHaveLength(54);
     expect(
       report.occurrences
         .filter(
@@ -693,6 +702,68 @@ describe("manual condition-array coverage report", () => {
     expect(report.supportsEnergyRecoveryClaims).toBe(false);
   });
 
+  it("promotes only the three Noelle high-investment rows and leaves holdouts and the empty row outside", () => {
+    const noelleRows = report.occurrences.filter(
+      ({ snapshotPath }) =>
+        snapshotPath ===
+        "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+    );
+    const promoted = noelleRows.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence?.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-noelle-source-local-high-investment-slice-luna-viii",
+    );
+    expect(promoted).toHaveLength(3);
+    expect(promoted.map(({ manualClaimPath }) => manualClaimPath).sort()).toEqual([
+      "recommendation.mainStats.circlet[0].conditions",
+      "recommendation.mainStats.goblet[0].conditions",
+      "recommendation.mainStats.sands[0].conditions",
+    ]);
+    expect(
+      promoted.every(
+        (row) =>
+          row.subject === "noelle" &&
+          row.conditions[0] ===
+            "Noelle is C6 or her Burst Talent is Level 10 or higher." &&
+          row.bindingClassification === "typed-bound" &&
+          row.energyClassification === "not-energy-deferred" &&
+          row.displayStatus === "typed-bound" &&
+          row.bindingEvidence?.kind ===
+            "source-local-typed-predicate-ast" &&
+          row.bindingEvidence.predicateAstSha256 ===
+            "a700f51166e436253a9943351cc4255141d6ebaf083273fc0bacf8fda0b85a8a" &&
+          row.energyEvidence?.kind ===
+            "source-local-not-energy-deferred" &&
+          !row.energyEvidence.energyRelatedWorkDeferred,
+      ),
+    ).toBe(true);
+
+    const outside = noelleRows.filter(
+      ({ occurrenceId }) =>
+        !promoted.some((promotedRow) => promotedRow.occurrenceId === occurrenceId),
+    );
+    expect(outside).toHaveLength(13);
+    expect(outside.filter(({ conditions }) => conditions.length > 0)).toHaveLength(
+      12,
+    );
+    expect(outside.filter(({ conditions }) => conditions.length === 0)).toHaveLength(
+      1,
+    );
+    expect(
+      outside.every(
+        ({ conditions, bindingClassification, energyClassification, bindingEvidence, energyEvidence }) =>
+          bindingClassification === "unbound" &&
+          bindingEvidence == null &&
+          (conditions.length === 0
+            ? energyClassification === "energy-unclassified" &&
+              energyEvidence == null
+            : energyClassification === "energy-unclassified" &&
+              energyEvidence == null),
+      ),
+    ).toBe(true);
+  });
+
   it("fails closed when a byte-authenticated durable wrapper is stale", async () => {
     const staleInput = structuredClone(input);
     const staleEquipment = structuredClone(
@@ -808,6 +879,34 @@ describe("manual condition-array coverage report", () => {
     expect(stale.bindingBoundary.status).toBe("rejected");
     expect(stale.issues[0]?.message).toContain(
       "checked-in Kokomi source-local report failed a fresh current rebuild",
+    );
+  });
+
+  it("fails closed when the byte-authenticated Noelle report is stale against its numeric projection", async () => {
+    const staleInput = structuredClone(input);
+    const source = staleInput.sourceFiles.find(
+      ({ path: sourcePath }) =>
+        sourcePath === NOELLE_SOURCE_LOCAL_REPORT_RELATIVE_PATH,
+    );
+    if (!source) throw new Error("Missing Noelle durable report fixture.");
+    const staleNoelle = JSON.parse(source.text) as {
+      numericEvaluationBoundary: { requestPredicateSha256: string };
+    };
+    staleNoelle.numericEvaluationBoundary.requestPredicateSha256 = "0".repeat(64);
+    const staleText = stableJson(staleNoelle);
+    source.text = staleText;
+    staleInput.generatedFrom = staleInput.generatedFrom.map((entry) =>
+      entry.path === NOELLE_SOURCE_LOCAL_REPORT_RELATIVE_PATH
+        ? { ...entry, sha256: sha256Text(staleText) }
+        : entry,
+    );
+
+    const stale = await buildManualConditionArrayCoverageReport(staleInput);
+    expect(stale.comparisonStatus).toBe("not-comparable");
+    expect(stale.occurrences).toEqual([]);
+    expect(stale.bindingBoundary.status).toBe("rejected");
+    expect(stale.issues[0]?.message).toContain(
+      "checked-in Noelle source-local report failed a fresh current rebuild",
     );
   });
 

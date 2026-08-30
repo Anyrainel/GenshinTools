@@ -21,20 +21,19 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 31 authenticates a standalone Noelle high-investment numeric request-
-context slice. It selects the exact DEF% Sands, Geo DMG Bonus Goblet, and CRIT
-Rate/CRIT DMG Circlet occurrences under one shared C6-or-Burst-Talent-10+
-condition, then projects them over the exact Noelle/Durin/Nicole/Xilonen source
-team. All three source cells remain unresolved until an independently supplied,
-team-and-character-scoped C6 request fact satisfies the pinned
-`any(constellation >= 6, burst talent >= 10)` predicate. The source evaluator
-still does not evaluate Talent levels, and constellation does not derive one.
-The exact 16-array boundary is three selected, 12 nonempty holdouts, and one
-empty array. This adds the thirtieth durable report but no catalog entry: the
-57-entry catalog and all checkpoint 30 coverage ledgers remain unchanged. It is
-typed applicability validation, not an artifact assignment, assembled build,
-recommendation, rank, optimizer, damage, rotation, ER result, or working guide
-factory:
+Checkpoint 32 admits only checkpoint 31's three already authenticated Noelle
+high-investment main-stat occurrences into the current condition-binding
+catalog. The source-specific path rechecks the exact Luna VIII snapshot, guide
+and team identities, shared C6-or-Burst-Talent-10+ condition and hashes,
+independent DEF% Sands, Geo DMG Bonus Goblet, and CRIT Rate/CRIT DMG Circlet
+payloads, numeric request projection, 12 holdouts, one empty occurrence, and
+disabled capability boundary before a private normalized helper constructs the
+three entries. The catalog is now 60 = 57 typed + 3 acknowledged; manual
+coverage authenticates seven wrapper families across 18 source files and 70
+generated-from paths. Checkpoint 32 adds no report, so the durable total remains
+30. This is occurrence-scoped validation evidence, not an artifact assignment,
+assembled build, recommendation, rank, optimizer, damage, rotation, ER result,
+or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -475,6 +474,29 @@ factory:
     executing no recommendation, rank, damage, rotation, or ER work.
 155. Keep catalog admission for only these three exact Noelle occurrences and a
     later lower-investment branch experiment as separate, unimplemented gates.
+156. Admit only the three checkpoint 31 Noelle main-stat occurrences after
+    requiring exact durable/current report equality and repeating every Noelle-
+    specific source, identity, numeric-request, payload, partition, and disabled-
+    capability assertion.
+157. Retain all 12 named nonempty holdouts and the one empty occurrence outside
+    the catalog, with zero slice-authored holdout consumption, binding, or energy
+    classification.
+158. Reuse the private normalized selected-to-claim-to-control cross-link and
+    entry-construction helper only after those Noelle-specific checks; add no
+    generic wrapper, extractor, schema adapter, or prose parser.
+159. Refresh the catalog to 60 = 57 typed + 3 acknowledged; full nonempty
+    coverage to 57/3/66; and non-structural coverage to 123/57/3/63.
+160. Refresh unique non-structural arrays to 33 typed-only, 52 unbound-only, and
+    1 mixed, while energy becomes 15 deferred, 54 explicitly not deferred, 57
+    nonempty unclassified, and 16 empty.
+161. Preserve display status as 54 typed, 54 known-but-unbound, 15 ER-deferred,
+    3 acknowledged, and 16 unconditional occurrences.
+162. Authenticate seven wrapper families across 18 source files and 70 generated-
+    from paths, then regenerate manual coverage and the checkpoint 27 Klee
+    witness without changing its four-claim semantics.
+163. Add no durable report and execute no assignment, recommendation, build,
+    rank, optimizer, damage, rotation, or ER work; keep the lower-investment
+    Noelle branch as a separate, unimplemented next experiment.
 
 The first two active sources are already in this repository:
 
@@ -611,9 +633,8 @@ source-conditioned candidate lattice, the authenticated cross-record
 composition contract, the eight-cell cross-record technical matrix, Diona
 comparison, the authenticated Itto source-conditioned packet, its separately
 authenticated request/account-context applicability projection, the exact
-Klee, Diona, and Kokomi catalog-integrated source-local condition slices, the
-standalone Noelle high-investment numeric source-local slice, the exact manual
-condition-array coverage
+Klee, Diona, Kokomi, and Noelle catalog-integrated source-local condition
+slices, the exact manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration.
 Stale evidence cannot pass.
@@ -716,7 +737,7 @@ metadata, and zero-request-binding check. A private normalized helper performs
 only the repeated selected-to-claim-to-control cross-link and entry construction
 after those checks; it is not a generic wrapper or parser.
 
-The standalone Noelle high-investment adapter selects three exact main-stat
+The Noelle high-investment adapter selects three exact main-stat
 occurrences from the C6-or-Burst-Talent-10+ guide branch: DEF% Sands, Geo DMG
 Bonus Goblet, and CRIT Rate/CRIT DMG Circlet. The source predicate remains one
 unresolved `investment-threshold` leaf. A wrapper-owned mapping preserves the
@@ -728,33 +749,42 @@ level evaluation remains false, and no Talent level is derived from
 constellation. The exact Noelle boundary contains 16 arrays: three selected, 12
 nonempty holdouts, and one empty array. The holdouts and empty occurrence are
 unconsumed and receive no slice-authored binding or energy classification.
-This standalone slice creates zero candidates, equipment assignments,
+The slice creates zero candidates, equipment assignments,
 optimizations, or assembled builds.
+
+Checkpoint 32 admits only those three selected Noelle occurrences after
+requiring the durable report to equal a fresh source-specific rebuild and
+rechecking the exact page/version, snapshot and repository parity, guide/team/
+subject identities, source and request predicates, payloads, recommendation
+metadata, request projection, 3/12/1 partition, and disabled capabilities. Only
+then may the private normalized helper perform the repeated selected-to-claim-
+to-control cross-link and entry construction. The 12 holdouts and one empty row
+remain outside the catalog.
 
 The manual condition-array inventory then broadens that validation boundary to
 all seven active external snapshots. It extracts 142 exact schema occurrences
 and matches all 142 to their consolidated copies. Sixteen arrays are
-unconditional. Across the 126 nonempty arrays, 54 are typed-bound, 3 are exact-
-text acknowledged, and 69 are unbound. Excluding only structural ER leaves 123
-binding-coverage rows: 54 typed, 3 acknowledged, and 66 unbound. The 86 unique
-non-structural arrays split into 32 typed-only, 53 unbound-only, and one mixed
+unconditional. Across the 126 nonempty arrays, 57 are typed-bound, 3 are exact-
+text acknowledged, and 66 are unbound. Excluding only structural ER leaves 123
+binding-coverage rows: 57 typed, 3 acknowledged, and 63 unbound. The 86 unique
+non-structural arrays split into 33 typed-only, 52 unbound-only, and one mixed
 acknowledged/unbound set. The separate
 energy ledger still defers 3 structural ER arrays, 3 typed Itto prerequisites,
-and 9 exact authored Diona/Furina rows; 51 rows are explicitly not energy-
-deferred and 60 nonempty rows remain energy-unclassified. Display status is 51
-typed, 57 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
+and 9 exact authored Diona/Furina rows; 54 rows are explicitly not energy-
+deferred and 57 nonempty rows remain energy-unclassified. Display status is 54
+typed, 54 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 16
 unconditional. The authenticated
 catalog deliberately binds only exact source occurrences. Its reusable evidence
 labels are `source-local-typed-predicate-ast` and `source-local-not-energy-
 deferred`, while each wrapper, fresh authentication, extraction path, and
 `sliceId` remains source-specific. The shared
 Viridescent Venerer text remains acknowledged for Jean, Kaedehara Kazuha, and
-Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates six
-wrapper families across 17 source files and 67 generated-from paths. The
-validator rebuilds the 57-entry catalog and coverage before regenerating the
+Sucrose but unbound for Sayu and Xianyun. Manual coverage authenticates seven
+wrapper families across 18 source files and 70 generated-from paths. The
+validator rebuilds the 60-entry catalog and coverage before regenerating the
 Klee witness. Neither catalog nor coverage feeds back into a source-local slice.
-The standalone Noelle classifications do not enter the catalog: its selected
-occurrences remain unbound and energy-unclassified in current manual coverage.
+The Noelle admission binds only the three selected occurrences; its 12
+holdouts and one empty row retain their checkpoint 31 exclusion boundary.
 These reports measure validation work. They do
 not prove a condition is satisfied, presume an unclassified row is non-ER, or
 establish that a preserved payload is a correct recommendation.
@@ -771,9 +801,9 @@ holdouts, and performs no payload expansion, compatibility evaluation, build or
 candidate construction, cross-product, selection, recommendation, ranking,
 generator, optimizer, formula, rotation, damage, ideal-roll, or ER work.
 Its durable report is regenerated because manual coverage is a declared input;
-the shared numeric request-context change also refreshes the authenticated
-source-local dependency chain. The four Klee claims, two team controls, and
-interpretation boundary do not change.
+the Noelle catalog admission changes only that downstream coverage dependency.
+The four Klee claims, two team controls, and interpretation boundary do not
+change.
 
 ## Data flow
 
