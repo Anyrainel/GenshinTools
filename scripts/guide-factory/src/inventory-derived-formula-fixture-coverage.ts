@@ -87,7 +87,8 @@ await writeJson(DERIVED_FORMULA_FIXTURE_COVERAGE_REPORT_PATH, report);
 
 console.log(
   `Wrote ${report.summary.fixtureCount} derived formula fixtures with ` +
+    `${report.summary.countParityOnlyFixtureCount} count-parity-only fixture, ` +
     `${report.summary.characterScenarioObservationCount} scenario-member ` +
     `observations across ${report.summary.uniqueCharacterCount} characters; ` +
-    `all remain withheld from guide use.`,
+    `all remain withheld from guide, damage, source-validation, and ER claims.`,
 );

@@ -255,6 +255,22 @@ Current durable pilot evidence:
   formulas, rotations, damage, ideal-roll, or ER calculations. Catalog entries
   use generic source-local evidence labels while retaining this exact wrapper,
   extraction boundary, occurrence identity, and `sliceId`.
+- `xiao-source-local-condition-slice.json` authenticates exactly three Xiao
+  Version 5.5 condition occurrences over the exact
+  Xiao/Xianyun/Furina/Faruzan roster. The roster source-matches the
+  Marechaussee Hunter and Anemo Goblet Xianyun predicates. The source team
+  leaves Xiao's investment unspecified, so only an explicit wrapper-owned
+  Xiao-C6 request fact resolves the separate C6 Anemo Goblet occurrence. The
+  source boundary closes all 21 Xiao arrays as 3 selected, 14 nonempty
+  holdouts, and 4 empty arrays; every holdout and empty array is unconsumed.
+  The global binding evidence preserves the two source-matched cells and the
+  one source-unresolved C6 cell together with its exact team-and-character-
+  scoped request predicate and effective match.
+  The slice evaluates no team rotation, excludes the separate rotation
+  fixture, assembles zero builds, and executes no recommendation, ranking,
+  generator, optimizer, damage, ideal-roll, or ER work. Its 68,775-byte report
+  has SHA-256
+  `2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -273,7 +289,7 @@ Current durable pilot evidence:
   optimizer, formula, rotation, damage, ideal-roll, or ER work. The report is
   regenerated whenever its authenticated manual-coverage dependency changes;
   the current Xiao/manual-source refresh leaves its Klee semantics unchanged.
-  It authenticates six source files, 81 generated-from paths, and 63 upstream
+  It authenticates six source files, 85 generated-from paths, and 66 upstream
   bindings. Its four Klee claims, team controls, and holdout boundary remain
   unchanged.
 - `klee-source-local-condition-slice.json` authenticates one reusable source-
@@ -298,17 +314,17 @@ Current durable pilot evidence:
   Witch therefore remains outside this corpus. The corpus contains 20
   empty arrays, 143 nonempty arrays, 105 unique exact ordered nonempty arrays,
   177 condition-string occurrences, and 114 unique strings. Binding and energy
-  are independent: all nonempty arrays contain 60 typed bindings, 3 exact-text
-  acknowledgements, and 80 unbound occurrences; excluding only three structural
-  ER rows leaves 140 occurrences: 60 typed, 3 acknowledged, and 77 unbound,
-  across 102 unique arrays. Those arrays contain 34 typed-only, 67 unbound-only,
+  are independent: all nonempty arrays contain 63 typed bindings, 3 exact-text
+  acknowledgements, and 77 unbound occurrences; excluding only three structural
+  ER rows leaves 140 occurrences: 63 typed, 3 acknowledged, and 74 unbound,
+  across 102 unique arrays. Those arrays contain 37 typed-only, 64 unbound-only,
   and one mixed acknowledged/unbound status set. The energy ledger defers 3
   structural rows, 3 typed Itto prerequisites, and 9 exact authored
-  Diona/Furina rows; 57 typed rows are not energy-deferred, 71 nonempty rows
-  remain energy-unclassified, and 20 are unconditional. Display status is 57
-  typed, 68 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 20
-  unconditional. The report authenticates eight wrapper families across 19
-  source files and 77 generated-from paths. Bindings are occurrence-, hash-,
+  Diona/Furina rows; 60 typed rows are not energy-deferred, 68 nonempty rows
+  remain energy-unclassified, and 20 are unconditional. Display status is 60
+  typed, 65 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 20
+  unconditional. The report authenticates nine wrapper families across 20
+  source files and 81 generated-from paths. Bindings are occurrence-, hash-,
   and subject-scoped: identical Viridescent Venerer text is acknowledged for
   Jean, Kaedehara Kazuha, and Sucrose while Sayu and Xianyun remain unbound.
   Typed coverage does not establish predicate truth, and unclassified does not
@@ -342,19 +358,37 @@ Current durable pilot evidence:
   builds, joins no baseline equipment, and executes no generator, optimizer,
   formula, rotation, damage, ranking, ideal-roll, or ER calculation. All seven
   source records remain unreviewed and publication stays withheld.
-- `derived-formula-fixture-coverage.json` authenticates exactly two checked-in
-  technical fixtures and inventories eight character-scenario observations
-  across six unique characters. Furina and Xilonen occur in both scenarios;
-  Keqing, Ineffa, Neuvillette, and Kaedehara Kazuha occur once. All observations
-  are exact C0 only as local calculator assumptions, while both source teams
-  leave constellation investment unspecified; C1-C6 remain unobserved. The
-  fixtures contain 25 positive and 11 zero-default formula rows, but zero
-  source-validated or guide-ready plans. Keqing retains eight readiness
-  blockers; the older Furina fixture is not assessed and records no token-
-  coverage classification. Both manual source extractions and both action
-  translations remain unreviewed. The report executes no formula, replay,
-  optimizer, damage, or ER path and supports no guide, recommendation, rank, or
-  source-validation claim.
+- `xiao-formula-count-parity.json` authenticates the separate source-authored
+  Xiao `EEQ12HP` fixture and the current GenshinTools FFXX calculator baseline
+  under explicit local C0/R1/level-90/10-10-10 assumptions. A Guide Factory-
+  authored, unreviewed alias table maps source tokens `E` and `HP` to
+  `xiao-skill` and `xiao-plunge-high`; KQM is not credited with those formula
+  identifiers. Skill is 2 on both sides. High Plunge is source 12 versus
+  calculator-default 11. That mismatch is retained as a validation target,
+  not a winner or correctness verdict. The report evaluates zero damage
+  formulas, excludes ER inputs, and supports no guide, team, build, equipment,
+  stat, rank, rotation, damage, or ER claim. Exact snapshot document metadata
+  and the declared generated-from hashes are authenticated, but the report
+  explicitly does not claim transitive runtime-code hash closure. Whole
+  containers are schema-validated even though only scoped, schema-valid rows
+  enter the semantic projection. Its 24,912-byte report has SHA-256
+  `eaf5c72b1861fc107b32d99af8d3485a5ff3d584bec31acd733c85e9a419ce6c`.
+- `derived-formula-fixture-coverage.json` authenticates three checked-in
+  technical fixtures: two legacy formula-plan drafts and the Xiao count-parity-
+  only witness. Its standalone assembly independently rebuilds the Xiao raw
+  fixture/preset semantic scope before accepting the saved witness. It
+  inventories twelve calculator-team observations across nine
+  unique characters. The Xiao fixture contributes four calculator-team-only
+  observations because its source fixture supplies no team. All observations
+  are exact C0 only as local calculator assumptions; eight legacy source-team
+  observations remain constellation-unspecified and four Xiao observations
+  have no source team. The fixtures contain 33 positive and 18 zero-default
+  formula rows. Xiao contributes two parity rows with one match and one
+  preserved mismatch. There are zero source-validated or guide-ready plans.
+  Keqing retains eight readiness blockers; the older Furina fixture remains
+  unassessed; and the Xiao aliases remain unreviewed. The inventory executes no
+  formula, replay, optimizer, damage, or ER path and supports no guide,
+  recommendation, rank, or source-validation claim.
 - `character-guide-input-coverage.json` projects contributing non-ER guide
   inputs across 125 guide-domain-eligible characters at C0 through C6: 875
   compact rows backed by 3,126 group-level observations. Aloy and the Anemo,
@@ -610,7 +644,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all thirty-seven globally integrated reports
+In full mode `validate.ts` rebuilds all thirty-nine globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -630,13 +664,18 @@ Its final 2,029,334-byte report has SHA-256
 Checkpoint 41 adds durable report 38 and globally integrates it as report 37.
 Its final 71,373-byte report has SHA-256
 `c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73`.
+Checkpoint 42 adds the Xiao source-local and formula-count witnesses to the
+global runner, bringing it to 39 integrated reports. Including checkpoint 35's
+permission-isolated report, this directory contains 40 JSON reports.
 
-The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged.
-The Xiao refresh expands current manual coverage to 8 guide snapshots, 71
-records, 163 condition arrays, 19 source files, and 77 generated-from paths; the
-Klee witness now authenticates six source files, 81 generated-from paths, and 63
-upstream bindings. These provenance and unbound-coverage changes do not add a
-catalog entry. Checkpoint 38
+Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
+Current manual coverage remains 8 guide snapshots, 71 records, and 163
+condition arrays while authenticating 20 source files and 81 generated-from
+paths; the Klee witness retains its four claims while authenticating six source
+files, 85 generated-from paths, and 66 upstream bindings. The separate Xiao
+formula-count witness and expanded derived-fixture inventory preserve one
+2-versus-2 match and one 12-versus-11 mismatch without producing a correctness
+verdict. Checkpoint 38
 executes the generator and replay runtime but produces no source, guide,
 team/equipment recommendation, rank, damage, DPS, gameplay, optimality,
 promotion, ideal-stat allocation, or ER claim. Its 139 intact-endpoint matches
@@ -652,7 +691,8 @@ start, while making no fresh runtime evaluation. Checkpoint 41 covers all 36
 starts and all 864 structurally effective declared orders through 31,104 traces,
 compact partitions, digests, and witness paths. It records 24/12 best-
 improvement basins and 18,576/12,528 declared-order terminal outcomes without
-fresh runtime evaluation. The next non-ER boundary should use the expanded
-repository for a second character/team slice. The Diona ER report is historical
+fresh runtime evaluation. Checkpoint 42 supplies that second character/team
+slice through bounded Xiao applicability and count-parity witnesses, not a
+guide or build. The Diona ER report is historical
 and deliberately decoupled from unrelated knowledge-repository changes while
 ER work is deferred.

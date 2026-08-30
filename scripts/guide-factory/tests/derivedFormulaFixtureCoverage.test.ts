@@ -29,6 +29,12 @@ const manualIndexPath =
   "scripts/guide-factory/data/source-snapshots/manual-index.json";
 const rosterReportPath =
   "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json";
+const xiaoManualFixturePath =
+  "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json";
+const xiaoPresetSnapshotPath =
+  "scripts/guide-factory/data/source-snapshots/genshintools-presets.json";
+const xiaoScopeCodePath =
+  "scripts/guide-factory/src/xiaoFormulaCountParityScope.ts";
 
 let fixture: BuildDerivedFormulaFixtureCoverageInput;
 let report: DerivedFormulaFixtureCoverageReport;
@@ -54,14 +60,21 @@ describe("derived formula fixture coverage", () => {
       supportsSourceValidation: false,
       supportsEnergyRecoveryClaims: false,
       summary: {
-        fixtureCount: 2,
-        characterScenarioObservationCount: 8,
-        uniqueCharacterCount: 6,
-        derivedC0ObservationCount: 8,
+        fixtureCount: 3,
+        legacyFormulaPlanFixtureCount: 2,
+        countParityOnlyFixtureCount: 1,
+        characterScenarioObservationCount: 12,
+        calculatorTeamOnlyObservationCount: 4,
+        uniqueCharacterCount: 9,
+        derivedC0ObservationCount: 12,
         sourceConstellationSpecifiedObservationCount: 0,
         sourceConstellationUnspecifiedObservationCount: 8,
-        positiveDefaultFormulaRowCount: 25,
-        zeroDefaultFormulaRowCount: 11,
+        sourceTeamAbsentObservationCount: 4,
+        positiveDefaultFormulaRowCount: 33,
+        zeroDefaultFormulaRowCount: 18,
+        countParityFormulaComparisonCount: 2,
+        countParityMatchedCount: 1,
+        countParityMismatchCount: 1,
         sourceValidatedObservationCount: 0,
         guideReadyObservationCount: 0,
       },
@@ -85,8 +98,12 @@ describe("derived formula fixture coverage", () => {
           },
           constellationBasis: "calculator-local-fixture-assumption",
           calculationTeamInvestment: "constellation-unspecified",
-          sourceRotationTeamInvestment: "constellation-unspecified",
         });
+        expect(observation.sourceRotationTeamInvestment).toBe(
+          scenario.fixtureSemantics === "formula-count-parity-only"
+            ? "not-applicable-source-fixture-has-no-team"
+            : "constellation-unspecified",
+        );
       }
     }
     for (const character of report.characters) {
@@ -108,7 +125,11 @@ describe("derived formula fixture coverage", () => {
       unobservedDerivedConstellations: [1, 2, 3, 4, 5, 6],
       derivedC0Basis: "calculator-local-fixture-assumptions-only",
       calculationTeamInvestment: "constellation-unspecified",
-      sourceRotationTeamInvestment: "constellation-unspecified",
+      sourceRotationTeamInvestment:
+        "mixed-legacy-unspecified-and-count-parity-source-team-absent",
+      legacySourceRotationTeamInvestment: "constellation-unspecified",
+      countParitySourceTeamInvestment:
+        "not-applicable-source-fixture-has-no-team",
       sourceConstellationUsedAsC0Evidence: false,
     });
   });
@@ -121,15 +142,18 @@ describe("derived formula fixture coverage", () => {
       ]),
     );
     expect(counts).toEqual({
-      furina: 2,
+      faruzan: 1,
+      furina: 3,
       ineffa: 1,
       kaedehara_kazuha: 1,
       keqing: 1,
       neuvillette: 1,
+      xianyun: 1,
+      xiao: 1,
       xilonen: 2,
     });
     expect(report.summary.sharedCharacterScenarioObservationCounts).toEqual({
-      furina: 2,
+      furina: 3,
       xilonen: 2,
     });
     expect(
@@ -137,6 +161,7 @@ describe("derived formula fixture coverage", () => {
     ).toEqual([
       "furina-neuvillette-source-rotation-comparison-v2",
       "keqing-ineffa-source-rotation-comparison-v1",
+      "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
     ]);
   });
 
@@ -176,11 +201,93 @@ describe("derived formula fixture coverage", () => {
       blockerCount: 8,
       sourceTokenCoverage: "recorded",
     });
+    expect(furina.fixtureSemantics).toBeUndefined();
+    expect(keqing.fixtureSemantics).toBeUndefined();
+    expect(furina.countParity).toBeUndefined();
+    expect(keqing.countParity).toBeUndefined();
+  });
+
+  it("keeps Xiao as an unreviewed count-parity-only calculator-team witness", () => {
+    const xiao = scenario(
+      "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+    );
+    expect(xiao).toMatchObject({
+      fixtureSemantics: "formula-count-parity-only",
+      calculationTeamRecordId:
+        "genshintools-presets:team:CX03obKWOJgK51-fWO",
+      sourceRotation: {
+        recordId:
+          "kqm:rotation-fixture:xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+        rotationId: "no-buff-eeq12hp",
+      },
+      provenance: {
+        sourceId: "kqm",
+        sourceRecordId:
+          "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+        sourceRotationExtractionReviewStatus: "unreviewed",
+        actionTranslationReviewStatus: "unreviewed",
+        semanticScope: {
+          scopeId: "xiao-formula-count-parity-v1",
+          status: "accepted",
+          trust:
+            "authenticated-current-input-rebuild-and-pinned-expectation",
+        },
+      },
+      readiness: {
+        state: "count-parity-only",
+        readyForDamageReplay: null,
+        blockerCount: null,
+        sourceTokenCoverage:
+          "complete-unreviewed-guide-factory-aliases",
+      },
+      supportsGuideClaims: false,
+      supportsDamageClaims: false,
+      supportsSourceValidation: false,
+      countParity: {
+        sourceTokenAliasesAuthoredByGuideFactory: true,
+        sourceTokenAliasesHumanReviewed: false,
+        formulaCountComparisonExecuted: true,
+        formulaComparisonCount: 2,
+        matchedCount: 1,
+        mismatchCount: 1,
+        mismatches: [
+          {
+            characterId: "xiao",
+            formulaId: "xiao-plunge-high",
+            sourceTranslatedCount: 12,
+            calculatorDefaultCount: 11,
+            relation: "source-translation-higher",
+          },
+        ],
+      },
+    });
+    expect(xiao.provenance.manualSnapshot).toBeUndefined();
+    expect(
+      xiao.memberObservations.map(
+        ({ characterId, formulaInventory }) => ({
+          characterId,
+          positive: formulaInventory.positiveDefaultFormulaCount,
+          zero: formulaInventory.zeroDefaultFormulaCount,
+        }),
+      ),
+    ).toEqual([
+      { characterId: "faruzan", positive: 1, zero: 2 },
+      { characterId: "furina", positive: 3, zero: 0 },
+      { characterId: "xianyun", positive: 2, zero: 4 },
+      { characterId: "xiao", positive: 2, zero: 1 },
+    ]);
+    expect(report.boundaries.review).toMatchObject({
+      xiaoFixtureReadiness: "count-parity-only",
+      xiaoSourceTokenAliasReviewStatus: "unreviewed",
+      xiaoFormulaCountMismatchCount: 1,
+    });
   });
 
   it("records the complete no-execution and ER exclusion boundary", () => {
     expect(report.boundaries.exclusions).toEqual({
       formulaExecutionPerformed: false,
+      formulaCountComparisonPerformed: true,
+      formulaDamageEvaluationPerformed: false,
       damageReplayPerformed: false,
       optimizerUsed: false,
       energyRecoveryInputsRead: false,
@@ -265,6 +372,75 @@ describe("derived formula fixture coverage", () => {
     expect(() => buildDerivedFormulaFixtureCoverageReport(staleEmbedded)).toThrow(
       /stale generatedFrom hash/,
     );
+  });
+
+  it("rebuilds Xiao semantic scope from authenticated raw inputs instead of trusting the saved copy", () => {
+    const copiedScopeDrift = cloneFixture(fixture);
+    mutateFixtureReport(
+      copiedScopeDrift,
+      DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+      (input) => {
+        const semanticScope = requiredRecord(input.semanticScope);
+        const selector = requiredRecord(semanticScope.selector);
+        selector.manifestSha256 = "0".repeat(64);
+      },
+    );
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(copiedScopeDrift),
+    ).toThrow(/semantic scope\/current raw-input rebuild no longer matches/);
+
+    const rawBoundaryDrift = cloneFixture(fixture);
+    mutateFixtureReport(
+      rawBoundaryDrift,
+      DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+      (input) => {
+        const rawBoundary = requiredRecord(input.rawInputBoundary);
+        rawBoundary.generatedCodeHashClosure = true;
+      },
+    );
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(rawBoundaryDrift),
+    ).toThrow(/exact raw-input boundary no longer matches/);
+  });
+
+  it("fails closed when Xiao raw source, preset, or declared code inputs drift", () => {
+    const rawFixtureDrift = cloneFixture(fixture);
+    mutateJsonSource(rawFixtureDrift, xiaoManualFixturePath, (input) => {
+      const records = requiredRecordArray(input.records);
+      const fixtureRecord = records.find(
+        ({ sourceRecordId }) =>
+          sourceRecordId ===
+          "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+      );
+      if (!fixtureRecord) throw new Error("Missing Xiao raw fixture record.");
+      requiredRecordArray(fixtureRecord.formulaCounts)[1]!.count = 13;
+    });
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(rawFixtureDrift),
+    ).toThrow(/Xiao formula-count semantic scope authentication failed/);
+
+    const rawPresetDrift = cloneFixture(fixture);
+    mutateJsonSource(rawPresetDrift, xiaoPresetSnapshotPath, (input) => {
+      const teams = requiredRecordArray(input.teams);
+      const team = teams.find(
+        ({ sourceRecordId }) => sourceRecordId === "CX03obKWOJgK51-fWO",
+      );
+      if (!team) throw new Error("Missing Xiao raw preset team.");
+      requiredRecordArray(team.members)[0]!.selectedWeaponId = "staff_of_homa";
+    });
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(rawPresetDrift),
+    ).toThrow(/Xiao formula-count semantic scope authentication failed/);
+
+    const declaredCodeDrift = cloneFixture(fixture);
+    replaceTextSource(
+      declaredCodeDrift,
+      xiaoScopeCodePath,
+      `${sourceText(declaredCodeDrift, xiaoScopeCodePath)}\n`,
+    );
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(declaredCodeDrift),
+    ).toThrow(/stale generatedFrom hash/);
   });
 
   it("fails closed on roster drift, formula nonmembers, and duplicate members", () => {
@@ -419,6 +595,56 @@ describe("derived formula fixture coverage", () => {
       /blocker distribution drifted/,
     );
   });
+
+  it("fails closed when Xiao aliases, mismatch evidence, or claim boundaries drift", () => {
+    const aliasReviewDrift = cloneFixture(fixture);
+    mutateFixtureReport(
+      aliasReviewDrift,
+      DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+      (input) => {
+        input.sourceTokenAliasesHumanReviewed = true;
+      },
+    );
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(aliasReviewDrift),
+    ).toThrow(/sourceTokenAliasesHumanReviewed must be false/);
+
+    const mismatchDrift = cloneFixture(fixture);
+    mutateFixtureReport(
+      mismatchDrift,
+      DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+      (input) => {
+        requiredRecord(input.comparison).mismatches = [];
+      },
+    );
+    expect(() => buildDerivedFormulaFixtureCoverageReport(mismatchDrift)).toThrow(
+      /observed mismatch no longer matches/,
+    );
+
+    const damageClaimDrift = cloneFixture(fixture);
+    mutateFixtureReport(
+      damageClaimDrift,
+      DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+      (input) => {
+        input.supportsDamageClaims = true;
+      },
+    );
+    expect(() =>
+      buildDerivedFormulaFixtureCoverageReport(damageClaimDrift),
+    ).toThrow(/supportsDamageClaims must be false/);
+
+    const energyInputDrift = cloneFixture(fixture);
+    mutateFixtureReport(
+      energyInputDrift,
+      DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+      (input) => {
+        input.energyRecoveryInputsUsed = true;
+      },
+    );
+    expect(() => buildDerivedFormulaFixtureCoverageReport(energyInputDrift)).toThrow(
+      /energyRecoveryInputsUsed must be false/,
+    );
+  });
 });
 
 function scenario(scenarioId: string) {
@@ -515,7 +741,33 @@ function replaceJsonSource(
   relativePath: string,
   value: unknown,
 ): void {
-  const text = stableJson(value);
+  replaceTextSource(input, relativePath, stableJson(value));
+}
+
+function mutateJsonSource(
+  input: BuildDerivedFormulaFixtureCoverageInput,
+  relativePath: string,
+  mutate: (value: Record<string, unknown>) => void,
+): void {
+  const value = requiredRecord(JSON.parse(sourceText(input, relativePath)));
+  mutate(value);
+  replaceJsonSource(input, relativePath, value);
+}
+
+function sourceText(
+  input: BuildDerivedFormulaFixtureCoverageInput,
+  relativePath: string,
+): string {
+  const source = input.sourceFiles.find(({ path }) => path === relativePath);
+  if (!source) throw new Error(`Missing source bytes for ${relativePath}.`);
+  return source.text;
+}
+
+function replaceTextSource(
+  input: BuildDerivedFormulaFixtureCoverageInput,
+  relativePath: string,
+  text: string,
+): void {
   const source = input.sourceFiles.find(({ path }) => path === relativePath);
   const generated = input.generatedFrom.find(({ path }) => path === relativePath);
   if (!source || !generated) {

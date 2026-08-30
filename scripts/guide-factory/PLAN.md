@@ -58,7 +58,10 @@ The Xiao Version 5.5 slice adds three conditional artifact branches, source-
 grouped 5-star weapons, an explicitly unranked 4-star list, and the exact FFXX
 team. Its guide snapshot deliberately omits ER advice, while the separate
 rotation fixture preserves source-local action counts without mapping them to
-calculator formulas or attaching them to a team.
+calculator formulas or attaching them to a team. Checkpoint 42 preserves that
+source boundary and adds a separate Guide Factory-owned alias witness: Skill
+counts match at 2, while High Plunge is source 12 versus calculator-default 11.
+The mismatch is retained for review rather than resolved by the adapter.
 
 ## 3. Build validation tooling
 
@@ -940,13 +943,31 @@ report 37; its 71,373-byte output has SHA-256
 The next non-ER boundary should use the expanded repository for a second
 character/team slice instead of tuning this one cached Keqing objective.
 
-The Xiao refresh leaves the authenticated 63-entry condition catalog unchanged
-but expands manual coverage to 8 guide snapshots, 71 records, and 163 arrays.
-Twenty arrays are empty and 143 are nonempty; the non-structural ledger is 140
-rows with 60 typed, 3 acknowledged, and 77 unbound. Manual coverage now binds
-19 source files and 77 generated-from paths, while the regenerated Klee witness
-binds 6 source files, 81 generated-from paths, and the same 63 upstream catalog
-entries. These are validation-coverage changes, not recommendation evidence.
+Checkpoint 42 uses that Xiao refresh for the next bounded non-ER slice. It
+authenticates exactly three condition occurrences over the FFXX roster: two
+Xianyun-presence predicates and one independently supplied Xiao-C6 request
+predicate. Fourteen nonempty conditions and four empty arrays remain
+unconsumed. The catalog is now 66 = 63 typed + 3 acknowledged. Manual coverage
+still contains 163 arrays; its 140 non-structural rows are 63 typed, 3
+acknowledged, and 74 unbound. It authenticates 20 source files and 81 generated-
+from paths, while the regenerated Klee witness retains the same four Klee
+claims over 6 source files, 85 generated-from paths, and 66 upstream entries.
+
+A separate Xiao formula-count witness maps the source fixture's `E = 2` and
+`HP = 12` through an unreviewed Guide Factory alias table. The calculator
+default matches Skill at 2 and reports 11 High Plunges. The 12-versus-11
+difference is retained as a validation target without damage evaluation or a
+correctness verdict. Derived formula coverage is now three fixtures, twelve
+member observations, nine characters, 33 positive rows, 18 zero rows, and two
+Xiao count comparisons with one match and one mismatch. These are
+validation-coverage changes, not recommendation evidence.
+
+The Xiao witness also pins its source-document metadata and labels its code
+hash boundary honestly as declared-file rather than transitive runtime
+closure. The derived aggregate rebuilds the raw fixture/preset semantic scope
+instead of trusting the saved witness's accepted label. Global condition
+evidence retains the exact two source matches, one source-unresolved C6 cell,
+and its exact FFXX/Xiao request-context resolution.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,

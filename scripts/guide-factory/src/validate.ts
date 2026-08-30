@@ -263,6 +263,19 @@ import {
   buildWeaponChoiceSearchCoverageReport,
   WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
 } from "./weaponChoiceSearchCoverage";
+import {
+  authenticateXiaoFormulaCountParityReport,
+  XIAO_FORMULA_COUNT_PARITY_CODE_PATHS,
+  XIAO_FORMULA_COUNT_PARITY_REPORT_PATH,
+  XIAO_FORMULA_COUNT_PARITY_SOURCE_FILE_PATHS,
+  type XiaoFormulaCountParityReport,
+} from "./xiaoFormulaCountParity";
+import {
+  authenticateXiaoSourceLocalConditionSliceReport,
+  XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+  XIAO_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
+  type XiaoSourceLocalConditionSliceReport,
+} from "./xiaoSourceLocalConditionSlice";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -347,6 +360,10 @@ export async function runValidation(
     noelleSourceLocalLowerInvestmentSliceSourceFiles,
     kleeTeamScopedClaimJoinWitnessInput,
     kleeTeamScopedClaimJoinWitnessSourceFiles,
+    xiaoSourceLocalConditionSliceInput,
+    xiaoSourceLocalConditionSliceSnapshotText,
+    xiaoFormulaCountParityInput,
+    xiaoFormulaCountParitySourceFiles,
   ] =
     await Promise.all([
       readJson(SOURCE_REGISTRY_PATH),
@@ -501,6 +518,26 @@ export async function runValidation(
       readJson(KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_REPORT_PATH),
       Promise.all(
         KLEE_TEAM_SCOPED_CLAIM_JOIN_WITNESS_SOURCE_FILE_PATHS.map(
+          async (relativePath) => ({
+            path: relativePath,
+            text: await readFile(
+              path.join(REPOSITORY_ROOT, relativePath),
+              "utf8",
+            ),
+          }),
+        ),
+      ),
+      readJson(XIAO_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH),
+      readFile(
+        path.join(
+          REPOSITORY_ROOT,
+          "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+        ),
+        "utf8",
+      ),
+      readJson(XIAO_FORMULA_COUNT_PARITY_REPORT_PATH),
+      Promise.all(
+        XIAO_FORMULA_COUNT_PARITY_SOURCE_FILE_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
@@ -1145,6 +1182,80 @@ export async function runValidation(
               : "The saved Noelle source-local lower-investment slice does not match the current raw source, consolidated records, exact three-claim C5-and-Burst-9 request projection, holdout/empty closure, and input hashes.",
         });
       }
+      const xiaoManualInput = requiredManualSnapshotInputContaining(
+        manualInputs,
+        "kqm",
+        "xiao-mh-artifact-branch-version-5-5",
+      );
+      const xiaoSourceLocalGeneratedFrom = await hashRelativePaths(
+        XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+      );
+      const xiaoSourceLocalAuthentication =
+        authenticateXiaoSourceLocalConditionSliceReport(
+          xiaoSourceLocalConditionSliceInput as XiaoSourceLocalConditionSliceReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualSnapshotInput: xiaoManualInput.snapshot,
+            manualSnapshotText: xiaoSourceLocalConditionSliceSnapshotText,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            generatedFrom: xiaoSourceLocalGeneratedFrom,
+          },
+        );
+      if (!xiaoSourceLocalAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_xiao_source_local_condition_slice"
+              : "pipeline.stale_xiao_source_local_condition_slice",
+          path: "reports.xiao-source-local-condition-slice",
+          message:
+            xiaoSourceLocalAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The freshly rebuilt Xiao source-local condition slice could not authenticate its exact Version 5.5 source snapshot, FFXX roster, three selected bindings, fourteen holdouts, or four empty arrays."
+              : "The saved Xiao source-local condition slice does not match the current raw source, consolidated records, scoped request projection, exact three-claim binding boundary, and input hashes.",
+        });
+      }
+      const xiaoFormulaFixtureManualInput =
+        requiredManualSnapshotInputContaining(
+          manualInputs,
+          "kqm",
+          "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+        );
+      const xiaoFormulaCountParityGeneratedFrom = await hashRelativePaths(
+        XIAO_FORMULA_COUNT_PARITY_CODE_PATHS,
+      );
+      const xiaoFormulaCountParityAuthentication =
+        await authenticateXiaoFormulaCountParityReport(
+          xiaoFormulaCountParityInput as XiaoFormulaCountParityReport,
+          {
+            repositoryInput: expectedKnowledge,
+            manualFixtureSnapshotInput: xiaoFormulaFixtureManualInput.snapshot,
+            genshinToolsSnapshotInput: genshinTools.data,
+            manualIndexInput,
+            sourceRegistryInput: registry.data,
+            sourceFiles: xiaoFormulaCountParitySourceFiles,
+            generatedFrom: xiaoFormulaCountParityGeneratedFrom,
+          },
+        );
+      if (!xiaoFormulaCountParityAuthentication.authenticated) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            xiaoFormulaCountParityAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "pipeline.non_comparable_xiao_formula_count_parity"
+              : "pipeline.stale_xiao_formula_count_parity",
+          path: "reports.xiao-formula-count-parity",
+          message:
+            xiaoFormulaCountParityAuthentication.reason ===
+            "canonical-inputs-not-comparable"
+              ? "The Xiao formula-count witness could not authenticate its exact EEQ12HP fixture, FFXX calculator baseline, two unreviewed aliases, scoped inputs, or current calculator defaults."
+              : "The saved Xiao formula-count witness does not match the current scoped source fixture, calculator baseline, exact 2-versus-2 match, 12-versus-11 mismatch, and withheld-use boundary.",
+        });
+      }
       const manualConditionArrayCoverageGeneratedFrom =
         await hashRelativePaths(MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS);
       const expectedManualConditionArrayCoverage =
@@ -1170,7 +1281,7 @@ export async function runValidation(
           code: "pipeline.non_comparable_manual_condition_array_coverage",
           path: "reports.manual-condition-array-coverage",
           message:
-            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its seven current wrapper families.",
+            "The freshly rebuilt manual condition-array inventory could not authenticate exact source arrays, repository parity, or its nine current wrapper families.",
         });
       } else if (
         stableJson(expectedManualConditionArrayCoverage) !==
@@ -1181,7 +1292,7 @@ export async function runValidation(
           code: "pipeline.stale_manual_condition_array_coverage",
           path: "reports.manual-condition-array-coverage",
           message:
-            "The saved manual condition-array coverage does not match the seven indexed source snapshots, exact repository paths, authenticated condition bindings, and current input hashes.",
+            "The saved manual condition-array coverage does not match the eight indexed source snapshots, exact repository paths, authenticated condition bindings, and current input hashes.",
         });
       }
 
@@ -1243,6 +1354,10 @@ export async function runValidation(
               path: DERIVED_FORMULA_FIXTURE_REPORT_PATHS[1],
               reportInput: expectedKeqingIneffaFormulaDraft,
             },
+            {
+              path: DERIVED_FORMULA_FIXTURE_REPORT_PATHS[2],
+              reportInput: xiaoFormulaCountParityInput,
+            },
           ],
           repositoryInput: expectedKnowledge,
           sourceRegistryInput: registry.data,
@@ -1263,7 +1378,7 @@ export async function runValidation(
           code: "pipeline.stale_derived_formula_fixture_coverage",
           path: "reports.derived-formula-fixture-coverage",
           message:
-            "The saved derived formula-fixture coverage does not match the two authenticated technical fixtures, source provenance, local C0 assumptions, and withheld-use boundary.",
+            "The saved derived formula-fixture coverage does not match the two legacy technical fixtures plus the authenticated Xiao count-parity witness, source provenance, local C0 assumptions, and withheld-use boundary.",
         });
       }
 

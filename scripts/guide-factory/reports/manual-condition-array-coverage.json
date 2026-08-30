@@ -1,7 +1,7 @@
 {
   "arbitraryEnglishParsingAllowed": false,
   "bindingBoundary": {
-    "catalogReportSha256": "9f7591dc808d6ddb680b56843efbe153c1cf951ca3c946ebf2ee9fff1f0fa2de",
+    "catalogReportSha256": "b7bb72248f8f7a4148115a6fdc9e286d47ff52eb24f118755cfce80f3d7a2414",
     "dionaSourceLocalDurableMatchesCurrent": true,
     "dionaSourceLocalOccurrenceCount": 3,
     "exactTextAcknowledgementOccurrenceCount": 3,
@@ -17,9 +17,11 @@
     "noelleSourceLocalLowerInvestmentDurableMatchesCurrent": true,
     "noelleSourceLocalLowerInvestmentOccurrenceCount": 3,
     "noelleSourceLocalOccurrenceCount": 3,
-    "occurrenceCount": 63,
+    "occurrenceCount": 66,
     "status": "authenticated",
-    "typedBindingMeansConditionTruth": false
+    "typedBindingMeansConditionTruth": false,
+    "xiaoSourceLocalDurableMatchesCurrent": true,
+    "xiaoSourceLocalOccurrenceCount": 3
   },
   "cautions": [
     "Typed-bound means exact source prose is mapped to a machine-readable predicate; it does not mean the predicate is true for a team or account.",
@@ -125,6 +127,10 @@
       "sha256": "12be18b24ca591f6aae97eaad6e9a9cbc89f202e699663e9eb92d791914b1ece"
     },
     {
+      "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
+      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+    },
+    {
       "path": "scripts/guide-factory/sources/registry.json",
       "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
     },
@@ -157,12 +163,16 @@
       "sha256": "e8871e88f5986f983e4fd07017f54b53e36378ba37b03eb4dc1af412cf66d8b1"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts",
+      "sha256": "0c49d53ebee045fed9db34d3b388a2f60536a19614ae66516fb1b782f46cf7ad"
+    },
+    {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "066c278fbfc6e4727b1233f07830eda2d71bc72df45423716c08a0e1f430f94a"
+      "sha256": "a391b0740f60e7842bd9c764e161c4ce61516b419d0c060924223be5d94b102e"
     },
     {
       "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
@@ -218,7 +228,7 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "5d81d130ae8ac6a514176b619b8fe2177f481dcc2e5ffabd17ff9d92bd072c3d"
+      "sha256": "15463e055f4711624aba5afc6253eab33f3f78796ac5c1636a041d64bb973cee"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -291,6 +301,14 @@
     {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
       "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSlice.ts",
+      "sha256": "abbdeb882797909059e1407bf14826f5c53034e6a721a748ae6b0f6a27964d70"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSliceScope.ts",
+      "sha256": "9f5b90e8ee5a99acea0c0d4c927dee419f80d42843ba95bbec69efa171ff2252"
     },
     {
       "path": "src/data/betaState.ts",
@@ -920,7 +938,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Xianyun is in Xiao's team."
@@ -1243,7 +1261,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
@@ -1600,7 +1618,7 @@
     },
     {
       "bindingClassifications": [
-        "unbound"
+        "typed-bound"
       ],
       "conditions": [
         "Xiao is C6."
@@ -6921,18 +6939,48 @@
       "subject": "xiao"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "contextResolutionEvidence": {
+          "contextApplicability": "source-already-matched",
+          "effectiveResolution": "matched",
+          "requestContextProjectionSha256": "34d19cada6d55fb6e3b51516f98816c79ee8d46ba9bb99c189c9a88dd36ba23b",
+          "requestContextReportSha256": "213ecb7c2c17b8f41b0817ef6de2f04f6e6f93a2bda4e807f7f88a9ea3777eb6",
+          "requestPredicateAst": null,
+          "requestPredicateAstSha256": null,
+          "sourceClaimCellSha256": "23b591c3dd359b0e8c3b0f30173b27e3b3f48b319c84fdaa7697a86c507d4a3e",
+          "sourceResolution": "matched",
+          "teamRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+        },
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "68db45b02b15a2e41a2be5c57d7320101d901058976b264186fd1a76596f067a",
+        "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+        "predicateAst": {
+          "characterId": "xianyun",
+          "type": "exact-team-roster-includes"
+        },
+        "predicateAstSha256": "ab21f048d451a2d095ab8958d1fd36defabcea358cb758c1d8fb7d8d32163031",
+        "selectedOccurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "c46898b21fce01efac4a40290121229853a4cf5d14529f9c6db7e36b45a11551",
+        "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions:9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b",
       "claimAxis": "artifact-recommendation",
       "conditions": [
         "Xiao is played with Xianyun, especially in the Xiao–Xianyun–Furina–Faruzan team."
       ],
       "conditionsSha256": "9825717baca82084a938c6975a810db3faa0650a305175385529638e6652f71b",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "selectedOccurrenceSha256": "c46898b21fce01efac4a40290121229853a4cf5d14529f9c6db7e36b45a11551",
+        "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -7090,18 +7138,48 @@
       "subject": "xiao"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "contextResolutionEvidence": {
+          "contextApplicability": "source-already-matched",
+          "effectiveResolution": "matched",
+          "requestContextProjectionSha256": "2c82d94d5182cdba8bb3c4a81a94b1d45b9f3b33e661372dfca1a1387650f6fa",
+          "requestContextReportSha256": "213ecb7c2c17b8f41b0817ef6de2f04f6e6f93a2bda4e807f7f88a9ea3777eb6",
+          "requestPredicateAst": null,
+          "requestPredicateAstSha256": null,
+          "sourceClaimCellSha256": "84d4dc8982ff1c20de2ccece2664a44f4392a2b3cbf24f70ce39fc3ee96478b9",
+          "sourceResolution": "matched",
+          "teamRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+        },
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "17b7046a895e2e5a997dd0a6d6a1f029d75357b380036bef1ccd986ddd5571d8",
+        "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+        "predicateAst": {
+          "characterId": "xianyun",
+          "type": "exact-team-roster-includes"
+        },
+        "predicateAstSha256": "ab21f048d451a2d095ab8958d1fd36defabcea358cb758c1d8fb7d8d32163031",
+        "selectedOccurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "selectedOccurrenceSha256": "048871163248ab8a70bc38f0ebcb4188470ed1ff5dcdaa3b6d2bfc1ac80d4531",
+        "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions:6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366",
       "claimAxis": "main-stat",
       "conditions": [
         "Xianyun is in Xiao's team."
       ],
       "conditionsSha256": "6783586e02e7954eb8073a1b0f12e79973d8e5a0dfad379fd03ddc0da4a79366",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "selectedOccurrenceSha256": "048871163248ab8a70bc38f0ebcb4188470ed1ff5dcdaa3b6d2bfc1ac80d4531",
+        "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -7124,18 +7202,53 @@
       "subject": "xiao"
     },
     {
-      "bindingClassification": "unbound",
+      "bindingClassification": "typed-bound",
       "bindingCoverageEligible": true,
-      "bindingEvidence": null,
-      "bindingOccurrenceKey": null,
+      "bindingEvidence": {
+        "contextResolutionEvidence": {
+          "contextApplicability": "applicable-under-supplied-context",
+          "effectiveResolution": "matched",
+          "requestContextProjectionSha256": "509f8b6de92edd168fb15f190ac85261dc983061e2e5c037656a9c5e80fb5afd",
+          "requestContextReportSha256": "213ecb7c2c17b8f41b0817ef6de2f04f6e6f93a2bda4e807f7f88a9ea3777eb6",
+          "requestPredicateAst": {
+            "characterId": "xiao",
+            "threshold": 6,
+            "type": "constellation-at-least"
+          },
+          "requestPredicateAstSha256": "9b4c77774f501a23c58014d4256b4a22e7c29bd610d44f4a63cd2043ede8c2f7",
+          "sourceClaimCellSha256": "e5f54b96ca56536895db4ba9bd8890cc2d37530ecf39593c5d027a3d044e4003",
+          "sourceResolution": "unresolved-context",
+          "teamRecordId": "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+        },
+        "kind": "source-local-typed-predicate-ast",
+        "occurrenceControlSha256": "5b10191ca84d5e14f8ff041160ac55996b8b9537bb74afd374bfc6999930298d",
+        "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
+        "predicateAst": {
+          "category": "investment-threshold",
+          "reason": "Xiao's Constellation is not authored by the exact FFXX source-team roster and must be supplied independently by exact team-and-character request context.",
+          "type": "unresolved-context"
+        },
+        "predicateAstSha256": "86f2940f7c7e84766cda73b411849a509ed5994bf65f62a4b8b8205c1bdd36a3",
+        "selectedOccurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "selectedOccurrenceSha256": "1994639390ec2bf81953c4828a54e05e7830ecb70b7e7011920b881cceb75f51",
+        "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5"
+      },
+      "bindingOccurrenceKey": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions:dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a",
       "claimAxis": "main-stat",
       "conditions": [
         "Xiao is C6."
       ],
       "conditionsSha256": "dbe5b5b7131413bd206a6443233c74ccad6ed4cb6f07bf5fbaeb93677dccc30a",
-      "displayStatus": "known-but-unbound",
-      "energyClassification": "energy-unclassified",
-      "energyEvidence": null,
+      "displayStatus": "typed-bound",
+      "energyClassification": "not-energy-deferred",
+      "energyEvidence": {
+        "energyRelatedWorkDeferred": false,
+        "kind": "source-local-not-energy-deferred",
+        "selectedOccurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+        "selectedOccurrenceSha256": "1994639390ec2bf81953c4828a54e05e7830ecb70b7e7011920b881cceb75f51",
+        "sliceId": "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
+        "structuralErEvidencePresent": false
+      },
       "extraction": {
         "method": "agent-assisted",
         "reviewStatus": "unreviewed"
@@ -8367,7 +8480,7 @@
     "repositoryProjectionRecordCount": 401,
     "repositoryProjectionSha256": "232acf871b56d1543075fd2881d70a3cc432a29d3e4b9c3456d712b671ab1e13",
     "rotationFixtureRecordsExcluded": true,
-    "sourceFileCount": 19,
+    "sourceFileCount": 20,
     "status": "accepted"
   },
   "recommendationCompositionExecuted": false,
@@ -8383,10 +8496,10 @@
       "nonemptyCount": 143,
       "occurrenceCount": 143,
       "stringOccurrenceCount": 177,
-      "typedBoundOccurrenceCount": 60,
-      "typedBoundStringOccurrenceCount": 82,
-      "unboundOccurrenceCount": 80,
-      "unboundStringOccurrenceCount": 92,
+      "typedBoundOccurrenceCount": 63,
+      "typedBoundStringOccurrenceCount": 85,
+      "unboundOccurrenceCount": 77,
+      "unboundStringOccurrenceCount": 89,
       "uniqueExactArrayCount": 105,
       "uniqueStringCount": 114
     },
@@ -8397,12 +8510,12 @@
         "erDeferredCount": 12,
         "exactTextAcknowledgedCount": 0,
         "groupId": "character_guide",
-        "knownButUnboundCount": 71,
+        "knownButUnboundCount": 68,
         "nonemptyCount": 127,
         "nonStructuralBindingCoverageConditionCount": 127,
         "occurrenceCount": 141,
         "stringOccurrenceCount": 161,
-        "typedBoundCount": 56,
+        "typedBoundCount": 59,
         "unconditionalCount": 14,
         "uniqueExactArrayCount": 93,
         "uniqueStringCount": 102
@@ -8479,12 +8592,12 @@
         "erDeferredCount": 15,
         "exactTextAcknowledgedCount": 3,
         "groupId": "kqm",
-        "knownButUnboundCount": 80,
+        "knownButUnboundCount": 77,
         "nonemptyCount": 143,
         "nonStructuralBindingCoverageConditionCount": 140,
         "occurrenceCount": 163,
         "stringOccurrenceCount": 177,
-        "typedBoundCount": 60,
+        "typedBoundCount": 63,
         "unconditionalCount": 20,
         "uniqueExactArrayCount": 105,
         "uniqueStringCount": 114
@@ -8785,12 +8898,12 @@
         "erDeferredCount": 0,
         "exactTextAcknowledgedCount": 0,
         "groupId": "xiao",
-        "knownButUnboundCount": 17,
+        "knownButUnboundCount": 14,
         "nonemptyCount": 17,
         "nonStructuralBindingCoverageConditionCount": 17,
         "occurrenceCount": 21,
         "stringOccurrenceCount": 18,
-        "typedBoundCount": 0,
+        "typedBoundCount": 3,
         "unconditionalCount": 4,
         "uniqueExactArrayCount": 16,
         "uniqueStringCount": 17
@@ -8848,8 +8961,8 @@
       "er-deferred": 15,
       "exact-text-acknowledged": 3,
       "invalid": 0,
-      "known-but-unbound": 68,
-      "typed-bound": 57,
+      "known-but-unbound": 65,
+      "typed-bound": 60,
       "unconditional": 20
     },
     "energyCoverage": {
@@ -8871,11 +8984,11 @@
       },
       "energyUnclassified": {
         "emptyCount": 0,
-        "nonemptyCount": 71,
-        "occurrenceCount": 71,
-        "stringOccurrenceCount": 80,
-        "uniqueExactArrayCount": 60,
-        "uniqueStringCount": 67
+        "nonemptyCount": 68,
+        "occurrenceCount": 68,
+        "stringOccurrenceCount": 77,
+        "uniqueExactArrayCount": 57,
+        "uniqueStringCount": 64
       },
       "exactAuthoredEnergyRelatedDeferral": {
         "emptyCount": 0,
@@ -8887,11 +9000,11 @@
       },
       "notEnergyDeferred": {
         "emptyCount": 0,
-        "nonemptyCount": 57,
-        "occurrenceCount": 57,
-        "stringOccurrenceCount": 79,
-        "uniqueExactArrayCount": 33,
-        "uniqueStringCount": 34
+        "nonemptyCount": 60,
+        "occurrenceCount": 60,
+        "stringOccurrenceCount": 82,
+        "uniqueExactArrayCount": 36,
+        "uniqueStringCount": 37
       },
       "structuralEr": {
         "emptyCount": 0,
@@ -8919,18 +9032,18 @@
       "nonemptyCount": 140,
       "occurrenceCount": 140,
       "stringOccurrenceCount": 174,
-      "typedBoundOccurrenceCount": 60,
-      "typedBoundStringOccurrenceCount": 82,
-      "unboundOccurrenceCount": 77,
-      "unboundStringOccurrenceCount": 89,
+      "typedBoundOccurrenceCount": 63,
+      "typedBoundStringOccurrenceCount": 85,
+      "unboundOccurrenceCount": 74,
+      "unboundStringOccurrenceCount": 86,
       "uniqueExactArrayCount": 102,
       "uniqueStringCount": 111
     },
     "nonStructuralUniqueBindingArrayCoverage": {
       "mixedAcknowledgedAndUnboundCount": 1,
       "otherMixedCount": 0,
-      "typedOnlyCount": 34,
-      "unboundOnlyCount": 67,
+      "typedOnlyCount": 37,
+      "unboundOnlyCount": 64,
       "uniqueExactArrayCount": 102
     },
     "total": {

@@ -117,6 +117,26 @@ and supports no guide claim. This assessment is advisory; `replayTeamDamage`
 does not consume or enforce it, and this checkpoint does not produce or
 authorize a replay. A readiness-enforcing wrapper is future work if useful.
 
+Checkpoint 42 adds a third, deliberately narrower durable witness. The source
+fixture preserves Xiao `E = 2` and `HP = 12` counts but supplies no calculator
+formula IDs or team. A separate Guide Factory-authored, unreviewed alias table
+maps those tokens to `xiao-skill` and `xiao-plunge-high`. The exact current FFXX
+baseline supplies runnable equipment under local C0/R1/level-90/10-10-10
+assumptions; it is not attributed to the source fixture. Skill matches at 2.
+High Plunge is source 12 versus calculator-default 11. The mismatch is retained
+as a review target and does not identify a correct side or authorize changing
+either count.
+
+The derived formula-fixture inventory now authenticates the two legacy drafts
+plus this count-parity-only witness. Its standalone assembly rebuilds the Xiao
+raw fixture/preset semantic scope instead of trusting the saved witness's
+accepted-scope label. It contains 12 calculator-team member observations
+across 9 characters, 33 positive rows, 18 zero rows, and 2 Xiao count
+comparisons with 1 match and 1 mismatch. The Xiao source fixture has no team,
+so its four baseline members remain calculator-team-only observations. The
+inventory has zero source-validated and zero guide-ready observations and
+executes no formula damage, replay, optimizer, or ER path.
+
 ## Artifact-choice search-domain seam
 
 `src/artifactChoiceSearchCoverage.ts` calls the existing analyzer's exported
@@ -652,6 +672,19 @@ optimizations, or assembled builds. Its source-local report remains standalone;
 checkpoint 34 separately admits only the three selected occurrences downstream
 after fresh source-specific authentication. The report total remains 31.
 
+The checkpoint-42 `src/xiaoSourceLocalConditionSlice.ts` adapter closes all 21
+Xiao guide condition arrays as 3 selected, 14 nonempty holdouts, and 4 empty
+arrays. The exact FFXX roster directly satisfies the selected Marechaussee
+Hunter and Anemo Goblet Xianyun predicates. The source team does not specify
+Xiao's constellation, so a separate Xiao-C6 request fact scoped to that team
+and subject resolves the second Anemo Goblet occurrence. The source and request
+results remain distinct, and C6 is not attributed to the source team.
+
+Only those three selected rows enter the catalog. The adapter consumes no
+holdout or empty row, reads no rotation, excludes the separate rotation fixture,
+and executes no build composition, candidate generation, equipment assignment,
+formula, damage, ideal-roll, rotation, or ER computation.
+
 ## Manual condition-array coverage seam
 
 `src/manualConditionArrayCoverage.ts` traverses only the condition-array fields
@@ -670,11 +703,11 @@ source must have exactly one active registry entry, use the manual-observation
 V1 mode and format, and not require permission. Crimson Witch is currently
 blocked and permission-required, so it cannot enter this seam.
 
-`src/currentConditionBindingCatalog.ts` overlays only eight authenticated
+`src/currentConditionBindingCatalog.ts` overlays only nine authenticated
 current wrapper families: Itto typed predicate ASTs, Keqing equipment predicate
 IDs, exact-text Keqing Viridescent Venerer acknowledgements, and the four Klee
 plus three Diona plus one Kokomi plus three high-investment and three lower-
-investment Noelle source-local typed bindings.
+investment Noelle plus three Xiao source-local typed bindings.
 Source-local catalog entries share the generic
 `source-local-typed-predicate-ast` and
 `source-local-not-energy-deferred` evidence labels, but wrapper authentication,
@@ -695,24 +728,24 @@ binding boundary, and capability flags. The helper is not a generic wrapper,
 extractor, schema adapter, or prose parser.
 
 The durable report keeps binding and energy as independent ledgers. Across 20
-empty and 143 nonempty arrays, the current catalog contributes 63 entries: 60
-typed and 3 exact-text acknowledged. Nonempty binding coverage is therefore 60
-typed, 3 acknowledged, and 80 unbound. Excluding only the three structural ER
-arrays leaves 140 rows: 60 typed, 3 acknowledged, and 77 unbound, spanning 102
-exact ordered arrays. Those arrays contain 34 typed-only sets, 67 unbound-only
+empty and 143 nonempty arrays, the current catalog contributes 66 entries: 63
+typed and 3 exact-text acknowledged. Nonempty binding coverage is therefore
+63 typed, 3 acknowledged, and 77 unbound. Excluding only the three structural
+ER arrays leaves 140 rows: 63 typed, 3 acknowledged, and 74 unbound, spanning
+102 exact ordered arrays. Those arrays contain 37 typed-only sets, 64 unbound-only
 sets, and one mixed acknowledged/unbound Viridescent Venerer set.
 
 The energy ledger marks three structural ER arrays, three typed Itto energy
 prerequisites, and nine exact authored Diona/Furina energy-sensitive arrays as
-deferred. Fifty-seven typed rows are explicitly not energy-deferred; 71
+deferred. Sixty typed rows are explicitly not energy-deferred; 68
 nonempty rows remain energy-unclassified; and 20 empty arrays are
 unconditional. An unclassified row is not presumed non-ER. Exact-text equality
 does not establish gameplay execution, and typed mapping does not establish
 that a predicate is true for a team or account.
 
-Display status is a separate projection over all 163 occurrences: 57 typed, 68
+Display status is a separate projection over all 163 occurrences: 60 typed, 65
 known-but-unbound, 15 ER-deferred, 3 acknowledged, and 20 unconditional. Manual
-coverage authenticates eight wrapper families across 19 source files and 77
+coverage authenticates nine wrapper families across 20 source files and 81
 generated-from paths.
 
 The Noelle catalog path first requires the durable report to equal a fresh
@@ -729,7 +762,7 @@ the unique-array partition is 34/51/1, the energy ledger is 15/57/54/16, and
 the display projection is 57/51/15/3/16.
 
 The dependency direction remains acyclic. Authenticated source-specific Klee,
-Diona, Kokomi, and both Noelle wrappers feed the 63-entry binding
+Diona, Kokomi, both Noelle, and Xiao wrappers feed the 66-entry binding
 catalog, then manual coverage and the regenerated checkpoint 27 Klee witness.
 The validator follows that order. The generic source-local core and source-
 specific wrappers never import the downstream catalog, coverage report, or

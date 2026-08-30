@@ -2,12 +2,14 @@
   "boundaries": {
     "constellation": {
       "calculationTeamInvestment": "constellation-unspecified",
+      "countParitySourceTeamInvestment": "not-applicable-source-fixture-has-no-team",
       "derivedC0Basis": "calculator-local-fixture-assumptions-only",
+      "legacySourceRotationTeamInvestment": "constellation-unspecified",
       "observedDerivedConstellations": [
         0
       ],
       "sourceConstellationUsedAsC0Evidence": false,
-      "sourceRotationTeamInvestment": "constellation-unspecified",
+      "sourceRotationTeamInvestment": "mixed-legacy-unspecified-and-count-parity-source-team-absent",
       "unobservedDerivedConstellations": [
         1,
         2,
@@ -21,17 +23,22 @@
       "damageReplayPerformed": false,
       "energyRecoveryComputed": false,
       "energyRecoveryInputsRead": false,
+      "formulaCountComparisonPerformed": true,
+      "formulaDamageEvaluationPerformed": false,
       "formulaExecutionPerformed": false,
       "optimizerUsed": false
     },
     "fixtureSet": {
       "completeExpectedInputSetRequired": true,
+      "countParityOnlyFixtureCount": 1,
       "embeddedGeneratedFromMustMatchCurrentFiles": true,
-      "expectedFixtureCount": 2,
+      "expectedFixtureCount": 3,
       "fixtureReportPaths": [
         "scripts/guide-factory/reports/furina-neuvillette-formula-plan-draft.json",
-        "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json"
+        "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
+        "scripts/guide-factory/reports/xiao-formula-count-parity.json"
       ],
+      "legacyFormulaPlanFixtureCount": 2,
       "reportFileHashesAuthenticatedAgainstGeneratedFrom": true
     },
     "review": {
@@ -40,7 +47,10 @@
       "furinaFixtureSourceTokenCoverage": "not-recorded",
       "keqingFixtureBlockerCount": 8,
       "keqingFixtureReadiness": "assessed-blocked",
-      "sourceRotationsHumanReviewed": false
+      "sourceRotationsHumanReviewed": false,
+      "xiaoFixtureReadiness": "count-parity-only",
+      "xiaoFormulaCountMismatchCount": 1,
+      "xiaoSourceTokenAliasReviewStatus": "unreviewed"
     },
     "roster": {
       "checkedInRosterReferenceMatched": true,
@@ -50,13 +60,59 @@
     }
   },
   "cautions": [
-    "C0 is observed only as an exact local calculator-fixture assumption; neither the calculation team nor the source-rotation team specifies constellation investment.",
-    "The two scenario observations for Furina and Xilonen remain separate and are not votes, averages, or corroboration.",
+    "C0 is observed only as an exact local calculator-fixture assumption; the two legacy calculation/source-rotation teams leave constellation investment unspecified, while the Xiao source fixture supplies no team at all.",
+    "Furina's three scenario observations and Xilonen's two scenario observations remain separate and are not votes, averages, or corroboration.",
     "The source rotations and agent-authored action translations are unreviewed.",
     "The older Furina fixture has no readiness assessment and does not record token-coverage classifications.",
-    "The Keqing fixture is blocked by eight recorded readiness blockers."
+    "The Keqing fixture is blocked by eight recorded readiness blockers.",
+    "The Xiao fixture compares formula counts only; its two Guide Factory-authored token aliases are unreviewed, and its observed 12-versus-11 High Plunge mismatch does not adjudicate either count."
   ],
   "characters": [
+    {
+      "characterId": "faruzan",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:faruzan:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:faruzan:C0"
+      ]
+    },
     {
       "characterId": "furina",
       "rows": [
@@ -64,7 +120,8 @@
           "constellation": 0,
           "scenarioObservationIds": [
             "furina-neuvillette-source-rotation-comparison-v2:furina:C0",
-            "keqing-ineffa-source-rotation-comparison-v1:furina:C0"
+            "keqing-ineffa-source-rotation-comparison-v1:furina:C0",
+            "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:furina:C0"
           ],
           "state": "observed-exact-derived-assumption"
         },
@@ -101,7 +158,8 @@
       ],
       "scenarioObservationIds": [
         "furina-neuvillette-source-rotation-comparison-v2:furina:C0",
-        "keqing-ineffa-source-rotation-comparison-v1:furina:C0"
+        "keqing-ineffa-source-rotation-comparison-v1:furina:C0",
+        "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:furina:C0"
       ]
     },
     {
@@ -285,6 +343,96 @@
       ]
     },
     {
+      "characterId": "xianyun",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:xianyun:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:xianyun:C0"
+      ]
+    },
+    {
+      "characterId": "xiao",
+      "rows": [
+        {
+          "constellation": 0,
+          "scenarioObservationIds": [
+            "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:xiao:C0"
+          ],
+          "state": "observed-exact-derived-assumption"
+        },
+        {
+          "constellation": 1,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 2,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 3,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 4,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 5,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        },
+        {
+          "constellation": 6,
+          "scenarioObservationIds": [],
+          "state": "not-observed"
+        }
+      ],
+      "scenarioObservationIds": [
+        "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:xiao:C0"
+      ]
+    },
+    {
       "characterId": "xilonen",
       "rows": [
         {
@@ -334,11 +482,15 @@
   ],
   "classification": "descriptive-derived-fixture-inventory",
   "comparisonStatus": "comparable",
-  "coveragePayloadSha256": "e957c13f142f477710743363b597832680e059d42a94f6a957bd6ef809bb57f4",
+  "coveragePayloadSha256": "d244c108f77dc0ba88f8760bf1c09e6d44894b64c0832a1678d35c5c1f553d08",
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
       "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
+      "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-furina-manual.json",
@@ -347,6 +499,10 @@
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
       "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json",
+      "sha256": "4aff3efdff86353b811e5b6f67a1dd4e864b6bf7bb1df5e986f084ae9c0456c7"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
@@ -365,8 +521,16 @@
       "sha256": "12be18b24ca591f6aae97eaad6e9a9cbc89f202e699663e9eb92d791914b1ece"
     },
     {
+      "path": "scripts/guide-factory/reports/xiao-formula-count-parity.json",
+      "sha256": "eaf5c72b1861fc107b32d99af8d3485a5ff3d584bec31acd733c85e9a419ce6c"
+    },
+    {
       "path": "scripts/guide-factory/sources/registry.json",
       "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts",
+      "sha256": "829b08ad5514db3c0d8a14c5fc0989fd4002949ec7052d6b841b6d3f57b87e77"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
@@ -374,7 +538,7 @@
     },
     {
       "path": "scripts/guide-factory/src/derivedFormulaFixtureCoverage.ts",
-      "sha256": "61baa77aa752e2010b28b674db535f064e3cd0a292edb04ce5da4ddb1958899f"
+      "sha256": "8f726f537121746acd061d0f20ca762f925366523788f65772fa3c5a04a62b73"
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
@@ -390,7 +554,7 @@
     },
     {
       "path": "scripts/guide-factory/src/inventory-derived-formula-fixture-coverage.ts",
-      "sha256": "e9567a15e8ac8cbc2a5fb2119a5e778ead8a5c3a4ed92cc95049d7e7df61d0d4"
+      "sha256": "b45ec487c28f28abe8e24b08bda18865cb051736e0e16251ffe3ad9d9fc78af4"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
@@ -423,6 +587,14 @@
     {
       "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
       "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFormulaCountParity.ts",
+      "sha256": "96cb943a9ed4796ca0f8d0da66163454f3936a14c2a6f56efda9337e56f1c9bf"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFormulaCountParityScope.ts",
+      "sha256": "4227337b523708797713dab5f911f2e69be2c3c8f67457bc9f3cfe1f450c02d0"
     },
     {
       "path": "src/data/charInfo.ts",
@@ -485,6 +657,10 @@
       "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
     },
     {
+      "path": "src/lib/dmgcalc/impl/character4Sumeru.ts",
+      "sha256": "9acae4fbcdb550071d66437d1dc66bb2643b7164c609bdc3ff1407ebb8afd941"
+    },
+    {
       "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
       "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
     },
@@ -505,6 +681,14 @@
       "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
     },
     {
+      "path": "src/lib/dmgcalc/impl/weapon4Bow.ts",
+      "sha256": "f4d9987dea9804a0501b7d4e22b8dbb3abc04e253d6e0709c2693fd537702fb2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Catalyst.ts",
+      "sha256": "bcfc2551417b05d3a7eef261ba1db59bbffc774adc934965aeec672bff2c2efa"
+    },
+    {
       "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
       "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
     },
@@ -521,7 +705,8 @@
     "Do not treat fixture membership, local C0 assumptions, or formula availability as source validation.",
     "Do not use this report to recommend, rank, or compare teams, builds, formulas, rotations, or damage.",
     "Do not infer any C1-C6 coverage from a C0 local fixture assumption.",
-    "Do not infer energy requirements, rotation feasibility, buff coverage, or optimization results."
+    "Do not infer energy requirements, rotation feasibility, buff coverage, or optimization results.",
+    "Do not treat the Xiao count-parity witness as a damage, guide, source-validation, or Energy Recharge claim."
   ],
   "reportType": "derived-formula-fixture-coverage",
   "scenarios": [
@@ -794,25 +979,186 @@
       "supportsRecommendations": false,
       "supportsSourceValidation": false,
       "validationDisposition": "withheld-from-guide-use"
+    },
+    {
+      "calculationTeamRecordId": "genshintools-presets:team:CX03obKWOJgK51-fWO",
+      "countParity": {
+        "formulaComparisonCount": 2,
+        "formulaCountComparisonExecuted": true,
+        "matchedCount": 1,
+        "mismatchCount": 1,
+        "mismatches": [
+          {
+            "calculatorDefaultCount": 11,
+            "characterId": "xiao",
+            "formulaId": "xiao-plunge-high",
+            "relation": "source-translation-higher",
+            "sourceTranslatedCount": 12
+          }
+        ],
+        "sourceTokenAliasesAuthoredByGuideFactory": true,
+        "sourceTokenAliasesHumanReviewed": false
+      },
+      "fixtureId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+      "fixtureReport": {
+        "generatedFromSha256": "e885dece7bf6df89375798e19cace978cb8b94c8254290ee0f1190c9d105d49d",
+        "path": "scripts/guide-factory/reports/xiao-formula-count-parity.json",
+        "sha256": "eaf5c72b1861fc107b32d99af8d3485a5ff3d584bec31acd733c85e9a419ce6c"
+      },
+      "fixtureSemantics": "formula-count-parity-only",
+      "memberObservations": [
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "faruzan",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "22a69f24ff7de6edb641942cb0c3221124bc1ef71e9269ab1fbe276079ff8ac9",
+            "positiveDefaultFormulaCount": 1,
+            "zeroDefaultFormulaCount": 2
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:faruzan:C0",
+          "scenarioId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+          "sourceRotationTeamInvestment": "not-applicable-source-fixture-has-no-team"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "furina",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "7523061d780ea1448a46f643eee76f178a52070431fc470caef4826a1b5884ab",
+            "positiveDefaultFormulaCount": 3,
+            "zeroDefaultFormulaCount": 0
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:furina:C0",
+          "scenarioId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+          "sourceRotationTeamInvestment": "not-applicable-source-fixture-has-no-team"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "xianyun",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "853ee1c58142e1505894240b76c594c8c4950273ec25457443989a6b35ad6972",
+            "positiveDefaultFormulaCount": 2,
+            "zeroDefaultFormulaCount": 4
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:xianyun:C0",
+          "scenarioId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+          "sourceRotationTeamInvestment": "not-applicable-source-fixture-has-no-team"
+        },
+        {
+          "calculationTeamInvestment": "constellation-unspecified",
+          "characterId": "xiao",
+          "constellationBasis": "calculator-local-fixture-assumption",
+          "derivedConstellation": 0,
+          "formulaInventory": {
+            "formulaIdsSha256": "1016702214178e0996cdd23b07b6998223d319e9c05614820af99a8edbfc7460",
+            "positiveDefaultFormulaCount": 2,
+            "zeroDefaultFormulaCount": 1
+          },
+          "localFixtureAssumptions": {
+            "charLevel": 90,
+            "constellation": 0,
+            "refinement": 1,
+            "talentLevels": {
+              "auto": 10,
+              "burst": 10,
+              "skill": 10
+            }
+          },
+          "observationId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5:xiao:C0",
+          "scenarioId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+          "sourceRotationTeamInvestment": "not-applicable-source-fixture-has-no-team"
+        }
+      ],
+      "provenance": {
+        "actionTranslationReviewStatus": "unreviewed",
+        "semanticScope": {
+          "scopeId": "xiao-formula-count-parity-v1",
+          "status": "accepted",
+          "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
+        },
+        "sourceId": "kqm",
+        "sourceRecordId": "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+        "sourceRotationExtractionReviewStatus": "unreviewed"
+      },
+      "readiness": {
+        "blockerCount": null,
+        "readyForDamageReplay": null,
+        "sourceTokenCoverage": "complete-unreviewed-guide-factory-aliases",
+        "state": "count-parity-only"
+      },
+      "scenarioId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5",
+      "sourceAuthoredFormulaPlan": false,
+      "sourceRotation": {
+        "recordId": "kqm:rotation-fixture:xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+        "rotationId": "no-buff-eeq12hp"
+      },
+      "supportsDamageClaims": false,
+      "supportsGuideClaims": false,
+      "supportsRanking": false,
+      "supportsRecommendations": false,
+      "supportsSourceValidation": false,
+      "validationDisposition": "withheld-from-guide-use"
     }
   ],
   "schemaVersion": 1,
   "sourceAuthoredFormulaPlan": false,
   "summary": {
-    "characterScenarioObservationCount": 8,
-    "derivedC0ObservationCount": 8,
-    "fixtureCount": 2,
+    "calculatorTeamOnlyObservationCount": 4,
+    "characterScenarioObservationCount": 12,
+    "countParityFormulaComparisonCount": 2,
+    "countParityMatchedCount": 1,
+    "countParityMismatchCount": 1,
+    "countParityOnlyFixtureCount": 1,
+    "derivedC0ObservationCount": 12,
+    "fixtureCount": 3,
     "guideReadyObservationCount": 0,
-    "positiveDefaultFormulaRowCount": 25,
+    "legacyFormulaPlanFixtureCount": 2,
+    "positiveDefaultFormulaRowCount": 33,
     "sharedCharacterScenarioObservationCounts": {
-      "furina": 2,
+      "furina": 3,
       "xilonen": 2
     },
     "sourceConstellationSpecifiedObservationCount": 0,
     "sourceConstellationUnspecifiedObservationCount": 8,
+    "sourceTeamAbsentObservationCount": 4,
     "sourceValidatedObservationCount": 0,
-    "uniqueCharacterCount": 6,
-    "zeroDefaultFormulaRowCount": 11
+    "uniqueCharacterCount": 9,
+    "zeroDefaultFormulaRowCount": 18
   },
   "supportsDamageClaims": false,
   "supportsEnergyRecoveryClaims": false,

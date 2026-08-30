@@ -38,9 +38,13 @@ import {
   KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_REPORT_PATH,
 } from "../src/paths";
 import type { SourceConditionedGuidePacketReport } from "../src/sourceConditionedGuidePacket";
+import {
+  XIAO_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
+  type XiaoSourceLocalConditionSliceReport,
+} from "../src/xiaoSourceLocalConditionSlice";
 
 describe("authenticated current condition-binding catalog", () => {
-  it("builds the deterministic 63-occurrence catalog with exact current coverage", async () => {
+  it("builds the deterministic 66-occurrence catalog with exact current coverage", async () => {
     const fixture = await loadFixture();
     const before = structuredClone(fixture);
     const report = buildCurrentConditionBindingCatalog(fixture);
@@ -50,32 +54,32 @@ describe("authenticated current condition-binding catalog", () => {
     expect(fixture).toEqual(before);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.issues).toEqual([]);
-    expect(report.entries).toHaveLength(63);
+    expect(report.entries).toHaveLength(66);
     expect(report.entries.map(({ occurrenceKey }) => occurrenceKey)).toEqual(
       [...report.entries.map(({ occurrenceKey }) => occurrenceKey)].sort(),
     );
     expect(
       new Set(report.entries.map(({ occurrenceId }) => occurrenceId)).size,
-    ).toBe(63);
+    ).toBe(66);
     expect(
       new Set(report.entries.map(({ occurrenceKey }) => occurrenceKey)).size,
-    ).toBe(63);
+    ).toBe(66);
     expect(report.summary).toEqual({
-      occurrenceCount: 63,
+      occurrenceCount: 66,
       bindingClassificationCounts: {
-        "typed-bound": 60,
+        "typed-bound": 63,
         "exact-text-acknowledged": 3,
         unbound: 0,
         invalid: 0,
       },
       energyClassificationCounts: {
         "energy-unclassified": 3,
-        "not-energy-deferred": 57,
+        "not-energy-deferred": 60,
         "structural-er": 0,
         "deferred-energy-prerequisite": 3,
         "exact-authored-energy-related-deferral": 0,
       },
-      typedBindingCount: 60,
+      typedBindingCount: 63,
       ittoOccurrenceCount: 15,
       ittoTypedBindingCount: 15,
       ittoDeferredEnergyPrerequisiteCount: 3,
@@ -99,6 +103,9 @@ describe("authenticated current condition-binding catalog", () => {
       noelleSourceLocalLowerInvestmentOccurrenceCount: 3,
       noelleSourceLocalLowerInvestmentTypedBindingCount: 3,
       noelleSourceLocalLowerInvestmentNotEnergyDeferredCount: 3,
+      xiaoSourceLocalOccurrenceCount: 3,
+      xiaoSourceLocalTypedBindingCount: 3,
+      xiaoSourceLocalNotEnergyDeferredCount: 3,
     });
     expect(report).toMatchObject({
       supportsGuideClaims: false,
@@ -117,6 +124,7 @@ describe("authenticated current condition-binding catalog", () => {
         kokomiSourceLocalDurableMatchesCurrent: true,
         noelleSourceLocalDurableMatchesCurrent: true,
         noelleSourceLocalLowerInvestmentDurableMatchesCurrent: true,
+        xiaoSourceLocalDurableMatchesCurrent: true,
       },
     });
     for (const entry of report.entries) {
@@ -852,6 +860,96 @@ describe("authenticated current condition-binding catalog", () => {
     expectFailure(collision, expectedCode);
   });
 
+  it("retains Xiao's exact source and request-context resolution boundary", async () => {
+    const report = buildCurrentConditionBindingCatalog(await loadFixture());
+    const entries = report.entries.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
+    );
+
+    expect(entries).toHaveLength(3);
+    const c6 = entries.find(({ occurrenceId }) =>
+      occurrenceId.endsWith("recommendation.mainStats.goblet[4].conditions"),
+    );
+    expect(c6?.bindingEvidence).toMatchObject({
+      kind: "source-local-typed-predicate-ast",
+      contextResolutionEvidence: {
+        teamRecordId:
+          "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5",
+        sourceResolution: "unresolved-context",
+        effectiveResolution: "matched",
+        contextApplicability: "applicable-under-supplied-context",
+        requestPredicateAst: {
+          type: "constellation-at-least",
+          characterId: "xiao",
+          threshold: 6,
+        },
+        requestPredicateAstSha256:
+          "9b4c77774f501a23c58014d4256b4a22e7c29bd610d44f4a63cd2043ede8c2f7",
+        requestContextReportSha256:
+          "213ecb7c2c17b8f41b0817ef6de2f04f6e6f93a2bda4e807f7f88a9ea3777eb6",
+      },
+    });
+    expect(
+      entries
+        .filter(({ occurrenceId }) => occurrenceId !== c6?.occurrenceId)
+        .every(
+          ({ bindingEvidence }) =>
+            bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+            bindingEvidence.contextResolutionEvidence?.sourceResolution ===
+              "matched" &&
+            bindingEvidence.contextResolutionEvidence.contextApplicability ===
+              "source-already-matched" &&
+            bindingEvidence.contextResolutionEvidence.requestPredicateAst ===
+              null,
+        ),
+    ).toBe(true);
+  });
+
+  it("fails closed on forged Xiao source resolution or C6 request context", async () => {
+    const base = await loadFixture();
+    const expectForgedFailure = (
+      mutate: (report: XiaoSourceLocalConditionSliceReport) => void,
+      code: string,
+    ): void => {
+      const forged = structuredClone(base);
+      mutate(forged.xiaoSourceLocal.currentReport);
+      forged.xiaoSourceLocal.durableReport = structuredClone(
+        forged.xiaoSourceLocal.currentReport,
+      );
+      expectFailure(forged, code);
+    };
+
+    expectForgedFailure((report) => {
+      const sourceCell = report.sourceLocalSlice?.sourceClaimCells[0]
+        ?.claimCells[2];
+      if (!sourceCell) throw new Error("Missing Xiao C6 source cell.");
+      sourceCell.resolution = "matched";
+    }, "xiao-source-local.partial-or-capability-crossing-evidence");
+    expectForgedFailure((report) => {
+      report.summary.effectiveMatchedCount = 2;
+    }, "xiao-source-local.partial-or-capability-crossing-evidence");
+    expectForgedFailure((report) => {
+      const requestFact = report.sourceLocalSlice?.requestContextReport?.context
+        .requestFactsByTeamRecordId?.[
+        "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5"
+      ]?.characterFactsById?.xiao;
+      if (!requestFact) throw new Error("Missing Xiao C6 request fact.");
+      requestFact.constellation = 5;
+    }, "xiao-source-local.partial-or-capability-crossing-evidence");
+    expectForgedFailure((report) => {
+      const c6 = report.selectedOccurrences.find(({ occurrenceId }) =>
+        occurrenceId.endsWith("recommendation.mainStats.goblet[4].conditions"),
+      );
+      if (c6?.requestPredicate?.type !== "constellation-at-least") {
+        throw new Error("Missing Xiao C6 predicate.");
+      }
+      c6.requestPredicate.threshold = 5;
+    }, "xiao-source-local.request-resolution-boundary-drift");
+  });
+
   it("fails closed on unauthenticated, stale, partial, duplicate, conflicting, or leaked evidence", async () => {
     const base = await loadFixture();
 
@@ -1566,6 +1664,9 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
   const noelleSourceLocalLowerInvestment = (await readJson(
     NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_REPORT_PATH,
   )) as NoelleSourceLocalLowerInvestmentSliceReport;
+  const xiaoSourceLocal = (await readJson(
+    XIAO_SOURCE_LOCAL_CONDITION_SLICE_REPORT_PATH,
+  )) as XiaoSourceLocalConditionSliceReport;
   return {
     ittoAuthentication: {
       authenticated: true,
@@ -1598,6 +1699,10 @@ async function loadFixture(): Promise<BuildCurrentConditionBindingCatalogInput> 
     noelleSourceLocalLowerInvestment: {
       durableReport: structuredClone(noelleSourceLocalLowerInvestment),
       currentReport: structuredClone(noelleSourceLocalLowerInvestment),
+    },
+    xiaoSourceLocal: {
+      durableReport: structuredClone(xiaoSourceLocal),
+      currentReport: structuredClone(xiaoSourceLocal),
     },
   };
 }

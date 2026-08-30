@@ -79,6 +79,11 @@ import {
   SourceRegistrySchema,
   type KnowledgeRepository,
 } from "./schemas";
+import {
+  authenticateXiaoSourceLocalConditionSliceReport,
+  XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+  type XiaoSourceLocalConditionSliceReport,
+} from "./xiaoSourceLocalConditionSlice";
 import type {
   GeneratedFromEntry,
   SourceConditionedGuidePacketReport,
@@ -250,12 +255,14 @@ export interface ManualConditionArrayCoverageReport {
     kokomiSourceLocalDurableMatchesCurrent: boolean;
     noelleSourceLocalDurableMatchesCurrent: boolean;
     noelleSourceLocalLowerInvestmentDurableMatchesCurrent: boolean;
+    xiaoSourceLocalDurableMatchesCurrent: boolean;
     keqingEquipmentAtomicClaimCount: number;
     kleeSourceLocalOccurrenceCount: number;
     dionaSourceLocalOccurrenceCount: number;
     kokomiSourceLocalOccurrenceCount: number;
     noelleSourceLocalOccurrenceCount: number;
     noelleSourceLocalLowerInvestmentOccurrenceCount: number;
+    xiaoSourceLocalOccurrenceCount: number;
     exactTextAcknowledgementOccurrenceCount: number;
     typedBindingMeansConditionTruth: false;
   };
@@ -296,6 +303,8 @@ const NOELLE_SOURCE_LOCAL_REPORT_PATH =
   "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json";
 const NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_REPORT_PATH =
   "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json";
+const XIAO_SOURCE_LOCAL_REPORT_PATH =
+  "scripts/guide-factory/reports/xiao-source-local-condition-slice.json";
 
 export const MANUAL_CONDITION_COVERAGE_SNAPSHOT_PATHS = [
   "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
@@ -385,6 +394,7 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_SOURCE_FILE_PATHS = [
   KOKOMI_SOURCE_LOCAL_REPORT_PATH,
   NOELLE_SOURCE_LOCAL_REPORT_PATH,
   NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_REPORT_PATH,
+  XIAO_SOURCE_LOCAL_REPORT_PATH,
 ] as const;
 
 export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [...new Set([
@@ -407,6 +417,7 @@ export const MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS = [...new Set([
     ...KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS,
     ...NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS,
     ...NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_INPUT_PATHS,
+    ...XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
   ])]
   .filter((inputPath) => inputPath !== REPOSITORY_PATH)
   .sort(compareText);
@@ -454,9 +465,9 @@ const PROHIBITED_INTERPRETATIONS = [
 ];
 
 const EXPECTED_CURRENT_OCCURRENCES_SHA256 =
-  "dc12875108a9b7f3b33e6c50a47b637b303f4bcf7f42212523205ba9b799af6b";
+  "b7c6b7df14e2f8e4c4c9b1635f98ce7127a80c74f3939a380738e8db6da32360";
 const EXPECTED_CURRENT_BINDING_CATALOG_SHA256 =
-  "9f7591dc808d6ddb680b56843efbe153c1cf951ca3c946ebf2ee9fff1f0fa2de";
+  "b7bb72248f8f7a4148115a6fdc9e286d47ff52eb24f118755cfce80f3d7a2414";
 
 export async function buildManualConditionArrayCoverageReport(
   input: BuildManualConditionArrayCoverageReportInput,
@@ -615,10 +626,10 @@ export function requireComparableManualConditionArrayCoverageReport(
     report.bindingBoundary.status === "authenticated" &&
     report.summary.nonStructuralBindingCoverage.occurrenceCount === 140 &&
     report.summary.nonStructuralBindingCoverage.typedBoundOccurrenceCount ===
-      60 &&
+      63 &&
     report.summary.nonStructuralBindingCoverage
       .exactTextAcknowledgedOccurrenceCount === 3 &&
-    report.summary.nonStructuralBindingCoverage.unboundOccurrenceCount === 77 &&
+    report.summary.nonStructuralBindingCoverage.unboundOccurrenceCount === 74 &&
     !report.arbitraryEnglishParsingAllowed &&
     !report.supportsSourceAuthorization &&
     !report.supportsGuideClaims &&
@@ -716,7 +727,7 @@ function authenticateComparableCurrentReportBoundary(
     {
       status: "authenticated",
       catalogReportSha256: EXPECTED_CURRENT_BINDING_CATALOG_SHA256,
-      occurrenceCount: 63,
+      occurrenceCount: 66,
       ittoAuthenticated: true,
       keqingEquipmentDurableMatchesCurrent: true,
       keqingRolePairDurableMatchesCurrent: true,
@@ -725,19 +736,23 @@ function authenticateComparableCurrentReportBoundary(
       kokomiSourceLocalDurableMatchesCurrent: true,
       noelleSourceLocalDurableMatchesCurrent: true,
       noelleSourceLocalLowerInvestmentDurableMatchesCurrent: true,
+      xiaoSourceLocalDurableMatchesCurrent: true,
       keqingEquipmentAtomicClaimCount: 42,
       kleeSourceLocalOccurrenceCount: 4,
       dionaSourceLocalOccurrenceCount: 3,
       kokomiSourceLocalOccurrenceCount: 1,
       noelleSourceLocalOccurrenceCount: 3,
       noelleSourceLocalLowerInvestmentOccurrenceCount: 3,
+      xiaoSourceLocalOccurrenceCount: 3,
       exactTextAcknowledgementOccurrenceCount: 3,
       typedBindingMeansConditionTruth: false,
     };
   if (
     stableJson(report.bindingBoundary) !== stableJson(expectedBindingBoundary)
   ) {
-    throw new Error("Pinned authenticated binding boundary drifted.");
+    throw new Error(
+      `Pinned authenticated binding boundary drifted: observed catalog ${report.bindingBoundary.catalogReportSha256}.`,
+    );
   }
 
   validateComparableOccurrenceRows(report.occurrences);
@@ -1116,6 +1131,41 @@ async function buildAuthenticatedBindingCatalog(
       }.`,
     );
   }
+  const xiaoManual = requiredManualSnapshotInputContaining(
+    input.manualInputs,
+    "kqm",
+    "xiao-mh-artifact-branch-version-5-5",
+  );
+  const xiaoDurableReport = requiredJsonSourceObject(
+    input.sourceFiles,
+    XIAO_SOURCE_LOCAL_REPORT_PATH,
+  ) as XiaoSourceLocalConditionSliceReport;
+  const xiaoSnapshotText = selectSourceFiles(input.sourceFiles, [
+    "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+  ])[0]!.text;
+  const xiaoAuthentication =
+    authenticateXiaoSourceLocalConditionSliceReport(xiaoDurableReport, {
+      repositoryInput: input.repositoryInput,
+      manualSnapshotInput: xiaoManual.snapshot,
+      manualSnapshotText: xiaoSnapshotText,
+      manualIndexInput: input.manualIndexInput,
+      sourceRegistryInput: input.sourceRegistryInput,
+      generatedFrom: selectGeneratedFrom(
+        generatedFrom,
+        XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS,
+      ),
+    });
+  if (!xiaoAuthentication.authenticated) {
+    throw new Error(
+      `The checked-in Xiao source-local report failed a fresh current rebuild: ${xiaoAuthentication.reason}${
+        xiaoAuthentication.issues.length > 0
+          ? ` (${xiaoAuthentication.issues
+              .map(({ code, path: issuePath }) => `${code} at ${issuePath}`)
+              .join("; ")})`
+          : ""
+      }.`,
+    );
+  }
   return buildCurrentConditionBindingCatalog({
     ittoAuthentication,
     keqingEquipment: {
@@ -1145,6 +1195,10 @@ async function buildAuthenticatedBindingCatalog(
     noelleSourceLocalLowerInvestment: {
       durableReport: noelleLowerInvestmentDurableReport,
       currentReport: noelleLowerInvestmentAuthentication.canonicalReport,
+    },
+    xiaoSourceLocal: {
+      durableReport: xiaoDurableReport,
+      currentReport: xiaoAuthentication.canonicalReport,
     },
   });
 }
@@ -1498,13 +1552,13 @@ function validateExpectedCurrentCoverageBoundary(
       uniqueExactArrayCount: 105,
       stringOccurrenceCount: 177,
       uniqueStringCount: 114,
-      typedBoundOccurrenceCount: 60,
+      typedBoundOccurrenceCount: 63,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 80,
+      unboundOccurrenceCount: 77,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 82,
+      typedBoundStringOccurrenceCount: 85,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 92,
+      unboundStringOccurrenceCount: 89,
       invalidStringOccurrenceCount: 0,
     },
     nonStructuralBindingCoverage: {
@@ -1514,13 +1568,13 @@ function validateExpectedCurrentCoverageBoundary(
       uniqueExactArrayCount: 102,
       stringOccurrenceCount: 174,
       uniqueStringCount: 111,
-      typedBoundOccurrenceCount: 60,
+      typedBoundOccurrenceCount: 63,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 77,
+      unboundOccurrenceCount: 74,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 82,
+      typedBoundStringOccurrenceCount: 85,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 89,
+      unboundStringOccurrenceCount: 86,
       invalidStringOccurrenceCount: 0,
     },
     energyCoverage: {
@@ -1534,8 +1588,8 @@ function validateExpectedCurrentCoverageBoundary(
         12,
         11,
       ),
-      notEnergyDeferred: expectedArrayStatistics(57, 0, 57, 33, 79, 34),
-      energyUnclassified: expectedArrayStatistics(71, 0, 71, 60, 80, 67),
+      notEnergyDeferred: expectedArrayStatistics(60, 0, 60, 36, 82, 37),
+      energyUnclassified: expectedArrayStatistics(68, 0, 68, 57, 77, 64),
       unconditional: expectedArrayStatistics(20, 20, 0, 0, 0, 0),
       deferredDisplay: expectedArrayStatistics(15, 0, 15, 12, 18, 15),
     },
@@ -1543,14 +1597,14 @@ function validateExpectedCurrentCoverageBoundary(
       invalid: 0,
       unconditional: 20,
       "er-deferred": 15,
-      "typed-bound": 57,
+      "typed-bound": 60,
       "exact-text-acknowledged": 3,
-      "known-but-unbound": 68,
+      "known-but-unbound": 65,
     },
     nonStructuralUniqueBindingArrayCoverage: {
       uniqueExactArrayCount: 102,
-      typedOnlyCount: 34,
-      unboundOnlyCount: 67,
+      typedOnlyCount: 37,
+      unboundOnlyCount: 64,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     },
@@ -1575,8 +1629,8 @@ function validateExpectedCurrentBindingCatalogBoundary(
   catalog: CurrentConditionBindingCatalogReport,
 ): void {
   if (
-    catalog.summary.occurrenceCount !== 63 ||
-    catalog.summary.typedBindingCount !== 60 ||
+    catalog.summary.occurrenceCount !== 66 ||
+    catalog.summary.typedBindingCount !== 63 ||
     catalog.summary.ittoTypedBindingCount !== 15 ||
     catalog.summary.ittoDeferredEnergyPrerequisiteCount !== 3 ||
     catalog.summary.keqingEquipmentOccurrenceCount !== 31 ||
@@ -1596,7 +1650,10 @@ function validateExpectedCurrentBindingCatalogBoundary(
     catalog.summary.noelleSourceLocalNotEnergyDeferredCount !== 3 ||
     catalog.summary.noelleSourceLocalLowerInvestmentOccurrenceCount !== 3 ||
     catalog.summary.noelleSourceLocalLowerInvestmentTypedBindingCount !== 3 ||
-    catalog.summary.noelleSourceLocalLowerInvestmentNotEnergyDeferredCount !== 3
+    catalog.summary.noelleSourceLocalLowerInvestmentNotEnergyDeferredCount !== 3 ||
+    catalog.summary.xiaoSourceLocalOccurrenceCount !== 3 ||
+    catalog.summary.xiaoSourceLocalTypedBindingCount !== 3 ||
+    catalog.summary.xiaoSourceLocalNotEnergyDeferredCount !== 3
   ) {
     throw new Error("Authenticated condition-binding catalog totals drifted.");
   }
@@ -1916,6 +1973,8 @@ function bindingBoundary(
     noelleSourceLocalLowerInvestmentDurableMatchesCurrent:
       catalog.authenticationBoundary
         .noelleSourceLocalLowerInvestmentDurableMatchesCurrent,
+    xiaoSourceLocalDurableMatchesCurrent:
+      catalog.authenticationBoundary.xiaoSourceLocalDurableMatchesCurrent,
     keqingEquipmentAtomicClaimCount:
       catalog.summary.keqingEquipmentAtomicClaimCount,
     kleeSourceLocalOccurrenceCount:
@@ -1928,6 +1987,8 @@ function bindingBoundary(
       catalog.summary.noelleSourceLocalOccurrenceCount,
     noelleSourceLocalLowerInvestmentOccurrenceCount:
       catalog.summary.noelleSourceLocalLowerInvestmentOccurrenceCount,
+    xiaoSourceLocalOccurrenceCount:
+      catalog.summary.xiaoSourceLocalOccurrenceCount,
     exactTextAcknowledgementOccurrenceCount:
       catalog.summary.keqingVvAcknowledgedOccurrenceCount,
     typedBindingMeansConditionTruth: false,
@@ -1983,12 +2044,14 @@ function failedReport(
       kokomiSourceLocalDurableMatchesCurrent: false,
       noelleSourceLocalDurableMatchesCurrent: false,
       noelleSourceLocalLowerInvestmentDurableMatchesCurrent: false,
+      xiaoSourceLocalDurableMatchesCurrent: false,
       keqingEquipmentAtomicClaimCount: 0,
       kleeSourceLocalOccurrenceCount: 0,
       dionaSourceLocalOccurrenceCount: 0,
       kokomiSourceLocalOccurrenceCount: 0,
       noelleSourceLocalOccurrenceCount: 0,
       noelleSourceLocalLowerInvestmentOccurrenceCount: 0,
+      xiaoSourceLocalOccurrenceCount: 0,
       exactTextAcknowledgementOccurrenceCount: 0,
       typedBindingMeansConditionTruth: false,
     },

@@ -1,0 +1,649 @@
+{
+  "aliasBoundary": {
+    "aliases": [
+      {
+        "formulaId": "xiao-skill",
+        "mappingBasis": "Guide Factory maps the source token E, labeled Elemental Skill in the captured fixture, to the existing calculator formula id xiao-skill for this count-only witness.",
+        "sourceLabel": "Elemental Skill",
+        "sourceToken": "E"
+      },
+      {
+        "formulaId": "xiao-plunge-high",
+        "mappingBasis": "Guide Factory maps the source token HP, labeled High Plunge in the captured fixture, to the existing calculator formula id xiao-plunge-high for this count-only witness.",
+        "sourceLabel": "High Plunge",
+        "sourceToken": "HP"
+      }
+    ],
+    "exactSourceTokenCoverage": true,
+    "ownership": "guide-factory",
+    "reviewStatus": "unreviewed",
+    "sourceAuthoredCalculatorFormulaIds": false
+  },
+  "assembledBuildCount": 0,
+  "baselineComputationBoundary": {
+    "equipmentPurpose": "calculator-runnability-not-source-fixture-evidence",
+    "localInvestmentAssumption": {
+      "charLevel": 90,
+      "constellation": 0,
+      "refinement": 1,
+      "talentLevels": {
+        "auto": 10,
+        "burst": 10,
+        "skill": 10
+      }
+    },
+    "roster": [
+      "xiao",
+      "xianyun",
+      "furina",
+      "faruzan"
+    ],
+    "sourceFixtureSuppliedConstellation": false,
+    "sourceFixtureSuppliedEquipment": false,
+    "sourceFixtureSuppliedTeam": false,
+    "sourceId": "genshintools-presets",
+    "teamInvestmentStatus": "unspecified",
+    "teamRecordId": "genshintools-presets:team:CX03obKWOJgK51-fWO"
+  },
+  "calculatorDefaultDraft": {
+    "assumptions": {
+      "characters": [
+        {
+          "characterId": "xiao",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "vermillion_hereafter",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "primordial_jade_wingedspear",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "xianyun",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "viridescent_venerer",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "cranes_echoing_call",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "furina",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "golden_troupe",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "splendor_of_tranquil_waters",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        },
+        {
+          "characterId": "faruzan",
+          "charLevel": 90,
+          "constellation": 0,
+          "refinement": 1,
+          "selectedArtifact": {
+            "setId": "viridescent_venerer",
+            "type": "4pc"
+          },
+          "selectedWeaponId": "favonius_warbow",
+          "talentLevels": {
+            "auto": 10,
+            "burst": 10,
+            "skill": 10
+          }
+        }
+      ],
+      "combatOptions": "calculator-defaults"
+    },
+    "cautions": [
+      "Formula counts come from calculator comboDescriptor implementation defaults, not source-reviewed rotation truth.",
+      "This draft does not establish an optimal rotation, buff sequence, field-time plan, ER feasibility, or guide recommendation.",
+      "Calculator combat options use their implementation defaults because the knowledge team does not provide option selections.",
+      "Constellation- or option-gated formulas unavailable under the explicit assumptions are checked for catalog integrity but omitted from the draft."
+    ],
+    "classification": "calculator-default-draft",
+    "lines": [
+      {
+        "characterId": "xiao",
+        "count": 11,
+        "formulaId": "xiao-plunge-high"
+      },
+      {
+        "characterId": "xiao",
+        "count": 2,
+        "formulaId": "xiao-skill"
+      },
+      {
+        "characterId": "xianyun",
+        "count": 1,
+        "formulaId": "xianyun-driftcloud"
+      },
+      {
+        "characterId": "xianyun",
+        "count": 1,
+        "formulaId": "xianyun-q-initial"
+      },
+      {
+        "characterId": "furina",
+        "count": 1,
+        "formulaId": "furina-burst"
+      },
+      {
+        "characterId": "furina",
+        "count": 1,
+        "formulaId": "furina-salon-total"
+      },
+      {
+        "characterId": "furina",
+        "count": 1,
+        "formulaId": "furina-skill-bubble"
+      },
+      {
+        "characterId": "faruzan",
+        "count": 1,
+        "formulaId": "faruzan-vortex"
+      }
+    ],
+    "schemaVersion": 1,
+    "sourceTeamRecordId": "genshintools-presets:team:CX03obKWOJgK51-fWO",
+    "supportsGuideClaims": false,
+    "zeroCountAvailableFormulas": [
+      {
+        "characterId": "xiao",
+        "formulaId": "rx-swirl-Hydro-xiao"
+      },
+      {
+        "characterId": "xianyun",
+        "formulaId": "rx-swirl-Hydro-xianyun"
+      },
+      {
+        "characterId": "xianyun",
+        "formulaId": "xianyun-driftcloud-1step"
+      },
+      {
+        "characterId": "xianyun",
+        "formulaId": "xianyun-q-starwicker"
+      },
+      {
+        "characterId": "xianyun",
+        "formulaId": "xianyun-skyladder"
+      },
+      {
+        "characterId": "faruzan",
+        "formulaId": "faruzan-polyhedron"
+      },
+      {
+        "characterId": "faruzan",
+        "formulaId": "rx-swirl-Hydro-faruzan"
+      }
+    ]
+  },
+  "calculatorDefaultDraftExecuted": true,
+  "cautions": [
+    "The two token aliases are Guide Factory-authored and unreviewed; count parity does not prove that source and calculator formula semantics are identical.",
+    "The source fixture is an agent-assisted, unreviewed observation and deliberately omits the chart's damage values and several combat assumptions.",
+    "The calculator side is its current comboDescriptor default under a local C0/R1/level-90/10-10-10 fixture, not source-reviewed rotation truth.",
+    "The 12-versus-11 High Plunge discrepancy is a validation target for later adjudication, not evidence that either side is correct.",
+    "The baseline FFXX team supplies only runnable equipment; its roster, equipment, and local investment assumptions are not attributed to the Xiao source fixture."
+  ],
+  "classification": "authenticated-unreviewed-formula-count-parity-witness",
+  "comparison": {
+    "formulaComparisons": [
+      {
+        "calculatorDefaultCount": 11,
+        "characterId": "xiao",
+        "formulaId": "xiao-plunge-high",
+        "mappingBasis": "Guide Factory maps the source token HP, labeled High Plunge in the captured fixture, to the existing calculator formula id xiao-plunge-high for this count-only witness.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 12
+      },
+      {
+        "calculatorDefaultCount": 2,
+        "characterId": "xiao",
+        "formulaId": "xiao-skill",
+        "mappingBasis": "Guide Factory maps the source token E, labeled Elemental Skill in the captured fixture, to the existing calculator formula id xiao-skill for this count-only witness.",
+        "relation": "matches",
+        "sourceTranslatedCount": 2
+      }
+    ],
+    "mismatches": [
+      {
+        "calculatorDefaultCount": 11,
+        "characterId": "xiao",
+        "formulaId": "xiao-plunge-high",
+        "mappingBasis": "Guide Factory maps the source token HP, labeled High Plunge in the captured fixture, to the existing calculator formula id xiao-plunge-high for this count-only witness.",
+        "relation": "source-translation-higher",
+        "sourceTranslatedCount": 12
+      }
+    ]
+  },
+  "comparisonStatus": "comparable",
+  "damageComputationExecuted": false,
+  "energyRecoveryComputationExecuted": false,
+  "energyRecoveryInputsUsed": false,
+  "formulaAvailabilityValidated": true,
+  "formulaCountComparisonExecuted": true,
+  "formulaDamageEvaluationExecuted": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts",
+      "sha256": "829b08ad5514db3c0d8a14c5fc0989fd4002949ec7052d6b841b6d3f57b87e77"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
+      "sha256": "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/scopedSemanticDependency.ts",
+      "sha256": "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619"
+    },
+    {
+      "path": "scripts/guide-factory/src/teamMemberInvestment.ts",
+      "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFormulaCountParity.ts",
+      "sha256": "96cb943a9ed4796ca0f8d0da66163454f3936a14c2a6f56efda9337e56f1c9bf"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoFormulaCountParityScope.ts",
+      "sha256": "4227337b523708797713dab5f911f2e69be2c3c8f67457bc9f3cfe1f450c02d0"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Sumeru.ts",
+      "sha256": "9acae4fbcdb550071d66437d1dc66bb2643b7164c609bdc3ff1407ebb8afd941"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Bow.ts",
+      "sha256": "f4d9987dea9804a0501b7d4e22b8dbb3abc04e253d6e0709c2693fd537702fb2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Catalyst.ts",
+      "sha256": "bcfc2551417b05d3a7eef261ba1db59bbffc774adc934965aeec672bff2c2efa"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    }
+  ],
+  "generatedTeamCount": 0,
+  "generatorExecuted": false,
+  "issues": [],
+  "optimizerExecuted": false,
+  "playerFacingRecommendations": false,
+  "prohibitedInterpretations": [
+    "Do not interpret this report as a Xiao guide, optimal rotation, damage comparison, weapon ranking, artifact recommendation, stat recommendation, or team recommendation.",
+    "Do not change the published calculator default or the captured source count solely because this witness finds a mismatch.",
+    "Do not infer buff timing, field time, hit feasibility, enemy assumptions, damage per rotation, DPS, ideal rolls, or Energy Recharge requirements.",
+    "Do not infer that the source authored calculator formula ids or the C0 baseline-team investment assumptions."
+  ],
+  "publicationStatus": "withheld-unreviewed-alias-and-calculator-default",
+  "rawInputBoundary": {
+    "broadContainerHashesEmbeddedInGeneratedFrom": false,
+    "declaredGeneratedFromHashClosure": true,
+    "exactSourceFilePathClosure": true,
+    "generatedCodeFileCount": 31,
+    "parsedContainerByteClosure": true,
+    "snapshotDocumentMetadataAuthenticated": true,
+    "sourceFileCount": 36,
+    "status": "accepted",
+    "transitiveRuntimeCodeHashClosure": false,
+    "unrelatedContainerRecordsMayAffectValidation": true,
+    "unrelatedSchemaValidContainerRecordsAffectSemanticProjection": false,
+    "wholeContainerSchemaValidationExecuted": true
+  },
+  "recommendationCompositionExecuted": false,
+  "reportType": "xiao-formula-count-parity-witness",
+  "rotationOptimizationExecuted": false,
+  "schemaVersion": 1,
+  "semanticScope": {
+    "dependencies": [
+      {
+        "collectionPath": "/records",
+        "containerPath": "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json",
+        "dependencyId": "xiao-formula-raw-fixture",
+        "keySchemaId": "manual-source-record-id-v1",
+        "projectionAdapterId": "xiao-formula-raw-fixture-v1",
+        "requiredKeys": [
+          "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5"
+        ],
+        "selectedEntries": [
+          {
+            "key": "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+            "occurrenceCount": 1,
+            "payloadSha256": "2d97c96ca0b225d0d3483928fd3e411a4a6fc9330383536fb5a53803369d5973"
+          }
+        ],
+        "selectedKeySetSha256": "14066312d3bc67456ee0471e5fbfa418ce4063a67872a626360ca00ac32d54ad",
+        "selectedPayloadSha256": "a638fc0cb150a2b0ee8dfbb0543ab483fb35c9833b3c8e44971707bbfc25c71a"
+      },
+      {
+        "collectionPath": "/records",
+        "containerPath": "scripts/guide-factory/data/knowledge/repository.json",
+        "dependencyId": "xiao-formula-consolidated-fixture",
+        "keySchemaId": "knowledge-record-id-v1",
+        "projectionAdapterId": "xiao-formula-repository-fixture-v1",
+        "requiredKeys": [
+          "kqm:rotation-fixture:xiao-no-buff-eeq12hp-rotation-fixture-version-5-5"
+        ],
+        "selectedEntries": [
+          {
+            "key": "kqm:rotation-fixture:xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+            "occurrenceCount": 1,
+            "payloadSha256": "b3de1f9df6710bf8dae6322af5894ce20ec43fe529878a42aec6739195047844"
+          }
+        ],
+        "selectedKeySetSha256": "41b6a6f589352a43cf56d650f507ee94d3982514fa117fa4b2b1ac8bcac0a19a",
+        "selectedPayloadSha256": "6b76c919441aaf99593a10477d0721a25a91fb9ef59c4263249128ac40e243c9"
+      },
+      {
+        "collectionPath": "/teams",
+        "containerPath": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
+        "dependencyId": "xiao-formula-raw-preset-team",
+        "keySchemaId": "genshintools-source-record-id-v1",
+        "projectionAdapterId": "xiao-formula-raw-preset-team-v1",
+        "requiredKeys": [
+          "CX03obKWOJgK51-fWO"
+        ],
+        "selectedEntries": [
+          {
+            "key": "CX03obKWOJgK51-fWO",
+            "occurrenceCount": 1,
+            "payloadSha256": "9a62881fe0b1833b3a27641ed4c687d89a64d37d64c1fa5020e822d4a95a3016"
+          }
+        ],
+        "selectedKeySetSha256": "8389931e3a5c78e314a680afb68640464ae1809b648fadc329f90b0aa7b6aeb1",
+        "selectedPayloadSha256": "00bcc77a2baea719a9adf7f57c12dc5f0b5924d25544f03b0b43c522d09f8231"
+      },
+      {
+        "collectionPath": "/records",
+        "containerPath": "scripts/guide-factory/data/knowledge/repository.json",
+        "dependencyId": "xiao-formula-consolidated-preset-team",
+        "keySchemaId": "knowledge-record-id-v1",
+        "projectionAdapterId": "xiao-formula-repository-team-v1",
+        "requiredKeys": [
+          "genshintools-presets:team:CX03obKWOJgK51-fWO"
+        ],
+        "selectedEntries": [
+          {
+            "key": "genshintools-presets:team:CX03obKWOJgK51-fWO",
+            "occurrenceCount": 1,
+            "payloadSha256": "46850e1f652362ca687bdb3ee4f185f6a0b62905e02020ddeeab7c9e9b364e6b"
+          }
+        ],
+        "selectedKeySetSha256": "1dee4767f99f17a4f3fec06d0e715f7fb2f16ac09f6d7a1fa9d562c29b70ab45",
+        "selectedPayloadSha256": "02abe83b50e89f477a2fe8b1faf6b78bd6a527b69c2a602653102a54787c6741"
+      },
+      {
+        "collectionPath": "/snapshots",
+        "containerPath": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+        "dependencyId": "xiao-formula-manual-index-entry",
+        "keySchemaId": "manual-snapshot-path-v1",
+        "projectionAdapterId": "xiao-formula-manual-index-entry-v1",
+        "requiredKeys": [
+          "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json"
+        ],
+        "selectedEntries": [
+          {
+            "key": "scripts/guide-factory/data/source-snapshots/kqm-xiao-rotation-fixture-manual.json",
+            "occurrenceCount": 1,
+            "payloadSha256": "b4b42676ac391c63b4e9dce36d317e6bc03901f605ff2075ef84c5afbcf86899"
+          }
+        ],
+        "selectedKeySetSha256": "b31a0ababe613094992e6eee4bc8095a5d66a45c5dd9cda65a073bf18f6cb90b",
+        "selectedPayloadSha256": "d00c9bd9fd6ea1ca745196e0f15041d8013b9c39b28376a1e3ba6fb1074c8d7a"
+      },
+      {
+        "collectionPath": "/sources",
+        "containerPath": "scripts/guide-factory/sources/registry.json",
+        "dependencyId": "xiao-formula-source-registry-entries",
+        "keySchemaId": "source-manifest-id-v1",
+        "projectionAdapterId": "xiao-formula-source-manifest-v1",
+        "requiredKeys": [
+          "kqm",
+          "genshintools-presets"
+        ],
+        "selectedEntries": [
+          {
+            "key": "kqm",
+            "occurrenceCount": 1,
+            "payloadSha256": "2083d2fdff9d00a8cd013c622627098e67406ae85a907e2194464726a227b263"
+          },
+          {
+            "key": "genshintools-presets",
+            "occurrenceCount": 1,
+            "payloadSha256": "be9c62af91a2260b4ec15b0d648e07628a87df070b345188112c996efc7e030c"
+          }
+        ],
+        "selectedKeySetSha256": "c312cde0af6a414a70c8a297ff7a2a2e6d6d5c6a6c1e1868bb056ab7cd685358",
+        "selectedPayloadSha256": "30fdf93edc5566e5f9e47fba960f1db8159e8b0357294117e457e0b415b14f7a"
+      }
+    ],
+    "parities": [
+      {
+        "left": {
+          "dependencyId": "xiao-formula-raw-fixture",
+          "key": "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5"
+        },
+        "leftNormalizedSha256": "535c034a6314d2268163a8b8e8dfcfbb3fd23b98126e64be09f7af766cb7fedd",
+        "parityAdapterId": "xiao-formula-manual-repository-fixture-parity-v1",
+        "parityId": "xiao-formula-manual-repository-fixture",
+        "right": {
+          "dependencyId": "xiao-formula-consolidated-fixture",
+          "key": "kqm:rotation-fixture:xiao-no-buff-eeq12hp-rotation-fixture-version-5-5"
+        },
+        "rightNormalizedSha256": "535c034a6314d2268163a8b8e8dfcfbb3fd23b98126e64be09f7af766cb7fedd",
+        "status": "exact"
+      },
+      {
+        "left": {
+          "dependencyId": "xiao-formula-raw-preset-team",
+          "key": "CX03obKWOJgK51-fWO"
+        },
+        "leftNormalizedSha256": "28996717397f5e44a95c8afa9d2ded34291cc5ba83ac4144266a17bbc06085ad",
+        "parityAdapterId": "xiao-formula-preset-repository-team-parity-v1",
+        "parityId": "xiao-formula-preset-repository-team",
+        "right": {
+          "dependencyId": "xiao-formula-consolidated-preset-team",
+          "key": "genshintools-presets:team:CX03obKWOJgK51-fWO"
+        },
+        "rightNormalizedSha256": "28996717397f5e44a95c8afa9d2ded34291cc5ba83ac4144266a17bbc06085ad",
+        "status": "exact"
+      }
+    ],
+    "schemaVersion": 1,
+    "scopeId": "xiao-formula-count-parity-v1",
+    "scopeProjectionSha256": "17f457d095268b739b46c2acb4f5f98f885c247823c22ff5adb5714c08da3f34",
+    "selector": {
+      "dependencyOrderPolicy": "declared",
+      "identityBinding": "dependency-container-collection-key-schema-projection-adapter",
+      "manifestSha256": "4359740241a370e3ebc72d6e194ae6441a0bfb59a1f90fe7f414020055a4c1aa",
+      "mode": "exact-key-manifest",
+      "parityOrderPolicy": "declared",
+      "requiredKeyOrderPolicy": "declared"
+    },
+    "status": "accepted",
+    "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
+  },
+  "sourceBoundary": {
+    "extractionMethod": "agent-assisted",
+    "formulaCounts": [
+      {
+        "count": 2,
+        "label": "Elemental Skill",
+        "sourceToken": "E"
+      },
+      {
+        "count": 12,
+        "label": "High Plunge",
+        "sourceToken": "HP"
+      }
+    ],
+    "pageUrl": "https://keqingmains.com/xiao/",
+    "promotionEligible": false,
+    "repositoryRecordId": "kqm:rotation-fixture:xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+    "repositoryStatus": "candidate",
+    "reviewStatus": "unreviewed",
+    "rotation": {
+      "assumptions": [
+        "This is one Burst rotation used for a weapon-and-refinement damage comparison.",
+        "No external buffs are assumed.",
+        "Energy Recharge is not considered.",
+        "Xiao's Talent Levels are 10/10/10.",
+        "Twenty-five perfect artifact rolls are distributed optimally across ATK%, CRIT Rate, and CRIT DMG."
+      ],
+      "id": "no-buff-eeq12hp",
+      "label": "KQM no-buff weapon-comparison rotation",
+      "notation": "EEQ12HP",
+      "unresolvedSegments": []
+    },
+    "sourceFormulaIdsAuthored": false,
+    "sourceId": "kqm",
+    "sourceRecordId": "xiao-no-buff-eeq12hp-rotation-fixture-version-5-5",
+    "sourceVersion": "Version 5.5"
+  },
+  "sourceFormulaIdsAuthored": false,
+  "sourceTokenAliasesAuthoredByGuideFactory": true,
+  "sourceTokenAliasesHumanReviewed": false,
+  "summary": {
+    "calculatorDefaultHigherCount": 0,
+    "damageComputationCount": 0,
+    "damageFormulaEvaluationCount": 0,
+    "energyRecoveryComputationCount": 0,
+    "matchedCount": 1,
+    "mismatchCount": 1,
+    "sourceFormulaCountRowCount": 2,
+    "sourceTranslationHigherCount": 1,
+    "translatedFormulaCountRowCount": 2
+  },
+  "supportsBuildRecommendations": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsGuideClaims": false,
+  "supportsRankClaims": false,
+  "supportsRotationClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsSourceValidation": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "translatedFormulaCounts": [
+    {
+      "characterId": "xiao",
+      "count": 2,
+      "formulaId": "xiao-skill",
+      "mappingBasis": "Guide Factory maps the source token E, labeled Elemental Skill in the captured fixture, to the existing calculator formula id xiao-skill for this count-only witness."
+    },
+    {
+      "characterId": "xiao",
+      "count": 12,
+      "formulaId": "xiao-plunge-high",
+      "mappingBasis": "Guide Factory maps the source token HP, labeled High Plunge in the captured fixture, to the existing calculator formula id xiao-plunge-high for this count-only witness."
+    }
+  ],
+  "witnessId": "kqm-xiao-eeq12hp-formula-count-parity-version-5-5"
+}

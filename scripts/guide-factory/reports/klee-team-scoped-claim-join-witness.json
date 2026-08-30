@@ -95,7 +95,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
-      "sha256": "bc6c40533fd83d8111234eb8629ce8e997b72e4c6d4188e723784006f1f905e2"
+      "sha256": "cffba02c3f56d859a6d94c5ee3216ce62697518c7b069e3a679f81cead8a98e6"
     },
     {
       "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
@@ -108,6 +108,10 @@
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
       "sha256": "12be18b24ca591f6aae97eaad6e9a9cbc89f202e699663e9eb92d791914b1ece"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
+      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -146,12 +150,16 @@
       "sha256": "e8871e88f5986f983e4fd07017f54b53e36378ba37b03eb4dc1af412cf66d8b1"
     },
     {
+      "path": "scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts",
+      "sha256": "0c49d53ebee045fed9db34d3b388a2f60536a19614ae66516fb1b782f46cf7ad"
+    },
+    {
       "path": "scripts/guide-factory/src/catalogs.ts",
       "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
     },
     {
       "path": "scripts/guide-factory/src/currentConditionBindingCatalog.ts",
-      "sha256": "066c278fbfc6e4727b1233f07830eda2d71bc72df45423716c08a0e1f430f94a"
+      "sha256": "a391b0740f60e7842bd9c764e161c4ce61516b419d0c060924223be5d94b102e"
     },
     {
       "path": "scripts/guide-factory/src/dionaSourceLocalSupportSlice.ts",
@@ -211,7 +219,7 @@
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
-      "sha256": "5d81d130ae8ac6a514176b619b8fe2177f481dcc2e5ffabd17ff9d92bd072c3d"
+      "sha256": "15463e055f4711624aba5afc6253eab33f3f78796ac5c1636a041d64bb973cee"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -284,6 +292,14 @@
     {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
       "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSlice.ts",
+      "sha256": "abbdeb882797909059e1407bf14826f5c53034e6a721a748ae6b0f6a27964d70"
+    },
+    {
+      "path": "scripts/guide-factory/src/xiaoSourceLocalConditionSliceScope.ts",
+      "sha256": "9f5b90e8ee5a99acea0c0d4c927dee419f80d42843ba95bbec69efa171ff2252"
     },
     {
       "path": "src/data/betaState.ts",
@@ -2374,11 +2390,11 @@
       "sourceTeamCount": 2
     },
     "manualCoverage": {
-      "bindingOccurrenceCount": 63,
+      "bindingOccurrenceCount": 66,
       "corpusOccurrenceCount": 163,
       "currentBoundaryAuthenticated": true,
-      "durableReportCanonicalObjectSha256": "bc6c40533fd83d8111234eb8629ce8e997b72e4c6d4188e723784006f1f905e2",
-      "durableReportFileSha256": "bc6c40533fd83d8111234eb8629ce8e997b72e4c6d4188e723784006f1f905e2",
+      "durableReportCanonicalObjectSha256": "cffba02c3f56d859a6d94c5ee3216ce62697518c7b069e3a679f81cead8a98e6",
+      "durableReportFileSha256": "cffba02c3f56d859a6d94c5ee3216ce62697518c7b069e3a679f81cead8a98e6",
       "durableReportPath": "scripts/guide-factory/reports/manual-condition-array-coverage.json",
       "kleeSourceLocalOccurrenceCount": 4,
       "typedBindingMeansConditionTruth": false

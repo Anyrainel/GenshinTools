@@ -270,6 +270,20 @@ claiming calculator formula IDs, damage values, equipment, or gameplay
 optimality. All eight records remain agent-assisted, unreviewed, and
 promotion-ineligible.
 
+Checkpoint 42 keeps those raw-source semantics unchanged. Its source-local
+condition adapter selects only three authenticated guide occurrences over the
+exact FFXX roster: two Xianyun-presence predicates and one Xiao-C6 predicate
+resolved by an independent request fact. Fourteen nonempty conditions and four
+empty arrays remain unconsumed. A separate derived formula-count witness owns
+an unreviewed `E -> xiao-skill` and `HP -> xiao-plunge-high` alias table. It
+records calculator-default counts 2 and 11 beside source counts 2 and 12, but
+the aliases and comparison are Guide Factory evidence, not fields added to the
+source snapshot. Count parity does not establish identical formula semantics,
+and the mismatch does not establish which side is correct. The witness pins
+the fixture's source-document metadata and declared-file hashes without
+claiming transitive runtime-code closure; its aggregate consumer independently
+rebuilds the raw fixture/preset semantic scope.
+
 ### KQM Itto pilot
 
 The Itto page stores seven narrow records from the visible `Version 5.6` guide:

@@ -11,6 +11,7 @@ import type { KleeSourceLocalConditionSliceReport } from "./kleeSourceLocalCondi
 import type { KokomiSourceLocalArtifactSliceReport } from "./kokomiSourceLocalArtifactSlice";
 import type { NoelleSourceLocalHighInvestmentSliceReport } from "./noelleSourceLocalHighInvestmentSlice";
 import type { NoelleSourceLocalLowerInvestmentSliceReport } from "./noelleSourceLocalLowerInvestmentSlice";
+import type { XiaoSourceLocalConditionSliceReport } from "./xiaoSourceLocalConditionSlice";
 import type {
   SourceLocalConditionRequestPredicateAst,
   SourceLocalConditionSliceReport,
@@ -74,6 +75,20 @@ export type CurrentConditionBindingEvidence =
       predicateAstSha256: string;
       payloadSha256: string;
       occurrenceControlSha256: string;
+      /** Present when a wrapper authenticates source and request-context resolution. */
+      contextResolutionEvidence?: {
+        teamRecordId: string;
+        sourceResolution: "matched" | "unresolved-context";
+        effectiveResolution: "matched";
+        contextApplicability:
+          | "source-already-matched"
+          | "applicable-under-supplied-context";
+        requestPredicateAst: SourceLocalConditionRequestPredicateAst | null;
+        requestPredicateAstSha256: string | null;
+        sourceClaimCellSha256: string;
+        requestContextProjectionSha256: string;
+        requestContextReportSha256: string;
+      };
     };
 
 export type CurrentConditionEnergyEvidence =
@@ -139,6 +154,7 @@ export interface BuildCurrentConditionBindingCatalogInput {
   kokomiSourceLocal: AuthenticatedCurrentReportPair<KokomiSourceLocalArtifactSliceReport>;
   noelleSourceLocal: AuthenticatedCurrentReportPair<NoelleSourceLocalHighInvestmentSliceReport>;
   noelleSourceLocalLowerInvestment: AuthenticatedCurrentReportPair<NoelleSourceLocalLowerInvestmentSliceReport>;
+  xiaoSourceLocal: AuthenticatedCurrentReportPair<XiaoSourceLocalConditionSliceReport>;
 }
 
 export interface CurrentConditionBindingCatalogIssue {
@@ -168,6 +184,7 @@ export interface CurrentConditionBindingCatalogReport {
     kokomiSourceLocalDurableMatchesCurrent: boolean;
     noelleSourceLocalDurableMatchesCurrent: boolean;
     noelleSourceLocalLowerInvestmentDurableMatchesCurrent: boolean;
+    xiaoSourceLocalDurableMatchesCurrent: boolean;
   };
   entries: CurrentConditionBindingCatalogEntry[];
   summary: {
@@ -204,6 +221,9 @@ export interface CurrentConditionBindingCatalogReport {
     noelleSourceLocalLowerInvestmentOccurrenceCount: number;
     noelleSourceLocalLowerInvestmentTypedBindingCount: number;
     noelleSourceLocalLowerInvestmentNotEnergyDeferredCount: number;
+    xiaoSourceLocalOccurrenceCount: number;
+    xiaoSourceLocalTypedBindingCount: number;
+    xiaoSourceLocalNotEnergyDeferredCount: number;
   };
   issues: CurrentConditionBindingCatalogIssue[];
 }
@@ -741,6 +761,37 @@ const NOELLE_SOURCE_LOCAL_LOWER_EXPECTED_HOLDOUTS = [
   ],
 ] as const;
 
+const XIAO_SOURCE_LOCAL_SLICE_ID =
+  "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5";
+const XIAO_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCE_IDS = [
+  "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+  "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+  "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+] as const;
+const XIAO_SOURCE_LOCAL_TEAM_ID =
+  "kqm:team:xiao-xianyun-furina-faruzan-ffxx-version-5-5";
+const XIAO_SOURCE_LOCAL_C6_OCCURRENCE_ID =
+  "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions";
+const XIAO_SOURCE_LOCAL_C6_REQUEST_PREDICATE = {
+  type: "constellation-at-least",
+  characterId: "xiao",
+  threshold: 6,
+} as const satisfies SourceLocalConditionRequestPredicateAst;
+const XIAO_SOURCE_LOCAL_C6_REQUEST_PREDICATE_SHA256 =
+  "9b4c77774f501a23c58014d4256b4a22e7c29bd610d44f4a63cd2043ede8c2f7";
+const XIAO_SOURCE_LOCAL_EVALUATION_BOUNDARY_SHA256 =
+  "fb0d66cb99557c76e9fb41d6fbc1eb3feed38bb995b76c728522ba0ecffbe9c4";
+const XIAO_SOURCE_LOCAL_EXACT_TEAM_CONTROLS_SHA256 =
+  "377da3d40a3a136e0a05f220aa759049e8c98fe12b77d6bfd162ad20491cf405";
+const XIAO_SOURCE_LOCAL_SOURCE_CELLS_SHA256 =
+  "898d7457df1db05d2758ce45e7d48ec7653dedab6217cd298e2224c4d8d31b9b";
+const XIAO_SOURCE_LOCAL_REQUEST_CONTEXT_REPORT_SHA256 =
+  "213ecb7c2c17b8f41b0817ef6de2f04f6e6f93a2bda4e807f7f88a9ea3777eb6";
+const XIAO_SOURCE_LOCAL_SLICE_SUMMARY_SHA256 =
+  "867597d669a2eb23d2ba16fb44ec4fac4d1c1fff18bc2eee791e8e97e96a574b";
+const XIAO_SOURCE_LOCAL_WRAPPER_SUMMARY_SHA256 =
+  "6f3d734a0a9fed020255e85527f1e56ad80a945bea4be114c62529bd0bbd0961";
+
 const KEQING_SHRED_SOURCE_MEMBER_INDEX: Readonly<Record<string, number>> = {
   kaedehara_kazuha: 0,
   sucrose: 1,
@@ -821,6 +872,9 @@ export function buildCurrentConditionBindingCatalog(
   );
   const noelleSourceLocalLowerInvestmentDurableMatchesCurrent =
     exactCurrentReportMatches(input.noelleSourceLocalLowerInvestment);
+  const xiaoSourceLocalDurableMatchesCurrent = exactCurrentReportMatches(
+    input.xiaoSourceLocal,
+  );
   const authenticationBoundary = {
     ittoAuthenticated,
     keqingEquipmentDurableMatchesCurrent,
@@ -830,6 +884,7 @@ export function buildCurrentConditionBindingCatalog(
     kokomiSourceLocalDurableMatchesCurrent,
     noelleSourceLocalDurableMatchesCurrent,
     noelleSourceLocalLowerInvestmentDurableMatchesCurrent,
+    xiaoSourceLocalDurableMatchesCurrent,
   };
 
   if (!ittoAuthenticated) {
@@ -896,6 +951,14 @@ export function buildCurrentConditionBindingCatalog(
       "The durable lower-investment Noelle source-local report differs from the current rebuilt report.",
     );
   }
+  if (!xiaoSourceLocalDurableMatchesCurrent) {
+    addIssue(
+      issues,
+      "authentication.xiao-source-local-stale",
+      "xiaoSourceLocal",
+      "The durable Xiao source-local report differs from the current rebuilt report.",
+    );
+  }
   if (issues.length > 0) {
     return failedReport(authenticationBoundary, issues);
   }
@@ -937,6 +1000,10 @@ export function buildCurrentConditionBindingCatalog(
       ),
       ...noelleHighInvestmentEntries,
       ...noelleLowerInvestmentEntries,
+      ...extractXiaoSourceLocalEntries(
+        input.xiaoSourceLocal.currentReport,
+        issues,
+      ),
     ];
     validateCombinedEntries(entries, issues);
     if (issues.length > 0) {
@@ -3707,6 +3774,289 @@ function exactSingleRowsById<T>(
   return result;
 }
 
+function extractXiaoSourceLocalEntries(
+  report: XiaoSourceLocalConditionSliceReport,
+  issues: CurrentConditionBindingCatalogIssue[],
+): CurrentConditionBindingCatalogEntry[] {
+  const sourceLocalSlice = report.sourceLocalSlice;
+  if (
+    report.comparisonStatus !== "comparable" ||
+    report.reportType !== "xiao-source-local-condition-slice" ||
+    report.classification !==
+      "authenticated-source-local-condition-binding-slice" ||
+    report.sliceId !== XIAO_SOURCE_LOCAL_SLICE_ID ||
+    report.issues.length !== 0 ||
+    sourceLocalSlice == null ||
+    sourceLocalSlice.comparisonStatus !== "comparable"
+  ) {
+    addIssue(
+      issues,
+      "xiao-source-local.non-comparable",
+      "xiaoSourceLocal.currentReport",
+      "The Xiao source-local report is not the expected comparable authenticated slice.",
+    );
+    return [];
+  }
+  if (
+    report.arbitraryEnglishParsingAllowed !== false ||
+    report.supportsSourceAuthorization !== false ||
+    report.supportsGuideClaims !== false ||
+    report.supportsTeamRecommendations !== false ||
+    report.supportsBuildRecommendations !== false ||
+    report.supportsEquipmentRecommendations !== false ||
+    report.supportsStatRecommendations !== false ||
+    report.supportsRankClaims !== false ||
+    report.supportsDamageClaims !== false ||
+    report.supportsRotationClaims !== false ||
+    report.supportsEnergyRecoveryClaims !== false ||
+    report.recommendationCompositionExecuted !== false ||
+    report.candidateGenerationExecuted !== false ||
+    report.generatorExecuted !== false ||
+    report.optimizerExecuted !== false ||
+    report.artifactAssignmentExecuted !== false ||
+    report.equipmentAssignmentExecuted !== false ||
+    report.teamCompositionExecuted !== false ||
+    report.buildCompositionExecuted !== false ||
+    report.damageComputationExecuted !== false ||
+    report.rotationComputationExecuted !== false ||
+    report.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.supportsSourceAuthorization !== false ||
+    sourceLocalSlice.supportsGuideClaims !== false ||
+    sourceLocalSlice.supportsTeamRecommendations !== false ||
+    sourceLocalSlice.supportsBuildRecommendations !== false ||
+    sourceLocalSlice.supportsStatRecommendations !== false ||
+    sourceLocalSlice.supportsRankClaims !== false ||
+    sourceLocalSlice.supportsDamageClaims !== false ||
+    sourceLocalSlice.supportsRotationClaims !== false ||
+    sourceLocalSlice.supportsEnergyRecoveryClaims !== false ||
+    sourceLocalSlice.playerFacingRecommendations !== false ||
+    sourceLocalSlice.ranking !== false ||
+    sourceLocalSlice.buildComposition !== false ||
+    sourceLocalSlice.damage !== false ||
+    sourceLocalSlice.formulas !== false ||
+    sourceLocalSlice.rotations !== false ||
+    sourceLocalSlice.ER !== false ||
+    sourceLocalSlice.recommendationCompositionExecuted !== false ||
+    sourceLocalSlice.generatorExecuted !== false ||
+    sourceLocalSlice.optimizerExecuted !== false ||
+    sourceLocalSlice.damageComputationExecuted !== false ||
+    sourceLocalSlice.energyRecoveryComputationExecuted !== false ||
+    sourceLocalSlice.assembledBuildCount !== 0 ||
+    sourceLocalSlice.issues.length !== 0 ||
+    sourceLocalSlice.sliceId !== report.sliceId ||
+    sourceLocalSlice.sourceDocumentBoundary.status !== "accepted" ||
+    sourceLocalSlice.sourceDocumentBoundary.sourceId !== "kqm" ||
+    sourceLocalSlice.sourceDocumentBoundary.exactOccurrenceIds.length !== 3 ||
+    sourceLocalSlice.sourceDocumentBoundary.exactTeamRecordIds.length !== 1 ||
+    !sourceLocalSlice.sourceDocumentBoundary
+      .allClaimsAndTeamsShareExactSourceDocument ||
+    report.sourceBoundary.status !== "accepted" ||
+    report.sourceBoundary.sourceId !== "kqm" ||
+    report.sourceBoundary.repositoryParity !== "exact" ||
+    !report.sourceBoundary.selectedAndHoldoutsCloseAllNonemptyXiaoConditions ||
+    !report.sourceBoundary.emptyOccurrenceClosureExact ||
+    report.sourceBoundary.totalConditionArrayCount !== 21 ||
+    report.sourceBoundary.nonemptyConditionArrayCount !== 17 ||
+    report.sourceBoundary.emptyConditionArrayCount !== 4 ||
+    report.sourceBoundary.selectedOccurrenceCount !== 3 ||
+    report.sourceBoundary.holdoutOccurrenceCount !== 14 ||
+    report.selectedOccurrences.length !== 3 ||
+    report.holdoutOccurrences.length !== 14 ||
+    report.emptyOccurrences.length !== 4 ||
+    report.summary.selectedOccurrenceCount !== 3 ||
+    report.summary.selectedNotEnergyDeferredCount !== 3 ||
+    report.summary.holdoutOccurrenceCount !== 14 ||
+    report.summary.holdoutConsumedCount !== 0 ||
+    report.summary.emptyConsumedCount !== 0 ||
+    report.summary.assembledBuildCount !== 0 ||
+    sourceLocalSlice.sourceClaimCatalog.length !== 3 ||
+    sourceLocalSlice.conditionControls.length !== 3 ||
+    sha256Text(stableJson(report.evaluationBoundary)) !==
+      XIAO_SOURCE_LOCAL_EVALUATION_BOUNDARY_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice.exactTeamControls)) !==
+      XIAO_SOURCE_LOCAL_EXACT_TEAM_CONTROLS_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice.sourceClaimCells)) !==
+      XIAO_SOURCE_LOCAL_SOURCE_CELLS_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice.requestContextReport)) !==
+      XIAO_SOURCE_LOCAL_REQUEST_CONTEXT_REPORT_SHA256 ||
+    sha256Text(stableJson(sourceLocalSlice.summary)) !==
+      XIAO_SOURCE_LOCAL_SLICE_SUMMARY_SHA256 ||
+    sha256Text(stableJson(report.summary)) !==
+      XIAO_SOURCE_LOCAL_WRAPPER_SUMMARY_SHA256
+  ) {
+    addIssue(
+      issues,
+      "xiao-source-local.partial-or-capability-crossing-evidence",
+      "xiaoSourceLocal.currentReport",
+      "The Xiao checkpoint lost its exact three-selected/fourteen-holdout/four-empty boundary or crossed a prohibited computation boundary.",
+    );
+    return [];
+  }
+
+  const actualSelectedIds = report.selectedOccurrences
+    .map(({ occurrenceId }) => occurrenceId)
+    .sort();
+  if (
+    stableJson(actualSelectedIds) !==
+    stableJson([...XIAO_SOURCE_LOCAL_EXPECTED_SELECTED_OCCURRENCE_IDS].sort())
+  ) {
+    addIssue(
+      issues,
+      "xiao-source-local.selected-occurrence-scope-drift",
+      "xiaoSourceLocal.currentReport.selectedOccurrences",
+      "The Xiao typed slice must remain limited to the three exact authenticated occurrences.",
+    );
+    return [];
+  }
+  const selectedIdSet = new Set(actualSelectedIds);
+  const holdoutIds = report.holdoutOccurrences.map(
+    ({ occurrenceId }) => occurrenceId,
+  );
+  const emptyIds = report.emptyOccurrences.map(({ occurrenceId }) => occurrenceId);
+  if (
+    new Set(holdoutIds).size !== 14 ||
+    new Set(emptyIds).size !== 4 ||
+    holdoutIds.some((occurrenceId) => selectedIdSet.has(occurrenceId)) ||
+    emptyIds.some(
+      (occurrenceId) =>
+        selectedIdSet.has(occurrenceId) || holdoutIds.includes(occurrenceId),
+    ) ||
+    report.holdoutOccurrences.some(
+      (holdout) =>
+        holdout.repositoryParity !== "exact" ||
+        holdout.sliceDisposition !== "holdout" ||
+        holdout.consumedBySlice ||
+        holdout.bindingAuthoredBySlice ||
+        holdout.energyClassificationAuthoredBySlice,
+    ) ||
+    report.emptyOccurrences.some(
+      (empty) =>
+        empty.repositoryParity !== "exact" ||
+        empty.sliceDisposition !== "empty-unconditional" ||
+        empty.conditions.length !== 0 ||
+        empty.consumedBySlice ||
+        empty.bindingAuthoredBySlice ||
+        empty.energyClassificationAuthoredBySlice,
+    )
+  ) {
+    addIssue(
+      issues,
+      "xiao-source-local.selected-holdout-empty-partition-drift",
+      "xiaoSourceLocal.currentReport",
+      "The Xiao selected, holdout, and empty occurrence sets must remain unique, disjoint, and unconsumed outside the three selected bindings.",
+    );
+    return [];
+  }
+
+  const claimById = exactSingleRowsById(
+    sourceLocalSlice.sourceClaimCatalog,
+    ({ claimId }) => claimId,
+    "xiao-source-local.duplicate-source-claim",
+    "xiaoSourceLocal.currentReport.sourceLocalSlice.sourceClaimCatalog",
+    issues,
+  );
+  const controlById = exactSingleRowsById(
+    sourceLocalSlice.conditionControls,
+    ({ claimId }) => claimId,
+    "xiao-source-local.duplicate-condition-control",
+    "xiaoSourceLocal.currentReport.sourceLocalSlice.conditionControls",
+    issues,
+  );
+  if (issues.length > 0) return [];
+
+  const entries: CurrentConditionBindingCatalogEntry[] = [];
+  for (const selected of report.selectedOccurrences) {
+    const control = controlById.get(selected.occurrenceId);
+    const sourceCell = sourceLocalSlice.sourceClaimCells[0]?.claimCells.find(
+      ({ claimId }) => claimId === selected.occurrenceId,
+    );
+    const requestProjection = sourceLocalSlice.requestContextReport
+      ?.teamProjections[0]?.claimProjections.find(
+        ({ claimId }) => claimId === selected.occurrenceId,
+      );
+    const isC6 = selected.occurrenceId === XIAO_SOURCE_LOCAL_C6_OCCURRENCE_ID;
+    const expectedSourceResolution = isC6 ? "unresolved-context" : "matched";
+    const expectedContextApplicability = isC6
+      ? "applicable-under-supplied-context"
+      : "source-already-matched";
+    const requestBinding = control?.requestBindings[0];
+    const projectedRequestBinding = requestProjection?.requestContextBindings[0];
+    const resolutionBoundaryMatches =
+      sourceCell?.resolution === expectedSourceResolution &&
+      requestProjection?.sourceControl.resolution === expectedSourceResolution &&
+      requestProjection?.resolution === "matched" &&
+      requestProjection.contextApplicability === expectedContextApplicability &&
+      (isC6
+        ? selected.requestPredicateSha256 ===
+            XIAO_SOURCE_LOCAL_C6_REQUEST_PREDICATE_SHA256 &&
+          stableJson(selected.requestPredicate) ===
+            stableJson(XIAO_SOURCE_LOCAL_C6_REQUEST_PREDICATE) &&
+          control?.requestBindings.length === 1 &&
+          requestBinding?.sourcePredicatePath === "predicate" &&
+          requestBinding.sourcePredicateLeafSha256 === selected.predicateSha256 &&
+          stableJson(requestBinding.requestPredicate) ===
+            stableJson(XIAO_SOURCE_LOCAL_C6_REQUEST_PREDICATE) &&
+          requestProjection.requestContextBindings.length === 1 &&
+          projectedRequestBinding?.sourcePredicatePath === "predicate" &&
+          projectedRequestBinding.result === "true" &&
+          stableJson(projectedRequestBinding.requestPredicate) ===
+            stableJson(XIAO_SOURCE_LOCAL_C6_REQUEST_PREDICATE) &&
+          projectedRequestBinding.predicateRows.length === 1 &&
+          projectedRequestBinding.predicateRows[0]?.factProvenance === "request" &&
+          projectedRequestBinding.predicateRows[0]?.factScope.teamRecordId ===
+            XIAO_SOURCE_LOCAL_TEAM_ID &&
+          projectedRequestBinding.predicateRows[0]?.factScope.characterId ===
+            "xiao"
+        : (selected.requestPredicate ?? null) === null &&
+          (selected.requestPredicateSha256 ?? null) === null &&
+          control?.requestBindings.length === 0 &&
+          requestProjection?.requestContextBindings.length === 0);
+    if (!resolutionBoundaryMatches || sourceCell == null || requestProjection == null) {
+      addIssue(
+        issues,
+        "xiao-source-local.request-resolution-boundary-drift",
+        `xiaoSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+        "The selected Xiao occurrence lost its exact source resolution, effective resolution, or team-and-character-scoped C6 request binding.",
+      );
+      continue;
+    }
+    const entry = buildSourceLocalCatalogEntry(
+      {
+        diagnosticCode: "xiao-source-local.conflicting-occurrence-evidence",
+        diagnosticPath: `xiaoSourceLocal.currentReport.selectedOccurrences.${selected.occurrenceId}`,
+        diagnosticMessage:
+          "The selected Xiao occurrence, source claim, condition control, predicate, payload, and exact source identity do not agree.",
+        sliceId: report.sliceId,
+        sourceId: "kqm",
+        recordKind: "character_guide",
+        subject: "xiao",
+        selected,
+        claim: claimById.get(selected.occurrenceId),
+        control,
+        contextResolutionEvidence: {
+          teamRecordId: XIAO_SOURCE_LOCAL_TEAM_ID,
+          sourceResolution: expectedSourceResolution,
+          effectiveResolution: "matched",
+          contextApplicability: expectedContextApplicability,
+          requestPredicateAst: selected.requestPredicate
+            ? structuredClone(selected.requestPredicate)
+            : null,
+          requestPredicateAstSha256: selected.requestPredicateSha256,
+          sourceClaimCellSha256: sha256Text(stableJson(sourceCell)),
+          requestContextProjectionSha256: sha256Text(
+            stableJson(requestProjection),
+          ),
+          requestContextReportSha256:
+            XIAO_SOURCE_LOCAL_REQUEST_CONTEXT_REPORT_SHA256,
+        },
+      },
+      issues,
+    );
+    if (entry) entries.push(entry);
+  }
+  return entries;
+}
+
 interface SourceLocalSelectedOccurrenceForCatalog {
   occurrenceId: string;
   sourceRecordId: string;
@@ -3719,6 +4069,8 @@ interface SourceLocalSelectedOccurrenceForCatalog {
   payloadSha256: string;
   predicate: SourceConditionPredicateAst;
   predicateSha256: string;
+  requestPredicate?: SourceLocalConditionRequestPredicateAst | null;
+  requestPredicateSha256?: string | null;
   repositoryParity: "exact";
   sliceDisposition: "selected";
   bindingAuthoredBySlice: true;
@@ -3743,6 +4095,10 @@ function buildSourceLocalCatalogEntry(
     control:
       | SourceLocalConditionSliceReport["conditionControls"][number]
       | undefined;
+    contextResolutionEvidence?: Extract<
+      CurrentConditionBindingEvidence,
+      { kind: "source-local-typed-predicate-ast" }
+    >["contextResolutionEvidence"];
   },
   issues: CurrentConditionBindingCatalogIssue[],
 ): CurrentConditionBindingCatalogEntry | null {
@@ -3825,6 +4181,13 @@ function buildSourceLocalCatalogEntry(
       predicateAstSha256,
       payloadSha256,
       occurrenceControlSha256: sha256Text(stableJson(control)),
+      ...(input.contextResolutionEvidence
+        ? {
+            contextResolutionEvidence: structuredClone(
+              input.contextResolutionEvidence,
+            ),
+          }
+        : {}),
     },
     energyEvidence: {
       kind: "source-local-not-energy-deferred",
@@ -3943,12 +4306,12 @@ function validateCombinedEntries(
       );
     }
   }
-  if (entries.length !== 63) {
+  if (entries.length !== 66) {
     addIssue(
       issues,
       "catalog.occurrence-count-drift",
       "entries",
-      `Expected 63 authenticated current bindings, found ${entries.length}.`,
+      `Expected 66 authenticated current bindings, found ${entries.length}.`,
     );
   }
 }
@@ -3991,6 +4354,11 @@ function summarize(
     ({ bindingEvidence }) =>
       bindingEvidence.kind === "source-local-typed-predicate-ast" &&
       bindingEvidence.sliceId === NOELLE_SOURCE_LOCAL_LOWER_SLICE_ID,
+  );
+  const xiaoEntries = entries.filter(
+    ({ bindingEvidence }) =>
+      bindingEvidence.kind === "source-local-typed-predicate-ast" &&
+      bindingEvidence.sliceId === XIAO_SOURCE_LOCAL_SLICE_ID,
   );
   return {
     occurrenceCount: entries.length,
@@ -4080,6 +4448,14 @@ function summarize(
         ({ energyClassification }) =>
           energyClassification === "not-energy-deferred",
       ).length,
+    xiaoSourceLocalOccurrenceCount: xiaoEntries.length,
+    xiaoSourceLocalTypedBindingCount: xiaoEntries.filter(
+      ({ typedBinding }) => typedBinding,
+    ).length,
+    xiaoSourceLocalNotEnergyDeferredCount: xiaoEntries.filter(
+      ({ energyClassification }) =>
+        energyClassification === "not-energy-deferred",
+    ).length,
   };
 }
 

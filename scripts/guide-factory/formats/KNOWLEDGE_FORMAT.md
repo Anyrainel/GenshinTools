@@ -348,17 +348,18 @@ its fresh authenticated rebuild. They must not parse arbitrary English, infer
 a predicate from repetition, or turn coverage frequency into confidence,
 ranking, or recommendation quality.
 
-The current authenticated catalog contains 63 entries: 60 typed bindings and 3
+The current authenticated catalog contains 66 entries: 63 typed bindings and 3
 exact-text acknowledgements. The guide-selected corpus contains 163 arrays from
 8 snapshots and 71 records: 20 empty and 143 nonempty. Full nonempty binding
-coverage is 60 typed, 3 acknowledged, and 80 unbound. The non-structural
-partition is 140 rows: 60 typed, 3 acknowledged, and 77 unbound. Its 102 unique
-ordered arrays contain 34 typed-only, 67 unbound-only, and one mixed
-acknowledged/unbound set. The independent energy ledger is 15 deferred, 57
-explicitly not energy-deferred, 71 nonempty unclassified, and 20 empty
-unconditional arrays. Display status is 57 typed, 68 known-but-unbound, 15 ER-
+coverage is 63 typed, 3 acknowledged, and 77 unbound. The non-structural
+partition is 140 rows: 63 typed, 3 acknowledged, and 74 unbound. Its 102 unique
+ordered arrays contain 37 typed-only, 64 unbound-only, and one mixed
+acknowledged/unbound set. The independent energy ledger is 15 deferred, 60
+explicitly not energy-deferred, 68 nonempty unclassified, and 20 empty
+unconditional arrays. Display status is 60 typed, 65 known-but-unbound, 15 ER-
 deferred, 3 acknowledged, and 20 unconditional. Coverage authenticates eight
-wrapper families across 19 source files and 77 generated-from paths. The ninth
+wrapper families plus the Xiao slice across 20 source files and 81 generated-
+from paths. The ninth
 indexed snapshot is the separate Xiao rotation fixture and contributes no
 condition array.
 
@@ -391,6 +392,9 @@ and reauthenticated; a broader catalog does not add claims to that exact
 witness. At checkpoint 34 the witness authenticates six source files, 76
 generated-from paths, and 63 upstream bindings while retaining the same four
 claims, positive team, negative control, and holdout exclusions.
+Checkpoint 42 regenerates the same witness after Xiao's three independent
+catalog admissions. Its semantics stay fixed while the authentication boundary
+becomes six source files, 85 generated-from paths, and 66 upstream bindings.
 
 ### Derived isolated sign-only evidence joins
 
@@ -653,6 +657,18 @@ additional knowledge-record kinds. This is distinct from a source-authored
 still supplies no calculator mapping. A calculator-default formula draft cannot
 be placed in a team's `damagePlans` until its counts and assumptions have been
 reviewed as an authored validation target.
+
+The current derived inventory contains two legacy formula-plan drafts and one
+Xiao count-parity-only witness: twelve calculator-team observations across nine
+characters, 33 positive rows, 18 zero-default rows, and two Xiao count
+comparisons. The Xiao source fixture supplies tokens and counts but no team or
+calculator identifiers. Its `E -> xiao-skill` and
+`HP -> xiao-plunge-high` mappings are separately owned, unreviewed aliases. A
+2-versus-2 match does not prove formula-semantic equivalence, and the preserved
+12-versus-11 mismatch does not identify a correct side. The inventory has zero
+source-validated and zero guide-ready observations and executes no damage or ER
+calculation. Its standalone rebuild authenticates the Xiao raw fixture and
+preset semantic scope before accepting fields copied from the durable witness.
 
 Those decisions will be introduced only after real source observations expose
 the necessary distinctions.

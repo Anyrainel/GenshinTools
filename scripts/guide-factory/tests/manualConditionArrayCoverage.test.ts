@@ -28,6 +28,7 @@ import { DIONA_SOURCE_LOCAL_SUPPORT_SLICE_INPUT_PATHS } from "../src/dionaSource
 import { KOKOMI_SOURCE_LOCAL_ARTIFACT_SLICE_INPUT_PATHS } from "../src/kokomiSourceLocalArtifactSlice";
 import { NOELLE_SOURCE_LOCAL_HIGH_INVESTMENT_SLICE_INPUT_PATHS } from "../src/noelleSourceLocalHighInvestmentSlice";
 import { NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_INPUT_PATHS } from "../src/noelleSourceLocalLowerInvestmentSlice";
+import { XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS } from "../src/xiaoSourceLocalConditionSlice";
 
 const KEQING_EQUIPMENT_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
@@ -41,6 +42,8 @@ const NOELLE_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json";
 const NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json";
+const XIAO_SOURCE_LOCAL_REPORT_RELATIVE_PATH =
+  "scripts/guide-factory/reports/xiao-source-local-condition-slice.json";
 
 describe("manual condition-array coverage report", () => {
   let input: BuildManualConditionArrayCoverageReportInput;
@@ -58,7 +61,7 @@ describe("manual condition-array coverage report", () => {
       status: "accepted",
       exactPathSet: true,
       rawJsonObjectClosure: true,
-      sourceFileCount: 19,
+      sourceFileCount: 20,
     });
     expect(report.corpusBoundary).toMatchObject({
       snapshotCount: 8,
@@ -71,7 +74,7 @@ describe("manual condition-array coverage report", () => {
     });
     expect(report.bindingBoundary).toMatchObject({
       status: "authenticated",
-      occurrenceCount: 63,
+      occurrenceCount: 66,
       ittoAuthenticated: true,
       keqingEquipmentDurableMatchesCurrent: true,
       keqingRolePairDurableMatchesCurrent: true,
@@ -80,12 +83,14 @@ describe("manual condition-array coverage report", () => {
       kokomiSourceLocalDurableMatchesCurrent: true,
       noelleSourceLocalDurableMatchesCurrent: true,
       noelleSourceLocalLowerInvestmentDurableMatchesCurrent: true,
+      xiaoSourceLocalDurableMatchesCurrent: true,
       keqingEquipmentAtomicClaimCount: 42,
       kleeSourceLocalOccurrenceCount: 4,
       dionaSourceLocalOccurrenceCount: 3,
       kokomiSourceLocalOccurrenceCount: 1,
       noelleSourceLocalOccurrenceCount: 3,
       noelleSourceLocalLowerInvestmentOccurrenceCount: 3,
+      xiaoSourceLocalOccurrenceCount: 3,
       exactTextAcknowledgementOccurrenceCount: 3,
       typedBindingMeansConditionTruth: false,
     });
@@ -96,7 +101,7 @@ describe("manual condition-array coverage report", () => {
       ),
     ).not.toThrow();
     const generatedPaths = new Set(report.generatedFrom.map(({ path }) => path));
-    expect(report.generatedFrom).toHaveLength(77);
+    expect(report.generatedFrom).toHaveLength(81);
     expect(generatedPaths.size).toBe(report.generatedFrom.length);
     expect(generatedPaths).toContain(KLEE_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(DIONA_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
@@ -105,6 +110,7 @@ describe("manual condition-array coverage report", () => {
     expect(generatedPaths).toContain(
       NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_REPORT_RELATIVE_PATH,
     );
+    expect(generatedPaths).toContain(XIAO_SOURCE_LOCAL_REPORT_RELATIVE_PATH);
     expect(generatedPaths).toContain(
       "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
     );
@@ -124,6 +130,9 @@ describe("manual condition-array coverage report", () => {
       "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
     );
     expect(NOELLE_SOURCE_LOCAL_LOWER_INVESTMENT_SLICE_INPUT_PATHS).not.toContain(
+      "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
+    );
+    expect(XIAO_SOURCE_LOCAL_CONDITION_SLICE_INPUT_PATHS).not.toContain(
       "scripts/guide-factory/src/manualConditionArrayCoverageReport.ts",
     );
   });
@@ -227,13 +236,13 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 105,
       stringOccurrenceCount: 177,
       uniqueStringCount: 114,
-      typedBoundOccurrenceCount: 60,
+      typedBoundOccurrenceCount: 63,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 80,
+      unboundOccurrenceCount: 77,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 82,
+      typedBoundStringOccurrenceCount: 85,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 92,
+      unboundStringOccurrenceCount: 89,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralBindingCoverage).toEqual({
@@ -243,19 +252,19 @@ describe("manual condition-array coverage report", () => {
       uniqueExactArrayCount: 102,
       stringOccurrenceCount: 174,
       uniqueStringCount: 111,
-      typedBoundOccurrenceCount: 60,
+      typedBoundOccurrenceCount: 63,
       exactTextAcknowledgedOccurrenceCount: 3,
-      unboundOccurrenceCount: 77,
+      unboundOccurrenceCount: 74,
       invalidOccurrenceCount: 0,
-      typedBoundStringOccurrenceCount: 82,
+      typedBoundStringOccurrenceCount: 85,
       exactTextAcknowledgedStringOccurrenceCount: 3,
-      unboundStringOccurrenceCount: 89,
+      unboundStringOccurrenceCount: 86,
       invalidStringOccurrenceCount: 0,
     });
     expect(report.summary.nonStructuralUniqueBindingArrayCoverage).toEqual({
       uniqueExactArrayCount: 102,
-      typedOnlyCount: 34,
-      unboundOnlyCount: 67,
+      typedOnlyCount: 37,
+      unboundOnlyCount: 64,
       mixedAcknowledgedAndUnboundCount: 1,
       otherMixedCount: 0,
     });
@@ -285,20 +294,20 @@ describe("manual condition-array coverage report", () => {
         uniqueStringCount: 11,
       },
       notEnergyDeferred: {
-        occurrenceCount: 57,
+        occurrenceCount: 60,
         emptyCount: 0,
-        nonemptyCount: 57,
-        uniqueExactArrayCount: 33,
-        stringOccurrenceCount: 79,
-        uniqueStringCount: 34,
+        nonemptyCount: 60,
+        uniqueExactArrayCount: 36,
+        stringOccurrenceCount: 82,
+        uniqueStringCount: 37,
       },
       energyUnclassified: {
-        occurrenceCount: 71,
+        occurrenceCount: 68,
         emptyCount: 0,
-        nonemptyCount: 71,
-        uniqueExactArrayCount: 60,
-        stringOccurrenceCount: 80,
-        uniqueStringCount: 67,
+        nonemptyCount: 68,
+        uniqueExactArrayCount: 57,
+        stringOccurrenceCount: 77,
+        uniqueStringCount: 64,
       },
       unconditional: {
         occurrenceCount: 20,
@@ -321,9 +330,9 @@ describe("manual condition-array coverage report", () => {
       invalid: 0,
       unconditional: 20,
       "er-deferred": 15,
-      "typed-bound": 57,
+      "typed-bound": 60,
       "exact-text-acknowledged": 3,
-      "known-but-unbound": 68,
+      "known-but-unbound": 65,
     });
     expect(report.nonStructuralUniqueBindingStatusSets).toHaveLength(102);
     expect(
@@ -474,7 +483,7 @@ describe("manual condition-array coverage report", () => {
         ({ energyClassification }) =>
           energyClassification === "not-energy-deferred",
       ),
-    ).toHaveLength(57);
+    ).toHaveLength(60);
     expect(
       report.occurrences
         .filter(
@@ -711,6 +720,53 @@ describe("manual condition-array coverage report", () => {
     ).toBe(true);
     expect(report.supportsEquipmentRecommendations).toBe(false);
     expect(report.supportsEnergyRecoveryClaims).toBe(false);
+  });
+
+  it("promotes only the three authenticated Xiao rows and leaves the remaining Xiao arrays unbound or unconditional", () => {
+    const xiaoRows = report.occurrences.filter(
+      ({ snapshotPath }) =>
+        snapshotPath ===
+        "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
+    );
+    expect(xiaoRows).toHaveLength(21);
+    const promoted = xiaoRows.filter(
+      ({ bindingEvidence }) =>
+        bindingEvidence?.kind === "source-local-typed-predicate-ast" &&
+        bindingEvidence.sliceId ===
+          "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
+    );
+    expect(promoted).toHaveLength(3);
+    expect(promoted.map(({ occurrenceId }) => occurrenceId).sort()).toEqual(
+      [
+        "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
+        "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
+      ].sort(),
+    );
+    expect(
+      promoted.every(
+        ({ subject, bindingClassification, energyClassification, displayStatus }) =>
+          subject === "xiao" &&
+          bindingClassification === "typed-bound" &&
+          energyClassification === "not-energy-deferred" &&
+          displayStatus === "typed-bound",
+      ),
+    ).toBe(true);
+    const nonemptyHoldouts = xiaoRows.filter(
+      ({ conditions, occurrenceId }) =>
+        conditions.length > 0 &&
+        !promoted.some((selected) => selected.occurrenceId === occurrenceId),
+    );
+    expect(nonemptyHoldouts).toHaveLength(14);
+    expect(
+      nonemptyHoldouts.every(
+        ({ bindingClassification, bindingEvidence }) =>
+          bindingClassification === "unbound" && bindingEvidence == null,
+      ),
+    ).toBe(true);
+    expect(
+      xiaoRows.filter(({ conditions }) => conditions.length === 0),
+    ).toHaveLength(4);
   });
 
   it("keeps the high- and lower-investment Noelle admissions separate and leaves all other rows outside", () => {
