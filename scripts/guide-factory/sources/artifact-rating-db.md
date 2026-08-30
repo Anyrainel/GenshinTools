@@ -64,10 +64,43 @@ The standalone validator requires:
 The snapshot is a validation-only pilot. It is not an input to the consolidated
 knowledge repository or any published application bundle.
 
+## Completed isolated Keqing comparison
+
+Checkpoint 35 authenticates the Keqing snapshot only inside a standalone
+five-file closure. The other four inputs are the consolidated repository, the
+existing Keqing/Ineffa four-endpoint local-marginal report, the raw KQM Keqing
+snapshot, and the existing Keqing Lunar equipment-evidence report. The wrapper
+requires exact raw-KQM/repository recommendation parity and independently
+closes the equipment report's exact-team, default-main-stat, and eight-claim
+projections, including seven exact-team matches and one unresolved secondary
+condition.
+
+The output has exactly ten stable, unranked, sign-only rows:
+
+- four source-nonzero/local-positive rows;
+- four source-zero/local-zero rows;
+- one Elemental Mastery objective-coverage gap; and
+- one Electro DMG Bonus source-main-only row.
+
+The comparison does not juxtapose coefficient and marginal magnitudes, sort
+KQM priority values, or claim comparable contexts. The pinned reaction-free
+local objective retains eight readiness blockers, so its all-zero Elemental
+Mastery observation is an objective-coverage gap rather than a disagreement
+with ArtifactRatingDB or KQM.
+
+Both `SPRatioBase` occurrences remain deferred source evidence. No guide,
+ranking, scalar stat weight, promotion, recommendation, candidate, optimizer,
+ideal-stat allocation, or ER requirement is produced. The result is the
+thirty-second durable Guide Factory report, but it remains outside the shared
+registry, consolidation pipeline, condition catalog, global validator, and
+application.
+
 ## Permission and integration gate
 
 The narrow Keqing attribution is explicit, but corpus-wide reuse still needs a
 review of the JSON aggregation and each credited model scope. Until that review
 is complete, keep registry status `planned`, permission `mixed`, and
-consolidation blocked. Shared registry, path, validation-runner, and format
-documentation integration should happen only after that decision.
+consolidation blocked. The isolated shape and report documentation above does
+not change that gate. Shared registry, active-source path, global validation-
+runner, and reusable-adapter integration should happen only after that
+decision.

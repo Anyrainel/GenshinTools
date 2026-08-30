@@ -329,6 +329,36 @@ Mobalytics was considered as a second publisher but is registered as
 permission-blocked under its current terms. No Mobalytics observation file is
 part of the active corpus.
 
+## Isolated `artifact-rating-model-v1` pilot
+
+This format preserves one ArtifactRatingDB entry with its raw `main`, `max`,
+and `weight` objects plus an exact normalized stat-key projection. The upstream
+`weight` field is retained as source-native heuristic coefficients, not renamed
+to a ranking, priority order, marginal sensitivity, or recommendation. Team,
+role, weapon, constellation, and scenario remain explicitly unknown.
+
+Checkpoint 35 uses the Keqing entry only through a five-file standalone
+validation wrapper. The wrapper authenticates the snapshot, repository, local-
+marginal report, raw KQM snapshot, and KQM equipment-evidence report. It
+requires raw-KQM/repository parity and reauthenticates the equipment report's
+exact-team, default-main-stat, and eight-claim projections, including seven
+exact-team matches and one unresolved secondary condition. Ten output rows
+retain only sign/zero classifications: four source-nonzero/local-positive,
+four source-zero/local-zero, one Elemental Mastery objective-coverage gap, and
+one Electro DMG Bonus source-main-only row.
+
+Coefficient and marginal magnitudes are never compared. KQM priority values
+are not sorted. Cross-source context comparability is not established. Two
+`SPRatioBase` occurrences remain present with `ignored-deferred-energy`
+handling, while the local objective retains eight readiness blockers. The
+wrapper produces no guide, rank, scalar stat weight, promotion, or ER result.
+
+The format remains outside the shared source registry and consolidation
+pipeline because permission is mixed and consolidation is blocked pending
+review. The checkpoint 35 report is durable isolated evidence, but it is not a
+shared source adapter, consolidated knowledge record, catalog input, global-
+validator input, or application asset.
+
 ## `simulation-evidence-v1`
 
 Simulation evidence records the engine revision, full config or config hash,

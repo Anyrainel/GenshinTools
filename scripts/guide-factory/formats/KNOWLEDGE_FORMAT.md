@@ -370,6 +370,33 @@ witness. At checkpoint 34 the witness authenticates six source files, 76
 generated-from paths, and 63 upstream bindings while retaining the same four
 claims, positive team, negative control, and holdout exclusions.
 
+### Derived isolated sign-only evidence joins
+
+A permission-isolated source may participate in a standalone validation report
+without entering the shared source registry or consolidated repository. Such a
+report must hash-close every input independently, authenticate any raw-to-
+repository parity it relies on, preserve the source's unknown context, and name
+the wrapper as the author of every cross-record join.
+
+Checkpoint 35 applies that rule to exactly five Keqing inputs:
+ArtifactRatingDB, the consolidated repository, a four-endpoint local-marginal
+diagnostic, the raw KQM snapshot, and the existing KQM equipment-evidence
+report. It verifies the equipment report's exact-team, default-main-stat, and
+eight-claim projections—seven exact-team matches and one unresolved secondary
+condition—before emitting ten stable, unranked sign-only rows.
+Those rows contain four source-nonzero/local-positive observations, four
+source-zero/local-zero observations, one Elemental Mastery objective-coverage
+gap, and one Electro DMG Bonus source-main-only observation.
+
+This derived shape cannot compare coefficient or marginal magnitudes, sort KQM
+priorities, establish context comparability, promote evidence, produce scalar
+weights, or support guide, rank, main-stat, substat, candidate, optimizer,
+ideal-allocation, or ER claims. Its two `SPRatioBase` occurrences remain
+deferred, and its local objective retains eight readiness blockers. It is a
+durable report, not a new knowledge-record kind. Mixed permission and blocked
+consolidation keep it outside the shared registry, repository, condition
+catalog, global validator, and application.
+
 ## Energy-guidance records
 
 ER guidance is first-class and remains separate when a source supplies an ER

@@ -778,14 +778,47 @@ four Klee claims, positive team, negative control, zero consumption of 11 Klee
 holdouts, and interpretation boundary.
 
 The completed checkpoint 34 verification passes TypeScript, 62 test files with
-464 tests, and validation with 0 errors and 12 existing warnings. The durable
-report total remains 31. The next bounded non-ER gate is an isolated Keqing
-triangulation across ArtifactRatingDB's source-native heuristic coefficients,
-attributed KQM build evidence, and the existing full-team local-marginal
-diagnostic. It is not complete. The ArtifactRatingDB pilot must retain its mixed
-permission posture, blocked consolidation state, and isolation from the shared
-registry and consolidated repository; unlike evidence must not be averaged
-into a single weight or recommendation.
+464 tests, and validation with 0 errors and 12 existing warnings. Its durable
+report total remains 31.
+
+## Isolated sign-only evidence triangulation seam
+
+Checkpoint 35 adds a standalone Keqing wrapper over exactly five authenticated
+inputs: the isolated ArtifactRatingDB snapshot, consolidated knowledge
+repository, existing four-endpoint local-marginal diagnostic, raw KQM Keqing
+snapshot, and existing Keqing Lunar equipment-evidence report. The wrapper
+requires raw-KQM/repository recommendation parity and independently verifies
+the equipment report's exact-team, default-main-stat, and eight-claim
+projections: seven exact-team matches and one unresolved secondary condition.
+The cross-record join is Guide Factory-authored validation only.
+
+The report emits ten stable, explicitly unranked rows. Four pair a nonzero
+ArtifactRatingDB heuristic coefficient with an all-positive Keqing local-
+marginal sign, four pair a zero coefficient with an all-zero sign, Elemental
+Mastery is retained as an objective-coverage gap, and Electro DMG Bonus is
+retained as source-main-stat-only because it is outside the nine-stat marginal
+perturbation domain. Only sign/zero classifications and endpoint identities
+cross the local-diagnostic boundary.
+
+No coefficient magnitude is compared with a marginal magnitude. No KQM
+priority number is sorted or treated as a validated order. ArtifactRatingDB's
+unknown team, role, weapon, constellation, and scenario prevent any claim of
+cross-source context comparability. The reaction-free technical objective
+retains eight readiness blockers, so the Elemental Mastery row is an objective
+coverage gap rather than a source disagreement.
+
+Both source `SPRatioBase` occurrences remain deferred evidence. The report
+executes no ER calculation and produces no guide, rank, scalar stat weight,
+promotion, recommendation, candidate, optimizer result, or ideal-stat
+allocation. It is durable report 32, but its mixed permission and blocked
+consolidation state keep it outside the shared registry, consolidated
+repository, condition catalog, global validator, application, and Worker.
+
+Checkpoint 35 passes Guide Factory TypeScript, 63 test files with 487 tests,
+application TypeScript, and dependency-boundary validation. The next bounded
+non-ER gate is a generic, source-backed four-character equipment candidate
+lattice. It is not implemented and must not reinterpret this sign-only seam as
+weight, priority, recommendation, or context-equivalence evidence.
 
 ## Callable modules for later experiments
 
@@ -815,6 +848,8 @@ into a single weight or recommendation.
   `scripts/guide-factory/src/boundedLatticePolicy.ts`.
 - Full-team non-ER local marginals with fail-closed multi-endpoint ranges:
   `scripts/guide-factory/src/teamStatMarginalDiagnostic.ts`.
+- Isolated ArtifactRatingDB/KQM/local-marginal sign-only validation:
+  `scripts/guide-factory/src/keqingArtifactRatingKqmMarginalValidationSlice.ts`.
 - One named source-scoped role binding without a global resolver:
   `scripts/guide-factory/src/sourceScopedRoleSample.ts`.
 - Two source-scoped roles checked only against configured published pairs:

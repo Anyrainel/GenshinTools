@@ -6,6 +6,25 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-artifact-rating-kqm-marginal-validation-slice.json` authenticates an
+  isolated five-file closure over the ArtifactRatingDB Keqing snapshot, the
+  consolidated repository, the existing Keqing/Ineffa local-marginal report,
+  the raw KQM Keqing snapshot, and the existing Keqing Lunar equipment-
+  evidence report. Raw KQM/repository recommendation parity and the equipment
+  report's exact-team, default-main-stat, and eight-claim projections must all
+  match; seven claims are exact-team matched and one secondary condition stays
+  unresolved. The report contains ten stable, explicitly unranked sign-only rows:
+  four source-nonzero/local-positive, four source-zero/local-zero, one
+  Elemental Mastery objective-coverage gap, and one Electro DMG Bonus source-
+  main-only row. It compares no coefficient or marginal magnitudes, sorts no
+  KQM priority values, and establishes no cross-source context comparability.
+  The reaction-free local objective retains eight readiness blockers. Both
+  `SPRatioBase` occurrences remain deferred source evidence. Guide, rank,
+  scalar-weight, promotion, recommendation, candidate, optimizer, ideal-stat,
+  and ER outputs remain false. This is durable report 32, but mixed permission
+  and blocked consolidation keep it outside the shared source registry,
+  consolidated repository, condition catalog, global validator, application,
+  and Worker.
 - `noelle-source-local-lower-investment-slice.json` authenticates slice
   `kqm-noelle-source-local-lower-investment-slice-luna-viii` against the exact
   KQM Noelle snapshot SHA-256
@@ -442,20 +461,20 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-one reports in memory and rejects stale
-checked-in output. Checkpoint 34 adds no report; it separately admits only the
-three authenticated lower-investment Noelle selected occurrences, leaving the
-durable total at 31 and the 12 holdouts plus one empty row outside the catalog.
-The resulting catalog is 63 = 60 typed + 3 acknowledged. Manual coverage uses
-19 source files and 73 generated-from paths; the regenerated Klee witness uses
-six source files and 76 generated-from paths and authenticates 63 upstream
-bindings. Its four claims, positive fixture, negative control, and holdout
-exclusions remain unchanged. The completed suite passes TypeScript, 62 test
-files with 464 tests, and validation with 0 errors and 12 existing warnings.
-No application, guide, recommendation, optimization, damage, rotation, or ER
-output is produced. The next ArtifactRatingDB×KQM×local-marginal Keqing
-triangulation is not complete and must keep the ArtifactRatingDB pilot outside
-the shared registry and consolidation pipeline while its permission posture is
-mixed and consolidation remains blocked. The Diona ER report is historical and
-deliberately decoupled from unrelated knowledge-repository changes while ER
-work is deferred.
+`validate.ts` rebuilds all thirty-one globally integrated reports in memory and
+rejects stale checked-in output. Checkpoint 35 adds the thirty-second durable
+report through a deliberately separate authenticated builder and CLI. It does
+not add ArtifactRatingDB to the global validator, because the source remains
+permission-mixed and consolidation-blocked. The completed checkpoint passes
+Guide Factory TypeScript, 63 test files with 487 tests, application TypeScript,
+and dependency-boundary validation.
+
+The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
+manual coverage remains 19 source files and 73 generated-from paths, and the
+Klee witness remains six source files, 76 generated-from paths, and 63 upstream
+bindings. Checkpoint 35 changes none of those ledgers. It produces no guide,
+rank, scalar weight, promotion, recommendation, optimization, damage, rotation,
+ideal-stat allocation, or ER requirement. The next bounded non-ER experiment
+is a generic, source-backed four-character equipment candidate lattice; it is
+not implemented. The Diona ER report is historical and deliberately decoupled
+from unrelated knowledge-repository changes while ER work is deferred.

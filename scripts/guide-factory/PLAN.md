@@ -718,13 +718,38 @@ with 0 errors and 12 existing warnings.
 
 Checkpoint 34 adds no application or Worker integration and makes no guide,
 recommendation, assignment, rank, optimization, damage, rotation, ideal-roll,
-or ER claim. The next bounded non-ER gate is an isolated Keqing triangulation
-across the ArtifactRatingDB source-native heuristic coefficients, attributed
-KQM build evidence, and the existing full-team local-marginal diagnostic. That
-triangulation is not complete. ArtifactRatingDB must remain outside the shared
-registry and consolidation pipeline with its mixed permission posture and
-blocked consolidation state until permission review is resolved; the three
-evidence types must not be averaged into a single weight or recommendation.
+or ER claim.
+
+Checkpoint 35 completes the isolated Keqing triangulation across
+ArtifactRatingDB's source-native heuristic coefficients, attributed KQM
+equipment/stat evidence, and the existing four-endpoint local-marginal
+diagnostic. Its five-file closure authenticates the ArtifactRatingDB snapshot,
+consolidated repository, marginal report, raw KQM snapshot, and Keqing
+equipment-evidence report. It requires raw-KQM/repository recommendation parity
+and the equipment report's exact-team, default-main-stat, and eight-claim
+projections, with seven exact-team matches and one unresolved secondary
+condition.
+
+The output is exactly ten stable, unranked sign-only observations: four source-
+nonzero/local-positive, four source-zero/local-zero, one Elemental Mastery
+objective-coverage gap, and one Electro DMG Bonus source-only row. Coefficient
+and marginal magnitudes are not compared, KQM priority values are not sorted,
+and context comparability is not established. The pinned reaction-free
+technical objective retains eight readiness blockers. Two `SPRatioBase`
+occurrences remain deferred source evidence; no ER work is performed.
+
+The report is durable evidence number 32, but ArtifactRatingDB remains outside
+the shared source registry, consolidated repository, condition catalog, global
+validator, application, and Worker. Its permission is still mixed and
+consolidation remains blocked pending review. Guide, rank, scalar-weight,
+promotion, recommendation, candidate, optimizer, ideal-stat, and ER outputs all
+remain false. Verification passes Guide Factory TypeScript, 63 test files with
+487 tests, application TypeScript, and dependency-boundary validation.
+
+The next bounded non-ER gate is a generic, source-backed four-character
+equipment candidate lattice. It is not implemented. It must preserve source
+scope and alternative groups without converting the sign-only checkpoint 35
+evidence into a weight, ordering, recommendation, or cross-product.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

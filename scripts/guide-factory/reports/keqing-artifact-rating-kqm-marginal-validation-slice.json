@@ -1,0 +1,736 @@
+{
+  "artifactRatingDbBoundary": {
+    "authentication": "accepted",
+    "characterId": "keqing",
+    "coefficientMeaning": "source-native-heuristic-only",
+    "crossSourceContextComparability": "not-established",
+    "deferredEnergyEvidence": {
+      "classification": "retained-source-evidence-no-er-computation",
+      "exactOccurrenceClosure": true,
+      "expectedOccurrenceCount": 2,
+      "observedNormalizedOccurrenceCount": 2,
+      "observedOccurrenceCount": 2,
+      "observedRawOccurrenceCount": 2,
+      "occurrences": [
+        {
+          "handling": "ignored-deferred-energy",
+          "normalizedCoefficient": 0,
+          "normalizedPath": "records[0].normalizedModel.main.sands.SPRatioBase",
+          "rawCoefficient": 0,
+          "rawPath": "records[0].rawModel.main.3.SPRatioBase",
+          "statId": "er"
+        },
+        {
+          "handling": "ignored-deferred-energy",
+          "normalizedCoefficient": 0,
+          "normalizedPath": "records[0].normalizedModel.coefficients.SPRatioBase",
+          "rawCoefficient": 0,
+          "rawPath": "records[0].rawModel.weight.SPRatioBase",
+          "statId": "er"
+        }
+      ]
+    },
+    "expectedNormalizedModelSha256": "9671e817c731c3f27a3e0199f2fbec5f54362a52995ce031cf189bf82939cab9",
+    "expectedRawModelSha256": "0dc083b90bb4e2c11b747270da6b66d2b8ae81a9fe3d300d241846fd281f618c",
+    "expectedRecordSha256": "2b5bda43c8b408b739a5c272ff149830e0fbd1cc31eba7e039e03b20206281e1",
+    "expectedSourceContextSha256": "cd03101cfa6f2ee74a22b8caf98cb6b6a54a07a3840297b1c0970ebc460e7790",
+    "expectedSourcePolicySha256": "b8ae2abcca3c08320589b94659563cc0a946fd7bfa9d294943f454a798d2ebce",
+    "normalizedModelSha256": "9671e817c731c3f27a3e0199f2fbec5f54362a52995ce031cf189bf82939cab9",
+    "rawModelSha256": "0dc083b90bb4e2c11b747270da6b66d2b8ae81a9fe3d300d241846fd281f618c",
+    "recomputedRawModelSha256": "0dc083b90bb4e2c11b747270da6b66d2b8ae81a9fe3d300d241846fd281f618c",
+    "recordOccurrenceCount": 1,
+    "recordSha256": "2b5bda43c8b408b739a5c272ff149830e0fbd1cc31eba7e039e03b20206281e1",
+    "sourceCommit": "255c084b0c35c33519d554c2532054fec57119cf",
+    "sourceContext": {
+      "constellation": "unknown",
+      "roleVariant": "unknown",
+      "scenario": "unknown",
+      "team": "unknown",
+      "weapon": "unknown"
+    },
+    "sourceContextMatchesExactly": true,
+    "sourceContextSha256": "cd03101cfa6f2ee74a22b8caf98cb6b6a54a07a3840297b1c0970ebc460e7790",
+    "sourceId": "artifact-rating-db",
+    "sourcePolicy": {
+      "consolidation": "blocked-pending-permission-review",
+      "integration": "isolated-pilot-only",
+      "permission": "mixed",
+      "status": "planned"
+    },
+    "sourcePolicyMatchesExactly": true,
+    "sourcePolicySha256": "b8ae2abcca3c08320589b94659563cc0a946fd7bfa9d294943f454a798d2ebce",
+    "sourceRecordId": "avatar-10000042"
+  },
+  "candidateGenerationExecuted": false,
+  "cautions": [
+    "ArtifactRatingDB coefficients are retained as source-native heuristic evidence. Their magnitudes are never compared with local marginal magnitudes.",
+    "Rows copy only local sign and zero classifications plus endpoint identities; local marginal magnitudes remain behind the authenticated input digest and are not juxtaposed with source coefficients.",
+    "KQM main-stat and substat membership is compared only as presence. Source priority numbers are neither sorted nor treated as validated ordering.",
+    "ArtifactRatingDB has unknown team, role, weapon, constellation, and scenario context, so this slice does not claim that its context is comparable with either the KQM team or the generated marginal endpoints.",
+    "The four local marginal endpoints use an unreviewed, reaction-free technical objective with eight readiness blockers. Positive and zero signs describe only that objective at those operating points.",
+    "The all-zero Elemental Mastery marginal is retained as an objective-coverage mismatch because the technical objective contains no reaction lines; it is not a disagreement with either source.",
+    "Two SPRatioBase occurrences are retained as deferred source evidence. This slice performs no Energy Recharge calculation or recommendation."
+  ],
+  "classification": "keqing-artifact-rating-kqm-local-marginal-isolated-validation-slice",
+  "energyRecoveryInputsUsed": false,
+  "energyRequirementsProduced": false,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/artifact-rating-db-keqing.json",
+      "sha256": "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e"
+    },
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-ineffa-team-stat-marginal-diagnostic.json",
+      "sha256": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
+      "sha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
+      "sha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598"
+    }
+  ],
+  "guideProduced": false,
+  "inputBoundary": {
+    "authentication": "accepted",
+    "exactPathSet": true,
+    "expectedFileCount": 5,
+    "expectedParsedPayloadSha256": {
+      "artifactRatingSnapshot": "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
+      "kqmEquipmentReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+      "kqmRawSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
+      "marginalReport": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+      "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    "files": [
+      {
+        "expectedSha256": "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e",
+        "matches": true,
+        "observedSha256": "8453fcda562155d0f0398e8a0fcc7d9ee4544cb31e2be0a43959d7a7eb976d2e",
+        "occurrenceCount": 1,
+        "path": "scripts/guide-factory/data/source-snapshots/artifact-rating-db-keqing.json"
+      },
+      {
+        "expectedSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+        "matches": true,
+        "observedSha256": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8",
+        "occurrenceCount": 1,
+        "path": "scripts/guide-factory/data/knowledge/repository.json"
+      },
+      {
+        "expectedSha256": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+        "matches": true,
+        "observedSha256": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+        "occurrenceCount": 1,
+        "path": "scripts/guide-factory/reports/keqing-ineffa-team-stat-marginal-diagnostic.json"
+      },
+      {
+        "expectedSha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
+        "matches": true,
+        "observedSha256": "da42e500bbd68a68dbbefc7ee77d69ab107956016226002c7df445f8b3056087",
+        "occurrenceCount": 1,
+        "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json"
+      },
+      {
+        "expectedSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+        "matches": true,
+        "observedSha256": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+        "occurrenceCount": 1,
+        "path": "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json"
+      }
+    ],
+    "observedFileCount": 5,
+    "parsedPayloadSha256": {
+      "artifactRatingSnapshot": "45248c5799721ffab3dd2f419c4e97c9443478224632298d780cfc18590ae4c0",
+      "kqmEquipmentReport": "9764c1e355e68ca92463ddd37f6ded55cf487b7eaf98b820944f0ff6a1594598",
+      "kqmRawSnapshot": "00558796187d9c2d806c51fe100eef4cbe9918a209029243d2c57fcd1bc09480",
+      "marginalReport": "812d80a183c3e43ac601bd6b0e4c7aab7fade43fab71dd4564182b82e3ddf2f5",
+      "repository": "66179b2cfea81c74cc233a73ed25df6697984f6ebf04289df2cce67fbefd08c8"
+    },
+    "parsedPayloadsMatch": true
+  },
+  "issues": [],
+  "kqmBoundary": {
+    "authentication": "accepted",
+    "comparisonPolicy": {
+      "coefficientMagnitudeToMarginal": "not-compared",
+      "comparedAxes": [
+        "main-stat-presence",
+        "substat-presence"
+      ],
+      "contextComparability": "not-established",
+      "priorityOrdering": "not-compared-or-sorted"
+    },
+    "conditionResolution": {
+      "exactTeamFacts": {
+        "containsKeqing": true,
+        "declaresLunarCharged": true
+      },
+      "occurrenceCount": 8,
+      "resolution": "matched-by-exact-team-facts",
+      "secondaryCondition": "Keqing does not overcap CRIT Rate after A4 and artifact-set bonuses.",
+      "secondaryConditionOccurrenceCount": 1,
+      "secondaryConditionResolution": "withheld-unresolved-source-condition",
+      "sourceCondition": "Keqing is used in a Lunar-Charged team."
+    },
+    "crossRecordJoin": "wrapper-owned-validation-only",
+    "declaredReactions": [
+      "lunarCharged"
+    ],
+    "equipmentEvidenceBoundary": {
+      "authentication": "accepted",
+      "capabilityBoundary": {
+        "candidateGenerationExecuted": false,
+        "candidateGenerationInput": false,
+        "damageOrRankingComputationExecuted": false,
+        "energyRecoveryInputsUsed": false,
+        "supportsConditionApplicabilityClaims": false,
+        "supportsDamageClaims": false,
+        "supportsEnergyRecoveryClaims": false,
+        "supportsEquipmentRecommendations": false,
+        "supportsGuideClaims": false,
+        "supportsRankClaims": false,
+        "supportsStatRecommendations": false
+      },
+      "defaultClaimCount": 8,
+      "defaultClaimProjectionSha256": "8bc393483f229ed742c934b495f0a51af32fce936b0248a54cbc20048ee3e89e",
+      "exactTeamMatchedClaimCount": 7,
+      "exactTeamProjectionSha256": "d2dca75e078cd4274cacd1185cf3813ccd446ae84fbb8b0b9d6448c27d290f52",
+      "exactTeamUnresolvedClaimCount": 1,
+      "expectedDefaultClaimProjectionSha256": "8bc393483f229ed742c934b495f0a51af32fce936b0248a54cbc20048ee3e89e",
+      "expectedExactTeamProjectionSha256": "d2dca75e078cd4274cacd1185cf3813ccd446ae84fbb8b0b9d6448c27d290f52",
+      "expectedMainStatCoverageSha256": "40ba4d8fac9abee7b47885b814134ba62f95f635c5ce3401fba51f4cb6f5ebc1",
+      "expectedSourceRecordProjectionSha256": "3878a832b1f831fecf6f80cd628111e0c6dbbaeb1133400403e267b33adf7b6d",
+      "mainStatCoverageSha256": "40ba4d8fac9abee7b47885b814134ba62f95f635c5ce3401fba51f4cb6f5ebc1",
+      "sourceRecordProjectionSha256": "3878a832b1f831fecf6f80cd628111e0c6dbbaeb1133400403e267b33adf7b6d",
+      "validationStatus": "comparable"
+    },
+    "exactRoster": [
+      "keqing",
+      "ineffa",
+      "furina",
+      "xilonen"
+    ],
+    "expectedGuideRecordSha256": "d74cf45e5372fd3d634ebbcfc990d007e64f2c081334b3d3b0d45541d6841b2b",
+    "expectedRecommendationSha256": "c099954041a609348ca055c43bc96490c763517ccdc259e412acb4386daf77ea",
+    "expectedTeamRecordSha256": "c85223f2df43322a9794d0d3135abbc87948c136936ca423db31bf3790734f59",
+    "guideRecordId": "kqm:character-guide:keqing-lunar-charged-default-artifact-stats-luna-i",
+    "guideRecordOccurrenceCount": 1,
+    "guideRecordSha256": "d74cf45e5372fd3d634ebbcfc990d007e64f2c081334b3d3b0d45541d6841b2b",
+    "guideState": "candidate",
+    "rawSourceBoundary": {
+      "authentication": "accepted",
+      "capturedAt": "2026-08-29",
+      "defaultRecordOccurrenceCount": 1,
+      "defaultRecordSha256": "f3e479a9fcc59d1d0bc09f03fd5cb9cd7894be2a259bb3edb331fe8555a5399b",
+      "expectedDefaultRecordSha256": "f3e479a9fcc59d1d0bc09f03fd5cb9cd7894be2a259bb3edb331fe8555a5399b",
+      "pageUrl": "https://keqingmains.com/q/keqing-quickguide/",
+      "recommendationParityWithRepository": "exact",
+      "snapshotRecordCount": 24,
+      "sourceId": "kqm",
+      "sourceVersion": "Luna I"
+    },
+    "recommendationSha256": "c099954041a609348ca055c43bc96490c763517ccdc259e412acb4386daf77ea",
+    "sourceAuthoredCrossRecordJoin": false,
+    "sourcePromotionEligible": false,
+    "sourceRecordId": "keqing-lunar-charged-default-artifact-stats-luna-i",
+    "teamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "teamRecordOccurrenceCount": 1,
+    "teamRecordSha256": "c85223f2df43322a9794d0d3135abbc87948c136936ca423db31bf3790734f59"
+  },
+  "marginalBoundary": {
+    "authentication": "accepted",
+    "captureDomainSha256": "42af4cd3307b268e1224a62ec9237d138190bac5d47ed915cc978185976a2ca6",
+    "capturedReactionFormulaLineCounts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "comparisonStatus": "comparable",
+    "diagnosticId": "keqing-ineffa-seed-node-four-carry-stat-marginals-v1",
+    "embeddedTechnicalObjectiveSha256": "80feca2a09d7b3b5df8bcd21a674fa80eba664b7a5ae28b4e189d2b74df5667e",
+    "endpointCount": 4,
+    "endpoints": [
+      {
+        "carryCharacterId": "keqing",
+        "endpointId": "carry-keqing"
+      },
+      {
+        "carryCharacterId": "ineffa",
+        "endpointId": "carry-ineffa"
+      },
+      {
+        "carryCharacterId": "furina",
+        "endpointId": "carry-furina"
+      },
+      {
+        "carryCharacterId": "xilonen",
+        "endpointId": "carry-xilonen"
+      }
+    ],
+    "exactFourEndpointDomain": true,
+    "exactNineStatDomain": true,
+    "expectedCaptureDomainSha256": "42af4cd3307b268e1224a62ec9237d138190bac5d47ed915cc978185976a2ca6",
+    "expectedEmbeddedTechnicalObjectiveSha256": "80feca2a09d7b3b5df8bcd21a674fa80eba664b7a5ae28b4e189d2b74df5667e",
+    "expectedKeqingStatsSha256": "488eb599ef10f893c5aa740fc567bbb0b6a1478b6e7fca924c4764068cfb569b",
+    "expectedTechnicalObjectiveSha256": "74efe95a9e7fcc56e6c52baebb53e278f5f22d00feba6f6eb9a730184f345fd1",
+    "fixedCandidateId": "01-seed-aubade-golden",
+    "formulaBuffOverrides": null,
+    "formulaLineCount": 11,
+    "keqingStatsSha256": "488eb599ef10f893c5aa740fc567bbb0b6a1478b6e7fca924c4764068cfb569b",
+    "marginalStatDomain": [
+      "cr",
+      "cd",
+      "atk%",
+      "hp%",
+      "def%",
+      "em",
+      "atk",
+      "hp",
+      "def"
+    ],
+    "objectiveCoverage": {
+      "elementalMasteryClassification": "objective-coverage-mismatch",
+      "elementalMasteryReactionContributionRepresented": false,
+      "reason": "ArtifactRatingDB assigns a positive heuristic coefficient to Elemental Mastery while the pinned reaction-free technical objective yields an all-zero local marginal at all four endpoints."
+    },
+    "observedReplayCount": 148,
+    "plannedReplayCount": 148,
+    "reactionDomain": "reaction-free",
+    "reactionFormulaLineCount": 0,
+    "readiness": {
+      "blockerCodes": [
+        "translation-unreviewed",
+        "partial-token-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-formula-mapping",
+        "unresolved-source-token"
+      ],
+      "blockerCount": 8,
+      "expectedSha256": "bfb9014767025fc07804d6beab6806adc4b318d84d3ac0602fd7fc9d4d08d311",
+      "readyForDamageReplay": false,
+      "sha256": "bfb9014767025fc07804d6beab6806adc4b318d84d3ac0602fd7fc9d4d08d311"
+    },
+    "sourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
+    "statCountPerCharacter": 9,
+    "technicalObjectiveSha256": "74efe95a9e7fcc56e6c52baebb53e278f5f22d00feba6f6eb9a730184f345fd1"
+  },
+  "optimizationExecuted": false,
+  "prohibitedInterpretations": [
+    "guide",
+    "build-recommendation",
+    "main-stat-recommendation",
+    "substat-priority",
+    "scalar-stat-weight",
+    "coefficient-to-marginal-scale-comparison",
+    "context-applicability",
+    "rank",
+    "promotion",
+    "damage-validation",
+    "optimal-allocation",
+    "energy-requirement"
+  ],
+  "promotionEligible": false,
+  "rankingProduced": false,
+  "rows": [
+    {
+      "artifactRatingDb": {
+        "coefficient": 0.65,
+        "coefficientClass": "positive",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "AttackAddedRatio",
+        "sourceLocation": "rawModel.weight.AttackAddedRatio",
+        "variableMainStatSlots": [
+          "sands",
+          "goblet",
+          "circlet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": true,
+        "mainStatSlots": [
+          "sands",
+          "goblet"
+        ]
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ],
+        "signClassification": "all-positive",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "none-zero",
+        "zeroEndpointIds": []
+      },
+      "rowClassification": "source-nonzero-and-local-all-positive",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "atk%"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 0.45,
+        "coefficientClass": "positive",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "AttackDelta",
+        "sourceLocation": "rawModel.weight.AttackDelta",
+        "variableMainStatSlots": []
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": false,
+        "mainStatSlots": []
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ],
+        "signClassification": "all-positive",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "none-zero",
+        "zeroEndpointIds": []
+      },
+      "rowClassification": "source-nonzero-and-local-all-positive",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "atk"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 1,
+        "coefficientClass": "positive",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "CriticalChanceBase",
+        "sourceLocation": "rawModel.weight.CriticalChanceBase",
+        "variableMainStatSlots": [
+          "circlet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": true,
+        "mainStatSlots": [
+          "circlet"
+        ]
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ],
+        "signClassification": "all-positive",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "none-zero",
+        "zeroEndpointIds": []
+      },
+      "rowClassification": "source-nonzero-and-local-all-positive",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "cr"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 1,
+        "coefficientClass": "positive",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "CriticalDamageBase",
+        "sourceLocation": "rawModel.weight.CriticalDamageBase",
+        "variableMainStatSlots": [
+          "circlet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": true,
+        "mainStatSlots": [
+          "circlet"
+        ]
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ],
+        "signClassification": "all-positive",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "none-zero",
+        "zeroEndpointIds": []
+      },
+      "rowClassification": "source-nonzero-and-local-all-positive",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "cd"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 0,
+        "coefficientClass": "zero",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "DefenceAddedRatio",
+        "sourceLocation": "rawModel.weight.DefenceAddedRatio",
+        "variableMainStatSlots": [
+          "sands",
+          "goblet",
+          "circlet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": false,
+        "mainStatSlots": []
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [],
+        "signClassification": "all-zero",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "all-zero",
+        "zeroEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ]
+      },
+      "rowClassification": "source-zero-and-local-all-zero",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "def%"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 0,
+        "coefficientClass": "zero",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "DefenceDelta",
+        "sourceLocation": "rawModel.weight.DefenceDelta",
+        "variableMainStatSlots": []
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": false,
+        "mainStatSlots": []
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [],
+        "signClassification": "all-zero",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "all-zero",
+        "zeroEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ]
+      },
+      "rowClassification": "source-zero-and-local-all-zero",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "def"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 0,
+        "coefficientClass": "zero",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "HPAddedRatio",
+        "sourceLocation": "rawModel.weight.HPAddedRatio",
+        "variableMainStatSlots": [
+          "sands",
+          "goblet",
+          "circlet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": false,
+        "mainStatSlots": []
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [],
+        "signClassification": "all-zero",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "all-zero",
+        "zeroEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ]
+      },
+      "rowClassification": "source-zero-and-local-all-zero",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "hp%"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 0,
+        "coefficientClass": "zero",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "HPDelta",
+        "sourceLocation": "rawModel.weight.HPDelta",
+        "variableMainStatSlots": []
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": false,
+        "mainStatSlots": []
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [],
+        "signClassification": "all-zero",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "all-zero",
+        "zeroEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ]
+      },
+      "rowClassification": "source-zero-and-local-all-zero",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "hp"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 0.85,
+        "coefficientClass": "positive",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "ElementalMastery",
+        "sourceLocation": "rawModel.weight.ElementalMastery",
+        "variableMainStatSlots": [
+          "sands",
+          "goblet",
+          "circlet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": true,
+        "mainStatSlots": []
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "endpointCount": 4,
+        "negativeEndpointIds": [],
+        "positiveEndpointIds": [],
+        "signClassification": "all-zero",
+        "status": "observed-in-nine-stat-domain",
+        "zeroClassification": "all-zero",
+        "zeroEndpointIds": [
+          "carry-keqing",
+          "carry-ineffa",
+          "carry-furina",
+          "carry-xilonen"
+        ]
+      },
+      "rowClassification": "objective-coverage-mismatch",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "em"
+    },
+    {
+      "artifactRatingDb": {
+        "coefficient": 1,
+        "coefficientClass": "positive",
+        "handling": "heuristic-evidence",
+        "rawStatKey": "ThunderAddedRatio",
+        "sourceLocation": "rawModel.main.4.ThunderAddedRatio",
+        "variableMainStatSlots": [
+          "goblet"
+        ]
+      },
+      "coefficientMagnitudeComparedToLocalMarginal": false,
+      "contextsClaimedComparable": false,
+      "kqmPresence": {
+        "listedAsSubstat": false,
+        "mainStatSlots": [
+          "goblet"
+        ]
+      },
+      "kqmPriorityOrderingComparedOrSorted": false,
+      "localMarginal": {
+        "reason": "elemental-damage-main-stat-not-perturbed",
+        "status": "not-in-nine-stat-marginal-domain"
+      },
+      "rowClassification": "source-main-only-no-local-marginal",
+      "rowOrdering": "wrapper-authored-stable-enumeration-not-rank",
+      "statId": "electro%"
+    }
+  ],
+  "schemaVersion": 1,
+  "sliceId": "artifact-rating-db-kqm-keqing-four-endpoint-local-marginal-v1",
+  "statWeightsProduced": false,
+  "summary": {
+    "deferredEnergyOccurrenceCount": 2,
+    "objectiveCoverageMismatchCount": 1,
+    "producedEnergyRequirementCount": 0,
+    "producedGuideCount": 0,
+    "producedStatWeightCount": 0,
+    "promotedRowCount": 0,
+    "rankedRowCount": 0,
+    "rowCount": 10,
+    "sourceMainOnlyCount": 1,
+    "sourceNonzeroLocalPositiveCount": 4,
+    "sourceZeroLocalZeroCount": 4
+  },
+  "supportsBuildRecommendations": false,
+  "supportsContextApplicabilityClaims": false,
+  "supportsDamageClaims": false,
+  "supportsEnergyRequirements": false,
+  "supportsGuideClaims": false,
+  "supportsIdealStatAllocation": false,
+  "supportsMainStatRecommendations": false,
+  "supportsRankClaims": false,
+  "supportsScalarStatWeights": false,
+  "supportsStatPriorityClaims": false,
+  "supportsSubstatRecommendations": false,
+  "validationStatus": "authenticated-isolated-observation"
+}

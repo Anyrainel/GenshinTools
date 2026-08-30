@@ -21,22 +21,27 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 34 separately admits only the three already authenticated Noelle
-lower-investment main-stat occurrences to the current condition-binding
-catalog. The exact lower slice remains 3 selected + 12 nonempty holdouts + 1
-empty occurrence; every holdout remains outside the catalog. Catalog admission
-requires exact durable/current report equality and repeats the complete Noelle-
-specific source, request, payload, partition, and disabled-capability boundary
-before the private normalized entry helper runs. The catalog is now 63 = 60
-typed + 3 acknowledged. Full binding coverage is 60/3/63, non-structural
-coverage is 60/3/60, unique non-structural arrays are 34/51/1, energy is
-15/57/54/16, and display is 57/51/15/3/16. Manual coverage authenticates eight
-wrapper families through 19 source files and 73 generated-from paths; the Klee
-witness authenticates six source files, 76 generated-from paths, and 63
-upstream bindings without changing its four-claim semantics. The durable report
-total remains 31. This is occurrence-scoped validation evidence, not an
-artifact assignment, assembled build, recommendation, rank, optimizer, damage,
-rotation, ER result, or working guide factory:
+Checkpoint 35 completes an isolated Keqing comparison across the
+ArtifactRatingDB source-native heuristic coefficients, attributed KQM
+equipment/stat observations, and the existing four-endpoint local stat-
+marginal diagnostic. Its five-file boundary authenticates the ArtifactRatingDB
+snapshot, consolidated repository, marginal report, raw KQM snapshot, and
+Keqing equipment-evidence report. Raw KQM/repository parity and the equipment
+report's exact-team, default-main-stat, and eight-claim projections (seven
+team-matched and one secondary condition unresolved) must all close before the
+wrapper emits ten sign-only rows: four source-nonzero/local-
+positive, four source-zero/local-zero, one Elemental Mastery objective gap, and
+one Electro DMG Bonus source-only row. Two `SPRatioBase` occurrences remain
+deferred and the marginal objective retains eight readiness blockers.
+Coefficient magnitudes, KQM priority ordering, and cross-source context
+comparability are not claimed. All guide, rank, scalar-weight, promotion, and
+ER outputs remain false. The thirty-second durable report stays outside the
+shared registry, consolidation, condition catalog, global validator, and
+application bundle because ArtifactRatingDB's permission posture is mixed and
+consolidation remains blocked. The checkpoint 34 catalog and coverage ledgers
+remain unchanged. This is validation evidence, not an artifact assignment,
+assembled build, recommendation, rank, optimizer, damage, rotation, ER result,
+or working guide factory:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -549,6 +554,31 @@ rotation, ER result, or working guide factory:
     ArtifactRatingDB×KQM×local-marginal Keqing triangulation isolated from
     shared registry and consolidation while permission review remains open; it
     is not implemented by this checkpoint.
+179. Authenticate an isolated five-file Keqing boundary containing the
+    ArtifactRatingDB snapshot, consolidated repository, local-marginal report,
+    raw KQM snapshot, and Keqing equipment-evidence report.
+180. Require exact raw-KQM/repository recommendation parity and reauthenticate
+    the equipment report's exact team, default main-stat coverage, and eight-
+    claim projection—seven team-matched and one secondary condition
+    unresolved—before comparing any evidence.
+181. Emit exactly ten stable, unranked sign-only rows: four source-nonzero/
+    local-positive, four source-zero/local-zero, one Elemental Mastery
+    objective-coverage gap, and one Electro DMG Bonus source-only row.
+182. Retain the reaction-free local objective's eight readiness blockers and
+    two `SPRatioBase` occurrences as deferred source evidence; compute no ER
+    requirement.
+183. Compare no coefficient or marginal magnitudes, sort no KQM priorities,
+    and establish no cross-source context comparability.
+184. Produce no guide, rank, scalar stat weight, promotion, recommendation,
+    candidate, optimization, ideal-stat allocation, or ER output.
+185. Add the thirty-second durable report while keeping ArtifactRatingDB
+    outside the shared registry, consolidated repository, condition catalog,
+    global validator, application, and Worker because permission remains mixed
+    and consolidation remains blocked.
+186. Pass Guide Factory TypeScript, 63 test files with 487 tests, application
+    TypeScript, and dependency-boundary validation. Leave a generic non-ER,
+    source-backed four-character equipment candidate lattice as the next
+    unimplemented gate.
 
 The first two active sources are already in this repository:
 
@@ -643,6 +673,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-keqing-ineffa-bounded-joint-artifacts.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-keqing-artifact-rating-kqm-marginal-validation-slice.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
@@ -674,7 +705,8 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty-one durable reports in memory: corpus inventory,
+It also rebuilds all thirty-one globally integrated durable reports in memory:
+corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
 fixture inventory, artifact-generation
@@ -692,16 +724,19 @@ manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
 historical ER calibration.
 Stale evidence cannot pass.
-The checkpoint 34 verification passes TypeScript, 62 test files with 464 tests,
-and validation with 0 errors and 12 existing warnings.
+Checkpoint 35 adds a thirty-second durable report outside that global runner.
+Its isolated builder and tests authenticate five files and close
+ArtifactRatingDB snapshot parity, raw-KQM/repository parity, the existing
+equipment-evidence projections, and the local-marginal input without adding the
+blocked source to shared infrastructure. The completed checkpoint passes Guide
+Factory TypeScript, 63 test files with 487 tests, application TypeScript, and
+dependency-boundary validation.
 
-The next bounded non-ER experiment is an isolated Keqing triangulation across
-ArtifactRatingDB's source-native heuristic coefficients, attributed KQM build
-evidence, and the existing full-team local-marginal diagnostic. It is not
-complete. ArtifactRatingDB remains outside the shared registry and consolidated
-repository with mixed permission posture and consolidation blocked pending
-review; the evidence types must not be averaged into a guide weight or
-recommendation.
+The next bounded non-ER experiment is a generic, source-backed four-character
+equipment candidate lattice. It is not implemented. It must preserve source
+scope and alternatives without converting checkpoint 35's sign-only rows into
+weights, priority ordering, context equivalence, or recommendations. ER remains
+deferred.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level
