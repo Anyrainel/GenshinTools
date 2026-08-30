@@ -1,0 +1,773 @@
+{
+  "autoTuneExecuted": false,
+  "candidateEquipmentAssignmentExecuted": false,
+  "candidateSelectionExecuted": false,
+  "cautions": [
+    "This checkpoint proves one exact static formula-count representation and calculator integration path. It is not a source rotation replay, team simulation, DPS result, or Noelle guide.",
+    "The numeric harness uses one Guide Factory-authored Noelle-only baseline with a level-90 C0 character, 1/1/1 talents, an R1 White Iron Greatsword, no artifact set, no artifact stats, and an explicit enemy context. None of those fixture choices are source recommendations.",
+    "The projection preserves the source 5/5/3/0 Normal Attack hit vector but has no action timestamps, cancel duration, buff-window coverage, swap timing, or supporter actions.",
+    "The zero-hit N4 part is represented by omission rather than by materializing an invalid zero-hit FormulaPart; only the positive 5/5/3 parts enter evaluation.",
+    "The calculator's static buff model is not evidence that a source rotation can establish or retain any buff for every projected hit.",
+    "The adapter temporarily replaces only one formula-index entry owned by one fresh offline TeamBuild and restores the entire ordered index with its original entry identities in a finally block. The normal calculator bootstrap still performs its one-time process-local entity registration; no published application source or persisted user data is changed.",
+    "Energy Recharge remains deferred and is neither inferred nor computed."
+  ],
+  "classification": "authenticated-offline-formula-count-technical-probe",
+  "energyRecoveryComputationExecuted": false,
+  "formulaProjectionExecuted": true,
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/data/knowledge/repository.json",
+      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
+      "sha256": "d6927fed20fc0f77e8f721e18b7c9f8db37009258ba5c582b7184fb16be558e0"
+    },
+    {
+      "path": "scripts/guide-factory/data/source-snapshots/manual-index.json",
+      "sha256": "f457349de662c61f0c5774d79cfda639b08aa49b5e486c8a73615cbde88fc216"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-hexerei-partial-equipment-composition.json",
+      "sha256": "1cca0c987f0590aff79c7d1e215d298ec47fe139429d8958c295c08eadf7e99c"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-hexerei-weapon-team-source-binding.json",
+      "sha256": "e0528e977ebf574b42e12f260880ec226c9591025a76e6ec78a2cdd02ced97b8"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-investment-artifact-profile-computation-admission.json",
+      "sha256": "c0cb9cbc89ff842ff2cbc42c890a91e44553e095b4454fbcb5360aacc6202e5e"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
+      "sha256": "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5"
+    },
+    {
+      "path": "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json",
+      "sha256": "4e9ce6dfa605f12af3660a63e842b9f79ce700870d985abfae0604d0c3540919"
+    },
+    {
+      "path": "scripts/guide-factory/sources/registry.json",
+      "sha256": "0ac050320f7faafd99fb2345501b974a6184cf62f23cc53c82f6255e91c47456"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-hexerei-partial-equipment-composition.ts",
+      "sha256": "5ab67f6d93cb3494f4c89a7257b8f0b2bc40797593f5a2e1e3550afbced371f4"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-hexerei-weapon-team-source-binding.ts",
+      "sha256": "f3441d1d5c1b577933af1894415c3ecc69c988f308ad9cd0cabec71ce20fb906"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-investment-artifact-profile-computation-admission.ts",
+      "sha256": "616a91202644fa23326c1ce30abf45b172975322c1bae6c2e8d86b8ccab939b3"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-normal-prefix-formula-projection.ts",
+      "sha256": "aa25284fd1484a4b3e7220a7f5ca022ab78d4528f7d41fe3a71d60ed1e05022c"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts",
+      "sha256": "53d57a733ff4416aa077330605e667a5b90370893051a6833f6a86ca6d496589"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-noelle-source-local-lower-investment-slice.ts",
+      "sha256": "e8871e88f5986f983e4fd07017f54b53e36378ba37b03eb4dc1af412cf66d8b1"
+    },
+    {
+      "path": "scripts/guide-factory/src/computationReplay.ts",
+      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+    },
+    {
+      "path": "scripts/guide-factory/src/formulaPartProjection.ts",
+      "sha256": "4f25b1870503af7d5c9620b3e80a606ee21763a9df72c49f8c1402cadf5d8fc3"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideRequestContext.ts",
+      "sha256": "deb828ad940076d03eead279cb36bf9a90c990870adba251ce5d49da460e8d6c"
+    },
+    {
+      "path": "scripts/guide-factory/src/io.ts",
+      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+    },
+    {
+      "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
+      "sha256": "edfffb459c3bbc02bd2a11db7783dbc3a5629cc46d65b1e022c8d12e775b540c"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleHexereiPartialEquipmentComposition.ts",
+      "sha256": "259db04b422e8ff0b1e7370a3cdfaa4fbb6a6a1cac0c9f725d5e00b647ae9add"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleHexereiWeaponTeamSourceBinding.ts",
+      "sha256": "a42c9242dead3a3d4f8094e89877f18bade002c42cc1fc5bb61b9c883b4eae3b"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleInvestmentArtifactProfileComputationAdmission.ts",
+      "sha256": "c41013b557cf6be3724d53a4dbf7e6ccceef2129b0cebd23e3c706d2659219d0"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleNormalPrefixFormulaProjection.ts",
+      "sha256": "daf6d34947b6b6dfb77486e64749c656ad9c4c4e4ec373ec36ef66a846f28d56"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
+      "sha256": "84056e869782be1de61119584f088a94225829165e76a67b853fe023a6d01c2a"
+    },
+    {
+      "path": "scripts/guide-factory/src/noelleSourceLocalLowerInvestmentSlice.ts",
+      "sha256": "80e6179d5b68a03eb61f007f64b5f48bd02a76a33f2078e98e440409146d2e2b"
+    },
+    {
+      "path": "scripts/guide-factory/src/paths.ts",
+      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+    },
+    {
+      "path": "scripts/guide-factory/src/schemas.ts",
+      "sha256": "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceConditionedGuidePacket.ts",
+      "sha256": "c7a25ffbbb97dcc073d05d83ad6f600bb21d7218203f541844f4361f3ecc6918"
+    },
+    {
+      "path": "scripts/guide-factory/src/sourceLocalConditionSlice.ts",
+      "sha256": "ff726c4a924699036c76dff453639be615016a7196cb25b449846efe9c44aeab"
+    },
+    {
+      "path": "src/data/betaState.ts",
+      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+    },
+    {
+      "path": "src/data/charInfo.ts",
+      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+    },
+    {
+      "path": "src/data/constants.ts",
+      "sha256": "3e076788dfac5447d5d59456dc23d47c8d7fe5827795264b2d1dc20bde532c08"
+    },
+    {
+      "path": "src/data/enums.ts",
+      "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
+    },
+    {
+      "path": "src/data/game/artifact_stat.json",
+      "sha256": "b2b6fcee736e7be28228f70a9d7624bc80bfce809c7a450377b46f0eef103f67"
+    },
+    {
+      "path": "src/data/game/character_beta_stats.json.gz",
+      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+    },
+    {
+      "path": "src/data/game/character_stats.json",
+      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+    },
+    {
+      "path": "src/data/game/weapon_beta_stats.json.gz",
+      "sha256": "86ac685730311d4ee68da96ba815b6c30b2f02534cd046c66a936ddb98ac4a14"
+    },
+    {
+      "path": "src/data/game/weapon_stats.json",
+      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+    },
+    {
+      "path": "src/data/gameDataUtil.ts",
+      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+    },
+    {
+      "path": "src/data/gameResources.ts",
+      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+    },
+    {
+      "path": "src/data/gameStatsLoader.ts",
+      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+    },
+    {
+      "path": "src/data/i18n-app.ts",
+      "sha256": "b96d4d06b9b23dfc57a2cf21de840c48edfdfb7f1833fc3e456ac93c74a2190e"
+    },
+    {
+      "path": "src/data/i18n-beta.ts",
+      "sha256": "f26c7d1c125db0ae93c541ea550e7d190b04e2833baddd1fc5eb81b17a411a4c"
+    },
+    {
+      "path": "src/data/i18n-game.ts",
+      "sha256": "002f857afe89ce51d74f250e1959b81bdafe1f05bd8235e4477518ba64360e7c"
+    },
+    {
+      "path": "src/data/resources_beta.ts",
+      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+    },
+    {
+      "path": "src/data/resources.ts",
+      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+    },
+    {
+      "path": "src/data/utils.ts",
+      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+    },
+    {
+      "path": "src/lib/artifact/scoring/constants.ts",
+      "sha256": "a1fbd7d200971276e96e61b3ad405112f592fe538250c75ac18b06256db1ad91"
+    },
+    {
+      "path": "src/lib/artifact/scoring/utils.ts",
+      "sha256": "7f8adecffa41ad02e21e7f64cac859845d89080b0446f5d2c142e547f0620e6a"
+    },
+    {
+      "path": "src/lib/dmgcalc/constants.ts",
+      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/charBuild.ts",
+      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/combo.ts",
+      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/comboBuffOverrides.ts",
+      "sha256": "623c65023bd11f572eca9e04d7158b70ce237504041992c21058b88504d7a342"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/damageFormula.ts",
+      "sha256": "12284b73d51deae51e6b99d6e79ae75cbeb25b06daf5155ba6e256fe01336764"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/dynamicBuffEval.ts",
+      "sha256": "35ef36d58b6ab297f2065b89da191ee8516fb1d9e77dfd5f4a660b80cab9df11"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/expr.ts",
+      "sha256": "1f408cc800ab5f3493ffba9e54e51350cbed13939f7d5c1e60749b22be91616c"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/exprStatSheet.ts",
+      "sha256": "3569cfb82143c617f9f39f71ccc48472b8747eaeccea941129a4811834951370"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/fieldState.ts",
+      "sha256": "5f962130bde4c9a8520bfa9d680a2a7974b020a0e520242353360e1b4dbaae5f"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/formulaCompiler.ts",
+      "sha256": "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/formulaEval.ts",
+      "sha256": "440a0096660c2b30b2879c25f5d49496877f7e75cc75a214163ffb27185d3402"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/implModel.ts",
+      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/marginalGain.ts",
+      "sha256": "394f7791aa1df123ea8c75d89b02903f3972cf4daa088eb6a83395892d868413"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/registry.ts",
+      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/stackRank.ts",
+      "sha256": "653a4b3df480af79f4b9ee95dc019f1b6d91506e7384153d11a5a04036a514f6"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/statBuff.ts",
+      "sha256": "b4afe113ab9ed6f815819334beef97979f2acd731559266ea18c128135668a41"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/statSheet.ts",
+      "sha256": "1239c11fe3774ef46c8bafaf9ee1354debca3eab34b4e105bb802477ad4cee10"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuffLedger.ts",
+      "sha256": "25e3d3efc48ad2a6446c77d7ad01a2607326962c8dd0af5a247621c4931a1578"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamBuild.ts",
+      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamExprStatSheet.ts",
+      "sha256": "550b12859436569a4c2f426d2f088e8350123a8ab7490f2e88d9525369ba9c82"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
+      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamMeta.ts",
+      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamReaction.ts",
+      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamResonance.ts",
+      "sha256": "9a393d567ba2ec7947e1bb84106f23fd7b1a6f8a068465f4f75636f7932e52f4"
+    },
+    {
+      "path": "src/lib/dmgcalc/core/teamStatSheet.ts",
+      "sha256": "c6e274a95ba207883e81a159e09927bc5666ea5d0a55f88a995de3ea072e43e6"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact2pc.ts",
+      "sha256": "7000a8bd41d193e11a58b1a77b7846ecde1441503cccfbe429c2beca10fe5b77"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/artifact4pc.ts",
+      "sha256": "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Fontaine.ts",
+      "sha256": "7302a8c04e6d0e6b654a8f13948b782c384a06670376ba87a87224ba6b890397"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Inazuma.ts",
+      "sha256": "9c03416c3f25c78b3b3d1a70ab2ae0a2eedce9ba65b02183a3207089bc340813"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Liyue.ts",
+      "sha256": "a39c7931327180a51dd33025016122c58bbaec75882dec05980f31f1adfbc792"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Mondstadt.ts",
+      "sha256": "62421a3ee438bdf7ec9958f9c0802accd91acd2a77f6317fbab56fb4a0b94ff9"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Natlan.ts",
+      "sha256": "2a187b0f913209f84cfbcb32772b6b41db1a7d3a3b6263b01255f28641be7fb1"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4NodKrai.ts",
+      "sha256": "34813f75211021f76756e94f5f64e30280ae091dd1b81819a83fd6b798ba5d52"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4None.ts",
+      "sha256": "e77a3463c64b9e9bbb5475488094b45b291501446543713ae332cb73471f157d"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Snezhnaya.ts",
+      "sha256": "ec63f6248d74cdfcdd841b7f08e78adf8b2322be8339137d8a19698cd816d8df"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character4Sumeru.ts",
+      "sha256": "9acae4fbcdb550071d66437d1dc66bb2643b7164c609bdc3ff1407ebb8afd941"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
+      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Inazuma.ts",
+      "sha256": "16778887d05d77f314891562c3726d5b4af78e111e341e11e1dda62327bfc83d"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Liyue.ts",
+      "sha256": "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Mondstadt.ts",
+      "sha256": "8fe1fc3c24e2102d6f7d2ebddd7af0397cc527dd4617f84fa9c2ae85355c8ecf"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
+      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5NodKrai.ts",
+      "sha256": "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5None.ts",
+      "sha256": "16f22040330dfe31513f91ac66add8e6dd4305319d5c2e0505277ff6258b4b17"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Snezhnaya.ts",
+      "sha256": "50e441e6e7ed1f68fb181169d14bbf973c98dd9b867a64c5a8cffc3237ee4a73"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/character5Sumeru.ts",
+      "sha256": "dff50e5e3609c021b1ec4c2b5c68f91e0aaf5a90e46974012141ef4194a4b450"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/helpers.ts",
+      "sha256": "ba17f4585ad579ac9a1dbe14a49387cd1bea23409b343254e1764ef54bec1b08"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon3.ts",
+      "sha256": "95e183f1ea64ceeeb3dbee7c596893c49f52b0d3debd25f4eba5af7953f9d7cd"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Bow.ts",
+      "sha256": "f4d9987dea9804a0501b7d4e22b8dbb3abc04e253d6e0709c2693fd537702fb2"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Catalyst.ts",
+      "sha256": "8b7e33219745ae25e612fe94ff9d0a840378d66db88edf4b071f7302a528dae4"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Claymore.ts",
+      "sha256": "89873a9c23b2d9ca2ddd6b615ad9c3e8a39e9d439dbad6309f2cd6083415b993"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Polearm.ts",
+      "sha256": "5b92aca3e98a267d5cdd71d6c3816624aa0ba2afa74fbbc3c304222e006f98c4"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon4Sword.ts",
+      "sha256": "e57306601e6b105fee72b1183383f916f48c2f5cd175e3f503b10c8df24aec79"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Bow.ts",
+      "sha256": "9d6d265cf45349b30e70f26d09ab4c71b2361318404565046f7e28963f8765d7"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Catalyst.ts",
+      "sha256": "bcfc2551417b05d3a7eef261ba1db59bbffc774adc934965aeec672bff2c2efa"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Claymore.ts",
+      "sha256": "90a814b10c5f5b4d52a9fd4b5ea65d7712de92adcd098fb41b7770c41f41ade0"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+      "sha256": "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c"
+    },
+    {
+      "path": "src/lib/dmgcalc/impl/weapon5Sword.ts",
+      "sha256": "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8"
+    },
+    {
+      "path": "src/lib/dmgcalc/index.ts",
+      "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    },
+    {
+      "path": "src/lib/dmgcalc/utils.ts",
+      "sha256": "0e79095bea4fd3e16d64e306f33701d7750e38eed672967517590eb585827bc6"
+    }
+  ],
+  "idealStatAllocationExecuted": false,
+  "operationSummary": {
+    "autoTuneRunCount": 0,
+    "candidateEquipmentAssignmentCount": 0,
+    "candidateSelectionCount": 0,
+    "compiledDamageEvaluationCount": 1,
+    "directDamageEvaluationCount": 3,
+    "energyRecoveryComputationCount": 0,
+    "formulaProjectionRunCount": 1,
+    "freshTeamBuildCount": 2,
+    "idealStatAllocationCount": 0,
+    "optimizerRunCount": 0,
+    "sourceRotationReplayCount": 0,
+    "sourceTeamTotalDamageComputationCount": 0,
+    "staticFormulaCountTechnicalComputationCount": 1,
+    "technicalFixtureWeaponMaterializationCount": 2,
+    "technicalSingleCharacterComboEvaluationCount": 2
+  },
+  "optimizerExecuted": false,
+  "prohibitedInterpretations": [
+    "Do not publish the technical damage total as a Noelle damage expectation, team result, benchmark, or guide claim.",
+    "Do not infer that the source action sequence is optimal, feasible, correctly timed, or fully represented.",
+    "Do not infer a weapon, refinement, artifact set, main stat, substat allocation, investment branch, rank, or recommendation from the technical fixture.",
+    "Do not infer supporter damage, team total damage, buff duration coverage, DPS, or Energy Recharge requirements."
+  ],
+  "projectionId": "noelle-normal-prefix-formula-projection-v1",
+  "publicationStatus": "withheld-technical-validation-only",
+  "rawInputBoundary": {
+    "allGeneratedFromHashesAuthenticatedFromBytes": true,
+    "binaryRuntimeInputCount": 2,
+    "cp53ReportByteAndParsedObjectParity": true,
+    "exactCp53InputProjection": true,
+    "exactGeneratedFromPathSet": true,
+    "exactSourceFilePathSet": true,
+    "generatedFromCount": 109,
+    "runtimeInputPathCount": 80,
+    "sourceFileCount": 109,
+    "status": "accepted"
+  },
+  "reportType": "noelle-normal-prefix-formula-projection",
+  "representationContract": {
+    "applicationSourceMutated": false,
+    "comboLineCount": 1,
+    "durableCatalogMutation": false,
+    "exactTargetMatch": true,
+    "existingFormulaIdRetained": true,
+    "formulaId": "noelle-na",
+    "implementationStrategy": "scoped-local-catalog-entry-replacement",
+    "omittedSourcePartIndexes": [
+      3
+    ],
+    "originalFormulaPartCount": 4,
+    "ownerCharId": "noelle",
+    "processLocalCalculatorRegistryBootstrapExecuted": true,
+    "processLocalCalculatorRegistryBootstrapRestored": false,
+    "projectedParts": [
+      {
+        "hits": 5,
+        "semanticLabel": "N1",
+        "sourcePartIndex": 0
+      },
+      {
+        "hits": 5,
+        "semanticLabel": "N2",
+        "sourcePartIndex": 1
+      },
+      {
+        "hits": 3,
+        "semanticLabel": "N3",
+        "sourcePartIndex": 2
+      }
+    ],
+    "publishedApplicationRuntimeMutated": false,
+    "representedHitVector": {
+      "n1": 5,
+      "n2": 5,
+      "n3": 3,
+      "n4": 0
+    }
+  },
+  "schemaVersion": 1,
+  "sourceFormulaCountTarget": {
+    "guideFactoryDerivedFormulaPartHitVector": true,
+    "noelleSegments": [
+      {
+        "cancelToken": "D",
+        "cancelTokenPreserved": true,
+        "formulaCountInferred": false,
+        "notation": "N3D",
+        "requiredHitVectorPerOccurrence": {
+          "n1": 1,
+          "n2": 1,
+          "n3": 1,
+          "n4": 0
+        },
+        "sourceTokenOccurrenceCount": 3
+      },
+      {
+        "cancelToken": null,
+        "cancelTokenPreserved": true,
+        "formulaCountInferred": false,
+        "notation": "N2",
+        "requiredHitVectorPerOccurrence": {
+          "n1": 1,
+          "n2": 1,
+          "n3": 0,
+          "n4": 0
+        },
+        "sourceTokenOccurrenceCount": 2
+      }
+    ],
+    "requiredTotalHitVector": {
+      "n1": 5,
+      "n2": 5,
+      "n3": 3,
+      "n4": 0
+    },
+    "rotationNotation": "Nicole (Q)¹E > Durin EEQ > Xilonen EN2 > Noelle EQ 2[N3D] N2 > Xilonen EN2 > Noelle N3D N2",
+    "sourceAuthoredCalculatorFormulaCounts": false,
+    "sourceSupportsActionPrefixCounts": true,
+    "sourceSupportsTimingOrBuffCoverage": false,
+    "teamSourceRecordId": "noelle-durin-nicole-xilonen-hexerei-example-luna-viii"
+  },
+  "sourceRotationReplayExecuted": false,
+  "sourceTeamTotalDamageComputationExecuted": false,
+  "staticFormulaCountTechnicalComputationExecuted": true,
+  "supportsBuffTimingClaims": false,
+  "supportsBuildRecommendations": false,
+  "supportsDpsClaims": false,
+  "supportsEnergyRecoveryClaims": false,
+  "supportsEquipmentRecommendations": false,
+  "supportsExactStaticFormulaCountRepresentation": true,
+  "supportsExactStaticFormulaCountTechnicalComputation": true,
+  "supportsGuideClaims": false,
+  "supportsIdealStatAllocation": false,
+  "supportsPlayerDamageClaims": false,
+  "supportsRankClaims": false,
+  "supportsSourceAuthorization": false,
+  "supportsSourceRotationReplay": false,
+  "supportsStatRecommendations": false,
+  "supportsTeamRecommendations": false,
+  "supportsTeamTotalDamageComputation": false,
+  "technicalFixtureWeaponMaterializationExecuted": true,
+  "technicalHarness": {
+    "authorityPartitions": {
+      "guideFactoryDerivedFields": [
+        "target-hit-vector",
+        "projected-formula-part-counts"
+      ],
+      "runtimeBackedInputs": [
+        "formula-id",
+        "formula-part-order"
+      ],
+      "sourceBackedInputs": [
+        "rotation-action-prefix-counts"
+      ]
+    },
+    "authorship": "guide-factory-technical-fixture",
+    "calculatorAgreement": {
+      "absoluteDifference": 9.09494701772928e-13,
+      "allowedDifference": 5.26758051313504e-9,
+      "compiledTotalDamage": 5267.58051313504,
+      "directPartsSumMatchesDirectTotal": true,
+      "directTotalDamage": 5267.58051313504,
+      "passed": true,
+      "projectedDirectMatchesIndependentWeighting": true
+    },
+    "comparisonEligible": false,
+    "evaluatedFormula": {
+      "comboLineCount": 1,
+      "computedBuffOverrideCount": 0,
+      "directParts": [
+        {
+          "damagePerHit": 408.133238342954,
+          "hits": 5,
+          "semanticLabel": "N1",
+          "total": 2040.66619171477
+        },
+        {
+          "damagePerHit": 378.410491637543,
+          "hits": 5,
+          "semanticLabel": "N2",
+          "total": 1892.05245818772
+        },
+        {
+          "damagePerHit": 444.953954410851,
+          "hits": 3,
+          "semanticLabel": "N3",
+          "total": 1334.86186323255
+        }
+      ],
+      "formulaId": "noelle-na",
+      "independentlyWeightedOriginalTotal": 5267.58051313504,
+      "omittedPartIndexes": [
+        3
+      ],
+      "originalDirectParts": [
+        {
+          "damagePerHit": 408.133238342954,
+          "hits": 1,
+          "semanticLabel": "N1",
+          "total": 408.133238342954
+        },
+        {
+          "damagePerHit": 378.410491637543,
+          "hits": 1,
+          "semanticLabel": "N2",
+          "total": 378.410491637543
+        },
+        {
+          "damagePerHit": 444.953954410851,
+          "hits": 1,
+          "semanticLabel": "N3",
+          "total": 444.953954410851
+        },
+        {
+          "damagePerHit": 585.138849319952,
+          "hits": 1,
+          "semanticLabel": "N4",
+          "total": 585.138849319952
+        }
+      ],
+      "projectedPartHits": [
+        5,
+        5,
+        3
+      ]
+    },
+    "guideFactoryAssumptions": {
+      "artifactSetAssignmentCount": 0,
+      "artifactStatEntryCount": 0,
+      "betaDataEnabled": false,
+      "betaEnvironmentOverrideEnabled": false,
+      "buffCoverageModel": "existing-static-calculator-state-not-source-timing",
+      "calcContext": {
+        "enemyLevel": 100,
+        "enemyRes": 0.1,
+        "rollMultiplier": 0.85,
+        "substatBudget": "8_6"
+      },
+      "combatOptions": {},
+      "config": {
+        "artifactSet": null,
+        "charId": "noelle",
+        "charLevel": 90,
+        "constellation": 0,
+        "refinement": 1,
+        "talentLevels": {
+          "auto": 1,
+          "burst": 1,
+          "skill": 1
+        },
+        "weaponId": "white_iron_greatsword"
+      },
+      "enemyAura": null,
+      "extraBuffCount": 0,
+      "formulaBuffOverrideCount": 0,
+      "teamShape": "single-character-isolation"
+    },
+    "harnessId": "noelle-normal-prefix-single-character-technical-harness-v1",
+    "numericResultClassification": "technical-regression-only",
+    "projection": {
+      "formulaId": "noelle-na",
+      "formulaRemainedDiscoverable": true,
+      "omittedSourcePartIndexes": [
+        3
+      ],
+      "originalEntryOwner": "noelle",
+      "originalPartCount": 4,
+      "ownerCharId": "noelle",
+      "projectedPartCount": 3,
+      "projectedParts": [
+        {
+          "hits": 5,
+          "semanticLabel": "N1",
+          "sourcePartIndex": 0
+        },
+        {
+          "hits": 5,
+          "semanticLabel": "N2",
+          "sourcePartIndex": 1
+        },
+        {
+          "hits": 3,
+          "semanticLabel": "N3",
+          "sourcePartIndex": 2
+        }
+      ]
+    },
+    "rankingEligible": false,
+    "recommendationEligible": false,
+    "runtimeIsolation": {
+      "controlTeamBuildEntryIdentityUnchanged": true,
+      "formulaIndexOrderAndEntryIdentitiesRestored": true,
+      "formulaIndexSizeRestored": true,
+      "freshTeamBuildCount": 2,
+      "originalEntryIdentityRestored": true,
+      "projectedTeamBuildOnly": true
+    }
+  },
+  "technicalSingleCharacterComboEvaluationExecuted": true,
+  "upstreamBoundary": {
+    "calculatorObservationCanonicalObjectSha256": "1a2fcc12dfc8c1ca809c7df759bcedfd12e2888171e19599e86201ae83b671c8",
+    "completeBuildCount": 0,
+    "cp53CanonicalObjectSha256": "1cca0c987f0590aff79c7d1e215d298ec47fe139429d8958c295c08eadf7e99c",
+    "cp53ReportFileSha256": "1cca0c987f0590aff79c7d1e215d298ec47fe139429d8958c295c08eadf7e99c",
+    "cp53ReportPath": "scripts/guide-factory/reports/noelle-hexerei-partial-equipment-composition.json",
+    "freshlyAuthenticated": true,
+    "partialCandidateCount": 2,
+    "preservedExistingReplayAdapterGate": {
+      "admissionStatus": "rejected-exact-formula-representation-missing",
+      "numericReplayAdmitted": false,
+      "numericResult": null,
+      "offlineAdapterAdmissionIsSeparate": true
+    },
+    "selectedCandidateCount": 0
+  },
+  "validationStatus": "accepted-exact-static-formula-count-representation"
+}

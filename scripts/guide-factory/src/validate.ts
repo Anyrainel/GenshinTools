@@ -353,6 +353,13 @@ import {
   NOELLE_HEXEREI_PARTIAL_EQUIPMENT_COMPOSITION_REPORT_PATH,
   type NoelleHexereiPartialEquipmentCompositionReport,
 } from "./noelleHexereiPartialEquipmentComposition";
+import {
+  authenticateNoelleNormalPrefixFormulaProjectionFromWorkspace,
+} from "./assemble-noelle-normal-prefix-formula-projection";
+import {
+  NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH,
+  type NoelleNormalPrefixFormulaProjectionReport,
+} from "./noelleNormalPrefixFormulaProjection";
 
 export interface ValidationRunResult {
   diagnostics: ValidationDiagnostic[];
@@ -1859,6 +1866,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle Hexerei partial-equipment composition failed fresh authentication: ${error.message}`
               : "The saved Noelle Hexerei partial-equipment composition failed fresh authentication.",
+        });
+      }
+      try {
+        const noelleNormalPrefixProjectionInput = await readJson(
+          NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH,
+        );
+        await authenticateNoelleNormalPrefixFormulaProjectionFromWorkspace(
+          noelleNormalPrefixProjectionInput as NoelleNormalPrefixFormulaProjectionReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_noelle_normal_prefix_formula_projection",
+          path: "reports.noelle-normal-prefix-formula-projection",
+          message:
+            error instanceof Error
+              ? `The saved Noelle exact Normal-prefix formula projection failed fresh authentication: ${error.message}`
+              : "The saved Noelle exact Normal-prefix formula projection failed fresh authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =

@@ -431,6 +431,22 @@ Current durable pilot evidence:
   existing runtime generator, optimizer, AutoTune, damage/replay, ideal-stat,
   and ER paths execute zero times. Its current 34,701-byte output has SHA-256
   `1cca0c987f0590aff79c7d1e215d298ec47fe139429d8958c295c08eadf7e99c`.
+- `noelle-normal-prefix-formula-projection.json` authenticates checkpoint 53,
+  the reusable offline projection adapter, and the exact first-party calculator
+  byte closure used by a deliberately isolated one-Noelle technical harness.
+  It retains the existing `noelle-na` formula ID, temporarily replaces its
+  local catalog entry with the N1/N2/N3 source parts carrying exact hit counts
+  5/5/3, and omits N4 as the authenticated zero-hit part. The direct and
+  compiled calculator paths agree within tolerance on the one-line technical
+  computation, and the entire ordered formula index is restored with its
+  original entry identities even when a callback fails. The numeric result is
+  regression-only: no source rotation, team total, buff timing, DPS,
+  investment branch, equipment selection, rank, optimizer, ideal-stat, or ER
+  claim is admitted. The 109/80 path cardinalities, independently derived
+  first-party import graph, released non-beta branch, and source/runtime/factory
+  authority partitions are pinned. Its current byte size and SHA-256 are
+  recorded in `CHECKPOINT-54.md`. Its current 28,943-byte output has SHA-256
+  `f262914f0fe5bc9dbc4a81b473201734176d89e993c76a4cc159938c03fed660`.
 - `klee-team-scoped-claim-join-witness.json` fresh-authenticates the durable
   Klee source-local slice, requires the current manual condition-coverage
   boundary to remain authenticated, then cross-links their same four exact
@@ -804,7 +820,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-In full mode `validate.ts` rebuilds all fifty globally integrated reports
+In full mode `validate.ts` rebuilds all fifty-one globally integrated reports
 in memory and rejects stale checked-in output. `--defer-er` skips only the
 historical Diona comparison and ER-calibration regeneration. Checkpoint 35's
 thirty-second durable report remains outside that runner because
@@ -860,6 +876,9 @@ now contains 50 JSON reports.
 Checkpoint 53 adds the Noelle Hexerei partial-equipment composition as
 integrated report 50. Including checkpoint 35's permission-isolated report,
 this directory now contains 51 JSON reports.
+Checkpoint 54 adds the Noelle exact Normal-prefix formula projection as
+integrated report 51. Including checkpoint 35's permission-isolated report,
+this directory now contains 52 JSON reports.
 
 Checkpoint 42 expands the condition catalog to 66 = 63 typed + 3 acknowledged.
 Current manual coverage remains 8 guide snapshots, 71 records, and 163

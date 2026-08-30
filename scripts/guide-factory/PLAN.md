@@ -1185,6 +1185,33 @@ or accumulate the missing refinement, teammate equipment, enemy, and complete
 fixture evidence. It must not convert these two partial candidates into a
 winner before those boundaries are resolved.
 
+Checkpoint 54 closes the first of those two boundaries without pretending the
+rest are solved. It fresh-authenticates checkpoint 53 and the exact calculator
+byte closure, then uses a reusable offline adapter to replace one formula entry
+inside one fresh `TeamBuild`. Keeping the existing `noelle-na` ID lets both the
+interpreted and compiled paths consume a three-part entry with hit counts
+5/5/3; source part N4 is omitted to preserve its required zero count. A
+single-character, Guide Factory-authored C0/1-1-1/no-artifact harness proves the
+two evaluator paths agree and that the complete ordered formula index is
+restored afterward. The 109/80 closure cardinalities, independently derived
+first-party runtime import graph, released non-beta branch, and exact upstream
+calculator observation are pinned. The report separately labels source-backed
+action-prefix counts, runtime-backed formula identity/order, and Guide
+Factory-derived target/part counts. Its operation ledger also records the two
+technical weapon materializations and two single-character combo-path
+evaluations rather than hiding them behind broader zero claims. The harness
+intentionally supplies no source-backed team, equipment, investment, enemy,
+action timing, or buff-coverage conclusion, so its numeric total is only a
+regression witness.
+
+The next non-ER checkpoint may compose this exact representation with a fully
+declared team fixture or use it to evaluate multiple explicitly authored
+equipment assumptions. It must first keep source facts and Guide Factory
+assumptions separate, select or parameterize the investment branch, resolve
+weapon refinement and complete teammate equipment, and state the enemy and
+static-buff assumptions. A successful static total still does not establish
+rotation duration, buff-window feasibility, DPS, or ER.
+
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, Noelle, and Xiao
 bindings and source classifications remains a prerequisite for publication,
 formula authoring, recommendation composition, or build composition.

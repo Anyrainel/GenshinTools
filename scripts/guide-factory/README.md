@@ -21,17 +21,17 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 53 performs the first deterministic Noelle candidate projection
-from the authenticated repository, while keeping the output deliberately
-partial. It fresh-authenticates checkpoints 51 and 52 under one 29-file outer
-closure, then projects the lower- and high-investment artifact profiles with
-the exact-team Gest applicability target. The exact team supplies no Noelle
-investment, so neither branch is evaluated or selected. Both candidates retain
-Gest and 4pc Husk as unselected options, all main-stat and ordinal substat
-groups unchanged, and the rejected normal-prefix representation gate. This is
-Guide Factory-authored validation composition—not a source-authored build or
-runtime-generator result—and it executes no assignment, optimizer, damage,
-ideal-stat, or ER work.
+Checkpoint 54 implements the first exact offline formula-part projection for
+the Noelle vertical slice. It fresh-authenticates checkpoint 53 and a pinned
+109-path byte closure, independently verifies the reachable 80-path calculator
+runtime graph, and rejects beta-mode execution. A scoped adapter temporarily
+replaces one fresh `TeamBuild`'s `noelle-na` entry with N1/N2/N3 hit counts
+5/5/3 while omitting zero-count N4; interpreted and compiled single-character
+technical evaluations agree, and the complete catalog is restored. Source
+action-prefix counts, calculator formula identity/order, and Guide Factory
+derivations remain separate authority partitions. The numeric result is a
+non-guide regression witness, not a team replay, build, recommendation, DPS,
+or ER result.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -1038,6 +1038,28 @@ This is not a working guide factory or an equipment recommendation:
 318. Integrate the composition as global report 50 while withholding every
      player-facing guide, team, build, equipment, stat, rank, damage, rotation,
      ideal-stat, and ER authority.
+319. Authenticate checkpoint 54 through the exact 109-path raw-byte/hash
+     closure, including checkpoint 53, its complete upstream boundary, the
+     projection adapter, and the exact 80-path calculator runtime graph.
+320. Independently derive the first-party value-import graph with the
+     TypeScript AST, require exact runtime reachability, pin the released
+     non-beta branch, and preserve both beta gzip archives as authenticated
+     possible inputs.
+321. Pin checkpoint 53's exact Noelle calculator observation, then separate
+     authority: source action-prefix counts, calculator formula ID/order, and
+     Guide Factory-derived 5/5/3/0 target and projected part counts.
+322. Temporarily replace only the fresh offline catalog's `noelle-na` entry,
+     preserve its ID, clone N1/N2/N3 with positive hit counts 5/5/3, and omit
+     N4 instead of constructing an invalid zero-hit part.
+323. Evaluate the explicit single-character technical fixture through both
+     interpreted and compiled paths, cross-check it against weighted original
+     direct parts, and restore every original catalog entry identity and order
+     on success or failure.
+324. Account explicitly for two technical weapon materializations and two
+     single-character combo-path evaluations while retaining zero source-team
+     totals, candidate equipment assignments, selections, optimizer/AutoTune,
+     ideal-stat, or ER computations. Integrate the result as global report 51
+     with every player-facing guide and damage claim withheld.
 
 The first two active sources are already in this repository:
 
@@ -1239,6 +1261,7 @@ npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-investment-artifact-profile-computation-admission.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-weapon-team-source-binding.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-partial-equipment-composition.ts
+npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-normal-prefix-formula-projection.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
 npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
@@ -1262,7 +1285,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-In full mode it rebuilds all fifty globally integrated durable reports
+In full mode it rebuilds all fifty-one globally integrated durable reports
 in memory; `--defer-er` skips only the two historical Diona reports:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
@@ -1286,6 +1309,7 @@ the authenticated unit-expanded candidate execution gate,
 the authenticated five-star source-group validation diagnostic,
 the authenticated guarded Circlet/substat local-marginal diagnostic,
 the authenticated Noelle investment artifact-profile representation admission,
+the authenticated Noelle exact Normal-prefix formula-count projection probe,
 the exact
 manual condition-array coverage
 inventory, the authenticated flat Klee team-scoped claim-join witness, and
