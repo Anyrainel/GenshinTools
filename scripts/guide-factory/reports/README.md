@@ -6,6 +6,25 @@ be committed only when it becomes durable review evidence.
 
 Current durable pilot evidence:
 
+- `keqing-ineffa-furina-xilonen-cached-policy-audit.json` authenticates the
+  exact checkpoint-38 technical table, checkpoint-39 occurrence evidence, and
+  cached-policy implementation, then retains only a compact projection. Four
+  active dimensions have complete `3 x 2 x 3 x 2` closure; Ineffa and Xilonen
+  equipment are fixed. From source sequence 0, one-shot best neighbor follows
+  `0 -> 1`, iterative best improvement follows `0 -> 1 -> 7`, and declared-
+  order first improvement follows `0 -> 1 -> 13`. Sequence 7 is only the
+  exhaustive cached-table reference under the unreviewed objective; the other
+  terminals' technical shortfalls are not equipment ranks. The report retains
+  576 exact checkpoint-39 occurrence diagnostics and 4,608 non-ER rows, but
+  excludes them from the objective and every policy filter. It reads ER-
+  deferral provenance for authentication while projecting no ER value into the
+  policy table. Only the default environment attests zero fresh forbidden
+  downstream calls; injected callback counts and ER influence are unknown. The
+  report's final SHA-256 is
+  `b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`,
+  and its final size is 2,029,334 bytes. This is durable report 37 and globally
+  integrated report 36. It supports no guide, rank, recommendation, damage,
+  gameplay, global-optimality, promotion, or ER claim.
 - `keqing-ineffa-furina-xilonen-generated-sheet-evidence.json` re-runs the
   exact checkpoint-38 36-node/four-carry domain and retains 144 fresh generator
   captures as 576 node/carry/character occurrences. Its content-addressed
@@ -557,7 +576,7 @@ Current durable pilot evidence:
   Its status remains `assumption-incomplete` until source RNG, enemy-particle,
   duration, and Favonius-cooldown assumptions are comparable.
 
-`validate.ts` rebuilds all thirty-five globally integrated reports in memory
+`validate.ts` rebuilds all thirty-six globally integrated reports in memory
 and rejects stale checked-in output. Checkpoint 35's thirty-second durable
 report remains outside that runner because ArtifactRatingDB is permission-
 mixed and consolidation-blocked. Checkpoint 36 adds durable report 33 and
@@ -569,13 +588,16 @@ SHA-256
 Checkpoint 39 adds durable report 36 and globally integrates it as report 35.
 Its final 17,496,526-byte report has SHA-256
 `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
+Checkpoint 40 adds durable report 37 and globally integrates it as report 36.
+Its final 2,029,334-byte report has SHA-256
+`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
 The 69-file Guide Factory suite passes 642 tests with one intentional opt-in
 skip; validation has zero errors and the same 12 existing warnings.
 
 The checkpoint 34 condition catalog remains 63 = 60 typed + 3 acknowledged;
 manual coverage remains 19 source files and 73 generated-from paths, and the
 Klee witness remains six source files, 76 generated-from paths, and 63 upstream
-bindings. Checkpoints 35 through 39 change none of those ledgers. Checkpoint 38
+bindings. Checkpoints 35 through 40 change none of those ledgers. Checkpoint 38
 executes the generator and replay runtime but produces no source, guide,
 team/equipment recommendation, rank, damage, DPS, gameplay, optimality,
 promotion, ideal-stat allocation, or ER claim. Its 139 intact-endpoint matches
@@ -585,8 +607,10 @@ factory or equipment recommendation. Checkpoint 39 exposes the 21 unique sheets
 and 23 displayed allocations, tests their display-round trips, and compares
 4,608 occurrence-scoped non-ER membership rows with authority-labelled targets
 without producing ranks, weights, correctness verdicts, or exact roll counts.
-The next non-ER checkpoint audits one-shot, iterative best-improvement, and
-declared first-improvement policies against the cached exhaustive 36-node table
-with no new generator, replay, or evaluator calls. The Diona ER report is
-historical and deliberately decoupled from unrelated knowledge-repository
-changes while ER work is deferred.
+Checkpoint 40 shows that one-shot, iterative best-improvement, and declared
+first-improvement policies can terminate at three different nodes from the same
+start, while making no fresh runtime evaluation. The next non-ER checkpoint
+should summarize all 36 starts and all 3,456 effective declared orders through
+compact partitions and witness traces. The Diona ER report is historical and
+deliberately decoupled from unrelated knowledge-repository changes while ER
+work is deferred.

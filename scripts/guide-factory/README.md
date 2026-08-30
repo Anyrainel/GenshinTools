@@ -21,23 +21,21 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 39 adds an authenticated generated-sheet and displayed-allocation
-evidence catalog for the exact checkpoint-38 Keqing/Ineffa/Furina/Xilonen
-domain. The default runtime re-runs all 36 equipment nodes and four carry
-generators per node, retaining 144 fresh captures, 576 node/carry/character
-occurrences, 21 globally unique sheets, and 23 stable displayed allocations.
-Every allocation round-trips through `StatSheet.fromArtifacts` within the
-declared display-rounding envelope. Its 4,608 non-ER occurrence rows are joined
-to 17 authority-labelled GenshinTools/KQM knowledge targets without treating
-presence, absence, source order, or condition status as correctness, weights,
-or ranks. Exact-roll tiers remain unknown, and all ER values are retained only
-as deferral provenance. The wrapper authenticates eight selected non-self
-inputs plus the exact post-execution generic and full report payloads; this is
-not an exhaustive transitive runtime closure or an execution attestation.
-Durable report 36 is globally integrated as report 35. Every guide, rank,
-recommendation, scalar-weight, damage, DPS, gameplay, optimality, promotion,
-and ER claim remains false. This is not a working guide factory or an equipment
-recommendation:
+Checkpoint 40 audits three cached coordinate-selection policies against the
+exact checkpoint-38 36-node Keqing/Ineffa/Furina/Xilonen table. From the same
+source-first start, a one-shot best-neighbor pass stops at sequence 1,
+iterative best improvement reaches the bounded-table reference at sequence 7,
+and declared-order first improvement stops at the other local terminal,
+sequence 13. Their shortfalls from the finite-table reference are respectively
+`0.785708566169412%`, zero, and `0.531264473403165%`. The compact report binds
+checkpoint 38, checkpoint 39, and the cached-policy implementation while
+retaining 576 exact occurrence diagnostics without embedding either upstream
+report. Checkpoint-39 ER deferral provenance is authenticated, but no ER value
+is projected into the policy input or used by the default policies. Durable
+report 37 is globally integrated as report 36. Every guide, rank,
+recommendation, scalar-weight, damage, DPS, gameplay, global-optimality,
+promotion, and ER claim remains false. This is not a working guide factory or
+an equipment recommendation:
 
 1. Register potential sources and their permitted ingestion mode.
 2. Capture source-shaped snapshots without silently filling missing facts.
@@ -699,6 +697,26 @@ recommendation:
      `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`;
      no guide, recommendation, rank, scalar-weight, damage, gameplay,
      optimality, promotion, or ER capability is enabled.
+219. Project checkpoint 38's exact complete 36-node table into four active
+     dimensions while proving Ineffa and Xilonen equipment fixed and exact
+     `3 x 2 x 3 x 2` Cartesian closure.
+220. Compare a single complete best-neighbor pass, iterative best improvement,
+     declared-order first improvement, and the exhaustive cached-table
+     reference from the same source-first node without new runtime evaluation.
+221. Retain exact paths `0 -> 1`, `0 -> 1 -> 7`, and `0 -> 1 -> 13`, plus their
+     technical shortfalls from sequence 7, only as cached-policy observations
+     under the unreviewed objective.
+222. Attach checkpoint 39's 576 occurrence contexts and 4,608 non-ER comparison
+     rows only through exact node/carry/character identity. Exclude every review
+     diagnostic from the objective and policy filters.
+223. Distinguish four trace-producing policy calls from guard-time default
+     recomputation. Attest seven zero fresh-work seams only for the default
+     environment; injected callbacks retain `null` counts and ER influence.
+224. Add durable report 37 and globally integrate it as report 36. Its
+     2,029,334-byte output has SHA-256
+     `b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`;
+     no guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+     optimality, promotion, or ER capability is enabled.
 
 The first two active sources are already in this repository:
 
@@ -828,7 +846,7 @@ inputs have not changed.
 `validate.ts` also reruns both adapters and consolidation in memory. It reports
 an error if a saved snapshot or the consolidated repository is stale, so a
 structurally valid but incomplete generated file cannot pass silently.
-It also rebuilds all thirty-five globally integrated durable reports in memory:
+It also rebuilds all thirty-six globally integrated durable reports in memory:
 corpus inventory,
 all-character C0-C6 guide-input coverage, team coverage, artifact- and weapon-
 choice search coverage, two formula-count comparisons, the derived formula-
@@ -849,7 +867,8 @@ historical ER calibration, plus the authenticated
 Keqing/Ineffa/Furina/Xilonen source-backed equipment candidate lattice, its
 authenticated runtime materialization preflight, and its authenticated bounded
 full-team technical computation, followed by its authenticated generated-sheet
-and displayed-allocation evidence catalog.
+and displayed-allocation evidence catalog, and the compact cached-policy audit
+derived from those two authenticated reports.
 Stale evidence cannot pass.
 Checkpoint 35 adds a thirty-second durable report outside that global runner.
 Its isolated builder and tests authenticate five files and close
@@ -907,12 +926,22 @@ It derives no roll tiers, weights, ranks, recommendations, or correctness
 verdicts. Generator-internal objective optimization is merely recorded as an
 operation fact, and ER remains deferred.
 
-The next non-ER checkpoint audits cached coordinate-selection policies against
-checkpoint 38's complete 36-node table. It compares an exact one-shot neighbor
-pass, iterative best improvement, explicitly ordered first improvement, and
-the exhaustive bounded-table reference with zero new generator, replay, or
-damage-evaluator calls. This is a policy-sensitivity experiment, not an
-equipment recommendation.
+Checkpoint 40 adds durable report 37 and integrates it as global report 36. It
+projects checkpoint 38's exact `3 x 2 x 3 x 2` cached table and compares a
+one-shot best-neighbor pass, iterative best improvement, and declared-order
+first improvement from source sequence 0. The paths terminate at sequences 1,
+7, and 13; only iterative best improvement reaches the finite-table reference.
+The 2,029,334-byte report has SHA-256
+`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+Its checkpoint-39 diagnostics are occurrence-scoped and excluded from every
+policy decision. It authenticates ER-deferral provenance but projects no ER
+value into the policy input and performs no ER calculation.
+
+The next non-ER checkpoint audits robustness across all 36 cached starts and
+the complete 3,456 effective declared-order family for this exact domain. It
+should store reconstructible partitions, histograms, digests, and a small set
+of witness traces rather than all 124,416 traces. This remains a cached-policy
+sensitivity experiment, not an equipment recommendation.
 
 The all-character inventory spans 125 guide-eligible characters and all seven
 C0-C6 investments, producing 875 compact rows backed by 3,104 group-level

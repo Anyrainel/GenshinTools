@@ -1011,10 +1011,40 @@ Checkpoint 39 is durable evidence 36 and global report 35. The checked-in
 Guide, recommendation, rank, scalar-weight, damage, gameplay, optimality, ER,
 and promotion claims all remain false.
 
-The next non-ER computation boundary is a cached coordinate-policy audit over
-checkpoint 38's complete 36-node table. It should compare one-shot neighbor,
-iterative best-improvement, explicitly ordered first-improvement, and exhaustive
-table-reference outcomes with no new generator, replay, or evaluator calls.
+## Authenticated cached coordinate-policy audit
+
+Checkpoint 40 consumes the authenticated checkpoint-38 and checkpoint-39
+reports plus the cached-policy implementation, but emits only a compact
+projection. Its four active dimensions have exact `3 x 2 x 3 x 2` closure;
+Ineffa and Xilonen equipment remain fixed. The report retains 36 technical
+nodes, 576 exact occurrence diagnostics, and 4,608 non-ER comparison rows
+without embedding either upstream report.
+
+From source sequence 0, the one-shot best-neighbor policy follows `0 -> 1`,
+iterative best improvement follows `0 -> 1 -> 7`, and declared-order first
+improvement follows `0 -> 1 -> 13`. Sequence 7 is the exhaustive cached-table
+reference for this exact finite domain. Sequences 1 and 13 fall short by
+`0.785708566169412%` and `0.531264473403165%` under the same unreviewed
+objective. These are policy-adjacency observations, not ranks or advice.
+
+Checkpoint-39 review diagnostics are attached only through exact
+node/carry/character identity and are excluded from the objective and every
+policy filter. The default environment attests zero fresh evaluator, generator,
+damage replay, downstream optimizer, rank, recommendation, and ER calls. Those
+counts and ER influence remain null for injected callbacks. Authentication
+reads checkpoint-39 ER-deferral provenance, while no ER value is projected into
+the policy table.
+
+Checkpoint 40 is durable evidence 37 and global report 36. The checked-in
+2,029,334-byte report has SHA-256
+`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+Guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+optimality, ER, and promotion claims all remain false.
+
+The next non-ER computation boundary is an all-start/all-order robustness
+census over the same cached table: 36 best-improvement starts and 3,456
+effective declared orders, summarized through endpoint partitions, histograms,
+digests, and representative traces rather than 124,416 embedded traces.
 
 ## Callable modules for later experiments
 

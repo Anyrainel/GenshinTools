@@ -890,12 +890,34 @@ The 17,496,526-byte report has SHA-256
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
 promotion, and ER claim remains false.
 
-The next non-ER checkpoint should use checkpoint 38's already complete cached
-36-node table to compare a single best-neighbor pass, iterative best
-improvement, an explicitly declared first-improvement coordinate order, and the
-exhaustive bounded-table reference. It must execute zero new generator, replay,
-or damage-evaluator calls and report policy sensitivity without promoting any
-finite-table node to a recommendation.
+Checkpoint 40 projects checkpoint 38's already complete 36-node table into four
+active dimensions with exact `3 x 2 x 3 x 2` closure. From source sequence 0,
+a single best-neighbor pass follows `0 -> 1`, iterative best improvement follows
+`0 -> 1 -> 7`, and declared-order first improvement follows `0 -> 1 -> 13`.
+Sequence 7 is only the complete finite-table technical reference; sequences 1
+and 13 fall short by `0.785708566169412%` and `0.531264473403165%` under the
+same unreviewed objective.
+
+The compact projection retains 576 exact checkpoint-39 occurrence diagnostics
+and 4,608 non-ER comparison rows without embedding the upstream reports. Those
+diagnostics are excluded from the objective and every policy filter. The real
+default report attests zero fresh evaluator, generator, replay, downstream
+optimizer, rank, recommendation, and ER calls. Injected callbacks expose those
+counts and ER influence as unknown. Checkpoint-39 ER-deferral provenance is
+read for authentication, while no ER value is projected into the policy table.
+
+Checkpoint 40 adds durable report 37 and globally integrates it as report 36.
+The 2,029,334-byte report has SHA-256
+`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+Every guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+optimality, promotion, and ER claim remains false.
+
+The next non-ER checkpoint should measure start and order sensitivity rather
+than extrapolating from source sequence 0. It should run best improvement from
+all 36 starts and declared first improvement over all 3,456 effective orders,
+retaining compact endpoint partitions, histograms, reconstruction digests, and
+a few witness traces instead of all 124,416 full traces. No fresh generator,
+replay, evaluator, or ER work is needed.
 
 Human review of the Itto, Keqing, Klee, Diona, Kokomi, and Noelle bindings and
 source classifications remains a prerequisite for publication, formula

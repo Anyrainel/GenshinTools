@@ -548,9 +548,36 @@ The checkpoint 39 report is durable report 36 overall and globally integrated
 report 35. Its 17,496,526 bytes have SHA-256
 `9f472a7b46b5318e0073dca4b385df95300c173fca28fcd471a08526e79af568`.
 Every guide, recommendation, rank, scalar-weight, damage, gameplay, optimality,
-promotion, and ER capability remains false. The next non-ER boundary is a
-cached coordinate-policy comparison against the complete 36-node table, not a
-computed equipment rank.
+promotion, and ER capability remains false.
+
+### Derived cached-policy audits
+
+A cached-policy audit is derived computation evidence, not a knowledge record,
+source ranking, or equipment recommendation. Checkpoint 40 projects the exact
+checkpoint-38 36-node table into four active dimensions, proves complete
+`3 x 2 x 3 x 2` closure, and compares deterministic coordinate policies without
+invoking a fresh evaluator, generator, damage replay, or artifact optimizer.
+
+Its one-shot, iterative best-improvement, and declared-order first-improvement
+paths from one source-first start terminate at different cached nodes. The
+finite-table reference and technical gaps are observations under the same
+unreviewed objective. They do not define “best” outside that authenticated
+table and do not upgrade any source or generated-sheet row.
+
+Checkpoint-39 review diagnostics remain attached only through exact
+node/carry/character occurrences and never become an objective or policy
+filter. Authenticating checkpoint 39 reads its ER-deferral provenance, but no
+ER value is projected into the policy table. Only the real default environment
+attests zero forbidden downstream calls; injected environments retain unknown
+counts and ER influence.
+
+The checkpoint 40 report is durable report 37 overall and globally integrated
+report 36. Its 2,029,334 bytes have SHA-256
+`b940336c4259e199e67f8aa3902ecd042744b68868d4711e318d6d4354857935`.
+Every guide, recommendation, rank, scalar-weight, damage, gameplay, global-
+optimality, promotion, and ER capability remains false. The next non-ER
+boundary is a compact all-start/all-order robustness census over the same
+cached table, not a computed equipment rank.
 
 ## Energy-guidance records
 

@@ -57,6 +57,13 @@ import {
   KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS,
 } from "./keqingLunarEquipmentEvidenceValidation";
 import {
+  buildKeqingIneffaFurinaXilonenCachedPolicyAuditReport,
+  KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_AUDIT_INPUT_PATHS,
+  KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_AUDIT_REPORT_PATH,
+  requireAuthenticatedKeqingIneffaFurinaXilonenCachedPolicyAuditReport,
+  type KeqingIneffaFurinaXilonenCachedPolicyAuditReport,
+} from "./keqingIneffaFurinaXilonenCachedPolicyAudit";
+import {
   buildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeReport,
   KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS,
   KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_REPORT_PATH,
@@ -290,6 +297,7 @@ export async function runValidation(): Promise<ValidationRunResult> {
     keqingIneffaFurinaXilonenEquipmentRuntimePreflightInput,
     keqingIneffaFurinaXilonenEquipmentTechnicalComputationInput,
     keqingIneffaFurinaXilonenGeneratedSheetEvidenceInput,
+    keqingIneffaFurinaXilonenCachedPolicyAuditInput,
     keqingLunarSourceConditionedCandidateLatticeInput,
     keqingLunarCrossRecordCompositionContractInput,
     keqingLunarCrossRecordTechnicalMatrixInput,
@@ -372,6 +380,9 @@ export async function runValidation(): Promise<ValidationRunResult> {
       ),
       readJson(
         KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH,
+      ),
+      readJson(
+        KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_AUDIT_REPORT_PATH,
       ),
       readJson(
         KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_REPORT_PATH,
@@ -1554,6 +1565,61 @@ export async function runValidation(): Promise<ValidationRunResult> {
           path: "reports.keqing-ineffa-furina-xilonen-generated-sheet-evidence",
           message:
             "The saved generated-sheet evidence does not match the fresh authenticated CP36 lattice, CP37 materializations, CP38 technical domain, exact eight-input hash set, 144 generator captures, occurrence-scoped source targets, or deferred-ER provenance boundary.",
+        });
+      }
+
+      let expectedKeqingIneffaFurinaXilonenCachedPolicyAudit:
+        | KeqingIneffaFurinaXilonenCachedPolicyAuditReport
+        | null = null;
+      let keqingIneffaFurinaXilonenCachedPolicyAuditAuthenticated = false;
+      try {
+        if (!expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence) {
+          throw new Error(
+            "The freshly rebuilt CP39 generated-sheet evidence is unavailable for the cached-policy audit.",
+          );
+        }
+        const keqingIneffaFurinaXilonenCachedPolicyAuditGeneratedFrom =
+          await hashRelativePaths(
+            KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_AUDIT_INPUT_PATHS,
+          );
+        expectedKeqingIneffaFurinaXilonenCachedPolicyAudit =
+          buildKeqingIneffaFurinaXilonenCachedPolicyAuditReport({
+            cp38Report:
+              expectedKeqingIneffaFurinaXilonenEquipmentTechnicalComputation,
+            cp39Report:
+              expectedKeqingIneffaFurinaXilonenGeneratedSheetEvidence,
+            inputFiles:
+              keqingIneffaFurinaXilonenCachedPolicyAuditGeneratedFrom,
+          });
+        requireAuthenticatedKeqingIneffaFurinaXilonenCachedPolicyAuditReport(
+          expectedKeqingIneffaFurinaXilonenCachedPolicyAudit,
+        );
+        keqingIneffaFurinaXilonenCachedPolicyAuditAuthenticated = true;
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.incomplete_keqing_ineffa_furina_xilonen_cached_policy_audit",
+          path: "reports.keqing-ineffa-furina-xilonen-cached-policy-audit",
+          message:
+            error instanceof Error
+              ? error.message
+              : "The freshly rebuilt cached-policy audit did not authenticate its exact CP38, CP39, and policy inputs; complete 36-node table; occurrence-scoped review projection; default cached-policy traces; execution provenance; or withheld-claim boundary.",
+        });
+      }
+      if (
+        keqingIneffaFurinaXilonenCachedPolicyAuditAuthenticated &&
+        expectedKeqingIneffaFurinaXilonenCachedPolicyAudit !== null &&
+        stableJson(expectedKeqingIneffaFurinaXilonenCachedPolicyAudit) !==
+          stableJson(
+            keqingIneffaFurinaXilonenCachedPolicyAuditInput as KeqingIneffaFurinaXilonenCachedPolicyAuditReport,
+          )
+      ) {
+        diagnostics.push({
+          severity: "error",
+          code: "pipeline.stale_keqing_ineffa_furina_xilonen_cached_policy_audit",
+          path: "reports.keqing-ineffa-furina-xilonen-cached-policy-audit",
+          message:
+            "The saved cached-policy audit does not match the fresh authenticated CP38 and CP39 reports, exact three-input hash set, complete 36-node compact table, four default cached-policy traces, occurrence-scoped review diagnostics, or zero-call and deferred-ER provenance boundaries.",
         });
       }
 
