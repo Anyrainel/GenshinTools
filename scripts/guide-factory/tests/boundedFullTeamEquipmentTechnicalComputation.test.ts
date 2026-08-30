@@ -43,12 +43,13 @@ type HarnessFault =
   | "final-domain"
   | "missing-final"
   | "identity-reuse"
+  | "emission-cap"
   | "generator-throw";
 
 type HarnessOptions = {
   generatorFault?: HarnessFault;
   generatorFaultAtCall?: number;
-  replayFault?: "throw" | "agreement";
+  replayFault?: "throw" | "agreement" | "tolerance";
   replayFaultAtCall?: number;
   evaluationMode?: "sheet-sum" | "zero";
 };
@@ -109,6 +110,8 @@ describe("bounded full-team equipment technical computation", () => {
     });
     expect(report.execution).toMatchObject({
       scheduling: "sequential",
+      freshRuntimeIdentityPerGeneratorInvocation: true,
+      hardMaximumGeneratorResultEmissionsPerInvocation: "64",
       hardMaximumCartesianReplays: "9216",
       plannedGeneratorInvocations: "8",
       theoreticalMaximumCartesianReplays: "512",
@@ -343,6 +346,7 @@ describe("bounded full-team equipment technical computation", () => {
     ["missing-final", "generator.missing_final_result", 0],
     ["generator-throw", "generator.failed", 0],
     ["identity-reuse", "generator.runtime_identity_reused", 1],
+    ["emission-cap", "generator.result_emission_cap_exceeded", 0],
   ] as const)(
     "retains a %s generator failure while replaying unaffected complete nodes",
     async (generatorFault, expectedCode, generatorFaultAtCall) => {
@@ -376,6 +380,11 @@ describe("bounded full-team equipment technical computation", () => {
       expect(report.nodes[0].issues.map(({ code }) => code)).toContain(
         expectedCode,
       );
+      expect(
+        report.nodes[0].generatorRuns.every(
+          ({ progress }) => progress.length <= 64,
+        ),
+      ).toBe(true);
       expect(report.nodes[1]).toMatchObject({
         comparisonStatus: "comparable",
         expectedCartesianCompositionCount: "16",
@@ -400,6 +409,7 @@ describe("bounded full-team equipment technical computation", () => {
   it.each([
     ["throw", "replay.failed"],
     ["agreement", "replay.calculator_disagreement"],
+    ["tolerance", "replay.calculator_disagreement"],
   ] as const)(
     "retains a replay %s per composition and withholds only affected-node and global references",
     async (replayFault, expectedCode) => {
@@ -477,6 +487,43 @@ describe("bounded full-team equipment technical computation", () => {
     expect(
       report.intactGeneratorEndpointTechnicalReference?.equivalentReferences,
     ).toHaveLength(8);
+  });
+
+  it("rejects a resealed truncated Cartesian replay domain after a typed replay failure", async () => {
+    const report = await runBoundedFullTeamEquipmentTechnicalComputation(
+      buildComputationInput(),
+      buildHarness({ replayFault: "throw", replayFaultAtCall: 0 }).environment,
+    );
+    const node = report.nodes[0];
+    const removed = node.compositions.pop();
+    expect(removed?.outcome).toBe("evaluated");
+    node.observedCartesianCompositionCount = node.compositions.length;
+    node.provenanceSummary = summarizeTestProvenance(node.compositions);
+    report.execution.observedReplayCalls -= 1;
+    report.execution.successfulReplayCount -= 1;
+    const allCompositions = report.nodes.flatMap(
+      ({ compositions }) => compositions,
+    );
+    report.provenanceSummary = summarizeTestProvenance(allCompositions);
+    report.objectiveDistribution = buildTestDistribution(
+      allCompositions.flatMap(({ unreviewedTechnicalObjective }) =>
+        unreviewedTechnicalObjective === null
+          ? []
+          : [unreviewedTechnicalObjective],
+      ),
+      "partial-diagnostic",
+    );
+    resealReport(report);
+
+    expect(report.execution.fullDomainExpectedReplayCount).toBe("32");
+    expect(report.execution.observedReplayCalls).toBe(31);
+    expect(node.expectedCartesianCompositionCount).toBe("16");
+    expect(node.observedCartesianCompositionCount).toBe(15);
+    expect(() =>
+      requireAuthenticatedBoundedFullTeamEquipmentTechnicalComputationReport(
+        report,
+      ),
+    ).toThrow(/incomplete, inconsistent, or mutated/);
   });
 
   it.runIf(process.env.GUIDE_FACTORY_CP38_REAL_RUNTIME === "1")(
@@ -589,11 +636,68 @@ describe("bounded full-team equipment technical computation", () => {
       },
     ],
     [
+      "captured config provenance",
+      (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
+        const run = report.nodes[0].generatorRuns[0];
+        if (run.outcome !== "captured") {
+          throw new Error("Expected a captured generator run fixture.");
+        }
+        run.observedTeamConfigsSha256 = "0".repeat(64);
+      },
+    ],
+    [
+      "fixed cautions",
+      (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
+        report.cautions = [];
+      },
+    ],
+    [
       "calculator agreement math",
       (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
         const agreement = report.nodes[0].compositions[0].calculatorAgreement;
         if (!agreement) throw new Error("Expected an agreement fixture.");
         agreement.absoluteDifference = 1e-10;
+      },
+    ],
+    [
+      "calculator tolerance",
+      (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
+        const agreement = report.nodes[0].compositions[0].calculatorAgreement;
+        if (!agreement) throw new Error("Expected an agreement fixture.");
+        agreement.compiledObjective = agreement.interpretedObjective + 1;
+        agreement.absoluteDifference = 1;
+        agreement.allowedDifference = 1;
+      },
+    ],
+    [
+      "fresh runtime identity execution invariant",
+      (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
+        (report.execution
+          .freshRuntimeIdentityPerGeneratorInvocation as boolean) = false;
+      },
+    ],
+    [
+      "generator result emission hard cap",
+      (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
+        (report.execution
+          .hardMaximumGeneratorResultEmissionsPerInvocation as string) = "65";
+      },
+    ],
+    [
+      "generator result emission trace",
+      (report: BoundedFullTeamEquipmentTechnicalComputationReport) => {
+        const run = report.nodes[0].generatorRuns[0];
+        if (run.outcome !== "captured") {
+          throw new Error("Expected a captured generator run fixture.");
+        }
+        run.progress = [
+          ...Array.from({ length: 64 }, (_, index) => ({
+            phase: "synthetic-progress",
+            progress: index / 128,
+            done: false,
+          })),
+          { phase: "done", progress: 1, done: true },
+        ];
       },
     ],
     [
@@ -723,6 +827,8 @@ function buildHarness(options: HarnessOptions = {}) {
                 ),
               0,
             );
+      const calculatorDiverges =
+        fault === "agreement" || fault === "tolerance";
       return {
         formulaCoverage: request.objectiveLines.map(
           ({ characterId, formulaId }) => ({
@@ -735,10 +841,11 @@ function buildHarness(options: HarnessOptions = {}) {
         calculatorAgreement: {
           passed: fault !== "agreement",
           directTotalDamage: totalDamage,
-          compiledTotalDamage:
-            fault === "agreement" ? totalDamage + 1 : totalDamage,
-          absoluteDifference: fault === "agreement" ? 1 : 0,
-          allowedDifference: 1e-9,
+          compiledTotalDamage: calculatorDiverges
+            ? totalDamage + 1
+            : totalDamage,
+          absoluteDifference: calculatorDiverges ? 1 : 0,
+          allowedDifference: fault === "tolerance" ? 1 : 1e-9,
         },
         totalDamage,
       };
@@ -760,6 +867,18 @@ async function* syntheticGeneratorResults(
   carryCharacterId: string,
   fault: HarnessFault | undefined,
 ): AsyncGenerator<GeneratorResult> {
+  if (fault === "emission-cap") {
+    for (let index = 0; index <= 64; index += 1) {
+      yield {
+        artifactsByChar: {} as GeneratorResult["artifactsByChar"],
+        sheetsByChar: {},
+        phase: "synthetic-progress",
+        progress: index / 128,
+        done: false,
+      };
+    }
+    return;
+  }
   yield {
     artifactsByChar: {} as GeneratorResult["artifactsByChar"],
     sheetsByChar: {},
@@ -1009,6 +1128,75 @@ function buildSyntheticObjective(): SourceBackedEquipmentRuntimeObjectiveEnvelop
 function requiredNumber(value: number | null): number {
   if (value === null) throw new Error("Expected a numeric refinement.");
   return value;
+}
+
+function summarizeTestProvenance(
+  compositions: BoundedFullTeamEquipmentTechnicalComputationReport["nodes"][number]["compositions"],
+): BoundedFullTeamEquipmentTechnicalComputationReport["provenanceSummary"] {
+  return {
+    intactGeneratorEndpointCompositionCount: compositions.filter(
+      ({ provenance }) =>
+        provenance.classification === "intact-generator-endpoint",
+    ).length,
+    crossEndpointRecombinationCount: compositions.filter(
+      ({ provenance }) =>
+        provenance.classification === "cross-endpoint-recombination",
+    ).length,
+  };
+}
+
+function buildTestDistribution(
+  rawValues: number[],
+  scope: "complete-domain" | "partial-diagnostic",
+): NonNullable<
+  BoundedFullTeamEquipmentTechnicalComputationReport["objectiveDistribution"]
+> {
+  const values = [...rawValues].sort((left, right) => left - right);
+  const classes = new Map<number, number>();
+  for (const value of values) classes.set(value, (classes.get(value) ?? 0) + 1);
+  const histogram = new Map<number, number>();
+  for (const count of classes.values()) {
+    histogram.set(count, (histogram.get(count) ?? 0) + 1);
+  }
+  const tied = [...classes.values()].filter((count) => count > 1);
+  return {
+    scope,
+    observationCount: values.length,
+    uniqueExactValueCount: classes.size,
+    exactTieClassCount: tied.length,
+    observationsInExactTieClasses: tied.reduce(
+      (sum, count) => sum + count,
+      0,
+    ),
+    maximumExactTieClassSize: Math.max(...classes.values()),
+    exactTieClassSizeHistogram: Object.fromEntries(
+      [...histogram.entries()]
+        .sort(([left], [right]) => left - right)
+        .map(([size, count]) => [String(size), count]),
+    ),
+    minimum: values[0],
+    percentile25: normalizeTestNumber(testQuantile(values, 0.25)),
+    median: normalizeTestNumber(testQuantile(values, 0.5)),
+    mean: normalizeTestNumber(
+      values.reduce((sum, value) => sum + value, 0) / values.length,
+    ),
+    percentile75: normalizeTestNumber(testQuantile(values, 0.75)),
+    maximum: values.at(-1) as number,
+  };
+}
+
+function testQuantile(values: number[], percentile: number): number {
+  const position = (values.length - 1) * percentile;
+  const lower = Math.floor(position);
+  const upper = Math.ceil(position);
+  return lower === upper
+    ? values[lower]
+    : values[lower] +
+        (values[upper] - values[lower]) * (position - lower);
+}
+
+function normalizeTestNumber(value: number): number {
+  return Object.is(value, -0) ? 0 : Number(value.toPrecision(15));
 }
 
 function resealReport(

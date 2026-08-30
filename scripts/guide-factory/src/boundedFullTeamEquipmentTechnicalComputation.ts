@@ -12,7 +12,6 @@ import {
   runGenerator as runRuntimeGenerator,
   type GeneratorResult,
 } from "@/lib/team-comp/generator/generator";
-import { fingerprintGeneratedArtifacts } from "./artifactGenerationSensitivityProbe";
 import {
   bootstrapGuideFactoryComputation,
   replayTeamDamage,
@@ -30,6 +29,9 @@ import {
 const SHA256 = /^[a-f0-9]{64}$/;
 const DECIMAL_INTEGER = /^(0|[1-9][0-9]*)$/;
 const HARD_MAXIMUM_CARTESIAN_REPLAYS = 9_216n;
+const HARD_MAXIMUM_GENERATOR_RESULT_EMISSIONS_PER_INVOCATION = 64;
+const ABSOLUTE_CALCULATOR_TOLERANCE = 1e-9;
+const RELATIVE_CALCULATOR_TOLERANCE = 1e-12;
 
 type SheetDumpEntry = { key: StatKey; filterKey: string; value: number };
 
@@ -127,7 +129,6 @@ export type BoundedFullTeamEquipmentGeneratorRunObservation =
       outcome: "captured";
       progress: ProgressObservation[];
       observedTeamConfigsSha256: string;
-      artifactFingerprintSha256: string;
       sheetFingerprintsByCharacter: Record<string, string>;
     }
   | {
@@ -304,13 +305,14 @@ export type BoundedFullTeamEquipmentTechnicalComputationReport = {
     nodeLocalSheetPoolsOnly: true;
     crossNodeSheetCompositionsAllowed: false;
     canonicalSheetDeduplication: true;
-    freshTeamBuildPerGeneratorInvocation: true;
+    freshRuntimeIdentityPerGeneratorInvocation: true;
     warmStartSupported: false;
     perCharacterConstraintsPassed: false;
     energyRecoveryThresholdsPassed: false;
     explicitGeneratorBuffOverridesPassed: false;
     explicitFormulaBuffOverridesPassedToReplay: false;
     countArithmetic: "bigint-decimal";
+    hardMaximumGeneratorResultEmissionsPerInvocation: "64";
     hardMaximumCartesianReplays: "9216";
     bootstrapCalls: number;
     plannedGeneratorInvocations: string | null;
@@ -563,7 +565,19 @@ export async function runBoundedFullTeamEquipmentTechnicalComputation(
         let finalResult: GeneratorResult | null = null;
         let previousProgress = -1;
         let sawDone = false;
+        let resultEmissionCount = 0;
         for await (const result of invocation.results) {
+          resultEmissionCount += 1;
+          if (
+            resultEmissionCount >
+            HARD_MAXIMUM_GENERATOR_RESULT_EMISSIONS_PER_INVOCATION
+          ) {
+            throw new TechnicalComputationFailure(
+              "generator.result_emission_cap_exceeded",
+              "capture",
+              `${node.nodeId}/${carryCharacterId} emitted more than ${HARD_MAXIMUM_GENERATOR_RESULT_EMISSIONS_PER_INVOCATION} generator results.`,
+            );
+          }
           validateProgress(
             result,
             previousProgress,
@@ -729,8 +743,9 @@ export async function runBoundedFullTeamEquipmentTechnicalComputation(
             absoluteDifference: normalizeNumber(
               Math.abs(interpretedObjective - compiledObjective),
             ),
-            allowedDifference: normalizeNumber(
-              evaluation.calculatorAgreement.allowedDifference,
+            allowedDifference: canonicalCalculatorAllowedDifference(
+              interpretedObjective,
+              compiledObjective,
             ),
           },
           failure: null,
@@ -1268,9 +1283,6 @@ function captureFinalResult(
     outcome: "captured" as const,
     progress: progress.map((row) => ({ ...row })),
     observedTeamConfigsSha256: sha256Text(stableJson(observedTeamConfigs)),
-    artifactFingerprintSha256: fingerprintGeneratedArtifacts(
-      finalResult.artifactsByChar,
-    ),
     sheetFingerprintsByCharacter: sortTextRecord(
       sheetFingerprintsByCharacter,
     ),
@@ -1469,17 +1481,37 @@ function validateEvaluation(
       );
     }
   }
+  const actualRawDifference = Math.abs(
+    agreement.directTotalDamage - agreement.compiledTotalDamage,
+  );
+  const canonicalRawTolerance = canonicalCalculatorAllowedDifference(
+    agreement.directTotalDamage,
+    agreement.compiledTotalDamage,
+  );
+  const normalizedDirect = normalizeNumber(agreement.directTotalDamage);
+  const normalizedCompiled = normalizeNumber(agreement.compiledTotalDamage);
+  const expectedAbsoluteDifference = normalizeNumber(
+    Math.abs(normalizedDirect - normalizedCompiled),
+  );
+  const expectedAllowedDifference = canonicalCalculatorAllowedDifference(
+    normalizedDirect,
+    normalizedCompiled,
+  );
   if (
     !agreement.passed ||
     agreement.absoluteDifference < 0 ||
-    agreement.allowedDifference < 0 ||
-    agreement.absoluteDifference > agreement.allowedDifference ||
+    actualRawDifference > canonicalRawTolerance ||
+    !equalWithinFloatingPointRoundoff(
+      agreement.allowedDifference,
+      canonicalRawTolerance,
+    ) ||
+    expectedAbsoluteDifference > expectedAllowedDifference ||
     observation.totalDamage !== agreement.directTotalDamage
   ) {
     throw new TechnicalComputationFailure(
       "replay.calculator_disagreement",
       "replay",
-      `${compositionId} failed direct/compiled calculator agreement.`,
+      `${compositionId} failed direct/compiled calculator agreement: observed difference ${agreement.absoluteDifference}, expected ${expectedAbsoluteDifference}; observed tolerance ${agreement.allowedDifference}, expected ${expectedAllowedDifference}.`,
     );
   }
 }
@@ -1800,13 +1832,15 @@ function fixedExecution(
     nodeLocalSheetPoolsOnly: true,
     crossNodeSheetCompositionsAllowed: false,
     canonicalSheetDeduplication: true,
-    freshTeamBuildPerGeneratorInvocation: true,
+    freshRuntimeIdentityPerGeneratorInvocation: true,
     warmStartSupported: false,
     perCharacterConstraintsPassed: false,
     energyRecoveryThresholdsPassed: false,
     explicitGeneratorBuffOverridesPassed: false,
     explicitFormulaBuffOverridesPassedToReplay: false,
     countArithmetic: "bigint-decimal",
+    hardMaximumGeneratorResultEmissionsPerInvocation:
+      HARD_MAXIMUM_GENERATOR_RESULT_EMISSIONS_PER_INVOCATION.toString() as "64",
     hardMaximumCartesianReplays:
       HARD_MAXIMUM_CARTESIAN_REPLAYS.toString() as "9216",
     maximumGeneratorInvocations: policy.maximumGeneratorInvocations,
@@ -1876,6 +1910,7 @@ function authenticationInputs(
 
 function fixedCautions(): string[] {
   return [
+    "The generic report self-digest authenticates internal content consistency only; source authority requires a source-specific wrapper to authenticate the expected preflight and complete report digest.",
     "The objective may remain unreviewed and source-not-ready; successful numerical execution does not establish rotation order, buff timing, field time, reaction ownership, or gameplay applicability.",
     "Every equipment node composes source-backed axis occurrences; no source is made the author of the whole equipment composition.",
     "An intact-generator-endpoint composition reproduces one captured four-character generator endpoint; a cross-endpoint-recombination only combines node-local character sheets from different endpoints and must never be described as generator-produced.",
@@ -1900,7 +1935,12 @@ function finalizeReport(
   return finalized;
 }
 
-/** Reject post-build mutation and inconsistent derived counters or provenance. */
+/**
+ * Reject post-build mutation and inconsistent derived counters or provenance.
+ * This generic self-digest establishes internal consistency, not source
+ * authority; a source-specific wrapper must authenticate its expected inputs
+ * and complete report digest.
+ */
 export function requireAuthenticatedBoundedFullTeamEquipmentTechnicalComputationReport(
   report: BoundedFullTeamEquipmentTechnicalComputationReport,
 ): void {
@@ -1997,10 +2037,11 @@ function basicReportSemanticsHold(
     report.supportsDamageClaims ||
     report.supportsOptimality ||
     report.supportsEnergyRequirements ||
+    !exactEqual(report.cautions, fixedCautions()) ||
     !report.execution.nodeLocalSheetPoolsOnly ||
     report.execution.crossNodeSheetCompositionsAllowed ||
     !report.execution.canonicalSheetDeduplication ||
-    !report.execution.freshTeamBuildPerGeneratorInvocation ||
+    !report.execution.freshRuntimeIdentityPerGeneratorInvocation ||
     report.execution.warmStartSupported ||
     report.execution.perCharacterConstraintsPassed ||
     report.execution.energyRecoveryThresholdsPassed ||
@@ -2008,6 +2049,8 @@ function basicReportSemanticsHold(
     report.execution.explicitFormulaBuffOverridesPassedToReplay ||
     report.execution.scheduling !== "sequential" ||
     report.execution.countArithmetic !== "bigint-decimal" ||
+    report.execution.hardMaximumGeneratorResultEmissionsPerInvocation !==
+      HARD_MAXIMUM_GENERATOR_RESULT_EMISSIONS_PER_INVOCATION.toString() ||
     report.execution.hardMaximumCartesianReplays !==
       HARD_MAXIMUM_CARTESIAN_REPLAYS.toString() ||
     report.execution.maximumGeneratorInvocations !==
@@ -2144,6 +2187,8 @@ function basicReportSemanticsHold(
   const allCompositions: BoundedFullTeamEquipmentCompositionObservation[] = [];
   let knownCompleteNodeExpectedReplayCount = 0n;
   let allNodesGenerated = true;
+  const postGenerationCapWithholding =
+    report.validationStatus === "withheld-post-generation-cap";
   for (const [nodeIndex, node] of report.nodes.entries()) {
     if (
       !nodeSemanticsHold(
@@ -2151,6 +2196,7 @@ function basicReportSemanticsHold(
         report.inputBoundary.teamCharacterIds,
         report.inputBoundary.carryCharacterIds,
         nodeIndex,
+        postGenerationCapWithholding,
       )
     ) {
       return false;
@@ -2177,6 +2223,10 @@ function basicReportSemanticsHold(
       (allNodesGenerated
         ? knownCompleteNodeExpectedReplayCount.toString()
         : null) ||
+    (postGenerationCapWithholding
+      ? observedReplayCalls !== 0
+      : BigInt(observedReplayCalls) !==
+        knownCompleteNodeExpectedReplayCount) ||
     !exactEqual(report.provenanceSummary, summarizeProvenance(allCompositions))
   ) {
     return false;
@@ -2298,6 +2348,7 @@ function nodeSemanticsHold(
   characterIds: string[],
   carryCharacterIds: string[],
   expectedSequence: number,
+  postGenerationCapWithholding: boolean,
 ): boolean {
   if (
     node.sequence !== expectedSequence ||
@@ -2323,7 +2374,7 @@ function nodeSemanticsHold(
     if (run.outcome === "captured") {
       if (
         !SHA256.test(run.observedTeamConfigsSha256) ||
-        !SHA256.test(run.artifactFingerprintSha256) ||
+        run.observedTeamConfigsSha256 !== node.materializedConfigsSha256 ||
         !sameStrings(
           Object.keys(run.sheetFingerprintsByCharacter).sort(compareText),
           [...characterIds].sort(compareText),
@@ -2434,6 +2485,9 @@ function nodeSemanticsHold(
   }
   if (
     node.observedCartesianCompositionCount !== node.compositions.length ||
+    (postGenerationCapWithholding
+      ? node.compositions.length !== 0
+      : BigInt(node.compositions.length) !== expected) ||
     !exactEqual(node.provenanceSummary, summarizeProvenance(node.compositions))
   ) {
     return false;
@@ -2557,7 +2611,11 @@ function nodeSemanticsHold(
     );
   }
   return (
-    (node.compositions.length === 0 || compositionFailures.length > 0) &&
+    (postGenerationCapWithholding
+      ? node.compositions.length === 0 &&
+        compositionFailures.length === 0 &&
+        node.issues.length === 0
+      : compositionFailures.length > 0) &&
     node.boundedTechnicalReference === null &&
     node.intactGeneratorEndpointTechnicalReference === null &&
     node.boundedReferenceOverIntact.status === "not-comparable" &&
@@ -2587,6 +2645,11 @@ function progressSemanticsHold(
   rows: ProgressObservation[],
   requireFinal: boolean,
 ): boolean {
+  if (
+    rows.length > HARD_MAXIMUM_GENERATOR_RESULT_EMISSIONS_PER_INVOCATION
+  ) {
+    return false;
+  }
   let previous = -1;
   let doneIndex = -1;
   for (const [index, row] of rows.entries()) {
@@ -2638,6 +2701,15 @@ function calculatorAgreementSemanticsHold(
     BoundedFullTeamEquipmentCompositionObservation["calculatorAgreement"]
   >,
 ): boolean {
+  const expectedAbsoluteDifference = normalizeNumber(
+    Math.abs(
+      agreement.interpretedObjective - agreement.compiledObjective,
+    ),
+  );
+  const expectedAllowedDifference = canonicalCalculatorAllowedDifference(
+    agreement.interpretedObjective,
+    agreement.compiledObjective,
+  );
   return (
     Number.isFinite(agreement.interpretedObjective) &&
     Number.isFinite(agreement.compiledObjective) &&
@@ -2646,14 +2718,32 @@ function calculatorAgreementSemanticsHold(
     objective === agreement.interpretedObjective &&
     agreement.absoluteDifference >= 0 &&
     agreement.allowedDifference >= 0 &&
-    agreement.absoluteDifference <= agreement.allowedDifference &&
-    agreement.absoluteDifference ===
-      normalizeNumber(
-        Math.abs(
-          agreement.interpretedObjective - agreement.compiledObjective,
-        ),
-      )
+    agreement.absoluteDifference === expectedAbsoluteDifference &&
+    agreement.allowedDifference === expectedAllowedDifference &&
+    expectedAbsoluteDifference <= expectedAllowedDifference
   );
+}
+
+function canonicalCalculatorAllowedDifference(
+  interpretedObjective: number,
+  compiledObjective: number,
+): number {
+  return normalizeNumber(
+    Math.max(
+      ABSOLUTE_CALCULATOR_TOLERANCE,
+      RELATIVE_CALCULATOR_TOLERANCE *
+        Math.max(
+          1,
+          Math.abs(interpretedObjective),
+          Math.abs(compiledObjective),
+        ),
+    ),
+  );
+}
+
+function equalWithinFloatingPointRoundoff(left: number, right: number): boolean {
+  const scale = Math.max(Math.abs(left), Math.abs(right), Number.MIN_VALUE);
+  return Math.abs(left - right) <= 32 * Number.EPSILON * scale;
 }
 
 function enumeratePublicCartesian(
