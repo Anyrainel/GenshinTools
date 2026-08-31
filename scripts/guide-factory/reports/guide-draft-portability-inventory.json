@@ -1,0 +1,3836 @@
+{
+  "authorityBoundary": {
+    "applicabilityIsRecommendation": false,
+    "durableReportBytesAuthenticated": true,
+    "selectedSurfaceCompletenessClaimed": false,
+    "upstreamClaimsReauthorized": false,
+    "upstreamFreshAuthenticationPerformedByThisInventory": false
+  },
+  "capabilityBoundary": {
+    "supportsDamageClaims": false,
+    "supportsEnergyRecoveryClaims": false,
+    "supportsEquipmentRecommendationClaims": false,
+    "supportsGuideClaims": false,
+    "supportsOptimizerClaims": false,
+    "supportsPortabilityInventory": true,
+    "supportsPublication": false,
+    "supportsRankClaims": false,
+    "supportsRotationClaims": false,
+    "supportsStatRecommendationClaims": false,
+    "supportsTeamRecommendationClaims": false
+  },
+  "classification": "authenticated-durable-surface-portability-gap-inventory",
+  "formatBoundary": {
+    "assessedCorePath": "scripts/guide-factory/src/guideDraftPacket.ts",
+    "assessedCoreSha256": "defde895365ae4b4b402f66483a04e3e5536d933abc516492e74acf188ed6ef5",
+    "assessmentMethod": "reviewed-exact-core-fingerprint",
+    "nonCp57UpstreamAnchorSupported": false,
+    "portabilityStatus": "blocked-pending-generic-anchor-and-readiness-refactor",
+    "relationStateDiscriminatorsAreCp57Specific": true,
+    "reusableClosedFieldTreePolicyPresent": true,
+    "reusableExactProvenanceHashPolicyPresent": true,
+    "upstreamAnchorModel": "cp57-envelope-candidate-artifact-profile",
+    "zeroLocalRelationPacketSupported": false
+  },
+  "generatedFrom": [
+    {
+      "path": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
+      "sha256": "758e65a9c1204cbae13691ba509629b31bdc3cdbbf634f76528522b13e5047b0"
+    },
+    {
+      "path": "scripts/guide-factory/reports/itto-request-context-applicability.json",
+      "sha256": "219575200d70d6bc50bee235711ecec6f585c5621fa31cd012f7a5a0c58d3a70"
+    },
+    {
+      "path": "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
+      "sha256": "0d06e54e9f1ccff31242a4eeebe421bddf80f25e33eae7eca3bbd13d1d2caf39"
+    },
+    {
+      "path": "scripts/guide-factory/reports/klee-team-scoped-claim-join-witness.json",
+      "sha256": "b8496e22a46db5122943126419a05d3df8304bc9c56c92f8df2a847f4fd80c1a"
+    },
+    {
+      "path": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
+      "sha256": "0e2f39fc1d72f5ffb90bda7445addcfdb4ce2528aa68b6fbeb02ac56c359f218"
+    },
+    {
+      "path": "scripts/guide-factory/reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json",
+      "sha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e"
+    },
+    {
+      "path": "scripts/guide-factory/src/assemble-guide-draft-portability-inventory.ts",
+      "sha256": "94c2a29a646b59a6a7a3221c67c27e0ca37561c52d4c4abfc1167bcf0beecc61"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideDraftPacket.ts",
+      "sha256": "defde895365ae4b4b402f66483a04e3e5536d933abc516492e74acf188ed6ef5"
+    },
+    {
+      "path": "scripts/guide-factory/src/guideDraftPortabilityInventory.ts",
+      "sha256": "27bc8271ed34e3609b9b1f41247c9aaff43106cf5d16307a7d65a0f66053c765"
+    }
+  ],
+  "inventoryId": "six-character-guide-draft-portability-cp59",
+  "publicationStatus": "withheld-offline-experimental-inventory",
+  "rawInputBoundary": {
+    "byteHashClosure": true,
+    "canonicalJsonByteObjectParity": true,
+    "exactPathSet": true,
+    "jsonReportCount": 6,
+    "sourceFileCount": 9,
+    "status": "accepted"
+  },
+  "reportSha256": "8d7e5682423542df933c9352e3f8d1fc14605904279ea4e8092bd30ff27db70b",
+  "reportType": "guide-draft-portability-inventory",
+  "schemaVersion": 1,
+  "scopeBoundary": {
+    "coverageScoreComputed": false,
+    "energyRecovery": "inventory-boundary-only-deferred-by-user",
+    "fieldFamilies": [
+      "request.entered",
+      "request.runtime-effective-talents",
+      "team.exact-context",
+      "team.subject-investment",
+      "authority.source-review",
+      "authority.source-authored-request-coverage",
+      "authority.composition-authorship",
+      "authority.complete-artifact-assignment",
+      "authority.complete-build",
+      "weapon.observed-options",
+      "weapon.selected",
+      "weapon.refinement",
+      "weapon.quantitative-performance",
+      "artifacts.set-options",
+      "artifacts.selected-set",
+      "artifacts.main-stats.sands.observed-options",
+      "artifacts.main-stats.sands.guarded-alternatives",
+      "artifacts.main-stats.sands.selected",
+      "artifacts.main-stats.goblet.observed-options",
+      "artifacts.main-stats.goblet.guarded-alternatives",
+      "artifacts.main-stats.goblet.selected",
+      "artifacts.main-stats.circlet.observed-options",
+      "artifacts.main-stats.circlet.guarded-alternatives",
+      "artifacts.main-stats.circlet.selected",
+      "substats.source-groups",
+      "substats.local-relation-overlays",
+      "substats.selected-allocation",
+      "substats.scalar-weights",
+      "computation.enemy-scenario",
+      "computation.formula-counts",
+      "computation.rotation-and-buff-coverage",
+      "computation.team-total-damage",
+      "computation.energy-recharge"
+    ],
+    "fieldFamilyCount": 33,
+    "majorityVoteComputed": false,
+    "subjectRankComputed": false
+  },
+  "selectedTrial": {
+    "characterId": "klee",
+    "evidenceGateEligibleCharacterIds": [
+      "klee"
+    ],
+    "nextRequiredWork": "generalize-upstream-anchor-and-zero-relation-readiness",
+    "selectionIsCharacterRank": false,
+    "selectionIsGuideRecommendation": false,
+    "selectionMethod": "exact-boolean-evidence-gate-not-score"
+  },
+  "subjects": [
+    {
+      "characterId": "arataki_itto",
+      "evidenceReferences": [
+        {
+          "canonicalValueSha256": "0933f568df6e4e91bb0a4856b1a6a919a1ec71080b663eb5a7d5511624e61f2e",
+          "evidenceId": "itto.request-contexts",
+          "family": "request.entered",
+          "itemCount": 3,
+          "jsonPointer": "/projections",
+          "observationKind": "request-context",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "84de95655844f198131a217bf838fa30e92a9310a635c5c0b0d8e191f8868a97",
+          "evidenceId": "itto.team-pointers",
+          "family": "team.exact-context",
+          "itemCount": 3,
+          "jsonPointer": "/projections/0/teamProjections",
+          "observationKind": "team-surface",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "415a330b45bb1748d01639d4b7a43624acc3ce386de414ee19b40831ef6e1e79",
+          "evidenceId": "itto.sands-claim",
+          "family": "artifacts.main-stats.sands.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/0",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "00bb8afe463884977cdf07197f447f3db057551fbf92585df01a0253463f7530",
+          "evidenceId": "itto.goblet-claim",
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/1",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "bebc82a968f41c24872600b14faaaba0eb1a886bf46041f99d7a539d37ad9da9",
+          "evidenceId": "itto.goblet-guard-claim",
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/2",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "8f4c01653b018733024c5b716489aa1faf4092c8cf43381ff21f50b7af09b8b9",
+          "evidenceId": "itto.circlet-claim",
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/3",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "9bcb5316e9d768da89bd07f5d6cf8b8d9f05d053f4b3c53a8bb481ad82352c5e",
+          "evidenceId": "itto.substat-claims",
+          "family": "substats.source-groups",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/4",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "4edd2474896f39a0866dbe8265b33171e581a71b37430f074066d5d7f99e57d0",
+          "evidenceId": "itto.artifact-claims",
+          "family": "artifacts.set-options",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/7",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "07e3fa5d1ff30180d3521c70c281b2f09372818abd3023e076ccc1118a489a33",
+          "evidenceId": "itto.weapon-claims",
+          "family": "weapon.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/projections/0/teamProjections/0/claimProjections/11",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "9425ee85a05291f3ab94093baa4c876b0629ea36fd36198e03f255854b17490d",
+          "evidenceId": "itto.review",
+          "family": "authority.source-review",
+          "itemCount": null,
+          "jsonPointer": "/publicationStatus",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "itto.source-authorization",
+          "family": "authority.source-authored-request-coverage",
+          "itemCount": null,
+          "jsonPointer": "/supportsSourceAuthorization",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "itto.composition",
+          "family": "authority.composition-authorship",
+          "itemCount": null,
+          "jsonPointer": "/buildComposition",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "evidenceId": "itto.build-count",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/summary/assembledBuildCount",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        }
+      ],
+      "fieldStates": [
+        {
+          "evidenceReferenceIds": [
+            "itto.request-contexts"
+          ],
+          "family": "request.entered",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "multiple-independent-contexts-not-one-request"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.runtime-effective-talents",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "effective-talent-facts-absent",
+            "effective-talents-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.team-pointers"
+          ],
+          "family": "team.exact-context",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "exact-team-roster-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "team.subject-investment",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "subject-investment-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.review"
+          ],
+          "family": "authority.source-review",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.source-authorization"
+          ],
+          "family": "authority.source-authored-request-coverage",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "source-request-coverage-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.composition"
+          ],
+          "family": "authority.composition-authorship",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "authority.complete-artifact-assignment",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-artifact-assignment-absent",
+            "artifact-assignment-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.build-count"
+          ],
+          "family": "authority.complete-build",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-build-evidence-absent",
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.weapon-claims"
+          ],
+          "family": "weapon.observed-options",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "option-payloads-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.refinement",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "refinement-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.quantitative-performance",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "quantitative-performance-evidence-absent",
+            "quantitative-performance-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.artifact-claims"
+          ],
+          "family": "artifacts.set-options",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "option-payloads-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.selected-set",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.sands-claim"
+          ],
+          "family": "artifacts.main-stats.sands.observed-options",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "option-payloads-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.goblet-claim"
+          ],
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "option-payloads-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.goblet-guard-claim"
+          ],
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "guarded-choice-unresolved",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "guarded-source-observation",
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.circlet-claim"
+          ],
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "option-payloads-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "itto.substat-claims"
+          ],
+          "family": "substats.source-groups",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "option-payloads-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.local-relation-overlays",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "local-relation-overlay-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.selected-allocation",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "substat-allocation-evidence-absent",
+            "ideal-substat-allocation-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.scalar-weights",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "scalar-weights-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.enemy-scenario",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "enemy-scenario-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.formula-counts",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "formula-count-evidence-absent",
+            "formula-counts-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.rotation-and-buff-coverage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "rotation-coverage-evidence-absent",
+            "rotation-coverage-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.team-total-damage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "team-total-evidence-absent",
+            "team-total-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.energy-recharge",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "energy-recharge-deferred-by-scope"
+          ],
+          "surfaceKinds": [
+            "scope-deferred"
+          ]
+        }
+      ],
+      "reviewAuthorityGap": {
+        "factoryAuthoredJoinsAreSourceAuthorization": false,
+        "gapClass": "review-authority",
+        "publicationAuthorized": false,
+        "sourcePermissionStatus": "unknown",
+        "sourceReviewStatus": "unreviewed"
+      },
+      "sourceSurface": {
+        "byteLength": 333121,
+        "canonicalObjectSha256": "219575200d70d6bc50bee235711ecec6f585c5621fa31cd012f7a5a0c58d3a70",
+        "classification": "descriptive-request-account-applicability-projection",
+        "durableBytesAuthenticated": true,
+        "embeddedGeneratedFromCanonicalSha256": "f497399a97fab84919a414d61ccb0b5678f882364db2f61ffcc9e34f945c4884",
+        "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
+        "fileSha256": "219575200d70d6bc50bee235711ecec6f585c5621fa31cd012f7a5a0c58d3a70",
+        "publicationStatus": "withheld-experimental-context",
+        "reportPath": "scripts/guide-factory/reports/itto-request-context-applicability.json",
+        "reportType": "itto-request-context-applicability-report",
+        "upstreamFreshAuthenticationPerformedByThisInventory": false,
+        "upstreamRecomputationPerformedByThisInventory": false
+      },
+      "trialDisposition": "withheld-additional-gaps",
+      "trialGate": {
+        "allThreeMainStatSlotsSurface": false,
+        "artifactSetOptionSurface": false,
+        "currentGenericPacketFormatAccepted": false,
+        "evidenceGatePassed": false,
+        "exactTeamRosterSurface": false,
+        "independentApplicabilityWithoutWholeBuildComposition": false,
+        "singleRequestTeamInterpretation": false,
+        "subjectScopedRequestSurface": true,
+        "zeroAssembledBuildsAndCandidates": true
+      }
+    },
+    {
+      "characterId": "klee",
+      "evidenceReferences": [
+        {
+          "canonicalValueSha256": "684cbc0dbd7b86151643fb6e70b349b0285b9e226f1876d82a396749a28ef4c8",
+          "evidenceId": "klee.request-context",
+          "family": "request.entered",
+          "itemCount": 3,
+          "jsonPointer": "/positiveWitness/claims/0/requestProjection/requestContextBindings/0/requestPredicate",
+          "observationKind": "request-context",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "dc875561def899f430a4f6c60a8916a957b1619dc457dd655cf430205ba04235",
+          "evidenceId": "klee.exact-team",
+          "family": "team.exact-context",
+          "itemCount": 10,
+          "jsonPointer": "/positiveWitness/team",
+          "observationKind": "team-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
+          "evidenceId": "klee.main-stat.sands",
+          "family": "artifacts.main-stats.sands.observed-options",
+          "itemCount": 5,
+          "jsonPointer": "/positiveWitness/claims/2/sourceClaim/payload",
+          "observationKind": "stat-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
+          "evidenceId": "klee.main-stat.goblet",
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "itemCount": 5,
+          "jsonPointer": "/positiveWitness/claims/1/sourceClaim/payload",
+          "observationKind": "stat-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
+          "evidenceId": "klee.main-stat.circlet",
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "itemCount": 5,
+          "jsonPointer": "/positiveWitness/claims/0/sourceClaim/payload",
+          "observationKind": "stat-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
+          "evidenceId": "klee.artifact-set",
+          "family": "artifacts.set-options",
+          "itemCount": 2,
+          "jsonPointer": "/positiveWitness/claims/3/sourceClaim/payload",
+          "observationKind": "equipment-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "klee.compatibility-block",
+          "family": "weapon.selected",
+          "itemCount": null,
+          "jsonPointer": "/positiveWitness/jointPayloadCompatibilityEstablished",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "f571b1b817b13130ac962e5527a4807dd7e5d3040e09a50a2720f6a5ebc32543",
+          "evidenceId": "klee.negative-control",
+          "family": "team.exact-context",
+          "itemCount": 9,
+          "jsonPointer": "/negativeControl",
+          "observationKind": "blocking-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "00b397150b1a447e5184b85bbe5e1057f4d2dbd2dc75b454dcced43b782ac003",
+          "evidenceId": "klee.review",
+          "family": "authority.source-review",
+          "itemCount": null,
+          "jsonPointer": "/publicationStatus",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "klee.source-authorization",
+          "family": "authority.source-authored-request-coverage",
+          "itemCount": null,
+          "jsonPointer": "/supportsSourceAuthorization",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "14d4c086e9cd8c4fc178a34994ca8d9f49bb3eeeff1df4c8869c0254006de834",
+          "evidenceId": "klee.authorship",
+          "family": "authority.composition-authorship",
+          "itemCount": 9,
+          "jsonPointer": "/authorshipBoundary",
+          "observationKind": "blocking-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "klee.completeness",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/positiveWitness/completenessEstablished",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "evidenceId": "klee.build-count",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/assembledBuildCount",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "klee.selection-boundary",
+          "family": "weapon.selected",
+          "itemCount": null,
+          "jsonPointer": "/choiceSelectionExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        }
+      ],
+      "fieldStates": [
+        {
+          "evidenceReferenceIds": [
+            "klee.request-context"
+          ],
+          "family": "request.entered",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.runtime-effective-talents",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "effective-talent-facts-absent",
+            "effective-talents-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.exact-team",
+            "klee.negative-control"
+          ],
+          "family": "team.exact-context",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "team.subject-investment",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "subject-investment-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.review"
+          ],
+          "family": "authority.source-review",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.source-authorization"
+          ],
+          "family": "authority.source-authored-request-coverage",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "source-request-coverage-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.authorship"
+          ],
+          "family": "authority.composition-authorship",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.compatibility-block"
+          ],
+          "family": "authority.complete-artifact-assignment",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-artifact-assignment-absent",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.completeness",
+            "klee.build-count"
+          ],
+          "family": "authority.complete-build",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-build-evidence-absent",
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.selection-boundary",
+            "klee.compatibility-block"
+          ],
+          "family": "weapon.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.refinement",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "refinement-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.quantitative-performance",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "quantitative-performance-evidence-absent",
+            "quantitative-performance-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.artifact-set"
+          ],
+          "family": "artifacts.set-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.selection-boundary",
+            "klee.compatibility-block"
+          ],
+          "family": "artifacts.selected-set",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.main-stat.sands"
+          ],
+          "family": "artifacts.main-stats.sands.observed-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.selection-boundary"
+          ],
+          "family": "artifacts.main-stats.sands.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.main-stat.goblet"
+          ],
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.selection-boundary"
+          ],
+          "family": "artifacts.main-stats.goblet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.main-stat.circlet"
+          ],
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "klee.selection-boundary"
+          ],
+          "family": "artifacts.main-stats.circlet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.source-groups",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.local-relation-overlays",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "local-relation-overlay-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.selected-allocation",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "substat-allocation-evidence-absent",
+            "ideal-substat-allocation-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.scalar-weights",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "scalar-weights-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.enemy-scenario",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "enemy-scenario-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.formula-counts",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "formula-count-evidence-absent",
+            "formula-counts-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.rotation-and-buff-coverage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "rotation-coverage-evidence-absent",
+            "rotation-coverage-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.team-total-damage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "team-total-evidence-absent",
+            "team-total-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.energy-recharge",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "energy-recharge-deferred-by-scope"
+          ],
+          "surfaceKinds": [
+            "scope-deferred"
+          ]
+        }
+      ],
+      "reviewAuthorityGap": {
+        "factoryAuthoredJoinsAreSourceAuthorization": false,
+        "gapClass": "review-authority",
+        "publicationAuthorized": false,
+        "sourcePermissionStatus": "unknown",
+        "sourceReviewStatus": "unreviewed"
+      },
+      "sourceSurface": {
+        "byteLength": 125287,
+        "canonicalObjectSha256": "b8496e22a46db5122943126419a05d3df8304bc9c56c92f8df2a847f4fd80c1a",
+        "classification": "authenticated-descriptive-independent-applicability-witness",
+        "durableBytesAuthenticated": true,
+        "embeddedGeneratedFromCanonicalSha256": "f6f50b2a20a82b1b2b139ac95aa6071636a863db2cf594485d4090e732b67ac7",
+        "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
+        "fileSha256": "b8496e22a46db5122943126419a05d3df8304bc9c56c92f8df2a847f4fd80c1a",
+        "publicationStatus": "withheld-unreviewed-factory-evidence-join",
+        "reportPath": "scripts/guide-factory/reports/klee-team-scoped-claim-join-witness.json",
+        "reportType": "klee-team-scoped-condition-resolved-claim-join-witness",
+        "upstreamFreshAuthenticationPerformedByThisInventory": false,
+        "upstreamRecomputationPerformedByThisInventory": false
+      },
+      "trialDisposition": "selected-for-next-format-portability-trial",
+      "trialGate": {
+        "allThreeMainStatSlotsSurface": true,
+        "artifactSetOptionSurface": true,
+        "currentGenericPacketFormatAccepted": false,
+        "evidenceGatePassed": true,
+        "exactTeamRosterSurface": true,
+        "independentApplicabilityWithoutWholeBuildComposition": true,
+        "singleRequestTeamInterpretation": true,
+        "subjectScopedRequestSurface": true,
+        "zeroAssembledBuildsAndCandidates": true
+      }
+    },
+    {
+      "characterId": "sangonomiya_kokomi",
+      "evidenceReferences": [
+        {
+          "canonicalValueSha256": "8db80632f15050aaf81936936d33378d5bff769b62afa27a91ac8fb00e164e9c",
+          "evidenceId": "kokomi.exact-team",
+          "family": "team.exact-context",
+          "itemCount": 10,
+          "jsonPointer": "/sourceLocalSlice/exactTeamControls/0",
+          "observationKind": "team-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "bfd412bb94e8e50e9deec6813ef5329eb71c656fdd1af64fc8b5a2243543e1a0",
+          "evidenceId": "kokomi.artifact-set",
+          "family": "artifacts.set-options",
+          "itemCount": 2,
+          "jsonPointer": "/selectedOccurrences/0/payload",
+          "observationKind": "equipment-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "33345e2374940821add8ceec1b6a759d83221806c91ee7eafbc17f39c234bb8e",
+          "evidenceId": "kokomi.artifact-holdouts",
+          "family": "artifacts.set-options",
+          "itemCount": 4,
+          "jsonPointer": "/holdoutOccurrences",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "d7f34a45b0f7ec012ca98be01192878cb195d02634b4801f538ff644e6953df4",
+          "evidenceId": "kokomi.review",
+          "family": "authority.source-review",
+          "itemCount": null,
+          "jsonPointer": "/publicationStatus",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "kokomi.source-authorization",
+          "family": "authority.source-authored-request-coverage",
+          "itemCount": null,
+          "jsonPointer": "/supportsSourceAuthorization",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "kokomi.assignment",
+          "family": "authority.complete-artifact-assignment",
+          "itemCount": null,
+          "jsonPointer": "/artifactAssignmentExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "kokomi.composition",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/buildCompositionExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        }
+      ],
+      "fieldStates": [
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.entered",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "request-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.runtime-effective-talents",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "effective-talent-facts-absent",
+            "effective-talents-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.exact-team"
+          ],
+          "family": "team.exact-context",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "team.subject-investment",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "subject-investment-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.review"
+          ],
+          "family": "authority.source-review",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.source-authorization"
+          ],
+          "family": "authority.source-authored-request-coverage",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "source-request-coverage-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.composition"
+          ],
+          "family": "authority.composition-authorship",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.assignment"
+          ],
+          "family": "authority.complete-artifact-assignment",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-artifact-assignment-absent",
+            "artifact-assignment-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.composition"
+          ],
+          "family": "authority.complete-build",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-build-evidence-absent",
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.refinement",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "refinement-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.quantitative-performance",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "quantitative-performance-evidence-absent",
+            "quantitative-performance-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "kokomi.artifact-set",
+            "kokomi.artifact-holdouts"
+          ],
+          "family": "artifacts.set-options",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "holdout-locator-without-payload"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "holdout-locator-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.selected-set",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.source-groups",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.local-relation-overlays",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "local-relation-overlay-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.selected-allocation",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "substat-allocation-evidence-absent",
+            "ideal-substat-allocation-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.scalar-weights",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "scalar-weights-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.enemy-scenario",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "enemy-scenario-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.formula-counts",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "formula-count-evidence-absent",
+            "formula-counts-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.rotation-and-buff-coverage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "rotation-coverage-evidence-absent",
+            "rotation-coverage-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.team-total-damage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "team-total-evidence-absent",
+            "team-total-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.energy-recharge",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "energy-recharge-deferred-by-scope"
+          ],
+          "surfaceKinds": [
+            "scope-deferred"
+          ]
+        }
+      ],
+      "reviewAuthorityGap": {
+        "factoryAuthoredJoinsAreSourceAuthorization": false,
+        "gapClass": "review-authority",
+        "publicationAuthorized": false,
+        "sourcePermissionStatus": "unknown",
+        "sourceReviewStatus": "unreviewed"
+      },
+      "sourceSurface": {
+        "byteLength": 31109,
+        "canonicalObjectSha256": "0e2f39fc1d72f5ffb90bda7445addcfdb4ce2528aa68b6fbeb02ac56c359f218",
+        "classification": "authenticated-source-local-condition-binding-slice",
+        "durableBytesAuthenticated": true,
+        "embeddedGeneratedFromCanonicalSha256": "5037e5a86968003943ccfa7514a625f1f97d2c835cc07c54797ea6a47a9da162",
+        "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
+        "fileSha256": "0e2f39fc1d72f5ffb90bda7445addcfdb4ce2528aa68b6fbeb02ac56c359f218",
+        "publicationStatus": "withheld-unreviewed-source-slice",
+        "reportPath": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
+        "reportType": "kokomi-source-local-artifact-slice",
+        "upstreamFreshAuthenticationPerformedByThisInventory": false,
+        "upstreamRecomputationPerformedByThisInventory": false
+      },
+      "trialDisposition": "withheld-additional-gaps",
+      "trialGate": {
+        "allThreeMainStatSlotsSurface": false,
+        "artifactSetOptionSurface": true,
+        "currentGenericPacketFormatAccepted": false,
+        "evidenceGatePassed": false,
+        "exactTeamRosterSurface": true,
+        "independentApplicabilityWithoutWholeBuildComposition": true,
+        "singleRequestTeamInterpretation": false,
+        "subjectScopedRequestSurface": false,
+        "zeroAssembledBuildsAndCandidates": true
+      }
+    },
+    {
+      "characterId": "diona",
+      "evidenceReferences": [
+        {
+          "canonicalValueSha256": "60d6988a1529e55136555defcb90694a648761e9a4e618e9c4b08a0e6a9b8a2a",
+          "evidenceId": "diona.request-context",
+          "family": "request.entered",
+          "itemCount": 3,
+          "jsonPointer": "/sourceLocalSlice/requestContextReport/teamProjections/0/claimProjections/0/requestContextBindings/0/requestPredicate",
+          "observationKind": "request-context",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "81536781a2e7e7e7817c2566b326c881004e03523272a48828a02bd4673d06f1",
+          "evidenceId": "diona.exact-team",
+          "family": "team.exact-context",
+          "itemCount": 10,
+          "jsonPointer": "/sourceLocalSlice/exactTeamControls/0",
+          "observationKind": "team-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "4e839978e28d338288feea3678928a73c9bd8de3a64a2abac115e2b1b16c1716",
+          "evidenceId": "diona.artifact-set",
+          "family": "artifacts.set-options",
+          "itemCount": 2,
+          "jsonPointer": "/selectedOccurrences/0/payload",
+          "observationKind": "equipment-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "532b676ad15d5ba4a1f9495a64c9e3609f16b0eec0f22c7c2d1e8ae50ec6ddbd",
+          "evidenceId": "diona.artifact-holdout",
+          "family": "artifacts.set-options",
+          "itemCount": 15,
+          "jsonPointer": "/holdoutOccurrences/0",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "56c790b18b2f6449e84dd864fd4eaf7e8a9371fa8e89d18c86400f9b5c470e29",
+          "evidenceId": "diona.circlet-holdout",
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "itemCount": 16,
+          "jsonPointer": "/holdoutOccurrences/6",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "419c030d3719577b222313934b83a3c23f438aa995c114c35b03d903572b62e6",
+          "evidenceId": "diona.substat-holdout",
+          "family": "substats.source-groups",
+          "itemCount": 15,
+          "jsonPointer": "/holdoutOccurrences/7",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "8ecd3f25f4b04e2626520e9fbf5749db61c72606f0cc7a25ad3b2790438723d6",
+          "evidenceId": "diona.weapon-holdout",
+          "family": "weapon.observed-options",
+          "itemCount": 15,
+          "jsonPointer": "/holdoutOccurrences/8",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "d7f34a45b0f7ec012ca98be01192878cb195d02634b4801f538ff644e6953df4",
+          "evidenceId": "diona.review",
+          "family": "authority.source-review",
+          "itemCount": null,
+          "jsonPointer": "/publicationStatus",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "diona.source-authorization",
+          "family": "authority.source-authored-request-coverage",
+          "itemCount": null,
+          "jsonPointer": "/supportsSourceAuthorization",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "diona.assignment",
+          "family": "authority.complete-artifact-assignment",
+          "itemCount": null,
+          "jsonPointer": "/artifactAssignmentExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "diona.composition",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/buildCompositionExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        }
+      ],
+      "fieldStates": [
+        {
+          "evidenceReferenceIds": [
+            "diona.request-context"
+          ],
+          "family": "request.entered",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.runtime-effective-talents",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "effective-talent-facts-absent",
+            "effective-talents-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.exact-team"
+          ],
+          "family": "team.exact-context",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "team.subject-investment",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "subject-investment-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.review"
+          ],
+          "family": "authority.source-review",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.source-authorization"
+          ],
+          "family": "authority.source-authored-request-coverage",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "source-request-coverage-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.composition"
+          ],
+          "family": "authority.composition-authorship",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.assignment"
+          ],
+          "family": "authority.complete-artifact-assignment",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-artifact-assignment-absent",
+            "artifact-assignment-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.composition"
+          ],
+          "family": "authority.complete-build",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-build-evidence-absent",
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.weapon-holdout"
+          ],
+          "family": "weapon.observed-options",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "holdout-locator-without-payload"
+          ],
+          "surfaceKinds": [
+            "holdout-locator-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.refinement",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "refinement-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.quantitative-performance",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "quantitative-performance-evidence-absent",
+            "quantitative-performance-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.artifact-set",
+            "diona.artifact-holdout"
+          ],
+          "family": "artifacts.set-options",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "holdout-locator-without-payload"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "holdout-locator-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.selected-set",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.circlet-holdout"
+          ],
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "holdout-locator-without-payload"
+          ],
+          "surfaceKinds": [
+            "holdout-locator-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "diona.substat-holdout"
+          ],
+          "family": "substats.source-groups",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "holdout-locator-without-payload"
+          ],
+          "surfaceKinds": [
+            "holdout-locator-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.local-relation-overlays",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "local-relation-overlay-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.selected-allocation",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "substat-allocation-evidence-absent",
+            "ideal-substat-allocation-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.scalar-weights",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "scalar-weights-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.enemy-scenario",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "enemy-scenario-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.formula-counts",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "formula-count-evidence-absent",
+            "formula-counts-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.rotation-and-buff-coverage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "rotation-coverage-evidence-absent",
+            "rotation-coverage-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.team-total-damage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "team-total-evidence-absent",
+            "team-total-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.energy-recharge",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "energy-recharge-deferred-by-scope"
+          ],
+          "surfaceKinds": [
+            "scope-deferred"
+          ]
+        }
+      ],
+      "reviewAuthorityGap": {
+        "factoryAuthoredJoinsAreSourceAuthorization": false,
+        "gapClass": "review-authority",
+        "publicationAuthorized": false,
+        "sourcePermissionStatus": "unknown",
+        "sourceReviewStatus": "unreviewed"
+      },
+      "sourceSurface": {
+        "byteLength": 61623,
+        "canonicalObjectSha256": "758e65a9c1204cbae13691ba509629b31bdc3cdbbf634f76528522b13e5047b0",
+        "classification": "authenticated-source-local-condition-binding-slice",
+        "durableBytesAuthenticated": true,
+        "embeddedGeneratedFromCanonicalSha256": "c6c777b66dc3a4662a0b50daf37e42ef87510c389c75e5b5b620ec882c3b2af2",
+        "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
+        "fileSha256": "758e65a9c1204cbae13691ba509629b31bdc3cdbbf634f76528522b13e5047b0",
+        "publicationStatus": "withheld-unreviewed-source-slice",
+        "reportPath": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
+        "reportType": "diona-source-local-support-slice",
+        "upstreamFreshAuthenticationPerformedByThisInventory": false,
+        "upstreamRecomputationPerformedByThisInventory": false
+      },
+      "trialDisposition": "withheld-additional-gaps",
+      "trialGate": {
+        "allThreeMainStatSlotsSurface": false,
+        "artifactSetOptionSurface": true,
+        "currentGenericPacketFormatAccepted": false,
+        "evidenceGatePassed": false,
+        "exactTeamRosterSurface": true,
+        "independentApplicabilityWithoutWholeBuildComposition": true,
+        "singleRequestTeamInterpretation": true,
+        "subjectScopedRequestSurface": true,
+        "zeroAssembledBuildsAndCandidates": true
+      }
+    },
+    {
+      "characterId": "xiao",
+      "evidenceReferences": [
+        {
+          "canonicalValueSha256": "8a8d9b987651094411c5ea954b107af5781759dabae579608d772b3b5c57c6e5",
+          "evidenceId": "xiao.team-id-only",
+          "family": "team.exact-context",
+          "itemCount": null,
+          "jsonPointer": "/candidates/0/teamRecordId",
+          "observationKind": "upstream-fragment-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "74647051776a514d9bb8dd9d3fde892374c7c5f14ff1cd2224649e68456c9612",
+          "evidenceId": "xiao.weapon-groups",
+          "family": "weapon.observed-options",
+          "itemCount": 2,
+          "jsonPointer": "/rankedFiveStarBranchGroups",
+          "observationKind": "equipment-surface",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "4bf4f78a43f33f7747bd6fb526673da6731e6b5c68390dbff5170c5dbbfad3ea",
+          "evidenceId": "xiao.four-star-group",
+          "family": "weapon.observed-options",
+          "itemCount": 1,
+          "jsonPointer": "/unrankedFourStarBranchGroups",
+          "observationKind": "equipment-surface",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "df6ecaf720aa4e11ddcb26191c1eefbb46b14a918e79ced3789c270ceef49acf",
+          "evidenceId": "xiao.artifact-set",
+          "family": "artifacts.set-options",
+          "itemCount": 6,
+          "jsonPointer": "/singletonAxes/artifactSet",
+          "observationKind": "equipment-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "128def0b10a13dca9c50216068f566ff4c423a4d5552c45367423d7453adfb7b",
+          "evidenceId": "xiao.sands",
+          "family": "artifacts.main-stats.sands.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/singletonAxes/sands",
+          "observationKind": "stat-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "4652cd296832c73f76240aca948001234977424808136db1b92a5189ff49e065",
+          "evidenceId": "xiao.goblet",
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/singletonAxes/goblet",
+          "observationKind": "stat-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "50457bacc8ecac3bb8472f5e08e87880d873617f775c5024ce4011d7a7216c21",
+          "evidenceId": "xiao.guarded-circlet",
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "itemCount": 7,
+          "jsonPointer": "/missingAxes/circlet",
+          "observationKind": "blocking-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "7c1c885d7e3cc9fc1918ecf03a1bf43dcf01c89ab74f4f65a4b6c5b52b3895ff",
+          "evidenceId": "xiao.guarded-substats",
+          "family": "substats.source-groups",
+          "itemCount": 7,
+          "jsonPointer": "/missingAxes/substats",
+          "observationKind": "blocking-boundary",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "eedc98c35bb10548427bc12ade8345f3333cedcdf85d23926bb605f5bc478096",
+          "evidenceId": "xiao.request-views",
+          "family": "request.entered",
+          "itemCount": 2,
+          "jsonPointer": "/candidates/0/baseViewEvidence",
+          "observationKind": "blocking-boundary",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "da80e87908c7fea3d717b404a7d1f44f40601c90392d0cac7182438336acdca3",
+          "evidenceId": "xiao.refinement",
+          "family": "weapon.refinement",
+          "itemCount": null,
+          "jsonPointer": "/candidates/0/axes/0/refinement",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "07936d19723bba501af17b25488c629810013193fb34ca1abb7fade6b140e875",
+          "evidenceId": "xiao.candidates",
+          "family": "authority.composition-authorship",
+          "itemCount": 6,
+          "jsonPointer": "/candidates",
+          "observationKind": "computation-surface",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "xiao.formula-boundary",
+          "family": "computation.formula-counts",
+          "itemCount": null,
+          "jsonPointer": "/formulaInputsUsed",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "c0b5462d4ee3da42572cfc24bb2b7a3c8ee7526dfbd365f3cb42bd4215969447",
+          "evidenceId": "xiao.review",
+          "family": "authority.source-review",
+          "itemCount": null,
+          "jsonPointer": "/publicationStatus",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "xiao.source-authorization",
+          "family": "authority.source-authored-request-coverage",
+          "itemCount": null,
+          "jsonPointer": "/supportsSourceAuthorization",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "xiao.selection-boundary",
+          "family": "weapon.selected",
+          "itemCount": null,
+          "jsonPointer": "/choiceSelectionExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "evidenceId": "xiao.build-count",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/summary/assembledBuildCount",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        }
+      ],
+      "fieldStates": [
+        {
+          "evidenceReferenceIds": [
+            "xiao.request-views"
+          ],
+          "family": "request.entered",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "request-facts-absent",
+            "complete-guide-field-shape-not-serialized"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.runtime-effective-talents",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "effective-talent-facts-absent",
+            "effective-talents-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.team-id-only"
+          ],
+          "family": "team.exact-context",
+          "gapClasses": [
+            "source-data",
+            "format"
+          ],
+          "gapCodes": [
+            "exact-team-roster-absent",
+            "identifier-without-payload"
+          ],
+          "surfaceKinds": [
+            "identifier-reference-only"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.request-views"
+          ],
+          "family": "team.subject-investment",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "subject-investment-facts-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.review"
+          ],
+          "family": "authority.source-review",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.source-authorization"
+          ],
+          "family": "authority.source-authored-request-coverage",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "source-request-coverage-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.candidates"
+          ],
+          "family": "authority.composition-authorship",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.candidates"
+          ],
+          "family": "authority.complete-artifact-assignment",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-artifact-assignment-absent",
+            "artifact-assignment-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.build-count"
+          ],
+          "family": "authority.complete-build",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-build-evidence-absent",
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.weapon-groups",
+            "xiao.four-star-group"
+          ],
+          "family": "weapon.observed-options",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "group-order-is-not-selection"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.selection-boundary"
+          ],
+          "family": "weapon.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.refinement"
+          ],
+          "family": "weapon.refinement",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "refinement-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.quantitative-performance",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "quantitative-performance-evidence-absent",
+            "quantitative-performance-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.artifact-set"
+          ],
+          "family": "artifacts.set-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.selection-boundary"
+          ],
+          "family": "artifacts.selected-set",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.sands"
+          ],
+          "family": "artifacts.main-stats.sands.observed-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.selection-boundary"
+          ],
+          "family": "artifacts.main-stats.sands.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.goblet"
+          ],
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.selection-boundary"
+          ],
+          "family": "artifacts.main-stats.goblet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "option-payloads-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.guarded-circlet"
+          ],
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "guarded-choice-unresolved"
+          ],
+          "surfaceKinds": [
+            "guarded-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.selection-boundary"
+          ],
+          "family": "artifacts.main-stats.circlet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.guarded-substats"
+          ],
+          "family": "substats.source-groups",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "guarded-choice-unresolved"
+          ],
+          "surfaceKinds": [
+            "guarded-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.local-relation-overlays",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "local-relation-overlay-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.selected-allocation",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "substat-allocation-evidence-absent",
+            "ideal-substat-allocation-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.scalar-weights",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "scalar-weights-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.enemy-scenario",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "enemy-scenario-evidence-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "xiao.formula-boundary"
+          ],
+          "family": "computation.formula-counts",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "formula-counts-not-computed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.rotation-and-buff-coverage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "rotation-coverage-evidence-absent",
+            "rotation-coverage-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.team-total-damage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "team-total-evidence-absent",
+            "team-total-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.energy-recharge",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "energy-recharge-deferred-by-scope"
+          ],
+          "surfaceKinds": [
+            "scope-deferred"
+          ]
+        }
+      ],
+      "reviewAuthorityGap": {
+        "factoryAuthoredJoinsAreSourceAuthorization": false,
+        "gapClass": "review-authority",
+        "publicationAuthorized": false,
+        "sourcePermissionStatus": "unknown",
+        "sourceReviewStatus": "unreviewed"
+      },
+      "sourceSurface": {
+        "byteLength": 64466,
+        "canonicalObjectSha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e",
+        "classification": "authenticated-guide-factory-authored-partial-branch-candidate-domain",
+        "durableBytesAuthenticated": true,
+        "embeddedGeneratedFromCanonicalSha256": "ffbb0eb22a94d2b6beef2710f25a833d5fa3ed52cb61580ad4dcce24ede00fe6",
+        "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
+        "fileSha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e",
+        "publicationStatus": "withheld-unreviewed-partial-candidate-domain",
+        "reportPath": "scripts/guide-factory/reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json",
+        "reportType": "xiao-ffxx-non-er-condition-free-branch-candidate-contract",
+        "upstreamFreshAuthenticationPerformedByThisInventory": false,
+        "upstreamRecomputationPerformedByThisInventory": false
+      },
+      "trialDisposition": "withheld-additional-gaps",
+      "trialGate": {
+        "allThreeMainStatSlotsSurface": false,
+        "artifactSetOptionSurface": true,
+        "currentGenericPacketFormatAccepted": false,
+        "evidenceGatePassed": false,
+        "exactTeamRosterSurface": false,
+        "independentApplicabilityWithoutWholeBuildComposition": false,
+        "singleRequestTeamInterpretation": false,
+        "subjectScopedRequestSurface": false,
+        "zeroAssembledBuildsAndCandidates": false
+      }
+    },
+    {
+      "characterId": "keqing",
+      "evidenceReferences": [
+        {
+          "canonicalValueSha256": "9f198a92945211bb0ed9d9277e7462c0b12265c061916ea5ef1b39fac02ce1f6",
+          "evidenceId": "keqing.exact-team",
+          "family": "team.exact-context",
+          "itemCount": 5,
+          "jsonPointer": "/targetBoundary",
+          "observationKind": "team-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "29715926a296a6daa1ad5f8dedd324af3e5acf4384d498e62ac032cee7603834",
+          "evidenceId": "keqing.compositions",
+          "family": "authority.composition-authorship",
+          "itemCount": 2,
+          "jsonPointer": "/compositions",
+          "observationKind": "computation-surface",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "cfd426ba4832feae134622b9206b27bd341d9c356c06ba9e390fb125c5e7369e",
+          "evidenceId": "keqing.weapon-options",
+          "family": "weapon.observed-options",
+          "itemCount": 7,
+          "jsonPointer": "/compositions/0/weapon",
+          "observationKind": "equipment-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "71ce8641ca4a614f809dc513fc8bcb3d3aaad30152b680104e6f5a0f8e5385bf",
+          "evidenceId": "keqing.refinement-policy",
+          "family": "weapon.refinement",
+          "itemCount": 8,
+          "jsonPointer": "/originLedger/r1ExperimentPolicy",
+          "observationKind": "computation-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "29715926a296a6daa1ad5f8dedd324af3e5acf4384d498e62ac032cee7603834",
+          "evidenceId": "keqing.artifact-options",
+          "family": "artifacts.set-options",
+          "itemCount": 2,
+          "jsonPointer": "/compositions",
+          "observationKind": "equipment-surface",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "e79184b3d5f6e4c0d3fe9bd22b94c4617241e4bd586a1f9afd83bf62de2c74f2",
+          "evidenceId": "keqing.stat-profile",
+          "family": "artifacts.main-stats.sands.observed-options",
+          "itemCount": 6,
+          "jsonPointer": "/compositions/0/statProfile",
+          "observationKind": "stat-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "d5bc0990fd1fecaf9215be1b6c5533ec193b928b4c23e52a6a3c677033e9c9a3",
+          "evidenceId": "keqing.guarded-circlet",
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "itemCount": 1,
+          "jsonPointer": "/compositions/0/statProfile/withheldClaims",
+          "observationKind": "blocking-boundary",
+          "valueShape": "array"
+        },
+        {
+          "canonicalValueSha256": "2cc1a773a75e08d548fad7b205fe5b37078e8b6ca981c8213e60d6756a8c226e",
+          "evidenceId": "keqing.formula-lines",
+          "family": "computation.formula-counts",
+          "itemCount": 6,
+          "jsonPointer": "/originLedger/unreviewedFormulaLines",
+          "observationKind": "computation-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "cbc8324a8d08f144570cee576a862b8c6db367880fcae04aa949dc2e032d815d",
+          "evidenceId": "keqing.calc-context",
+          "family": "computation.enemy-scenario",
+          "itemCount": 4,
+          "jsonPointer": "/originLedger/calcContext",
+          "observationKind": "computation-surface",
+          "valueShape": "object"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "keqing.review",
+          "family": "authority.source-review",
+          "itemCount": null,
+          "jsonPointer": "/supportsGuideClaims",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "keqing.source-authorization",
+          "family": "authority.source-authored-request-coverage",
+          "itemCount": null,
+          "jsonPointer": "/supportsSourceAuthoredBuildClaims",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        },
+        {
+          "canonicalValueSha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+          "evidenceId": "keqing.execution",
+          "family": "authority.complete-build",
+          "itemCount": null,
+          "jsonPointer": "/generatorExecuted",
+          "observationKind": "blocking-boundary",
+          "valueShape": "scalar"
+        }
+      ],
+      "fieldStates": [
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.entered",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "request-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "request.runtime-effective-talents",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "effective-talent-facts-absent",
+            "effective-talents-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.exact-team"
+          ],
+          "family": "team.exact-context",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "direct-source-observation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "team.subject-investment",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "subject-investment-facts-absent"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.review"
+          ],
+          "family": "authority.source-review",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.source-authorization"
+          ],
+          "family": "authority.source-authored-request-coverage",
+          "gapClasses": [
+            "source-data"
+          ],
+          "gapCodes": [
+            "source-request-coverage-absent"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.compositions"
+          ],
+          "family": "authority.composition-authorship",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.compositions"
+          ],
+          "family": "authority.complete-artifact-assignment",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-artifact-assignment-absent",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.execution"
+          ],
+          "family": "authority.complete-build",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "complete-build-evidence-absent",
+            "build-composition-not-executed"
+          ],
+          "surfaceKinds": [
+            "explicit-negative-boundary"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.weapon-options",
+            "keqing.compositions"
+          ],
+          "family": "weapon.observed-options",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.compositions"
+          ],
+          "family": "weapon.selected",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.refinement-policy"
+          ],
+          "family": "weapon.refinement",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "experimental-fixture-not-a-guide-field",
+            "refinement-comparison-not-executed"
+          ],
+          "surfaceKinds": [
+            "experimental-fixture"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "weapon.quantitative-performance",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "quantitative-performance-evidence-absent",
+            "quantitative-performance-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.artifact-options",
+            "keqing.compositions"
+          ],
+          "family": "artifacts.set-options",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.compositions"
+          ],
+          "family": "artifacts.selected-set",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.stat-profile"
+          ],
+          "family": "artifacts.main-stats.sands.observed-options",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.sands.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.stat-profile"
+          ],
+          "family": "artifacts.main-stats.goblet.observed-options",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.guarded-alternatives",
+          "gapClasses": [],
+          "gapCodes": [],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.goblet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.stat-profile"
+          ],
+          "family": "artifacts.main-stats.circlet.observed-options",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.guarded-circlet",
+            "keqing.compositions"
+          ],
+          "family": "artifacts.main-stats.circlet.guarded-alternatives",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "guarded-choice-unresolved",
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "guarded-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "artifacts.main-stats.circlet.selected",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "selection-not-executed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.stat-profile"
+          ],
+          "family": "substats.source-groups",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "cross-record-composition-not-a-source-build",
+            "joint-compatibility-not-evaluated"
+          ],
+          "surfaceKinds": [
+            "direct-source-observation",
+            "guide-factory-composition"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.local-relation-overlays",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "local-relation-overlay-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.selected-allocation",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "substat-allocation-evidence-absent",
+            "ideal-substat-allocation-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "substats.scalar-weights",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "scalar-weights-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.calc-context"
+          ],
+          "family": "computation.enemy-scenario",
+          "gapClasses": [
+            "format"
+          ],
+          "gapCodes": [
+            "experimental-fixture-not-a-guide-field"
+          ],
+          "surfaceKinds": [
+            "experimental-fixture"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [
+            "keqing.formula-lines"
+          ],
+          "family": "computation.formula-counts",
+          "gapClasses": [
+            "format",
+            "computation"
+          ],
+          "gapCodes": [
+            "unreviewed-factory-translation-not-a-guide-field",
+            "formula-counts-not-computed"
+          ],
+          "surfaceKinds": [
+            "unreviewed-factory-translation"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.rotation-and-buff-coverage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "rotation-coverage-evidence-absent",
+            "rotation-coverage-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.team-total-damage",
+          "gapClasses": [
+            "source-data",
+            "computation"
+          ],
+          "gapCodes": [
+            "team-total-evidence-absent",
+            "team-total-not-computed"
+          ],
+          "surfaceKinds": [
+            "not-serialized"
+          ]
+        },
+        {
+          "evidenceReferenceIds": [],
+          "family": "computation.energy-recharge",
+          "gapClasses": [
+            "computation"
+          ],
+          "gapCodes": [
+            "energy-recharge-deferred-by-scope"
+          ],
+          "surfaceKinds": [
+            "scope-deferred"
+          ]
+        }
+      ],
+      "reviewAuthorityGap": {
+        "factoryAuthoredJoinsAreSourceAuthorization": false,
+        "gapClass": "review-authority",
+        "publicationAuthorized": false,
+        "sourcePermissionStatus": "unknown",
+        "sourceReviewStatus": "unreviewed"
+      },
+      "sourceSurface": {
+        "byteLength": 30124,
+        "canonicalObjectSha256": "0d06e54e9f1ccff31242a4eeebe421bddf80f25e33eae7eca3bbd13d1d2caf39",
+        "classification": "keqing-lunar-cross-record-composition-contract",
+        "durableBytesAuthenticated": true,
+        "embeddedGeneratedFromCanonicalSha256": "a774bcf630537ad64eac9f7fa2d550a5269763fd8bad95cace397ec971201539",
+        "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
+        "fileSha256": "0d06e54e9f1ccff31242a4eeebe421bddf80f25e33eae7eca3bbd13d1d2caf39",
+        "publicationStatus": null,
+        "reportPath": "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
+        "reportType": null,
+        "upstreamFreshAuthenticationPerformedByThisInventory": false,
+        "upstreamRecomputationPerformedByThisInventory": false
+      },
+      "trialDisposition": "withheld-additional-gaps",
+      "trialGate": {
+        "allThreeMainStatSlotsSurface": true,
+        "artifactSetOptionSurface": true,
+        "currentGenericPacketFormatAccepted": false,
+        "evidenceGatePassed": false,
+        "exactTeamRosterSurface": true,
+        "independentApplicabilityWithoutWholeBuildComposition": false,
+        "singleRequestTeamInterpretation": false,
+        "subjectScopedRequestSurface": false,
+        "zeroAssembledBuildsAndCandidates": false
+      }
+    }
+  ],
+  "summary": {
+    "assembledBuildCount": 0,
+    "computationGapRowCount": 109,
+    "currentFormatAcceptedSubjectCount": 0,
+    "damageComputationCount": 0,
+    "directSourceObservationRowCount": 23,
+    "energyRecoveryComputationCount": 0,
+    "evidenceGateEligibleSubjectCount": 1,
+    "experimentalFixtureRowCount": 2,
+    "explicitNegativeBoundaryRowCount": 42,
+    "fieldFamilyCountPerSubject": 33,
+    "fieldStateCount": 198,
+    "formatGapRowCount": 34,
+    "guardedSourceObservationRowCount": 4,
+    "guideCount": 0,
+    "guideFactoryCompositionRowCount": 11,
+    "holdoutLocatorOnlyRowCount": 5,
+    "identifierReferenceOnlyRowCount": 9,
+    "notSerializedRowCount": 106,
+    "optimizerRunCount": 0,
+    "rankCount": 0,
+    "recommendationCount": 0,
+    "reviewAuthorityGapCount": 6,
+    "scopeDeferredRowCount": 6,
+    "selectedTrialSubjectCount": 1,
+    "sourceDataGapRowCount": 89,
+    "subjectCount": 6,
+    "unreviewedFactoryTranslationRowCount": 1
+  },
+  "validationStatus": "completed-six-character-closed-field-family-audit"
+}

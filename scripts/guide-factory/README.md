@@ -21,17 +21,27 @@ checks this invariant.
 
 ## Current checkpoint
 
-Checkpoint 58 projects checkpoint 57's six authenticated request envelopes into
-a generic, blocker-aware character-guide draft format. Two packets have all
-three request-local relations admitted and four retain counterexamples, but all
-six remain incomplete and publication-withheld. Across 200 explicit field
-states, the projection preserves the exact team, entered and runtime-effective
-talents as separate facts, Gest and 4pc Husk observations, every main-stat
-option and guard, the original unordered source groups, and all 18 relation
-overlays. Thirty-six selections stay null and 128 deterministic blockers state
-what still prevents a guide. Nothing is selected or ranked, no total stat order
-or scalar weight is synthesized, and rotation, team-total, DPS, timing, and ER
-work stay deferred.
+Checkpoint 59 tests whether checkpoint 58's blocker-aware draft format is
+actually portable. It byte-authenticates one durable surface each for Itto,
+Klee, Kokomi, Diona, Xiao, and Keqing, then classifies the same 33 field
+families as checkpoint 58: 198 ordered subject/family rows. Rows can preserve
+multiple surface kinds at once, so direct payloads are not flattened together
+with holdout locators, factory-authored compositions, guarded choices,
+unreviewed translations, negative boundaries, or non-serialized fields. The
+report records source-data, format, computation, and review-authority gaps
+without turning counts into a score.
+
+The test found a concrete format defect: checkpoint 58's field tree and
+provenance policy are reusable, but its upstream anchor, mandatory local-
+relation readiness, and relation discriminators are still specific to the
+Noelle checkpoint-57 envelope. Klee alone passes the exact evidence-only trial
+gate because one positive witness contains a request-scoped exact team, one
+artifact-set option, and all three main-stat slots with zero builds or
+candidates. It still cannot be serialized by the current packet contract.
+Selecting Klee as the next format trial is not a character rank or guide
+recommendation. No guide, build, selection, optimizer, damage, rotation, or ER
+computation is produced. Every ER row is retained only as an explicit
+scope-deferred boundary.
 
 This is not a working guide factory or an equipment recommendation:
 
@@ -1134,6 +1144,29 @@ This is not a working guide factory or an equipment recommendation:
 346. Preserve all 36 null selections without inventing a sole-option default,
      rank, scalar weight, legal allocation, optimizer result, damage, rotation,
      team total, or Energy Recharge value.
+347. Authenticate checkpoint 59 through an exact nine-path raw-byte closure:
+     six durable character surfaces, the checkpoint-58 packet core, and the
+     new inventory core and CLI; require canonical JSON byte/object parity.
+348. Inventory the same 33 exact guide-packet field families for Itto, Klee,
+     Kokomi, Diona, Xiao, and Keqing, retaining exactly 198 ordered rows and
+     exact JSON-pointer hashes without copying source prose into a merged guide.
+349. Preserve overlapping surface kinds instead of one lossy status: 23 direct,
+     four guarded, nine identifier-only, five holdout-only, 11 factory-
+     composition, two experimental-fixture, one unreviewed-translation, 42
+     explicit-negative, six scope-deferred, and 106 not-serialized rows.
+     Separately record 89 source-data, 34 format, and 109 computation gap rows,
+     plus six independent review-authority blockers; these are not scores.
+350. Pin the reviewed checkpoint-58 packet core fingerprint and record that its
+     CP57 envelope/candidate/profile anchor, mandatory nonempty local-relation
+     set, and CP57-specific relation discriminators reject every non-Noelle
+     surface despite the reusable field/provenance policy.
+351. Select only Klee for the next portability trial through seven exact
+     report-derived boolean evidence predicates, not a character-ID branch,
+     score, vote, rank, or completeness claim; retain current-format acceptance
+     at zero.
+352. Produce zero guides, builds, recommendations, ranks, optimizer runs,
+     damage computations, or Energy Recharge computations, and explicitly
+     retain all six ER families as scope-deferred boundary rows.
 
 The first two active sources are already in this repository:
 

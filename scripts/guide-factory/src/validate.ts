@@ -385,6 +385,13 @@ import {
   authenticateNoelleHexereiGuideDraftProjectionFromWorkspace,
 } from "./assemble-noelle-hexerei-guide-draft-projection";
 import {
+  authenticateGuideDraftPortabilityInventoryFromWorkspace,
+} from "./assemble-guide-draft-portability-inventory";
+import {
+  GUIDE_DRAFT_PORTABILITY_INVENTORY_REPORT_PATH,
+  type GuideDraftPortabilityInventoryReport,
+} from "./guideDraftPortabilityInventory";
+import {
   NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_REPORT_PATH,
   type NoelleHexereiGuideDraftProjectionReport,
 } from "./noelleHexereiGuideDraftProjection";
@@ -1991,6 +1998,25 @@ export async function runValidation(
             error instanceof Error
               ? `The saved Noelle Hexerei guide-draft projection failed fresh authentication: ${error.message}`
               : "The saved Noelle Hexerei guide-draft projection failed fresh authentication.",
+        });
+      }
+      try {
+        const guideDraftPortabilityInventoryInput = await readJson(
+          GUIDE_DRAFT_PORTABILITY_INVENTORY_REPORT_PATH,
+        );
+        await authenticateGuideDraftPortabilityInventoryFromWorkspace(
+          guideDraftPortabilityInventoryInput as GuideDraftPortabilityInventoryReport,
+        );
+      } catch (error) {
+        diagnostics.push({
+          severity: "error",
+          code:
+            "pipeline.rejected_or_stale_guide_draft_portability_inventory",
+          path: "reports.guide-draft-portability-inventory",
+          message:
+            error instanceof Error
+              ? `The saved guide-draft portability inventory failed workspace authentication: ${error.message}`
+              : "The saved guide-draft portability inventory failed workspace authentication.",
         });
       }
       const manualConditionArrayCoverageGeneratedFrom =
