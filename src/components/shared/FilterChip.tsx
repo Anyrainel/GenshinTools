@@ -6,6 +6,7 @@ interface FilterChipProps {
   onClick: () => void;
   children: React.ReactNode;
   color?: ChipColor;
+  disabled?: boolean;
 }
 
 export function FilterChip({
@@ -13,14 +14,16 @@ export function FilterChip({
   onClick,
   children,
   color,
+  disabled = false,
 }: FilterChipProps) {
   const scheme = color ? CHIP_COLORS[color] : null;
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs leading-none font-medium transition-all border",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium leading-none transition-all disabled:cursor-not-allowed disabled:opacity-50",
         scheme
           ? active
             ? scheme.active

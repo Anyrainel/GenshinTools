@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import type { Achievement } from "@/data/types";
+import type { Achievement, AchievementCategory } from "@/data/types";
 import {
+  achievementCategoryMatchesQuery,
   achievementCategoryMatchesStatusFilter,
+  achievementCategoryNameMatchesQuery,
   achievementSeriesMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
 } from "@/lib/achievement/utils";
+
+function category(id: number, name: string, order = id): AchievementCategory {
+  return { id, name, order };
+}
 
 function achievement(
   id: number,
@@ -88,6 +94,36 @@ describe("achievementCategoryMatchesStatusFilter", () => {
         new Set([1])
       )
     ).toBe(true);
+  });
+});
+
+describe("achievement category search", () => {
+  const wonders = category(1, "Wonders of the World");
+  const items = [achievement(1, 1), achievement(2, 2)];
+
+  it("matches category names after trimming and case folding", () => {
+    expect(
+      achievementCategoryNameMatchesQuery(wonders, "  wOnDeRs OF THE WORLD  ")
+    ).toBe(true);
+    expect(achievementCategoryNameMatchesQuery(wonders, "explorer")).toBe(
+      false
+    );
+  });
+
+  it("keeps a category when an achievement name or description matches", () => {
+    expect(
+      achievementCategoryMatchesQuery(wonders, items, "achievement 2")
+    ).toBe(true);
+    expect(
+      achievementCategoryMatchesQuery(wonders, items, "DESCRIPTION 1")
+    ).toBe(true);
+    expect(achievementCategoryMatchesQuery(wonders, items, "unrelated")).toBe(
+      false
+    );
+  });
+
+  it("treats an empty query as matching every category", () => {
+    expect(achievementCategoryMatchesQuery(wonders, [], "  ")).toBe(true);
   });
 });
 

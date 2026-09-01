@@ -1,5 +1,13 @@
 import type { Language } from "@/data/enums";
-import type { Achievement } from "@/data/types";
+import type { Achievement, AchievementCategory } from "@/data/types";
+
+function textMatchesQuery(text: string, query: string): boolean {
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  return (
+    normalizedQuery.length === 0 ||
+    text.toLocaleLowerCase().includes(normalizedQuery)
+  );
+}
 
 export function buildAchievementVideoSearchUrl(
   site: "youtube" | "bilibili",
@@ -53,6 +61,24 @@ export function achievementCategoryMatchesStatusFilter(
   return achievements.some((achievement) => !earnedIds.has(achievement.id));
 }
 
+export function achievementCategoryNameMatchesQuery(
+  category: AchievementCategory,
+  query: string
+): boolean {
+  return textMatchesQuery(category.name, query);
+}
+
+export function achievementCategoryMatchesQuery(
+  category: AchievementCategory,
+  achievements: readonly Achievement[],
+  query: string
+): boolean {
+  if (achievementCategoryNameMatchesQuery(category, query)) return true;
+  return achievements.some((achievement) =>
+    textMatchesQuery(`${achievement.name}\n${achievement.description}`, query)
+  );
+}
+
 export function achievementSeriesMatchesFilters(
   series: readonly Achievement[],
   query: string,
@@ -60,7 +86,6 @@ export function achievementSeriesMatchesFilters(
   versions: ReadonlySet<number>,
   earnedIds: ReadonlySet<number>
 ): boolean {
-  const normalizedQuery = query.trim().toLocaleLowerCase();
   return series.some((achievement) => {
     const finished = earnedIds.has(achievement.id);
     if (
@@ -75,9 +100,9 @@ export function achievementSeriesMatchesFilters(
       if (!versions.has(majorVersion)) return false;
     }
 
-    if (!normalizedQuery) return true;
-    return `${achievement.name}\n${achievement.description}`
-      .toLocaleLowerCase()
-      .includes(normalizedQuery);
+    return textMatchesQuery(
+      `${achievement.name}\n${achievement.description}`,
+      query
+    );
   });
 }

@@ -17,6 +17,7 @@ interface FilterChipGroupProps<T> {
   color?: ChipColor;
   emptyMeansAll?: boolean;
   collapsible?: boolean;
+  disabled?: boolean;
 }
 
 export function FilterChipGroup<T>({
@@ -33,6 +34,7 @@ export function FilterChipGroup<T>({
   color,
   emptyMeansAll = true,
   collapsible = false,
+  disabled = false,
 }: FilterChipGroupProps<T>) {
   const [expanded, setExpanded] = useState(false);
 
@@ -56,7 +58,8 @@ export function FilterChipGroup<T>({
             type="button"
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
-            className="text-sm font-medium text-foreground bg-background/30 hover:bg-background/50 border border-border px-3 py-0.5 rounded-md shrink-0"
+            disabled={disabled}
+            className="shrink-0 rounded-md border border-border bg-background/30 px-3 py-0.5 text-sm font-medium text-foreground hover:bg-background/50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {label} {expanded ? "<" : ">"}
           </button>
@@ -79,6 +82,7 @@ export function FilterChipGroup<T>({
             active={active}
             onClick={() => handleToggle(value)}
             color={getColor?.(option, active) ?? color}
+            disabled={disabled}
           >
             {getIcon?.(option, active)}
             {getLabel(option, active)}

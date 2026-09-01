@@ -12,7 +12,9 @@ import { achievementTextResource } from "@/data/gameDataLoader";
 import type { Achievement, AchievementCategory } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
+  achievementCategoryMatchesQuery,
   achievementCategoryMatchesStatusFilter,
+  achievementCategoryNameMatchesQuery,
   achievementSeriesMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
@@ -26,6 +28,8 @@ type AchievementStatus = "unfinished" | "finished";
 const STATUS_OPTIONS: AchievementStatus[] = ["unfinished", "finished"];
 const VERSION_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
 const EMPTY_EARNED_IDS: number[] = [];
+const EMPTY_STATUS_FILTER: ReadonlySet<AchievementStatus> = new Set();
+const EMPTY_VERSION_FILTER: ReadonlySet<number> = new Set();
 
 function CategoryList({
   categories,
@@ -288,6 +292,7 @@ function AchievementFilterToolbar({
   onVersionFilterChange: (values: Set<number>) => void;
 }) {
   const { t } = useLanguage();
+  const filtersDisabled = searchQuery.trim().length > 0;
 
   return (
     <ArchiveToolbar
@@ -309,6 +314,7 @@ function AchievementFilterToolbar({
         }
         emptyMeansAll={false}
         className="contents"
+        disabled={filtersDisabled}
       />
       <div className="mx-1 hidden h-5 w-px bg-border sm:block" />
       <FilterChipGroup
@@ -319,6 +325,7 @@ function AchievementFilterToolbar({
         getLabel={(version) => `v${version}.x`}
         emptyMeansAll
         className="contents"
+        disabled={filtersDisabled}
       />
     </ArchiveToolbar>
   );
@@ -361,6 +368,13 @@ export function AchievementArchiveView() {
   const [versionFilter, setVersionFilter] = useState<Set<number>>(
     () => new Set()
   );
+  const hasSearchQuery = searchQuery.trim().length > 0;
+  const effectiveStatusFilter = hasSearchQuery
+    ? EMPTY_STATUS_FILTER
+    : statusFilter;
+  const effectiveVersionFilter = hasSearchQuery
+    ? EMPTY_VERSION_FILTER
+    : versionFilter;
 
   const refreshFilterSnapshot = useCallback(() => {
     setFilterSnapshot({
@@ -416,18 +430,27 @@ export function AchievementArchiveView() {
 
   const visibleCategories = useMemo(
     () =>
-      categories.filter((category) =>
-        achievementCategoryMatchesStatusFilter(
-          achievementsByCategory.get(category.id) ?? [],
-          statusFilter,
-          filterEarnedIds
-        )
-      ),
-    [achievementsByCategory, categories, filterEarnedIds, statusFilter]
+      categories.filter((category) => {
+        const achievements = achievementsByCategory.get(category.id) ?? [];
+        return (
+          achievementCategoryMatchesStatusFilter(
+            achievements,
+            effectiveStatusFilter,
+            filterEarnedIds
+          ) &&
+          achievementCategoryMatchesQuery(category, achievements, searchQuery)
+        );
+      }),
+    [
+      achievementsByCategory,
+      categories,
+      effectiveStatusFilter,
+      filterEarnedIds,
+      searchQuery,
+    ]
   );
 
   useEffect(() => {
-    if (!isDesktop) return;
     if (visibleCategories.length === 0) {
       if (selectedCategoryId !== null) setSelectedCategoryId(null);
       return;
@@ -435,13 +458,21 @@ export function AchievementArchiveView() {
     if (
       !visibleCategories.some((category) => category.id === selectedCategoryId)
     ) {
-      setSelectedCategoryId(visibleCategories[0].id);
+      if (isDesktop) setSelectedCategoryId(visibleCategories[0].id);
+      else if (hasSearchQuery && selectedCategoryId !== null) {
+        setSelectedCategoryId(null);
+      }
     }
-  }, [isDesktop, selectedCategoryId, visibleCategories]);
+  }, [hasSearchQuery, isDesktop, selectedCategoryId, visibleCategories]);
 
   const selectedCategory = categories.find(
     (category) => category.id === selectedCategoryId
   );
+  const seriesSearchQuery =
+    selectedCategory &&
+    achievementCategoryNameMatchesQuery(selectedCategory, searchQuery)
+      ? ""
+      : searchQuery;
   const visibleSeries = useMemo(() => {
     if (selectedCategoryId === null) return [];
     return groupAchievementSeries(
@@ -449,19 +480,19 @@ export function AchievementArchiveView() {
     ).filter((series) =>
       achievementSeriesMatchesFilters(
         series,
-        searchQuery,
-        statusFilter,
-        versionFilter,
+        seriesSearchQuery,
+        effectiveStatusFilter,
+        effectiveVersionFilter,
         filterEarnedIds
       )
     );
   }, [
     achievementsByCategory,
+    effectiveStatusFilter,
+    effectiveVersionFilter,
     filterEarnedIds,
-    searchQuery,
     selectedCategoryId,
-    statusFilter,
-    versionFilter,
+    seriesSearchQuery,
   ]);
 
   const handleStatusChange = useCallback(

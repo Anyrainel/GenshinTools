@@ -14,8 +14,10 @@ const LABELS: Record<Option, string> = {
 
 function FilterChipGroupHarness({
   initialSelected = [],
+  disabled = false,
 }: {
   initialSelected?: Option[];
+  disabled?: boolean;
 }) {
   const [selected, setSelected] = useState<Set<Option>>(
     () => new Set(initialSelected)
@@ -34,6 +36,7 @@ function FilterChipGroupHarness({
         getKey={(option) => option}
         getLabel={(option) => LABELS[option]}
         collapsible
+        disabled={disabled}
       />
     </>
   );
@@ -86,5 +89,18 @@ describe("FilterChipGroup collapsible selections", () => {
     for (const label of Object.values(LABELS)) {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
     }
+  });
+
+  it("disables the group controls without changing the selection", async () => {
+    const user = userEvent.setup();
+    render(<FilterChipGroupHarness initialSelected={["pyro"]} disabled />);
+
+    const label = screen.getByRole("button", { name: /filter by element/i });
+    const selectedChip = screen.getByRole("button", { name: "Pyro" });
+
+    expect(label).toBeDisabled();
+    expect(selectedChip).toBeDisabled();
+    await user.click(selectedChip);
+    expect(screen.getByTestId("selected-values")).toHaveTextContent("pyro");
   });
 });
