@@ -1,5 +1,6 @@
 import type { Language } from "@/data/enums";
 import type { Achievement } from "@/data/types";
+import { itemMatchesArchiveFilterScope } from "@/lib/archiveFilters";
 
 function getSearchTerms(query: string): string[] {
   return query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
@@ -55,25 +56,30 @@ export function achievementMatchesFilters(
   versions: ReadonlySet<number>,
   earnedIds: ReadonlySet<number>
 ): boolean {
-  const searchTerms = getSearchTerms(query);
-  if (searchTerms.length > 0) {
-    const searchText =
-      `${achievement.name}\n${achievement.description}`.toLocaleLowerCase();
-    return searchTerms.every((term) => searchText.includes(term));
-  }
+  return itemMatchesArchiveFilterScope(
+    achievement,
+    query,
+    (item, normalizedSearch) => {
+      const searchTerms = getSearchTerms(normalizedSearch);
+      const searchText =
+        `${item.name}\n${item.description}`.toLocaleLowerCase();
+      return searchTerms.every((term) => searchText.includes(term));
+    },
+    (item) => {
+      const finished = earnedIds.has(item.id);
+      if (
+        statuses.size > 0 &&
+        !statuses.has(finished ? "finished" : "unfinished")
+      ) {
+        return false;
+      }
 
-  const finished = earnedIds.has(achievement.id);
-  if (
-    statuses.size > 0 &&
-    !statuses.has(finished ? "finished" : "unfinished")
-  ) {
-    return false;
-  }
+      if (versions.size > 0) {
+        const majorVersion = Number.parseInt(item.version ?? "", 10);
+        if (!versions.has(majorVersion)) return false;
+      }
 
-  if (versions.size > 0) {
-    const majorVersion = Number.parseInt(achievement.version ?? "", 10);
-    if (!versions.has(majorVersion)) return false;
-  }
-
-  return true;
+      return true;
+    }
+  );
 }

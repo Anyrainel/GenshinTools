@@ -288,7 +288,6 @@ function AchievementFilterToolbar({
   onVersionFilterChange: (values: Set<number>) => void;
 }) {
   const { t } = useLanguage();
-  const filtersDisabled = searchQuery.trim().length > 0;
 
   return (
     <ArchiveToolbar
@@ -310,7 +309,6 @@ function AchievementFilterToolbar({
         }
         emptyMeansAll={false}
         className="contents"
-        disabled={filtersDisabled}
       />
       <div className="mx-1 hidden h-5 w-px bg-border sm:block" />
       <FilterChipGroup
@@ -321,7 +319,6 @@ function AchievementFilterToolbar({
         getLabel={(version) => `v${version}.x`}
         emptyMeansAll
         className="contents"
-        disabled={filtersDisabled}
       />
     </ArchiveToolbar>
   );

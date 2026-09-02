@@ -10,6 +10,7 @@ import {
   sortedArtifacts,
 } from "@/data/gameResources";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { filterArchiveItems } from "@/lib/archiveFilters";
 import { fuzzyMatch } from "@/lib/search";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 
@@ -46,37 +47,31 @@ export function ArtifactArchiveView() {
   }, []);
 
   const artifacts = useMemo(() => {
-    let result = sortedArtifacts;
+    return filterArchiveItems(
+      sortedArtifacts,
+      searchQuery,
+      (item, normalizedSearch) => {
+        const name = t.artifact(item.id);
+        const effects = t.artifactEffects(item.id);
 
-    // Half-set filter
-    if (halfSetFilter.size > 0) {
-      result = result.filter((artifact) => {
-        const halfSetId = artifactIdToHalfSetId[artifact.id];
-        return halfSetId && halfSetFilter.has(halfSetId);
-      });
-    }
-
-    // Search filter
-    const query = searchQuery.trim();
-    if (query) {
-      result = result.filter((artifact) => {
-        const name = t.artifact(artifact.id);
-        const effects = t.artifactEffects(artifact.id);
-
-        if (fuzzyMatch(query, name) || fuzzyMatch(query, artifact.id)) {
+        if (
+          fuzzyMatch(normalizedSearch, name) ||
+          fuzzyMatch(normalizedSearch, item.id)
+        ) {
           return true;
         }
 
-        const q = query.toLowerCase();
-        for (const effect of effects) {
-          if (effect.toLowerCase().includes(q)) return true;
-        }
-
-        return false;
-      });
-    }
-
-    return result;
+        const lowerQuery = normalizedSearch.toLowerCase();
+        return effects.some((effect) =>
+          effect.toLowerCase().includes(lowerQuery)
+        );
+      },
+      (item) => {
+        if (halfSetFilter.size === 0) return true;
+        const halfSetId = artifactIdToHalfSetId[item.id];
+        return Boolean(halfSetId && halfSetFilter.has(halfSetId));
+      }
+    );
   }, [searchQuery, halfSetFilter, t]);
 
   return (

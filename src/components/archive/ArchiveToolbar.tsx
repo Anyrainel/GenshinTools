@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { isArchiveSearchActive } from "@/lib/archiveFilters";
 
 interface ArchiveToolbarProps {
   searchQuery: string;
@@ -15,6 +16,8 @@ export function ArchiveToolbar({
   searchPlaceholder,
   children,
 }: ArchiveToolbarProps) {
+  const filtersDisabled = isArchiveSearchActive(searchQuery);
+
   return (
     <div className="space-y-3">
       {/* Search bar — centered, prominent */}
@@ -30,9 +33,12 @@ export function ArchiveToolbar({
 
       {/* Filter chips — rendered by parent */}
       {children && (
-        <div className="flex flex-wrap items-center justify-center gap-1.5">
+        <fieldset
+          disabled={filtersDisabled}
+          className="m-0 flex min-w-0 flex-wrap items-center justify-center gap-1.5 border-0 p-0"
+        >
           {children}
-        </div>
+        </fieldset>
       )}
     </div>
   );

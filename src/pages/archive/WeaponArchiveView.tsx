@@ -13,6 +13,10 @@ import {
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { WeaponResource } from "@/data/types";
+import {
+  filterArchiveItems,
+  isArchiveSearchActive,
+} from "@/lib/archiveFilters";
 import { fuzzyMatch } from "@/lib/search";
 import { cn, getAssetUrl, getSortedWeaponSecondaryStats } from "@/lib/utils";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
@@ -176,6 +180,7 @@ export function WeaponArchiveView() {
   );
   const searchQuery = useArchiveSessionStore((s) => s.weaponSearch);
   const setSearchQuery = useArchiveSessionStore((s) => s.setWeaponSearch);
+  const searchActive = isArchiveSearchActive(searchQuery);
   const [weaponTypeFilter, setWeaponTypeFilter] = useState<Set<WeaponType>>(
     () => new Set()
   );
@@ -196,38 +201,41 @@ export function WeaponArchiveView() {
   );
 
   const weaponsByType = useMemo(() => {
-    const query = searchQuery.trim();
-
-    const filtered = sortedWeapons.filter((weapon) => {
-      const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
-      if (rarityFilter.size > 0 && !rarityFilter.has(meta.rarity)) return false;
-      if (
-        secondaryStatFilter.size > 0 &&
-        (meta.secondaryStat == null ||
-          !secondaryStatFilter.has(meta.secondaryStat))
-      )
-        return false;
-      if (
-        weaponTypeFilter.size > 0 &&
-        (meta.type == null || !weaponTypeFilter.has(meta.type))
-      )
-        return false;
-      if (query) {
-        const lowerQuery = query.toLowerCase();
+    const filtered = filterArchiveItems(
+      sortedWeapons,
+      searchQuery,
+      (weapon, normalizedSearch) => {
+        const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
+        const lowerQuery = normalizedSearch.toLowerCase();
         const name = t.weapon(weapon.id);
         const statLabel =
           meta.secondaryStat != null ? t.statShort(meta.secondaryStat) : "";
         const effect = t.weaponEffect(weapon.id);
+        return (
+          fuzzyMatch(normalizedSearch, name) ||
+          fuzzyMatch(normalizedSearch, weapon.id) ||
+          fuzzyMatch(normalizedSearch, statLabel) ||
+          effect.toLowerCase().includes(lowerQuery)
+        );
+      },
+      (weapon) => {
+        const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
+        if (rarityFilter.size > 0 && !rarityFilter.has(meta.rarity))
+          return false;
         if (
-          !fuzzyMatch(query, name) &&
-          !fuzzyMatch(query, weapon.id) &&
-          !fuzzyMatch(query, statLabel) &&
-          !effect.toLowerCase().includes(lowerQuery)
+          secondaryStatFilter.size > 0 &&
+          (meta.secondaryStat == null ||
+            !secondaryStatFilter.has(meta.secondaryStat))
         )
           return false;
+        if (
+          weaponTypeFilter.size > 0 &&
+          (meta.type == null || !weaponTypeFilter.has(meta.type))
+        )
+          return false;
+        return true;
       }
-      return true;
-    });
+    );
 
     const grouped: Record<WeaponType, WeaponResource[]> = {
       Sword: [],
@@ -261,7 +269,9 @@ export function WeaponArchiveView() {
 
   // Determine which sections to render (hide empty sections when weapon type filter is active)
   const visibleTypes =
-    weaponTypeFilter.size > 0 ? [...weaponTypeFilter] : weaponTypes;
+    !searchActive && weaponTypeFilter.size > 0
+      ? [...weaponTypeFilter]
+      : weaponTypes;
 
   return (
     <ScrollLayout

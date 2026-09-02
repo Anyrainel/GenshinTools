@@ -26,6 +26,7 @@ import {
 import type { CharacterResource } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
+import { filterArchiveItems } from "@/lib/archiveFilters";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
@@ -313,41 +314,42 @@ export function CharacterArchiveView() {
 
   // Filter characters (use stats-based meta)
   const filteredCharacters = useMemo(() => {
-    const hasSearch = searchQuery.trim().length > 0;
-    return sortedCharacters.filter((c) => {
-      const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
-      if (
-        elementFilter.size > 0 &&
-        (meta.element == null || !elementFilter.has(meta.element))
-      )
-        return false;
-      if (
-        weaponTypeFilter.size > 0 &&
-        (meta.weaponType == null || !weaponTypeFilter.has(meta.weaponType))
-      )
-        return false;
-      if (rarityFilter.size > 0 && !rarityFilter.has(meta.rarity)) return false;
-      if (hasSearch) {
-        const name = t.character(c.id);
-        const skills = t.skills(c.id);
-        const passives = t.passives(c.id);
-        const constellations = t.constellations(c.id);
-        const glossary = t.glossary(c.id);
+    return filterArchiveItems(
+      sortedCharacters,
+      searchQuery,
+      (item, normalizedSearch) => {
+        const name = t.character(item.id);
+        const skills = t.skills(item.id);
+        const passives = t.passives(item.id);
+        const constellations = t.constellations(item.id);
+        const glossary = t.glossary(item.id);
+        return characterMatchesSearch(
+          item.id,
+          normalizedSearch,
+          name,
+          skills,
+          passives,
+          constellations,
+          glossary
+        );
+      },
+      (item) => {
+        const meta = getCharacterDisplayMeta(item, characterStats?.[item.id]);
         if (
-          !characterMatchesSearch(
-            c.id,
-            searchQuery.trim(),
-            name,
-            skills,
-            passives,
-            constellations,
-            glossary
-          )
+          elementFilter.size > 0 &&
+          (meta.element == null || !elementFilter.has(meta.element))
         )
           return false;
+        if (
+          weaponTypeFilter.size > 0 &&
+          (meta.weaponType == null || !weaponTypeFilter.has(meta.weaponType))
+        )
+          return false;
+        if (rarityFilter.size > 0 && !rarityFilter.has(meta.rarity))
+          return false;
+        return true;
       }
-      return true;
-    });
+    );
   }, [
     sortedCharacters,
     characterStats,
