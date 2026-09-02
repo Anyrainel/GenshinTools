@@ -1046,6 +1046,10 @@ export const i18nUiData = {
   app: {
     title: { en: "GG Artifact", zh: "GG圣遗物" },
     language: { en: "Language", zh: "语言" },
+    siteSwitcherLabel: { en: "Switch game site", zh: "切换游戏站点" },
+    gameGenshin: { en: "Genshin Impact", zh: "原神" },
+    gameGenshinShort: { en: "Genshin", zh: "原神" },
+    gameStarRail: { en: "Honkai: Star Rail", zh: "崩坏：星穹铁道" },
     navArtifactFilter: { en: "Builds", zh: "配装" },
     navAccountData: { en: "Account Data", zh: "账号数据" },
     navTierList: { en: "Tier List", zh: "榜单" },

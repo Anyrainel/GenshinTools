@@ -90,6 +90,38 @@ describe("AppBar", () => {
     expect(screen.getByText("Other")).toBeInTheDocument();
   });
 
+  it("switches between the Genshin home and the Star Rail site", async () => {
+    renderAppBar(<AppBar />);
+
+    const siteSwitcher = screen.getByRole("button", {
+      name: "app.siteSwitcherLabel",
+    });
+    expect(within(siteSwitcher).getByAltText("Logo")).toBeInTheDocument();
+
+    await userEvent.click(siteSwitcher);
+
+    const genshinItem = screen.getByRole("menuitem", { name: /app\.title/ });
+    expect(genshinItem).toHaveAttribute("href", "/");
+
+    const starRailItem = screen.getByRole("menuitem", {
+      name: /GGStarRail/,
+    });
+    expect(starRailItem).toHaveAttribute("href", "http://127.0.0.1:41737");
+  });
+
+  it("keeps the site switcher reachable on mobile", async () => {
+    mockMatchMedia(false);
+    renderAppBar(<AppBar />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "app.siteSwitcherLabel" })
+    );
+
+    expect(
+      screen.getByRole("menuitem", { name: /GGStarRail/ })
+    ).toBeInTheDocument();
+  });
+
   it("renders actions", () => {
     const mockAction = vi.fn();
     const actions = [

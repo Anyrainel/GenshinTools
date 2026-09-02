@@ -1,5 +1,6 @@
 import {
   Check,
+  ChevronDown,
   CircleUserRound,
   Cloud,
   HeartHandshake,
@@ -12,6 +13,7 @@ import {
   MoreVertical,
   Palette,
   Settings,
+  TrainFront,
 } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -48,6 +50,12 @@ import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
+
+const STAR_RAIL_SITE_URL =
+  import.meta.env.VITE_STAR_RAIL_SITE_URL ??
+  (import.meta.env.DEV
+    ? "http://127.0.0.1:41737"
+    : "https://hsr.ggartifact.com");
 
 function hashString(value: string): number {
   let hash = 0;
@@ -477,6 +485,61 @@ export function AppBar({
     </>
   );
 
+  const renderSiteSwitcher = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="h-10 min-w-0 gap-2 px-1.5 text-muted-foreground hover:text-foreground sm:px-2 2xl:ml-2"
+          aria-label={t.ui("app.siteSwitcherLabel")}
+        >
+          <img
+            src={getAssetUrl("/logo_gt.svg")}
+            className="w-8 h-8"
+            alt="Logo"
+          />
+          <span className="hidden font-semibold text-lg whitespace-nowrap sm:inline">
+            {t.ui("app.title")}
+          </span>
+          <span className="rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+            {t.ui("app.gameGenshinShort")}
+          </span>
+          <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-72">
+        <DropdownMenuLabel>{t.ui("app.siteSwitcherLabel")}</DropdownMenuLabel>
+        <DropdownMenuItem asChild>
+          <Link to="/" className="gap-2">
+            <img
+              src={getAssetUrl("/logo_gt.svg")}
+              className="h-7 w-7"
+              alt="Logo"
+            />
+            <span className="min-w-0 flex-1">
+              <span className="block font-medium">{t.ui("app.title")}</span>
+              <span className="block text-xs text-muted-foreground">
+                {t.ui("app.gameGenshin")}
+              </span>
+            </span>
+            <Check className="text-primary" aria-hidden="true" />
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <a href={STAR_RAIL_SITE_URL} className="gap-2">
+            <TrainFront className="text-primary" aria-hidden="true" />
+            <span className="min-w-0 flex-1">
+              <span className="block font-medium">GGStarRail</span>
+              <span className="block text-xs text-muted-foreground">
+                {t.ui("app.gameStarRail")}
+              </span>
+            </span>
+          </a>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   return (
     <>
       <header
@@ -587,19 +650,7 @@ export function AppBar({
               </SheetContent>
             </Sheet>
 
-            <Link
-              to="/"
-              className="flex items-center 2xl:pl-4 gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <img
-                src={getAssetUrl("/logo_gt.svg")}
-                className="w-8 h-8"
-                alt="Logo"
-              />
-              <span className="font-semibold text-lg whitespace-nowrap">
-                {t.ui("app.title")}
-              </span>
-            </Link>
+            {renderSiteSwitcher()}
 
             {/* Desktop Nav */}
             <div className="hidden xl:flex items-center gap-2">
