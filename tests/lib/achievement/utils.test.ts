@@ -1,17 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { Achievement, AchievementCategory } from "@/data/types";
+import type { Achievement } from "@/data/types";
 import {
-  achievementCategoryMatchesQuery,
-  achievementCategoryMatchesStatusFilter,
-  achievementCategoryNameMatchesQuery,
-  achievementSeriesMatchesFilters,
+  achievementMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
 } from "@/lib/achievement/utils";
-
-function category(id: number, name: string, order = id): AchievementCategory {
-  return { id, name, order };
-}
 
 function achievement(
   id: number,
@@ -61,83 +54,18 @@ describe("groupAchievementSeries", () => {
   });
 });
 
-describe("achievementCategoryMatchesStatusFilter", () => {
-  const achievements = [achievement(1, 1), achievement(2, 2)];
+describe("achievementMatchesFilters", () => {
+  const berryPicker: Achievement = {
+    ...achievement(2, 2, 1, "5.0"),
+    name: "Berry Picker",
+    description: "Find the hidden berries.",
+  };
 
-  it("hides fully completed categories only in unfinished-only mode", () => {
-    const allEarned = new Set([1, 2]);
-
+  it("treats empty search and chip groups as no filter", () => {
     expect(
-      achievementCategoryMatchesStatusFilter(
-        achievements,
-        new Set(["unfinished"]),
-        allEarned
-      )
-    ).toBe(false);
-    expect(
-      achievementCategoryMatchesStatusFilter(
-        achievements,
-        new Set(["unfinished", "finished"]),
-        allEarned
-      )
-    ).toBe(true);
-    expect(
-      achievementCategoryMatchesStatusFilter(achievements, new Set(), allEarned)
-    ).toBe(true);
-  });
-
-  it("keeps categories that still contain an unfinished achievement", () => {
-    expect(
-      achievementCategoryMatchesStatusFilter(
-        achievements,
-        new Set(["unfinished"]),
-        new Set([1])
-      )
-    ).toBe(true);
-  });
-});
-
-describe("achievement category search", () => {
-  const wonders = category(1, "Wonders of the World");
-  const items = [achievement(1, 1), achievement(2, 2)];
-
-  it("matches category names after trimming and case folding", () => {
-    expect(
-      achievementCategoryNameMatchesQuery(wonders, "  wOnDeRs OF THE WORLD  ")
-    ).toBe(true);
-    expect(achievementCategoryNameMatchesQuery(wonders, "explorer")).toBe(
-      false
-    );
-  });
-
-  it("keeps a category when an achievement name or description matches", () => {
-    expect(
-      achievementCategoryMatchesQuery(wonders, items, "achievement 2")
-    ).toBe(true);
-    expect(
-      achievementCategoryMatchesQuery(wonders, items, "DESCRIPTION 1")
-    ).toBe(true);
-    expect(achievementCategoryMatchesQuery(wonders, items, "unrelated")).toBe(
-      false
-    );
-  });
-
-  it("treats an empty query as matching every category", () => {
-    expect(achievementCategoryMatchesQuery(wonders, [], "  ")).toBe(true);
-  });
-});
-
-describe("achievementSeriesMatchesFilters", () => {
-  const series = [
-    achievement(1, 1, undefined, "4.8"),
-    achievement(2, 2, 1, "5.0"),
-  ];
-
-  it("treats an empty chip group as no filter", () => {
-    expect(
-      achievementSeriesMatchesFilters(
-        series,
-        "",
+      achievementMatchesFilters(
+        berryPicker,
+        "   ",
         new Set(),
         new Set(),
         new Set()
@@ -145,23 +73,65 @@ describe("achievementSeriesMatchesFilters", () => {
     ).toBe(true);
   });
 
-  it("matches status, major version, and text against any series step", () => {
+  it("matches every whitespace-separated search term across item text", () => {
     expect(
-      achievementSeriesMatchesFilters(
-        series,
-        "description 2",
-        new Set(["finished"]),
-        new Set([5]),
-        new Set([2])
+      achievementMatchesFilters(
+        berryPicker,
+        "  HIDDEN   picker  ",
+        new Set(),
+        new Set(),
+        new Set()
       )
     ).toBe(true);
     expect(
-      achievementSeriesMatchesFilters(
-        series,
-        "description 2",
+      achievementMatchesFilters(
+        berryPicker,
+        "hidden apple",
+        new Set(),
+        new Set(),
+        new Set()
+      )
+    ).toBe(false);
+  });
+
+  it("ignores contradictory chip filters while item search is active", () => {
+    expect(
+      achievementMatchesFilters(
+        berryPicker,
+        "hidden picker",
         new Set(["unfinished"]),
         new Set([4]),
-        new Set([2])
+        new Set([berryPicker.id])
+      )
+    ).toBe(true);
+  });
+
+  it("applies status and major-version chips to an individual item", () => {
+    expect(
+      achievementMatchesFilters(
+        berryPicker,
+        " \t ",
+        new Set(["finished"]),
+        new Set([5]),
+        new Set([berryPicker.id])
+      )
+    ).toBe(true);
+    expect(
+      achievementMatchesFilters(
+        berryPicker,
+        "",
+        new Set(["unfinished"]),
+        new Set([5]),
+        new Set([berryPicker.id])
+      )
+    ).toBe(false);
+    expect(
+      achievementMatchesFilters(
+        berryPicker,
+        "",
+        new Set(["finished"]),
+        new Set([4]),
+        new Set([berryPicker.id])
       )
     ).toBe(false);
   });

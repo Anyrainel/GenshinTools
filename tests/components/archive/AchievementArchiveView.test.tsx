@@ -20,7 +20,7 @@ vi.mock("@/contexts/LanguageContext", () => ({
             "archive.achievementNeedsAccount":
               "Select an account to track achievement progress.",
             "archive.achievementSearchPlaceholder":
-              "Search categories, achievement names, and descriptions...",
+              "Search achievement names and descriptions...",
             "archive.achievementUnfinished": "Unfinished",
             "archive.loadingAchievements": "Loading achievements...",
             "archive.markAchievementFinished": "Mark {0} finished",
@@ -94,8 +94,7 @@ const ACHIEVEMENT_DATA: AchievementData = {
   ],
 };
 
-const SEARCH_PLACEHOLDER =
-  "Search categories, achievement names, and descriptions...";
+const SEARCH_PLACEHOLDER = "Search achievement names and descriptions...";
 const FILTER_CHIP_LABELS = [
   "Unfinished",
   "Finished",
@@ -119,16 +118,14 @@ describe("AchievementArchiveView search", () => {
     vi.restoreAllMocks();
   });
 
-  it("filters groups by item name without applying the saved chips", async () => {
+  it("uses AND item search instead of saved chips and restores them when cleared", async () => {
     const user = userEvent.setup();
     render(<AchievementArchiveView />);
 
     await screen.findByText("Apple Hunter I");
     await user.click(screen.getByRole("button", { name: "v4.x" }));
-    await user.type(
-      screen.getByPlaceholderText(SEARCH_PLACEHOLDER),
-      "bErRy PiCkEr"
-    );
+    const searchInput = screen.getByPlaceholderText(SEARCH_PLACEHOLDER);
+    await user.type(searchInput, "  hidden   bErRy  ");
 
     await waitFor(() => {
       expect(
@@ -138,12 +135,26 @@ describe("AchievementArchiveView search", () => {
         screen.getByRole("button", { name: /Beta League/ })
       ).toBeInTheDocument();
       expect(screen.getByText("Berry Picker")).toBeInTheDocument();
+      expect(screen.queryByText("Forest Scout")).not.toBeInTheDocument();
     });
-    expect(screen.getByText("Forest Scout")).toBeInTheDocument();
     expect(screen.queryByText("Apple Hunter I")).not.toBeInTheDocument();
+    expect(screen.queryByText("Apple Hunter II")).not.toBeInTheDocument();
+
+    await user.clear(searchInput);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Alpha Guild/ })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /Beta League/ })
+      ).not.toBeInTheDocument();
+      expect(screen.getByText("Apple Hunter I")).toBeInTheDocument();
+      expect(screen.queryByText("Apple Hunter II")).not.toBeInTheDocument();
+    });
   });
 
-  it("matches a category name and shows that category's items", async () => {
+  it("does not match category names", async () => {
     const user = userEvent.setup();
     render(<AchievementArchiveView />);
 
@@ -155,14 +166,107 @@ describe("AchievementArchiveView search", () => {
 
     await waitFor(() => {
       expect(
+        screen.queryByRole("button", { name: /Alpha Guild/ })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /Beta League/ })
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Apple Hunter I")).not.toBeInTheDocument();
+      expect(screen.queryByText("Apple Hunter II")).not.toBeInTheDocument();
+    });
+  });
+
+  it("hides categories and series steps without a matching version", async () => {
+    const user = userEvent.setup();
+    render(<AchievementArchiveView />);
+
+    await screen.findByText("Apple Hunter I");
+    await user.click(screen.getByRole("button", { name: "v4.x" }));
+
+    await waitFor(() => {
+      expect(
         screen.getByRole("button", { name: /Alpha Guild/ })
       ).toBeInTheDocument();
       expect(
         screen.queryByRole("button", { name: /Beta League/ })
       ).not.toBeInTheDocument();
+      expect(screen.getByText("Apple Hunter I")).toBeInTheDocument();
+      expect(screen.queryByText("Apple Hunter II")).not.toBeInTheDocument();
     });
-    expect(screen.getByText("Apple Hunter I")).toBeInTheDocument();
-    expect(screen.getByText("Apple Hunter II")).toBeInTheDocument();
+  });
+
+  it("hides categories and series steps without a matching status", async () => {
+    const user = userEvent.setup();
+    useAccountStore.setState({ accounts: {}, activeAccountId: 1 });
+    useAchievementStore.setState({ earnedIdsByProfileId: { 1: [101] } });
+    render(<AchievementArchiveView />);
+
+    await screen.findByText("Apple Hunter II");
+    await user.click(screen.getByRole("button", { name: "Finished" }));
+    await user.click(screen.getByRole("button", { name: "Unfinished" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Alpha Guild/ })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /Beta League/ })
+      ).not.toBeInTheDocument();
+      expect(screen.getByText("Apple Hunter I")).toBeInTheDocument();
+      expect(screen.queryByText("Apple Hunter II")).not.toBeInTheDocument();
+    });
+  });
+
+  it("shows every matching item across categories and hides other series steps", async () => {
+    const user = userEvent.setup();
+    render(<AchievementArchiveView />);
+
+    await screen.findByText("Apple Hunter I");
+    await user.type(screen.getByPlaceholderText(SEARCH_PLACEHOLDER), "pick");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Alpha Guild/ })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /Beta League/ })
+      ).toBeInTheDocument();
+      expect(screen.getByText("Apple Hunter I")).toBeInTheDocument();
+      expect(screen.getByText("Apple Hunter II")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: /Beta League/ }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Berry Picker")).toBeInTheDocument();
+      expect(screen.queryByText("Forest Scout")).not.toBeInTheDocument();
+    });
+  });
+
+  it("keeps the full series cascade when search hides predecessor steps", async () => {
+    const user = userEvent.setup();
+    useAccountStore.setState({ accounts: {}, activeAccountId: 1 });
+    useAchievementStore.setState({ earnedIdsByProfileId: { 1: [] } });
+    render(<AchievementArchiveView />);
+
+    await user.type(
+      screen.getByPlaceholderText(SEARCH_PLACEHOLDER),
+      "Berry Picker"
+    );
+
+    expect(await screen.findByText("Berry Picker")).toBeInTheDocument();
+    expect(screen.queryByText("Forest Scout")).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "Mark Berry Picker finished" })
+    );
+
+    await waitFor(() => {
+      expect(useAchievementStore.getState().earnedIdsByProfileId[1]).toEqual([
+        201, 202,
+      ]);
+    });
+    expect(screen.queryByText("Forest Scout")).not.toBeInTheDocument();
   });
 
   it("disables filter chips only while a non-whitespace search is active", async () => {

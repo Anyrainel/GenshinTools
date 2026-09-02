@@ -1,12 +1,8 @@
 import type { Language } from "@/data/enums";
-import type { Achievement, AchievementCategory } from "@/data/types";
+import type { Achievement } from "@/data/types";
 
-function textMatchesQuery(text: string, query: string): boolean {
-  const normalizedQuery = query.trim().toLocaleLowerCase();
-  return (
-    normalizedQuery.length === 0 ||
-    text.toLocaleLowerCase().includes(normalizedQuery)
-  );
+function getSearchTerms(query: string): string[] {
+  return query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
 }
 
 export function buildAchievementVideoSearchUrl(
@@ -52,57 +48,32 @@ export function groupAchievementSeries(
   );
 }
 
-export function achievementCategoryMatchesStatusFilter(
-  achievements: readonly Achievement[],
-  statuses: ReadonlySet<"unfinished" | "finished">,
-  earnedIds: ReadonlySet<number>
-): boolean {
-  if (statuses.size !== 1 || !statuses.has("unfinished")) return true;
-  return achievements.some((achievement) => !earnedIds.has(achievement.id));
-}
-
-export function achievementCategoryNameMatchesQuery(
-  category: AchievementCategory,
-  query: string
-): boolean {
-  return textMatchesQuery(category.name, query);
-}
-
-export function achievementCategoryMatchesQuery(
-  category: AchievementCategory,
-  achievements: readonly Achievement[],
-  query: string
-): boolean {
-  if (achievementCategoryNameMatchesQuery(category, query)) return true;
-  return achievements.some((achievement) =>
-    textMatchesQuery(`${achievement.name}\n${achievement.description}`, query)
-  );
-}
-
-export function achievementSeriesMatchesFilters(
-  series: readonly Achievement[],
+export function achievementMatchesFilters(
+  achievement: Achievement,
   query: string,
   statuses: ReadonlySet<"unfinished" | "finished">,
   versions: ReadonlySet<number>,
   earnedIds: ReadonlySet<number>
 ): boolean {
-  return series.some((achievement) => {
-    const finished = earnedIds.has(achievement.id);
-    if (
-      statuses.size > 0 &&
-      !statuses.has(finished ? "finished" : "unfinished")
-    ) {
-      return false;
-    }
+  const searchTerms = getSearchTerms(query);
+  if (searchTerms.length > 0) {
+    const searchText =
+      `${achievement.name}\n${achievement.description}`.toLocaleLowerCase();
+    return searchTerms.every((term) => searchText.includes(term));
+  }
 
-    if (versions.size > 0) {
-      const majorVersion = Number.parseInt(achievement.version ?? "", 10);
-      if (!versions.has(majorVersion)) return false;
-    }
+  const finished = earnedIds.has(achievement.id);
+  if (
+    statuses.size > 0 &&
+    !statuses.has(finished ? "finished" : "unfinished")
+  ) {
+    return false;
+  }
 
-    return textMatchesQuery(
-      `${achievement.name}\n${achievement.description}`,
-      query
-    );
-  });
+  if (versions.size > 0) {
+    const majorVersion = Number.parseInt(achievement.version ?? "", 10);
+    if (!versions.has(majorVersion)) return false;
+  }
+
+  return true;
 }

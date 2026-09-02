@@ -12,10 +12,7 @@ import { achievementTextResource } from "@/data/gameDataLoader";
 import type { Achievement, AchievementCategory } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
-  achievementCategoryMatchesQuery,
-  achievementCategoryMatchesStatusFilter,
-  achievementCategoryNameMatchesQuery,
-  achievementSeriesMatchesFilters,
+  achievementMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
 } from "@/lib/achievement/utils";
@@ -28,8 +25,6 @@ type AchievementStatus = "unfinished" | "finished";
 const STATUS_OPTIONS: AchievementStatus[] = ["unfinished", "finished"];
 const VERSION_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
 const EMPTY_EARNED_IDS: number[] = [];
-const EMPTY_STATUS_FILTER: ReadonlySet<AchievementStatus> = new Set();
-const EMPTY_VERSION_FILTER: ReadonlySet<number> = new Set();
 
 function CategoryList({
   categories,
@@ -83,19 +78,20 @@ function CategoryList({
 
 function AchievementSeriesCard({
   series,
+  seriesIds,
   earnedIds,
   onStatusChange,
 }: {
   series: readonly Achievement[];
+  seriesIds: readonly number[];
   earnedIds: ReadonlySet<number>;
   onStatusChange: (
-    seriesIds: number[],
+    seriesIds: readonly number[],
     achievementId: number,
     finished: boolean
   ) => void;
 }) {
   const { language, t } = useLanguage();
-  const seriesIds = useMemo(() => series.map((item) => item.id), [series]);
 
   return (
     <Card className="overflow-hidden border-border/70 bg-card/60">
@@ -368,13 +364,6 @@ export function AchievementArchiveView() {
   const [versionFilter, setVersionFilter] = useState<Set<number>>(
     () => new Set()
   );
-  const hasSearchQuery = searchQuery.trim().length > 0;
-  const effectiveStatusFilter = hasSearchQuery
-    ? EMPTY_STATUS_FILTER
-    : statusFilter;
-  const effectiveVersionFilter = hasSearchQuery
-    ? EMPTY_VERSION_FILTER
-    : versionFilter;
 
   const refreshFilterSnapshot = useCallback(() => {
     setFilterSnapshot({
@@ -428,26 +417,35 @@ export function AchievementArchiveView() {
     return byCategory;
   }, [achievementData]);
 
+  const matchingAchievementsByCategory = useMemo(() => {
+    const byCategory = new Map<number, Achievement[]>();
+    for (const [categoryId, achievements] of achievementsByCategory) {
+      const matching = achievements.filter((achievement) =>
+        achievementMatchesFilters(
+          achievement,
+          searchQuery,
+          statusFilter,
+          versionFilter,
+          filterEarnedIds
+        )
+      );
+      if (matching.length > 0) byCategory.set(categoryId, matching);
+    }
+    return byCategory;
+  }, [
+    achievementsByCategory,
+    filterEarnedIds,
+    searchQuery,
+    statusFilter,
+    versionFilter,
+  ]);
+
   const visibleCategories = useMemo(
     () =>
-      categories.filter((category) => {
-        const achievements = achievementsByCategory.get(category.id) ?? [];
-        return (
-          achievementCategoryMatchesStatusFilter(
-            achievements,
-            effectiveStatusFilter,
-            filterEarnedIds
-          ) &&
-          achievementCategoryMatchesQuery(category, achievements, searchQuery)
-        );
-      }),
-    [
-      achievementsByCategory,
-      categories,
-      effectiveStatusFilter,
-      filterEarnedIds,
-      searchQuery,
-    ]
+      categories.filter((category) =>
+        matchingAchievementsByCategory.has(category.id)
+      ),
+    [categories, matchingAchievementsByCategory]
   );
 
   useEffect(() => {
@@ -459,44 +457,42 @@ export function AchievementArchiveView() {
       !visibleCategories.some((category) => category.id === selectedCategoryId)
     ) {
       if (isDesktop) setSelectedCategoryId(visibleCategories[0].id);
-      else if (hasSearchQuery && selectedCategoryId !== null) {
-        setSelectedCategoryId(null);
-      }
+      else if (selectedCategoryId !== null) setSelectedCategoryId(null);
     }
-  }, [hasSearchQuery, isDesktop, selectedCategoryId, visibleCategories]);
+  }, [isDesktop, selectedCategoryId, visibleCategories]);
 
   const selectedCategory = categories.find(
     (category) => category.id === selectedCategoryId
   );
-  const seriesSearchQuery =
-    selectedCategory &&
-    achievementCategoryNameMatchesQuery(selectedCategory, searchQuery)
-      ? ""
-      : searchQuery;
   const visibleSeries = useMemo(() => {
     if (selectedCategoryId === null) return [];
-    return groupAchievementSeries(
-      achievementsByCategory.get(selectedCategoryId) ?? []
-    ).filter((series) =>
-      achievementSeriesMatchesFilters(
-        series,
-        seriesSearchQuery,
-        effectiveStatusFilter,
-        effectiveVersionFilter,
-        filterEarnedIds
+    const matchingIds = new Set(
+      (matchingAchievementsByCategory.get(selectedCategoryId) ?? []).map(
+        (achievement) => achievement.id
       )
     );
+    return groupAchievementSeries(
+      achievementsByCategory.get(selectedCategoryId) ?? []
+    ).flatMap((series) => {
+      const matching = series.filter((achievement) =>
+        matchingIds.has(achievement.id)
+      );
+      return matching.length > 0
+        ? [{ series: matching, seriesIds: series.map((item) => item.id) }]
+        : [];
+    });
   }, [
     achievementsByCategory,
-    effectiveStatusFilter,
-    effectiveVersionFilter,
-    filterEarnedIds,
+    matchingAchievementsByCategory,
     selectedCategoryId,
-    seriesSearchQuery,
   ]);
 
   const handleStatusChange = useCallback(
-    (seriesIds: number[], achievementId: number, finished: boolean) => {
+    (
+      seriesIds: readonly number[],
+      achievementId: number,
+      finished: boolean
+    ) => {
       if (activeAccountId === null) {
         toast.info(t.ui("archive.achievementNeedsAccount"));
         return;
@@ -563,10 +559,11 @@ export function AchievementArchiveView() {
             </div>
           ) : (
             <div className="space-y-1.5">
-              {visibleSeries.map((series) => (
+              {visibleSeries.map(({ series, seriesIds }) => (
                 <AchievementSeriesCard
-                  key={series[0].id}
+                  key={seriesIds[0]}
                   series={series}
+                  seriesIds={seriesIds}
                   earnedIds={earnedIds}
                   onStatusChange={handleStatusChange}
                 />

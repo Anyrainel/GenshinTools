@@ -1301,8 +1301,8 @@ export const i18nUiData = {
     achievementFinished: { en: "Finished", zh: "已完成" },
     primogems: { en: "Primogems", zh: "原石" },
     achievementSearchPlaceholder: {
-      en: "Search categories, achievement names, and descriptions...",
-      zh: "搜索成就分类、名称和描述...",
+      en: "Search achievement names and descriptions...",
+      zh: "搜索成就名称和描述...",
     },
     loadingAchievements: {
       en: "Loading achievements...",
