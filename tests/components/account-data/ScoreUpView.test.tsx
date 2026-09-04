@@ -8,8 +8,50 @@ import type {
 } from "@/lib/artifact/scoring/artifactScore";
 import { ScoreUpView } from "@/pages/account-data/ScoreUpView";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { useScoreUpCacheStore } from "@/stores/useScoreUpCacheStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { render, screen } from "../../utils/render";
+import { render, screen, waitFor } from "../../utils/render";
+
+const gameStatReadiness = vi.hoisted(() => ({
+  character: true,
+  weapon: true,
+}));
+const recommendationSpies = vi.hoisted(() => ({
+  start: vi.fn(),
+  stop: vi.fn(),
+}));
+
+vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+  return {
+    ...actual,
+    characterStatsResource: {
+      ...actual.characterStatsResource,
+      use: () => (gameStatReadiness.character ? {} : null),
+    },
+    weaponStatsResource: {
+      ...actual.weaponStatsResource,
+      use: () => (gameStatReadiness.weapon ? {} : null),
+    },
+  };
+});
+
+vi.mock("@/hooks/useAsyncRecommendations", () => ({
+  useAsyncScoreUp: () => ({
+    recommendations: null,
+    progress: {
+      completedTierCount: 0,
+      totalTierCount: 0,
+      currentTier: null,
+    },
+    isComputing: false,
+    error: null,
+    start: recommendationSpies.start,
+    stop: recommendationSpies.stop,
+  }),
+}));
 
 const mockBuild: Build = {
   id: "test-build",
@@ -63,7 +105,13 @@ const mockScoreResult: ArtifactScoreResult = {
 
 describe("ScoreUpView", () => {
   beforeEach(() => {
+    gameStatReadiness.character = true;
+    gameStatReadiness.weapon = true;
+    recommendationSpies.start.mockClear();
+    recommendationSpies.stop.mockClear();
     useAccountStore.getState().clearAccounts();
+    useBuildsStore.getState().clearAll();
+    useScoreUpCacheStore.getState().clear();
     useTierStore.getState().resetTierList();
   });
 
@@ -155,5 +203,50 @@ describe("ScoreUpView", () => {
     // Component renders without crashing — the score-up engine may
     // error on the minimal mock build, but the view renders gracefully
     expect(document.body.textContent).toBeTruthy();
+  });
+
+  it("waits for both CR-budget stat resources before starting recommendations", async () => {
+    useAccountStore.getState().addOrUpdateAccount(0, {
+      data: {
+        characters: [
+          {
+            key: "hu_tao",
+            level: 90,
+            constellation: 0,
+            talent: { auto: 10, skill: 10, burst: 10 },
+            artifacts: {},
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      },
+    });
+    useBuildsStore.setState({
+      enabledResolvedBuildGroups: [
+        { characterId: "hu_tao", builds: [mockBuild], weapons: [] },
+      ],
+    });
+    useTierStore
+      .getState()
+      .setTierAssignments({ hu_tao: { tier: "S", position: 0 } });
+    gameStatReadiness.character = false;
+    gameStatReadiness.weapon = false;
+
+    const { rerender } = render(
+      <ScoreUpView scores={{ hu_tao: mockScoreResult }} />
+    );
+
+    expect(recommendationSpies.start).not.toHaveBeenCalled();
+
+    gameStatReadiness.character = true;
+    rerender(<ScoreUpView scores={{ hu_tao: mockScoreResult }} />);
+    expect(recommendationSpies.start).not.toHaveBeenCalled();
+
+    gameStatReadiness.weapon = true;
+    rerender(<ScoreUpView scores={{ hu_tao: mockScoreResult }} />);
+
+    await waitFor(() => {
+      expect(recommendationSpies.start).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -441,6 +441,7 @@ function safeGetCrBudget(
       baseCr: 0.05,
       ascensionCr: 0,
       characterBuffCr: 0,
+      teamResonanceCr: 0,
       weaponSecondaryCr: 0,
       weaponPassiveCr: 0,
       artifactSetCr: 0,

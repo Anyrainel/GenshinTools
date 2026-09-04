@@ -1,4 +1,8 @@
 import { useEffect, useMemo } from "react";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import type { Build } from "@/data/types";
 import {
   useActiveAccountData,
@@ -21,6 +25,9 @@ import {
 const EMPTY_STALE_SCORE_CHAR_IDS: string[] = [];
 
 export function useArtifactScoreComputation(): void {
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
+  const crBudgetDataReady = characterStats !== null && weaponStats !== null;
   const accountData = useActiveAccountData();
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const staleScoreCharIds = useAccountScoreCacheStore((s) =>
@@ -78,6 +85,9 @@ export function useArtifactScoreComputation(): void {
 
   useEffect(() => {
     if (activeAccountId === null) return;
+    // getCrBudget is synchronous, so do not cache partial scores while its
+    // lazy character/weapon data is still loading.
+    if (!crBudgetDataReady) return;
     if (charsToScore.length === 0) return;
     const timer = setTimeout(() => {
       const results: Record<string, ArtifactScoreResult | null> = {};
@@ -106,6 +116,7 @@ export function useArtifactScoreComputation(): void {
   }, [
     activeAccountId,
     charsToScore,
+    crBudgetDataReady,
     scoreConfig,
     mergeScores,
     resolvedBuildsMap,

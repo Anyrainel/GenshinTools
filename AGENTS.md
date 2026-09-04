@@ -73,6 +73,7 @@ Use this as the first routing hint when the user refers to a page or tab in natu
 
 - For Genshin game data, formulas, damage implementations, or calculator review, use the `genshin-knowledge` skill first.
 - For damage, energy, or gcsim batch work, use the dispatcher skills under `.agents/skills/`; they launch Codex `worker` subagents that read `.agents/agents/*.md`.
+- When a new or changed character, weapon, artifact, or resonance grants CRIT Rate, update `src/lib/account-data/maxCrBuff.ts` and its tests so score-up recommendations use the same CR budget.
 - For persisted stores, imports, conversions, or artifact mutation flows, inspect the relevant store, migration code, and nearby tests before editing.
 
 ## UI Rules

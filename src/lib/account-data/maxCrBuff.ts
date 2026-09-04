@@ -1,6 +1,7 @@
 import { charInfo } from "@/data/charInfo";
 import { artifactIdToHalfSetId } from "@/data/gameResources";
 import {
+  characterStatsResource,
   resolveCharacterStats,
   resolveWeaponStats,
 } from "@/data/gameStatsLoader";
@@ -21,7 +22,8 @@ export interface CrBudgetInput {
 export interface CrBudgetResult {
   baseCr: number; // 0.05
   ascensionCr: number; // from character_stats.json
-  characterBuffCr: number; // self CR from innate kit/constellation ceilings
+  characterBuffCr: number; // self CR adjustments from innate kit/constellation ceilings
+  teamResonanceCr: number; // Cryo resonance ceiling for Cryo characters
   weaponSecondaryCr: number; // from weapon_stats.json
   weaponPassiveCr: number; // max CR from local weapon passive ceilings
   artifactSetCr: number; // max CR from local artifact set ceilings
@@ -42,6 +44,7 @@ const HALF_SET_CR_BUDGET: Record<string, number> = {
 const STATIC_ARTIFACT_SET_CR_BUDGET: Record<string, number> = {
   berserker: 0.24,
   blizzard_strayer: 0.4,
+  disenchantment_in_deep_shadow: 0.16,
   marechaussee_hunter: 0.36,
   night_of_the_skys_unveiling: 0.3,
   resolution_of_sojourner: 0.3,
@@ -57,8 +60,10 @@ const STATIC_CHARACTER_CR_BUDGET: Record<string, CharacterBuffEntry> = {
   freminet: { constellations: [{ min: 1, cr: 0.15 }] },
   gaming: { constellations: [{ min: 6, cr: 0.2 }] },
   ganyu: { base: 0.2 },
+  jahoda: { constellations: [{ min: 6, cr: 0.05 }] },
   kaeya: { constellations: [{ min: 1, cr: 0.15 }] },
   keqing: { base: 0.15 },
+  mona: { constellations: [{ min: 4, cr: 0.15 }] },
   nahida: { base: 0.24 },
   navia: { constellations: [{ min: 2, cr: 0.36 }] },
   nilou: { constellations: [{ min: 6, cr: 0.3 }] },
@@ -69,15 +74,28 @@ const STATIC_CHARACTER_CR_BUDGET: Record<string, CharacterBuffEntry> = {
     ],
   },
   rosaria: { base: 0.12 },
+  sangonomiya_kokomi: { base: -1 },
   sethos: { constellations: [{ min: 1, cr: 0.15 }] },
   shikanoin_heizou: { constellations: [{ min: 6, cr: 0.16 }] },
   sigewinne: { constellations: [{ min: 6, cr: 0.2 }] },
   tighnari: { constellations: [{ min: 1, cr: 0.15 }] },
+  traveler_anemo: { base: 0.1 },
+  traveler_cryo: { base: 0.1 },
+  traveler_dendro: { base: 0.1 },
+  traveler_electro: { base: 0.1 },
+  traveler_geo: {
+    base: 0.1,
+    constellations: [{ min: 1, cr: 0.1 }],
+  },
+  traveler_hydro: { base: 0.1 },
+  traveler_pyro: { base: 0.1 },
   varesa: { constellations: [{ min: 6, cr: 0.1 }] },
+  wanderer: { base: 0.2 },
   wriothesley: { constellations: [{ min: 6, cr: 0.1 }] },
   xianyun: { base: 0.1 },
   xinyan: { constellations: [{ min: 2, cr: 1 }] },
   yanfei: { constellations: [{ min: 2, cr: 0.2 }] },
+  yumemizuki_mizuki: { constellations: [{ min: 6, cr: 0.2 }] },
 };
 
 const IGNORED_CHARACTER_CR_BUDGET = new Set([
@@ -120,11 +138,11 @@ function getAscensionCr(input: CrBudgetInput): number {
       input.characterId,
       input.characterLevel
     );
-    for (const entry of charStats) {
-      if (entry.key === "cr" && entry.value > BASE_CR) {
-        return entry.value - BASE_CR;
-      }
-    }
+    const totalCr = charStats.reduce(
+      (total, entry) => total + (entry.key === "cr" ? entry.value : 0),
+      0
+    );
+    return Math.max(0, totalCr - BASE_CR);
   } catch {
     // Stats may not be loaded in tests or may be absent for unreleased data.
   }
@@ -168,6 +186,14 @@ function getStaticCharBuff(charId: string, constellation: number): number {
   );
 }
 
+function getTeamResonanceCr(input: CrBudgetInput): number {
+  // Score-up recommendations are character-centric and do not carry a team.
+  // Model the expected double-Cryo, Cryo-affected enemy ceiling for Cryo builds.
+  return characterStatsResource.peek()?.[input.characterId]?.element === "Cryo"
+    ? 0.15
+    : 0;
+}
+
 function getStaticWeaponBuff(
   weaponId: string | undefined,
   refinement: number | undefined
@@ -176,8 +202,18 @@ function getStaticWeaponBuff(
   return refinementValue(STATIC_WEAPON_CR_BUDGET[weaponId] ?? [], refinement);
 }
 
-function getDynamicWeaponBuff(_input: CrBudgetInput): number {
-  switch (_input.weaponId) {
+function getDynamicWeaponBuff(input: CrBudgetInput): number {
+  switch (input.weaponId) {
+    case "lithic_blade":
+    case "lithic_spear": {
+      const perLiyueCharacter = refinementValue(
+        [0.03, 0.04, 0.05, 0.06, 0.07],
+        input.weaponRefinement
+      );
+      const wielderIsFromLiyue =
+        characterStatsResource.peek()?.[input.characterId]?.region === "Liyue";
+      return perLiyueCharacter * (wielderIsFromLiyue ? 4 : 3);
+    }
     default:
       return 0;
   }
@@ -214,6 +250,12 @@ function getDynamicArtifactBuff(input: CrBudgetInput): number {
       return charInfo[input.characterId]?.faction === "Hexerei" ? 0.2 : 0;
     case "obsidian_codex":
       return charInfo[input.characterId]?.faction === "Nightsoul" ? 0.4 : 0;
+    case "scarlet_proof":
+      // Only Anemo wearers can trigger Stellar Swirl themselves.
+      return characterStatsResource.peek()?.[input.characterId]?.element ===
+        "Anemo"
+        ? 0.16
+        : 0;
     default:
       return 0;
   }
@@ -226,6 +268,7 @@ export function getCrBudget(input: CrBudgetInput): CrBudgetResult {
     input.characterId,
     input.constellation
   );
+  const teamResonanceCr = getTeamResonanceCr(input);
   const weaponSecondaryCr = getWeaponSecondaryCr(input);
   const weaponPassiveCr =
     getStaticWeaponBuff(input.weaponId, input.weaponRefinement) +
@@ -237,6 +280,7 @@ export function getCrBudget(input: CrBudgetInput): CrBudgetResult {
     baseCr,
     ascensionCr,
     characterBuffCr,
+    teamResonanceCr,
     weaponSecondaryCr,
     weaponPassiveCr,
     artifactSetCr,
@@ -244,6 +288,7 @@ export function getCrBudget(input: CrBudgetInput): CrBudgetResult {
       baseCr +
       ascensionCr +
       characterBuffCr +
+      teamResonanceCr +
       weaponSecondaryCr +
       weaponPassiveCr +
       artifactSetCr,

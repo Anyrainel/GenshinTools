@@ -18,6 +18,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { LuckExpectation, Tier } from "@/data/enums";
 import { allSlots, LUCK_MULTIPLIERS, tiers } from "@/data/enums";
 import { charactersById } from "@/data/gameResources";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import type { CharacterData, TierCustomization } from "@/data/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { useAsyncScoreUp } from "@/hooks/useAsyncRecommendations";
@@ -68,6 +72,9 @@ export function ScoreUpView({
   onShowTour,
 }: ScoreUpViewProps) {
   const { t } = useLanguage();
+  const characterStats = characterStatsResource.use();
+  const weaponStats = weaponStatsResource.use();
+  const crBudgetDataReady = characterStats !== null && weaponStats !== null;
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
   const buildGroups = useBuildsStore(selectEnabledBuildGroups);
@@ -152,7 +159,9 @@ export function ScoreUpView({
   );
 
   const recommendationCacheKey = useMemo(() => {
-    if (!activeAccount || !accountData || !hasAnyBuilds) return null;
+    if (!activeAccount || !accountData || !hasAnyBuilds || !crBudgetDataReady) {
+      return null;
+    }
     return `recommendations:${hashString(
       JSON.stringify({
         accountId: activeAccount.id,
@@ -168,6 +177,7 @@ export function ScoreUpView({
     activeAccount,
     accountData,
     allowPoolArtifactSteals,
+    crBudgetDataReady,
     respectFrozenArtifacts,
     protectedArtifactIds,
     hasAnyBuilds,

@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import type { MainStat, Slot, SubStat, Tier } from "@/data/enums";
 import { allSlots } from "@/data/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/data/gameStatsLoader";
 import type {
   AccountData,
   ArtifactData,
@@ -20,6 +24,13 @@ import type {
   StatWeightMap,
 } from "@/lib/artifact/scoring/artifactScore";
 import { createArtifactScoreResult } from "../../fixtures";
+
+beforeAll(async () => {
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
+});
 
 const stepOrderAccountData: AccountData = {
   characters: [
@@ -99,6 +110,102 @@ describe("runTierWaterfallSteps", () => {
 });
 
 describe("runTierWaterfall", () => {
+  it("propagates current entity and Cryo resonance CR into allocation", () => {
+    const odetteBuild: Build = {
+      ...build,
+      characterId: "odette",
+      artifactSet: "disenchantment_in_deep_shadow",
+      circletWeights: [{ stat: "cd", weight: 100 }],
+    };
+    const equipped = Object.fromEntries(
+      allSlots.map((slot) => [
+        slot,
+        {
+          ...artifact(slot, `odette-${slot}`),
+          setKey: "disenchantment_in_deep_shadow",
+          mainStatKey: slot === "circlet" ? "cd" : mainStatBySlot[slot],
+          substats: { cr: 20 },
+        },
+      ])
+    ) as Record<Slot, ArtifactData>;
+    const accountData: AccountData = {
+      characters: [
+        {
+          key: "odette",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 10, skill: 10, burst: 10 },
+          weapon: {
+            id: "odette-weapon",
+            key: "whitelake_frostfeather",
+            level: 90,
+            refinement: 1,
+            lock: false,
+          },
+          artifacts: equipped,
+        },
+      ],
+      extraArtifacts: [],
+      extraWeapons: [],
+    };
+    const scores = {
+      odette: createArtifactScoreResult({
+        buildMatch: {
+          build: odetteBuild,
+          statWeights: { cr: 100, cd: 100, "atk%": 100 },
+        },
+      }),
+    };
+
+    const result = runTierWaterfall(accountData, scores, {
+      odette: { tier: "S", position: 0 },
+    });
+    const allocated = result.perCharacter.odette;
+    const context = requireContext(allocated.context, "odette");
+    const budget = context.crBudget;
+
+    expect(allocated.build).not.toBeNull();
+    expect(budget.weaponSecondaryCr).toBeCloseTo(0.221, 6);
+    expect(budget.artifactSetCr).toBe(0.16);
+    expect(budget.teamResonanceCr).toBe(0.15);
+    expect(budget.totalNonArtifactCr).toBeCloseTo(
+      budget.baseCr +
+        budget.ascensionCr +
+        budget.characterBuffCr +
+        0.15 +
+        0.221 +
+        0.16,
+      6
+    );
+
+    const scoreWithCurrentBudget = scoreFullBuild(
+      allocated.build!.artifacts,
+      context.config.weights,
+      context.config.targetMainStatWeights,
+      budget
+    ).finalScore;
+    const staleBudget = {
+      ...budget,
+      teamResonanceCr: 0,
+      weaponSecondaryCr: 0,
+      artifactSetCr: 0,
+      totalNonArtifactCr:
+        budget.totalNonArtifactCr -
+        budget.teamResonanceCr -
+        budget.weaponSecondaryCr -
+        budget.artifactSetCr,
+    };
+    const scoreWithStaleBudget = scoreFullBuild(
+      allocated.build!.artifacts,
+      context.config.weights,
+      context.config.targetMainStatWeights,
+      staleBudget
+    ).finalScore;
+
+    expect(scoreWithCurrentBudget).toBeCloseTo(allocated.build!.finalScore, 6);
+    expect(scoreWithStaleBudget).toBeGreaterThan(scoreWithCurrentBudget);
+  });
+
   it("can exclude artifacts equipped by Pool characters from recommendation search", () => {
     const poolArtifacts = Object.fromEntries(
       allSlots.map((slot) => [slot, artifact(slot)])

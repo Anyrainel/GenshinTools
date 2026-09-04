@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AccountProfileId } from "@/lib/account-data/types";
 import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+import { migrateAccountScoreCacheStore } from "./migration/accountScoreCache";
 import { PersistedAccountScoreCacheStoreSchema } from "./schemas";
 
 export type AccountScoreMap = Record<string, ArtifactScoreResult | null>;
@@ -159,7 +160,8 @@ export const useAccountScoreCacheStore = create<AccountScoreCacheStore>()(
     }),
     {
       name: "account-score-cache-storage",
-      version: 1,
+      version: 2,
+      migrate: migrateAccountScoreCacheStore,
       partialize: (state) => ({
         scoresByProfileId: state.scoresByProfileId,
         staleScoreCharIdsByProfileId: state.staleScoreCharIdsByProfileId,

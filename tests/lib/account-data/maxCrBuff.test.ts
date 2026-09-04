@@ -16,7 +16,7 @@ beforeAll(async () => {
 
 const testBuild: Build = {
   id: "test-build",
-  characterId: "hutao",
+  characterId: "hu_tao",
   visible: true,
   composition: "4pc",
   artifactSet: "crimson_witch_of_flames",
@@ -47,7 +47,7 @@ function getBudgetFor(char: CharacterData, artifact?: Build) {
 describe("getCrBudget", () => {
   it("includes base CR of 0.05", () => {
     const char: CharacterData = {
-      key: "hutao",
+      key: "hu_tao",
       constellation: 0,
       level: 90,
       talent: { auto: 10, skill: 10, burst: 8 },
@@ -58,31 +58,29 @@ describe("getCrBudget", () => {
     expect(result.totalNonArtifactCr).toBeGreaterThanOrEqual(0.05);
   });
 
-  it("detects CR ascension stat (e.g., ganyu has CR ascension)", () => {
+  it("counts a CR ascension stat without subtracting base CR twice", () => {
     const char: CharacterData = {
-      key: "ganyu",
+      key: "yelan",
       constellation: 0,
       level: 90,
       talent: { auto: 10, skill: 10, burst: 8 },
       artifacts: {},
     };
 
-    const ganyu_build: Build = {
+    const yelanBuild: Build = {
       ...testBuild,
-      characterId: "ganyu",
+      characterId: "yelan",
     };
 
-    const result = getBudgetFor(char, ganyu_build);
-    // Ganyu has CR ascension stat — should have ascensionCr > 0
-    // Based on game data, Ganyu has 19.2% CD ascension, not CR, so this may be 0
-    // The test verifies the field exists and is a number
-    expect(typeof result.ascensionCr).toBe("number");
-    expect(result.ascensionCr).toBeGreaterThanOrEqual(0);
+    const result = getBudgetFor(char, yelanBuild);
+
+    expect(result.ascensionCr).toBeCloseTo(0.192, 6);
+    expect(result.totalNonArtifactCr).toBeCloseTo(0.05 + 0.192, 6);
   });
 
   it("detects weapon secondary CR", () => {
     const char: CharacterData = {
-      key: "hutao",
+      key: "hu_tao",
       constellation: 0,
       level: 90,
       talent: { auto: 10, skill: 10, burst: 8 },
@@ -101,9 +99,31 @@ describe("getCrBudget", () => {
     expect(result.weaponSecondaryCr).toBeGreaterThan(0);
   });
 
+  it.each([
+    { weaponId: "clash_of_kings", expected: 0.276 },
+    { weaponId: "exaiphanes_blade", expected: 0.331 },
+    { weaponId: "forged_by_the_golden_melody", expected: 0.276 },
+    { weaponId: "heretics_molten_blade", expected: 0.276 },
+    { weaponId: "jade_vista", expected: 0.276 },
+    { weaponId: "whitelake_frostfeather", expected: 0.221 },
+  ])("includes the current CR secondary stat for $weaponId", ({
+    weaponId,
+    expected,
+  }) => {
+    const result = getCrBudget({
+      characterId: "hu_tao",
+      characterLevel: 90,
+      constellation: 0,
+      weaponId,
+      weaponRefinement: 1,
+    });
+
+    expect(result.weaponSecondaryCr).toBeCloseTo(expected, 6);
+  });
+
   it("handles missing weapon gracefully", () => {
     const char: CharacterData = {
-      key: "hutao",
+      key: "hu_tao",
       constellation: 0,
       level: 90,
       talent: { auto: 10, skill: 10, burst: 8 },
@@ -117,7 +137,7 @@ describe("getCrBudget", () => {
 
   it("sums all CR sources correctly", () => {
     const char: CharacterData = {
-      key: "hutao",
+      key: "hu_tao",
       constellation: 0,
       level: 90,
       talent: { auto: 10, skill: 10, burst: 8 },
@@ -129,10 +149,142 @@ describe("getCrBudget", () => {
       result.baseCr +
       result.ascensionCr +
       result.characterBuffCr +
+      result.teamResonanceCr +
       result.weaponSecondaryCr +
       result.weaponPassiveCr +
       result.artifactSetCr;
     expect(result.totalNonArtifactCr).toBeCloseTo(expectedTotal, 6);
+  });
+
+  it("includes the expected double-Cryo resonance ceiling for Cryo characters", () => {
+    const char: CharacterData = {
+      key: "ganyu",
+      constellation: 0,
+      level: 90,
+      talent: { auto: 10, skill: 10, burst: 8 },
+      artifacts: {},
+    };
+
+    const result = getBudgetFor(char, {
+      ...testBuild,
+      characterId: "ganyu",
+    });
+
+    expect(result.teamResonanceCr).toBe(0.15);
+    expect(result.totalNonArtifactCr).toBeCloseTo(
+      result.baseCr +
+        result.ascensionCr +
+        result.characterBuffCr +
+        0.15 +
+        result.weaponSecondaryCr +
+        result.weaponPassiveCr +
+        result.artifactSetCr,
+      6
+    );
+  });
+
+  it("does not add the Cryo resonance ceiling for non-Cryo characters", () => {
+    const char: CharacterData = {
+      key: "hu_tao",
+      constellation: 0,
+      level: 90,
+      talent: { auto: 10, skill: 10, burst: 8 },
+      artifacts: {},
+    };
+
+    expect(getBudgetFor(char, testBuild).teamResonanceCr).toBe(0);
+  });
+
+  it.each([
+    {
+      label: "Mizuki C6",
+      characterId: "yumemizuki_mizuki",
+      constellation: 6,
+      expected: 0.2,
+    },
+    {
+      label: "Mona C4",
+      characterId: "mona",
+      constellation: 4,
+      expected: 0.15,
+    },
+    {
+      label: "Wanderer P1",
+      characterId: "wanderer",
+      constellation: 0,
+      expected: 0.2,
+    },
+    {
+      label: "Jahoda C6",
+      characterId: "jahoda",
+      constellation: 6,
+      expected: 0.05,
+    },
+    {
+      label: "Anemo Traveler's cross-resonance passive",
+      characterId: "traveler_anemo",
+      constellation: 0,
+      expected: 0.1,
+    },
+    {
+      label: "Cryo Traveler's cross-resonance passive",
+      characterId: "traveler_cryo",
+      constellation: 0,
+      expected: 0.1,
+    },
+    {
+      label: "Dendro Traveler's cross-resonance passive",
+      characterId: "traveler_dendro",
+      constellation: 0,
+      expected: 0.1,
+    },
+    {
+      label: "Electro Traveler's cross-resonance passive",
+      characterId: "traveler_electro",
+      constellation: 0,
+      expected: 0.1,
+    },
+    {
+      label: "Hydro Traveler's cross-resonance passive",
+      characterId: "traveler_hydro",
+      constellation: 0,
+      expected: 0.1,
+    },
+    {
+      label: "Pyro Traveler's cross-resonance passive",
+      characterId: "traveler_pyro",
+      constellation: 0,
+      expected: 0.1,
+    },
+    {
+      label: "Geo Traveler's cross-resonance passive and C1",
+      characterId: "traveler_geo",
+      constellation: 1,
+      expected: 0.2,
+    },
+  ])("includes the current self-applicable CR ceiling for $label", ({
+    characterId,
+    constellation,
+    expected,
+  }) => {
+    expect(
+      getCrBudget({
+        characterId,
+        characterLevel: 90,
+        constellation,
+      }).characterBuffCr
+    ).toBe(expected);
+  });
+
+  it("preserves Kokomi's negative CR adjustment in artifact headroom", () => {
+    const result = getCrBudget({
+      characterId: "sangonomiya_kokomi",
+      characterLevel: 90,
+      constellation: 0,
+    });
+
+    expect(result.characterBuffCr).toBe(-1);
+    expect(result.totalNonArtifactCr).toBeCloseTo(-0.95, 6);
   });
 
   it("uses peak Ascendant Gleam CR for Night of the Sky's Unveiling", () => {
@@ -156,6 +308,7 @@ describe("getCrBudget", () => {
       result.baseCr +
         result.ascensionCr +
         result.characterBuffCr +
+        result.teamResonanceCr +
         result.weaponSecondaryCr +
         result.weaponPassiveCr +
         0.3,
@@ -217,6 +370,64 @@ describe("getCrBudget", () => {
     );
   });
 
+  it("includes current CR artifact-set ceilings and wearer gates", () => {
+    const wriothesley: CharacterData = {
+      key: "wriothesley",
+      constellation: 0,
+      level: 90,
+      talent: { auto: 10, skill: 10, burst: 8 },
+      artifacts: {},
+    };
+    const mizuki: CharacterData = {
+      key: "yumemizuki_mizuki",
+      constellation: 0,
+      level: 90,
+      talent: { auto: 10, skill: 10, burst: 8 },
+      artifacts: {},
+    };
+    const deepShadowBuild: Build = {
+      ...testBuild,
+      characterId: "wriothesley",
+      artifactSet: "disenchantment_in_deep_shadow",
+    };
+    const scarletProofBuild: Build = {
+      ...testBuild,
+      characterId: "yumemizuki_mizuki",
+      artifactSet: "scarlet_proof",
+    };
+
+    expect(getBudgetFor(wriothesley, deepShadowBuild).artifactSetCr).toBe(0.16);
+    expect(getBudgetFor(mizuki, scarletProofBuild).artifactSetCr).toBe(0.16);
+    expect(
+      getBudgetFor({ ...wriothesley, key: "hu_tao" }, scarletProofBuild)
+        .artifactSetCr
+    ).toBe(0);
+  });
+
+  it("uses the reachable team ceiling for Lithic weapon CR", () => {
+    const character = (key: string, weaponKey: string): CharacterData => ({
+      key,
+      constellation: 0,
+      level: 90,
+      talent: { auto: 10, skill: 10, burst: 8 },
+      weapon: {
+        id: "w1",
+        key: weaponKey,
+        level: 90,
+        refinement: 5,
+        lock: false,
+      },
+      artifacts: {},
+    });
+
+    expect(
+      getBudgetFor(character("xiangling", "lithic_spear")).weaponPassiveCr
+    ).toBeCloseTo(0.28, 6);
+    expect(
+      getBudgetFor(character("diluc", "lithic_blade")).weaponPassiveCr
+    ).toBeCloseTo(0.21, 6);
+  });
+
   it("includes character constellation and weapon passive CR ceilings", () => {
     const char: CharacterData = {
       key: "gaming",
@@ -244,6 +455,7 @@ describe("getCrBudget", () => {
       result.baseCr +
         result.ascensionCr +
         result.characterBuffCr +
+        result.teamResonanceCr +
         result.weaponSecondaryCr +
         result.weaponPassiveCr +
         result.artifactSetCr,
@@ -269,6 +481,7 @@ describe("getCrBudget", () => {
     expect(result.totalNonArtifactCr).toBeCloseTo(
       result.baseCr +
         result.ascensionCr +
+        result.teamResonanceCr +
         result.weaponSecondaryCr +
         result.weaponPassiveCr +
         result.artifactSetCr,
