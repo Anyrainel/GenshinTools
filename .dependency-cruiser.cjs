@@ -277,7 +277,7 @@ module.exports = {
         "Move such code to scripts/ or functions/.",
       from: {
         path: "^src/",
-        pathNot: "^src/data/utils\\.ts$"
+        pathNot: "^src/data/utils\\.ts$",
       },
       to: {
         path: [
