@@ -1,6 +1,6 @@
 # GG logo study
 
-Temporary, standalone comparison page for four paired GGArtifact / GGStarRail
+Temporary, standalone comparison page for four paired GGArtifact [Genshin] / GGArtifact [Star Rail]
 logo directions. No production imports or asset replacements.
 
 From the repository root, serve locally:
@@ -16,7 +16,12 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-All concept geometry is authored in `lab.js`. Reference artwork is loaded from
+Round two replaces the initial four studies with Luminous bevel, Opal polish,
+Aurora cut, and Petal crystal. All have solid centers and shared material
+treatments rather than cut-outs, frames, or separated fragments.
+
+All concept geometry is authored in `icon-art.js`; `lab.js` contains the preview
+controls and exports. Reference artwork is loaded from
 the four user-supplied URLs and the current local GI SVG; it is not included in
 exports. The HSR URLs are labeled by filename because the supplied 900001 image
 renders a crystal cluster and 3 renders a four-petal gem. The first three HSR
