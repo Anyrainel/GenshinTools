@@ -175,8 +175,8 @@ async function render() {
 $("concepts").innerHTML = [0]
   .map(
     (family) =>
-      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>A1 and A5 references · A6 proposed pair</span></div><div class="family-grid">${[
-        0, 10, 4,
+      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>A6 baseline · two crystal refinements</span></div><div class="family-grid">${[
+        10, 11, 12,
       ]
         .map((i) => {
           const concept = concepts[i];

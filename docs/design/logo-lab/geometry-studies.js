@@ -105,6 +105,36 @@ concepts.push({
   gi: "An intermediate shoulder depth keeps the star substantial without a square-looking center.",
   hsr: "A5 retained: the same silhouette, palette, facets, and inner highlight.",
 });
+for (const [refinement, name, material, description] of [
+  [
+    1,
+    "Clear planes",
+    "A6 outline · clearer crystal faces",
+    "The A6 silhouette and colors are retained. Three continuous faces describe the main crystal; each side crystal meets a single shared bottom edge. Removing the floating inner highlight gives the eye fewer competing shapes to interpret.",
+  ],
+  [
+    2,
+    "Gathered crystal",
+    "A6 proportions · more distinct side crystals",
+    "A small change to the cluster: the left shard rises to a clearer tip, the right shard has a more upright face, and the underside is shallower. The faces meet as a single solid cluster. The Genshin star and shared palette remain exactly A6.",
+  ],
+]) {
+  concepts.push({
+    ...concepts[10],
+    hybrid: false,
+    crystalRefinement: refinement,
+    code: `A${6 + refinement}`,
+    name,
+    material,
+    description,
+    tag: "A6 baseline / crystal clarity",
+    gi: "A6 star retained without changes.",
+    hsr:
+      refinement === 1
+        ? "A6 outline retained; continuous faces replace the overlapping internal patches."
+        : "More legible side tips and a shallower base reduce the impression of a ribbon or stand.",
+  });
+}
 export const shapes = {
   angular: [
     "M32 3 40 20 43 24 60 32 43 40 39 45 32 62 25 45 21 40 4 32 21 24 24 20Z",

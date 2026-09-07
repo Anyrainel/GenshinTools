@@ -12,8 +12,17 @@ export function icon(
   refined = true
 ) {
   const study = concepts[index];
+  if (study.crystalRefinement && (game === "gi" || !refined))
+    return icon(10, game, oneColor, foreground, size, true);
   if (study.hybrid && (!refined || game === "hsr"))
-    return icon(game === "hsr" ? 4 : 0, game, oneColor, foreground, size, true);
+    return icon(
+      game === "hsr" ? 4 : 10,
+      game,
+      oneColor,
+      foreground,
+      size,
+      true
+    );
   const { family, variant } = study;
   const improving = refined && (variant === 0 || variant === 2);
   const c = improving ? study.refinedColors : study.colors;
@@ -37,6 +46,8 @@ export function icon(
   if (study.hybrid)
     shape =
       "M32 3 39.5 21.5 41 24.5 60 32 41 39.5 38 44 32 61 26 44 23 39.5 4 32 23 24.5 24.5 21.5Z";
+  if (study.crystalRefinement === 2)
+    shape = "M35 4 49 14 44 37 52 29 58 43 45 54 26 58 9 45 13 27 23 36 24 13Z";
   const gradient = (key, colors, x2 = "80%", y2 = "100%") =>
     `<linearGradient id="${id}-${key}" x1="15%" y1="0%" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
   const fill = (key) => `url(#${id}-${key})`;
@@ -221,6 +232,37 @@ export function icon(
       [`M24 50 32 46 44 50 60 45 48 56 ${foot}Z`, "middle"],
     ];
   }
+  if (study.crystalRefinement) {
+    const gathered = study.crystalRefinement === 2;
+    const left = gathered ? "13 27" : "11 31";
+    const leftFoot = gathered ? "9 45" : "8 46";
+    const bottom = gathered ? "26 58" : "25 60";
+    const right = gathered ? "52 29" : "53 33";
+    const rightFoot = gathered ? "58 43" : "59 45";
+    const lowerRight = gathered ? "45 54" : "46 55";
+    faces = [
+      ["M35 4 24 13 22 37 31 46 37 23Z", "warm"],
+      ["M35 4 49 14 37 23Z", "light"],
+      ["M49 14 45 38 31 46 37 23Z", "dark"],
+      [`M${left} 22 37 31 46 23 49Z`, "light"],
+      [`M${left} 23 49 ${bottom} ${leftFoot}Z`, "middle"],
+      [`M31 46 45 38 ${right} 43 49Z`, "lower"],
+      [`M${right} ${rightFoot} ${lowerRight} 43 49Z`, "dark"],
+      [`M23 49 31 46 43 49 ${lowerRight} ${bottom}Z`, "middle"],
+    ];
+    if (tiny) {
+      // Keep the main light/dark split and the two supporting crystal masses.
+      faces = [
+        ["M35 4 24 13 22 37 31 46 37 23Z", "warm"],
+        ["M35 4 49 14 45 38 31 46 37 23Z", "dark"],
+        [`M${left} 22 37 31 46 ${bottom} ${leftFoot}Z`, "light"],
+        [
+          `M31 46 45 38 ${right} ${rightFoot} ${lowerRight} ${bottom}Z`,
+          "lower",
+        ],
+      ];
+    }
+  }
   let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
   if (variant === 1 && game === "hsr" && family === 0) {
     interior =
@@ -238,7 +280,7 @@ export function icon(
   if (variant === 3 && game === "hsr") {
     interior = `<g transform="rotate(7 32 32)">${interior}</g>`;
   }
-  if (variant === 4 && !tiny) {
+  if (variant === 4 && !tiny && !study.crystalRefinement) {
     // A low-contrast inner cut, never a separate badge or a heavy outline.
     const inset =
       game === "hsr" && family === 0

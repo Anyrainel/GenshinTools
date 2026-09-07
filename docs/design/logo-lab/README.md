@@ -16,12 +16,13 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-Round seven focuses exclusively on group A. A6 is the proposed pairing: a
-Genshin star between A1's fuller center and A5's deeper shoulders, with the A5
-Star Rail icon retained exactly. A1 and A5 remain as comparison references;
-group B is removed from the grid. A6 uses A5's palette and restrained inner cut
-to tie the pair together. Its comparison checkbox shows the earlier A1 star
-with the same A5 crystal. Previews and exports follow the selected state.
+Round eight establishes A6 as the baseline for all future refinements. A7 keeps
+the A6 crystal silhouette and replaces overlapping internal patches with more
+continuous faces. A8 also raises the side-crystal tips and makes the underside
+shallower. Both use eight primary full-size faces and simplified small artwork.
+The Genshin star and palette are identical across A6, A7, and A8. Only those
+three pairs appear in the grid. The comparison checkbox restores A6; previews
+and exports follow the selected state.
 
 The design brief requires familiarity for players, standalone clarity and
 quality for people unfamiliar with the games, and visibly original geometry
