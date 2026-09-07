@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GG / Icon studies</title>
+    <link rel="icon" id="favicon" type="image/svg+xml" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header><a class="brand" href="#">GG<span> / BRAND WORKSHOP</span></a><span class="edition">01 — Currency studies</span></header>
+      <section class="intro"><p class="eyebrow">GGARTIFACT + GGSTARRAIL</p><h1>Same family.<br />Different worlds.</h1><p>Four paired directions, drawn for the browser tab first. Pick a pair, change the canvas, and judge the smallest version before the largest.</p></section>
+      <section aria-label="Choose a design pair" class="concepts" id="concepts"></section>
+      <section class="workbench" aria-labelledby="direction-title">
+        <div class="section-heading"><div><p class="eyebrow" id="direction-number"></p><h2 id="direction-title"></h2></div><label class="toggle"><input type="checkbox" id="mono" /> One-color test</label></div>
+        <p id="direction-description" class="description"></p>
+        <div class="controls"><fieldset><legend>Preview canvas</legend><div id="swatches"></div></fieldset><label class="custom">Custom color <input type="color" id="custom-color" value="#446084" /></label><label class="toggle"><input type="checkbox" id="light-page" /> Light page</label></div>
+        <div class="hero-pair" id="hero-pair"></div>
+        <div class="notes" id="notes"></div>
+        <div class="section-heading"><div><p class="eyebrow">THE REAL TEST</p><h2>Small, smaller, smallest.</h2></div><span class="hint">Rasterized at the labeled pixel count</span></div>
+        <div id="sizes" class="size-pair"></div>
+        <div class="tabs-pair" id="tabs"></div>
+        <p class="hint">Use “Try in this tab” to change this page’s actual favicon. Browser tabs may cache previous icons. Preview rows show 16 px at 1×; the enlarged grid shows the exact 16 × 16 raster.</p>
+        <div class="section-heading"><div><p class="eyebrow">CONTRAST CHECK</p><h2>Across the spectrum.</h2></div></div>
+        <div id="backgrounds" class="backgrounds"></div>
+      </section>
+      <details class="references"><summary>Reference board · originals and current GI logo</summary><p>Original artwork from the supplied URLs, shown for comparison only. HSR labels below follow the supplied filenames: 900001 renders a crystal cluster; 3 renders a four-petal gem.</p><div id="references" class="reference-grid"></div></details>
+      <footer>Temporary concept study · SVG originals + PNG exports · No production logos replaced</footer>
+      <p id="status" role="status" aria-live="polite"></p>
+    </main>
+    <script type="module" src="./lab.js"></script>
+  </body>
+</html>
