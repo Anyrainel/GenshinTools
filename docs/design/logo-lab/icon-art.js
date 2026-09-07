@@ -51,6 +51,9 @@ export function icon(
   if (study.crystalRefinement === 3)
     shape =
       "M37 4 46 8 53 21 46 42 52 41 59 48 54 57 31 60 13 55 7 45 11 39 19 44 22 15Z";
+  if (study.crystalRefinement === 4)
+    shape =
+      "M39 4 44 6 52 19 45 40 51 39 57 46 55 54 43 60 30 61 25 57 19 58 8 44 9 35 13 33 19 36 20 40 24 12Z";
   const gradient = (key, colors, x2 = "80%", y2 = "100%") =>
     `<linearGradient id="${id}-${key}" x1="15%" y1="0%" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
   const fill = (key) => `url(#${id}-${key})`;
@@ -303,7 +306,7 @@ export function icon(
         ["M23 51 28 47 46 42 52 41 59 48 54 57 31 60Z", "lower"],
       ];
   }
-  if (study.directionalColor) {
+  if (study.directionalColor && study.crystalRefinement === 3) {
     const tones = tiny
       ? ["cap", "front", "bevel", "blueTop", "blueShadow", "blueFront"]
       : [
@@ -318,6 +321,36 @@ export function icon(
           "blueFront",
         ];
     faces = faces.map(([d], i) => [d, tones[i]]);
+  }
+  if (study.crystalRefinement === 4) {
+    // Retain the reference's broad leaning body and compact irregular base.
+    // Simplify surface detail into connected cap, front, side and support faces.
+    faces = [
+      ["M24 12 39 4 44 6 41 20Z", "cap"],
+      ["M24 12 41 20 38 23 26 18Z", "cap"],
+      ["M24 12 26 18 23 36 20 40Z", "shoulder"],
+      ["M26 18 38 23 32 40 23 36Z", "front"],
+      ["M38 23 41 20 34 43 32 40Z", "bevel"],
+      ["M23 36 32 40 34 43 20 40Z", "shoulder"],
+      ["M44 6 52 19 44 23 41 20Z", "shoulder"],
+      ["M41 20 44 23 52 19 45 40 29 50 34 43Z", "bevel"],
+      ["M20 40 34 43 29 50Z", "side"],
+      ["M9 35 13 33 19 36 25 50 19 48Z", "blueTop"],
+      ["M9 35 19 48 19 58 8 44Z", "blueFront"],
+      ["M19 48 25 50 25 57 19 58Z", "blueShadow"],
+      ["M25 50 45 40 51 39 57 46 34 55Z", "blueTop"],
+      ["M34 55 57 46 55 54 43 60 30 61Z", "blueFront"],
+      ["M25 50 34 55 30 61 25 57Z", "blueShadow"],
+    ];
+    if (tiny)
+      faces = [
+        ["M24 12 39 4 44 6 41 20Z", "cap"],
+        ["M24 12 41 20 34 43 29 50 20 40Z", "front"],
+        ["M44 6 52 19 45 40 29 50 34 43 41 20Z", "bevel"],
+        ["M9 35 13 33 19 36 25 50 25 57 19 58 8 44Z", "blueFront"],
+        ["M25 50 45 40 51 39 57 46 34 55Z", "blueTop"],
+        ["M25 50 34 55 57 46 55 54 43 60 30 61 25 57Z", "blueFront"],
+      ];
   }
   let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
   if (variant === 1 && game === "hsr" && family === 0) {
@@ -351,7 +384,11 @@ export function icon(
       game === "hsr" && family === 0
         ? "M35 8 37 24 31 45 35 24Z"
         : "M32 9 32.7 31 52 32 32.5 32.7 32 54 31.4 32.6 11 32 31.4 31.3Z";
-    if ((variant === 0 || variant === 4) && study.crystalRefinement !== 3)
+    if (
+      (variant === 0 || variant === 4) &&
+      !study.directionalColor &&
+      study.crystalRefinement !== 3
+    )
       interior += path(
         glint,
         c[0],

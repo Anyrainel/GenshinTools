@@ -16,13 +16,12 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-Round ten shows A6 as the baseline, A9 as the geometry reference, and A10 as
-the color correction. A10 uses exactly A9's crystal geometry, with ivory/peach
-on the main crystal and blue on the base. Shaded side faces use muted violet;
-top/left-facing surfaces are lighter than right/underside faces. Dedicated
-material gradients prevent pink and blue from being spread across every face.
-The Genshin star remains A6. The comparison checkbox restores A6; previews
-and exports follow the selected state.
+Round eleven returns to a silhouette close to the reference: a broad leaning
+main crystal, small left fragment, and compact cluster around its foot. A11
+retains the larger connected facets and warm inset front, while removing small
+chips and scattered highlights. Ivory/peach stays on the main body; the base
+stays blue. A6 remains the baseline and its Genshin star is unchanged. The
+comparison checkbox restores A6; previews and exports follow the selection.
 
 The design brief requires familiarity for players, standalone clarity and
 quality for people unfamiliar with the games, and visibly original geometry
