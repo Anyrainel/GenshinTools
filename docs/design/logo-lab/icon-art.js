@@ -48,6 +48,9 @@ export function icon(
       "M32 3 39.5 21.5 41 24.5 60 32 41 39.5 38 44 32 61 26 44 23 39.5 4 32 23 24.5 24.5 21.5Z";
   if (study.crystalRefinement === 2)
     shape = "M35 4 49 14 44 37 52 29 58 43 45 54 26 58 9 45 13 27 23 36 24 13Z";
+  if (study.crystalRefinement === 3)
+    shape =
+      "M37 4 46 8 53 21 46 42 52 41 59 48 54 57 31 60 13 55 7 45 11 39 19 44 22 15Z";
   const gradient = (key, colors, x2 = "80%", y2 = "100%") =>
     `<linearGradient id="${id}-${key}" x1="15%" y1="0%" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
   const fill = (key) => `url(#${id}-${key})`;
@@ -263,6 +266,28 @@ export function icon(
       ];
     }
   }
+  if (study.crystalRefinement === 3) {
+    faces = [
+      ["M22 15 37 4 46 8 40 19 32 24Z", "light"],
+      ["M22 15 32 24 40 19 38 34 28 47 19 40Z", "warm"],
+      ["M46 8 53 21 44 26 40 19Z", "middle"],
+      ["M40 19 44 26 46 42 36 47 28 47 38 34Z", "middle"],
+      ["M53 21 46 42 36 47 44 26Z", "lower"],
+      ["M11 39 19 44 23 50 12 48 7 45Z", "light"],
+      ["M7 45 12 48 23 50 31 60 13 55Z", "dark"],
+      ["M23 50 28 47 36 47 46 42 52 41 59 48 44 52Z", "lower"],
+      ["M23 50 44 52 59 48 54 57 31 60Z", "middle"],
+    ];
+    if (tiny)
+      faces = [
+        ["M22 15 37 4 46 8 40 21 32 24Z", "light"],
+        ["M22 15 32 24 40 21 38 34 28 47 19 40Z", "warm"],
+        ["M46 8 53 21 46 42 28 47 38 34 40 21Z", "middle"],
+        ["M11 39 19 44 28 47 23 51 7 45Z", "lower"],
+        ["M7 45 23 51 31 60 13 55Z", "dark"],
+        ["M23 51 28 47 46 42 52 41 59 48 54 57 31 60Z", "lower"],
+      ];
+  }
   let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
   if (variant === 1 && game === "hsr" && family === 0) {
     interior =
@@ -295,7 +320,7 @@ export function icon(
       game === "hsr" && family === 0
         ? "M35 8 37 24 31 45 35 24Z"
         : "M32 9 32.7 31 52 32 32.5 32.7 32 54 31.4 32.6 11 32 31.4 31.3Z";
-    if (variant === 0 || variant === 4)
+    if ((variant === 0 || variant === 4) && study.crystalRefinement !== 3)
       interior += path(
         glint,
         c[0],

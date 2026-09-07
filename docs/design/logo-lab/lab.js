@@ -15,7 +15,7 @@ const backgrounds = [
   ["Apricot", "#f7d5b7", "#513224"],
   ["Cobalt", "#24489b", "#eff4ff"],
 ];
-let selected = 10;
+let selected = 13;
 let mono = false;
 let canvasText = backgrounds[0][2];
 let renderVersion = 0;
@@ -175,8 +175,8 @@ async function render() {
 $("concepts").innerHTML = [0]
   .map(
     (family) =>
-      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>A6 baseline · two crystal refinements</span></div><div class="family-grid">${[
-        10, 11, 12,
+      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>A6 baseline · A9 revised construction</span></div><div class="family-grid">${[
+        10, 13,
       ]
         .map((i) => {
           const concept = concepts[i];

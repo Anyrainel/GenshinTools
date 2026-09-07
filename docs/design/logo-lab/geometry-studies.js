@@ -135,6 +135,19 @@ for (const [refinement, name, material, description] of [
         : "More legible side tips and a shallower base reduce the impression of a ribbon or stand.",
   });
 }
+concepts.push({
+  ...concepts[10],
+  hybrid: false,
+  crystalRefinement: 3,
+  code: "A9",
+  name: "Low-set crystal",
+  material: "Low base · broad, offset crystal faces",
+  description:
+    "An A6 refinement informed by the reference's proportions: a broad leaning crystal carries the visual weight, with small supporting fragments kept low. Offset face junctions replace the continuous central split. The Genshin star and palette stay at A6.",
+  tag: "A6 baseline / revised crystal construction",
+  gi: "A6 star retained without changes.",
+  hsr: "A low, shallow base supports a broad crystal with a light cap and staggered rose–violet faces.",
+});
 export const shapes = {
   angular: [
     "M32 3 40 20 43 24 60 32 43 40 39 45 32 62 25 45 21 40 4 32 21 24 24 20Z",
