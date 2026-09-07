@@ -1,4 +1,5 @@
-import { concepts, icon } from "./icon-art.js";
+import { concepts } from "./geometry-studies.js";
+import { icon } from "./icon-art.js";
 
 const backgrounds = [
   ["Ink", "#202633", "#f3f4f8"],
@@ -59,10 +60,13 @@ async function render() {
   $("palette").innerHTML =
     `<strong>${concept.material}</strong>${concept.colors.map((color) => `<span style="background:${color}" title="${color}"></span>`).join("")}`;
   for (const button of document.querySelectorAll(".concept")) {
-    button.setAttribute(
-      "aria-pressed",
-      String(Number(button.dataset.index) === selected)
-    );
+    const cardIndex = Number(button.dataset.index);
+    button.setAttribute("aria-pressed", String(cardIndex === selected));
+    const ink = document.body.classList.contains("light")
+      ? "#202633"
+      : "#f2f4f8";
+    button.querySelector(".concept-icons").innerHTML =
+      icon(cardIndex, "gi", mono, ink) + icon(cardIndex, "hsr", mono, ink);
   }
   $("hero-pair").innerHTML = ["gi", "hsr"]
     .map(
@@ -206,8 +210,10 @@ $("mono").onchange = (event) => {
   mono = event.target.checked;
   render().catch(showError);
 };
-$("light-page").onchange = (event) =>
+$("light-page").onchange = (event) => {
   document.body.classList.toggle("light", event.target.checked);
+  render().catch(showError);
+};
 $("custom-color").oninput = (event) => {
   const color = event.target.value;
   const rgb = [1, 3, 5]

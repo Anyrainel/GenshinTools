@@ -16,14 +16,17 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-Round three keeps the Luminous bevel silhouettes (A1–A5) and Petal crystal
-silhouettes (B1–B5). Both families offer Apricot glass, Vermilion enamel, Amber
-alloy, Rose tourmaline, and Ember garnet. Material, warm palette, and edge
-treatment distinguish the variants. No new cut-outs or enclosing shapes.
+Round four varies the geometry of the Luminous bevel family (A1–A5) and Petal
+crystal family (B1–B5). Both offer Precision cut, Broad chamfer, Soft cast, Ink
+edge, and Crown facets. The shared rose–violet–blue palette is held constant so
+the comparison is about silhouettes, corner sharpness, facet count, contour
+weight, and rendering style. All twenty outlines are independently authored.
+No cut-outs or enclosing shapes.
 
-16–24 px use dedicated simplified artwork with four or five broad faces,
-stronger edges, and no secondary glints. Full-detail artwork starts at 32 px.
-Both exports preserve the same outer silhouettes. Each card includes actual
+16–24 px use dedicated small-size artwork. Faceted styles lose secondary
+glints; Soft cast retains its curved volume and Crown facets its filled inset
+face. Full-detail artwork starts at 32 px. Both exports preserve the same outer
+silhouettes. Each card includes actual
 16 px previews on light and dark backgrounds. The selected pair supports
 full-detail SVG, favicon SVG, and 16/32/48/96/180 px PNG export. The favicon SVG
 uses the simplified geometry at every display size.
@@ -32,7 +35,8 @@ The page includes a critique of the reference art as logos and links to MDN
 icon selection and Google Search favicon guidance. Local design checks do not
 certify hosted URL stability, crawlability, or search appearance.
 
-All concept geometry is authored in `icon-art.js`; `lab.js` contains the preview
+Silhouettes and descriptions are authored in `geometry-studies.js`; rendering
+styles live in `icon-art.js`; `lab.js` contains the preview
 controls and exports. Reference artwork is loaded from
 the four user-supplied URLs and the current local GI SVG; it is not included in
 exports. The HSR URLs are labeled by filename because the supplied 900001 image
