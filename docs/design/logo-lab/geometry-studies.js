@@ -90,6 +90,21 @@ export const concepts = [0, 1].flatMap((family) =>
     hsr: notes[variant][family * 2 + 1],
   }))
 );
+concepts.push({
+  name: "Balanced cut",
+  material: "A1–A5 midpoint · A5 crystal",
+  description:
+    "The proposed pair: a four-point star with more body than A5 and deeper shoulders than A1, paired with the unchanged A5 crystal. Shared rose, violet, and blue facets establish the family. The forms should read as considered gem emblems even without knowing the games.",
+  family: 0,
+  variant: 4,
+  hybrid: true,
+  colors,
+  refinedColors: colors,
+  code: "A6",
+  tag: "Group A / proposed pairing",
+  gi: "An intermediate shoulder depth keeps the star substantial without a square-looking center.",
+  hsr: "A5 retained: the same silhouette, palette, facets, and inner highlight.",
+});
 export const shapes = {
   angular: [
     "M32 3 40 20 43 24 60 32 43 40 39 45 32 62 25 45 21 40 4 32 21 24 24 20Z",

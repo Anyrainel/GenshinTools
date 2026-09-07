@@ -12,6 +12,8 @@ export function icon(
   refined = true
 ) {
   const study = concepts[index];
+  if (study.hybrid && (!refined || game === "hsr"))
+    return icon(game === "hsr" ? 4 : 0, game, oneColor, foreground, size, true);
   const { family, variant } = study;
   const improving = refined && (variant === 0 || variant === 2);
   const c = improving ? study.refinedColors : study.colors;
@@ -32,6 +34,9 @@ export function icon(
       family === 0
         ? "M32 4 39 25 60 32 39 39 32 60 25 39 4 32 25 25Z"
         : "M32 4Q35 26 60 32Q38 35 32 60Q29 38 4 32Q26 29 32 4Z";
+  if (study.hybrid)
+    shape =
+      "M32 3 39.5 21.5 41 24.5 60 32 41 39.5 38 44 32 61 26 44 23 39.5 4 32 23 24.5 24.5 21.5Z";
   const gradient = (key, colors, x2 = "80%", y2 = "100%") =>
     `<linearGradient id="${id}-${key}" x1="15%" y1="0%" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
   const fill = (key) => `url(#${id}-${key})`;
@@ -153,8 +158,18 @@ export function icon(
         [22, 22],
       ],
     ];
-    const ring =
-      refined && variant === 4
+    const ring = study.hybrid
+      ? [
+          [32, 3],
+          [41, 24.5],
+          [60, 32],
+          [41, 39.5],
+          [32, 61],
+          [23, 39.5],
+          [4, 32],
+          [23, 24.5],
+        ]
+      : refined && variant === 4
         ? [
             [32, 4],
             [39, 25],

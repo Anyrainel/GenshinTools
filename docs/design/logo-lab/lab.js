@@ -15,7 +15,7 @@ const backgrounds = [
   ["Apricot", "#f7d5b7", "#513224"],
   ["Cobalt", "#24489b", "#eff4ff"],
 ];
-let selected = 0;
+let selected = 10;
 let mono = false;
 let canvasText = backgrounds[0][2];
 let renderVersion = 0;
@@ -172,10 +172,19 @@ async function render() {
     $("tabs").append(tabColumn);
   }
 }
-$("concepts").innerHTML = [0, 1]
+$("concepts").innerHTML = [0]
   .map(
     (family) =>
-      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>Genshin + Star Rail · retained studies 1, 3, 5</span></div><div class="family-grid">${concepts.map((concept, i) => (concept.family === family && [0, 2, 4].includes(concept.variant) ? `<button class="concept" aria-pressed="${i === 0}" data-index="${i}"><div class="concept-icons">${icon(i, "gi")}${icon(i, "hsr")}</div><strong>${concept.code} · ${concept.name}</strong><small>${concept.material}</small><div class="card-tiny" aria-label="16 pixel previews" data-preview="${i}"><span>16 px</span><div class="mini-dark"></div><div class="mini-light"></div></div></button>` : "")).join("")}</div></section>`
+      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>A1 and A5 references · A6 proposed pair</span></div><div class="family-grid">${[
+        0, 10, 4,
+      ]
+        .map((i) => {
+          const concept = concepts[i];
+          return concept.family === family
+            ? `<button class="concept" aria-pressed="${i === selected}" data-index="${i}"><div class="concept-icons">${icon(i, "gi")}${icon(i, "hsr")}</div><strong>${concept.code} · ${concept.name}</strong><small>${concept.material}</small><div class="card-tiny" aria-label="16 pixel previews" data-preview="${i}"><span>16 px</span><div class="mini-dark"></div><div class="mini-light"></div></div></button>`
+            : "";
+        })
+        .join("")}</div></section>`
   )
   .join("");
 async function renderCardFavicons() {
@@ -210,7 +219,7 @@ for (const button of document.querySelectorAll(".concept")) {
 $("swatches").innerHTML = backgrounds
   .map(
     ([label, color], i) =>
-      `<button class="swatch" style="background:${color}" data-color="${color}" aria-label="${label} canvas" title="${label}" aria-pressed="${i === 0}"></button>`
+      `<button class="swatch" style="background:${color}" data-color="${color}" aria-label="${label} canvas" title="${label}" aria-pressed="${i === selected}"></button>`
   )
   .join("");
 for (const [i, button] of document.querySelectorAll(".swatch").entries()) {

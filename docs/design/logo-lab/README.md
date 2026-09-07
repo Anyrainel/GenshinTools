@@ -16,13 +16,16 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-Round six focuses the grid on studies 1, 3, and 5 in both families, preserving
-their original numbering. Studies 2 and 4 are retired from the grid. The
-refinement strengthens rose–blue contrast in 1 and 3, removes 3's translucent
-facet wash, and reduces the group A Star Rail cluster from nine primary faces
-to seven while retaining its silhouette and overlapping base. Study 5 gets
-deeper star shoulders and a pointed inset. The comparison checkbox restores
-the previous artwork and palette; previews and exports follow that selection.
+Round seven focuses exclusively on group A. A6 is the proposed pairing: a
+Genshin star between A1's fuller center and A5's deeper shoulders, with the A5
+Star Rail icon retained exactly. A1 and A5 remain as comparison references;
+group B is removed from the grid. A6 uses A5's palette and restrained inner cut
+to tie the pair together. Its comparison checkbox shows the earlier A1 star
+with the same A5 crystal. Previews and exports follow the selected state.
+
+The design brief requires familiarity for players, standalone clarity and
+quality for people unfamiliar with the games, and visibly original geometry
+and adapted color. These are design criteria; no audience study is claimed.
 
 16–24 px use dedicated small-size artwork, removing secondary glints and inner
 bevel detail and using solid facet colors. Full-detail artwork starts at 32 px.
