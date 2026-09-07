@@ -60,9 +60,24 @@ export function icon(
   defs += gradient("middle", [c[2], c[3]]);
   defs += gradient("lower", [c[3], c[4]]);
   defs += gradient("dark", [c[3], c[5]]);
+  const materialTones = {
+    cap: ["#fff9ed", "#f5e1c2"],
+    front: ["#fff0d2", "#e9b383"],
+    shoulder: ["#f5e9e6", "#d8c9da"],
+    bevel: ["#efddd0", "#c6a9b9"],
+    side: ["#b8a6be", "#827f9e"],
+    blueTop: ["#b9e2ee", "#76b8d7"],
+    blueFront: ["#70b6d7", "#3e80ae"],
+    blueShadow: ["#467f9f", "#344e72"],
+  };
+  if (study.directionalColor)
+    for (const [tone, stops] of Object.entries(materialTones))
+      defs += gradient(tone, stops);
   defs += `<clipPath id="${id}-clip">${path(shape, "white")}</clipPath>`;
 
   const paint = (tone) => {
+    if (study.directionalColor && materialTones[tone])
+      return tiny ? materialTones[tone][1] : fill(tone);
     if (tiny)
       return { light: c[0], warm: c[1], middle: c[2], lower: c[3], dark: c[4] }[
         tone
@@ -287,6 +302,22 @@ export function icon(
         ["M7 45 23 51 31 60 13 55Z", "dark"],
         ["M23 51 28 47 46 42 52 41 59 48 54 57 31 60Z", "lower"],
       ];
+  }
+  if (study.directionalColor) {
+    const tones = tiny
+      ? ["cap", "front", "bevel", "blueTop", "blueShadow", "blueFront"]
+      : [
+          "cap",
+          "front",
+          "shoulder",
+          "bevel",
+          "side",
+          "blueTop",
+          "blueShadow",
+          "blueTop",
+          "blueFront",
+        ];
+    faces = faces.map(([d], i) => [d, tones[i]]);
   }
   let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
   if (variant === 1 && game === "hsr" && family === 0) {

@@ -148,6 +148,17 @@ concepts.push({
   gi: "A6 star retained without changes.",
   hsr: "A low, shallow base supports a broad crystal with a light cap and staggered rose–violet faces.",
 });
+concepts.push({
+  ...concepts[13],
+  code: "A10",
+  name: "Warm crystal / blue base",
+  directionalColor: true,
+  colors: ["#fff4df", "#edbd8c", "#b6a0bd", "#71b7d7", "#397ca9", "#334863"],
+  material: "A9 geometry · separated material colors",
+  description:
+    "The main crystal is warm ivory and peach, with muted violet confined to its shaded right edge. The base stays blue: pale on top, deeper on its front and underside. Light comes from above left. Geometry is identical to A9; the Genshin star remains A6.",
+  hsr: "Warm main crystal, cool blue support, and a consistent upper-left light direction.",
+});
 export const shapes = {
   angular: [
     "M32 3 40 20 43 24 60 32 43 40 39 45 32 62 25 45 21 40 4 32 21 24 24 20Z",
