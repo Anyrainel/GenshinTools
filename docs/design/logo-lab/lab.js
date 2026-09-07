@@ -49,10 +49,15 @@ function showError(error) {
 }
 async function render() {
   const version = ++renderVersion;
+  const index = selected;
+  const oneColor = mono;
+  const foreground = canvasText;
   const concept = concepts[selected];
   $("direction-number").textContent = concept.tag;
-  $("direction-title").textContent = concept.name;
+  $("direction-title").textContent = `${concept.code} · ${concept.name}`;
   $("direction-description").textContent = concept.description;
+  $("palette").innerHTML =
+    `<strong>${concept.material}</strong>${concept.colors.map((color) => `<span style="background:${color}" title="${color}"></span>`).join("")}`;
   for (const button of document.querySelectorAll(".concept")) {
     button.setAttribute(
       "aria-pressed",
@@ -77,11 +82,12 @@ async function render() {
     .join("");
   for (const game of ["gi", "hsr"]) {
     const svg = icon(selected, game, mono, canvasText);
+    const atSize = (size) => icon(index, game, oneColor, foreground, size);
     const card = document.createElement("div");
     card.className = "size-card";
     card.innerHTML = `<div class="size-row"></div><div class="pixel-view"><p>16 × 16, enlarged 6×.<br />${name(game)}<br />Look for a clear silhouette and readable light and shadow.</p></div>`;
     for (const size of [16, 20, 24, 32, 48, 64]) {
-      const canvas = await raster(svg, size);
+      const canvas = await raster(atSize(size), size);
       if (version !== renderVersion) return;
       canvas.setAttribute("aria-label", `${name(game)} at ${size} pixels`);
       const sample = document.createElement("div");
@@ -94,13 +100,19 @@ async function render() {
       );
       card.querySelector(".size-row").append(sample);
     }
-    const pixelCanvas = await raster(svg, 16);
+    const pixelCanvas = await raster(atSize(16), 16);
     if (version !== renderVersion) return;
     card.querySelector(".pixel-view").prepend(pixelCanvas);
     $("sizes").append(card);
     const tabColumn = document.createElement("div");
     for (const dark of [false, true]) {
-      const tabSvg = icon(selected, game, mono, dark ? "#f2f4f8" : "#202633");
+      const tabSvg = icon(
+        selected,
+        game,
+        mono,
+        dark ? "#f2f4f8" : "#202633",
+        16
+      );
       const favicon = await raster(tabSvg, 16);
       if (version !== renderVersion) return;
       const browser = document.createElement("div");
@@ -112,19 +124,24 @@ async function render() {
     const actions = document.createElement("div");
     actions.className = "actions";
     const download = document.createElement("a");
-    download.textContent = "Download SVG";
+    download.textContent = "SVG · full detail";
     download.href = dataUrl(svg);
-    download.download = `gg-${game}-${selected + 5}${mono ? "-mono" : ""}.svg`;
+    download.download = `ggartifact-${game}-${concept.code}${mono ? "-mono" : ""}.svg`;
     actions.append(download);
-    for (const size of [16, 32, 180]) {
+    const microDownload = document.createElement("a");
+    microDownload.textContent = "SVG · favicon";
+    microDownload.href = dataUrl(atSize(16));
+    microDownload.download = `ggartifact-${game}-${concept.code}-favicon.svg`;
+    actions.append(microDownload);
+    for (const size of [16, 32, 48, 96, 180]) {
       const button = document.createElement("button");
       button.textContent = `PNG ${size}`;
       button.onclick = async () => {
         try {
-          const canvas = await raster(svg, size);
+          const canvas = await raster(atSize(size), size);
           const link = document.createElement("a");
           link.href = canvas.toDataURL("image/png");
-          link.download = `gg-${game}-${concept.name.toLowerCase().replaceAll(" ", "-")}-${size}.png`;
+          link.download = `ggartifact-${game}-${concept.code}-${size}.png`;
           link.click();
           notify(`${name(game)} ${size} px PNG exported.`);
         } catch (error) {
@@ -136,7 +153,7 @@ async function render() {
     const tryButton = document.createElement("button");
     tryButton.textContent = "Try in this tab";
     tryButton.onclick = () => {
-      $("favicon").href = dataUrl(svg);
+      $("favicon").href = dataUrl(atSize(16));
       document.title = `${name(game)} · ${concept.name}`;
       notify(`Tab icon: ${name(game)} / ${concept.name}`);
     };
@@ -145,12 +162,31 @@ async function render() {
     $("tabs").append(tabColumn);
   }
 }
-$("concepts").innerHTML = concepts
+$("concepts").innerHTML = [0, 1]
   .map(
-    (concept, i) =>
-      `<button class="concept" aria-pressed="${i === 0}" data-index="${i}"><div class="concept-icons">${icon(i, "gi")}${icon(i, "hsr")}</div><strong>${concept.name}</strong><small>${concept.tag}</small></button>`
+    (family) =>
+      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>Genshin + Star Rail · five paired variants</span></div><div class="family-grid">${concepts.map((concept, i) => (concept.family === family ? `<button class="concept" aria-pressed="${i === 0}" data-index="${i}"><div class="concept-icons">${icon(i, "gi")}${icon(i, "hsr")}</div><strong>${concept.code} · ${concept.name}</strong><small>${concept.material}</small><div class="card-tiny" aria-label="16 pixel previews" data-preview="${i}"><span>16 px</span><div class="mini-dark"></div><div class="mini-light"></div></div></button>` : "")).join("")}</div></section>`
   )
   .join("");
+async function renderCardFavicons() {
+  for (const [index] of concepts.entries()) {
+    const target = document.querySelector(`[data-preview="${index}"]`);
+    for (const theme of ["dark", "light"]) {
+      for (const game of ["gi", "hsr"]) {
+        const canvas = await raster(
+          icon(index, game, false, "#202633", 16),
+          16
+        );
+        canvas.setAttribute(
+          "aria-label",
+          `${concepts[index].code} ${name(game)} 16 px ${theme} background`
+        );
+        target.querySelector(`.mini-${theme}`).append(canvas);
+      }
+    }
+  }
+}
+renderCardFavicons().catch(showError);
 for (const button of document.querySelectorAll(".concept")) {
   button.onclick = () => {
     selected = Number(button.dataset.index);
@@ -203,5 +239,5 @@ $("references").innerHTML = references
       `<a class="reference" href="${url}" target="_blank" rel="noreferrer"><img src="${url}" alt="${label}" loading="lazy" />${label}</a>`
   )
   .join("");
-$("favicon").href = dataUrl(icon(0, "gi"));
+$("favicon").href = dataUrl(icon(0, "gi", false, "#202633", 16));
 render().catch(showError);

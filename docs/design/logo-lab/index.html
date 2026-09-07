@@ -3,32 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GGArtifact / Icon studies II</title>
-    <link rel="icon" id="favicon" type="image/svg+xml" />
-    <link rel="stylesheet" href="./style.css" />
+    <title>GGArtifact / Warm gem studies</title>
+    <link rel="icon" id="favicon" type="image/svg+xml" sizes="any" />
+    <link rel="stylesheet" href="./style.css?v=3" />
   </head>
   <body>
     <main>
-      <header><a class="brand" href="#">GGArtifact<span> / BRAND WORKSHOP</span></a><span class="edition">02 — Light inside the gem</span></header>
-      <section class="intro"><p class="eyebrow">GGARTIFACT [GENSHIN] / GGARTIFACT [STAR RAIL]</p><h1>More gem.<br />More depth.</h1><p>Four new pairs with solid centers, luminous facets, and color that follows the crystal. Shared light, saturation, and curvature connect the two games.</p></section>
+      <header><a class="brand" href="#">GGArtifact<span> / BRAND WORKSHOP</span></a><span class="edition">03 — A warmer kind of gem</span></header>
+      <section class="intro"><p class="eyebrow">GGARTIFACT [GENSHIN] / GGARTIFACT [STAR RAIL]</p><h1>Small mark.<br />Distinct material.</h1><p>Two accepted silhouettes. Five finishes each. Peach, enamel, bronze, rose, and garnet bring warmth and a stronger identity to the original currency inspiration.</p></section>
+      <details class="critique" open><summary>If the originals were proposed as website logos…</summary><div class="critique-grid"><p><strong>Keep the silhouette.</strong>The star, cluster, and petals identify themselves before you see any detail. Preserve their continuous outlines and solid centers.</p><p><strong>Reduce the visual noise.</strong>Tiny splinters, layered reflections, and central ornaments blur at 16 px. These variants have separate tiny artwork with just four or five broad planes.</p><p><strong>Give light a limit.</strong>White-cyan highlights wash out on pale tabs and make every surface feel frozen. Warm midtones, deeper shadows, and a restrained rim give the gem substance.</p><p><strong>Make the finish distinctive.</strong>A currency item should look precious; a logo should also be memorable. These five materials keep the gem vocabulary while adding a recognizable palette and treatment.</p></div></details>
       <section aria-label="Choose a design pair" class="concepts" id="concepts"></section>
       <section class="workbench" aria-labelledby="direction-title">
         <div class="section-heading"><div><p class="eyebrow" id="direction-number"></p><h2 id="direction-title"></h2></div><label class="toggle"><input type="checkbox" id="mono" /> One-color test</label></div>
         <p id="direction-description" class="description"></p>
+        <div id="palette" class="palette" aria-label="Material palette"></div>
         <div class="controls"><fieldset><legend>Preview canvas</legend><div id="swatches"></div></fieldset><label class="custom">Custom color <input type="color" id="custom-color" value="#446084" /></label><label class="toggle"><input type="checkbox" id="light-page" /> Light page</label></div>
         <div class="hero-pair" id="hero-pair"></div>
         <div class="notes" id="notes"></div>
         <div class="section-heading"><div><p class="eyebrow">THE REAL TEST</p><h2>Small, smaller, smallest.</h2></div><span class="hint">Rasterized at the labeled pixel count</span></div>
         <div id="sizes" class="size-pair"></div>
         <div class="tabs-pair" id="tabs"></div>
-        <p class="hint">Use “Try in this tab” to change this page’s actual favicon. Browser tabs may cache previous icons. Preview rows show 16 px at 1×; the enlarged grid shows the exact 16 × 16 raster.</p>
+        <p class="hint">16–24 px previews use simplified artwork: fewer faces, a stronger edge, and no fine glints. Larger exports retain the full material detail. “SVG · favicon” and “Try in this tab” use the simplified mark. View at 100% browser zoom to judge native pixel sizes.</p>
         <div class="section-heading"><div><p class="eyebrow">CONTRAST CHECK</p><h2>Across the spectrum.</h2></div></div>
         <div id="backgrounds" class="backgrounds"></div>
       </section>
+      <details class="critique"><summary>Favicon delivery checklist and sources</summary><div class="critique-grid"><p><strong>Square and self-contained.</strong>Every SVG has a 64 × 64 viewBox, transparent padding, and no external fonts, images, filters, or animation. The marks are inset so strokes do not touch the canvas edge.</p><p><strong>Multiple sizes.</strong>PNG exports: 16, 32, 48, 96, and 180 px. SVG exports: full detail and simplified favicon. Use explicit types and sizes in the site’s icon links. <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel" target="_blank" rel="noreferrer">MDN icon selection</a>.</p><p><strong>Visual acceptance.</strong>Compare actual 16 px rasters on light and dark tabs, plus eight colored surfaces. These are design checks, not a universal contrast certification for logos.</p><p><strong>Search is separate.</strong>Google recommends a square favicon larger than 48 px; the 96 px export covers that size recommendation. Crawlability and stable hosted URLs are deployment checks, not properties of this local study. <a href="https://developers.google.com/search/docs/appearance/favicon-in-search" target="_blank" rel="noreferrer">Google favicon guidance</a>.</p></div></details>
       <details class="references"><summary>Reference board · originals and current GI logo</summary><p>Original artwork from the supplied URLs, shown for comparison only. HSR labels below follow the supplied filenames: 900001 renders a crystal cluster; 3 renders a four-petal gem.</p><div id="references" class="reference-grid"></div></details>
       <footer>Temporary concept study · SVG originals + PNG exports · No production logos replaced</footer>
       <p id="status" role="status" aria-live="polite"></p>
     </main>
-    <script type="module" src="./lab.js"></script>
+    <script type="module" src="./lab.js?v=3"></script>
   </body>
 </html>

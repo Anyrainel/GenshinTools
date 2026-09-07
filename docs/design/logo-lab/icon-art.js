@@ -1,166 +1,223 @@
-// Each material uses the same lighting and facet treatment across both games.
-// Geometry remains contiguous so the small raster retains a readable silhouette.
-export const concepts = [
+// Two accepted silhouettes, five material studies each. Tiny exports use fewer
+// faces and a stronger contour; all outputs retain a transparent square canvas.
+const treatments = [
   {
-    name: "Luminous bevel",
-    tag: "05 / Cut glass",
+    name: "Apricot glass",
+    material: "Warm beveled glass",
+    colors: ["#ffe0ad", "#ed9b7c", "#b56887", "#7976ad", "#49477e", "#2f294b"],
     description:
-      "A fuller evolution of the first silhouettes. Broad inner faces sit inside a narrow luminous bevel, with rose and pearl light above and deeper blue refraction below. The center is solid.",
-    gi: "A four-point gem with clipped shoulders and a slightly elongated lower tip. Eight inner faces meet at an off-center highlight.",
-    hsr: "A leaning main crystal with two joined side crystals. Larger faces and a beveled edge keep the cluster dimensional without its tiny fragments.",
+      "Apricot light gives way to dusty violet shadows. A restrained bevel keeps the gemstone character, while a darker lower half gives the tab icon more weight.",
+    adjustment:
+      "Replace ice-blue reflections with peach and violet; keep only the broadest facet junctions at tab size.",
   },
   {
-    name: "Opal polish",
-    tag: "06 / Soft iridescence",
+    name: "Vermilion enamel",
+    material: "Opaque enamel with a fine gilt edge",
+    colors: ["#ffdda2", "#f18565", "#c84646", "#a6314e", "#742840", "#412332"],
     description:
-      "Gently curved outlines and translucent overlapping planes give both gems a polished, opalescent finish. Color flows through the volume rather than forming stripes; a cool edge keeps the pale highlights defined.",
-    gi: "A softly shouldered star with a pearly upper face and a curved aqua reflection through the lower half.",
-    hsr: "A rounded crystal cluster with the same pearly illumination and flowing aqua reflection. Its fused base feels smoother than a pile of shards.",
+      "An opaque coral-red gem with a fine warm edge. A small satin highlight replaces the large white flare. This feels like a crafted emblem, with distinct faces that hold up without glass effects.",
+    adjustment:
+      "Trade translucent noise for four to six opaque planes. The warm rim separates the silhouette from dark tabs.",
   },
   {
-    name: "Aurora cut",
-    tag: "07 / Rich refraction",
+    name: "Amber alloy",
+    material: "Brushed gold and bronze",
+    colors: ["#ffe3a0", "#e5b65f", "#c2863f", "#a96438", "#77422e", "#452b25"],
     description:
-      "A more saturated jewel treatment: champagne highlights, violet side faces, and a deep cyan core. Offset face junctions and a second tier of facets bring the reference artwork’s richness into a compact silhouette.",
-    gi: "A broad star with a tiny secondary shoulder on each arm and an inset kite-shaped face. The pale upper edge contrasts with the blue lower tip.",
-    hsr: "A slightly wider, asymmetric cluster with a long central face. Violet side planes separate the main crystal from its aqua base.",
+      "Gold-lit faces and bronze recesses turn the gem into a small cast object. Light follows the sculpted faces; a narrow highlight suggests polished metal without a white outline.",
+    adjustment:
+      "Use a strong gold-to-bronze value range instead of a rainbow. Broad modeled faces survive the reduction to 16 px.",
   },
   {
-    name: "Petal crystal",
-    tag: "08 / Sculpted softness",
+    name: "Rose tourmaline",
+    material: "Satin mineral, rose and olive",
+    colors: ["#f4d8ae", "#d68d92", "#aa617b", "#9d9b68", "#686646", "#393a30"],
     description:
-      "The flower reference returns with sculpted facets instead of color bands. Both icons have rounded shoulders, pointed tips, and a full luminous center. Pale rim light and translucent blue shadows create the family resemblance.",
-    gi: "A softly curved four-point star, modeled with petal-like inner faces while retaining the Primogem-inspired silhouette.",
-    hsr: "Four plump crystal petals with alternating rose and aqua faces. A small solid center replaces the original central ornament.",
+      "Muted rose above, olive-gold below. Two mineral colors share the same quiet satin surface, with broad asymmetric reflections and no brilliant white core.",
+    adjustment:
+      "Give the symbol a memorable warm mineral palette; preserve a solid center and separate its few large faces by value.",
+  },
+  {
+    name: "Ember garnet",
+    material: "Deep jewel with copper-lit faces",
+    colors: ["#ffd2a0", "#e39a72", "#ac5571", "#874361", "#5b304c", "#352439"],
+    description:
+      "Copper light catches a deep wine-colored gem. Dark interior faces make the small highlights feel intentional. A continuous warm edge keeps the darker body visible on dark backgrounds.",
+    adjustment:
+      "Make highlights scarce, not icy. Retain a warm perimeter and one copper-lit face in the tiny version.",
   },
 ];
+
+export const concepts = [0, 1].flatMap((family) =>
+  treatments.map((treatment, variant) => ({
+    ...treatment,
+    family,
+    variant,
+    code: `${family === 0 ? "A" : "B"}${variant + 1}`,
+    tag: `${family === 0 ? "Option 1 · bevel" : "Option 4 · petal"} / ${variant + 1} of 5`,
+    gi: `${family === 0 ? "The accepted angular star silhouette, with its clipped shoulders and longer lower point." : "The accepted curved star silhouette, with softly sculpted shoulders."} ${treatment.adjustment}`,
+    hsr: `${family === 0 ? "The accepted leaning crystal cluster, with its joined base." : "The accepted four-petal crystal, with a full center."} Same palette, edge weight, and surface finish as Genshin.`,
+  }))
+);
 
 let serial = 0;
-const p = (d, fill, extra = "") => `<path d="${d}" fill="${fill}" ${extra}/>`;
-const palettes = [
-  ["#fff4dc", "#f2b5e1", "#b599eb", "#78ecf4", "#299edc", "#3459b1"],
-  ["#fffae9", "#f2d0ef", "#b6b5ee", "#a7f2ed", "#57bfe1", "#638dcc"],
-  ["#fff0ba", "#f5addd", "#9162d2", "#65eff9", "#159bdd", "#354b9e"],
-  ["#fff4eb", "#edb1e5", "#b794dc", "#8cecf4", "#399fdc", "#4962ad"],
-];
+const path = (d, fill, extra = "") =>
+  `<path d="${d}" fill="${fill}" ${extra}/>`;
+const angularStar =
+  "M32 3 40 20 43 24 60 32 43 40 39 45 32 62 25 45 21 40 4 32 21 24 24 20Z";
+const curvedStar =
+  "M32 3C36 12 38 21 43 24L60 32C49 37 42 39 39 45L32 62C28 51 25 43 20 40L4 32C15 27 22 25 25 19Z";
+const cluster =
+  "M37 3 51 13 46 37 55 33 60 45 48 56 25 62 7 46 10 29 22 35 24 12Z";
+const flower =
+  "M32 3C42 10 48 19 41 24C50 19 57 25 62 32C55 42 48 47 41 41C46 49 39 57 32 62C23 55 18 48 24 41C16 47 8 40 2 32C9 22 17 18 24 24C18 16 24 8 32 3Z";
 
-export function icon(index, game, oneColor = false, foreground = "#202633") {
-  const id = `crystal-${serial++}`;
-  const [pearl, rose, lilac, ice, aqua, deep] = palettes[index];
-  const soft = index === 1 || index === 3;
-  const star =
-    index === 2
-      ? "M32 2 41 20 44 24 61 31 44 39 40 43 32 62 24 43 20 39 3 31 20 24 23 20Z"
-      : soft
-        ? "M32 3C36 12 38 21 43 24L60 32C49 37 42 39 39 45L32 62C28 51 25 43 20 40L4 32C15 27 22 25 25 19Z"
-        : "M32 3 40 20 43 24 60 32 43 40 39 45 32 62 25 45 21 40 4 32 21 24 24 20Z";
-  const cluster = soft
-    ? "M37 3Q39 2 41 4L51 13Q52 15 51 18L45 37 53 34Q56 33 57 37L59 44Q60 46 57 49L47 56 26 61Q23 62 21 59L8 47Q6 45 7 42L10 31Q11 28 14 30L22 35 24 14Q24 11 27 10Z"
-    : "M37 3 51 13 46 37 55 33 60 45 48 56 25 62 7 46 10 29 22 35 24 12Z";
-  const flower =
-    "M32 3C42 10 48 19 41 24C50 19 57 25 62 32C55 42 48 47 41 41C46 49 39 57 32 62C23 55 18 48 24 41C16 47 8 40 2 32C9 22 17 18 24 24C18 16 24 8 32 3Z";
-  const shape = game === "gi" ? star : index === 3 ? flower : cluster;
-  const gradient = (
-    key,
-    colors,
-    x1 = "10%",
-    y1 = "0%",
-    x2 = "85%",
-    y2 = "100%"
-  ) =>
-    `<linearGradient id="${id}-${key}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
+export function icon(
+  index,
+  game,
+  oneColor = false,
+  foreground = "#202633",
+  size = 64
+) {
+  const study = concepts[index];
+  const { family, variant, colors: c } = study;
+  const tiny = size <= 24;
+  const id = `gem-${serial++}`;
+  const shape =
+    game === "gi"
+      ? family === 0
+        ? angularStar
+        : curvedStar
+      : family === 0
+        ? cluster
+        : flower;
+  const gradient = (key, colors, x2 = "80%", y2 = "100%") =>
+    `<linearGradient id="${id}-${key}" x1="15%" y1="0%" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
   const fill = (key) => `url(#${id}-${key})`;
-  let defs = gradient("body", [pearl, rose, ice, aqua, deep]);
-  defs += gradient("warm", [pearl, rose, lilac]);
-  defs += gradient("pink", ["#ffffff", rose, lilac], "0%", "0%", "100%", "80%");
-  defs += gradient("cool", ["#eaffff", ice, aqua], "0%", "0%", "90%", "100%");
-  defs += gradient("shade", [lilac, aqua, deep]);
-  defs += gradient(
-    "rim",
-    [pearl, "#e9f6ff", aqua, deep],
-    "15%",
-    "0%",
-    "80%",
-    "100%"
-  );
-  defs += gradient("shine", ["#ffffff", ice], "0%", "0%", "100%", "100%");
-  defs += `<radialGradient id="${id}-opal" cx="35%" cy="24%" r="76%"><stop stop-color="#fffdf3"/><stop offset=".3" stop-color="${rose}"/><stop offset=".62" stop-color="${ice}"/><stop offset="1" stop-color="${deep}"/></radialGradient>`;
-  defs += `<clipPath id="${id}-clip">${p(shape, "white")}</clipPath>`;
-  let body = p(
-    shape,
-    fill("rim"),
-    `stroke="${deep}" stroke-width=".7" stroke-linejoin="round"`
-  );
-  let faces = "";
+  let defs = gradient("rim", [c[0], c[1], c[3], c[5]]);
+  defs += gradient("light", [c[0], c[1]]);
+  defs += gradient("warm", [c[1], c[2]]);
+  defs += gradient("middle", [c[2], c[3]]);
+  defs += gradient("lower", [c[3], c[4]]);
+  defs += gradient("dark", [c[3], c[5]]);
+  defs += gradient("metal", [c[2], c[0], c[1], c[3]], "100%", "35%");
+  defs += `<clipPath id="${id}-clip">${path(shape, "white")}</clipPath>`;
+
+  const paint = (tone) => {
+    if (variant === 1 || tiny)
+      return { light: c[0], warm: c[1], middle: c[2], lower: c[3], dark: c[4] }[
+        tone
+      ];
+    if (variant === 2 && tone === "light") return fill("metal");
+    return fill(tone);
+  };
+  let faces;
   if (game === "gi") {
-    const center = index === 2 ? "30 30" : "32 31";
-    faces =
-      p(`M32 6 25 22 ${center}Z`, fill("shine")) +
-      p(`M32 6 40 24 ${center}Z`, fill("warm")) +
-      p(`M25 22 8 32 ${center}Z`, fill("pink")) +
-      p(`M8 32 23 39 ${center}Z`, fill("shade")) +
-      p(`M40 24 56 32 ${center}Z`, fill("cool")) +
-      p(`M56 32 41 39 ${center}Z`, fill("shade")) +
-      p(`M23 39 32 57 ${center}Z`, fill("cool")) +
-      p(`M32 57 41 39 ${center}Z`, fill("shade"));
-    if (index === 2)
-      faces +=
-        p("M32 10 36 25 30 30 27 24Z", fill("pink")) +
-        p("M30 30 38 39 32 54 29 40Z", fill("cool"));
-    faces += p(
-      "M8 32 30 30 32 6 33 31 56 32 33 33 32 57 30 33Z",
-      "#f1ffff",
-      'opacity=".55"'
-    );
-  } else if (index === 3) {
-    faces =
-      p("M32 6Q21 16 26 25L32 32Z", fill("pink")) +
-      p("M32 6Q45 16 39 25L32 32Z", fill("warm")) +
-      p("M59 32Q49 21 39 26L32 32Z", fill("pink")) +
-      p("M59 32Q49 44 40 38L32 32Z", fill("shade")) +
-      p("M32 59Q44 48 38 40L32 32Z", fill("shade")) +
-      p("M32 59Q21 49 26 40L32 32Z", fill("cool")) +
-      p("M5 32Q16 45 25 38L32 32Z", fill("shade")) +
-      p("M5 32Q16 21 25 26L32 32Z", fill("cool")) +
-      p(
-        "M32 11 34 29 54 32 34 34 32 55 30 34 10 32 30 30Z",
-        "#e8ffff",
-        'opacity=".48"'
-      );
+    faces = [
+      ["M32 5 24 23 32 32Z", "light"],
+      ["M32 5 41 24 32 32Z", "warm"],
+      ["M24 23 6 32 32 32Z", "warm"],
+      ["M6 32 22 40 32 32Z", "dark"],
+      ["M41 24 58 32 32 32Z", "middle"],
+      ["M58 32 41 40 32 32Z", "dark"],
+      ["M22 40 32 59 32 32Z", "lower"],
+      ["M32 59 41 40 32 32Z", "dark"],
+    ];
+    if (tiny)
+      faces = [
+        ["M32 3 43 24 60 32 32 32Z", "warm"],
+        ["M32 3 24 20 21 24 4 32 32 32Z", "light"],
+        ["M4 32 21 40 25 45 32 62 32 32Z", "lower"],
+        ["M32 32 60 32 43 40 39 45 32 62Z", "dark"],
+      ];
+  } else if (family === 1) {
+    faces = [
+      ["M32 5Q21 16 26 25L32 32Z", "light"],
+      ["M32 5Q45 16 39 25L32 32Z", "warm"],
+      ["M60 32Q49 21 39 26L32 32Z", "warm"],
+      ["M60 32Q49 44 40 38L32 32Z", "middle"],
+      ["M32 60Q44 48 38 40L32 32Z", "dark"],
+      ["M32 60Q21 49 26 40L32 32Z", "lower"],
+      ["M4 32Q16 45 25 38L32 32Z", "dark"],
+      ["M4 32Q16 21 25 26L32 32Z", "lower"],
+    ];
+    if (tiny)
+      faces = [
+        ["M0 0H32V32H0Z", "light"],
+        ["M32 0H64V32H32Z", "warm"],
+        ["M0 32H32V64H0Z", "lower"],
+        ["M32 32H64V64H32Z", "dark"],
+      ];
   } else {
-    faces =
-      p("M37 6 27 14 31 35 39 27Z", fill("warm")) +
-      p("M37 6 48 15 39 27Z", fill("pink")) +
-      p("M48 15 43 39 32 48 39 27Z", fill("shade")) +
-      p("M27 14 24 38 32 48 31 35Z", fill("shine")) +
-      p("M12 32 22 38 25 50 11 44Z", fill("cool")) +
-      p("M11 44 25 50 25 58 10 46Z", fill("shade")) +
-      p("M32 48 43 39 54 36 55 44 43 49Z", fill("cool")) +
-      p("M55 44 47 53 43 49Z", fill("shade")) +
-      p("M25 50 32 48 43 49 47 53 25 58Z", fill("cool")) +
-      p("M37 6 39 27 32 48 37 26Z", "#fffaff", 'opacity=".7"');
-    if (index === 2)
-      faces +=
-        p("M29 17 35 22 31 38Z", fill("pink")) +
-        p("M28 51 40 51 31 57Z", fill("shade"));
+    faces = [
+      ["M37 5 26 13 31 35 39 27Z", "warm"],
+      ["M37 5 49 14 39 27Z", "light"],
+      ["M49 14 44 39 32 48 39 27Z", "dark"],
+      ["M26 13 23 38 32 48 31 35Z", "middle"],
+      ["M11 31 22 37 25 50 9 44Z", "light"],
+      ["M9 44 25 50 25 60 8 46Z", "dark"],
+      ["M32 48 44 39 55 34 58 45 43 49Z", "lower"],
+      ["M58 45 47 55 43 49Z", "dark"],
+      ["M25 50 32 48 43 49 47 55 25 60Z", "middle"],
+    ];
+    if (tiny)
+      faces = [
+        ["M37 3 24 12 22 35 32 46 39 26Z", "light"],
+        ["M37 3 51 13 46 37 32 46 39 26Z", "warm"],
+        ["M10 29 22 35 32 46 25 62 7 46Z", "lower"],
+        ["M32 46 46 37 55 33 60 45 48 56 25 62Z", "dark"],
+        ["M10 29 22 35 32 46 18 43Z", "middle"],
+      ];
   }
-  if (index === 1) {
-    body = p(shape, `url(#${id}-opal)`, `stroke="${deep}" stroke-width=".8"`);
-    faces =
-      `<g opacity=".48">${faces}</g>` +
-      p(
-        "M7 37C23 45 36 18 57 25L61 35C38 25 29 53 9 48Z",
-        fill("cool"),
-        'opacity=".52"'
-      ) +
-      p(
-        "M16 13Q29 3 43 9Q29 12 26 30Q22 27 16 13Z",
-        "#fffdf5",
-        'opacity=".48"'
+  let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
+  // Finishes change the modeled surface as well as the palette. Micro artwork
+  // deliberately omits glints, secondary facets and narrow specular ridges.
+  if (!tiny) {
+    const center =
+      game === "hsr" && family === 0
+        ? "M37 8 39 27 32 47 36 27Z"
+        : "M32 8 33 30 53 32 32 33 31 52 30 32 12 32 31 30Z";
+    if (variant === 0) interior += path(center, c[0], 'opacity=".45"');
+    if (variant === 1)
+      interior += path(
+        game === "hsr" && family === 0
+          ? "M28 15 35 10 31 29Z"
+          : "M29 16 31 10 31 26 24 28Z",
+        c[0]
+      );
+    if (variant === 2) interior += path(center, c[0], 'opacity=".65"');
+    if (variant === 3)
+      interior += path(
+        game === "hsr" && family === 0
+          ? "M27 15Q29 28 33 33L28 39Z"
+          : "M26 22Q29 30 39 28L34 34Q26 33 22 29Z",
+        c[1],
+        'opacity=".6"'
+      );
+    if (variant === 4)
+      interior += path(
+        game === "hsr" && family === 0
+          ? "M37 8 44 14 39 25Z"
+          : "M32 10 36 24 32 30 29 25Z",
+        fill("light")
       );
   }
-  body += `<g clip-path="url(#${id}-clip)">${faces}</g>`;
-  if (oneColor) body = p(shape, foreground);
-  const label = `${concepts[index].name} GGArtifact [${game === "gi" ? "Genshin" : "Star Rail"}]`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="${label}"><defs>${defs}</defs>${body}</svg>`;
+  const outerWidth = tiny ? 2.8 : 1.6;
+  const edge = variant === 1 || variant === 4 ? c[0] : fill("rim");
+  let body =
+    path(
+      shape,
+      edge,
+      `stroke="${c[5]}" stroke-width="${outerWidth}" stroke-linejoin="round"`
+    ) +
+    `<g clip-path="url(#${id}-clip)">${path(shape, paint("middle"))}${interior}</g>` +
+    path(
+      shape,
+      "none",
+      `stroke="${edge}" stroke-width="${tiny ? 1.3 : 1}" stroke-linejoin="round"`
+    );
+  if (oneColor) body = path(shape, foreground);
+  const label = `${study.code} ${study.name} GGArtifact [${game === "gi" ? "Genshin" : "Star Rail"}]`;
+  // Fixed inset leaves clear pixels around all four edges, including strokes.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="${label}"><defs>${defs}</defs><g transform="translate(4 4) scale(.875)">${body}</g></svg>`;
 }
