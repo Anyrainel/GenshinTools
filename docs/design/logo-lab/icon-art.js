@@ -36,7 +36,7 @@ export function icon(
   defs += `<clipPath id="${id}-clip">${path(shape, "white")}</clipPath>`;
 
   const paint = (tone) => {
-    if (variant === 1 || tiny)
+    if (tiny)
       return { light: c[0], warm: c[1], middle: c[2], lower: c[3], dark: c[4] }[
         tone
       ];
@@ -101,98 +101,132 @@ export function icon(
         ["M10 29 22 35 32 46 18 43Z", "middle"],
       ];
   }
-  const simplified = tiny || variant === 1;
-  if (variant === 1 && !tiny) {
-    // The chamfer style keeps the same deliberately low facet count at all sizes.
-    if (game === "gi" || family === 1)
-      faces = [
-        ["M0 0H32V32H0Z", "light"],
-        ["M32 0H64V32H32Z", "warm"],
-        ["M0 32H32V64H0Z", "lower"],
-        ["M32 32H64V64H32Z", "dark"],
-      ];
-    else
-      faces = [
-        ["M0 0H36L30 44 0 32Z", "warm"],
-        ["M36 0H64V32L30 44Z", "middle"],
-        ["M0 32 30 44 26 64H0Z", "lower"],
-        ["M30 44 64 32V64H26Z", "dark"],
-      ];
+  if (variant > 0 && game === "gi") {
+    const rings = [
+      [],
+      [
+        [32, 3],
+        [39, 23],
+        [56, 32],
+        [39, 40],
+        [32, 61],
+        [25, 40],
+        [8, 32],
+        [25, 23],
+      ],
+      [
+        [32, 4],
+        [43, 23],
+        [59, 32],
+        [41, 43],
+        [32, 60],
+        [21, 41],
+        [5, 32],
+        [23, 21],
+      ],
+      [
+        [36, 4],
+        [41, 22],
+        [60, 29],
+        [42, 39],
+        [28, 60],
+        [24, 41],
+        [4, 35],
+        [23, 24],
+      ],
+      [
+        [32, 4],
+        [42, 22],
+        [60, 32],
+        [42, 42],
+        [32, 60],
+        [22, 42],
+        [4, 32],
+        [22, 22],
+      ],
+    ];
+    const ring = rings[variant];
+    const center =
+      variant === 3 ? [30, 31] : variant === 1 ? [32, 34] : [32, 32];
+    const tones = [
+      "warm",
+      "middle",
+      "lower",
+      "dark",
+      "lower",
+      "dark",
+      "warm",
+      "light",
+    ];
+    faces = ring.map((point, i) => [
+      `M${point} ${ring[(i + 1) % 8]} ${center}Z`,
+      tones[i],
+    ]);
+    if (variant === 1) {
+      // A continuous pale face on the upper left, with a longer blue lower face.
+      faces[7][1] = "warm";
+      faces[0][1] = "light";
+      faces[4][1] = "middle";
+    }
   }
-  let interior = faces
-    .map(([d, tone]) =>
-      path(
-        d,
-        paint(tone),
-        variant === 3 && !tiny
-          ? `stroke="${c[5]}" stroke-width="1.1" stroke-linejoin="round"`
-          : ""
-      )
-    )
-    .join("");
-  if (variant === 2) {
-    // Continuous volume and two broad curved reflections instead of triangles.
-    defs += `<radialGradient id="${id}-volume" cx="32%" cy="18%" r="90%"><stop stop-color="${c[1]}"/><stop offset=".45" stop-color="${c[2]}"/><stop offset=".75" stop-color="${c[3]}"/><stop offset="1" stop-color="${c[4]}"/></radialGradient>`;
+  let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
+  if (variant === 1 && game === "hsr" && family === 0) {
     interior =
-      path(shape, fill("volume")) +
-      path(
-        game === "hsr" && family === 0
-          ? "M24 10Q36 8 40 15Q34 23 31 38Q21 24 24 10Z"
-          : "M21 12Q33 8 40 18Q33 26 30 36Q19 30 21 12Z",
-        fill("warm")
-      ) +
-      path(
-        game === "hsr" && family === 0
-          ? "M8 39Q31 52 58 39L59 54 24 62Z"
-          : "M5 34Q30 45 59 32Q41 40 32 61Q25 44 5 34Z",
-        fill("lower")
-      );
+      path("M35 3 25 12 23 39 31 46Z", fill("warm")) +
+      path("M35 3 47 13 31 46Z", fill("light")) +
+      path("M47 13 43 39 31 46Z", fill("dark")) +
+      path("M12 34 23 39 31 46 25 60 9 46Z", fill("lower")) +
+      path("M31 46 43 39 53 35 58 45 46 55 25 60Z", fill("dark")) +
+      path("M31 46 53 35 46 47 25 53Z", fill("lower"));
   }
-  if (variant === 0 && !tiny)
-    interior += path(
+  if (variant === 2) {
+    // Preserve a cut object: gently soften the facet contrast, not the outline.
+    interior = `<g opacity=".86">${interior}</g>`;
+  }
+  if (variant === 3 && game === "hsr") {
+    interior = `<g transform="rotate(7 32 32)">${interior}</g>`;
+  }
+  if (variant === 4 && !tiny) {
+    // A low-contrast inner cut, never a separate badge or a heavy outline.
+    const inset =
       game === "hsr" && family === 0
-        ? "M37 8 39 27 32 47 36 27Z"
-        : "M32 8 33 30 53 32 32 33 31 52 30 32 12 32 31 30Z",
-      c[0],
-      'opacity=".4"'
-    );
-  if (variant === 4) {
-    // A filled table facet changes the construction, not just the lighting.
-    interior += path(
+        ? "M33 13 42 18 37 38 30 43 27 31Z"
+        : "M32 17Q35 28 47 32Q36 35 32 47Q29 36 17 32Q28 29 32 17Z";
+    interior += path(inset, fill("middle"), 'opacity=".48"');
+  }
+  if (!tiny) {
+    const glint =
       game === "hsr" && family === 0
-        ? "M31 14 42 19 38 37 29 43 26 31Z"
-        : "M32 19 43 30 34 44 21 34Z",
-      fill("warm"),
-      `stroke="${c[4]}" stroke-width="${tiny ? 1.5 : 1}"`
-    );
-    if (!tiny)
+        ? "M35 8 37 24 31 45 35 24Z"
+        : "M32 9 32.7 31 52 32 32.5 32.7 32 54 31.4 32.6 11 32 31.4 31.3Z";
+    if (variant === 0 || variant === 4)
+      interior += path(
+        glint,
+        c[0],
+        `opacity="${variant === 0 ? ".4" : ".24"}"`
+      );
+    if (variant === 1)
       interior += path(
         game === "hsr" && family === 0
-          ? "M31 14 42 19 35 22 26 31Z"
-          : "M32 19 43 30 33 29 21 34Z",
-        fill("light")
+          ? "M35 7 35 28 31 45 33 26Z"
+          : "M32 8 33 33 32 55 31.5 33Z",
+        c[0],
+        'opacity=".3"'
       );
   }
-  const outerWidth = variant === 3 ? (tiny ? 4 : 3.4) : tiny ? 2.4 : 1.2;
-  const edge = variant === 1 ? c[4] : fill("rim");
+  const outerWidth = tiny ? 2.4 : 1.2;
   let body =
     path(
       shape,
-      edge,
+      fill("rim"),
       `stroke="${c[5]}" stroke-width="${outerWidth}" stroke-linejoin="round"`
     ) +
-    `<g clip-path="url(#${id}-clip)">${path(shape, paint("middle"))}${interior}</g>`;
-  if (variant === 3)
+    `<g clip-path="url(#${id}-clip)">${path(shape, fill("middle"))}${interior}</g>`;
+  if (!tiny)
     body += path(
       shape,
       "none",
-      `stroke="${c[5]}" stroke-width="${tiny ? 2.5 : 2.8}" stroke-linejoin="round"`
-    );
-  else if (!simplified && variant !== 2)
-    body += path(
-      shape,
-      "none",
-      `stroke="${edge}" stroke-width=".8" stroke-linejoin="round"`
+      `stroke="${fill("rim")}" stroke-width=".8" stroke-linejoin="round"`
     );
   if (oneColor) body = path(shape, foreground);
   const label = `${study.code} ${study.name} GGArtifact [${game === "gi" ? "Genshin" : "Star Rail"}]`;

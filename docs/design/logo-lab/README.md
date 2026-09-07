@@ -16,16 +16,17 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-Round four varies the geometry of the Luminous bevel family (A1–A5) and Petal
-crystal family (B1–B5). Both offer Precision cut, Broad chamfer, Soft cast, Ink
-edge, and Crown facets. The shared rose–violet–blue palette is held constant so
-the comparison is about silhouettes, corner sharpness, facet count, contour
-weight, and rendering style. All twenty outlines are independently authored.
-No cut-outs or enclosing shapes.
+Round five retains Precision cut as the baseline for the Luminous bevel family
+(A1–A5) and Petal crystal family (B1–B5). First light, Silken prism, Lightfold,
+and Inner glow explore balanced proportions, facet composition, and restrained
+light. These replace the previous chamfer, swollen, heavy-outline, and crown
+experiments. The shared rose–violet–blue palette remains constant. Each pair
+uses related proportions and surface treatment without cut-outs or enclosing
+shapes.
 
-16–24 px use dedicated small-size artwork. Faceted styles lose secondary
-glints; Soft cast retains its curved volume and Crown facets its filled inset
-face. Full-detail artwork starts at 32 px. Both exports preserve the same outer
+16–24 px use dedicated small-size artwork, removing secondary glints and inner
+bevel detail and using solid facet colors. Full-detail artwork starts at 32 px.
+Both exports preserve the same outer
 silhouettes. Each card includes actual
 16 px previews on light and dark backgrounds. The selected pair supports
 full-detail SVG, favicon SVG, and 16/32/48/96/180 px PNG export. The favicon SVG
