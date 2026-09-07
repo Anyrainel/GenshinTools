@@ -8,11 +8,19 @@ const colors = [
   "#4d639f",
   "#343957",
 ];
+const refinedColors = [
+  "#f4dfde",
+  "#ed91c4",
+  "#ac79ce",
+  "#66afdf",
+  "#435ca0",
+  "#303653",
+];
 const studies = [
   [
     "Precision cut",
-    "The retained baseline",
-    "The reference point for this round: a fine rim, clear facets, and familiar elongated proportions.",
+    "Crisp shoulders, clear planes",
+    "The refinement preserves the silhouette, strengthens rose and blue, and retains a small pale highlight. In group A, the Star Rail cluster is consolidated into seven broad faces. Compare with the previous version to judge the change.",
   ],
   [
     "First light",
@@ -22,7 +30,7 @@ const studies = [
   [
     "Silken prism",
     "Gentle shoulders, softly modeled facets",
-    "A little more fullness through the middle, balanced by pointed ends. Soft transitions sit inside clearly defined faces; the gem remains cut and dimensional rather than becoming a rounded blob.",
+    "Fuller shoulders and pointed ends give this direction a softer silhouette. The refinement removes the translucent wash and restores clearer facet contrast. In group A, the Star Rail cluster uses seven faces while keeping its layered base.",
   ],
   [
     "Lightfold",
@@ -38,7 +46,7 @@ const studies = [
 const notes = [
   [
     "The original fine-cut star is retained.",
-    "The original leaning cluster is retained.",
+    "The leaning cluster retains its silhouette; the refinement merges secondary face divisions.",
     "The original curved star is retained.",
     "The original pointed petals are retained.",
   ],
@@ -75,6 +83,7 @@ export const concepts = [0, 1].flatMap((family) =>
     family,
     variant,
     colors,
+    refinedColors,
     code: `${family === 0 ? "A" : "B"}${variant + 1}`,
     tag: `${family === 0 ? "Star + cluster" : "Curved star + petals"} / study ${variant + 1}`,
     gi: notes[variant][family * 2],

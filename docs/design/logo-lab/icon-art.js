@@ -8,13 +8,16 @@ export function icon(
   game,
   oneColor = false,
   foreground = "#202633",
-  size = 64
+  size = 64,
+  refined = true
 ) {
   const study = concepts[index];
-  const { family, variant, colors: c } = study;
+  const { family, variant } = study;
+  const improving = refined && (variant === 0 || variant === 2);
+  const c = improving ? study.refinedColors : study.colors;
   const tiny = size <= 24;
   const id = `gem-${serial++}`;
-  const shape =
+  let shape =
     shapes[
       game === "gi"
         ? family === 0
@@ -24,6 +27,11 @@ export function icon(
           ? "cluster"
           : "flower"
     ][variant];
+  if (refined && variant === 4 && game === "gi")
+    shape =
+      family === 0
+        ? "M32 4 39 25 60 32 39 39 32 60 25 39 4 32 25 25Z"
+        : "M32 4Q35 26 60 32Q38 35 32 60Q29 38 4 32Q26 29 32 4Z";
   const gradient = (key, colors, x2 = "80%", y2 = "100%") =>
     `<linearGradient id="${id}-${key}" x1="15%" y1="0%" x2="${x2}" y2="${y2}">${colors.map((color, i) => `<stop offset="${i / (colors.length - 1)}" stop-color="${color}"/>`).join("")}</linearGradient>`;
   const fill = (key) => `url(#${id}-${key})`;
@@ -145,7 +153,19 @@ export function icon(
         [22, 22],
       ],
     ];
-    const ring = rings[variant];
+    const ring =
+      refined && variant === 4
+        ? [
+            [32, 4],
+            [39, 25],
+            [60, 32],
+            [39, 39],
+            [32, 60],
+            [25, 39],
+            [4, 32],
+            [25, 25],
+          ]
+        : rings[variant];
     const center =
       variant === 3 ? [30, 31] : variant === 1 ? [32, 34] : [32, 32];
     const tones = [
@@ -169,6 +189,23 @@ export function icon(
       faces[4][1] = "middle";
     }
   }
+  if (improving && game === "hsr" && family === 0 && !tiny) {
+    // Three main-crystal planes, two left-shard planes, one right face, one base.
+    // Preserve the overlapping cluster while merging incidental subdivisions.
+    const soft = variant === 2;
+    const top = soft ? "37 4" : "37 3";
+    const shoulder = soft ? "51 15" : "51 13";
+    const foot = soft ? "25 60" : "25 62";
+    faces = [
+      [`M${top} 24 12 22 35 32 46 40 25Z`, "warm"],
+      [`M${top} ${shoulder} 40 25Z`, "light"],
+      [`M${shoulder} 46 37 32 46 40 25Z`, "dark"],
+      ["M10 29 22 35 32 46 24 50 7 46Z", "middle"],
+      [`M7 46 24 50 ${foot}Z`, "dark"],
+      ["M32 46 46 37 55 33 60 45 44 50Z", "lower"],
+      [`M24 50 32 46 44 50 60 45 48 56 ${foot}Z`, "middle"],
+    ];
+  }
   let interior = faces.map(([d, tone]) => path(d, paint(tone))).join("");
   if (variant === 1 && game === "hsr" && family === 0) {
     interior =
@@ -179,7 +216,7 @@ export function icon(
       path("M31 46 43 39 53 35 58 45 46 55 25 60Z", fill("dark")) +
       path("M31 46 53 35 46 47 25 53Z", fill("lower"));
   }
-  if (variant === 2) {
+  if (variant === 2 && !improving) {
     // Preserve a cut object: gently soften the facet contrast, not the outline.
     interior = `<g opacity=".86">${interior}</g>`;
   }
@@ -191,7 +228,9 @@ export function icon(
     const inset =
       game === "hsr" && family === 0
         ? "M33 13 42 18 37 38 30 43 27 31Z"
-        : "M32 17Q35 28 47 32Q36 35 32 47Q29 36 17 32Q28 29 32 17Z";
+        : refined && game === "gi"
+          ? "M32 12 36 28 52 32 36 36 32 52 28 36 12 32 28 28Z"
+          : "M32 17Q35 28 47 32Q36 35 32 47Q29 36 17 32Q28 29 32 17Z";
     interior += path(inset, fill("middle"), 'opacity=".48"');
   }
   if (!tiny) {

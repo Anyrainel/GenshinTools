@@ -1,6 +1,6 @@
 # GG logo study
 
-Temporary, standalone comparison page for ten paired GGArtifact [Genshin] / GGArtifact [Star Rail]
+Temporary, standalone comparison page for paired GGArtifact [Genshin] / GGArtifact [Star Rail]
 logo directions. No production imports or asset replacements.
 
 From the repository root, serve locally:
@@ -16,13 +16,13 @@ enlarged 16 px pixels, light/dark browser tabs, and eight colorful backgrounds.
 The page also supports a custom canvas, a light page theme, one-color marks,
 SVG / PNG downloads, and an actual tab favicon switch.
 
-Round five retains Precision cut as the baseline for the Luminous bevel family
-(A1–A5) and Petal crystal family (B1–B5). First light, Silken prism, Lightfold,
-and Inner glow explore balanced proportions, facet composition, and restrained
-light. These replace the previous chamfer, swollen, heavy-outline, and crown
-experiments. The shared rose–violet–blue palette remains constant. Each pair
-uses related proportions and surface treatment without cut-outs or enclosing
-shapes.
+Round six focuses the grid on studies 1, 3, and 5 in both families, preserving
+their original numbering. Studies 2 and 4 are retired from the grid. The
+refinement strengthens rose–blue contrast in 1 and 3, removes 3's translucent
+facet wash, and reduces the group A Star Rail cluster from nine primary faces
+to seven while retaining its silhouette and overlapping base. Study 5 gets
+deeper star shoulders and a pointed inset. The comparison checkbox restores
+the previous artwork and palette; previews and exports follow that selection.
 
 16–24 px use dedicated small-size artwork, removing secondary glints and inner
 bevel detail and using solid facet colors. Full-detail artwork starts at 32 px.

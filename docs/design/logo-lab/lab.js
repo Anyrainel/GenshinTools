@@ -1,5 +1,9 @@
 import { concepts } from "./geometry-studies.js";
-import { icon } from "./icon-art.js";
+import { icon as drawIcon } from "./icon-art.js";
+
+let refined = true;
+const icon = (index, game, mono, foreground, size, revision = refined) =>
+  drawIcon(index, game, mono, foreground, size, revision);
 
 const backgrounds = [
   ["Ink", "#202633", "#f3f4f8"],
@@ -53,12 +57,13 @@ async function render() {
   const index = selected;
   const oneColor = mono;
   const foreground = canvasText;
+  const revision = refined;
   const concept = concepts[selected];
   $("direction-number").textContent = concept.tag;
   $("direction-title").textContent = `${concept.code} · ${concept.name}`;
   $("direction-description").textContent = concept.description;
   $("palette").innerHTML =
-    `<strong>${concept.material}</strong>${concept.colors.map((color) => `<span style="background:${color}" title="${color}"></span>`).join("")}`;
+    `<strong>${refined ? "Refined study" : "Previous version"} · ${concept.material}</strong>${(refined && [0, 2].includes(concept.variant) ? concept.refinedColors : concept.colors).map((color) => `<span style="background:${color}" title="${color}"></span>`).join("")}`;
   for (const button of document.querySelectorAll(".concept")) {
     const cardIndex = Number(button.dataset.index);
     button.setAttribute("aria-pressed", String(cardIndex === selected));
@@ -86,7 +91,8 @@ async function render() {
     .join("");
   for (const game of ["gi", "hsr"]) {
     const svg = icon(selected, game, mono, canvasText);
-    const atSize = (size) => icon(index, game, oneColor, foreground, size);
+    const atSize = (size) =>
+      icon(index, game, oneColor, foreground, size, revision);
     const card = document.createElement("div");
     card.className = "size-card";
     card.innerHTML = `<div class="size-row"></div><div class="pixel-view"><p>16 × 16, enlarged 6×.<br />${name(game)}<br />Look for a clear silhouette and readable light and shadow.</p></div>`;
@@ -169,18 +175,22 @@ async function render() {
 $("concepts").innerHTML = [0, 1]
   .map(
     (family) =>
-      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>Genshin + Star Rail · five paired variants</span></div><div class="family-grid">${concepts.map((concept, i) => (concept.family === family ? `<button class="concept" aria-pressed="${i === 0}" data-index="${i}"><div class="concept-icons">${icon(i, "gi")}${icon(i, "hsr")}</div><strong>${concept.code} · ${concept.name}</strong><small>${concept.material}</small><div class="card-tiny" aria-label="16 pixel previews" data-preview="${i}"><span>16 px</span><div class="mini-dark"></div><div class="mini-light"></div></div></button>` : "")).join("")}</div></section>`
+      `<section class="family"><div class="family-heading"><h2>${family === 0 ? "A / Option 1 silhouette" : "B / Option 4 silhouette"}</h2><span>Genshin + Star Rail · retained studies 1, 3, 5</span></div><div class="family-grid">${concepts.map((concept, i) => (concept.family === family && [0, 2, 4].includes(concept.variant) ? `<button class="concept" aria-pressed="${i === 0}" data-index="${i}"><div class="concept-icons">${icon(i, "gi")}${icon(i, "hsr")}</div><strong>${concept.code} · ${concept.name}</strong><small>${concept.material}</small><div class="card-tiny" aria-label="16 pixel previews" data-preview="${i}"><span>16 px</span><div class="mini-dark"></div><div class="mini-light"></div></div></button>` : "")).join("")}</div></section>`
   )
   .join("");
 async function renderCardFavicons() {
+  const revision = refined;
   for (const [index] of concepts.entries()) {
     const target = document.querySelector(`[data-preview="${index}"]`);
+    if (!target) continue;
     for (const theme of ["dark", "light"]) {
+      target.querySelector(`.mini-${theme}`).replaceChildren();
       for (const game of ["gi", "hsr"]) {
         const canvas = await raster(
-          icon(index, game, false, "#202633", 16),
+          icon(index, game, false, "#202633", 16, revision),
           16
         );
+        if (revision !== refined) return;
         canvas.setAttribute(
           "aria-label",
           `${concepts[index].code} ${name(game)} 16 px ${theme} background`
@@ -209,6 +219,11 @@ for (const [i, button] of document.querySelectorAll(".swatch").entries()) {
 $("mono").onchange = (event) => {
   mono = event.target.checked;
   render().catch(showError);
+};
+$("previous").onchange = (event) => {
+  refined = !event.target.checked;
+  render().catch(showError);
+  renderCardFavicons().catch(showError);
 };
 $("light-page").onchange = (event) => {
   document.body.classList.toggle("light", event.target.checked);
