@@ -13,7 +13,6 @@ import {
   MoreVertical,
   Palette,
   Settings,
-  TrainFront,
 } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -494,7 +493,7 @@ export function AppBar({
           aria-label={t.ui("app.siteSwitcherLabel")}
         >
           <img
-            src={getAssetUrl("/logo_gt.svg")}
+            src={getAssetUrl("/logo-gi.svg")}
             className="w-8 h-8"
             alt="Logo"
           />
@@ -512,7 +511,7 @@ export function AppBar({
         <DropdownMenuItem asChild>
           <Link to="/" className="gap-2">
             <img
-              src={getAssetUrl("/logo_gt.svg")}
+              src={getAssetUrl("/logo-gi.svg")}
               className="h-7 w-7"
               alt="Logo"
             />
@@ -527,9 +526,13 @@ export function AppBar({
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <a href={STAR_RAIL_SITE_URL} className="gap-2">
-            <TrainFront className="text-primary" aria-hidden="true" />
+            <img
+              src={getAssetUrl("/logo-hsr.svg")}
+              className="h-7 w-7"
+              alt=""
+            />
             <span className="min-w-0 flex-1">
-              <span className="block font-medium">GGStarRail</span>
+              <span className="block font-medium">{t.ui("app.title")}</span>
               <span className="block text-xs text-muted-foreground">
                 {t.ui("app.gameStarRail")}
               </span>
@@ -565,7 +568,7 @@ export function AppBar({
                 <SheetHeader>
                   <SheetTitle className="text-left flex items-center gap-2">
                     <img
-                      src={getAssetUrl("/logo_gt.svg")}
+                      src={getAssetUrl("/logo-gi.svg")}
                       className="w-6 h-6"
                       alt="Logo"
                     />

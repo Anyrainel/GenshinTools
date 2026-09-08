@@ -54,6 +54,15 @@
   Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
   CDN-Cache-Control: public, max-age=2592000
 
+# Brand assets have stable, unhashed URLs; revalidate after a release.
+/logo-*.svg
+  Cache-Control: no-cache, must-revalidate
+  CDN-Cache-Control: no-store
+
+/favicon.svg
+  Cache-Control: no-cache, must-revalidate
+  CDN-Cache-Control: no-store
+
 # === GOOD DATA (CORS-enabled exports) ===
 /good/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400

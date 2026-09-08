@@ -16,7 +16,7 @@ export default function NotFoundPage() {
         <section className="w-full max-w-xl rounded-xl bg-gradient-card border border-border overflow-hidden shadow-lg">
           <div className="bg-gradient-select border-b border-border/70 px-5 py-4 flex items-center gap-3">
             <img
-              src={getAssetUrl("logo_gt.svg")}
+              src={getAssetUrl("logo-gi.svg")}
               alt="GGArtifact"
               className="h-10 w-10 shrink-0"
             />

@@ -100,11 +100,13 @@ describe("AppBar", () => {
 
     await userEvent.click(siteSwitcher);
 
-    const genshinItem = screen.getByRole("menuitem", { name: /app\.title/ });
+    const genshinItem = screen.getByRole("menuitem", {
+      name: /app\.gameGenshin/,
+    });
     expect(genshinItem).toHaveAttribute("href", "/");
 
     const starRailItem = screen.getByRole("menuitem", {
-      name: /GGStarRail/,
+      name: /app.gameStarRail/,
     });
     expect(starRailItem).toHaveAttribute("href", "http://127.0.0.1:41737");
   });
@@ -118,7 +120,7 @@ describe("AppBar", () => {
     );
 
     expect(
-      screen.getByRole("menuitem", { name: /GGStarRail/ })
+      screen.getByRole("menuitem", { name: /app.gameStarRail/ })
     ).toBeInTheDocument();
   });
 
