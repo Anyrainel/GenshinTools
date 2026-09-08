@@ -824,55 +824,59 @@ function LunarEq({ p, hl, critMode, t }: RendererProps) {
   const baseDmg = levelMult * reactBase;
   const rbdp = p.statValues["reactionBaseDmg%"] || 0;
   const bdp = p.statValues["baseDmg%"] || 0;
+  const hasFlatBonus = !!p.statValues.baseDmg;
 
   return (
     <>
-      <MathZone
-        label={t.formula("BaseMultZone")}
-        value={fmtDamage(baseDmg)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={reactBase}
-              label={
-                p.tag?.reaction
-                  ? t.reaction(p.tag.reaction)
-                  : t.formula("Coeff")
+      <ParenGroup enabled={hasFlatBonus}>
+        <MathZone
+          label={t.formula("BaseMultZone")}
+          value={fmtDamage(baseDmg)}
+          mathLine={
+            <span className="flex items-center">
+              <MathVar
+                val={reactBase}
+                label={
+                  p.tag?.reaction
+                    ? t.reaction(p.tag.reaction)
+                    : t.formula("Coeff")
+                }
+              />
+              <MathOp char="×" />
+              <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
+            </span>
+          }
+        />
+        {bdp ? (
+          <>
+            <Op />
+            <MathZone
+              label={t.formula("BaseDmgPercent")}
+              highlight={hl === "baseDmg%"}
+              mathLine={
+                <span className="flex items-center">
+                  <MathVar val={1} label="" />
+                  <MathOp char="+" />
+                  <MathVar
+                    val={fmtPercent(bdp)}
+                    label={t.formula("DmgPercent")}
+                    highlight={hl === "baseDmg%"}
+                  />
+                </span>
               }
             />
-            <MathOp char="×" />
-            <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
-          </span>
-        }
-      />
-      {bdp ? (
-        <>
-          <Op />
-          <MathZone
-            label={t.formula("BaseDmgPercent")}
-            highlight={hl === "baseDmg%"}
-            mathLine={
-              <span className="flex items-center">
-                <MathVar val={1} label="" />
-                <MathOp char="+" />
-                <MathVar
-                  val={fmtPercent(bdp)}
-                  label={t.formula("DmgPercent")}
-                  highlight={hl === "baseDmg%"}
-                />
-              </span>
-            }
-          />
-        </>
-      ) : null}
-      {rbdp ? (
-        <>
-          <Op />
-          <ReactionBaseDmgZone p={p} hl={hl} t={t} />
-        </>
-      ) : null}
-      <Op />
-      <ReactionBonusZone p={p} hl={hl} t={t} />
+          </>
+        ) : null}
+        {rbdp ? (
+          <>
+            <Op />
+            <ReactionBaseDmgZone p={p} hl={hl} t={t} />
+          </>
+        ) : null}
+        <Op />
+        <ReactionBonusZone p={p} hl={hl} t={t} />
+        {hasFlatBonus && <FlatBonusZone p={p} hl={hl} t={t} />}
+      </ParenGroup>
       <Op />
       <CommonMultipliers
         p={p}

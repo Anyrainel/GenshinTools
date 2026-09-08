@@ -329,6 +329,42 @@ describe("TransformFormula buildExpr parity", () => {
 // ─── LunarFormula parity ───
 
 describe("LunarFormula buildExpr parity", () => {
+  it.each([
+    "lunarCharged",
+    "lunarCrystallize",
+  ] as const)("%s preserves variable flat damage in weighted expressions", (reaction) => {
+    const formula = new LunarFormula(
+      0,
+      {
+        element: reaction === "lunarCharged" ? "Electro" : "Geo",
+        ability: "special",
+        reaction,
+      },
+      undefined,
+      undefined,
+      0.5
+    );
+    const baseStats: [StatKey, number][] = [
+      ["em", 700],
+      ["baseDmg%", 0.4],
+      ["reactionBaseDmg%", 0.3],
+      ["reactionDmg%", 0.2],
+      ["elevated%", 0.25],
+      ["cr", 0.5],
+      ["cd", 1],
+    ];
+    const { varMapping, exprStats } = makeStatsAndExpr(baseStats, ["baseDmg"]);
+    const expr = formula.buildExpr(exprStats, 90, CTX);
+    expect(varMapping.getVarIdx(0, "baseDmg", "")).toBeDefined();
+    for (const flat of [0, 600, 2400]) {
+      const values: [StatKey, number][] = [["baseDmg", flat]];
+      expect(evaluate(expr, fillVars(varMapping, values))).toBeCloseTo(
+        formula.calc(makeFullSheet(baseStats, values), 90, CTX),
+        6
+      );
+    }
+  });
+
   const formula = new LunarFormula(0, {
     element: "Hydro",
     ability: "skill",

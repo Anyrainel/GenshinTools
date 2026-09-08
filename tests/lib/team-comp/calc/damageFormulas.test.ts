@@ -277,6 +277,60 @@ describe("TransformFormula", () => {
 });
 
 describe("LunarFormula", () => {
+  it.each([
+    "lunarCharged",
+    "lunarCrystallize",
+  ] as const)("%s adds flat damage after reaction scaling and weights the full contribution", (reaction) => {
+    const formula = new LunarFormula(
+      0,
+      {
+        element: reaction === "lunarCharged" ? "Electro" : "Geo",
+        ability: "special",
+        reaction,
+      },
+      undefined,
+      undefined,
+      0.5
+    );
+    const baseline = new StatSheet([
+      { key: "em", value: 800 },
+      { key: "baseDmg%", value: 0.4 },
+      { key: "reactionBaseDmg%", value: 0.3 },
+      { key: "reactionDmg%", value: 0.2 },
+      { key: "elevated%", value: 0.25 },
+      { key: "cr", value: 0.5 },
+      { key: "cd", value: 1 },
+    ]);
+    const buffed = baseline.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: 1200 }], {
+        reactions: [reaction],
+      })
+    );
+    const damage = formula.calc(buffed, 90, CTX);
+    // Flat bonus gets elevation, CRIT, resistance and rank weight only.
+    expect(damage - formula.calc(baseline, 90, CTX)).toBeCloseTo(
+      1200 * 1.25 * 1.5 * 0.9 * 0.5,
+      6
+    );
+    const display = formula.display(buffed, 90, CTX);
+    expect(display.damage).toBeCloseTo(damage, 6);
+    expect(display.statValues.baseDmg).toBe(1200);
+    expect(formula.getReadKeys().has("baseDmg")).toBe(true);
+    expect(formula.calcBaseDmgMult(buffed, 90, CTX)).toBeCloseTo(
+      (damage - formula.calc(baseline, 90, CTX)) / 1200,
+      6
+    );
+    // Ability-scoped direct buffs do not leak into reaction damage.
+    const directOnly = baseline.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: 1200 }], {
+        abilities: ["skill", "burst", "normal", "charge", "plunge"],
+      })
+    );
+    expect(formula.calc(directOnly, 90, CTX)).toBe(
+      formula.calc(baseline, 90, CTX)
+    );
+  });
+
   const formula = new LunarFormula(0, {
     element: "Electro",
     ability: "skill",

@@ -2162,6 +2162,83 @@ describe("display path matches damage path for reaction formulas", () => {
   });
 });
 
+describe("Lunar-Crystallize flat reaction bonuses", () => {
+  it.each([
+    0, 1, 6,
+  ])("Linnea C%i applies Field Catalog to weighted Moondrifts, excluding Illuga stacks", (constellation) => {
+    const team: TeamSlotConfig[] = [
+      { ...LCR_ONLY[0], constellation, weaponId: "favonius_warbow" },
+      { ...LCR_ONLY[1], charId: "xingqiu", weaponId: "sacrificial_sword" },
+      {
+        ...LCR_ONLY[0],
+        charId: "illuga",
+        constellation: 0,
+        weaponId: "favonius_lance",
+      },
+    ];
+    const tb = new TeamBuild(team, { linnea: "tap" });
+    const sheets = emptySheets("linnea", "xingqiu", "illuga");
+    const stats = tb.getTeamStats(sheets, "linnea", CTX);
+    const entry = tb.catalog.formulaIndex.get("rx-lunarCrystallize-linnea")!;
+    expect(entry.parts.length).toBeGreaterThan(1);
+    const expectedFlat =
+      constellation === 0
+        ? 0
+        : stats.linnea!.get("def", entry.parts[0].formula.tag) *
+          (constellation === 6 ? 1.125 : 0.75);
+    for (const part of entry.parts) {
+      const sheet = stats[part.statsCharId!]!;
+      expect(sheet.get("baseDmg", part.formula.tag)).toBeCloseTo(
+        expectedFlat,
+        6
+      );
+      if (constellation > 0) {
+        const withoutFlat = sheet.merge(
+          new StatSheet([{ key: "baseDmg", value: -expectedFlat }])
+        );
+        expect(part.formula.calc(sheet, 90, CTX)).toBeGreaterThan(
+          part.formula.calc(withoutFlat, 90, CTX)
+        );
+      }
+    }
+    // Illuga's actual Q/P2 buffs still apply to direct LC hits on the active character.
+    expect(
+      stats.linnea!.get("baseDmg", {
+        element: "Geo",
+        ability: "skill",
+        reaction: "lunarCrystallize",
+      })
+    ).toBeGreaterThan(expectedFlat);
+
+    const combo = singleFormulaCombo("linnea", "rx-lunarCrystallize-linnea");
+    const compiled = compileComboTeamDamage(tb, combo, "linnea", sheets, CTX);
+    const results: number[] = [];
+    for (const def of [0, 1000]) {
+      const changed: Record<string, StatSheet> = {
+        ...sheets,
+        linnea: new StatSheet([{ key: "def", value: def }]),
+      };
+      const vars = new Float64Array(compiled.numVars);
+      for (const charId of Object.keys(changed)) {
+        fillVarsFromSheet(
+          changed[charId],
+          compiled.varMapping,
+          compiled.charIdxMap?.get(charId) ?? 0,
+          vars
+        );
+      }
+      const interpreted = tb.getComboDamageResult(
+        combo,
+        changed,
+        CTX
+      ).totalDamage;
+      expect(compiled.evaluate(vars)).toBeCloseTo(interpreted, 4);
+      results.push(interpreted);
+    }
+    if (constellation > 0) expect(results[1]).toBeGreaterThan(results[0]);
+  });
+});
+
 describe("compiled multi-contributor matches interpreted", () => {
   it("compiled lunarCharged matches getDamageResult via combo", () => {
     const tb = new TeamBuild(MIXED_LEVEL_LUNAR);

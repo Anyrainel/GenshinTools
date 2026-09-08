@@ -913,10 +913,23 @@ export class LunarFormula extends DamageFormula {
     this.rankWeight = rankWeight ?? 1;
   }
 
+  override calcBaseDmgMult(
+    stats: StatSheet,
+    _charLevel: number,
+    ctx: CalcContext
+  ): number {
+    return (
+      (1 + stats.get("elevated%", this.tag)) *
+      this.computeResMult(stats, ctx) *
+      this.computeCritMult(stats, ctx) *
+      this.rankWeight
+    );
+  }
+
   override getReadKeys(): ReadonlySet<StatKey> {
     return new Set<StatKey>([
       ...REACTION_KEYS,
-      "baseDmg%",
+      ...BASE_DMG_KEYS,
       "reactionBaseDmg%",
       "elevated%",
       ...CRIT_KEYS,
@@ -946,11 +959,14 @@ export class LunarFormula extends DamageFormula {
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelMult * reactionCoeff;
-    let expr = E.mul(
+    const reactionDmg = E.mul(
       E.const(baseDmg),
       E.add(E.const(1), baseDmgBonus),
       E.add(E.const(1), reactionBaseDmg),
-      E.add(E.const(1), emBonus, reactionDmgBonus),
+      E.add(E.const(1), emBonus, reactionDmgBonus)
+    );
+    let expr = E.mul(
+      E.add(reactionDmg, stats.get("baseDmg", this.tag)),
       E.add(E.const(1), elevated),
       resMult,
       critMult
@@ -977,11 +993,15 @@ export class LunarFormula extends DamageFormula {
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelMult * reactionCoeff;
-    return (
+    // Flat Lunar bonuses are added after reaction scaling, before elevation,
+    // resistance, CRIT, and this contributor's rank weight.
+    const reactionDmg =
       baseDmg *
       (1 + baseDmgBonus) *
       (1 + reactionBaseDmg) *
-      (1 + emBonus + reactionDmgBonus) *
+      (1 + emBonus + reactionDmgBonus);
+    return (
+      (reactionDmg + stats.get("baseDmg", this.tag)) *
       (1 + elevated) *
       resMult *
       critMult *
@@ -1003,11 +1023,14 @@ export class LunarFormula extends DamageFormula {
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelCoeff * reactionCoeff;
-    const damage =
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const reactionDmg =
       baseDmg *
       (1 + baseDmgBonus) *
       (1 + reactionBaseDmg) *
-      (1 + emBonus + reactionDmgBonus) *
+      (1 + emBonus + reactionDmgBonus);
+    const damage =
+      (reactionDmg + flatBaseDmg) *
       (1 + elevated) *
       resMult *
       critMult *
@@ -1030,6 +1053,7 @@ export class LunarFormula extends DamageFormula {
         em,
         "reactionDmg%": reactionDmgBonus,
         "baseDmg%": baseDmgBonus,
+        ...(flatBaseDmg !== 0 ? { baseDmg: flatBaseDmg } : {}),
         "reactionBaseDmg%": reactionBaseDmg,
         "elevated%": elevated,
         cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
