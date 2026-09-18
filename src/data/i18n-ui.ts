@@ -1,4 +1,14 @@
 export const i18nUiData = {
+  seo: {
+    homeTitle: {
+      en: "GGArtifact — Genshin Impact Artifact Optimizer",
+      zh: "GGArtifact — 原神圣遗物优化器",
+    },
+    description: {
+      en: "Genshin Impact artifact scoring, build optimization, and team damage tools for players worldwide. Available in English and Simplified Chinese.",
+      zh: "面向全球原神玩家的圣遗物评分、配装优化与队伍伤害计算工具，支持简体中文和英文。",
+    },
+  },
   common: {
     search: { en: "Search...", zh: "搜索..." },
     clear: { en: "Clear", zh: "清除" },

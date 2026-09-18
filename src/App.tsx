@@ -44,20 +44,29 @@ const NOT_FOUND_TITLE = { en: "Page Not Found", zh: "页面未找到" };
 
 function App() {
   const location = useLocation();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isHomePage = location.pathname === "/";
   useHydrateBuildPreset();
   useHydrateTeamPreset();
 
+  const homeTitle = t.ui("seo.homeTitle");
+  const description = t.ui("seo.description");
   useEffect(() => {
-    if (isHomePage) {
-      document.title = SITE_NAME;
-      return;
-    }
     const base = `/${location.pathname.split("/")[1]}`;
     const page = PAGE_TITLES[base];
-    document.title = `${(page ?? NOT_FOUND_TITLE)[language]} — ${SITE_NAME}`;
-  }, [isHomePage, location.pathname, language]);
+    document.title = isHomePage
+      ? homeTitle
+      : `${(page ?? NOT_FOUND_TITLE)[language]} — ${SITE_NAME}`;
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute("content", description);
+    document
+      .querySelector('meta[property="og:title"]')
+      ?.setAttribute("content", document.title);
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute("content", description);
+  }, [isHomePage, location.pathname, language, homeTitle, description]);
 
   // Tier B preload — fire-and-forget at app boot. Tooltip / table consumers
   // call resource.use() themselves and render skeletons until ready, so this
