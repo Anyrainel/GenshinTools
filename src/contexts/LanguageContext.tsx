@@ -89,21 +89,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       if (stored === "en" || stored === "zh") {
         return stored;
       }
-
-      if (navigator.language.toLowerCase().startsWith("zh")) {
-        // Auto-detect system language
-        // Note: navigator.language can be "zh-CN", "zh-TW", etc.
-        return "zh";
-      }
-
-      return "en";
     } catch {
-      return "en";
+      // Browser language still works when storage is unavailable.
     }
+    return navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
   });
 
   useEffect(() => {
-    document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+    document.documentElement.lang = language === "zh" ? "zh-Hans" : "en";
   }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {

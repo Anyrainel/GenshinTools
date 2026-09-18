@@ -43,6 +43,24 @@ describe("LanguageContext", () => {
   });
 
   describe("initial state", () => {
+    it("uses browser Chinese when storage is unavailable", () => {
+      const browserLanguage = vi
+        .spyOn(navigator, "language", "get")
+        .mockReturnValue("zh-SG");
+      localStorageMock.getItem.mockImplementationOnce(() => {
+        throw new Error("Storage unavailable");
+      });
+      try {
+        const { result } = renderHook(() => useLanguage(), {
+          wrapper: LanguageProvider,
+        });
+        expect(result.current.language).toBe("zh");
+        expect(document.documentElement.lang).toBe("zh-Hans");
+      } finally {
+        browserLanguage.mockRestore();
+      }
+    });
+
     it("defaults to English", () => {
       const { result } = renderHook(() => useLanguage(), {
         wrapper: LanguageProvider,
@@ -111,7 +129,7 @@ describe("LanguageContext", () => {
         result.current.setLanguage("zh");
       });
 
-      expect(document.documentElement.lang).toBe("zh-CN");
+      expect(document.documentElement.lang).toBe("zh-Hans");
     });
   });
 

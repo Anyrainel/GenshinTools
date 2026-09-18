@@ -2,6 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Set the displayed language before the app bundle loads. Keep this
+      // preference order aligned with LanguageProvider.
+      (() => {
+        let language;
+        try {
+          language = localStorage.getItem("app_language");
+        } catch {
+          // Browser language still works when storage is unavailable.
+        }
+        if (language !== "en" && language !== "zh") {
+          language = navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
+        }
+        document.documentElement.lang = language === "zh" ? "zh-Hans" : "en";
+      })();
+    </script>
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -14,7 +30,7 @@
     <meta property="og:image" content="/apple-touch-icon.png" />
   </head>
   <body>
-    <div id="root" class="notranslate" translate="no"></div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- Fallback: if the main bundle fails to load (e.g. post-deploy cache mismatch),
          show a reload prompt instead of a black screen. -->
