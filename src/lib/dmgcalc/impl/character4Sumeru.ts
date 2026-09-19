@@ -455,14 +455,180 @@ class Candace extends CharacterBase {
       : []),
   ];
 
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = {
+    "candace-normal": {
+      label: { zh: "普攻完整一套", en: "N4 String" },
+      parts: [1, 2, 3, 4, 5].map((index) => ({
+        formula: new DirectFormula(this.param("A", index), {
+          element: "Physical",
+          ability: "normal",
+          reaction: "none",
+        }),
+      })),
+    },
+    "candace-skill-tap": {
+      label: { zh: "E点按", en: "E Tap" },
+      parts: [
+        {
+          formula: new DirectFormula(
+            this.param("E", 3),
+            { element: "Hydro", ability: "skill", reaction: "none" },
+            "hp"
+          ),
+        },
+      ],
+    },
+    "candace-skill-hold": {
+      label: { zh: "E蓄力完成", en: "E Fully Charged" },
+      parts: [
+        {
+          formula: new DirectFormula(
+            this.param("E", 4),
+            { element: "Hydro", ability: "skill", reaction: "none" },
+            "hp"
+          ),
+        },
+      ],
+    },
+    "candace-burst": {
+      label: { zh: "Q施放伤害", en: "Q Cast" },
+      parts: [
+        {
+          formula: new DirectFormula(
+            this.param("Q", 1),
+            { element: "Hydro", ability: "burst", reaction: "none" },
+            "hp"
+          ),
+        },
+      ],
+    },
+    "candace-wave": {
+      label: { zh: "Q水波冲击", en: "Q Wave Impact" },
+      parts: [
+        {
+          formula: new DirectFormula(
+            this.param("Q", 4),
+            { element: "Hydro", ability: "burst", reaction: "none" },
+            "hp"
+          ),
+          offField: true,
+        },
+      ],
+    },
+    "candace-c6-wave": {
+      label: { zh: "C6衍潮冲击", en: "C6 Attack Wave" },
+      minC: 6,
+      parts: [
+        {
+          formula: new DirectFormula(
+            0.15,
+            { element: "Hydro", ability: "burst", reaction: "none" },
+            "hp"
+          ),
+          offField: true,
+        },
+      ],
+    },
+  };
+
+  protected get comboDescriptor(): ComboTemplate {
+    return [
+      { id: "candace-skill-tap", count: 1 },
+      { id: "candace-burst", count: 1 },
+      { id: "candace-wave", count: 3 },
+      // Per-proc entry: users can set the number of teammate-triggered waves.
+      { id: "candace-c6-wave", count: 0, bonus: [{ minC: 6, delta: 1 }] },
+    ];
+  }
 }
 
 @RegisterCharacter("dori")
 class Dori extends CharacterBase {
-  // Pure healer/energy battery — no damage-relevant buffs
   readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = {
+    "dori-normal": {
+      label: { zh: "普攻完整一套", en: "N3 String" },
+      parts: [1, 2, 3, 4].map((index) => ({
+        formula: new DirectFormula(this.param("A", index), {
+          element: "Physical",
+          ability: "normal",
+          reaction: "none",
+        }),
+      })),
+    },
+    "dori-c6-normal": {
+      label: {
+        zh: "C6雷附魔普攻一套",
+        en: "C6 Electro N3",
+      },
+      minC: 6,
+      parts: [1, 2, 3, 4].map((index) => ({
+        formula: new DirectFormula(this.param("A", index), {
+          element: "Electro",
+          ability: "normal",
+          reaction: "none",
+        }),
+      })),
+    },
+    "dori-skill": {
+      label: { zh: "E断除烦恼炮", en: "E Troubleshooter Shot" },
+      parts: [
+        {
+          formula: new DirectFormula(this.param("E", 1), {
+            element: "Electro",
+            ability: "skill",
+            reaction: "none",
+          }),
+        },
+        {
+          formula: new DirectFormula(this.param("E", 2), {
+            element: "Electro",
+            ability: "skill",
+            reaction: "none",
+          }),
+          hits: this.constellation >= 1 ? 3 : 2,
+        },
+      ],
+    },
+    "dori-connector": {
+      label: { zh: "Q连接伤害", en: "Q Connector" },
+      parts: [
+        {
+          formula: new DirectFormula(this.param("Q", 1), {
+            element: "Electro",
+            ability: "burst",
+            reaction: "none",
+          }),
+          offField: true,
+        },
+      ],
+    },
+    "dori-c2-toop": {
+      label: { zh: "C2镇灵炮", en: "C2 Jinni Toop" },
+      minC: 2,
+      // C2 has no talent damage type; KQM's Dori evidence verifies it is not Q damage.
+      parts: [
+        {
+          formula: new DirectFormula(0.5, {
+            element: "Electro",
+            ability: "special",
+            reaction: "none",
+          }),
+          offField: true,
+        },
+      ],
+    },
+  };
+
+  protected get comboDescriptor(): ComboTemplate {
+    return [
+      { id: "dori-skill", count: 1 },
+      // Connector contact and C2 proc counts depend on positioning and duration.
+      // Expose each as one hit rather than assuming uninterrupted enemy contact.
+      { id: "dori-connector", count: 1 },
+      { id: "dori-c2-toop", count: 0, bonus: [{ minC: 2, delta: 1 }] },
+    ];
+  }
 }
 
 @RegisterCharacter("collei")
