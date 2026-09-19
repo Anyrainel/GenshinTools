@@ -33,6 +33,10 @@ import {
 import type { AccountData, CharacterData, WeaponResource } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
+  canReceiveInfusion,
+  getInfusionOptionKey,
+} from "@/lib/dmgcalc/core/infusion";
+import {
   getDefaultOptionValue,
   getOptionDef,
   isChoiceEnabled,
@@ -179,7 +183,7 @@ export function TeamRosterCard({
         ? weaponsById[entityId]?.imagePath
         : type === "artifact"
           ? artifactsById[entityId]?.imagePaths?.flower
-          : charactersById[entityId]?.imagePath;
+          : charactersById[entityId.replace(/^infusion:/, "")]?.imagePath;
     if (!imagePath) return null;
 
     return (
@@ -189,7 +193,7 @@ export function TeamRosterCard({
       >
         <img
           src={getAssetUrl(imagePath)}
-          alt={entityId}
+          alt={entityId.replace(/^infusion:/, "")}
           className="w-5 h-5 xl:w-7 xl:h-7 object-contain rounded-full bg-secondary/40 shrink-0 border border-border/30"
         />
         <span className="font-bold text-foreground/80 text-xs md:text-sm lg:text-xs xl:text-sm min-w-0 truncate">
@@ -270,7 +274,12 @@ export function TeamRosterCard({
   // Note: This component only renders when gameStats are ready (gated by parent),
   // so TeamMeta always has valid element/region/faction data here.
   useEffect(() => {
-    const entityIds: string[] = [...charIds];
+    const entityIds: string[] = [
+      ...charIds,
+      ...charIds
+        .filter((id) => canReceiveInfusion(id, teamMeta))
+        .map(getInfusionOptionKey),
+    ];
     for (let i = 0; i < characters.length; i++) {
       const wid = weapons[i];
       if (wid && getOptionDef(wid)) entityIds.push(wid);
@@ -403,6 +412,13 @@ export function TeamRosterCard({
             const char = charactersById[charId];
             const weaponId = weapons[i];
             const charHasOption = getOptionDef(charId) != null;
+            const infusionKey = getInfusionOptionKey(charId);
+            const infusionHasOption =
+              canReceiveInfusion(charId, teamMeta) &&
+              getOptionDef(infusionKey)!.choices.some(
+                (choice) =>
+                  choice.value !== "none" && isChoiceEnabled(choice, teamMeta)
+              );
             const weaponHasOption =
               weaponId != null && getOptionDef(weaponId) != null;
             const artConfig = artifacts[i];
@@ -749,9 +765,14 @@ export function TeamRosterCard({
                 </div>
 
                 {/* Per-character combat options */}
-                {(charHasOption || weaponHasOption || artifactHasOption) && (
+                {(charHasOption ||
+                  infusionHasOption ||
+                  weaponHasOption ||
+                  artifactHasOption) && (
                   <div className="w-full space-y-1">
                     {charHasOption && renderOption(charId, "character")}
+                    {infusionHasOption &&
+                      renderOption(infusionKey, "character")}
                     {weaponHasOption &&
                       weaponId &&
                       renderOption(weaponId, "weapon")}

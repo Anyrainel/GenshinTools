@@ -3,13 +3,15 @@
 - id: candace-c6-overflow
   entity: candace
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
-    C6 The Overflow wave (15% HP Hydro, every 2.3s) not modeled.
+    Added C6 The Overflow wave (15% HP Hydro) as a selectable formula.
   detail: >
-    No runbook formulas for Candace. C6-only coordinated attack for a niche
-    support character. Periodic/minor proc, estimated <5% team DPS contribution.
+    Reopened after explicit user feedback requested Candace coverage. Added a
+    C6-gated, off-field Hydro burst formula with editable proc count and
+    regression coverage in requestedSupportCoverage.test.ts. The previous
+    niche-use exclusion no longer applies to this requested coverage.
 
 - id: nilou-c1-dmg-zone
   entity: nilou

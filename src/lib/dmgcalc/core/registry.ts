@@ -11,6 +11,11 @@ import type {
   CharacterBase,
   WeaponBase,
 } from "./implModel";
+import {
+  applyPhysicalAttackInfusion,
+  getInfusionOptionDef,
+  getInfusionOptionKey,
+} from "./infusion";
 import type { TeamMeta } from "./teamMeta";
 
 type CharacterCtor = new (
@@ -39,7 +44,7 @@ export function createCharacter(
 ): CharacterBase {
   const Ctor = characterRegistry.get(charId);
   if (!Ctor) throw new Error(`No character registered for: ${charId}`);
-  return new Ctor(
+  const character = new Ctor(
     charId,
     charLevel,
     constellation,
@@ -47,6 +52,13 @@ export function createCharacter(
     combatOpts,
     talentLevels
   );
+  applyPhysicalAttackInfusion(
+    character.allFormulaEntries,
+    charId,
+    combatOpts[getInfusionOptionKey(charId)],
+    teamMeta
+  );
+  return character;
 }
 
 type WeaponCtor = new (
@@ -126,6 +138,7 @@ export function createArtifactHalfSet(
 
 const optionRegistry = new Map<string, OptionDef>();
 export function getOptionDef(entityId: string): OptionDef | null {
+  if (entityId.startsWith("infusion:")) return getInfusionOptionDef();
   return optionRegistry.get(entityId) ?? null;
 }
 

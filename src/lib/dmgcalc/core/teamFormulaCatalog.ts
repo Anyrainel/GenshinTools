@@ -406,7 +406,15 @@ export function getFormulaReactions(
 
   const isMultiElement = MULTI_ELEMENT_CHARS.has(charId);
 
-  if (isMultiElement && formulaEntry) {
+  // External infusion can make any melee character deal another element.
+  // Derive choices from the attack, rather than the character's Vision.
+  if (
+    formulaEntry &&
+    (isMultiElement ||
+      formulaEntry.parts.some(
+        (part) => part.formula.tag.element !== charElement
+      ))
+  ) {
     const rxSet = new Set<ReactionType>(["none"]);
     for (const part of formulaEntry.parts) {
       const partEl = part.formula.tag.element;

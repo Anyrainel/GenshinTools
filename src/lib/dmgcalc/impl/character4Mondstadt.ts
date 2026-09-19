@@ -1140,6 +1140,16 @@ class Bennett extends CharacterBase {
           },
         ],
       },
+      "bennett-normal": {
+        label: { zh: "普通攻击一套", en: "Normal Attack String" },
+        parts: [1, 2, 3, 4, 5].map((index) => ({
+          formula: new DirectFormula(this.param("A", index), {
+            element: "Physical",
+            ability: "normal",
+            reaction: "none",
+          }),
+        })),
+      },
     };
   })();
 
