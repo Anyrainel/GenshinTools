@@ -146,12 +146,22 @@ class Skirk extends CharacterBase {
       );
     }
 
-    // C2: After 极恶技·尽 (Extinction), ATK +70% for 12.5s (all abilities)
+    // C2: Extinction grants +70% ATK for 12.5s, canceled on leaving
+    // Seven-Phase Flash. Being on-field alone does not imply this stance:
+    // Ruin and its C6 coordinated hits occur outside it and must not benefit.
+    // https://keqingmains.com/q/skirk-quickguide/#Constellations
+    // In the current formula map, retain the existing normal/charge coverage
+    // (including the existing C1 timing assumption), excluding both burst entries.
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
-          { key: "atk%", value: 0.7 },
-        ])
+        new StatBuff(
+          cbs(this, "C2", ["Q"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["charge", "normal"] },
+          },
+          [{ key: "atk%", value: 0.7 }]
+        )
       );
     }
 
