@@ -187,7 +187,7 @@ function AchievementSeriesCard({
                     className="mx-1 h-6 w-px shrink-0 bg-foreground/20 sm:mx-2"
                   />
                   <div className="flex h-10 shrink-0 items-center gap-1">
-                    <span className="text-sm font-medium tabular-nums text-foreground/90">
+                    <span className="w-[2ch] text-right text-sm font-medium tabular-nums text-foreground/90">
                       {achievement.reward}
                     </span>
                     <img
