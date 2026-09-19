@@ -529,6 +529,52 @@ describe("runTriage", () => {
     expect(decisions[0].specialRules).not.toContain("offPiecePattern");
   });
 
+  it("retains all EM goblets and circlets with main-stat-only custom rules", () => {
+    const artifacts = [
+      makeArt({
+        slotKey: "goblet",
+        mainStatKey: "em",
+        substats: { hp: 1, def: 1, atk: 1 },
+      }),
+      makeArt({
+        slotKey: "circlet",
+        mainStatKey: "em",
+        level: 20,
+        substats: { hp: 5, def: 1, atk: 1, "hp%": 1 },
+      }),
+      makeArt({
+        slotKey: "sands",
+        mainStatKey: "em",
+        substats: { hp: 1, def: 1, atk: 1 },
+      }),
+      makeArt({
+        slotKey: "goblet",
+        mainStatKey: "hp%",
+        substats: { hp: 1, def: 1, atk: 1 },
+      }),
+    ];
+    const { decisions } = runTriage(makeAccount([], artifacts), [], {
+      ...SETTINGS,
+      setSlotKeep: 0,
+      highLevelProtection: false,
+      levelProtection: 0,
+      equippedProtection: false,
+      customFlexInputs: [
+        { slot: "goblet", mainStat: "em", requiredSubs: [] },
+        { slot: "circlet", mainStat: "em", requiredSubs: [] },
+      ],
+    });
+    for (const artifact of artifacts.slice(0, 2)) {
+      const decision = decisions.find((d) => d.artifact.id === artifact.id)!;
+      expect(decision.specialRules).toContain("offPiecePattern");
+      expect(decision.label).toBe("lock");
+    }
+    for (const artifact of artifacts.slice(2)) {
+      const decision = decisions.find((d) => d.artifact.id === artifact.id)!;
+      expect(decision.specialRules).not.toContain("offPiecePattern");
+    }
+  });
+
   // fillerKeep: under-supply keeps best filler artifacts
 
   it("fillerKeep: locks top filler artifacts when supply < demand", () => {

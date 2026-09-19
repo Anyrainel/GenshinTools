@@ -32,6 +32,52 @@ function makeSettings(
 }
 
 describe("FlexPatternDialog", () => {
+  it("requires an explicit Any substats choice to add a main-stat-only pattern", () => {
+    const onSettingsChange = vi.fn();
+    render(
+      <FlexPatternDialog
+        open
+        onOpenChange={vi.fn()}
+        flexPatterns={[]}
+        settings={makeSettings()}
+        onSettingsChange={onSettingsChange}
+      />
+    );
+
+    const add = screen.getByRole("button", { name: "Add" });
+    expect(add).toBeDisabled();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Any substats" }));
+    expect(add).toBeEnabled();
+    fireEvent.click(add);
+    expect(onSettingsChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        customFlexInputs: [
+          {
+            slot: "flower",
+            mainStat: "hp",
+            requiredSubs: [],
+            requiresFourInitialSubstats: false,
+          },
+        ],
+      })
+    );
+  });
+
+  it("labels saved main-stat-only patterns as Any substats", () => {
+    render(
+      <FlexPatternDialog
+        open
+        onOpenChange={vi.fn()}
+        flexPatterns={[]}
+        settings={makeSettings([
+          { slot: "goblet", mainStat: "em", requiredSubs: [] },
+        ])}
+        onSettingsChange={vi.fn()}
+      />
+    );
+    expect(screen.getAllByText("Any substats")).toHaveLength(2);
+  });
+
   it("allows removing a custom pattern that requires four initial substats", () => {
     const fourLineInput: CustomFlexInput = {
       slot: "goblet",

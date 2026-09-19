@@ -1,6 +1,7 @@
 ## roadmap
 - Ongoing: more damage formulas and customization options
 - P1: Better graduation celebration effects
+- TODO: Manage artifact stars with customizable options
 
 ## 2026-08-23
 

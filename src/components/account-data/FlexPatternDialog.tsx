@@ -239,7 +239,9 @@ export function FlexPatternDialog({
                     <span>{t.statShort(fp.mainStat)}</span>
                     <span className="text-muted-foreground">·</span>
                     <span>
-                      {fp.requiredSubs.map((s) => t.statShort(s)).join("+")}
+                      {fp.requiredSubs.length === 0
+                        ? t.ui("triage.anySubstats")
+                        : fp.requiredSubs.map((s) => t.statShort(s)).join("+")}
                     </span>
                     {fp.requiresFourInitialSubstats && (
                       <Badge variant="secondary" className="h-5 text-[10px]">
@@ -347,6 +349,7 @@ function CustomFlexAddForm({
   const [slot, setSlot] = useState<Slot>("flower");
   const [mainStat, setMainStat] = useState<MainStat>("hp");
   const [subs, setSubs] = useState<string[]>([""]);
+  const [anySubstats, setAnySubstats] = useState(false);
   const [requiresFourInitialSubstats, setRequiresFourInitialSubstats] =
     useState(false);
 
@@ -374,11 +377,15 @@ function CustomFlexAddForm({
   }, [mainStat]);
 
   // Filter out empty placeholders for validation/submission
-  const filledSubs = useMemo(() => subs.filter((s) => s !== ""), [subs]);
+  const filledSubs = useMemo(
+    () => (anySubstats ? [] : subs.filter((s) => s !== "")),
+    [anySubstats, subs]
+  );
 
   // Validation
   const validation = useMemo(() => {
-    if (filledSubs.length < 1) return { valid: false, error: null };
+    if (!anySubstats && filledSubs.length < 1)
+      return { valid: false, error: null };
 
     const sorted = sortSubs(filledSubs as SubStat[]);
     const key = makeFlexPatternKey(
@@ -414,6 +421,7 @@ function CustomFlexAddForm({
     slot,
     mainStat,
     filledSubs,
+    anySubstats,
     officialKeys,
     customPatterns,
     requiresFourInitialSubstats,
@@ -432,6 +440,7 @@ function CustomFlexAddForm({
       customFlexInputs: [...settings.customFlexInputs, input],
     });
     setSubs([""]);
+    setAnySubstats(false);
   };
 
   return (
@@ -482,13 +491,26 @@ function CustomFlexAddForm({
         <span className="text-xs text-muted-foreground">
           {t.ui("triage.subLabel")}
         </span>
-        <StatSelect
-          values={subs}
-          onValuesChange={handleSubsChange}
-          options={subOptions}
-          maxLength={4}
-          compact
-        />
+        <label
+          className="flex items-center gap-2 text-xs text-foreground"
+          htmlFor="customFlexAnySubstats"
+        >
+          <Checkbox
+            id="customFlexAnySubstats"
+            checked={anySubstats}
+            onBooleanChange={setAnySubstats}
+          />
+          <span>{t.ui("triage.anySubstats")}</span>
+        </label>
+        {!anySubstats && (
+          <StatSelect
+            values={subs}
+            onValuesChange={handleSubsChange}
+            options={subOptions}
+            maxLength={4}
+            compact
+          />
+        )}
 
         {/* Add button */}
         <label

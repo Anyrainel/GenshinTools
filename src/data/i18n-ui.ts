@@ -2958,6 +2958,7 @@ export const i18nUiData = {
     },
     mainLabel: { en: "Main", zh: "主" },
     subLabel: { en: "Sub", zh: "副" },
+    anySubstats: { en: "Any substats", zh: "副词条不限" },
     customPatterns: { en: "Custom Patterns", zh: "自定义散件" },
     addCustomFlex: { en: "Add", zh: "添加" },
     requiresFourInitialSubstats: {
