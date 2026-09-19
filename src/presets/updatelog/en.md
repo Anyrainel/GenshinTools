@@ -3,6 +3,25 @@
 - P1: Better graduation celebration effects
 - TODO: Manage artifact stars with customizable options
 
+## 2026-09-18
+
+### features
+- Added more Normal Attack, Skill, Burst, and constellation damage options for Candace and Dori, plus Normal Attacks for Bennett and Chongyun
+- Added teammate infusion options for physical melee attacks, including Bennett C6, Candace, and Chongyun, with matching elemental damage and reactions
+- Added “Any substats” to custom artifact retention rules, allowing rules such as keeping every EM goblet and circlet
+- Added a lock-result filter to artifact triage for reviewing artifacts recommended for locking or unlocking
+- Added a site switcher in the header with quick access to GGStarRail
+
+### fixes
+- Fixed Skirk’s C2 ATK bonus incorrectly affecting her regular Burst and C6 Burst follow-up attacks
+- Fixed missing flat damage bonuses in some Lunar reactions, alongside Stellar Swirl and Cryo Traveler’s enhanced Charged Attack calculations
+- Fixed damage counts and Skirk combos in older saved teams to prevent incorrect totals after updating
+- Improved CRIT Rate calculations for score-up recommendations, including missing character, weapon, artifact, and Cryo Resonance effects
+- Fixed retention counts, special-rule priority, and set filtering in artifact triage
+- Fixed search and filter behavior across the Archive, ensured achievement filters show only matching entries, and repaired some achievement guide video links
+- Fixed weapon details in Inventory and improved item layout and collapsed filter visibility
+- Fixed the initial page language and restored browser translation support
+
 ## 2026-08-23
 
 ### features
