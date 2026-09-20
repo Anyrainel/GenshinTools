@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-08-30T06:48:52.354Z",
+  "generatedAt": "2026-09-20T04:13:26.463Z",
   "teams": {
     "YU06qLrWu1q46mwZ0O": {
       "teamName": "sandrone / odette / yae_miko / sucrose",
@@ -7508,24 +7508,24 @@
           "minCr": 0.02
         }
       },
-      "damage": 21876426.5701,
+      "damage": 22032211.265,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 793828.108,
-            "total": 1587656.216
+            "perHit": 788225.2363,
+            "total": 1576450.4725
           },
           {
-            "perHit": 2135858.8658,
-            "total": 3689013.1307
+            "perHit": 2122000.8867,
+            "total": 3664916.3606
           },
           {
-            "perHit": 1589943.1316,
-            "total": 3179886.2632
+            "perHit": 1579475.8442,
+            "total": 3158951.6885
           },
           {
-            "perHit": 127892.9881,
-            "total": 255785.9762
+            "perHit": 147019.3387,
+            "total": 294038.6775
           },
           {
             "perHit": 55704.6808,
@@ -7536,63 +7536,63 @@
             "total": 626213.6315
           },
           {
-            "perHit": 2877506.0013,
-            "total": 5755012.0025
+            "perHit": 2854034.543,
+            "total": 5708069.0859
           },
           {
             "perHit": 1886122.3041,
             "total": 3772244.6081
           },
           {
-            "perHit": 99909.7428,
-            "total": 199819.4856
+            "perHit": 140913.0588,
+            "total": 281826.1177
           },
           {
-            "perHit": 48123.6116,
-            "total": 96247.2232
+            "perHit": 47743.8428,
+            "total": 95487.6855
           },
           {
-            "perHit": 59656.7753,
-            "total": 119313.5505
+            "perHit": 59182.0642,
+            "total": 118364.1284
           },
           {
-            "perHit": 81071.1375,
-            "total": 162142.275
+            "perHit": 80420.1412,
+            "total": 160840.2824
           },
           {
             "perHit": 12188.9521,
             "total": 24377.9042
           },
           {
-            "perHit": 99562.7429,
-            "total": 199125.4858
+            "perHit": 130652.1701,
+            "total": 261304.3401
           },
           {
-            "perHit": 58833.589,
-            "total": 117667.1779
+            "perHit": 59837.7659,
+            "total": 119675.5318
           },
           {
-            "perHit": 39297.7009,
-            "total": 78595.4019
+            "perHit": 38157.0751,
+            "total": 76314.1503
           },
           {
-            "perHit": 787301.8057,
-            "total": 1500423.5699
+            "perHit": 794309.2726,
+            "total": 1516987.0044
           },
           {
-            "perHit": 21999.1914,
-            "total": 43998.3829
+            "perHit": 21360.6593,
+            "total": 42721.3186
           },
           {
-            "perHit": 75774.9927,
-            "total": 151549.9855
+            "perHit": 73575.6042,
+            "total": 147151.2084
           },
           {
-            "perHit": 102972.469,
-            "total": 205944.9379
+            "perHit": 137433.8536,
+            "total": 274867.7071
           }
         ],
-        "totalDamage": 21876426.5701
+        "totalDamage": 22032211.265
       },
       "artifacts": {
         "zibai": {
@@ -7640,8 +7640,8 @@
             "setKey": "generated",
             "mainStat": "cr",
             "substats": {
-              "cd": 33.02,
-              "def%": 6.19,
+              "cd": 26.42,
+              "def%": 12.39,
               "em": 19.82,
               "def": 19.67
             }
@@ -7757,9 +7757,9 @@
             "mainStat": "hp",
             "substats": {
               "er": 11.01,
-              "cr": 3.31,
               "hp%": 19.82,
-              "em": 19.82
+              "em": 19.82,
+              "cd": 6.6
             }
           },
           "plume": {
@@ -7768,16 +7768,16 @@
             "substats": {
               "cr": 6.61,
               "hp%": 19.82,
-              "em": 19.82,
-              "cd": 6.6
+              "cd": 6.6,
+              "em": 19.82
             }
           },
           "sands": {
             "setKey": "generated",
             "mainStat": "hp%",
             "substats": {
-              "cr": 13.22,
-              "em": 39.63,
+              "cr": 6.61,
+              "em": 79.26,
               "cd": 6.6,
               "hp": 253.94
             }
@@ -7786,19 +7786,19 @@
             "setKey": "generated",
             "mainStat": "hp%",
             "substats": {
-              "cr": 13.22,
-              "em": 39.63,
+              "cr": 6.61,
+              "em": 79.26,
               "cd": 6.6,
               "hp": 253.94
             }
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "hp%",
+            "mainStat": "cr",
             "substats": {
-              "cr": 13.22,
-              "em": 39.63,
+              "hp%": 24.77,
               "cd": 6.6,
+              "em": 19.82,
               "hp": 253.94
             }
           }
@@ -7809,7 +7809,7 @@
           "hp": 4780,
           "er": 0.7157,
           "cr": 0.6746,
-          "cd": 0.5944,
+          "cd": 0.5284,
           "atk": 311,
           "em": 59,
           "def": 20
@@ -7833,77 +7833,77 @@
         "columbina": {
           "hp": 5542,
           "er": 0.1101,
-          "cr": 0.4958,
-          "em": 159,
+          "em": 218,
+          "cd": 0.3303,
           "atk": 311,
-          "cd": 0.2642
+          "cr": 0.5093
         }
       },
       "display": {
-        "totalDamage": 21876426.5701,
+        "totalDamage": 22032211.265,
         "partsByFormula": {
           "zibai.zibai-e-combo": [
             {
-              "damage": 22228.4024,
+              "damage": 22070.2744,
               "template": "direct"
             },
             {
-              "damage": 20702.2285,
+              "damage": 20553.5796,
               "template": "direct"
             },
             {
-              "damage": 14727.9269,
+              "damage": 14616.3844,
               "template": "direct",
               "hits": 2
             },
             {
-              "damage": 32656.0758,
+              "damage": 32433.1813,
               "template": "direct"
             },
             {
-              "damage": 688785.5477,
+              "damage": 683935.4321,
               "template": "lunarDirect"
             }
           ],
           "zibai.zibai-steed": [
             {
-              "damage": 61741.244,
+              "damage": 61337.7011,
               "template": "direct"
             },
             {
-              "damage": 2074117.6218,
+              "damage": 2060663.1857,
               "template": "lunarDirect"
             },
             {
-              "damage": 1491413.021,
+              "damage": 1481577.7728,
               "template": "lunarDirect"
             }
           ],
           "zibai.zibai-burst": [
             {
-              "damage": 46212.6558,
+              "damage": 45905.5612,
               "template": "direct"
             },
             {
-              "damage": 1543730.4758,
+              "damage": 1533570.283,
               "template": "lunarDirect"
             }
           ],
           "zibai.rx-lunarCrystallize-zibai": [
             {
-              "damage": 91912.837,
+              "damage": 55290.4771,
               "template": "lunar"
             },
             {
-              "damage": 3709.2315,
+              "damage": 4879.9199,
               "template": "lunar"
             },
             {
-              "damage": 2936.0915,
+              "damage": 3651.9437,
               "template": "lunar"
             },
             {
-              "damage": 29334.828,
+              "damage": 83196.9981,
               "template": "lunar"
             }
           ],
@@ -7922,7 +7922,7 @@
           ],
           "linnea.linnea-million-ton": [
             {
-              "damage": 2877506.0013,
+              "damage": 2854034.543,
               "template": "lunarDirect"
             }
           ],
@@ -7934,37 +7934,37 @@
           ],
           "linnea.rx-lunarCrystallize-linnea": [
             {
-              "damage": 4221.6041,
+              "damage": 5783.9156,
               "template": "lunar"
             },
             {
-              "damage": 63417.2192,
+              "damage": 41254.2032,
               "template": "lunar"
             },
             {
-              "damage": 2936.0915,
+              "damage": 3891.4133,
               "template": "lunar"
             },
             {
-              "damage": 29334.828,
+              "damage": 89983.5267,
               "template": "lunar"
             }
           ],
           "illuga.illuga-skill-press": [
             {
-              "damage": 48123.6116,
+              "damage": 47743.8428,
               "template": "direct"
             }
           ],
           "illuga.illuga-skill-hold": [
             {
-              "damage": 59656.7753,
+              "damage": 59182.0642,
               "template": "direct"
             }
           ],
           "illuga.illuga-burst": [
             {
-              "damage": 81071.1375,
+              "damage": 80420.1412,
               "template": "direct"
             }
           ],
@@ -7976,72 +7976,72 @@
           ],
           "illuga.rx-lunarCrystallize-illuga": [
             {
-              "damage": 3101.4642,
+              "damage": 3817.3163,
               "template": "lunar"
             },
             {
-              "damage": 63417.2192,
+              "damage": 38757.9358,
               "template": "lunar"
             },
             {
-              "damage": 3709.2315,
+              "damage": 4879.9199,
               "template": "lunar"
             },
             {
-              "damage": 29334.828,
+              "damage": 83196.9981,
               "template": "lunar"
             }
           ],
           "columbina.columbina-charge": [
             {
-              "damage": 19611.1963,
+              "damage": 19945.922,
               "template": "lunarDirect",
               "hits": 3
             }
           ],
           "columbina.columbina-skill-initial": [
             {
-              "damage": 39297.7009,
+              "damage": 38157.0751,
               "template": "direct"
             }
           ],
           "columbina.columbina-skill-interference": [
             {
-              "damage": 787301.8057,
+              "damage": 794309.2726,
               "template": "lunarDirect"
             },
             {
-              "damage": 713121.7642,
+              "damage": 722677.7318,
               "template": "lunarDirect"
             }
           ],
           "columbina.columbina-ripple": [
             {
-              "damage": 21999.1914,
+              "damage": 21360.6593,
               "template": "direct"
             }
           ],
           "columbina.columbina-burst": [
             {
-              "damage": 75774.9927,
+              "damage": 73575.6042,
               "template": "direct"
             }
           ],
           "columbina.rx-lunarCrystallize-columbina": [
             {
-              "damage": 32909.9267,
+              "damage": 90144.0542,
               "template": "lunar"
             },
             {
-              "damage": 63417.2192,
+              "damage": 38757.9358,
               "template": "lunar"
             },
             {
-              "damage": 3709.2315,
+              "damage": 4879.9199,
               "template": "lunar"
             },
             {
-              "damage": 2936.0915,
+              "damage": 3651.9437,
               "template": "lunar"
             }
           ]
@@ -8114,7 +8114,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2535.1488
+                "value": 2552.6365
               }
             ],
             "providerCharId": "zibai"
@@ -8142,7 +8142,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 23238.8641
+                "value": 23399.1682
               }
             ],
             "providerCharId": "zibai"
@@ -8608,7 +8608,7 @@
             "entries": [
               {
                 "key": "def",
-                "value": 621.1768
+                "value": 586.8242
               }
             ],
             "providerCharId": "columbina"
@@ -8710,7 +8710,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 7764.7095
+                "value": 7335.3026
               }
             ],
             "providerCharId": "columbina"
@@ -8719,24 +8719,24 @@
         "detailStats": {
           "zibai": {
             "onField": {
-              "cd": 2.7604,
+              "cd": 2.6944,
               "cr": 0.7246,
               "er": 1.7157,
               "dmg%": 0.15,
               "em": 353,
-              "def": 4225,
+              "def": 4254,
               "hp": 18618,
               "atk": 1128
             },
             "offField": {
-              "cd": 2.7604,
+              "cd": 2.6944,
               "cr": 0.7246,
               "er": 1.7157,
               "dmg%": 0.15,
               "em": 199,
               "hp": 18618,
               "atk": 1128,
-              "def": 3148
+              "def": 3211
             }
           },
           "linnea": {
@@ -8746,7 +8746,7 @@
               "er": 1.9359,
               "dmg%": 0.15,
               "em": 335,
-              "def": 4142,
+              "def": 4107,
               "hp": 15378,
               "atk": 1029
             },
@@ -8768,7 +8768,7 @@
               "cd": 1.2303,
               "er": 1.306,
               "dmg%": 0.15,
-              "def": 2237,
+              "def": 2203,
               "hp": 17570,
               "atk": 1116
             },
@@ -8785,22 +8785,22 @@
           },
           "columbina": {
             "onField": {
-              "cr": 0.8878,
-              "cd": 2.0462,
+              "cr": 0.9013,
+              "cd": 2.1123,
               "er": 1.1101,
               "dmg%": 0.15,
-              "em": 392,
-              "def": 1511,
-              "hp": 62118,
+              "em": 452,
+              "def": 1477,
+              "hp": 58682,
               "atk": 970
             },
             "offField": {
-              "cr": 0.8878,
-              "cd": 2.0462,
+              "cr": 0.9013,
+              "cd": 2.1123,
               "er": 1.1101,
               "dmg%": 0.15,
-              "em": 239,
-              "hp": 62118,
+              "em": 298,
+              "hp": 58682,
               "atk": 970,
               "def": 552
             }
@@ -8811,13 +8811,13 @@
             "onField": {
               "atk": 1128,
               "hp": 18618,
-              "def": 4225,
+              "def": 4254,
               "em": 353,
               "cr": 0.8246,
-              "cd": 3.8604,
+              "cd": 3.7944,
               "er": 1.7157,
               "dmg%": 0.55,
-              "baseDmg": 34446.8385,
+              "baseDmg": 34624.6303,
               "baseDmg%": 1.5,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.93,
@@ -8827,13 +8827,13 @@
             "offField": {
               "atk": 1128,
               "hp": 18618,
-              "def": 3148,
+              "def": 3211,
               "em": 199,
               "cr": 0.8246,
-              "cd": 3.8604,
+              "cd": 3.7944,
               "er": 1.7157,
               "dmg%": 0.55,
-              "baseDmg": 4659.364,
+              "baseDmg": 4620.7174,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.45,
               "reactionDmg%": 2.47,
@@ -8844,13 +8844,13 @@
             "onField": {
               "atk": 1029,
               "hp": 15378,
-              "def": 4142,
+              "def": 4107,
               "em": 335,
               "cr": 0.9174,
               "cd": 3.1462,
               "er": 1.9359,
               "dmg%": 0.95,
-              "baseDmg": 9869.7432,
+              "baseDmg": 9831.0966,
               "reactionBaseDmg%": 0.35,
               "elevated%": 0.45,
               "reactionDmg%": 1.59,
@@ -8876,7 +8876,7 @@
             "onField": {
               "atk": 1116,
               "hp": 17570,
-              "def": 2237,
+              "def": 2203,
               "em": 968,
               "cr": 0.678,
               "cd": 2.0303,
@@ -8900,11 +8900,11 @@
           "columbina": {
             "onField": {
               "atk": 970,
-              "hp": 62118,
-              "def": 1511,
-              "em": 392,
-              "cr": 0.9878,
-              "cd": 3.1462,
+              "hp": 58682,
+              "def": 1477,
+              "em": 452,
+              "cr": 1.0013,
+              "cd": 3.2123,
               "er": 1.1101,
               "dmg%": 0.55,
               "baseDmg": 8672.8256,
@@ -8916,11 +8916,11 @@
             },
             "offField": {
               "atk": 970,
-              "hp": 62118,
+              "hp": 58682,
               "def": 552,
-              "em": 239,
-              "cr": 0.9878,
-              "cd": 3.1462,
+              "em": 298,
+              "cr": 1.0013,
+              "cd": 3.2123,
               "er": 1.1101,
               "dmg%": 0.55,
               "baseDmg": 3462.4464,
@@ -8935,17 +8935,17 @@
         "marginalGains": {
           "zibai": {
             "def": 0.0017,
-            "def%": 0.0054,
-            "em": 0.0032,
-            "cr": 0.0126,
-            "cd": 0.0054
+            "def%": 0.0053,
+            "em": 0.003,
+            "cr": 0.0121,
+            "cd": 0.0052
           },
           "linnea": {
-            "def": 0.0029,
-            "def%": 0.009,
-            "em": 0.0056,
-            "cr": 0.0136,
-            "cd": 0.0056
+            "def": 0.003,
+            "def%": 0.0091,
+            "em": 0.0055,
+            "cr": 0.0135,
+            "cd": 0.0055
           },
           "illuga": {
             "def": 0.0001,
@@ -8956,10 +8956,10 @@
           },
           "columbina": {
             "hp": 0.0007,
-            "hp%": 0.0022,
-            "em": 0.0013,
-            "cr": 0.0013,
-            "cd": 0.0012
+            "hp%": 0.0023,
+            "em": 0.0014,
+            "cr": 0.0005,
+            "cd": 0.0015
           }
         },
         "levelUpGains": {}
@@ -13016,7 +13016,7 @@
           "minCr": 0.32
         }
       },
-      "damage": 49702622.5275,
+      "damage": 47828900.8099,
       "comboResult": {
         "lineDamages": [
           {
@@ -13032,16 +13032,16 @@
             "total": 1554569.6048
           },
           {
-            "perHit": 4936074.2568,
-            "total": 9872148.5136
+            "perHit": 4406554.6184,
+            "total": 8813109.2369
           },
           {
             "perHit": 1380175.4951,
             "total": 2760350.9903
           },
           {
-            "perHit": 3504439.6843,
-            "total": 7008879.3685
+            "perHit": 3097098.4638,
+            "total": 6194196.9277
           },
           {
             "perHit": 3562893.0431,
@@ -13104,7 +13104,7 @@
             "total": 78358.4367
           }
         ],
-        "totalDamage": 49702622.5275
+        "totalDamage": 47828900.8099
       },
       "artifacts": {
         "skirk": {
@@ -13347,7 +13347,7 @@
         }
       },
       "display": {
-        "totalDamage": 49702622.5275,
+        "totalDamage": 47828900.8099,
         "partsByFormula": {
           "skirk.skirk-e-normal": [
             {
@@ -13392,12 +13392,12 @@
           ],
           "skirk.skirk-burst": [
             {
-              "damage": 800917.9301,
+              "damage": 715658.4068,
               "template": "direct",
               "hits": 5
             },
             {
-              "damage": 931484.6065,
+              "damage": 828262.5844,
               "template": "direct"
             }
           ],
@@ -13410,7 +13410,7 @@
           ],
           "skirk.skirk-c6-burst-coord": [
             {
-              "damage": 1168146.5614,
+              "damage": 1032366.1546,
               "template": "direct",
               "hits": 3
             }
@@ -13602,7 +13602,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 51159.0697
+                "value": 44120.9436
               }
             ],
             "providerCharId": "skirk"
@@ -14096,7 +14096,7 @@
               "er": 1.5505,
               "dmg%": 1.24,
               "hp": 18739,
-              "atk": 5663,
+              "atk": 4884,
               "def": 864
             },
             "offField": {
@@ -14182,7 +14182,7 @@
               "cd": 3.3587,
               "er": 1.5505,
               "dmg%": 2.326,
-              "baseDmg": 73025.5966,
+              "baseDmg": 65987.4706,
               "baseDmg%": 1.091,
               "resReduction%": 0.7
             },
@@ -14276,29 +14276,29 @@
         },
         "marginalGains": {
           "skirk": {
-            "atk": 0.0014,
-            "atk%": 0.0048,
+            "atk": 0.0015,
+            "atk%": 0.005,
             "cr": 0.0021,
-            "cd": 0.0114
+            "cd": 0.0113
           },
           "escoffier": {
             "atk": 0.0008,
-            "atk%": 0.0025,
-            "cd": 0.0032
+            "atk%": 0.0026,
+            "cd": 0.0033
           },
           "furina": {
-            "hp": 0.0003,
+            "hp": 0.0004,
             "hp%": 0.0011,
             "atk": 0,
             "atk%": 0.0001,
-            "cr": 0.0018,
-            "cd": 0.0018
+            "cr": 0.0019,
+            "cd": 0.0019
           },
           "shenhe": {
-            "atk": 0.0006,
-            "atk%": 0.0021,
+            "atk": 0.0007,
+            "atk%": 0.0022,
             "cr": 0.0005,
-            "cd": 0.0002
+            "cd": 0.0003
           }
         },
         "levelUpGains": {}
@@ -14349,7 +14349,7 @@
           "minCr": 0.33
         }
       },
-      "damage": 58677144.1435,
+      "damage": 56364715.567,
       "comboResult": {
         "lineDamages": [
           {
@@ -14365,16 +14365,16 @@
             "total": 1183118.1926
           },
           {
-            "perHit": 5443268.8277,
-            "total": 10886537.6554
+            "perHit": 4789769.254,
+            "total": 9579538.5081
           },
           {
             "perHit": 1335394.3285,
             "total": 2670788.6569
           },
           {
-            "perHit": 4004431.295,
-            "total": 8008862.59
+            "perHit": 3501716.5804,
+            "total": 7003433.1608
           },
           {
             "perHit": 3293509.6753,
@@ -14445,7 +14445,7 @@
             "total": 1499941.4558
           }
         ],
-        "totalDamage": 58677144.1435
+        "totalDamage": 56364715.567
       },
       "artifacts": {
         "skirk": {
@@ -14688,7 +14688,7 @@
         }
       },
       "display": {
-        "totalDamage": 58677144.1435,
+        "totalDamage": 56364715.567,
         "partsByFormula": {
           "skirk.skirk-e-normal": [
             {
@@ -14733,12 +14733,12 @@
           ],
           "skirk.skirk-burst": [
             {
-              "damage": 880276.872,
+              "damage": 775054.9726,
               "template": "direct",
               "hits": 5
             },
             {
-              "damage": 1041884.4678,
+              "damage": 914494.3909,
               "template": "direct"
             }
           ],
@@ -14751,7 +14751,7 @@
           ],
           "skirk.skirk-c6-burst-coord": [
             {
-              "damage": 1334810.4317,
+              "damage": 1167238.8601,
               "template": "direct",
               "hits": 3
             }
@@ -14984,7 +14984,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 51308.4413
+                "value": 44270.3152
               }
             ],
             "providerCharId": "skirk"
@@ -15381,7 +15381,7 @@
               "dmg%": 1.24,
               "defReduction%": 0.3,
               "hp": 20057,
-              "atk": 5680,
+              "atk": 4901,
               "def": 864
             },
             "offField": {
@@ -15474,7 +15474,7 @@
               "cd": 3.6711,
               "er": 1,
               "dmg%": 2.4294,
-              "baseDmg": 62378.7763,
+              "baseDmg": 55340.6503,
               "baseDmg%": 1.091,
               "defReduction%": 0.3,
               "resReduction%": 0.55
@@ -15573,14 +15573,14 @@
         },
         "marginalGains": {
           "skirk": {
-            "atk": 0.0015,
-            "atk%": 0.005,
-            "cr": 0.0019,
-            "cd": 0.0093
+            "atk": 0.0016,
+            "atk%": 0.0052,
+            "cr": 0.0018,
+            "cd": 0.0091
           },
           "escoffier": {
-            "atk": 0.0011,
-            "atk%": 0.0035,
+            "atk": 0.0012,
+            "atk%": 0.0036,
             "cr": 0.0021,
             "cd": 0.0015
           },
@@ -15589,16 +15589,16 @@
             "hp%": 0.0013,
             "atk": 0,
             "atk%": 0.0001,
-            "cr": 0.002,
-            "cd": 0.0021
+            "cr": 0.0021,
+            "cd": 0.0022
           },
           "kamisato_ayaka": {
             "atk": 0.0005,
-            "atk%": 0.0015,
+            "atk%": 0.0016,
             "def": 0.001,
             "def%": 0.0026,
-            "cr": 0.0041,
-            "cd": 0.0037
+            "cr": 0.0043,
+            "cd": 0.0039
           }
         },
         "levelUpGains": {}
@@ -19231,7 +19231,7 @@
           "minCr": 0.46
         }
       },
-      "damage": 5848548.0018,
+      "damage": 5922521.6041,
       "comboResult": {
         "lineDamages": [
           {
@@ -19323,11 +19323,15 @@
             "total": 135511.1361
           },
           {
+            "perHit": 36986.8012,
+            "total": 73973.6024
+          },
+          {
             "perHit": 15236.7027,
             "total": 30473.4053
           }
         ],
-        "totalDamage": 5848548.0018
+        "totalDamage": 5922521.6041
       },
       "artifacts": {
         "varesa": {
@@ -19572,7 +19576,7 @@
         }
       },
       "display": {
-        "totalDamage": 5848548.0018,
+        "totalDamage": 5922521.6041,
         "partsByFormula": {
           "varesa.varesa-e": [
             {
@@ -19704,6 +19708,28 @@
           "bennett.bennett-burst": [
             {
               "damage": 67755.5681,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 6395.5303,
+              "template": "direct"
+            },
+            {
+              "damage": 6217.2386,
+              "template": "direct"
+            },
+            {
+              "damage": 7388.8702,
+              "template": "direct"
+            },
+            {
+              "damage": 7889.7851,
+              "template": "direct"
+            },
+            {
+              "damage": 9095.377,
               "template": "direct"
             }
           ],
@@ -19994,6 +20020,20 @@
           },
           {
             "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1542.9128
+              }
+            ],
+            "providerCharId": "bennett"
+          },
+          {
+            "source": {
               "type": "character",
               "id": "varesa",
               "origin": "P1"
@@ -20214,6 +20254,7 @@
               "cd": 1.6228,
               "er": 1.818,
               "dmg%": 1.466,
+              "baseDmg": 1542.9128,
               "resReduction%": 0.4,
               "atkSpd%": 0.1
             },
@@ -20226,6 +20267,7 @@
               "cd": 1.6228,
               "er": 1.818,
               "dmg%": 1.066,
+              "baseDmg": 645.6648,
               "resReduction%": 0.4,
               "atkSpd%": 0.1
             }
@@ -20234,16 +20276,16 @@
         "marginalGains": {
           "varesa": {
             "atk": 0.0021,
-            "atk%": 0.007,
+            "atk%": 0.0069,
             "em": 0.0003,
             "cr": 0.0015,
-            "cd": 0.0118
+            "cd": 0.0117
           },
           "iansan": {
             "atk": 0.0002,
             "atk%": 0.0005,
             "em": 0.0003,
-            "cr": 0.0013,
+            "cr": 0.0012,
             "cd": 0.0014
           },
           "chevreuse": {
@@ -20252,15 +20294,15 @@
             "atk": 0.0002,
             "atk%": 0.0005,
             "em": 0.0003,
-            "cr": 0.0012,
+            "cr": 0.0011,
             "cd": 0.0012
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0004,
+            "atk": 0.0002,
+            "atk%": 0.0005,
             "em": 0.0002,
-            "cr": 0.0008,
-            "cd": 0.0009
+            "cr": 0.0011,
+            "cd": 0.0011
           }
         },
         "levelUpGains": {}
@@ -24653,79 +24695,83 @@
           "minCr": 0
         }
       },
-      "damage": 12410902.0573,
+      "damage": 12649967.0928,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 890615.5742,
-            "total": 1781231.1484
+            "perHit": 891831.3238,
+            "total": 1783662.6476
           },
           {
-            "perHit": 619399.5324,
-            "total": 1238799.0648
+            "perHit": 621831.0315,
+            "total": 1243662.063
           },
           {
-            "perHit": 1538666.9431,
-            "total": 3077333.8862
+            "perHit": 1543529.9414,
+            "total": 3087059.8827
           },
           {
-            "perHit": 1062262.8334,
-            "total": 2124525.6667
+            "perHit": 1068341.5812,
+            "total": 2136683.1623
           },
           {
-            "perHit": 96570.1938,
-            "total": 193140.3876
+            "perHit": 97785.9434,
+            "total": 195571.8867
           },
           {
             "perHit": 76262.9366,
             "total": 152525.8731
           },
           {
-            "perHit": 229102.1839,
-            "total": 458204.3677
+            "perHit": 230317.9334,
+            "total": 460635.8668
           },
           {
             "perHit": 56075.6887,
             "total": 112151.3773
           },
           {
-            "perHit": 267626.9108,
-            "total": 535253.8216
+            "perHit": 268842.6604,
+            "total": 537685.3208
           },
           {
-            "perHit": 352764.5501,
-            "total": 705529.1002
+            "perHit": 336891.333,
+            "total": 673782.6661
           },
           {
-            "perHit": 224486.0892,
-            "total": 448972.1785
+            "perHit": 206823.5458,
+            "total": 413647.0915
           },
           {
-            "perHit": 57118.8719,
-            "total": 114237.7438
+            "perHit": 57636.1703,
+            "total": 115272.3407
           },
           {
-            "perHit": 138761.4878,
-            "total": 277522.9757
+            "perHit": 139796.0847,
+            "total": 279592.1695
           },
           {
-            "perHit": 288039.1312,
-            "total": 576078.2624
+            "perHit": 290108.325,
+            "total": 580216.6501
           },
           {
-            "perHit": 85421.617,
-            "total": 170843.2339
+            "perHit": 85938.9154,
+            "total": 171877.8308
           },
           {
-            "perHit": 86376.1942,
-            "total": 172752.3884
+            "perHit": 76653.0882,
+            "total": 153306.1765
           },
           {
-            "perHit": 135900.2905,
-            "total": 271800.5809
+            "perHit": 120084.727,
+            "total": 240169.4541
+          },
+          {
+            "perHit": 156232.3166,
+            "total": 312464.6332
           }
         ],
-        "totalDamage": 12410902.0573
+        "totalDamage": 12649967.0928
       },
       "artifacts": {
         "mavuika": {
@@ -24786,8 +24832,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 22.02,
-              "em": 39.63,
               "cr": 3.31,
+              "em": 39.63,
               "cd": 6.6
             }
           },
@@ -24796,8 +24842,8 @@
             "mainStat": "atk",
             "substats": {
               "er": 22.02,
-              "em": 39.63,
               "cr": 3.31,
+              "em": 39.63,
               "cd": 6.6
             }
           },
@@ -24815,17 +24861,17 @@
             "setKey": "generated",
             "mainStat": "em",
             "substats": {
-              "cr": 9.92,
-              "cd": 19.81,
+              "cr": 16.53,
+              "cd": 6.6,
               "atk%": 4.96,
               "atk": 16.54
             }
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "cr",
+            "mainStat": "em",
             "substats": {
-              "em": 99.08,
+              "cr": 16.53,
               "cd": 6.6,
               "atk%": 4.96,
               "atk": 16.54
@@ -24917,7 +24963,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cd": 13.21,
               "cr": 13.22,
@@ -24948,9 +24994,9 @@
         "citlali": {
           "hp": 4780,
           "er": 0.4955,
-          "em": 551,
-          "cr": 0.6415,
-          "cd": 0.4624,
+          "cr": 0.5619,
+          "em": 639,
+          "cd": 0.3303,
           "atk": 344
         },
         "xilonen": {
@@ -24970,21 +25016,21 @@
         }
       },
       "display": {
-        "totalDamage": 12410902.0573,
+        "totalDamage": 12649967.0928,
         "partsByFormula": {
           "mavuika.mavuika-sunfell": [
             {
-              "damage": 890615.5742,
+              "damage": 891831.3238,
               "template": "direct"
             }
           ],
           "mavuika.mavuika-combo": [
             {
-              "damage": 197887.3099,
+              "damage": 199103.0594,
               "template": "direct"
             },
             {
-              "damage": 324631.7818,
+              "damage": 325847.5314,
               "template": "direct"
             },
             {
@@ -24999,40 +25045,40 @@
               "hits": 2
             },
             {
-              "damage": 324631.7818,
+              "damage": 325847.5314,
               "template": "direct",
               "hits": 3
             },
             {
-              "damage": 371010.7162,
+              "damage": 372226.4658,
               "template": "direct"
             }
           ],
           "mavuika.mavuika-fs-normal": [
             {
-              "damage": 197887.3099,
+              "damage": 199103.0594,
               "template": "direct"
             },
             {
-              "damage": 200125.8564,
+              "damage": 201341.606,
               "template": "direct"
             },
             {
-              "damage": 213133.6216,
+              "damage": 214349.3711,
               "template": "direct"
             },
             {
-              "damage": 212795.5607,
+              "damage": 214011.3102,
               "template": "direct"
             },
             {
-              "damage": 238320.4849,
+              "damage": 239536.2344,
               "template": "direct"
             }
           ],
           "mavuika.mavuika-e-cast": [
             {
-              "damage": 96570.1938,
+              "damage": 97785.9434,
               "template": "direct"
             }
           ],
@@ -25044,7 +25090,7 @@
           ],
           "mavuika.mavuika-fs-plunge": [
             {
-              "damage": 229102.1839,
+              "damage": 230317.9334,
               "template": "direct"
             }
           ],
@@ -25056,85 +25102,107 @@
           ],
           "mavuika.mavuika-c6-ring": [
             {
-              "damage": 267626.9108,
+              "damage": 268842.6604,
               "template": "direct"
             }
           ],
           "citlali.citlali-e-total": [
             {
-              "damage": 19050.7512,
+              "damage": 17171.0415,
               "template": "direct"
             },
             {
-              "damage": 5365.6373,
+              "damage": 5072.8871,
               "template": "direct",
               "hits": 20
             },
             {
-              "damage": 75467.0174,
+              "damage": 72754.1834,
               "template": "direct",
               "hits": 3
             }
           ],
           "citlali.citlali-burst-total": [
             {
-              "damage": 211915.4067,
+              "damage": 195493.194,
               "template": "direct"
             },
             {
-              "damage": 12570.6826,
+              "damage": 11330.3518,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-e-rush": [
             {
-              "damage": 57118.8719,
+              "damage": 57636.1703,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal-2": [
             {
-              "damage": 69506.3983,
+              "damage": 70023.6968,
               "template": "direct"
             },
             {
-              "damage": 69255.0895,
+              "damage": 69772.3879,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal": [
             {
-              "damage": 69506.3983,
+              "damage": 70023.6968,
               "template": "direct"
             },
             {
-              "damage": 69255.0895,
+              "damage": 69772.3879,
               "template": "direct"
             },
             {
-              "damage": 72032.3518,
+              "damage": 72549.6503,
               "template": "direct"
             },
             {
-              "damage": 77245.2916,
+              "damage": 77762.59,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-q-initial": [
             {
-              "damage": 85421.617,
+              "damage": 85938.9154,
               "template": "direct"
             }
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 86376.1942,
+              "damage": 76653.0882,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 135900.2905,
+              "damage": 120084.727,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 28653.2706,
+              "template": "direct"
+            },
+            {
+              "damage": 28191.7702,
+              "template": "direct"
+            },
+            {
+              "damage": 31224.4871,
+              "template": "direct"
+            },
+            {
+              "damage": 32521.0835,
+              "template": "direct"
+            },
+            {
+              "damage": 35641.7052,
               "template": "direct"
             }
           ]
@@ -25362,7 +25430,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2512.67
+                "value": 2687.52
               }
             ],
             "providerCharId": "citlali"
@@ -25571,6 +25639,20 @@
             "source": {
               "type": "character",
               "id": "xilonen",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 2866.5979
+              }
+            ],
+            "providerCharId": "xilonen"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "xilonen",
               "origin": "C6"
             },
             "entries": [
@@ -25702,7 +25784,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1130.7015
+                "value": 1209.384
               }
             ],
             "providerCharId": "citlali"
@@ -25716,7 +25798,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 15076.02
+                "value": 16125.12
               }
             ],
             "providerCharId": "citlali"
@@ -25747,9 +25829,9 @@
           },
           "citlali": {
             "onField": {
-              "em": 1256,
-              "cr": 0.6915,
-              "cd": 1.5624,
+              "em": 1344,
+              "cr": 0.6119,
+              "cd": 1.4303,
               "er": 1.4955,
               "dmg%": 2.06,
               "defReduction%": 0.2,
@@ -25758,9 +25840,9 @@
               "def": 817
             },
             "offField": {
-              "em": 1256,
-              "cr": 0.6915,
-              "cd": 1.5624,
+              "em": 1344,
+              "cr": 0.6119,
+              "cd": 1.4303,
               "er": 1.4955,
               "defReduction%": 0.2,
               "dmg%": 1,
@@ -25826,7 +25908,7 @@
               "cd": 1.9803,
               "er": 2.101,
               "dmg%": 2.788,
-              "baseDmg": 60076.878,
+              "baseDmg": 60251.728,
               "defReduction%": 0.2,
               "resReduction%": 0.85
             },
@@ -25847,9 +25929,9 @@
               "atk": 2589,
               "hp": 17240,
               "def": 817,
-              "em": 1256,
-              "cr": 0.6915,
-              "cd": 1.5624,
+              "em": 1344,
+              "cr": 0.6119,
+              "cd": 1.4303,
               "er": 1.4955,
               "dmg%": 2.572,
               "defReduction%": 0.2,
@@ -25859,9 +25941,9 @@
               "atk": 1319,
               "hp": 17240,
               "def": 817,
-              "em": 1256,
-              "cr": 0.6915,
-              "cd": 1.5624,
+              "em": 1344,
+              "cr": 0.6119,
+              "cd": 1.4303,
               "er": 1.4955,
               "dmg%": 1.512,
               "defReduction%": 0.2,
@@ -25878,7 +25960,7 @@
               "cd": 0.9624,
               "er": 2.1786,
               "dmg%": 2.472,
-              "baseDmg": 18609.7197,
+              "baseDmg": 18784.5697,
               "defReduction%": 0.2,
               "resReduction%": 0.45
             },
@@ -25903,8 +25985,8 @@
               "cr": 0.7246,
               "cd": 1.4908,
               "er": 1.4872,
-              "dmg%": 2.788,
-              "baseDmg": 2512.67,
+              "dmg%": 2.322,
+              "baseDmg": 5554.1179,
               "defReduction%": 0.2,
               "resReduction%": 0.85
             },
@@ -25915,7 +25997,7 @@
               "cr": 0.7246,
               "cd": 1.4908,
               "er": 1.4872,
-              "dmg%": 1.578,
+              "dmg%": 1.112,
               "defReduction%": 0.2,
               "resReduction%": 0.85
             }
@@ -25924,28 +26006,28 @@
         "marginalGains": {
           "mavuika": {
             "atk": 0.0016,
-            "atk%": 0.0067,
-            "cr": 0.0208,
-            "cd": 0.0154
+            "atk%": 0.0066,
+            "cr": 0.0205,
+            "cd": 0.0152
           },
           "citlali": {
-            "atk": 0.0003,
+            "atk": 0.0002,
             "atk%": 0.0005,
             "em": 0.0018,
-            "cr": 0.0023,
-            "cd": 0.002
+            "cr": 0.0022,
+            "cd": 0.0019
           },
           "xilonen": {
-            "def": 0.0005,
-            "def%": 0.0017,
+            "def": 0.0006,
+            "def%": 0.0018,
             "cr": 0.0022,
             "cd": 0.0016
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0003,
-            "cr": 0.0008,
-            "cd": 0.0008
+            "atk": 0.0002,
+            "atk%": 0.0004,
+            "cr": 0.0013,
+            "cd": 0.0013
           }
         },
         "levelUpGains": {}
@@ -27394,7 +27476,7 @@
           "minCr": 0.1
         }
       },
-      "damage": 6448192.0539,
+      "damage": 6600817.1399,
       "comboResult": {
         "lineDamages": [
           {
@@ -27402,16 +27484,16 @@
             "total": 44719.775
           },
           {
-            "perHit": 1162439.2009,
-            "total": 2324878.4018
+            "perHit": 1167919.5514,
+            "total": 2335839.1028
           },
           {
             "perHit": 71912.9433,
             "total": 143825.8866
           },
           {
-            "perHit": 772375.6644,
-            "total": 1544751.3288
+            "perHit": 773440.4446,
+            "total": 1546880.8893
           },
           {
             "perHit": 4506.7914,
@@ -27430,31 +27512,35 @@
             "total": 293962.2976
           },
           {
-            "perHit": 62819.0635,
-            "total": 125638.127
+            "perHit": 61434.6468,
+            "total": 122869.2937
           },
           {
-            "perHit": 152743.8062,
-            "total": 305487.6125
+            "perHit": 149469.5574,
+            "total": 298939.1148
           },
           {
-            "perHit": 317110.9412,
-            "total": 634221.8823
+            "perHit": 310345.7136,
+            "total": 620691.4273
           },
           {
-            "perHit": 94101.6085,
-            "total": 188203.2171
+            "perHit": 92133.8941,
+            "total": 184267.7882
           },
           {
-            "perHit": 55150.6562,
-            "total": 110301.3124
+            "perHit": 47334.2919,
+            "total": 94668.5838
           },
           {
-            "perHit": 85081.8091,
-            "total": 170163.6182
+            "perHit": 73023.3775,
+            "total": 146046.7551
+          },
+          {
+            "perHit": 103033.8156,
+            "total": 206067.6313
           }
         ],
-        "totalDamage": 6448192.0539
+        "totalDamage": 6600817.1399
       },
       "artifacts": {
         "chasca": {
@@ -27576,23 +27662,13 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "def%": 18.58,
-              "cr": 9.92,
+              "def%": 24.78,
+              "cr": 6.61,
               "cd": 6.6,
               "def": 19.67
             }
           },
           "sands": {
-            "setKey": "generated",
-            "mainStat": "def%",
-            "substats": {
-              "cd": 33.02,
-              "cr": 3.31,
-              "def": 19.67,
-              "atk%": 4.96
-            }
-          },
-          "goblet": {
             "setKey": "generated",
             "mainStat": "def%",
             "substats": {
@@ -27602,12 +27678,22 @@
               "atk%": 4.96
             }
           },
+          "goblet": {
+            "setKey": "generated",
+            "mainStat": "def%",
+            "substats": {
+              "cd": 33.02,
+              "cr": 3.31,
+              "def": 19.67,
+              "atk%": 4.96
+            }
+          },
           "circlet": {
             "setKey": "generated",
             "mainStat": "cr",
             "substats": {
-              "def%": 18.58,
-              "cd": 19.81,
+              "def%": 24.78,
+              "cd": 13.21,
               "def": 19.67,
               "atk%": 4.96
             }
@@ -27646,7 +27732,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cd": 19.81,
               "cr": 9.92,
@@ -27686,8 +27772,8 @@
         "xilonen": {
           "hp": 4780,
           "er": 0.1652,
-          "cr": 0.6085,
-          "cd": 0.9247,
+          "cr": 0.5754,
+          "cd": 0.8587,
           "atk": 311,
           "def": 79
         },
@@ -27700,7 +27786,7 @@
         }
       },
       "display": {
-        "totalDamage": 6448192.0539,
+        "totalDamage": 6600817.1399,
         "partsByFormula": {
           "chasca.chasca-e-resonance": [
             {
@@ -27710,35 +27796,35 @@
           ],
           "chasca.chasca-shining-volley": [
             {
-              "damage": 55548.4625,
+              "damage": 56013.9381,
               "template": "direct"
             },
             {
-              "damage": 55548.4625,
+              "damage": 56013.9381,
               "template": "direct"
             },
             {
-              "damage": 184417.2847,
+              "damage": 185155.2685,
               "template": "direct"
             },
             {
-              "damage": 184417.2847,
+              "damage": 185155.2685,
               "template": "direct"
             },
             {
-              "damage": 250974.3474,
+              "damage": 251978.6731,
               "template": "direct"
             },
             {
-              "damage": 250974.3474,
+              "damage": 251978.6731,
               "template": "direct"
             },
             {
-              "damage": 75177.002,
+              "damage": 75620.3307,
               "template": "direct"
             },
             {
-              "damage": 105382.0098,
+              "damage": 106003.4614,
               "template": "direct"
             }
           ],
@@ -27778,11 +27864,11 @@
               "template": "direct"
             },
             {
-              "damage": 75177.002,
+              "damage": 75620.3307,
               "template": "direct"
             },
             {
-              "damage": 105382.0098,
+              "damage": 106003.4614,
               "template": "direct"
             }
           ],
@@ -27826,53 +27912,75 @@
           ],
           "xilonen.xilonen-e-rush": [
             {
-              "damage": 62819.0635,
+              "damage": 61434.6468,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal-2": [
             {
-              "damage": 76510.7868,
+              "damage": 74871.0728,
               "template": "direct"
             },
             {
-              "damage": 76233.0194,
+              "damage": 74598.4846,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal": [
             {
-              "damage": 76510.7868,
+              "damage": 74871.0728,
               "template": "direct"
             },
             {
-              "damage": 76233.0194,
+              "damage": 74598.4846,
               "template": "direct"
             },
             {
-              "damage": 79302.6804,
+              "damage": 77610.9084,
               "template": "direct"
             },
             {
-              "damage": 85064.4545,
+              "damage": 83265.2478,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-q-initial": [
             {
-              "damage": 94101.6085,
+              "damage": 92133.8941,
               "template": "direct"
             }
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 55150.6562,
+              "damage": 47334.2919,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 85081.8091,
+              "damage": 73023.3775,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 19340.6029,
+              "template": "direct"
+            },
+            {
+              "damage": 19115.2693,
+              "template": "direct"
+            },
+            {
+              "damage": 20596.033,
+              "template": "direct"
+            },
+            {
+              "damage": 21229.1131,
+              "template": "direct"
+            },
+            {
+              "damage": 22752.7974,
               "template": "direct"
             }
           ]
@@ -28115,7 +28223,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2839.2802
+                "value": 2919.4931
               }
             ],
             "providerCharId": "xilonen"
@@ -28129,7 +28237,21 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2839.2802
+                "value": 2919.4931
+              }
+            ],
+            "providerCharId": "xilonen"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "xilonen",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 2919.4931
               }
             ],
             "providerCharId": "xilonen"
@@ -28143,7 +28265,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 13104.3702
+                "value": 13474.5834
               }
             ],
             "providerCharId": "xilonen"
@@ -28242,6 +28364,20 @@
               {
                 "key": "cr",
                 "value": 0.08
+              }
+            ],
+            "providerCharId": "bennett"
+          },
+          {
+            "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1191.6068
               }
             ],
             "providerCharId": "bennett"
@@ -28349,23 +28485,23 @@
           },
           "xilonen": {
             "onField": {
-              "cr": 0.6585,
-              "cd": 1.4247,
+              "cr": 0.6254,
+              "cd": 1.3587,
               "er": 1.1652,
               "em": 250,
               "dmg%": 1.06,
               "hp": 18067,
               "atk": 2499,
-              "def": 4368
+              "def": 4492
             },
             "offField": {
-              "cr": 0.6585,
-              "cd": 1.4247,
+              "cr": 0.6254,
+              "cd": 1.3587,
               "er": 1.1652,
               "dmg%": 0.5,
               "hp": 18067,
               "atk": 1321,
-              "def": 4368
+              "def": 4492
             }
           },
           "bennett": {
@@ -28402,7 +28538,7 @@
               "cd": 2.2188,
               "er": 1.0551,
               "dmg%": 2.632,
-              "baseDmg": 5233.0602,
+              "baseDmg": 5313.2731,
               "resReduction%": 0.85
             },
             "offField": {
@@ -28445,21 +28581,21 @@
             "onField": {
               "atk": 2499,
               "hp": 18067,
-              "def": 4368,
+              "def": 4492,
               "em": 250,
-              "cr": 0.6585,
-              "cd": 1.4247,
+              "cr": 0.6254,
+              "cd": 1.3587,
               "er": 1.1652,
               "dmg%": 1.972,
-              "baseDmg": 18337.4304,
+              "baseDmg": 18787.8565,
               "resReduction%": 0.45
             },
             "offField": {
               "atk": 1321,
               "hp": 18067,
-              "def": 4368,
-              "cr": 0.6585,
-              "cd": 1.4247,
+              "def": 4492,
+              "cr": 0.6254,
+              "cd": 1.3587,
               "er": 1.1652,
               "dmg%": 1.412,
               "resReduction%": 0.45
@@ -28474,8 +28610,8 @@
               "cr": 0.7715,
               "cd": 1.6228,
               "er": 2.5012,
-              "dmg%": 2.288,
-              "baseDmg": 2393.78,
+              "dmg%": 1.822,
+              "baseDmg": 6504.8799,
               "resReduction%": 0.85,
               "atkSpd%": 0.1
             },
@@ -28486,7 +28622,8 @@
               "cr": 0.7715,
               "cd": 1.6228,
               "er": 2.5012,
-              "dmg%": 1.578,
+              "dmg%": 1.112,
+              "baseDmg": 720.1188,
               "resReduction%": 0.85,
               "atkSpd%": 0.1
             }
@@ -28494,30 +28631,30 @@
         },
         "marginalGains": {
           "chasca": {
-            "atk": 0.0019,
-            "atk%": 0.0059,
+            "atk": 0.0018,
+            "atk%": 0.0057,
             "em": 0.0001,
-            "cr": 0.0081,
-            "cd": 0.0112
+            "cr": 0.0079,
+            "cd": 0.0109
           },
           "citlali": {
             "atk": 0.0004,
-            "atk%": 0.0008,
+            "atk%": 0.0007,
             "em": 0.0034,
-            "cr": 0.0034,
+            "cr": 0.0033,
             "cd": 0.0027
           },
           "xilonen": {
             "def": 0.0011,
-            "def%": 0.0035,
-            "cr": 0.0047,
-            "cd": 0.0044
+            "def%": 0.0034,
+            "cr": 0.0045,
+            "cd": 0.0042
           },
           "bennett": {
             "atk": 0.0002,
-            "atk%": 0.0005,
-            "cr": 0.001,
-            "cd": 0.001
+            "atk%": 0.0006,
+            "cr": 0.0016,
+            "cd": 0.0015
           }
         },
         "levelUpGains": {}
@@ -28560,7 +28697,7 @@
           "minCr": 0.17
         }
       },
-      "damage": 9506976.9477,
+      "damage": 9732267.9702,
       "comboResult": {
         "lineDamages": [
           {
@@ -28624,15 +28761,19 @@
             "total": 326641.2693
           },
           {
-            "perHit": 63209.5738,
-            "total": 126419.1475
+            "perHit": 60726.6687,
+            "total": 121453.3375
           },
           {
-            "perHit": 95113.8574,
-            "total": 190227.7147
+            "perHit": 92285.5915,
+            "total": 184571.183
+          },
+          {
+            "perHit": 117956.6821,
+            "total": 235913.3643
           }
         ],
-        "totalDamage": 9506976.9477
+        "totalDamage": 9732267.9702
       },
       "artifacts": {
         "chasca": {
@@ -28824,12 +28965,12 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "atk%",
             "substats": {
               "cd": 19.81,
               "cr": 9.92,
-              "atk%": 4.96,
-              "atk": 16.54
+              "atk": 16.54,
+              "hp%": 4.96
             }
           },
           "circlet": {
@@ -28876,7 +29017,7 @@
         }
       },
       "display": {
-        "totalDamage": 9506976.9477,
+        "totalDamage": 9732267.9702,
         "partsByFormula": {
           "chasca.chasca-e-resonance": [
             {
@@ -29075,13 +29216,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 63209.5738,
+              "damage": 60726.6687,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 95113.8574,
+              "damage": 92285.5915,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 21659.6725,
+              "template": "direct"
+            },
+            {
+              "damage": 21315.9018,
+              "template": "direct"
+            },
+            {
+              "damage": 23574.9664,
+              "template": "direct"
+            },
+            {
+              "damage": 24540.7983,
+              "template": "direct"
+            },
+            {
+              "damage": 26865.343,
               "template": "direct"
             }
           ]
@@ -29405,6 +29568,20 @@
           },
           {
             "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1328.1005
+              }
+            ],
+            "providerCharId": "bennett"
+          },
+          {
+            "source": {
               "type": "character",
               "id": "chasca",
               "origin": "C6"
@@ -29535,8 +29712,8 @@
               "em": 514,
               "dmg%": 1.8,
               "atkSpd%": 0.1,
-              "hp": 20005,
-              "atk": 2967,
+              "hp": 20662,
+              "atk": 3320,
               "def": 825
             },
             "offField": {
@@ -29545,8 +29722,8 @@
               "cd": 1.6228,
               "dmg%": 1.24,
               "atkSpd%": 0.1,
-              "hp": 20005,
-              "atk": 1788,
+              "hp": 20662,
+              "atk": 2142,
               "em": 264,
               "def": 825
             }
@@ -29629,27 +29806,28 @@
           },
           "bennett": {
             "onField": {
-              "atk": 2967,
-              "hp": 20005,
+              "atk": 3320,
+              "hp": 20662,
               "def": 825,
               "em": 514,
               "cr": 0.8376,
               "cd": 1.6228,
               "er": 1.818,
-              "dmg%": 3.016,
-              "baseDmg": 3216.3939,
+              "dmg%": 2.55,
+              "baseDmg": 4544.4943,
               "resReduction%": 0.4,
               "atkSpd%": 0.1
             },
             "offField": {
-              "atk": 1788,
-              "hp": 20005,
+              "atk": 2142,
+              "hp": 20662,
               "def": 825,
               "em": 264,
               "cr": 0.8376,
               "cd": 1.6228,
               "er": 1.818,
-              "dmg%": 2.306,
+              "dmg%": 1.84,
+              "baseDmg": 856.6125,
               "resReduction%": 0.4,
               "atkSpd%": 0.1
             }
@@ -29658,31 +29836,31 @@
         "marginalGains": {
           "chasca": {
             "atk": 0.0013,
-            "atk%": 0.0041,
+            "atk%": 0.004,
             "em": 0.0001,
-            "cr": 0.0099,
-            "cd": 0.0083
+            "cr": 0.0096,
+            "cd": 0.0081
           },
           "citlali": {
             "atk": 0.0002,
             "atk%": 0.0004,
-            "em": 0.0022,
+            "em": 0.0023,
             "cr": 0.002,
-            "cd": 0.0019
+            "cd": 0.0018
           },
           "furina": {
             "hp": 0.0017,
-            "hp%": 0.0056,
+            "hp%": 0.0055,
             "atk": 0.0001,
             "atk%": 0.0003,
-            "cr": 0.0109,
-            "cd": 0.0109
+            "cr": 0.0106,
+            "cd": 0.0107
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0004,
-            "cr": 0.0008,
-            "cd": 0.0008
+            "atk": 0.0002,
+            "atk%": 0.0005,
+            "cr": 0.0013,
+            "cd": 0.0013
           }
         },
         "levelUpGains": {}
@@ -38266,59 +38444,63 @@
           "minCr": 0.39
         }
       },
-      "damage": 8911413.7809,
+      "damage": 9077926.2738,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 2170484.0045,
-            "total": 4340968.0089
+            "perHit": 2184017.6798,
+            "total": 4368035.3596
           },
           {
-            "perHit": 818335.458,
-            "total": 1636670.9161
+            "perHit": 820268.8402,
+            "total": 1640537.6805
           },
           {
-            "perHit": 106092.6632,
-            "total": 212185.3265
+            "perHit": 107564.143,
+            "total": 215128.2859
           },
           {
-            "perHit": 340070.9607,
-            "total": 680141.9213
+            "perHit": 341542.4404,
+            "total": 683084.8808
           },
           {
-            "perHit": 267396.576,
-            "total": 534793.1521
+            "perHit": 250851.7623,
+            "total": 501703.5246
           },
           {
-            "perHit": 149098.2916,
-            "total": 298196.5833
+            "perHit": 134770.391,
+            "total": 269540.782
           },
           {
-            "perHit": 44291.6387,
-            "total": 88583.2773
+            "perHit": 44698.5544,
+            "total": 89397.1089
           },
           {
-            "perHit": 107604.1752,
-            "total": 215208.3505
+            "perHit": 108418.0068,
+            "total": 216836.0136
           },
           {
-            "perHit": 223364.8016,
-            "total": 446729.6033
+            "perHit": 224992.4647,
+            "total": 449984.9294
           },
           {
-            "perHit": 66243.5732,
-            "total": 132487.1464
+            "perHit": 66650.489,
+            "total": 133300.9779
           },
           {
-            "perHit": 63433.6068,
-            "total": 126867.2135
+            "perHit": 55147.5902,
+            "total": 110295.1804
           },
           {
-            "perHit": 99291.1409,
-            "total": 198582.2817
+            "perHit": 85923.1258,
+            "total": 171846.2517
+          },
+          {
+            "perHit": 114117.6492,
+            "total": 228235.2985
           }
         ],
-        "totalDamage": 8911413.7809
+        "totalDamage": 9077926.2738
       },
       "artifacts": {
         "arlecchino": {
@@ -38379,8 +38561,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 22.02,
-              "em": 39.63,
-              "cr": 3.31,
+              "cr": 6.61,
+              "em": 19.82,
               "cd": 6.6
             }
           },
@@ -38389,8 +38571,8 @@
             "mainStat": "atk",
             "substats": {
               "er": 22.02,
-              "em": 39.63,
               "cr": 3.31,
+              "em": 39.63,
               "cd": 6.6
             }
           },
@@ -38416,10 +38598,10 @@
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "cr",
+            "mainStat": "em",
             "substats": {
               "er": 11.01,
-              "em": 79.26,
+              "cr": 13.22,
               "cd": 6.6,
               "atk%": 4.96
             }
@@ -38510,7 +38692,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cd": 33.02,
               "cr": 3.31,
@@ -38541,8 +38723,8 @@
         "citlali": {
           "hp": 4780,
           "er": 0.9909,
-          "em": 532,
-          "cr": 0.5093,
+          "cr": 0.3636,
+          "em": 619,
           "cd": 0.3303,
           "atk": 311
         },
@@ -38563,131 +38745,153 @@
         }
       },
       "display": {
-        "totalDamage": 8911413.7809,
+        "totalDamage": 9077926.2738,
         "partsByFormula": {
           "arlecchino.arlecchino-normal": [
             {
-              "damage": 346964.7067,
+              "damage": 348898.0889,
               "template": "direct"
             },
             {
-              "damage": 334456.1005,
+              "damage": 336389.4827,
               "template": "direct"
             },
             {
-              "damage": 332956.0926,
+              "damage": 334889.4748,
               "template": "direct"
             },
             {
-              "damage": 286325.3986,
+              "damage": 288258.7808,
               "template": "direct"
             },
             {
-              "damage": 272356.1623,
+              "damage": 274289.5445,
               "template": "direct"
             },
             {
-              "damage": 296094.3614,
+              "damage": 298027.7436,
               "template": "direct"
             },
             {
-              "damage": 301331.1823,
+              "damage": 303264.5645,
               "template": "direct"
             }
           ],
           "arlecchino.arlecchino-burst": [
             {
-              "damage": 818335.458,
+              "damage": 820268.8402,
               "template": "direct"
             }
           ],
           "arlecchino.arlecchino-e-cleave": [
             {
-              "damage": 106092.6632,
+              "damage": 107564.143,
               "template": "direct"
             }
           ],
           "arlecchino.arlecchino-c2-bloodfire": [
             {
-              "damage": 340070.9607,
+              "damage": 341542.4404,
               "template": "direct"
             }
           ],
           "citlali.citlali-e-total": [
             {
-              "damage": 12560.9295,
+              "damage": 11106.1923,
               "template": "direct"
             },
             {
-              "damage": 4089.5874,
+              "damage": 3796.2488,
               "template": "direct",
               "hits": 20
             },
             {
-              "damage": 57681.2995,
+              "damage": 54606.865,
               "template": "direct",
               "hits": 3
             }
           ],
           "citlali.citlali-burst-total": [
             {
-              "damage": 139581.0093,
+              "damage": 126355.3475,
               "template": "direct"
             },
             {
-              "damage": 9517.2824,
+              "damage": 8415.0435,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-e-rush": [
             {
-              "damage": 44291.6387,
+              "damage": 44698.5544,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal-2": [
             {
-              "damage": 53899.5466,
+              "damage": 54306.4624,
               "template": "direct"
             },
             {
-              "damage": 53704.6286,
+              "damage": 54111.5444,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal": [
             {
-              "damage": 53899.5466,
+              "damage": 54306.4624,
               "template": "direct"
             },
             {
-              "damage": 53704.6286,
+              "damage": 54111.5444,
               "template": "direct"
             },
             {
-              "damage": 55858.7052,
+              "damage": 56265.621,
               "template": "direct"
             },
             {
-              "damage": 59901.9212,
+              "damage": 60308.837,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-q-initial": [
             {
-              "damage": 66243.5732,
+              "damage": 66650.489,
               "template": "direct"
             }
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 63433.6068,
+              "damage": 55147.5902,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 99291.1409,
+              "damage": 85923.1258,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 21014.3393,
+              "template": "direct"
+            },
+            {
+              "damage": 20692.3647,
+              "template": "direct"
+            },
+            {
+              "damage": 22808.1977,
+              "template": "direct"
+            },
+            {
+              "damage": 23712.793,
+              "template": "direct"
+            },
+            {
+              "damage": 25889.9546,
               "template": "direct"
             }
           ]
@@ -38775,7 +38979,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 2473.04
+                "value": 2647.89
               }
             ],
             "providerCharId": "citlali"
@@ -38984,6 +39188,20 @@
             "source": {
               "type": "character",
               "id": "xilonen",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 2826.4915
+              }
+            ],
+            "providerCharId": "xilonen"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "xilonen",
               "origin": "C6"
             },
             "entries": [
@@ -39115,7 +39333,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 1112.868
+                "value": 1191.5505
               }
             ],
             "providerCharId": "citlali"
@@ -39129,7 +39347,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 14838.24
+                "value": 15887.34
               }
             ],
             "providerCharId": "citlali"
@@ -39159,8 +39377,8 @@
           },
           "citlali": {
             "onField": {
-              "em": 1237,
-              "cr": 0.5593,
+              "em": 1324,
+              "cr": 0.4136,
               "cd": 1.4303,
               "er": 1.9909,
               "dmg%": 1.56,
@@ -39169,8 +39387,8 @@
               "def": 817
             },
             "offField": {
-              "em": 1237,
-              "cr": 0.5593,
+              "em": 1324,
+              "cr": 0.4136,
               "cd": 1.4303,
               "er": 1.9909,
               "dmg%": 1,
@@ -39232,7 +39450,7 @@
               "cd": 2.6408,
               "er": 1.2202,
               "dmg%": 3.528,
-              "baseDmg": 5299.5315,
+              "baseDmg": 5474.3815,
               "resReduction%": 0.85
             },
             "offField": {
@@ -39251,8 +39469,8 @@
               "atk": 2556,
               "hp": 17240,
               "def": 817,
-              "em": 1237,
-              "cr": 0.5593,
+              "em": 1324,
+              "cr": 0.4136,
               "cd": 1.4303,
               "er": 1.9909,
               "dmg%": 2.072,
@@ -39262,8 +39480,8 @@
               "atk": 1286,
               "hp": 17240,
               "def": 817,
-              "em": 1237,
-              "cr": 0.5593,
+              "em": 1324,
+              "cr": 0.4136,
               "cd": 1.4303,
               "er": 1.9909,
               "dmg%": 1.512,
@@ -39280,7 +39498,7 @@
               "cd": 0.9624,
               "er": 2.2337,
               "dmg%": 1.972,
-              "baseDmg": 18344.8767,
+              "baseDmg": 18519.7267,
               "resReduction%": 0.45
             },
             "offField": {
@@ -39303,8 +39521,8 @@
               "cr": 0.7246,
               "cd": 1.5568,
               "er": 1.9502,
-              "dmg%": 2.288,
-              "baseDmg": 2473.04,
+              "dmg%": 1.822,
+              "baseDmg": 5474.3815,
               "resReduction%": 0.85
             },
             "offField": {
@@ -39314,7 +39532,7 @@
               "cr": 0.7246,
               "cd": 1.5568,
               "er": 1.9502,
-              "dmg%": 1.578,
+              "dmg%": 1.112,
               "resReduction%": 0.85
             }
           }
@@ -39322,16 +39540,16 @@
         "marginalGains": {
           "arlecchino": {
             "atk": 0.0026,
-            "atk%": 0.0085,
+            "atk%": 0.0084,
             "cr": 0.0023,
-            "cd": 0.0143
+            "cd": 0.0142
           },
           "citlali": {
             "atk": 0.0002,
             "atk%": 0.0005,
-            "em": 0.0022,
+            "em": 0.0021,
             "cr": 0.0025,
-            "cd": 0.0019
+            "cd": 0.0015
           },
           "xilonen": {
             "def": 0.0006,
@@ -39340,10 +39558,10 @@
             "cd": 0.0018
           },
           "bennett": {
-            "atk": 0.0001,
+            "atk": 0.0002,
             "atk%": 0.0004,
-            "cr": 0.0009,
-            "cd": 0.0008
+            "cr": 0.0014,
+            "cd": 0.0013
           }
         },
         "levelUpGains": {}
@@ -39386,7 +39604,7 @@
           "minCr": 0.3
         }
       },
-      "damage": 8149118.6053,
+      "damage": 8270354.5832,
       "comboResult": {
         "lineDamages": [
           {
@@ -39446,15 +39664,19 @@
             "total": 959644.2255
           },
           {
-            "perHit": 31378.7732,
-            "total": 62757.5464
+            "perHit": 25814.6528,
+            "total": 51629.3057
           },
           {
-            "perHit": 53088.5058,
-            "total": 106177.0116
+            "perHit": 43674.7905,
+            "total": 87349.5811
+          },
+          {
+            "perHit": 75595.8246,
+            "total": 151191.6492
           }
         ],
-        "totalDamage": 8149118.6053
+        "totalDamage": 8270354.5832
       },
       "artifacts": {
         "arlecchino": {
@@ -39646,7 +39868,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "er": 11.01,
               "cd": 19.81,
@@ -39698,7 +39920,7 @@
         }
       },
       "display": {
-        "totalDamage": 8149118.6053,
+        "totalDamage": 8270354.5832,
         "partsByFormula": {
           "arlecchino.arlecchino-normal": [
             {
@@ -39831,13 +40053,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 31378.7732,
+              "damage": 25814.6528,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 53088.5058,
+              "damage": 43674.7905,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 13553.0869,
+              "template": "direct"
+            },
+            {
+              "damage": 13274.3781,
+              "template": "direct"
+            },
+            {
+              "damage": 15105.8931,
+              "template": "direct"
+            },
+            {
+              "damage": 15888.9321,
+              "template": "direct"
+            },
+            {
+              "damage": 17773.5344,
               "template": "direct"
             }
           ]
@@ -39996,6 +40240,20 @@
               {
                 "key": "atk%",
                 "value": 0.45
+              }
+            ],
+            "providerCharId": "xilonen"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "xilonen",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 3216.7144
               }
             ],
             "providerCharId": "xilonen"
@@ -40388,7 +40646,8 @@
               "cr": 0.6585,
               "cd": 1.3587,
               "er": 2.3355,
-              "dmg%": 1.628,
+              "dmg%": 1.496,
+              "baseDmg": 3216.7144,
               "resReduction%": 0.45
             },
             "offField": {
@@ -40398,7 +40657,7 @@
               "cr": 0.6585,
               "cd": 1.3587,
               "er": 2.3355,
-              "dmg%": 0.978,
+              "dmg%": 0.996,
               "resReduction%": 0.45
             }
           }
@@ -40406,27 +40665,27 @@
         "marginalGains": {
           "arlecchino": {
             "atk": 0.002,
-            "atk%": 0.0066,
-            "cr": 0.002,
-            "cd": 0.0106
+            "atk%": 0.0065,
+            "cr": 0.0019,
+            "cd": 0.0105
           },
           "xilonen": {
-            "def": 0.0007,
-            "def%": 0.0023,
+            "def": 0.0008,
+            "def%": 0.0024,
             "cr": 0.0025,
-            "cd": 0.0029
+            "cd": 0.0028
           },
           "yelan": {
-            "hp": 0.0016,
-            "hp%": 0.0047,
-            "cr": 0.0037,
-            "cd": 0.0061
+            "hp": 0.0015,
+            "hp%": 0.0046,
+            "cr": 0.0036,
+            "cd": 0.006
           },
           "bennett": {
             "atk": 0.0001,
-            "atk%": 0.0002,
-            "cr": 0.0005,
-            "cd": 0.0005
+            "atk%": 0.0003,
+            "cr": 0.0008,
+            "cd": 0.0008
           }
         },
         "levelUpGains": {}
@@ -40465,7 +40724,7 @@
           "minCr": 0.24
         }
       },
-      "damage": 10489819.0946,
+      "damage": 10594698.567,
       "comboResult": {
         "lineDamages": [
           {
@@ -40533,15 +40792,19 @@
             "total": 694723.5446
           },
           {
-            "perHit": 28784.0213,
-            "total": 57568.0425
+            "perHit": 27590.5145,
+            "total": 55181.0289
           },
           {
-            "perHit": 48698.5476,
-            "total": 97397.0952
+            "perHit": 46679.3007,
+            "total": 93358.6013
+          },
+          {
+            "perHit": 55652.4899,
+            "total": 111304.9799
           }
         ],
-        "totalDamage": 10489819.0946
+        "totalDamage": 10594698.567
       },
       "artifacts": {
         "arlecchino": {
@@ -40733,12 +40996,12 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "atk%",
             "substats": {
               "cd": 26.42,
               "cr": 6.61,
-              "atk%": 4.96,
-              "atk": 16.54
+              "atk": 16.54,
+              "hp%": 4.96
             }
           },
           "circlet": {
@@ -40783,7 +41046,7 @@
         }
       },
       "display": {
-        "totalDamage": 10489819.0946,
+        "totalDamage": 10594698.567,
         "partsByFormula": {
           "arlecchino.arlecchino-normal": [
             {
@@ -40935,13 +41198,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 28784.0213,
+              "damage": 27590.5145,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 48698.5476,
+              "damage": 46679.3007,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 9065.4056,
+              "template": "direct"
+            },
+            {
+              "damage": 8697.8892,
+              "template": "direct"
+            },
+            {
+              "damage": 11112.9972,
+              "template": "direct"
+            },
+            {
+              "damage": 12145.5434,
+              "template": "direct"
+            },
+            {
+              "damage": 14630.6546,
               "template": "direct"
             }
           ]
@@ -41325,8 +41610,8 @@
               "cr": 0.6915,
               "cd": 1.4247,
               "dmg%": 1.74,
-              "hp": 27308,
-              "atk": 3366,
+              "hp": 27964,
+              "atk": 3746,
               "em": 336,
               "def": 825
             },
@@ -41335,8 +41620,8 @@
               "cr": 0.6915,
               "cd": 1.4247,
               "dmg%": 1.24,
-              "hp": 27308,
-              "atk": 2095,
+              "hp": 27964,
+              "atk": 2476,
               "em": 336,
               "def": 825
             }
@@ -41414,53 +41699,53 @@
           },
           "bennett": {
             "onField": {
-              "atk": 3366,
-              "hp": 27308,
+              "atk": 3746,
+              "hp": 27964,
               "def": 825,
               "em": 336,
               "cr": 0.6915,
               "cd": 1.4247,
               "er": 2.1704,
-              "dmg%": 2.356
+              "dmg%": 2.153
             },
             "offField": {
-              "atk": 2095,
-              "hp": 27308,
+              "atk": 2476,
+              "hp": 27964,
               "def": 825,
               "em": 336,
               "cr": 0.6915,
               "cd": 1.4247,
               "er": 2.1704,
-              "dmg%": 1.706
+              "dmg%": 1.653
             }
           }
         },
         "marginalGains": {
           "arlecchino": {
             "atk": 0.0014,
-            "atk%": 0.0046,
+            "atk%": 0.0045,
             "cr": 0.0059,
-            "cd": 0.0061
+            "cd": 0.006
           },
           "furina": {
             "hp": 0.0013,
-            "hp%": 0.0041,
+            "hp%": 0.004,
             "atk": 0.0001,
             "atk%": 0.0003,
-            "cr": 0.01,
-            "cd": 0.01
+            "cr": 0.0099,
+            "cd": 0.0099
           },
           "yelan": {
             "hp": 0.001,
-            "hp%": 0.0031,
+            "hp%": 0.003,
             "cr": 0.0023,
             "cd": 0.0039
           },
           "bennett": {
             "atk": 0.0001,
-            "atk%": 0.0002,
-            "cr": 0.0004,
-            "cd": 0.0003
+            "atk%": 0.0003,
+            "cr": 0.0006,
+            "cd": 0.0006
           }
         },
         "levelUpGains": {}
@@ -42774,7 +43059,7 @@
           "minCr": 0.18
         }
       },
-      "damage": 6677919.6017,
+      "damage": 6772950.1379,
       "comboResult": {
         "lineDamages": [
           {
@@ -42838,15 +43123,19 @@
             "total": 549694.0343
           },
           {
-            "perHit": 27509.942,
-            "total": 55019.884
+            "perHit": 25624.8784,
+            "total": 51249.7568
           },
           {
-            "perHit": 46542.9832,
-            "total": 93085.9665
+            "perHit": 43353.7187,
+            "total": 86707.4375
+          },
+          {
+            "perHit": 52589.5961,
+            "total": 105179.1923
           }
         ],
-        "totalDamage": 6677919.6017
+        "totalDamage": 6772950.1379
       },
       "artifacts": {
         "gaming": {
@@ -43038,12 +43327,12 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "atk%",
             "substats": {
               "cd": 26.42,
               "cr": 6.61,
-              "atk%": 4.96,
-              "atk": 16.54
+              "atk": 16.54,
+              "hp%": 4.96
             }
           },
           "circlet": {
@@ -43088,7 +43377,7 @@
         }
       },
       "display": {
-        "totalDamage": 6677919.6017,
+        "totalDamage": 6772950.1379,
         "partsByFormula": {
           "gaming.gaming-cloudstrider": [
             {
@@ -43205,13 +43494,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 27509.942,
+              "damage": 25624.8784,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 46542.9832,
+              "damage": 43353.7187,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 8566.4814,
+              "template": "direct"
+            },
+            {
+              "damage": 8219.1916,
+              "template": "direct"
+            },
+            {
+              "damage": 10501.3816,
+              "template": "direct"
+            },
+            {
+              "damage": 11477.1005,
+              "template": "direct"
+            },
+            {
+              "damage": 13825.441,
               "template": "direct"
             }
           ]
@@ -43612,8 +43923,8 @@
               "cr": 0.7576,
               "cd": 1.6228,
               "dmg%": 1.24,
-              "hp": 19349,
-              "atk": 3366,
+              "hp": 20005,
+              "atk": 3746,
               "def": 825
             },
             "offField": {
@@ -43621,8 +43932,8 @@
               "cr": 0.7576,
               "cd": 1.6228,
               "dmg%": 1.24,
-              "hp": 19349,
-              "atk": 2095,
+              "hp": 20005,
+              "atk": 2476,
               "def": 825
             }
           }
@@ -43697,22 +44008,22 @@
           },
           "bennett": {
             "onField": {
-              "atk": 3366,
-              "hp": 19349,
+              "atk": 3746,
+              "hp": 20005,
               "def": 825,
               "cr": 0.7576,
               "cd": 1.6228,
               "er": 1.8401,
-              "dmg%": 1.856
+              "dmg%": 1.653
             },
             "offField": {
-              "atk": 2095,
-              "hp": 19349,
+              "atk": 2476,
+              "hp": 20005,
               "def": 825,
               "cr": 0.7576,
               "cd": 1.6228,
               "er": 1.8401,
-              "dmg%": 1.706
+              "dmg%": 1.653
             }
           }
         },
@@ -43727,22 +44038,22 @@
             "atk": 0.0004,
             "atk%": 0.0015,
             "em": 0.0001,
-            "cr": 0.0023,
-            "cd": 0.0023
+            "cr": 0.0022,
+            "cd": 0.0022
           },
           "furina": {
             "hp": 0.0028,
-            "hp%": 0.0089,
+            "hp%": 0.0088,
             "atk": 0.0002,
             "atk%": 0.0005,
-            "cr": 0.0086,
-            "cd": 0.0148
+            "cr": 0.0085,
+            "cd": 0.0146
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0003,
-            "cr": 0.0005,
-            "cd": 0.0005
+            "atk": 0.0002,
+            "atk%": 0.0004,
+            "cr": 0.0009,
+            "cd": 0.0008
           }
         },
         "levelUpGains": {}
@@ -43781,7 +44092,7 @@
           "minCr": 0.15
         }
       },
-      "damage": 4751667.0884,
+      "damage": 4878975.1132,
       "comboResult": {
         "lineDamages": [
           {
@@ -43857,15 +44168,19 @@
             "total": 2371.1116
           },
           {
-            "perHit": 23078.901,
-            "total": 46157.802
+            "perHit": 23271.5343,
+            "total": 46543.0686
           },
           {
-            "perHit": 39046.2802,
-            "total": 78092.5603
+            "perHit": 39372.1888,
+            "total": 78744.3776
+          },
+          {
+            "perHit": 63135.4705,
+            "total": 126270.9409
           }
         ],
-        "totalDamage": 4751667.0884
+        "totalDamage": 4878975.1132
       },
       "artifacts": {
         "xianyun": {
@@ -44029,8 +44344,8 @@
             "setKey": "generated",
             "mainStat": "hp",
             "substats": {
-              "er": 22.02,
-              "cr": 6.61,
+              "er": 11.01,
+              "cr": 13.22,
               "cd": 6.6,
               "atk%": 4.96
             }
@@ -44039,30 +44354,30 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "er": 22.02,
-              "cd": 6.6,
+              "cd": 26.42,
               "cr": 6.61,
-              "atk%": 4.96
+              "atk%": 4.96,
+              "hp%": 4.96
             }
           },
           "sands": {
             "setKey": "generated",
-            "mainStat": "atk%",
-            "substats": {
-              "er": 22.02,
-              "cr": 3.31,
-              "cd": 13.21,
-              "atk": 16.54
-            }
-          },
-          "goblet": {
-            "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "er",
             "substats": {
               "cd": 26.42,
               "cr": 6.61,
               "atk%": 4.96,
               "atk": 16.54
+            }
+          },
+          "goblet": {
+            "setKey": "generated",
+            "mainStat": "atk%",
+            "substats": {
+              "cd": 19.81,
+              "cr": 9.92,
+              "atk": 16.54,
+              "hp%": 4.96
             }
           },
           "circlet": {
@@ -44103,14 +44418,14 @@
         },
         "bennett": {
           "hp": 4780,
-          "er": 0.6606,
-          "cr": 0.5424,
-          "cd": 0.8587,
+          "er": 0.6281,
+          "cr": 0.6746,
+          "cd": 1.1228,
           "atk": 361
         }
       },
       "display": {
-        "totalDamage": 4751667.0884,
+        "totalDamage": 4878975.1132,
         "partsByFormula": {
           "xianyun.xianyun-skyladder": [
             {
@@ -44245,13 +44560,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 23078.901,
+              "damage": 23271.5343,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 39046.2802,
+              "damage": 39372.1888,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 10916.9975,
+              "template": "direct"
+            },
+            {
+              "damage": 10612.6583,
+              "template": "direct"
+            },
+            {
+              "damage": 12612.6017,
+              "template": "direct"
+            },
+            {
+              "damage": 13467.65,
+              "template": "direct"
+            },
+            {
+              "damage": 15525.5629,
               "template": "direct"
             }
           ]
@@ -44592,6 +44929,20 @@
               }
             ],
             "providerCharId": "bennett"
+          },
+          {
+            "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1315.9066
+              }
+            ],
+            "providerCharId": "bennett"
           }
         ],
         "detailStats": {
@@ -44663,22 +45014,22 @@
           },
           "bennett": {
             "onField": {
-              "er": 2.4786,
-              "cr": 0.6724,
-              "cd": 1.3587,
+              "er": 2.4461,
+              "cr": 0.8046,
+              "cd": 1.6228,
               "dmg%": 1.24,
               "atkSpd%": 0.1,
-              "hp": 18692,
+              "hp": 20005,
               "atk": 3290,
               "def": 825
             },
             "offField": {
-              "er": 2.4786,
-              "cr": 0.6724,
-              "cd": 1.3587,
+              "er": 2.4461,
+              "cr": 0.8046,
+              "cd": 1.6228,
               "dmg%": 1.24,
               "atkSpd%": 0.1,
-              "hp": 18692,
+              "hp": 20005,
               "atk": 2111,
               "def": 825
             }
@@ -44765,22 +45116,24 @@
           "bennett": {
             "onField": {
               "atk": 3290,
-              "hp": 18692,
+              "hp": 20005,
               "def": 825,
-              "cr": 0.6724,
-              "cd": 1.3587,
-              "er": 2.4786,
-              "dmg%": 1.856,
+              "cr": 0.8046,
+              "cd": 1.6228,
+              "er": 2.4461,
+              "dmg%": 1.56,
+              "baseDmg": 1315.9066,
               "atkSpd%": 0.1
             },
             "offField": {
               "atk": 2111,
-              "hp": 18692,
+              "hp": 20005,
               "def": 825,
-              "cr": 0.6724,
-              "cd": 1.3587,
-              "er": 2.4786,
-              "dmg%": 1.706,
+              "cr": 0.8046,
+              "cd": 1.6228,
+              "er": 2.4461,
+              "dmg%": 1.56,
+              "baseDmg": 844.4186,
               "atkSpd%": 0.1
             }
           }
@@ -44790,16 +45143,16 @@
             "atk": 0.0007,
             "atk%": 0.0022,
             "em": 0.0001,
-            "cr": 0.0093,
-            "cd": 0.0038
+            "cr": 0.009,
+            "cd": 0.0037
           },
           "furina": {
-            "hp": 0.0027,
-            "hp%": 0.0085,
+            "hp": 0.0026,
+            "hp%": 0.0083,
             "atk": 0.0002,
             "atk%": 0.0006,
-            "cr": 0.015,
-            "cd": 0.0148
+            "cr": 0.0146,
+            "cd": 0.0144
           },
           "faruzan": {
             "atk": 0.0002,
@@ -44809,10 +45162,10 @@
             "cd": 0.0009
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0003,
-            "cr": 0.0006,
-            "cd": 0.0006
+            "atk": 0.0003,
+            "atk%": 0.0007,
+            "cr": 0.0012,
+            "cd": 0.0012
           }
         },
         "levelUpGains": {}
@@ -46281,7 +46634,7 @@
           "minCr": 0.1
         }
       },
-      "damage": 12954112.5532,
+      "damage": 13120545.4266,
       "comboResult": {
         "lineDamages": [
           {
@@ -46301,20 +46654,20 @@
             "total": 51775.6325
           },
           {
-            "perHit": 82119.9116,
-            "total": 164239.8233
+            "perHit": 81310.0589,
+            "total": 162620.1177
           },
           {
-            "perHit": 204772.8789,
-            "total": 409545.7579
+            "perHit": 202753.4432,
+            "total": 405506.8863
           },
           {
-            "perHit": 426926.9504,
-            "total": 853853.9009
+            "perHit": 422716.6685,
+            "total": 845433.337
           },
           {
-            "perHit": 128898.9327,
-            "total": 257797.8655
+            "perHit": 127627.7531,
+            "total": 255255.5062
           },
           {
             "perHit": 128657.5604,
@@ -46329,27 +46682,31 @@
             "total": 217507.7614
           },
           {
-            "perHit": 915126.1259,
-            "total": 1830252.2517
+            "perHit": 916117.6901,
+            "total": 1832235.3802
           },
           {
-            "perHit": 234624.444,
-            "total": 469248.8879
+            "perHit": 234872.335,
+            "total": 469744.67
           },
           {
-            "perHit": 260788.0748,
-            "total": 521576.1497
+            "perHit": 261035.9659,
+            "total": 522071.9318
           },
           {
-            "perHit": 44929.8856,
-            "total": 89859.7712
+            "perHit": 38978.3999,
+            "total": 77956.7998
           },
           {
-            "perHit": 76015.0972,
-            "total": 152030.1944
+            "perHit": 65946.0138,
+            "total": 131892.0276
+          },
+          {
+            "perHit": 106060.4096,
+            "total": 212120.8192
           }
         ],
-        "totalDamage": 12954112.5532
+        "totalDamage": 13120545.4266
       },
       "artifacts": {
         "navia": {
@@ -46419,9 +46776,9 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 13.22,
+              "cr": 9.92,
+              "def%": 12.39,
               "cd": 13.21,
-              "def%": 6.19,
               "def": 19.67
             }
           },
@@ -46439,8 +46796,8 @@
             "setKey": "generated",
             "mainStat": "def%",
             "substats": {
-              "cr": 9.92,
-              "cd": 19.81,
+              "cr": 13.22,
+              "cd": 13.21,
               "def": 19.67,
               "atk%": 4.96
             }
@@ -46449,8 +46806,8 @@
             "setKey": "generated",
             "mainStat": "def%",
             "substats": {
-              "cr": 13.22,
-              "cd": 13.21,
+              "cr": 9.92,
+              "cd": 19.81,
               "def": 19.67,
               "atk%": 4.96
             }
@@ -46541,7 +46898,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cd": 26.42,
               "cr": 6.61,
@@ -46571,7 +46928,7 @@
         },
         "xilonen": {
           "hp": 4780,
-          "cr": 0.5949,
+          "cr": 0.5619,
           "cd": 0.7265,
           "def": 98,
           "atk": 311
@@ -46592,7 +46949,7 @@
         }
       },
       "display": {
-        "totalDamage": 12954112.5532,
+        "totalDamage": 13120545.4266,
         "partsByFormula": {
           "navia.navia-crystalshot": [
             {
@@ -46625,41 +46982,41 @@
           ],
           "xilonen.xilonen-e-rush": [
             {
-              "damage": 82119.9116,
+              "damage": 81310.0589,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal-2": [
             {
-              "damage": 102594.1222,
+              "damage": 101582.3562,
               "template": "direct"
             },
             {
-              "damage": 102178.7567,
+              "damage": 101171.087,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-normal": [
             {
-              "damage": 102594.1222,
+              "damage": 101582.3562,
               "template": "direct"
             },
             {
-              "damage": 102178.7567,
+              "damage": 101171.087,
               "template": "direct"
             },
             {
-              "damage": 106769.0398,
+              "damage": 105716.1015,
               "template": "direct"
             },
             {
-              "damage": 115385.0316,
+              "damage": 114247.1238,
               "template": "direct"
             }
           ],
           "xilonen.xilonen-q-initial": [
             {
-              "damage": 128898.9327,
+              "damage": 127627.7531,
               "template": "direct"
             }
           ],
@@ -46694,43 +47051,65 @@
           ],
           "furina.furina-c6-normal": [
             {
-              "damage": 226715.85,
+              "damage": 226963.7411,
               "template": "direct"
             },
             {
-              "damage": 225290.1072,
+              "damage": 225537.9983,
               "template": "direct"
             },
             {
-              "damage": 228777.4504,
+              "damage": 229025.3415,
               "template": "direct"
             },
             {
-              "damage": 234342.7182,
+              "damage": 234590.6093,
               "template": "direct"
             }
           ],
           "furina.furina-c6-charge": [
             {
-              "damage": 234624.444,
+              "damage": 234872.335,
               "template": "direct"
             }
           ],
           "furina.furina-c6-plunge": [
             {
-              "damage": 260788.0748,
+              "damage": 261035.9659,
               "template": "direct"
             }
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 44929.8856,
+              "damage": 38978.3999,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 76015.0972,
+              "damage": 65946.0138,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 18939.6827,
+              "template": "direct"
+            },
+            {
+              "damage": 18535.2726,
+              "template": "direct"
+            },
+            {
+              "damage": 21192.8243,
+              "template": "direct"
+            },
+            {
+              "damage": 22329.0239,
+              "template": "direct"
+            },
+            {
+              "damage": 25063.6061,
               "template": "direct"
             }
           ]
@@ -46925,7 +47304,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 3069.0774
+                "value": 3109.1839
               }
             ],
             "providerCharId": "xilonen"
@@ -46939,7 +47318,21 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 3069.0774
+                "value": 3109.1839
+              }
+            ],
+            "providerCharId": "xilonen"
+          },
+          {
+            "source": {
+              "type": "character",
+              "id": "xilonen",
+              "origin": "C4"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 3109.1839
               }
             ],
             "providerCharId": "xilonen"
@@ -46953,7 +47346,7 @@
             "entries": [
               {
                 "key": "baseDmg",
-                "value": 14164.9728
+                "value": 14350.0794
               }
             ],
             "providerCharId": "xilonen"
@@ -47266,21 +47659,21 @@
           },
           "xilonen": {
             "onField": {
-              "cr": 0.6449,
+              "cr": 0.6119,
               "cd": 1.2266,
               "er": 1,
               "dmg%": 1.89,
               "hp": 18067,
-              "def": 4722,
+              "def": 4783,
               "atk": 2591
             },
             "offField": {
-              "cr": 0.6449,
+              "cr": 0.6119,
               "cd": 1.2266,
               "er": 1,
               "dmg%": 1.89,
               "hp": 18067,
-              "def": 4722,
+              "def": 4783,
               "atk": 1321
             }
           },
@@ -47352,19 +47745,19 @@
             "onField": {
               "atk": 2591,
               "hp": 18067,
-              "def": 4722,
-              "cr": 0.6449,
+              "def": 4783,
+              "cr": 0.6119,
               "cd": 1.2266,
               "er": 1,
               "dmg%": 2.802,
-              "baseDmg": 17234.0502,
+              "baseDmg": 17459.2633,
               "resReduction%": 0.85
             },
             "offField": {
               "atk": 1321,
               "hp": 18067,
-              "def": 4722,
-              "cr": 0.6449,
+              "def": 4783,
+              "cr": 0.6119,
               "cd": 1.2266,
               "er": 1,
               "dmg%": 2.802,
@@ -47380,7 +47773,7 @@
               "cd": 2.2407,
               "er": 1.2202,
               "dmg%": 3.128,
-              "baseDmg": 34283.7531,
+              "baseDmg": 34323.8595,
               "baseDmg%": 0.4,
               "resReduction%": 0.45
             },
@@ -47404,7 +47797,8 @@
               "cr": 0.6915,
               "cd": 1.3587,
               "er": 1.7625,
-              "dmg%": 2.518,
+              "dmg%": 2.386,
+              "baseDmg": 3109.1839,
               "resReduction%": 0.45
             },
             "offField": {
@@ -47414,7 +47808,7 @@
               "cr": 0.6915,
               "cd": 1.3587,
               "er": 1.7625,
-              "dmg%": 2.368,
+              "dmg%": 2.386,
               "resReduction%": 0.45
             }
           }
@@ -47422,29 +47816,29 @@
         "marginalGains": {
           "navia": {
             "atk": 0.0007,
-            "atk%": 0.0024,
+            "atk%": 0.0023,
             "cr": 0.0016,
-            "cd": 0.0031
+            "cd": 0.003
           },
           "xilonen": {
             "def": 0.0006,
-            "def%": 0.0019,
+            "def%": 0.002,
             "cr": 0.0029,
-            "cd": 0.0031
+            "cd": 0.0029
           },
           "furina": {
             "hp": 0.0021,
             "hp%": 0.0067,
             "atk": 0.0001,
             "atk%": 0.0004,
-            "cr": 0.0078,
-            "cd": 0.013
+            "cr": 0.0077,
+            "cd": 0.0128
           },
           "bennett": {
             "atk": 0.0001,
-            "atk%": 0.0002,
-            "cr": 0.0004,
-            "cd": 0.0004
+            "atk%": 0.0003,
+            "cr": 0.0007,
+            "cd": 0.0008
           }
         },
         "levelUpGains": {}
@@ -48750,7 +49144,7 @@
           "minCr": 0.48
         }
       },
-      "damage": 7894106.5535,
+      "damage": 8017742.9371,
       "comboResult": {
         "lineDamages": [
           {
@@ -48794,15 +49188,19 @@
             "total": 41231.2802
           },
           {
-            "perHit": 37367.6197,
-            "total": 74735.2393
+            "perHit": 29683.0165,
+            "total": 59366.033
           },
           {
-            "perHit": 59091.0389,
-            "total": 118182.0779
+            "perHit": 46939.0424,
+            "total": 93878.0848
+          },
+          {
+            "perHit": 81654.7915,
+            "total": 163309.583
           }
         ],
-        "totalDamage": 7894106.5535
+        "totalDamage": 8017742.9371
       },
       "artifacts": {
         "wriothesley": {
@@ -48994,7 +49392,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cr": 6.61,
               "cd": 26.42,
@@ -49045,7 +49443,7 @@
         }
       },
       "display": {
-        "totalDamage": 7894106.5535,
+        "totalDamage": 8017742.9371,
         "partsByFormula": {
           "wriothesley.wriothesley-normal": [
             {
@@ -49158,13 +49556,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 37367.6197,
+              "damage": 29683.0165,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 59091.0389,
+              "damage": 46939.0424,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 14722.7716,
+              "template": "direct"
+            },
+            {
+              "damage": 14436.5689,
+              "template": "direct"
+            },
+            {
+              "damage": 16317.3296,
+              "template": "direct"
+            },
+            {
+              "damage": 17121.4229,
+              "template": "direct"
+            },
+            {
+              "damage": 19056.6984,
               "template": "direct"
             }
           ]
@@ -49748,6 +50168,20 @@
           },
           {
             "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1373.5706
+              }
+            ],
+            "providerCharId": "bennett"
+          },
+          {
+            "source": {
               "type": "character",
               "id": "durin",
               "origin": "P2"
@@ -49945,8 +50379,8 @@
               "cr": 0.7758,
               "cd": 1.6504,
               "er": 2.3135,
-              "dmg%": 1.266,
-              "baseDmg": 1908.8199,
+              "dmg%": 0.8,
+              "baseDmg": 3282.3905,
               "defReduction%": 0.3,
               "resReduction%": 0.2,
               "atkSpd%": 0.2
@@ -49958,7 +50392,8 @@
               "cr": 0.7758,
               "cd": 1.6504,
               "er": 2.3135,
-              "dmg%": 1.116,
+              "dmg%": 0.733,
+              "baseDmg": 793.5386,
               "defReduction%": 0.3,
               "resReduction%": 0.2,
               "atkSpd%": 0.2
@@ -49968,27 +50403,27 @@
         "marginalGains": {
           "wriothesley": {
             "atk": 0.0013,
-            "atk%": 0.0041,
-            "cr": 0.0112,
-            "cd": 0.0136
+            "atk%": 0.004,
+            "cr": 0.011,
+            "cd": 0.0134
           },
           "durin": {
             "atk": 0.0016,
             "atk%": 0.0049,
-            "cr": 0.0062,
-            "cd": 0.006
+            "cr": 0.0061,
+            "cd": 0.0059
           },
           "shenhe": {
-            "atk": 0.001,
+            "atk": 0.0009,
             "atk%": 0.0032,
             "cr": 0.0012,
             "cd": 0.0008
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0003,
-            "cr": 0.0006,
-            "cd": 0.0005
+            "atk": 0.0002,
+            "atk%": 0.0004,
+            "cr": 0.0009,
+            "cd": 0.0009
           }
         },
         "levelUpGains": {}
@@ -58536,7 +58971,7 @@
           "minCr": 0.29
         }
       },
-      "damage": 4633260.7982,
+      "damage": 4728034.6348,
       "comboResult": {
         "lineDamages": [
           {
@@ -58592,15 +59027,19 @@
             "total": 2766.2969
           },
           {
-            "perHit": 36249.0186,
-            "total": 72498.0372
+            "perHit": 28266.0117,
+            "total": 56532.0234
           },
           {
-            "perHit": 57338.2901,
-            "total": 114676.5802
+            "perHit": 44710.8595,
+            "total": 89421.719
+          },
+          {
+            "perHit": 67997.3558,
+            "total": 135994.7116
           }
         ],
-        "totalDamage": 4633260.7982
+        "totalDamage": 4728034.6348
       },
       "artifacts": {
         "wanderer": {
@@ -58792,7 +59231,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cd": 19.81,
               "cr": 9.92,
@@ -58843,7 +59282,7 @@
         }
       },
       "display": {
-        "totalDamage": 4633260.7982,
+        "totalDamage": 4728034.6348,
         "partsByFormula": {
           "wanderer.wanderer-skill": [
             {
@@ -58962,13 +59401,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 36249.0186,
+              "damage": 28266.0117,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 57338.2901,
+              "damage": 44710.8595,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 12258.5134,
+              "template": "direct"
+            },
+            {
+              "damage": 12019.8684,
+              "template": "direct"
+            },
+            {
+              "damage": 13588.1071,
+              "template": "direct"
+            },
+            {
+              "damage": 14258.586,
+              "template": "direct"
+            },
+            {
+              "damage": 15872.2809,
               "template": "direct"
             }
           ]
@@ -59325,6 +59786,20 @@
           },
           {
             "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1380.1846
+              }
+            ],
+            "providerCharId": "bennett"
+          },
+          {
+            "source": {
               "type": "character",
               "id": "wanderer",
               "origin": "E"
@@ -59546,8 +60021,8 @@
               "cr": 0.8376,
               "cd": 1.6228,
               "er": 1.818,
-              "dmg%": 1.116,
-              "baseDmg": 1908.8199,
+              "dmg%": 0.65,
+              "baseDmg": 3289.0045,
               "defReduction%": 0.3,
               "resReduction%": 0.2,
               "atkSpd%": 0.1
@@ -59559,7 +60034,8 @@
               "cr": 0.8376,
               "cd": 1.6228,
               "er": 1.818,
-              "dmg%": 0.966,
+              "dmg%": 0.583,
+              "baseDmg": 800.1526,
               "defReduction%": 0.3,
               "resReduction%": 0.2,
               "atkSpd%": 0.1
@@ -59568,17 +60044,17 @@
         },
         "marginalGains": {
           "wanderer": {
-            "atk": 0.0018,
-            "atk%": 0.0057,
+            "atk": 0.0017,
+            "atk%": 0.0056,
             "em": 0.0001,
-            "cr": 0.0058,
-            "cd": 0.012
+            "cr": 0.0057,
+            "cd": 0.0117
           },
           "durin": {
             "atk": 0.0023,
             "atk%": 0.007,
-            "cr": 0.0082,
-            "cd": 0.008
+            "cr": 0.008,
+            "cd": 0.0078
           },
           "faruzan": {
             "atk": 0.0002,
@@ -59589,9 +60065,9 @@
           },
           "bennett": {
             "atk": 0.0002,
-            "atk%": 0.0004,
-            "cr": 0.0009,
-            "cd": 0.0009
+            "atk%": 0.0006,
+            "cr": 0.0014,
+            "cd": 0.0014
           }
         },
         "levelUpGains": {}
@@ -67896,7 +68372,7 @@
           "minCr": 0.23
         }
       },
-      "damage": 3596184.4597,
+      "damage": 3678568.6366,
       "comboResult": {
         "lineDamages": [
           {
@@ -67976,19 +68452,23 @@
             "total": 11056.1162
           },
           {
-            "perHit": 22508.071,
-            "total": 45016.142
+            "perHit": 24395.5397,
+            "total": 48791.0795
           },
           {
-            "perHit": 41522.1272,
-            "total": 83044.2543
+            "perHit": 45004.0656,
+            "total": 90008.1312
           },
           {
-            "perHit": 19957.9541,
-            "total": 39915.9083
+            "perHit": 39245.8925,
+            "total": 78491.7851
+          },
+          {
+            "perHit": 16534.7429,
+            "total": 33069.4857
           }
         ],
-        "totalDamage": 3596184.4597
+        "totalDamage": 3678568.6366
       },
       "artifacts": {
         "raiden_shogun": {
@@ -68170,11 +68650,11 @@
           },
           "sands": {
             "setKey": "generated",
-            "mainStat": "em",
+            "mainStat": "atk%",
             "substats": {
               "cd": 19.81,
               "cr": 9.92,
-              "atk%": 4.96,
+              "em": 19.82,
               "atk": 16.54
             }
           },
@@ -68230,11 +68710,11 @@
           "cr": 0.6415,
           "cd": 0.8587,
           "atk": 344,
-          "em": 226
+          "em": 59
         }
       },
       "display": {
-        "totalDamage": 3596184.4597,
+        "totalDamage": 3678568.6366,
         "partsByFormula": {
           "raiden_shogun.raiden-e-cast": [
             {
@@ -68407,19 +68887,41 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 22508.071,
+              "damage": 24395.5397,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 41522.1272,
+              "damage": 45004.0656,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 6392.8844,
+              "template": "direct"
+            },
+            {
+              "damage": 6133.7134,
+              "template": "direct"
+            },
+            {
+              "damage": 7836.837,
+              "template": "direct"
+            },
+            {
+              "damage": 8564.9841,
+              "template": "direct"
+            },
+            {
+              "damage": 10317.4736,
               "template": "direct"
             }
           ],
           "bennett.rx-overloaded-bennett": [
             {
-              "damage": 19957.9541,
+              "damage": 16534.7429,
               "template": "transform"
             }
           ]
@@ -68830,18 +69332,18 @@
               "er": 1.7074,
               "cr": 0.6915,
               "cd": 1.3587,
-              "em": 626,
+              "em": 459,
               "hp": 18035,
-              "atk": 4539,
+              "atk": 4920,
               "def": 825
             },
             "offField": {
               "er": 1.7074,
               "cr": 0.6915,
               "cd": 1.3587,
-              "em": 426,
+              "em": 259,
               "hp": 18035,
-              "atk": 2490,
+              "atk": 2871,
               "def": 825
             }
           }
@@ -68916,20 +69418,20 @@
           },
           "bennett": {
             "onField": {
-              "atk": 4539,
+              "atk": 4920,
               "hp": 18035,
               "def": 825,
-              "em": 626,
+              "em": 459,
               "cr": 0.6915,
               "cd": 1.3587,
               "er": 1.7074,
               "dmg%": 1.1717
             },
             "offField": {
-              "atk": 2490,
+              "atk": 2871,
               "hp": 18035,
               "def": 825,
-              "em": 426,
+              "em": 259,
               "cr": 0.6915,
               "cd": 1.3587,
               "er": 1.7074,
@@ -68939,33 +69441,33 @@
         },
         "marginalGains": {
           "raiden_shogun": {
-            "atk": 0.0018,
-            "atk%": 0.0055,
-            "er": 0.0059,
-            "em": 0.0003,
-            "cr": 0.0114,
-            "cd": 0.0112
+            "atk": 0.0017,
+            "atk%": 0.0053,
+            "er": 0.0058,
+            "em": 0.0002,
+            "cr": 0.0111,
+            "cd": 0.011
           },
           "kujou_sara": {
             "atk": 0.0004,
             "atk%": 0.0009,
             "em": 0.0002,
-            "cr": 0.0024,
+            "cr": 0.0023,
             "cd": 0.0022
           },
           "kaedehara_kazuha": {
             "atk": 0.0016,
-            "atk%": 0.0047,
-            "em": 0.0035,
-            "cr": 0.0077,
-            "cd": 0.0077
+            "atk%": 0.0045,
+            "em": 0.0034,
+            "cr": 0.0075,
+            "cd": 0.0075
           },
           "bennett": {
-            "atk": 0.0001,
-            "atk%": 0.0004,
+            "atk": 0.0002,
+            "atk%": 0.0005,
             "em": 0.0002,
-            "cr": 0.0008,
-            "cd": 0.0008
+            "cr": 0.0014,
+            "cd": 0.0014
           }
         },
         "levelUpGains": {}
@@ -68998,7 +69500,7 @@
           "minCr": 0.41
         }
       },
-      "damage": 1653543.0852,
+      "damage": 1709125.1233,
       "comboResult": {
         "lineDamages": [
           {
@@ -69066,11 +69568,15 @@
             "total": 79777.8572
           },
           {
+            "perHit": 27791.0191,
+            "total": 55582.0382
+          },
+          {
             "perHit": 13580.5393,
             "total": 27161.0786
           }
         ],
-        "totalDamage": 1653543.0852
+        "totalDamage": 1709125.1233
       },
       "artifacts": {
         "raiden_shogun": {
@@ -69315,7 +69821,7 @@
         }
       },
       "display": {
-        "totalDamage": 1653543.0852,
+        "totalDamage": 1709125.1233,
         "partsByFormula": {
           "raiden_shogun.raiden-e-cast": [
             {
@@ -69435,6 +69941,28 @@
           "bennett.bennett-burst": [
             {
               "damage": 39888.9286,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 4526.9647,
+              "template": "direct"
+            },
+            {
+              "damage": 4343.4391,
+              "template": "direct"
+            },
+            {
+              "damage": 5549.4645,
+              "template": "direct"
+            },
+            {
+              "damage": 6065.084,
+              "template": "direct"
+            },
+            {
+              "damage": 7306.0667,
               "template": "direct"
             }
           ],
@@ -69961,15 +70489,15 @@
         "marginalGains": {
           "raiden_shogun": {
             "atk": 0.0029,
-            "atk%": 0.009,
-            "er": 0.0097,
-            "em": 0.0015,
-            "cr": 0.0165,
-            "cd": 0.0162
+            "atk%": 0.0087,
+            "er": 0.0094,
+            "em": 0.0014,
+            "cr": 0.016,
+            "cd": 0.0157
           },
           "xiangling": {
             "atk": 0.0004,
-            "atk%": 0.001,
+            "atk%": 0.0009,
             "er": 0.0006,
             "em": 0.0006,
             "cr": 0.0017,
@@ -69979,15 +70507,15 @@
             "atk": 0.0005,
             "atk%": 0.001,
             "em": 0.0005,
-            "cr": 0.0023,
-            "cd": 0.0021
+            "cr": 0.0022,
+            "cd": 0.002
           },
           "bennett": {
-            "atk": 0.0003,
-            "atk%": 0.0009,
+            "atk": 0.0005,
+            "atk%": 0.0013,
             "em": 0.0007,
-            "cr": 0.0017,
-            "cd": 0.0017
+            "cr": 0.0024,
+            "cd": 0.0024
           }
         },
         "levelUpGains": {}
@@ -78087,7 +78615,7 @@
           "minCr": 0
         }
       },
-      "damage": 2116728.8755,
+      "damage": 2191783.4893,
       "comboResult": {
         "lineDamages": [
           {
@@ -78173,9 +78701,13 @@
           {
             "perHit": 42054.4256,
             "total": 84108.8512
+          },
+          {
+            "perHit": 37527.3069,
+            "total": 75054.6138
           }
         ],
-        "totalDamage": 2116728.8755
+        "totalDamage": 2191783.4893
       },
       "artifacts": {
         "tartaglia": {
@@ -78419,7 +78951,7 @@
         }
       },
       "display": {
-        "totalDamage": 2116728.8755,
+        "totalDamage": 2191783.4893,
         "partsByFormula": {
           "tartaglia.tartaglia-melee-combo": [
             {
@@ -78617,6 +79149,28 @@
           "bennett.bennett-burst": [
             {
               "damage": 42054.4256,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 6112.9387,
+              "template": "direct"
+            },
+            {
+              "damage": 5865.1168,
+              "template": "direct"
+            },
+            {
+              "damage": 7493.6603,
+              "template": "direct"
+            },
+            {
+              "damage": 8189.9217,
+              "template": "direct"
+            },
+            {
+              "damage": 9865.6694,
               "template": "direct"
             }
           ]
@@ -79094,30 +79648,30 @@
         },
         "marginalGains": {
           "tartaglia": {
-            "atk": 0.0012,
-            "atk%": 0.0034,
-            "cr": 0.0079,
-            "cd": 0.0081
+            "atk": 0.0011,
+            "atk%": 0.0033,
+            "cr": 0.0076,
+            "cd": 0.0078
           },
           "kaedehara_kazuha": {
-            "atk": 0.0025,
-            "atk%": 0.0072,
-            "em": 0.0046,
-            "cr": 0.0119,
-            "cd": 0.0116
+            "atk": 0.0024,
+            "atk%": 0.007,
+            "em": 0.0044,
+            "cr": 0.0115,
+            "cd": 0.0112
           },
           "xiangling": {
-            "atk": 0.0004,
+            "atk": 0.0003,
             "atk%": 0.0009,
             "er": 0.0006,
-            "cr": 0.0019,
-            "cd": 0.0019
+            "cr": 0.0018,
+            "cd": 0.0018
           },
           "bennett": {
-            "atk": 0.0003,
-            "atk%": 0.0007,
-            "cr": 0.0015,
-            "cd": 0.0014
+            "atk": 0.0004,
+            "atk%": 0.0011,
+            "cr": 0.0023,
+            "cd": 0.0021
           }
         },
         "levelUpGains": {}
@@ -82947,7 +83501,7 @@
           "minCr": 0.24
         }
       },
-      "damage": 1903068.7084,
+      "damage": 2008803.3744,
       "comboResult": {
         "lineDamages": [
           {
@@ -82983,15 +83537,19 @@
             "total": 98537.1002
           },
           {
-            "perHit": 26067.3697,
-            "total": 52134.7395
+            "perHit": 21485.0286,
+            "total": 42970.0571
           },
           {
-            "perHit": 44102.3523,
-            "total": 88204.7046
+            "perHit": 36349.6704,
+            "total": 72699.3408
+          },
+          {
+            "perHit": 65202.3561,
+            "total": 130404.7121
           }
         ],
-        "totalDamage": 1903068.7084
+        "totalDamage": 2008803.3744
       },
       "artifacts": {
         "noelle": {
@@ -83183,7 +83741,7 @@
           },
           "goblet": {
             "setKey": "generated",
-            "mainStat": "pyro%",
+            "mainStat": "phys%",
             "substats": {
               "cr": 16.53,
               "cd": 6.6,
@@ -83236,7 +83794,7 @@
         }
       },
       "display": {
-        "totalDamage": 1903068.7084,
+        "totalDamage": 2008803.3744,
         "partsByFormula": {
           "noelle.noelle-na": [
             {
@@ -83315,13 +83873,35 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 26067.3697,
+              "damage": 21485.0286,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 44102.3523,
+              "damage": 36349.6704,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 11274.3907,
+              "template": "direct"
+            },
+            {
+              "damage": 10960.0882,
+              "template": "direct"
+            },
+            {
+              "damage": 13025.5044,
+              "template": "direct"
+            },
+            {
+              "damage": 13908.5447,
+              "template": "direct"
+            },
+            {
+              "damage": 16033.8281,
               "template": "direct"
             }
           ]
@@ -83677,6 +84257,20 @@
           },
           {
             "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1343.0426
+              }
+            ],
+            "providerCharId": "bennett"
+          },
+          {
+            "source": {
               "type": "character",
               "id": "albedo",
               "origin": "C6"
@@ -83866,7 +84460,8 @@
               "cr": 0.8088,
               "cd": 1.5844,
               "er": 2.2584,
-              "dmg%": 1.6509,
+              "dmg%": 1.6179,
+              "baseDmg": 1343.0426,
               "atkSpd%": 0.1
             },
             "offField": {
@@ -83877,40 +84472,41 @@
               "cr": 0.8088,
               "cd": 1.5844,
               "er": 2.2584,
-              "dmg%": 1.3309,
+              "dmg%": 1.4479,
+              "baseDmg": 708.7386,
               "atkSpd%": 0.1
             }
           }
         },
         "marginalGains": {
           "noelle": {
-            "atk": 0.0007,
-            "atk%": 0.0016,
-            "def": 0.0015,
-            "def%": 0.004,
-            "cr": 0.0069,
-            "cd": 0.0061
+            "atk": 0.0006,
+            "atk%": 0.0015,
+            "def": 0.0014,
+            "def%": 0.0038,
+            "cr": 0.0065,
+            "cd": 0.0057
           },
           "albedo": {
-            "atk": 0.0011,
-            "atk%": 0.0025,
-            "def": 0.0034,
-            "def%": 0.0101,
-            "cr": 0.0134,
-            "cd": 0.0131
+            "atk": 0.001,
+            "atk%": 0.0023,
+            "def": 0.0033,
+            "def%": 0.0096,
+            "cr": 0.0127,
+            "cd": 0.0124
           },
           "mona": {
             "atk": 0.0005,
-            "atk%": 0.0012,
+            "atk%": 0.0011,
             "er": 0.0003,
             "cr": 0.0016,
-            "cd": 0.0017
+            "cd": 0.0016
           },
           "bennett": {
-            "atk": 0.0004,
-            "atk%": 0.0009,
-            "cr": 0.0017,
-            "cd": 0.0017
+            "atk": 0.0006,
+            "atk%": 0.0015,
+            "cr": 0.0028,
+            "cd": 0.0029
           }
         },
         "levelUpGains": {}
@@ -83943,7 +84539,7 @@
           "minCr": 0.31
         }
       },
-      "damage": 2356843.9445,
+      "damage": 2429662.2494,
       "comboResult": {
         "lineDamages": [
           {
@@ -84007,19 +84603,23 @@
             "total": 10593.1682
           },
           {
-            "perHit": 26050.4295,
-            "total": 52100.859
+            "perHit": 31681.0962,
+            "total": 63362.1924
           },
           {
-            "perHit": 44073.6918,
-            "total": 88147.3836
+            "perHit": 53599.9942,
+            "total": 107199.9883
           },
           {
-            "perHit": 20362.7833,
-            "total": 40725.5666
+            "perHit": 26378.264,
+            "total": 52756.5281
+          },
+          {
+            "perHit": 15236.7027,
+            "total": 30473.4053
           }
         ],
-        "totalDamage": 2356843.9445
+        "totalDamage": 2429662.2494
       },
       "artifacts": {
         "razor": {
@@ -84183,8 +84783,8 @@
             "setKey": "generated",
             "mainStat": "hp",
             "substats": {
-              "cr": 16.53,
-              "cd": 6.6,
+              "cd": 13.21,
+              "cr": 13.22,
               "atk%": 4.96,
               "em": 19.82
             }
@@ -84193,8 +84793,8 @@
             "setKey": "generated",
             "mainStat": "atk",
             "substats": {
-              "cr": 9.92,
               "cd": 19.81,
+              "cr": 9.92,
               "atk%": 4.96,
               "em": 19.82
             }
@@ -84203,8 +84803,8 @@
             "setKey": "generated",
             "mainStat": "em",
             "substats": {
-              "cd": 13.21,
-              "cr": 13.22,
+              "cd": 26.42,
+              "cr": 6.61,
               "atk%": 4.96,
               "atk": 16.54
             }
@@ -84213,19 +84813,19 @@
             "setKey": "generated",
             "mainStat": "pyro%",
             "substats": {
-              "cd": 33.02,
-              "cr": 3.31,
+              "cd": 19.81,
+              "cr": 9.92,
               "atk%": 4.96,
               "em": 19.82
             }
           },
           "circlet": {
             "setKey": "generated",
-            "mainStat": "em",
+            "mainStat": "cr",
             "substats": {
-              "cd": 13.21,
-              "cr": 13.22,
+              "cd": 33.02,
               "atk%": 4.96,
+              "em": 19.82,
               "atk": 16.54
             }
           }
@@ -84257,14 +84857,14 @@
         },
         "bennett": {
           "hp": 4780,
-          "cr": 0.5619,
-          "cd": 0.8587,
-          "em": 432,
+          "cd": 1.1228,
+          "cr": 0.7076,
+          "em": 266,
           "atk": 344
         }
       },
       "display": {
-        "totalDamage": 2356843.9445,
+        "totalDamage": 2429662.2494,
         "partsByFormula": {
           "razor.razor-burst-na": [
             {
@@ -84402,19 +85002,41 @@
           ],
           "bennett.bennett-skill": [
             {
-              "damage": 26050.4295,
+              "damage": 31681.0962,
               "template": "direct"
             }
           ],
           "bennett.bennett-burst": [
             {
-              "damage": 44073.6918,
+              "damage": 53599.9942,
+              "template": "direct"
+            }
+          ],
+          "bennett.bennett-normal": [
+            {
+              "damage": 4561.1673,
+              "template": "direct"
+            },
+            {
+              "damage": 4434.0131,
+              "template": "direct"
+            },
+            {
+              "damage": 5269.5978,
+              "template": "direct"
+            },
+            {
+              "damage": 5626.8406,
+              "template": "direct"
+            },
+            {
+              "damage": 6486.6452,
               "template": "direct"
             }
           ],
           "bennett.rx-overloaded-bennett": [
             {
-              "damage": 20362.7833,
+              "damage": 15236.7027,
               "template": "transform"
             }
           ]
@@ -84692,6 +85314,20 @@
               }
             ],
             "providerCharId": "bennett"
+          },
+          {
+            "source": {
+              "type": "weapon",
+              "id": "skyward_blade",
+              "origin": "R5"
+            },
+            "entries": [
+              {
+                "key": "baseDmg",
+                "value": 1269.7928
+              }
+            ],
+            "providerCharId": "bennett"
           }
         ],
         "detailStats": {
@@ -84766,23 +85402,23 @@
           "bennett": {
             "onField": {
               "er": 1.818,
-              "cr": 0.6919,
-              "cd": 1.3587,
+              "cr": 0.8376,
+              "cd": 1.6228,
               "defReduction%": 0.15,
               "atkSpd%": 0.1,
               "hp": 18035,
-              "em": 432,
+              "em": 266,
               "atk": 3174,
               "def": 825
             },
             "offField": {
               "er": 1.818,
-              "cr": 0.6919,
-              "cd": 1.3587,
+              "cr": 0.8376,
+              "cd": 1.6228,
               "defReduction%": 0.15,
               "atkSpd%": 0.1,
               "hp": 18035,
-              "em": 432,
+              "em": 266,
               "atk": 1614,
               "def": 825
             }
@@ -84874,11 +85510,12 @@
               "atk": 3410,
               "hp": 18035,
               "def": 825,
-              "em": 432,
-              "cr": 0.6919,
-              "cd": 1.3587,
+              "em": 266,
+              "cr": 0.8376,
+              "cd": 1.6228,
               "er": 1.818,
               "dmg%": 1.216,
+              "baseDmg": 1269.7928,
               "defReduction%": 0.15,
               "resReduction%": 0.4,
               "atkSpd%": 0.1
@@ -84887,11 +85524,12 @@
               "atk": 1850,
               "hp": 18035,
               "def": 825,
-              "em": 432,
-              "cr": 0.6919,
-              "cd": 1.3587,
+              "em": 266,
+              "cr": 0.8376,
+              "cd": 1.6228,
               "er": 1.818,
               "dmg%": 1.066,
+              "baseDmg": 645.6648,
               "defReduction%": 0.15,
               "resReduction%": 0.4,
               "atkSpd%": 0.1
@@ -84900,33 +85538,33 @@
         },
         "marginalGains": {
           "razor": {
-            "atk": 0.0014,
-            "atk%": 0.0037,
-            "em": 0.0007,
-            "cd": 0.0048
+            "atk": 0.0013,
+            "atk%": 0.0035,
+            "em": 0.0006,
+            "cd": 0.0046
           },
           "chevreuse": {
             "hp": 0.0006,
             "hp%": 0.0014,
-            "atk": 0.0007,
-            "atk%": 0.0015,
+            "atk": 0.0006,
+            "atk%": 0.0014,
             "em": 0.0007,
-            "cr": 0.0033,
-            "cd": 0.0032
+            "cr": 0.0032,
+            "cd": 0.0031
           },
           "fischl": {
-            "atk": 0.0025,
-            "atk%": 0.0073,
+            "atk": 0.0024,
+            "atk%": 0.0071,
             "em": 0.0007,
-            "cr": 0.0108,
-            "cd": 0.0106
+            "cr": 0.0105,
+            "cd": 0.0103
           },
           "bennett": {
-            "atk": 0.0003,
-            "atk%": 0.0007,
+            "atk": 0.0005,
+            "atk%": 0.0012,
             "em": 0.0005,
-            "cr": 0.0014,
-            "cd": 0.0014
+            "cr": 0.0021,
+            "cd": 0.0022
           }
         },
         "levelUpGains": {}
