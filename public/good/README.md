@@ -5,12 +5,11 @@
   using the same localized-name shape:
 
 ```json
-{"categories":[{"id":0,"n":{"zh":"天地万象"}}],"achievements":[{"id":80127,"categoryId":0,"n":{"zh":"动物园大亨"}},{"id":80128,"categoryId":0,"n":{"zh":"动物园大亨"}}]}
+{"categories":[{"id":0,"n":{"zh":"天地万象"},"achievements":[{"id":80127,"n":{"zh":"动物园大亨"}},{"id":80128,"n":{"zh":"动物园大亨"}}]}]}
 ```
 
-Both lists are sorted by numeric ID. Group achievements by `categoryId` and look
-up the matching `categories[].id` for the category name. Category ID `0` is valid
-(天地万象). The flat achievement list is retained for existing consumers.
+Each category contains its own `achievements` list. Categories and their nested
+achievements are sorted by numeric ID. Category ID `0` is valid (天地万象).
 
 Titles are not unique: multiple tiers or other
 achievements can share a title. Consumers must preserve all matching IDs rather
